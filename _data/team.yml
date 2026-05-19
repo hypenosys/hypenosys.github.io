@@ -1,0 +1,35 @@
+- name: Axel
+  role: 3D Animator & Network Systems Admin
+  description: "Especialista en animación 3D y entornos interactivos. El motor que mantiene la infraestructura en pie y los personajes en movimiento."
+  image: assets/images/upload_soul.svg
+  skills: [HTML, CSS, Javascript, Python, PHP, Bash, C#]
+  github: https://github.com/Axlfc
+  portfolio: https://axlfc.github.io
+  extra_links:
+    - { name: Music, url: "https://afaces.tk" }
+    - { name: YouTube, url: "https://www.youtube.com/c/axelaxel12" }
+    - { name: LinkedIn, url: "https://www.linkedin.com/in/axelcurros/" }
+
+- name: Alex
+  role: Main Programming, Secondary Design
+  description: "El Alex. Capaz de convertir café en código y bugs en 'features experimentales'. Si ves un commit a las 4 AM, es él. O un bot que ha programado para que trabaje por él."
+  image: assets/images/upload_soul.svg
+  skills: [Programming, Design]
+
+- name: Javi
+  role: Main Design, Secondary Art
+  description: "Arquitecto de sueños y pesadillas (según el día). Si el juego es bonito pero te explota la cabeza, Javi ha pasado por ahí. Su ratón tiene más kilómetros que un taxi."
+  image: assets/images/upload_soul.svg
+  skills: [Design, Art]
+
+- name: Dídac
+  role: Main Art, Secondary Design
+  description: "Si no tiene colores que te derritan las retinas, no es arte. Dídac vive en un mundo de 16 millones de colores y se conoce el nombre de todos. Menos del gris, el gris no existe."
+  image: assets/images/upload_soul.svg
+  skills: [Art, Design]
+
+- name: Mitxel
+  role: Main Design, Secondary Art
+  description: "Diseñador de niveles que te harán cuestionar tu cordura. Mitxel cree que un pasillo recto es un desperdicio de espacio. Si te pierdes, es que el diseño funciona."
+  image: assets/images/upload_soul.svg
+  skills: [Design, Art]

@@ -1,43 +1,16 @@
+<footer class="py-5 bg-dark border-top border-purple mt-5">
+  <div class="container text-center">
+    <p class="h3 mb-4 text-purple font-weight-bold">{{ site.title | upcase }}</p>
+    <p class="text-muted mb-4">{{ site.description }}</p>
 
-<div class="py-5 border-top">
-  <div class="container">
-
-    <p class="h5 mb-3">{{ site.title | escape }}</p>
-
-    <div class="row">
-
-      <div class="col-sm">
-        <ul class="list-unstyled">
-          <li>
-            {%- if site.author -%}
-              {{ site.author | escape }}
-            {%- else -%}
-              {{ site.title | escape }}
-            {%- endif -%}
-          </li>
-          {%- if site.email -%}
-            <li>
-              <a href="mailto:{{ site.email }}">
-                {{ site.email }}
-              </a>
-            </li>
-          {%- endif -%}
-        </ul>
-      </div>
-
-
-      <div class="col-sm text-right">
-        <p>{{- site.description | escape -}}</p>
-
-        <p>
-          <a href="https://nicolas-van.github.io/bootstrap-4-github-pages/">Powered by Bootstrap 4 Github Pages</a>
-        </p>
-        <p>
-          <a href="https://github.com/nicolas-van/bootstrap-4-github-pages"><img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/nicolas-van/bootstrap-4-github-pages?style=social"></a>
-        <p>
-      </div>
-
+    <div class="mb-4">
+      <a href="{{ site.github.repository_url }}" class="btn btn-outline-purple btn-sm">
+        <i class="fab fa-github"></i> Repository
+      </a>
     </div>
 
+    <div class="small text-muted">
+      <p>&copy; {{ "now" | date: "%Y" }} Hypenosys Indie Studio. Built with passion and lots of coffee.</p>
+    </div>
   </div>
-</div>
+</footer>
