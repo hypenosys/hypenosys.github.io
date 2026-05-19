@@ -1,0 +1,6 @@
+<svg width="300" height="300" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+  <rect width="300" height="300" fill="#1a1a1a"/>
+  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="20" fill="#bd93f9">UPLOAD YOUR SOUL</text>
+  <text x="50%" y="60%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#6272a4">IMAGE HERE</text>
+  <rect x="50" y="50" width="200" height="200" fill="none" stroke="#bd93f9" stroke-width="2" stroke-dasharray="10 5"/>
+</svg>

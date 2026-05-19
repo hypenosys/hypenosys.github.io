@@ -1,0 +1,23 @@
+<ul class="tree-view">
+  {% assign excluded_files = "README.md,LICENSE.md,CONTRIBUTING.md,index.md,404.html" | split: "," %}
+  {% assign pages = site.pages | sort: "title" %}
+
+  {% for p in pages %}
+    {% assign parts = p.path | split: "/" %}
+    {% if parts.size == 1 %}
+      {% unless excluded_files contains p.path %}
+        {% if p.name contains ".md" or p.name contains ".html" %}
+          <li>
+            <a href="{{ p.url | relative_url }}">
+              {% if p.title %}
+                {{ p.title }}
+              {% else %}
+                {{ p.name | replace: ".md", "" | replace: "-", " " | capitalize }}
+              {% endif %}
+            </a>
+          </li>
+        {% endif %}
+      {% endunless %}
+    {% endif %}
+  {% endfor %}
+</ul>
