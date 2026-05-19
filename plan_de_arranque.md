@@ -1,16 +1,15 @@
-<!DOCTYPE html>
-<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plan Operativo: Estudio Indie (Fase 0)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        /* Base styles and specific chart container requirements */
+        /* Base styles and custom overrides */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f5f4; /* stone-100 - warm neutral */
+            background-color: #f5f5f4; /* warm neutral stone-100 */
             color: #292524; /* stone-800 */
         }
         
@@ -20,17 +19,10 @@
             max-width: 800px; 
             margin-left: auto; 
             margin-right: auto; 
-            height: 300px; 
-            max-height: 400px; 
-        } 
-        
-        @media (min-width: 768px) { 
-            .chart-container { 
-                height: 350px; 
-            } 
+            height: 250px; 
         }
 
-        /* Custom scrollbar for inner content if needed */
+        /* Custom scrollbar */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #e7e5e4; border-radius: 4px; }
         ::-webkit-scrollbar-thumb { background: #a8a29e; border-radius: 4px; }
@@ -47,283 +39,562 @@
             animation: fadeIn 0.3s ease-in-out;
         }
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
     </style>
-
-    <!-- Chosen Palette: Warm Neutrals (Stone) with Muted Teal accents for a calm, professional, and structured feel. -->
-    
-    <!-- Application Structure Plan: A dashboard-style SPA divided into 4 logical views: 'Resumen' (Overview of the whole plan and deliverables), 'Equipo & Método' (Human resources and Sunday workflows), 'Producción' (GDD and Pipeline research), and 'Tecnología' (SVN, Unreal, AI). This structure shifts the linear text into actionable, thematic hubs, making it easier for a team of beginners to digest complex technical and organizational concepts step-by-step. -->
-    
-    <!-- Visualization & Content Choices: 
-         1. Report Info: Team of 5 (1 pro, 4 noobs) -> Goal: Visualize roles -> Viz: Doughnut Chart (Chart.js) -> Justification: Shows part-to-whole relationship of responsibilities. 
-         2. Report Info: 9-step research plan -> Goal: Plan timeline/effort -> Viz: Horizontal Bar Chart (Chart.js) -> Justification: Helps estimate effort for Sunday meetings.
-         3. Report Info: Pipeline & Deliverables -> Goal: Organize actionable items -> Viz: Interactive CSS/HTML Grid cards -> Justification: Text-heavy structural information needs clean formatting, not data charts.
-         4. Report Info: SVN/AI Matrix -> Goal: Compare options -> Viz: Interactive HTML Table with JS highlight -> Justification: Allows quick comparison of text-based attributes.
-         Confirming NO SVG/Mermaid used. -> Library: Chart.js and Vanilla DOM manipulation. -->
-         
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 </head>
 <body class="min-h-screen flex flex-col">
 
     <!-- Header -->
     <header class="bg-stone-900 text-stone-50 shadow-md p-6">
-        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
             <div>
-                <h1 class="text-3xl font-bold tracking-tight">Proyecto Indie: Plan de Arranque</h1>
-                <p class="text-stone-400 mt-1">Guía operativa y de investigación para equipo de 5 personas.</p>
+                <h1 class="text-3xl font-bold tracking-tight flex items-center gap-3">
+                    <i class="fa-solid fa-gamepad text-teal-500"></i> Proyecto Indie: Plan de Arranque
+                </h1>
+                <p class="text-stone-400 mt-1">Manual operativo, técnico e infraestructura para el equipo de 5.</p>
             </div>
-            <div class="flex items-center gap-2 bg-stone-800 p-2 rounded-lg border border-stone-700">
-                <span class="text-xl">⚙️</span>
-                <span class="text-sm font-semibold tracking-wider text-stone-300 uppercase">Fase de Pre-producción</span>
+            <div class="flex items-center gap-3 bg-stone-800 p-3 rounded-lg border border-stone-700">
+                <span class="text-xl">🚀</span>
+                <div>
+                    <span class="block text-xs font-semibold tracking-wider text-stone-400 uppercase">Estado Actual</span>
+                    <span class="text-sm font-bold text-teal-400">Fase 0: Infraestructura & GDD</span>
+                </div>
             </div>
         </div>
     </header>
 
     <!-- Navigation -->
-    <nav class="bg-white border-b border-stone-200 sticky top-0 z-10">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav class="bg-white border-b border-stone-200 sticky top-0 z-10 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex space-x-2 overflow-x-auto py-3 hide-scrollbar">
-                <button onclick="navigate('resumen')" id="btn-resumen" class="nav-btn active whitespace-nowrap px-4 py-2 rounded-md border border-stone-300 text-stone-700 font-medium hover:bg-stone-50 transition-colors">📊 Resumen y Entregables</button>
-                <button onclick="navigate('equipo')" id="btn-equipo" class="nav-btn whitespace-nowrap px-4 py-2 rounded-md border border-stone-300 text-stone-700 font-medium hover:bg-stone-50 transition-colors">👥 Equipo y Método</button>
-                <button onclick="navigate('produccion')" id="btn-produccion" class="nav-btn whitespace-nowrap px-4 py-2 rounded-md border border-stone-300 text-stone-700 font-medium hover:bg-stone-50 transition-colors">🎮 GDD y Pipeline</button>
-                <button onclick="navigate('tecnologia')" id="btn-tecnologia" class="nav-btn whitespace-nowrap px-4 py-2 rounded-md border border-stone-300 text-stone-700 font-medium hover:bg-stone-50 transition-colors">💻 Tecnología (SVN/Unreal)</button>
+                <button onclick="navigate('resumen')" id="btn-resumen" class="nav-btn active whitespace-nowrap px-4 py-2 rounded-md border border-stone-300 text-stone-700 font-medium hover:bg-stone-50 transition-colors">📊 Resumen General</button>
+                <button onclick="navigate('onboarding')" id="btn-onboarding" class="nav-btn whitespace-nowrap px-4 py-2 rounded-md border border-stone-300 text-stone-700 font-medium hover:bg-stone-50 transition-colors">👥 Onboarding & Roles</button>
+                <button onclick="navigate('pipeline')" id="btn-pipeline" class="nav-btn whitespace-nowrap px-4 py-2 rounded-md border border-stone-300 text-stone-700 font-medium hover:bg-stone-50 transition-colors">🎮 Pipeline & Flujo</button>
+                <button onclick="navigate('unreal-fab')" id="btn-unreal-fab" class="nav-btn whitespace-nowrap px-4 py-2 rounded-md border border-stone-300 text-stone-700 font-medium hover:bg-stone-50 transition-colors">🧱 Unreal & Ecosistema Fab</button>
+                <button onclick="navigate('repos')" id="btn-repos" class="nav-btn whitespace-nowrap px-4 py-2 rounded-md border border-stone-300 text-stone-700 font-medium hover:bg-stone-50 transition-colors">💻 Git, SVN & Repos</button>
+                <button onclick="navigate('changelogs')" id="btn-changelogs" class="nav-btn whitespace-nowrap px-4 py-2 rounded-md border border-stone-300 text-stone-700 font-medium hover:bg-stone-50 transition-colors">📝 Registro (Changelogs)</button>
             </div>
         </div>
     </nav>
 
     <!-- Main Content Area -->
-    <main class="flex-grow max-w-6xl mx-auto w-full p-4 sm:p-6 lg:p-8">
+    <main class="flex-grow max-w-7xl mx-auto w-full p-4 sm:p-6 lg:p-8">
 
         <!-- VIEW: RESUMEN -->
         <section id="view-resumen" class="view-section fade-in">
             <div class="mb-8">
-                <h2 class="text-2xl font-bold text-stone-800 mb-2">Visión General del Plan</h2>
+                <h2 class="text-2xl font-bold text-stone-800 mb-2">Visión General de Arranque</h2>
                 <p class="text-stone-600 max-w-3xl">
-                    Esta sección consolida el plan de investigación en un mapa de ruta accionable. El objetivo principal no es solo recopilar teoría, sino generar tres <strong>entregables clave</strong> que sirvan como el "sistema operativo" del proyecto antes de escribir la primera línea de código o crear el primer asset.
+                    Este panel interactivo centraliza la planificación para nuestro estudio de 5 personas. Establecemos una regla inquebrantable de <strong>infraestructura primero</strong>: nadie programará ni creará arte hasta que el entorno colaborativo (Git, SVN, Motores y Herramientas) esté 100% montado y testeo.
                 </p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-                <!-- Entregables Cards -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 border-t-4 border-t-teal-600">
-                    <div class="text-3xl mb-3">📝</div>
-                    <h3 class="text-lg font-bold mb-2">Plantilla GDD</h3>
-                    <p class="text-sm text-stone-600">Documento listo para rellenar con pilares de diseño, core loop, narrativa y alcance ajustado a 5 personas.</p>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-stone-200 border-t-4 border-t-red-500">
+                    <div class="text-2xl mb-2 text-red-500"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                    <h3 class="text-md font-bold mb-1">Paso 0 (Crítico)</h3>
+                    <p class="text-xs text-stone-600">Montar infraestructura y herramientas. Cero líneas de código o modelos 3D hasta completar esto.</p>
                 </div>
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 border-t-4 border-t-teal-600">
-                    <div class="text-3xl mb-3">⚖️</div>
-                    <h3 class="text-lg font-bold mb-2">Matriz de Decisión</h3>
-                    <p class="text-sm text-stone-600">Herramienta para evaluar y seleccionar el hosting SVN ideal y las herramientas de IA más eficientes para el equipo.</p>
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-stone-200 border-t-4 border-t-teal-600">
+                    <div class="text-2xl mb-2 text-teal-600"><i class="fa-solid fa-comments"></i></div>
+                    <h3 class="text-md font-bold mb-1">Paso 1: Ideación</h3>
+                    <p class="text-xs text-stone-600">Lluvia de ideas y creación conjunta de un Game Design Document (GDD) cerrado.</p>
                 </div>
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 border-t-4 border-t-teal-600">
-                    <div class="text-3xl mb-3">📅</div>
-                    <h3 class="text-lg font-bold mb-2">Calendario Producción</h3>
-                    <p class="text-sm text-stone-600">Cronograma con hitos semanales (domingos) y mensuales, desde la preproducción hasta el vertical slice.</p>
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-stone-200 border-t-4 border-t-amber-500">
+                    <div class="text-2xl mb-2 text-amber-500"><i class="fa-solid fa-cubes"></i></div>
+                    <h3 class="text-md font-bold mb-1">Paso 2: Greyboxing</h3>
+                    <p class="text-xs text-stone-600">Programadores y diseñadores prueban el loop de juego mientras los de arte acumulan material.</p>
+                </div>
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-stone-200 border-t-4 border-t-purple-600">
+                    <div class="text-2xl mb-2 text-purple-600"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                    <h3 class="text-md font-bold mb-1">Paso 3: Vestido</h3>
+                    <p class="text-xs text-stone-600">Una vez el gameplay está pulido en cajas grises, el equipo de arte decora y pule la escena final.</p>
                 </div>
             </div>
 
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
-                <h3 class="text-lg font-bold mb-4">Estimación de Esfuerzo Investigativo (Bloques)</h3>
-                <p class="text-sm text-stone-500 mb-4">Distribución sugerida del tiempo para abarcar los 9 puntos del plan de investigación propuesto.</p>
-                <div class="chart-container">
-                    <canvas id="planTimelineChart"></canvas>
-                </div>
-            </div>
-        </section>
-
-        <!-- VIEW: EQUIPO Y METODO -->
-        <section id="view-equipo" class="view-section hidden fade-in">
-            <div class="mb-8">
-                <h2 class="text-2xl font-bold text-stone-800 mb-2">Organización y Método de Trabajo</h2>
-                <p class="text-stone-600 max-w-3xl">
-                    Con un equipo de 5 personas donde 4 son principiantes, la estructura es vital. Esta sección define cómo se repartirán los roles para evitar bloqueos y establece el ritmo del proyecto mediante reuniones dominicales altamente estructuradas.
-                </p>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <!-- Roles Chart -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 flex flex-col">
-                    <h3 class="text-lg font-bold mb-2">Estructura Propuesta del Equipo</h3>
-                    <p class="text-sm text-stone-500 mb-4">Roles primarios (interno) y apoyo transversal (externo) para evitar cuellos de botella.</p>
-                    <div class="flex-grow flex items-center justify-center chart-container">
-                        <canvas id="teamRolesChart"></canvas>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 lg:col-span-2">
+                    <h3 class="text-lg font-bold text-stone-800 mb-4">Estimación de Esfuerzo en Pre-Producción</h3>
+                    <div class="chart-container">
+                        <canvas id="effortChart"></canvas>
                     </div>
                 </div>
-
-                <!-- Reuniones Dominicales -->
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
-                    <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
-                        <span class="text-xl">☕</span> Sistema Operativo Semanal (Domingos)
-                    </h3>
-                    <ul class="space-y-4">
-                        <li class="flex items-start gap-3">
-                            <div class="bg-stone-100 p-2 rounded text-stone-600 font-bold">1</div>
-                            <div>
-                                <h4 class="font-semibold text-stone-800">Revisión de Avances (15 min)</h4>
-                                <p class="text-sm text-stone-600">Demostración visual de lo logrado en la semana. Qué funcionó y qué no.</p>
-                            </div>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <div class="bg-stone-100 p-2 rounded text-stone-600 font-bold">2</div>
-                            <div>
-                                <h4 class="font-semibold text-stone-800">Resolución de Bloqueos (20 min)</h4>
-                                <p class="text-sm text-stone-600">El integrante con experiencia asiste directamente a los principiantes estancados.</p>
-                            </div>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <div class="bg-stone-100 p-2 rounded text-stone-600 font-bold">3</div>
-                            <div>
-                                <h4 class="font-semibold text-stone-800">Asignación de Tareas (15 min)</h4>
-                                <p class="text-sm text-stone-600">Reparto en tablero Kanban (Trello/Jira). Tareas pequeñas, claras y realizables en 1 semana.</p>
-                            </div>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <div class="bg-teal-50 p-2 rounded text-teal-700 font-bold">4</div>
-                            <div>
-                                <h4 class="font-semibold text-teal-900">Cierre y Objetivos (10 min)</h4>
-                                <p class="text-sm text-teal-700">Fijar un objetivo medible y realista para el próximo domingo. Registro de decisiones.</p>
-                            </div>
-                        </li>
+                    <h3 class="text-lg font-bold text-stone-800 mb-3"><i class="fa-solid fa-clock-rotate-left"></i> Ritmo Dominical</h3>
+                    <p class="text-sm text-stone-600 mb-4">
+                        Quedaremos todos los <strong>domingos por la mañana</strong>. No es para trabajar a ciegas, sino para sincronizar objetivos claros:
+                    </p>
+                    <ul class="space-y-3 text-xs text-stone-700">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check-double text-teal-600"></i> <strong>Revisión semanal:</strong> 15 minutos de demo visual de avances.</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-fire text-red-500"></i> <strong>Resolución de bloqueos:</strong> El único que sabe asiste a los rookies.</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-list-check text-blue-500"></i> <strong>Reparto Kanban:</strong> Asignar tareas cortas y realistas de 1 semana.</li>
                     </ul>
                 </div>
             </div>
         </section>
 
-        <!-- VIEW: PRODUCCION Y GDD -->
-        <section id="view-produccion" class="view-section hidden fade-in">
+        <!-- VIEW: ONBOARDING -->
+        <section id="view-onboarding" class="view-section hidden fade-in">
             <div class="mb-8">
-                <h2 class="text-2xl font-bold text-stone-800 mb-2">Diseño de Juego y Pipeline</h2>
+                <h2 class="text-2xl font-bold text-stone-800 mb-2">Estructura del Equipo y Onboarding</h2>
                 <p class="text-stone-600 max-w-3xl">
-                    Antes de abrir Unreal, el equipo necesita saber qué va a construir y en qué orden. Aquí se estructura la investigación sobre cómo documentar el juego (GDD) y cómo dividir su desarrollo en fases manejables (Pipeline) para no perder la motivación.
+                    Somos un equipo de 5 personas. Dado que 4 son principiantes, asignamos <strong>roles primarios y secundarios</strong> de modo que todos tengan un foco principal pero puedan apoyarse mutuamente si alguien se queda colgado.
                 </p>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- GDD Column -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 lg:col-span-1">
-                    <h3 class="text-lg font-bold mb-4 border-b pb-2">Foco del GDD Accionable</h3>
-                    <div class="space-y-3 text-sm text-stone-700">
-                        <p><strong>1. Alcance Realista:</strong> Adaptado estrictamente a 5 personas a tiempo parcial.</p>
-                        <p><strong>2. Core Loop:</strong> Definir el bucle jugable principal en 1 párrafo.</p>
-                        <p><strong>3. Pilares de Diseño:</strong> 3 reglas inquebrantables que guían todas las decisiones.</p>
-                        <p><strong>4. IA en Ideación:</strong> Uso de IA para brainstorming de mecánicas, no para diseñar el juego entero.</p>
-                        <div class="mt-6 p-4 bg-amber-50 border border-amber-200 rounded-lg text-amber-800">
-                            <strong>Riesgo:</strong> Evitar crear un GDD de 50 páginas teóricas. Debe ser una wiki viva o un documento ágil.
+            <!-- Team status checklist -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 mb-8">
+                <h3 class="text-lg font-bold text-stone-800 mb-4"><i class="fa-solid fa-users"></i> Estado de Onboarding del Equipo</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    <!-- Alex -->
+                    <div class="p-4 bg-teal-50 border border-teal-200 rounded-lg">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-stone-800">Alex</h4>
+                            <span class="text-xs bg-teal-200 text-teal-800 px-2 py-0.5 rounded font-mono">Git OK</span>
+                        </div>
+                        <p class="text-xs text-stone-600 mb-2"><strong>Primario:</strong> Programador Procedural</p>
+                        <p class="text-xs text-stone-500"><strong>Secundario:</strong> Blueprints & Tech Art</p>
+                    </div>
+
+                    <!-- Axel -->
+                    <div class="p-4 bg-teal-50 border border-teal-200 rounded-lg relative">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-stone-800">Axel</h4>
+                            <span class="text-xs bg-teal-200 text-teal-800 px-2 py-0.5 rounded font-mono">Git OK</span>
+                        </div>
+                        <p class="text-xs text-stone-600 mb-2"><strong>Primario:</strong> Programador Procedural</p>
+                        <p class="text-xs text-stone-500"><strong>Secundario:</strong> Sistemas e Infraestructura</p>
+                        <span class="absolute bottom-1 right-2 text-[10px] text-teal-600 font-bold"><i class="fa-brands fa-linux"></i> Arch User (CachyOS)</span>
+                    </div>
+
+                    <!-- Mitxel -->
+                    <div class="p-4 bg-teal-50 border border-teal-200 rounded-lg">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-stone-800">Mitxel</h4>
+                            <span class="text-xs bg-teal-200 text-teal-800 px-2 py-0.5 rounded font-mono">Git OK</span>
+                        </div>
+                        <p class="text-xs text-stone-600 mb-2"><strong>Primario:</strong> Arte 3D / Texturas</p>
+                        <p class="text-xs text-stone-500"><strong>Secundario:</strong> Concept Art & UI</p>
+                    </div>
+
+                    <!-- Javi -->
+                    <div class="p-4 bg-red-50 border border-red-200 rounded-lg">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-stone-950">Javi</h4>
+                            <span class="text-xs bg-red-200 text-red-800 px-2 py-0.5 rounded font-semibold animate-pulse">Pendiente</span>
+                        </div>
+                        <p class="text-xs text-stone-700 mb-2"><strong>Primario:</strong> Level Design / Audio</p>
+                        <p class="text-xs text-stone-600"><strong>Secundario:</strong> Q&A & Narrativa</p>
+                        <div class="mt-2 text-[10px] text-red-700"><i class="fa-solid fa-circle-info"></i> Debe crear cuenta Git y unirse.</div>
+                    </div>
+
+                    <!-- Dídac -->
+                    <div class="p-4 bg-red-50 border border-red-200 rounded-lg">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-stone-950">Dídac</h4>
+                            <span class="text-xs bg-red-200 text-red-800 px-2 py-0.5 rounded font-semibold animate-pulse">Pendiente</span>
+                        </div>
+                        <p class="text-xs text-stone-700 mb-2"><strong>Primario:</strong> Modelado 3D / Props</p>
+                        <p class="text-xs text-stone-600"><strong>Secundario:</strong> Integración Audio & SFX</p>
+                        <div class="mt-2 text-[10px] text-red-700"><i class="fa-solid fa-circle-info"></i> Debe crear cuenta Git y unirse.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Software Stack & Systems -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Software requisites -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                    <h3 class="text-lg font-bold text-stone-800 mb-4"><i class="fa-solid fa-layer-group"></i> Stack de Software Obligatorio</h3>
+                    <div class="space-y-4 text-sm text-stone-700">
+                        <div class="flex items-start gap-3">
+                            <div class="bg-orange-100 text-orange-700 p-2 rounded"><i class="fa-solid fa-cube text-xl"></i></div>
+                            <div>
+                                <h4 class="font-semibold">Blender (¡Un "Must" absoluto!)</h4>
+                                <p class="text-xs text-stone-500">Toda la producción de modelado, UVs y rigging pasará obligatoriamente por Blender para mantener compatibilidad.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="bg-blue-100 text-blue-700 p-2 rounded"><i class="fa-solid fa-headphones text-xl"></i></div>
+                            <div>
+                                <h4 class="font-semibold">Audacity</h4>
+                                <p class="text-xs text-stone-500">Edición rápida de sonido para efectos, locuciones o loops de música.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="bg-purple-100 text-purple-700 p-2 rounded"><i class="fa-solid fa-palette text-xl"></i></div>
+                            <div>
+                                <h4 class="font-semibold">Krita y GIMP</h4>
+                                <p class="text-xs text-stone-500">Krita para concept art y UI; GIMP para el tratamiento rápido y manipulación de texturas 2D.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="bg-amber-100 text-amber-700 p-2 rounded"><i class="fa-solid fa-robot text-xl"></i></div>
+                            <div>
+                                <h4 class="font-semibold">Manifestación de IA</h4>
+                                <p class="text-xs text-stone-500">Aquellos integrantes que decidan o deseen incorporar flujos de IA en sus roles específicos deben manifestarse en la próxima sesión para coordinar accesos y reglas.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Pipeline Column -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 lg:col-span-2">
-                    <h3 class="text-lg font-bold mb-4">Pipeline de Producción Indie</h3>
-                    <p class="text-sm text-stone-500 mb-6">Haz clic en cada fase para ver sus entregables e hitos.</p>
-                    
-                    <div class="flex flex-col md:flex-row gap-2 mb-6">
-                        <button onclick="showPipeline('pre')" class="flex-1 py-2 px-2 bg-stone-100 hover:bg-teal-50 border border-stone-300 rounded text-sm font-semibold transition">1. Pre-producción</button>
-                        <button onclick="showPipeline('proto')" class="flex-1 py-2 px-2 bg-stone-100 hover:bg-teal-50 border border-stone-300 rounded text-sm font-semibold transition">2. Prototipo/VS</button>
-                        <button onclick="showPipeline('prod')" class="flex-1 py-2 px-2 bg-stone-100 hover:bg-teal-50 border border-stone-300 rounded text-sm font-semibold transition">3. Producción (Alpha)</button>
+                <!-- Arch Linux and systems easter egg / guide -->
+                <div class="bg-stone-800 text-stone-200 p-6 rounded-xl shadow-sm border border-stone-900 flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-bold text-teal-400"><i class="fa-solid fa-terminal"></i> El Rincón del Capo: Axel & CachyOS (Arch)</h3>
+                            <span class="text-xs bg-teal-900 text-teal-200 px-2 py-1 rounded font-mono">neofetch</span>
+                        </div>
+                        <p class="text-sm text-stone-300 leading-relaxed mb-4">
+                            Mientras que el resto del equipo usará Windows con <strong>TortoiseSVN</strong> para una integración visual fácil en el explorador de archivos, Axel opera en la élite con <strong>CachyOS</strong> (Kernel optimizado basado en Arch). No se lo tengamos en cuenta, ¡al contrario, es nuestro colchón de infraestructura!
+                        </p>
+                        <div class="bg-stone-950 p-4 rounded-lg font-mono text-xs text-teal-300 mb-4 border border-teal-900">
+                            <p class="text-stone-500"># Instalar cliente SVN y GUI recomendada para Arch</p>
+                            <p>$ sudo pacman -S subversion</p>
+                            <p class="text-stone-500"># GUI similar a Tortoise (RabbitVCS con Nemo/Nautilus)</p>
+                            <p>$ yay -S rabbitvcs-nemo rabbitvcs-cli</p>
+                        </div>
                     </div>
+                    <div class="p-3 bg-stone-900 rounded border-l-4 border-l-teal-500 text-xs text-stone-400">
+                        <strong>Nota de soporte:</strong> Para mantener la armonía, todas las rutas del SVN utilizarán nombres de archivo sin espacios ni tildes para evitar conflictos de sistema entre Windows y Arch Linux.
+                    </div>
+                </div>
+            </div>
 
-                    <div id="pipeline-content" class="min-h-[150px] p-5 bg-stone-50 rounded-lg border border-stone-200">
-                        <h4 class="font-bold text-lg text-teal-800 mb-2">Selecciona una fase</h4>
-                        <p class="text-stone-600">Explora los objetivos, responsables y riesgos de cada etapa del pipeline estructurado.</p>
+            <!-- Jules Bot Info -->
+            <div class="mt-8 bg-teal-900 text-white p-6 rounded-xl shadow-sm">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="text-2xl">🤖</span>
+                    <h3 class="text-lg font-bold">Jules: El Motor de Automatización de la Organización</h3>
+                </div>
+                <p class="text-sm text-teal-100 mb-4">
+                    Jules es nuestro bot de automatización para gestionar el despliegue del portfolio de la organización en <span class="font-mono bg-teal-950 px-2 py-0.5 rounded text-white">hypenosys.github.io</span>. Para que Jules pueda operar adecuadamente con las cuentas del equipo, es crucial contar con su GitHub asociado a un Gmail.
+                </p>
+                <div class="p-4 bg-teal-950 rounded-lg text-xs font-mono border border-teal-800">
+                    Todos los integrantes podrán gestionar push/pull requests a cualquier repositorio de la organización "con la punta del cipotete" una vez las identidades queden debidamente configuradas y autorizadas.
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW: PIPELINE -->
+        <section id="view-pipeline" class="view-section hidden fade-in">
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-stone-800 mb-2">Pipeline de Producción y Bloqueos</h2>
+                <p class="text-stone-600 max-w-3xl">
+                    Tener claras las tareas críticas es la diferencia entre terminar un juego o abandonar a los dos meses. Aquí se detalla cómo avanza el juego en orden lógico de bloqueos.
+                </p>
+            </div>
+
+            <!-- Pipeline phases roadmap -->
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-stone-200">
+                    <span class="text-xs font-bold text-teal-600">PASO 0 (Inmediato)</span>
+                    <h4 class="font-bold text-stone-800 mb-2">Instalar y Configurar</h4>
+                    <p class="text-xs text-stone-600">Creación de cuentas, instalación de Unreal Engine, Blender, Audacity y TortoiseSVN en equipos locales.</p>
+                </div>
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-stone-200">
+                    <span class="text-xs font-bold text-amber-500">PASO 1</span>
+                    <h4 class="font-bold text-stone-800 mb-2">Ideación & GDD</h4>
+                    <p class="text-xs text-stone-600">Lluvia de ideas conjunta. Redacción del GDD (pilares, mecánicas, alcance). Cierre de la preproducción.</p>
+                </div>
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-stone-200">
+                    <span class="text-xs font-bold text-blue-600">PASO 2</span>
+                    <h4 class="font-bold text-stone-800 mb-2">Greyboxing + Arte</h4>
+                    <p class="text-xs text-stone-600">Diseñadores crean el juego con cubos y cilindros grises. Mientras, el equipo de arte produce modelos 3D y audio como locos.</p>
+                </div>
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-stone-200">
+                    <span class="text-xs font-bold text-purple-600">PASO 3</span>
+                    <h4 class="font-bold text-stone-800 mb-2">Vestido de Escena</h4>
+                    <p class="text-xs text-stone-600">Los programadores se retiran del nivel principal. El equipo de arte reemplaza las cajas grises por los modelos definitivos.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- AI and Concept Rules -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-lg font-bold text-stone-800 mb-3"><i class="fa-solid fa-ban text-red-500"></i> Políticas de Inteligencia Artificial</h3>
+                        <p class="text-sm text-stone-600 mb-4">
+                            Para mantener la coherencia y el alma de nuestro videojuego, establecemos políticas estrictas sobre el uso de inteligencias artificiales generativas:
+                        </p>
+                        <div class="space-y-3 mb-4">
+                            <div class="p-3 bg-red-50 border-l-4 border-l-red-500 rounded text-xs">
+                                <strong class="text-red-800 block">PROHIBIDO: ChatGPT para Diseño</strong>
+                                <p class="text-stone-700">No utilizaremos ChatGPT para escribir mecánicas, sistemas de juego ni para estructurar el GDD. El diseño debe nacer de la sinergia y discusión del equipo los domingos.</p>
+                            </div>
+                            <div class="p-3 bg-red-50 border-l-4 border-l-red-500 rounded text-xs">
+                                <strong class="text-red-800 block">PROHIBIDO: Gemini para Imágenes</strong>
+                                <p class="text-stone-700">Está tajantemente prohibido usar Gemini para generar imágenes o material artístico del juego.</p>
+                            </div>
+                            <div class="p-3 bg-teal-50 border-l-4 border-l-teal-500 rounded text-xs">
+                                <strong class="text-teal-800 block">PERMITIDO: Búsquedas & Lógica</strong>
+                                <p class="text-stone-700">Claude para refinar diseño y programación a punta pala. Gemini + Perplexity para búsquedas profundas. NotebookLM para crear bibliotecas de conocimiento interconectadas.</p>
+                            </div>
+                            <div class="p-3 bg-teal-50 border-l-4 border-l-teal-500 rounded text-xs">
+                                <strong class="text-teal-800 block">PERMITIDO: Leonardo.ai sin marcas de agua</strong>
+                                <p class="text-stone-700">El equipo de arte puede utilizar Leonardo.ai o ChatGPT para generar imágenes de concepto limpias sin marcas de agua para el documento de referencias estéticas.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-amber-50 rounded-lg border border-amber-200 text-xs text-amber-800">
+                        <strong>Flujo de Concepto:</strong> Lluvia de ideas inicial -> El equipo de arte busca referencias estéticas reales de otros videojuegos -> Generación de un documento unificado de Concept Art & Referencias para mantener un único estilo visual.
+                    </div>
+                </div>
+
+                <!-- Procedural Generation (Alex & Axel) -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                    <h3 class="text-lg font-bold text-stone-800 mb-3"><i class="fa-solid fa-code text-teal-600"></i> Pipeline Procedural</h3>
+                    <p class="text-sm text-stone-600 mb-4">
+                        <strong>Alex y Axel</strong> formarán la vanguardia técnica del proyecto. Se encargarán de diseñar un pipeline para la generación procedimental de elementos que ahorre trabajo manual al equipo:
+                    </p>
+                    <ul class="space-y-3 text-xs text-stone-700">
+                        <li class="p-3 bg-stone-50 rounded border border-stone-200">
+                            <strong>1. Spawners de Objetos:</strong> Creación de algoritmos para sembrar rocas, árboles y props creados por el equipo en la escena basada en parámetros físicos o de terreno.
+                        </li>
+                        <li class="p-3 bg-stone-50 rounded border border-stone-200">
+                            <strong>2. Generación de Layouts:</strong> Sistemas lógicos para instanciar habitaciones, pasillos o biomas de forma automática en Unreal Engine.
+                        </li>
+                        <li class="p-3 bg-stone-50 rounded border border-stone-200">
+                            <strong>3. Testing & Feedback:</strong> Al final de cada iteración, proveer herramientas para que el resto pueda ajustar la aleatoriedad sin tocar código de programación.
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Blockings & Backup system -->
+                <div class="bg-stone-900 text-stone-100 p-6 rounded-xl shadow-sm border border-stone-950 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-lg font-bold text-amber-400 mb-3"><i class="fa-solid fa-shield-halved"></i> Sistema Anti-Bloqueos</h3>
+                        <p class="text-sm text-stone-300 mb-4">
+                            Si alguien se encalla en el desarrollo de un asset o blueprint, todo el proyecto puede verse perjudicado. Para mitigar esto implementaremos un sistema de apoyo obligatorio:
+                        </p>
+                        <div class="space-y-3 text-xs">
+                            <div class="p-3 bg-stone-800 rounded border border-stone-700">
+                                <strong>Responsable Primario (Owner):</strong> El encargado principal de llevar la tarea a término. Si ve que no llega, debe levantar la mano el sábado por Discord.
+                            </div>
+                            <div class="p-3 bg-stone-800 rounded border border-stone-700">
+                                <strong>Apoyo Secundario (Backup):</strong> Un miembro del equipo asignado explícitamente a esa tarea para ayudar a desatascar problemas, resolver dudas técnicas o aportar assets de emergencia.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 p-3 bg-teal-950 text-teal-200 rounded border border-teal-800 text-xs text-center font-bold">
+                        <i class="fa-solid fa-bullhorn text-amber-400 animate-bounce"></i> Transparencia de Comunicación: "Me he visto tal vídeo de YouTube [Enlace] para hacer tal cosa."
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- VIEW: TECNOLOGIA -->
-        <section id="view-tecnologia" class="view-section hidden fade-in">
+        <!-- VIEW: UNREAL FAB -->
+        <section id="view-unreal-fab" class="view-section hidden fade-in">
             <div class="mb-8">
-                <h2 class="text-2xl font-bold text-stone-800 mb-2">Infraestructura, Motor y Herramientas</h2>
+                <h2 class="text-2xl font-bold text-stone-800 mb-2">Unreal Engine & Ecosistema Fab Store</h2>
                 <p class="text-stone-600 max-w-3xl">
-                    El pilar técnico del proyecto. Configurar mal el control de versiones con archivos binarios de Unreal es el fin de muchos proyectos indie. Esta sección cubre la investigación de SVN, la guía de onboarding y la evaluación de herramientas IA.
+                    Epic Games ha unificado todos sus marketplaces (Megascans, Unreal Marketplace, Sketchfab, ArtStation) bajo una única gran plataforma: <strong>Fab</strong>. Es nuestro mayor aliado de recursos, pero requiere orden.
                 </p>
             </div>
 
-            <!-- Tabs internas para Tecnología -->
-            <div class="flex space-x-2 mb-6 border-b border-stone-200 pb-2">
-                <button onclick="techTab('svn')" id="tab-svn" class="tech-tab active px-3 py-1 text-sm font-bold text-teal-700 border-b-2 border-teal-700">SVN & Unreal</button>
-                <button onclick="techTab('ai')" id="tab-ai" class="tech-tab px-3 py-1 text-sm font-bold text-stone-500 hover:text-stone-800">Matriz Herramientas IA</button>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+                <!-- Fab guide -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 lg:col-span-2">
+                    <h3 class="text-lg font-bold text-stone-800 mb-4"><i class="fa-solid fa-store text-teal-600"></i> Importación Limpia desde la Tienda Fab</h3>
+                    <p class="text-sm text-stone-600 mb-4">
+                        El error típico de los principiantes es arrastrar gigabytes de assets de Fab directamente al proyecto de Unreal, ensuciando el control de versiones (SVN). Seguiremos este flujo inquebrantable:
+                    </p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                        <div class="p-4 bg-stone-50 border border-stone-200 rounded-lg">
+                            <div class="font-bold text-stone-800 mb-1">1. Descarga Local</div>
+                            <p class="text-stone-600">Descarga los packs de Fab en un proyecto de pruebas o carpeta temporal fuera del SVN principal.</p>
+                        </div>
+                        <div class="p-4 bg-stone-50 border border-stone-200 rounded-lg">
+                            <div class="font-bold text-stone-800 mb-1">2. Limpieza de Assets</div>
+                            <p class="text-stone-600">Elimina niveles de demostración, texturas duplicadas y assets innecesarios de alta resolución que consuman espacio.</p>
+                        </div>
+                        <div class="p-4 bg-stone-50 border border-stone-200 rounded-lg">
+                            <div class="font-bold text-teal-700 mb-1">3. Migración Oficial</div>
+                            <p class="text-stone-600">Migra únicamente los assets filtrados al SVN usando la opción "Migrar" de Unreal para mantener las dependencias.</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 p-4 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-800">
+                        <strong>¡Regla de Oro!</strong> Nunca subas plugins pesados de Fab al SVN a menos que sea coordinado. Cada integrante debe tener los plugins instalados directamente en el motor localmente.
+                    </div>
+                </div>
+
+                <!-- Unreal configuration details -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-lg font-bold text-stone-800 mb-3"><i class="fa-solid fa-gears"></i> Sincronización de Unreal con SVN</h3>
+                        <p class="text-xs text-stone-600 mb-4">
+                            Para evitar que dos personas editen el mismo archivo a la vez (por ejemplo, el mapa principal o un blueprint de personaje), configuramos el sistema de <strong>Locks (Bloqueos)</strong> en Unreal:
+                        </p>
+                        <ul class="space-y-2 text-xs text-stone-700">
+                            <li><i class="fa-solid fa-circle text-teal-600 text-[8px]"></i> <strong>Needs Lock:</strong> Todo archivo binario (.umap, .uasset) requiere de un bloqueo antes de poder modificarlo.</li>
+                            <li><i class="fa-solid fa-circle text-teal-600 text-[8px]"></i> <strong>Ignorar carpetas:</strong> Evitar subir carpetas temporales locales de Unreal en SVN (ver sección de Repos).</li>
+                        </ul>
+                    </div>
+                    <div class="p-3 bg-stone-100 rounded text-xs text-stone-600">
+                        <strong>Comprobación semanal:</strong> Cada domingo limpiaremos los "locks" olvidados del servidor de SVN para que nadie se quede con archivos secuestrados durante la semana.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW: REPOS -->
+        <section id="view-repos" class="view-section hidden fade-in">
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-stone-800 mb-2">Git, SVN & Repositorios de Trabajo</h2>
+                <p class="text-stone-600 max-w-3xl">
+                    La clave del éxito reside en dividir el contenido: la documentación oficial y los scripts ágiles van a **Git**, mientras que los cambios pesados de Unreal Engine y el arte 3D van al servidor centralizado **SVN**.
+                </p>
             </div>
 
-            <!-- Tab Content: SVN -->
-            <div id="content-svn" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
-                    <h3 class="text-lg font-bold mb-3 flex items-center gap-2"><span class="text-xl">🗄️</span> Estrategia SVN</h3>
-                    <ul class="space-y-3 text-sm text-stone-700">
-                        <li><strong>Hosting:</strong> Investigar VPS (DigitalOcean/Linode) vs Hosting Gestionado (Assembla) vs Local.</li>
-                        <li><strong>Unreal Specs:</strong> Archivos binarios (.uasset, .umap). Configuración crítica para ignorar carpetas DerivedDataCache, Intermediate, Saved.</li>
-                        <li><strong>Locking:</strong> Obligatorio configurar "Needs Lock" en assets binarios para evitar conflictos irresolubles entre artistas.</li>
-                    </ul>
+            <!-- Warning about dangerous repositories -->
+            <div class="bg-red-50 border border-red-200 p-4 rounded-xl flex items-center gap-4 mb-8 text-sm">
+                <div class="text-red-600 text-3xl"><i class="fa-solid fa-radiation animate-bounce"></i></div>
+                <div>
+                    <strong class="text-red-900">Advertencia para el equipo:</strong> Los issues en el repositorio de la app de producción son de naturaleza altamente caótica y compleja. Se aconseja entrar con extrema precaución para no quemarse la cabeza antes de empezar.
                 </div>
-                <div class="bg-stone-800 text-stone-100 p-6 rounded-xl shadow-sm border border-stone-900">
-                    <h3 class="text-lg font-bold mb-3 text-teal-400">Guía Novatos (Onboarding)</h3>
-                    <p class="text-sm text-stone-300 mb-4">La documentación debe ser un manual a prueba de fallos. Conceptos a enseñar de forma visual:</p>
-                    <div class="grid grid-cols-2 gap-2 text-xs font-mono">
-                        <div class="bg-stone-700 p-2 rounded">1. Checkout (Bajar)</div>
-                        <div class="bg-stone-700 p-2 rounded">2. Update (Sincronizar)</div>
-                        <div class="bg-stone-700 p-2 rounded border border-red-500">3. Get Lock (Bloquear)</div>
-                        <div class="bg-stone-700 p-2 rounded text-teal-300">4. Commit (Subir)</div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+                <!-- Repos links with custom styles -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 lg:col-span-2">
+                    <h3 class="text-lg font-bold text-stone-800 mb-4"><i class="fa-brands fa-github text-stone-800"></i> Acceso Directo a los Repositorios Oficiales</h3>
+                    
+                    <div class="space-y-4">
+                        <a href="https://github.com/hypenosys/scripts" target="_blank" class="block p-4 bg-stone-50 hover:bg-teal-50 border border-stone-200 rounded-lg transition">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="font-bold text-stone-800 text-sm"><i class="fa-solid fa-users-viewfinder"></i> hypenosys/scripts</span>
+                                <span class="text-xs bg-teal-100 text-teal-800 px-2 py-0.5 rounded font-mono">Programación</span>
+                            </div>
+                            <p class="text-xs text-stone-600">Repositorio de programación dedicado a scripts para la generación procedural de personajes de forma aleatoria.</p>
+                        </a>
+
+                        <a href="https://github.com/hypenosys/blueprints" target="_blank" class="block p-4 bg-stone-50 hover:bg-teal-50 border border-stone-200 rounded-lg transition">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="font-bold text-stone-800 text-sm"><i class="fa-solid fa-folder-tree"></i> hypenosys/blueprints</span>
+                                <span class="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded font-mono">Archivo definitivo</span>
+                            </div>
+                            <p class="text-xs text-stone-600">Repositorio archivo para almacenar y documentar aquellas Blueprints definitivas, limpias y listas para reutilizar.</p>
+                        </a>
+
+                        <a href="https://github.com/hypenosys/app/issues" target="_blank" class="block p-4 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="font-bold text-red-950 text-sm"><i class="fa-solid fa-skull-crossbones"></i> hypenosys/app/issues</span>
+                                <span class="text-xs bg-red-200 text-red-800 px-2 py-0.5 rounded font-mono">Infierno Técnico</span>
+                            </div>
+                            <p class="text-xs text-stone-600">El tablón de las pesadillas. Registro de bugs críticos del motor e integraciones complejas.</p>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Git vs SVN differences -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-lg font-bold text-stone-800 mb-3"><i class="fa-solid fa-circle-nodes text-teal-600"></i> Reparto de Contenido</h3>
+                        <p class="text-xs text-stone-600 mb-4">
+                            Dividir correctamente dónde va cada elemento salva el proyecto de la corrupción de datos y de las velocidades lentas de red:
+                        </p>
+                        <div class="space-y-3">
+                            <div class="p-3 bg-teal-50 rounded text-xs">
+                                <strong class="text-teal-800 block">Sube a Git:</strong>
+                                Documentación (.md), actas dominicales, scripts externos de Python/C++, y la configuración del servidor web.
+                            </div>
+                            <div class="p-3 bg-amber-50 rounded text-xs">
+                                <strong class="text-amber-800 block">Sube a SVN:</strong>
+                                Mapas (.umap), lógicas binarias (.uasset), texturas (.png/tga), modelos (.fbx/obj), archivos de audio (.wav) y assets del proyecto local de Unreal Engine.
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-[10px] text-stone-500 mt-4">Toda coordinación de tareas se llevará en una herramienta estilo **HacknPlan** para visibilidad total de las tareas del equipo.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW: CHANGELOGS -->
+        <section id="view-changelogs" class="view-section hidden fade-in">
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-stone-800 mb-2">Registros de Cambios (Changelogs)</h2>
+                <p class="text-stone-600 max-w-3xl">
+                    Para evitar ruido de comunicación y sobrecarga de información, dividimos estrictamente los changelogs en tres áreas. Registra cualquier cambio en la interfaz interactiva para simular el comportamiento de nuestro repositorio Markdown en Git.
+                </p>
+            </div>
+
+            <!-- Simulator Tool -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 mb-8">
+                <h3 class="text-lg font-bold text-stone-800 mb-4"><i class="fa-solid fa-plus text-teal-600"></i> Registrar Cambio en el Repositorio de Documentación</h3>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                    <div>
+                        <label class="block text-xs font-semibold text-stone-600 mb-1">Autor</label>
+                        <select id="change-author" class="w-full bg-stone-50 border border-stone-300 rounded p-2 text-xs">
+                            <option value="Alex">Alex</option>
+                            <option value="Axel">Axel</option>
+                            <option value="Mitxel">Mitxel</option>
+                            <option value="Javi">Javi</option>
+                            <option value="Dídac">Dídac</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-stone-600 mb-1">Changelog</label>
+                        <select id="change-category" class="w-full bg-stone-50 border border-stone-300 rounded p-2 text-xs">
+                            <option value="programacion">🛠️ Programación</option>
+                            <option value="arte">🎨 Arte 3D/Audio</option>
+                            <option value="diseno">📐 Diseño & GDD</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-2 flex gap-2">
+                        <div class="flex-grow">
+                            <label class="block text-xs font-semibold text-stone-600 mb-1">Descripción del Cambio</label>
+                            <input id="change-desc" type="text" placeholder="Ej: Implementada lógica inicial de generación procedural..." class="w-full bg-stone-50 border border-stone-300 rounded p-2 text-xs">
+                        </div>
+                        <button onclick="addChangelogEntry()" class="bg-teal-700 hover:bg-teal-800 text-white font-bold px-4 py-2 rounded text-xs self-end h-[34px]"><i class="fa-solid fa-save"></i> Registrar</button>
                     </div>
                 </div>
             </div>
 
-            <!-- Tab Content: AI -->
-            <div id="content-ai" class="hidden">
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 overflow-x-auto">
-                    <h3 class="text-lg font-bold mb-4">Matriz de Decisión: Casos de Uso IA</h3>
-                    <table class="w-full text-left border-collapse min-w-[600px]">
-                        <thead>
-                            <tr class="bg-stone-100 text-stone-600 text-sm border-b-2 border-stone-300">
-                                <th class="p-3">Caso de Uso</th>
-                                <th class="p-3">Herramienta Potencial</th>
-                                <th class="p-3">Curva de Aprendizaje</th>
-                                <th class="p-3">Control/Calidad</th>
-                                <th class="p-3">Riesgo para Principiantes</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-sm">
-                            <tr class="border-b border-stone-100 hover:bg-stone-50 transition">
-                                <td class="p-3 font-semibold text-stone-800">Concept Art / Referencias</td>
-                                <td class="p-3">Midjourney / DALL-E</td>
-                                <td class="p-3"><span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">Baja</span></td>
-                                <td class="p-3">Medio</td>
-                                <td class="p-3">Inconsistencia de estilo</td>
-                            </tr>
-                            <tr class="border-b border-stone-100 hover:bg-stone-50 transition">
-                                <td class="p-3 font-semibold text-stone-800">Asistencia Programación</td>
-                                <td class="p-3">GitHub Copilot / ChatGPT</td>
-                                <td class="p-3"><span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs">Media</span></td>
-                                <td class="p-3">Alto (requiere revisión)</td>
-                                <td class="p-3 text-red-600">Copiar código sin entender (Spaghetti code)</td>
-                            </tr>
-                            <tr class="border-b border-stone-100 hover:bg-stone-50 transition">
-                                <td class="p-3 font-semibold text-stone-800">Ideación y Documentación</td>
-                                <td class="p-3">Claude / ChatGPT</td>
-                                <td class="p-3"><span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">Baja</span></td>
-                                <td class="p-3">Alto</td>
-                                <td class="p-3">Textos genéricos o irreales</td>
-                            </tr>
-                            <tr class="border-b border-stone-100 hover:bg-stone-50 transition">
-                                <td class="p-3 font-semibold text-stone-800">Generación Texturas/Assets</td>
-                                <td class="p-3">Krea AI / Leonardo</td>
-                                <td class="p-3"><span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs">Media</span></td>
-                                <td class="p-3">Medio-Bajo</td>
-                                <td class="p-3">Problemas de topología / optimización</td>
-                            </tr>
-                        </tbody>
-                    </table>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Programacion -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 border-t-4 border-t-sky-500">
+                    <h3 class="text-lg font-bold text-sky-800 mb-4 flex items-center gap-2"><i class="fa-solid fa-code"></i> Programación</h3>
+                    <div id="log-programacion" class="space-y-3 max-h-96 overflow-y-auto pr-2">
+                        <div class="bg-stone-50 p-3 rounded text-xs">
+                            <span class="block text-[10px] text-stone-500 font-mono">Alex - Inicial</span>
+                            <p class="font-medium text-stone-700">Subidos los primeros templates de generación de caracteres aleatorios en /scripts.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Arte -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 border-t-4 border-t-fuchsia-500">
+                    <h3 class="text-lg font-bold text-fuchsia-800 mb-4 flex items-center gap-2"><i class="fa-solid fa-palette"></i> Arte & Audio</h3>
+                    <div id="log-arte" class="space-y-3 max-h-96 overflow-y-auto pr-2">
+                        <div class="bg-stone-50 p-3 rounded text-xs">
+                            <span class="block text-[10px] text-stone-500 font-mono">Mitxel - Inicial</span>
+                            <p class="font-medium text-stone-700">Consolidado el moodboard estético inicial con referencias de juegos clave en el Git.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Diseño -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 border-t-4 border-t-emerald-500">
+                    <h3 class="text-lg font-bold text-emerald-800 mb-4 flex items-center gap-2"><i class="fa-solid fa-compass"></i> Diseño & GDD</h3>
+                    <div id="log-diseno" class="space-y-3 max-h-96 overflow-y-auto pr-2">
+                        <div class="bg-stone-50 p-3 rounded text-xs">
+                            <span class="block text-[10px] text-stone-500 font-mono">Líder - Inicial</span>
+                            <p class="font-medium text-stone-700">Creada la estructura básica Markdown para el GDD de la preproducción.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
     </main>
 
-    <footer class="bg-stone-900 text-stone-400 py-6 text-center text-sm mt-auto">
-        <p>Documento Interactivo Generado - Planificación Inicial Equipo Indie</p>
+    <footer class="bg-stone-900 text-stone-400 py-6 text-center text-xs mt-auto">
+        <p>Documento Técnico de Arranque - Organización Hypenosys - Todos los derechos reservados.</p>
     </footer>
 
     <!-- JavaScript Logic -->
@@ -347,159 +618,77 @@
 
             // Render charts if viewing specific tabs to handle canvas sizing correctly
             if(viewId === 'resumen' && !chartsRendered.resumen) renderResumenCharts();
-            if(viewId === 'equipo' && !chartsRendered.equipo) renderEquipoCharts();
         }
 
-        // --- Tech Sub-tabs Logic ---
-        function techTab(tabId) {
-            document.querySelectorAll('.tech-tab').forEach(tab => {
-                tab.classList.remove('text-teal-700', 'border-b-2', 'border-teal-700');
-                tab.classList.add('text-stone-500');
-            });
-            const activeTab = document.getElementById('tab-' + tabId);
-            activeTab.classList.remove('text-stone-500');
-            activeTab.classList.add('text-teal-700', 'border-b-2', 'border-teal-700');
+        // --- Simulated Changelog Logic ---
+        function addChangelogEntry() {
+            const author = document.getElementById('change-author').value;
+            const category = document.getElementById('change-category').value;
+            const desc = document.getElementById('change-desc').value;
 
-            if(tabId === 'svn') {
-                document.getElementById('content-svn').classList.remove('hidden');
-                document.getElementById('content-ai').classList.add('hidden');
-            } else {
-                document.getElementById('content-ai').classList.remove('hidden');
-                document.getElementById('content-svn').classList.add('hidden');
+            if(!desc.trim()) {
+                alert("Por favor, escribe una descripción.");
+                return;
             }
-        }
 
-        // --- Pipeline Interactive Data ---
-        const pipelineData = {
-            pre: {
-                title: "Fase 1: Pre-producción",
-                color: "text-teal-700",
-                content: "<strong>Objetivos:</strong> GDD cerrado, Concept Art clave, Pruebas de mecánicas aisladas.<br><strong>Entregable:</strong> Documento GDD y Matriz de herramientas aprobada.<br><strong>Riesgo:</strong> Quedarse atascado teorizando sin pasar al motor."
-            },
-            proto: {
-                title: "Fase 2: Prototipado / Vertical Slice",
-                color: "text-amber-700",
-                content: "<strong>Objetivos:</strong> Construir el 'Core Loop' jugable. Un nivel pequeño que represente la calidad final.<br><strong>Entregable:</strong> Build ejecutable de 5 minutos de gameplay.<br><strong>Riesgo:</strong> Querer hacer demasiado; hay que centrarse solo en las mecánicas base."
-            },
-            prod: {
-                title: "Fase 3: Producción (Camino a Alpha)",
-                color: "text-blue-700",
-                content: "<strong>Objetivos:</strong> Creación de contenido masivo basado en el Vertical Slice (niveles, assets, narrativa).<br><strong>Entregable:</strong> Juego jugable de principio a fin (Alpha), aunque falten texturas o haya bugs.<br><strong>Riesgo:</strong> Conflictos en SVN por archivos pesados, mala comunicación."
-            }
-        };
-
-        function showPipeline(phase) {
-            const container = document.getElementById('pipeline-content');
-            const data = pipelineData[phase];
-            container.innerHTML = `
-                <h4 class="font-bold text-lg ${data.color} mb-2">${data.title}</h4>
-                <p class="text-stone-700 text-sm leading-relaxed">${data.content}</p>
+            const targetDiv = document.getElementById('log-' + category);
+            const entry = document.createElement('div');
+            entry.className = "bg-stone-50 p-3 rounded text-xs border border-teal-200 fade-in";
+            
+            const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            entry.innerHTML = `
+                <span class="block text-[10px] text-stone-500 font-mono">${author} - Hoy ${timestamp}</span>
+                <p class="font-medium text-stone-700">${desc}</p>
             `;
-            // Visual effect
-            container.classList.remove('fade-in');
-            void container.offsetWidth; // trigger reflow
-            container.classList.add('fade-in');
+
+            targetDiv.insertBefore(entry, targetDiv.firstChild);
+            document.getElementById('change-desc').value = ""; // Reset
         }
 
-        // --- Chart.js Implementations ---
-        let chartsRendered = { resumen: false, equipo: false };
-        
-        // Common chart options for styling and responsiveness
-        Chart.defaults.color = '#57534e'; // stone-500
+        // --- Chart.js Implementation ---
+        let chartsRendered = { resumen: false };
+        Chart.defaults.color = '#78716c'; // stone-500
         Chart.defaults.font.family = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
 
         function renderResumenCharts() {
-            const ctxPlan = document.getElementById('planTimelineChart').getContext('2d');
+            const ctxPlan = document.getElementById('effortChart').getContext('2d');
             new Chart(ctxPlan, {
                 type: 'bar',
                 data: {
-                    labels: ['Definición & GDD', 'Setup Equipo', 'Setup SVN/Unreal', 'Investigación IA', 'Docs Onboarding'],
+                    labels: ['Fase 0: Infraestructura', 'Fase 1: Ideación & GDD', 'Fase 2: Greyboxing & Arte', 'Fase 3: Decoración/Vestido'],
                     datasets: [{
-                        label: 'Esfuerzo Relativo (Peso %)',
-                        data: [25, 15, 30, 15, 15],
+                        label: 'Esfuerzo Estimado (%)',
+                        data: [20, 25, 40, 15],
                         backgroundColor: [
+                            'rgba(239, 68, 68, 0.7)',  // red
                             'rgba(15, 118, 110, 0.7)', // teal
                             'rgba(217, 119, 6, 0.7)',  // amber
-                            'rgba(3, 105, 161, 0.7)',  // sky
-                            'rgba(147, 51, 234, 0.7)', // purple
-                            'rgba(168, 162, 158, 0.7)' // stone
+                            'rgba(147, 51, 234, 0.7)'  // purple
                         ],
                         borderColor: [
+                            'rgb(239, 68, 68)',
                             'rgb(15, 118, 110)',
                             'rgb(217, 119, 6)',
-                            'rgb(3, 105, 161)',
-                            'rgb(147, 51, 234)',
-                            'rgb(120, 113, 108)'
+                            'rgb(147, 51, 234)'
                         ],
                         borderWidth: 1,
                         borderRadius: 4
                     }]
                 },
                 options: {
-                    indexAxis: 'y', // Horizontal bar chart
+                    indexAxis: 'y', // Horizontal bar
                     responsive: true,
-                    maintainAspectRatio: false, // CRITICAL for chart-container logic
+                    maintainAspectRatio: false,
                     plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return context.parsed.x + '% del esfuerzo inicial';
-                                }
-                            }
-                        }
+                        legend: { display: false }
                     },
                     scales: {
-                        x: { beginAtZero: true, max: 40, title: { display: true, text: 'Esfuerzo/Tiempo' } }
+                        x: { beginAtZero: true, max: 100 }
                     }
                 }
             });
             chartsRendered.resumen = true;
-        }
-
-        function renderEquipoCharts() {
-            const ctxRoles = document.getElementById('teamRolesChart').getContext('2d');
-            new Chart(ctxRoles, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Programación (Core)', 'Arte 3D/2D (Core)', 'Diseño de Niveles', 'Líder / Productor', 'Generalista (QA/Narrativa)'],
-                    datasets: [{
-                        data: [1, 1, 1, 1, 1], // Represents the 5 members
-                        backgroundColor: [
-                            '#0284c7', // sky-600 (Code)
-                            '#d946ef', // fuchsia-500 (Art)
-                            '#10b981', // emerald-500 (Design)
-                            '#f59e0b', // amber-500 (Lead)
-                            '#64748b'  // slate-500 (Generalist)
-                        ],
-                        borderWidth: 2,
-                        borderColor: '#ffffff',
-                        hoverOffset: 10
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false, // CRITICAL for chart-container logic
-                    cutout: '65%',
-                    plugins: {
-                        legend: {
-                            position: 'right',
-                            labels: {
-                                usePointStyle: true,
-                                padding: 20
-                            }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return ' 1 Persona (Rol Principal)';
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-            chartsRendered.equipo = true;
         }
 
         // Initialize first view on load
@@ -509,4 +698,3 @@
 
     </script>
 </body>
-</html>
