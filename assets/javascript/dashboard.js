@@ -4,6 +4,7 @@
  */
 
 const MEMBERS = ['Axel', 'Alex', 'Dídac', 'Javi', 'Mitxel'];
+const STAGES = ['Concepto / GDD', 'Pre-producción', 'Tools / Automation', 'Arte / Assets', 'Programación / Engine', 'QA / Testing', 'Build / Deploy', 'Post-launch'];
 const REFRESH_INTERVAL_MS = 30000; // 30 seconds
 
 let activeFilter = null;
@@ -289,10 +290,22 @@ function buildTaskCard(task) {
 
   card.innerHTML = `
     <div class="flex justify-between items-start mb-2">
-      <span class="text-[9px] font-mono text-slate-500">#${task.id}</span>
+      <div class="flex gap-2 items-center">
+        <span class="text-[9px] font-mono text-slate-500">#${task.id}</span>
+        <button onclick="openEditTaskModal(${task.id})" class="text-[10px] text-slate-500 hover:text-white opacity-0 group-hover:opacity-100 transition-all">
+          <i class="fa-solid fa-pencil"></i>
+        </button>
+      </div>
       <span class="text-[9px] font-bold px-1.5 py-0.5 rounded ${priorityColors[task.prioridad] || 'bg-slate-700'}">${task.prioridad.toUpperCase()}</span>
     </div>
     <p class="text-sm text-slate-200 leading-snug mb-3">${task.descripcion}</p>
+
+    <div class="mb-3">
+        <select onchange="handleQuickStageUpdate(${task.id}, this.value)" class="w-full bg-slate-950/50 border border-slate-700 rounded text-[10px] p-1 text-slate-400 focus:text-white focus:border-indigo-500 outline-none">
+            ${STAGES.map(s => `<option value="${s}" ${task.tema_principal === s ? 'selected' : ''}>${s}</option>`).join('')}
+        </select>
+    </div>
+
     <div class="flex justify-between items-end">
       <div class="flex -space-x-2">
         ${task.resuelto_por ? `<div onclick="scrollToProfile('${task.resuelto_por}')" title="Resuelto por: ${task.resuelto_por}" class="w-6 h-6 rounded-full bg-emerald-500 border-2 border-slate-800 flex items-center justify-center text-[8px] font-bold text-slate-950 cursor-pointer hover:scale-110 transition-transform">${task.resuelto_por[0]}</div>` : ''}
@@ -868,6 +881,7 @@ function renderTeamProfiles() {
         <div class="text-xs font-bold text-slate-500 uppercase">Editar Perfil</div>
         <input type="text" id="edit-name-${name}" value="${profile.display_name}" class="bg-slate-950 border border-slate-800 rounded p-2 text-sm text-white" placeholder="Nombre">
         <input type="text" id="edit-role-${name}" value="${profile.role}" class="bg-slate-950 border border-slate-800 rounded p-2 text-sm text-white" placeholder="Rol">
+        <input type="url" id="edit-portfolio-${name}" value="${profile.portfolio || ''}" class="bg-slate-950 border border-slate-800 rounded p-2 text-sm text-white" placeholder="Portfolio URL">
         <textarea id="edit-bio-${name}" class="bg-slate-950 border border-slate-800 rounded p-2 text-sm text-white flex-grow" placeholder="Bio">${profile.bio}</textarea>
         <div class="flex gap-2">
           <button onclick="saveProfileEdit('${name}')" class="flex-grow py-2 bg-emerald-500 text-slate-950 font-bold rounded text-xs">Guardar</button>
@@ -915,35 +929,112 @@ function showToast(mensaje, tipo = 'info', duracionMs = 4000) {
   }, duracionMs);
 }
 
+function populateMemberSelects() {
+    const resolverSelect = document.getElementById('task-resolver-input');
+    const detectorSelect = document.getElementById('task-detector-input');
+    if (!resolverSelect || !detectorSelect) return;
+
+    const options = `<option value="">-- Unassigned --</option>` +
+        MEMBERS.map(m => `<option value="${m}">${m}</option>`).join('');
+
+    resolverSelect.innerHTML = options;
+    detectorSelect.innerHTML = options;
+}
+
 function openCreateTaskModal() {
+  populateMemberSelects();
+  document.getElementById('task-modal-title').textContent = 'Crear Nueva Tarea';
+  document.getElementById('task-id-input').value = '';
+  document.getElementById('task-desc-input').value = '';
+  document.getElementById('task-rama-input').value = 'PRO';
+  document.getElementById('task-priority-input').value = 'Major';
+  document.getElementById('task-milestone-input').value = 'M1';
+  document.getElementById('task-topic-input').value = 'Programación / Engine';
+  document.getElementById('task-status-input').value = 'Pending';
+  document.getElementById('task-completion-input').value = '0';
+  document.getElementById('task-resolver-input').value = '';
+  document.getElementById('task-detector-input').value = activeFilter || '';
+
   document.getElementById('create-task-modal').classList.remove('hidden');
 }
 
+function openEditTaskModal(taskId) {
+    const task = currentTasks.find(t => t.id === taskId);
+    if (!task) return;
+
+    populateMemberSelects();
+    document.getElementById('task-modal-title').textContent = `Editar Tarea #${taskId}`;
+    document.getElementById('task-id-input').value = taskId;
+    document.getElementById('task-desc-input').value = task.descripcion || '';
+    document.getElementById('task-rama-input').value = task.rama || 'PRO';
+    document.getElementById('task-priority-input').value = task.prioridad || 'Major';
+    document.getElementById('task-milestone-input').value = task.milestone || 'M1';
+    document.getElementById('task-topic-input').value = task.tema_principal || 'Programación / Engine';
+    document.getElementById('task-status-input').value = task.estado || 'Pending';
+    document.getElementById('task-completion-input').value = task.completitud || '0';
+    document.getElementById('task-resolver-input').value = task.resuelto_por || '';
+    document.getElementById('task-detector-input').value = task.detectado_por || '';
+
+    document.getElementById('create-task-modal').classList.remove('hidden');
+}
+
+async function handleQuickStageUpdate(taskId, newStage) {
+    showToast(UI_STRINGS.saving, 'info');
+    try {
+        await window.githubApi.updateTask(taskId, { tema_principal: newStage });
+        showToast(`Tarea #${taskId} movida a ${newStage}`, 'success');
+        await refreshDashboardData();
+    } catch (err) {
+        showToast(`Error: ${err.message}`, 'error');
+    }
+}
+
 async function handleCreateTask() {
+  const taskId = document.getElementById('task-id-input').value;
   const desc = document.getElementById('task-desc-input').value;
   const rama = document.getElementById('task-rama-input').value;
   const priority = document.getElementById('task-priority-input').value;
   const milestone = document.getElementById('task-milestone-input').value;
   const topic = document.getElementById('task-topic-input').value;
+  const status = document.getElementById('task-status-input').value;
+  const completion = parseFloat(document.getElementById('task-completion-input').value) || 0;
+  const resolver = document.getElementById('task-resolver-input').value || null;
+  const detector = document.getElementById('task-detector-input').value || 'Unassigned';
 
   if (!desc) return showToast('La descripción es obligatoria', 'warning');
 
-  const newTask = {
-    rama, rama2: null, ver: true, descripcion: desc,
-    fecha: new Date().toISOString().split('T')[0],
+  const taskData = {
+    rama,
+    descripcion: desc,
     tema_principal: topic,
-    detectado_por: activeFilter || 'Unassigned',
-    resuelto_por: null, apoyo: null, estado: 'Pending',
-    prioridad: priority, limite: null, comentario: '',
-    milestone, completitud: 0
+    prioridad: priority,
+    milestone,
+    estado: status,
+    completitud: completion,
+    resuelto_por: resolver,
+    detectado_por: detector
   };
 
   showToast(UI_STRINGS.saving, 'info');
   document.getElementById('create-task-modal').classList.add('hidden');
 
   try {
-    await window.githubApi.createTask(newTask);
-    showToast(UI_STRINGS.taskCreated(newTask.id), 'success');
+    if (taskId) {
+        await window.githubApi.updateTask(parseInt(taskId), taskData);
+        showToast(`Tarea #${taskId} actualizada`, 'success');
+    } else {
+        const newTask = {
+            ...taskData,
+            rama2: null,
+            ver: true,
+            fecha: new Date().toISOString().split('T')[0],
+            apoyo: null,
+            limite: null,
+            comentario: ''
+        };
+        await window.githubApi.createTask(newTask);
+        showToast('Tarea creada correctamente', 'success');
+    }
     await refreshDashboardData();
   } catch (err) {
     showToast(`Error: ${err.message}`, 'error');
@@ -1025,6 +1116,7 @@ async function saveProfileEdit(memberName) {
   const profileDelta = {
     display_name: document.getElementById(`edit-name-${memberName}`).value,
     role: document.getElementById(`edit-role-${memberName}`).value,
+    portfolio: document.getElementById(`edit-portfolio-${memberName}`).value,
     bio: document.getElementById(`edit-bio-${memberName}`).value
   };
 

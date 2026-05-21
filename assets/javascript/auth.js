@@ -166,6 +166,11 @@ class AuthManager {
 
         if (user) {
             container.innerHTML = `
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard.html">
+                        <i class="fas fa-tachometer-alt fa-sm fa-fw mr-1 text-purple"></i> Dashboard
+                    </a>
+                </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span class="mr-2 d-none d-lg-inline text-gray-400 small font-weight-mono">${user.login}</span>
@@ -281,27 +286,29 @@ class AuthManager {
             return;
         }
 
-        const updatedMember = {
-            ...this.currentTeamData[this.currentMemberIndex],
-            name,
-            role,
-            description: desc,
-            portfolio
-        };
-
-        const updatedTeamData = [...this.currentTeamData];
-        updatedTeamData[this.currentMemberIndex] = updatedMember;
-
         const btn = document.getElementById('btn-save-profile');
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Guardando...';
 
         try {
             const login = window.githubApi.user.login;
-            const message = `feat(team): sync profile card for @${login} [skip ci]`;
-            const content = JSON.stringify(updatedTeamData, null, 2);
             
-            await window.githubApi.updateFile('_data/team.json', content, message, this.currentFileSha);
+            // Map GitHub login to Member Name in team_profiles.json
+            const profilesRes = await window.githubApi.fetchFileWithSha('_data/team_profiles.json');
+            const profiles = profilesRes.content.members;
+            const memberEntry = Object.entries(profiles).find(([k, v]) => v.handle.toLowerCase() === login.toLowerCase());
+
+            if (!memberEntry) throw new Error("No se encontró perfil de equipo vinculado a este GitHub.");
+
+            const memberName = memberEntry[0];
+            const profileDelta = {
+                display_name: name,
+                role: role,
+                bio: desc,
+                portfolio: portfolio
+            };
+
+            await window.githubApi.updateMemberProfile(memberName, profileDelta);
             
             this.showToast('Éxito', 'Perfil actualizado correctamente. Refrescando...', 'success');
             $('#profileModal').modal('hide');
@@ -309,7 +316,8 @@ class AuthManager {
             // Refresh UI
             await this.renderDreamTeamComponent();
         } catch (e) {
-            this.showToast('Error', 'Fallo al guardar los cambios en GitHub.', 'error');
+            console.error(e);
+            this.showToast('Error', 'Fallo al guardar los cambios: ' + e.message, 'error');
         } finally {
             btn.disabled = false;
             btn.innerHTML = 'Guardar Cambios';
