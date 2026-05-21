@@ -1,0 +1,293 @@
+// Dashboard Custom Styles
+
+$dashboard-card-bg: $gray-900;
+$dashboard-column-bg: rgba($black, 0.3);
+$dashboard-border: rgba($purple, 0.2);
+$dashboard-highlight: $purple;
+$dashboard-success: #50fa7b; // Dracula Green
+$dashboard-warning: #f1fa8c; // Dracula Yellow
+$dashboard-danger: #ff5555;  // Dracula Red
+
+.dashboard-container {
+    max-width: 100%;
+    margin-top: 2rem;
+}
+
+// Kanban View
+.kanban-board {
+    display: flex;
+    overflow-x: auto;
+    padding-bottom: 1rem;
+    gap: 1rem;
+    min-height: 70vh;
+
+    .kanban-column {
+        flex: 0 0 300px;
+        background-color: $dashboard-column-bg;
+        border: 1px solid $dashboard-border;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        max-height: 100%;
+
+        h5 {
+            padding: 1rem;
+            margin: 0;
+            border-bottom: 1px solid $dashboard-border;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            .badge {
+                background: $dashboard-border;
+                color: $white;
+            }
+        }
+
+        .kanban-tasks {
+            flex: 1;
+            padding: 0.75rem;
+            overflow-y: auto;
+            min-height: 100px;
+
+            &.drag-over {
+                background-color: rgba($purple, 0.05);
+                outline: 2px dashed $purple;
+            }
+        }
+    }
+}
+
+.task-card {
+    background-color: $dashboard-card-bg;
+    border: 1px solid $dashboard-border;
+    border-radius: 6px;
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+    cursor: grab;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+
+    &:hover {
+        border-color: $purple;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    }
+
+    &.dragging {
+        opacity: 0.5;
+        cursor: grabbing;
+    }
+
+    .task-id {
+        font-family: 'Courier New', Courier, monospace;
+        color: rgba($white, 0.4);
+        font-size: 0.8rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .task-title {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+        color: $white;
+    }
+
+    .task-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.8rem;
+
+        .task-assignee {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+
+            img {
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                border: 1px solid $dashboard-border;
+            }
+        }
+
+        .task-labels {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+        }
+    }
+}
+
+// Spreadsheet View
+.spreadsheet-container {
+    background-color: $dashboard-column-bg;
+    border: 1px solid $dashboard-border;
+    border-radius: 8px;
+    overflow: hidden;
+
+    .table {
+        margin-bottom: 0;
+        color: $white;
+
+        th {
+            border-top: none;
+            border-bottom: 2px solid $dashboard-border;
+            background-color: rgba($black, 0.4);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            border-top: 1px solid rgba($purple, 0.1);
+            vertical-align: middle;
+            font-size: 0.9rem;
+        }
+
+        tr:hover {
+            background-color: rgba($purple, 0.05);
+        }
+    }
+
+    .editable-cell {
+        cursor: pointer;
+        padding: 0.5rem;
+        border-radius: 4px;
+
+        &:hover {
+            background-color: rgba($purple, 0.1);
+        }
+
+        &.editing {
+            padding: 0;
+            background: none;
+        }
+
+        input, select {
+            width: 100%;
+            background-color: $black;
+            color: $white;
+            border: 1px solid $purple;
+            border-radius: 4px;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.9rem;
+
+            &:focus {
+                outline: none;
+                box-shadow: 0 0 5px rgba($purple, 0.5);
+            }
+        }
+    }
+}
+
+// UI Components
+.view-switcher {
+    margin-bottom: 1.5rem;
+    .btn {
+        text-transform: uppercase;
+        font-weight: bold;
+        letter-spacing: 1px;
+        padding: 0.5rem 1.5rem;
+    }
+}
+
+.rate-limit-indicator {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    background: rgba($black, 0.8);
+    border: 1px solid $dashboard-border;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+
+    .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: $dashboard-success;
+
+        &.warning { background-color: $dashboard-warning; }
+        &.danger { background-color: $dashboard-danger; }
+    }
+}
+
+.toast-container {
+    position: fixed;
+    top: 5rem;
+    right: 1rem;
+    z-index: 1050;
+}
+
+.custom-toast {
+    background: rgba($gray-900, 0.95);
+    border: 1px solid $dashboard-border;
+    color: $white;
+    min-width: 250px;
+    margin-bottom: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    border-left: 4px solid $purple;
+
+    &.success { border-left-color: $dashboard-success; }
+    &.error { border-left-color: $dashboard-danger; }
+    &.warning { border-left-color: $dashboard-warning; }
+
+    .toast-header {
+        background: transparent;
+        border-bottom: 1px solid rgba($purple, 0.1);
+        color: $purple;
+        padding: 0.5rem 1rem;
+    }
+
+    .toast-body {
+        padding: 1rem;
+    }
+}
+
+// Modal customization
+.modal-content {
+    background-color: $gray-900;
+    border: 1px solid $purple;
+    color: $white;
+
+    .modal-header {
+        border-bottom: 1px solid rgba($purple, 0.2);
+        .close {
+            color: $white;
+            text-shadow: none;
+            opacity: 0.5;
+            &:hover { opacity: 1; }
+        }
+    }
+
+    .modal-footer {
+        border-top: 1px solid rgba($purple, 0.2);
+    }
+
+    .form-control {
+        background-color: $black;
+        border: 1px solid rgba($purple, 0.3);
+        color: $white;
+
+        &:focus {
+            background-color: $black;
+            border-color: $purple;
+            box-shadow: 0 0 0 0.2rem rgba($purple, 0.25);
+            color: $white;
+        }
+    }
+}
+
+.btn-auto-assign {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    text-transform: uppercase;
+}
