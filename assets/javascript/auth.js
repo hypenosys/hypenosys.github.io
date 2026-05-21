@@ -59,7 +59,7 @@ class AuthManager {
             
             try {
                 // Exchange code for token via Gatekeeper
-                const response = await fetch('https://hypenosys-gatekeeper.axlffcc.workers.dev', {
+                const response = await fetch('https://hypenosys-gatekeeper-v2.axlffcc.workers.dev', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ code })
