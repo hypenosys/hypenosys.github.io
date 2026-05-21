@@ -1,16 +1,139 @@
 {
   "schema_version": "1.0.0",
-  "last_computed": "2025-01-20T10:00:00.000Z",
+  "last_computed": "2026-05-21T15:08:52.580Z",
   "global": {
-    "total_tasks": 0,
+    "total_tasks": 1,
     "total_ok": 0,
     "total_ko": 0,
     "total_uncertain": 0,
     "total_obsolete": 0,
-    "fixed_found_ratio": 0.0,
-    "verified_ratio": 0.0,
-    "by_priority": {}
+    "fixed_found_ratio": 0,
+    "verified_ratio": 0,
+    "by_priority": {
+      "Critical": {
+        "total": 1,
+        "solved": 0,
+        "rate": 0
+      },
+      "Major": {
+        "total": 0,
+        "solved": 0,
+        "rate": 0
+      },
+      "Medium": {
+        "total": 0,
+        "solved": 0,
+        "rate": 0
+      },
+      "Minor": {
+        "total": 0,
+        "solved": 0,
+        "rate": 0
+      },
+      "Cosmetic": {
+        "total": 0,
+        "solved": 0,
+        "rate": 0
+      },
+      "ToDo": {
+        "total": 0,
+        "solved": 0,
+        "rate": 0
+      },
+      "Obsolete": {
+        "total": 0,
+        "solved": 0,
+        "rate": 0
+      }
+    }
   },
-  "members": {},
-  "hall_of_fame": []
+  "members": {
+    "Axel": {
+      "found": 1,
+      "fixed": 1,
+      "fixed_ok": 0,
+      "support": 0,
+      "support_ok": 0,
+      "score": 0.3
+    },
+    "Alex": {
+      "found": 0,
+      "fixed": 0,
+      "fixed_ok": 0,
+      "support": 0,
+      "support_ok": 0,
+      "score": 0
+    },
+    "Dídac": {
+      "found": 0,
+      "fixed": 0,
+      "fixed_ok": 0,
+      "support": 0,
+      "support_ok": 0,
+      "score": 0
+    },
+    "Javi": {
+      "found": 0,
+      "fixed": 0,
+      "fixed_ok": 0,
+      "support": 0,
+      "support_ok": 0,
+      "score": 0
+    },
+    "Mitxel": {
+      "found": 0,
+      "fixed": 0,
+      "fixed_ok": 0,
+      "support": 0,
+      "support_ok": 0,
+      "score": 0
+    }
+  },
+  "hall_of_fame": [
+    {
+      "rank": 1,
+      "medal": "🏆",
+      "name": "Axel",
+      "score": 0.3,
+      "found": 1,
+      "fixed_ok": 0,
+      "support_ok": 0
+    },
+    {
+      "rank": 2,
+      "medal": "🥇",
+      "name": "Alex",
+      "score": 0,
+      "found": 0,
+      "fixed_ok": 0,
+      "support_ok": 0
+    },
+    {
+      "rank": 3,
+      "medal": "🥈",
+      "name": "Dídac",
+      "score": 0,
+      "found": 0,
+      "fixed_ok": 0,
+      "support_ok": 0
+    },
+    {
+      "rank": 4,
+      "medal": "🥉",
+      "name": "Javi",
+      "score": 0,
+      "found": 0,
+      "fixed_ok": 0,
+      "support_ok": 0
+    },
+    {
+      "rank": 5,
+      "medal": "🎖",
+      "name": "Mitxel",
+      "score": 0,
+      "found": 0,
+      "fixed_ok": 0,
+      "support_ok": 0
+    }
+  ]
 }
