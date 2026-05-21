@@ -75,6 +75,7 @@
                 <button onclick="navigate('unreal-fab')" id="btn-unreal-fab" class="nav-btn whitespace-nowrap px-4 py-2 rounded-md border border-stone-300 text-stone-700 font-medium hover:bg-stone-50 transition-colors">🧱 Unreal & Ecosistema Fab</button>
                 <button onclick="navigate('repos')" id="btn-repos" class="nav-btn whitespace-nowrap px-4 py-2 rounded-md border border-stone-300 text-stone-700 font-medium hover:bg-stone-50 transition-colors">💻 Git, SVN & Repos</button>
                 <button onclick="navigate('changelogs')" id="btn-changelogs" class="nav-btn whitespace-nowrap px-4 py-2 rounded-md border border-stone-300 text-stone-700 font-medium hover:bg-stone-50 transition-colors">📝 Registro (Changelogs)</button>
+                <button onclick="navigate('ritual')" id="btn-ritual" class="nav-btn whitespace-nowrap px-4 py-2 rounded-md border border-stone-300 text-stone-700 font-medium hover:bg-stone-50 transition-colors">⚡ Ritual Domingo</button>
             </div>
         </div>
     </nav>
@@ -510,6 +511,61 @@
                         </div>
                     </div>
                     <p class="text-[10px] text-stone-500 mt-4">Toda coordinación de tareas se llevará en una herramienta estilo **HacknPlan** para visibilidad total de las tareas del equipo.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW: RITUAL DOMINGO -->
+        <section id="view-ritual" class="view-section hidden fade-in">
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-stone-800 mb-2">⚡ El Ritual del Domingo: Sincronización Crítica</h2>
+                <p class="text-stone-600 max-w-3xl">
+                    Cada domingo por la mañana, el equipo se reúne para alinear la visión, destruir bloqueos técnicos y repartir la carga de la semana entrante. Este es el corazón operativo de Hypenosys.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-stone-900 text-stone-100 p-6 rounded-xl border-l-4 border-l-teal-500 shadow-sm">
+                    <h3 class="text-lg font-bold mb-3"><i class="fa-solid fa-satellite-dish text-teal-400"></i> 1. El Púlpito (15 min)</h3>
+                    <p class="text-xs text-stone-400 leading-relaxed">
+                        Cada miembro realiza una demo visual rápida de sus avances. No vale con "he hecho código", hay que mostrar resultados tangibles en el motor o assets terminados.
+                    </p>
+                </div>
+                <div class="bg-stone-900 text-stone-100 p-6 rounded-xl border-l-4 border-l-amber-500 shadow-sm">
+                    <h3 class="text-lg font-bold mb-3"><i class="fa-solid fa-screwdriver-wrench text-amber-400"></i> 2. La Forja (30 min)</h3>
+                    <p class="text-xs text-stone-400 leading-relaxed">
+                        Resolución de dudas técnicas complejas. Axel y Alex actúan como consultores senior para desatascar problemas de Git, SVN o lógica de Blueprints.
+                    </p>
+                </div>
+                <div class="bg-stone-900 text-stone-100 p-6 rounded-xl border-l-4 border-l-purple-500 shadow-sm">
+                    <h3 class="text-lg font-bold mb-3"><i class="fa-solid fa-list-check text-purple-400"></i> 3. El Reparto (15 min)</h3>
+                    <p class="text-xs text-stone-400 leading-relaxed">
+                        Asignación de tareas en el Kanban. Definimos el "Sprint de 7 días". Nadie sale de la reunión sin saber exactamente qué tiene que entregar el próximo domingo.
+                    </p>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                <h3 class="text-lg font-bold text-stone-800 mb-4"><i class="fa-solid fa-calendar-day text-teal-600"></i> Próxima Sesión Ritual</h3>
+                <div class="flex flex-col md:flex-row items-center gap-6">
+                    <div class="bg-stone-100 p-4 rounded-lg text-center min-w-[120px]">
+                        <span class="block text-xs uppercase font-bold text-stone-500">Próximo</span>
+                        <span class="block text-3xl font-black text-stone-800">DOM</span>
+                        <span class="block text-xs font-mono text-teal-700">10:00 AM</span>
+                    </div>
+                    <div class="flex-grow">
+                        <h4 class="font-bold text-stone-800 mb-2">Objetivo Principal: Cierre de Infraestructura</h4>
+                        <ul class="text-xs text-stone-600 space-y-2">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-teal-500"></i> Verificación de cuentas Git de Javi y Dídac.</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-teal-500"></i> Test de stress del servidor SVN con assets pesados.</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-teal-500"></i> Primera lluvia de ideas para el pilar narrativo del GDD.</li>
+                        </ul>
+                    </div>
+                    <div class="w-full md:w-auto">
+                        <button class="w-full bg-stone-800 text-white px-6 py-3 rounded-lg font-bold hover:bg-stone-700 transition shadow-md flex items-center justify-center gap-2">
+                            <i class="fa-brands fa-discord"></i> Unirse al Canal de Voz
+                        </button>
+                    </div>
                 </div>
             </div>
         </section>

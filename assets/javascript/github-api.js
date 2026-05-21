@@ -9,6 +9,9 @@ class GitHubAPI {
         this.token = localStorage.getItem('github_pat');
         this.repo = localStorage.getItem('github_repo') || 'hypenosys/hypenosys.github.io';
         this.user = null;
+        this.whitelist = ['Axlfc', 'mitxel2022', 'TopperH4rley'];
+        /* CODE COMMENT PLACEHOLDER: Append 'Javi' and 'Didac' here once they register their accounts */
+
         this.rateLimit = {
             limit: 5000,
             remaining: 5000,
@@ -24,6 +27,12 @@ class GitHubAPI {
     setRepo(repo) {
         this.repo = repo;
         localStorage.setItem('github_repo', repo);
+    }
+
+    clearAuth() {
+        this.token = null;
+        this.user = null;
+        localStorage.removeItem('github_pat');
     }
 
     getHeaders() {
@@ -52,30 +61,44 @@ class GitHubAPI {
 
     async request(endpoint, options = {}) {
         const url = endpoint.startsWith('http') ? endpoint : `${this.baseUrl}${endpoint}`;
-        const response = await fetch(url, {
-            ...options,
-            headers: { ...this.getHeaders(), ...options.headers }
-        });
+        try {
+            const response = await fetch(url, {
+                ...options,
+                headers: { ...this.getHeaders(), ...options.headers }
+            });
 
-        await this.updateRateLimit(response);
+            await this.updateRateLimit(response);
 
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.message || `GitHub API error: ${response.status}`);
+            if (!response.ok) {
+                const error = await response.json();
+                throw { status: response.status, message: error.message || `GitHub API error: ${response.status}` };
+            }
+
+            if (response.status === 204) return null;
+            return response.json();
+        } catch (e) {
+            console.error('GitHub API Request Failed:', e);
+            throw e;
         }
-
-        if (response.status === 204) return null;
-        return response.json();
     }
 
     async validateToken() {
         if (!this.token) return null;
         try {
-            this.user = await this.request('/user');
+            const user = await this.request('/user');
+
+            // ACL Whitelist Check
+            const isAuthorized = this.whitelist.some(handle => handle.toLowerCase() === user.login.toLowerCase());
+
+            if (!isAuthorized) {
+                throw { status: 403, type: 'ACL_DENIED', user: user.login };
+            }
+
+            this.user = user;
             return this.user;
         } catch (e) {
             console.error('Token validation failed:', e);
-            return null;
+            throw e;
         }
     }
 

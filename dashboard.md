@@ -9,8 +9,8 @@ title: Production Dashboard
             <h1 class="mb-0 text-purple">PRODUCTION DASHBOARD</h1>
             <p class="text-muted mb-0">High-efficiency task management system</p>
         </div>
-        <div id="current-user" class="d-flex align-items-center text-white">
-            <!-- User info will be injected here -->
+        <div id="dashboard-user-info" class="d-flex align-items-center text-white">
+            <!-- Secondary user info if needed -->
         </div>
     </div>
 
@@ -46,44 +46,6 @@ title: Production Dashboard
     </div>
 </div>
 
-<!-- Settings Modal -->
-<div class="modal fade" id="settingsModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content shadow-lg">
-            <div class="modal-header">
-                <h5 class="modal-title text-purple font-weight-bold">
-                    <i class="fas fa-terminal mr-2"></i> SYSTEM CONFIGURATION
-                </h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="alert alert-info bg-dark border-purple text-white-50 small mb-4">
-                    <i class="fas fa-info-circle mr-2"></i>
-                    Your credentials are stored locally in your browser's <code>localStorage</code>.
-                    Ensure your PAT has <code>repo</code> permissions.
-                </div>
-                <div class="form-group">
-                    <label for="input-pat" class="text-purple small font-weight-bold">GITHUB PERSONAL ACCESS TOKEN</label>
-                    <input type="password" class="form-control" id="input-pat" placeholder="ghp_xxxxxxxxxxxx">
-                </div>
-                <div class="form-group">
-                    <label for="input-repo" class="text-purple small font-weight-bold">TARGET REPOSITORY</label>
-                    <input type="text" class="form-control" id="input-repo" placeholder="owner/repo">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" id="btn-save-settings" class="btn btn-primary">Save & Connect</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Toast Notifications Container -->
-<div id="toast-container" class="toast-container"></div>
-
 <!-- Rate Limit Indicator -->
 <div id="rate-limit-info" class="rate-limit-indicator">
     <div class="status-dot"></div>
@@ -92,5 +54,4 @@ title: Production Dashboard
 </div>
 
 <!-- Load Scripts -->
-<script src="{{ '/assets/javascript/github-api.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/dashboard.js' | relative_url }}"></script>
