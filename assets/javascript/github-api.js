@@ -41,8 +41,7 @@ async function fetchFileWithSha(filePath) {
   const response = await fetch(url, {
     headers: {
       'Authorization': `Bearer ${getAuthToken()}`,
-      'Accept': 'application/vnd.github.v3+json',
-      'Cache-Control': 'no-cache'
+      'Accept': 'application/vnd.github.v3+json'
     }
   });
   if (!response.ok) {
@@ -392,9 +391,84 @@ async function updateMemberProfile(memberName, profileDelta) {
   });
 }
 
-// Global API Object
+// ─── STATE ────────────────────────────────────────────────────
+let _currentUser = null;
+
+// ─── PATCH validateToken para guardar user en el objeto global ─
+const _originalValidateToken = validateToken;
+async function validateTokenAndStore() {
+  const result = await _originalValidateToken();
+  if (result.valid && result.user) {
+    _currentUser = result.user;
+  }
+  return result;
+}
+
+// ─── PUBLIC API ───────────────────────────────────────────────
 window.githubApi = {
-  validateToken,
+  // Auth methods (compatibilidad con auth-manager.js)
+  get user() { return _currentUser; },
+  setToken(token) {
+    if (!token) return;
+    const cleanToken = token.trim();
+    sessionStorage.setItem('gh_access_token', cleanToken);
+    localStorage.setItem('github_token', cleanToken);
+  },
+  clearAuth() {
+    sessionStorage.removeItem('gh_access_token');
+    localStorage.removeItem('github_token');
+    _currentUser = null;
+  },
+
+  // ─── LEGACY COMPAT (usado por auth-manager.js) ────────────────
+  /**
+   * Fetches a file and returns { content (base64 raw), sha }
+   * Compatible con auth-manager.js que espera data.content y data.sha
+   */
+  async getFile(filePath) {
+    const url = `${GITHUB_API_BASE}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filePath}?ref=${DATA_BRANCH}&t=${Date.now()}`;
+    const response = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${getAuthToken()}`,
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    });
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(`getFile error ${filePath}: ${err.message}`);
+    }
+    return await response.json();
+  },
+
+  /**
+   * Writes a file directly (sin atomic wrapper — para edición de perfiles desde el home)
+   */
+  async updateFile(filePath, contentString, commitMessage, sha) {
+    const url = `${GITHUB_API_BASE}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filePath}`;
+    const body = JSON.stringify({
+      message: commitMessage,
+      content: btoa(unescape(encodeURIComponent(contentString))),
+      sha: sha,
+      branch: DATA_BRANCH
+    });
+    const response = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${getAuthToken()}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json'
+      },
+      body
+    });
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(`updateFile error ${filePath}: ${err.message}`);
+    }
+    return await response.json();
+  },
+
+  // Core API
+  validateToken: validateTokenAndStore,
   getAuthToken,
   fetchFileWithSha,
   createTask,
@@ -402,6 +476,8 @@ window.githubApi = {
   updateBudget,
   updateMemberProfile,
   recomputeAndSaveStats,
+
+  // Fórmulas
   computeFixedFoundRatio,
   computeAllMemberStats,
   computeHallOfFame,

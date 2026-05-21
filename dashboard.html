@@ -31,6 +31,11 @@
             <a href="/" class="text-emerald-400 text-2xl font-bold tracking-tighter flex items-center gap-2">
                 <i class="fa-solid fa-microchip"></i> HYPENOSYS <span class="text-slate-500 font-light text-sm tracking-normal">OPS</span>
             </a>
+            <div class="hidden md:flex items-center ml-4 gap-4 mr-6 border-r border-slate-800 pr-6">
+                <a href="#kanban-board" class="text-xs font-bold text-slate-400 hover:text-white transition-all uppercase">Kanban</a>
+                <a href="#pipeline" class="text-xs font-bold text-slate-400 hover:text-white transition-all uppercase">Pipeline</a>
+                <a href="#charts" class="text-xs font-bold text-slate-400 hover:text-white transition-all uppercase">Analytics</a>
+            </div>
             <div id="member-filters" class="flex items-center gap-2 bg-slate-950 p-1 rounded-lg border border-slate-800">
                 <!-- Member filters injected here -->
             </div>
@@ -47,6 +52,11 @@
 
     <main class="flex-grow p-6 space-y-8 max-w-[1600px] mx-auto w-full">
         
+        <!-- Critical Path Alert Panel -->
+        <div id="critical-path-panel" class="hidden space-y-2">
+            <!-- Alerts injected here -->
+        </div>
+
         <!-- Summary Stats Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-sm">
@@ -120,8 +130,49 @@
             </div>
         </section>
 
+        <!-- Production Pipeline Section -->
+        <section id="pipeline" class="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden transition-all">
+            <button onclick="togglePipelineCollapse()" class="w-full flex items-center justify-between p-6 hover:bg-slate-800/50 transition-all">
+                <h2 class="text-xl font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-industry text-indigo-400"></i> Production Pipeline Tracker
+                </h2>
+                <i id="pipeline-chevron" class="fa-solid fa-chevron-up text-slate-500"></i>
+            </button>
+            <div id="pipeline-content" class="p-6 pt-0 space-y-8">
+                <!-- Pipeline Swimlanes -->
+                <div id="pipeline-swimlanes" class="flex flex-nowrap gap-4 overflow-x-auto pb-4 custom-scrollbar">
+                    <!-- Stages injected here -->
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Milestone Burndown -->
+                    <div class="bg-slate-950/50 p-5 rounded-xl border border-slate-800">
+                        <h3 class="text-sm font-bold text-slate-400 mb-4 uppercase tracking-wider">Milestone Burndown</h3>
+                        <div class="h-[250px]">
+                            <canvas id="milestone-burndown-chart"></canvas>
+                        </div>
+                    </div>
+                    <!-- Dependency Graph -->
+                    <div class="bg-slate-950/50 p-5 rounded-xl border border-slate-800 flex flex-col">
+                        <h3 class="text-sm font-bold text-slate-400 mb-4 uppercase tracking-wider">Dependency Graph</h3>
+                        <div id="dependency-graph-container" class="flex-grow overflow-auto min-h-[250px] bg-slate-900 rounded-lg border border-slate-800 p-4">
+                            <!-- SVG injected here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Velocity Tracker -->
+                <div class="bg-slate-950/50 p-5 rounded-xl border border-slate-800">
+                    <h3 class="text-sm font-bold text-slate-400 mb-4 uppercase tracking-wider">Velocity Tracker (Created vs. Completed)</h3>
+                    <div class="h-[200px]">
+                        <canvas id="velocity-tracker-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Charts & Hall of Fame -->
-        <section class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <section id="charts" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- QA Velocity Chart -->
             <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 lg:col-span-2">
                 <canvas id="qa-velocity-chart"></canvas>
