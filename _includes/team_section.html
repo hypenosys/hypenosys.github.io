@@ -1,13 +1,16 @@
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
   try {
-    const response = await fetch('https://raw.githubusercontent.com/hypenosys/hypenosys.github.io/main/_data/team_profiles.json');
+    const response = await fetch('https://raw.githubusercontent.com/hypenosys/hypenosys.github.io/master/_data/team_profiles.json');
     if (!response.ok) return;
     const data = await response.json();
     const profiles = data.members;
     
     Object.entries(profiles).forEach(([name, profile]) => {
-      const card = document.querySelector(`[data-member="${name}"]`);
+      let card = document.querySelector(`[data-member="${name}"]`);
+      if (!card) {
+        card = Array.from(document.querySelectorAll('[data-member]')).find(c => c.dataset.member.includes(name));
+      }
       if (!card) return;
       
       if (profile.display_name) card.querySelector('.card-title').textContent = profile.display_name.toUpperCase();

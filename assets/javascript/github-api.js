@@ -359,6 +359,19 @@ async function createTask(taskObject) {
   });
 }
 
+async function updateTask(taskId, taskDelta) {
+  return atomicWrite('_data/dashboard_tasks.json', (db) => {
+    const taskIndex = db.tasks.findIndex(t => t.id === taskId);
+    if (taskIndex === -1) throw new Error(`Tarea #${taskId} no encontrada.`);
+    db.tasks[taskIndex] = { ...db.tasks[taskIndex], ...taskDelta };
+    db.last_updated_by = _currentUser?.login || 'Sistema';
+    return db;
+  }, `chore: actualizar tarea #${taskId}`, (local, remote) => {
+    local.tasks = mergeTaskArrays(local.tasks, remote.tasks);
+    return local;
+  });
+}
+
 async function updateTaskStatus(taskId, newEstado, resolverHandle, testerHandle) {
   return atomicWrite('_data/dashboard_tasks.json', (db) => {
     const task = db.tasks.find(t => t.id === taskId);
@@ -379,16 +392,44 @@ async function updateBudget(mutatorFn, commitMessage) {
 }
 
 async function updateMemberProfile(memberName, profileDelta) {
-  return atomicWrite('_data/team_profiles.json', (db) => {
-    if (!db.members[memberName]) throw new Error(`Miembro ${memberName} no encontrado.`);
+  // 1. Update team_profiles.json
+  await atomicWrite('_data/team_profiles.json', (db) => {
+    if (!db.members[memberName]) throw new Error(`Miembro ${memberName} no encontrado en team_profiles.json.`);
     db.members[memberName] = { ...db.members[memberName], ...profileDelta };
     db.last_updated = new Date().toISOString();
     return db;
-  }, `chore: actualizar perfil de ${memberName}`, (local, remote) => {
+  }, `chore: actualizar perfil de ${memberName} (profiles)`, (local, remote) => {
     const merged = { ...remote };
     merged.members[memberName] = { ...remote.members[memberName], ...local.members[memberName] };
     return merged;
   });
+
+  // 2. Sync with team.json
+  try {
+    const profilesRes = await fetchFileWithSha('_data/team_profiles.json');
+    const profile = profilesRes.content.members[memberName];
+
+    await atomicWrite('_data/team.json', (team) => {
+      const memberIndex = team.findIndex(m =>
+        (m.github && m.github.toLowerCase().includes(profile.handle.toLowerCase())) ||
+        (m.name.toLowerCase().includes(memberName.toLowerCase()))
+      );
+      if (memberIndex !== -1) {
+        team[memberIndex].name = profile.display_name;
+        team[memberIndex].role = profile.role;
+        team[memberIndex].description = profile.bio;
+        team[memberIndex].image = `https://github.com/${profile.handle}.png`;
+        if (profile.links && profile.links.github) team[memberIndex].github = profile.links.github;
+        if (profile.portfolio) team[memberIndex].portfolio = profile.portfolio;
+      }
+      return team;
+    }, `chore: sincronizar team.json con perfil de ${memberName}`, (local, remote) => {
+       // Simple replacement for team.json sync
+       return local;
+    });
+  } catch (err) {
+    console.error('Failed to sync team.json:', err);
+  }
 }
 
 // ─── STATE ────────────────────────────────────────────────────
@@ -473,6 +514,7 @@ window.githubApi = {
   fetchFileWithSha,
   createTask,
   updateTaskStatus,
+  updateTask,
   updateBudget,
   updateMemberProfile,
   recomputeAndSaveStats,
