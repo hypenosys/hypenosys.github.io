@@ -34,6 +34,12 @@
             color: white;
             border-color: #0f766e;
         }
+
+        .svn-tab-btn.active {
+            background-color: #0c0a09; /* stone-950 */
+            color: #2dd4bf; /* teal-400 */
+            border: 1px solid #2dd4bf;
+        }
         
         .fade-in {
             animation: fadeIn 0.3s ease-in-out;
@@ -382,6 +388,168 @@
                     </div>
                     <div class="mt-4 p-3 bg-teal-950 text-teal-200 rounded border border-teal-800 text-xs text-center font-bold">
                         <i class="fa-solid fa-bullhorn text-amber-400 animate-bounce"></i> Transparencia de Comunicación: "Me he visto tal vídeo de YouTube [Enlace] para hacer tal cosa."
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB-SECTION: Infraestructura SVN & Unreal Engine -->
+            <div class="mt-12 pt-8 border-t border-stone-300">
+                <h2 class="text-2xl font-bold text-stone-800 mb-6 flex items-center gap-3">
+                    <i class="fa-solid fa-box-archive text-teal-600"></i> 📦 Infraestructura SVN & Unreal Engine Integration
+                </h2>
+
+                <!-- Tabs Navigation -->
+                <div class="flex gap-2 mb-6 bg-stone-200 p-1 rounded-xl w-fit">
+                    <button onclick="switchSvnTab('svn-admin')" id="tab-btn-svn-admin" class="svn-tab-btn active px-4 py-2 rounded-lg text-sm font-bold transition-all">
+                        <i class="fa-solid fa-server mr-2"></i> [Servidor / Servidor Linux]
+                    </button>
+                    <button onclick="switchSvnTab('svn-team')" id="tab-btn-svn-team" class="svn-tab-btn px-4 py-2 rounded-lg text-sm font-bold transition-all text-stone-600 hover:bg-stone-300 border border-transparent">
+                        <i class="fa-solid fa-plug mr-2"></i> [Conexión Unreal Engine]
+                    </button>
+                </div>
+
+                <!-- Tab: Admin Server -->
+                <div id="svn-admin" class="svn-tab-content fade-in">
+                    <div class="bg-stone-900 text-stone-100 rounded-2xl overflow-hidden border border-stone-800 shadow-2xl">
+                        <div class="p-6 border-b border-stone-800 bg-stone-900/50">
+                            <h3 class="text-lg font-bold text-teal-400 flex items-center gap-2">
+                                <i class="fa-solid fa-terminal"></i> MODULE 1: Guía de Despliegue del Servidor SVN
+                            </h3>
+                            <p class="text-xs text-stone-400 mt-1">Enfoque Admin: Alex & Axel</p>
+                        </div>
+                        
+                        <div class="p-6 space-y-8">
+                            <!-- Server Init -->
+                            <div>
+                                <h4 class="text-sm font-bold text-stone-300 mb-3 uppercase tracking-wider">1. Inicialización del Servidor</h4>
+                                <div class="relative group">
+                                    <button onclick="copyToClipboard('code-svn-init', this)" class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 bg-stone-800 hover:bg-stone-700 text-teal-400 p-2 rounded-lg transition-all border border-stone-700">
+                                        <i class="fa-solid fa-copy"></i>
+                                    </button>
+                                    <pre id="code-svn-init" class="bg-stone-950 p-5 rounded-xl font-mono text-xs text-teal-300 border border-teal-900/30 overflow-x-auto">
+# Crear el repositorio base
+svnadmin create /var/svn/hypenosys-unreal
+
+# Configurar permisos (conf/svnserve.conf)
+# [general]
+# anon-access = none
+# auth-access = write
+# password-db = passwd
+# realm = Hypenosys Unreal Repository
+
+# Definir usuarios (conf/passwd)
+# [users]
+# Axlfc = password_seguro
+# mitxel2022 = password_seguro
+# TopperH4rley = password_seguro</pre>
+                                </div>
+                            </div>
+
+                            <!-- Binary Locks -->
+                            <div>
+                                <h4 class="text-sm font-bold text-stone-300 mb-3 uppercase tracking-wider">2. Exclusive Binary Locks (Needs-Lock)</h4>
+                                <p class="text-xs text-stone-400 mb-3">Crucial para Unreal Engine: evita conflictos en archivos binarios forzando el modo "Solo Lectura" hasta que se pide el bloqueo.</p>
+                                <div class="relative group">
+                                    <button onclick="copyToClipboard('code-svn-locks', this)" class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 bg-stone-800 hover:bg-stone-700 text-teal-400 p-2 rounded-lg transition-all border border-stone-700">
+                                        <i class="fa-solid fa-copy"></i>
+                                    </button>
+                                    <pre id="code-svn-locks" class="bg-stone-950 p-5 rounded-xl font-mono text-xs text-amber-300 border border-amber-900/30 overflow-x-auto">
+# Aplicar propiedad recursiva para forzar el bloqueo en binarios
+svn propset svn:needs-lock "*" . --recursive --filter-ext .uasset,.umap,.blend,.fbx,.png,.tga,.wav
+
+# Confirmar cambios
+svn commit -m "CONFIG: Activado auto-locking para assets binarios (Unreal Workflow)"</pre>
+                                </div>
+                            </div>
+
+                            <!-- Global Ignores -->
+                            <div>
+                                <h4 class="text-sm font-bold text-stone-300 mb-3 uppercase tracking-wider">3. Global Ignore Definitions (.svnignore)</h4>
+                                <div class="relative group">
+                                    <button onclick="copyToClipboard('code-svn-ignore', this)" class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 bg-stone-800 hover:bg-stone-700 text-teal-400 p-2 rounded-lg transition-all border border-stone-700">
+                                        <i class="fa-solid fa-copy"></i>
+                                    </button>
+                                    <pre id="code-svn-ignore" class="bg-stone-950 p-5 rounded-xl font-mono text-xs text-blue-300 border border-blue-900/30 overflow-x-auto">
+# Configurar archivos a ignorar para evitar basura en el repo
+svn propedit svn:ignore .
+
+# Pegar lo siguiente en el editor:
+Binaries
+DerivedDataCache
+Intermediate
+Saved
+.vscode
+.vs
+*.sln
+*.pdb</pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Team Connection -->
+                <div id="svn-team" class="svn-tab-content hidden fade-in">
+                    <div class="bg-stone-900 text-stone-100 rounded-2xl overflow-hidden border border-stone-800 shadow-2xl">
+                        <div class="p-6 border-b border-stone-800 bg-stone-900/50">
+                            <h3 class="text-lg font-bold text-purple-400 flex items-center gap-2">
+                                <i class="fa-solid fa-plug"></i> MODULE 2: Conexión de Unreal Engine al SVN Central
+                            </h3>
+                            <p class="text-xs text-stone-400 mt-1">Enfoque Equipo: Artistas, Diseñadores y Devs</p>
+                        </div>
+
+                        <div class="p-6 space-y-6">
+                            <!-- Prerequisites -->
+                            <div class="bg-stone-800/50 p-4 rounded-xl border border-stone-700">
+                                <h4 class="text-sm font-bold text-stone-200 mb-2"><i class="fa-solid fa-list-check text-teal-500 mr-2"></i> Prerrequisitos de Instalación</h4>
+                                <ul class="text-xs text-stone-400 space-y-2">
+                                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-teal-600"></i> Windows: **TortoiseSVN** instalado (¡Marca "Command Line Client Tools" en el instalador!).</li>
+                                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-teal-600"></i> Linux (Axel): Binario `subversion` instalado y accesible en `$PATH`.</li>
+                                </ul>
+                            </div>
+
+                            <!-- In-Editor Configuration -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="space-y-4">
+                                    <h4 class="text-sm font-bold text-stone-200 uppercase tracking-widest text-[10px]">Configuración en Editor</h4>
+                                    <ol class="text-xs text-stone-400 space-y-3">
+                                        <li class="flex gap-3"><span class="bg-stone-800 w-5 h-5 flex-shrink-0 flex items-center justify-center rounded-full text-teal-400 font-bold">1</span> Click en icono "Source Control" (barra inferior).</li>
+                                        <li class="flex gap-3"><span class="bg-stone-800 w-5 h-5 flex-shrink-0 flex items-center justify-center rounded-full text-teal-400 font-bold">2</span> Seleccionar Proveedor: **Subversion (SVN)**.</li>
+                                        <li class="flex gap-3"><span class="bg-stone-800 w-5 h-5 flex-shrink-0 flex items-center justify-center rounded-full text-teal-400 font-bold">3</span> URL: `svn://[IP-SERVIDOR]/hypenosys-unreal`.</li>
+                                        <li class="flex gap-3"><span class="bg-stone-800 w-5 h-5 flex-shrink-0 flex items-center justify-center rounded-full text-teal-400 font-bold">4</span> Ingresar Usuario y Password asignado.</li>
+                                    </ol>
+                                </div>
+                                <div class="bg-stone-950 p-4 rounded-xl border border-stone-800 flex flex-col justify-center">
+                                    <div class="text-[10px] text-stone-500 font-mono mb-2 uppercase">Validación de Ruta (Crucial)</div>
+                                    <p class="text-[11px] text-amber-200/80 leading-relaxed">
+                                        En "Settings", verifica que el **SVN Executable** apunte a:<br>
+                                        <code class="bg-stone-800 px-1 rounded text-teal-400">C:\Program Files\TortoiseSVN\bin\svn.exe</code>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Ritual Workflow -->
+                            <div class="mt-4 pt-6 border-t border-stone-800">
+                                <h4 class="text-sm font-bold text-stone-200 mb-4"><i class="fa-solid fa-synagogue text-purple-500 mr-2"></i> El Ritual del Flujo de Trabajo</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                                    <div class="p-4 bg-stone-800/30 rounded-xl border border-stone-700">
+                                        <div class="text-teal-500 mb-2"><i class="fa-solid fa-lock-open text-xl"></i></div>
+                                        <div class="text-[10px] font-bold uppercase text-stone-300">Check Out (Lock)</div>
+                                        <p class="text-[9px] text-stone-500 mt-1">Botón derecho sobre el asset ➔ Source Control ➔ Check Out. El asset se vuelve editable.</p>
+                                    </div>
+                                    <div class="p-4 bg-stone-800/30 rounded-xl border border-stone-700">
+                                        <div class="text-amber-500 mb-2"><i class="fa-solid fa-pen-nib text-xl"></i></div>
+                                        <div class="text-[10px] font-bold uppercase text-stone-300">Modificación</div>
+                                        <p class="text-[9px] text-stone-500 mt-1">Tus compañeros verán un icono de check rojo: saben que tú tienes el control.</p>
+                                    </div>
+                                    <div class="p-4 bg-stone-800/30 rounded-xl border border-stone-700">
+                                        <div class="text-purple-500 mb-2"><i class="fa-solid fa-cloud-arrow-up text-xl"></i></div>
+                                        <div class="text-[10px] font-bold uppercase text-stone-300">Check In (Submit)</div>
+                                        <p class="text-[9px] text-stone-500 mt-1">Al terminar, Submit Content. Los cambios se suben y el archivo se libera para otros.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -852,6 +1020,25 @@ Dale caña, pregúntame lo primero.`;
 
             document.getElementById('prompt-dna').innerText = dnaPrompt;
             document.getElementById('prompt-bio').innerText = bioPrompt;
+        }
+
+        // --- SVN Tab Logic ---
+        function switchSvnTab(tabId) {
+            // Hide all SVN tab contents
+            document.querySelectorAll('.svn-tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            // Show selected tab content
+            document.getElementById(tabId).classList.remove('hidden');
+
+            // Update buttons
+            document.querySelectorAll('.svn-tab-btn').forEach(btn => {
+                btn.classList.remove('active', 'text-teal-400', 'bg-stone-950', 'border-teal-400');
+                btn.classList.add('text-stone-600', 'hover:bg-stone-300', 'border-transparent');
+            });
+            const activeBtn = document.getElementById('tab-btn-' + tabId);
+            activeBtn.classList.remove('text-stone-600', 'hover:bg-stone-300', 'border-transparent');
+            activeBtn.classList.add('active');
         }
 
         function copyToClipboard(elementId, btn) {
