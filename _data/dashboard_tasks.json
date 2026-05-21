@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0.0",
+  "last_updated": "2025-01-01T00:00:00.000Z",
+  "last_updated_by": "Axel",
+  "tasks": [
+    {
+      "id": 1,
+      "rama": "PRO",
+      "rama2": null,
+      "ver": true,
+      "descripcion": "Configuración inicial del dashboard operacional",
+      "fecha": "2025-01-01",
+      "tema_principal": "Tools / Automation",
+      "detectado_por": "Axel",
+      "resuelto_por": "Axel",
+      "apoyo": null,
+      "estado": "OK",
+      "prioridad": "Critical",
+      "limite": null,
+      "comentario": "Sistema base del dashboard",
+      "milestone": "M1",
+      "completitud": 1.0
+    }
+  ]
+}
