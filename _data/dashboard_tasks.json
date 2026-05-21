@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-21T15:09:18.495Z",
-  "last_updated_by": "Sistema",
+  "last_updated": "2026-05-21T15:11:04.315Z",
+  "last_updated_by": "Axel",
   "tasks": [
     {
       "id": 1,
@@ -20,6 +20,24 @@
       "comentario": "Sistema base del dashboard",
       "milestone": "M1",
       "completitud": 1
+    },
+    {
+      "rama": "PRO",
+      "rama2": null,
+      "ver": true,
+      "descripcion": "Engatusar a Dídac y a Javi de que se hagan users de GitHub y meterlos en el Operational Dashboard",
+      "fecha": "2026-05-21",
+      "tema_principal": "INFRA",
+      "detectado_por": "Axel",
+      "resuelto_por": null,
+      "apoyo": null,
+      "estado": "Pending",
+      "prioridad": "Major",
+      "limite": null,
+      "comentario": "",
+      "milestone": "M1",
+      "completitud": 0,
+      "id": 2
     }
   ]
 }
