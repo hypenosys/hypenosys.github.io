@@ -45,7 +45,7 @@ async function initDashboard() {
     document.getElementById('login-overlay').classList.remove('hidden');
     return;
   }
-  
+
   if (!sessionStorage.getItem('gh_access_token')) {
     sessionStorage.setItem('gh_access_token', token);
   }
@@ -63,11 +63,11 @@ async function initDashboard() {
     }
 
     window.currentUser = user.login.toLowerCase();
-    
+
     await refreshDashboardData();
-    
+
     // Set default filter to current user if they match
-    const memberMatch = MEMBERS.find(m => m.toLowerCase() === window.currentUser || 
+    const memberMatch = MEMBERS.find(m => m.toLowerCase() === window.currentUser ||
                                           (currentProfiles && currentProfiles.members[m] && currentProfiles.members[m].handle.toLowerCase() === window.currentUser));
     if (memberMatch) activeFilter = memberMatch;
 
@@ -103,8 +103,8 @@ async function refreshDashboardData() {
     currentProfiles = profilesRes.content;
 
     renderDashboard();
-    
-    document.getElementById('last-sync-timestamp').textContent = 
+
+    document.getElementById('last-sync-timestamp').textContent =
       `Última sincronización: ${new Date().toLocaleTimeString('es-ES')}`;
 
   } catch (err) {
@@ -131,7 +131,7 @@ function renderStatsSummary() {
   const activeTasks = tasks.filter(t => t.estado !== 'Obsolete');
   document.getElementById('stat-total-tasks').textContent = activeTasks.length;
   document.getElementById('stat-ok-tasks').textContent    = tasks.filter(t => t.estado === 'OK').length;
-  
+
   const ratio = window.githubApi.computeFixedFoundRatio(tasks);
   document.getElementById('stat-fixed-ratio').textContent = `${(ratio * 100).toFixed(2)}%`;
 }
@@ -140,11 +140,11 @@ function renderMemberToggles() {
   const container = document.getElementById('member-filters');
   if (!container) return;
   container.innerHTML = '';
-  
+
   const allBtn = document.createElement('button');
   allBtn.textContent = '👥 Todos';
-  allBtn.className = activeFilter === null 
-    ? 'px-3 py-1 text-xs font-bold rounded-md bg-emerald-500 text-slate-950 transition-all' 
+  allBtn.className = activeFilter === null
+    ? 'px-3 py-1 text-xs font-bold rounded-md bg-emerald-500 text-slate-950 transition-all'
     : 'px-3 py-1 text-xs font-bold rounded-md text-slate-400 hover:text-white transition-all';
   allBtn.addEventListener('click', () => { activeFilter = null; renderDashboard(); });
   container.appendChild(allBtn);
@@ -152,8 +152,8 @@ function renderMemberToggles() {
   for (const member of MEMBERS) {
     const btn = document.createElement('button');
     btn.textContent = member;
-    btn.className = activeFilter === member 
-      ? 'px-3 py-1 text-xs font-bold rounded-md bg-emerald-500 text-slate-950 transition-all' 
+    btn.className = activeFilter === member
+      ? 'px-3 py-1 text-xs font-bold rounded-md bg-emerald-500 text-slate-950 transition-all'
       : 'px-3 py-1 text-xs font-bold rounded-md text-slate-400 hover:text-white transition-all';
     btn.addEventListener('click', () => {
       activeFilter = (activeFilter === member) ? null : member;
@@ -165,7 +165,7 @@ function renderMemberToggles() {
 
 function renderKanbanBoard() {
   const tasks = getFilteredTasks(currentTasks.filter(t => t.estado !== 'Obsolete'));
-  
+
   for (const col of KANBAN_COLUMNS) {
     const colEl = document.getElementById(`kanban-col-${col.id}`);
     if (!colEl) continue;
@@ -204,8 +204,8 @@ function buildTaskCard(task) {
   const card = document.createElement('div');
   card.className = `bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-sm cursor-grab active:cursor-grabbing hover:border-slate-500 transition-colors group relative`;
   card.draggable = true;
-  card.addEventListener('dragstart', e => { 
-    e.dataTransfer.setData('text/plain', String(task.id)); 
+  card.addEventListener('dragstart', e => {
+    e.dataTransfer.setData('text/plain', String(task.id));
     card.classList.add('opacity-50');
   });
   card.addEventListener('dragend', () => card.classList.remove('opacity-50'));
@@ -371,7 +371,7 @@ function renderHallOfFame() {
 
   const hof = window.githubApi.computeHallOfFame(currentTasks, MEMBERS);
   const filtered = activeFilter ? hof.filter(e => e.name === activeFilter) : hof;
-  
+
   container.innerHTML = '';
   filtered.slice(0, 5).forEach(entry => {
     const el = document.createElement('div');
@@ -413,7 +413,7 @@ function renderTeamProfiles() {
   const grid = document.getElementById('team-profiles-grid');
   if (!grid || !currentProfiles) return;
   grid.innerHTML = '';
-  
+
   const memberStats = window.githubApi.computeAllMemberStats(currentTasks, MEMBERS);
 
   Object.entries(currentProfiles.members).forEach(([name, profile]) => {
@@ -423,7 +423,7 @@ function renderTeamProfiles() {
     const card = document.createElement('div');
     card.className = `bg-slate-900 border ${isSelf ? 'border-emerald-500 ring-1 ring-emerald-500 pulse-emerald' : 'border-slate-800'} rounded-2xl overflow-hidden relative group transition-all`;
     card.dataset.member = name;
-    
+
     card.innerHTML = `
       <div class="h-2" style="background-color: ${profile.color_accent}"></div>
       <div class="p-6">
@@ -492,7 +492,7 @@ function showToast(mensaje, tipo = 'info', duracionMs = 4000) {
 
   toast.className = `toast bg-slate-900 border-l-4 p-4 rounded-xl shadow-2xl flex items-center gap-3 min-w-[300px] ${colors[tipo]}`;
   toast.innerHTML = `<i class="fa-solid ${icons[tipo]} text-xl"></i> <span class="text-sm font-semibold text-slate-100">${mensaje}</span>`;
-  
+
   container.appendChild(toast);
   requestAnimationFrame(() => toast.classList.add('toast--visible'));
   setTimeout(() => {
@@ -619,9 +619,9 @@ async function saveProfileEdit(memberName) {
 
 function getFilteredTasks(tasks) {
   if (!activeFilter) return tasks;
-  return tasks.filter(t => 
-    t.resuelto_por === activeFilter || 
-    t.detectado_por === activeFilter || 
+  return tasks.filter(t =>
+    t.resuelto_por === activeFilter ||
+    t.detectado_por === activeFilter ||
     t.apoyo === activeFilter
   );
 }
