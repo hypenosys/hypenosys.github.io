@@ -25,20 +25,39 @@ class Dashboard {
 
     async init() {
         this.bindEvents();
-        try {
-            const user = await window.githubApi.validateToken();
+
+        // Wait for AuthManager to be ready
+        if (document.readyState === 'complete') {
+            this.setupAuthListener();
+        } else {
+            window.addEventListener('load', () => this.setupAuthListener());
+        }
+    }
+
+    setupAuthListener() {
+        document.addEventListener('authReady', async (e) => {
+            const user = e.detail.user;
             if (user) {
                 await this.refreshData();
             } else {
-                this.showLoginModal();
+                this.showAccessDenied();
             }
-        } catch (e) {
-            // Error handling is mostly handled by auth.js globally,
-            // but we ensure the dashboard stays in a clean state.
-            console.error('Dashboard Init Error:', e);
-            if (!localStorage.getItem('github_pat')) {
-                this.showLoginModal();
-            }
+        });
+    }
+
+    showAccessDenied() {
+        const container = document.getElementById('dashboard-view-content');
+        if (container) {
+            container.innerHTML = `
+                <div class="text-center py-5">
+                    <i class="fas fa-lock fa-3x text-purple mb-3"></i>
+                    <h3 class="text-white">Authentication Required</h3>
+                    <p class="text-muted">Please log in with GitHub to access the production dashboard.</p>
+                    <button class="btn btn-purple mt-3" onclick="window.authManager.handleLogin()">
+                        <i class="fa-brands fa-github mr-2"></i> Log in with GitHub
+                    </button>
+                </div>
+            `;
         }
     }
 
@@ -387,7 +406,8 @@ class Dashboard {
     }
 
     showLoginModal() {
-        $('#settingsModal').modal('show');
+        // Deprecated: We now show a "Please log in" message instead of the modal
+        this.showAccessDenied();
     }
 }
 
