@@ -392,9 +392,35 @@ async function updateMemberProfile(memberName, profileDelta) {
   });
 }
 
-// Global API Object
+// ─── STATE ────────────────────────────────────────────────────
+let _currentUser = null;
+
+// ─── PATCH validateToken para guardar user en el objeto global ─
+const _originalValidateToken = validateToken;
+async function validateTokenAndStore() {
+  const result = await _originalValidateToken();
+  if (result.valid && result.user) {
+    _currentUser = result.user;
+  }
+  return result;
+}
+
+// ─── PUBLIC API ───────────────────────────────────────────────
 window.githubApi = {
-  validateToken,
+  // Auth methods (compatibilidad con auth-manager.js)
+  get user() { return _currentUser; },
+  setToken(token) {
+    sessionStorage.setItem('gh_access_token', token.trim());
+    localStorage.setItem('github_token', token.trim());
+  },
+  clearAuth() {
+    sessionStorage.removeItem('gh_access_token');
+    localStorage.removeItem('github_token');
+    _currentUser = null;
+  },
+
+  // Core API
+  validateToken: validateTokenAndStore,
   getAuthToken,
   fetchFileWithSha,
   createTask,
@@ -402,6 +428,8 @@ window.githubApi = {
   updateBudget,
   updateMemberProfile,
   recomputeAndSaveStats,
+
+  // Fórmulas
   computeFixedFoundRatio,
   computeAllMemberStats,
   computeHallOfFame,

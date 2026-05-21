@@ -37,7 +37,51 @@ const UI_STRINGS = {
 
 // ─── INITIALIZATION ───────────────────────────────────────────
 
-document.addEventListener('DOMContentLoaded', initDashboard);
+document.addEventListener('DOMContentLoaded', handleDOMContentLoaded);
+
+async function handleDOMContentLoaded() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const code = urlParams.get('code');
+
+  if (code) {
+    const loginOverlay = document.getElementById('login-overlay');
+    const originalOverlayHTML = loginOverlay.innerHTML;
+    loginOverlay.classList.remove('hidden');
+    loginOverlay.innerHTML = `
+      <div class="text-center">
+        <div class="text-emerald-400 text-6xl mb-6 animate-spin"><i class="fa-solid fa-circle-notch"></i></div>
+        <h1 class="text-3xl font-bold mb-2">Autenticando con GitHub...</h1>
+        <p class="text-slate-400 mb-8 max-w-sm mx-auto">Intercambiando código de autorización por token de acceso.</p>
+      </div>
+    `;
+
+    try {
+      const resp = await fetch('https://hypenosys-gatekeeper-v2.axlffcc.workers.dev', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code })
+      });
+
+      const data = await resp.json();
+      if (data.access_token) {
+        sessionStorage.setItem('gh_access_token', data.access_token.trim());
+        window.history.replaceState({}, document.title, window.location.pathname);
+        loginOverlay.classList.add('hidden');
+        loginOverlay.innerHTML = originalOverlayHTML;
+      } else {
+        throw new Error(data.error || 'No se recibió el token de acceso.');
+      }
+    } catch (err) {
+      console.error('OAuth Exchange Error:', err);
+      loginOverlay.innerHTML = originalOverlayHTML;
+      loginOverlay.classList.remove('hidden');
+      showToast('Error de autenticación: ' + err.message, 'error');
+      return;
+    }
+  }
+
+  await initDashboard();
+}
 
 async function initDashboard() {
   const token = sessionStorage.getItem('gh_access_token') || localStorage.getItem('github_token');
@@ -108,7 +152,14 @@ async function refreshDashboardData() {
       `Última sincronización: ${new Date().toLocaleTimeString('es-ES')}`;
 
   } catch (err) {
-    showToast(`Error de sincronización: ${err.message}`, 'error');
+    let msg = `Error de sincronización: ${err.message}`;
+    if (err.message.includes('401')) msg = "Token inválido o expirado. Por favor, vuelve a iniciar sesión.";
+    if (err.message.includes('403')) msg = "Sin permisos de escritura en el repositorio.";
+    if (err.message.includes('404')) msg = "Archivo no encontrado en el repositorio.";
+    if (err.message.includes('409')) msg = "Conflicto detectado — ejecutando sincronización automática...";
+    if (err.name === 'TypeError' && err.message === 'Failed to fetch') msg = "Error de red — comprueba tu conexión e inténtalo de nuevo.";
+
+    showToast(msg, 'error');
   }
 }
 
@@ -124,6 +175,13 @@ function renderDashboard() {
   renderHallOfFame();
   renderMilestoneProgress();
   renderTeamProfiles();
+
+  // Part 2 — Production Pipeline
+  renderCriticalPathAlerts();
+  renderPipelineSwimlanes();
+  renderMilestoneBurndownChart();
+  renderDependencyGraph();
+  renderVelocityTrackerChart();
 }
 
 function renderStatsSummary() {
@@ -228,9 +286,9 @@ function buildTaskCard(task) {
     <p class="text-sm text-slate-200 leading-snug mb-3">${task.descripcion}</p>
     <div class="flex justify-between items-end">
       <div class="flex -space-x-2">
-        ${task.resuelto_por ? `<div title="Resuelto por: ${task.resuelto_por}" class="w-6 h-6 rounded-full bg-emerald-500 border-2 border-slate-800 flex items-center justify-center text-[8px] font-bold text-slate-950">${task.resuelto_por[0]}</div>` : ''}
-        ${task.detectado_por ? `<div title="Detectado por: ${task.detectado_por}" class="w-6 h-6 rounded-full bg-indigo-500 border-2 border-slate-800 flex items-center justify-center text-[8px] font-bold text-white">${task.detectado_por[0]}</div>` : ''}
-        ${task.apoyo ? `<div title="Apoyo: ${task.apoyo}" class="w-6 h-6 rounded-full bg-purple-500 border-2 border-slate-800 flex items-center justify-center text-[8px] font-bold text-white">${task.apoyo[0]}</div>` : ''}
+        ${task.resuelto_por ? `<div onclick="scrollToProfile('${task.resuelto_por}')" title="Resuelto por: ${task.resuelto_por}" class="w-6 h-6 rounded-full bg-emerald-500 border-2 border-slate-800 flex items-center justify-center text-[8px] font-bold text-slate-950 cursor-pointer hover:scale-110 transition-transform">${task.resuelto_por[0]}</div>` : ''}
+        ${task.detectado_por ? `<div onclick="scrollToProfile('${task.detectado_por}')" title="Detectado por: ${task.detectado_por}" class="w-6 h-6 rounded-full bg-indigo-500 border-2 border-slate-800 flex items-center justify-center text-[8px] font-bold text-white cursor-pointer hover:scale-110 transition-transform">${task.detectado_por[0]}</div>` : ''}
+        ${task.apoyo ? `<div onclick="scrollToProfile('${task.apoyo}')" title="Apoyo: ${task.apoyo}" class="w-6 h-6 rounded-full bg-purple-500 border-2 border-slate-800 flex items-center justify-center text-[8px] font-bold text-white cursor-pointer hover:scale-110 transition-transform">${task.apoyo[0]}</div>` : ''}
       </div>
       <div class="text-[9px] font-bold text-slate-500 uppercase tracking-tighter">
         ${task.rama}${task.rama2 ? ` / ${task.rama2}` : ''}
@@ -375,7 +433,8 @@ function renderHallOfFame() {
   container.innerHTML = '';
   filtered.slice(0, 5).forEach(entry => {
     const el = document.createElement('div');
-    el.className = 'flex items-center gap-4 bg-slate-950/50 p-3 rounded-xl border border-slate-800';
+    el.className = 'flex items-center gap-4 bg-slate-950/50 p-3 rounded-xl border border-slate-800 cursor-pointer hover:bg-slate-900 transition-colors';
+    el.onclick = () => scrollToProfile(entry.name);
     el.innerHTML = `
       <div class="text-2xl">${entry.medal}</div>
       <div class="flex-grow">
@@ -409,6 +468,356 @@ function renderMilestoneProgress() {
   document.getElementById('milestone-end').textContent = mil.date_end;
 }
 
+function togglePipelineCollapse() {
+  const content = document.getElementById('pipeline-content');
+  const chevron = document.getElementById('pipeline-chevron');
+  content.classList.toggle('hidden');
+  chevron.classList.toggle('fa-chevron-down');
+  chevron.classList.toggle('fa-chevron-up');
+}
+
+function renderCriticalPathAlerts() {
+  const panel = document.getElementById('critical-path-panel');
+  if (!panel) return;
+  panel.innerHTML = '';
+
+  const alerts = [];
+  const today = new Date().toISOString().split('T')[0];
+
+  currentTasks.forEach(t => {
+    if (t.estado === 'Obsolete' || t.estado === 'OK' || t.estado === 'Closed') return;
+
+    if (t.prioridad === 'Critical') {
+      alerts.push({ type: 'error', msg: `TAREA CRÍTICA PENDIENTE: #${t.id} - ${t.descripcion}`, taskId: t.id });
+    }
+    if (t.limite && t.limite < today) {
+      alerts.push({ type: 'warning', msg: `FECHA LÍMITE SUPERADA: #${t.id} - ${t.descripcion}`, taskId: t.id });
+    }
+    if (t.estado === 'Working' && !t.resuelto_por) {
+      alerts.push({ type: 'info', msg: `TAREA EN PROGRESO SIN ASIGNAR: #${t.id} - ${t.descripcion}`, taskId: t.id });
+    }
+  });
+
+  const burnoutIndex = window.githubApi.computeBurnoutIndex(
+    currentTasks,
+    currentBudget?.burnout?.current_milestone || 'M1',
+    currentBudget?.burnout?.milestones?.find(m => m.id === (currentBudget?.burnout?.current_milestone || 'M1'))?.date_start,
+    currentBudget?.burnout?.milestones?.find(m => m.id === (currentBudget?.burnout?.current_milestone || 'M1'))?.date_end
+  );
+
+  if (burnoutIndex > 0.7) {
+    alerts.push({ type: 'error', msg: `⚠ ALTA PRESIÓN: El Stress Index es del ${(burnoutIndex * 100).toFixed(1)}%. Se recomienda revisar la carga de trabajo.`, taskId: null });
+  }
+
+  if (alerts.length > 0) {
+    panel.classList.remove('hidden');
+    alerts.forEach(a => {
+      const div = document.createElement('div');
+      const colors = { error: 'bg-red-900/30 border-red-500 text-red-200', warning: 'bg-amber-900/30 border-amber-500 text-amber-200', info: 'bg-indigo-900/30 border-indigo-500 text-indigo-200' };
+      div.className = `p-4 rounded-xl border-l-4 flex justify-between items-center ${colors[a.type]}`;
+      div.innerHTML = `
+        <span class="text-sm font-bold flex items-center gap-2">
+          <i class="fa-solid ${a.type === 'error' ? 'fa-circle-exclamation' : a.type === 'warning' ? 'fa-triangle-exclamation' : 'fa-circle-info'}"></i>
+          ${a.msg}
+        </span>
+        ${a.taskId ? `<button onclick="scrollToTask(${a.taskId})" class="px-3 py-1 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-bold transition-all uppercase">Ver Tarea</button>` : ''}
+      `;
+      panel.appendChild(div);
+    });
+  } else {
+    panel.classList.add('hidden');
+  }
+}
+
+function scrollToTask(id) {
+  // Simple search for the task card
+  const cards = document.querySelectorAll('.kanban-cards > div');
+  for (const card of cards) {
+    if (card.querySelector('.text-\\[9px\\]')?.textContent === `#${id}`) {
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      card.classList.add('ring-4', 'ring-emerald-500', 'ring-offset-4', 'ring-offset-slate-950');
+      setTimeout(() => card.classList.remove('ring-4', 'ring-emerald-500', 'ring-offset-4', 'ring-offset-slate-950'), 3000);
+      return;
+    }
+  }
+}
+
+function renderPipelineSwimlanes() {
+  const container = document.getElementById('pipeline-swimlanes');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const STAGES = [
+    { id: 'CONCEPT',        label: 'Concept',        icon: 'fa-lightbulb', topics: ['Concepto / GDD'] },
+    { id: 'PRE-PRODUCTION', label: 'Pre-Production', icon: 'fa-map',       topics: ['Pre-producción'] },
+    { id: 'PRODUCTION',     label: 'Production',     icon: 'fa-gears',     topics: ['Tools / Automation', 'Arte / Assets', 'Programación / Engine'] },
+    { id: 'ALPHA',          label: 'Alpha',          icon: 'fa-flask',     topics: ['QA / Testing'], milestoneFilter: 'M1' },
+    { id: 'BETA',           label: 'Beta',           icon: 'fa-bug',       topics: ['QA / Testing'], milestoneFilter: 'M2' },
+    { id: 'GOLD',           label: 'Gold',           icon: 'fa-compact-disc', topics: ['Build / Deploy'] },
+    { id: 'SHIPPED',        label: 'Shipped',        icon: 'fa-truck-fast', topics: ['Post-launch'] }
+  ];
+
+  STAGES.forEach(stage => {
+    const stageTasks = currentTasks.filter(t =>
+      stage.topics.includes(t.tema_principal) &&
+      (!stage.milestoneFilter || t.milestone === stage.milestoneFilter)
+    );
+
+    const total = stageTasks.length;
+    const ok = stageTasks.filter(t => t.estado === 'OK').length;
+    const pct = total > 0 ? (ok / total) * 100 : 0;
+
+    const assignees = [...new Set(stageTasks.map(t => t.resuelto_por || t.detectado_por).filter(Boolean))];
+
+    const colorClass = pct < 30 ? 'bg-red-500' : pct < 70 ? 'bg-amber-500' : 'bg-emerald-500';
+
+    const card = document.createElement('div');
+    card.className = 'min-w-[240px] bg-slate-950 border border-slate-800 rounded-xl p-4 flex flex-col gap-3 group hover:border-slate-600 transition-all cursor-pointer';
+    card.onclick = () => {
+        // Filter kanban by topics
+        activeFilter = null; // Clear member filter
+        // Custom logic to filter kanban by stage topics (not implemented as global state yet, but can be done)
+        showToast(`Filtrando por etapa: ${stage.label}`, 'info');
+    };
+
+    card.innerHTML = `
+      <div class="flex justify-between items-start">
+        <div class="flex items-center gap-2">
+            <i class="fa-solid ${stage.icon} text-indigo-400"></i>
+            <span class="text-sm font-bold">${stage.label}</span>
+        </div>
+        <span class="text-[10px] font-mono text-slate-500">${ok}/${total}</span>
+      </div>
+      <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+        <div class="h-full ${colorClass} transition-all duration-1000" style="width: ${pct}%"></div>
+      </div>
+      <div class="flex justify-between items-center">
+        <div class="flex -space-x-1.5">
+            ${assignees.slice(0, 4).map(name => `<img src="https://github.com/${currentProfiles?.members[name]?.handle || 'ghost'}.png" class="w-5 h-5 rounded-full border border-slate-900" title="${name}">`).join('')}
+            ${assignees.length > 4 ? `<div class="w-5 h-5 rounded-full bg-slate-800 border border-slate-900 flex items-center justify-center text-[8px] font-bold">+${assignees.length - 4}</div>` : ''}
+        </div>
+        <span class="text-[10px] font-bold text-slate-400">${pct.toFixed(0)}%</span>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function renderMilestoneBurndownChart() {
+  const ctx = document.getElementById('milestone-burndown-chart').getContext('2d');
+  if (!ctx || !currentBudget || !currentTasks) return;
+
+  const milestoneId = currentBudget.burnout?.current_milestone || 'M1';
+  const mil = currentBudget.burnout?.milestones?.find(m => m.id === milestoneId);
+  if (!mil) return;
+
+  const tasks = currentTasks.filter(t => t.milestone === milestoneId && t.estado !== 'Obsolete');
+  const totalTasks = tasks.length;
+
+  const start = new Date(mil.date_start);
+  const end = new Date(mil.date_end);
+  const daysTotal = Math.ceil((end - start) / 86400000);
+
+  const labels = [];
+  const idealData = [];
+  const actualData = [];
+
+  const today = new Date();
+  const daysElapsed = Math.ceil((today - start) / 86400000);
+
+  for (let i = 0; i <= daysTotal; i++) {
+    const d = new Date(start);
+    d.setDate(d.getDate() + i);
+    labels.push(d.toISOString().split('T')[0]);
+
+    // Ideal: linear from totalTasks to 0
+    idealData.push(totalTasks - (totalTasks * (i / daysTotal)));
+
+    // Actual: count tasks completed after this date or not yet completed
+    if (i <= daysElapsed) {
+        const remainingAtThisDay = tasks.filter(t => {
+            if (t.estado !== 'OK') return true;
+            // Assuming 'fecha' is the completion date if estado is 'OK'
+            return new Date(t.fecha) > d;
+        }).length;
+        actualData.push(remainingAtThisDay);
+    }
+  }
+
+  if (window.__burndownChart__) window.__burndownChart__.destroy();
+  window.__burndownChart__ = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        { label: 'Ideal', data: idealData, borderColor: 'rgba(148,163,184,0.5)', borderDash: [5, 5], fill: false, tension: 0, pointRadius: 0 },
+        { label: 'Actual', data: actualData, borderColor: '#6366f1', backgroundColor: 'rgba(99, 102, 241, 0.1)', fill: true, tension: 0.1 }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { labels: { color: '#e2e8f0' } }
+      },
+      scales: {
+        x: { ticks: { color: '#94a3b8', maxTicksLimit: 7 }, grid: { color: 'rgba(148,163,184,0.1)' } },
+        y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(148,163,184,0.1)' }, beginAtZero: true }
+      }
+    }
+  });
+}
+
+function renderDependencyGraph() {
+  const container = document.getElementById('dependency-graph-container');
+  if (!container) return;
+
+  const milestoneId = currentBudget?.burnout?.current_milestone || 'M1';
+  const tasks = currentTasks.filter(t => t.milestone === milestoneId && t.estado !== 'Obsolete');
+
+  const nodes = [];
+  const edges = [];
+
+  tasks.forEach(t => {
+    const blockedBy = t.comentario?.match(/#BLOCKED_BY:(\d+)/);
+    const blocks = t.comentario?.match(/#BLOCKS:(\d+)/);
+
+    if (blockedBy || blocks) {
+      nodes.push(t);
+      if (blockedBy) edges.push({ from: parseInt(blockedBy[1]), to: t.id, type: 'blocked_by' });
+      if (blocks) edges.push({ from: t.id, to: parseInt(blocks[1]), type: 'blocks' });
+    }
+  });
+
+  if (nodes.length === 0) {
+    container.innerHTML = '<div class="h-full flex items-center justify-center text-slate-500 italic text-sm">No dependencies found in this milestone.</div>';
+    return;
+  }
+
+  // Deduplicate nodes
+  const uniqueNodes = [...new Map(nodes.map(n => [n.id, n])).values()];
+
+  // Arrange in columns by state
+  const columns = { Pending: [], Working: [], Fixed: [], OK: [] };
+  uniqueNodes.forEach(n => {
+    const col = n.estado === 'Pending' || n.estado === 'ToDo' || n.estado === null ? 'Pending' :
+                n.estado === 'Working' || n.estado === 'KO' ? 'Working' :
+                n.estado === 'Fixed' || n.estado === '?' ? 'Fixed' : 'OK';
+    columns[col].push(n);
+  });
+
+  const COL_WIDTH = 200;
+  const ROW_HEIGHT = 80;
+  const positions = new Map();
+
+  let svgWidth = Object.keys(columns).length * COL_WIDTH;
+  let maxRow = Math.max(...Object.values(columns).map(c => c.length));
+  let svgHeight = maxRow * ROW_HEIGHT + 40;
+
+  let svgHtml = `<svg width="100%" height="${svgHeight}" viewBox="0 0 ${svgWidth} ${svgHeight}" xmlns="http://www.w3.org/2000/svg">`;
+
+  // Draw edges first
+  edges.forEach(e => {
+    // Find positions (we'll calculate them next)
+  });
+
+  let colIdx = 0;
+  for (const [colName, colTasks] of Object.entries(columns)) {
+    colTasks.forEach((t, rowIdx) => {
+      const x = colIdx * COL_WIDTH + 20;
+      const y = rowIdx * ROW_HEIGHT + 40;
+      positions.set(t.id, { x, y });
+    });
+    colIdx++;
+  }
+
+  edges.forEach(e => {
+    const start = positions.get(e.from);
+    const end = positions.get(e.to);
+    if (start && end) {
+      const color = e.type === 'blocked_by' ? '#f87171' : '#fbbf24';
+      const dash = e.type === 'blocked_by' ? '5,5' : '';
+      svgHtml += `<path d="M ${start.x + 150} ${start.y + 20} L ${end.x} ${end.y + 20}" stroke="${color}" stroke-width="2" fill="none" stroke-dasharray="${dash}" marker-end="url(#arrowhead)"/>`;
+    }
+  });
+
+  positions.forEach((pos, id) => {
+    const t = uniqueNodes.find(n => n.id === id);
+    const color = t.estado === 'OK' ? '#10b981' : '#6366f1';
+    svgHtml += `
+      <g class="cursor-pointer" onclick="scrollToTask(${id})">
+        <rect x="${pos.x}" y="${pos.y}" width="150" height="40" rx="8" fill="#1e293b" stroke="${color}" stroke-width="1"/>
+        <text x="${pos.x + 10}" y="${pos.y + 25}" fill="#f1f5f9" font-size="10" font-family="monospace">#${id} ${t.descripcion.substring(0, 15)}...</text>
+      </g>
+    `;
+  });
+
+  svgHtml += `
+    <defs>
+      <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orientation="auto">
+        <polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8" />
+      </marker>
+    </defs>
+  </svg>`;
+
+  container.innerHTML = svgHtml;
+}
+
+function renderVelocityTrackerChart() {
+  const ctx = document.getElementById('velocity-tracker-chart').getContext('2d');
+  if (!ctx || !currentTasks) return;
+
+  // Group tasks by week
+  const createdByWeek = {};
+  const completedByWeek = {};
+
+  currentTasks.forEach(t => {
+    if (t.estado === 'Obsolete') return;
+
+    const weekC = getWeekNumber(new Date(t.fecha_creacion || t.fecha)); // Fallback to fecha
+    createdByWeek[weekC] = (createdByWeek[weekC] || 0) + 1;
+
+    if (t.estado === 'OK') {
+        const weekO = getWeekNumber(new Date(t.fecha));
+        completedByWeek[weekO] = (completedByWeek[weekO] || 0) + 1;
+    }
+  });
+
+  const weeks = [...new Set([...Object.keys(createdByWeek), ...Object.keys(completedByWeek)])].sort();
+  const createdData = weeks.map(w => createdByWeek[w] || 0);
+  const completedData = weeks.map(w => completedByWeek[w] || 0);
+  const netVelocity = weeks.map(w => (completedByWeek[w] || 0) - (createdByWeek[w] || 0));
+
+  if (window.__velocityChart__) window.__velocityChart__.destroy();
+  window.__velocityChart__ = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: weeks.map(w => `Semana ${w}`),
+      datasets: [
+        { label: 'Creadas', data: createdData, backgroundColor: 'rgba(248, 113, 113, 0.5)' },
+        { label: 'Completadas', data: completedData, backgroundColor: 'rgba(52, 211, 153, 0.5)' },
+        { label: 'Velocidad Neta', data: netVelocity, type: 'line', borderColor: '#facc15', tension: 0.3 }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: '#e2e8f0' } } },
+      scales: {
+        x: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(148,163,184,0.1)' } },
+        y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(148,163,184,0.1)' } }
+      }
+    }
+  });
+}
+
+function getWeekNumber(d) {
+  d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+}
+
 function renderTeamProfiles() {
   const grid = document.getElementById('team-profiles-grid');
   if (!grid || !currentProfiles) return;
@@ -418,9 +827,10 @@ function renderTeamProfiles() {
 
   Object.entries(currentProfiles.members).forEach(([name, profile]) => {
     const stats = memberStats[name] || { found: 0, fixed_ok: 0, support_ok: 0, score: 0 };
-    const isSelf = window.currentUser === profile.handle.toLowerCase();
+    const isSelf = window.currentUser === (profile.handle || '').toLowerCase();
     
     const card = document.createElement('div');
+    card.id = `profile-card-${name.toLowerCase()}`;
     card.className = `bg-slate-900 border ${isSelf ? 'border-emerald-500 ring-1 ring-emerald-500 pulse-emerald' : 'border-slate-800'} rounded-2xl overflow-hidden relative group transition-all`;
     card.dataset.member = name;
 
@@ -594,6 +1004,17 @@ function promptQAAssignment(taskId) {
 function toggleProfileEdit(memberName) {
   const overlay = document.getElementById(`edit-overlay-${memberName}`);
   if (overlay) overlay.classList.toggle('hidden');
+}
+
+function scrollToProfile(memberName) {
+  const card = document.getElementById(`profile-card-${memberName.toLowerCase()}`);
+  if (card) {
+    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    card.classList.add('ring-4', 'ring-indigo-500', 'ring-offset-4', 'ring-offset-slate-950');
+    setTimeout(() => {
+      card.classList.remove('ring-4', 'ring-indigo-500', 'ring-offset-4', 'ring-offset-slate-950');
+    }, 3000);
+  }
 }
 
 async function saveProfileEdit(memberName) {
