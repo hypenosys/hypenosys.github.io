@@ -15,6 +15,52 @@
   </div>
 </footer>
 
+<!-- Profile Editing Modal -->
+<div class="modal fade" id="profileModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content shadow-lg bg-dark text-white border-purple">
+            <div class="modal-header border-purple">
+                <h5 class="modal-title text-purple font-weight-bold">
+                    <i class="fas fa-user-edit mr-2"></i> EDITAR MI PERFIL
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="text-purple small font-weight-bold uppercase">Nombre Público</label>
+                            <input type="text" id="edit-profile-name" class="form-control bg-dark text-white border-purple">
+                        </div>
+                        <div class="form-group">
+                            <label class="text-purple small font-weight-bold uppercase">Rol en el Estudio</label>
+                            <input type="text" id="edit-profile-role" class="form-control bg-dark text-white border-purple">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="text-purple small font-weight-bold uppercase">Portfolio / Web Link</label>
+                            <input type="url" id="edit-profile-portfolio" class="form-control bg-dark text-white border-purple">
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label class="text-purple small font-weight-bold uppercase">Descripción / Bio</label>
+                            <textarea id="edit-profile-desc" class="form-control bg-dark text-white border-purple" rows="4"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-purple">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" id="btn-save-profile" class="btn btn-purple">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Settings Modal -->
 <div class="modal fade" id="settingsModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog" role="document">
