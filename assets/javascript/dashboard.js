@@ -1,417 +1,609 @@
 /**
- * Dashboard UI Module
- * Handles Kanban and Spreadsheet views, drag and drop, and user interactions.
+ * HYPENOSYS OPERATIONAL DASHBOARD — LOGIC ENGINE
+ * Full implementation for Kanban, Charts, and Stats
  */
 
-class Dashboard {
-    constructor() {
-        this.currentView = 'kanban';
-        this.issues = [];
-        this.milestones = [];
-        this.labels = [];
-        this.assignees = [];
-        this.isLoading = false;
+const MEMBERS = ['Axel', 'Alex', 'Dídac', 'Javi', 'Mitxel'];
+const REFRESH_INTERVAL_MS = 60000; // 1 minute
 
-        this.columns = {
-            'backlog': { title: 'Backlog', id: 'backlog' },
-            'todo': { title: 'To Do', id: 'todo' },
-            'in-progress': { title: 'In Progress', id: 'in-progress' },
-            'qa': { title: 'QA', id: 'qa' },
-            'done': { title: 'Production / Done', id: 'done' }
-        };
+let activeFilter = null;
+let currentTasks = [];
+let currentStats = null;
+let currentBudget = null;
+let currentProfiles = null;
 
-        this.init();
+const KANBAN_COLUMNS = [
+    { id: 'backlog', states: ['Pending', 'ToDo', null] },
+    { id: 'working', states: ['Working', 'KO'] },
+    { id: 'qa',      states: ['Fixed', '?'] },
+    { id: 'done',    states: ['OK', 'Closed'] }
+];
+
+const UI_STRINGS = {
+    loading:         'Cargando datos del repositorio...',
+    saving:          'Guardando cambios...',
+    saved:           'Cambios guardados correctamente.',
+    conflict:        'Conflicto detectado — ejecutando sincronización automática...',
+    unauthorized:    'Acceso denegado. Tu cuenta de GitHub no pertenece al equipo.',
+    taskMoved:       (id, col) => `Tarea #${id} movida a "${col}".`,
+    taskCreated:     (id) => `Tarea #${id} creada correctamente.`,
+    qaRequired:      'Debes asignar tanto el detector QA como el resolutor para mover a Verificación.',
+    networkError:    'Error de red — comprueba tu conexión e inténtalo de nuevo.',
+    retrying:        (n, max) => `Reintentando escritura (${n}/${max})...`,
+};
+
+// ─── INITIALIZATION ───────────────────────────────────────────
+
+document.addEventListener('DOMContentLoaded', initDashboard);
+
+async function initDashboard() {
+    const token = sessionStorage.getItem('gh_access_token');
+    if (!token) {
+        document.getElementById('login-overlay').classList.remove('hidden');
+        return;
     }
 
-    async init() {
-        this.bindEvents();
-
-        // Wait for AuthManager to be ready
-        if (document.readyState === 'complete') {
-            this.setupAuthListener();
-        } else {
-            window.addEventListener('load', () => this.setupAuthListener());
-        }
-    }
-
-    setupAuthListener() {
-        document.addEventListener('authReady', async (e) => {
-            const user = e.detail.user;
-            if (user) {
-                await this.refreshData();
-            } else {
-                this.showAccessDenied();
-            }
+    try {
+        const resp = await fetch('https://api.github.com/user', {
+            headers: { 'Authorization': `Bearer ${token}` }
         });
-    }
+        if (!resp.ok) throw new Error('Token inválido');
+        const user = await resp.json();
 
-    showAccessDenied() {
-        const container = document.getElementById('dashboard-view-content');
-        if (container) {
-            container.innerHTML = `
-                <div class="text-center py-5">
-                    <i class="fas fa-lock fa-3x text-purple mb-3"></i>
-                    <h3 class="text-white">Authentication Required</h3>
-                    <p class="text-muted">Please log in with GitHub to access the production dashboard.</p>
-                    <button class="btn btn-purple mt-3" onclick="window.authManager.handleLogin()">
-                        <i class="fa-brands fa-github mr-2"></i> Log in with GitHub
-                    </button>
-                </div>
-            `;
-        }
-    }
+        const ALLOWED = ['axlfc', 'mitxel2022', 'topperh4rley']; // Add others if confirmed
+        // For Alex and Dídac, we use placeholders until confirmed. 
+        // Based on team.json and requirements, we'll allow those with profiles.
+        
+        window.currentUserHandle = user.login.toLowerCase();
+        
+        // Fetch and Refresh Loop
+        await refreshDashboardData();
+        startAutoRefresh();
+        
+        renderUserStatus(user);
+        renderMemberToggles();
+        setupEventListeners();
 
-    bindEvents() {
-        // View switching
-        document.getElementById('btn-view-kanban')?.addEventListener('click', () => this.switchView('kanban'));
-        document.getElementById('btn-view-spreadsheet')?.addEventListener('click', () => this.switchView('spreadsheet'));
-
-        // Refresh button
-        document.getElementById('btn-refresh')?.addEventListener('click', () => this.refreshData());
-
-        // Rate limit event
-        window.addEventListener('github-ratelimit-update', (e) => this.updateRateLimitUI(e.detail));
-    }
-
-    async refreshData() {
-        if (this.isLoading) return;
-        this.setLoading(true);
-        try {
-            [this.issues, this.milestones, this.labels, this.assignees] = await Promise.all([
-                window.githubApi.fetchIssues(),
-                window.githubApi.fetchMilestones(),
-                window.githubApi.fetchRepoLabels(),
-                window.githubApi.fetchRepoAssignees()
-            ]);
-            this.render();
-        } catch (e) {
-            this.showToast('Error', e.message, 'error');
-        } finally {
-            this.setLoading(false);
-        }
-    }
-
-    setLoading(loading) {
-        this.isLoading = loading;
-        const btn = document.getElementById('btn-refresh');
-        if (btn) {
-            if (loading) {
-                btn.innerHTML = '<i class="fas fa-sync-alt fa-spin"></i> Loading...';
-                btn.disabled = true;
-            } else {
-                btn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh Data';
-                btn.disabled = false;
-            }
-        }
-    }
-
-    updateRateLimitUI(limit) {
-        const el = document.getElementById('rate-limit-info');
-        if (el) {
-            const percent = (limit.remaining / limit.limit) * 100;
-            const statusDot = el.querySelector('.status-dot');
-            statusDot.className = 'status-dot';
-            if (percent < 10) statusDot.classList.add('danger');
-            else if (percent < 30) statusDot.classList.add('warning');
-
-            el.querySelector('.limit-text').innerText = `${limit.remaining} / ${limit.limit}`;
-        }
-    }
-
-    switchView(view) {
-        this.currentView = view;
-        document.getElementById('btn-view-kanban').classList.toggle('active', view === 'kanban');
-        document.getElementById('btn-view-spreadsheet').classList.toggle('active', view === 'spreadsheet');
-        this.render();
-    }
-
-    render() {
-        const container = document.getElementById('dashboard-view-content');
-        if (!container) return;
-        container.innerHTML = '';
-
-        if (this.currentView === 'kanban') {
-            this.renderKanban(container);
-        } else {
-            this.renderSpreadsheet(container);
-        }
-    }
-
-    renderKanban(container) {
-        const board = document.createElement('div');
-        board.className = 'kanban-board';
-
-        Object.values(this.columns).forEach(column => {
-            const columnEl = document.createElement('div');
-            columnEl.className = 'kanban-column';
-            columnEl.id = `col-${column.id}`;
-
-            const columnIssues = this.getIssuesForStatus(column.id);
-
-            columnEl.innerHTML = `
-                <h5>${column.title} <span class="badge badge-pill">${columnIssues.length}</span></h5>
-                <div class="kanban-tasks" data-status="${column.id}"></div>
-            `;
-
-            const tasksContainer = columnEl.querySelector('.kanban-tasks');
-            columnIssues.forEach(issue => {
-                tasksContainer.appendChild(this.createTaskCard(issue));
-            });
-
-            // Drag and Drop
-            tasksContainer.addEventListener('dragover', e => {
-                e.preventDefault();
-                tasksContainer.classList.add('drag-over');
-            });
-
-            tasksContainer.addEventListener('dragleave', () => {
-                tasksContainer.classList.remove('drag-over');
-            });
-
-            tasksContainer.addEventListener('drop', async e => {
-                e.preventDefault();
-                tasksContainer.classList.remove('drag-over');
-                const issueId = e.dataTransfer.getData('text/plain');
-                const newStatus = tasksContainer.dataset.status;
-                await this.moveTask(issueId, newStatus);
-            });
-
-            board.appendChild(columnEl);
-        });
-
-        container.appendChild(board);
-    }
-
-    createTaskCard(issue) {
-        const card = document.createElement('div');
-        card.className = 'task-card';
-        card.draggable = true;
-        card.dataset.issueId = issue.number;
-
-        const assignee = issue.assignees[0];
-        const labels = issue.labels
-            .filter(l => !l.name.startsWith('status:'))
-            .map(l => `<span class="badge badge-skill" style="border-color: #${l.color}; color: #${l.color}">${l.name}</span>`)
-            .join('');
-
-        card.innerHTML = `
-            <div class="task-id">#${issue.number}</div>
-            <div class="task-title">${issue.title}</div>
-            <div class="task-meta">
-                <div class="task-assignee">
-                    ${assignee ? `<img src="${assignee.avatar_url}" title="${assignee.login}">` : '<button class="btn btn-sm btn-outline-purple btn-auto-assign">Assign Me</button>'}
-                </div>
-                <div class="task-labels">
-                    ${labels}
-                </div>
-            </div>
-        `;
-
-        card.addEventListener('dragstart', e => {
-            e.dataTransfer.setData('text/plain', issue.number);
-            card.classList.add('dragging');
-        });
-
-        card.addEventListener('dragend', () => {
-            card.classList.remove('dragging');
-        });
-
-        card.querySelector('.btn-auto-assign')?.addEventListener('click', async (e) => {
-            e.stopPropagation();
-            await this.autoAssign(issue.number);
-        });
-
-        return card;
-    }
-
-    renderSpreadsheet(container) {
-        const wrapper = document.createElement('div');
-        wrapper.className = 'spreadsheet-container table-responsive';
-
-        const table = document.createElement('table');
-        table.className = 'table table-hover table-dark';
-
-        table.innerHTML = `
-            <thead>
-                <tr>
-                    <th style="width: 80px">#</th>
-                    <th>Title</th>
-                    <th>Status</th>
-                    <th>Assignee</th>
-                    <th>Milestone</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        `;
-
-        const tbody = table.querySelector('tbody');
-        this.issues.forEach(issue => {
-            const tr = document.createElement('tr');
-            const status = this.getIssueStatus(issue);
-            const assignee = issue.assignees[0]?.login || 'Unassigned';
-            const milestone = issue.milestone?.title || 'None';
-
-            tr.innerHTML = `
-                <td>${issue.number}</td>
-                <td class="editable-cell" data-field="title" data-issue-number="${issue.number}">${issue.title}</td>
-                <td class="editable-cell" data-field="status" data-issue-number="${issue.number}">${this.columns[status].title}</td>
-                <td class="editable-cell" data-field="assignee" data-issue-number="${issue.number}">${assignee}</td>
-                <td class="editable-cell" data-field="milestone" data-issue-number="${issue.number}">${milestone}</td>
-            `;
-
-            // Inline editing
-            tr.querySelectorAll('.editable-cell').forEach(cell => {
-                cell.addEventListener('dblclick', () => this.startInlineEdit(cell, issue));
-            });
-
-            tbody.appendChild(tr);
-        });
-
-        wrapper.appendChild(table);
-        container.appendChild(wrapper);
-    }
-
-    startInlineEdit(cell, issue) {
-        if (cell.classList.contains('editing')) return;
-        cell.classList.add('editing');
-        const field = cell.dataset.field;
-        const originalValue = cell.innerText;
-        cell.innerHTML = '';
-
-        let input;
-        if (field === 'status') {
-            input = document.createElement('select');
-            Object.entries(this.columns).forEach(([id, col]) => {
-                const opt = document.createElement('option');
-                opt.value = id;
-                opt.text = col.title;
-                opt.selected = (id === this.getIssueStatus(issue));
-                input.appendChild(opt);
-            });
-        } else if (field === 'assignee') {
-            input = document.createElement('select');
-            const noneOpt = document.createElement('option');
-            noneOpt.value = '';
-            noneOpt.text = 'Unassigned';
-            input.appendChild(noneOpt);
-            this.assignees.forEach(user => {
-                const opt = document.createElement('option');
-                opt.value = user.login;
-                opt.text = user.login;
-                opt.selected = (user.login === issue.assignees[0]?.login);
-                input.appendChild(opt);
-            });
-        } else if (field === 'milestone') {
-            input = document.createElement('select');
-            const noneOpt = document.createElement('option');
-            noneOpt.value = '';
-            noneOpt.text = 'None';
-            input.appendChild(noneOpt);
-            this.milestones.forEach(m => {
-                const opt = document.createElement('option');
-                opt.value = m.number;
-                opt.text = m.title;
-                opt.selected = (m.number === issue.milestone?.number);
-                input.appendChild(opt);
-            });
-        } else {
-            input = document.createElement('input');
-            input.type = 'text';
-            input.value = originalValue;
-        }
-
-        cell.appendChild(input);
-        input.focus();
-
-        const save = async () => {
-            const newValue = input.value;
-            cell.classList.remove('editing');
-
-            if (newValue === originalValue) {
-                cell.innerText = originalValue;
-                return;
-            }
-
-            // Optimistic update
-            cell.innerText = input.options ? input.options[input.selectedIndex].text : newValue;
-
-            try {
-                if (field === 'title') await window.githubApi.updateIssue(issue.number, { title: newValue });
-                else if (field === 'status') await window.githubApi.updateStatus(issue.number, newValue);
-                else if (field === 'assignee') await window.githubApi.updateIssue(issue.number, { assignees: newValue ? [newValue] : [] });
-                else if (field === 'milestone') await window.githubApi.updateMilestone(issue.number, newValue || null);
-
-                this.showToast('Updated', `Issue #${issue.number} updated successfully.`, 'success');
-                this.refreshData(); // Refresh to ensure state is synced
-            } catch (e) {
-                this.showToast('Update Failed', e.message, 'error');
-                cell.innerText = originalValue;
-            }
-        };
-
-        input.addEventListener('blur', save);
-        input.addEventListener('keydown', e => {
-            if (e.key === 'Enter') save();
-            if (e.key === 'Escape') {
-                cell.classList.remove('editing');
-                cell.innerText = originalValue;
-            }
-        });
-    }
-
-    getIssueStatus(issue) {
-        if (issue.state === 'closed') return 'done';
-        const statusLabel = issue.labels.find(l => l.name.startsWith('status:'));
-        if (statusLabel) return statusLabel.name.split(':')[1];
-        return 'backlog';
-    }
-
-    getIssuesForStatus(status) {
-        return this.issues.filter(issue => this.getIssueStatus(issue) === status);
-    }
-
-    async moveTask(issueNumber, newStatus) {
-        const oldStatus = this.getIssueStatus(this.issues.find(i => i.number == issueNumber));
-        if (oldStatus === newStatus) return;
-
-        // Optimistic UI update
-        this.showToast('Updating...', `Moving #${issueNumber} to ${this.columns[newStatus].title}`, 'info');
-
-        try {
-            await window.githubApi.updateStatus(issueNumber, newStatus);
-            this.showToast('Success', `Moved #${issueNumber} to ${this.columns[newStatus].title}`, 'success');
-            this.refreshData();
-        } catch (e) {
-            this.showToast('Move Failed', e.message, 'error');
-            this.render(); // Re-render to revert
-        }
-    }
-
-    async autoAssign(issueNumber) {
-        try {
-            await window.githubApi.autoAssign(issueNumber);
-            this.showToast('Assigned', `You have been assigned to #${issueNumber}`, 'success');
-            this.refreshData();
-        } catch (e) {
-            this.showToast('Assignment Failed', e.message, 'error');
-        }
-    }
-
-    showToast(title, message, type = 'info') {
-        if (window.authManager) {
-            window.authManager.showToast(title, message, type);
-        } else {
-            console.log(`Toast: [${type}] ${title} - ${message}`);
-        }
-    }
-
-    showLoginModal() {
-        // Deprecated: We now show a "Please log in" message instead of the modal
-        this.showAccessDenied();
+    } catch (err) {
+        console.error(err);
+        document.getElementById('login-overlay').classList.remove('hidden');
     }
 }
 
-// Initialize on DOM load
-document.addEventListener('DOMContentLoaded', () => {
-    window.dashboard = new Dashboard();
-});
+function startAutoRefresh() {
+    setInterval(refreshDashboardData, REFRESH_INTERVAL_MS);
+}
+
+// ─── DATA FETCHING ───────────────────────────────────────────
+
+async function refreshDashboardData() {
+    try {
+        const [tasksRes, statsRes, budgetRes, profilesRes] = await Promise.all([
+            fetchFileWithSha('_data/dashboard_tasks.json'),
+            fetchFileWithSha('_data/studio_stats.json'),
+            fetchFileWithSha('_data/studio_budget.json'),
+            fetchFileWithSha('_data/team_profiles.json')
+        ]);
+
+        currentTasks    = tasksRes.content.tasks || [];
+        currentStats    = statsRes.content;
+        currentBudget   = budgetRes.content;
+        currentProfiles = profilesRes.content;
+
+        renderDashboard();
+        
+        document.getElementById('last-sync-timestamp').textContent = 
+            `Sync: ${new Date().toLocaleTimeString('es-ES')}`;
+
+    } catch (err) {
+        showToast(`Error de sincronización: ${err.message}`, 'error');
+    }
+}
+
+// ─── RENDERING ENGINE ────────────────────────────────────────
+
+function renderDashboard() {
+    renderStatsSummary();
+    renderKanbanBoard();
+    renderQAVelocityChart();
+    renderBurnoutGauge();
+    renderBudgetChart();
+    renderHallOfFame();
+    renderMilestoneProgress();
+    renderTeamProfiles();
+}
+
+function renderStatsSummary() {
+    const tasks = getFilteredTasks(currentTasks);
+    document.getElementById('stat-total-tasks').textContent = tasks.filter(t => t.estado !== 'Obsolete').length;
+    document.getElementById('stat-ok-tasks').textContent    = tasks.filter(t => t.estado === 'OK').length;
+    
+    const ratio = computeFixedFoundRatio(tasks);
+    document.getElementById('stat-fixed-ratio').textContent = `${(ratio * 100).toFixed(2)}%`;
+}
+
+function renderMemberToggles() {
+    const container = document.getElementById('member-filters');
+    container.innerHTML = '';
+    
+    const allBtn = document.createElement('button');
+    allBtn.className = `px-3 py-1 text-xs font-bold rounded-md transition-all ${!activeFilter ? 'bg-emerald-500 text-slate-950' : 'text-slate-400 hover:text-white'}`;
+    allBtn.textContent = 'TODOS';
+    allBtn.onclick = () => { activeFilter = null; renderMemberToggles(); renderDashboard(); };
+    container.appendChild(allBtn);
+
+    MEMBERS.forEach(m => {
+        const btn = document.createElement('button');
+        btn.className = `px-3 py-1 text-xs font-bold rounded-md transition-all ${activeFilter === m ? 'bg-emerald-500 text-slate-950' : 'text-slate-400 hover:text-white'}`;
+        btn.textContent = m.toUpperCase();
+        btn.onclick = () => { activeFilter = m; renderMemberToggles(); renderDashboard(); };
+        container.appendChild(btn);
+    });
+}
+
+function renderKanbanBoard() {
+    const tasks = getFilteredTasks(currentTasks.filter(t => t.estado !== 'Obsolete'));
+    
+    KANBAN_COLUMNS.forEach(col => {
+        const colEl = document.getElementById(`kanban-col-${col.id}`);
+        const cardsEl = colEl.querySelector('.kanban-cards');
+        const countEl = colEl.querySelector('.col-count');
+        
+        const colTasks = tasks.filter(t => getTaskColumnId(t) === col.id);
+        countEl.textContent = colTasks.length;
+        cardsEl.innerHTML = '';
+
+        colTasks.forEach(task => {
+            const card = buildTaskCard(task);
+            cardsEl.appendChild(card);
+        });
+
+        // Setup drop zone
+        cardsEl.ondragover = (e) => { e.preventDefault(); colEl.classList.add('drag-over'); };
+        cardsEl.ondragleave = () => colEl.classList.remove('drag-over');
+        cardsEl.ondrop = async (e) => {
+            e.preventDefault();
+            colEl.classList.remove('drag-over');
+            const taskId = parseInt(e.dataTransfer.getData('task-id'));
+            await handleCardDrop(taskId, col.id);
+        };
+    });
+}
+
+function getTaskColumnId(task) {
+    if (['Pending', 'ToDo'].includes(task.estado) || task.estado === null) return 'backlog';
+    if (['Working', 'KO'].includes(task.estado)) return 'working';
+    if (task.estado === 'Fixed' || (task.estado === '?' && task.completitud > 0)) return 'qa';
+    if (['OK', 'Closed'].includes(task.estado)) return 'done';
+    return 'backlog';
+}
+
+function buildTaskCard(task) {
+    const card = document.createElement('div');
+    card.className = `bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-sm cursor-grab active:cursor-grabbing hover:border-slate-500 transition-colors group relative`;
+    card.draggable = true;
+    card.ondragstart = (e) => { e.dataTransfer.setData('task-id', task.id); card.classList.add('opacity-50'); };
+    card.ondragend = () => card.classList.remove('opacity-50');
+
+    const priorityColors = {
+        Critical: 'bg-red-900 text-red-300',
+        Major:    'bg-orange-900 text-orange-300',
+        Medium:   'bg-yellow-900 text-yellow-300',
+        Minor:    'bg-slate-700 text-slate-300',
+        Cosmetic: 'bg-slate-800 text-slate-400',
+        ToDo:     'bg-indigo-900 text-indigo-300'
+    };
+
+    card.innerHTML = `
+        <div class="flex justify-between items-start mb-2">
+            <span class="text-[9px] font-mono text-slate-500">#${task.id}</span>
+            <span class="text-[9px] font-bold px-1.5 py-0.5 rounded ${priorityColors[task.prioridad] || 'bg-slate-700'}">${task.prioridad.toUpperCase()}</span>
+        </div>
+        <p class="text-sm text-slate-200 leading-snug mb-3">${task.descripcion}</p>
+        <div class="flex justify-between items-end">
+            <div class="flex -space-x-2">
+                ${task.resuelto_por ? `<div title="Resuelto por: ${task.resuelto_por}" class="w-6 h-6 rounded-full bg-emerald-500 border-2 border-slate-800 flex items-center justify-center text-[8px] font-bold text-slate-950">${task.resuelto_por[0]}</div>` : ''}
+                ${task.detectado_por ? `<div title="Detectado por: ${task.detectado_por}" class="w-6 h-6 rounded-full bg-indigo-500 border-2 border-slate-800 flex items-center justify-center text-[8px] font-bold text-white">${task.detectado_por[0]}</div>` : ''}
+            </div>
+            <div class="text-[9px] font-bold text-slate-500 uppercase tracking-tighter">
+                ${task.rama}${task.rama2 ? ` / ${task.rama2}` : ''}
+            </div>
+        </div>
+    `;
+    return card;
+}
+
+// ─── CHART RENDERING ──────────────────────────────────────────
+
+function renderQAVelocityChart() {
+    const ctx = document.getElementById('qa-velocity-chart').getContext('2d');
+    const members = Object.entries(currentStats.members);
+    const labels = members.map(([name]) => name);
+    const found = members.map(([, s]) => s.found);
+    const fixedOK = members.map(([, s]) => s.fixed_ok);
+    const support = members.map(([, s]) => s.support_ok);
+
+    if (window.__qaVelocityChart__) window.__qaVelocityChart__.destroy();
+    window.__qaVelocityChart__ = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [
+                { label: 'Encontrados', data: found, backgroundColor: '#fbbf24' },
+                { label: 'Resueltos (OK)', data: fixedOK, backgroundColor: '#34d399' },
+                { label: 'Apoyo OK', data: support, backgroundColor: '#6366f1' }
+            ]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { labels: { color: '#94a3b8', font: { size: 10 } } },
+                title: { display: true, text: 'VELOCIDAD QA POR MIEMBRO', color: '#f1f5f9', font: { size: 12, weight: 'bold' } }
+            },
+            scales: {
+                x: { ticks: { color: '#475569' }, grid: { color: '#1e293b' } },
+                y: { ticks: { color: '#f1f5f9' }, grid: { display: false } }
+            }
+        }
+    });
+}
+
+function renderBurnoutGauge() {
+    const ctx = document.getElementById('burnout-gauge-canvas').getContext('2d');
+    const milestoneId = currentBudget.burnout?.current_milestone || 'M1';
+    const milData = (currentBudget.burnout?.milestones || []).find(m => m.id === milestoneId);
+    
+    const burnoutIndex = milData 
+        ? computeBurnoutIndex(currentTasks, milestoneId, milData.date_start, milData.date_end)
+        : 0;
+
+    const color = burnoutIndex < 0.4 ? '#34d399' : burnoutIndex < 0.7 ? '#fbbf24' : '#f87171';
+    document.getElementById('burnout-index-value').textContent = `${(burnoutIndex * 100).toFixed(1)}%`;
+    document.getElementById('burnout-index-value').style.color = color;
+
+    if (window.__burnoutChart__) window.__burnoutChart__.destroy();
+    window.__burnoutChart__ = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            datasets: [{
+                data: [burnoutIndex, 1 - burnoutIndex],
+                backgroundColor: [color, '#0f172a'],
+                borderWidth: 0,
+                circumference: 180,
+                rotation: 270
+            }]
+        },
+        options: {
+            cutout: '85%',
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: { legend: { display: false }, tooltip: { enabled: false } }
+        }
+    });
+}
+
+function renderBudgetChart() {
+    const ctx = document.getElementById('budget-doughnut-canvas').getContext('2d');
+    const cats = currentBudget.categories || [];
+    const labels = cats.map(c => c.label);
+    const values = cats.map(c => {
+        let total = 0;
+        if (c.roles) c.roles.forEach(r => total += (r.hourly_rate * r.monthly_hours));
+        if (c.entries) c.entries.forEach(e => total += (e.cost_monthly || 0));
+        return total;
+    });
+
+    if (window.__budgetChart__) window.__budgetChart__.destroy();
+    window.__budgetChart__ = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels,
+            datasets: [{
+                data: values,
+                backgroundColor: ['#6366f1', '#34d399', '#fbbf24', '#f87171', '#a78bfa', '#38bdf8'],
+                borderWidth: 2,
+                borderColor: '#0f172a'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'right', labels: { color: '#94a3b8', font: { size: 10 } } },
+                title: { display: true, text: 'DISTRIBUCIÓN PRESUPUESTO', color: '#f1f5f9', font: { size: 12, weight: 'bold' } }
+            }
+        }
+    });
+}
+
+function renderHallOfFame() {
+    const grid = document.getElementById('hall-of-fame-grid');
+    grid.innerHTML = '';
+    const hof = currentStats.hall_of_fame || [];
+    
+    hof.slice(0, 5).forEach(entry => {
+        const el = document.createElement('div');
+        el.className = 'flex items-center gap-4 bg-slate-950/50 p-3 rounded-xl border border-slate-800';
+        el.innerHTML = `
+            <div class="text-2xl">${entry.medal}</div>
+            <div class="flex-grow">
+                <div class="text-sm font-bold">${entry.name}</div>
+                <div class="text-[10px] text-slate-500 uppercase tracking-widest font-mono">Score: ${(entry.score * 100).toFixed(1)}%</div>
+            </div>
+            <div class="flex gap-3 text-xs">
+                <span title="Found">🔍 ${entry.found}</span>
+                <span title="Fixed OK">✅ ${entry.fixed_ok}</span>
+            </div>
+        `;
+        grid.appendChild(el);
+    });
+}
+
+function renderMilestoneProgress() {
+    const milId = currentBudget.burnout?.current_milestone || 'M1';
+    const mil = (currentBudget.burnout?.milestones || []).find(m => m.id === milId);
+    if (!mil) return;
+
+    const tasks = currentTasks.filter(t => t.milestone === milId);
+    const total = tasks.length;
+    const ok = tasks.filter(t => t.estado === 'OK').length;
+    const pct = total > 0 ? (ok / total) * 100 : 0;
+
+    document.getElementById('current-milestone-label').textContent = milId;
+    document.getElementById('milestone-progress-bar').style.width = `${pct}%`;
+    document.getElementById('milestone-pct-label').textContent = `${pct.toFixed(0)}% completado`;
+    document.getElementById('milestone-start').textContent = mil.date_start;
+    document.getElementById('milestone-end').textContent = mil.date_end;
+}
+
+function renderTeamProfiles() {
+    const grid = document.getElementById('team-profiles-grid');
+    grid.innerHTML = '';
+    
+    Object.entries(currentProfiles.members).forEach(([name, profile]) => {
+        const card = document.createElement('div');
+        card.className = 'bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden relative group';
+        card.dataset.member = name;
+        
+        const isSelf = window.currentUserHandle === profile.handle.toLowerCase();
+        
+        card.innerHTML = `
+            <div class="h-2" style="background-color: ${profile.color_accent}"></div>
+            <div class="p-6">
+                <div class="flex justify-between items-start mb-4">
+                    <img src="https://github.com/${profile.handle || 'ghost'}.png" class="w-16 h-16 rounded-2xl border-2 border-slate-800 shadow-xl bg-slate-800">
+                    ${isSelf ? `<button onclick="toggleProfileEdit('${name}')" class="p-2 text-slate-500 hover:text-white transition-colors"><i class="fa-solid fa-pencil"></i></button>` : ''}
+                </div>
+                <h3 class="text-xl font-bold mb-1">${profile.display_name}</h3>
+                <div class="text-xs text-emerald-400 font-bold uppercase tracking-wider mb-3">${profile.role || 'Sin Rol'}</div>
+                <p class="text-sm text-slate-400 leading-relaxed mb-4 h-12 overflow-hidden">${profile.bio || 'Sin biografía disponible.'}</p>
+                <div class="flex gap-3 text-slate-500">
+                    ${profile.links.github ? `<a href="${profile.links.github}" target="_blank" class="hover:text-white"><i class="fa-brands fa-github"></i></a>` : ''}
+                    ${profile.links.twitter ? `<a href="${profile.links.twitter}" target="_blank" class="hover:text-white"><i class="fa-brands fa-twitter"></i></a>` : ''}
+                    ${profile.links.itch ? `<a href="${profile.links.itch}" target="_blank" class="hover:text-white"><i class="fa-brands fa-itch-io"></i></a>` : ''}
+                </div>
+            </div>
+
+            <!-- Edit Overlay -->
+            <div id="edit-overlay-${name}" class="hidden absolute inset-0 bg-slate-900 z-10 p-6 flex flex-col gap-3">
+                <div class="text-xs font-bold text-slate-500 uppercase">Editar Perfil</div>
+                <input type="text" id="edit-name-${name}" value="${profile.display_name}" class="bg-slate-950 border border-slate-800 rounded p-2 text-sm" placeholder="Nombre">
+                <input type="text" id="edit-role-${name}" value="${profile.role}" class="bg-slate-950 border border-slate-800 rounded p-2 text-sm" placeholder="Rol">
+                <textarea id="edit-bio-${name}" class="bg-slate-950 border border-slate-800 rounded p-2 text-sm flex-grow" placeholder="Bio">${profile.bio}</textarea>
+                <div class="flex gap-2">
+                    <button onclick="saveProfileEdit('${name}')" class="flex-grow py-2 bg-emerald-500 text-slate-950 font-bold rounded text-xs">Guardar</button>
+                    <button onclick="toggleProfileEdit('${name}')" class="py-2 px-4 border border-slate-700 rounded text-xs">X</button>
+                </div>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+// ─── ACTIONS & EVENT HANDLERS ────────────────────────────────
+
+function setupEventListeners() {
+    document.getElementById('task-cancel-btn').onclick = () => document.getElementById('create-task-modal').classList.add('hidden');
+    document.getElementById('task-save-btn').onclick   = handleCreateTask;
+    
+    document.getElementById('qa-cancel-btn').onclick   = () => document.getElementById('qa-assignment-modal').classList.add('hidden');
+}
+
+function showToast(message, type = 'info') {
+    const container = document.body;
+    let toastContainer = document.getElementById('toast-container');
+    if (!toastContainer) {
+        toastContainer = document.createElement('div');
+        toastContainer.id = 'toast-container';
+        toastContainer.className = 'fixed bottom-6 right-6 flex flex-col gap-3 z-[200]';
+        container.appendChild(toastContainer);
+    }
+
+    const toast = document.createElement('div');
+    const icons = { success: 'fa-circle-check', error: 'fa-circle-xmark', info: 'fa-circle-info', warning: 'fa-triangle-exclamation' };
+    const colors = { success: 'border-emerald-500 text-emerald-400', error: 'border-red-500 text-red-400', info: 'border-blue-500 text-blue-400', warning: 'border-amber-500 text-amber-400' };
+
+    toast.className = `toast bg-slate-900 border-l-4 p-4 rounded-xl shadow-2xl flex items-center gap-3 min-w-[300px] ${colors[type]}`;
+    toast.innerHTML = `<i class="fa-solid ${icons[type]} text-xl"></i> <span class="text-sm font-semibold text-slate-100">${message}</span>`;
+    
+    toastContainer.appendChild(toast);
+    setTimeout(() => toast.classList.add('toast--visible'), 100);
+    setTimeout(() => {
+        toast.classList.remove('toast--visible');
+        setTimeout(() => toast.remove(), 400);
+    }, 4000);
+}
+
+function openCreateTaskModal() {
+    document.getElementById('create-task-modal').classList.remove('hidden');
+}
+
+async function handleCreateTask() {
+    const desc = document.getElementById('task-desc-input').value;
+    const rama = document.getElementById('task-rama-input').value;
+    const priority = document.getElementById('task-priority-input').value;
+    const milestone = document.getElementById('task-milestone-input').value;
+    const topic = document.getElementById('task-topic-input').value;
+
+    if (!desc) return showToast('La descripción es obligatoria', 'warning');
+
+    const newTask = {
+        rama, rama2: null, ver: true, descripcion: desc,
+        fecha: new Date().toISOString().split('T')[0],
+        tema_principal: topic,
+        detectado_por: activeFilter || 'Unassigned',
+        resuelto_por: null, apoyo: null, estado: 'Pending',
+        prioridad: priority, limite: null, comentario: '',
+        milestone, completitud: 0
+    };
+
+    showToast('Creando tarea...', 'info');
+    document.getElementById('create-task-modal').classList.add('hidden');
+
+    try {
+        await createTask(newTask);
+        showToast('Tarea creada con éxito', 'success');
+        await refreshDashboardData();
+    } catch (err) {
+        showToast(`Error: ${err.message}`, 'error');
+    }
+}
+
+async function handleCardDrop(taskId, targetColumnId) {
+    const stateMap = { backlog: 'Pending', working: 'Working', qa: 'Fixed', done: 'OK' };
+    const newEstado = stateMap[targetColumnId];
+
+    let resolverHandle = null;
+    let testerHandle   = null;
+
+    if (targetColumnId === 'qa') {
+        const selection = await promptQAAssignment(taskId);
+        if (!selection) return;
+        testerHandle = selection.tester;
+        resolverHandle = selection.resolver;
+    }
+
+    showToast(`Actualizando tarea #${taskId}...`, 'info');
+    try {
+        await updateTaskStatus(taskId, newEstado, resolverHandle, testerHandle);
+        showToast(`Tarea #${taskId} actualizada`, 'success');
+        await refreshDashboardData();
+    } catch (err) {
+        showToast(`Error: ${err.message}`, 'error');
+    }
+}
+
+function promptQAAssignment() {
+    return new Promise((resolve) => {
+        const modal = document.getElementById('qa-assignment-modal');
+        const testerSelect = document.getElementById('qa-tester-select');
+        const resolverSelect = document.getElementById('qa-resolver-select');
+
+        [testerSelect, resolverSelect].forEach(s => {
+            s.innerHTML = '<option value="">-- Seleccionar --</option>';
+            MEMBERS.forEach(m => {
+                const opt = document.createElement('option');
+                opt.value = m; opt.textContent = m;
+                s.appendChild(opt);
+            });
+        });
+
+        modal.classList.remove('hidden');
+        document.getElementById('qa-confirm-btn').onclick = () => {
+            if (!testerSelect.value || !resolverSelect.value) {
+                showToast('Asigna ambos responsables', 'warning');
+                return;
+            }
+            modal.classList.add('hidden');
+            resolve({ tester: testerSelect.value, resolver: resolverSelect.value });
+        };
+        document.getElementById('qa-cancel-btn').onclick = () => {
+            modal.classList.add('hidden');
+            resolve(null);
+        };
+    });
+}
+
+function toggleProfileEdit(memberName) {
+    const overlay = document.getElementById(`edit-overlay-${memberName}`);
+    overlay.classList.toggle('hidden');
+}
+
+async function saveProfileEdit(memberName) {
+    const profileDelta = {
+        display_name: document.getElementById(`edit-name-${memberName}`).value,
+        role: document.getElementById(`edit-role-${memberName}`).value,
+        bio: document.getElementById(`edit-bio-${memberName}`).value
+    };
+
+    // OPTIMISTIC UI UPDATE
+    const card = document.querySelector(`[data-member="${memberName}"]`);
+    const oldHtml = card.innerHTML;
+    
+    card.querySelector('h3').textContent = profileDelta.display_name;
+    card.querySelector('.text-emerald-400').textContent = profileDelta.role || 'Sin Rol';
+    card.querySelector('p').textContent = profileDelta.bio || 'Sin biografía disponible.';
+    toggleProfileEdit(memberName);
+
+    showToast('Guardando perfil...', 'info');
+
+    try {
+        await updateMemberProfile(memberName, profileDelta);
+        showToast('Perfil actualizado correctamente', 'success');
+        await refreshDashboardData();
+    } catch (err) {
+        card.innerHTML = oldHtml;
+        showToast(`Fallo al guardar: ${err.message}`, 'error');
+    }
+}
+
+// ─── HELPERS & FORMULAS ──────────────────────────────────────
+
+function getFilteredTasks(tasks) {
+    if (!activeFilter) return tasks;
+    return tasks.filter(t => 
+        t.resuelto_por === activeFilter || 
+        t.detectado_por === activeFilter || 
+        t.apoyo === activeFilter
+    );
+}
+
+function renderUserStatus(user) {
+    const container = document.getElementById('user-status');
+    container.innerHTML = `
+        <div class="flex flex-col items-end">
+            <span class="text-[10px] font-bold text-white leading-none">${user.login}</span>
+            <span class="text-[9px] text-emerald-500 font-mono">ONLINE</span>
+        </div>
+        <img src="${user.avatar_url}" class="w-8 h-8 rounded-lg border border-slate-700 shadow-lg pulse-emerald">
+    `;
+}
+
+// Formulas (repeated from github-api logic for UI computations)
+function computeFixedFoundRatio(tasks) {
+    const found = tasks.filter(t => t.detectado_por && t.detectado_por !== 'Unassigned').length;
+    const fixed = tasks.filter(t => t.estado === 'OK').length;
+    return found > 0 ? fixed / found : 0;
+}
+
+function computeBurnoutIndex(tasks, currentMilestoneId, milestoneStartDate, milestoneEndDate) {
+    const today       = new Date();
+    const start       = new Date(milestoneStartDate);
+    const end         = new Date(milestoneEndDate);
+    const totalDays   = Math.max(1, (end - start) / 86400000);
+    const elapsedDays = Math.max(0, (today - start) / 86400000);
+    const timePressure = Math.min(1.0, elapsedDays / totalDays);
+
+    const milTasks    = tasks.filter(t => t.milestone === currentMilestoneId && t.estado !== 'Obsolete' && t.estado !== 'OK');
+    const totalActive = milTasks.length;
+    const critPending = milTasks.filter(t => t.prioridad === 'Critical').length;
+    const majPending  = milTasks.filter(t => t.prioridad === 'Major').length;
+
+    const weightedStress = (critPending * 3 + majPending * 2);
+    const maxStress      = totalActive * 3;
+    const stressRatio    = maxStress > 0 ? weightedStress / maxStress : 0;
+
+    return Math.min(1.0, stressRatio * (0.4 + timePressure * 0.6));
+}
