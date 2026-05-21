@@ -7,6 +7,7 @@ const MEMBERS = ['Axel', 'Alex', 'Dídac', 'Javi', 'Mitxel'];
 const REFRESH_INTERVAL_MS = 30000; // 30 seconds
 
 let activeFilter = null;
+let activeStageFilter = null;
 let currentTasks = [];
 let currentStats = null;
 let currentBudget = null;
@@ -63,8 +64,12 @@ async function handleDOMContentLoaded() {
       });
 
       const data = await resp.json();
-      if (data.access_token) {
-        sessionStorage.setItem('gh_access_token', data.access_token.trim());
+      console.log('[Gatekeeper Response]', JSON.stringify(data));
+
+      const token = data.access_token || data.token;
+
+      if (token) {
+        sessionStorage.setItem('gh_access_token', token.trim());
         window.history.replaceState({}, document.title, window.location.pathname);
         loginOverlay.classList.add('hidden');
         loginOverlay.innerHTML = originalOverlayHTML;
@@ -201,10 +206,14 @@ function renderMemberToggles() {
 
   const allBtn = document.createElement('button');
   allBtn.textContent = '👥 Todos';
-  allBtn.className = activeFilter === null
+  allBtn.className = (activeFilter === null && activeStageFilter === null)
     ? 'px-3 py-1 text-xs font-bold rounded-md bg-emerald-500 text-slate-950 transition-all'
     : 'px-3 py-1 text-xs font-bold rounded-md text-slate-400 hover:text-white transition-all';
-  allBtn.addEventListener('click', () => { activeFilter = null; renderDashboard(); });
+  allBtn.addEventListener('click', () => {
+    activeFilter = null;
+    activeStageFilter = null;
+    renderDashboard();
+  });
   container.appendChild(allBtn);
 
   for (const member of MEMBERS) {
@@ -574,9 +583,9 @@ function renderPipelineSwimlanes() {
     const card = document.createElement('div');
     card.className = 'min-w-[240px] bg-slate-950 border border-slate-800 rounded-xl p-4 flex flex-col gap-3 group hover:border-slate-600 transition-all cursor-pointer';
     card.onclick = () => {
-        // Filter kanban by topics
-        activeFilter = null; // Clear member filter
-        // Custom logic to filter kanban by stage topics (not implemented as global state yet, but can be done)
+        activeFilter = null;
+        activeStageFilter = stage;
+        renderDashboard();
         showToast(`Filtrando por etapa: ${stage.label}`, 'info');
     };
 
@@ -715,11 +724,6 @@ function renderDependencyGraph() {
   let svgHeight = maxRow * ROW_HEIGHT + 40;
 
   let svgHtml = `<svg width="100%" height="${svgHeight}" viewBox="0 0 ${svgWidth} ${svgHeight}" xmlns="http://www.w3.org/2000/svg">`;
-
-  // Draw edges first
-  edges.forEach(e => {
-    // Find positions (we'll calculate them next)
-  });
 
   let colIdx = 0;
   for (const [colName, colTasks] of Object.entries(columns)) {
@@ -1039,12 +1043,24 @@ async function saveProfileEdit(memberName) {
 // ─── HELPERS ──────────────────────────────────────────────────
 
 function getFilteredTasks(tasks) {
-  if (!activeFilter) return tasks;
-  return tasks.filter(t =>
-    t.resuelto_por === activeFilter ||
-    t.detectado_por === activeFilter ||
-    t.apoyo === activeFilter
-  );
+  let filtered = tasks;
+
+  if (activeFilter) {
+    filtered = filtered.filter(t =>
+      t.resuelto_por === activeFilter ||
+      t.detectado_por === activeFilter ||
+      t.apoyo === activeFilter
+    );
+  }
+
+  if (activeStageFilter) {
+    filtered = filtered.filter(t =>
+      activeStageFilter.topics.includes(t.tema_principal) &&
+      (!activeStageFilter.milestoneFilter || t.milestone === activeStageFilter.milestoneFilter)
+    );
+  }
+
+  return filtered;
 }
 
 function renderUserStatus(user) {
