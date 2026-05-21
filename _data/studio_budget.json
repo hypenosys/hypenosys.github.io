@@ -1,0 +1,73 @@
+{
+  "project": "hypenosys",
+  "currency": "EUR",
+  "product_price": 0,
+  "milestones": [
+    { "id": "M1", "label": "Milestone 1", "income": 0, "date": "2025-01-01" }
+  ],
+  "categories": [
+    {
+      "id": "labor_leadership",
+      "label": "Liderazgo",
+      "roles": [
+        { "title": "Creative Lead / Director",  "hourly_rate": 49.4, "monthly_hours": 180 },
+        { "title": "Producer",                  "hourly_rate": 39.4, "monthly_hours": 180 }
+      ]
+    },
+    {
+      "id": "labor_code",
+      "label": "Programación",
+      "roles": [
+        { "title": "Technical Director", "hourly_rate": 39.4, "monthly_hours": 180 },
+        { "title": "Coder #2",           "hourly_rate": 29.4, "monthly_hours": 180 }
+      ]
+    },
+    {
+      "id": "labor_art",
+      "label": "Arte",
+      "roles": [
+        { "title": "Art Director",   "hourly_rate": 32.0, "monthly_hours": 180 },
+        { "title": "Concept Artist", "hourly_rate": 24.4, "monthly_hours": 180 }
+      ]
+    },
+    {
+      "id": "saas_ops",
+      "label": "Software / SaaS / Herramientas",
+      "entries": [
+        { "tool": "GitHub", "cost_monthly": 0, "notes": "Free tier" },
+        { "tool": "Perforce/SVN", "cost_monthly": 0, "notes": "" }
+      ]
+    },
+    {
+      "id": "ga",
+      "label": "G&A",
+      "entries": [
+        { "name": "Legal",   "cost_monthly": 0 },
+        { "name": "Misc",    "cost_monthly": 0 },
+        { "name": "Travel",  "cost_monthly": 0 }
+      ]
+    }
+  ],
+  "monthly_records": [],
+  "burnout": {
+    "milestones": [
+      {
+        "id": "M1",
+        "weeks": 7,
+        "days": 35,
+        "hours": 280,
+        "tasks_total": 0,
+        "tasks_checked_ratio": 0.0,
+        "qa_solved": 0,
+        "date_start": "2025-01-01",
+        "date_end": "2025-02-15",
+        "tasks_per_hour": 0.0,
+        "qa_solved_pct": 0.0,
+        "error_rate": 0.0
+      }
+    ],
+    "current_milestone": "M1",
+    "elapsed_days": 0,
+    "burnout_index": 0.0
+  }
+}
