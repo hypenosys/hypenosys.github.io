@@ -12,6 +12,7 @@ class AuthManager {
         this.bindEvents();
         await this.handleOAuthCallback();
         await this.checkAuthState();
+        document.dispatchEvent(new CustomEvent('authReady', { detail: { user: window.githubApi.user } }));
     }
 
     bindEvents() {
@@ -67,6 +68,8 @@ class AuthManager {
 
                 if (data.access_token) {
                     window.githubApi.setToken(data.access_token);
+                    const user = await window.githubApi.validateToken();
+                    this.updateHeaderUI(user);
                     this.showToast('Éxito', 'Sesión iniciada correctamente.', 'success');
                 } else {
                     throw new Error('No se recibió token del gatekeeper');
