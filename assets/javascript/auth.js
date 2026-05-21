@@ -4,7 +4,7 @@
 
 class AuthManager {
     constructor() {
-        this.clientId = 'YOUR_CLIENT_ID'; // Placeholder for Client ID
+        this.clientId = 'Ov23liAVwbXNtvhkHJQe'; // Placeholder for Client ID
         this.init();
     }
 
