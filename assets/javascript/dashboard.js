@@ -25,12 +25,20 @@ class Dashboard {
 
     async init() {
         this.bindEvents();
-        const user = await window.githubApi.validateToken();
-        if (user) {
-            this.updateUserUI(user);
-            await this.refreshData();
-        } else {
-            this.showLoginModal();
+        try {
+            const user = await window.githubApi.validateToken();
+            if (user) {
+                await this.refreshData();
+            } else {
+                this.showLoginModal();
+            }
+        } catch (e) {
+            // Error handling is mostly handled by auth.js globally,
+            // but we ensure the dashboard stays in a clean state.
+            console.error('Dashboard Init Error:', e);
+            if (!localStorage.getItem('github_pat')) {
+                this.showLoginModal();
+            }
         }
     }
 
@@ -42,17 +50,8 @@ class Dashboard {
         // Refresh button
         document.getElementById('btn-refresh')?.addEventListener('click', () => this.refreshData());
 
-        // Settings / Token saving
-        document.getElementById('btn-save-settings')?.addEventListener('click', () => this.saveSettings());
-
         // Rate limit event
         window.addEventListener('github-ratelimit-update', (e) => this.updateRateLimitUI(e.detail));
-
-        // Modal events
-        $('#settingsModal').on('shown.bs.modal', () => {
-            document.getElementById('input-pat').value = localStorage.getItem('github_pat') || '';
-            document.getElementById('input-repo').value = localStorage.getItem('github_repo') || 'hypenosys/hypenosys.github.io';
-        });
     }
 
     async refreshData() {
@@ -87,34 +86,6 @@ class Dashboard {
         }
     }
 
-    async saveSettings() {
-        const token = document.getElementById('input-pat').value;
-        const repo = document.getElementById('input-repo').value;
-
-        window.githubApi.setToken(token);
-        window.githubApi.setRepo(repo);
-
-        const user = await window.githubApi.validateToken();
-        if (user) {
-            this.updateUserUI(user);
-            $('#settingsModal').modal('hide');
-            this.showToast('Success', 'Authentication successful', 'success');
-            this.refreshData();
-        } else {
-            this.showToast('Error', 'Invalid token or repository access', 'error');
-        }
-    }
-
-    updateUserUI(user) {
-        const userEl = document.getElementById('current-user');
-        if (userEl) {
-            userEl.innerHTML = `
-                <img src="${user.avatar_url}" width="30" height="30" class="rounded-circle mr-2 border-purple">
-                <span>${user.login}</span>
-            `;
-        }
-    }
-
     updateRateLimitUI(limit) {
         const el = document.getElementById('rate-limit-info');
         if (el) {
@@ -125,10 +96,6 @@ class Dashboard {
             else if (percent < 30) statusDot.classList.add('warning');
 
             el.querySelector('.limit-text').innerText = `${limit.remaining} / ${limit.limit}`;
-
-            if (percent < 10) {
-                this.showToast('Rate Limit Warning', `GitHub API rate limit is low: ${limit.remaining} remaining.`, 'warning');
-            }
         }
     }
 
@@ -412,27 +379,11 @@ class Dashboard {
     }
 
     showToast(title, message, type = 'info') {
-        const container = document.getElementById('toast-container');
-        if (!container) return;
-
-        const toast = document.createElement('div');
-        toast.className = `custom-toast ${type}`;
-        toast.innerHTML = `
-            <div class="toast-header">
-                <strong class="mr-auto">${title}</strong>
-                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast">&times;</button>
-            </div>
-            <div class="toast-body">${message}</div>
-        `;
-
-        container.appendChild(toast);
-
-        // Auto-remove after 5 seconds
-        setTimeout(() => {
-            $(toast).fadeOut(500, () => toast.remove());
-        }, 5000);
-
-        $(toast).find('.close').on('click', () => toast.remove());
+        if (window.authManager) {
+            window.authManager.showToast(title, message, type);
+        } else {
+            console.log(`Toast: [${type}] ${title} - ${message}`);
+        }
     }
 
     showLoginModal() {
