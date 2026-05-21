@@ -4,7 +4,7 @@
 
 class AuthManager {
     constructor() {
-        this.clientId = 'Ov23liAVwbXNtvhkHJQe'; // Placeholder for Client ID
+        this.clientId = 'Ov23liAVwbXNtvhkHJQe';
         this.init();
     }
 
@@ -57,8 +57,8 @@ class AuthManager {
             this.showToast('Autenticando...', 'Intercambiando código con el gatekeeper...', 'info');
             
             try {
-                // Placeholder for Gatekeeper exchange
-                const response = await fetch('https://your-gatekeeper.workers.dev/authenticate/' + code);
+                // Exchange code for token via Gatekeeper
+                const response = await fetch('https://hypenosys-gatekeeper.axlffcc.workers.dev/authenticate/' + code);
                 const data = await response.json();
                 
                 if (data.token) {
