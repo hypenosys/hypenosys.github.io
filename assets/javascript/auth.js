@@ -57,13 +57,10 @@ class AuthManager {
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get('code');
         if (code) {
-            // Clean URL
             window.history.replaceState({}, document.title, window.location.pathname);
-            
             this.showToast('Autenticando...', 'Intercambiando código con el gatekeeper...', 'info');
             
             try {
-                // Exchange code for token via Gatekeeper
                 const response = await fetch('https://hypenosys-gatekeeper-v2.axlffcc.workers.dev', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -73,33 +70,37 @@ class AuthManager {
 
                 if (data.access_token) {
                     window.githubApi.setToken(data.access_token);
-                    const user = await window.githubApi.validateToken();
-                    this.updateHeaderUI(user);
-                    this.showToast('Éxito', 'Sesión iniciada correctamente.', 'success');
+                    const result = await window.githubApi.validateToken();
+                    if (result.valid) {
+                        this.updateHeaderUI(result.user);
+                        this.showToast('Éxito', 'Sesión iniciada correctamente.', 'success');
+                    }
                 } else {
-                    throw new Error('No se recibió token del gatekeeper');
+                    throw new Error(data.error || 'No se recibió token del gatekeeper');
                 }
             } catch (e) {
                 console.error('OAuth exchange failed:', e);
-                this.showToast('Error', 'Fallo en la autenticación OAuth. Usando flujo manual si es posible.', 'error');
+                this.showToast('Error', 'Fallo en la autenticación OAuth.', 'error');
             }
         }
     }
 
     async checkAuthState() {
-        const token = localStorage.getItem('github_token');
+        const token = localStorage.getItem('github_token') || sessionStorage.getItem('gh_access_token');
         if (!token) {
             this.updateHeaderUI(null);
             return;
         }
 
         try {
-            const user = await window.githubApi.validateToken();
-            this.updateHeaderUI(user);
-            
-            // If we're on the home page, ensure team is rendered
-            if (document.getElementById('dream-team-container')) {
-                await this.renderDreamTeamComponent();
+            const result = await window.githubApi.validateToken();
+            if (result.valid) {
+                this.updateHeaderUI(result.user);
+                if (document.getElementById('dream-team-container')) {
+                    await this.renderDreamTeamComponent();
+                }
+            } else {
+                this.handleAuthError({ status: result.user ? 403 : 401, type: result.user ? 'ACL_DENIED' : 'INVALID' });
             }
         } catch (e) {
             this.handleAuthError(e);

@@ -44,8 +44,8 @@ async function handleDOMContentLoaded() {
   const code = urlParams.get('code');
 
   if (code) {
-    // Show loading spinner for authentication
     const loginOverlay = document.getElementById('login-overlay');
+    const originalOverlayHTML = loginOverlay.innerHTML;
     loginOverlay.classList.remove('hidden');
     loginOverlay.innerHTML = `
       <div class="text-center">
@@ -56,7 +56,7 @@ async function handleDOMContentLoaded() {
     `;
 
     try {
-      const resp = await fetch('https://hypenosys-gatekeeper-v2.axlffcc.workers.dev/callback', {
+      const resp = await fetch('https://hypenosys-gatekeeper-v2.axlffcc.workers.dev', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code })
@@ -65,14 +65,18 @@ async function handleDOMContentLoaded() {
       const data = await resp.json();
       if (data.access_token) {
         sessionStorage.setItem('gh_access_token', data.access_token.trim());
-        // Clean URL
         window.history.replaceState({}, document.title, window.location.pathname);
+        loginOverlay.classList.add('hidden');
+        loginOverlay.innerHTML = originalOverlayHTML;
       } else {
-        throw new Error('No se recibió el token de acceso.');
+        throw new Error(data.error || 'No se recibió el token de acceso.');
       }
     } catch (err) {
       console.error('OAuth Exchange Error:', err);
+      loginOverlay.innerHTML = originalOverlayHTML;
+      loginOverlay.classList.remove('hidden');
       showToast('Error de autenticación: ' + err.message, 'error');
+      return;
     }
   }
 
