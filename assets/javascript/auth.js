@@ -58,11 +58,15 @@ class AuthManager {
             
             try {
                 // Exchange code for token via Gatekeeper
-                const response = await fetch('https://hypenosys-gatekeeper.axlffcc.workers.dev/authenticate/' + code);
+                const response = await fetch('https://hypenosys-gatekeeper.axlffcc.workers.dev', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code })
+                });
                 const data = await response.json();
-                
-                if (data.token) {
-                    window.githubApi.setToken(data.token);
+
+                if (data.access_token) {
+                    window.githubApi.setToken(data.access_token);
                     this.showToast('Éxito', 'Sesión iniciada correctamente.', 'success');
                 } else {
                     throw new Error('No se recibió token del gatekeeper');
