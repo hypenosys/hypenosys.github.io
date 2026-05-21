@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.0.0",
+  "last_updated": "2025-01-01T00:00:00.000Z",
+  "members": {
+    "Axel": {
+      "handle": "Axlfc",
+      "display_name": "Axel",
+      "role": "Creative Lead / Director",
+      "avatar_url": "",
+      "bio": "",
+      "links": { "github": "https://github.com/Axlfc", "twitter": "", "itch": "" },
+      "color_accent": "#34d399"
+    },
+    "Mitxel": {
+      "handle": "mitxel2022",
+      "display_name": "Mitxel",
+      "role": "Main Design, Secondary Art",
+      "avatar_url": "",
+      "bio": "",
+      "links": { "github": "https://github.com/mitxel2022", "twitter": "", "itch": "" },
+      "color_accent": "#6366f1"
+    },
+    "Alex": {
+      "handle": "TopperH4rley",
+      "display_name": "Alex",
+      "role": "Main Programming, Secondary Design",
+      "avatar_url": "",
+      "bio": "",
+      "links": { "github": "https://github.com/TopperH4rley", "twitter": "", "itch": "" },
+      "color_accent": "#f87171"
+    },
+    "Javi": {
+      "handle": "",
+      "display_name": "Javi",
+      "role": "Main Design, Secondary Art",
+      "avatar_url": "",
+      "bio": "",
+      "links": { "github": "", "twitter": "", "itch": "" },
+      "color_accent": "#fbbf24"
+    },
+    "Dídac": {
+      "handle": "",
+      "display_name": "Dídac",
+      "role": "Main Art, Secondary Design",
+      "avatar_url": "",
+      "bio": "",
+      "links": { "github": "", "twitter": "", "itch": "" },
+      "color_accent": "#38bdf8"
+    }
+  }
+}
