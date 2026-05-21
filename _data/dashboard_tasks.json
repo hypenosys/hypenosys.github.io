@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-21T15:08:51.245Z",
-  "last_updated_by": "Axel",
+  "last_updated": "2026-05-21T15:09:18.495Z",
+  "last_updated_by": "Sistema",
   "tasks": [
     {
       "id": 1,
@@ -14,7 +14,7 @@
       "detectado_por": "Axel",
       "resuelto_por": "Axel",
       "apoyo": null,
-      "estado": "Fixed",
+      "estado": "OK",
       "prioridad": "Critical",
       "limite": null,
       "comentario": "Sistema base del dashboard",
