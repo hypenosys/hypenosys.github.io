@@ -37,10 +37,18 @@ const UI_STRINGS = {
 document.addEventListener('DOMContentLoaded', initDashboard);
 
 async function initDashboard() {
-    const token = sessionStorage.getItem('gh_access_token');
+    // ─── FIX: comprobar ambos stores
+    const token = sessionStorage.getItem('gh_access_token') 
+               || localStorage.getItem('github_token');
+    
     if (!token) {
         document.getElementById('login-overlay').classList.remove('hidden');
         return;
+    }
+
+    // ─── FIX: asegurar que sessionStorage tiene el token para getAuthToken()
+    if (!sessionStorage.getItem('gh_access_token')) {
+        sessionStorage.setItem('gh_access_token', token);
     }
 
     try {
