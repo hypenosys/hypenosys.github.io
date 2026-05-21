@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "last_computed": "2025-01-01T00:00:00.000Z",
+  "global": {
+    "total_tasks": 0,
+    "total_ok": 0,
+    "total_ko": 0,
+    "total_uncertain": 0,
+    "total_obsolete": 0,
+    "fixed_found_ratio": 0.0,
+    "by_priority": {}
+  },
+  "members": {},
+  "hall_of_fame": []
+}
