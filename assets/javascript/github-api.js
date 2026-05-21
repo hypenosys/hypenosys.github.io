@@ -308,9 +308,9 @@ async function validateToken() {
 }
 
 // ─── PUBLIC API SURFACE ───────────────────────────────────────
-// Single global object consumed by dashboard.js and any other script.
-// Never call putFileContent or fetchFileWithSha directly from outside this file.
-window.githubApi = {
+// Internal references for the atomic transaction engine.
+// dashboard.js uses these functions directly from the script scope.
+const githubAtomicApi = {
   // Auth
   validateToken,
   getAuthToken,
@@ -367,7 +367,16 @@ window.githubApi = {
 class GitHubAPI {
     constructor() {
         this.baseUrl = 'https://api.github.com';
-        this.token = localStorage.getItem('github_token');
+        // ─── FIX: intentar ambos stores al iniciar
+        this.token = localStorage.getItem('github_token') 
+                  || sessionStorage.getItem('gh_access_token') 
+                  || null;
+        
+        // Si vino de sessionStorage, sincronizar a localStorage
+        if (!localStorage.getItem('github_token') && this.token) {
+            localStorage.setItem('github_token', this.token);
+        }
+        
         this.repo = localStorage.getItem('github_repo') || 'hypenosys/hypenosys.github.io';
         this.user = null;
         this.whitelist = ['Axlfc', 'mitxel2022', 'TopperH4rley', 'Alex', 'Dídac'];
@@ -382,6 +391,8 @@ class GitHubAPI {
     setToken(token) {
         this.token = token;
         localStorage.setItem('github_token', token);
+        // ─── FIX: bridge para dashboard.html (usa sessionStorage)
+        sessionStorage.setItem('gh_access_token', token);
     }
 
     setRepo(repo) {
@@ -393,6 +404,8 @@ class GitHubAPI {
         this.token = null;
         this.user = null;
         localStorage.removeItem('github_token');
+        // ─── FIX: limpiar también el bridge
+        sessionStorage.removeItem('gh_access_token');
     }
 
     getHeaders() {
