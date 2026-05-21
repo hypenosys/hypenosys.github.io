@@ -1,6 +1,38 @@
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const response = await fetch('https://raw.githubusercontent.com/hypenosys/hypenosys.github.io/main/_data/team_profiles.json');
+    if (!response.ok) return;
+    const data = await response.json();
+    const profiles = data.members;
+    
+    Object.entries(profiles).forEach(([name, profile]) => {
+      const card = document.querySelector(`[data-member="${name}"]`);
+      if (!card) return;
+      
+      if (profile.display_name) card.querySelector('.card-title').textContent = profile.display_name.toUpperCase();
+      if (profile.role) card.querySelector('.role-tag').textContent = profile.role;
+      if (profile.bio) card.querySelector('.card-text').textContent = profile.bio;
+      if (profile.handle) {
+        const img = card.querySelector('.team-img');
+        img.src = `https://github.com/${profile.handle}.png`;
+      }
+      
+      // Update GitHub link if it exists and profile has a handle
+      const ghLink = card.querySelector('a[href*="github.com"]');
+      if (ghLink && profile.handle) {
+        ghLink.href = `https://github.com/${profile.handle}`;
+      }
+    });
+  } catch (e) {
+    console.warn('Fallo al sincronizar perfiles en tiempo real:', e);
+  }
+});
+</script>
+
 <div class="row" id="dream-team-container">
   {% for member in site.data.team %}
-  <div class="col-lg-4 col-md-6 mb-4">
+  <div class="col-lg-4 col-md-6 mb-4" data-member="{{ member.name }}">
     <div class="card h-100 team-card shadow-sm">
       <div class="team-img-container">
         <img src="{{ member.image | relative_url }}" class="card-img-top team-img" alt="{{ member.name }}">
