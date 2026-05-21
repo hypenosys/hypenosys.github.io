@@ -255,3 +255,42 @@ footer {
     from { transform: translateX(100%); opacity: 0; }
     to { transform: translateX(0); opacity: 1; }
 }
+
+// Global Mono styling for IDs
+.font-weight-mono {
+    font-family: 'Courier New', Courier, monospace !important;
+}
+
+// Form refinements
+.form-control {
+    &:focus {
+        background-color: $gray-900;
+        border-color: $purple;
+        color: $white;
+        box-shadow: 0 0 0 0.2rem rgba($purple, 0.25);
+    }
+}
+
+.uppercase {
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+// Pulse animation for critical buttons
+.btn-purple {
+    &.pulse {
+        animation: pulse-purple 2s infinite;
+    }
+}
+
+@keyframes pulse-purple {
+    0% {
+        box-shadow: 0 0 0 0 rgba($purple, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba($purple, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba($purple, 0);
+    }
+}
