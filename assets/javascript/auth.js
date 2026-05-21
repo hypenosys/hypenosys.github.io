@@ -12,7 +12,12 @@ class AuthManager {
         this.bindEvents();
         await this.handleOAuthCallback();
         await this.checkAuthState();
-        document.dispatchEvent(new CustomEvent('authReady', { detail: { user: window.githubApi.user } }));
+        
+        // ─── FIX: solo disparar authReady si el user está completo
+        const currentUser = window.githubApi.user || null;
+        document.dispatchEvent(new CustomEvent('authReady', { 
+            detail: { user: currentUser } 
+        }));
     }
 
     bindEvents() {
@@ -151,6 +156,12 @@ class AuthManager {
     updateHeaderUI(user) {
         const container = document.getElementById('auth-nav-container');
         if (!container) return;
+
+        // ─── FIX: guard contra user incompleto
+        if (user && !user.login) {
+            console.warn('[AuthManager] updateHeaderUI llamado con user sin login:', user);
+            return;
+        }
 
         if (user) {
             container.innerHTML = `
