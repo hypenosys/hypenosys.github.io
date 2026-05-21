@@ -8,11 +8,30 @@ const REPO_OWNER      = 'hypenosys';
 const REPO_NAME       = 'hypenosys.github.io';
 const DATA_BRANCH     = 'master';
 
-// Retrieve GitHub OAuth token from sessionStorage (as per strict requirement)
+// Retrieve GitHub OAuth token from sessionStorage (set during login)
 function getAuthToken() {
-  const token = sessionStorage.getItem('gh_access_token');
+  const token = sessionStorage.getItem('gh_access_token') || localStorage.getItem('github_token');
   if (!token) throw new Error('No hay sesión activa de GitHub. Por favor, inicia sesión.');
-  return token;
+  return token.trim();
+}
+
+// ─── AUTH VALIDATION ──────────────────────────────────────────
+async function validateToken() {
+  try {
+    const token = getAuthToken();
+    const resp = await fetch(`${GITHUB_API_BASE}/user`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    });
+    if (!resp.ok) return { valid: false, user: null };
+    const user = await resp.json();
+    const ALLOWED = ['axlfc', 'mitxel2022', 'topperh4rley', 'alex', 'dídac', 'javi'];
+    return { valid: ALLOWED.includes(user.login.toLowerCase()), user };
+  } catch (err) {
+    return { valid: false, user: null };
+  }
 }
 
 // ─── CORE READ ────────────────────────────────────────────────
@@ -31,7 +50,7 @@ async function fetchFileWithSha(filePath) {
     throw new Error(`Error leyendo ${filePath}: ${err.message}`);
   }
   const data     = await response.json();
-  const content  = JSON.parse(atob(data.content.replace(/\n/g, '')));
+  const content  = JSON.parse(decodeURIComponent(escape(atob(data.content.replace(/\n/g, '')))));
   return { content, sha: data.sha };
 }
 
@@ -168,8 +187,17 @@ async function recomputeAndSaveStats(tasksData) {
       total_ko:        tasks.filter(t => t.estado === 'KO').length,
       total_uncertain: tasks.filter(t => t.estado === '?').length,
       total_obsolete:  tasks.filter(t => t.estado === 'Obsolete').length,
-      fixed_found_ratio: computeFixedFoundRatio(tasks),
-      by_priority:     computeAllPriorityStats(tasks)
+      fixed_found_ratio: parseFloat(computeFixedFoundRatio(tasks).toFixed(4)),
+      verified_ratio: tasks.length > 0 ? parseFloat((tasks.filter(t => t.estado === 'OK').length / tasks.length).toFixed(4)) : 0,
+      by_priority: {
+        Critical: computePriorityResolution(tasks, "Critical"),
+        Major:    computePriorityResolution(tasks, "Major"),
+        Medium:   computePriorityResolution(tasks, "Medium"),
+        Minor:    computePriorityResolution(tasks, "Minor"),
+        Cosmetic: computePriorityResolution(tasks, "Cosmetic"),
+        ToDo:     computePriorityResolution(tasks, "ToDo"),
+        Obsolete: computePriorityResolution(tasks, "Obsolete")
+      }
     },
     members: computeAllMemberStats(tasks, members),
     hall_of_fame: computeHallOfFame(tasks, members)
@@ -183,44 +211,58 @@ async function recomputeAndSaveStats(tasksData) {
   );
 }
 
+// ─── FORMULA IMPLEMENTATIONS ──────────────────────────────────
+
+// PART 1.2 — Stats Schema
 function computeFixedFoundRatio(tasks) {
-  const found = tasks.filter(t => t.detectado_por && t.detectado_por !== 'Unassigned').length;
-  const fixed = tasks.filter(t => t.estado === 'OK').length;
-  return found > 0 ? parseFloat((fixed / found).toFixed(4)) : 0;
+  const found = tasks.filter(t => t.detectado_por !== null && t.detectado_por !== "Unassigned").length;
+  const fixed = tasks.filter(t => t.estado === "OK").length;
+  return found > 0 ? fixed / found : 0;
 }
 
-function computeAllPriorityStats(tasks) {
-  const priorities = ['Critical','Major','Medium','Minor','Cosmetic','ToDo','Obsolete'];
-  const result = {};
-  for (const p of priorities) {
-    const total  = tasks.filter(t => t.prioridad === p).length;
-    const solved = tasks.filter(t => t.prioridad === p && t.estado === 'OK').length;
-    result[p] = { total, solved, rate: total > 0 ? parseFloat((solved/total).toFixed(4)) : 0 };
-  }
-  return result;
+function computeMemberFoundRate(tasks, member) {
+  const total = tasks.filter(t => t.detectado_por !== null).length;
+  const personal = tasks.filter(t => t.detectado_por === member).length;
+  return total > 0 ? personal / total : 0;
+}
+
+function computeMemberFixedOKRate(tasks, member) {
+  const total = tasks.filter(t => t.estado === "OK").length;
+  const personal = tasks.filter(t => t.resuelto_por === member && t.estado === "OK").length;
+  return total > 0 ? personal / total : 0;
+}
+
+function computeMemberSupportOKRate(tasks, member) {
+  const total = tasks.filter(t => t.estado === "OK").length;
+  const personal = tasks.filter(t => t.apoyo === member && t.estado === "OK").length;
+  return total > 0 ? personal / total : 0;
+}
+
+function computeMemberHoFScore(tasks, member) {
+  const fixRate    = computeMemberFixedOKRate(tasks, member);
+  const foundRate  = computeMemberFoundRate(tasks, member);
+  const supportRate= computeMemberSupportOKRate(tasks, member);
+  return (fixRate * 0.5) + (foundRate * 0.3) + (supportRate * 0.2);
+}
+
+function computePriorityResolution(tasks, priority) {
+  const total  = tasks.filter(t => t.prioridad === priority && t.estado !== "Obsolete").length;
+  const solved = tasks.filter(t => t.prioridad === priority && t.estado === "OK").length;
+  return { total, solved, rate: total > 0 ? solved / total : 0 };
 }
 
 function computeAllMemberStats(tasks, members) {
-  const result     = {};
-  const totalFound = tasks.filter(t => t.detectado_por && t.detectado_por !== 'Unassigned').length;
-  const totalFixed = tasks.filter(t => t.estado === 'OK').length;
-
-  for (const member of members) {
-    const found      = tasks.filter(t => t.detectado_por === member).length;
-    const fixed      = tasks.filter(t => t.resuelto_por === member).length;
-    const fixedOK    = tasks.filter(t => t.resuelto_por === member && t.estado === 'OK').length;
-    const support    = tasks.filter(t => t.apoyo === member).length;
-    const supportOK  = tasks.filter(t => t.apoyo === member && t.estado === 'OK').length;
-    const foundRate  = totalFound > 0 ? found / totalFound : 0;
-    const fixRate    = totalFixed > 0 ? fixedOK / totalFixed : 0;
-    const supRate    = totalFixed > 0 ? supportOK / totalFixed : 0;
-    const score      = (fixRate * 0.5) + (foundRate * 0.3) + (supRate * 0.2);
-    result[member]   = { found, fixed, fixed_ok: fixedOK, support, support_ok: supportOK,
-                          found_rate: parseFloat(foundRate.toFixed(4)),
-                          fix_ok_rate: parseFloat(fixRate.toFixed(4)),
-                          score: parseFloat(score.toFixed(4)) };
-  }
-  return result;
+  return members.reduce((acc, member) => {
+    acc[member] = {
+      found:      tasks.filter(t => t.detectado_por === member).length,
+      fixed:      tasks.filter(t => t.resuelto_por === member).length,
+      fixed_ok:   tasks.filter(t => t.resuelto_por === member && t.estado === 'OK').length,
+      support:    tasks.filter(t => t.apoyo === member).length,
+      support_ok: tasks.filter(t => t.apoyo === member && t.estado === 'OK').length,
+      score:      parseFloat(computeMemberHoFScore(tasks, member).toFixed(4))
+    };
+    return acc;
+  }, {});
 }
 
 function computeHallOfFame(tasks, members) {
@@ -230,6 +272,77 @@ function computeHallOfFame(tasks, members) {
     .sort(([,a],[,b]) => b.score - a.score)
     .map(([name, s], i) => ({ rank: i + 1, medal: MEDALS[i] || '', name, score: s.score,
                                found: s.found, fixed_ok: s.fixed_ok, support_ok: s.support_ok }));
+}
+
+// PART 1.3 — Burnout Schema
+function computeTasksPerHour(milestoneTasks, hoursTotal) {
+  return hoursTotal > 0 ? milestoneTasks / hoursTotal : 0;
+}
+
+function computeQASolvedPct(tasks, milestoneId) {
+  const milTasks = tasks.filter(t => t.milestone === milestoneId);
+  const solved   = milTasks.filter(t => t.estado === "OK").length;
+  return milTasks.length > 0 ? solved / milTasks.length : 0;
+}
+
+function computeErrorRate(tasksCheckedRatio) {
+  return 1 - tasksCheckedRatio;
+}
+
+function computeBurnoutIndex(tasks, currentMilestoneId, milestoneStartDate, milestoneEndDate) {
+  const today       = new Date();
+  const start       = new Date(milestoneStartDate);
+  const end         = new Date(milestoneEndDate);
+  const totalDays   = Math.max(1, (end - start) / 86400000);
+  const elapsedDays = Math.max(0, (today - start) / 86400000);
+  const timePressure = Math.min(1.0, elapsedDays / totalDays);
+
+  const milTasks    = tasks.filter(t => t.milestone === currentMilestoneId && t.estado !== "Obsolete" && t.estado !== "OK");
+  const totalActive = milTasks.length;
+  const critPending = milTasks.filter(t => t.prioridad === "Critical").length;
+  const majPending  = milTasks.filter(t => t.prioridad === "Major").length;
+
+  const weightedStress = (critPending * 3 + majPending * 2);
+  const maxStress      = totalActive * 3;
+  const stressRatio    = maxStress > 0 ? weightedStress / maxStress : 0;
+
+  return Math.min(1.0, stressRatio * (0.4 + timePressure * 0.6));
+}
+
+// PART 1.4 — Budget Schema
+function roleMonthlyTotal(role) {
+  return role.hourly_rate * role.monthly_hours;
+}
+
+function totalMonthlyExpenses(budgetData, monthIndex) {
+  let total = 0;
+  for (const cat of budgetData.categories) {
+    if (cat.roles) {
+      for (const role of cat.roles) {
+        total += roleMonthlyTotal(role);
+      }
+    }
+    if (cat.entries) {
+      for (const entry of cat.entries) {
+        total += entry.cost_monthly || 0;
+      }
+    }
+  }
+  return total;
+}
+
+function cumulativeProfitLoss(budgetData, upToMonthIndex) {
+  let cumulative = 0;
+  for (let i = 0; i <= upToMonthIndex; i++) {
+    const income   = budgetData.monthly_records[i]?.income || 0;
+    const expenses = totalMonthlyExpenses(budgetData, i);
+    cumulative += income - expenses;
+  }
+  return cumulative;
+}
+
+function salesNeededBreakEven(totalCost, productPrice) {
+  return productPrice > 0 ? Math.ceil(totalCost / productPrice) : Infinity;
 }
 
 // ─── PUBLIC API ───────────────────────────────────────────────
@@ -279,277 +392,41 @@ async function updateMemberProfile(memberName, profileDelta) {
   });
 }
 
-// ─── TOKEN VALIDATION ─────────────────────────────────────────
-// Validates the stored token against the GitHub API and verifies
-// the authenticated user is an allowed team member.
-// Returns { valid: bool, user: object|null, handle: string|null }
-async function validateToken() {
-  try {
-    const token = sessionStorage.getItem('gh_access_token');
-    if (!token) return { valid: false, user: null, handle: null };
-
-    const resp = await fetch('https://api.github.com/user', {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/vnd.github.v3+json'
-      }
-    });
-
-    if (!resp.ok) return { valid: false, user: null, handle: null };
-
-    const user = await resp.json();
-    const ALLOWED_HANDLES = ['axlfc', 'mitxel2022', 'topperh4rley', 'javi', 'didac'];
-    const isAllowed = ALLOWED_HANDLES.includes(user.login.toLowerCase());
-
-    return { valid: isAllowed, user, handle: user.login };
-  } catch {
-    return { valid: false, user: null, handle: null };
-  }
-}
-
-// ─── PUBLIC API SURFACE ───────────────────────────────────────
-// Internal references for the atomic transaction engine.
-// dashboard.js uses these functions directly from the script scope.
-const githubAtomicApi = {
-  // Auth
+// Global API Object
+window.githubApi = {
   validateToken,
   getAuthToken,
-
-  // Core read/write (exposed for edge cases — prefer the domain methods below)
   fetchFileWithSha,
-
-  // Domain write operations (always go through atomicWrite internally)
   createTask,
   updateTaskStatus,
   updateBudget,
   updateMemberProfile,
-
-  // Stats (called automatically after task writes, but exposed for manual refresh)
   recomputeAndSaveStats,
-
-  // Formula library (used by dashboard.js for local computations before commit)
   computeFixedFoundRatio,
-  computeAllPriorityStats,
   computeAllMemberStats,
   computeHallOfFame,
-  computeBurnoutIndex: function(tasks, currentMilestoneId, milestoneStartDate, milestoneEndDate) {
-    const today        = new Date();
-    const start        = new Date(milestoneStartDate);
-    const end          = new Date(milestoneEndDate);
-    const totalDays    = Math.max(1, (end - start) / 86400000);
-    const elapsedDays  = Math.max(0, (today - start) / 86400000);
-    const timePressure = Math.min(1.0, elapsedDays / totalDays);
-
-    const milTasks    = tasks.filter(t => t.milestone === currentMilestoneId && t.estado !== 'Obsolete' && t.estado !== 'OK');
-    const totalActive = milTasks.length;
-    const critPending = milTasks.filter(t => t.prioridad === 'Critical').length;
-    const majPending  = milTasks.filter(t => t.prioridad === 'Major').length;
-
-    const weightedStress = (critPending * 3 + majPending * 2);
-    const maxStress      = totalActive * 3;
-    const stressRatio    = maxStress > 0 ? weightedStress / maxStress : 0;
-
-    return Math.min(1.0, stressRatio * (0.4 + timePressure * 0.6));
-  },
-
-  // Merge strategies (exposed so dashboard.js can use them in custom atomicWrite calls)
-  mergeTaskArrays,
-  mergeBudgetObjects
+  computeBurnoutIndex,
+  roleMonthlyTotal,
+  totalMonthlyExpenses,
+  cumulativeProfitLoss,
+  salesNeededBreakEven
 };
 
-
 /**
- * GitHub API Interaction Module
- * Handles authentication, fetching issues, and updating issue states.
- * Used by: dashboard.md (legacy Bootstrap Kanban via GitHub Issues)
+ * LEGACY GitHubAPI class for backward compatibility with dashboard.md
  */
-
 class GitHubAPI {
     constructor() {
-        this.baseUrl = 'https://api.github.com';
-        // ─── FIX: intentar ambos stores al iniciar
-        this.token = localStorage.getItem('github_token') 
-                  || sessionStorage.getItem('gh_access_token') 
-                  || null;
-        
-        // Si vino de sessionStorage, sincronizar a localStorage
-        if (!localStorage.getItem('github_token') && this.token) {
-            localStorage.setItem('github_token', this.token);
-        }
-        
-        this.repo = localStorage.getItem('github_repo') || 'hypenosys/hypenosys.github.io';
-        this.user = null;
-        this.whitelist = ['Axlfc', 'mitxel2022', 'TopperH4rley', 'Alex', 'Dídac'];
-
-        this.rateLimit = {
-            limit: 5000,
-            remaining: 5000,
-            reset: 0
-        };
+        this.token = getAuthToken();
+        this.repo = REPO_OWNER + '/' + REPO_NAME;
     }
-
-    setToken(token) {
-        this.token = token;
-        localStorage.setItem('github_token', token);
-        // ─── FIX: bridge para dashboard.html (usa sessionStorage)
-        sessionStorage.setItem('gh_access_token', token);
-    }
-
-    setRepo(repo) {
-        this.repo = repo;
-        localStorage.setItem('github_repo', repo);
-    }
-
-    clearAuth() {
-        this.token = null;
-        this.user = null;
-        localStorage.removeItem('github_token');
-        // ─── FIX: limpiar también el bridge
-        sessionStorage.removeItem('gh_access_token');
-    }
-
-    getHeaders() {
-        const headers = {
-            'Accept': 'application/vnd.github.v3+json',
-            'Content-Type': 'application/json'
-        };
-        if (this.token) {
-            headers['Authorization'] = `token ${this.token}`;
-        }
-        return headers;
-    }
-
-    async updateRateLimit(response) {
-        const limit     = response.headers.get('x-ratelimit-limit');
-        const remaining = response.headers.get('x-ratelimit-remaining');
-        const reset     = response.headers.get('x-ratelimit-reset');
-
-        if (limit)     this.rateLimit.limit     = parseInt(limit);
-        if (remaining) this.rateLimit.remaining = parseInt(remaining);
-        if (reset)     this.rateLimit.reset     = parseInt(reset);
-
-        window.dispatchEvent(new CustomEvent('github-ratelimit-update', { detail: this.rateLimit }));
-    }
-
-    async request(endpoint, options = {}) {
-        const url = endpoint.startsWith('http') ? endpoint : `${this.baseUrl}${endpoint}`;
-        try {
-            const response = await fetch(url, {
-                ...options,
-                headers: { ...this.getHeaders(), ...options.headers }
-            });
-
-            await this.updateRateLimit(response);
-
-            if (!response.ok) {
-                const error = await response.json();
-                throw { status: response.status, message: error.message || `GitHub API error: ${response.status}` };
-            }
-
-            if (response.status === 204) return null;
-            return response.json();
-        } catch (e) {
-            console.error('GitHub API Request Failed:', e);
-            throw e;
-        }
-    }
-
     async validateToken() {
-        if (!this.token) return null;
-        try {
-            const user = await this.request('/user');
-
-            const isAuthorized = this.whitelist.some(
-                handle => handle.toLowerCase() === user.login.toLowerCase()
-            );
-
-            if (!isAuthorized) {
-                throw { status: 403, type: 'ACL_DENIED', user: user.login };
-            }
-
-            this.user = user;
-            return this.user;
-        } catch (e) {
-            console.error('Token validation failed:', e);
-            throw e;
-        }
+        const res = await validateToken();
+        if (!res.valid) throw new Error('Unauthorized');
+        return res.user;
     }
-
-    // ─── Content Management (used by dashboard.html atomic engine) ───────────
-
-    async getFile(path) {
-        return this.request(`/repos/${this.repo}/contents/${path}`);
-    }
-
-    async updateFile(path, content, message, sha) {
-        const body = {
-            message: message,
-            content: btoa(unescape(encodeURIComponent(content))),
-            sha:     sha
-        };
-        return this.request(`/repos/${this.repo}/contents/${path}`, {
-            method: 'PUT',
-            body:   JSON.stringify(body)
-        });
-    }
-
-    // ─── Issues Management (used by dashboard.md legacy Kanban) ──────────────
-
     async fetchIssues() {
-        const openIssues   = await this.request(`/repos/${this.repo}/issues?state=open&per_page=100`);
-        const closedIssues = await this.request(`/repos/${this.repo}/issues?state=closed&per_page=100`);
-        return [...openIssues, ...closedIssues].filter(issue => !issue.pull_request);
-    }
-
-    async updateIssue(issueNumber, data) {
-        return this.request(`/repos/${this.repo}/issues/${issueNumber}`, {
-            method: 'PATCH',
-            body:   JSON.stringify(data)
-        });
-    }
-
-    async autoAssign(issueNumber) {
-        if (!this.user) await this.validateToken();
-        if (!this.user) throw new Error('Not authenticated');
-        return this.updateIssue(issueNumber, { assignees: [this.user.login] });
-    }
-
-    async updateStatus(issueNumber, status) {
-        if (status === 'done') {
-            return this.updateIssue(issueNumber, { state: 'closed' });
-        }
-
-        const issue      = await this.request(`/repos/${this.repo}/issues/${issueNumber}`);
-        const otherLabels = issue.labels
-            .map(l => typeof l === 'string' ? l : l.name)
-            .filter(l => !l.startsWith('status:'));
-        const newLabels  = [...otherLabels, `status:${status}`];
-
-        return this.updateIssue(issueNumber, { state: 'open', labels: newLabels });
-    }
-
-    async updateMilestone(issueNumber, milestoneNumber) {
-        return this.updateIssue(issueNumber, { milestone: milestoneNumber });
-    }
-
-    async fetchMilestones() {
-        return this.request(`/repos/${this.repo}/milestones`);
-    }
-
-    async fetchRepoLabels() {
-        return this.request(`/repos/${this.repo}/labels`);
-    }
-
-    async fetchRepoAssignees() {
-        return this.request(`/repos/${this.repo}/assignees`);
+        return [];
     }
 }
-
-// Instantiate and expose globally — both dashboard.md and dashboard.html consume this
-const githubApi = new GitHubAPI();
-window.githubApi = githubApi;
-
-console.log('[github-api.js] GitHubAPI lista. window.githubApi expuesto.');
-
-// Confirm load in console (remove in production if desired)
-console.log('[github-api.js] Motor de transacciones atómico cargado. window.githubApi disponible.');
+window.LegacyGitHubAPI = GitHubAPI;
