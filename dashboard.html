@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-slate-950">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hypenosys Operational Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
+        body { font-family: 'Inter', system-ui, sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .kanban-column { min-height: 70vh; }
+        .drag-over { background-color: rgba(51, 65, 85, 0.5); }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
+        .toast { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform: translateY(100px); opacity: 0; }
+        .toast--visible { transform: translateY(0); opacity: 1; }
+        .pulse-emerald { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.7); animation: pulse-emerald 2s infinite; }
+        @keyframes pulse-emerald { 0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(52, 211, 153, 0); } 100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); } }
+    </style>
+</head>
+<body class="h-full text-slate-100 flex flex-col">
+
+    <!-- Top Navigation / Filter Bar -->
+    <header class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4 sticky top-0 z-40">
+        <div class="flex items-center gap-4">
+            <a href="/" class="text-emerald-400 text-2xl font-bold tracking-tighter flex items-center gap-2">
+                <i class="fa-solid fa-microchip"></i> HYPENOSYS <span class="text-slate-500 font-light text-sm tracking-normal">OPS</span>
+            </a>
+            <div id="member-filters" class="flex items-center gap-2 bg-slate-950 p-1 rounded-lg border border-slate-800">
+                <!-- Member filters injected here -->
+            </div>
+        </div>
+        <div class="flex items-center gap-6">
+            <div id="last-sync-timestamp" class="text-[10px] font-mono text-slate-500 uppercase tracking-widest">
+                Sincronizando...
+            </div>
+            <div id="user-status" class="flex items-center gap-3">
+                <!-- User avatar and status -->
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow p-6 space-y-8 max-w-[1600px] mx-auto w-full">
+        
+        <!-- Summary Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-sm">
+                <div class="text-slate-500 text-xs font-bold uppercase mb-1">Tareas Activas</div>
+                <div id="stat-total-tasks" class="text-3xl font-bold text-white font-mono">0</div>
+                <div class="text-xs text-slate-400 mt-2 flex items-center gap-1">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span> <span id="stat-ok-tasks">0</span> completadas
+                </div>
+            </div>
+            <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-sm">
+                <div class="text-slate-500 text-xs font-bold uppercase mb-1">QA Velocity Ratio</div>
+                <div id="stat-fixed-ratio" class="text-3xl font-bold text-emerald-400 font-mono">0.00%</div>
+                <div class="text-xs text-slate-400 mt-2 italic">Ratio Fixed/Found global</div>
+            </div>
+            <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-sm col-span-1 lg:col-span-2">
+                <div class="flex justify-between items-center mb-4">
+                    <div class="text-slate-500 text-xs font-bold uppercase">Progreso Milestone Actual</div>
+                    <div id="current-milestone-label" class="bg-indigo-900/50 text-indigo-300 text-[10px] px-2 py-0.5 rounded border border-indigo-700 font-bold uppercase">M1</div>
+                </div>
+                <div class="w-full bg-slate-800 h-3 rounded-full overflow-hidden mb-2">
+                    <div id="milestone-progress-bar" class="bg-indigo-500 h-full transition-all duration-1000" style="width: 0%"></div>
+                </div>
+                <div class="flex justify-between text-[10px] text-slate-500 font-mono">
+                    <span id="milestone-start">2025-01-01</span>
+                    <span id="milestone-pct-label">0% completado</span>
+                    <span id="milestone-end">2025-02-15</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kanban Board -->
+        <section>
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-table-columns text-emerald-400"></i> Kanban de Operaciones
+                </h2>
+                <button onclick="openCreateTaskModal()" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2 px-4 rounded-lg text-sm transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-plus"></i> Nueva Tarea
+                </button>
+            </div>
+            <div id="kanban-board" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Columns -->
+                <div id="kanban-col-backlog" class="kanban-column flex flex-col gap-4">
+                    <div class="flex justify-between items-center px-2 py-1 border-l-4 border-slate-500">
+                        <span class="text-xs font-bold uppercase text-slate-400">Backlog / ToDo</span>
+                        <span class="col-count text-[10px] bg-slate-800 px-2 py-0.5 rounded text-slate-400">0</span>
+                    </div>
+                    <div class="kanban-cards flex-grow space-y-4 custom-scrollbar overflow-y-auto max-h-[70vh]"></div>
+                </div>
+                <div id="kanban-col-working" class="kanban-column flex flex-col gap-4">
+                    <div class="flex justify-between items-center px-2 py-1 border-l-4 border-amber-400">
+                        <span class="text-xs font-bold uppercase text-amber-400">En Progreso</span>
+                        <span class="col-count text-[10px] bg-amber-900/30 px-2 py-0.5 rounded text-amber-400">0</span>
+                    </div>
+                    <div class="kanban-cards flex-grow space-y-4 custom-scrollbar overflow-y-auto max-h-[70vh]"></div>
+                </div>
+                <div id="kanban-col-qa" class="kanban-column flex flex-col gap-4">
+                    <div class="flex justify-between items-center px-2 py-1 border-l-4 border-indigo-400">
+                        <span class="text-xs font-bold uppercase text-indigo-400">QA Verification</span>
+                        <span class="col-count text-[10px] bg-indigo-900/30 px-2 py-0.5 rounded text-indigo-400">0</span>
+                    </div>
+                    <div class="kanban-cards flex-grow space-y-4 custom-scrollbar overflow-y-auto max-h-[70vh]"></div>
+                </div>
+                <div id="kanban-col-done" class="kanban-column flex flex-col gap-4">
+                    <div class="flex justify-between items-center px-2 py-1 border-l-4 border-emerald-400">
+                        <span class="text-xs font-bold uppercase text-emerald-400">Completado</span>
+                        <span class="col-count text-[10px] bg-emerald-900/30 px-2 py-0.5 rounded text-emerald-400">0</span>
+                    </div>
+                    <div class="kanban-cards flex-grow space-y-4 custom-scrollbar overflow-y-auto max-h-[70vh]"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Charts & Hall of Fame -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- QA Velocity Chart -->
+            <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 lg:col-span-2">
+                <canvas id="qa-velocity-chart"></canvas>
+            </div>
+            <!-- Burnout Gauge -->
+            <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 flex flex-col items-center justify-center">
+                <div class="relative w-full aspect-square max-w-[250px]">
+                    <canvas id="burnout-gauge-canvas"></canvas>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center pt-8">
+                        <div id="burnout-index-value" class="text-4xl font-bold font-mono">0%</div>
+                        <div class="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">Stress Index</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Budget Distribution -->
+            <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800">
+                <canvas id="budget-doughnut-canvas"></canvas>
+            </div>
+            <!-- Hall of Fame -->
+            <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 overflow-hidden">
+                <h3 class="text-lg font-bold mb-6 flex items-center gap-2">
+                    <i class="fa-solid fa-trophy text-amber-400"></i> QA Hall of Fame
+                </h3>
+                <div id="hall-of-fame-grid" class="space-y-4">
+                    <!-- HOF entries -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Team Profiles Section (for editing) -->
+        <section>
+            <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                <i class="fa-solid fa-users text-emerald-400"></i> Perfiles del Equipo
+            </h2>
+            <div id="team-profiles-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Profile cards -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 border-t border-slate-800 py-6 px-6 text-center text-xs text-slate-500">
+        &copy; 2025 Hypenosys Indie Game Studio. Neural Operations Center.
+    </footer>
+
+    <!-- Modals -->
+    <!-- QA Assignment Modal -->
+    <div id="qa-assignment-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4">
+        <div class="bg-slate-900 border border-indigo-500/30 rounded-2xl shadow-2xl w-full max-w-md p-6">
+            <h3 class="text-xl font-bold text-white mb-4">Mover a QA Verification</h3>
+            <p class="text-slate-400 text-sm mb-6">Asigna a los responsables para el testeo manual de esta tarea.</p>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Tester (Detectado por)</label>
+                    <select id="qa-tester-select" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-slate-100 focus:border-indigo-500 outline-none"></select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Resolutor (Resuelto por)</label>
+                    <select id="qa-resolver-select" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-slate-100 focus:border-indigo-500 outline-none"></select>
+                </div>
+            </div>
+            <div class="flex gap-3 mt-8">
+                <button id="qa-cancel-btn" class="flex-grow py-2 border border-slate-700 hover:bg-slate-800 rounded-lg font-bold text-sm transition-all">Cancelar</button>
+                <button id="qa-confirm-btn" class="flex-grow py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg font-bold text-sm transition-all">Confirmar Paso</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Task Modal -->
+    <div id="create-task-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4">
+        <div class="bg-slate-900 border border-emerald-500/30 rounded-2xl shadow-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <h3 class="text-xl font-bold text-white mb-6">Crear Nueva Tarea</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Descripción</label>
+                    <textarea id="task-desc-input" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-slate-100 focus:border-emerald-500 outline-none"></textarea>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Rama</label>
+                        <select id="task-rama-input" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100">
+                            <option value="PRO">Programación (PRO)</option>
+                            <option value="ART">Arte (ART)</option>
+                            <option value="DIS">Diseño (DIS)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Prioridad</label>
+                        <select id="task-priority-input" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100">
+                            <option value="Critical">Critical</option>
+                            <option value="Major" selected>Major</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Minor">Minor</option>
+                            <option value="Cosmetic">Cosmetic</option>
+                            <option value="ToDo">ToDo</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Milestone</label>
+                        <select id="task-milestone-input" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100">
+                            <option value="M1">M1</option>
+                            <option value="M2">M2</option>
+                            <option value="M3">M3</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Tema Principal</label>
+                        <input type="text" id="task-topic-input" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100">
+                    </div>
+                </div>
+            </div>
+            <div class="flex gap-3 mt-8">
+                <button id="task-cancel-btn" class="flex-grow py-2 border border-slate-700 hover:bg-slate-800 rounded-lg font-bold text-sm transition-all">Cancelar</button>
+                <button id="task-save-btn" class="flex-grow py-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 rounded-lg font-bold text-sm transition-all">Guardar Tarea</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Prompt (Overlay) -->
+    <div id="login-overlay" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-slate-950 p-4">
+        <div class="text-center">
+            <div class="text-emerald-400 text-6xl mb-6"><i class="fa-solid fa-lock"></i></div>
+            <h1 class="text-3xl font-bold mb-2">Acceso Restringido</h1>
+            <p class="text-slate-400 mb-8 max-w-sm mx-auto">Neural Operations Center requiere autenticación de equipo. Por favor, conecta tu sesión de GitHub.</p>
+            <button onclick="window.location.href='/'" class="bg-slate-800 hover:bg-slate-700 py-3 px-8 rounded-xl font-bold transition-all border border-slate-700">
+                Volver al Home
+            </button>
+        </div>
+    </div>
+
+    <!-- Unauthorized Alert (Overlay) -->
+    <div id="unauthorized-overlay" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-slate-950 p-4">
+        <div class="text-center">
+            <div class="text-red-500 text-6xl mb-6"><i class="fa-solid fa-user-shield"></i></div>
+            <h1 class="text-3xl font-bold mb-2">Acceso Denegado</h1>
+            <p id="unauthorized-msg" class="text-slate-400 mb-8 max-w-sm mx-auto">Tu cuenta de GitHub no figura en la lista autorizada de Hypenosys.</p>
+            <button onclick="sessionStorage.clear(); window.location.reload();" class="bg-red-900/30 hover:bg-red-900/50 text-red-300 py-3 px-8 rounded-xl font-bold transition-all border border-red-900/50">
+                Cerrar Sesión e Reintentar
+            </button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/javascript/github-api.js"></script>
+    <script src="assets/javascript/dashboard.js"></script>
+</body>
+</html>
