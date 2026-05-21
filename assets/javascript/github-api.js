@@ -6,7 +6,7 @@
 class GitHubAPI {
     constructor() {
         this.baseUrl = 'https://api.github.com';
-        this.token = localStorage.getItem('github_pat');
+        this.token = localStorage.getItem('github_token');
         this.repo = localStorage.getItem('github_repo') || 'hypenosys/hypenosys.github.io';
         this.user = null;
         this.whitelist = ['Axlfc', 'mitxel2022', 'TopperH4rley'];
@@ -21,7 +21,7 @@ class GitHubAPI {
 
     setToken(token) {
         this.token = token;
-        localStorage.setItem('github_pat', token);
+        localStorage.setItem('github_token', token);
     }
 
     setRepo(repo) {
@@ -32,7 +32,7 @@ class GitHubAPI {
     clearAuth() {
         this.token = null;
         this.user = null;
-        localStorage.removeItem('github_pat');
+        localStorage.removeItem('github_token');
     }
 
     getHeaders() {
@@ -101,6 +101,26 @@ class GitHubAPI {
             throw e;
         }
     }
+
+    // --- Content Management ---
+
+    async getFile(path) {
+        return this.request(`/repos/${this.repo}/contents/${path}`);
+    }
+
+    async updateFile(path, content, message, sha) {
+        const body = {
+            message: message,
+            content: btoa(unescape(encodeURIComponent(content))),
+            sha: sha
+        };
+        return this.request(`/repos/${this.repo}/contents/${path}`, {
+            method: 'PUT',
+            body: JSON.stringify(body)
+        });
+    }
+
+    // --- Issues Management ---
 
     async fetchIssues() {
         // Fetch open issues (all statuses except closed)
