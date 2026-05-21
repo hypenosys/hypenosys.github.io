@@ -278,3 +278,84 @@ async function updateMemberProfile(memberName, profileDelta) {
     return merged;
   });
 }
+
+// ─── TOKEN VALIDATION ─────────────────────────────────────────
+// Validates the stored token against the GitHub API and verifies
+// the authenticated user is an allowed team member.
+// Returns { valid: bool, user: object|null, handle: string|null }
+async function validateToken() {
+  try {
+    const token = sessionStorage.getItem('gh_access_token');
+    if (!token) return { valid: false, user: null, handle: null };
+
+    const resp = await fetch('https://api.github.com/user', {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    });
+
+    if (!resp.ok) return { valid: false, user: null, handle: null };
+
+    const user = await resp.json();
+    const ALLOWED_HANDLES = ['axlfc', 'mitxel2022', 'topperh4rley', 'alex', 'dídac'];
+    const isAllowed = ALLOWED_HANDLES.includes(user.login.toLowerCase());
+
+    return { valid: isAllowed, user, handle: user.login };
+  } catch {
+    return { valid: false, user: null, handle: null };
+  }
+}
+
+// ─── PUBLIC API SURFACE ───────────────────────────────────────
+// Single global object consumed by dashboard.js and any other script.
+// Never call putFileContent or fetchFileWithSha directly from outside this file.
+window.githubApi = {
+  // Auth
+  validateToken,
+  getAuthToken,
+
+  // Core read/write (exposed for edge cases — prefer the domain methods below)
+  fetchFileWithSha,
+
+  // Domain write operations (always go through atomicWrite internally)
+  createTask,
+  updateTaskStatus,
+  updateBudget,
+  updateMemberProfile,
+
+  // Stats (called automatically after task writes, but exposed for manual refresh)
+  recomputeAndSaveStats,
+
+  // Formula library (used by dashboard.js for local computations before commit)
+  computeFixedFoundRatio,
+  computeAllPriorityStats,
+  computeAllMemberStats,
+  computeHallOfFame,
+  computeBurnoutIndex: function(tasks, currentMilestoneId, milestoneStartDate, milestoneEndDate) {
+    const today        = new Date();
+    const start        = new Date(milestoneStartDate);
+    const end          = new Date(milestoneEndDate);
+    const totalDays    = Math.max(1, (end - start) / 86400000);
+    const elapsedDays  = Math.max(0, (today - start) / 86400000);
+    const timePressure = Math.min(1.0, elapsedDays / totalDays);
+
+    const milTasks    = tasks.filter(t => t.milestone === currentMilestoneId && t.estado !== 'Obsolete' && t.estado !== 'OK');
+    const totalActive = milTasks.length;
+    const critPending = milTasks.filter(t => t.prioridad === 'Critical').length;
+    const majPending  = milTasks.filter(t => t.prioridad === 'Major').length;
+
+    const weightedStress = (critPending * 3 + majPending * 2);
+    const maxStress      = totalActive * 3;
+    const stressRatio    = maxStress > 0 ? weightedStress / maxStress : 0;
+
+    return Math.min(1.0, stressRatio * (0.4 + timePressure * 0.6));
+  },
+
+  // Merge strategies (exposed so dashboard.js can use them in custom atomicWrite calls)
+  mergeTaskArrays,
+  mergeBudgetObjects
+};
+
+// Confirm load in console (remove in production if desired)
+console.log('[github-api.js] Motor de transacciones atómico cargado. window.githubApi disponible.');
