@@ -518,53 +518,114 @@
         <!-- VIEW: RITUAL DOMINGO -->
         <section id="view-ritual" class="view-section hidden fade-in">
             <div class="mb-8">
-                <h2 class="text-2xl font-bold text-stone-800 mb-2">⚡ El Ritual del Domingo: Sincronización Crítica</h2>
+                <h2 class="text-2xl font-bold text-stone-800 mb-2">⚡ Onboarding: Ritual del Domingo</h2>
                 <p class="text-stone-600 max-w-3xl">
-                    Cada domingo por la mañana, el equipo se reúne para alinear la visión, destruir bloqueos técnicos y repartir la carga de la semana entrante. Este es el corazón operativo de Hypenosys.
+                    Fase 0 - Infraestructura Absoluta. Configura tu identidad técnica, sincroniza tus herramientas y genera tu perfil de equipo antes de la sesión de ideación.
                 </p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div class="bg-stone-900 text-stone-100 p-6 rounded-xl border-l-4 border-l-teal-500 shadow-sm">
-                    <h3 class="text-lg font-bold mb-3"><i class="fa-solid fa-satellite-dish text-teal-400"></i> 1. El Púlpito (15 min)</h3>
-                    <p class="text-xs text-stone-400 leading-relaxed">
-                        Cada miembro realiza una demo visual rápida de sus avances. No vale con "he hecho código", hay que mostrar resultados tangibles en el motor o assets terminados.
-                    </p>
-                </div>
-                <div class="bg-stone-900 text-stone-100 p-6 rounded-xl border-l-4 border-l-amber-500 shadow-sm">
-                    <h3 class="text-lg font-bold mb-3"><i class="fa-solid fa-screwdriver-wrench text-amber-400"></i> 2. La Forja (30 min)</h3>
-                    <p class="text-xs text-stone-400 leading-relaxed">
-                        Resolución de dudas técnicas complejas. Axel y Alex actúan como consultores senior para desatascar problemas de Git, SVN o lógica de Blueprints.
-                    </p>
-                </div>
-                <div class="bg-stone-900 text-stone-100 p-6 rounded-xl border-l-4 border-l-purple-500 shadow-sm">
-                    <h3 class="text-lg font-bold mb-3"><i class="fa-solid fa-list-check text-purple-400"></i> 3. El Reparto (15 min)</h3>
-                    <p class="text-xs text-stone-400 leading-relaxed">
-                        Asignación de tareas en el Kanban. Definimos el "Sprint de 7 días". Nadie sale de la reunión sin saber exactamente qué tiene que entregar el próximo domingo.
-                    </p>
+            <!-- Identidad del Usuario -->
+            <div class="bg-stone-900 text-stone-100 p-6 rounded-xl shadow-lg border border-stone-800 mb-8">
+                <h3 class="text-lg font-bold text-teal-400 mb-4"><i class="fa-solid fa-id-card"></i> 0. Define tu Identidad</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-xs font-semibold text-stone-400 mb-2 uppercase tracking-wider">Tu Nombre</label>
+                        <input type="text" id="ritual-name" oninput="updatePrompts()" placeholder="Ej: Mitxel, Javi, Dídac..." 
+                               class="w-full bg-stone-800 border border-stone-700 rounded-lg p-3 text-stone-100 focus:border-teal-500 focus:outline-none transition-colors">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-stone-400 mb-2 uppercase tracking-wider">Especialidad / Equipo</label>
+                        <select id="ritual-role" onchange="updatePrompts()" 
+                                class="w-full bg-stone-800 border border-stone-700 rounded-lg p-3 text-stone-100 focus:border-teal-500 focus:outline-none transition-colors">
+                            <option value="Art">🎨 Art Team (3D, Textures, Blender)</option>
+                            <option value="Design">📐 Design Team (Level Design, Systems)</option>
+                            <option value="Dev">💻 Dev Team (Blueprints, C++, Logic)</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
-                <h3 class="text-lg font-bold text-stone-800 mb-4"><i class="fa-solid fa-calendar-day text-teal-600"></i> Próxima Sesión Ritual</h3>
-                <div class="flex flex-col md:flex-row items-center gap-6">
-                    <div class="bg-stone-100 p-4 rounded-lg text-center min-w-[120px]">
-                        <span class="block text-xs uppercase font-bold text-stone-500">Próximo</span>
-                        <span class="block text-3xl font-black text-stone-800">DOM</span>
-                        <span class="block text-xs font-mono text-teal-700">10:00 AM</span>
+            <!-- Prompt 1: ADN Técnico -->
+            <div class="mb-8">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold text-stone-800"><i class="fa-solid fa-dna text-teal-600"></i> PROMPT 1: Extractor de ADN Técnico</h3>
+                    <button onclick="copyToClipboard('prompt-dna', this)" class="bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold py-2 px-4 rounded-lg transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-copy"></i> Copiar Prompt
+                    </button>
+                </div>
+                <div class="bg-stone-900 rounded-xl overflow-hidden border border-stone-800 shadow-inner">
+                    <div class="bg-stone-800 px-4 py-2 border-b border-stone-700 flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-amber-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                        <span class="text-[10px] text-stone-500 font-mono ml-2">claude-onboarding-ritual.txt</span>
                     </div>
-                    <div class="flex-grow">
-                        <h4 class="font-bold text-stone-800 mb-2">Objetivo Principal: Cierre de Infraestructura</h4>
-                        <ul class="text-xs text-stone-600 space-y-2">
-                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-teal-500"></i> Verificación de cuentas Git de Javi y Dídac.</li>
-                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-teal-500"></i> Test de stress del servidor SVN con assets pesados.</li>
-                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-teal-500"></i> Primera lluvia de ideas para el pilar narrativo del GDD.</li>
-                        </ul>
+                    <pre id="prompt-dna" class="p-6 text-xs text-teal-300 font-mono whitespace-pre-wrap leading-relaxed"></pre>
+                </div>
+            </div>
+
+            <!-- Prompt 2: Bios de Élite -->
+            <div class="mb-8">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold text-stone-800"><i class="fa-solid fa-user-ninja text-purple-600"></i> PROMPT 2: Generador de Bios de Élite</h3>
+                    <button onclick="copyToClipboard('prompt-bio', this)" class="bg-purple-700 hover:bg-purple-800 text-white text-xs font-bold py-2 px-4 rounded-lg transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-copy"></i> Copiar Prompt
+                    </button>
+                </div>
+                <div class="bg-stone-900 rounded-xl overflow-hidden border border-stone-800 shadow-inner">
+                    <div class="bg-stone-800 px-4 py-2 border-b border-stone-700 flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-amber-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                        <span class="text-[10px] text-stone-500 font-mono ml-2">hypenosys-bio-gen.txt</span>
                     </div>
-                    <div class="w-full md:w-auto">
-                        <button class="w-full bg-stone-800 text-white px-6 py-3 rounded-lg font-bold hover:bg-stone-700 transition shadow-md flex items-center justify-center gap-2">
-                            <i class="fa-brands fa-discord"></i> Unirse al Canal de Voz
+                    <pre id="prompt-bio" class="p-6 text-xs text-purple-300 font-mono whitespace-pre-wrap leading-relaxed"></pre>
+                </div>
+            </div>
+
+            <!-- Prompt 3: Infraestructura -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <div>
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-md font-bold text-stone-800"><i class="fa-brands fa-windows text-blue-600"></i> Windows Infrastructure</h3>
+                        <button onclick="copyToClipboard('infra-windows', this)" class="bg-blue-700 hover:bg-blue-800 text-white text-[10px] font-bold py-1.5 px-3 rounded-lg transition-all">
+                            <i class="fa-solid fa-copy"></i>
                         </button>
+                    </div>
+                    <div class="bg-stone-900 p-4 rounded-xl border border-stone-800">
+                        <pre id="infra-windows" class="text-[10px] text-blue-300 font-mono whitespace-pre-wrap">
+# --- CHECKLIST DE INFRAESTRUCTURA (WINDOWS) ---
+# 1. Instalar TortoiseSVN: https://tortoisesvn.net/downloads.html
+# 2. Reiniciar explorador de archivos.
+# 3. Checkout del repo SVN en carpeta de trabajo.
+# 4. Asegurar que las credenciales de GitHub están en el Credential Manager.
+
+# COMANDO RÁPIDO PARA VALIDAR GIT:
+git config --global user.name "Tu Nombre"
+git config --global user.email "tu-email@gmail.com"
+git auth status
+                        </pre>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-md font-bold text-teal-400"><i class="fa-brands fa-linux"></i> CachyOS / Arch (Axel)</h3>
+                        <button onclick="copyToClipboard('infra-linux', this)" class="bg-teal-700 hover:bg-teal-800 text-white text-[10px] font-bold py-1.5 px-3 rounded-lg transition-all">
+                            <i class="fa-solid fa-copy"></i>
+                        </button>
+                    </div>
+                    <div class="bg-stone-900 p-4 rounded-xl border border-stone-800">
+                        <pre id="infra-linux" class="text-[10px] text-teal-400 font-mono whitespace-pre-wrap">
+# --- AXEL'S INFRASTRUCTURE (CACHYOS / ARCH) ---
+# Instalar componentes críticos
+sudo pacman -S subversion git openssh --noconfirm
+
+# Instalar RabbitVCS para integración con explorador (Nemo/Thunar)
+yay -S rabbitvcs-nemo rabbitvcs-cli --noconfirm
+
+# Validar acceso a la organización Hypenosys
+ssh -T git@github.com
+                        </pre>
                     </div>
                 </div>
             </div>
@@ -747,9 +808,71 @@
             chartsRendered.resumen = true;
         }
 
+        // --- Onboarding Ritual Logic ---
+        function updatePrompts() {
+            const nameInput = document.getElementById('ritual-name');
+            const roleInput = document.getElementById('ritual-role');
+            if (!nameInput || !roleInput) return;
+
+            const name = nameInput.value || '[TU NOMBRE]';
+            const role = roleInput.value;
+            
+            const dnaPrompt = `Actúa como un Lead Técnico Senior de Hypenosys. Mi nombre es ${name} y mi rol es ${role}. 
+Tu objetivo es realizarme una entrevista técnica interactiva de 10 preguntas diseñada para extraer mi "ADN Técnico" y asegurar que mi entorno está alineado con la Fase 0 del estudio.
+
+REGLAS DE LA ENTREVISTA:
+1. Debes realizar las 10 preguntas de una en una. No pases a la siguiente hasta que yo responda.
+2. Las preguntas deben ser específicas para mi stack: ${role === 'Art' ? 'Blender, Unreal Engine, Modelado High/Low poly y flujos de exportación.' : role === 'Design' ? 'Unreal Engine, Level Design, Sistemas de Juego y Documentación GDD.' : 'Programación en C++, Blueprints, Arquitectura de Sistemas y Optimización.'}
+3. Debes forzar el cumplimiento de protocolos críticos:
+   - Bloqueo de archivos binarios en SVN (Locks).
+   - Estructura de carpetas en /Content/.
+   - Reclamación de tareas automatizada mediante Jules.
+4. Al final de la entrevista, sintetiza dos resultados:
+   - Un bloque de texto titulado "Add this to Memory: [Resumen]" con mis capacidades y manías técnicas.
+   - Un "Prompt de Inicialización Estructural" para que yo pueda abrir cualquier nuevo Proyecto de Claude y que la IA ya sepa exactamente cómo debo trabajar.
+
+Empieza ahora presentándote con la frialdad técnica que te caracteriza.`;
+
+            const bioPrompt = `Actúa como un biógrafo de élite con un sentido del humor seco, cínico y profesional (estilo Indie Dev). Mi nombre es ${name} y mi especialidad es ${role}.
+Tu misión es entrevistarme para redactar mi perfil público en la web oficial de Hypenosys.
+
+DIRECTRICES:
+1. Entrevístame con preguntas punzantes de una en una.
+2. Quiero que indagues en:
+   - Mi trayectoria y qué me trajo a este infierno del desarrollo indie.
+   - El bug más absurdo que me ha hecho dudar de mi salud mental o mi carrera.
+   - Mi nivel de dependencia de la cafeína (o sustancias equivalentes) para producir código/arte.
+   - Mi opinión real sobre las reuniones de los domingos a las 10:00 AM.
+   - Mi estilo: ¿Soy un artesano del pixel/puntero o soy de los que dicen "si compila, a producción"?
+
+SALIDA:
+Un perfil en Markdown con un tono brillante, ingenioso y "profesionalmente desquiciado" que encaje con la estética Obsidian/Dracula de nuestra plataforma.
+
+Dale caña, pregúntame lo primero.`;
+
+            document.getElementById('prompt-dna').innerText = dnaPrompt;
+            document.getElementById('prompt-bio').innerText = bioPrompt;
+        }
+
+        function copyToClipboard(elementId, btn) {
+            const text = document.getElementById(elementId).innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const originalContent = btn.innerHTML;
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> ¡Copiado! 🚀';
+                const originalBg = btn.className;
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalContent;
+                }, 2000);
+            }).catch(err => {
+                console.error('Error al copiar: ', err);
+            });
+        }
+
         // Initialize first view on load
         window.addEventListener('DOMContentLoaded', () => {
             renderResumenCharts();
+            if(document.getElementById('ritual-name')) updatePrompts();
         });
 
     </script>
