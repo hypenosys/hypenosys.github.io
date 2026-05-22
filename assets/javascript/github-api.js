@@ -27,7 +27,7 @@ async function validateToken() {
     });
     if (!resp.ok) return { valid: false, user: null };
     const user = await resp.json();
-    const ALLOWED = ['axlfc', 'mitxel2022', 'topperh4rley', 'alex', 'dídac', 'javi'];
+    const ALLOWED = ['axlfc', 'mitxel2022', 'topperh4rley', 'dkdidac-design', 'javi26031994-a11y'];
     return { valid: ALLOWED.includes(user.login.toLowerCase()), user };
   } catch (err) {
     return { valid: false, user: null };
