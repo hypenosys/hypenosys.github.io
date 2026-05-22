@@ -47,6 +47,7 @@ class AuthManager {
         $('#settingsModal').on('shown.bs.modal', () => {
             document.getElementById('input-pat').value = localStorage.getItem('github_token') || '';
             document.getElementById('input-repo').value = localStorage.getItem('github_repo') || 'hypenosys/hypenosys.github.io';
+            document.getElementById('input-jules-key-modal').value = localStorage.getItem('jules_api_key') || '';
         });
 
         // Profile Modal Save
@@ -115,9 +116,16 @@ class AuthManager {
     async handleSaveSettings() {
         const token = document.getElementById('input-pat').value.trim();
         const repo = document.getElementById('input-repo').value.trim();
+        const julesKey = document.getElementById('input-jules-key-modal').value.trim();
 
         if (token) window.githubApi.setToken(token);
         window.githubApi.setRepo(repo);
+
+        if (julesKey) {
+            localStorage.setItem('jules_api_key', julesKey);
+        } else {
+            localStorage.removeItem('jules_api_key');
+        }
 
         try {
             const user = await window.githubApi.validateToken();
@@ -125,12 +133,19 @@ class AuthManager {
             $('#settingsModal').modal('hide');
             this.showToast('Éxito', 'Configuración actualizada.', 'success');
 
-            if (window.location.pathname.includes('dashboard')) {
-                window.location.reload();
+            // Dispatch event for other components (like Jules Panel) to refresh
+            document.dispatchEvent(new CustomEvent('settingsSaved'));
+
+            if (window.location.pathname.includes('dashboard') || window.location.pathname.includes('jules-panel')) {
+                setTimeout(() => window.location.reload(), 1000);
             }
         } catch (e) {
             this.handleAuthError(e);
         }
+    }
+
+    showSettingsModal() {
+        $('#settingsModal').modal('show');
     }
 
     handleAuthError(e) {
@@ -175,7 +190,7 @@ class AuthManager {
                     <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span class="mr-2 d-none d-lg-inline text-gray-400 small font-weight-mono">${user.login}</span>
                         <div class="position-relative">
-                            <img src="${user.avatar_url}" width="32" height="32" class="rounded-circle border-purple shadow-sm">
+                            ${window.HypenosysUI.renderAvatar(user)}
                             <span class="connectivity-dot"></span>
                         </div>
                     </a>

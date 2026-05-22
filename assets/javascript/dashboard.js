@@ -173,6 +173,7 @@ async function refreshDashboardData() {
 
 function renderDashboard() {
   renderMemberToggles();
+  updateJulesBadges();
   renderStatsSummary();
   renderKanbanBoard();
   renderQAVelocityChart();
@@ -305,6 +306,15 @@ function buildTaskCard(task) {
             ${STAGES.map(s => `<option value="${s}" ${task.tema_principal === s ? 'selected' : ''}>${s}</option>`).join('')}
         </select>
     </div>
+
+    ${task.jules_session_id ? `
+    <div class="mb-3 p-2 bg-indigo-500/10 border border-indigo-500/20 rounded flex items-center justify-between">
+        <span class="text-[9px] font-bold text-indigo-400 flex items-center gap-1">
+            <i class="fa-solid fa-robot"></i> JULES
+        </span>
+        <span id="jules-status-${task.id}" class="text-[8px] font-mono text-indigo-300 uppercase">Cargando...</span>
+    </div>
+    ` : ''}
 
     <div class="flex justify-between items-end">
       <div class="flex -space-x-2">
@@ -1155,6 +1165,22 @@ function getFilteredTasks(tasks) {
   return filtered;
 }
 
+function updateJulesBadges() {
+    const cachedSessions = JSON.parse(localStorage.getItem('jules_sessions_cache') || '[]');
+    currentTasks.forEach(t => {
+        if (t.jules_session_id) {
+            const el = document.getElementById(`jules-status-${t.id}`);
+            if (el) {
+                const session = cachedSessions.find(s => s.name.endsWith(t.jules_session_id));
+                el.textContent = session ? session.state.replace(/_/g, ' ') : 'Desconocido';
+                if (session && ['PLANNING', 'IN_PROGRESS'].includes(session.state)) {
+                    el.classList.add('animate-pulse');
+                }
+            }
+        }
+    });
+}
+
 function renderUserStatus(user) {
   const container = document.getElementById('user-status');
   if (!container) return;
@@ -1163,6 +1189,8 @@ function renderUserStatus(user) {
       <span class="text-[10px] font-bold text-white leading-none">${user.login}</span>
       <span class="text-[9px] text-emerald-500 font-mono">ONLINE</span>
     </div>
-    <img src="${user.avatar_url}" class="w-8 h-8 rounded-lg border border-slate-700 shadow-lg pulse-emerald">
+    <div class="pulse-emerald rounded-full">
+      ${window.HypenosysUI.renderAvatar(user)}
+    </div>
   `;
 }

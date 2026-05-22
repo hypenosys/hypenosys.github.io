@@ -1,0 +1,205 @@
+---
+layout: page
+title: Tech Stack
+permalink: /tech-stack/
+---
+
+{% assign stack = site.data.tech_stack %}
+
+<div class="bg-slate-950 text-slate-100 min-h-screen font-sans">
+    <!-- Header -->
+    <div class="mb-8">
+        <h1 class="text-4xl font-bold text-purple-500 mb-2 flex items-center gap-3">
+            <i class="fa-solid fa-layer-group"></i> Stack Tecnológico
+        </h1>
+        <p class="text-slate-400">Manual de referencia interna y base de conocimientos de Hypenosys Studio.</p>
+    </div>
+
+    <!-- Tabs Navigation -->
+    <div class="flex flex-col md:flex-row justify-center gap-2 border-b border-purple-900/30 mb-8 p-1 bg-slate-900/50 rounded-t-xl">
+        <button onclick="switchTab('DEV')" id="tab-btn-DEV" class="tab-btn px-8 py-3 rounded-lg text-sm font-bold transition-all flex items-center justify-center gap-2 bg-purple-600 text-white shadow-lg shadow-purple-500/20">
+            <i class="fa-solid fa-code"></i> DESARROLLO (DEV)
+        </button>
+        <button onclick="switchTab('DIS')" id="tab-btn-DIS" class="tab-btn px-8 py-3 rounded-lg text-sm font-bold transition-all flex items-center justify-center gap-2 text-slate-400 border border-transparent hover:text-white hover:bg-slate-800">
+            <i class="fa-solid fa-palette"></i> DISEÑO (DIS)
+        </button>
+        <button onclick="switchTab('ART')" id="tab-btn-ART" class="tab-btn px-8 py-3 rounded-lg text-sm font-bold transition-all flex items-center justify-center gap-2 text-slate-400 border border-transparent hover:text-white hover:bg-slate-800">
+            <i class="fa-solid fa-clapperboard"></i> MEDIA (ART)
+        </button>
+    </div>
+
+    {% for tab in "DEV,DIS,ART" split: "," %}
+    <div id="tab-content-{{ tab }}" class="tab-content space-y-12 {% if tab != 'DEV' %}hidden{% endif %}">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for tool in stack.tools %}
+                {% if tool.tab == tab %}
+                <div class="bg-slate-900 rounded-2xl border-l-4 border-purple-500/50 p-6 hover:border-purple-500 transition-all group flex flex-col h-full shadow-lg">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-12 h-12 bg-slate-950 rounded-xl flex items-center justify-center border border-slate-800 group-hover:scale-110 transition-transform">
+                            {% if tool.icon contains 'simple-icons:' %}
+                                <img src="https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/{{ tool.icon | split: ':' | last }}.svg" class="w-6 h-6 filter invert opacity-80" alt="{{ tool.name }}">
+                            {% else %}
+                                <i class="{{ tool.icon }} text-2xl text-purple-400"></i>
+                            {% endif %}
+                        </div>
+                        <div class="flex flex-col items-end gap-1">
+                            <span class="text-[10px] font-bold px-2 py-1 rounded {{ tool.master_level_class }} bg-opacity-10 {{ tool.master_level_class | replace: 'bg-', 'text-' }} border border-current">
+                                {{ tool.master_level | upcase }}
+                            </span>
+                            <div class="flex items-center gap-1.5 mt-1">
+                                <div class="w-2 h-2 rounded-full {{ tool.master_level_class }}"></div>
+                                <span class="text-[9px] text-slate-500 font-bold uppercase">{{ tool.master_level }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 mb-1">
+                        <h3 class="text-xl font-bold text-white">{{ tool.name }}</h3>
+                        <span class="text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded border border-slate-700 uppercase font-bold">{{ tool.category }}</span>
+                    </div>
+                    <p class="text-sm text-purple-400 font-semibold mb-2 leading-tight">{{ tool.purpose }}</p>
+                    <p class="text-xs text-slate-400 leading-relaxed flex-grow mb-6">{{ tool.description }}</p>
+                    <div class="flex flex-wrap gap-1.5 mt-auto">
+                        {% for format in tool.formats %}
+                        <span class="text-[9px] bg-slate-950 text-slate-500 px-2 py-0.5 rounded border border-slate-800 font-mono">{{ format }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <div class="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
+            <div class="p-6 border-b border-slate-800 flex justify-between items-center bg-slate-900/50">
+                <h2 class="text-xl font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-table text-purple-400"></i> Referencia de Formatos ({{ tab }})
+                </h2>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-slate-950 text-slate-500 uppercase text-[10px] font-bold tracking-widest">
+                        <tr>
+                            <th class="px-6 py-4">Extensión</th>
+                            <th class="px-6 py-4">Nombre</th>
+                            <th class="px-6 py-4">Herramienta</th>
+                            <th class="px-6 py-4">Uso Principal</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800">
+                        {% for f in stack.format_references[tab] %}
+                        <tr class="hover:bg-purple-500/5 transition-colors group">
+                            <td class="px-6 py-4 font-mono text-purple-400 font-bold group-hover:text-purple-300">{{ f.format }}</td>
+                            <td class="px-6 py-4 text-slate-300">{{ f.name }}</td>
+                            <td class="px-6 py-4">
+                                <span class="bg-slate-950 px-2 py-1 rounded border border-slate-800 text-xs text-slate-400 group-hover:border-purple-900/50 group-hover:text-slate-300">{{ f.tool }}</span>
+                            </td>
+                            <td class="px-6 py-4 text-xs text-slate-500 group-hover:text-slate-400">{{ f.usage }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <!-- Naming Conventions Section -->
+    <div class="mt-20 bg-slate-900 rounded-3xl border border-purple-900/20 p-8 shadow-2xl relative overflow-hidden">
+        <div class="absolute top-0 right-0 p-8 opacity-5 text-8xl text-purple-500">
+            <i class="fa-solid fa-folder-tree"></i>
+        </div>
+        <h2 class="text-3xl font-bold text-white mb-8 flex items-center gap-3">
+            <i class="fa-solid fa-folder-open text-purple-500"></i> 📁 Convenciones de Nomenclatura
+        </h2>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <div class="space-y-6">
+                <div>
+                    <h3 class="text-lg font-bold text-purple-400 mb-3 uppercase tracking-wider">Reglas Generales</h3>
+                    <ul class="space-y-3 text-slate-300">
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-check text-green-500 mt-1"></i>
+                            Usar <code class="bg-slate-950 px-1.5 py-0.5 rounded text-purple-400 border border-slate-800">snake_case</code> para todos los archivos y carpetas. Sin espacios ni CamelCase.
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-check text-green-500 mt-1"></i>
+                            Prefijar activos por tipo y rol: <code class="text-purple-400">T_</code> (Texture), <code class="text-purple-400">M_</code> (Material), <code class="text-purple-400">SM_</code> (Static Mesh), <code class="text-purple-400">SK_</code> (Skeletal Mesh), <code class="text-purple-400">BP_</code> (Blueprint), <code class="text-purple-400">A_</code> (Audio), <code class="text-purple-400">FX_</code> (VFX), <code class="text-purple-400">UI_</code> (Interface).
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-check text-green-500 mt-1"></i>
+                            Incluir siempre sufijo de versión en trabajos en curso: <code class="text-purple-400">_v01</code>, <code class="text-purple-400">_v02</code>.
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-check text-green-500 mt-1"></i>
+                            Los activos finales aprobados eliminan el sufijo de versión.
+                        </li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-bold text-amber-500 mb-3 uppercase tracking-wider">Ejemplos</h3>
+                    <div class="space-y-2 font-mono text-sm">
+                        <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 flex justify-between items-center hover:border-purple-900/50 transition-colors">
+                            <span class="text-green-400">T_hero_diffuse.tga</span>
+                            <span class="text-[10px] bg-green-500/10 text-green-500 px-2 py-0.5 rounded border border-green-500/20 font-bold">CORRECTO</span>
+                        </div>
+                        <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 flex justify-between items-center hover:border-purple-900/50 transition-colors">
+                            <span class="text-green-400">SM_env_rock_large_v02.fbx</span>
+                            <span class="text-[10px] bg-green-500/10 text-green-500 px-2 py-0.5 rounded border border-green-500/20 font-bold">CORRECTO</span>
+                        </div>
+                        <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 flex justify-between items-center hover:border-purple-900/50 transition-colors">
+                            <span class="text-green-400">BP_PlayerController.uasset</span>
+                            <span class="text-[10px] bg-green-500/10 text-green-500 px-2 py-0.5 rounded border border-green-500/20 font-bold">CORRECTO</span>
+                        </div>
+                        <div class="bg-slate-950 p-3 rounded-lg border border-red-500/30 flex justify-between items-center bg-red-500/5">
+                            <span class="text-red-400">hero final FINAL2.psd</span>
+                            <span class="text-[10px] bg-red-500/10 text-red-500 px-2 py-0.5 rounded border border-red-500/20 font-bold">NUNCA HACER ESTO</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <div>
+                    <h3 class="text-lg font-bold text-purple-400 mb-3 uppercase tracking-wider">Nomenclatura de Ramas (Git/SVN)</h3>
+                    <div class="bg-slate-950 p-6 rounded-2xl border border-slate-800 font-mono text-sm space-y-2 hover:border-purple-900/50 transition-colors shadow-inner">
+                        <div class="text-slate-400"><span class="text-purple-400">feature/</span>jules-panel</div>
+                        <div class="text-slate-400"><span class="text-green-400">fix/</span>profile-icon-consistency</div>
+                        <div class="text-slate-400"><span class="text-amber-400">chore/</span>update-studio-stats</div>
+                    </div>
+                </div>
+
+                <div class="bg-purple-900/10 border border-purple-500/20 p-6 rounded-2xl shadow-lg">
+                    <h4 class="text-white font-bold mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-circle-info text-purple-400"></i> Nota sobre SVN
+                    </h4>
+                    <p class="text-sm text-slate-400 leading-relaxed">
+                        Para activos binarios en SVN, es vital mantener el bloqueo (Lock) de archivos antes de editar para evitar conflictos que no pueden fusionarse automáticamente. Consultar la <a href="/guia-ue5-svn" class="text-purple-400 hover:underline">guía completa</a>.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function switchTab(tabId) {
+        // Update buttons
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('bg-purple-600', 'text-white', 'shadow-lg', 'shadow-purple-500/20');
+            btn.classList.add('text-slate-400', 'hover:text-white', 'hover:bg-slate-800', 'border-transparent');
+        });
+        const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+        activeBtn.classList.remove('text-slate-400', 'hover:text-white', 'hover:bg-slate-800', 'border-transparent');
+        activeBtn.classList.add('bg-purple-600', 'text-white', 'shadow-lg', 'shadow-purple-500/20');
+
+        // Update content
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
+        document.getElementById(`tab-content-${tabId}`).classList.remove('hidden');
+    }
+</script>
+
+<style>
+    .tab-content { animation: fadeIn 0.3s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .filter.invert { filter: invert(1); }
+</style>
