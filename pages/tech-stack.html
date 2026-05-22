@@ -1,0 +1,313 @@
+---
+layout: page
+title: Tech Stack
+permalink: /tech-stack/
+---
+
+<div class="bg-slate-950 text-slate-100 min-h-screen font-sans">
+    <!-- Header -->
+    <div class="mb-8">
+        <h1 class="text-4xl font-bold text-emerald-400 mb-2 flex items-center gap-3">
+            <i class="fa-solid fa-layer-group"></i> Stack Tecnológico
+        </h1>
+        <p class="text-slate-400">Manual de referencia interna y base de conocimientos de Hypenosys Studio.</p>
+    </div>
+
+    <!-- Tabs Navigation -->
+    <div class="flex gap-2 border-b border-slate-800 mb-8 p-1 bg-slate-900/50 rounded-t-xl">
+        <button onclick="switchTab('DEV')" id="tab-btn-DEV" class="tab-btn px-6 py-3 rounded-lg text-sm font-bold transition-all flex items-center gap-2 bg-emerald-500 text-slate-950">
+            <i class="fa-solid fa-code"></i> DESARROLLO (DEV)
+        </button>
+        <button onclick="switchTab('DIS')" id="tab-btn-DIS" class="tab-btn px-6 py-3 rounded-lg text-sm font-bold transition-all flex items-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800">
+            <i class="fa-solid fa-palette"></i> DISEÑO (DIS)
+        </button>
+        <button onclick="switchTab('ART')" id="tab-btn-ART" class="tab-btn px-6 py-3 rounded-lg text-sm font-bold transition-all flex items-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800">
+            <i class="fa-solid fa-clapperboard"></i> MEDIA (ART)
+        </button>
+    </div>
+
+    <!-- Tab Contents -->
+    <div id="tab-content-DEV" class="tab-content space-y-12">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="tools-grid-DEV">
+            <!-- Tools will be injected here -->
+        </div>
+
+        <div class="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
+            <div class="p-6 border-b border-slate-800 flex justify-between items-center bg-slate-900/50">
+                <h2 class="text-xl font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-table text-indigo-400"></i> Referencia de Formatos (DEV)
+                </h2>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm" id="format-table-DEV">
+                    <thead class="bg-slate-950 text-slate-500 uppercase text-[10px] font-bold tracking-widest">
+                        <tr>
+                            <th class="px-6 py-4 cursor-pointer hover:text-white transition-colors" onclick="sortTable('DEV', 0)">Extensión <i class="fa-solid fa-sort ml-1"></i></th>
+                            <th class="px-6 py-4 cursor-pointer hover:text-white transition-colors" onclick="sortTable('DEV', 1)">Nombre <i class="fa-solid fa-sort ml-1"></i></th>
+                            <th class="px-6 py-4 cursor-pointer hover:text-white transition-colors" onclick="sortTable('DEV', 2)">Herramienta <i class="fa-solid fa-sort ml-1"></i></th>
+                            <th class="px-6 py-4">Uso Principal</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800">
+                        <!-- Formats injected here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="tab-content-DIS" class="tab-content space-y-12 hidden">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="tools-grid-DIS">
+            <!-- Tools will be injected here -->
+        </div>
+
+        <div class="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
+            <div class="p-6 border-b border-slate-800 flex justify-between items-center bg-slate-900/50">
+                <h2 class="text-xl font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-table text-indigo-400"></i> Referencia de Formatos (DIS)
+                </h2>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm" id="format-table-DIS">
+                    <thead class="bg-slate-950 text-slate-500 uppercase text-[10px] font-bold tracking-widest">
+                        <tr>
+                            <th class="px-6 py-4 cursor-pointer hover:text-white transition-colors" onclick="sortTable('DIS', 0)">Extensión <i class="fa-solid fa-sort ml-1"></i></th>
+                            <th class="px-6 py-4 cursor-pointer hover:text-white transition-colors" onclick="sortTable('DIS', 1)">Nombre <i class="fa-solid fa-sort ml-1"></i></th>
+                            <th class="px-6 py-4 cursor-pointer hover:text-white transition-colors" onclick="sortTable('DIS', 2)">Herramienta <i class="fa-solid fa-sort ml-1"></i></th>
+                            <th class="px-6 py-4">Uso Principal</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800">
+                        <!-- Formats injected here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="tab-content-ART" class="tab-content space-y-12 hidden">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="tools-grid-ART">
+            <!-- Tools will be injected here -->
+        </div>
+
+        <div class="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
+            <div class="p-6 border-b border-slate-800 flex justify-between items-center bg-slate-900/50">
+                <h2 class="text-xl font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-table text-indigo-400"></i> Referencia de Formatos (ART)
+                </h2>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm" id="format-table-ART">
+                    <thead class="bg-slate-950 text-slate-500 uppercase text-[10px] font-bold tracking-widest">
+                        <tr>
+                            <th class="px-6 py-4 cursor-pointer hover:text-white transition-colors" onclick="sortTable('ART', 0)">Extensión <i class="fa-solid fa-sort ml-1"></i></th>
+                            <th class="px-6 py-4 cursor-pointer hover:text-white transition-colors" onclick="sortTable('ART', 1)">Nombre <i class="fa-solid fa-sort ml-1"></i></th>
+                            <th class="px-6 py-4 cursor-pointer hover:text-white transition-colors" onclick="sortTable('ART', 2)">Herramienta <i class="fa-solid fa-sort ml-1"></i></th>
+                            <th class="px-6 py-4">Uso Principal</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800">
+                        <!-- Formats injected here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Naming Conventions Section -->
+    <div class="mt-20 bg-slate-900 rounded-3xl border border-slate-800 p-8 shadow-2xl relative overflow-hidden">
+        <div class="absolute top-0 right-0 p-8 opacity-5 text-8xl">
+            <i class="fa-solid fa-folder-tree"></i>
+        </div>
+        <h2 class="text-3xl font-bold text-white mb-8 flex items-center gap-3">
+            <i class="fa-solid fa-folder-open text-emerald-400"></i> 📁 Convenciones de Nomenclatura
+        </h2>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <div class="space-y-6">
+                <div>
+                    <h3 class="text-lg font-bold text-emerald-400 mb-3 uppercase tracking-wider">Reglas Generales</h3>
+                    <ul class="space-y-3 text-slate-300">
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-check text-emerald-500 mt-1"></i>
+                            Usar <code class="bg-slate-950 px-1.5 py-0.5 rounded text-indigo-400">snake_case</code> para todos los archivos y carpetas. Sin espacios ni CamelCase.
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-check text-emerald-500 mt-1"></i>
+                            Prefijar activos por tipo y rol: <code class="text-indigo-400">T_</code> (Texture), <code class="text-indigo-400">M_</code> (Material), <code class="text-indigo-400">SM_</code> (Static Mesh), <code class="text-indigo-400">SK_</code> (Skeletal Mesh), <code class="text-indigo-400">BP_</code> (Blueprint), <code class="text-indigo-400">A_</code> (Audio), <code class="text-indigo-400">FX_</code> (VFX), <code class="text-indigo-400">UI_</code> (Interface).
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-check text-emerald-500 mt-1"></i>
+                            Incluir siempre sufijo de versión en trabajos en curso: <code class="text-indigo-400">_v01</code>, <code class="text-indigo-400">_v02</code>.
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-check text-emerald-500 mt-1"></i>
+                            Los activos finales aprobados eliminan el sufijo de versión.
+                        </li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-bold text-amber-400 mb-3 uppercase tracking-wider">Ejemplos</h3>
+                    <div class="space-y-2 font-mono text-sm">
+                        <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 flex justify-between items-center">
+                            <span class="text-emerald-400">T_hero_diffuse.tga</span>
+                            <span class="text-[10px] bg-emerald-500/10 text-emerald-500 px-2 py-0.5 rounded border border-emerald-500/20">CORRECTO</span>
+                        </div>
+                        <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 flex justify-between items-center">
+                            <span class="text-emerald-400">SM_env_rock_large_v02.fbx</span>
+                            <span class="text-[10px] bg-emerald-500/10 text-emerald-500 px-2 py-0.5 rounded border border-emerald-500/20">CORRECTO</span>
+                        </div>
+                        <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 flex justify-between items-center">
+                            <span class="text-emerald-400">BP_PlayerController.uasset</span>
+                            <span class="text-[10px] bg-emerald-500/10 text-emerald-500 px-2 py-0.5 rounded border border-emerald-500/20">CORRECTO</span>
+                        </div>
+                        <div class="bg-slate-950 p-3 rounded-lg border border-red-500/30 flex justify-between items-center">
+                            <span class="text-red-400">hero final FINAL2.psd</span>
+                            <span class="text-[10px] bg-red-500/10 text-red-500 px-2 py-0.5 rounded border border-red-500/20">NUNCA HACER ESTO</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <div>
+                    <h3 class="text-lg font-bold text-indigo-400 mb-3 uppercase tracking-wider">Nomenclatura de Ramas (Git/SVN)</h3>
+                    <div class="bg-slate-950 p-6 rounded-2xl border border-slate-800 font-mono text-sm space-y-2">
+                        <div class="text-slate-400"><span class="text-indigo-400">feature/</span>jules-panel</div>
+                        <div class="text-slate-400"><span class="text-emerald-400">fix/</span>profile-icon-consistency</div>
+                        <div class="text-slate-400"><span class="text-amber-400">chore/</span>update-studio-stats</div>
+                    </div>
+                </div>
+
+                <div class="bg-indigo-900/20 border border-indigo-500/30 p-6 rounded-2xl">
+                    <h4 class="text-white font-bold mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-circle-info text-indigo-400"></i> Nota sobre SVN
+                    </h4>
+                    <p class="text-sm text-slate-400 leading-relaxed">
+                        Para activos binarios en SVN, es vital mantener el bloqueo (Lock) de archivos antes de editar para evitar conflictos que no pueden fusionarse automáticamente. Consultar la <a href="/guia-ue5-svn" class="text-indigo-400 hover:underline">guía completa</a>.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let stackData = null;
+
+    async function initTechStack() {
+        try {
+            const response = await fetch('{{ "/_data/tech_stack.json" | relative_url }}');
+            stackData = await response.json();
+            renderTools();
+            renderFormats();
+        } catch (e) {
+            console.error('Error loading tech stack data:', e);
+        }
+    }
+
+    function renderTools() {
+        const tabs = ['DEV', 'DIS', 'ART'];
+        tabs.forEach(tab => {
+            const grid = document.getElementById(`tools-grid-${tab}`);
+            const tools = stackData.tools.filter(t => t.tab === tab);
+            grid.innerHTML = tools.map(tool => `
+                <div class="bg-slate-900 rounded-2xl border border-slate-800 p-6 hover:border-slate-600 transition-all group flex flex-col h-full shadow-lg">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-12 h-12 bg-slate-950 rounded-xl flex items-center justify-center border border-slate-800 group-hover:scale-110 transition-transform">
+                            ${renderIcon(tool.icon)}
+                        </div>
+                        <span class="text-[10px] font-bold px-2 py-1 rounded border ${tool.master_level_class} bg-opacity-10 ${tool.master_level_class.replace('bg-', 'text-')}">
+                            ${tool.master_level.toUpperCase()}
+                        </span>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-1">${tool.name}</h3>
+                    <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">${tool.category}</div>
+                    <p class="text-sm text-emerald-400 font-semibold mb-2 leading-tight">${tool.purpose}</p>
+                    <p class="text-xs text-slate-400 leading-relaxed flex-grow mb-6">${tool.description}</p>
+                    <div class="flex flex-wrap gap-1.5">
+                        ${tool.formats.map(f => `<span class="text-[9px] bg-slate-950 text-slate-500 px-2 py-0.5 rounded border border-slate-800">${f}</span>`).join('')}
+                    </div>
+                </div>
+            `).join('');
+        });
+    }
+
+    function renderIcon(iconStr) {
+        if (iconStr.startsWith('simple-icons:')) {
+            const slug = iconStr.split(':')[1];
+            return `<img src="https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/${slug}.svg" class="w-6 h-6 filter invert opacity-80" alt="${slug}">`;
+        }
+        return `<i class="${iconStr} text-2xl text-slate-400"></i>`;
+    }
+
+    function renderFormats() {
+        const tabs = ['DEV', 'DIS', 'ART'];
+        tabs.forEach(tab => {
+            const tbody = document.querySelector(`#format-table-${tab} tbody`);
+            const formats = stackData.format_references[tab];
+            tbody.innerHTML = formats.map(f => `
+                <tr class="hover:bg-slate-800/30 transition-colors">
+                    <td class="px-6 py-4 font-mono text-indigo-400 font-bold">${f.format}</td>
+                    <td class="px-6 py-4 text-slate-300">${f.name}</td>
+                    <td class="px-6 py-4"><span class="bg-slate-950 px-2 py-1 rounded border border-slate-800 text-xs text-slate-400">${f.tool}</span></td>
+                    <td class="px-6 py-4 text-xs text-slate-500">${f.usage}</td>
+                </tr>
+            `).join('');
+        });
+    }
+
+    function switchTab(tabId) {
+        // Update buttons
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('bg-emerald-500', 'text-slate-950');
+            btn.classList.add('text-slate-400', 'hover:text-white', 'hover:bg-slate-800');
+        });
+        const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+        activeBtn.classList.remove('text-slate-400', 'hover:text-white', 'hover:bg-slate-800');
+        activeBtn.classList.add('bg-emerald-500', 'text-slate-950');
+
+        // Update content
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
+        document.getElementById(`tab-content-${tabId}`).classList.remove('hidden');
+    }
+
+    let sortState = { col: null, dir: 1 };
+    function sortTable(tab, colIdx) {
+        const formats = [...stackData.format_references[tab]];
+        const keys = ['format', 'name', 'tool'];
+        const key = keys[colIdx];
+
+        if (sortState.col === colIdx) {
+            sortState.dir *= -1;
+        } else {
+            sortState.col = colIdx;
+            sortState.dir = 1;
+        }
+
+        formats.sort((a, b) => {
+            return a[key].localeCompare(b[key]) * sortState.dir;
+        });
+
+        const tbody = document.querySelector(`#format-table-${tab} tbody`);
+        tbody.innerHTML = formats.map(f => `
+            <tr class="hover:bg-slate-800/30 transition-colors">
+                <td class="px-6 py-4 font-mono text-indigo-400 font-bold">${f.format}</td>
+                <td class="px-6 py-4 text-slate-300">${f.name}</td>
+                <td class="px-6 py-4"><span class="bg-slate-950 px-2 py-1 rounded border border-slate-800 text-xs text-slate-400">${f.tool}</span></td>
+                <td class="px-6 py-4 text-xs text-slate-500">${f.usage}</td>
+            </tr>
+        `).join('');
+    }
+
+    document.addEventListener('DOMContentLoaded', initTechStack);
+</script>
+
+<style>
+    .tab-content { animation: fadeIn 0.3s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Simple Icons Filter to match Studio Aesthetic (if needed) */
+    .filter.invert { filter: invert(1); }
+</style>

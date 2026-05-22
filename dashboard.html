@@ -35,12 +35,19 @@
                 <a href="#kanban-board" class="text-xs font-bold text-slate-400 hover:text-white transition-all uppercase">Kanban</a>
                 <a href="#pipeline" class="text-xs font-bold text-slate-400 hover:text-white transition-all uppercase">Pipeline</a>
                 <a href="#charts" class="text-xs font-bold text-slate-400 hover:text-white transition-all uppercase">Analytics</a>
+                <a href="/tech-stack/" class="text-xs font-bold text-slate-400 hover:text-white transition-all uppercase">Tech Stack</a>
+                <a href="/jules-panel/" class="text-xs font-bold text-slate-400 hover:text-white transition-all uppercase">Jules</a>
             </div>
             <div id="member-filters" class="flex items-center gap-2 bg-slate-950 p-1 rounded-lg border border-slate-800">
                 <!-- Member filters injected here -->
             </div>
         </div>
         <div class="flex items-center gap-6">
+            <div class="flex items-center gap-3 mr-2">
+                <button onclick="window.location.href='/jules-panel/'" class="bg-slate-800 hover:bg-slate-700 text-emerald-400 p-2 rounded-lg transition-all border border-slate-700 flex items-center gap-2 text-xs font-bold" title="Quick Jules">
+                    <i class="fa-solid fa-robot"></i> <span class="hidden lg:inline">Quick Jules</span>
+                </button>
+            </div>
             <div id="last-sync-timestamp" class="text-[10px] font-mono text-slate-500 uppercase tracking-widest">
                 Sincronizando...
             </div>
@@ -376,6 +383,7 @@
 
     <!-- Scripts -->
     <script src="assets/javascript/github-api.js"></script>
+    <script src="assets/javascript/ui-components.js"></script>
     <script src="assets/javascript/dashboard.js"></script>
 </body>
 </html>
