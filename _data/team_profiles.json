@@ -30,21 +30,21 @@
       "color_accent": "#f87171"
     },
     "Javi": {
-      "handle": "javi",
+      "handle": "javi26031994-a11y",
       "display_name": "Javi",
       "role": "Main Design, Secondary Art",
       "avatar_url": "",
       "bio": "",
-      "links": { "github": "", "twitter": "", "itch": "" },
+      "links": { "github": "https://github.com/javi26031994-a11y", "twitter": "", "itch": "" },
       "color_accent": "#fbbf24"
     },
     "Dídac": {
-      "handle": "dídac",
+      "handle": "dkdidac-design",
       "display_name": "Dídac",
       "role": "Main Art, Secondary Design",
       "avatar_url": "",
       "bio": "",
-      "links": { "github": "", "twitter": "", "itch": "" },
+      "links": { "github": "https://github.com/dkdidac-design", "twitter": "", "itch": "" },
       "color_accent": "#38bdf8"
     }
   }
