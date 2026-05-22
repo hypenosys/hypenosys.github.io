@@ -45,21 +45,23 @@
     "name": "Javi",
     "role": "Main Design, Secondary Art",
     "description": "Arquitecto de sueños y pesadillas (según el día). Si el juego es bonito pero te explota la cabeza, Javi ha pasado por ahí. Su ratón tiene más kilómetros que un taxi.",
-    "image": "assets/images/upload_soul.svg",
+    "image": "https://github.com/javi26031994-a11y.png",
     "skills": [
       "Design",
       "Art"
-    ]
+    ],
+    "github": "https://github.com/javi26031994-a11y"
   },
   {
     "name": "Dídac",
     "role": "Main Art, Secondary Design",
     "description": "Si no tiene colores que te derritan las retinas, no es arte. Dídac vive en un mundo de 16 millones de colores y se conoce el nombre de todos. Menos del gris, el gris no existe.",
-    "image": "assets/images/upload_soul.svg",
+    "image": "https://github.com/dkdidac-design.png",
     "skills": [
       "Art",
       "Design"
-    ]
+    ],
+    "github": "https://github.com/dkdidac-design"
   },
   {
     "name": "Mitxel",
