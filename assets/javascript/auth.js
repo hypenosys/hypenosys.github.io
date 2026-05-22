@@ -279,6 +279,7 @@ class AuthManager {
             document.getElementById('edit-profile-role').value = member.role || '';
             document.getElementById('edit-profile-desc').value = member.description || '';
             document.getElementById('edit-profile-portfolio').value = member.portfolio || '';
+            document.getElementById('input-jules-key').value = localStorage.getItem('jules_api_key') || '';
             
             this.currentTeamData = team;
             this.currentFileSha = fileData.sha;
@@ -295,6 +296,13 @@ class AuthManager {
         const role = document.getElementById('edit-profile-role').value.trim();
         const desc = document.getElementById('edit-profile-desc').value.trim();
         const portfolio = document.getElementById('edit-profile-portfolio').value.trim();
+        const julesKey = document.getElementById('input-jules-key').value.trim();
+
+        if (julesKey) {
+            localStorage.setItem('jules_api_key', julesKey);
+        } else {
+            localStorage.removeItem('jules_api_key');
+        }
 
         if (!name || !role) {
             this.showToast('Error', 'Nombre y Rol son campos obligatorios.', 'error');
