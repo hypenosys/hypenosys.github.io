@@ -15,15 +15,19 @@ const UI = {
         const login = user.login || 'User';
         const initials = login.substring(0, 2).toUpperCase();
 
-        // Standard styling: circular, dark border, shadow
-        const baseClasses = "inline-block rounded-full border-2 border-slate-800 shadow-sm object-cover";
-        const sizeClasses = "w-8 h-8 md:w-9 md:h-9";
+        // Constrained styles for Bug #1
+        const containerStyle = "width: 32px; height: 32px; max-width: 32px; max-height: 32px; overflow: hidden; border: 2px solid rgba(139, 92, 246, 0.6); border-radius: 9999px; flex-shrink: 0; display: inline-block;";
+        const imgStyle = "width: 32px; height: 32px; object-fit: cover; border-radius: 9999px; display: block;";
 
         if (avatarUrl) {
-            return `<img src="${avatarUrl}" alt="${login}" class="${baseClasses} ${sizeClasses} bg-slate-800">`;
+            return `
+                <div style="${containerStyle}" class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+                    <img src="${avatarUrl}" alt="${login}" style="${imgStyle}" class="w-full h-full object-cover">
+                </div>
+            `;
         } else {
             return `
-                <div class="${baseClasses} ${sizeClasses} bg-slate-900 flex items-center justify-center text-[10px] font-bold text-slate-400">
+                <div style="${containerStyle}" class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 bg-slate-900 flex items-center justify-center text-[10px] font-bold text-slate-400">
                     ${initials}
                 </div>
             `;

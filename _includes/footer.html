@@ -72,7 +72,7 @@
         <div class="modal-content shadow-lg bg-dark text-white border-purple">
             <div class="modal-header border-purple">
                 <h5 class="modal-title text-purple font-weight-bold">
-                    <i class="fas fa-terminal mr-2"></i> SYSTEM CONFIGURATION
+                    <i class="fas fa-terminal mr-2"></i> ⚙️ CONFIGURACIÓN DEL SISTEMA
                 </h5>
                 <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -81,25 +81,72 @@
             <div class="modal-body">
                 <div class="alert alert-info bg-black border-purple text-white-50 small mb-4">
                     <i class="fas fa-info-circle mr-2"></i>
-                    Your credentials are stored locally in your browser's <code>localStorage</code>.
-                    Ensure your PAT has <code>repo</code> permissions.
+                    Tus credenciales se guardan localmente en el <code>localStorage</code> de tu navegador. Nunca se envían a nuestros servidores.
                 </div>
-                <div class="form-group">
-                    <label for="input-pat" class="text-purple small font-weight-bold uppercase">Github Personal Access Token</label>
-                    <input type="password" class="form-control bg-dark text-white border-purple" id="input-pat" placeholder="ghp_xxxxxxxxxxxx">
+
+                <!-- GitHub Section -->
+                <div class="mb-4">
+                    <h6 class="text-purple font-weight-bold uppercase small border-bottom border-purple pb-2 mb-3">
+                        <i class="fab fa-github mr-2"></i> GitHub
+                    </h6>
+                    <div class="form-group">
+                        <label for="input-pat" class="text-gray-400 small font-weight-bold uppercase">Token de Acceso Personal (PAT)</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control bg-dark text-white border-purple" id="input-pat" placeholder="ghp_xxxxxxxxxxxx">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-purple" type="button" onclick="togglePasswordVisibility('input-pat')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <small class="text-muted">Asegúrate de que tu PAT tenga permisos de <code>repo</code>.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="input-repo" class="text-gray-400 small font-weight-bold uppercase">Repositorio Objetivo</label>
+                        <input type="text" class="form-control bg-dark text-white border-purple" id="input-repo" placeholder="owner/repo">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="input-repo" class="text-purple small font-weight-bold uppercase">Target Repository</label>
-                    <input type="text" class="form-control bg-dark text-white border-purple" id="input-repo" placeholder="owner/repo">
+
+                <!-- Jules AI Section -->
+                <div>
+                    <h6 class="text-purple font-weight-bold uppercase small border-bottom border-purple pb-2 mb-3">
+                        <i class="fas fa-robot mr-2"></i> Agente de IA Jules
+                    </h6>
+                    <div class="form-group">
+                        <label for="input-jules-key-modal" class="text-gray-400 small font-weight-bold uppercase">Jules API Key</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control bg-dark text-white border-purple" id="input-jules-key-modal" placeholder="AIza...">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-purple" type="button" onclick="togglePasswordVisibility('input-jules-key-modal')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <small class="text-muted">Consigue tu clave en <a href="https://jules.google.com/settings" target="_blank" class="text-purple">jules.google.com/settings</a></small>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer border-purple">
-                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" id="btn-save-settings" class="btn btn-purple">Save & Connect</button>
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" id="btn-save-settings" class="btn btn-purple">Guardar y Conectar</button>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+function togglePasswordVisibility(id) {
+    const input = document.getElementById(id);
+    const btn = input.nextElementSibling.querySelector('i');
+    if (input.type === 'password') {
+        input.type = 'text';
+        btn.classList.replace('fa-eye', 'fa-eye-slash');
+    } else {
+        input.type = 'password';
+        btn.classList.replace('fa-eye-slash', 'fa-eye');
+    }
+}
+</script>
 
 <!-- Access Denied Modal -->
 <div class="modal fade" id="accessDeniedModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
