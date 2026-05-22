@@ -1,15 +1,20 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2025-01-01T00:00:00.000Z",
+  "last_updated": "2026-05-22T22:04:07.404Z",
   "members": {
     "Axel": {
       "handle": "Axlfc",
-      "display_name": "Axel",
-      "role": "Creative Lead / Director",
+      "display_name": "Axel (El Afaces)",
+      "role": "3D Animator & Network Systems Admin",
       "avatar_url": "",
-      "bio": "",
-      "links": { "github": "https://github.com/Axlfc", "twitter": "", "itch": "" },
-      "color_accent": "#34d399"
+      "bio": "Especialista en animación 3D y entornos interactivos. El motor que mantiene la infraestructura en pie y los personajes en movimiento.",
+      "links": {
+        "github": "https://github.com/Axlfc",
+        "twitter": "",
+        "itch": ""
+      },
+      "color_accent": "#34d399",
+      "portfolio": "https://axlfc.github.io"
     },
     "Mitxel": {
       "handle": "mitxel2022",
@@ -17,7 +22,11 @@
       "role": "Main Design, Secondary Art",
       "avatar_url": "",
       "bio": "",
-      "links": { "github": "https://github.com/mitxel2022", "twitter": "", "itch": "" },
+      "links": {
+        "github": "https://github.com/mitxel2022",
+        "twitter": "",
+        "itch": ""
+      },
       "color_accent": "#6366f1"
     },
     "Alex": {
@@ -26,7 +35,11 @@
       "role": "Main Programming, Secondary Design",
       "avatar_url": "",
       "bio": "",
-      "links": { "github": "https://github.com/TopperH4rley", "twitter": "", "itch": "" },
+      "links": {
+        "github": "https://github.com/TopperH4rley",
+        "twitter": "",
+        "itch": ""
+      },
       "color_accent": "#f87171"
     },
     "Javi": {
@@ -35,7 +48,11 @@
       "role": "Main Design, Secondary Art",
       "avatar_url": "",
       "bio": "",
-      "links": { "github": "https://github.com/javi26031994-a11y", "twitter": "", "itch": "" },
+      "links": {
+        "github": "https://github.com/javi26031994-a11y",
+        "twitter": "",
+        "itch": ""
+      },
       "color_accent": "#fbbf24"
     },
     "Dídac": {
@@ -44,7 +61,11 @@
       "role": "Main Art, Secondary Design",
       "avatar_url": "",
       "bio": "",
-      "links": { "github": "https://github.com/dkdidac-design", "twitter": "", "itch": "" },
+      "links": {
+        "github": "https://github.com/dkdidac-design",
+        "twitter": "",
+        "itch": ""
+      },
       "color_accent": "#38bdf8"
     }
   }
