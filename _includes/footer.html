@@ -44,6 +44,11 @@
                             <label class="text-purple small font-weight-bold uppercase">Portfolio / Web Link</label>
                             <input type="url" id="edit-profile-portfolio" class="form-control bg-dark text-white border-purple">
                         </div>
+                        <div class="form-group">
+                            <label class="text-purple small font-weight-bold uppercase">Jules API Key</label>
+                            <input type="password" id="input-jules-key" class="form-control bg-dark text-white border-purple" placeholder="AIza...">
+                            <small class="text-muted">Consigue tu clave en <a href="https://jules.google.com/settings" target="_blank" class="text-purple">jules.google.com/settings</a></small>
+                        </div>
                     </div>
                     <div class="col-12">
                         <div class="form-group">
@@ -121,4 +126,5 @@
 
 <!-- Load Scripts -->
 <script src="{{ '/assets/javascript/github-api.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/ui-components.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/auth.js' | relative_url }}"></script>

@@ -1,0 +1,464 @@
+---
+layout: page
+title: Jules Panel
+permalink: /jules-panel/
+---
+
+<div id="jules-auth-gate" class="bg-slate-950 text-slate-100 min-h-[60vh] flex items-center justify-center hidden">
+    <div class="text-center">
+        <div class="text-emerald-400 text-6xl mb-6"><i class="fa-solid fa-lock"></i></div>
+        <h1 class="text-3xl font-bold mb-2">Panel Restringido</h1>
+        <p class="text-slate-400 mb-8 max-w-sm mx-auto">Necesitas iniciar sesión con GitHub para acceder al Panel de Jules.</p>
+        <button onclick="window.authManager.handleLogin()" class="bg-slate-800 hover:bg-slate-700 py-3 px-8 rounded-xl font-bold transition-all border border-slate-700">
+            <i class="fa-brands fa-github mr-2"></i> Iniciar Sesión con GitHub
+        </button>
+    </div>
+</div>
+
+<div id="jules-main-panel" class="bg-slate-950 text-slate-100 min-h-screen font-sans hidden">
+    <!-- Header -->
+    <div class="mb-8">
+        <h1 class="text-4xl font-bold text-emerald-400 mb-2 flex items-center gap-3">
+            <i class="fa-solid fa-robot"></i> Panel de Control Jules
+        </h1>
+        <p class="text-slate-400">Agente de IA Autónomo para Automatización de Repositorios.</p>
+    </div>
+
+    <!-- API Key Banner -->
+    <div id="jules-api-key-banner" class="bg-indigo-900/20 border border-indigo-500/30 p-6 rounded-2xl mb-8 flex flex-col md:flex-row justify-between items-center gap-4 hidden">
+        <div class="flex items-center gap-4">
+            <div class="text-indigo-400 text-3xl"><i class="fa-solid fa-gear"></i></div>
+            <div>
+                <h3 class="text-lg font-bold">Jules API Key no configurada</h3>
+                <p class="text-sm text-slate-400">Añade tu clave en los Ajustes de Perfil para desbloquear el panel.</p>
+            </div>
+        </div>
+        <button onclick="window.authManager.showProfileModal()" class="bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-2 rounded-lg font-bold text-sm transition-all whitespace-nowrap">
+            Ir a Ajustes de Perfil
+        </button>
+    </div>
+
+    <div id="jules-content" class="space-y-8">
+        <!-- Repository Selector -->
+        <div class="bg-slate-900 rounded-2xl border border-slate-800 p-6 shadow-xl">
+            <h2 class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-folder-open text-emerald-400"></i> Seleccionar Repositorio
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Repositorio</label>
+                    <select id="jules-repo-select" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-slate-100 focus:border-emerald-500 outline-none">
+                        <option value="">Cargando repositorios...</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Rama</label>
+                    <select id="jules-branch-select" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-slate-100 focus:border-emerald-500 outline-none">
+                        <option value="">Selecciona un repositorio primero</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- New Session Form -->
+        <div class="bg-slate-900 rounded-2xl border border-slate-800 p-6 shadow-xl">
+            <h2 class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-plus text-emerald-400"></i> Nueva Sesión de Jules
+            </h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Descripción de la Tarea</label>
+                    <textarea id="jules-prompt-input" rows="4" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-4 text-slate-100 focus:border-emerald-500 outline-none" placeholder="Describe lo que quieres que Jules haga... (ej: 'Refactoriza el sistema de carga de texturas para usar pooling')"></textarea>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Título de la Sesión (Opcional)</label>
+                    <input type="text" id="jules-title-input" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-slate-100 focus:border-emerald-500 outline-none" placeholder="Título descriptivo">
+                </div>
+                <div class="flex flex-wrap gap-6 pt-2">
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <input type="checkbox" id="jules-approve-checkbox" checked class="w-5 h-5 bg-slate-950 border-slate-800 rounded text-emerald-500 focus:ring-emerald-500">
+                        <span class="text-sm text-slate-400 group-hover:text-white transition-colors">Requerir aprobación del plan</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <input type="checkbox" id="jules-pr-checkbox" checked class="w-5 h-5 bg-slate-950 border-slate-800 rounded text-emerald-500 focus:ring-emerald-500">
+                        <span class="text-sm text-slate-400 group-hover:text-white transition-colors">Auto-crear PR al finalizar</span>
+                    </label>
+                </div>
+                <div class="pt-4">
+                    <button id="jules-launch-btn" class="w-full md:w-auto bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-3 px-10 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20">
+                        <i class="fa-solid fa-rocket"></i> Lanzar Sesión
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Sessions Panel -->
+        <div class="bg-slate-900 rounded-2xl border border-slate-800 p-6 shadow-xl">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-sm font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                    <i class="fa-solid fa-broadcast-tower text-indigo-400"></i> Sesiones Activas
+                </h2>
+                <button onclick="refreshSessions()" class="text-xs font-bold text-slate-400 hover:text-white flex items-center gap-2 transition-colors">
+                    <i class="fa-solid fa-rotate"></i> Actualizar
+                </button>
+            </div>
+            <div id="jules-sessions-list" class="space-y-4">
+                <!-- Sessions will be injected here -->
+                <div class="text-center py-10 text-slate-500 italic">No hay sesiones activas.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Send Message Modal -->
+<div id="jules-msg-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4">
+    <div class="bg-slate-900 border border-emerald-500/30 rounded-2xl shadow-2xl w-full max-w-lg p-6">
+        <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-comment text-emerald-400"></i> Enviar Mensaje a Jules
+        </h3>
+        <textarea id="jules-msg-input" rows="4" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-4 text-slate-100 focus:border-emerald-500 outline-none mb-4" placeholder="Escribe tu mensaje o feedback..."></textarea>
+        <div class="flex gap-3">
+            <button onclick="closeMsgModal()" class="flex-grow py-2 border border-slate-700 hover:bg-slate-800 rounded-lg font-bold text-sm transition-all">Cancelar</button>
+            <button id="jules-send-msg-btn" class="flex-grow py-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 rounded-lg font-bold text-sm transition-all">Enviar</button>
+        </div>
+    </div>
+</div>
+
+<script src="{{ '/assets/javascript/jules-api.js' | relative_url }}"></script>
+<script>
+    let currentSources = [];
+    let currentSessions = [];
+    let activeMsgSessionId = null;
+
+    async function initJulesPanel() {
+        const token = sessionStorage.getItem('gh_access_token') || localStorage.getItem('github_token');
+        if (!token) {
+            document.getElementById('jules-auth-gate').classList.remove('hidden');
+            return;
+        }
+
+        document.getElementById('jules-main-panel').classList.remove('hidden');
+
+        if (!window.julesApi.apiKey) {
+            document.getElementById('jules-api-key-banner').classList.remove('hidden');
+            document.getElementById('jules-content').classList.add('opacity-40', 'pointer-events-none');
+        } else {
+            loadSources();
+            refreshSessions();
+            startAutoRefresh();
+        }
+    }
+
+    async function loadSources() {
+        try {
+            const data = await window.julesApi.getSources();
+            currentSources = data.sources || [];
+            const select = document.getElementById('jules-repo-select');
+
+            if (currentSources.length === 0) {
+                select.innerHTML = '<option value="">No se encontraron repositorios</option>';
+                return;
+            }
+
+            select.innerHTML = '<option value="">-- Selecciona un repositorio --</option>' +
+                currentSources.map(s => `<option value="${s.name}">${s.githubRepo.owner}/${s.githubRepo.repo}</option>`).join('');
+
+            // Restore last selection
+            const lastRepo = localStorage.getItem('jules_selected_source');
+            if (lastRepo) {
+                select.value = lastRepo;
+                updateBranches();
+            }
+        } catch (e) {
+            showToast('Error cargando fuentes: ' + e.message, 'error');
+        }
+    }
+
+    function updateBranches() {
+        const sourceName = document.getElementById('jules-repo-select').value;
+        const branchSelect = document.getElementById('jules-branch-select');
+
+        if (!sourceName) {
+            branchSelect.innerHTML = '<option value="">Selecciona un repositorio primero</option>';
+            return;
+        }
+
+        const source = currentSources.find(s => s.name === sourceName);
+        if (source && source.githubRepo && source.githubRepo.branches) {
+            branchSelect.innerHTML = source.githubRepo.branches.map(b => `<option value="${b}">${b}</option>`).join('');
+
+            const lastBranch = localStorage.getItem('jules_selected_branch');
+            if (lastBranch && source.githubRepo.branches.includes(lastBranch)) {
+                branchSelect.value = lastBranch;
+            }
+        }
+
+        localStorage.setItem('jules_selected_source', sourceName);
+    }
+
+    document.getElementById('jules-repo-select').onchange = updateBranches;
+    document.getElementById('jules-branch-select').onchange = () => {
+        localStorage.setItem('jules_selected_branch', document.getElementById('jules-branch-select').value);
+    };
+
+    async function refreshSessions() {
+        try {
+            const data = await window.julesApi.getSessions();
+            currentSessions = data.sessions || [];
+            localStorage.setItem('jules_sessions_cache', JSON.stringify(currentSessions));
+            renderSessions();
+        } catch (e) {
+            console.error('Error refreshing sessions:', e);
+        }
+    }
+
+    function renderSessions() {
+        const list = document.getElementById('jules-sessions-list');
+        if (currentSessions.length === 0) {
+            list.innerHTML = '<div class="text-center py-10 text-slate-500 italic">No hay sesiones activas.</div>';
+            return;
+        }
+
+        list.innerHTML = currentSessions.map(s => {
+            const state = s.state || 'QUEUED';
+            const badgeColor = getBadgeColor(state);
+            const isPulsing = ['PLANNING', 'AWAITING_PLAN_APPROVAL', 'AWAITING_USER_FEEDBACK', 'IN_PROGRESS'].includes(state);
+            const progress = (s.completionPercent || 0) * 100;
+
+            return `
+                <div class="bg-slate-950 border border-slate-800 rounded-xl overflow-hidden group">
+                    <div class="p-5">
+                        <div class="flex justify-between items-start mb-3">
+                            <div class="flex items-center gap-3">
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold ${badgeColor} ${isPulsing ? 'animate-pulse' : ''}">
+                                    ${state.replace(/_/g, ' ')}
+                                </span>
+                                <h3 class="font-bold text-white">${s.title || 'Sesión sin título'}</h3>
+                            </div>
+                            <span class="text-[10px] font-mono text-slate-500">${new Date(s.createTime).toLocaleString()}</span>
+                        </div>
+
+                        <div class="flex items-center gap-4 text-xs text-slate-400 mb-4">
+                            <span class="flex items-center gap-1"><i class="fa-solid fa-code-branch"></i> ${s.sourceContext?.githubRepoContext?.startingBranch || 'main'}</span>
+                            <span class="flex items-center gap-1"><i class="fa-solid fa-folder"></i> ${s.sourceContext?.source?.split('/').pop() || 'Repo'}</span>
+                        </div>
+
+                        ${state === 'IN_PROGRESS' ? `
+                            <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden mb-4">
+                                <div class="bg-emerald-500 h-full transition-all duration-500" style="width: ${progress}%"></div>
+                            </div>
+                        ` : ''}
+
+                        <div class="flex flex-wrap gap-2 pt-2 border-t border-slate-900 mt-4">
+                            <button onclick="openMsgModal('${s.name}')" class="px-4 py-1.5 bg-slate-900 hover:bg-slate-800 rounded-lg text-xs font-bold transition-all flex items-center gap-2">
+                                <i class="fa-solid fa-comment"></i> Mensaje
+                            </button>
+                            ${state === 'AWAITING_PLAN_APPROVAL' ? `
+                                <button onclick="approvePlan('${s.name}')" class="px-4 py-1.5 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-lg text-xs font-bold transition-all flex items-center gap-2">
+                                    <i class="fa-solid fa-check"></i> Aprobar Plan
+                                </button>
+                            ` : ''}
+                            <button onclick="deleteSession('${s.name}')" class="px-4 py-1.5 bg-red-900/30 hover:bg-red-900/50 text-red-300 border border-red-900/50 rounded-lg text-xs font-bold transition-all flex items-center gap-2">
+                                <i class="fa-solid fa-trash"></i> Eliminar
+                            </button>
+                            <a href="${s.url}" target="_blank" class="px-4 py-1.5 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg text-xs font-bold transition-all flex items-center gap-2 ml-auto">
+                                Ver en Jules <i class="fa-solid fa-external-link text-[10px]"></i>
+                            </a>
+                        </div>
+
+                        ${s.pullRequest ? `
+                            <div class="mt-4 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg flex items-center justify-between">
+                                <span class="text-xs text-emerald-400 font-bold">PR Generada:</span>
+                                <a href="${s.pullRequest.url}" target="_blank" class="text-xs text-white hover:underline flex items-center gap-1 font-mono">
+                                    ${s.pullRequest.number} <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                </a>
+                            </div>
+                        ` : ''}
+                    </div>
+
+                    <!-- Activity Log Toggle -->
+                    <button onclick="toggleActivityLog('${s.name}')" class="w-full bg-slate-900/50 py-2 text-[10px] font-bold text-slate-500 hover:text-white transition-all uppercase tracking-widest border-t border-slate-800">
+                        Ver Log de Actividad <i class="fa-solid fa-chevron-down ml-2"></i>
+                    </button>
+                    <div id="activity-log-${s.name.replace(/\//g, '-')}" class="hidden p-4 bg-slate-950 border-t border-slate-800 max-h-60 overflow-y-auto custom-scrollbar">
+                        <div class="flex flex-col gap-3" id="activity-content-${s.name.replace(/\//g, '-')}">
+                            <div class="text-center py-4 text-slate-600 italic">Cargando actividad...</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function getBadgeColor(state) {
+        switch(state) {
+            case 'QUEUED': return 'bg-slate-700 text-slate-300';
+            case 'PLANNING': return 'bg-blue-600 text-white';
+            case 'AWAITING_PLAN_APPROVAL': return 'bg-amber-500 text-slate-950';
+            case 'AWAITING_USER_FEEDBACK': return 'bg-orange-500 text-white';
+            case 'IN_PROGRESS': return 'bg-emerald-500 text-slate-950';
+            case 'COMPLETED': return 'bg-emerald-600 text-white';
+            case 'FAILED': return 'bg-red-600 text-white';
+            case 'PAUSED': return 'bg-slate-800 text-slate-400';
+            default: return 'bg-slate-700 text-slate-300';
+        }
+    }
+
+    async function launchSession() {
+        const sourceName = document.getElementById('jules-repo-select').value;
+        const branch = document.getElementById('jules-branch-select').value;
+        const prompt = document.getElementById('jules-prompt-input').value.trim();
+        const title = document.getElementById('jules-title-input').value.trim();
+        const approvePlan = document.getElementById('jules-approve-checkbox').checked;
+        const autoPR = document.getElementById('jules-pr-checkbox').checked;
+
+        if (!sourceName || !prompt) {
+            showToast('Repositorio y descripción son obligatorios', 'warning');
+            return;
+        }
+
+        const btn = document.getElementById('jules-launch-btn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Lanzando...';
+
+        try {
+            const data = {
+                prompt,
+                title: title || `Sesión ${new Date().toLocaleDateString()}`,
+                sourceContext: {
+                    source: sourceName,
+                    githubRepoContext: {
+                        startingBranch: branch
+                    }
+                },
+                requirePlanApproval: approvePlan,
+                automationMode: autoPR ? "AUTO_CREATE_PR" : undefined
+            };
+
+            await window.julesApi.createSession(data);
+            showToast('Sesión lanzada con éxito', 'success');
+            document.getElementById('jules-prompt-input').value = '';
+            document.getElementById('jules-title-input').value = '';
+            refreshSessions();
+        } catch (e) {
+            showToast('Error al lanzar sesión: ' + e.message, 'error');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-rocket"></i> Lanzar Sesión';
+        }
+    }
+
+    document.getElementById('jules-launch-btn').onclick = launchSession;
+
+    async function approvePlan(sessionId) {
+        try {
+            await window.julesApi.approvePlan(sessionId);
+            showToast('Plan aprobado correctamente', 'success');
+            refreshSessions();
+        } catch (e) {
+            showToast('Error al aprobar plan: ' + e.message, 'error');
+        }
+    }
+
+    async function deleteSession(sessionId) {
+        if (!confirm('¿Seguro que deseas eliminar esta sesión?')) return;
+        try {
+            await window.julesApi.deleteSession(sessionId);
+            showToast('Sesión eliminada', 'info');
+            refreshSessions();
+        } catch (e) {
+            showToast('Error al eliminar: ' + e.message, 'error');
+        }
+    }
+
+    function openMsgModal(sessionId) {
+        activeMsgSessionId = sessionId;
+        document.getElementById('jules-msg-modal').classList.remove('hidden');
+        document.getElementById('jules-msg-input').focus();
+    }
+
+    function closeMsgModal() {
+        document.getElementById('jules-msg-modal').classList.add('hidden');
+        document.getElementById('jules-msg-input').value = '';
+        activeMsgSessionId = null;
+    }
+
+    async function sendMessage() {
+        const msg = document.getElementById('jules-msg-input').value.trim();
+        if (!msg || !activeMsgSessionId) return;
+
+        try {
+            await window.julesApi.sendMessage(activeMsgSessionId, msg);
+            showToast('Mensaje enviado', 'success');
+            closeMsgModal();
+            refreshSessions();
+        } catch (e) {
+            showToast('Error al enviar mensaje: ' + e.message, 'error');
+        }
+    }
+
+    document.getElementById('jules-send-msg-btn').onclick = sendMessage;
+
+    async function toggleActivityLog(sessionId) {
+        const idSafe = sessionId.replace(/\//g, '-');
+        const logPanel = document.getElementById(`activity-log-${idSafe}`);
+        const content = document.getElementById(`activity-content-${idSafe}`);
+
+        logPanel.classList.toggle('hidden');
+
+        if (!logPanel.classList.contains('hidden')) {
+            try {
+                const data = await window.julesApi.getActivities(sessionId);
+                const activities = data.activities || [];
+
+                if (activities.length === 0) {
+                    content.innerHTML = '<div class="text-center py-4 text-slate-600 italic">No hay actividades registradas.</div>';
+                } else {
+                    content.innerHTML = activities.map(a => `
+                        <div class="flex gap-3 text-[11px] border-l-2 border-slate-800 pl-3 py-1">
+                            <span class="text-slate-500 font-mono whitespace-nowrap">${new Date(a.createTime).toLocaleTimeString()}</span>
+                            <span class="text-indigo-400 font-bold">${a.type}</span>
+                            <span class="text-slate-300">${a.message}</span>
+                        </div>
+                    `).join('');
+                    // Auto-scroll to bottom
+                    logPanel.scrollTop = logPanel.scrollHeight;
+                }
+            } catch (e) {
+                content.innerHTML = `<div class="text-center py-4 text-red-500 italic">Error: ${e.message}</div>`;
+            }
+        }
+    }
+
+    function startAutoRefresh() {
+        setInterval(() => {
+            const hasActiveSession = currentSessions.some(s =>
+                ['QUEUED', 'PLANNING', 'AWAITING_PLAN_APPROVAL', 'AWAITING_USER_FEEDBACK', 'IN_PROGRESS'].includes(s.state)
+            );
+            if (hasActiveSession) refreshSessions();
+        }, 15000);
+    }
+
+    function showToast(msg, type) {
+        // Reuse global toast system if available, else console log
+        if (window.authManager && window.authManager.showToast) {
+            window.authManager.showToast(type === 'error' ? 'Error' : 'Jules', msg, type);
+        } else {
+            alert(msg);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', initJulesPanel);
+    document.addEventListener('authReady', (e) => {
+        if (e.detail.user) {
+            document.getElementById('jules-auth-gate').classList.add('hidden');
+            initJulesPanel();
+        }
+    });
+</script>
+
+<style>
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+</style>
