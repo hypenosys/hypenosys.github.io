@@ -763,13 +763,12 @@ permalink: /jules-panel/
     const expandedActivities = new Set();
 
     // --- INITIALIZATION ---
-    async function initJulesPanel() {
-        const loading = document.getElementById('auth-loading');
-        const gate = document.getElementById('jules-auth-gate');
-        const panel = document.getElementById('jules-main-panel');
+    async function initJulesPanel(user) {
+        const loading = document.getElementById("auth-loading");
+        const gate = document.getElementById("jules-auth-gate");
+        const panel = document.getElementById("jules-main-panel");
 
-        const token = sessionStorage.getItem('gh_access_token') || localStorage.getItem('github_token');
-
+        const token = sessionStorage.getItem("gh_access_token") || localStorage.getItem("github_token");
         if (!token) {
             loading.classList.add('hidden');
             gate.classList.remove('hidden');
@@ -1373,9 +1372,6 @@ permalink: /jules-panel/
             const newHtml = activities.map(renderActivity).join('');
             const hasNewContent = newHtml !== oldContent;
 
-            container.innerHTML = `<div class="activity-log">${newHtml}</div>`;
-
-            if (hasNewContent) {
             // Para que smartScrollActivities funcione al reemplazar el innerHTML,
             // capturamos el estado de scroll del logEl antiguo antes de la sustitución
             const threshold = 40;
@@ -1387,6 +1383,10 @@ permalink: /jules-panel/
               const newLogEl = container.querySelector(".activity-log");
               smartScrollActivities(newLogEl, isAtBottom);
             }
+        } catch (e) {
+            console.error("Act activities fail:", e);
+        }
+    }
 
     function renderActivity(activity) {
       let html = '';
@@ -1738,11 +1738,33 @@ permalink: /jules-panel/
     }
 
     // --- EVENTS ---
+    function onAuthReady(user) {
+      // Toda la inicialización del panel va aquí
+      initJulesPanel(user);
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
-      initJulesPanel();
+      // Patrón seguro: si authReady ya se disparó antes de que cargara este script,
+      // window.authManager.user ya existe — no esperamos el evento
+      if (window.authManager && window.githubApi?.user !== undefined) {
+        // Auth ya completó antes de que cargáramos
+        onAuthReady(window.githubApi.user);
+      } else {
+        // Esperamos el evento
+        document.addEventListener('authReady', (e) => onAuthReady(e.detail.user));
+
+        // Failsafe: si en 10 segundos no llega authReady, iniciamos igualmente
+        setTimeout(() => {
+          const panel = document.getElementById('jules-main-panel');
+          const loading = document.getElementById('auth-loading');
+          if (loading && !loading.classList.contains('hidden')) {
+            console.warn('[Jules Panel] authReady timeout — iniciando sin auth');
+            onAuthReady(null);
+          }
+        }, 10000);
+      }
       renderArchivedCount();
     });
-    document.addEventListener('authReady', () => initJulesPanel());
     document.addEventListener('settingsSaved', () => {
         updateKeyState();
         initializeRepoSelector();
