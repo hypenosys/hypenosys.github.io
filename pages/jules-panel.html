@@ -25,151 +25,669 @@ permalink: /jules-panel/
 </div>
 
 <!-- Main Jules Panel -->
-<div id="jules-main-panel" class="bg-slate-950 text-slate-100 min-h-screen font-sans hidden" style="display:none">
+<div id="jules-main-panel" class="jules-panel-container hidden" style="display:none">
 
-    <!-- Page Header -->
-    <div class="mb-10">
-        <div class="flex items-center gap-3 mb-2">
-            <div class="w-10 h-10 bg-purple-500/10 rounded-xl flex items-center justify-center border border-purple-500/20">
-                <i class="fa-solid fa-bolt text-purple-500 text-xl"></i>
-            </div>
-            <h1 class="text-4xl font-bold text-white">Panel de Jules</h1>
-        </div>
-        <p class="text-slate-500 text-lg">Agente de IA autónomo para automatización de código y gestión de repositorios.</p>
-    </div>
-
-    <!-- API Key Status / CTA -->
-    <div id="jules-api-status-bar" class="hidden mb-8">
-        <div class="bg-slate-900/50 border border-purple-500/20 px-4 py-2 rounded-lg flex items-center justify-between text-[11px] font-bold">
-            <div class="flex items-center gap-2 text-green-400">
-                <i class="fa-solid fa-circle-check"></i>
-                <span class="uppercase tracking-widest">Jules API Key configurada</span>
-            </div>
-            <button onclick="window.authManager.showProfileModal()" class="text-purple-400 hover:text-purple-300 transition-colors uppercase tracking-widest">
-                [ Cambiar en Ajustes ]
-            </button>
-        </div>
-    </div>
-
-    <div id="jules-api-key-cta" class="bg-purple-900/10 border border-purple-500/30 p-8 rounded-2xl mb-10 flex flex-col md:flex-row justify-between items-center gap-6 hidden shadow-2xl">
-        <div class="flex items-center gap-6 text-center md:text-left">
-            <div class="w-16 h-16 bg-purple-500 text-white rounded-2xl flex items-center justify-center text-3xl shadow-lg shadow-purple-500/20">
-                <i class="fa-solid fa-key"></i>
+    <!-- Header Section -->
+    <header class="panel-header">
+        <div class="header-left">
+            <div class="brand-icon">
+                <i class="fa-solid fa-bolt"></i>
             </div>
             <div>
-                <h3 class="text-xl font-bold text-white mb-1">🔑 Configura tu Jules API Key</h3>
-                <p class="text-slate-400 text-sm max-w-md">Para usar el Panel de Jules necesitas añadir tu clave de API. Consíguela gratis en <a href="https://jules.google.com/settings" target="_blank" class="text-purple-400 hover:underline">jules.google.com/settings</a></p>
+                <h1 class="panel-title">Jules Panel</h1>
+                <p class="panel-subtitle">Neural Operations & Repository Automation</p>
             </div>
         </div>
-        <button onclick="window.authManager.showSettingsModal()" class="w-full md:w-auto bg-purple-600 hover:bg-purple-500 text-white px-8 py-3 rounded-xl font-bold transition-all shadow-lg shadow-purple-500/20">
-            Ir a Ajustes Avanzados
-        </button>
-    </div>
-
-    <!-- Panel Sections -->
-    <div id="jules-functional-sections" class="space-y-8">
-
-        <!-- Repository Selector -->
-        <div class="bg-slate-900/80 rounded-2xl border border-slate-800 p-8 shadow-xl">
-            <h2 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-6 flex items-center gap-2">
-                <i class="fa-solid fa-folder-open text-purple-500"></i> Seleccionar Repositorio
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="space-y-2">
-                    <label class="block text-[10px] font-bold text-slate-500 uppercase ml-1">Repositorio</label>
-                    <div class="relative">
-                        <select id="jules-repo-select" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-slate-100 focus:border-purple-500 outline-none appearance-none transition-all">
-                            <option value="">Cargando repositorios...</option>
-                        </select>
-                        <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">
-                            <i class="fa-solid fa-chevron-down"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="space-y-2">
-                    <label class="block text-[10px] font-bold text-slate-500 uppercase ml-1">Rama</label>
-                    <div class="relative">
-                        <select id="jules-branch-select" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-slate-100 focus:border-purple-500 outline-none appearance-none transition-all">
-                            <option value="">Selecciona un repositorio primero</option>
-                        </select>
-                        <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">
-                            <i class="fa-solid fa-chevron-down"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div id="jules-api-indicator-container">
+            <!-- Dinámico: api-key-indicator -->
         </div>
+    </header>
 
-        <!-- New Session Form -->
-        <div class="bg-slate-900/80 rounded-2xl border border-slate-800 p-8 shadow-xl">
-            <h2 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-6 flex items-center gap-2">
-                <i class="fa-solid fa-plus text-purple-500"></i> Nueva Sesión de Jules
-            </h2>
-            <div class="space-y-6">
-                <div class="space-y-2">
-                    <label class="block text-[10px] font-bold text-slate-500 uppercase ml-1">Descripción de la Tarea</label>
-                    <textarea id="jules-prompt-input" rows="5" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-5 text-slate-100 focus:border-purple-500 outline-none transition-all resize-none" placeholder="Describe lo que quieres que Jules haga... (ej: 'Refactoriza el sistema de carga de texturas para usar pooling')"></textarea>
-                </div>
-                <div class="space-y-2">
-                    <label class="block text-[10px] font-bold text-slate-500 uppercase ml-1">Título de la Sesión (Opcional)</label>
-                    <input type="text" id="jules-title-input" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-slate-100 focus:border-purple-500 outline-none transition-all" placeholder="Título descriptivo">
+    <div class="panel-grid">
+        <!-- Sidebar / Config -->
+        <aside class="panel-sidebar">
+            <section class="config-section">
+                <h2 class="section-title">Configuración</h2>
+
+                <div class="form-group">
+                    <label class="form-label">Repositorio</label>
+                    <div class="select-wrapper">
+                        <select id="jules-repo-select" class="form-select">
+                            <option value="">Cargando fuentes...</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down select-icon"></i>
+                    </div>
                 </div>
 
-                <div class="flex flex-wrap gap-10 py-2">
-                    <label class="flex items-center gap-3 cursor-pointer group">
-                        <div class="relative inline-block w-10 h-6">
-                            <input type="checkbox" id="jules-approve-checkbox" checked class="peer opacity-0 w-0 h-0">
-                            <span class="absolute cursor-pointer inset-0 bg-slate-800 rounded-full transition-all peer-checked:bg-purple-600 after:content-[''] after:absolute after:h-4 after:w-4 after:left-1 after:bottom-1 after:bg-white after:rounded-full after:transition-all peer-checked:after:translate-x-4"></span>
-                        </div>
-                        <span class="text-sm text-slate-400 group-hover:text-white transition-colors">Requerir aprobación del plan</span>
+                <div class="form-group">
+                    <label class="form-label">Rama</label>
+                    <input type="text" id="jules-branch-input" class="form-input" list="branch-list" placeholder="Selecciona repo o escribe rama...">
+                    <datalist id="branch-list"></datalist>
+                </div>
+
+                <div id="repo-error-container"></div>
+            </section>
+
+            <section class="new-session-section">
+                <h2 class="section-title">Nueva Sesión</h2>
+                <div class="form-group">
+                    <label class="form-label">Descripción de la Tarea</label>
+                    <textarea id="jules-prompt-input" class="form-textarea" rows="4" placeholder="¿Qué debe hacer Jules?"></textarea>
+                    <div id="error-prompt" class="field-error hidden">Este campo es obligatorio</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Título (Opcional)</label>
+                    <input type="text" id="jules-title-input" class="form-input" placeholder="Ej: Fix auth bug">
+                </div>
+
+                <div class="checkbox-group">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="jules-approve-checkbox" checked>
+                        <span class="checkmark"></span>
+                        <span class="checkbox-label">Requerir aprobación</span>
                     </label>
-                    <label class="flex items-center gap-3 cursor-pointer group">
-                        <div class="relative inline-block w-10 h-6">
-                            <input type="checkbox" id="jules-pr-checkbox" checked class="peer opacity-0 w-0 h-0">
-                            <span class="absolute cursor-pointer inset-0 bg-slate-800 rounded-full transition-all peer-checked:bg-purple-600 after:content-[''] after:absolute after:h-4 after:w-4 after:left-1 after:bottom-1 after:bg-white after:rounded-full after:transition-all peer-checked:after:translate-x-4"></span>
-                        </div>
-                        <span class="text-sm text-slate-400 group-hover:text-white transition-colors">Auto-crear PR al finalizar</span>
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="jules-pr-checkbox" checked>
+                        <span class="checkmark"></span>
+                        <span class="checkbox-label">Auto-crear PR</span>
                     </label>
                 </div>
 
-                <div class="pt-4 border-t border-slate-800">
-                    <button id="jules-launch-btn" class="w-full md:w-auto bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold py-4 px-12 rounded-xl transition-all flex items-center justify-center gap-3 shadow-lg shadow-purple-500/20 active:scale-95">
-                        <i class="fa-solid fa-rocket"></i> Lanzar Sesión
+                <button id="jules-launch-btn" class="btn--primary">
+                    <i class="fa-solid fa-rocket mr-2"></i> Lanzar Sesión
+                </button>
+            </section>
+        </aside>
+
+        <!-- Main Content / Sessions -->
+        <main class="panel-content">
+            <div class="content-header">
+                <div class="flex justify-between items-end mb-4">
+                    <h2 class="section-title mb-0 border-0 p-0">Historial de Sesiones</h2>
+                    <span id="jules-last-update" class="text-[9px] text-slate-600 font-bold uppercase tracking-tighter">Última actualización: hace 0 segundos</span>
+                </div>
+                <div class="session-filters">
+                    <button class="filter-chip active" data-filter="all">Todas</button>
+                    <button class="filter-chip" data-filter="RUNNING">En curso</button>
+                    <button class="filter-chip" data-filter="WAITING_FOR_INPUT">Esperando</button>
+                    <button class="filter-chip" data-filter="COMPLETED">Completadas</button>
+                    <button class="filter-chip" data-filter="FAILED">Fallidas</button>
+                </div>
+            </div>
+
+            <div id="sessions-container">
+                <div id="jules-sessions-list">
+                    <!-- Dinámico: session-cards -->
+                </div>
+                <div id="pagination-container" class="pagination-footer hidden">
+                    <button id="btn-load-more" class="btn btn--secondary w-full py-3 mt-4 font-bold text-[11px] uppercase tracking-widest">
+                        Cargar más sesiones
                     </button>
                 </div>
             </div>
-        </div>
-
-        <!-- Active Sessions Panel -->
-        <div class="bg-slate-900/80 rounded-2xl border border-slate-800 p-8 shadow-xl">
-            <div class="flex justify-between items-center mb-8">
-                <div class="flex flex-col gap-1">
-                    <h2 class="text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
-                        <i class="fa-solid fa-broadcast-tower text-purple-500"></i> Sesiones Activas
-                    </h2>
-                    <p id="jules-last-update" class="text-[9px] text-slate-600 font-bold uppercase tracking-tighter">Última actualización: hace 0 segundos</p>
-                </div>
-                <button onclick="refreshSessions(true)" class="text-[10px] font-bold text-slate-500 hover:text-white flex items-center gap-2 transition-all bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800">
-                    <i class="fa-solid fa-rotate"></i> Sincronizar
-                </button>
-            </div>
-            <div id="jules-sessions-list" class="space-y-6">
-                <div class="text-center py-16">
-                    <div class="text-slate-800 text-6xl mb-4"><i class="fa-solid fa-inbox"></i></div>
-                    <p class="text-slate-600 font-bold uppercase text-[10px] tracking-widest">No hay sesiones activas en el historial</p>
-                </div>
-            </div>
-        </div>
+        </main>
     </div>
 </div>
 
+<!-- Toast Container -->
+<div id="jules-toast-container"></div>
+
+<style>
+:root {
+    /* Backgrounds */
+    --bg-page: #0d0d0f;
+    --bg-panel: #111114;
+    --bg-card: #18181c;
+    --bg-card-hover: #1e1e24;
+    --bg-input: #0d0d0f;
+
+    /* Borders */
+    --border-subtle: #2a2a35;
+    --border-accent: #6d28d9;   /* violet-700 */
+
+    /* Accents */
+    --accent-primary: #7c3aed;  /* violet-600 */
+    --accent-secondary: #8b5cf6; /* violet-500 */
+    --accent-glow: rgba(124,58,237,0.15);
+
+    /* Text */
+    --text-primary: #f8f8f8;
+    --text-secondary: #9ca3af;  /* gray-400 */
+    --text-muted: #6b7280;      /* gray-500 */
+
+    /* Status colors */
+    --status-queued: #6b7280;
+    --status-waiting: #f59e0b;  /* amber-500 */
+    --status-running: #3b82f6;  /* blue-500 */
+    --status-completed: #10b981; /* emerald-500 */
+    --status-failed: #ef4444;   /* red-500 */
+}
+
+.jules-panel-container {
+    background: var(--bg-page);
+    color: var(--text-primary);
+    min-height: 100vh;
+    font-family: inherit;
+    padding: 24px;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.brand-icon {
+    width: 42px;
+    height: 42px;
+    background: var(--accent-glow);
+    border: 1px solid var(--border-accent);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent-secondary);
+    font-size: 20px;
+}
+
+.panel-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+
+.panel-subtitle {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.panel-grid {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 32px;
+}
+
+@media (max-width: 1024px) {
+    .panel-grid { grid-template-columns: 1fr; }
+}
+
+.panel-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.config-section, .new-session-section {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 20px;
+}
+
+/* Common UI Elements */
+.section-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--accent-secondary);
+    margin: 0 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.form-group { margin-bottom: 16px; position: relative; }
+.form-label {
+    display: block;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+}
+
+.form-select, .form-input, .form-textarea {
+    width: 100%;
+    background: var(--bg-input);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 13px;
+    padding: 10px 12px;
+    font-family: inherit;
+    transition: all 0.15s ease;
+    outline: none;
+}
+
+.form-select:focus, .form-input:focus, .form-textarea:focus {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+.select-wrapper { position: relative; }
+.select-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 10px;
+    color: var(--text-muted);
+    pointer-events: none;
+}
+
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.btn--primary {
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 12px 20px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+}
+
+.btn--primary:hover { opacity: 0.9; transform: translateY(-1px); }
+.btn--primary:active { transform: translateY(0); }
+.btn--primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+/* Session Card Styling */
+.session-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 12px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.session-card:hover {
+    border-color: var(--border-accent);
+    box-shadow: 0 0 0 1px var(--accent-glow), 0 4px 20px rgba(0,0,0,0.4);
+}
+.session-card[data-state="RUNNING"] {
+    border-left: 3px solid var(--status-running);
+}
+.session-card[data-state="WAITING_FOR_INPUT"] {
+    border-left: 3px solid var(--status-waiting);
+    animation: pulse-border 2s ease-in-out infinite;
+}
+@keyframes pulse-border {
+    0%, 100% { border-left-color: var(--status-waiting); }
+    50% { border-left-color: transparent; }
+}
+
+.session-card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.session-card__left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.session-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 2px 8px;
+    border-radius: 20px;
+}
+.session-badge--queued    { background: rgba(107,114,128,0.15); color: var(--status-queued); }
+.session-badge--waiting   { background: rgba(245,158,11,0.15);  color: var(--status-waiting); }
+.session-badge--running   { background: rgba(59,130,246,0.15);  color: var(--status-running); }
+.session-badge--completed { background: rgba(16,185,129,0.15);  color: var(--status-completed); }
+.session-badge--failed    { background: rgba(239,68,68,0.15);   color: var(--status-failed); }
+
+.session-badge--running::before {
+    content: '';
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--status-running);
+    margin-right: 4px;
+    animation: ping 1s cubic-bezier(0,0,0.2,1) infinite;
+}
+@keyframes ping {
+    0% { transform: scale(1); opacity: 1; }
+    75%, 100% { transform: scale(1.8); opacity: 0; }
+}
+
+.session-card__time {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.session-card__title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 8px;
+    line-height: 1.4;
+}
+
+.session-card__meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
+.meta-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: var(--text-muted);
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border-subtle);
+    border-radius: 4px;
+    padding: 2px 7px;
+}
+
+.session-card__actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s ease;
+    text-decoration: none;
+}
+
+.btn--approve { background: var(--status-waiting); color: #000; }
+.btn--approve:hover { filter: brightness(1.15); }
+
+.btn--secondary {
+    background: transparent;
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+}
+.btn--secondary:hover {
+    border-color: var(--accent-secondary);
+    color: var(--accent-secondary);
+}
+
+.btn--pr {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid var(--status-completed);
+    color: var(--status-completed);
+}
+
+.btn-icon {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: color 0.15s;
+}
+.btn-icon:hover { color: var(--status-failed); }
+
+/* Message Area */
+.session-card__message {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-subtle);
+}
+
+.message-input {
+    width: 100%;
+    background: var(--bg-input);
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+    color: var(--text-primary);
+    font-size: 12px;
+    padding: 8px 10px;
+    resize: vertical;
+    font-family: inherit;
+    outline: none;
+}
+.message-input:focus { border-color: var(--accent-primary); box-shadow: 0 0 0 2px var(--accent-glow); }
+
+.btn--ghost {
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 11px;
+    padding: 4px 10px;
+    border: 1px solid var(--border-subtle);
+    align-self: flex-end;
+}
+.btn--ghost:hover { color: var(--text-primary); border-color: var(--text-secondary); }
+
+/* Activity Log */
+.session-card__activities-toggle {
+    margin-top: 12px;
+}
+.btn-toggle-activities {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-top: 1px solid var(--border-subtle);
+    padding: 8px;
+    color: var(--text-muted);
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.btn-toggle-activities:hover { color: var(--text-secondary); }
+
+.activity-log {
+    margin-top: 12px;
+    padding: 12px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 8px;
+    max-height: 300px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.activity-entry {
+    font-size: 11px;
+    line-height: 1.5;
+}
+.activity-entry--plan { color: var(--accent-secondary); }
+.activity-entry--progress { color: var(--text-secondary); }
+.activity-entry--user {
+    align-self: flex-end;
+    background: rgba(124,58,237,0.1);
+    border: 1px solid var(--border-accent);
+    border-radius: 8px 8px 0 8px;
+    padding: 6px 10px;
+    color: var(--text-primary);
+    max-width: 85%;
+}
+.activity-entry--agent {
+    align-self: flex-start;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px 8px 8px 0;
+    padding: 6px 10px;
+    color: var(--text-secondary);
+    max-width: 85%;
+}
+.activity-code {
+    background: #0a0a0d;
+    border: 1px solid var(--border-subtle);
+    border-radius: 4px;
+    padding: 8px;
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    color: #a5f3fc;
+    margin-top: 4px;
+    overflow-x: auto;
+    white-space: pre;
+}
+
+/* Filters */
+.session-filters {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+.filter-chip {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--border-subtle);
+    background: transparent;
+    color: var(--text-muted);
+    transition: all 0.15s;
+    outline: none;
+}
+.filter-chip:hover { border-color: var(--accent-primary); color: var(--text-primary); }
+.filter-chip.active {
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
+    color: #fff;
+}
+
+/* API Key Indicator */
+.api-key-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+}
+.api-key-indicator--valid {
+    background: rgba(16,185,129,0.1);
+    border: 1px solid var(--status-completed);
+    color: var(--status-completed);
+}
+.api-key-indicator--invalid {
+    background: rgba(239,68,68,0.1);
+    border: 1px solid var(--status-failed);
+    color: var(--status-failed);
+}
+
+/* Banner & Toast */
+.error-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: rgba(239,68,68,0.08);
+    border: 1px solid rgba(239,68,68,0.3);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    font-size: 12px;
+    color: #fca5a5;
+    animation: slideDown 0.2s ease;
+}
+.error-banner button {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: #fca5a5;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+}
+
+.toast-success {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: rgba(16,185,129,0.1);
+    border: 1px solid var(--status-completed);
+    color: var(--status-completed);
+    border-radius: 8px;
+    padding: 12px 18px;
+    font-size: 13px;
+    font-weight: 500;
+    z-index: 1000;
+    animation: toastIn 0.25s ease, toastOut 0.25s ease 3.75s forwards;
+}
+
+@keyframes slideDown { from { transform: translateY(-8px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes toastIn { from { transform: translateY(16px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes toastOut { from { opacity: 1; } to { opacity: 0; } }
+
+.field-error { font-size: 10px; color: var(--status-failed); margin-top: 4px; font-weight: 600; }
+.hidden { display: none !important; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-page); }
+::-webkit-scrollbar-thumb { background: var(--border-subtle); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-primary); }
+</style>
+
 <script src="{{ '/assets/javascript/jules-api.js' | relative_url }}"></script>
 <script>
+    // --- STATE ---
     let currentSources = [];
     let currentSessions = [];
+    let nextPageToken = null;
     let lastRefreshTime = Date.now();
-    let pollInterval = null;
+    let currentFilter = 'all';
 
+    let sessionPollInterval = null;
+    const activeActivityPolls = new Set();
+
+    // --- INITIALIZATION ---
     async function initJulesPanel() {
         const loading = document.getElementById('auth-loading');
         const gate = document.getElementById('jules-auth-gate');
@@ -195,8 +713,11 @@ permalink: /jules-panel/
                 panel.style.display = 'block';
 
                 updateKeyState();
-                loadSources();
-                refreshSessions();
+                if (window.julesApi.apiKey) {
+                    loadSources();
+                    refreshSessions();
+                    startPolling();
+                }
             } else {
                 gate.classList.remove('hidden');
                 gate.style.display = 'flex';
@@ -208,108 +729,334 @@ permalink: /jules-panel/
         }
     }
 
+    // --- API KEY UI ---
     function updateKeyState() {
-        const status = document.getElementById('jules-api-status-bar');
-        const cta = document.getElementById('jules-api-key-cta');
-        const content = document.getElementById('jules-functional-sections');
+        const container = document.getElementById('jules-api-indicator-container');
+        const key = window.julesApi.apiKey;
 
-        if (window.julesApi.apiKey) {
-            status.classList.remove('hidden');
-            cta.classList.add('hidden');
-            content.classList.remove('opacity-40', 'pointer-events-none');
+        if (key) {
+            container.innerHTML = `
+                <div class="api-key-indicator api-key-indicator--valid">
+                    <i class="fa-solid fa-check-circle"></i> API KEY ACTIVA
+                    <button onclick="window.authManager.showSettingsModal()" class="ml-2 text-[9px] underline opacity-70 hover:opacity-100">CAMBIAR</button>
+                </div>
+            `;
         } else {
-            status.classList.add('hidden');
-            cta.classList.remove('hidden');
-            content.classList.add('opacity-40', 'pointer-events-none');
+            container.innerHTML = `
+                <div class="api-key-indicator api-key-indicator--invalid">
+                    <i class="fa-solid fa-exclamation-triangle"></i> SIN CONFIGURAR
+                    <button onclick="window.authManager.showSettingsModal()" class="ml-2 text-[9px] underline opacity-70 hover:opacity-100">CONFIGURAR</button>
+                </div>
+            `;
         }
     }
 
+    // --- REPOSITORY LOGIC ---
     async function loadSources() {
-        if (!window.julesApi.apiKey) return;
-
         const select = document.getElementById('jules-repo-select');
-        select.innerHTML = '<option value="">Buscando fuentes...</option>';
+        select.innerHTML = '<option value="">Cargando fuentes...</option>';
 
         try {
-            const data = await window.julesApi.getSources();
-            currentSources = data.sources || [];
+            currentSources = await window.loadAllSources();
 
             if (currentSources.length === 0) {
-                select.innerHTML = '<option value="">No se encontraron repositorios</option>';
+                select.innerHTML = '<option value="">No hay repos disponibles</option>';
+                showError('No se encontraron repositorios. Instala la Jules GitHub App.');
                 return;
             }
 
-            select.innerHTML = '<option value="">-- Escoge un repositorio --</option>' +
-                currentSources.map(s => `<option value="${s.name}">${s.githubRepo.owner}/${s.githubRepo.repo}</option>`).join('');
+            // Agrupar por owner
+            const groups = {};
+            currentSources.forEach(s => {
+                const owner = s.githubRepo.owner;
+                if (!groups[owner]) groups[owner] = [];
+                groups[owner].push(s);
+            });
 
+            let html = '<option value="">-- Selecciona Repositorio --</option>';
+            Object.keys(groups).sort().forEach(owner => {
+                html += `<optgroup label="${owner}">`;
+                groups[owner].forEach(s => {
+                    html += `<option value="${s.name}">${owner}/${s.githubRepo.repo}</option>`;
+                });
+                html += `</optgroup>`;
+            });
+
+            select.innerHTML = html;
+
+            // Restaurar persistencia
             const lastRepo = localStorage.getItem('jules_selected_source');
-            if (lastRepo) {
+            if (lastRepo && currentSources.some(s => s.name === lastRepo)) {
                 select.value = lastRepo;
                 updateBranches();
             }
         } catch (e) {
+            handleApiError(e);
             select.innerHTML = '<option value="">Error de carga</option>';
-            showToast('No se pudieron cargar los repositorios. Verifica tu API Key.', 'error');
         }
     }
 
-    function updateBranches() {
+    async function updateBranches() {
         const sourceName = document.getElementById('jules-repo-select').value;
-        const branchSelect = document.getElementById('jules-branch-select');
+        const branchInput = document.getElementById('jules-branch-input');
+        const datalist = document.getElementById('branch-list');
 
-        if (!sourceName) {
-            branchSelect.innerHTML = '<option value="">Selecciona un repositorio primero</option>';
-            return;
-        }
+        datalist.innerHTML = '';
+        branchInput.value = '';
+
+        if (!sourceName) return;
+        localStorage.setItem('jules_selected_source', sourceName);
 
         const source = currentSources.find(s => s.name === sourceName);
-        if (source && source.githubRepo && source.githubRepo.branches) {
-            branchSelect.innerHTML = source.githubRepo.branches.map(b => `<option value="${b}">${b}</option>`).join('');
+        const { owner, repo } = source.githubRepo;
+
+        branchInput.placeholder = "Cargando ramas...";
+
+        try {
+            // Intentar fetch de ramas de la API de GitHub
+            const resp = await fetch(`https://api.github.com/repos/${owner}/${repo}/branches`);
+            if (!resp.ok) throw new Error(resp.status);
+
+            const branches = await resp.json();
+            datalist.innerHTML = branches.map(b => `<option value="${b.name}">`).join('');
+            branchInput.placeholder = "Selecciona o escribe rama";
 
             const lastBranch = localStorage.getItem('jules_selected_branch');
-            if (lastBranch && source.githubRepo.branches.includes(lastBranch)) {
-                branchSelect.value = lastBranch;
-            }
+            if (lastBranch) branchInput.value = lastBranch;
+        } catch (e) {
+            branchInput.placeholder = "Introduce la rama manualmente";
+            console.warn(`GitHub API branches fail: ${e.message}`);
         }
-
-        localStorage.setItem('jules_selected_source', sourceName);
     }
 
     document.getElementById('jules-repo-select').onchange = updateBranches;
-    document.getElementById('jules-branch-select').onchange = () => {
-        localStorage.setItem('jules_selected_branch', document.getElementById('jules-branch-select').value);
+    document.getElementById('jules-branch-input').onchange = (e) => {
+        localStorage.setItem('jules_selected_branch', e.target.value);
     };
 
-    async function refreshSessions(manual = false) {
-        if (!window.julesApi.apiKey) return;
+    // --- SESSION ACTIONS ---
+    async function launchSession() {
+        const sourceName = document.getElementById('jules-repo-select').value;
+        const branch = document.getElementById('jules-branch-input').value.trim();
+        const prompt = document.getElementById('jules-prompt-input').value.trim();
+        const title = document.getElementById('jules-title-input').value.trim();
+        const approve = document.getElementById('jules-approve-checkbox').checked;
+        const autoPR = document.getElementById('jules-pr-checkbox').checked;
+
+        let hasError = false;
+        if (!sourceName) { showError('Selecciona un repositorio.'); hasError = true; }
+        if (!prompt) {
+            document.getElementById('error-prompt').classList.remove('hidden');
+            hasError = true;
+        } else {
+            document.getElementById('error-prompt').classList.add('hidden');
+        }
+
+        if (hasError) return;
+
+        const btn = document.getElementById('jules-launch-btn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Enviando a Jules...';
 
         try {
-            const data = await window.julesApi.getSessions();
-            currentSessions = data.sessions || [];
-            localStorage.setItem('jules_sessions_cache', JSON.stringify(currentSessions));
-            lastRefreshTime = Date.now();
-            renderSessions();
-            managePolling();
-            if (manual) showToast('Sincronización completada', 'success');
+            const body = {
+                prompt,
+                sourceContext: {
+                    source: sourceName,
+                    githubRepoContext: { startingBranch: branch || 'master' }
+                },
+                requirePlanApproval: approve,
+                automationMode: autoPR ? "AUTO_CREATE_PR" : undefined
+            };
+            if (title) body.title = title;
+
+            const res = await window.julesApi.createSession(body);
+            showToast(`Sesión "${res.title || 'Iniciada'}" creada correctamente`);
+
+            // Limpiar form
+            document.getElementById('jules-prompt-input').value = '';
+            document.getElementById('jules-title-input').value = '';
+
+            refreshSessions();
         } catch (e) {
-            console.error('Refresh error:', e);
+            handleApiError(e);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-rocket mr-2"></i> Lanzar Sesión';
         }
     }
 
-    function managePolling() {
-        const hasActive = currentSessions.some(s =>
-            ['QUEUED', 'PLANNING', 'AWAITING_PLAN_APPROVAL', 'AWAITING_USER_FEEDBACK', 'IN_PROGRESS'].includes(s.state)
-        );
+    document.getElementById('jules-launch-btn').onclick = launchSession;
 
-        if (hasActive && !pollInterval) {
-            pollInterval = setInterval(() => refreshSessions(), 20000);
-        } else if (!hasActive && pollInterval) {
-            clearInterval(pollInterval);
-            pollInterval = null;
+    async function refreshSessions(loadMore = false) {
+        try {
+            const data = await window.julesApi.getSessions(30, loadMore ? nextPageToken : null);
+            const newSessions = data.sessions || [];
+
+            if (loadMore) {
+                currentSessions = currentSessions.concat(newSessions);
+            } else {
+                currentSessions = newSessions;
+            }
+
+            nextPageToken = data.nextPageToken || null;
+            lastRefreshTime = Date.now();
+
+            renderSessions();
+
+            const pagContainer = document.getElementById('pagination-container');
+            if (nextPageToken) pagContainer.classList.remove('hidden');
+            else pagContainer.classList.add('hidden');
+
+        } catch (e) {
+            handleApiError(e);
         }
     }
 
-    // Timer for "last update"
+    document.getElementById('btn-load-more').onclick = () => refreshSessions(true);
+
+    function renderSessions() {
+        const list = document.getElementById('jules-sessions-list');
+        const filtered = currentSessions.filter(s => {
+            if (currentFilter === 'all') return true;
+            return s.state === currentFilter;
+        });
+
+        if (filtered.length === 0) {
+            list.innerHTML = `
+                <div class="text-center py-12 opacity-40">
+                    <i class="fa-solid fa-inbox text-4xl mb-3"></i>
+                    <p class="text-xs font-bold uppercase tracking-widest">No hay sesiones que mostrar</p>
+                </div>
+            `;
+            return;
+        }
+
+        list.innerHTML = filtered.map(s => {
+            const state = s.state || 'QUEUED';
+            const idSafe = s.name.split('/').pop();
+            const timeAgo = getTimeAgo(s.createTime);
+            const truncatedTitle = s.title || (s.prompt.length > 60 ? s.prompt.substring(0, 57) + '...' : s.prompt);
+            const repoLabel = s.sourceContext?.source?.split('/').slice(-2).join('/') || 'Repo';
+            const branchLabel = s.sourceContext?.githubRepoContext?.startingBranch || '---';
+
+            return `
+                <div class="session-card" data-session-id="${s.name}" data-state="${state}">
+                    <div class="session-card__header">
+                        <div class="session-card__left">
+                            ${getStateBadge(state)}
+                            <span class="session-card__time">${timeAgo}</span>
+                        </div>
+                        <div class="session-card__right">
+                            <button class="btn-icon" title="Eliminar sesión" onclick="deleteSession('${s.name}', this)">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <h3 class="session-card__title">${truncatedTitle}</h3>
+
+                    <div class="session-card__meta">
+                        <span class="meta-tag"><i class="fa-solid fa-code mr-1 opacity-50"></i> ${repoLabel}</span>
+                        <span class="meta-tag"><i class="fa-solid fa-code-branch mr-1 opacity-50"></i> ${branchLabel}</span>
+                        <span class="meta-tag"><i class="fa-solid fa-calendar mr-1 opacity-50"></i> ${new Date(s.createTime).toLocaleDateString()}</span>
+                    </div>
+
+                    <div class="session-card__actions">
+                        ${state === 'WAITING_FOR_INPUT' ? `
+                            <button class="btn btn--approve" onclick="approvePlan('${s.name}')">
+                                ✅ Aprobar Plan
+                            </button>
+                        ` : ''}
+
+                        <a href="${s.url}" target="_blank" class="btn btn--secondary">
+                            Ver en consola <i class="fa-solid fa-external-link ml-1 text-[10px]"></i>
+                        </a>
+
+                        ${s.outputs?.pullRequest ? `
+                            <a href="${s.outputs.pullRequest.url}" target="_blank" class="btn btn--pr">
+                                🔗 Ver PR
+                            </a>
+                        ` : ''}
+                    </div>
+
+                    ${!['FAILED', 'COMPLETED'].includes(state) ? `
+                        <div class="session-card__message">
+                            <textarea
+                                class="message-input"
+                                placeholder="Escribe tu mensaje..."
+                                rows="2"
+                                onkeydown="if(event.key==='Enter'&&event.ctrlKey) sendMessage('${s.name}', this)"
+                            ></textarea>
+                            <button class="btn btn--ghost" onclick="sendMessage('${s.name}', this.previousElementSibling)">
+                                Enviar (Ctrl+Enter)
+                            </button>
+                        </div>
+                    ` : ''}
+
+                    <div class="session-card__activities-toggle">
+                        <button class="btn-toggle-activities" onclick="toggleActivities('${s.name}', this)">
+                            <i class="fa-solid fa-chevron-down mr-1"></i> Historial de actividad
+                        </button>
+                    </div>
+                    <div class="session-card__activities hidden" id="activities-${idSafe}">
+                        <!-- Dinámico -->
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // --- HELPERS ---
+    function getStateBadge(state) {
+        const config = {
+            'QUEUED': { label: 'En Cola', cls: 'session-badge--queued' },
+            'WAITING_FOR_INPUT': { label: '⏳ Esperando aprobación', cls: 'session-badge--waiting' },
+            'RUNNING': { label: '⚡ Ejecutando', cls: 'session-badge--running' },
+            'COMPLETED': { label: '✅ Completada', cls: 'session-badge--completed' },
+            'FAILED': { label: '❌ Error', cls: 'session-badge--failed' }
+        };
+        const s = config[state] || { label: state, cls: 'session-badge--queued' };
+        return `<span class="session-badge ${s.cls}">${s.label}</span>`;
+    }
+
+    function getTimeAgo(dateStr) {
+        const seconds = Math.floor((new Date() - new Date(dateStr)) / 1000);
+        let interval = seconds / 31536000;
+        if (interval > 1) return `hace ${Math.floor(interval)} años`;
+        interval = seconds / 2592000;
+        if (interval > 1) return `hace ${Math.floor(interval)} meses`;
+        interval = seconds / 86400;
+        if (interval > 1) return `hace ${Math.floor(interval)} días`;
+        interval = seconds / 3600;
+        if (interval > 1) return `hace ${Math.floor(interval)} horas`;
+        interval = seconds / 60;
+        if (interval > 1) return `hace ${Math.floor(interval)} min`;
+        return 'hace unos segundos';
+    }
+
+    // --- POLLING LOGIC ---
+    function startPolling() {
+        stopPolling();
+        sessionPollInterval = setInterval(() => {
+            if (!document.hidden) {
+                refreshSessions();
+                activeActivityPolls.forEach(id => refreshActivities(id));
+            }
+        }, 15000);
+    }
+
+    function stopPolling() {
+        if (sessionPollInterval) clearInterval(sessionPollInterval);
+    }
+
+    document.addEventListener('visibilitychange', () => {
+        document.hidden ? stopPolling() : startPolling();
+    });
+
+    window.addEventListener('beforeunload', stopPolling);
+
+    // Timer para "última actualización"
     setInterval(() => {
         const el = document.getElementById('jules-last-update');
         if (el) {
@@ -318,279 +1065,177 @@ permalink: /jules-panel/
         }
     }, 1000);
 
-    function renderSessions() {
-        const list = document.getElementById('jules-sessions-list');
-        if (currentSessions.length === 0) {
-            list.innerHTML = `
-                <div class="text-center py-16">
-                    <div class="text-slate-800 text-6xl mb-4"><i class="fa-solid fa-inbox"></i></div>
-                    <p class="text-slate-600 font-bold uppercase text-[10px] tracking-widest">No hay sesiones activas en el historial</p>
-                </div>
-            `;
-            return;
-        }
+    // --- ACTIVITY LOGIC ---
+    async function toggleActivities(sessionId, btn) {
+        const idSafe = sessionId.split('/').pop();
+        const container = document.getElementById(`activities-${idSafe}`);
+        const isHidden = container.classList.contains('hidden');
 
-        list.innerHTML = currentSessions.map(s => {
-            const state = s.state || 'QUEUED';
-            const { colorClass, label } = getStateConfig(state);
-            const isPulsing = ['PLANNING', 'AWAITING_PLAN_APPROVAL', 'AWAITING_USER_FEEDBACK', 'IN_PROGRESS'].includes(state);
-            const progress = (s.completionPercent || 0) * 100;
+        if (isHidden) {
+            container.classList.remove('hidden');
+            btn.innerHTML = '<i class="fa-solid fa-chevron-up mr-1"></i> Ocultar historial';
 
-            return `
-                <div class="bg-slate-950 border-l-4 ${colorClass.border} rounded-r-2xl border-y border-r border-slate-800 overflow-hidden shadow-xl transition-all hover:border-purple-500/40">
-                    <div class="p-6">
-                        <div class="flex justify-between items-start mb-4">
-                            <div class="flex items-center gap-3">
-                                <span class="px-2 py-1 rounded text-[9px] font-bold ${colorClass.bg} ${colorClass.text} ${isPulsing ? 'animate-pulse' : ''} uppercase tracking-wider">
-                                    ${label}
-                                </span>
-                                <h3 class="font-bold text-white text-lg">${s.title || 'Sesión Jules'}</h3>
-                            </div>
-                            <div class="flex items-center gap-4">
-                                <span class="text-[10px] font-mono text-slate-600 bg-slate-900 px-2 py-1 rounded">${new Date(s.createTime).toLocaleTimeString()} · ${new Date(s.createTime).toLocaleDateString()}</span>
-                                <button onclick="deleteSession('${s.name}')" class="text-slate-600 hover:text-red-500 transition-colors" title="Eliminar">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </button>
-                            </div>
-                        </div>
+            // Si la sesión está activa, añadir al set de polling
+            const session = currentSessions.find(s => s.name === sessionId);
+            if (session && ['RUNNING', 'WAITING_FOR_INPUT', 'QUEUED'].includes(session.state)) {
+                activeActivityPolls.add(sessionId);
+            }
 
-                        <div class="flex items-center gap-4 text-xs font-bold text-slate-500 mb-6">
-                            <span class="flex items-center gap-2 bg-slate-900 px-3 py-1 rounded-full"><i class="fa-solid fa-code-branch text-purple-500"></i> ${s.sourceContext?.githubRepoContext?.startingBranch || 'main'}</span>
-                            <span class="flex items-center gap-2 bg-slate-900 px-3 py-1 rounded-full"><i class="fa-solid fa-code text-indigo-500"></i> ${s.sourceContext?.source?.split('/').pop() || 'Repo'}</span>
-                        </div>
-
-                        ${state === 'IN_PROGRESS' ? `
-                            <div class="space-y-2 mb-6">
-                                <div class="flex justify-between text-[10px] font-bold text-slate-500 uppercase">
-                                    <span>Progreso de ejecución</span>
-                                    <span>${progress.toFixed(0)}%</span>
-                                </div>
-                                <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden">
-                                    <div class="bg-purple-500 h-full transition-all duration-1000" style="width: ${progress}%"></div>
-                                </div>
-                            </div>
-                        ` : ''}
-
-                        <div class="flex flex-wrap items-center gap-3">
-                            <button onclick="toggleMsgArea('${s.name}')" class="px-5 py-2 bg-slate-900 hover:bg-slate-800 rounded-xl text-[10px] font-bold text-slate-300 transition-all flex items-center gap-2 border border-slate-800">
-                                <i class="fa-solid fa-message"></i> Feedback
-                            </button>
-
-                            ${state === 'AWAITING_PLAN_APPROVAL' ? `
-                                <button onclick="confirmPlanApproval('${s.name}')" class="px-6 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-xl text-[10px] font-bold transition-all flex items-center gap-2 shadow-lg shadow-purple-500/20">
-                                    <i class="fa-solid fa-check-double"></i> Aprobar Plan
-                                </button>
-                            ` : ''}
-
-                            <a href="${s.url}" target="_blank" class="px-5 py-2 bg-indigo-900/20 hover:bg-indigo-900/40 text-indigo-400 rounded-xl text-[10px] font-bold transition-all flex items-center gap-2 border border-indigo-500/20 ml-auto">
-                                Ver en consola <i class="fa-solid fa-external-link text-[8px]"></i>
-                            </a>
-                        </div>
-
-                        <div id="msg-area-${s.name.replace(/\//g, '-')}" class="hidden mt-6 pt-6 border-t border-slate-900">
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Enviar mensaje a Jules</label>
-                            <div class="flex gap-3">
-                                <textarea id="msg-input-${s.name.replace(/\//g, '-')}" class="flex-grow bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-100 focus:border-purple-500 outline-none resize-none" rows="2" placeholder="Escribe tu mensaje..."></textarea>
-                                <button onclick="sendMessage('${s.name}')" class="bg-purple-600 hover:bg-purple-500 text-white px-6 rounded-xl transition-all flex items-center justify-center">
-                                    <i class="fa-solid fa-paper-plane"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        ${s.pullRequest ? `
-                            <div class="mt-6 p-4 bg-green-500/5 border border-green-500/20 rounded-xl flex items-center justify-between">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 bg-green-500/10 rounded-lg flex items-center justify-center text-green-500">
-                                        <i class="fa-solid fa-code-pull-request"></i>
-                                    </div>
-                                    <div>
-                                        <p class="text-[10px] font-bold text-green-500 uppercase tracking-widest leading-none mb-1">Pull Request Generada</p>
-                                        <p class="text-xs text-slate-300 font-bold">PR #${s.pullRequest.number}</p>
-                                    </div>
-                                </div>
-                                <a href="${s.pullRequest.url}" target="_blank" class="px-4 py-1.5 bg-green-500 hover:bg-green-600 text-slate-950 rounded-lg text-[10px] font-bold transition-all uppercase">
-                                    Revisar Cambios
-                                </a>
-                            </div>
-                        ` : ''}
-                    </div>
-
-                    <!-- Activity Log Toggle -->
-                    <button onclick="toggleActivityLog('${s.name}')" class="w-full bg-slate-900/30 py-3 text-[9px] font-bold text-slate-600 hover:text-slate-300 transition-all uppercase tracking-[0.2em] border-t border-slate-900 flex items-center justify-center gap-3">
-                        <i class="fa-solid fa-terminal"></i> Historial de Actividad <i class="fa-solid fa-chevron-down opacity-50"></i>
-                    </button>
-                    <div id="activity-log-${s.name.replace(/\//g, '-')}" class="hidden p-6 bg-black/40 border-t border-slate-900 max-h-72 overflow-y-auto custom-scrollbar font-mono text-[11px]">
-                        <div class="flex flex-col gap-2" id="activity-content-${s.name.replace(/\//g, '-')}">
-                            <div class="text-center py-4 text-slate-700 italic">Cargando eventos...</div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }).join('');
-    }
-
-    function getStateConfig(state) {
-        switch(state) {
-            case 'QUEUED': return { label: 'En Cola', colorClass: { border: 'border-slate-500', bg: 'bg-slate-800', text: 'text-slate-300' } };
-            case 'PLANNING': return { label: 'Planificando', colorClass: { border: 'border-blue-500', bg: 'bg-blue-900/30', text: 'text-blue-300' } };
-            case 'AWAITING_PLAN_APPROVAL': return { label: 'Esperando Aprobación', colorClass: { border: 'border-amber-500', bg: 'bg-amber-900/30', text: 'text-amber-300' } };
-            case 'AWAITING_USER_FEEDBACK': return { label: 'Esperando Feedback', colorClass: { border: 'border-orange-500', bg: 'bg-orange-900/30', text: 'text-orange-300' } };
-            case 'IN_PROGRESS': return { label: 'Ejecutando', colorClass: { border: 'border-purple-500', bg: 'bg-purple-900/30', text: 'text-purple-300' } };
-            case 'COMPLETED': return { label: 'Completado', colorClass: { border: 'border-green-500', bg: 'bg-green-900/30', text: 'text-green-300' } };
-            case 'FAILED': return { label: 'Fallido', colorClass: { border: 'border-red-500', bg: 'bg-red-900/30', text: 'text-red-300' } };
-            case 'PAUSED': return { label: 'Pausado', colorClass: { border: 'border-slate-700', bg: 'bg-slate-900', text: 'text-slate-500' } };
-            default: return { label: state, colorClass: { border: 'border-slate-800', bg: 'bg-slate-900', text: 'text-slate-400' } };
+            refreshActivities(sessionId);
+        } else {
+            container.classList.add('hidden');
+            btn.innerHTML = '<i class="fa-solid fa-chevron-down mr-1"></i> Historial de actividad';
+            activeActivityPolls.delete(sessionId);
         }
     }
 
-    async function launchSession() {
-        const sourceName = document.getElementById('jules-repo-select').value;
-        const branch = document.getElementById('jules-branch-select').value;
-        const prompt = document.getElementById('jules-prompt-input').value.trim();
-        const title = document.getElementById('jules-title-input').value.trim();
-        const approvePlan = document.getElementById('jules-approve-checkbox').checked;
-        const autoPR = document.getElementById('jules-pr-checkbox').checked;
-
-        if (!sourceName || !prompt) {
-            showToast('Selecciona un repositorio y describe la tarea para continuar.', 'warning');
-            return;
-        }
-
-        const btn = document.getElementById('jules-launch-btn');
-        btn.disabled = true;
-        const originalHTML = btn.innerHTML;
-        btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Lanzando...';
+    async function refreshActivities(sessionId) {
+        const idSafe = sessionId.split('/').pop();
+        const container = document.getElementById(`activities-${idSafe}`);
+        if (!container) return;
 
         try {
-            const data = {
-                prompt,
-                title: title || `Sesión ${new Date().toLocaleDateString()}`,
-                sourceContext: {
-                    source: sourceName,
-                    githubRepoContext: {
-                        startingBranch: branch
-                    }
-                },
-                requirePlanApproval: approvePlan,
-                automationMode: autoPR ? "AUTO_CREATE_PR" : undefined
-            };
+            const data = await window.julesApi.getActivities(sessionId, 30);
+            const activities = data.activities || [];
 
-            await window.julesApi.createSession(data);
-            showToast('✅ Sesión creada. Jules está en cola.', 'success');
-            document.getElementById('jules-prompt-input').value = '';
-            document.getElementById('jules-title-input').value = '';
-            refreshSessions();
+            if (activities.length === 0) {
+                container.innerHTML = '<div class="activity-log italic text-center opacity-40">No hay eventos todavía</div>';
+                return;
+            }
+
+            container.innerHTML = `<div class="activity-log">${activities.map(renderActivity).join('')}</div>`;
         } catch (e) {
-            showToast('Error al lanzar sesión: ' + e.message, 'error');
-        } finally {
-            btn.disabled = false;
-            btn.innerHTML = originalHTML;
+            console.error('Act activities fail:', e);
         }
     }
 
-    document.getElementById('jules-launch-btn').onclick = launchSession;
+    function renderActivity(a) {
+        const time = new Date(a.createTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-    function confirmPlanApproval(sessionId) {
-        if (confirm('¿Aprobar el plan de Jules y proceder con la ejecución?')) {
-            approvePlan(sessionId);
+        if (a.type === 'planGenerated' && a.plan) {
+            return `
+                <div class="activity-entry activity-entry--plan">
+                    <strong>[${time}] Plan generado:</strong>
+                    <ul class="ml-4 mt-1 list-decimal">
+                        ${a.plan.steps.map(s => `<li>${s.title}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
         }
+
+        if (a.type === 'planApproved') {
+            return `<div class="activity-entry activity-entry--progress"><strong>[${time}]</strong> ✅ Plan aprobado por el usuario</div>`;
+        }
+
+        if (a.type === 'progressUpdated') {
+            let html = `<div class="activity-entry activity-entry--progress"><strong>[${time}]</strong> ${a.message}</div>`;
+            if (a.bashOutput) {
+                html += `<div class="activity-code">${a.bashOutput}</div>`;
+            }
+            return html;
+        }
+
+        if (a.type === 'userMessage' || a.origin === 'USER') {
+            return `<div class="activity-entry activity-entry--user">${a.message || a.prompt}</div>`;
+        }
+
+        return `<div class="activity-entry activity-entry--agent">${a.message}</div>`;
     }
 
+    // --- COMMANDS ---
     async function approvePlan(sessionId) {
         try {
             await window.julesApi.approvePlan(sessionId);
-            showToast('Plan aprobado correctamente', 'success');
+            showToast('Plan aprobado. Jules continúa trabajando.');
             refreshSessions();
-        } catch (e) {
-            showToast('Error al aprobar plan: ' + e.message, 'error');
-        }
+        } catch (e) { handleApiError(e); }
     }
 
-    async function deleteSession(sessionId) {
-        if (!confirm('¿Eliminar esta sesión de Jules? Esta acción no se puede deshacer.')) return;
+    async function deleteSession(sessionId, btn) {
+        if (!confirm('¿Estás seguro de eliminar esta sesión?')) return;
         try {
+            const card = btn.closest('.session-card');
+            card.style.opacity = '0.4';
+            card.style.pointerEvents = 'none';
+
             await window.julesApi.deleteSession(sessionId);
-            showToast('Sesión eliminada', 'info');
-            refreshSessions();
-        } catch (e) {
-            showToast('Error al eliminar: ' + e.message, 'error');
-        }
+            card.style.transition = 'all 0.4s ease';
+            card.style.transform = 'translateX(50px)';
+            card.style.opacity = '0';
+
+            setTimeout(() => {
+                currentSessions = currentSessions.filter(s => s.name !== sessionId);
+                renderSessions();
+            }, 400);
+
+            showToast('Sesión eliminada correctamente');
+        } catch (e) { handleApiError(e); }
     }
 
-    function toggleMsgArea(sessionId) {
-        const idSafe = sessionId.replace(/\//g, '-');
-        const area = document.getElementById(`msg-area-${idSafe}`);
-        area.classList.toggle('hidden');
-        if (!area.classList.contains('hidden')) {
-            document.getElementById(`msg-input-${idSafe}`).focus();
-        }
-    }
-
-    async function sendMessage(sessionId) {
-        const idSafe = sessionId.replace(/\//g, '-');
-        const textarea = document.getElementById(`msg-input-${idSafe}`);
+    async function sendMessage(sessionId, textarea) {
         const msg = textarea.value.trim();
-
         if (!msg) return;
 
         try {
+            textarea.disabled = true;
             await window.julesApi.sendMessage(sessionId, msg);
-            showToast('Mensaje enviado', 'success');
+            showToast('Mensaje enviado');
             textarea.value = '';
-            document.getElementById(`msg-area-${idSafe}`).classList.add('hidden');
-            refreshSessions();
-        } catch (e) {
-            showToast('Error al enviar mensaje: ' + e.message, 'error');
-        }
+            refreshActivities(sessionId);
+        } catch (e) { handleApiError(e); }
+        finally { textarea.disabled = false; textarea.focus(); }
     }
 
-    async function toggleActivityLog(sessionId) {
-        const idSafe = sessionId.replace(/\//g, '-');
-        const logPanel = document.getElementById(`activity-log-${idSafe}`);
-        const content = document.getElementById(`activity-content-${idSafe}`);
+    // --- FILTERS ---
+    document.querySelectorAll('.filter-chip').forEach(chip => {
+        chip.onclick = () => {
+            document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+            currentFilter = chip.dataset.filter;
+            renderSessions();
+        };
+    });
 
-        logPanel.classList.toggle('hidden');
-
-        if (!logPanel.classList.contains('hidden')) {
-            try {
-                const data = await window.julesApi.getActivities(sessionId);
-                const activities = data.activities || [];
-
-                if (activities.length === 0) {
-                    content.innerHTML = '<div class="text-center py-4 text-slate-800 italic">No hay actividad reciente.</div>';
-                } else {
-                    content.innerHTML = activities.map(a => `
-                        <div class="flex gap-4 group">
-                            <span class="text-slate-700 whitespace-nowrap font-bold text-[9px] pt-0.5">${new Date(a.createTime).toLocaleTimeString()}</span>
-                            <div class="flex flex-col">
-                                <span class="text-purple-400 font-bold text-[10px] uppercase tracking-widest">${a.type}</span>
-                                <span class="text-slate-400 leading-relaxed">${a.message}</span>
-                            </div>
-                        </div>
-                    `).join('');
-                    logPanel.scrollTop = logPanel.scrollHeight;
-                }
-            } catch (e) {
-                content.innerHTML = `<div class="text-center py-4 text-red-900 italic">Error de conexión con Jules.</div>`;
-            }
-        }
+    // --- HELPERS (User Patterns) ---
+    function showToast(msg, type = 'success') {
+        const t = document.createElement('div');
+        t.className = `toast-success`;
+        t.style.borderColor = type === 'success' ? '#10b981' : '#ef4444';
+        t.style.color = type === 'success' ? '#10b981' : '#ef4444';
+        t.textContent = msg;
+        document.getElementById('jules-toast-container').appendChild(t);
+        setTimeout(() => t.remove(), 4200);
     }
 
-    function showToast(msg, type) {
-        if (window.authManager && window.authManager.showToast) {
-            window.authManager.showToast(type === 'error' ? 'Error' : 'Jules AI', msg, type);
+    function showError(msg) {
+        document.querySelectorAll('.error-banner').forEach(b => b.remove());
+        const b = document.createElement('div');
+        b.className = 'error-banner';
+        b.innerHTML = `<span>⚠️ ${msg}</span><button onclick="this.parentElement.remove()">✕</button>`;
+        document.getElementById('sessions-container').prepend(b);
+    }
+
+    function handleApiError(err) {
+        if (err.message === 'RATE_LIMIT') {
+            stopPolling();
+            showError('Rate limit alcanzado. Reiniciando en 60s...');
+            setTimeout(startPolling, 60000);
+        } else if (err.message === 'API_KEY_INVALID') {
+            showError('API Key inválida o expirada. Actualízala en Ajustes.');
+        } else if (err.message === 'TIMEOUT') {
+            showError('La API de Jules está tardando demasiado en responder.');
         } else {
-            alert(msg);
+            showError(err.message || 'Ocurrió un error inesperado');
         }
     }
 
+    // --- EVENTS ---
     document.addEventListener('DOMContentLoaded', initJulesPanel);
-    document.addEventListener('authReady', (e) => initJulesPanel());
+    document.addEventListener('authReady', () => initJulesPanel());
+    document.addEventListener('settingsSaved', () => {
+        updateKeyState();
+        loadSources();
+        refreshSessions();
+        startPolling();
+    });
 </script>
-
-<style>
-    .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
-    .custom-scrollbar::-webkit-scrollbar-track { background: #0a0a0f; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: #1e1e2d; border-radius: 10px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #8b5cf6; }
-</style>
