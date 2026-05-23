@@ -766,6 +766,19 @@ permalink: /jules-panel/
 .field-error { font-size: 10px; color: var(--status-failed); margin-top: 4px; font-weight: 600; }
 .hidden { display: none !important; }
 
+.dl {
+  padding: 0 6px;
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  line-height: 1.5;
+  color: #9ca3af;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.dl-add { color: #86efac; background: rgba(16,185,129,0.06); }
+.dl-del { color: #fca5a5; background: rgba(239,68,68,0.06); }
+.dl-hunk { color: #93c5fd; background: rgba(59,130,246,0.06); }
+
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg-page); }
@@ -1444,20 +1457,31 @@ permalink: /jules-panel/
             const msg   = artifact.changeSet.gitPatch.suggestedCommitMessage || '';
             const lines = patch.split('\n');
 
-            const diffLinesHtml = lines.map(line => {
-              let color = '#9ca3af'; let bg = 'transparent';
-              if (line.startsWith('+') && !line.startsWith('+++'))
-                { color = '#86efac'; bg = 'rgba(16,185,129,0.06)'; }
-              if (line.startsWith('-') && !line.startsWith('---'))
-                { color = '#fca5a5'; bg = 'rgba(239,68,68,0.06)'; }
-              if (line.startsWith('@@'))
-                { color = '#93c5fd'; bg = 'rgba(59,130,246,0.06)'; }
-              return `<div style="color:${color};background:${bg};
-                        padding:0 4px;white-space:pre;font-family:monospace;
-                        font-size:10px;line-height:1.5;">
-                ${escapeHtml(line)}
-              </div>`;
+            // Máximo 300 líneas visibles — el resto se oculta con "Ver más"
+            const MAX_LINES = 300;
+            const visibleLines = lines.slice(0, MAX_LINES);
+            const hiddenCount = lines.length - visibleLines.length;
+
+            // Construir HTML con clases en lugar de estilos inline por línea
+            const diffLinesHtml = visibleLines.map(line => {
+              let cls = 'dl';
+              if (line.startsWith('+') && !line.startsWith('+++')) cls = 'dl dl-add';
+              else if (line.startsWith('-') && !line.startsWith('---')) cls = 'dl dl-del';
+              else if (line.startsWith('@@')) cls = 'dl dl-hunk';
+              return `<div class="${cls}">${escapeHtml(line)}</div>`;
             }).join('');
+
+            const session = currentSessions.find(s => s.name === activity.name?.split('/activities/')[0]);
+            const moreHtml = hiddenCount > 0
+              ? `<div style="font-size:10px;color:#6b7280;padding:6px;text-align:center;
+                   border-top:1px solid #2a2a35;">
+                   +${hiddenCount} líneas más —
+                   <a href="${session?.url || '#'}" target="_blank"
+                      style="color:#8b5cf6;text-decoration:underline;">
+                     ver completo en Jules
+                   </a>
+                 </div>`
+              : '';
 
             diffsHtml += `
               <details style="margin-top:8px;" class="diff-viewer">
@@ -1466,13 +1490,13 @@ permalink: /jules-panel/
                   display:flex;align-items:center;gap:6px;">
                   <span>📄</span>
                   <span>Ver cambios en código</span>
-                  ${msg ? `<span style="color:#6b7280;font-weight:400;
-                    font-size:10px;">— ${escapeHtml(msg)}</span>` : ''}
+                  ${msg ? `<span style="color:#6b7280;font-weight:400;font-size:10px;">
+                    — ${escapeHtml(msg)}</span>` : ''}
                 </summary>
-                <div class="diff-viewer">
-                  <div style="border:1px solid #2a2a35;border-radius:6px;">
-                    ${diffLinesHtml}
-                  </div>
+                <div style="border:1px solid #2a2a35;border-radius:6px;
+                  overflow:hidden;max-height:250px;overflow-y:auto;">
+                  ${diffLinesHtml}
+                  ${moreHtml}
                 </div>
               </details>`;
           }
