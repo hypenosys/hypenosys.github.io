@@ -1,6 +1,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
   <div class="container">
-    <a class="navbar-brand font-weight-bold text-purple" rel="author" href="{{ "/" | relative_url }}">
+    <a class="navbar-brand font-weight-bold text-purple d-flex align-items-center" rel="author" href="{{ "/" | relative_url }}">
+      <i class="fa-solid fa-microchip mr-2"></i>
       <span style="letter-spacing: 2px;">{{ site.title | upcase }}</span>
     </a>
 
@@ -10,6 +11,9 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto" id="auth-nav-container-left">
+        <!-- Auth status injected here by auth.js -->
+      </ul>
       <ul class="navbar-nav ml-auto">
         {%- for path in page_paths -%}
           {%- assign my_page = site.pages | where: "path", path | first -%}
@@ -19,6 +23,11 @@
           </li>
           {%- endif -%}
         {% endfor -%}
+        <li class="nav-item">
+          <a class="nav-link" href="{{ '/dashboard.html' | relative_url }}">
+            <i class="fas fa-tachometer-alt fa-sm fa-fw mr-1 text-purple"></i> Dashboard
+          </a>
+        </li>
         <li class="nav-item">
           <a class="nav-link" href="{{ '/tech-stack/' | relative_url }}">Tech Stack</a>
         </li>
