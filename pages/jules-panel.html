@@ -60,41 +60,31 @@ permalink: /jules-panel/
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">RAMA</label>
-                    <div style="position:relative;">
-                        <input
-                            type="text"
-                            id="jules-branch-input"
-                            class="form-input"
-                            list="jules-branch-datalist"
-                            placeholder="Selecciona o escribe rama"
-                            autocomplete="off"
-                            spellcheck="false"
-                        />
-                        <datalist id="jules-branch-datalist">
-                            <!-- se llena dinámicamente -->
-                        </datalist>
-                        <!-- Spinner que aparece mientras carga -->
-                        <div id="jules-branch-loading" style="
-                            display:none;
-                            position:absolute;
-                            right:10px;
-                            top:50%;
-                            transform:translateY(-50%);
-                            width:14px;height:14px;
-                            border:2px solid #6d28d9;
-                            border-top-color:transparent;
-                            border-radius:50%;
-                            animation:spin 0.7s linear infinite;
-                        "></div>
-                    </div>
-                    <!-- Mensaje de estado de ramas -->
-                    <div id="jules-branch-status" style="
-                        font-size:10px;
-                        color:#6b7280;
-                        margin-top:4px;
-                        min-height:14px;
+                  <label class="form-label">RAMA</label>
+                  <div style="position:relative;">
+                    <select
+                      id="jules-branch-input"
+                      class="form-select"
+                      style="appearance:auto; -webkit-appearance:auto;"
+                    >
+                      <option value="">Selecciona una rama...</option>
+                    </select>
+                    <div id="jules-branch-loading" style="
+                      display:none;
+                      position:absolute;
+                      right:32px; top:50%;
+                      transform:translateY(-50%);
+                      width:13px; height:13px;
+                      border:2px solid #7c3aed;
+                      border-top-color:transparent;
+                      border-radius:50%;
+                      animation:spin 0.7s linear infinite;
                     "></div>
+                  </div>
+                  <div id="jules-branch-status" style="
+                    font-size:10px; color:#6b7280;
+                    margin-top:4px; min-height:14px;
+                  "></div>
                 </div>
 
                 <div id="repo-error-container"></div>
@@ -141,8 +131,8 @@ permalink: /jules-panel/
                 </div>
                 <div class="session-filters">
                     <button class="filter-chip active" data-filter="all">Todas</button>
-                    <button class="filter-chip" data-filter="RUNNING">En curso</button>
-                    <button class="filter-chip" data-filter="WAITING_FOR_INPUT">Esperando</button>
+                        <button class="filter-chip" data-filter="IN_PROGRESS">En curso</button>
+                        <button class="filter-chip" data-filter="AWAITING_PLAN_APPROVAL">Esperando</button>
                     <button class="filter-chip" data-filter="COMPLETED">Completadas</button>
                     <button class="filter-chip" data-filter="FAILED">Fallidas</button>
                 </div>
@@ -364,10 +354,14 @@ permalink: /jules-panel/
     border-color: var(--border-accent);
     box-shadow: 0 0 0 1px var(--accent-glow), 0 4px 20px rgba(0,0,0,0.4);
 }
-.session-card[data-state="RUNNING"] {
+.session-card[data-state="RUNNING"],
+.session-card[data-state="IN_PROGRESS"],
+.session-card[data-state="PLANNING"] {
     border-left: 3px solid var(--status-running);
 }
-.session-card[data-state="WAITING_FOR_INPUT"] {
+.session-card[data-state="WAITING_FOR_INPUT"],
+.session-card[data-state="AWAITING_PLAN_APPROVAL"],
+.session-card[data-state="AWAITING_USER_FEEDBACK"] {
     border-left: 3px solid var(--status-waiting);
     animation: pulse-border 2s ease-in-out infinite;
 }
@@ -850,56 +844,57 @@ permalink: /jules-panel/
     }
 
     async function onRepoSelected(sourceName, sourceObject) {
-        const branchInput = document.getElementById('jules-branch-input');
-        const branchDatalist = document.getElementById('jules-branch-datalist');
-        const branchLoading = document.getElementById('jules-branch-loading');
-        const branchStatus = document.getElementById('jules-branch-status');
+      const branchSelect  = document.getElementById('jules-branch-input');
+      const branchLoading = document.getElementById('jules-branch-loading');
+      const branchStatus  = document.getElementById('jules-branch-status');
 
-        if (!sourceName) {
-            branchInput.value = '';
-            branchDatalist.innerHTML = '';
-            branchStatus.textContent = '';
-            return;
-        }
-
-        // Mostrar spinner
-        branchLoading.style.display = 'block';
-        branchInput.value = '';
-        branchInput.placeholder = 'Cargando ramas...';
-        branchInput.disabled = true;
+      if (!sourceName) {
+        branchSelect.innerHTML = '<option value="">Selecciona una rama...</option>';
         branchStatus.textContent = '';
+        return;
+      }
 
-        try {
-            const branches = await window.loadBranchesForRepo(sourceName, sourceObject);
+      // Estado: cargando
+      branchLoading.style.display = 'block';
+      branchSelect.disabled = true;
+      branchSelect.innerHTML = '<option value="">Cargando ramas...</option>';
+      branchStatus.textContent = '';
 
-            // Llenar datalist
-            branchDatalist.innerHTML = branches
-                .map(b => `<option value="${b}"></option>`)
-                .join('');
+      try {
+        const branches = await window.loadBranchesForRepo(sourceName, sourceObject);
 
-            // Autoseleccionar: primero "main", luego "master", luego la primera
-            const preferred = ['main', 'master', 'develop'];
-            const autoSelect = preferred.find(p => branches.includes(p)) || branches[0] || '';
-            branchInput.value = autoSelect;
+        // Poblar el <select> con todas las ramas
+        branchSelect.innerHTML = branches
+          .map(b => `<option value="${b}">${b}</option>`)
+          .join('');
 
-            branchStatus.textContent = `${branches.length} rama${branches.length !== 1 ? 's' : ''} disponible${branches.length !== 1 ? 's' : ''}`;
-            branchStatus.style.color = '#10b981';
+        // Autoseleccionar: main > master > develop > primera disponible
+        const preferred = ['main', 'master', 'develop', 'feat', 'staging'];
+        const best = preferred.find(p => branches.includes(p)) || branches[0] || '';
+        branchSelect.value = best;
 
-            // Guardar en localStorage
-            localStorage.setItem('jules_selected_branch', autoSelect);
-            localStorage.setItem('jules_selected_source', sourceName);
+        // Estado: éxito
+        const n = branches.length;
+        branchStatus.textContent = `${n} rama${n !== 1 ? 's' : ''} disponible${n !== 1 ? 's' : ''}`;
+        branchStatus.style.color = '#10b981';
 
-        } catch (err) {
-            branchStatus.textContent = 'No se pudieron cargar ramas. Escríbela manualmente.';
-            branchStatus.style.color = '#f59e0b';
-            // Poner al menos las ramas por defecto
-            branchDatalist.innerHTML = ['main', 'master', 'develop', 'staging', 'production']
-                .map(b => `<option value="${b}"></option>`).join('');
-        } finally {
-            branchLoading.style.display = 'none';
-            branchInput.disabled = false;
-            branchInput.placeholder = 'Selecciona o escribe rama';
-        }
+        // Persistir
+        localStorage.setItem('jules_selected_branch', best);
+        localStorage.setItem('jules_selected_source', sourceName);
+
+      } catch(err) {
+        // Fallback: ramas estándar siempre disponibles
+        const fallback = ['main', 'master', 'develop', 'staging', 'production'];
+        branchSelect.innerHTML = fallback
+          .map(b => `<option value="${b}">${b}</option>`)
+          .join('');
+        branchSelect.value = 'main';
+        branchStatus.textContent = 'Ramas por defecto (repo privado o error de red)';
+        branchStatus.style.color = '#f59e0b';
+      } finally {
+        branchLoading.style.display = 'none';
+        branchSelect.disabled = false;
+      }
     }
 
     // Event listeners
@@ -909,9 +904,10 @@ permalink: /jules-panel/
         onRepoSelected(sourceName, sourceObj);
     });
 
-    document.getElementById('jules-branch-input').addEventListener('change', function () {
+    document.getElementById('jules-branch-input')
+      .addEventListener('change', function() {
         if (this.value) localStorage.setItem('jules_selected_branch', this.value);
-    });
+      });
 
     // --- SESSION ACTIONS ---
     async function launchSession() {
@@ -1042,7 +1038,7 @@ permalink: /jules-panel/
                     </div>
 
                     <div class="session-card__actions">
-                        ${state === 'WAITING_FOR_INPUT' ? `
+                        ${state === 'AWAITING_PLAN_APPROVAL' ? `
                             <button class="btn btn--approve" onclick="approvePlan('${s.name}')">
                                 ✅ Aprobar Plan
                             </button>
@@ -1087,16 +1083,22 @@ permalink: /jules-panel/
     }
 
     // --- HELPERS ---
+    const STATE_CONFIG = {
+      'QUEUED':                  { label: 'En cola',           cls: 'queued',    icon: '⏸' },
+      'PLANNING':                { label: 'Planificando',       cls: 'running',   icon: '🧠' },
+      'AWAITING_PLAN_APPROVAL':  { label: 'Esperando aprobación', cls: 'waiting', icon: '⏳' },
+      'AWAITING_USER_FEEDBACK':  { label: 'Esperando input',    cls: 'waiting',   icon: '💬' },
+      'IN_PROGRESS':             { label: 'En progreso',        cls: 'running',   icon: '⚡' },
+      'PAUSED':                  { label: 'Pausada',            cls: 'queued',    icon: '⏸' },
+      'FAILED':                  { label: 'Fallida',            cls: 'failed',    icon: '❌' },
+      'COMPLETED':               { label: 'Completada',         cls: 'completed', icon: '✅' },
+    };
+
     function getStateBadge(state) {
-        const config = {
-            'QUEUED': { label: 'En Cola', cls: 'session-badge--queued' },
-            'WAITING_FOR_INPUT': { label: '⏳ Esperando aprobación', cls: 'session-badge--waiting' },
-            'RUNNING': { label: '⚡ Ejecutando', cls: 'session-badge--running' },
-            'COMPLETED': { label: '✅ Completada', cls: 'session-badge--completed' },
-            'FAILED': { label: '❌ Error', cls: 'session-badge--failed' }
-        };
-        const s = config[state] || { label: state, cls: 'session-badge--queued' };
-        return `<span class="session-badge ${s.cls}">${s.label}</span>`;
+      const cfg = STATE_CONFIG[state] || { label: state || '—', cls: 'queued', icon: '◌' };
+      return `<span class="session-badge session-badge--${cfg.cls}">
+        ${cfg.icon} ${cfg.label}
+      </span>`;
     }
 
     function getTimeAgo(dateStr) {
@@ -1145,6 +1147,14 @@ permalink: /jules-panel/
     }, 1000);
 
     // --- ACTIVITY LOGIC ---
+    function escapeHtml(str) {
+      return String(str ?? '')
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;');
+    }
+
     async function toggleActivities(sessionId, btn) {
         const idSafe = sessionId.split('/').pop();
         const container = document.getElementById(`activities-${idSafe}`);
@@ -1156,7 +1166,7 @@ permalink: /jules-panel/
 
             // Si la sesión está activa, añadir al set de polling
             const session = currentSessions.find(s => s.name === sessionId);
-            if (session && ['RUNNING', 'WAITING_FOR_INPUT', 'QUEUED'].includes(session.state)) {
+            if (session && !['FAILED', 'COMPLETED'].includes(session.state)) {
                 activeActivityPolls.add(sessionId);
             }
 
@@ -1188,37 +1198,101 @@ permalink: /jules-panel/
         }
     }
 
-    function renderActivity(a) {
-        const time = new Date(a.createTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-        if (a.type === 'planGenerated' && a.plan) {
-            return `
-                <div class="activity-entry activity-entry--plan">
-                    <strong>[${time}] Plan generado:</strong>
-                    <ul class="ml-4 mt-1 list-decimal">
-                        ${a.plan.steps.map(s => `<li>${s.title}</li>`).join('')}
-                    </ul>
+    function renderActivity(activity) {
+      // Detectar tipo de actividad
+      if (activity.planGenerated) {
+        const steps = activity.planGenerated?.plan?.steps || [];
+        const stepsHtml = steps
+          .sort((a, b) => (a.index || 0) - (b.index || 0))
+          .map(s => `
+            <div style="display:flex;gap:8px;padding:4px 0;border-bottom:1px solid #1e1e2a;">
+              <span style="color:#7c3aed;font-weight:700;min-width:18px;">
+                ${(s.index || 0) + 1}.
+              </span>
+              <div>
+                <div style="color:#e2e8f0;font-size:12px;font-weight:500;">
+                  ${s.title || 'Sin título'}
                 </div>
-            `;
-        }
+                ${s.description ? `
+                  <div style="color:#6b7280;font-size:11px;margin-top:2px;">
+                    ${s.description}
+                  </div>` : ''}
+              </div>
+            </div>
+          `).join('');
 
-        if (a.type === 'planApproved') {
-            return `<div class="activity-entry activity-entry--progress"><strong>[${time}]</strong> ✅ Plan aprobado por el usuario</div>`;
-        }
+        return `
+          <div class="activity-entry activity-entry--plan">
+            <div style="font-size:10px;font-weight:700;color:#8b5cf6;
+                        text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">
+              📋 Plan generado (${steps.length} pasos)
+            </div>
+            <div>${stepsHtml || '<span style="color:#6b7280">Sin pasos</span>'}</div>
+          </div>`;
+      }
 
-        if (a.type === 'progressUpdated') {
-            let html = `<div class="activity-entry activity-entry--progress"><strong>[${time}]</strong> ${a.message}</div>`;
-            if (a.bashOutput) {
-                html += `<div class="activity-code">${a.bashOutput}</div>`;
-            }
-            return html;
-        }
+      if (activity.planApproved) {
+        return `<div class="activity-entry" style="color:#10b981;font-size:11px;">
+          ✅ Plan aprobado
+        </div>`;
+      }
 
-        if (a.type === 'userMessage' || a.origin === 'USER') {
-            return `<div class="activity-entry activity-entry--user">${a.message || a.prompt}</div>`;
-        }
+      if (activity.userMessaged) {
+        const msg = activity.userMessaged.userMessage || '';
+        return `<div class="activity-entry activity-entry--user">${escapeHtml(msg)}</div>`;
+      }
 
-        return `<div class="activity-entry activity-entry--agent">${a.message}</div>`;
+      if (activity.agentMessaged) {
+        const msg = activity.agentMessaged.agentMessage || '';
+        return `<div class="activity-entry activity-entry--agent">${escapeHtml(msg)}</div>`;
+      }
+
+      if (activity.progressUpdated) {
+        const title = activity.progressUpdated.title || '';
+        const desc  = activity.progressUpdated.description || '';
+
+        // Buscar bashOutput en artifacts de esta actividad
+        const bash = (activity.artifacts || [])
+          .map(a => a.bashOutput).filter(Boolean)[0];
+
+        return `
+          <div class="activity-entry activity-entry--progress">
+            <div style="color:#9ca3af;font-size:11px;">
+              ⚙️ <strong style="color:#d1d5db;">${escapeHtml(title)}</strong>
+              ${desc ? `<span style="color:#6b7280"> — ${escapeHtml(desc)}</span>` : ''}
+            </div>
+            ${bash ? `
+              <details style="margin-top:6px;">
+                <summary style="font-size:10px;color:#6b7280;cursor:pointer;">
+                  $ ${escapeHtml(bash.command || '')}
+                  <span style="color:${bash.exitCode === 0 ? '#10b981' : '#ef4444'}">
+                    [exit ${bash.exitCode ?? '?'}]
+                  </span>
+                </summary>
+                <pre class="activity-code">${escapeHtml(bash.output || '')}</pre>
+              </details>` : ''}
+          </div>`;
+      }
+
+      if (activity.sessionCompleted) {
+        return `<div class="activity-entry"
+                     style="color:#10b981;font-size:11px;font-weight:600;">
+          🏁 Sesión completada
+        </div>`;
+      }
+
+      if (activity.sessionFailed) {
+        const reason = activity.sessionFailed.reason || 'Error desconocido';
+        return `<div class="activity-entry"
+                     style="color:#ef4444;font-size:11px;">
+          ❌ Sesión fallida: ${escapeHtml(reason)}
+        </div>`;
+      }
+
+      // Fallback: actividad desconocida — NO mostrar "undefined"
+      return `<div class="activity-entry" style="color:#4b5563;font-size:10px;">
+        ${activity.originator || 'system'}: actividad registrada
+      </div>`;
     }
 
     // --- COMMANDS ---
