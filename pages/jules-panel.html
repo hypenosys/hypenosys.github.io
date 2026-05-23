@@ -13,7 +13,7 @@ permalink: /jules-panel/
 </div>
 
 <!-- Access Restricted Gate -->
-<div id="jules-auth-gate" class="bg-slate-950 text-slate-100 min-h-[80vh] flex items-center justify-center hidden" style="display:none">
+<div id="jules-auth-gate" class="bg-slate-950 text-slate-100 min-h-[80vh] flex items-center justify-center hidden">
     <div class="text-center">
         <div class="text-purple-500 text-6xl mb-6"><i class="fa-solid fa-lock"></i></div>
         <h1 class="text-3xl font-bold mb-2">Acceso Restringido</h1>
@@ -25,7 +25,7 @@ permalink: /jules-panel/
 </div>
 
 <!-- Main Jules Panel -->
-<div id="jules-main-panel" class="jules-panel-container hidden" style="display:none">
+<div id="jules-main-panel" class="jules-panel-container hidden">
 
     <!-- Header Section -->
     <header class="panel-header">
@@ -766,6 +766,19 @@ permalink: /jules-panel/
 .field-error { font-size: 10px; color: var(--status-failed); margin-top: 4px; font-weight: 600; }
 .hidden { display: none !important; }
 
+.dl {
+  padding: 0 6px;
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  line-height: 1.5;
+  color: #9ca3af;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.dl-add { color: #86efac; background: rgba(16,185,129,0.06); }
+.dl-del { color: #fca5a5; background: rgba(239,68,68,0.06); }
+.dl-hunk { color: #93c5fd; background: rgba(59,130,246,0.06); }
+
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg-page); }
@@ -792,41 +805,29 @@ permalink: /jules-panel/
     // --- INITIALIZATION ---
     async function initJulesPanel(user) {
         const loading = document.getElementById("auth-loading");
-        const gate = document.getElementById("jules-auth-gate");
-        const panel = document.getElementById("jules-main-panel");
+        const gate    = document.getElementById("jules-auth-gate");
+        const panel   = document.getElementById("jules-main-panel");
 
-        const token = sessionStorage.getItem("gh_access_token") || localStorage.getItem("github_token");
-        if (!token) {
-            loading.classList.add('hidden');
+        loading.classList.add('hidden');
+
+        const token = sessionStorage.getItem("gh_access_token")
+                   || localStorage.getItem("github_token");
+
+        if (!token || !user) {
             gate.classList.remove('hidden');
-            gate.style.display = 'flex';
-            panel.style.display = 'none';
+            panel.classList.add('hidden');
             return;
         }
 
-        try {
-            const { valid } = await window.githubApi.validateToken();
-            loading.classList.add('hidden');
+        // Usuario válido — mostrar panel
+        gate.classList.add('hidden');
+        panel.classList.remove('hidden');
 
-            if (valid) {
-                gate.style.display = 'none';
-                panel.classList.remove('hidden');
-                panel.style.display = 'block';
-
-                updateKeyState();
-                if (window.julesApi.apiKey) {
-                    initializeRepoSelector();
-                    refreshSessions();
-                    startPolling();
-                }
-            } else {
-                gate.classList.remove('hidden');
-                gate.style.display = 'flex';
-            }
-        } catch (e) {
-            loading.classList.add('hidden');
-            gate.classList.remove('hidden');
-            gate.style.display = 'flex';
+        updateKeyState();
+        if (window.julesApi.apiKey) {
+            initializeRepoSelector();
+            refreshSessions();
+            startPolling();
         }
     }
 
@@ -1226,8 +1227,15 @@ permalink: /jules-panel/
                 // ACTUALIZACIÓN QUIRÚRGICA — no tocar el panel de actividades
                 updateCardMeta(existingCard, session);
 
-                // Mover al final para mantener el orden de currentSessions
-                list.appendChild(existingCard);
+                // Solo mover si el orden realmente cambió — nunca mover si ya está en su sitio
+                const cards = [...list.children];
+                const currentIndex = cards.indexOf(existingCard);
+                const expectedIndex = currentSessions
+                  .filter(s => !archivedIds.has(getIdSafe(s.name)))
+                  .indexOf(session);
+                if (currentIndex !== expectedIndex) {
+                  list.appendChild(existingCard);
+                }
             } else {
                 // CARD NUEVA
                 const div = document.createElement('div');
@@ -1362,8 +1370,12 @@ permalink: /jules-panel/
         const container = document.getElementById(`activities-${idSafe}`);
         if (!container || container.classList.contains('hidden')) return;
 
-        const log = container.querySelector('.activity-log');
-        if (!log) return;
+        let log = container.querySelector('.activity-log');
+        if (!log) {
+          log = document.createElement('div');
+          log.className = 'activity-log';
+          container.appendChild(log);
+        }
 
         try {
             const data = await window.julesApi.getActivities(sessionId, 50);
@@ -1393,34 +1405,40 @@ permalink: /jules-panel/
                 .map(el => el.dataset.activityId)
             );
 
-            // Solo añadir las NUEVAS — nunca reconstruir todo (Mejora 2 FIX)
+            // Quitar el placeholder "No hay eventos" si existen actividades reales
+            const placeholder = log.querySelector('[data-placeholder]');
+            if (placeholder && activities.length > 0) placeholder.remove();
+
+            // Añadir SOLO las actividades nuevas
             let added = false;
             activities.forEach(activity => {
-              if (!existingIds.has(activity.id)) {
-                const html = renderActivity(activity);
-                if (!html) return;
-                const div = document.createElement('div');
-                div.dataset.activityId = activity.id;
-                div.innerHTML = html;
-                log.appendChild(div);
-                added = true;
-              }
+              if (existingIds.has(activity.id)) return;
+              const html = renderActivity(activity);
+              if (!html) return;
+              const div = document.createElement('div');
+              div.dataset.activityId = activity.id;
+              div.innerHTML = html;
+              log.appendChild(div);
+              added = true;
             });
 
-            if (log.children.length === 0 && activities.length === 0) {
-              log.innerHTML = '<div class="activity-log italic text-center opacity-40">No hay eventos todavía</div>';
-            } else if (log.querySelector('.opacity-40') && activities.length > 0) {
-              log.innerHTML = ''; // Limpiar mensaje vacío
-              // Forzar re-renderizado en la siguiente pasada para este caso borde
+            // Mostrar placeholder solo si el log sigue vacío después de intentar añadir
+            if (log.querySelectorAll('[data-activity-id]').length === 0) {
+              if (!log.querySelector('[data-placeholder]')) {
+                const ph = document.createElement('div');
+                ph.dataset.placeholder = 'true';
+                ph.className = 'italic text-center opacity-40';
+                ph.style.cssText = 'font-size:11px;padding:12px;color:#4b5563;';
+                ph.textContent = 'No hay eventos todavía';
+                log.appendChild(ph);
+              }
             }
 
-            // Scroll inteligente solo si se añadió contenido nuevo
+            // Scroll inteligente
             if (added) {
               const threshold = 40;
               const isAtBottom = log.scrollHeight - log.scrollTop - log.clientHeight < threshold;
-              if (isAtBottom) {
-                log.scrollTo({ top: log.scrollHeight, behavior: 'smooth' });
-              }
+              if (isAtBottom) log.scrollTo({ top: log.scrollHeight, behavior: 'smooth' });
             }
         } catch (e) {
             console.warn("refreshActivities error:", e);
@@ -1439,20 +1457,31 @@ permalink: /jules-panel/
             const msg   = artifact.changeSet.gitPatch.suggestedCommitMessage || '';
             const lines = patch.split('\n');
 
-            const diffLinesHtml = lines.map(line => {
-              let color = '#9ca3af'; let bg = 'transparent';
-              if (line.startsWith('+') && !line.startsWith('+++'))
-                { color = '#86efac'; bg = 'rgba(16,185,129,0.06)'; }
-              if (line.startsWith('-') && !line.startsWith('---'))
-                { color = '#fca5a5'; bg = 'rgba(239,68,68,0.06)'; }
-              if (line.startsWith('@@'))
-                { color = '#93c5fd'; bg = 'rgba(59,130,246,0.06)'; }
-              return `<div style="color:${color};background:${bg};
-                        padding:0 4px;white-space:pre;font-family:monospace;
-                        font-size:10px;line-height:1.5;">
-                ${escapeHtml(line)}
-              </div>`;
+            // Máximo 300 líneas visibles — el resto se oculta con "Ver más"
+            const MAX_LINES = 300;
+            const visibleLines = lines.slice(0, MAX_LINES);
+            const hiddenCount = lines.length - visibleLines.length;
+
+            // Construir HTML con clases en lugar de estilos inline por línea
+            const diffLinesHtml = visibleLines.map(line => {
+              let cls = 'dl';
+              if (line.startsWith('+') && !line.startsWith('+++')) cls = 'dl dl-add';
+              else if (line.startsWith('-') && !line.startsWith('---')) cls = 'dl dl-del';
+              else if (line.startsWith('@@')) cls = 'dl dl-hunk';
+              return `<div class="${cls}">${escapeHtml(line)}</div>`;
             }).join('');
+
+            const session = currentSessions.find(s => s.name === activity.name?.split('/activities/')[0]);
+            const moreHtml = hiddenCount > 0
+              ? `<div style="font-size:10px;color:#6b7280;padding:6px;text-align:center;
+                   border-top:1px solid #2a2a35;">
+                   +${hiddenCount} líneas más —
+                   <a href="${session?.url || '#'}" target="_blank"
+                      style="color:#8b5cf6;text-decoration:underline;">
+                     ver completo en Jules
+                   </a>
+                 </div>`
+              : '';
 
             diffsHtml += `
               <details style="margin-top:8px;" class="diff-viewer">
@@ -1461,13 +1490,13 @@ permalink: /jules-panel/
                   display:flex;align-items:center;gap:6px;">
                   <span>📄</span>
                   <span>Ver cambios en código</span>
-                  ${msg ? `<span style="color:#6b7280;font-weight:400;
-                    font-size:10px;">— ${escapeHtml(msg)}</span>` : ''}
+                  ${msg ? `<span style="color:#6b7280;font-weight:400;font-size:10px;">
+                    — ${escapeHtml(msg)}</span>` : ''}
                 </summary>
-                <div class="diff-viewer">
-                  <div style="border:1px solid #2a2a35;border-radius:6px;">
-                    ${diffLinesHtml}
-                  </div>
+                <div style="border:1px solid #2a2a35;border-radius:6px;
+                  overflow:hidden;max-height:250px;overflow-y:auto;">
+                  ${diffLinesHtml}
+                  ${moreHtml}
                 </div>
               </details>`;
           }
@@ -1792,9 +1821,9 @@ permalink: /jules-panel/
     (function arrancarPanel() {
       function iniciar(user) {
         const loading = document.getElementById('auth-loading');
-        if (loading) loading.style.display = 'none';
+        if (loading) loading.classList.add('hidden');
         const panel = document.getElementById('jules-main-panel');
-        if (panel) panel.style.display = 'block';
+        if (panel) panel.classList.remove('hidden');
 
         try { window.julesSessionsCache = window.julesSessionsCache || []; }
         catch(e) {}
