@@ -714,6 +714,8 @@ permalink: /jules-panel/
 
     let sessionPollInterval = null;
     const activeActivityPolls = new Set();
+    // IDs de sesiones con historial actualmente expandido (usando idSafe)
+    const expandedActivities = new Set();
 
     // --- INITIALIZATION ---
     async function initJulesPanel() {
@@ -1080,6 +1082,24 @@ permalink: /jules-panel/
                 </div>
             `;
         }).join('');
+
+        // Restaurar paneles de actividad que estaban abiertos antes del re-render
+        expandedActivities.forEach(idSafe => {
+            const panel = document.getElementById('activities-' + idSafe);
+            const btn = list.querySelector(`[onclick*="toggleActivities("][onclick*="${idSafe}"]`);
+
+            if (panel) {
+                panel.classList.remove('hidden');
+                // Intentar recuperar el name completo de la sesión para el polling/refresh
+                const session = currentSessions.find(s => s.name.endsWith('/' + idSafe) || s.name === idSafe);
+                if (session) {
+                    refreshActivities(session.name);
+                }
+            }
+            if (btn) {
+                btn.innerHTML = '<i class="fa-solid fa-chevron-up mr-1"></i> Ocultar historial';
+            }
+        });
     }
 
     // --- HELPERS ---
@@ -1158,10 +1178,13 @@ permalink: /jules-panel/
     async function toggleActivities(sessionId, btn) {
         const idSafe = sessionId.split('/').pop();
         const container = document.getElementById(`activities-${idSafe}`);
+        if (!container) return;
+
         const isHidden = container.classList.contains('hidden');
 
         if (isHidden) {
             container.classList.remove('hidden');
+            expandedActivities.add(idSafe);
             btn.innerHTML = '<i class="fa-solid fa-chevron-up mr-1"></i> Ocultar historial';
 
             // Si la sesión está activa, añadir al set de polling
@@ -1173,6 +1196,7 @@ permalink: /jules-panel/
             refreshActivities(sessionId);
         } else {
             container.classList.add('hidden');
+            expandedActivities.delete(idSafe);
             btn.innerHTML = '<i class="fa-solid fa-chevron-down mr-1"></i> Historial de actividad';
             activeActivityPolls.delete(sessionId);
         }
