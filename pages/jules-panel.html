@@ -1214,8 +1214,15 @@ permalink: /jules-panel/
                 // ACTUALIZACIÓN QUIRÚRGICA — no tocar el panel de actividades
                 updateCardMeta(existingCard, session);
 
-                // Mover al final para mantener el orden de currentSessions
-                list.appendChild(existingCard);
+                // Solo mover si el orden realmente cambió — nunca mover si ya está en su sitio
+                const cards = [...list.children];
+                const currentIndex = cards.indexOf(existingCard);
+                const expectedIndex = currentSessions
+                  .filter(s => !archivedIds.has(getIdSafe(s.name)))
+                  .indexOf(session);
+                if (currentIndex !== expectedIndex) {
+                  list.appendChild(existingCard);
+                }
             } else {
                 // CARD NUEVA
                 const div = document.createElement('div');
