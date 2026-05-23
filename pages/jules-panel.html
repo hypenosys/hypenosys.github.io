@@ -60,9 +60,41 @@ permalink: /jules-panel/
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Rama</label>
-                    <input type="text" id="jules-branch-input" class="form-input" list="branch-list" placeholder="Selecciona repo o escribe rama...">
-                    <datalist id="branch-list"></datalist>
+                    <label class="form-label">RAMA</label>
+                    <div style="position:relative;">
+                        <input
+                            type="text"
+                            id="jules-branch-input"
+                            class="form-input"
+                            list="jules-branch-datalist"
+                            placeholder="Selecciona o escribe rama"
+                            autocomplete="off"
+                            spellcheck="false"
+                        />
+                        <datalist id="jules-branch-datalist">
+                            <!-- se llena dinámicamente -->
+                        </datalist>
+                        <!-- Spinner que aparece mientras carga -->
+                        <div id="jules-branch-loading" style="
+                            display:none;
+                            position:absolute;
+                            right:10px;
+                            top:50%;
+                            transform:translateY(-50%);
+                            width:14px;height:14px;
+                            border:2px solid #6d28d9;
+                            border-top-color:transparent;
+                            border-radius:50%;
+                            animation:spin 0.7s linear infinite;
+                        "></div>
+                    </div>
+                    <!-- Mensaje de estado de ramas -->
+                    <div id="jules-branch-status" style="
+                        font-size:10px;
+                        color:#6b7280;
+                        margin-top:4px;
+                        min-height:14px;
+                    "></div>
                 </div>
 
                 <div id="repo-error-container"></div>
@@ -673,6 +705,8 @@ permalink: /jules-panel/
 ::-webkit-scrollbar-track { background: var(--bg-page); }
 ::-webkit-scrollbar-thumb { background: var(--border-subtle); border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--accent-primary); }
+
+@keyframes spin { to { transform: translateY(-50%) rotate(360deg); } }
 </style>
 
 <script src="{{ '/assets/javascript/jules-api.js' | relative_url }}"></script>
@@ -714,7 +748,7 @@ permalink: /jules-panel/
 
                 updateKeyState();
                 if (window.julesApi.apiKey) {
-                    loadSources();
+                    initializeRepoSelector();
                     refreshSessions();
                     startPolling();
                 }
@@ -752,87 +786,132 @@ permalink: /jules-panel/
     }
 
     // --- REPOSITORY LOGIC ---
-    async function loadSources() {
-        const select = document.getElementById('jules-repo-select');
-        select.innerHTML = '<option value="">Cargando fuentes...</option>';
+    async function initializeRepoSelector() {
+        const repoSelect = document.getElementById('jules-repo-select');
+        const repoStatus = document.getElementById('repo-error-container');
+
+        repoSelect.innerHTML = '<option value="">Cargando fuentes...</option>';
+        repoSelect.disabled = true;
 
         try {
-            currentSources = await window.loadAllSources();
+            const sources = await window.loadAllSources();
+            window.julesSourcesCache = sources;
+            currentSources = sources;
 
-            if (currentSources.length === 0) {
-                select.innerHTML = '<option value="">No hay repos disponibles</option>';
+            if (sources.length === 0) {
+                repoSelect.innerHTML = '<option value="">No hay repos disponibles</option>';
                 showError('No se encontraron repositorios. Instala la Jules GitHub App.');
                 return;
             }
 
             // Agrupar por owner
             const groups = {};
-            currentSources.forEach(s => {
-                const owner = s.githubRepo.owner;
+            sources.forEach(s => {
+                const owner = s.githubRepo?.owner || window.parseSourceName(s.name)?.owner || 'Otros';
                 if (!groups[owner]) groups[owner] = [];
                 groups[owner].push(s);
             });
 
-            let html = '<option value="">-- Selecciona Repositorio --</option>';
-            Object.keys(groups).sort().forEach(owner => {
-                html += `<optgroup label="${owner}">`;
-                groups[owner].forEach(s => {
-                    html += `<option value="${s.name}">${owner}/${s.githubRepo.repo}</option>`;
+            repoSelect.innerHTML = '<option value="">— Escoge un repositorio —</option>';
+            Object.entries(groups).sort(([a], [b]) => a.localeCompare(b)).forEach(([owner, srcs]) => {
+                const optgroup = document.createElement('optgroup');
+                optgroup.label = owner;
+                srcs.forEach(s => {
+                    const opt = document.createElement('option');
+                    opt.value = s.name;
+                    const repo = s.githubRepo?.repo || window.parseSourceName(s.name)?.repo || s.name;
+                    opt.textContent = `${owner}/${repo}`;
+                    optgroup.appendChild(opt);
                 });
-                html += `</optgroup>`;
+                repoSelect.appendChild(optgroup);
             });
 
-            select.innerHTML = html;
-
-            // Restaurar persistencia
-            const lastRepo = localStorage.getItem('jules_selected_source');
-            if (lastRepo && currentSources.some(s => s.name === lastRepo)) {
-                select.value = lastRepo;
-                updateBranches();
+            repoSelect.disabled = false;
+            if (repoStatus) {
+                repoStatus.innerHTML = `<div class="text-[10px] text-emerald-500 mt-2 font-bold uppercase tracking-wider">${sources.length} repositorios conectados</div>`;
             }
+
+            // Restaurar selección anterior
+            const lastSource = localStorage.getItem('jules_selected_source');
+            const lastBranch = localStorage.getItem('jules_selected_branch');
+            if (lastSource && sources.some(s => s.name === lastSource)) {
+                repoSelect.value = lastSource;
+                const sourceObj = sources.find(s => s.name === lastSource);
+                await onRepoSelected(lastSource, sourceObj);
+                if (lastBranch) {
+                    document.getElementById('jules-branch-input').value = lastBranch;
+                }
+            }
+
         } catch (e) {
             handleApiError(e);
-            select.innerHTML = '<option value="">Error de carga</option>';
+            repoSelect.innerHTML = '<option value="">Error de carga</option>';
         }
     }
 
-    async function updateBranches() {
-        const sourceName = document.getElementById('jules-repo-select').value;
+    async function onRepoSelected(sourceName, sourceObject) {
         const branchInput = document.getElementById('jules-branch-input');
-        const datalist = document.getElementById('branch-list');
+        const branchDatalist = document.getElementById('jules-branch-datalist');
+        const branchLoading = document.getElementById('jules-branch-loading');
+        const branchStatus = document.getElementById('jules-branch-status');
 
-        datalist.innerHTML = '';
+        if (!sourceName) {
+            branchInput.value = '';
+            branchDatalist.innerHTML = '';
+            branchStatus.textContent = '';
+            return;
+        }
+
+        // Mostrar spinner
+        branchLoading.style.display = 'block';
         branchInput.value = '';
-
-        if (!sourceName) return;
-        localStorage.setItem('jules_selected_source', sourceName);
-
-        const source = currentSources.find(s => s.name === sourceName);
-        const { owner, repo } = source.githubRepo;
-
-        branchInput.placeholder = "Cargando ramas...";
+        branchInput.placeholder = 'Cargando ramas...';
+        branchInput.disabled = true;
+        branchStatus.textContent = '';
 
         try {
-            // Intentar fetch de ramas de la API de GitHub
-            const resp = await fetch(`https://api.github.com/repos/${owner}/${repo}/branches`);
-            if (!resp.ok) throw new Error(resp.status);
+            const branches = await window.loadBranchesForRepo(sourceName, sourceObject);
 
-            const branches = await resp.json();
-            datalist.innerHTML = branches.map(b => `<option value="${b.name}">`).join('');
-            branchInput.placeholder = "Selecciona o escribe rama";
+            // Llenar datalist
+            branchDatalist.innerHTML = branches
+                .map(b => `<option value="${b}"></option>`)
+                .join('');
 
-            const lastBranch = localStorage.getItem('jules_selected_branch');
-            if (lastBranch) branchInput.value = lastBranch;
-        } catch (e) {
-            branchInput.placeholder = "Introduce la rama manualmente";
-            console.warn(`GitHub API branches fail: ${e.message}`);
+            // Autoseleccionar: primero "main", luego "master", luego la primera
+            const preferred = ['main', 'master', 'develop'];
+            const autoSelect = preferred.find(p => branches.includes(p)) || branches[0] || '';
+            branchInput.value = autoSelect;
+
+            branchStatus.textContent = `${branches.length} rama${branches.length !== 1 ? 's' : ''} disponible${branches.length !== 1 ? 's' : ''}`;
+            branchStatus.style.color = '#10b981';
+
+            // Guardar en localStorage
+            localStorage.setItem('jules_selected_branch', autoSelect);
+            localStorage.setItem('jules_selected_source', sourceName);
+
+        } catch (err) {
+            branchStatus.textContent = 'No se pudieron cargar ramas. Escríbela manualmente.';
+            branchStatus.style.color = '#f59e0b';
+            // Poner al menos las ramas por defecto
+            branchDatalist.innerHTML = ['main', 'master', 'develop', 'staging', 'production']
+                .map(b => `<option value="${b}"></option>`).join('');
+        } finally {
+            branchLoading.style.display = 'none';
+            branchInput.disabled = false;
+            branchInput.placeholder = 'Selecciona o escribe rama';
         }
     }
 
-    document.getElementById('jules-repo-select').onchange = updateBranches;
-    document.getElementById('jules-branch-input').onchange = (e) => {
-        localStorage.setItem('jules_selected_branch', e.target.value);
-    };
+    // Event listeners
+    document.getElementById('jules-repo-select').addEventListener('change', function () {
+        const sourceName = this.value;
+        const sourceObj = window.julesSourcesCache?.find(s => s.name === sourceName);
+        onRepoSelected(sourceName, sourceObj);
+    });
+
+    document.getElementById('jules-branch-input').addEventListener('change', function () {
+        if (this.value) localStorage.setItem('jules_selected_branch', this.value);
+    });
 
     // --- SESSION ACTIONS ---
     async function launchSession() {
@@ -1234,7 +1313,7 @@ permalink: /jules-panel/
     document.addEventListener('authReady', () => initJulesPanel());
     document.addEventListener('settingsSaved', () => {
         updateKeyState();
-        loadSources();
+        initializeRepoSelector();
         refreshSessions();
         startPolling();
     });
