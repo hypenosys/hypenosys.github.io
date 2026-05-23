@@ -142,6 +142,10 @@ permalink: /jules-panel/
                 <div id="jules-sessions-list">
                     <!-- Dinámico: session-cards -->
                 </div>
+                <div id="jules-empty-message" class="hidden text-center py-12 opacity-40">
+                    <i class="fa-solid fa-inbox text-4xl mb-3"></i>
+                    <p class="text-xs font-bold uppercase tracking-widest">No hay sesiones que mostrar</p>
+                </div>
                 <div id="pagination-container" class="pagination-footer hidden">
                     <button id="btn-load-more" class="btn btn--secondary w-full py-3 mt-4 font-bold text-[11px] uppercase tracking-widest">
                         Cargar más sesiones
@@ -992,114 +996,145 @@ permalink: /jules-panel/
 
     document.getElementById('btn-load-more').onclick = () => refreshSessions(true);
 
-    function renderSessions() {
-        const list = document.getElementById('jules-sessions-list');
-        const filtered = currentSessions.filter(s => {
-            if (currentFilter === 'all') return true;
-            return s.state === currentFilter;
-        });
+    function buildCardHtml(s, idSafe) {
+        const state = s.state || 'QUEUED';
+        const timeAgo = getTimeAgo(s.createTime);
+        const truncatedTitle = s.title || (s.prompt.length > 60 ? s.prompt.substring(0, 57) + '...' : s.prompt);
+        const repoLabel = s.sourceContext?.source?.split('/').slice(-2).join('/') || 'Repo';
+        const branchLabel = s.sourceContext?.githubRepoContext?.startingBranch || '---';
 
-        if (filtered.length === 0) {
-            list.innerHTML = `
-                <div class="text-center py-12 opacity-40">
-                    <i class="fa-solid fa-inbox text-4xl mb-3"></i>
-                    <p class="text-xs font-bold uppercase tracking-widest">No hay sesiones que mostrar</p>
+        return `
+            <div class="session-card__header">
+                <div class="session-card__left">
+                    <span data-role="state-badge">${getStateBadge(state)}</span>
+                    <span class="session-card__time" data-role="time">${timeAgo}</span>
                 </div>
-            `;
-            return;
+                <div class="session-card__right">
+                    <button class="btn-icon" title="Eliminar sesión" onclick="deleteSession('${s.name}', this)">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                </div>
+            </div>
+
+            <h3 class="session-card__title">${truncatedTitle}</h3>
+
+            <div class="session-card__meta">
+                <span class="meta-tag"><i class="fa-solid fa-code mr-1 opacity-50"></i> ${repoLabel}</span>
+                <span class="meta-tag"><i class="fa-solid fa-code-branch mr-1 opacity-50"></i> ${branchLabel}</span>
+                <span class="meta-tag"><i class="fa-solid fa-calendar mr-1 opacity-50"></i> ${new Date(s.createTime).toLocaleDateString()}</span>
+            </div>
+
+            <div class="session-card__actions">
+                <button class="btn btn--approve" data-role="approve-btn" onclick="approvePlan('${s.name}')" style="display: ${state === 'AWAITING_PLAN_APPROVAL' ? '' : 'none'}">
+                    ✅ Aprobar Plan
+                </button>
+
+                <a href="${s.url}" target="_blank" class="btn btn--secondary">
+                    Ver en consola <i class="fa-solid fa-external-link ml-1 text-[10px]"></i>
+                </a>
+
+                <a href="${s.outputs?.pullRequest?.url || '#'}" target="_blank" class="btn btn--pr" data-role="pr-link" style="display: ${s.outputs?.pullRequest ? '' : 'none'}">
+                    🔗 Ver PR
+                </a>
+            </div>
+
+            ${!['FAILED', 'COMPLETED'].includes(state) ? `
+                <div class="session-card__message">
+                    <textarea
+                        class="message-input"
+                        placeholder="Escribe tu mensaje..."
+                        rows="2"
+                        onkeydown="if(event.key==='Enter'&&event.ctrlKey) sendMessage('${s.name}', this)"
+                    ></textarea>
+                    <button class="btn btn--ghost" onclick="sendMessage('${s.name}', this.previousElementSibling)">
+                        Enviar (Ctrl+Enter)
+                    </button>
+                </div>
+            ` : ''}
+
+            <div class="session-card__activities-toggle">
+                <button class="btn-toggle-activities" onclick="toggleActivities('${s.name}', this)">
+                    <i class="fa-solid fa-chevron-down mr-1"></i> Historial de actividad
+                </button>
+            </div>
+            <div class="session-card__activities hidden" id="activities-${idSafe}">
+                <!-- Dinámico -->
+            </div>
+        `;
+    }
+
+    function updateCardMeta(cardEl, session) {
+        const state = session.state || 'QUEUED';
+
+        // Badge de estado
+        const badge = cardEl.querySelector('[data-role="state-badge"]');
+        if (badge) badge.innerHTML = getStateBadge(state);
+
+        // Tiempo relativo
+        const timeEl = cardEl.querySelector('[data-role="time"]');
+        if (timeEl) timeEl.textContent = getTimeAgo(session.createTime);
+
+        // Botón aprobar plan
+        const approveBtn = cardEl.querySelector('[data-role="approve-btn"]');
+        if (approveBtn) {
+            approveBtn.style.display = state === 'AWAITING_PLAN_APPROVAL' ? '' : 'none';
         }
 
-        list.innerHTML = filtered.map(s => {
-            const state = s.state || 'QUEUED';
-            const idSafe = s.name.split('/').pop();
-            const timeAgo = getTimeAgo(s.createTime);
-            const truncatedTitle = s.title || (s.prompt.length > 60 ? s.prompt.substring(0, 57) + '...' : s.prompt);
-            const repoLabel = s.sourceContext?.source?.split('/').slice(-2).join('/') || 'Repo';
-            const branchLabel = s.sourceContext?.githubRepoContext?.startingBranch || '---';
-
-            return `
-                <div class="session-card" data-session-id="${s.name}" data-state="${state}">
-                    <div class="session-card__header">
-                        <div class="session-card__left">
-                            ${getStateBadge(state)}
-                            <span class="session-card__time">${timeAgo}</span>
-                        </div>
-                        <div class="session-card__right">
-                            <button class="btn-icon" title="Eliminar sesión" onclick="deleteSession('${s.name}', this)">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <h3 class="session-card__title">${truncatedTitle}</h3>
-
-                    <div class="session-card__meta">
-                        <span class="meta-tag"><i class="fa-solid fa-code mr-1 opacity-50"></i> ${repoLabel}</span>
-                        <span class="meta-tag"><i class="fa-solid fa-code-branch mr-1 opacity-50"></i> ${branchLabel}</span>
-                        <span class="meta-tag"><i class="fa-solid fa-calendar mr-1 opacity-50"></i> ${new Date(s.createTime).toLocaleDateString()}</span>
-                    </div>
-
-                    <div class="session-card__actions">
-                        ${state === 'AWAITING_PLAN_APPROVAL' ? `
-                            <button class="btn btn--approve" onclick="approvePlan('${s.name}')">
-                                ✅ Aprobar Plan
-                            </button>
-                        ` : ''}
-
-                        <a href="${s.url}" target="_blank" class="btn btn--secondary">
-                            Ver en consola <i class="fa-solid fa-external-link ml-1 text-[10px]"></i>
-                        </a>
-
-                        ${s.outputs?.pullRequest ? `
-                            <a href="${s.outputs.pullRequest.url}" target="_blank" class="btn btn--pr">
-                                🔗 Ver PR
-                            </a>
-                        ` : ''}
-                    </div>
-
-                    ${!['FAILED', 'COMPLETED'].includes(state) ? `
-                        <div class="session-card__message">
-                            <textarea
-                                class="message-input"
-                                placeholder="Escribe tu mensaje..."
-                                rows="2"
-                                onkeydown="if(event.key==='Enter'&&event.ctrlKey) sendMessage('${s.name}', this)"
-                            ></textarea>
-                            <button class="btn btn--ghost" onclick="sendMessage('${s.name}', this.previousElementSibling)">
-                                Enviar (Ctrl+Enter)
-                            </button>
-                        </div>
-                    ` : ''}
-
-                    <div class="session-card__activities-toggle">
-                        <button class="btn-toggle-activities" onclick="toggleActivities('${s.name}', this)">
-                            <i class="fa-solid fa-chevron-down mr-1"></i> Historial de actividad
-                        </button>
-                    </div>
-                    <div class="session-card__activities hidden" id="activities-${idSafe}">
-                        <!-- Dinámico -->
-                    </div>
-                </div>
-            `;
-        }).join('');
-
-        // Restaurar paneles de actividad que estaban abiertos antes del re-render
-        expandedActivities.forEach(idSafe => {
-            const panel = document.getElementById('activities-' + idSafe);
-            const btn = list.querySelector(`[onclick*="toggleActivities("][onclick*="${idSafe}"]`);
-
-            if (panel) {
-                panel.classList.remove('hidden');
-                // Intentar recuperar el name completo de la sesión para el polling/refresh
-                const session = currentSessions.find(s => s.name.endsWith('/' + idSafe) || s.name === idSafe);
-                if (session) {
-                    refreshActivities(session.name);
-                }
+        // Enlace al PR
+        const prLink = cardEl.querySelector('[data-role="pr-link"]');
+        if (prLink) {
+            if (session.outputs?.pullRequest) {
+                prLink.href = session.outputs.pullRequest.url;
+                prLink.style.display = '';
+            } else {
+                prLink.style.display = 'none';
             }
-            if (btn) {
-                btn.innerHTML = '<i class="fa-solid fa-chevron-up mr-1"></i> Ocultar historial';
+        }
+
+        // Atributo de estado en la card (para CSS border-left)
+        cardEl.dataset.state = state;
+    }
+
+    function renderSessions() {
+        const list = document.getElementById('jules-sessions-list');
+
+        // Sessions que vienen de la API indexadas por su idSafe
+        const incomingMap = new Map(
+            currentSessions.map(s => [s.name.split('/').pop(), s])
+        );
+
+        // 1. Actualizar o crear cards manteniendo el orden del array
+        currentSessions.forEach((session, index) => {
+            const idSafe = session.name.split('/').pop();
+            const existingCard = document.getElementById('card-' + idSafe);
+
+            if (existingCard) {
+                // ACTUALIZACIÓN QUIRÚRGICA — no tocar el panel de actividades
+                updateCardMeta(existingCard, session);
+
+                // Mover al final para mantener el orden de currentSessions
+                list.appendChild(existingCard);
+            } else {
+                // CARD NUEVA
+                const div = document.createElement('div');
+                div.id = 'card-' + idSafe;
+                div.className = 'session-card';
+                div.dataset.sessionId = session.name;
+                div.dataset.state = session.state || 'QUEUED';
+                div.innerHTML = buildCardHtml(session, idSafe);
+                list.appendChild(div);
             }
         });
+
+        // 2. Eliminar cards de sesiones que ya no existen
+        list.querySelectorAll('[id^="card-"]').forEach(card => {
+            const idSafe = card.id.replace('card-', '');
+            if (!incomingMap.has(idSafe)) {
+                card.remove();
+            }
+        });
+
+        applyFilter();
     }
 
     // --- HELPERS ---
@@ -1364,12 +1399,30 @@ permalink: /jules-panel/
     }
 
     // --- FILTERS ---
+    function applyFilter() {
+        const list = document.getElementById('jules-sessions-list');
+        const cards = list.querySelectorAll('[id^="card-"]');
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+            const state = card.dataset.state;
+            const matches = currentFilter === 'all' || state === currentFilter;
+            card.style.display = matches ? '' : 'none';
+            if (matches) visibleCount++;
+        });
+
+        const emptyMsg = document.getElementById('jules-empty-message');
+        if (emptyMsg) {
+            emptyMsg.classList.toggle('hidden', visibleCount > 0);
+        }
+    }
+
     document.querySelectorAll('.filter-chip').forEach(chip => {
         chip.onclick = () => {
             document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
             chip.classList.add('active');
             currentFilter = chip.dataset.filter;
-            renderSessions();
+            applyFilter();
         };
     });
 
