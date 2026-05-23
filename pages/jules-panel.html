@@ -1265,7 +1265,7 @@ permalink: /jules-panel/
 
     function getStateBadge(state) {
       const cfg = STATE_CONFIG[state] || { label: state || '—', cls: 'queued', icon: '◌' };
-      return `<span class="session-badge session-badge--${cfg.cls}">
+                activeActivityPolls.forEach(id => refreshActivities(id));
         ${cfg.icon} ${cfg.label}
       </span>`;
     }
