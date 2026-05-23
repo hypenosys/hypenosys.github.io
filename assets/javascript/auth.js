@@ -171,6 +171,7 @@ class AuthManager {
 
     updateHeaderUI(user) {
         const container = document.getElementById('auth-nav-container');
+        const leftContainer = document.getElementById('auth-nav-container-left');
         if (!container) return;
 
         // ─── FIX: guard contra user incompleto
@@ -180,12 +181,23 @@ class AuthManager {
         }
 
         if (user) {
+            if (leftContainer) {
+                leftContainer.innerHTML = `
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center" href="#" id="btn-open-profile-img">
+                            <div class="position-relative">
+                                ${window.HypenosysUI.renderAvatar(user)}
+                                <span class="connectivity-dot"></span>
+                            </div>
+                        </a>
+                    </li>
+                `;
+                document.getElementById('btn-open-profile-img')?.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.showProfileModal();
+                });
+            }
             container.innerHTML = `
-                <li class="nav-item">
-                    <a class="nav-link" href="/dashboard.html">
-                        <i class="fas fa-tachometer-alt fa-sm fa-fw mr-1 text-purple"></i> Dashboard
-                    </a>
-                </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span class="mr-2 d-none d-lg-inline text-gray-400 small font-weight-mono">${user.login}</span>
@@ -212,6 +224,7 @@ class AuthManager {
                 </li>
             `;
         } else {
+            if (leftContainer) leftContainer.innerHTML = '';
             container.innerHTML = `
                 <li class="nav-item">
                     <button id="btn-sign-in" class="btn btn-outline-purple btn-sm ml-lg-3 mt-1 mt-lg-0">
