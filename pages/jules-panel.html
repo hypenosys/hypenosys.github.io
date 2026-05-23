@@ -136,6 +136,20 @@ permalink: /jules-panel/
                     <button class="filter-chip" data-filter="COMPLETED">Completadas</button>
                     <button class="filter-chip" data-filter="FAILED">Fallidas</button>
                 </div>
+
+                <div style="margin-top:12px;border-top:1px solid #1e1e2a;padding-top:12px;">
+                  <button onclick="toggleArchive()"
+                    style="font-size:11px;color:#6b7280;background:none;border:none;
+                           cursor:pointer;display:flex;align-items:center;gap:6px;">
+                    📦 Archivo
+                    <span id="archive-count" style="background:#2a2a35;border-radius:10px;
+                      padding:1px 7px;font-size:10px;">0</span>
+                  </button>
+
+                  <div id="archive-panel" class="hidden" style="margin-top:12px;">
+                    <div id="archive-list"></div>
+                  </div>
+                </div>
             </div>
 
             <div id="sessions-container">
@@ -353,6 +367,8 @@ permalink: /jules-panel/
     padding: 16px 20px;
     margin-bottom: 12px;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    overflow: hidden;
+    min-width: 0;
 }
 .session-card:hover {
     border-color: var(--border-accent);
@@ -556,16 +572,41 @@ permalink: /jules-panel/
 }
 .btn-toggle-activities:hover { color: var(--text-secondary); }
 
+.session-card__activities,
+.activity-log {
+    overflow: hidden;
+    min-width: 0;
+}
+
 .activity-log {
     margin-top: 12px;
     padding: 12px;
     background: rgba(0,0,0,0.2);
     border-radius: 8px;
-    max-height: 300px;
+    max-height: 380px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 8px;
+}
+
+.diff-viewer {
+  max-width: 100%;
+  overflow: hidden;
+}
+.diff-viewer > div {
+  max-height: 250px;
+  overflow-y: auto;
+  overflow-x: auto;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.diff-viewer div[style*="white-space:pre"],
+.diff-viewer div[style*="white-space: pre"] {
+  white-space: pre-wrap !important;  /* wrap en lugar de scroll horizontal */
+  word-break: break-all;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .activity-entry {
@@ -652,6 +693,33 @@ permalink: /jules-panel/
     color: var(--status-failed);
 }
 
+    .working-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      margin-top: 8px;
+      background: rgba(59,130,246,0.06);
+      border: 1px solid rgba(59,130,246,0.15);
+      border-radius: 6px;
+      font-size: 11px;
+      color: #93c5fd;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+    .octopus {
+      font-size: 13px;
+      display: inline-block;
+      animation: octopus-float 2s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+    @keyframes octopus-float {
+      0%, 100% { transform: translateY(0px) rotate(-5deg); }
+      50%       { transform: translateY(-3px) rotate(5deg); }
+    }
+
 /* Banner & Toast */
 .error-banner {
     display: flex;
@@ -722,13 +790,12 @@ permalink: /jules-panel/
     const expandedActivities = new Set();
 
     // --- INITIALIZATION ---
-    async function initJulesPanel() {
-        const loading = document.getElementById('auth-loading');
-        const gate = document.getElementById('jules-auth-gate');
-        const panel = document.getElementById('jules-main-panel');
+    async function initJulesPanel(user) {
+        const loading = document.getElementById("auth-loading");
+        const gate = document.getElementById("jules-auth-gate");
+        const panel = document.getElementById("jules-main-panel");
 
-        const token = sessionStorage.getItem('gh_access_token') || localStorage.getItem('github_token');
-
+        const token = sessionStorage.getItem("gh_access_token") || localStorage.getItem("github_token");
         if (!token) {
             loading.classList.add('hidden');
             gate.classList.remove('hidden');
@@ -980,6 +1047,8 @@ permalink: /jules-panel/
                 currentSessions = newSessions;
             }
 
+            window.julesSessionsCache = currentSessions; // Mejora 5: Cache global
+
             nextPageToken = data.nextPageToken || null;
             lastRefreshTime = Date.now();
 
@@ -995,6 +1064,10 @@ permalink: /jules-panel/
     }
 
     document.getElementById('btn-load-more').onclick = () => refreshSessions(true);
+
+    function getIdSafe(name) {
+      return name ? name.split('/').pop() : '';
+    }
 
     function buildCardHtml(s, idSafe) {
         const state = s.state || 'QUEUED';
@@ -1018,6 +1091,13 @@ permalink: /jules-panel/
 
             <h3 class="session-card__title">${truncatedTitle}</h3>
 
+            ${state === 'IN_PROGRESS' ? `
+              <div class="working-indicator" data-role="working-indicator">
+                <span class="octopus">🐙</span>
+                <span class="working-text" data-role="working-text">Trabajando...</span>
+              </div>
+            ` : ''}
+
             <div class="session-card__meta">
                 <span class="meta-tag"><i class="fa-solid fa-code mr-1 opacity-50"></i> ${repoLabel}</span>
                 <span class="meta-tag"><i class="fa-solid fa-code-branch mr-1 opacity-50"></i> ${branchLabel}</span>
@@ -1036,6 +1116,12 @@ permalink: /jules-panel/
                 <a href="${s.outputs?.pullRequest?.url || '#'}" target="_blank" class="btn btn--pr" data-role="pr-link" style="display: ${s.outputs?.pullRequest ? '' : 'none'}">
                     🔗 Ver PR
                 </a>
+
+                <button class="btn btn--ghost" data-role="archive-btn"
+                        onclick="archiveSession('${idSafe}')"
+                        style="display: ${['COMPLETED', 'FAILED'].includes(state) ? '' : 'none'}; font-size: 10px;">
+                    📦 Archivar
+                </button>
             </div>
 
             ${!['FAILED', 'COMPLETED'].includes(state) ? `
@@ -1091,8 +1177,34 @@ permalink: /jules-panel/
             }
         }
 
+        // Botón Archivar
+        const archiveBtn = cardEl.querySelector('[data-role="archive-btn"]');
+        if (archiveBtn) {
+            archiveBtn.style.display = ['COMPLETED', 'FAILED'].includes(state) ? '' : 'none';
+        }
+
         // Atributo de estado en la card (para CSS border-left)
         cardEl.dataset.state = state;
+
+        // Mejora 1: Indicador Trabajando
+        let indicator = cardEl.querySelector('[data-role="working-indicator"]');
+        if (state === 'IN_PROGRESS') {
+            if (!indicator) {
+                // Insertar antes de session-card__meta
+                const meta = cardEl.querySelector('.session-card__meta');
+                const div = document.createElement('div');
+                div.className = 'working-indicator';
+                div.dataset.role = 'working-indicator';
+                div.innerHTML = `
+                    <span class="octopus">🐙</span>
+                    <span class="working-text" data-role="working-text">Trabajando...</span>
+                `;
+                if (meta) cardEl.insertBefore(div, meta);
+                else cardEl.appendChild(div);
+            }
+        } else if (indicator) {
+            indicator.remove();
+        }
     }
 
     function renderSessions() {
@@ -1106,6 +1218,8 @@ permalink: /jules-panel/
         // 1. Actualizar o crear cards manteniendo el orden del array
         currentSessions.forEach((session, index) => {
             const idSafe = session.name.split('/').pop();
+            // Saltar sesiones archivadas — no renderizarlas nunca
+            if (archivedIds.has(idSafe)) return;
             const existingCard = document.getElementById('card-' + idSafe);
 
             if (existingCard) {
@@ -1211,7 +1325,7 @@ permalink: /jules-panel/
     }
 
     async function toggleActivities(sessionId, btn) {
-        const idSafe = sessionId.split('/').pop();
+        const idSafe = getIdSafe(sessionId);
         const container = document.getElementById(`activities-${idSafe}`);
         if (!container) return;
 
@@ -1225,39 +1339,141 @@ permalink: /jules-panel/
             // Si la sesión está activa, añadir al set de polling
             const session = currentSessions.find(s => s.name === sessionId);
             if (session && !['FAILED', 'COMPLETED'].includes(session.state)) {
-                activeActivityPolls.add(sessionId);
+                activeActivityPolls.add(idSafe);
             }
 
-            refreshActivities(sessionId);
+            refreshActivities(idSafe);
         } else {
             container.classList.add('hidden');
             expandedActivities.delete(idSafe);
             btn.innerHTML = '<i class="fa-solid fa-chevron-down mr-1"></i> Historial de actividad';
-            activeActivityPolls.delete(sessionId);
+            activeActivityPolls.delete(idSafe);
         }
     }
 
-    async function refreshActivities(sessionId) {
-        const idSafe = sessionId.split('/').pop();
+    function smartScrollActivities(panelEl, isAtBottom) {
+      if (isAtBottom && panelEl) {
+        panelEl.scrollTo({ top: panelEl.scrollHeight, behavior: "smooth" });
+      }
+    }
+
+    async function refreshActivities(idSafe) {
+        const sessionId = currentSessions.find(s => getIdSafe(s.name) === idSafe)?.name || 'sessions/' + idSafe;
         const container = document.getElementById(`activities-${idSafe}`);
-        if (!container) return;
+        if (!container || container.classList.contains('hidden')) return;
+
+        const log = container.querySelector('.activity-log');
+        if (!log) return;
 
         try {
-            const data = await window.julesApi.getActivities(sessionId, 30);
-            const activities = data.activities || [];
+            const data = await window.julesApi.getActivities(sessionId, 50);
+            let activities = (data.activities || [])
+              .filter((a, i, arr) => arr.findIndex(x => x.id === a.id) === i);
 
-            if (activities.length === 0) {
-                container.innerHTML = '<div class="activity-log italic text-center opacity-40">No hay eventos todavía</div>';
-                return;
+            // Mejora 1: Actualizar Working Indicator
+            const session = currentSessions.find(s => s.name === sessionId);
+            if (session && session.state === 'IN_PROGRESS') {
+              const lastProgress = [...activities].reverse().find(a => a.progressUpdated);
+              if (lastProgress) {
+                let title = lastProgress.progressUpdated.title || '';
+                title = title.replace(/^Reading\b/i, 'Leyendo').replace(/^Writing\b/i, 'Escribiendo');
+                const card = document.getElementById('card-' + idSafe);
+                const workingText = card?.querySelector('[data-role="working-text"]');
+                if (workingText) {
+                  let text = title;
+                  if (text.length > 60) text = text.substring(0, 57) + '...';
+                  workingText.textContent = text.endsWith('...') ? text : text + '...';
+                }
+              }
             }
 
-            container.innerHTML = `<div class="activity-log">${activities.map(renderActivity).join('')}</div>`;
+            // Guardar IDs ya renderizados
+            const existingIds = new Set(
+              [...log.querySelectorAll('[data-activity-id]')]
+                .map(el => el.dataset.activityId)
+            );
+
+            // Solo añadir las NUEVAS — nunca reconstruir todo (Mejora 2 FIX)
+            let added = false;
+            activities.forEach(activity => {
+              if (!existingIds.has(activity.id)) {
+                const html = renderActivity(activity);
+                if (!html) return;
+                const div = document.createElement('div');
+                div.dataset.activityId = activity.id;
+                div.innerHTML = html;
+                log.appendChild(div);
+                added = true;
+              }
+            });
+
+            if (log.children.length === 0 && activities.length === 0) {
+              log.innerHTML = '<div class="activity-log italic text-center opacity-40">No hay eventos todavía</div>';
+            } else if (log.querySelector('.opacity-40') && activities.length > 0) {
+              log.innerHTML = ''; // Limpiar mensaje vacío
+              // Forzar re-renderizado en la siguiente pasada para este caso borde
+            }
+
+            // Scroll inteligente solo si se añadió contenido nuevo
+            if (added) {
+              const threshold = 40;
+              const isAtBottom = log.scrollHeight - log.scrollTop - log.clientHeight < threshold;
+              if (isAtBottom) {
+                log.scrollTo({ top: log.scrollHeight, behavior: 'smooth' });
+              }
+            }
         } catch (e) {
-            console.error('Act activities fail:', e);
+            console.warn("refreshActivities error:", e);
         }
     }
 
     function renderActivity(activity) {
+      let html = '';
+
+      // Mejora 4: Visor de Diffs Inline (se puede añadir a cualquier tipo de actividad)
+      let diffsHtml = '';
+      if (activity.artifacts && activity.artifacts.length > 0) {
+        activity.artifacts.forEach(artifact => {
+          if (artifact.changeSet?.gitPatch?.unidiffPatch) {
+            const patch = artifact.changeSet.gitPatch.unidiffPatch;
+            const msg   = artifact.changeSet.gitPatch.suggestedCommitMessage || '';
+            const lines = patch.split('\n');
+
+            const diffLinesHtml = lines.map(line => {
+              let color = '#9ca3af'; let bg = 'transparent';
+              if (line.startsWith('+') && !line.startsWith('+++'))
+                { color = '#86efac'; bg = 'rgba(16,185,129,0.06)'; }
+              if (line.startsWith('-') && !line.startsWith('---'))
+                { color = '#fca5a5'; bg = 'rgba(239,68,68,0.06)'; }
+              if (line.startsWith('@@'))
+                { color = '#93c5fd'; bg = 'rgba(59,130,246,0.06)'; }
+              return `<div style="color:${color};background:${bg};
+                        padding:0 4px;white-space:pre;font-family:monospace;
+                        font-size:10px;line-height:1.5;">
+                ${escapeHtml(line)}
+              </div>`;
+            }).join('');
+
+            diffsHtml += `
+              <details style="margin-top:8px;" class="diff-viewer">
+                <summary style="cursor:pointer;font-size:11px;color:#8b5cf6;
+                  font-weight:600;padding:4px 0;list-style:none;
+                  display:flex;align-items:center;gap:6px;">
+                  <span>📄</span>
+                  <span>Ver cambios en código</span>
+                  ${msg ? `<span style="color:#6b7280;font-weight:400;
+                    font-size:10px;">— ${escapeHtml(msg)}</span>` : ''}
+                </summary>
+                <div class="diff-viewer">
+                  <div style="border:1px solid #2a2a35;border-radius:6px;">
+                    ${diffLinesHtml}
+                  </div>
+                </div>
+              </details>`;
+          }
+        });
+      }
+
       // Detectar tipo de actividad
       if (activity.planGenerated) {
         const steps = activity.planGenerated?.plan?.steps || [];
@@ -1280,7 +1496,7 @@ permalink: /jules-panel/
             </div>
           `).join('');
 
-        return `
+        html = `
           <div class="activity-entry activity-entry--plan">
             <div style="font-size:10px;font-weight:700;color:#8b5cf6;
                         text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">
@@ -1290,23 +1506,23 @@ permalink: /jules-panel/
           </div>`;
       }
 
-      if (activity.planApproved) {
-        return `<div class="activity-entry" style="color:#10b981;font-size:11px;">
+      else if (activity.planApproved) {
+        html = `<div class="activity-entry" style="color:#10b981;font-size:11px;">
           ✅ Plan aprobado
         </div>`;
       }
 
-      if (activity.userMessaged) {
+      else if (activity.userMessaged) {
         const msg = activity.userMessaged.userMessage || '';
-        return `<div class="activity-entry activity-entry--user">${escapeHtml(msg)}</div>`;
+        html = `<div class="activity-entry activity-entry--user">${escapeHtml(msg)}</div>`;
       }
 
-      if (activity.agentMessaged) {
+      else if (activity.agentMessaged) {
         const msg = activity.agentMessaged.agentMessage || '';
-        return `<div class="activity-entry activity-entry--agent">${escapeHtml(msg)}</div>`;
+        html = `<div class="activity-entry activity-entry--agent">${escapeHtml(msg)}</div>`;
       }
 
-      if (activity.progressUpdated) {
+      else if (activity.progressUpdated) {
         const title = activity.progressUpdated.title || '';
         const desc  = activity.progressUpdated.description || '';
 
@@ -1314,7 +1530,7 @@ permalink: /jules-panel/
         const bash = (activity.artifacts || [])
           .map(a => a.bashOutput).filter(Boolean)[0];
 
-        return `
+        html = `
           <div class="activity-entry activity-entry--progress">
             <div style="color:#9ca3af;font-size:11px;">
               ⚙️ <strong style="color:#d1d5db;">${escapeHtml(title)}</strong>
@@ -1333,25 +1549,34 @@ permalink: /jules-panel/
           </div>`;
       }
 
-      if (activity.sessionCompleted) {
-        return `<div class="activity-entry"
+      else if (activity.sessionCompleted) {
+        html = `<div class="activity-entry"
                      style="color:#10b981;font-size:11px;font-weight:600;">
           🏁 Sesión completada
         </div>`;
       }
 
-      if (activity.sessionFailed) {
+      else if (activity.sessionFailed) {
         const reason = activity.sessionFailed.reason || 'Error desconocido';
-        return `<div class="activity-entry"
+        html = `<div class="activity-entry"
                      style="color:#ef4444;font-size:11px;">
           ❌ Sesión fallida: ${escapeHtml(reason)}
         </div>`;
       }
 
-      // Fallback: actividad desconocida — NO mostrar "undefined"
-      return `<div class="activity-entry" style="color:#4b5563;font-size:10px;">
-        ${activity.originator || 'system'}: actividad registrada
-      </div>`;
+      if (!html) {
+        // Fallback — actividad de sistema (Mejora 3 - Bug B)
+        const desc = activity.description || '';
+        if (!desc && !diffsHtml) return ''; // si no hay nada útil, no renderizar NADA
+        if (desc) {
+          html = `<div class="activity-entry" style="color:#4b5563;font-size:10px;
+            font-style:italic;">
+            ${escapeHtml(desc)}
+          </div>`;
+        }
+      }
+
+      return html + diffsHtml;
     }
 
     // --- COMMANDS ---
@@ -1459,13 +1684,146 @@ permalink: /jules-panel/
         }
     }
 
+    // --- ARCHIVE LOGIC ---
+    const archivedIds = new Set(
+      JSON.parse(localStorage.getItem('jules_archived_ids') || '[]')
+    );
+
+    function archiveSession(idSafe) {
+      // 1. Marcar como archivado
+      archivedIds.add(idSafe);
+      localStorage.setItem('jules_archived_ids', JSON.stringify([...archivedIds]));
+
+      // 2. Guardar datos de la sesión (sin duplicar)
+      const archived = JSON.parse(localStorage.getItem('jules_archived_sessions') || '[]');
+      const alreadyStored = archived.some(s => getIdSafe(s.name) === idSafe);
+
+      if (!alreadyStored) {
+        const session = window.julesSessionsCache?.find(s => getIdSafe(s.name) === idSafe);
+        if (session) {
+          archived.unshift({ ...session, archivedAt: new Date().toISOString() });
+          localStorage.setItem('jules_archived_sessions', JSON.stringify(archived));
+        }
+      }
+
+      // 3. Ocultar card con animación
+      const card = document.getElementById('card-' + idSafe);
+      if (card) {
+        card.style.transition = 'opacity 0.3s ease, max-height 0.4s ease 0.1s';
+        card.style.opacity = '0';
+        card.style.overflow = 'hidden';
+        card.style.maxHeight = card.offsetHeight + 'px';
+        setTimeout(() => { card.style.maxHeight = '0'; card.style.margin = '0'; }, 50);
+        setTimeout(() => card.remove(), 500);
+      }
+
+      renderArchivedCount();
+      renderArchive();
+    }
+
+    function unarchiveSession(idSafe) {
+      // Quitar del Set y localStorage de IDs
+      archivedIds.delete(idSafe);
+      localStorage.setItem('jules_archived_ids', JSON.stringify([...archivedIds]));
+
+      // Quitar del array de datos
+      const archived = JSON.parse(localStorage.getItem('jules_archived_sessions') || '[]');
+      const updated = archived.filter(s => getIdSafe(s.name) !== idSafe);
+      localStorage.setItem('jules_archived_sessions', JSON.stringify(updated));
+
+      renderArchivedCount();
+      renderArchive();
+      // La card reaparecerá sola en el próximo ciclo de polling (15s)
+    }
+
+    function toggleArchive() {
+      const panel = document.getElementById('archive-panel');
+      if (!panel) return;
+      const isHidden = panel.classList.contains('hidden');
+      panel.classList.toggle('hidden');
+      if (isHidden) renderArchive(); // cargar contenido al abrir
+    }
+
+    function renderArchive() {
+      const list = document.getElementById('archive-list');
+      if (!list) return;
+      const archived = JSON.parse(localStorage.getItem('jules_archived_sessions') || '[]');
+
+      if (archived.length === 0) {
+        list.innerHTML = `<div style="color:#4b5563;font-size:11px;text-align:center;padding:12px;">Sin tareas archivadas</div>`;
+        return;
+      }
+
+      list.innerHTML = archived.map(s => {
+        const idSafe = getIdSafe(s.name);
+        const title = escapeHtml(s.title || (s.prompt || '').substring(0, 60) + '...' || 'Sin título');
+        return `
+          <div style="background:#111114;border:1px solid #1e1e2a;border-radius:8px;padding:10px 14px;margin-bottom:8px;">
+            <div style="font-size:12px;color:#d1d5db;font-weight:500;margin-bottom:4px;">${title}</div>
+            <div style="font-size:10px;color:#4b5563;margin-bottom:8px;">
+              Archivado: ${new Date(s.archivedAt).toLocaleDateString('es-ES')}
+            </div>
+            <div style="display:flex;gap:6px;">
+              <button onclick="unarchiveSession('${idSafe}')" class="btn btn--ghost" style="font-size:10px;">
+                ↩ Restaurar
+              </button>
+              ${s.url ? `<a href="${s.url}" target="_blank" class="btn btn--secondary" style="font-size:10px;">
+                Ver en consola →
+              </a>` : ''}
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    function renderArchivedCount() {
+      const el = document.getElementById('archive-count');
+      if (el) el.textContent = archivedIds.size;
+    }
+
     // --- EVENTS ---
-    document.addEventListener('DOMContentLoaded', initJulesPanel);
-    document.addEventListener('authReady', () => initJulesPanel());
     document.addEventListener('settingsSaved', () => {
         updateKeyState();
         initializeRepoSelector();
         refreshSessions();
         startPolling();
     });
+
+    // ── Arranque del Jules Panel ──────────────────────────────────────
+    (function arrancarPanel() {
+      function iniciar(user) {
+        const loading = document.getElementById('auth-loading');
+        if (loading) loading.style.display = 'none';
+        const panel = document.getElementById('jules-main-panel');
+        if (panel) panel.style.display = 'block';
+
+        try { window.julesSessionsCache = window.julesSessionsCache || []; }
+        catch(e) {}
+        try { initJulesPanel(user); }
+        catch(e) { console.error('[Jules] initJulesPanel falló:', e); }
+
+        renderArchivedCount();
+      }
+
+      // Caso 1: authReady ya se disparó (auth.js cargó antes que este script)
+      if (window.authManager && window.githubApi?.user !== undefined) {
+        iniciar(window.githubApi.user);
+        return;
+      }
+
+      // Caso 2: Esperamos el evento
+      let arrancado = false;
+      document.addEventListener('authReady', function(e) {
+        if (arrancado) return;
+        arrancado = true;
+        iniciar(e.detail?.user || null);
+      });
+
+      // Caso 3: Failsafe — si en 6s no llega nada, arrancar igualmente
+      setTimeout(function() {
+        if (arrancado) return;
+        arrancado = true;
+        console.warn('[Jules] authReady timeout — arrancando sin esperar auth');
+        iniciar(window.githubApi?.user || null);
+      }, 6000);
+    })();
 </script>
