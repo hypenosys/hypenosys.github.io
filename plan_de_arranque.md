@@ -188,25 +188,25 @@
                     </div>
 
                     <!-- Javi -->
-                    <div class="p-4 bg-red-50 border border-red-200 rounded-lg">
+                    <div class="p-4 bg-teal-50 border border-teal-200 rounded-lg">
                         <div class="flex justify-between items-start mb-2">
-                            <h4 class="font-bold text-stone-950">Javi</h4>
-                            <span class="text-xs bg-red-200 text-red-800 px-2 py-0.5 rounded font-semibold animate-pulse">Pendiente</span>
+                            <h4 class="font-bold text-stone-800">Javi</h4>
+                            <span class="text-xs bg-teal-200 text-teal-800 px-2 py-0.5 rounded font-mono">Git OK</span>
                         </div>
-                        <p class="text-xs text-stone-700 mb-2"><strong>Primario:</strong> Level Design / Audio</p>
-                        <p class="text-xs text-stone-600"><strong>Secundario:</strong> Q&A & Narrativa</p>
-                        <div class="mt-2 text-[10px] text-red-700"><i class="fa-solid fa-circle-info"></i> Debe crear cuenta Git y unirse.</div>
+                        <p class="text-xs text-stone-600 mb-2"><strong>Primario:</strong> Level Design / Audio</p>
+                        <p class="text-xs text-stone-500"><strong>Secundario:</strong> Q&A & Narrativa</p>
+                        <div class="mt-2 text-[10px] text-teal-600"><i class="fa-brands fa-github"></i> javi26031994-a11y</div>
                     </div>
 
                     <!-- Dídac -->
-                    <div class="p-4 bg-red-50 border border-red-200 rounded-lg">
+                    <div class="p-4 bg-teal-50 border border-teal-200 rounded-lg">
                         <div class="flex justify-between items-start mb-2">
-                            <h4 class="font-bold text-stone-950">Dídac</h4>
-                            <span class="text-xs bg-red-200 text-red-800 px-2 py-0.5 rounded font-semibold animate-pulse">Pendiente</span>
+                            <h4 class="font-bold text-stone-800">Dídac</h4>
+                            <span class="text-xs bg-teal-200 text-teal-800 px-2 py-0.5 rounded font-mono">Git OK</span>
                         </div>
-                        <p class="text-xs text-stone-700 mb-2"><strong>Primario:</strong> Modelado 3D / Props</p>
-                        <p class="text-xs text-stone-600"><strong>Secundario:</strong> Integración Audio & SFX</p>
-                        <div class="mt-2 text-[10px] text-red-700"><i class="fa-solid fa-circle-info"></i> Debe crear cuenta Git y unirse.</div>
+                        <p class="text-xs text-stone-600 mb-2"><strong>Primario:</strong> Modelado 3D / Props</p>
+                        <p class="text-xs text-stone-500"><strong>Secundario:</strong> Integración Audio & SFX</p>
+                        <div class="mt-2 text-[10px] text-teal-600"><i class="fa-brands fa-github"></i> dkdidac-design</div>
                     </div>
                 </div>
             </div>
