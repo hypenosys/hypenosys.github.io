@@ -1350,8 +1350,12 @@ permalink: /jules-panel/
         const container = document.getElementById(`activities-${idSafe}`);
         if (!container || container.classList.contains('hidden')) return;
 
-        const log = container.querySelector('.activity-log');
-        if (!log) return;
+        let log = container.querySelector('.activity-log');
+        if (!log) {
+          log = document.createElement('div');
+          log.className = 'activity-log';
+          container.appendChild(log);
+        }
 
         try {
             const data = await window.julesApi.getActivities(sessionId, 50);
