@@ -837,11 +837,10 @@ permalink: /jules-panel/
             if (lastSource && sources.some(s => s.name === lastSource)) {
                 repoSelect.value = lastSource;
                 const sourceObj = sources.find(s => s.name === lastSource);
-                onRepoSelected(lastSource, sourceObj).then(() => {
-                    if (lastBranch) {
-                        document.getElementById('jules-branch-input').value = lastBranch;
-                    }
-                });
+                await onRepoSelected(lastSource, sourceObj);
+                if (lastBranch) {
+                    document.getElementById('jules-branch-input').value = lastBranch;
+                }
             }
 
         } catch (e) {
