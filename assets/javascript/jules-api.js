@@ -132,3 +132,79 @@ class JulesAPI {
 window.julesApi = new JulesAPI();
 window.julesApiCall = julesApiCall;
 window.loadAllSources = loadAllSources;
+
+/**
+ * Parsea "sources/github/hypenosys/hypenosys.github.io" → {owner:"hypenosys", repo:"hypenosys.github.io"}
+ * @param {string} sourceName
+ * @returns {Object|null}
+ */
+function parseSourceName(sourceName) {
+  if (!sourceName) return null;
+  // Formato: sources/github/{owner}/{repo}
+  const parts = sourceName.split('/');
+  if (parts.length >= 4 && parts[1] === 'github') {
+    return { owner: parts[2], repo: parts.slice(3).join('/') };
+  }
+  return null;
+}
+
+/**
+ * Carga de ramas con múltiples estrategias
+ * @param {string} sourceName
+ * @param {Object} sourceObject
+ * @returns {Promise<Array>}
+ */
+async function loadBranchesForRepo(sourceName, sourceObject) {
+  let owner, repo;
+
+  if (sourceObject?.githubRepo) {
+    owner = sourceObject.githubRepo.owner;
+    repo  = sourceObject.githubRepo.repo;
+  } else {
+    const parsed = parseSourceName(sourceName);
+    if (!parsed) return [];
+    owner = parsed.owner;
+    repo  = parsed.repo;
+  }
+
+  // Estrategia 1: GitHub API pública (repos públicos, sin auth)
+  try {
+    const res = await fetch(
+      `https://api.github.com/repos/${owner}/${repo}/branches?per_page=100`,
+      {
+        headers: {
+          'Accept': 'application/vnd.github+json',
+          'X-GitHub-Api-Version': '2022-11-28'
+        }
+      }
+    );
+    if (res.ok) {
+      const data = await res.json();
+      return data.map(b => b.name);
+    }
+  } catch (e) {
+    console.warn('[Jules Panel] GitHub API pública falló:', e.message);
+  }
+
+  // Estrategia 2: Intentar inferir ramas comunes de la sesión más reciente del mismo repo
+  try {
+    const sessions = await julesApiCall('GET', '/sessions?pageSize=50');
+    const matchingSessions = (sessions.sessions || []).filter(s =>
+      s.sourceContext?.source === sourceName
+    );
+    const branches = [...new Set(
+      matchingSessions
+        .map(s => s.sourceContext?.githubRepoContext?.startingBranch)
+        .filter(Boolean)
+    )];
+    if (branches.length > 0) return branches;
+  } catch(e) {
+    console.warn('[Jules Panel] Estrategia sesiones falló:', e.message);
+  }
+
+  // Estrategia 3: fallback con ramas estándar
+  return ['main', 'master', 'develop', 'feat', 'staging', 'production'];
+}
+
+window.parseSourceName = parseSourceName;
+window.loadBranchesForRepo = loadBranchesForRepo;
