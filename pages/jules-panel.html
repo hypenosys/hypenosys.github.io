@@ -1342,8 +1342,8 @@ permalink: /jules-panel/
                 activeActivityPolls.add(idSafe);
             }
 
-            refreshActivities(sessionId);
             refreshActivities(idSafe);
+        } else {
             container.classList.add('hidden');
             expandedActivities.delete(idSafe);
             btn.innerHTML = '<i class="fa-solid fa-chevron-down mr-1"></i> Historial de actividad';
@@ -1781,37 +1781,49 @@ permalink: /jules-panel/
     }
 
     // --- EVENTS ---
-    function onAuthReady(user) {
-      // Toda la inicialización del panel va aquí
-      initJulesPanel(user);
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      // Patrón seguro: si authReady ya se disparó antes de que cargara este script,
-      // window.authManager.user ya existe — no esperamos el evento
-      if (window.authManager && window.githubApi?.user !== undefined) {
-        // Auth ya completó antes de que cargáramos
-        onAuthReady(window.githubApi.user);
-      } else {
-        // Esperamos el evento
-        document.addEventListener('authReady', (e) => onAuthReady(e.detail.user));
-
-        // Failsafe: si en 10 segundos no llega authReady, iniciamos igualmente
-        setTimeout(() => {
-          const panel = document.getElementById('jules-main-panel');
-          const loading = document.getElementById('auth-loading');
-          if (loading && !loading.classList.contains('hidden')) {
-            console.warn('[Jules Panel] authReady timeout — iniciando sin auth');
-            onAuthReady(null);
-          }
-        }, 10000);
-      }
-      renderArchivedCount();
-    });
     document.addEventListener('settingsSaved', () => {
         updateKeyState();
         initializeRepoSelector();
         refreshSessions();
         startPolling();
     });
+
+    // ── Arranque del Jules Panel ──────────────────────────────────────
+    (function arrancarPanel() {
+      function iniciar(user) {
+        const loading = document.getElementById('auth-loading');
+        if (loading) loading.style.display = 'none';
+        const panel = document.getElementById('jules-main-panel');
+        if (panel) panel.style.display = 'block';
+
+        try { window.julesSessionsCache = window.julesSessionsCache || []; }
+        catch(e) {}
+        try { initJulesPanel(user); }
+        catch(e) { console.error('[Jules] initJulesPanel falló:', e); }
+
+        renderArchivedCount();
+      }
+
+      // Caso 1: authReady ya se disparó (auth.js cargó antes que este script)
+      if (window.authManager && window.githubApi?.user !== undefined) {
+        iniciar(window.githubApi.user);
+        return;
+      }
+
+      // Caso 2: Esperamos el evento
+      let arrancado = false;
+      document.addEventListener('authReady', function(e) {
+        if (arrancado) return;
+        arrancado = true;
+        iniciar(e.detail?.user || null);
+      });
+
+      // Caso 3: Failsafe — si en 6s no llega nada, arrancar igualmente
+      setTimeout(function() {
+        if (arrancado) return;
+        arrancado = true;
+        console.warn('[Jules] authReady timeout — arrancando sin esperar auth');
+        iniciar(window.githubApi?.user || null);
+      }, 6000);
+    })();
 </script>
