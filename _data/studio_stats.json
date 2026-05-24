@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_computed": "2026-05-24T13:55:08.342Z",
+  "last_computed": "2026-05-24T13:55:32.237Z",
   "global": {
     "total_tasks": 10,
     "total_ok": 4,
@@ -50,11 +50,11 @@
   "members": {
     "Axel": {
       "found": 7,
-      "fixed": 2,
-      "fixed_ok": 2,
+      "fixed": 3,
+      "fixed_ok": 3,
       "support": 0,
       "support_ok": 0,
-      "score": 0.46
+      "score": 0.585
     },
     "Alex": {
       "found": 3,
@@ -94,9 +94,9 @@
       "rank": 1,
       "medal": "🏆",
       "name": "Axel",
-      "score": 0.46,
+      "score": 0.585,
       "found": 7,
-      "fixed_ok": 2,
+      "fixed_ok": 3,
       "support_ok": 0
     },
     {
