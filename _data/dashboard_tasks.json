@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-24T13:43:26.692Z",
+  "last_updated": "2026-05-24T13:43:34.438Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -90,7 +90,7 @@
     {
       "rama": "PRO",
       "descripcion": "Tutorial Unreal Engine conceptos basicos",
-      "tema_principal": "Tools / Automation",
+      "tema_principal": "Pre-producción",
       "prioridad": "Critical",
       "milestone": "M1",
       "estado": "Pending",
