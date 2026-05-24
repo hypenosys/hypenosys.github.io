@@ -12,12 +12,18 @@ Esta guía detalla los comandos esenciales y los flujos de trabajo de **Hypenosy
 
 ## 1. Control de Versiones: Git vs SVN
 
-En Hypenosys utilizamos un sistema híbrido para optimizar el rendimiento:
-*   **Git (GitHub):** Exclusivo para código fuente, archivos de configuración (`.json`, `.yml`) y documentación (`.md`).
-*   **SVN (Subversion):** Exclusivo para activos binarios pesados de Unreal Engine (`.uasset`, `.umap`, `.fbx`, `.png`, `.wav`).
+En Hypenosys utilizamos un sistema híbrido para optimizar el rendimiento y la colaboración.
+
+| Característica | Git (GitHub) | SVN (Subversion) |
+| :--- | :--- | :--- |
+| **Uso Principal** | Código fuente y configuración | Assets binarios pesados |
+| **Tipos de Archivo** | `.cpp`, `.h`, `.json`, `.yml`, `.md` | `.uasset`, `.umap`, `.fbx`, `.png` |
+| **Bloqueo (Lock)** | No (basado en ramas/merge) | **Sí** (Vital para mapas y assets) |
+| **Velocidad** | Rápido para texto | Eficiente para archivos grandes |
 
 ### ¿Por qué?
-Git es excelente para texto pero sufre con archivos binarios grandes. SVN permite bloquear archivos (**Lock**), evitando que dos personas editen el mismo mapa o textura al mismo tiempo, algo vital en el desarrollo con UE5.
+
+Git es excelente para texto y permite un desarrollo paralelo fluido mediante ramas. Sin embargo, sufre con archivos binarios grandes. SVN permite bloquear archivos (**Lock**), evitando conflictos binarios imposibles de resolver en Unreal Engine.
 
 ---
 
@@ -26,6 +32,7 @@ Git es excelente para texto pero sufre con archivos binarios grandes. SVN permit
 Para los que prefieren la terminal o necesitan automatizar tareas.
 
 ### Subversion (SVN)
+
 | Comando | Descripción |
 | :--- | :--- |
 | `svn checkout [URL]` | Descarga el repositorio por primera vez. |
@@ -38,6 +45,7 @@ Para los que prefieren la terminal o necesitan automatizar tareas.
 | `svn log -l 5` | Muestra los últimos 5 mensajes de commit. |
 
 ### Git
+
 | Comando | Descripción |
 | :--- | :--- |
 | `git pull` | Descarga y fusiona los cambios remotos. |
@@ -81,6 +89,19 @@ Optimizamos el desarrollo utilizando IA para actuar directamente sobre el reposi
 4.  **Verificación:**
     *   Jules realizará los cambios, creará la rama o el Pull Request y reportará el resultado.
     *   Revisa el log de actividad en el panel para confirmar que todo es correcto.
+
+---
+
+## 5. 📊 Resumen de Flujo Diario
+
+| Momento | Acción | Herramienta |
+| :--- | :--- | :--- |
+| **Inicio del día** | `svn update` & `git pull` | SVN / Git |
+| **Antes de editar asset** | `svn lock` | SVN |
+| **Durante el desarrollo** | Edit & Save | UE5 / VS |
+| **Al finalizar asset** | `svn commit` (libera lock) | SVN |
+| **Al finalizar código** | `git add`, `commit` & `push` | Git |
+| **Tareas complejas** | Usar Claude → Jules | Jules Panel |
 
 ---
 
