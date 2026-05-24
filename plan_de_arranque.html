@@ -1,0 +1,518 @@
+---
+layout: page
+title: "Plan Operativo: Estudio Indie (Fase 0)"
+permalink: /plan_de_arranque/
+---
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="row">
+  <div class="col-12 mb-4">
+    <div class="jumbotron">
+      <h1 class="display-4 text-purple"><i class="fa-solid fa-gamepad"></i> Plan de Arranque 🚀</h1>
+      <p class="lead">Manual operativo, técnico e infraestructura para el equipo. Establecemos una regla inquebrantable de <strong>infraestructura primero</strong>.</p>
+      <hr class="my-4 border-purple" style="opacity: 0.2;">
+      <div class="d-flex align-items-center">
+        <span class="badge badge-skill mr-2">Estado Actual</span>
+        <span class="text-success font-weight-bold">Fase 0: Infraestructura & GDD</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top mb-5 rounded border border-purple" style="top: 10px; z-index: 1020; border-opacity: 0.2;">
+  <div class="container-fluid">
+    <div class="navbar-nav w-100 justify-content-between overflow-auto flex-nowrap py-2" id="nav-tabs">
+      <button onclick="navigate('resumen')" id="btn-resumen" class="btn btn-outline-purple mx-1 active">📊 Resumen</button>
+      <button onclick="navigate('onboarding')" id="btn-onboarding" class="btn btn-outline-purple mx-1">👥 Onboarding</button>
+      <button onclick="navigate('pipeline')" id="btn-pipeline" class="btn btn-outline-purple mx-1">🎮 Pipeline</button>
+      <button onclick="navigate('unreal-fab')" id="btn-unreal-fab" class="btn btn-outline-purple mx-1">🧱 Unreal & Fab</button>
+      <button onclick="navigate('repos')" id="btn-repos" class="btn btn-outline-purple mx-1">💻 Repos</button>
+      <button onclick="navigate('changelogs')" id="btn-changelogs" class="btn btn-outline-purple mx-1">📝 Changelogs</button>
+      <button onclick="navigate('ritual')" id="btn-ritual" class="btn btn-outline-purple mx-1">⚡ Ritual Domingo</button>
+    </div>
+  </div>
+</nav>
+
+<div id="view-resumen" class="view-section">
+  <div class="row mb-5">
+    <div class="col-12">
+      <h2 class="text-purple border-bottom border-purple pb-2 mb-4">Visión General de Arranque</h2>
+      <p>Este panel centraliza la planificación. Nadie programará ni creará arte hasta que el entorno colaborativo esté 100% montado y testeo.</p>
+    </div>
+  </div>
+
+  <div class="row mb-5">
+    <div class="col-md-3 mb-4">
+      <div class="card h-100 border-danger">
+        <div class="card-body">
+          <div class="text-danger mb-2"><i class="fa-solid fa-triangle-exclamation fa-2x"></i></div>
+          <h5 class="card-title text-danger">Paso 0 (Crítico)</h5>
+          <p class="card-text text-xs">Montar infraestructura y herramientas. Cero líneas de código hasta completar esto.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 mb-4">
+      <div class="card h-100 border-purple">
+        <div class="card-body">
+          <div class="text-purple mb-2"><i class="fa-solid fa-comments fa-2x"></i></div>
+          <h5 class="card-title text-purple">Paso 1: Ideación</h5>
+          <p class="card-text text-xs">Lluvia de ideas y creación conjunta de un Game Design Document (GDD).</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 mb-4">
+      <div class="card h-100 border-warning">
+        <div class="card-body">
+          <div class="text-warning mb-2"><i class="fa-solid fa-cubes fa-2x"></i></div>
+          <h5 class="card-title text-warning">Paso 2: Greyboxing</h5>
+          <p class="card-text text-xs">Pruebas del loop de juego mientras arte acumula material.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 mb-4">
+      <div class="card h-100 border-success">
+        <div class="card-body">
+          <div class="text-success mb-2"><i class="fa-solid fa-wand-magic-sparkles fa-2x"></i></div>
+          <h5 class="card-title text-success">Paso 3: Vestido</h5>
+          <p class="card-text text-xs">Arte decora y pule la escena final una vez el gameplay está listo.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-8 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title text-purple">Estimación de Esfuerzo en Pre-Producción</h5>
+          <div style="height: 300px;">
+            <canvas id="effortChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4 mb-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title text-purple"><i class="fa-solid fa-clock-rotate-left"></i> Ritmo Dominical</h5>
+          <p class="card-text text-sm">Quedamos todos los <strong>domingos por la mañana</strong> para sincronizar objetivos:</p>
+          <ul class="tree-view">
+            <li><strong>Revisión semanal:</strong> 15 mins de demo visual.</li>
+            <li><strong>Resolución de bloqueos:</strong> Soporte técnico mutuo.</li>
+            <li><strong>Reparto Kanban:</strong> Tareas de 1 semana.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="view-onboarding" class="view-section d-none">
+  <div class="row mb-5">
+    <div class="col-12">
+      <h2 class="text-purple border-bottom border-purple pb-2 mb-4">Estructura del Equipo y Onboarding</h2>
+      <p>Roles primarios y secundarios para asegurar que todos tengan foco pero puedan apoyarse.</p>
+    </div>
+  </div>
+
+  <div class="row mb-5">
+    <div class="col-12">
+      <div class="card border-purple">
+        <div class="card-body">
+          <h5 class="card-title text-purple"><i class="fa-solid fa-users"></i> Estado de Onboarding</h5>
+          <div class="row">
+            <div class="col-md-4 col-lg-2 mb-3">
+              <div class="p-3 bg-dark border border-success rounded">
+                <h6 class="font-weight-bold">Alex <span class="badge badge-success float-right">OK</span></h6>
+                <small class="d-block text-muted">Prog. Procedural</small>
+              </div>
+            </div>
+            <div class="col-md-4 col-lg-2 mb-3">
+              <div class="p-3 bg-dark border border-success rounded">
+                <h6 class="font-weight-bold">Axel <span class="badge badge-success float-right">OK</span></h6>
+                <small class="d-block text-muted">Prog. Procedural</small>
+              </div>
+            </div>
+            <div class="col-md-4 col-lg-2 mb-3">
+              <div class="p-3 bg-dark border border-success rounded">
+                <h6 class="font-weight-bold">Mitxel <span class="badge badge-success float-right">OK</span></h6>
+                <small class="d-block text-muted">Arte 3D / Text.</small>
+              </div>
+            </div>
+            <div class="col-md-4 col-lg-2 mb-3">
+              <div class="p-3 bg-dark border border-success rounded">
+                <h6 class="font-weight-bold">Javi <span class="badge badge-success float-right">OK</span></h6>
+                <small class="d-block text-muted">Level / Audio</small>
+              </div>
+            </div>
+            <div class="col-md-4 col-lg-2 mb-3">
+              <div class="p-3 bg-dark border border-success rounded">
+                <h6 class="font-weight-bold">Dídac <span class="badge badge-success float-right">OK</span></h6>
+                <small class="d-block text-muted">3D / Props</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-6 mb-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title text-purple"><i class="fa-solid fa-layer-group"></i> Software Obligatorio</h5>
+          <ul class="list-group list-group-flush bg-transparent">
+            <li class="list-group-item bg-transparent text-light border-secondary">
+              <strong>Blender:</strong> Modelado, UVs y rigging.
+            </li>
+            <li class="list-group-item bg-transparent text-light border-secondary">
+              <strong>Audacity:</strong> Edición rápida de sonido.
+            </li>
+            <li class="list-group-item bg-transparent text-light border-secondary">
+              <strong>Krita / GIMP:</strong> Arte 2D y texturas.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6 mb-4">
+      <div class="card h-100 bg-dark border-purple">
+        <div class="card-body">
+          <h5 class="card-title text-purple"><i class="fa-solid fa-terminal"></i> Axel & CachyOS (Arch)</h5>
+          <p class="card-text text-sm">Integración SVN en Linux para el colchón de infraestructura.</p>
+          <div class="bg-black p-3 rounded font-weight-mono text-success text-xs">
+            $ sudo pacman -S subversion<br>
+            $ yay -S rabbitvcs-nemo rabbitvcs-cli
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="view-pipeline" class="view-section d-none">
+  <div class="row mb-5">
+    <div class="col-12">
+      <h2 class="text-purple border-bottom border-purple pb-2 mb-4">Pipeline de Producción</h2>
+      <p>Orden lógico de bloqueos para avanzar con seguridad.</p>
+    </div>
+  </div>
+
+  <div class="row mb-5 text-center">
+    <div class="col-md-3 mb-3"><div class="p-3 card"><strong>Paso 0</strong><br><small>Configuración</small></div></div>
+    <div class="col-md-3 mb-3"><div class="p-3 card"><strong>Paso 1</strong><br><small>Ideación & GDD</small></div></div>
+    <div class="col-md-3 mb-3"><div class="p-3 card"><strong>Paso 2</strong><br><small>Greybox + Arte</small></div></div>
+    <div class="col-md-3 mb-3"><div class="p-3 card"><strong>Paso 3</strong><br><small>Vestido final</small></div></div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-6 mb-4">
+      <div class="card border-danger h-100">
+        <div class="card-body">
+          <h5 class="card-title text-danger"><i class="fa-solid fa-ban"></i> Políticas de IA</h5>
+          <ul class="tree-view">
+            <li><strong>Prohibido:</strong> ChatGPT para Diseño (GDD) o Gemini para imágenes finales.</li>
+            <li><strong>Permitido:</strong> Claude para lógica, Leonardo.ai para conceptos limpios.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6 mb-4">
+      <div class="card border-purple h-100">
+        <div class="card-body">
+          <h5 class="card-title text-purple"><i class="fa-solid fa-shield-halved"></i> Sistema Anti-Bloqueos</h5>
+          <ul class="tree-view">
+            <li><strong>Owner:</strong> Responsable primario. Avisa el sábado si no llega.</li>
+            <li><strong>Backup:</strong> Soporte asignado para desatascar tareas.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="view-unreal-fab" class="view-section d-none">
+  <div class="row mb-4">
+    <div class="col-12">
+      <h2 class="text-purple border-bottom border-purple pb-2 mb-4">Unreal Engine & Fab</h2>
+      <p>Marketplace unificado bajo <strong>Fab</strong>. Requiere orden de migración.</p>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-8 mb-4">
+      <div class="card border-purple">
+        <div class="card-body">
+          <h5 class="card-title text-purple">Importación Limpia</h5>
+          <ol class="tree-view">
+            <li>Descarga local (fuera del SVN).</li>
+            <li>Limpieza de assets redundantes.</li>
+            <li>Migración oficial a la carpeta de contenido.</li>
+          </ol>
+          <div class="alert bg-danger-transparent border-danger text-light mt-3">
+            <strong>⚠️ NUNCA</strong> subas plugins pesados al SVN sin coordinar.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-4">
+      <div class="card bg-dark border-purple h-100">
+        <div class="card-body">
+          <h5 class="card-title text-purple">Sincro SVN</h5>
+          <ul class="tree-view">
+            <li>Needs Lock habilitado.</li>
+            <li>Limpieza de locks dominical.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="view-repos" class="view-section d-none">
+  <div class="row mb-4">
+    <div class="col-12">
+      <h2 class="text-purple border-bottom border-purple pb-2 mb-4">Repositorios</h2>
+      <p>Git para documentación/scripts, SVN para assets binarios pesados.</p>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12 mb-4">
+      <div class="alert bg-danger-transparent border-danger text-light">
+        <i class="fa-solid fa-radiation"></i> <strong>Cuidado:</strong> Los issues en la app de producción son terreno de alta complejidad.
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6 mb-4">
+      <div class="list-group">
+        <a href="https://github.com/hypenosys/scripts" class="list-group-item list-group-item-action bg-dark text-light border-purple mb-2 rounded">
+          <h6 class="text-purple">hypenosys/scripts</h6>
+          <small>Generación procedural de caracteres.</small>
+        </a>
+        <a href="https://github.com/hypenosys/blueprints" class="list-group-item list-group-item-action bg-dark text-light border-purple mb-2 rounded">
+          <h6 class="text-purple">hypenosys/blueprints</h6>
+          <small>Archivo definitivo de lógicas.</small>
+        </a>
+      </div>
+    </div>
+    <div class="col-md-6 mb-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title text-purple">Reparto de Carga</h5>
+          <ul class="tree-view">
+            <li><strong>Git:</strong> Markdown, actas, scripts Python/C++, Web.</li>
+            <li><strong>SVN:</strong> .umap, .uasset, .png, .fbx, .wav.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="view-changelogs" class="view-section d-none">
+  <div class="row mb-5">
+    <div class="col-12">
+      <h2 class="text-purple border-bottom border-purple pb-2 mb-4">Changelogs</h2>
+    </div>
+  </div>
+
+  <div class="row mb-5">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title text-purple">Registrar Cambio</h5>
+          <div class="form-row">
+            <div class="form-group col-md-3">
+              <label>Autor</label>
+              <select id="change-author" class="form-control bg-dark text-light border-purple">
+                <option>Alex</option><option>Axel</option><option>Mitxel</option><option>Javi</option><option>Dídac</option>
+              </select>
+            </div>
+            <div class="form-group col-md-3">
+              <label>Categoría</label>
+              <select id="change-category" class="form-control bg-dark text-light border-purple">
+                <option value="programacion">🛠️ Programación</option>
+                <option value="arte">🎨 Arte/Audio</option>
+                <option value="diseno">📐 Diseño/GDD</option>
+              </select>
+            </div>
+            <div class="form-group col-md-4">
+              <label>Descripción</label>
+              <input id="change-desc" type="text" class="form-control bg-dark text-light border-purple" placeholder="Cambios realizados...">
+            </div>
+            <div class="form-group col-md-2">
+              <label>&nbsp;</label>
+              <button onclick="addChangelogEntry()" class="btn btn-purple btn-block">Guardar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-4 mb-4">
+      <h5 class="text-info border-bottom border-info pb-2 mb-3">🛠️ Programación</h5>
+      <div id="log-programacion" class="small overflow-auto" style="max-height: 300px;"></div>
+    </div>
+    <div class="col-md-4 mb-4">
+      <h5 class="text-pink border-bottom border-pink pb-2 mb-3">🎨 Arte & Audio</h5>
+      <div id="log-arte" class="small overflow-auto" style="max-height: 300px;"></div>
+    </div>
+    <div class="col-md-4 mb-4">
+      <h5 class="text-success border-bottom border-success pb-2 mb-3">📐 Diseño & GDD</h5>
+      <div id="log-diseno" class="small overflow-auto" style="max-height: 300px;"></div>
+    </div>
+  </div>
+</div>
+
+<div id="view-ritual" class="view-section d-none">
+  <div class="row mb-5">
+    <div class="col-12">
+      <h2 class="text-purple border-bottom border-purple pb-2 mb-4">Ritual del Domingo ⚡</h2>
+      <p>Identidad técnica y sincronización.</p>
+    </div>
+  </div>
+
+  <div class="card mb-5">
+    <div class="card-body">
+      <h5 class="card-title text-purple">0. Define tu Identidad</h5>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <input type="text" id="ritual-name" oninput="updatePrompts()" class="form-control bg-dark text-light border-purple" placeholder="Tu Nombre">
+        </div>
+        <div class="form-group col-md-6">
+          <select id="ritual-role" onchange="updatePrompts()" class="form-control bg-dark text-light border-purple">
+            <option value="Art">🎨 Art Team</option>
+            <option value="Design">📐 Design Team</option>
+            <option value="Dev">💻 Dev Team</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12 mb-4">
+      <div class="card">
+        <div class="card-header bg-dark d-flex justify-content-between align-items-center">
+          <span class="text-purple">PROMPT 1: ADN Técnico</span>
+          <button onclick="copyToClipboard('prompt-dna', this)" class="btn btn-sm btn-outline-purple">Copiar</button>
+        </div>
+        <div class="card-body bg-black">
+          <pre id="prompt-dna" class="text-success text-xs mb-0" style="white-space: pre-wrap;"></pre>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-12 mb-4">
+      <div class="card">
+        <div class="card-header bg-dark d-flex justify-content-between align-items-center">
+          <span class="text-purple">PROMPT 2: Bios de Élite</span>
+          <button onclick="copyToClipboard('prompt-bio', this)" class="btn btn-sm btn-outline-purple">Copiar</button>
+        </div>
+        <div class="card-body bg-black">
+          <pre id="prompt-bio" class="text-purple text-xs mb-0" style="white-space: pre-wrap;"></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function navigate(viewId) {
+    document.querySelectorAll('.view-section').forEach(v => v.classList.add('d-none'));
+    document.getElementById('view-' + viewId).classList.remove('d-none');
+
+    document.querySelectorAll('#nav-tabs button').forEach(b => b.classList.remove('active'));
+    document.getElementById('btn-' + viewId).classList.add('active');
+
+    if(viewId === 'resumen') renderResumenCharts();
+  }
+
+  function addChangelogEntry() {
+    const author = document.getElementById('change-author').value;
+    const category = document.getElementById('change-category').value;
+    const desc = document.getElementById('change-desc').value;
+    if(!desc.trim()) return;
+
+    const log = document.getElementById('log-' + category);
+    const div = document.createElement('div');
+    div.className = "p-2 bg-dark border border-secondary mb-2 rounded";
+    div.innerHTML = `<small class="text-muted d-block">${author} - Ahora</small>${desc}`;
+    log.prepend(div);
+    document.getElementById('change-desc').value = '';
+  }
+
+  let chartsRendered = false;
+  function renderResumenCharts() {
+    if(chartsRendered) return;
+    const ctx = document.getElementById('effortChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Fase 0: Infra', 'Fase 1: GDD', 'Fase 2: Greybox', 'Fase 3: Vestido'],
+        datasets: [{
+          data: [20, 25, 40, 15],
+          backgroundColor: ['#ff5555', '#bd93f9', '#ffb86c', '#50fa7b'],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { grid: { color: '#44475a' }, ticks: { color: '#f8f8f2' } },
+          y: { grid: { display: false }, ticks: { color: '#f8f8f2' } }
+        }
+      }
+    });
+    chartsRendered = true;
+  }
+
+  function updatePrompts() {
+    const name = document.getElementById('ritual-name').value || '[NOMBRE]';
+    const role = document.getElementById('ritual-role').value;
+
+    const dna = `Actúa como Lead Técnico de Hypenosys. Soy ${name} (${role}). Entrevístame (10 preguntas) para extraer mi ADN Técnico.`;
+    const bio = `Actúa como biógrafo indie cínico. Soy ${name} (${role}). Entrevístame para mi bio pública.`;
+
+    document.getElementById('prompt-dna').innerText = dna;
+    document.getElementById('prompt-bio').innerText = bio;
+  }
+
+  function copyToClipboard(id, btn) {
+    const text = document.getElementById(id).innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const original = btn.innerText;
+      btn.innerText = 'Copiado!';
+      setTimeout(() => btn.innerText = original, 2000);
+    });
+  }
+
+  window.onload = () => {
+    renderResumenCharts();
+    updatePrompts();
+
+    // Seed initial logs
+    const initialLogs = {
+      programacion: [{a: 'Alex', d: 'Scripts iniciales de generación procedural.'}],
+      arte: [{a: 'Mitxel', d: 'Moodboard estético inicial consolidado.'}],
+      diseno: [{a: 'Lead', d: 'Estructura básica del GDD en Markdown.'}]
+    };
+    Object.keys(initialLogs).forEach(cat => {
+      initialLogs[cat].forEach(entry => {
+        const log = document.getElementById('log-' + cat);
+        const div = document.createElement('div');
+        div.className = "p-2 bg-dark border border-secondary mb-2 rounded";
+        div.innerHTML = `<small class="text-muted d-block">${entry.a} - Inicial</small>${entry.d}`;
+        log.appendChild(div);
+      });
+    });
+  };
+</script>
