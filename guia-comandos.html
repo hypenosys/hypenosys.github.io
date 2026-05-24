@@ -1,0 +1,130 @@
+---
+layout: page
+title: "Guía Técnica: Comandos y Flujos (Git, SVN & IA)"
+permalink: /guia-comandos/
+---
+
+<div class="row">
+  <div class="col-12 mb-4">
+    <div class="jumbotron">
+      <h1 class="display-4 text-purple">🛠️ Guía Técnica de Operaciones</h1>
+      <p class="lead">Comandos esenciales y flujos de trabajo de <strong>Hypenosys</strong> para garantizar la integridad del proyecto.</p>
+    </div>
+  </div>
+</div>
+
+<div class="row mb-5">
+  <div class="col-12">
+    <h2 class="text-purple border-bottom border-purple pb-2 mb-4">1. Control de Versiones: Git vs SVN</h2>
+    <p>Utilizamos un sistema híbrido para optimizar el rendimiento y la colaboración.</p>
+
+    <div class="page-content">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Característica</th>
+            <th>Git (GitHub)</th>
+            <th>SVN (Subversion)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Uso Principal</strong></td>
+            <td>Código fuente y configuración</td>
+            <td>Assets binarios pesados</td>
+          </tr>
+          <tr>
+            <td><strong>Tipos de Archivo</strong></td>
+            <td><code>.cpp</code>, <code>.h</code>, <code>.json</code>, <code>.yml</code>, <code>.md</code></td>
+            <td><code>.uasset</code>, <code>.umap</code>, <code>.fbx</code>, <code>.png</code></td>
+          </tr>
+          <tr>
+            <td><strong>Bloqueo (Lock)</strong></td>
+            <td>No (basado en ramas/merge)</td>
+            <td><strong>Sí</strong> (Vital para mapas y assets)</td>
+          </tr>
+          <tr>
+            <td><strong>Velocidad</strong></td>
+            <td>Rápido para texto</td>
+            <td>Eficiente para archivos grandes</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="row mb-5">
+  <div class="col-12">
+    <h2 class="text-purple border-bottom border-purple pb-2 mb-4">2. Referencia de Comandos CLI</h2>
+    <div class="row">
+      <div class="col-md-6 mb-4">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title text-purple">Subversion (SVN)</h5>
+            <div class="bg-black p-2 rounded font-weight-mono text-xs text-success mb-2">
+              <code>svn checkout [URL]</code><br>
+              <code>svn update</code><br>
+              <code>svn commit -m "Msg"</code><br>
+              <code>svn lock [file]</code><br>
+              <code>svn unlock [file]</code><br>
+              <code>svn status</code>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 mb-4">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title text-purple">Git</h5>
+            <div class="bg-black p-2 rounded font-weight-mono text-xs text-info mb-2">
+              <code>git pull</code><br>
+              <code>git add .</code><br>
+              <code>git commit -m "Msg"</code><br>
+              <code>git push</code><br>
+              <code>git status</code><br>
+              <code>git checkout -b [branch]</code>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mb-5">
+  <div class="col-12">
+    <h2 class="text-purple border-bottom border-purple pb-2 mb-4">3. Flujo TortoiseSVN (Windows)</h2>
+    <ol class="tree-view">
+      <li><strong>Update (Mañana):</strong> Click derecho > <code>SVN Update</code>.</li>
+      <li><strong>Lock (Antes de editar):</strong> Click derecho > <code>TortoiseSVN</code> > <code>Get Lock</code>.</li>
+      <li><strong>Edit:</strong> Realiza tus cambios en Unreal Engine.</li>
+      <li><strong>Commit (Al terminar):</strong> Click derecho > <code>SVN Commit...</code>.</li>
+      <li><strong>Revert (Si algo sale mal):</strong> Click derecho > <code>TortoiseSVN</code> > <code>Revert</code>.</li>
+    </ol>
+  </div>
+</div>
+
+<div class="row mb-5">
+  <div class="col-12">
+    <h2 class="text-purple border-bottom border-purple pb-2 mb-4">4. 🤖 Flujo de Trabajo con IA (Claude → Jules)</h2>
+    <div class="card border-purple">
+      <div class="card-body">
+        <ul class="tree-view">
+          <li><strong>Conceptualización (Claude):</strong> Describe lo que necesitas a Claude.</li>
+          <li><strong>Generación de Prompt Técnico:</strong> Pídele a Claude un prompt para Jules.</li>
+          <li><strong>Ejecución (Jules):</strong> Pega el prompt en el <strong>Jules Panel</strong>.</li>
+          <li><strong>Verificación:</strong> Revisa el log de actividad y el PR.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="alert bg-info-transparent border-info text-white">
+      <strong>💡 TIP:</strong> Haz commits pequeños y frecuentes. Si tienes dudas con un conflicto, <strong>no fuerces el commit</strong>.
+    </div>
+  </div>
+</div>

@@ -1,0 +1,183 @@
+---
+layout: page
+title: "Changelog & Project Logs"
+permalink: /CHANGELOG.html
+---
+
+<div class="row">
+  <div class="col-12 mb-4">
+    <div class="jumbotron">
+      <h1 class="display-4 text-purple">Changelog de Hypenosys 🚀</h1>
+      <p class="lead">Aquí listamos los avances del estudio. ¡Mantened esto actualizado!</p>
+    </div>
+  </div>
+</div>
+
+<div id="changelog-form-container" class="mb-5 d-none">
+  <div class="card border-purple shadow-lg">
+    <div class="card-header bg-dark border-purple">
+      <h5 class="mb-0 text-purple"><i class="fas fa-plus-circle mr-2"></i> Añadir Nueva Entrada</h5>
+    </div>
+    <div class="card-body">
+      <form id="add-changelog-form">
+        <div class="form-row">
+          <div class="form-group col-md-4">
+            <label>Versión / Tag</label>
+            <input type="text" id="cl-version" class="form-control bg-dark text-white border-purple" placeholder="ej: v0.3.1" required>
+          </div>
+          <div class="form-group col-md-4">
+            <label>Fecha</label>
+            <input type="date" id="cl-date" class="form-control bg-dark text-white border-purple" required>
+          </div>
+          <div class="form-group col-md-4">
+            <label>Tipo</label>
+            <select id="cl-type" class="form-control bg-dark text-white border-purple">
+              <option value="feat">✨ feat (Nueva funcionalidad)</option>
+              <option value="fix">🐛 fix (Corrección de errores)</option>
+              <option value="docs">📚 docs (Documentación)</option>
+              <option value="refactor">♻️ refactor (Refactorización)</option>
+              <option value="art">🎨 art (Arte y Assets)</option>
+              <option value="design">📐 design (Diseño/GDD)</option>
+              <option value="infra">🔧 infra (Infraestructura)</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Descripción</label>
+          <textarea id="cl-description" class="form-control bg-dark text-white border-purple" rows="3" placeholder="Describe los cambios realizados..." required></textarea>
+        </div>
+        <button type="submit" id="btn-submit-changelog" class="btn btn-purple">
+          <i class="fas fa-save mr-2"></i> Añadir entrada
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div id="changelog-entries">
+      <!-- Unreleased -->
+      <div class="changelog-section mb-5">
+        <h2 class="text-purple border-bottom border-purple pb-2 mb-4">[Unreleased]</h2>
+        <div class="card mb-3">
+          <div class="card-body">
+            <h5 class="text-success">Added</h5>
+            <ul class="tree-view mb-0">
+              <li>TortoiseSVN onboarding section and collaborative workflow guide in <code>guia-ue5-svn.html</code></li>
+              <li><code>plan_de_arranque.html</code> unified with platform design system</li>
+              <li>CHANGELOG enforcement GitHub Action</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- v0.1.0 -->
+      <div class="changelog-section mb-5">
+        <h2 class="text-purple border-bottom border-purple pb-2 mb-4">[v0.1.0] - 2023-10-27</h2>
+        <div class="card mb-3">
+          <div class="card-body">
+            <h5 class="text-success">Added</h5>
+            <ul class="tree-view mb-3">
+              <li><strong>Modernización de la Landing Page:</strong> Ahora se ve profesional, oscura y morada (Dracula Style).</li>
+              <li><strong>Sistema de Árbol de Páginas:</strong> Autogenerado a partir de archivos <code>.md</code>.</li>
+              <li><strong>Fichas de Equipo:</strong> Axel, Alex, Javi, Dídac y Mitxel ya tienen su sitio en la web.</li>
+              <li><strong>Guía de SVN:</strong> Para que nadie rompa el repositorio (o lo intente).</li>
+            </ul>
+            <h5 class="text-danger">Fixed</h5>
+            <ul class="tree-view mb-0">
+              <li>Eliminado el diseño aburrido de Bootstrap por defecto.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="jumbotron mt-5">
+      <h4 class="text-purple">Estructura de Trabajo</h4>
+      <ul class="tree-view">
+        <li><code>assets/</code>: Imágenes, iconos y estilos.</li>
+        <li><code>docs/</code>: (Opcional) Si queremos meter más PDFs o manuales externos.</li>
+        <li>Raíz: Crea aquí tus archivos <code>.html</code> y aparecerán mágicamente en la Home.</li>
+      </ul>
+      <p class="mt-4 italic">Commit message tip: [Add] para cosas nuevas, [Fix] para errores, [Update] para cambios menores.</p>
+    </div>
+  </div>
+</div>
+
+<script src="{{ '/assets/javascript/github-api.js' | relative_url }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+    const formContainer = document.getElementById('changelog-form-container');
+    const form = document.getElementById('add-changelog-form');
+    const dateInput = document.getElementById('cl-date');
+
+    // Set default date to today
+    dateInput.valueAsDate = new Date();
+
+    // Check authentication
+    document.addEventListener('authReady', (e) => {
+        if (e.detail.user) {
+            formContainer.classList.remove('d-none');
+        }
+    });
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const btn = document.getElementById('btn-submit-changelog');
+        const originalHtml = btn.innerHTML;
+
+        const version = document.getElementById('cl-version').value;
+        const date = document.getElementById('cl-date').value;
+        const type = document.getElementById('cl-type').value;
+        const description = document.getElementById('cl-description').value;
+
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Procesando...';
+
+        try {
+            const filePath = 'CHANGELOG.html';
+            const fileData = await window.githubApi.getFile(filePath);
+            const content = decodeURIComponent(escape(atob(fileData.content.replace(/\n/g, ''))));
+
+            // Prepare the new entry
+            const newEntry = `
+      <div class="changelog-section mb-5">
+        <h2 class="text-purple border-bottom border-purple pb-2 mb-4">[${version}] - ${date}</h2>
+        <div class="card mb-3">
+          <div class="card-body">
+            <h5 class="${type === 'fix' ? 'text-danger' : 'text-success'}">${type.charAt(0).toUpperCase() + type.slice(1)}</h5>
+            <ul class="tree-view mb-0">
+              <li>${description}</li>
+            </ul>
+          </div>
+        </div>
+      </div>`;
+
+            // Inject the new entry at the top of the list
+            const marker = '<div id="changelog-entries">';
+            const parts = content.split(marker);
+            if (parts.length !== 2) throw new Error("Could not find insertion point in CHANGELOG.html");
+
+            const newContent = parts[0] + marker + newEntry + parts[1];
+
+            await window.githubApi.updateFile(
+                filePath,
+                newContent,
+                `docs: add changelog entry ${version}`,
+                fileData.sha
+            );
+
+            window.authManager.showToast('Éxito', 'Entrada añadida correctamente. Recargando...', 'success');
+            setTimeout(() => window.location.reload(), 1500);
+
+        } catch (err) {
+            console.error(err);
+            window.authManager.showToast('Error', 'Fallo al añadir entrada: ' + err.message, 'error');
+            btn.disabled = false;
+            btn.innerHTML = originalHtml;
+        }
+    });
+});
+</script>

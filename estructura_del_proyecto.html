@@ -1,0 +1,153 @@
+---
+layout: page
+title: "Estructura del Proyecto: El Manifiesto Operacional"
+permalink: /estructura_del_proyecto/
+---
+
+<div class="row">
+  <div class="col-12 mb-4">
+    <div class="jumbotron">
+      <h1 class="display-4 text-purple">🛠️ PROTOCOLO DE SUPERVIVENCIA ARQUITECTÓNICA</h1>
+      <p class="lead">Este documento constituye la única fuente de verdad sobre cómo se organiza el caos en este estudio.</p>
+    </div>
+  </div>
+</div>
+
+<div class="row mb-5">
+  <div class="col-12">
+    <h2 class="text-purple border-bottom border-purple pb-2 mb-4">1. EL ÁRBOL FILOGENÉTICO DEL PROYECTO</h2>
+    <p>La carpeta <code>/Content/</code> no es un vertedero. Es un ecosistema sagrado. Se impone la siguiente jerarquía basada en prefijos numéricos para forzar el orden alfabético y mental:</p>
+
+    <div class="bg-dark p-3 rounded font-weight-mono text-success text-xs border border-purple mb-4">
+<pre class="mb-0 text-success">
+/Content/
+├── 01_Core/                # El cerebro del proyecto. Si esto falla, nada existe.
+│   ├── GameModes/          # Lógica de reglas de juego.
+│   ├── Controllers/        # PlayerControllers y AIControllers.
+│   ├── Inputs/             # Enhanced Input Actions y Mapping Contexts.
+│   └── Interfaces/         # Blueprints Interfaces (BPI_).
+├── 02_Design/              # Donde la magia se vuelve lógica (y bugs).
+│   ├── Blueprints/         # Actores lógicos y componentes.
+│   ├── UI/                 # Widgets (WBP_) y lógica de interfaz.
+│   └── Data/               # DataTables y DataAssets. No hardcodear nada.
+├── 03_Art/                 # Lo que el jugador ve (mientras el código llora).
+│   ├── Animations/         # Rigs, SkelMeshes y AnimBlueprints.
+│   ├── Audio/              # Cues y Waves.
+│   ├── Materials/          # Master Materials (M_) únicamente.
+│   │   └── Instances/      # Material Instances (MI_) - OBLIGATORIO.
+│   ├── Textures/           # Mapas de bits.
+│   └── Vehicles/           # Assets específicos de conducción.
+├── 04_Environment/         # El escenario de nuestros crímenes.
+│   ├── Architecture/       # SM_ de paredes, suelos, techos.
+│   ├── Props/              # SM_ de mobiliario y detalle.
+│   └── Maps/               # Niveles (.umap). Nada de "Test_Final_V2_REAL".
+└── 05_Developers/          # Zona de Pruebas Bacteriológicas (Safe Zone).
+    ├── Axlfc/              # Territorio de Axel.
+    ├── mitxel2022/         # Territorio de Mitxel.
+    └── TopperH4rley/       # Territorio de Topper.
+</pre>
+    </div>
+  </div>
+</div>
+
+<div class="row mb-5">
+  <div class="col-12">
+    <h2 class="text-purple border-bottom border-purple pb-2 mb-4">2. REGLAS BACTERIOLÓGICAS DE NOMENCLATURA</h2>
+    <p>El uso de espacios, tildes o la letra "ñ" se considera un acto de sabotaje industrial.</p>
+
+    <div class="page-content">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Tipo de Asset</th>
+            <th>Prefijo</th>
+            <th>Ejemplo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Blueprint Class</strong></td>
+            <td><code>BP_</code></td>
+            <td><code>BP_PlayerController</code></td>
+          </tr>
+          <tr>
+            <td><strong>Static Mesh</strong></td>
+            <td><code>SM_</code></td>
+            <td><code>SM_Concrete_Column_01</code></td>
+          </tr>
+          <tr>
+            <td><strong>Skeletal Mesh</strong></td>
+            <td><code>SK_</code></td>
+            <td><code>SK_MainCharacter</code></td>
+          </tr>
+          <tr>
+            <td><strong>Texture</strong></td>
+            <td><code>T_</code></td>
+            <td><code>T_Brick_Wall_ORM</code></td>
+          </tr>
+          <tr>
+            <td><strong>Master Material</strong></td>
+            <td><code>M_</code></td>
+            <td><code>M_Base_Opaque</code></td>
+          </tr>
+          <tr>
+            <td><strong>Material Instance</strong></td>
+            <td><code>MI_</code></td>
+            <td><code>MI_Concrete_Floor_Dirty</code></td>
+          </tr>
+          <tr>
+            <td><strong>Widget Blueprint</strong></td>
+            <td><code>WBP_</code></td>
+            <td><code>WBP_MainMenu</code></td>
+          </tr>
+          <tr>
+            <td><strong>Level / Map</strong></td>
+            <td><code>L_</code></td>
+            <td><code>L_DeepNight_Sublevel_01</code></td>
+          </tr>
+          <tr>
+            <td><strong>Data Asset</strong></td>
+            <td><code>DA_</code></td>
+            <td><code>DA_WeaponStats</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="alert bg-info-transparent border-info text-white mt-3">
+      <strong>Nota sobre Sufijos:</strong> Utilice guiones bajos (<code>_</code>) solo para identificadores de estado o variantes.
+      <ul>
+        <li><strong>Correcto:</strong> <code>T_Rock_Base_Normal</code>, <code>MI_Metal_Rusted_02</code>.</li>
+        <li><strong>Incorrecto:</strong> <code>T Rock Base (1)</code>, <code>MI_Metal_Ñoño</code>.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="row mb-5">
+  <div class="col-12">
+    <h2 class="text-purple border-bottom border-purple pb-2 mb-4">3. EL PROTOCOLO DE CONCURRENCIA: LOCKS Y REGLAMENTO DOMINICAL</h2>
+    <p>Unreal Engine maneja archivos binarios (<code>.uasset</code>, <code>.umap</code>). Estos archivos <strong>NO SE PUEDEN MEZCLAR</strong>.</p>
+
+    <div class="card bg-dark border-purple mb-4">
+      <div class="card-body">
+        <h5 class="card-title text-purple">La Mecánica del Lock (Bloqueo)</h5>
+        <ol class="tree-view">
+          <li><strong>Adquisición:</strong> Antes de mover un solo vértice, DEBES adquirir el bloqueo (Lock) en SVN.</li>
+          <li><strong>Exclusividad:</strong> Si el candado está en rojo, ese asset pertenece a otra alma. No lo toques.</li>
+          <li><strong>Infracción:</strong> Modificar archivos sin bloqueo previo es una falta administrativa grave.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="jumbotron border-danger">
+      <h3 class="text-danger"><i class="fa-solid fa-broom"></i> The Sunday Purge (La Purga Dominical) 🧹</h3>
+      <p>Cada Domingo a las 09:00 AM, un cron job en el servidor ejecuta un <code>svn unlock --force</code> masivo sobre todo el repositorio.</p>
+      <p class="italic mb-0">Si tenías algo bloqueado y no subiste los cambios antes de esa hora, el bloqueo desaparecerá. El servidor no tiene sentimientos; yo tampoco.</p>
+    </div>
+
+    <div class="alert bg-success-transparent border-success text-white mt-4">
+      <strong>La Directiva Sandbox (Exención):</strong> Todo lo que resida dentro de <code>05_Developers/</code> está exento de las políticas de bloqueo estricto. Es vuestro jardín de juegos.
+    </div>
+  </div>
+</div>
