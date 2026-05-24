@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-24T13:37:43.316Z",
+  "last_updated": "2026-05-24T13:37:57.121Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -145,7 +145,10 @@
       "apoyo": null,
       "limite": null,
       "comentario": "",
-      "id": 7
+      "id": 7,
+      "asignados": [
+        "topperh4rley"
+      ]
     },
     {
       "rama": "PRO",
