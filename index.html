@@ -15,12 +15,19 @@ title: Hypenosys Indie Studio
     <h2 class="mb-4">🚀 Project Hub & Documentation</h2>
     <div class="card p-4 mb-5 shadow-sm">
       <p>Bienvenido al centro de mando. Aquí encontrarás toda la documentación y guías necesarias para el proyecto.</p>
-      {% include auto_tree.html %}
+      <ul class="tree-view">
+        <li><a href="{{ '/CHANGELOG.html' | relative_url }}">Changelog & Project Logs</a></li>
+        <li><a href="{{ '/estructura_del_proyecto/' | relative_url }}">Estructura del Proyecto</a></li>
+        <li><a href="{{ '/guia-comandos/' | relative_url }}">Guía Técnica: Comandos y Flujos</a></li>
+        <li><a href="{{ '/guia-ue5-svn/' | relative_url }}">Guía de Supervivencia: UE5 + SVN</a></li>
+        <li><a href="{{ '/plan_de_arranque/' | relative_url }}">Plan de Arranque</a></li>
+        <li><a href="{{ '/tech-stack' | relative_url }}">Tech Stack</a></li>
+      </ul>
     </div>
 
     <h2 class="mb-4">⚡ Latest Updates</h2>
     <div class="card p-4 mb-5 shadow-sm">
-      <p>Consulta el <a href="{{ '/changelog' | relative_url }}" class="text-purple font-weight-bold">Changelog</a> para estar al día de los commits y cambios en el proyecto.</p>
+      <p>Consulta el <a href="{{ '/CHANGELOG.html' | relative_url }}" class="text-purple font-weight-bold">Changelog</a> para estar al día de los commits y cambios en el proyecto.</p>
     </div>
   </div>
 
