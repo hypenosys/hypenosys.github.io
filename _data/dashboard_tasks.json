@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-24T12:40:34.484Z",
-  "last_updated_by": "Sistema",
+  "last_updated": "2026-05-24T13:43:44.496Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -19,7 +19,10 @@
       "limite": null,
       "comentario": "Sistema base del dashboard",
       "milestone": "M1",
-      "completitud": 1
+      "completitud": 1,
+      "asignados": [
+        "axlfc"
+      ]
     },
     {
       "rama": "PRO",
@@ -27,17 +30,20 @@
       "ver": true,
       "descripcion": "Engatusar a Dídac y a Javi de que se hagan users de GitHub y meterlos en el Operational Dashboard",
       "fecha": "2026-05-21",
-      "tema_principal": "Tools / Automation",
+      "tema_principal": "Pre-producción",
       "detectado_por": "Axel",
       "resuelto_por": null,
       "apoyo": null,
       "estado": "OK",
-      "prioridad": "Major",
+      "prioridad": "Medium",
       "limite": null,
       "comentario": "",
       "milestone": "M1",
       "completitud": 0,
-      "id": 2
+      "id": 2,
+      "asignados": [
+        "axlfc"
+      ]
     },
     {
       "rama": "PRO",
@@ -55,12 +61,15 @@
       "apoyo": null,
       "limite": null,
       "comentario": "",
-      "id": 3
+      "id": 3,
+      "asignados": [
+        "axlfc"
+      ]
     },
     {
       "rama": "DIS",
       "descripcion": "BrainStorm",
-      "tema_principal": "Build / Deploy",
+      "tema_principal": "Concepto / GDD",
       "prioridad": "Critical",
       "milestone": "M1",
       "estado": "Pending",
@@ -73,12 +82,15 @@
       "apoyo": null,
       "limite": null,
       "comentario": "",
-      "id": 4
+      "id": 4,
+      "asignados": [
+        "javi26031994-a11y"
+      ]
     },
     {
       "rama": "PRO",
       "descripcion": "Tutorial Unreal Engine conceptos basicos",
-      "tema_principal": "Programación / Engine",
+      "tema_principal": "Pre-producción",
       "prioridad": "Critical",
       "milestone": "M1",
       "estado": "Pending",
@@ -91,13 +103,16 @@
       "apoyo": null,
       "limite": null,
       "comentario": "",
-      "id": 5
+      "id": 5,
+      "asignados": [
+        "topperh4rley"
+      ]
     },
     {
       "rama": "PRO",
       "descripcion": "Engatusar a Dídac y Mitxel para que se unan al Tailscale",
       "tema_principal": "Tools / Automation",
-      "prioridad": "Critical",
+      "prioridad": "Major",
       "milestone": "M1",
       "estado": "Working",
       "completitud": 0.5,
@@ -109,12 +124,15 @@
       "apoyo": null,
       "limite": null,
       "comentario": "",
-      "id": 6
+      "id": 6,
+      "asignados": [
+        "topperh4rley"
+      ]
     },
     {
       "rama": "PRO",
       "descripcion": "Instalar Tailscale + Tortoise + Unreal Engine 5.7.4",
-      "tema_principal": "Programación / Engine",
+      "tema_principal": "Pre-producción",
       "prioridad": "Critical",
       "milestone": "M1",
       "estado": "OK",
@@ -127,15 +145,18 @@
       "apoyo": null,
       "limite": null,
       "comentario": "",
-      "id": 7
+      "id": 7,
+      "asignados": [
+        "topperh4rley"
+      ]
     },
     {
       "rama": "PRO",
-      "descripcion": "Instalar Tailscale + Tortoise + Unreal Engine 5.7.4",
-      "tema_principal": "Programación / Engine",
-      "prioridad": "Major",
+      "descripcion": "Instalar TortoiseSVN + Unreal Engine 5.7.4",
+      "tema_principal": "Pre-producción",
+      "prioridad": "Medium",
       "milestone": "M1",
-      "estado": "Working",
+      "estado": "Fixed",
       "completitud": 0,
       "resuelto_por": "Javi",
       "detectado_por": "Axel",
@@ -145,13 +166,16 @@
       "apoyo": null,
       "limite": null,
       "comentario": "",
-      "id": 8
+      "id": 8,
+      "asignados": [
+        "javi26031994-a11y"
+      ]
     },
     {
       "rama": "PRO",
-      "descripcion": "Instalar Tailscale + Tortoise + Unreal Engine 5.7.4",
-      "tema_principal": "Programación / Engine",
-      "prioridad": "Major",
+      "descripcion": "Instalar Tailscale + TortoiseSVN + Unreal Engine 5.7.4",
+      "tema_principal": "Pre-producción",
+      "prioridad": "Medium",
       "milestone": "M1",
       "estado": "Working",
       "completitud": 0,
@@ -163,7 +187,31 @@
       "apoyo": null,
       "limite": null,
       "comentario": "",
-      "id": 9
+      "id": 9,
+      "asignados": [
+        "dkdidac-design"
+      ]
+    },
+    {
+      "rama": "PRO",
+      "descripcion": "Instalar Tailscale + TortoiseSVN + Unreal Engine 5.7.4",
+      "tema_principal": "Pre-producción",
+      "prioridad": "Medium",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": "Mitxel",
+      "detectado_por": "Axel",
+      "asignados": [
+        "mitxel2022"
+      ],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-05-24",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "id": 10
     }
   ]
 }
