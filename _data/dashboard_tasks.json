@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-24T13:31:06.003Z",
-  "last_updated_by": "Axlfc",
+  "last_updated": "2026-05-24T13:31:25.383Z",
+  "last_updated_by": "Axel",
   "tasks": [
     {
       "id": 1,
@@ -182,6 +182,27 @@
       "asignados": [
         "dkdidac-design"
       ]
+    },
+    {
+      "rama": "PRO",
+      "descripcion": "Instalar Tailscale + TortoiseSVN + Unreal Engine 5.7.4",
+      "tema_principal": "Programación / Engine",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": "Mitxel",
+      "detectado_por": "Axel",
+      "asignados": [
+        "mitxel2022"
+      ],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-05-24",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "id": 10
     }
   ]
 }
