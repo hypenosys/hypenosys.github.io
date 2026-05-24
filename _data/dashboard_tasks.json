@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-24T13:55:31.532Z",
+  "last_updated": "2026-05-24T13:55:43.673Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -65,7 +65,8 @@
       "comentario": "",
       "id": 3,
       "asignados": [
-        "axlfc"
+        "axlfc",
+        "topperh4rley"
       ]
     },
     {
