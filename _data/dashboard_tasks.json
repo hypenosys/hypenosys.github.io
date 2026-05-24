@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-24T13:46:53.893Z",
+  "last_updated": "2026-05-24T13:47:16.252Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -98,9 +98,9 @@
       "prioridad": "Critical",
       "milestone": "M1",
       "estado": "Pending",
-      "completitud": 0,
+      "completitud": 0.2,
       "resuelto_por": null,
-      "detectado_por": "Unassigned",
+      "detectado_por": "Alex",
       "rama2": null,
       "ver": true,
       "fecha": "2026-05-24",
@@ -109,7 +109,10 @@
       "comentario": "",
       "id": 5,
       "asignados": [
-        "topperh4rley"
+        "topperh4rley",
+        "javi26031994-a11y",
+        "dkdidac-design",
+        "mitxel2022"
       ]
     },
     {
