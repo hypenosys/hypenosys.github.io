@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-24T10:54:48.992Z",
-  "last_updated_by": "Sistema",
+  "last_updated": "2026-05-24T12:36:11.165Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -47,7 +47,7 @@
       "milestone": "M1",
       "estado": "Fixed",
       "completitud": 0,
-      "resuelto_por": "Alex",
+      "resuelto_por": "Axel",
       "detectado_por": "Axel",
       "rama2": null,
       "ver": true,
