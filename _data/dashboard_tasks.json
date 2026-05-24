@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-24T12:40:34.484Z",
-  "last_updated_by": "Sistema",
+  "last_updated": "2026-05-24T13:18:25.566Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -60,7 +60,7 @@
     {
       "rama": "DIS",
       "descripcion": "BrainStorm",
-      "tema_principal": "Build / Deploy",
+      "tema_principal": "Pre-producción",
       "prioridad": "Critical",
       "milestone": "M1",
       "estado": "Pending",
