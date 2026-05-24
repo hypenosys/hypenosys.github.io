@@ -1,0 +1,192 @@
+---
+layout: page
+title: "Guía de Supervivencia: UE5 + SVN (TortoiseSVN)"
+permalink: /guia-ue5-svn/
+---
+
+<div class="row">
+  <div class="col-12 mb-4">
+    <div class="jumbotron">
+      <h1 class="display-4 text-purple">Guía de Supervivencia: UE5 + SVN 🛠️</h1>
+      <p class="lead">Bienvenidos a la biblia de <strong>Hypenosys</strong>. Para que no nos matemos entre nosotros y el proyecto no explote, seguid estos pasos al pie de la letra.</p>
+    </div>
+  </div>
+</div>
+
+<div class="row mb-5">
+  <div class="col-12">
+    <h2 class="text-purple border-bottom border-purple pb-2 mb-4">Primeros pasos: Configuración inicial</h2>
+    <div class="row">
+      <div class="col-md-6 mb-4">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title text-purple">0. Añádete a la VPN de Tailscale</h5>
+            <p class="card-text">Tienes el enlace en md en Discord. Avisa a Axel para que te acepte.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 mb-4">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title text-purple">1. Instala TortoiseSVN</h5>
+            <p class="card-text">Descárgalo de <a href="https://tortoisesvn.net" target="_blank">tortoisesvn.net</a> e instálalo. Durante la instalación marca también <strong>"command line client tools"</strong>.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-12 mb-4">
+        <div class="card h-100 border-purple">
+          <div class="card-body">
+            <h5 class="card-title text-purple">2. Haz checkout del repo</h5>
+            <p class="card-text">Crea una carpeta donde quieras tener el proyecto, por ejemplo <code>C:\Proyectos\Hypenosys</code>. Clic derecho dentro → <strong>SVN Checkout</strong> y pon:</p>
+            <div class="bg-dark p-3 rounded font-weight-mono text-light text-xs">
+              URL: svn://preguntar.ip.a.axel/hypenosys/trunk<br>
+              Checkout directory: C:\Proyectos\Hypenosys\trunk
+            </div>
+            <p class="card-text mt-3">Usuario: tuusuarioquetepasoaxelpormdendiscord y la contraseña que le hayas dado.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 mb-4">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title text-purple">3. Abre el proyecto en Unreal</h5>
+            <p class="card-text">Abre UE y navega hasta <code>C:\Proyectos\Hypenosys\trunk\Hypenosys\</code> y abre el <strong>.uproject</strong>.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 mb-4">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title text-purple">4. Conecta Source Control en Unreal</h5>
+            <p class="card-text">En la barra inferior del editor → <strong>Revision Control</strong> → <strong>Connect to Revision Control</strong>:</p>
+            <ul class="text-xs">
+              <li><strong>Provider:</strong> Subversion</li>
+              <li><strong>Repository:</strong> svn://preguntar.ip.a.axel/hypenosys/trunk/Hypenosys</li>
+              <li><strong>Username:</strong> tuusuarioquetepasoaxelpormdendiscord</li>
+              <li><strong>Directorio de etiquetas:</strong> tags/</li>
+              <li><strong>Password:</strong> la que te pasé</li>
+            </ul>
+            <p class="card-text">Dale a <strong>Accept Settings</strong> — el icono debe ponerse verde.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-12 mb-4">
+        <div class="card h-100 bg-success-transparent">
+          <div class="card-body">
+            <h5 class="card-title text-success"><i class="fa-solid fa-circle-check"></i> 5. Comprueba que funciona</h5>
+            <p class="card-text">En el Content Browser, clic derecho sobre cualquier asset → debería aparecer el menú de SVN con opciones como Check Out, History, etc. Si las ve, está todo correcto.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="alert bg-danger-transparent border-danger text-light mt-3">
+      <strong>⚠️ IMPORTANTE:</strong> Antes de editar cualquier <code>.uasset</code> o <code>.umap</code> tienes que hacer <strong>Check Out</strong> primero para bloquear el archivo. Así nadie del equipo puede editarlo al mismo tiempo.
+    </div>
+  </div>
+</div>
+
+<div class="row mb-5">
+  <div class="col-12">
+    <h2 class="text-purple border-bottom border-purple pb-2 mb-4">Flujo de trabajo colaborativo con TortoiseSVN</h2>
+    <div class="list-group">
+      <div class="list-group-item bg-dark text-light border-purple mb-3 rounded shadow-sm">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1 text-purple">1. SVN Update al inicio de cada sesión</h5>
+          <span class="badge badge-skill">Obligatorio</span>
+        </div>
+        <p class="mb-1">Hazlo siempre antes de tocar nada. Te aseguras de tener los últimos cambios del equipo y evitas conflictos.</p>
+        <small class="text-muted">UI: Click derecho → SVN Update | CLI: <code>svn update</code></small>
+      </div>
+
+      <div class="list-group-item bg-dark text-light border-purple mb-3 rounded shadow-sm">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1 text-purple">2. Lock / Check Out antes de editar BINARIOS</h5>
+          <span class="badge badge-skill">Crítico</span>
+        </div>
+        <p class="mb-1">Unreal Engine usa archivos binarios (<code>.uasset</code>, <code>.umap</code>, etc.) que <strong>no se pueden fusionar automáticamente</strong>. Si dos personas los editan a la vez, uno perderá su trabajo.</p>
+        <small class="text-muted">UI: Click derecho → TortoiseSVN → Get Lock... | CLI: <code>svn lock [file]</code></small>
+      </div>
+
+      <div class="list-group-item bg-dark text-light border-purple mb-3 rounded shadow-sm">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1 text-purple">3. Edita tus archivos</h5>
+        </div>
+        <p class="mb-1">Trabaja normalmente en Unreal o tu software de elección (Blender, Photoshop, etc.).</p>
+        <small class="text-muted">Operación interna en el software correspondiente.</small>
+      </div>
+
+      <div class="list-group-item bg-dark text-light border-purple mb-3 rounded shadow-sm">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1 text-purple">4. SVN Commit con mensaje descriptivo</h5>
+        </div>
+        <p class="mb-1">Usa el formato: <code>[AREA] Breve descripción</code></p>
+        <div class="bg-dark p-2 rounded font-weight-mono text-teal text-xs border border-secondary mb-2">
+          Ejemplo: [ART] Updated character_base texture normals
+        </div>
+        <small class="text-muted">UI: Click derecho → SVN Commit... | CLI: <code>svn commit -m "[AREA] Message"</code></small>
+      </div>
+
+      <div class="list-group-item bg-dark text-light border-purple mb-3 rounded shadow-sm">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1 text-purple">5. Libera el bloqueo (Unlock)</h5>
+        </div>
+        <p class="mb-1">Normalmente TortoiseSVN lo hace solo al hacer commit, pero asegúrate de que el candado desaparezca para que otros puedan trabajar.</p>
+        <small class="text-muted">UI: Click derecho → TortoiseSVN → Release Lock... | CLI: <code>svn unlock [archivo]</code></small>
+      </div>
+
+      <div class="list-group-item bg-dark text-light border-purple mb-3 rounded shadow-sm">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1 text-purple">6. Nunca dejes bloqueos abiertos por la noche</h5>
+          <span class="badge badge-skill">Etiqueta</span>
+        </div>
+        <p class="mb-1">Si terminas tu jornada, sube tus cambios o libera el bloqueo. No seas "ese" compañero que bloquea el progreso de los demás mientras duerme.</p>
+        <small class="text-muted">UI: Click derecho → TortoiseSVN → Release Lock... | CLI: <code>svn unlock [archivo]</code></small>
+      </div>
+
+      <div class="list-group-item bg-dark text-light border-purple mb-3 rounded shadow-sm">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1 text-purple">7. ¿Qué hacer si un archivo está bloqueado?</h5>
+        </div>
+        <p class="mb-1">Comunícate por Discord. <strong>Nunca</strong> fuerces un bloqueo ("Steal lock") sin hablar antes con la persona que lo tiene.</p>
+        <small class="text-muted">UI: Click derecho → TortoiseSVN → Check for modifications → Check repository | CLI: <code>svn status -u</code></small>
+      </div>
+
+      <div class="list-group-item bg-dark text-light border-purple mb-3 rounded shadow-sm">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1 text-purple">8. SVN Cleanup para emergencias</h5>
+        </div>
+        <p class="mb-1">Si TortoiseSVN se queda "colgado" o da errores extraños de base de datos, el comando Cleanup suele arreglarlo.</p>
+        <small class="text-muted">UI: Click derecho → TortoiseSVN → Clean up... | CLI: <code>svn cleanup</code></small>
+      </div>
+    </div>
+
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <div class="alert bg-danger-transparent border-danger text-light h-100">
+          <strong>⚠️ IMPORTANTE:</strong> Nunca edites un binario sin haberlo bloqueado primero. Es la regla #1 para no romper el proyecto.
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="alert bg-info-transparent border-info text-light h-100">
+          <strong>💡 TIP:</strong> Haz commits pequeños y frecuentes. Es mucho más fácil seguir el hilo de lo que pasa y arreglar errores si subes cambios por partes.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <h2 class="text-purple border-bottom border-purple pb-2 mb-4">Reglas de Oro 📜</h2>
+    <ul class="tree-view">
+      <li><strong>NUNCA</strong> subas archivos binarios que no sean del proyecto (nada de <code>Intermediate</code>, <code>Saved</code>, o <code>DerivedDataCache</code>).</li>
+      <li><strong>SIEMPRE</strong> haz Update antes de empezar.</li>
+      <li><strong>SIEMPRE</strong> avisa por Discord si vas a tocar un nivel entero o el <code>ProjectSettings</code>.</li>
+      <li>Si sale un conflicto: <strong>NO ENTRES EN PÁNICO.</strong> Llama a Alex o Axel. No intentes arreglarlo borrando cosas al azar.</li>
+    </ul>
+
+    <div class="jumbotron mt-4 text-center">
+      <p class="italic">"Si sigues estos pasos, el SVN será tu amigo. Si no, será tu peor pesadilla." 💀</p>
+    </div>
+  </div>
+</div>
