@@ -184,7 +184,7 @@ async function recomputeAndSaveStats(tasksData) {
       total_tasks:     tasks.filter(t => t.estado !== 'Obsolete').length,
       total_ok:        tasks.filter(t => t.estado === 'OK').length,
       total_ko:        tasks.filter(t => t.estado === 'KO').length,
-      total_uncertain: tasks.filter(t => t.estado === '?').length,
+      total_uncertain: tasks.filter(t => ['?', 'In Review'].includes(t.estado)).length,
       total_obsolete:  tasks.filter(t => t.estado === 'Obsolete').length,
       fixed_found_ratio: parseFloat(computeFixedFoundRatio(tasks).toFixed(4)),
       verified_ratio: tasks.length > 0 ? parseFloat((tasks.filter(t => t.estado === 'OK').length / tasks.length).toFixed(4)) : 0,
@@ -391,6 +391,60 @@ async function updateBudget(mutatorFn, commitMessage) {
   return atomicWrite('_data/studio_budget.json', mutatorFn, commitMessage, mergeBudgetObjects);
 }
 
+async function archiveTask(taskId) {
+  let taskToArchive = null;
+
+  // 1. Remove from active tasks
+  await atomicWrite('_data/dashboard_tasks.json', (db) => {
+    const idx = db.tasks.findIndex(t => t.id === taskId);
+    if (idx === -1) throw new Error(`Tarea #${taskId} no encontrada en activos.`);
+    taskToArchive = db.tasks.splice(idx, 1)[0];
+    db.last_updated_by = _currentUser?.login || 'Sistema';
+    return db;
+  }, `chore: archivar tarea #${taskId}`, (local) => local);
+
+  if (!taskToArchive) return;
+
+  // 2. Add to archive
+  await atomicWrite('_data/dashboard_tasks_archive.json', (db) => {
+    if (!db.tasks.find(t => t.id === taskId)) {
+      db.tasks.push(taskToArchive);
+    }
+    db.last_updated_by = _currentUser?.login || 'Sistema';
+    return db;
+  }, `chore: tarea #${taskId} movida al archivo`, (local, remote) => {
+     local.tasks = mergeTaskArrays(local.tasks, remote.tasks);
+     return local;
+  });
+}
+
+async function restoreTask(taskId) {
+  let taskToRestore = null;
+
+  // 1. Remove from archive
+  await atomicWrite('_data/dashboard_tasks_archive.json', (db) => {
+    const idx = db.tasks.findIndex(t => t.id === taskId);
+    if (idx === -1) throw new Error(`Tarea #${taskId} no encontrada en el archivo.`);
+    taskToRestore = db.tasks.splice(idx, 1)[0];
+    db.last_updated_by = _currentUser?.login || 'Sistema';
+    return db;
+  }, `chore: desarchivar tarea #${taskId}`, (local) => local);
+
+  if (!taskToRestore) return;
+
+  // 2. Add back to active tasks
+  await atomicWrite('_data/dashboard_tasks.json', (db) => {
+    if (!db.tasks.find(t => t.id === taskId)) {
+      db.tasks.push(taskToRestore);
+    }
+    db.last_updated_by = _currentUser?.login || 'Sistema';
+    return db;
+  }, `chore: tarea #${taskId} restaurada desde el archivo`, (local, remote) => {
+     local.tasks = mergeTaskArrays(local.tasks, remote.tasks);
+     return local;
+  });
+}
+
 async function updateMemberProfile(memberName, profileDelta) {
   // 1. Update team_profiles.json
   await atomicWrite('_data/team_profiles.json', (db) => {
@@ -455,6 +509,10 @@ window.githubApi = {
     sessionStorage.setItem('gh_access_token', cleanToken);
     localStorage.setItem('github_token', cleanToken);
   },
+  setRepo(repo) {
+      if (!repo) return;
+      localStorage.setItem('github_repo', repo);
+  },
   clearAuth() {
     sessionStorage.removeItem('gh_access_token');
     localStorage.removeItem('github_token');
@@ -515,6 +573,8 @@ window.githubApi = {
   createTask,
   updateTaskStatus,
   updateTask,
+  archiveTask,
+  restoreTask,
   updateBudget,
   updateMemberProfile,
   recomputeAndSaveStats,
