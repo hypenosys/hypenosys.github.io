@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-24T10:03:10.678Z",
-  "last_updated_by": "Axel",
+  "last_updated": "2026-05-24T10:03:19.501Z",
+  "last_updated_by": "Sistema",
   "tasks": [
     {
       "id": 1,
@@ -45,7 +45,7 @@
       "tema_principal": "Programación / Engine",
       "prioridad": "Critical",
       "milestone": "M1",
-      "estado": "Pending",
+      "estado": "Working",
       "completitud": 0,
       "resuelto_por": null,
       "detectado_por": "Axel",
