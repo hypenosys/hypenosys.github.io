@@ -11,10 +11,10 @@ jobs:
       - uses: dangoslen/changelog-enforcer@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          changeLogPath: CHANGELOG.md
+          changeLogPath: CHANGELOG.html
           skipLabels: "skip-changelog,docs-only,chore"
           missingUpdateErrorMessage: |
-            ❌ Este PR no actualiza CHANGELOG.md.
+            ❌ Este PR no actualiza CHANGELOG.html.
             Añade una entrada en la sección [Unreleased] describiendo
             qué cambiaste y por qué. Formato: Keep a Changelog
             (https://keepachangelog.com/es/1.0.0/)
