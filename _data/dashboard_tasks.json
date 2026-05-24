@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-24T14:04:01.888Z",
+  "last_updated": "2026-05-24T14:07:21.297Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -168,7 +168,7 @@
       "tema_principal": "Pre-producción",
       "prioridad": "Medium",
       "milestone": "M1",
-      "estado": "Fixed",
+      "estado": "In Review",
       "completitud": 0,
       "resuelto_por": "Javi",
       "detectado_por": "Axel",
