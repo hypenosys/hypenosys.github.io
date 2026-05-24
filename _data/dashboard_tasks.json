@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-24T13:35:40.071Z",
-  "last_updated_by": "Javi",
+  "last_updated": "2026-05-24T13:37:39.155Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -82,7 +82,10 @@
       "apoyo": null,
       "limite": null,
       "comentario": "",
-      "id": 4
+      "id": 4,
+      "asignados": [
+        "javi26031994-a11y"
+      ]
     },
     {
       "rama": "PRO",
