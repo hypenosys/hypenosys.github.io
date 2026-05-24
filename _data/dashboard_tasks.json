@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-24T14:27:29.849Z",
+  "last_updated": "2026-05-24T14:27:38.105Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -201,6 +201,28 @@
         "axlfc",
         "javi26031994-a11y",
         "dkdidac-design"
+      ]
+    },
+    {
+      "rama": "PRO",
+      "descripcion": "Configurar SVN",
+      "tema_principal": "Programación / Engine",
+      "prioridad": "Critical",
+      "milestone": "M1",
+      "estado": "OK",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-05-24",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "id": 3,
+      "asignados": [
+        "axlfc",
+        "topperh4rley"
       ]
     }
   ]
