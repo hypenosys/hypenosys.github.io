@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-24T13:34:34.479Z",
+  "last_updated": "2026-05-24T13:34:41.729Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -187,7 +187,7 @@
       "rama": "PRO",
       "descripcion": "Instalar Tailscale + TortoiseSVN + Unreal Engine 5.7.4",
       "tema_principal": "Programación / Engine",
-      "prioridad": "Major",
+      "prioridad": "Medium",
       "milestone": "M1",
       "estado": "Pending",
       "completitud": 0,
