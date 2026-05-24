@@ -114,24 +114,40 @@ class AuthManager {
     }
 
     async handleSaveSettings() {
+        const btn = document.getElementById('btn-save-settings');
+        const originalHtml = btn.innerHTML;
+
         const token = document.getElementById('input-pat').value.trim();
         const repo = document.getElementById('input-repo').value.trim();
         const julesKey = document.getElementById('input-jules-key-modal').value.trim();
 
-        if (token) window.githubApi.setToken(token);
-        window.githubApi.setRepo(repo);
-
-        if (julesKey) {
-            localStorage.setItem('jules_api_key', julesKey);
-        } else {
-            localStorage.removeItem('jules_api_key');
-        }
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Conectando...';
 
         try {
+            // 1. Validar Token de GitHub (si se proporciona)
+            if (token) window.githubApi.setToken(token);
+            window.githubApi.setRepo(repo);
             const user = await window.githubApi.validateToken();
             this.updateHeaderUI(user);
+
+            // 2. Validar Jules API Key (Obligatorio para guardar/conectar)
+            if (!julesKey) {
+                throw new Error("Se requiere una Jules API Key para conectar con el agente de IA.");
+            }
+
+            try {
+                // Intentamos una llamada mínima a Jules para validar la clave
+                await window.julesApiCall('GET', '/sources', null, julesKey);
+                localStorage.setItem('jules_api_key', julesKey);
+            } catch (julesErr) {
+                console.error("Jules validation failed:", julesErr);
+                throw new Error("Jules API Key inválida o error de conexión: " + julesErr.message);
+            }
+
+            // Si todo OK, cerramos y notificamos
             $('#settingsModal').modal('hide');
-            this.showToast('Éxito', 'Configuración actualizada.', 'success');
+            this.showToast('Éxito', 'Conexión establecida con GitHub y Jules.', 'success');
 
             // Dispatch event for other components (like Jules Panel) to refresh
             document.dispatchEvent(new CustomEvent('settingsSaved'));
@@ -140,7 +156,12 @@ class AuthManager {
                 setTimeout(() => window.location.reload(), 1000);
             }
         } catch (e) {
-            this.handleAuthError(e);
+            console.error("Save settings failed:", e);
+            this.showToast('Error de Conexión', e.message, 'error');
+            // NO cerramos el modal si hay error
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = originalHtml;
         }
     }
 
