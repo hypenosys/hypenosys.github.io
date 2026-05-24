@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-24T14:13:45.594Z",
+  "last_updated": "2026-05-24T14:13:52.729Z",
   "last_updated_by": "Sistema",
   "tasks": [
     {
@@ -75,7 +75,7 @@
       "tema_principal": "Concepto / GDD",
       "prioridad": "Critical",
       "milestone": "M1",
-      "estado": "Working",
+      "estado": "Pending",
       "completitud": 0,
       "resuelto_por": null,
       "detectado_por": "Alex",
