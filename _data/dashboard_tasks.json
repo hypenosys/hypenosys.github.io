@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-24T12:40:14.977Z",
-  "last_updated_by": "Sistema",
+  "last_updated": "2026-05-24T12:40:30.193Z",
+  "last_updated_by": "Axel",
   "tasks": [
     {
       "id": 1,
@@ -146,6 +146,24 @@
       "limite": null,
       "comentario": "",
       "id": 8
+    },
+    {
+      "rama": "PRO",
+      "descripcion": "Instalar Tailscale + Tortoise + Unreal Engine 5.7.4",
+      "tema_principal": "Programación / Engine",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": "Dídac",
+      "detectado_por": "Axel",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-05-24",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "id": 9
     }
   ]
 }
