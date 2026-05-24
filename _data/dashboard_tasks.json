@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-24T13:31:25.383Z",
-  "last_updated_by": "Axel",
+  "last_updated": "2026-05-24T13:32:07.333Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -35,7 +35,7 @@
       "resuelto_por": null,
       "apoyo": null,
       "estado": "OK",
-      "prioridad": "Major",
+      "prioridad": "Critical",
       "limite": null,
       "comentario": "",
       "milestone": "M1",
