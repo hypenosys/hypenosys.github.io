@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-24T13:30:37.589Z",
+  "last_updated": "2026-05-24T13:30:45.401Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -40,7 +40,10 @@
       "comentario": "",
       "milestone": "M1",
       "completitud": 0,
-      "id": 2
+      "id": 2,
+      "asignados": [
+        "axlfc"
+      ]
     },
     {
       "rama": "PRO",
