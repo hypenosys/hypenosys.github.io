@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-24T13:18:25.566Z",
+  "last_updated": "2026-05-24T13:18:41.401Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -60,7 +60,7 @@
     {
       "rama": "DIS",
       "descripcion": "BrainStorm",
-      "tema_principal": "Pre-producción",
+      "tema_principal": "Concepto / GDD",
       "prioridad": "Critical",
       "milestone": "M1",
       "estado": "Pending",
