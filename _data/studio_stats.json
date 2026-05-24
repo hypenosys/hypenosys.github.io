@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0.0",
-  "last_computed": "2026-05-24T13:46:54.629Z",
+  "last_computed": "2026-05-24T13:47:17.021Z",
   "global": {
     "total_tasks": 10,
     "total_ok": 4,
     "total_ko": 0,
     "total_uncertain": 0,
     "total_obsolete": 0,
-    "fixed_found_ratio": 0.4444,
+    "fixed_found_ratio": 0.4,
     "verified_ratio": 0.4,
     "by_priority": {
       "Critical": {
@@ -57,12 +57,12 @@
       "score": 0.46
     },
     "Alex": {
-      "found": 2,
+      "found": 3,
       "fixed": 1,
       "fixed_ok": 1,
       "support": 0,
       "support_ok": 0,
-      "score": 0.185
+      "score": 0.215
     },
     "Dídac": {
       "found": 0,
@@ -103,8 +103,8 @@
       "rank": 2,
       "medal": "🥇",
       "name": "Alex",
-      "score": 0.185,
-      "found": 2,
+      "score": 0.215,
+      "found": 3,
       "fixed_ok": 1,
       "support_ok": 0
     },
