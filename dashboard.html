@@ -221,6 +221,30 @@
                 <!-- Profile cards -->
             </div>
         </section>
+
+        <!-- Cementerio de Tareas (Archive Section) -->
+        <section id="task-archive-section" class="bg-slate-900/30 rounded-2xl border border-slate-800/50 overflow-hidden transition-all opacity-60 hover:opacity-100">
+            <button onclick="toggleArchiveCollapse()" class="w-full flex items-center justify-between p-6 hover:bg-slate-800/50 transition-all">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-full bg-slate-950 flex items-center justify-center text-slate-600 border border-slate-800">
+                        <i class="fa-solid fa-tombstone text-xl"></i>
+                    </div>
+                    <div class="text-left">
+                        <h2 class="text-xl font-bold text-slate-400">Cementerio de Tareas</h2>
+                        <p class="text-[10px] font-mono text-slate-500 uppercase tracking-widest">Tareas archivadas y fuera de la línea de producción activa</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span id="archive-count" class="text-xs font-mono text-slate-500 bg-slate-950 px-2 py-1 rounded">0 Tareas</span>
+                    <i id="archive-chevron" class="fa-solid fa-chevron-down text-slate-600"></i>
+                </div>
+            </button>
+            <div id="archive-content" class="hidden p-6 pt-0">
+                <div id="archived-tasks-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    <!-- Archived cards injected here -->
+                </div>
+            </div>
+        </section>
     </main>
 
     <!-- Footer -->
@@ -299,7 +323,7 @@
                             <option value="Working">Working</option>
                             <option value="KO">KO</option>
                             <option value="Fixed">Fixed</option>
-                            <option value="?">?</option>
+                            <option value="In Review">In Review</option>
                             <option value="OK">OK</option>
                             <option value="Closed">Closed</option>
                             <option value="Obsolete">Obsolete</option>

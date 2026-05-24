@@ -17,6 +17,7 @@ const REFRESH_INTERVAL_MS = 30000; // 30 seconds
 let activeFilter = null;
 let activeStageFilter = null;
 let currentTasks = [];
+let archivedTasks = [];
 let currentStats = null;
 let currentBudget = null;
 let currentProfiles = null;
@@ -24,9 +25,21 @@ let currentProfiles = null;
 const KANBAN_COLUMNS = [
   { id: 'backlog',    label: 'Backlog / ToDo',        states: ['Pending','ToDo',null],           icon: '📋' },
   { id: 'working',   label: 'En Progreso',             states: ['Working','KO'],                  icon: '⚡' },
-  { id: 'qa',        label: 'QA / Manual Test',        states: ['Fixed','?'],                     icon: '🧪' },
+  { id: 'qa',        label: 'QA / Manual Test',        states: ['Fixed','In Review'],             icon: '🧪' },
   { id: 'done',      label: 'Completado',              states: ['OK','Closed'],                   icon: '✅' }
 ];
+
+const STATE_CONFIG = {
+    'Pending':  { color: 'bg-slate-700 text-slate-300', label: 'Pending' },
+    'ToDo':     { color: 'bg-indigo-500 text-white', label: 'ToDo' },
+    'Working':  { color: 'bg-amber-500 text-slate-950', label: 'Working' },
+    'KO':       { color: 'bg-red-500 text-slate-950', label: 'KO' },
+    'Fixed':    { color: 'bg-blue-500 text-slate-950', label: 'Fixed' },
+    'In Review':{ color: 'bg-purple-500 text-white', label: 'In Review' },
+    'OK':       { color: 'bg-emerald-500 text-slate-950', label: 'OK' },
+    'Closed':   { color: 'bg-slate-800 text-slate-400', label: 'Closed' },
+    'Obsolete': { color: 'bg-slate-950 text-slate-600 line-through', label: 'Obsolete' }
+};
 
 const UI_STRINGS = {
   loading:         'Cargando datos del repositorio...',
@@ -147,14 +160,16 @@ function startAutoRefresh() {
 
 async function refreshDashboardData() {
   try {
-    const [tasksRes, statsRes, budgetRes, profilesRes] = await Promise.all([
+    const [tasksRes, archiveRes, statsRes, budgetRes, profilesRes] = await Promise.all([
       window.githubApi.fetchFileWithSha('_data/dashboard_tasks.json'),
+      window.githubApi.fetchFileWithSha('_data/dashboard_tasks_archive.json'),
       window.githubApi.fetchFileWithSha('_data/studio_stats.json'),
       window.githubApi.fetchFileWithSha('_data/studio_budget.json'),
       window.githubApi.fetchFileWithSha('_data/team_profiles.json')
     ]);
 
     currentTasks    = tasksRes.content.tasks || [];
+    archivedTasks   = archiveRes.content.tasks || [];
     currentStats    = statsRes.content;
     currentBudget   = budgetRes.content;
     currentProfiles = profilesRes.content;
@@ -189,6 +204,7 @@ function renderDashboard() {
   renderHallOfFame();
   renderMilestoneProgress();
   renderTeamProfiles();
+  renderTaskArchive();
 
   // Part 2 — Production Pipeline
   renderCriticalPathAlerts();
@@ -269,16 +285,18 @@ function renderKanbanBoard() {
 }
 
 function getTaskColumn(task) {
-  if (['Pending','ToDo'].includes(task.estado) || task.estado === null) return 'backlog';
-  if (['Working','KO'].includes(task.estado)) return 'working';
-  if (task.estado === 'Fixed' || (task.estado === '?' && task.completitud > 0 && task.completitud < 1)) return 'qa';
-  if (['OK','Closed'].includes(task.estado)) return 'done';
+  const estado = task.estado === '?' ? 'In Review' : task.estado;
+  if (['Pending','ToDo'].includes(estado) || estado === null) return 'backlog';
+  if (['Working','KO'].includes(estado)) return 'working';
+  if (estado === 'Fixed' || estado === 'In Review') return 'qa';
+  if (['OK','Closed'].includes(estado)) return 'done';
   return 'backlog';
 }
 
 function buildTaskCard(task) {
+  const isMinimized = localStorage.getItem(`task_minimized_${task.id}`) === 'true';
   const card = document.createElement('div');
-  card.className = `bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-sm cursor-grab active:cursor-grabbing hover:border-slate-500 transition-colors group relative`;
+  card.className = `bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-sm cursor-grab active:cursor-grabbing hover:border-slate-500 transition-all group relative ${isMinimized ? 'py-2' : ''}`;
   card.draggable = true;
   card.addEventListener('dragstart', e => {
     e.dataTransfer.setData('text/plain', String(task.id));
@@ -287,68 +305,129 @@ function buildTaskCard(task) {
   card.addEventListener('dragend', () => card.classList.remove('opacity-50'));
 
   const priorityColors = {
-    Critical: 'bg-red-900 text-red-300',
-    Major:    'bg-orange-900 text-orange-300',
-    Medium:   'bg-yellow-900 text-yellow-300',
+    Critical: 'bg-red-500 text-slate-950 font-black',
+    Major:    'bg-orange-500 text-slate-950 font-black',
+    Medium:   'bg-yellow-500 text-slate-950 font-black',
     Minor:    'bg-slate-700 text-slate-300',
     Cosmetic: 'bg-slate-800 text-slate-400',
-    ToDo:     'bg-indigo-900 text-indigo-300',
-    Obsolete: 'bg-slate-900 text-slate-500 line-through'
+    ToDo:     'bg-indigo-500 text-white font-bold',
+    Obsolete: 'bg-slate-950 text-slate-500 line-through'
   };
 
-  card.innerHTML = `
-    <div class="flex justify-between items-start mb-2">
-      <div class="flex gap-2 items-center">
-        <span class="text-[9px] font-mono text-slate-500">#${task.id}</span>
-        <button onclick="openEditTaskModal(${task.id})" class="text-[10px] text-slate-500 hover:text-white opacity-0 group-hover:opacity-100 transition-all">
-          <i class="fa-solid fa-pencil"></i>
-        </button>
-      </div>
-      <span class="text-[9px] font-bold px-1.5 py-0.5 rounded ${priorityColors[task.prioridad] || 'bg-slate-700'}">${task.prioridad.toUpperCase()}</span>
-    </div>
-    <p class="text-sm text-slate-200 leading-snug mb-3">${task.descripcion}</p>
+  const priorityColorsMinimized = {
+    Critical: 'bg-red-500 text-slate-950',
+    Major:    'bg-orange-500 text-slate-950',
+    Medium:   'bg-yellow-500 text-slate-950',
+    Minor:    'bg-slate-700 text-slate-300',
+    Cosmetic: 'bg-slate-800 text-slate-400',
+    ToDo:     'bg-indigo-500 text-white',
+    Obsolete: 'bg-slate-950 text-slate-500 line-through'
+  };
 
-    <div class="mb-3">
-        <select onchange="handleQuickStageUpdate(${task.id}, this.value)" class="w-full bg-slate-950/50 border border-slate-700 rounded text-[10px] p-1 text-slate-400 focus:text-white focus:border-indigo-500 outline-none">
-            ${STAGES.map(s => `<option value="${s}" ${task.tema_principal === s ? 'selected' : ''}>${s}</option>`).join('')}
-        </select>
-    </div>
+  const estado = task.estado === '?' ? 'In Review' : (task.estado || 'Pending');
+  const stateInfo = STATE_CONFIG[estado] || { color: 'bg-slate-700', label: estado };
 
-    ${task.jules_session_id ? `
-    <div class="mb-3 p-2 bg-indigo-500/10 border border-indigo-500/20 rounded flex items-center justify-between">
-        <span class="text-[9px] font-bold text-indigo-400 flex items-center gap-1">
-            <i class="fa-solid fa-robot"></i> JULES
-        </span>
-        <span id="jules-status-${task.id}" class="text-[8px] font-mono text-indigo-300 uppercase">Cargando...</span>
-    </div>
-    ` : ''}
+    const canArchive = ['OK', 'Closed', 'Obsolete'].includes(estado);
 
-    <div class="flex justify-between items-end">
-      <div class="flex flex-col gap-2">
-        <div class="flex -space-x-2">
-          ${task.resuelto_por ? `<div onclick="scrollToProfile('${task.resuelto_por}')" title="Resuelto por: ${task.resuelto_por}" class="w-6 h-6 rounded-full bg-emerald-500 border-2 border-slate-800 flex items-center justify-center text-[8px] font-bold text-slate-950 cursor-pointer hover:scale-110 transition-transform">${task.resuelto_por[0]}</div>` : ''}
-          ${task.detectado_por ? `<div onclick="scrollToProfile('${task.detectado_por}')" title="Detectado por: ${task.detectado_por}" class="w-6 h-6 rounded-full bg-indigo-500 border-2 border-slate-800 flex items-center justify-center text-[8px] font-bold text-white cursor-pointer hover:scale-110 transition-transform">${task.detectado_por[0]}</div>` : ''}
-          ${task.apoyo ? `<div onclick="scrollToProfile('${task.apoyo}')" title="Apoyo: ${task.apoyo}" class="w-6 h-6 rounded-full bg-purple-500 border-2 border-slate-800 flex items-center justify-center text-[8px] font-bold text-white cursor-pointer hover:scale-110 transition-transform">${task.apoyo[0]}</div>` : ''}
+  if (isMinimized) {
+    card.innerHTML = `
+      <div class="flex justify-between items-center gap-2">
+        <div class="flex items-center gap-2 overflow-hidden">
+          <span class="text-[9px] font-mono text-slate-500 flex-shrink-0">#${task.id}</span>
+          <button onclick="openEditTaskModal(${task.id})" class="text-[10px] text-slate-500 hover:text-white opacity-0 group-hover:opacity-100 transition-all flex-shrink-0">
+            <i class="fa-solid fa-pencil"></i>
+          </button>
+          <p class="text-xs text-slate-200 truncate font-semibold">${task.descripcion}</p>
         </div>
-
-        <div onclick="openAssignmentModal(${task.id})" class="flex -space-x-1.5 cursor-pointer hover:opacity-80 transition-opacity min-h-[24px] items-center">
-          ${(task.asignados || []).length > 0
-            ? task.asignados.map(handle => {
-                const name = MEMBER_MAPPING[handle] || handle;
-                return `<img src="https://github.com/${handle}.png" class="w-6 h-6 rounded-full border-2 border-slate-800 shadow-sm" title="Asignado: ${name}">`;
-              }).join('')
-            : `<div class="w-6 h-6 rounded-full border border-dashed border-slate-600 flex items-center justify-center text-slate-500 hover:border-emerald-500 hover:text-emerald-500 transition-colors">
-                 <i class="fa-solid fa-plus text-[10px]"></i>
-               </div>`
-          }
+        <div class="flex items-center gap-1 flex-shrink-0">
+          ${canArchive ? `
+            <button onclick="handleArchiveTask(${task.id})" class="text-slate-500 hover:text-emerald-400 mr-1 transition-colors" title="Archivar">
+                <i class="fa-solid fa-box-archive text-[10px]"></i>
+            </button>
+          ` : ''}
+          <span class="text-[8px] font-bold px-1 py-0.5 rounded ${priorityColorsMinimized[task.prioridad] || 'bg-slate-700'}">${task.prioridad[0]}</span>
+          <span class="text-[8px] font-bold px-1 py-0.5 rounded ${stateInfo.color}">${stateInfo.label}</span>
+          <button onclick="toggleTaskMinimize(${task.id})" class="text-slate-500 hover:text-white ml-1">
+            <i class="fa-solid fa-chevron-down"></i>
+          </button>
         </div>
       </div>
-      <div class="text-[9px] font-bold text-slate-500 uppercase tracking-tighter">
-        ${task.rama}${task.rama2 ? ` / ${task.rama2}` : ''}
+    `;
+  } else {
+    card.innerHTML = `
+      <div class="flex justify-between items-start mb-2">
+        <div class="flex gap-2 items-center">
+          <span class="text-[9px] font-mono text-slate-500">#${task.id}</span>
+          <button onclick="openEditTaskModal(${task.id})" class="text-[10px] text-slate-500 hover:text-white opacity-0 group-hover:opacity-100 transition-all">
+            <i class="fa-solid fa-pencil"></i>
+          </button>
+        </div>
+        <div class="flex gap-2 items-center">
+          ${canArchive ? `
+            <button onclick="handleArchiveTask(${task.id})" class="text-[10px] font-bold text-slate-500 hover:text-emerald-400 flex items-center gap-1 px-2 py-0.5 bg-slate-900 rounded border border-slate-700 transition-all mr-2" title="Mover al Cementerio">
+                <i class="fa-solid fa-box-archive"></i> ARCHIVAR
+            </button>
+          ` : ''}
+          <span class="text-[9px] font-bold px-1.5 py-0.5 rounded ${priorityColors[task.prioridad] || 'bg-slate-700'}">${task.prioridad.toUpperCase()}</span>
+          <button onclick="toggleTaskMinimize(${task.id})" class="text-slate-500 hover:text-white">
+            <i class="fa-solid fa-chevron-up"></i>
+          </button>
+        </div>
       </div>
-    </div>
-  `;
+      <p class="text-sm text-slate-200 leading-snug mb-3">${task.descripcion}</p>
+
+      <div class="mb-3">
+          <select onchange="handleQuickStageUpdate(${task.id}, this.value)" class="w-full bg-slate-950/50 border border-slate-700 rounded text-[10px] p-1 text-slate-400 focus:text-white focus:border-indigo-500 outline-none">
+              ${STAGES.map(s => `<option value="${s}" ${task.tema_principal === s ? 'selected' : ''}>${s}</option>`).join('')}
+          </select>
+      </div>
+
+      ${task.jules_session_id ? `
+      <div class="mb-3 p-2 bg-indigo-500/10 border border-indigo-500/20 rounded flex items-center justify-between">
+          <span class="text-[9px] font-bold text-indigo-400 flex items-center gap-1">
+              <i class="fa-solid fa-robot"></i> JULES
+          </span>
+          <span id="jules-status-${task.id}" class="text-[8px] font-mono text-indigo-300 uppercase">Cargando...</span>
+      </div>
+      ` : ''}
+
+      <div class="flex justify-between items-end">
+        <div class="flex flex-col gap-2">
+          <div class="flex items-center gap-2">
+            <div class="flex -space-x-2">
+              ${task.resuelto_por ? `<div onclick="scrollToProfile('${task.resuelto_por}')" title="Resuelto por: ${task.resuelto_por}" class="w-6 h-6 rounded-full bg-emerald-500 border-2 border-slate-800 flex items-center justify-center text-[8px] font-bold text-slate-950 cursor-pointer hover:scale-110 transition-transform">${task.resuelto_por[0]}</div>` : ''}
+              ${task.detectado_por ? `<div onclick="scrollToProfile('${task.detectado_por}')" title="Detectado por: ${task.detectado_por}" class="w-6 h-6 rounded-full bg-indigo-500 border-2 border-slate-800 flex items-center justify-center text-[8px] font-bold text-white cursor-pointer hover:scale-110 transition-transform">${task.detectado_por[0]}</div>` : ''}
+              ${task.apoyo ? `<div onclick="scrollToProfile('${task.apoyo}')" title="Apoyo: ${task.apoyo}" class="w-6 h-6 rounded-full bg-purple-500 border-2 border-slate-800 flex items-center justify-center text-[8px] font-bold text-white cursor-pointer hover:scale-110 transition-transform">${task.apoyo[0]}</div>` : ''}
+            </div>
+            <span class="text-[8px] font-bold px-1.5 py-0.5 rounded ${stateInfo.color}">${stateInfo.label.toUpperCase()}</span>
+          </div>
+
+          <div onclick="openAssignmentModal(${task.id})" class="flex -space-x-1.5 cursor-pointer hover:opacity-80 transition-opacity min-h-[24px] items-center">
+            ${(task.asignados || []).length > 0
+              ? task.asignados.map(handle => {
+                  const name = MEMBER_MAPPING[handle] || handle;
+                  return `<img src="https://github.com/${handle}.png" class="w-6 h-6 rounded-full border-2 border-slate-800 shadow-sm" title="Asignado: ${name}">`;
+                }).join('')
+              : `<div class="w-6 h-6 rounded-full border border-dashed border-slate-600 flex items-center justify-center text-slate-500 hover:border-emerald-500 hover:text-emerald-500 transition-colors">
+                   <i class="fa-solid fa-plus text-[10px]"></i>
+                 </div>`
+            }
+          </div>
+        </div>
+        <div class="text-[9px] font-bold text-slate-500 uppercase tracking-tighter">
+          ${task.rama}${task.rama2 ? ` / ${task.rama2}` : ''}
+        </div>
+      </div>
+    `;
+  }
   return card;
+}
+
+function toggleTaskMinimize(taskId) {
+  const key = `task_minimized_${taskId}`;
+  const current = localStorage.getItem(key) === 'true';
+  localStorage.setItem(key, !current);
+  renderKanbanBoard();
 }
 
 // ─── CHART RENDERING ──────────────────────────────────────────
@@ -534,20 +613,28 @@ function renderCriticalPathAlerts() {
   if (!panel) return;
   panel.innerHTML = '';
 
+  const isCollapsed = localStorage.getItem('alerts_panel_collapsed') === 'true';
   const alerts = [];
   const today = new Date().toISOString().split('T')[0];
 
-  currentTasks.forEach(t => {
+  const tasksToAnalyze = getFilteredTasks(currentTasks);
+
+  tasksToAnalyze.forEach(t => {
     if (t.estado === 'Obsolete' || t.estado === 'OK' || t.estado === 'Closed') return;
 
-    if (t.prioridad === 'Critical') {
+    const estado = t.estado === '?' ? 'In Review' : (t.estado || 'Pending');
+
+    if (t.prioridad === 'Critical' && ['Pending', 'ToDo', 'Working'].includes(estado)) {
       alerts.push({ type: 'error', msg: `TAREA CRÍTICA PENDIENTE: #${t.id} - ${t.descripcion}`, taskId: t.id });
     }
     if (t.limite && t.limite < today) {
       alerts.push({ type: 'warning', msg: `FECHA LÍMITE SUPERADA: #${t.id} - ${t.descripcion}`, taskId: t.id });
     }
-    if (t.estado === 'Working' && !t.resuelto_por) {
+    if (estado === 'Working' && (!t.asignados || t.asignados.length === 0)) {
       alerts.push({ type: 'info', msg: `TAREA EN PROGRESO SIN ASIGNAR: #${t.id} - ${t.descripcion}`, taskId: t.id });
+    }
+    if (estado === 'KO') {
+        alerts.push({ type: 'error', msg: `TAREA EN ESTADO KO: #${t.id} - ${t.descripcion}`, taskId: t.id });
     }
   });
 
@@ -564,22 +651,53 @@ function renderCriticalPathAlerts() {
 
   if (alerts.length > 0) {
     panel.classList.remove('hidden');
-    alerts.forEach(a => {
-      const div = document.createElement('div');
-      const colors = { error: 'bg-red-900/30 border-red-500 text-red-200', warning: 'bg-amber-900/30 border-amber-500 text-amber-200', info: 'bg-indigo-900/30 border-indigo-500 text-indigo-200' };
-      div.className = `p-4 rounded-xl border-l-4 flex justify-between items-center ${colors[a.type]}`;
-      div.innerHTML = `
-        <span class="text-sm font-bold flex items-center gap-2">
-          <i class="fa-solid ${a.type === 'error' ? 'fa-circle-exclamation' : a.type === 'warning' ? 'fa-triangle-exclamation' : 'fa-circle-info'}"></i>
-          ${a.msg}
-        </span>
-        ${a.taskId ? `<button onclick="scrollToTask(${a.taskId})" class="px-3 py-1 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-bold transition-all uppercase">Ver Tarea</button>` : ''}
-      `;
-      panel.appendChild(div);
-    });
+
+    if (isCollapsed) {
+        const bar = document.createElement('div');
+        bar.className = 'bg-slate-900 border border-slate-800 rounded-xl p-2 flex items-center justify-between cursor-pointer hover:bg-slate-800 transition-all';
+        bar.onclick = toggleAlertsPanel;
+        bar.innerHTML = `
+            <div class="flex items-center gap-3">
+                <span class="bg-red-500 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full pulse-emerald">${alerts.length}</span>
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Alertas de Ruta Crítica activas</span>
+            </div>
+            <i class="fa-solid fa-chevron-down text-slate-600 mr-2"></i>
+        `;
+        panel.appendChild(bar);
+    } else {
+        const header = document.createElement('div');
+        header.className = 'flex justify-between items-center mb-2 px-2';
+        header.innerHTML = `
+            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Panel de Alertas Críticas</span>
+            <button onclick="toggleAlertsPanel()" class="text-slate-500 hover:text-white transition-colors text-xs flex items-center gap-1">
+                <i class="fa-solid fa-chevron-up"></i> Colapsar
+            </button>
+        `;
+        panel.appendChild(header);
+
+        alerts.forEach(a => {
+          const div = document.createElement('div');
+          const colors = { error: 'bg-red-900/30 border-red-500 text-red-200', warning: 'bg-amber-900/30 border-amber-500 text-amber-200', info: 'bg-indigo-900/30 border-indigo-500 text-indigo-200' };
+          div.className = `p-4 rounded-xl border-l-4 flex justify-between items-center ${colors[a.type]}`;
+          div.innerHTML = `
+            <span class="text-sm font-bold flex items-center gap-2">
+              <i class="fa-solid ${a.type === 'error' ? 'fa-circle-exclamation' : a.type === 'warning' ? 'fa-triangle-exclamation' : 'fa-circle-info'}"></i>
+              ${a.msg}
+            </span>
+            ${a.taskId ? `<button onclick="scrollToTask(${a.taskId})" class="px-3 py-1 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-bold transition-all uppercase">Ver Tarea</button>` : ''}
+          `;
+          panel.appendChild(div);
+        });
+    }
   } else {
     panel.classList.add('hidden');
   }
+}
+
+function toggleAlertsPanel() {
+    const current = localStorage.getItem('alerts_panel_collapsed') === 'true';
+    localStorage.setItem('alerts_panel_collapsed', !current);
+    renderCriticalPathAlerts();
 }
 
 function scrollToTask(id) {
@@ -1018,7 +1136,9 @@ function openEditTaskModal(taskId) {
     document.getElementById('task-priority-input').value = task.prioridad || 'Major';
     document.getElementById('task-milestone-input').value = task.milestone || 'M1';
     document.getElementById('task-topic-input').value = task.tema_principal || 'Programación / Engine';
-    document.getElementById('task-status-input').value = task.estado || 'Pending';
+    let status = task.estado || 'Pending';
+    if (status === '?') status = 'In Review';
+    document.getElementById('task-status-input').value = status;
     document.getElementById('task-completion-input').value = task.completitud || '0';
     document.getElementById('task-resolver-input').value = task.resuelto_por || '';
     document.getElementById('task-detector-input').value = task.detectado_por || '';
@@ -1135,6 +1255,82 @@ async function handleCreateTask() {
   }
 }
 
+async function handleArchiveTask(taskId) {
+    if (!confirm(`¿Estás seguro de que quieres enviar la tarea #${taskId} al Cementerio?`)) return;
+    showToast(UI_STRINGS.saving, 'info');
+    try {
+        await window.githubApi.archiveTask(taskId);
+        showToast(`Tarea #${taskId} enviada al Cementerio`, 'success');
+        await refreshDashboardData();
+    } catch (err) {
+        showToast(`Error: ${err.message}`, 'error');
+    }
+}
+
+async function handleRestoreTask(taskId) {
+    showToast(UI_STRINGS.saving, 'info');
+    try {
+        await window.githubApi.restoreTask(taskId);
+        showToast(`Tarea #${taskId} resucitada del Cementerio`, 'success');
+        await refreshDashboardData();
+    } catch (err) {
+        showToast(`Error: ${err.message}`, 'error');
+    }
+}
+
+function renderTaskArchive() {
+    const grid = document.getElementById('archived-tasks-grid');
+    const countEl = document.getElementById('archive-count');
+    if (!grid || !countEl) return;
+
+    countEl.textContent = `${archivedTasks.length} Tareas`;
+    grid.innerHTML = '';
+
+    archivedTasks.sort((a, b) => b.id - a.id).forEach(task => {
+        const card = document.createElement('div');
+        card.className = 'bg-slate-950/50 p-4 rounded-xl border border-slate-800 flex flex-col gap-2 group hover:border-slate-700 transition-all';
+
+        const estado = task.estado === '?' ? 'In Review' : (task.estado || 'Pending');
+        const stateInfo = STATE_CONFIG[estado] || { color: 'bg-slate-700', label: estado };
+
+        card.innerHTML = `
+            <div class="flex justify-between items-start">
+                <div class="flex items-center gap-2">
+                    <span class="text-[9px] font-mono text-slate-600">#${task.id}</span>
+                    <span class="text-[8px] font-bold px-1.5 py-0.5 rounded ${stateInfo.color} opacity-60">${stateInfo.label}</span>
+                </div>
+                <button onclick="handleRestoreTask(${task.id})" class="text-[10px] font-bold text-emerald-500 hover:text-emerald-400 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                    <i class="fa-solid fa-hand-holding-heart"></i> RESUCITAR
+                </button>
+            </div>
+            <p class="text-xs text-slate-400 line-clamp-2">${task.descripcion}</p>
+            <div class="flex justify-between items-center mt-2 border-t border-slate-800 pt-2">
+                <span class="text-[8px] text-slate-600 font-mono">${task.fecha}</span>
+                <span class="text-[8px] text-slate-600 font-bold uppercase">${task.tema_principal}</span>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+function toggleArchiveCollapse() {
+    const content = document.getElementById('archive-content');
+    const chevron = document.getElementById('archive-chevron');
+    const section = document.getElementById('task-archive-section');
+
+    const isHidden = content.classList.contains('hidden');
+    if (isHidden) {
+        content.classList.remove('hidden');
+        chevron.classList.replace('fa-chevron-down', 'fa-chevron-up');
+        section.classList.remove('opacity-60');
+        section.classList.add('opacity-100');
+    } else {
+        content.classList.add('hidden');
+        chevron.classList.replace('fa-chevron-up', 'fa-chevron-down');
+        section.classList.add('opacity-60');
+    }
+}
+
 async function handleCardDrop(taskId, targetColumnId) {
   const stateMap = { backlog: 'Pending', working: 'Working', qa: 'Fixed', done: 'OK' };
   const newEstado = stateMap[targetColumnId];
@@ -1232,10 +1428,12 @@ function getFilteredTasks(tasks) {
   let filtered = tasks;
 
   if (activeFilter) {
+    const activeHandle = Object.keys(MEMBER_MAPPING).find(key => MEMBER_MAPPING[key] === activeFilter);
     filtered = filtered.filter(t =>
       t.resuelto_por === activeFilter ||
       t.detectado_por === activeFilter ||
-      t.apoyo === activeFilter
+      t.apoyo === activeFilter ||
+      (t.asignados && t.asignados.includes(activeHandle))
     );
   }
 
