@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-24T10:25:06.049Z",
-  "last_updated_by": "Unassigned",
+  "last_updated": "2026-05-24T10:54:32.136Z",
+  "last_updated_by": "Axel",
   "tasks": [
     {
       "id": 1,
@@ -92,6 +92,24 @@
       "limite": null,
       "comentario": "",
       "id": 5
+    },
+    {
+      "rama": "PRO",
+      "descripcion": "Engatusar a Dídac y Mitxel para que se unan al Tailscale",
+      "tema_principal": "Tools / Automation",
+      "prioridad": "Critical",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Axel",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-05-24",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "id": 6
     }
   ]
 }
