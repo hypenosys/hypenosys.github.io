@@ -11,7 +11,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
         body { font-family: 'Inter', system-ui, sans-serif; }
         .font-mono { font-family: 'JetBrains Mono', monospace; }
-        .kanban-column { min-height: 70vh; }
+        .kanban-column { min-height: 100px; transition: all 0.3s ease; }
         .drag-over { background-color: rgba(51, 65, 85, 0.5); }
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
@@ -111,28 +111,28 @@
                         <span class="text-xs font-bold uppercase text-slate-400">Backlog / ToDo</span>
                         <span class="col-count text-[10px] bg-slate-800 px-2 py-0.5 rounded text-slate-400">0</span>
                     </div>
-                    <div class="kanban-cards flex-grow space-y-4 custom-scrollbar overflow-y-auto max-h-[70vh]"></div>
+                    <div class="kanban-cards flex-grow space-y-4 custom-scrollbar"></div>
                 </div>
                 <div id="kanban-col-working" class="kanban-column flex flex-col gap-4">
                     <div class="flex justify-between items-center px-2 py-1 border-l-4 border-amber-400">
                         <span class="text-xs font-bold uppercase text-amber-400">En Progreso</span>
                         <span class="col-count text-[10px] bg-amber-900/30 px-2 py-0.5 rounded text-amber-400">0</span>
                     </div>
-                    <div class="kanban-cards flex-grow space-y-4 custom-scrollbar overflow-y-auto max-h-[70vh]"></div>
+                    <div class="kanban-cards flex-grow space-y-4 custom-scrollbar"></div>
                 </div>
                 <div id="kanban-col-qa" class="kanban-column flex flex-col gap-4">
                     <div class="flex justify-between items-center px-2 py-1 border-l-4 border-indigo-400">
                         <span class="text-xs font-bold uppercase text-indigo-400">QA Verification</span>
                         <span class="col-count text-[10px] bg-indigo-900/30 px-2 py-0.5 rounded text-indigo-400">0</span>
                     </div>
-                    <div class="kanban-cards flex-grow space-y-4 custom-scrollbar overflow-y-auto max-h-[70vh]"></div>
+                    <div class="kanban-cards flex-grow space-y-4 custom-scrollbar"></div>
                 </div>
                 <div id="kanban-col-done" class="kanban-column flex flex-col gap-4">
                     <div class="flex justify-between items-center px-2 py-1 border-l-4 border-emerald-400">
                         <span class="text-xs font-bold uppercase text-emerald-400">Completado</span>
                         <span class="col-count text-[10px] bg-emerald-900/30 px-2 py-0.5 rounded text-emerald-400">0</span>
                     </div>
-                    <div class="kanban-cards flex-grow space-y-4 custom-scrollbar overflow-y-auto max-h-[70vh]"></div>
+                    <div class="kanban-cards flex-grow space-y-4 custom-scrollbar"></div>
                 </div>
             </div>
         </section>

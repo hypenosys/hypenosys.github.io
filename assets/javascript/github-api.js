@@ -509,6 +509,10 @@ window.githubApi = {
     sessionStorage.setItem('gh_access_token', cleanToken);
     localStorage.setItem('github_token', cleanToken);
   },
+  setRepo(repo) {
+      if (!repo) return;
+      localStorage.setItem('github_repo', repo);
+  },
   clearAuth() {
     sessionStorage.removeItem('gh_access_token');
     localStorage.removeItem('github_token');
