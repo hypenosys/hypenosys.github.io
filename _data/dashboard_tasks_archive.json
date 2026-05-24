@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-24T14:26:24.254Z",
+  "last_updated": "2026-05-24T14:26:44.169Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -23,6 +23,29 @@
       "asignados": [
         "axlfc",
         "topperh4rley"
+      ]
+    },
+    {
+      "rama": "PRO",
+      "rama2": null,
+      "ver": true,
+      "descripcion": "Engatusar a Dídac y a Javi de que se hagan users de GitHub y meterlos en el Operational Dashboard",
+      "fecha": "2026-05-21",
+      "tema_principal": "Pre-producción",
+      "detectado_por": "Axel",
+      "resuelto_por": "Axel",
+      "apoyo": null,
+      "estado": "OK",
+      "prioridad": "Medium",
+      "limite": null,
+      "comentario": "",
+      "milestone": "M1",
+      "completitud": 0,
+      "id": 2,
+      "asignados": [
+        "axlfc",
+        "javi26031994-a11y",
+        "dkdidac-design"
       ]
     }
   ]
