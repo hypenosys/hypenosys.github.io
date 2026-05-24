@@ -25,6 +25,11 @@ description: >- # this means to ignore newlines until "baseurl:"
 repository: "nicolas-van/bootstrap-4-github-pages"
 
 # Build settings
+markdown: kramdown
+kramdown:
+  input: GFM
+  hard_wrap: false
+
 plugins:
   - jekyll-feed
   - jekyll-sitemap
