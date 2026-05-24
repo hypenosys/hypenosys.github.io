@@ -4,6 +4,13 @@
  */
 
 const MEMBERS = ['Axel', 'Alex', 'Dídac', 'Javi', 'Mitxel'];
+const MEMBER_MAPPING = {
+    'axlfc': 'Axel',
+    'topperh4rley': 'Alex',
+    'javi26031994-a11y': 'Javi',
+    'dkdidac-design': 'Dídac',
+    'mitxel2022': 'Mitxel'
+};
 const STAGES = ['Concepto / GDD', 'Pre-producción', 'Tools / Automation', 'Arte / Assets', 'Programación / Engine', 'QA / Testing', 'Build / Deploy', 'Post-launch'];
 const REFRESH_INTERVAL_MS = 30000; // 30 seconds
 
@@ -317,10 +324,24 @@ function buildTaskCard(task) {
     ` : ''}
 
     <div class="flex justify-between items-end">
-      <div class="flex -space-x-2">
-        ${task.resuelto_por ? `<div onclick="scrollToProfile('${task.resuelto_por}')" title="Resuelto por: ${task.resuelto_por}" class="w-6 h-6 rounded-full bg-emerald-500 border-2 border-slate-800 flex items-center justify-center text-[8px] font-bold text-slate-950 cursor-pointer hover:scale-110 transition-transform">${task.resuelto_por[0]}</div>` : ''}
-        ${task.detectado_por ? `<div onclick="scrollToProfile('${task.detectado_por}')" title="Detectado por: ${task.detectado_por}" class="w-6 h-6 rounded-full bg-indigo-500 border-2 border-slate-800 flex items-center justify-center text-[8px] font-bold text-white cursor-pointer hover:scale-110 transition-transform">${task.detectado_por[0]}</div>` : ''}
-        ${task.apoyo ? `<div onclick="scrollToProfile('${task.apoyo}')" title="Apoyo: ${task.apoyo}" class="w-6 h-6 rounded-full bg-purple-500 border-2 border-slate-800 flex items-center justify-center text-[8px] font-bold text-white cursor-pointer hover:scale-110 transition-transform">${task.apoyo[0]}</div>` : ''}
+      <div class="flex flex-col gap-2">
+        <div class="flex -space-x-2">
+          ${task.resuelto_por ? `<div onclick="scrollToProfile('${task.resuelto_por}')" title="Resuelto por: ${task.resuelto_por}" class="w-6 h-6 rounded-full bg-emerald-500 border-2 border-slate-800 flex items-center justify-center text-[8px] font-bold text-slate-950 cursor-pointer hover:scale-110 transition-transform">${task.resuelto_por[0]}</div>` : ''}
+          ${task.detectado_por ? `<div onclick="scrollToProfile('${task.detectado_por}')" title="Detectado por: ${task.detectado_por}" class="w-6 h-6 rounded-full bg-indigo-500 border-2 border-slate-800 flex items-center justify-center text-[8px] font-bold text-white cursor-pointer hover:scale-110 transition-transform">${task.detectado_por[0]}</div>` : ''}
+          ${task.apoyo ? `<div onclick="scrollToProfile('${task.apoyo}')" title="Apoyo: ${task.apoyo}" class="w-6 h-6 rounded-full bg-purple-500 border-2 border-slate-800 flex items-center justify-center text-[8px] font-bold text-white cursor-pointer hover:scale-110 transition-transform">${task.apoyo[0]}</div>` : ''}
+        </div>
+
+        <div onclick="openAssignmentModal(${task.id})" class="flex -space-x-1.5 cursor-pointer hover:opacity-80 transition-opacity min-h-[24px] items-center">
+          ${(task.asignados || []).length > 0
+            ? task.asignados.map(handle => {
+                const name = MEMBER_MAPPING[handle] || handle;
+                return `<img src="https://github.com/${handle}.png" class="w-6 h-6 rounded-full border-2 border-slate-800 shadow-sm" title="Asignado: ${name}">`;
+              }).join('')
+            : `<div class="w-6 h-6 rounded-full border border-dashed border-slate-600 flex items-center justify-center text-slate-500 hover:border-emerald-500 hover:text-emerald-500 transition-colors">
+                 <i class="fa-solid fa-plus text-[10px]"></i>
+               </div>`
+          }
+        </div>
       </div>
       <div class="text-[9px] font-bold text-slate-500 uppercase tracking-tighter">
         ${task.rama}${task.rama2 ? ` / ${task.rama2}` : ''}
@@ -909,10 +930,12 @@ function setupEventListeners() {
   const taskCancel = document.getElementById('task-cancel-btn');
   const taskSave = document.getElementById('task-save-btn');
   const qaCancel = document.getElementById('qa-cancel-btn');
+  const assignCancel = document.getElementById('assignment-cancel-btn');
 
   if (taskCancel) taskCancel.onclick = () => document.getElementById('create-task-modal').classList.add('hidden');
   if (taskSave) taskSave.onclick = handleCreateTask;
   if (qaCancel) qaCancel.onclick = () => document.getElementById('qa-assignment-modal').classList.add('hidden');
+  if (assignCancel) assignCancel.onclick = () => document.getElementById('assignment-modal').classList.add('hidden');
 }
 
 function showToast(mensaje, tipo = 'info', duracionMs = 4000) {
@@ -942,13 +965,25 @@ function showToast(mensaje, tipo = 'info', duracionMs = 4000) {
 function populateMemberSelects() {
     const resolverSelect = document.getElementById('task-resolver-input');
     const detectorSelect = document.getElementById('task-detector-input');
-    if (!resolverSelect || !detectorSelect) return;
+    const asignadosContainer = document.getElementById('task-asignados-container');
+    if (!resolverSelect || !detectorSelect || !asignadosContainer) return;
 
     const options = `<option value="">-- Unassigned --</option>` +
         MEMBERS.map(m => `<option value="${m}">${m}</option>`).join('');
 
     resolverSelect.innerHTML = options;
     detectorSelect.innerHTML = options;
+
+    asignadosContainer.innerHTML = '';
+    Object.entries(MEMBER_MAPPING).forEach(([handle, name]) => {
+        const label = document.createElement('label');
+        label.className = 'flex items-center gap-2 bg-slate-900 px-2 py-1 rounded border border-slate-800 cursor-pointer hover:bg-slate-800 transition-colors';
+        label.innerHTML = `
+            <input type="checkbox" name="asignados" value="${handle}" class="rounded border-slate-700 text-emerald-500 focus:ring-emerald-500">
+            <span class="text-[10px] font-bold">${name}</span>
+        `;
+        asignadosContainer.appendChild(label);
+    });
 }
 
 function openCreateTaskModal() {
@@ -964,6 +999,9 @@ function openCreateTaskModal() {
   document.getElementById('task-completion-input').value = '0';
   document.getElementById('task-resolver-input').value = '';
   document.getElementById('task-detector-input').value = activeFilter || '';
+
+  const checkboxes = document.querySelectorAll('#task-asignados-container input[name="asignados"]');
+  checkboxes.forEach(cb => cb.checked = false);
 
   document.getElementById('create-task-modal').classList.remove('hidden');
 }
@@ -985,7 +1023,51 @@ function openEditTaskModal(taskId) {
     document.getElementById('task-resolver-input').value = task.resuelto_por || '';
     document.getElementById('task-detector-input').value = task.detectado_por || '';
 
+    const checkboxes = document.querySelectorAll('#task-asignados-container input[name="asignados"]');
+    checkboxes.forEach(cb => {
+        cb.checked = (task.asignados || []).includes(cb.value);
+    });
+
     document.getElementById('create-task-modal').classList.remove('hidden');
+}
+
+function openAssignmentModal(taskId) {
+    const task = currentTasks.find(t => t.id === taskId);
+    if (!task) return;
+
+    const list = document.getElementById('assignment-list');
+    list.innerHTML = '';
+
+    Object.entries(MEMBER_MAPPING).forEach(([handle, name]) => {
+        const item = document.createElement('div');
+        item.className = 'flex items-center justify-between p-3 bg-slate-950 border border-slate-800 rounded-xl hover:border-emerald-500/50 transition-all';
+        const isChecked = (task.asignados || []).includes(handle);
+
+        item.innerHTML = `
+            <div class="flex items-center gap-3">
+                <img src="https://github.com/${handle}.png" class="w-8 h-8 rounded-full border border-slate-800">
+                <span class="text-sm font-bold text-slate-200">${name}</span>
+            </div>
+            <input type="checkbox" value="${handle}" ${isChecked ? 'checked' : ''} class="w-5 h-5 rounded border-slate-700 text-emerald-500 focus:ring-emerald-500 bg-slate-900">
+        `;
+        list.appendChild(item);
+    });
+
+    const modal = document.getElementById('assignment-modal');
+    modal.classList.remove('hidden');
+
+    document.getElementById('assignment-save-btn').onclick = async () => {
+        const selected = Array.from(list.querySelectorAll('input:checked')).map(cb => cb.value);
+        showToast(UI_STRINGS.saving, 'info');
+        modal.classList.add('hidden');
+        try {
+            await window.githubApi.updateTask(taskId, { asignados: selected });
+            showToast(`Asignados actualizados para #${taskId}`, 'success');
+            await refreshDashboardData();
+        } catch (err) {
+            showToast(`Error: ${err.message}`, 'error');
+        }
+    };
 }
 
 async function handleQuickStageUpdate(taskId, newStage) {
@@ -1010,6 +1092,7 @@ async function handleCreateTask() {
   const completion = parseFloat(document.getElementById('task-completion-input').value) || 0;
   const resolver = document.getElementById('task-resolver-input').value || null;
   const detector = document.getElementById('task-detector-input').value || 'Unassigned';
+  const asignados = Array.from(document.querySelectorAll('#task-asignados-container input[name="asignados"]:checked')).map(cb => cb.value);
 
   if (!desc) return showToast('La descripción es obligatoria', 'warning');
 
@@ -1022,7 +1105,8 @@ async function handleCreateTask() {
     estado: status,
     completitud: completion,
     resuelto_por: resolver,
-    detectado_por: detector
+    detectado_por: detector,
+    asignados: asignados
   };
 
   showToast(UI_STRINGS.saving, 'info');

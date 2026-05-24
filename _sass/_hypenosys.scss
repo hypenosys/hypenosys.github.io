@@ -277,6 +277,57 @@ footer {
     letter-spacing: 1px;
 }
 
+// Flawless Markdown Tables (Slate/Emerald aesthetic)
+.page-content table {
+    width: 100%;
+    margin-bottom: 2rem;
+    color: #e2e8f0; // slate-200
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid #1e293b; // slate-800
+    border-radius: 0.75rem;
+    overflow: hidden;
+    background-color: #0f172a; // slate-900
+
+    th {
+        background-color: #1e293b; // slate-800
+        color: #10b981; // emerald-500
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.05em;
+        padding: 0.75rem 1rem;
+        border-bottom: 2px solid #10b981;
+        text-align: left;
+    }
+
+    td {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #1e293b;
+        font-size: 0.875rem;
+        line-height: 1.5;
+    }
+
+    tr:last-child td {
+        border-bottom: none;
+    }
+
+    tr:hover td {
+        background-color: rgba(16, 185, 129, 0.05); // emerald-500 with low opacity
+    }
+
+    // Alignment support
+    th[style*="text-align: center"], td[style*="text-align: center"] {
+        text-align: center !important;
+    }
+    th[style*="text-align: right"], td[style*="text-align: right"] {
+        text-align: right !important;
+    }
+    th[style*="text-align: left"], td[style*="text-align: left"] {
+        text-align: left !important;
+    }
+}
+
 // Pulse animation for critical buttons
 .btn-purple {
     &.pulse {
