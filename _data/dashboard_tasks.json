@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-24T13:47:16.252Z",
+  "last_updated": "2026-05-24T13:55:07.646Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -123,7 +123,7 @@
       "milestone": "M1",
       "estado": "Working",
       "completitud": 0.5,
-      "resuelto_por": null,
+      "resuelto_por": "Alex",
       "detectado_por": "Axel",
       "rama2": null,
       "ver": true,
@@ -133,7 +133,9 @@
       "comentario": "",
       "id": 6,
       "asignados": [
-        "topperh4rley"
+        "topperh4rley",
+        "dkdidac-design",
+        "mitxel2022"
       ]
     },
     {
