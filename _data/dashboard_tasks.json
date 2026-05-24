@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-24T13:43:11.591Z",
+  "last_updated": "2026-05-24T13:43:17.870Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -30,7 +30,7 @@
       "ver": true,
       "descripcion": "Engatusar a Dídac y a Javi de que se hagan users de GitHub y meterlos en el Operational Dashboard",
       "fecha": "2026-05-21",
-      "tema_principal": "Tools / Automation",
+      "tema_principal": "Pre-producción",
       "detectado_por": "Axel",
       "resuelto_por": null,
       "apoyo": null,
