@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-24T10:54:44.233Z",
-  "last_updated_by": "Alex",
+  "last_updated": "2026-05-24T10:54:48.992Z",
+  "last_updated_by": "Sistema",
   "tasks": [
     {
       "id": 1,
@@ -99,7 +99,7 @@
       "tema_principal": "Tools / Automation",
       "prioridad": "Critical",
       "milestone": "M1",
-      "estado": "Pending",
+      "estado": "Working",
       "completitud": 0,
       "resuelto_por": null,
       "detectado_por": "Axel",
