@@ -786,8 +786,93 @@ permalink: /jules-panel/
 ::-webkit-scrollbar-thumb:hover { background: var(--accent-primary); }
 
 @keyframes spin { to { transform: translateY(-50%) rotate(360deg); } }
+    /* Markdown / Prose Styles */
+    .prose {
+        color: #e2e8f0;
+        line-height: 1.6;
+        font-size: 13px;
+    }
+    .prose h1, .prose h2, .prose h3 {
+        color: #f8fafc;
+        margin-top: 1.5em;
+        margin-bottom: 0.5em;
+        font-weight: 700;
+    }
+    .prose p { margin-bottom: 1em; }
+    .prose code {
+        background: rgba(52, 211, 153, 0.1);
+        color: #34d399; /* text-emerald-400 */
+        padding: 0.2em 0.4em;
+        border-radius: 4px;
+        font-family: 'Courier New', monospace;
+        font-size: 0.9em;
+    }
+    .prose pre {
+        background: #1e293b; /* bg-slate-800 */
+        padding: 12px;
+        border-radius: 8px;
+        overflow-x: auto;
+        margin-bottom: 1em;
+        border: 1px solid #334155;
+    }
+    .prose pre code {
+        background: transparent;
+        color: #e2e8f0;
+        padding: 0;
+    }
+    .prose ul, .prose ol {
+        margin-bottom: 1em;
+        padding-left: 1.5em;
+    }
+    .prose li { margin-bottom: 0.5em; }
+    .prose a {
+        color: #8b5cf6;
+        text-decoration: underline;
+    }
+
+    /* PR Lifecycle Block */
+    .pr-lifecycle-block {
+        margin-top: 16px;
+        padding: 16px;
+        background: rgba(30, 41, 59, 0.4);
+        border: 1px solid var(--border-subtle);
+        border-radius: 10px;
+    }
+    .pr-status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 2px 10px;
+        border-radius: 20px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .badge--open { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .badge--merged { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .badge--closed { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+
+    .checks-list {
+        margin-top: 10px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+    .check-item {
+        font-size: 10px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        padding: 2px 8px;
+        border-radius: 4px;
+        color: var(--text-secondary);
+    }
 </style>
 
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="{{ '/assets/javascript/jules-api.js' | relative_url }}"></script>
 <script>
     // --- STATE ---
@@ -1114,9 +1199,6 @@ permalink: /jules-panel/
                     Ver en consola <i class="fa-solid fa-external-link ml-1 text-[10px]"></i>
                 </a>
 
-                <a href="${s.outputs?.pullRequest?.url || '#'}" target="_blank" class="btn btn--pr" data-role="pr-link" style="display: ${s.outputs?.pullRequest ? '' : 'none'}">
-                    🔗 Ver PR
-                </a>
 
                 <button class="btn btn--ghost" data-role="archive-btn"
                         onclick="archiveSession('${idSafe}')"
@@ -1147,6 +1229,10 @@ permalink: /jules-panel/
             <div class="session-card__activities hidden" id="activities-${idSafe}">
                 <!-- Dinámico -->
             </div>
+
+            <div id="pr-lifecycle-${idSafe}" class="pr-lifecycle-block hidden">
+                <!-- Dinámico: PR Lifecycle -->
+            </div>
         `;
     }
 
@@ -1167,16 +1253,6 @@ permalink: /jules-panel/
             approveBtn.style.display = state === 'AWAITING_PLAN_APPROVAL' ? '' : 'none';
         }
 
-        // Enlace al PR
-        const prLink = cardEl.querySelector('[data-role="pr-link"]');
-        if (prLink) {
-            if (session.outputs?.pullRequest) {
-                prLink.href = session.outputs.pullRequest.url;
-                prLink.style.display = '';
-            } else {
-                prLink.style.display = 'none';
-            }
-        }
 
         // Botón Archivar
         const archiveBtn = cardEl.querySelector('[data-role="archive-btn"]');
@@ -1246,12 +1322,26 @@ permalink: /jules-panel/
                 div.innerHTML = buildCardHtml(session, idSafe);
                 list.appendChild(div);
             }
+
+            // Actualizar PR Lifecycle si existe PR
+            const prData = session.pull_request || (session.outputs && session.outputs.pullRequest);
+            const card = document.getElementById('card-' + idSafe);
+            if (prData) {
+                refreshPRStatus(session.name, idSafe, prData);
+            } else if (card && card.__prPollInterval) {
+                // Si ya no hay PR (ej. borrado), limpiar polling
+                clearInterval(card.__prPollInterval);
+                card.__prPollInterval = null;
+                const prBlock = document.getElementById(`pr-lifecycle-${idSafe}`);
+                if (prBlock) prBlock.classList.add('hidden');
+            }
         });
 
         // 2. Eliminar cards de sesiones que ya no existen
         list.querySelectorAll('[id^="card-"]').forEach(card => {
             const idSafe = card.id.replace('card-', '');
             if (!incomingMap.has(idSafe)) {
+                if (card.__prPollInterval) clearInterval(card.__prPollInterval);
                 card.remove();
             }
         });
@@ -1363,6 +1453,110 @@ permalink: /jules-panel/
       if (isAtBottom && panelEl) {
         panelEl.scrollTo({ top: panelEl.scrollHeight, behavior: "smooth" });
       }
+    }
+
+    async function refreshPRStatus(sessionId, idSafe, initialPrData = null) {
+        const container = document.getElementById(`pr-lifecycle-${idSafe}`);
+        const card = document.getElementById(`card-${idSafe}`);
+        if (!container || !card) return;
+
+        const updateUI = async () => {
+            try {
+                // Si initialPrData tiene number lo usamos, si no intentamos sacarlo de la URL o volver a pedir la sesión
+                let prNumber = initialPrData?.number;
+                if (!prNumber && initialPrData?.url) {
+                    prNumber = initialPrData.url.split('/').pop();
+                }
+
+                // Obtener datos frescos del PR desde GitHub
+                // Asumimos REPO_OWNER y REPO_NAME están disponibles o los parseamos de la sesión
+                const session = currentSessions.find(s => s.name === sessionId);
+                const repoParts = session?.sourceContext?.source?.split('/') || [];
+                const owner = repoParts[2];
+                const repo = repoParts.slice(3).join('/');
+
+                if (!owner || !repo || !prNumber) return;
+
+                const token = window.githubApi.token || localStorage.getItem('github_token');
+                const prResp = await fetch(`https://api.github.com/repos/${owner}/${repo}/pulls/${prNumber}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const pr = await prResp.json();
+
+                if (!pr.html_url) return;
+
+                // Verificaciones de checks
+                const checksResp = await fetch(`https://api.github.com/repos/${owner}/${repo}/commits/${pr.head.sha}/check-runs`, {
+                    headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' }
+                });
+                const checksData = await checksResp.json();
+                const checks = checksData.check_runs || [];
+
+                // Verificar si la rama head existe
+                let branchExists = true;
+                const branchResp = await fetch(`https://api.github.com/repos/${owner}/${repo}/branches/${pr.head.ref}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (branchResp.status === 404) branchExists = false;
+
+                // Renderizar
+                container.classList.remove('hidden');
+
+                let badgeHtml = '';
+                if (pr.merged) {
+                    badgeHtml = `<span class="pr-status-badge badge--merged">✅ Mergeada</span>`;
+                } else if (pr.state === 'open') {
+                    badgeHtml = `<span class="pr-status-badge badge--open">🔄 Revisión pendiente</span>`;
+                } else if (pr.state === 'closed') {
+                    badgeHtml = `<span class="pr-status-badge badge--closed">❌ Cerrada sin merge</span>`;
+                }
+
+                const checksHtml = checks.map(c => {
+                    let icon = '🔄';
+                    if (c.status === 'completed') {
+                        icon = c.conclusion === 'success' ? '✅' : '❌';
+                    }
+                    return `<div class="check-item" title="${c.name}: ${c.status} ${c.conclusion || ''}">${icon} ${c.name}</div>`;
+                }).join('');
+
+                container.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            ${badgeHtml}
+                            ${(pr.merged && !branchExists) ? '<span style="font-size: 10px; color: var(--text-muted);">Rama eliminada</span>' : ''}
+                        </div>
+                        <a href="${pr.html_url}" target="_blank" class="btn btn--primary" style="width: auto; padding: 4px 12px; font-size: 11px;">
+                            Ver Pull Request #${pr.number} →
+                        </a>
+                    </div>
+                    <div class="checks-list">
+                        ${checksHtml || '<span style="font-size: 10px; color: var(--text-muted);">Sin checks detectados</span>'}
+                    </div>
+                `;
+
+                // Detener polling si el PR ya no está activo
+                if (pr.merged || pr.state === 'closed') {
+                    if (card.__prPollInterval) {
+                        clearInterval(card.__prPollInterval);
+                        card.__prPollInterval = null;
+                    }
+                }
+
+            } catch (e) {
+                console.warn("[PR Lifecycle] Error updating UI:", e);
+            }
+        };
+
+        // Primera ejecución inmediata
+        updateUI();
+
+        // Configurar polling si no existe y el PR está abierto
+        const prState = initialPrData?.state || 'open';
+        const isMerged = initialPrData?.merged || false;
+
+        if (prState === 'open' && !isMerged && !card.__prPollInterval) {
+            card.__prPollInterval = setInterval(updateUI, 15000);
+        }
     }
 
     async function refreshActivities(idSafe) {
@@ -1543,12 +1737,14 @@ permalink: /jules-panel/
 
       else if (activity.userMessaged) {
         const msg = activity.userMessaged.userMessage || '';
-        html = `<div class="activity-entry activity-entry--user">${escapeHtml(msg)}</div>`;
+        const parsed = typeof marked !== 'undefined' ? marked.parse(msg) : escapeHtml(msg);
+        html = `<div class="activity-entry activity-entry--user prose" style="overflow-x: auto; max-width: 100%; word-break: break-word;">${parsed}</div>`;
       }
 
       else if (activity.agentMessaged) {
         const msg = activity.agentMessaged.agentMessage || '';
-        html = `<div class="activity-entry activity-entry--agent">${escapeHtml(msg)}</div>`;
+        const parsed = typeof marked !== 'undefined' ? marked.parse(msg) : escapeHtml(msg);
+        html = `<div class="activity-entry activity-entry--agent prose" style="overflow-x: auto; max-width: 100%; word-break: break-word;">${parsed}</div>`;
       }
 
       else if (activity.progressUpdated) {
@@ -1621,6 +1817,10 @@ permalink: /jules-panel/
         if (!confirm('¿Estás seguro de eliminar esta sesión?')) return;
         try {
             const card = btn.closest('.session-card');
+            if (card && card.__prPollInterval) {
+                clearInterval(card.__prPollInterval);
+                card.__prPollInterval = null;
+            }
             card.style.opacity = '0.4';
             card.style.pointerEvents = 'none';
 
@@ -1738,6 +1938,10 @@ permalink: /jules-panel/
       // 3. Ocultar card con animación
       const card = document.getElementById('card-' + idSafe);
       if (card) {
+        if (card.__prPollInterval) {
+          clearInterval(card.__prPollInterval);
+          card.__prPollInterval = null;
+        }
         card.style.transition = 'opacity 0.3s ease, max-height 0.4s ease 0.1s';
         card.style.opacity = '0';
         card.style.overflow = 'hidden';
