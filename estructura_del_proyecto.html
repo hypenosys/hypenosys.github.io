@@ -7,8 +7,8 @@ permalink: /estructura_del_proyecto/
 <div class="row">
   <div class="col-12 mb-4">
     <div class="jumbotron">
-      <h1 class="display-4 text-purple">🛠️ PROTOCOLO DE SUPERVIVENCIA ARQUITECTÓNICA</h1>
-      <p class="lead">Este documento constituye la única fuente de verdad sobre cómo se organiza el caos en este estudio.</p>
+      <h1 class="display-4 text-purple">⚙️ PROTOCOLO DE SUPERVIVENCIA ARQUITECTÓNICA v2.0</h1>
+      <p class="lead">La única fuente de verdad sobre cómo se organiza el caos en este estudio. Ahora con soporte para IA, Jules y pipelines modernos.</p>
     </div>
   </div>
 </div>
@@ -16,36 +16,74 @@ permalink: /estructura_del_proyecto/
 <div class="row mb-5">
   <div class="col-12">
     <h2 class="text-purple border-bottom border-purple pb-2 mb-4">1. EL ÁRBOL FILOGENÉTICO DEL PROYECTO</h2>
-    <p>La carpeta <code>/Content/</code> no es un vertedero. Es un ecosistema sagrado. Se impone la siguiente jerarquía basada en prefijos numéricos para forzar el orden alfabético y mental:</p>
+    <p>La carpeta <code>/Content/</code> no es un vertedero. Es un ecosistema sagrado. Jerarquía por prefijos numéricos para forzar el orden alfabético y mental. <strong>Todo asset sin prefijo es un asset huérfano. Los huérfanos se borran sin aviso.</strong></p>
 
     <div class="bg-dark p-3 rounded font-weight-mono text-success text-xs border border-purple mb-4">
 <pre class="mb-0 text-success">
 /Content/
-├── 01_Core/                # El cerebro del proyecto. Si esto falla, nada existe.
-│   ├── GameModes/          # Lógica de reglas de juego.
-│   ├── Controllers/        # PlayerControllers y AIControllers.
-│   ├── Inputs/             # Enhanced Input Actions y Mapping Contexts.
-│   └── Interfaces/         # Blueprints Interfaces (BPI_).
-├── 02_Design/              # Donde la magia se vuelve lógica (y bugs).
-│   ├── Blueprints/         # Actores lógicos y componentes.
-│   ├── UI/                 # Widgets (WBP_) y lógica de interfaz.
-│   └── Data/               # DataTables y DataAssets. No hardcodear nada.
-├── 03_Art/                 # Lo que el jugador ve (mientras el código llora).
-│   ├── Animations/         # Rigs, SkelMeshes y AnimBlueprints.
-│   ├── Audio/              # Cues y Waves.
-│   ├── Materials/          # Master Materials (M_) únicamente.
-│   │   └── Instances/      # Material Instances (MI_) - OBLIGATORIO.
-│   ├── Textures/           # Mapas de bits.
-│   └── Vehicles/           # Assets específicos de conducción.
-├── 04_Environment/         # El escenario de nuestros crímenes.
-│   ├── Architecture/       # SM_ de paredes, suelos, techos.
-│   ├── Props/              # SM_ de mobiliario y detalle.
-│   └── Maps/               # Niveles (.umap). Nada de "Test_Final_V2_REAL".
-└── 05_Developers/          # Zona de Pruebas Bacteriológicas (Safe Zone).
-    ├── Axlfc/              # Territorio de Axel.
-    ├── mitxel2022/         # Territorio de Mitxel.
-    └── TopperH4rley/       # Territorio de Topper.
+├── 01_Core/                    # Sistema nervioso central. Si esto falla, nada existe.
+│   ├── GameModes/              # GameMode, GameState, GameInstance.
+│   ├── Controllers/            # PlayerControllers y AIControllers.
+│   ├── Inputs/                 # Enhanced Input Actions y Mapping Contexts.
+│   ├── Interfaces/             # Blueprint Interfaces (BPI_).
+│   ├── GameplayAbilities/      # GAS: Abilities (GA_), Effects (GE_), Attributes (GAS_).
+│   └── SaveSystem/             # SaveGame objects y lógica de persistencia.
+│
+├── 02_Design/                  # Donde la magia se vuelve lógica (y bugs).
+│   ├── Blueprints/             # Actores lógicos y componentes (BP_).
+│   │   ├── Characters/         # Personajes jugables y NPCs.
+│   │   ├── Interactables/      # Objetos con lógica de interacción.
+│   │   └── Systems/            # Sistemas transversales (inventario, diálogos...).
+│   ├── UI/                     # Widgets (WBP_) y lógica de interfaz.
+│   │   ├── HUD/
+│   │   ├── Menus/
+│   │   └── Components/         # Widgets reutilizables (WBP_Comp_).
+│   └── Data/                   # DataTables (DT_), DataAssets (DA_). CERO hardcoding.
+│       ├── Tables/
+│       └── Assets/
+│
+├── 03_Art/                     # Lo que el jugador ve (mientras el código llora).
+│   ├── Animations/
+│   │   ├── Characters/         # AnimBP (ABP_), Montages (AM_), BlendSpaces (BS_).
+│   │   └── Props/
+│   ├── Audio/
+│   │   ├── SFX/                # Sound Cues (SC_) y Waves (SW_).
+│   │   ├── Music/
+│   │   └── Dialogue/           # Voice lines con nomenclatura DI_NPC_Linea_01.
+│   ├── Materials/
+│   │   ├── Masters/            # Master Materials (M_) únicamente. Sin clutter.
+│   │   ├── Instances/          # Material Instances (MI_). OBLIGATORIO usar MI_.
+│   │   └── Functions/          # Material Functions (MF_) reutilizables.
+│   ├── Textures/               # T_ con sufijo de mapa: _BC, _N, _ORM, _E, _M.
+│   ├── VFX/                    # Niagara Systems (NS_) y Emitters (NE_).
+│   ├── Vehicles/
+│   └── Characters/             # SK_, Rigs, PhysicsAssets (PA_).
+│
+├── 04_Environment/             # El escenario de nuestros crímenes.
+│   ├── Architecture/           # SM_ estructurales: paredes, suelos, techos.
+│   ├── Props/                  # SM_ de mobiliario y detalle.
+│   ├── Foliage/                # Meshes y configuraciones de Foliage (FT_).
+│   ├── Lighting/               # LUTs, IES profiles, Hdri (HDRI_).
+│   └── Maps/                   # Niveles (.umap). L_ obligatorio. Prohibido "Test_Final_V2_REAL".
+│       ├── Persistent/         # Niveles maestros (L_Main_).
+│       ├── Sublevels/          # Sublevels de streaming (L_Sub_).
+│       └── _Testing/           # Mapas de prueba efímeros. Se purgan en cada release.
+│
+├── 05_AI_Generated/            # 🤖 Assets generados o asistidos por IA.
+│   ├── _Review/                # Staging. Todo aquí DEBE ser revisado antes de promoverse.
+│   ├── Textures/               # Texturas generadas (T_AIGen_).
+│   ├── Concepts/               # Concepts e imágenes de referencia. No van a producción.
+│   └── Audio/                  # Audio generado por IA pendiente de revisión.
+│
+└── 06_Developers/              # Zona de Pruebas Bacteriológicas (Safe Zone).
+    ├── Axlfc/
+    ├── mitxel2022/
+    └── TopperH4rley/
 </pre>
+    </div>
+
+    <div class="alert bg-warning-transparent border-warning text-white mt-3">
+      <strong>⚠️ Regla de Promoción de Assets:</strong> Ningún asset sube directamente de <code>06_Developers/</code> o <code>05_AI_Generated/_Review/</code> a producción sin pasar por un PR con al menos una revisión. El pipeline de Jules puede automatizar el lint, pero el criterio artístico es humano.
     </div>
   </div>
 </div>
@@ -53,7 +91,7 @@ permalink: /estructura_del_proyecto/
 <div class="row mb-5">
   <div class="col-12">
     <h2 class="text-purple border-bottom border-purple pb-2 mb-4">2. REGLAS BACTERIOLÓGICAS DE NOMENCLATURA</h2>
-    <p>El uso de espacios, tildes o la letra "ñ" se considera un acto de sabotaje industrial.</p>
+    <p>El uso de espacios, tildes o la letra "ñ" se considera un acto de sabotaje industrial. Los assets se nombran en <strong>inglés</strong>. Siempre.</p>
 
     <div class="page-content">
       <table class="table">
@@ -65,60 +103,177 @@ permalink: /estructura_del_proyecto/
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td><strong>Blueprint Class</strong></td>
-            <td><code>BP_</code></td>
-            <td><code>BP_PlayerController</code></td>
-          </tr>
-          <tr>
-            <td><strong>Static Mesh</strong></td>
-            <td><code>SM_</code></td>
-            <td><code>SM_Concrete_Column_01</code></td>
-          </tr>
-          <tr>
-            <td><strong>Skeletal Mesh</strong></td>
-            <td><code>SK_</code></td>
-            <td><code>SK_MainCharacter</code></td>
-          </tr>
-          <tr>
-            <td><strong>Texture</strong></td>
-            <td><code>T_</code></td>
-            <td><code>T_Brick_Wall_ORM</code></td>
-          </tr>
-          <tr>
-            <td><strong>Master Material</strong></td>
-            <td><code>M_</code></td>
-            <td><code>M_Base_Opaque</code></td>
-          </tr>
-          <tr>
-            <td><strong>Material Instance</strong></td>
-            <td><code>MI_</code></td>
-            <td><code>MI_Concrete_Floor_Dirty</code></td>
-          </tr>
-          <tr>
-            <td><strong>Widget Blueprint</strong></td>
-            <td><code>WBP_</code></td>
-            <td><code>WBP_MainMenu</code></td>
-          </tr>
-          <tr>
-            <td><strong>Level / Map</strong></td>
-            <td><code>L_</code></td>
-            <td><code>L_DeepNight_Sublevel_01</code></td>
-          </tr>
-          <tr>
-            <td><strong>Data Asset</strong></td>
-            <td><code>DA_</code></td>
-            <td><code>DA_WeaponStats</code></td>
-          </tr>
+          <tr><td><strong>Blueprint Class</strong></td><td><code>BP_</code></td><td><code>BP_PlayerController</code></td></tr>
+          <tr><td><strong>Static Mesh</strong></td><td><code>SM_</code></td><td><code>SM_Concrete_Column_01</code></td></tr>
+          <tr><td><strong>Skeletal Mesh</strong></td><td><code>SK_</code></td><td><code>SK_MainCharacter</code></td></tr>
+          <tr><td><strong>Texture</strong></td><td><code>T_</code></td><td><code>T_Brick_Wall_ORM</code></td></tr>
+          <tr><td><strong>Master Material</strong></td><td><code>M_</code></td><td><code>M_Base_Opaque</code></td></tr>
+          <tr><td><strong>Material Instance</strong></td><td><code>MI_</code></td><td><code>MI_Concrete_Floor_Dirty</code></td></tr>
+          <tr><td><strong>Material Function</strong></td><td><code>MF_</code></td><td><code>MF_Triplanar_Blend</code></td></tr>
+          <tr><td><strong>Widget Blueprint</strong></td><td><code>WBP_</code></td><td><code>WBP_MainMenu</code></td></tr>
+          <tr><td><strong>Level / Map</strong></td><td><code>L_</code></td><td><code>L_DeepNight_Sublevel_01</code></td></tr>
+          <tr><td><strong>Data Asset</strong></td><td><code>DA_</code></td><td><code>DA_WeaponStats</code></td></tr>
+          <tr><td><strong>Data Table</strong></td><td><code>DT_</code></td><td><code>DT_EnemyStats</code></td></tr>
+          <tr><td><strong>Anim Blueprint</strong></td><td><code>ABP_</code></td><td><code>ABP_PlayerCharacter</code></td></tr>
+          <tr><td><strong>Anim Montage</strong></td><td><code>AM_</code></td><td><code>AM_Attack_Heavy_01</code></td></tr>
+          <tr><td><strong>Niagara System</strong></td><td><code>NS_</code></td><td><code>NS_Explosion_Debris</code></td></tr>
+          <tr><td><strong>Sound Cue</strong></td><td><code>SC_</code></td><td><code>SC_Footstep_Concrete</code></td></tr>
+          <tr><td><strong>Blueprint Interface</strong></td><td><code>BPI_</code></td><td><code>BPI_Interactable</code></td></tr>
+          <tr><td><strong>Gameplay Ability</strong></td><td><code>GA_</code></td><td><code>GA_Dash</code></td></tr>
+          <tr><td><strong>Gameplay Effect</strong></td><td><code>GE_</code></td><td><code>GE_Damage_Fire</code></td></tr>
+          <tr><td><strong>AI Generated Asset</strong></td><td><code>AIGEN_</code></td><td><code>AIGEN_T_Grunge_BC</code></td></tr>
         </tbody>
       </table>
     </div>
 
     <div class="alert bg-info-transparent border-info text-white mt-3">
-      <strong>Nota sobre Sufijos:</strong> Utilice guiones bajos (<code>_</code>) solo para identificadores de estado o variantes.
+      <strong>Convención de sufijos de Textura:</strong>
       <ul>
-        <li><strong>Correcto:</strong> <code>T_Rock_Base_Normal</code>, <code>MI_Metal_Rusted_02</code>.</li>
-        <li><strong>Incorrecto:</strong> <code>T Rock Base (1)</code>, <code>MI_Metal_Ñoño</code>.</li>
+        <li><code>_BC</code> — Base Color</li>
+        <li><code>_N</code> — Normal Map</li>
+        <li><code>_ORM</code> — Occlusion / Roughness / Metallic (canal empaquetado)</li>
+        <li><code>_E</code> — Emissive</li>
+        <li><code>_M</code> — Mask</li>
+      </ul>
+      <strong>Correcto:</strong> <code>T_Rock_Base_N</code>, <code>MI_Metal_Rusted_02</code>.<br>
+      <strong>Incorrecto:</strong> <code>T Rock Base (1)</code>, <code>MI_Metal_Ñoño</code>, <code>texture_FINAL_v3_USE_THIS</code>.
+    </div>
+  </div>
+</div>
+
+<div class="row mb-5">
+  <div class="col-12">
+    <h2 class="text-purple border-bottom border-purple pb-2 mb-4">3. CONTROL DE VERSIONES: GIT + SVN — EL ACUERDO DE PAZ</h2>
+    <p>Este studio opera en un modelo híbrido. <strong>Git</strong> controla código y configuración. <strong>SVN/Perforce Locking</strong> controla assets binarios de UE5. Mezclar ambos sin criterio es la receta del apocalipsis.</p>
+
+    <div class="card bg-dark border-purple mb-4">
+      <div class="card-body">
+        <h5 class="card-title text-purple">¿Qué va a dónde?</h5>
+        <table class="table table-dark">
+          <thead><tr><th>Qué</th><th>Sistema</th><th>Por qué</th></tr></thead>
+          <tbody>
+            <tr><td>Scripts C++, configs, CI/CD, docs</td><td><strong>Git</strong></td><td>Mergeable, diff legible, PR reviews.</td></tr>
+            <tr><td><code>.uasset</code>, <code>.umap</code>, texturas, audio</td><td><strong>SVN + LFS</strong></td><td>Binarios no mergeables. Locks obligatorios.</td></tr>
+            <tr><td>Assets de IA en revisión (<code>_Review/</code>)</td><td><strong>Git LFS</strong></td><td>Ciclo corto de revisión; no necesita lock.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card bg-dark border-purple mb-4">
+      <div class="card-body">
+        <h5 class="card-title text-purple">La Mecánica del Lock (Bloqueo SVN)</h5>
+        <ol class="tree-view">
+          <li><strong>Adquisición:</strong> Antes de mover un solo vértice, DEBES adquirir el Lock en SVN.</li>
+          <li><strong>Exclusividad:</strong> Candado en rojo = ese asset pertenece a otra alma. No lo toques.</li>
+          <li><strong>Infracción:</strong> Modificar sin bloqueo previo es falta administrativa grave. El cron no perdona.</li>
+          <li><strong>Excepción IA:</strong> Assets en <code>05_AI_Generated/_Review/</code> no requieren lock hasta su promoción a producción.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="jumbotron border-danger">
+      <h3 class="text-danger"><i class="fa-solid fa-broom"></i> The Sunday Purge (La Purga Dominical) 🧹</h3>
+      <p>Cada domingo a las 09:00 AM, un cron job ejecuta <code>svn unlock --force</code> masivo sobre todo el repositorio.</p>
+      <p class="italic mb-0">Si tenías algo bloqueado y no subiste los cambios antes de esa hora, el bloqueo desaparecerá. El servidor no tiene sentimientos; yo tampoco.</p>
+    </div>
+
+    <div class="alert bg-success-transparent border-success text-white mt-4">
+      <strong>La Directiva Sandbox (Exención):</strong> Todo dentro de <code>06_Developers/</code> está exento de bloqueo estricto. Es vuestro jardín de juegos. Los assets en <code>05_AI_Generated/_Review/</code> también operan sin lock hasta que sean promovidos.
+    </div>
+  </div>
+</div>
+
+<div class="row mb-5">
+  <div class="col-12">
+    <h2 class="text-purple border-bottom border-purple pb-2 mb-4">4. PIPELINE DE IA Y JULES — PROTOCOLO DE AGENTES</h2>
+    <p>Los agentes de IA (Jules, Copilot, Claude) son miembros del equipo con privilegios restringidos. No tienen acceso de escritura directa a producción. Jamás.</p>
+
+    <div class="card bg-dark border-purple mb-4">
+      <div class="card-body">
+        <h5 class="card-title text-purple">Zonas de Operación de Agentes IA</h5>
+        <table class="table table-dark">
+          <thead><tr><th>Zona</th><th>Acceso IA</th><th>Acción humana requerida</th></tr></thead>
+          <tbody>
+            <tr><td><code>06_Developers/</code></td><td>✅ Lectura + Escritura</td><td>Ninguna. Zona libre.</td></tr>
+            <tr><td><code>05_AI_Generated/_Review/</code></td><td>✅ Escritura (output)</td><td>Revisión + aprobación para promover.</td></tr>
+            <tr><td><code>02_Design/</code>, <code>03_Art/</code>, etc.</td><td>⚠️ Lectura únicamente</td><td>PR obligatorio para cualquier cambio.</td></tr>
+            <tr><td><code>01_Core/</code></td><td>🚫 Sin acceso</td><td>Cambios manuales exclusivamente.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card bg-dark border-purple mb-4">
+      <div class="card-body">
+        <h5 class="card-title text-purple">Flujo de Trabajo con Jules</h5>
+        <ol class="tree-view">
+          <li><strong>Task Assignment:</strong> Las tareas asignadas a Jules se abren como Issues en Git con la etiqueta <code>agent:jules</code>.</li>
+          <li><strong>Branching:</strong> Jules trabaja siempre en ramas con prefijo <code>jules/</code> (ej: <code>jules/fix-inventory-logic</code>). Nunca en <code>master</code> o <code>develop</code>.</li>
+          <li><strong>Output:</strong> Todo código generado por Jules incluye comentario de cabecera <code>// AI-ASSISTED: Jules [fecha]</code> para trazabilidad.</li>
+          <li><strong>Review:</strong> PR obligatorio con revisión humana antes del merge. Jules no aprueba sus propios PRs.</li>
+          <li><strong>Prohibición:</strong> Jules no toca <code>01_Core/</code>, archivos de configuración de CI/CD, ni credenciales. Nunca.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="alert bg-warning-transparent border-warning text-white mt-3">
+      <strong>🤖 Regla de Oro de IA:</strong> Todo asset o código marcado como <code>AIGEN_</code> o con comentario <code>// AI-ASSISTED</code> debe tener un propietario humano asignado que sea responsable de su calidad. "La IA lo hizo" no es excusa válida en una post-mortem.
+    </div>
+  </div>
+</div>
+
+<div class="row mb-5">
+  <div class="col-12">
+    <h2 class="text-purple border-bottom border-purple pb-2 mb-4">5. PIPELINE CI/CD Y AUTOMATIZACIÓN</h2>
+    <p>El servidor trabaja mientras dormís. Configuradlo bien o sufrid las consecuencias.</p>
+
+    <div class="card bg-dark border-purple mb-4">
+      <div class="card-body">
+        <h5 class="card-title text-purple">Jobs Automáticos Activos</h5>
+        <table class="table table-dark">
+          <thead><tr><th>Job</th><th>Trigger</th><th>Acción</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Asset Lint</strong></td><td>Push a cualquier rama</td><td>Valida nomenclatura de assets. Falla el PR si hay violaciones.</td></tr>
+            <tr><td><strong>Sunday Purge</strong></td><td>Domingo 09:00 AM</td><td><code>svn unlock --force</code> masivo. Sin excepciones.</td></tr>
+            <tr><td><strong>Build Nightly</strong></td><td>Diario 02:00 AM</td><td>Cook de Development build en servidor. Notificación en Discord si falla.</td></tr>
+            <tr><td><strong>AI Review Ping</strong></td><td>Nuevo archivo en <code>_Review/</code></td><td>Notifica al equipo en Discord para revisión pendiente.</td></tr>
+            <tr><td><strong>Release Build</strong></td><td>Tag <code>v*.*.*</code> en Git</td><td>Cook completo Shipping + upload a distribución interna.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="alert bg-info-transparent border-info text-white mt-3">
+      <strong>Configuración de Notificaciones:</strong> Todos los jobs reportan a Discord (<code>#ci-cd-log</code>). Los fallos de Build Nightly mencionan a <code>@dev-team</code>. Los fallos de Asset Lint bloquean el PR automáticamente.
+    </div>
+  </div>
+</div>
+
+<div class="row mb-5">
+  <div class="col-12">
+    <h2 class="text-purple border-bottom border-purple pb-2 mb-4">6. PROTOCOLO DE BRANCHES Y RELEASES</h2>
+    <p>El caos de ramas es el segundo mayor asesino de proyectos indie, justo después de "refactorizar todo desde cero a 3 semanas del deadline".</p>
+
+    <div class="bg-dark p-3 rounded font-weight-mono text-success text-xs border border-purple mb-4">
+<pre class="mb-0 text-success">
+master                  # Producción. Solo merge desde release/*. Protegida.
+develop                 # Integración. Aquí converge todo.
+├── feature/xxx         # Nueva funcionalidad. Sale de develop, vuelve a develop.
+├── fix/xxx             # Bugfix en develop.
+├── hotfix/xxx          # Fix urgente sobre master. Merge a master Y develop.
+├── jules/xxx           # Ramas exclusivas de Jules. Nunca merge directo a master.
+└── release/vX.X.X      # Preparación de release. Solo bugfixes aquí.
+</pre>
+    </div>
+
+    <div class="alert bg-success-transparent border-success text-white mt-3">
+      <strong>Regla de Merge:</strong>
+      <ul>
+        <li><code>feature/*</code> → <code>develop</code>: PR + 1 review.</li>
+        <li><code>release/*</code> → <code>master</code>: PR + 2 reviews + build verde obligatorio.</li>
+        <li><code>jules/*</code> → <code>develop</code>: PR + 1 review humano obligatorio.</li>
+        <li>Merge directo a <code>master</code>: <strong>PROHIBIDO</strong>. Sin excepciones. Ni en domingo.</li>
       </ul>
     </div>
   </div>
@@ -126,28 +281,28 @@ permalink: /estructura_del_proyecto/
 
 <div class="row mb-5">
   <div class="col-12">
-    <h2 class="text-purple border-bottom border-purple pb-2 mb-4">3. EL PROTOCOLO DE CONCURRENCIA: LOCKS Y REGLAMENTO DOMINICAL</h2>
-    <p>Unreal Engine maneja archivos binarios (<code>.uasset</code>, <code>.umap</code>). Estos archivos <strong>NO SE PUEDEN MEZCLAR</strong>.</p>
+    <h2 class="text-purple border-bottom border-purple pb-2 mb-4">7. PERFORMANCE BUDGETS — LOS MANDAMIENTOS DEL RENDERING</h2>
+    <p>Un asset hermoso que destruye el framerate es un asset enemigo. Estos límites son innegociables.</p>
 
-    <div class="card bg-dark border-purple mb-4">
-      <div class="card-body">
-        <h5 class="card-title text-purple">La Mecánica del Lock (Bloqueo)</h5>
-        <ol class="tree-view">
-          <li><strong>Adquisición:</strong> Antes de mover un solo vértice, DEBES adquirir el bloqueo (Lock) en SVN.</li>
-          <li><strong>Exclusividad:</strong> Si el candado está en rojo, ese asset pertenece a otra alma. No lo toques.</li>
-          <li><strong>Infracción:</strong> Modificar archivos sin bloqueo previo es una falta administrativa grave.</li>
-        </ol>
-      </div>
+    <div class="page-content">
+      <table class="table">
+        <thead>
+          <tr><th>Recurso</th><th>Límite por Asset</th><th>Límite Global en Escena</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Triángulos (Prop Hero)</td><td>50.000 tris</td><td>—</td></tr>
+          <tr><td>Triángulos (Prop Secundario)</td><td>10.000 tris</td><td>—</td></tr>
+          <tr><td>Triángulos (Personaje Principal)</td><td>80.000 tris</td><td>—</td></tr>
+          <tr><td>Textura máxima</td><td>2048×2048</td><td>VRAM &lt; 2GB en escena</td></tr>
+          <tr><td>Draw Calls</td><td>—</td><td>&lt; 1000 en escena activa</td></tr>
+          <tr><td>Luces dinámicas activas</td><td>—</td><td>&lt; 8 con sombras activas</td></tr>
+          <tr><td>Partículas activas (Niagara)</td><td>500 partículas</td><td>&lt; 5000 total en pantalla</td></tr>
+        </tbody>
+      </table>
     </div>
 
-    <div class="jumbotron border-danger">
-      <h3 class="text-danger"><i class="fa-solid fa-broom"></i> The Sunday Purge (La Purga Dominical) 🧹</h3>
-      <p>Cada Domingo a las 09:00 AM, un cron job en el servidor ejecuta un <code>svn unlock --force</code> masivo sobre todo el repositorio.</p>
-      <p class="italic mb-0">Si tenías algo bloqueado y no subiste los cambios antes de esa hora, el bloqueo desaparecerá. El servidor no tiene sentimientos; yo tampoco.</p>
-    </div>
-
-    <div class="alert bg-success-transparent border-success text-white mt-4">
-      <strong>La Directiva Sandbox (Exención):</strong> Todo lo que resida dentro de <code>05_Developers/</code> está exento de las políticas de bloqueo estricto. Es vuestro jardín de juegos.
+    <div class="alert bg-warning-transparent border-warning text-white mt-3">
+      <strong>LOD Obligatorio:</strong> Todo <code>SM_</code> con más de 5.000 triángulos debe tener mínimo 3 niveles de LOD configurados. El Asset Lint lo verificará. Un mesh sin LODs es un mesh que no entra en producción.
     </div>
   </div>
 </div>
