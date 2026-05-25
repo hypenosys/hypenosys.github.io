@@ -202,22 +202,7 @@ class AuthManager {
         }
 
         if (user) {
-            if (leftContainer) {
-                leftContainer.innerHTML = `
-                    <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center" href="#" id="btn-open-profile-img">
-                            <div class="position-relative">
-                                ${window.HypenosysUI.renderAvatar(user)}
-                                <span class="connectivity-dot"></span>
-                            </div>
-                        </a>
-                    </li>
-                `;
-                document.getElementById('btn-open-profile-img')?.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    this.showProfileModal();
-                });
-            }
+            if (leftContainer) leftContainer.innerHTML = '';
             container.innerHTML = `
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
