@@ -28,11 +28,11 @@
             <i class="fas fa-tachometer-alt fa-sm fa-fw mr-1 text-purple"></i> Dashboard
           </a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{ '/guia-comandos/' | relative_url }}">Comandos</a>
+        <li class="nav-item {% if page.url == '/guia-comandos/' %}active{% endif %}">
+          <a class="nav-link" href="{{ '/guia-comandos/' | relative_url }}" {% if page.url == '/guia-comandos/' %}style="pointer-events: none; opacity: 0.5;"{% endif %}>Comandos</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{ '/tech-stack/' | relative_url }}">Tech Stack</a>
+        <li class="nav-item {% if page.url == '/tech-stack/' %}active{% endif %}">
+          <a class="nav-link" href="{{ '/tech-stack/' | relative_url }}" {% if page.url == '/tech-stack/' %}style="pointer-events: none; opacity: 0.5;"{% endif %}>Tech Stack</a>
         </li>
         <li class="nav-item {% if page.url == '/jules-panel/' %}active{% endif %}">
           <a class="nav-link" href="{{ '/jules-panel/' | relative_url }}" {% if page.url == '/jules-panel/' %}style="pointer-events: none; opacity: 0.5;"{% endif %}>Jules</a>
