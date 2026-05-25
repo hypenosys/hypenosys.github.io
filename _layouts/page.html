@@ -3,9 +3,11 @@ layout: default
 ---
 <article>
 
+  {% unless page.hide_title %}
   <header>
     <h1>{{ page.title | escape }}</h1>
   </header>
+  {% endunless %}
 
   <section>
     {{ content }}
