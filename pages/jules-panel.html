@@ -1751,15 +1751,18 @@ permalink: /jules-panel/
         const title = activity.progressUpdated.title || '';
         const desc  = activity.progressUpdated.description || '';
 
-        // Buscar bashOutput en artifacts de esta actividad
+        const parsedTitle = typeof marked !== 'undefined' ? marked.parse(title) : escapeHtml(title);
+        const parsedDesc  = typeof marked !== 'undefined' && desc ? marked.parse(desc) : escapeHtml(desc);
+
         const bash = (activity.artifacts || [])
           .map(a => a.bashOutput).filter(Boolean)[0];
 
         html = `
           <div class="activity-entry activity-entry--progress">
-            <div style="color:#9ca3af;font-size:11px;">
-              ⚙️ <strong style="color:#d1d5db;">${escapeHtml(title)}</strong>
-              ${desc ? `<span style="color:#6b7280"> — ${escapeHtml(desc)}</span>` : ''}
+            <div class="prose" style="overflow-x:auto;max-width:100%;word-break:break-word;font-size:12px;">
+              <span style="color:#8b5cf6;font-weight:700;">⚙️</span>
+              ${parsedTitle}
+              ${parsedDesc ? `<div style="color:#9ca3af;margin-top:4px;">${parsedDesc}</div>` : ''}
             </div>
             ${bash ? `
               <details style="margin-top:6px;">
@@ -1775,10 +1778,22 @@ permalink: /jules-panel/
       }
 
       else if (activity.sessionCompleted) {
-        html = `<div class="activity-entry"
-                     style="color:#10b981;font-size:11px;font-weight:600;">
-          🏁 Sesión completada
-        </div>`;
+        const commitMsg = activity.sessionCompleted?.commitMessage ||
+                          activity.sessionCompleted?.message || '';
+        const parsed = typeof marked !== 'undefined' && commitMsg
+          ? marked.parse(commitMsg)
+          : '';
+
+        html = `
+          <div class="activity-entry" style="color:#10b981;font-size:11px;font-weight:600;">
+            🏁 Sesión completada
+            ${parsed ? `
+              <div class="prose" style="overflow-x:auto;max-width:100%;word-break:break-word;
+                   font-size:11px;font-weight:400;color:#d1d5db;margin-top:6px;
+                   border-top:1px solid #1e1e2a;padding-top:6px;">
+                ${parsed}
+              </div>` : ''}
+          </div>`;
       }
 
       else if (activity.sessionFailed) {
