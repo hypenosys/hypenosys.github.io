@@ -34,8 +34,8 @@
         <li class="nav-item">
           <a class="nav-link" href="{{ '/tech-stack/' | relative_url }}">Tech Stack</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{ '/jules-panel/' | relative_url }}">Jules</a>
+        <li class="nav-item {% if page.url == '/jules-panel/' %}active{% endif %}">
+          <a class="nav-link" href="{{ '/jules-panel/' | relative_url }}" {% if page.url == '/jules-panel/' %}style="pointer-events: none; opacity: 0.5;"{% endif %}>Jules</a>
         </li>
       </ul>
       <ul class="navbar-nav ml-auto" id="auth-nav-container">
