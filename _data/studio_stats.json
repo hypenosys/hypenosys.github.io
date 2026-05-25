@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_computed": "2026-05-24T14:27:38.819Z",
+  "last_computed": "2026-05-25T08:22:59.379Z",
   "global": {
     "total_tasks": 10,
     "total_ok": 4,
@@ -74,7 +74,7 @@
     },
     "Javi": {
       "found": 0,
-      "fixed": 1,
+      "fixed": 2,
       "fixed_ok": 0,
       "support": 0,
       "support_ok": 0,
