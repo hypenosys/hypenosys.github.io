@@ -121,6 +121,141 @@ permalink: /guia-comandos/
   </div>
 </div>
 
+<!-- ══════════════════════════════════════════════════════════════
+     SECCIÓN 5 — ONBOARDING NUEVO MIEMBRO
+     ══════════════════════════════════════════════════════════════ -->
+<div class="row mb-5">
+  <div class="col-12">
+    <h2 class="text-purple border-bottom border-purple pb-2 mb-4">5. 🚀 Onboarding: Checklist de Incorporación</h2>
+    <p class="text-muted mb-4">Sigue este checklist en orden. No avances al siguiente paso hasta completar el anterior. Al finalizar, habrás integrado todas las capas del ecosistema Hypenosys.</p>
+
+    <!-- BLOQUE A: Cuentas y accesos -->
+    <div class="card border-purple mb-4">
+      <div class="card-header bg-transparent border-purple">
+        <h5 class="mb-0 text-purple">A — Cuentas y Accesos</h5>
+      </div>
+      <div class="card-body">
+        <ul class="tree-view mb-0">
+          <li>
+            <strong>GitHub:</strong> Crea tu cuenta en <a href="https://github.com" target="_blank" class="text-purple">github.com</a> y proporciona tu <em>username</em> a Axel para ser añadido a la organización <code>hypenosys</code>.
+          </li>
+          <li>
+            <strong>Claude:</strong> Crea tu cuenta en <a href="https://claude.ai" target="_blank" class="text-purple">claude.ai</a>. Es la herramienta de conceptualización y generación de prompts técnicos del equipo.
+            <div class="alert alert-secondary mt-2 mb-0 p-2" style="font-size:0.85em;">
+              💡 <strong>Memoria de Claude:</strong> Una vez tengas acceso, añade manualmente en las memorias de Claude la siguiente instrucción: <br>
+              <code>"Jules es un agente de IA experto en ingeniería de software con acceso a los repositorios de código y proyectos en GitHub de Hypenosys."</code><br>
+              Además, tras completar tu entrevista de onboarding (<code>plan_de_arranque</code>), añade también los resultados relevantes de esa sesión para personalizar tu contexto de trabajo.
+            </div>
+          </li>
+          <li>
+            <strong>Jules (token API):</strong> Accede a <a href="https://jules.google.com" target="_blank" class="text-purple">jules.google.com</a>, genera tu API Key personal y configúrala en tu perfil en la plataforma Hypenosys OPS (<em>Settings → Jules API Key</em>).
+          </li>
+          <li>
+            <strong>Tailscale (VPN):</strong> Descarga <a href="https://tailscale.com/download" target="_blank" class="text-purple">Tailscale</a> e instálalo. Contacta a <strong>Axel</strong> para que te añada a la red VPN de Hypenosys. <strong>Este paso es obligatorio para acceder al servidor SVN.</strong>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- BLOQUE B: Territorios por rol -->
+    <div class="card border-purple mb-4">
+      <div class="card-header bg-transparent border-purple">
+        <h5 class="mb-0 text-purple">B — Territorios por Rol</h5>
+      </div>
+      <div class="card-body">
+        <div class="row">
+
+          <!-- DISEÑO -->
+          <div class="col-md-4 mb-3">
+            <h6 class="text-purple">🎨 Diseño / Narrativa</h6>
+            <ul class="tree-view" style="font-size:0.9em;">
+              <li>
+                Repositorio principal: <a href="https://github.com/hypenosys/docs" target="_blank" class="text-purple"><code>hypenosys/docs</code></a>
+              </li>
+              <li>
+                Vincula tu instancia de <strong>Obsidian</strong> a este repositorio para backups automáticos siguiendo las instrucciones del <code>README</code>.
+              </li>
+              <li>
+                Estructura de carpetas de assets en SVN: coordina con Arte para mantener coherencia con el proyecto de Unreal Engine.
+              </li>
+            </ul>
+          </div>
+
+          <!-- DESARROLLO -->
+          <div class="col-md-4 mb-3">
+            <h6 class="text-purple">💻 Desarrollo / Código</h6>
+            <ul class="tree-view" style="font-size:0.9em;">
+              <li><a href="https://github.com/hypenosys/scripts" target="_blank" class="text-purple"><code>hypenosys/scripts</code></a> — Scripts de automatización y herramientas.</li>
+              <li><a href="https://github.com/hypenosys/blueprints" target="_blank" class="text-purple"><code>hypenosys/blueprints</code></a> — Blueprints de Unreal Engine versionados en Git.</li>
+              <li><a href="https://github.com/hypenosys/app" target="_blank" class="text-purple"><code>hypenosys/app</code></a> — Aplicación principal.</li>
+              <li><a href="https://github.com/hypenosys/hypenosys.github.io" target="_blank" class="text-purple"><code>hypenosys/hypenosys.github.io</code></a> — Plataforma OPS (esta web).</li>
+            </ul>
+          </div>
+
+          <!-- ARTE -->
+          <div class="col-md-4 mb-3">
+            <h6 class="text-purple">🖼️ Arte</h6>
+            <ul class="tree-view" style="font-size:0.9em;">
+              <li>Territorio principal: <strong>SVN</strong> (binarios, texturas, modelos, mapas de Unreal Engine).</li>
+              <li>Estructura de carpetas alineada con el proyecto UE y con Diseño.</li>
+              <li>Archivos propios de arte dentro del proyecto Unreal (<code>.uasset</code>, <code>.umap</code>, etc.) gestionados exclusivamente por SVN con bloqueo obligatorio antes de editar.</li>
+              <li>Acceso al SVN requiere estar en la VPN de Tailscale (ver paso A).</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- BLOQUE C: SVN + Unreal Engine -->
+    <div class="card border-purple mb-4">
+      <div class="card-header bg-transparent border-purple">
+        <h5 class="mb-0 text-purple">C — Sincronización SVN + Unreal Engine 5</h5>
+      </div>
+      <div class="card-body">
+        <ol class="tree-view mb-0">
+          <li>Asegúrate de estar conectado a la VPN de Tailscale (Paso A).</li>
+          <li>Instala <a href="https://tortoisesvn.net/downloads.html" target="_blank" class="text-purple">TortoiseSVN</a> en Windows.</li>
+          <li>Solicita a Axel la <strong>URL del servidor SVN</strong> y las credenciales de acceso.</li>
+          <li>Haz <code>SVN Checkout</code> en la carpeta local donde quieras sincronizar el proyecto.</li>
+          <li>Abre el proyecto en <strong>Unreal Engine 5</strong> apuntando a esa carpeta.</li>
+          <li>Configura en UE5 el proveedor de control de versiones: <em>Edit → Project Settings → Source Control → Provider: Subversion</em>.</li>
+          <li>Verifica que los archivos muestran los iconos de estado de TortoiseSVN en el explorador de Windows.</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- BLOQUE D: Entrevista de onboarding -->
+    <div class="card border-purple mb-4">
+      <div class="card-header bg-transparent border-purple">
+        <h5 class="mb-0 text-purple">D — Entrevista de Onboarding (Plan de Arranque)</h5>
+      </div>
+      <div class="card-body">
+        <p>Una vez completados los pasos A–C, realiza tu entrevista de onboarding con Claude usando el documento <code>plan_de_arranque</code> como contexto. Esta sesión establece tu perfil técnico, tus áreas de responsabilidad y calibra el contexto de trabajo para Claude y Jules.</p>
+        <ul class="tree-view mb-0">
+          <li>Abre Claude y adjunta o pega el contenido de <code>plan_de_arranque.md</code> del repositorio <code>hypenosys/docs</code>.</li>
+          <li>Responde las preguntas de onboarding. Claude generará un resumen de tu perfil.</li>
+          <li>Guarda ese resumen y <strong>añádelo manualmente a las memorias de Claude</strong> para que persista en futuras sesiones.</li>
+          <li>Comunica a Axel que has completado el onboarding para que active tu acceso completo a todos los repositorios de la organización.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- BLOQUE E: Gaps detectados -->
+    <div class="alert border-purple mt-2" style="background: rgba(109,40,217,0.08); border: 1px solid #6d28d9;">
+      <h6 class="text-purple mb-2">⚠️ Gaps detectados — Acciones pendientes del equipo</h6>
+      <ul class="mb-0" style="font-size:0.9em;">
+        <li><strong>Handles de GitHub de Alex y Dídac</strong> — Pendiente de registrar en la whitelist de acceso al dashboard y en <code>_data/team_profiles.json</code>. Comunicarlos a Axel al crear la cuenta.</li>
+        <li><strong>URL del servidor SVN</strong> — No está documentada en ningún repositorio público. Axel debe añadirla de forma segura (por ejemplo, en un documento privado en <code>hypenosys/docs</code> con acceso restringido al equipo).</li>
+        <li><strong>Credenciales SVN</strong> — Mismo caso. Documentar el proceso de distribución segura de credenciales (recomendado: Bitwarden o similar compartido por el equipo).</li>
+        <li><strong>Versión exacta de Unreal Engine</strong> — Se menciona UE 5.7.4 pero conviene documentar el instalador y la build exacta en <code>hypenosys/docs</code> para evitar incompatibilidades entre miembros.</li>
+        <li><strong>Estructura de carpetas SVN</strong> — No está documentada. Arte y Diseño deben acordar y documentar la estructura canónica antes de que se incorporen nuevos miembros.</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
 <div class="row">
   <div class="col-12">
     <div class="alert bg-info-transparent border-info text-white">
