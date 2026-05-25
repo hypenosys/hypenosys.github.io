@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-24T14:27:38.105Z",
+  "last_updated": "2026-05-25T08:22:58.107Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -32,7 +32,7 @@
       "milestone": "M1",
       "estado": "Pending",
       "completitud": 0,
-      "resuelto_por": null,
+      "resuelto_por": "Javi",
       "detectado_por": "Alex",
       "rama2": null,
       "ver": true,
