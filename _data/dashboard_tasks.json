@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-26T18:15:16.641Z",
+  "last_updated": "2026-05-26T18:16:34.807Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -161,7 +161,7 @@
     },
     {
       "rama": "PRO",
-      "descripcion": "Update GitHub repo 'app' to 5.7.4 (fixed)",
+      "descripcion": "Commit upgrade SVN Content/Scripts to repo 'app' to 5.7.4",
       "tema_principal": "Tools / Automation",
       "prioridad": "Critical",
       "milestone": "M1",
