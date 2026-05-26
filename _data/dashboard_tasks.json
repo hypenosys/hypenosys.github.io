@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-26T19:36:25.588Z",
+  "last_updated": "2026-05-26T19:36:40.223Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -101,7 +101,7 @@
       "rama": "PRO",
       "descripcion": "Instalar Git, TortoiseSVN(add to path) + Unreal Engine 5.7.4",
       "tema_principal": "Tools / Automation",
-      "prioridad": "Medium",
+      "prioridad": "Critical",
       "milestone": "M1",
       "estado": "In Review",
       "completitud": 0.25,
