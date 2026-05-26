@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-26T18:31:05.217Z",
+  "last_updated": "2026-05-26T18:31:18.959Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -142,7 +142,7 @@
     {
       "rama": "PRO",
       "descripcion": "Merge SVN Content/Scripts with upgraded github repo 'app' 5.7.4",
-      "tema_principal": "Tools / Automation",
+      "tema_principal": "Programación / Engine",
       "prioridad": "Major",
       "milestone": "M1",
       "estado": "Working",
