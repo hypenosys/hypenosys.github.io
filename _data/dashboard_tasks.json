@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-26T19:35:59.329Z",
+  "last_updated": "2026-05-26T19:36:25.588Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -166,7 +166,7 @@
       "rama": "DIS",
       "descripcion": "GDD (Game Design Document)",
       "tema_principal": "Concepto / GDD",
-      "prioridad": "Major",
+      "prioridad": "Medium",
       "milestone": "M1",
       "estado": "Working",
       "completitud": 0,
