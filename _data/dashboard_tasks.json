@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-26T18:30:38.409Z",
+  "last_updated": "2026-05-26T18:30:50.654Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -21,7 +21,9 @@
       "milestone": "M1",
       "completitud": 1,
       "asignados": [
-        "axlfc"
+        "axlfc",
+        "topperh4rley",
+        "javi26031994-a11y"
       ]
     },
     {
