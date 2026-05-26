@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-26T19:43:24.575Z",
-  "last_updated_by": "Axlfc",
+  "last_updated": "2026-05-26T19:48:04.853Z",
+  "last_updated_by": "Axel",
   "tasks": [
     {
       "id": 1,
@@ -201,6 +201,32 @@
         "axel@hypenosys.com",
         "alex@hypenosys.com"
       ]
+    },
+    {
+      "rama": "PRO",
+      "descripcion": "Completar onboarding y rellenar perfil dashboard",
+      "tema_principal": "Concepto / GDD",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "ToDo",
+      "completitud": 0.2,
+      "resuelto_por": null,
+      "detectado_por": "Axel",
+      "asignados": [
+        "topperh4rley",
+        "javi26031994-a11y",
+        "dkdidac-design",
+        "mitxel2022"
+      ],
+      "email_responsable": "alex@hypenosys.com",
+      "emails_asignados": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-05-26",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "id": 12
     }
   ]
 }
