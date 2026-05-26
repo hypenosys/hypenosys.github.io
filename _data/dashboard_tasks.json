@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-26T18:11:51.798Z",
+  "last_updated": "2026-05-26T18:12:26.578Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -165,7 +165,7 @@
       "milestone": "M1",
       "estado": "Pending",
       "completitud": 0.5,
-      "resuelto_por": null,
+      "resuelto_por": "Alex",
       "detectado_por": "Axel",
       "asignados": [
         "axlfc",
