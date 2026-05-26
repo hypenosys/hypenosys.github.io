@@ -1,14 +1,14 @@
 {
   "schema_version": "1.0.0",
-  "last_computed": "2026-05-26T18:00:26.461Z",
+  "last_computed": "2026-05-26T18:02:00.239Z",
   "global": {
-    "total_tasks": 11,
-    "total_ok": 4,
+    "total_tasks": 10,
+    "total_ok": 3,
     "total_ko": 0,
     "total_uncertain": 1,
     "total_obsolete": 0,
-    "fixed_found_ratio": 0.3636,
-    "verified_ratio": 0.3636,
+    "fixed_found_ratio": 0.3,
+    "verified_ratio": 0.3,
     "by_priority": {
       "Critical": {
         "total": 5,
@@ -21,9 +21,9 @@
         "rate": 0
       },
       "Medium": {
-        "total": 4,
-        "solved": 1,
-        "rate": 0.25
+        "total": 3,
+        "solved": 0,
+        "rate": 0
       },
       "Minor": {
         "total": 1,
@@ -49,12 +49,12 @@
   },
   "members": {
     "Axel": {
-      "found": 8,
-      "fixed": 3,
-      "fixed_ok": 3,
+      "found": 7,
+      "fixed": 2,
+      "fixed_ok": 2,
       "support": 0,
       "support_ok": 0,
-      "score": 0.5932
+      "score": 0.5433
     },
     "Alex": {
       "found": 3,
@@ -62,7 +62,7 @@
       "fixed_ok": 1,
       "support": 0,
       "support_ok": 0,
-      "score": 0.2068
+      "score": 0.2567
     },
     "Dídac": {
       "found": 0,
@@ -94,16 +94,16 @@
       "rank": 1,
       "medal": "🏆",
       "name": "Axel",
-      "score": 0.5932,
-      "found": 8,
-      "fixed_ok": 3,
+      "score": 0.5433,
+      "found": 7,
+      "fixed_ok": 2,
       "support_ok": 0
     },
     {
       "rank": 2,
       "medal": "🥇",
       "name": "Alex",
-      "score": 0.2068,
+      "score": 0.2567,
       "found": 3,
       "fixed_ok": 1,
       "support_ok": 0
