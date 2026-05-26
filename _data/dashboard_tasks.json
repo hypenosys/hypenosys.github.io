@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-26T18:09:30.043Z",
+  "last_updated": "2026-05-26T18:11:25.496Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -25,15 +25,15 @@
       ]
     },
     {
-      "rama": "DIS",
+      "rama": "ART",
       "descripcion": "BrainStorm",
       "tema_principal": "Concepto / GDD",
       "prioridad": "Critical",
       "milestone": "M1",
       "estado": "Pending",
-      "completitud": 0,
-      "resuelto_por": "Javi",
-      "detectado_por": "Alex",
+      "completitud": 0.2,
+      "resuelto_por": null,
+      "detectado_por": "Dídac",
       "rama2": null,
       "ver": true,
       "fecha": "2026-05-24",
@@ -45,7 +45,6 @@
         "axlfc",
         "topperh4rley",
         "javi26031994-a11y",
-        "dkdidac-design",
         "mitxel2022"
       ]
     },
