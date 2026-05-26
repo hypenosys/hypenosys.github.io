@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0.0",
-  "last_computed": "2026-05-26T18:13:20.107Z",
+  "last_computed": "2026-05-26T18:13:46.301Z",
   "global": {
     "total_tasks": 8,
     "total_ok": 1,
     "total_ko": 0,
     "total_uncertain": 1,
     "total_obsolete": 0,
-    "fixed_found_ratio": 0.125,
+    "fixed_found_ratio": 0.1429,
     "verified_ratio": 0.125,
     "by_priority": {
       "Critical": {
@@ -49,12 +49,12 @@
   },
   "members": {
     "Axel": {
-      "found": 5,
+      "found": 4,
       "fixed": 1,
       "fixed_ok": 1,
       "support": 0,
       "support_ok": 0,
-      "score": 0.6875
+      "score": 0.65
     },
     "Alex": {
       "found": 2,
@@ -66,7 +66,7 @@
     },
     "Dídac": {
       "found": 1,
-      "fixed": 1,
+      "fixed": 0,
       "fixed_ok": 0,
       "support": 0,
       "support_ok": 0,
@@ -94,8 +94,8 @@
       "rank": 1,
       "medal": "🏆",
       "name": "Axel",
-      "score": 0.6875,
-      "found": 5,
+      "score": 0.65,
+      "found": 4,
       "fixed_ok": 1,
       "support_ok": 0
     },
