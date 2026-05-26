@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-26T18:02:18.311Z",
+  "last_updated": "2026-05-26T18:09:33.419Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -45,6 +45,27 @@
       "id": 3,
       "asignados": [
         "axlfc",
+        "topperh4rley"
+      ]
+    },
+    {
+      "rama": "PRO",
+      "descripcion": "Instalar Tailscale + Tortoise + Unreal Engine 5.7.4",
+      "tema_principal": "Pre-producción",
+      "prioridad": "Critical",
+      "milestone": "M1",
+      "estado": "OK",
+      "completitud": 0,
+      "resuelto_por": "Alex",
+      "detectado_por": "Alex",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-05-24",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "id": 7,
+      "asignados": [
         "topperh4rley"
       ]
     }
