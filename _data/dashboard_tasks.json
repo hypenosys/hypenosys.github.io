@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-26T18:37:54.790Z",
+  "last_updated": "2026-05-26T18:40:48.485Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -15,7 +15,7 @@
       "resuelto_por": "Axel",
       "apoyo": null,
       "estado": "In Review",
-      "prioridad": "Major",
+      "prioridad": "Critical",
       "limite": null,
       "comentario": "Sistema base del dashboard",
       "milestone": "M1",
