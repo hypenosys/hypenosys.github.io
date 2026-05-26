@@ -17,7 +17,7 @@
       "estado": "In Review",
       "prioridad": "Critical",
       "limite": null,
-      "comentario": "Sistema base del dashboard",
+      "comentario": "Implementación del núcleo del Operations Center usando Jekyll y Tailwind. Configuración de la API de GitHub para persistencia de tareas y visualización de métricas de QA.",
       "milestone": "M1",
       "completitud": 0.6,
       "asignados": [
@@ -26,6 +26,14 @@
         "javi26031994-a11y",
         "dkdidac-design",
         "mitxel2022"
+      ],
+      "email_responsable": "axel@hypenosys.com",
+      "emails_asignados": [
+        "axel@hypenosys.com",
+        "alex@hypenosys.com",
+        "javi@hypenosys.com",
+        "didac@hypenosys.com",
+        "mitxel@hypenosys.com"
       ]
     },
     {
@@ -43,13 +51,20 @@
       "fecha": "2026-05-24",
       "apoyo": null,
       "limite": null,
-      "comentario": "",
+      "comentario": "Sesión de ideación creativa para definir el núcleo mecánico del proyecto. Documentación de resultados en el GDD inicial.",
       "id": 4,
       "asignados": [
         "axlfc",
         "topperh4rley",
         "javi26031994-a11y",
         "mitxel2022"
+      ],
+      "email_responsable": "didac@hypenosys.com",
+      "emails_asignados": [
+        "axel@hypenosys.com",
+        "alex@hypenosys.com",
+        "javi@hypenosys.com",
+        "mitxel@hypenosys.com"
       ]
     },
     {
@@ -67,12 +82,18 @@
       "fecha": "2026-05-24",
       "apoyo": null,
       "limite": null,
-      "comentario": "",
+      "comentario": "Capacitación del equipo en la navegación del motor, gestión de assets y flujo de trabajo con Blueprints.",
       "id": 5,
       "asignados": [
         "topperh4rley",
         "dkdidac-design",
         "mitxel2022"
+      ],
+      "email_responsable": "alex@hypenosys.com",
+      "emails_asignados": [
+        "alex@hypenosys.com",
+        "didac@hypenosys.com",
+        "mitxel@hypenosys.com"
       ]
     },
     {
@@ -90,11 +111,16 @@
       "fecha": "2026-05-24",
       "apoyo": null,
       "limite": null,
-      "comentario": "",
+      "comentario": "Configuración de la red privada virtual (VPN Mesh) para permitir la conexión directa con el servidor SVN y colaboración segura.",
       "id": 6,
       "asignados": [
         "dkdidac-design",
         "mitxel2022"
+      ],
+      "email_responsable": "mitxel@hypenosys.com",
+      "emails_asignados": [
+        "didac@hypenosys.com",
+        "mitxel@hypenosys.com"
       ]
     },
     {
@@ -112,11 +138,16 @@
       "fecha": "2026-05-24",
       "apoyo": null,
       "limite": null,
-      "comentario": "",
+      "comentario": "Preparación del entorno de desarrollo local con el cliente de control de versiones para assets binarios y la versión específica del motor.",
       "id": 8,
       "asignados": [
         "dkdidac-design",
         "mitxel2022"
+      ],
+      "email_responsable": "mitxel@hypenosys.com",
+      "emails_asignados": [
+        "didac@hypenosys.com",
+        "mitxel@hypenosys.com"
       ]
     },
     {
@@ -137,8 +168,12 @@
       "fecha": "2026-05-24",
       "apoyo": null,
       "limite": null,
-      "comentario": "",
-      "id": 10
+      "comentario": "Setup completo de infraestructura de red y software de desarrollo para nuevos integrantes.",
+      "id": 10,
+      "email_responsable": "mitxel@hypenosys.com",
+      "emails_asignados": [
+        "mitxel@hypenosys.com"
+      ]
     },
     {
       "rama": "PRO",
@@ -159,8 +194,13 @@
       "fecha": "2026-05-26",
       "apoyo": null,
       "limite": null,
-      "comentario": "",
-      "id": 11
+      "comentario": "Sincronización técnica entre el repositorio de scripts procedurales y el proyecto principal en la versión 5.7.4 para asegurar compatibilidad.",
+      "id": 11,
+      "email_responsable": "alex@hypenosys.com",
+      "emails_asignados": [
+        "axel@hypenosys.com",
+        "alex@hypenosys.com"
+      ]
     }
   ]
 }
