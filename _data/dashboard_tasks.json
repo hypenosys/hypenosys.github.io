@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-26T18:13:45.351Z",
+  "last_updated": "2026-05-26T18:14:00.262Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -112,7 +112,8 @@
       "comentario": "",
       "id": 8,
       "asignados": [
-        "javi26031994-a11y"
+        "dkdidac-design",
+        "mitxel2022"
       ]
     },
     {
