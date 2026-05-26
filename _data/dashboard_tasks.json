@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-26T18:13:19.114Z",
+  "last_updated": "2026-05-26T18:13:45.351Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -123,8 +123,8 @@
       "milestone": "M1",
       "estado": "Working",
       "completitud": 0,
-      "resuelto_por": "Dídac",
-      "detectado_por": "Axel",
+      "resuelto_por": null,
+      "detectado_por": "Unassigned",
       "rama2": null,
       "ver": true,
       "fecha": "2026-05-24",
