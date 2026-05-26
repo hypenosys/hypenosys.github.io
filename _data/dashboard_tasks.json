@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-26T19:43:15.359Z",
+  "last_updated": "2026-05-26T19:43:24.575Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -15,7 +15,7 @@
       "resuelto_por": "Axel",
       "apoyo": null,
       "estado": "In Review",
-      "prioridad": "Critical",
+      "prioridad": "Medium",
       "limite": null,
       "comentario": "Implementación del núcleo del Operations Center usando Jekyll y Tailwind. Configuración de la API de GitHub para persistencia de tareas y visualización de métricas de QA.",
       "milestone": "M1",
