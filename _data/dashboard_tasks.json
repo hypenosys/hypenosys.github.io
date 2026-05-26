@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-26T20:10:24.957Z",
-  "last_updated_by": "TopperH4rley",
+  "last_updated": "2026-05-26T20:41:41.351Z",
+  "last_updated_by": "Alex",
   "tasks": [
     {
       "id": 1,
@@ -227,6 +227,31 @@
       "limite": null,
       "comentario": "",
       "id": 12
+    },
+    {
+      "rama": "PRO",
+      "descripcion": "programa botones en jules botones para archivar y eliminar sesiones inconcluyentes, y que estas sesiones sean sincronizadas con jules",
+      "tema_principal": "Programación / Engine",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "ToDo",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Alex",
+      "asignados": [],
+      "email_responsable": "alex@hypenosys.com",
+      "emails_asignados": [
+        "alex@hypenosys.com",
+        "didac@hypenosys.com",
+        "mitxel@hypenosys.com"
+      ],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-05-26",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "id": 13
     }
   ]
 }
