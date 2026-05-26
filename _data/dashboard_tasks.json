@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-26T20:09:44.147Z",
+  "last_updated": "2026-05-26T20:09:51.962Z",
   "last_updated_by": "TopperH4rley",
   "tasks": [
     {
@@ -70,7 +70,7 @@
     {
       "rama": "DIS",
       "descripcion": "Tutorial Unreal Engine conceptos basicos",
-      "tema_principal": "Post-launch",
+      "tema_principal": "Concepto / GDD",
       "prioridad": "ToDo",
       "milestone": "M1",
       "estado": "Working",
