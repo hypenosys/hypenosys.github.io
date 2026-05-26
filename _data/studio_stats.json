@@ -1,32 +1,32 @@
 {
   "schema_version": "1.0.0",
-  "last_computed": "2026-05-26T18:09:31.230Z",
+  "last_computed": "2026-05-26T18:09:34.783Z",
   "global": {
-    "total_tasks": 8,
-    "total_ok": 1,
+    "total_tasks": 3,
+    "total_ok": 3,
     "total_ko": 0,
-    "total_uncertain": 1,
+    "total_uncertain": 0,
     "total_obsolete": 0,
-    "fixed_found_ratio": 0.125,
-    "verified_ratio": 0.125,
+    "fixed_found_ratio": 1,
+    "verified_ratio": 1,
     "by_priority": {
       "Critical": {
-        "total": 3,
-        "solved": 1,
-        "rate": 0.3333333333333333
+        "total": 2,
+        "solved": 2,
+        "rate": 1
       },
       "Major": {
-        "total": 1,
+        "total": 0,
         "solved": 0,
         "rate": 0
       },
       "Medium": {
-        "total": 3,
-        "solved": 0,
-        "rate": 0
+        "total": 1,
+        "solved": 1,
+        "rate": 1
       },
       "Minor": {
-        "total": 1,
+        "total": 0,
         "solved": 0,
         "rate": 0
       },
@@ -49,24 +49,24 @@
   },
   "members": {
     "Axel": {
-      "found": 6,
+      "found": 2,
+      "fixed": 2,
+      "fixed_ok": 2,
+      "support": 0,
+      "support_ok": 0,
+      "score": 0.5333
+    },
+    "Alex": {
+      "found": 1,
       "fixed": 1,
       "fixed_ok": 1,
       "support": 0,
       "support_ok": 0,
-      "score": 0.725
-    },
-    "Alex": {
-      "found": 2,
-      "fixed": 1,
-      "fixed_ok": 0,
-      "support": 0,
-      "support_ok": 0,
-      "score": 0.075
+      "score": 0.2667
     },
     "Dídac": {
       "found": 0,
-      "fixed": 1,
+      "fixed": 0,
       "fixed_ok": 0,
       "support": 0,
       "support_ok": 0,
@@ -74,7 +74,7 @@
     },
     "Javi": {
       "found": 0,
-      "fixed": 2,
+      "fixed": 0,
       "fixed_ok": 0,
       "support": 0,
       "support_ok": 0,
@@ -82,7 +82,7 @@
     },
     "Mitxel": {
       "found": 0,
-      "fixed": 1,
+      "fixed": 0,
       "fixed_ok": 0,
       "support": 0,
       "support_ok": 0,
@@ -94,18 +94,18 @@
       "rank": 1,
       "medal": "🏆",
       "name": "Axel",
-      "score": 0.725,
-      "found": 6,
-      "fixed_ok": 1,
+      "score": 0.5333,
+      "found": 2,
+      "fixed_ok": 2,
       "support_ok": 0
     },
     {
       "rank": 2,
       "medal": "🥇",
       "name": "Alex",
-      "score": 0.075,
-      "found": 2,
-      "fixed_ok": 0,
+      "score": 0.2667,
+      "found": 1,
+      "fixed_ok": 1,
       "support_ok": 0
     },
     {
