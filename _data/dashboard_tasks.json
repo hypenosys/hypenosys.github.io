@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-26T18:18:13.471Z",
+  "last_updated": "2026-05-26T18:18:39.398Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -122,7 +122,7 @@
       "tema_principal": "Pre-producción",
       "prioridad": "Medium",
       "milestone": "M1",
-      "estado": "Working",
+      "estado": "OK",
       "completitud": 0,
       "resuelto_por": null,
       "detectado_por": "Unassigned",
@@ -134,7 +134,9 @@
       "comentario": "",
       "id": 9,
       "asignados": [
-        "axlfc"
+        "axlfc",
+        "topperh4rley",
+        "javi26031994-a11y"
       ]
     },
     {
