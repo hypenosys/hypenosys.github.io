@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-26T18:09:33.419Z",
+  "last_updated": "2026-05-26T18:18:52.789Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -67,6 +67,29 @@
       "id": 7,
       "asignados": [
         "topperh4rley"
+      ]
+    },
+    {
+      "rama": "PRO",
+      "descripcion": "Instalar Tailscale + TortoiseSVN + Unreal Engine 5.7.4",
+      "tema_principal": "Pre-producción",
+      "prioridad": "Medium",
+      "milestone": "M1",
+      "estado": "OK",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Unassigned",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-05-24",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "id": 9,
+      "asignados": [
+        "axlfc",
+        "topperh4rley",
+        "javi26031994-a11y"
       ]
     }
   ]
