@@ -28,6 +28,8 @@ permalink: /plan_de_arranque/
       <button onclick="navigate('pipeline')" id="btn-pipeline" class="btn btn-outline-purple mx-1">🎮 Pipeline</button>
       <button onclick="navigate('unreal-fab')" id="btn-unreal-fab" class="btn btn-outline-purple mx-1">🧱 Unreal & Fab</button>
       <button onclick="navigate('repos')" id="btn-repos" class="btn btn-outline-purple mx-1">💻 Repos</button>
+      <button onclick="navigate('github-admin')" id="btn-github-admin" class="btn btn-outline-purple mx-1">🐙 GitHub Admin</button>
+      <button onclick="navigate('guia-svn')" id="btn-guia-svn" class="btn btn-outline-purple mx-1">🐢 Guía SVN</button>
       <button onclick="navigate('changelogs')" id="btn-changelogs" class="btn btn-outline-purple mx-1">📝 Changelogs</button>
       <button onclick="navigate('ritual')" id="btn-ritual" class="btn btn-outline-purple mx-1">⚡ Ritual Domingo</button>
     </div>
@@ -165,6 +167,9 @@ permalink: /plan_de_arranque/
           <h5 class="card-title text-purple"><i class="fa-solid fa-layer-group"></i> Software Obligatorio</h5>
           <ul class="list-group list-group-flush bg-transparent">
             <li class="list-group-item bg-transparent text-light border-secondary">
+              <strong>Obsidian:</strong> Gestión de [[GDD]] y Wiki técnica.
+            </li>
+            <li class="list-group-item bg-transparent text-light border-secondary">
               <strong>Blender:</strong> Modelado, UVs y rigging.
             </li>
             <li class="list-group-item bg-transparent text-light border-secondary">
@@ -290,20 +295,53 @@ permalink: /plan_de_arranque/
   <div class="row">
     <div class="col-md-6 mb-4">
       <div class="list-group">
+        <a href="https://github.com/hypenosys/hypenosys.github.io" class="list-group-item list-group-item-action bg-dark text-light border-purple mb-2 rounded">
+          <div class="d-flex justify-content-between align-items-center">
+            <h6 class="text-purple mb-0">hypenosys.github.io</h6>
+            <span class="badge badge-success">Activo</span>
+          </div>
+          <small class="d-block mt-1">Sitio web principal y Operations Center.</small>
+          <div class="mt-2 text-xs text-muted">
+            <i class="fa-solid fa-code-branch"></i> Rama: main | <i class="fa-solid fa-bolt"></i> CI: Pages Build
+          </div>
+        </a>
+        <a href="https://github.com/hypenosys/docs" class="list-group-item list-group-item-action bg-dark text-light border-purple mb-2 rounded">
+          <div class="d-flex justify-content-between align-items-center">
+            <h6 class="text-purple mb-0">hypenosys/docs</h6>
+            <span class="badge badge-warning">Fase 0</span>
+          </div>
+          <small class="d-block mt-1">Repositorio central de documentación y Obsidian Vault.</small>
+          <div class="mt-2 text-xs text-muted">
+            <i class="fa-solid fa-code-branch"></i> Rama: main (asumida) | <i class="fa-solid fa-circle-info"></i> Estado: Pendiente verificación
+          </div>
+        </a>
+        <a href="https://github.com/hypenosys/app" class="list-group-item list-group-item-action bg-dark text-light border-purple mb-2 rounded">
+          <div class="d-flex justify-content-between align-items-center">
+            <h6 class="text-purple mb-0">hypenosys/app</h6>
+            <span class="badge badge-warning">Fase 0</span>
+          </div>
+          <small class="d-block mt-1">Código fuente del juego / Proyecto UE.</small>
+          <div class="mt-2 text-xs text-muted">
+            <i class="fa-solid fa-code-branch"></i> Rama: main (asumida) | <i class="fa-solid fa-circle-info"></i> Estado: Pendiente verificación
+          </div>
+        </a>
         <a href="https://github.com/hypenosys/scripts" class="list-group-item list-group-item-action bg-dark text-light border-purple mb-2 rounded">
           <h6 class="text-purple">hypenosys/scripts</h6>
           <small>Generación procedural de caracteres.</small>
-        </a>
-        <a href="https://github.com/hypenosys/blueprints" class="list-group-item list-group-item-action bg-dark text-light border-purple mb-2 rounded">
-          <h6 class="text-purple">hypenosys/blueprints</h6>
-          <small>Archivo definitivo de lógicas.</small>
         </a>
       </div>
     </div>
     <div class="col-md-6 mb-4">
       <div class="card h-100">
         <div class="card-body">
-          <h5 class="card-title text-purple">Reparto de Carga</h5>
+          <h5 class="card-title text-purple">Análisis de Gaps</h5>
+          <ul class="tree-view small">
+            <li class="text-danger"><strong>Docs:</strong> Falta vinculación directa con el flujo de autocommit de Obsidian.</li>
+            <li class="text-danger"><strong>App:</strong> Sincronización SVN <-> GitHub no automatizada.</li>
+            <li class="text-warning"><strong>CI/CD:</strong> Configuración inicial de GitHub Actions pendiente en repositorios satélite.</li>
+          </ul>
+          <hr class="border-purple opacity-20">
+          <h5 class="card-title text-purple mt-3">Reparto de Carga</h5>
           <ul class="tree-view">
             <li><strong>Git:</strong> Markdown, actas, scripts Python/C++, Web.</li>
             <li><strong>SVN:</strong> .umap, .uasset, .png, .fbx, .wav.</li>
@@ -311,6 +349,142 @@ permalink: /plan_de_arranque/
         </div>
       </div>
     </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-12">
+      <div class="card border-info">
+        <div class="card-body">
+          <h5 class="card-title text-info"><i class="fa-solid fa-sync"></i> Sincronización de Scripts (Dev)</h5>
+          <p class="card-text small">Para mantener alineados `Content/Scripts` (SVN/Local) y `hypenosys/scripts` (Git), utilizar el script de sincronización:</p>
+          <div class="bg-black p-3 rounded font-weight-mono text-success text-xs mb-3">
+            $ chmod +x scripts/sync_scripts.sh<br>
+            $ ./scripts/sync_scripts.sh /ruta/al/proyecto/UE
+          </div>
+          <ul class="tree-view text-xs">
+            <li>El script realiza un `rsync` bidireccional filtrando archivos temporales.</li>
+            <li>Prioriza siempre la versión más reciente basada en timestamp.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="view-github-admin" class="view-section d-none">
+  <div class="row mb-5">
+    <div class="col-12">
+      <h2 class="text-purple border-bottom border-purple pb-2 mb-4">GitHub — Administración Transversal</h2>
+      <p>Flujo completo de administración para el equipo de Hypenosys.</p>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6 mb-4">
+      <div class="card h-100 border-purple">
+        <div class="card-body">
+          <h5 class="card-title text-purple">Gestión de Repositorios & Permisos</h5>
+          <ul class="tree-view">
+            <li><strong>Organización:</strong> Todos los repos bajo <a href="https://github.com/hypenosys">github.com/hypenosys</a>.</li>
+            <li><strong>Permisos:</strong> Axel (Admin), Alex (Write), Resto del equipo (Read/Write según área).</li>
+            <li><strong>Obsidian:</strong> Uso de [[documentos]] vinculados al repo de <code>docs</code>.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 mb-4">
+      <div class="card h-100 border-purple">
+        <div class="card-body">
+          <h5 class="card-title text-purple">Flujo de Ramas & PRs</h5>
+          <ul class="tree-view">
+            <li><strong>main:</strong> Rama protegida. Solo código estable.</li>
+            <li><strong>feature/*:</strong> Ramas de trabajo para nuevas funcionalidades.</li>
+            <li><strong>PRs:</strong> Requieren al menos 1 review técnica antes de mergear a main.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title text-purple">Integración de Herramientas</h5>
+          <div class="table-responsive">
+            <table class="table table-dark table-sm text-xs">
+              <thead>
+                <tr>
+                  <th>Herramienta</th>
+                  <th>Uso</th>
+                  <th>Integración</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Obsidian</td>
+                  <td>GDD y Wiki técnica</td>
+                  <td>Sincronización via Git al repo <code>docs</code>.</td>
+                </tr>
+                <tr>
+                  <td>SVN</td>
+                  <td>Assets binarios (UE)</td>
+                  <td>Vínculo local via <code>scripts/sync_scripts.sh</code>.</td>
+                </tr>
+                <tr>
+                  <td>GitHub Actions</td>
+                  <td>CI/CD</td>
+                  <td>Auto-despliegue de docs y validación de builds.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="view-guia-svn" class="view-section d-none">
+  <div class="row mb-5">
+    <div class="col-12">
+      <h2 class="text-purple border-bottom border-purple pb-2 mb-4">Guía: Clonar con SVN y Cargar Proyecto</h2>
+      <p>Instrucciones paso a paso para el control de versiones de assets binarios.</p>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-4 mb-4">
+      <div class="card h-100">
+        <div class="card-body text-center">
+          <div class="text-purple mb-3"><i class="fa-solid fa-link fa-3x"></i></div>
+          <h5 class="card-title">1. Vincular Carpeta</h5>
+          <p class="card-text small">Crea una carpeta local (ej. <code>Hypenosys_Project</code>). Haz click derecho y selecciona <strong>SVN Checkout</strong>.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-4">
+      <div class="card h-100">
+        <div class="card-body text-center">
+          <div class="text-purple mb-3"><i class="fa-solid fa-cloud-arrow-down fa-3x"></i></div>
+          <h5 class="card-title">2. Clonar Repo</h5>
+          <p class="card-text small">Introduce la URL del servidor SVN (proporcionada en Discord). Pulsa OK para descargar los assets pesados.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-4">
+      <div class="card h-100">
+        <div class="card-body text-center">
+          <div class="text-purple mb-3"><i class="fa-solid fa-folder-open fa-3x"></i></div>
+          <h5 class="card-title">3. Abrir Proyecto</h5>
+          <p class="card-text small">Navega a la carpeta clonada y abre el archivo <code>.uproject</code> con Unreal Engine 5.7.4.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert alert-info">
+    <i class="fa-solid fa-circle-info"></i> <strong>Nota:</strong> Recuerda siempre hacer <strong>SVN Update</strong> antes de empezar a trabajar y <strong>Commit</strong> al terminar tu sesión.
   </div>
 </div>
 

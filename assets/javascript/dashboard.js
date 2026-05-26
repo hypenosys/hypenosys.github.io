@@ -413,6 +413,7 @@ function buildTaskCard(task) {
                  </div>`
             }
           </div>
+          ${task.email_responsable ? `<div class="text-[8px] text-slate-500 mt-1 flex items-center gap-1"><i class="fa-solid fa-envelope text-[7px]"></i> ${task.email_responsable}</div>` : ''}
         </div>
         <div class="text-[9px] font-bold text-slate-500 uppercase tracking-tighter">
           ${task.rama}${task.rama2 ? ` / ${task.rama2}` : ''}
@@ -1117,6 +1118,8 @@ function openCreateTaskModal() {
   document.getElementById('task-completion-input').value = '0';
   document.getElementById('task-resolver-input').value = '';
   document.getElementById('task-detector-input').value = activeFilter || '';
+  document.getElementById('task-email-responsable-input').value = '';
+  document.getElementById('task-emails-asignados-input').value = '';
 
   const checkboxes = document.querySelectorAll('#task-asignados-container input[name="asignados"]');
   checkboxes.forEach(cb => cb.checked = false);
@@ -1142,6 +1145,8 @@ function openEditTaskModal(taskId) {
     document.getElementById('task-completion-input').value = task.completitud || '0';
     document.getElementById('task-resolver-input').value = task.resuelto_por || '';
     document.getElementById('task-detector-input').value = task.detectado_por || '';
+    document.getElementById('task-email-responsable-input').value = task.email_responsable || '';
+    document.getElementById('task-emails-asignados-input').value = (task.emails_asignados || []).join(', ');
 
     const checkboxes = document.querySelectorAll('#task-asignados-container input[name="asignados"]');
     checkboxes.forEach(cb => {
@@ -1213,6 +1218,8 @@ async function handleCreateTask() {
   const resolver = document.getElementById('task-resolver-input').value || null;
   const detector = document.getElementById('task-detector-input').value || 'Unassigned';
   const asignados = Array.from(document.querySelectorAll('#task-asignados-container input[name="asignados"]:checked')).map(cb => cb.value);
+  const emailResponsable = document.getElementById('task-email-responsable-input').value || null;
+  const emailsAsignados = (document.getElementById('task-emails-asignados-input').value || '').split(',').map(e => e.trim()).filter(e => e);
 
   if (!desc) return showToast('La descripción es obligatoria', 'warning');
 
@@ -1226,7 +1233,9 @@ async function handleCreateTask() {
     completitud: completion,
     resuelto_por: resolver,
     detectado_por: detector,
-    asignados: asignados
+    asignados: asignados,
+    email_responsable: emailResponsable,
+    emails_asignados: emailsAsignados
   };
 
   showToast(UI_STRINGS.saving, 'info');
