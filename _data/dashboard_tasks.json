@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-26T18:31:18.959Z",
+  "last_updated": "2026-05-26T18:31:46.052Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -14,7 +14,7 @@
       "detectado_por": "Axel",
       "resuelto_por": "Axel",
       "apoyo": null,
-      "estado": "Working",
+      "estado": "In Review",
       "prioridad": "Major",
       "limite": null,
       "comentario": "Sistema base del dashboard",
