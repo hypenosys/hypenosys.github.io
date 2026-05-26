@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-26T18:26:35.779Z",
+  "last_updated": "2026-05-26T18:28:03.230Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -139,7 +139,7 @@
     },
     {
       "rama": "PRO",
-      "descripcion": "Merge upgrade SVN Content/Scripts to repo 'app' to 5.7.4",
+      "descripcion": "Merge SVN Content/Scripts with upgraded repo 'app'°5.7.4",
       "tema_principal": "Tools / Automation",
       "prioridad": "Critical",
       "milestone": "M1",
