@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-26T17:59:54.872Z",
-  "last_updated_by": "Axel",
+  "last_updated": "2026-05-26T18:00:25.505Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -227,7 +227,7 @@
     },
     {
       "rama": "PRO",
-      "descripcion": "Update repo'app' to 5.7.4 (fixed)",
+      "descripcion": "Update GitHub repo 'app' to 5.7.4 (fixed)",
       "tema_principal": "Tools / Automation",
       "prioridad": "Critical",
       "milestone": "M1",
