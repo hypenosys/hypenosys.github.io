@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-26T18:30:50.654Z",
+  "last_updated": "2026-05-26T18:31:05.217Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -99,7 +99,7 @@
     {
       "rama": "PRO",
       "descripcion": "Instalar TortoiseSVN + Unreal Engine 5.7.4",
-      "tema_principal": "Pre-producción",
+      "tema_principal": "Tools / Automation",
       "prioridad": "Medium",
       "milestone": "M1",
       "estado": "In Review",
