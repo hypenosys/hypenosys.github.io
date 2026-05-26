@@ -1,12 +1,12 @@
 {
   "schema_version": "1.0.0",
-  "last_computed": "2026-05-26T18:34:19.380Z",
+  "last_computed": "2026-05-26T18:35:57.589Z",
   "global": {
-    "total_tasks": 6,
+    "total_tasks": 5,
     "total_ok": 0,
     "total_ko": 0,
     "total_uncertain": 2,
-    "total_obsolete": 1,
+    "total_obsolete": 2,
     "fixed_found_ratio": 0,
     "verified_ratio": 0,
     "by_priority": {
@@ -16,7 +16,7 @@
         "rate": 0
       },
       "Major": {
-        "total": 3,
+        "total": 2,
         "solved": 0,
         "rate": 0
       },
