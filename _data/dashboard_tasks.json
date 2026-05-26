@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-26T18:36:26.127Z",
+  "last_updated": "2026-05-26T18:36:50.124Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -56,9 +56,9 @@
       "rama": "PRO",
       "descripcion": "Tutorial Unreal Engine conceptos basicos",
       "tema_principal": "Pre-producción",
-      "prioridad": "Minor",
+      "prioridad": "ToDo",
       "milestone": "M1",
-      "estado": "Pending",
+      "estado": "Working",
       "completitud": 0.2,
       "resuelto_por": null,
       "detectado_por": "Alex",
