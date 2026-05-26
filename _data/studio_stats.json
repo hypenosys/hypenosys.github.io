@@ -1,19 +1,19 @@
 {
   "schema_version": "1.0.0",
-  "last_computed": "2026-05-26T18:29:36.075Z",
+  "last_computed": "2026-05-26T18:30:06.112Z",
   "global": {
     "total_tasks": 6,
-    "total_ok": 1,
+    "total_ok": 0,
     "total_ko": 0,
     "total_uncertain": 1,
     "total_obsolete": 1,
-    "fixed_found_ratio": 0.1429,
-    "verified_ratio": 0.1429,
+    "fixed_found_ratio": 0,
+    "verified_ratio": 0,
     "by_priority": {
       "Critical": {
         "total": 2,
-        "solved": 1,
-        "rate": 0.5
+        "solved": 0,
+        "rate": 0
       },
       "Major": {
         "total": 2,
@@ -51,10 +51,10 @@
     "Axel": {
       "found": 4,
       "fixed": 1,
-      "fixed_ok": 1,
+      "fixed_ok": 0,
       "support": 0,
       "support_ok": 0,
-      "score": 0.6714
+      "score": 0.1714
     },
     "Alex": {
       "found": 2,
@@ -94,9 +94,9 @@
       "rank": 1,
       "medal": "🏆",
       "name": "Axel",
-      "score": 0.6714,
+      "score": 0.1714,
       "found": 4,
-      "fixed_ok": 1,
+      "fixed_ok": 0,
       "support_ok": 0
     },
     {
