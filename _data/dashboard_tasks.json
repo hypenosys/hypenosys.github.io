@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-26T18:32:20.180Z",
+  "last_updated": "2026-05-26T18:32:51.755Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -107,7 +107,7 @@
       "estado": "In Review",
       "completitud": 0,
       "resuelto_por": "Mitxel",
-      "detectado_por": "Axel",
+      "detectado_por": "Dídac",
       "rama2": null,
       "ver": true,
       "fecha": "2026-05-24",
