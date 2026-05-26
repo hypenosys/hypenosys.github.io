@@ -9,11 +9,32 @@ permalink: /guia-comandos/
     <div class="jumbotron">
       <h1 class="display-4 text-purple">🛠️ Guía Técnica de Operaciones</h1>
       <p class="lead">Comandos esenciales y flujos de trabajo de <strong>Hypenosys</strong> para garantizar la integridad del proyecto.</p>
+      <hr class="my-4 border-purple">
+      <div class="toc-container card bg-dark border-purple p-3">
+        <h5 class="text-purple mb-3"><i class="fas fa-list-ul mr-2"></i> Índice de Contenidos</h5>
+        <div class="row">
+          <div class="col-md-6">
+            <ul class="list-unstyled mb-0">
+              <li><a href="#sec-1" class="text-white small">1. Control de Versiones: Git vs SVN</a></li>
+              <li><a href="#sec-2" class="text-white small">2. Referencia de Comandos CLI</a></li>
+              <li><a href="#sec-3" class="text-white small">3. Flujo TortoiseSVN (Windows)</a></li>
+              <li><a href="#sec-4" class="text-white small">4. Flujo de Trabajo con IA (Claude → Jules)</a></li>
+            </ul>
+          </div>
+          <div class="col-md-6">
+            <ul class="list-unstyled mb-0">
+              <li><a href="#sec-5" class="text-white small">5. Onboarding: Checklist de Incorporación</a></li>
+              <li><a href="#sec-6" class="text-white small">6. Antigravity IDE: Extensiones y Setup</a></li>
+              <li><a href="#sec-7" class="text-white small">7. Obsidian: Sincronización de la Bóveda</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
-<div class="row mb-5">
+<div class="row mb-5" id="sec-1">
   <div class="col-12">
     <h2 class="text-purple border-bottom border-purple pb-2 mb-4">1. Control de Versiones: Git vs SVN</h2>
     <p>Utilizamos un sistema híbrido para optimizar el rendimiento y la colaboración.</p>
@@ -54,7 +75,7 @@ permalink: /guia-comandos/
   </div>
 </div>
 
-<div class="row mb-5">
+<div class="row mb-5" id="sec-2">
   <div class="col-12">
     <h2 class="text-purple border-bottom border-purple pb-2 mb-4">2. Referencia de Comandos CLI</h2>
     <div class="row">
@@ -92,7 +113,7 @@ permalink: /guia-comandos/
   </div>
 </div>
 
-<div class="row mb-5">
+<div class="row mb-5" id="sec-3">
   <div class="col-12">
     <h2 class="text-purple border-bottom border-purple pb-2 mb-4">3. Flujo TortoiseSVN (Windows)</h2>
     <ol class="tree-view">
@@ -105,7 +126,7 @@ permalink: /guia-comandos/
   </div>
 </div>
 
-<div class="row mb-5">
+<div class="row mb-5" id="sec-4">
   <div class="col-12">
     <h2 class="text-purple border-bottom border-purple pb-2 mb-4">4. 🤖 Flujo de Trabajo con IA (Claude → Jules)</h2>
     <div class="card border-purple">
@@ -124,7 +145,7 @@ permalink: /guia-comandos/
 <!-- ══════════════════════════════════════════════════════════════
      SECCIÓN 5 — ONBOARDING NUEVO MIEMBRO
      ══════════════════════════════════════════════════════════════ -->
-<div class="row mb-5">
+<div class="row mb-5" id="sec-5">
   <div class="col-12">
     <h2 class="text-purple border-bottom border-purple pb-2 mb-4">5. 🚀 Onboarding: Checklist de Incorporación</h2>
     <p class="text-muted mb-4">Sigue este checklist en orden. No avances al siguiente paso hasta completar el anterior. Al finalizar, habrás integrado todas las capas del ecosistema Hypenosys.</p>
@@ -255,6 +276,146 @@ permalink: /guia-comandos/
 
   </div>
 </div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SECCIÓN 6 — ANTIGRAVITY IDE
+     ══════════════════════════════════════════════════════════════ -->
+<div class="row mb-5" id="sec-6">
+  <div class="col-12">
+    <h2 class="text-purple border-bottom border-purple pb-2 mb-4">6. 🛸 Antigravity IDE: Extensiones y Setup</h2>
+    <p>Para que Antigravity deje de ser un bloc de notas glorificado y se convierta en una estación de combate real, necesitas configurar las extensiones oficiales de VS Code.</p>
+
+    <div class="row">
+      <div class="col-md-6 mb-4">
+        <div class="card h-100 border-purple">
+          <div class="card-header bg-transparent border-purple">
+            <h5 class="mb-0 text-purple small uppercase font-weight-bold">Imprescindibles (No seas animal, instálalas)</h5>
+          </div>
+          <div class="card-body">
+            <ul class="tree-view mb-0">
+              <li><strong>Graph-It-Live:</strong> Porque navegar proyectos grandes a ciegas es deporte de riesgo.</li>
+              <li><strong>Antigravity Cockpit:</strong> Monitoriza cuotas y uso de LLMs. No querrás quedarte sin "gasolina" a mitad de un sprint.</li>
+              <li><strong>Jules Bridge Preview:</strong> El puente directo para que Jules haga el trabajo sucio mientras tú tomas café.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 mb-4">
+        <div class="card h-100 border-secondary">
+          <div class="card-header bg-transparent border-secondary">
+            <h5 class="mb-0 text-muted small uppercase font-weight-bold">Confort Visual (Para nostálgicos de VS Code)</h5>
+          </div>
+          <div class="card-body">
+            <ul class="tree-view mb-0">
+              <li><strong>GitHub Theme:</strong> Porque tus ojos merecen un descanso de los temas por defecto.</li>
+              <li><strong>vscode-icons:</strong> Diferenciar un <code>.json</code> de un <code>.js</code> por el icono ahorra milisegundos preciosos.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card border-purple mb-4">
+      <div class="card-body">
+        <h5 class="text-purple"><i class="fas fa-random mr-2"></i> Flujo Recomendado de Configuración</h5>
+        <ol class="tree-view">
+          <li><strong>Hackea el Marketplace:</strong> Cambia la URL del marketplace por defecto al oficial de VS Code (ver abajo).</li>
+          <li><strong>Orden de Batalla:</strong> Instala primero las de navegación. Si no ves dónde estás, no sirve de nada lo que escribas.</li>
+          <li><strong>Estética:</strong> Aplica temas e iconos para no sentir que estás programando en 1995.</li>
+          <li><strong>Higiene:</strong> Prioriza herramientas con mantenimiento activo. Instalar extensiones abandonadas es comprar boletos para un bug que nadie va a arreglar.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="alert bg-dark border-purple">
+      <h6 class="text-purple font-weight-bold mb-3">Configuración del Marketplace Oficial</h6>
+      <p class="small text-muted">Añade estas URLs en la configuración de Antigravity para acceder al catálogo real:</p>
+      <div class="bg-black p-3 rounded font-weight-mono text-xs mb-0 text-info">
+        Item URL: <code>https://marketplace.visualstudio.com/items</code><br>
+        Gallery URL: <code>https://marketplace.visualstudio.com/_apis/public/gallery</code>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SECCIÓN 7 — OBSIDIAN & SYNC
+     ══════════════════════════════════════════════════════════════ -->
+<div class="row mb-5" id="sec-7">
+  <div class="col-12">
+    <h2 class="text-purple border-bottom border-purple pb-2 mb-4">7. 💎 Obsidian: Sincronización de la Bóveda</h2>
+    <p>Bienvenido al repositorio-vertedero de documentación. Si estás leyendo esto, enhorabuena: ya superaste el primer obstáculo. Los que no llegaron hasta aquí probablemente siguen buscando el archivo en el escritorio.</p>
+
+    <div class="card border-purple mb-4">
+      <div class="card-body">
+        <h5 class="text-purple mb-3">Requisitos (Lo mínimo para no fallar)</h5>
+        <ul class="tree-view mb-0">
+          <li><strong>Obsidian Desktop</strong> instalado.</li>
+          <li>Acceso al repo <code>hypenosys/docs</code> en GitHub.</li>
+          <li>Un <strong>Personal Access Token (PAT)</strong> de GitHub.</li>
+          <li>10 minutos de tu vida que no recuperarás, pero que te salvarán de la humillación técnica.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h5 class="text-purple mt-4 mb-3">Instalación paso a paso</h5>
+    <div class="page-content">
+      <div class="card bg-dark border-purple mb-3">
+        <div class="card-body">
+          <p class="font-weight-bold mb-2">1. Clona el Repo</p>
+          <code class="bg-black p-2 d-block text-success small">git clone https://github.com/hypenosys/docs tu-carpeta-local</code>
+          <p class="small text-muted mt-2 mb-0">Si no sabes qué es una terminal, este proyecto te va a doler.</p>
+        </div>
+      </div>
+
+      <div class="card bg-dark border-purple mb-3">
+        <div class="card-body">
+          <p class="font-weight-bold mb-2">2. Abre la Bóveda</p>
+          <p class="small mb-0">En Obsidian, selecciona <strong>"Abrir carpeta como bóveda"</strong> y apunta a lo que acabas de clonar. Sí, las carpetas son las notas. No busques magia donde hay estructura.</p>
+        </div>
+      </div>
+
+      <div class="card bg-dark border-purple mb-3">
+        <div class="card-body">
+          <p class="font-weight-bold mb-2">3. Activa el Plugin de Git</p>
+          <p class="small mb-2">Ve a <em>Configuración → Plugins de comunidad</em>, desactiva el <strong>Modo restringido</strong> e instala el plugin <code>Git</code> (de Vinzent03).</p>
+          <div class="alert alert-secondary p-2 mb-0 small">
+            💡 <strong>Configuración Crítica del Plugin:</strong>
+            <ul class="mb-0 mt-1">
+              <li>Auto commit-and-sync: <code>10</code> minutos.</li>
+              <li>Pull on startup: ✅ ON.</li>
+              <li>Push on commit-and-sync: ✅ ON.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="card bg-dark border-purple mb-3">
+        <div class="card-body">
+          <p class="font-weight-bold mb-2">4. El Token de GitHub (El "PAT")</p>
+          <p class="small mb-2">GitHub ya no acepta contraseñas normales. Necesitas un token. Es como una contraseña, pero más larga y con menos dignidad.</p>
+          <ol class="small mb-0">
+            <li><em>Settings → Developer Settings → Personal Access Tokens → Fine-grained tokens</em>.</li>
+            <li>Genera uno nuevo para <code>hypenosys/docs</code> con permisos de <strong>Contents: Read and Write</strong>.</li>
+            <li>Cópialo. GitHub no te lo volverá a mostrar. No hay segunda oportunidad.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert bg-danger-transparent border-danger text-white mt-4">
+      <h6 class="text-danger font-weight-bold"><i class="fas fa-exclamation-triangle mr-2"></i> Gestión de Conflictos</h6>
+      <p class="small mb-0">Si al hacer pull Obsidian te grita sobre un conflicto, significa que alguien editó lo mismo que tú. <strong>Hablar con el equipo antes de editar</strong> es una funcionalidad que Git no puede implementar por ti. Si no sabes qué hacer con un conflicto, pregunta antes de romper el historial del lore.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Botón flotante Volver Arriba -->
+<button onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
+        class="btn btn-purple shadow-lg"
+        style="position: fixed; bottom: 30px; right: 30px; z-index: 1000; border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+  <i class="fas fa-chevron-up"></i>
+</button>
 
 <div class="row">
   <div class="col-12">
