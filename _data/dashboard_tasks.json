@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-26T18:40:48.485Z",
+  "last_updated": "2026-05-26T19:36:40.223Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -125,12 +125,12 @@
     },
     {
       "rama": "PRO",
-      "descripcion": "Instalar TortoiseSVN + Unreal Engine 5.7.4",
+      "descripcion": "Instalar Git, TortoiseSVN(add to path) + Unreal Engine 5.7.4",
       "tema_principal": "Tools / Automation",
-      "prioridad": "Medium",
+      "prioridad": "Critical",
       "milestone": "M1",
       "estado": "In Review",
-      "completitud": 0,
+      "completitud": 0.25,
       "resuelto_por": "Mitxel",
       "detectado_por": "Dídac",
       "rama2": null,
