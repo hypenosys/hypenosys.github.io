@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-27T12:59:08.301Z",
+  "last_updated": "2026-05-27T13:00:08.216Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -131,8 +131,8 @@
       "milestone": "M1",
       "estado": "In Review",
       "completitud": 0.25,
-      "resuelto_por": "Mitxel",
-      "detectado_por": "Dídac",
+      "resuelto_por": "Dídac",
+      "detectado_por": "Javi",
       "rama2": null,
       "ver": true,
       "fecha": "2026-05-24",
@@ -144,7 +144,7 @@
         "dkdidac-design",
         "mitxel2022"
       ],
-      "email_responsable": "mitxel@hypenosys.com",
+      "email_responsable": "didac@hypenosys.com",
       "emails_asignados": [
         "didac@hypenosys.com",
         "mitxel@hypenosys.com"
