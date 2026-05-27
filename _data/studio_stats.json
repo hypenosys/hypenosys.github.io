@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_computed": "2026-05-27T12:59:09.520Z",
+  "last_computed": "2026-05-27T13:00:10.189Z",
   "global": {
     "total_tasks": 7,
     "total_ok": 0,
@@ -65,24 +65,24 @@
       "score": 0.0667
     },
     "Dídac": {
-      "found": 3,
-      "fixed": 0,
+      "found": 2,
+      "fixed": 1,
       "fixed_ok": 0,
       "support": 0,
       "support_ok": 0,
-      "score": 0.1
+      "score": 0.0667
     },
     "Javi": {
-      "found": 0,
+      "found": 1,
       "fixed": 0,
       "fixed_ok": 0,
       "support": 0,
       "support_ok": 0,
-      "score": 0
+      "score": 0.0333
     },
     "Mitxel": {
       "found": 0,
-      "fixed": 3,
+      "fixed": 2,
       "fixed_ok": 0,
       "support": 0,
       "support_ok": 0,
@@ -102,16 +102,16 @@
     {
       "rank": 2,
       "medal": "🥇",
-      "name": "Dídac",
-      "score": 0.1,
-      "found": 3,
+      "name": "Alex",
+      "score": 0.0667,
+      "found": 2,
       "fixed_ok": 0,
       "support_ok": 0
     },
     {
       "rank": 3,
       "medal": "🥈",
-      "name": "Alex",
+      "name": "Dídac",
       "score": 0.0667,
       "found": 2,
       "fixed_ok": 0,
@@ -121,8 +121,8 @@
       "rank": 4,
       "medal": "🥉",
       "name": "Javi",
-      "score": 0,
-      "found": 0,
+      "score": 0.0333,
+      "found": 1,
       "fixed_ok": 0,
       "support_ok": 0
     },
