@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-27T12:58:41.635Z",
+  "last_updated": "2026-05-27T12:59:08.301Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -218,7 +218,7 @@
         "dkdidac-design",
         "mitxel2022"
       ],
-      "email_responsable": "alex@hypenosys.com",
+      "email_responsable": "mitxel@hypenosys.com",
       "emails_asignados": [],
       "rama2": null,
       "ver": true,
