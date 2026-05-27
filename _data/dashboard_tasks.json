@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-26T20:41:41.351Z",
-  "last_updated_by": "Alex",
+  "last_updated": "2026-05-27T12:58:41.635Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -59,7 +59,7 @@
         "javi26031994-a11y",
         "mitxel2022"
       ],
-      "email_responsable": "didac@hypenosys.com",
+      "email_responsable": "javi@hypenosys.com",
       "emails_asignados": [
         "axel@hypenosys.com",
         "alex@hypenosys.com",
