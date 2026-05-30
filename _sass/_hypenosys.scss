@@ -1,6 +1,10 @@
 @charset "utf-8";
 // Hypenosys Custom Styles
 
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
 body {
     background-color: $black !important;
     color: $white !important;
