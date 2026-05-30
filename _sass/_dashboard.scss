@@ -21,8 +21,16 @@ $dashboard-danger: #ff5555;  // Dracula Red
     gap: 1rem;
     min-height: 70vh;
 
+    @media (max-width: 768px) {
+        flex-direction: column;
+        overflow-x: hidden;
+    }
+
     .kanban-column {
         flex: 0 0 300px;
+        @media (max-width: 768px) {
+            flex: 1 1 auto;
+        }
         background-color: $dashboard-column-bg;
         border: 1px solid $dashboard-border;
         border-radius: 8px;

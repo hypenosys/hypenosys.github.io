@@ -227,6 +227,15 @@ permalink: /jules-panel/
     min-height: 100vh;
     font-family: inherit;
     padding: 24px;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+@media (max-width: 480px) {
+    .jules-panel-container {
+        padding: 16px;
+    }
 }
 
 .panel-header {
@@ -234,6 +243,15 @@ permalink: /jules-panel/
     justify-content: space-between;
     align-items: center;
     margin-bottom: 32px;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 600px) {
+    .panel-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }
 
 .header-left {
@@ -272,6 +290,8 @@ permalink: /jules-panel/
     display: grid;
     grid-template-columns: 320px 1fr;
     gap: 32px;
+    min-width: 0;
+    max-width: 100%;
 }
 
 @media (max-width: 1024px) {
@@ -289,6 +309,28 @@ permalink: /jules-panel/
     border: 1px solid var(--border-subtle);
     border-radius: 12px;
     padding: 20px;
+    min-width: 0;
+}
+
+@media (max-width: 375px) {
+    .config-section, .new-session-section {
+        padding: 16px;
+    }
+    .section-title {
+        font-size: 13px;
+        margin-bottom: 12px;
+    }
+    .form-label {
+        font-size: 13px;
+    }
+    .form-select, .form-input, .form-textarea {
+        font-size: 13px;
+        padding: 8px 10px;
+    }
+    .btn--primary {
+        font-size: 12px;
+        padding: 10px 16px;
+    }
 }
 
 /* Common UI Elements */
@@ -482,6 +524,16 @@ permalink: /jules-panel/
     margin-bottom: 12px;
 }
 
+@media (max-width: 350px) {
+    .session-card__meta {
+        flex-direction: column;
+        gap: 4px;
+    }
+    .meta-tag {
+        width: 100%;
+    }
+}
+
 .meta-tag {
     display: inline-flex;
     align-items: center;
@@ -499,6 +551,13 @@ permalink: /jules-panel/
     gap: 8px;
     flex-wrap: wrap;
     margin-bottom: 12px;
+}
+
+@media (max-width: 430px) {
+    .session-card__actions .btn {
+        flex: 1 1 auto;
+        justify-content: center;
+    }
 }
 
 .btn {
