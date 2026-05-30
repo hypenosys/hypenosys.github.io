@@ -258,6 +258,16 @@ function renderMemberToggles() {
 function renderKanbanBoard() {
   const tasks = getFilteredTasks(currentTasks.filter(t => t.estado !== 'Obsolete'));
 
+  // Update Global Toggle Icon
+  const globalToggle = document.getElementById('global-kanban-toggle');
+  if (globalToggle) {
+    const anyExpanded = tasks.some(t => localStorage.getItem(`task_minimized_${t.id}`) !== 'true');
+    const icon = globalToggle.querySelector('i');
+    if (icon) {
+      icon.className = anyExpanded ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down';
+    }
+  }
+
   for (const col of KANBAN_COLUMNS) {
     const colEl = document.getElementById(`kanban-col-${col.id}`);
     if (!colEl) continue;
@@ -428,6 +438,20 @@ function toggleTaskMinimize(taskId) {
   const key = `task_minimized_${taskId}`;
   const current = localStorage.getItem(key) === 'true';
   localStorage.setItem(key, !current);
+  renderKanbanBoard();
+}
+
+function toggleAllTasks() {
+  const tasks = getFilteredTasks(currentTasks.filter(t => t.estado !== 'Obsolete'));
+  const anyExpanded = tasks.some(t => localStorage.getItem(`task_minimized_${t.id}`) !== 'true');
+
+  // If any expanded -> minimize all. If all minimized -> expand all.
+  const newState = anyExpanded; // if anyExpanded is true, we want to minimize (set to true)
+
+  tasks.forEach(t => {
+    localStorage.setItem(`task_minimized_${t.id}`, newState);
+  });
+
   renderKanbanBoard();
 }
 

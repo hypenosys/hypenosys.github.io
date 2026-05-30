@@ -99,9 +99,14 @@
                 <h2 class="text-xl font-bold flex items-center gap-2">
                     <i class="fa-solid fa-table-columns text-emerald-400"></i> Kanban de Operaciones
                 </h2>
-                <button onclick="openCreateTaskModal()" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2 px-4 rounded-lg text-sm transition-all flex items-center gap-2">
-                    <i class="fa-solid fa-plus"></i> Nueva Tarea
-                </button>
+                <div class="flex items-center gap-2">
+                    <button id="global-kanban-toggle" onclick="toggleAllTasks()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-2 px-3 rounded-lg text-sm transition-all flex items-center gap-2" title="Contraer/Expandir todas las tareas">
+                        <i class="fa-solid fa-chevron-up"></i>
+                    </button>
+                    <button onclick="openCreateTaskModal()" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2 px-4 rounded-lg text-sm transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-plus"></i> Nueva Tarea
+                    </button>
+                </div>
             </div>
             <div id="kanban-board" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Columns -->
