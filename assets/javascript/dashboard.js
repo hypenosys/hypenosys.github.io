@@ -196,6 +196,7 @@ async function refreshDashboardData() {
 function renderDashboard() {
   renderMemberToggles();
   updateJulesBadges();
+  renderJulesSessions();
   renderStatsSummary();
   renderKanbanBoard();
   renderQAVelocityChart();
@@ -628,6 +629,14 @@ function renderMilestoneProgress() {
 function togglePipelineCollapse() {
   const content = document.getElementById('pipeline-content');
   const chevron = document.getElementById('pipeline-chevron');
+  content.classList.toggle('hidden');
+  chevron.classList.toggle('fa-chevron-down');
+  chevron.classList.toggle('fa-chevron-up');
+}
+
+function toggleJulesCollapse() {
+  const content = document.getElementById('jules-ops-content');
+  const chevron = document.getElementById('jules-ops-chevron');
   content.classList.toggle('hidden');
   chevron.classList.toggle('fa-chevron-down');
   chevron.classList.toggle('fa-chevron-up');
@@ -1495,6 +1504,101 @@ function updateJulesBadges() {
         }
     });
 }
+
+function renderJulesSessions() {
+    const container = document.getElementById('jules-dashboard-sessions');
+    if (!container) return;
+
+    const cachedSessions = JSON.parse(localStorage.getItem('jules_sessions_cache') || '[]');
+    const archivedIds = new Set(JSON.parse(localStorage.getItem('jules_archived_ids') || '[]'));
+    const cemeteryIds = new Set(JSON.parse(localStorage.getItem('jules_cemetery_ids') || '[]'));
+
+    const sessions = cachedSessions.filter(s => {
+        const id = s.name.split('/').pop();
+        return !archivedIds.has(id) && !cemeteryIds.has(id);
+    });
+
+    if (sessions.length === 0) {
+        container.innerHTML = '<div class="col-span-full text-center py-8 opacity-40 italic text-sm">No hay sesiones activas.</div>';
+        return;
+    }
+
+    container.innerHTML = sessions.map(s => {
+        const id = s.name.split('/').pop();
+        const state = s.state || 'QUEUED';
+        const title = s.title || (s.prompt.length > 40 ? s.prompt.substring(0, 37) + '...' : s.prompt);
+
+        const stateColors = {
+            'COMPLETED': 'text-emerald-400 border-emerald-500/30',
+            'FAILED': 'text-red-400 border-red-500/30',
+            'IN_PROGRESS': 'text-blue-400 border-blue-500/30',
+            'PAUSED': 'text-slate-400 border-slate-500/30',
+            'AWAITING_PLAN_APPROVAL': 'text-amber-400 border-amber-500/30'
+        };
+
+        return `
+            <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 flex flex-col gap-3 group hover:border-indigo-500/50 transition-all">
+                <div class="flex justify-between items-start">
+                    <span class="text-[9px] font-mono text-slate-600">#${id}</span>
+                    <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button onclick="handleDashboardJulesArchive('${id}')" class="text-slate-500 hover:text-emerald-400" title="Archivar">
+                            <i class="fa-solid fa-box-archive text-xs"></i>
+                        </button>
+                        <button onclick="handleDashboardJulesCemetery('${id}')" class="text-slate-500 hover:text-red-400" title="Al Cementerio">
+                            <i class="fa-solid fa-tombstone text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+                <h4 class="text-xs font-bold text-slate-200 line-clamp-2 h-8">${title}</h4>
+                <div class="flex justify-between items-center mt-2 border-t border-slate-800 pt-2">
+                    <span class="text-[9px] font-bold uppercase tracking-tighter ${stateColors[state] || 'text-slate-500'}">
+                        ${state.replace(/_/g, ' ')}
+                    </span>
+                    <a href="/jules-panel/" class="text-[9px] font-bold text-indigo-400 hover:underline">CONTROL →</a>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+window.handleDashboardJulesArchive = (id) => {
+    const archivedIds = JSON.parse(localStorage.getItem('jules_archived_ids') || '[]');
+    archivedIds.push(id);
+    localStorage.setItem('jules_archived_ids', JSON.stringify(archivedIds));
+
+    // Guardar datos completos para el archivo si están en cache
+    const cachedSessions = JSON.parse(localStorage.getItem('jules_sessions_cache') || '[]');
+    const session = cachedSessions.find(s => s.name.endsWith(id));
+    if (session) {
+        const archived = JSON.parse(localStorage.getItem('jules_archived_sessions') || '[]');
+        if (!archived.some(s => s.name.endsWith(id))) {
+            archived.unshift({ ...session, archivedAt: new Date().toISOString() });
+            localStorage.setItem('jules_archived_sessions', JSON.stringify(archived));
+        }
+    }
+
+    showToast(`Sesión #${id} archivada`, 'success');
+    renderDashboard();
+};
+
+window.handleDashboardJulesCemetery = (id) => {
+    const cemeteryIds = JSON.parse(localStorage.getItem('jules_cemetery_ids') || '[]');
+    cemeteryIds.push(id);
+    localStorage.setItem('jules_cemetery_ids', JSON.stringify(cemeteryIds));
+
+    const cachedSessions = JSON.parse(localStorage.getItem('jules_sessions_cache') || '[]');
+    const session = cachedSessions.find(s => s.name.endsWith(id));
+    if (session) {
+        const cemetery = JSON.parse(localStorage.getItem('jules_cemetery_sessions') || '[]');
+        if (!cemetery.some(s => s.name.endsWith(id))) {
+            cemetery.unshift({ ...session, deletedAt: new Date().toISOString() });
+            localStorage.setItem('jules_cemetery_sessions', JSON.stringify(cemetery));
+        }
+    }
+
+    showToast(`Sesión #${id} movida al cementerio`, 'warning');
+    renderDashboard();
+};
 
 function renderUserStatus(user) {
   const container = document.getElementById('user-status');
