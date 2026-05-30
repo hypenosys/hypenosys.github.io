@@ -138,17 +138,33 @@ permalink: /jules-panel/
                     <button class="filter-chip" data-filter="FAILED">Fallidas</button>
                 </div>
 
-                <div style="margin-top:12px;border-top:1px solid #1e1e2a;padding-top:12px;">
-                  <button onclick="toggleArchive()"
-                    style="font-size:11px;color:#6b7280;background:none;border:none;
-                           cursor:pointer;display:flex;align-items:center;gap:6px;">
-                    📦 Archivo
-                    <span id="archive-count" style="background:#2a2a35;border-radius:10px;
-                      padding:1px 7px;font-size:10px;">0</span>
-                  </button>
+                <div style="margin-top:12px;border-top:1px solid #1e1e2a;padding-top:12px;display:flex;flex-direction:column;gap:12px;">
+                  <div>
+                    <button onclick="toggleArchive()"
+                      style="font-size:11px;color:#6b7280;background:none;border:none;
+                             cursor:pointer;display:flex;align-items:center;gap:6px;">
+                      📦 Archivo
+                      <span id="archive-count" style="background:#2a2a35;border-radius:10px;
+                        padding:1px 7px;font-size:10px;">0</span>
+                    </button>
 
-                  <div id="archive-panel" class="hidden" style="margin-top:12px;">
-                    <div id="archive-list"></div>
+                    <div id="archive-panel" class="hidden" style="margin-top:12px;">
+                      <div id="archive-list"></div>
+                    </div>
+                  </div>
+
+                  <div id="jules-cemetery-section">
+                    <button onclick="toggleCemetery()"
+                      style="font-size:11px;color:#6b7280;background:none;border:none;
+                             cursor:pointer;display:flex;align-items:center;gap:6px;">
+                      🪦 Cementerio de Sesiones
+                      <span id="cemetery-count" style="background:#2a2a35;border-radius:10px;
+                        padding:1px 7px;font-size:10px;">0</span>
+                    </button>
+
+                    <div id="cemetery-panel" class="hidden" style="margin-top:12px;">
+                      <div id="cemetery-list"></div>
+                    </div>
                   </div>
                 </div>
             </div>
@@ -396,6 +412,17 @@ permalink: /jules-panel/
     justify-content: space-between;
     align-items: center;
     margin-bottom: 8px;
+}
+
+.session-card__right {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    display: flex;
+    gap: 4px;
+}
+
+.session-card:hover .session-card__right {
+    opacity: 1;
 }
 
 .session-card__left {
@@ -1135,6 +1162,7 @@ permalink: /jules-panel/
             }
 
             window.julesSessionsCache = currentSessions; // Mejora 5: Cache global
+            localStorage.setItem('jules_sessions_cache', JSON.stringify(currentSessions));
 
             nextPageToken = data.nextPageToken || null;
             lastRefreshTime = Date.now();
@@ -1163,6 +1191,8 @@ permalink: /jules-panel/
         const repoLabel = s.sourceContext?.source?.split('/').slice(-2).join('/') || 'Repo';
         const branchLabel = s.sourceContext?.githubRepoContext?.startingBranch || '---';
 
+        const canArchive = ['COMPLETED', 'FAILED', 'PAUSED'].includes(state);
+
         return `
             <div class="session-card__header">
                 <div class="session-card__left">
@@ -1170,7 +1200,13 @@ permalink: /jules-panel/
                     <span class="session-card__time" data-role="time">${timeAgo}</span>
                 </div>
                 <div class="session-card__right">
-                    <button class="btn-icon" title="Eliminar sesión" onclick="deleteSession('${s.name}', this)">
+                    <button class="btn-icon" title="Archivar sesión" onclick="archiveSession('${idSafe}')" style="display: ${canArchive ? '' : 'none'}">
+                        <i class="fa-solid fa-box-archive"></i>
+                    </button>
+                    <button class="btn-icon" title="Mover al Cementerio" onclick="moveToCemetery('${idSafe}')">
+                        <i class="fa-solid fa-tombstone"></i>
+                    </button>
+                    <button class="btn-icon" title="Eliminar de Jules" onclick="deleteSession('${s.name}', this)">
                         <i class="fa-solid fa-trash-can"></i>
                     </button>
                 </div>
@@ -1255,10 +1291,16 @@ permalink: /jules-panel/
         }
 
 
-        // Botón Archivar
+        // Botones Header
+        const archiveBtnHeader = cardEl.querySelector('.session-card__right button[title="Archivar sesión"]');
+        if (archiveBtnHeader) {
+            archiveBtnHeader.style.display = ['COMPLETED', 'FAILED', 'PAUSED'].includes(state) ? '' : 'none';
+        }
+
+        // Botón Archivar (Acciones)
         const archiveBtn = cardEl.querySelector('[data-role="archive-btn"]');
         if (archiveBtn) {
-            archiveBtn.style.display = ['COMPLETED', 'FAILED'].includes(state) ? '' : 'none';
+            archiveBtn.style.display = ['COMPLETED', 'FAILED', 'PAUSED'].includes(state) ? '' : 'none';
         }
 
         // Atributo de estado en la card (para CSS border-left)
@@ -1296,8 +1338,8 @@ permalink: /jules-panel/
         // 1. Actualizar o crear cards manteniendo el orden del array
         currentSessions.forEach((session, index) => {
             const idSafe = session.name.split('/').pop();
-            // Saltar sesiones archivadas — no renderizarlas nunca
-            if (archivedIds.has(idSafe)) return;
+            // Saltar sesiones archivadas o en cementerio — no renderizarlas nunca
+            if (archivedIds.has(idSafe) || cemeteryIds.has(idSafe)) return;
             const existingCard = document.getElementById('card-' + idSafe);
 
             if (existingCard) {
@@ -1929,29 +1971,15 @@ permalink: /jules-panel/
         }
     }
 
-    // --- ARCHIVE LOGIC ---
+    // --- ARCHIVE & CEMETERY LOGIC ---
     const archivedIds = new Set(
       JSON.parse(localStorage.getItem('jules_archived_ids') || '[]')
     );
+    const cemeteryIds = new Set(
+      JSON.parse(localStorage.getItem('jules_cemetery_ids') || '[]')
+    );
 
-    function archiveSession(idSafe) {
-      // 1. Marcar como archivado
-      archivedIds.add(idSafe);
-      localStorage.setItem('jules_archived_ids', JSON.stringify([...archivedIds]));
-
-      // 2. Guardar datos de la sesión (sin duplicar)
-      const archived = JSON.parse(localStorage.getItem('jules_archived_sessions') || '[]');
-      const alreadyStored = archived.some(s => getIdSafe(s.name) === idSafe);
-
-      if (!alreadyStored) {
-        const session = window.julesSessionsCache?.find(s => getIdSafe(s.name) === idSafe);
-        if (session) {
-          archived.unshift({ ...session, archivedAt: new Date().toISOString() });
-          localStorage.setItem('jules_archived_sessions', JSON.stringify(archived));
-        }
-      }
-
-      // 3. Ocultar card con animación
+    function animateCardRemoval(idSafe) {
       const card = document.getElementById('card-' + idSafe);
       if (card) {
         if (card.__prPollInterval) {
@@ -1965,68 +1993,121 @@ permalink: /jules-panel/
         setTimeout(() => { card.style.maxHeight = '0'; card.style.margin = '0'; }, 50);
         setTimeout(() => card.remove(), 500);
       }
+    }
 
+    function archiveSession(idSafe) {
+      archivedIds.add(idSafe);
+      localStorage.setItem('jules_archived_ids', JSON.stringify([...archivedIds]));
+
+      const archived = JSON.parse(localStorage.getItem('jules_archived_sessions') || '[]');
+      if (!archived.some(s => getIdSafe(s.name) === idSafe)) {
+        const session = window.julesSessionsCache?.find(s => getIdSafe(s.name) === idSafe);
+        if (session) {
+          archived.unshift({ ...session, archivedAt: new Date().toISOString() });
+          localStorage.setItem('jules_archived_sessions', JSON.stringify(archived));
+        }
+      }
+
+      animateCardRemoval(idSafe);
       renderArchivedCount();
       renderArchive();
     }
 
+    function moveToCemetery(idSafe) {
+      cemeteryIds.add(idSafe);
+      localStorage.setItem('jules_cemetery_ids', JSON.stringify([...cemeteryIds]));
+
+      const cemetery = JSON.parse(localStorage.getItem('jules_cemetery_sessions') || '[]');
+      if (!cemetery.some(s => getIdSafe(s.name) === idSafe)) {
+        const session = window.julesSessionsCache?.find(s => getIdSafe(s.name) === idSafe);
+        if (session) {
+          cemetery.unshift({ ...session, deletedAt: new Date().toISOString() });
+          localStorage.setItem('jules_cemetery_sessions', JSON.stringify(cemetery));
+        }
+      }
+
+      animateCardRemoval(idSafe);
+      renderCemeteryCount();
+      renderCemetery();
+    }
+
     function unarchiveSession(idSafe) {
-      // Quitar del Set y localStorage de IDs
       archivedIds.delete(idSafe);
       localStorage.setItem('jules_archived_ids', JSON.stringify([...archivedIds]));
-
-      // Quitar del array de datos
       const archived = JSON.parse(localStorage.getItem('jules_archived_sessions') || '[]');
-      const updated = archived.filter(s => getIdSafe(s.name) !== idSafe);
-      localStorage.setItem('jules_archived_sessions', JSON.stringify(updated));
-
+      localStorage.setItem('jules_archived_sessions', JSON.stringify(archived.filter(s => getIdSafe(s.name) !== idSafe)));
       renderArchivedCount();
       renderArchive();
-      // La card reaparecerá sola en el próximo ciclo de polling (15s)
+    }
+
+    function resurrectSession(idSafe) {
+      cemeteryIds.delete(idSafe);
+      localStorage.setItem('jules_cemetery_ids', JSON.stringify([...cemeteryIds]));
+      const cemetery = JSON.parse(localStorage.getItem('jules_cemetery_sessions') || '[]');
+      localStorage.setItem('jules_cemetery_sessions', JSON.stringify(cemetery.filter(s => getIdSafe(s.name) !== idSafe)));
+      renderCemeteryCount();
+      renderCemetery();
     }
 
     function toggleArchive() {
       const panel = document.getElementById('archive-panel');
-      if (!panel) return;
-      const isHidden = panel.classList.contains('hidden');
       panel.classList.toggle('hidden');
-      if (isHidden) renderArchive(); // cargar contenido al abrir
+      if (!panel.classList.contains('hidden')) renderArchive();
+    }
+
+    function toggleCemetery() {
+      const panel = document.getElementById('cemetery-panel');
+      panel.classList.toggle('hidden');
+      if (!panel.classList.contains('hidden')) renderCemetery();
     }
 
     function renderArchive() {
       const list = document.getElementById('archive-list');
-      if (!list) return;
       const archived = JSON.parse(localStorage.getItem('jules_archived_sessions') || '[]');
-
       if (archived.length === 0) {
         list.innerHTML = `<div style="color:#4b5563;font-size:11px;text-align:center;padding:12px;">Sin tareas archivadas</div>`;
         return;
       }
+      list.innerHTML = archived.map(s => renderSmallCard(s, 'unarchiveSession')).join('');
+    }
 
-      list.innerHTML = archived.map(s => {
-        const idSafe = getIdSafe(s.name);
-        const title = escapeHtml(s.title || (s.prompt || '').substring(0, 60) + '...' || 'Sin título');
-        return `
-          <div style="background:#111114;border:1px solid #1e1e2a;border-radius:8px;padding:10px 14px;margin-bottom:8px;">
-            <div style="font-size:12px;color:#d1d5db;font-weight:500;margin-bottom:4px;">${title}</div>
-            <div style="font-size:10px;color:#4b5563;margin-bottom:8px;">
-              Archivado: ${new Date(s.archivedAt).toLocaleDateString('es-ES')}
-            </div>
-            <div style="display:flex;gap:6px;">
-              <button onclick="unarchiveSession('${idSafe}')" class="btn btn--ghost" style="font-size:10px;">
-                ↩ Restaurar
-              </button>
-              ${s.url ? `<a href="${s.url}" target="_blank" class="btn btn--secondary" style="font-size:10px;">
-                Ver en consola →
-              </a>` : ''}
-            </div>
-          </div>`;
-      }).join('');
+    function renderCemetery() {
+      const list = document.getElementById('cemetery-list');
+      const cemetery = JSON.parse(localStorage.getItem('jules_cemetery_sessions') || '[]');
+      if (cemetery.length === 0) {
+        list.innerHTML = `<div style="color:#4b5563;font-size:11px;text-align:center;padding:12px;">El cementerio está vacío</div>`;
+        return;
+      }
+      list.innerHTML = cemetery.map(s => renderSmallCard(s, 'resurrectSession', '🪦 Resucitar')).join('');
+    }
+
+    function renderSmallCard(s, actionName, actionLabel = '↩ Restaurar') {
+      const idSafe = getIdSafe(s.name);
+      const title = escapeHtml(s.title || (s.prompt || '').substring(0, 60) + '...' || 'Sin título');
+      const date = new Date(s.archivedAt || s.deletedAt).toLocaleDateString('es-ES');
+      return `
+        <div style="background:#111114;border:1px solid #1e1e2a;border-radius:8px;padding:10px 14px;margin-bottom:8px;">
+          <div style="font-size:12px;color:#d1d5db;font-weight:500;margin-bottom:4px;">${title}</div>
+          <div style="font-size:10px;color:#4b5563;margin-bottom:8px;">Fecha: ${date}</div>
+          <div style="display:flex;gap:6px;">
+            <button onclick="${actionName}('${idSafe}')" class="btn btn--ghost" style="font-size:10px;">
+              ${actionLabel}
+            </button>
+            ${s.url ? `<a href="${s.url}" target="_blank" class="btn btn--secondary" style="font-size:10px;">
+              Ver en Jules →
+            </a>` : ''}
+          </div>
+        </div>`;
     }
 
     function renderArchivedCount() {
       const el = document.getElementById('archive-count');
       if (el) el.textContent = archivedIds.size;
+    }
+
+    function renderCemeteryCount() {
+      const el = document.getElementById('cemetery-count');
+      if (el) el.textContent = cemeteryIds.size;
     }
 
     // --- EVENTS ---
@@ -2051,6 +2132,7 @@ permalink: /jules-panel/
         catch(e) { console.error('[Jules] initJulesPanel falló:', e); }
 
         renderArchivedCount();
+        renderCemeteryCount();
       }
 
       // Caso 1: authReady ya se disparó (auth.js cargó antes que este script)

@@ -93,6 +93,30 @@
             </div>
         </div>
 
+        <!-- Jules Neural Operations Section -->
+        <section id="jules-ops-section" class="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden transition-all">
+            <button onclick="toggleJulesCollapse()" class="w-full flex items-center justify-between p-6 hover:bg-slate-800/50 transition-all">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-full bg-indigo-900/30 flex items-center justify-center text-indigo-400 border border-indigo-500/30">
+                        <i class="fa-solid fa-brain text-xl"></i>
+                    </div>
+                    <div class="text-left">
+                        <h2 class="text-xl font-bold text-white">Jules Neural Operations</h2>
+                        <p class="text-[10px] font-mono text-slate-500 uppercase tracking-widest">Monitoreo de agentes autónomos y sesiones de repositorio</p>
+                    </div>
+                </div>
+                <i id="jules-ops-chevron" class="fa-solid fa-chevron-up text-slate-500"></i>
+            </button>
+            <div id="jules-ops-content" class="p-6 pt-0">
+                <div id="jules-dashboard-sessions" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    <!-- Jules sessions injected here -->
+                    <div class="col-span-full text-center py-8 opacity-40 italic text-sm">
+                        Sincronizando con Jules Panel...
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Kanban Board -->
         <section>
             <div class="flex items-center justify-between mb-4">
