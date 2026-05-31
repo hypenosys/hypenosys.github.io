@@ -21,6 +21,7 @@ let archivedTasks = [];
 let currentStats = null;
 let currentBudget = null;
 let currentProfiles = null;
+let currentTaskImages = []; // TODO: Migrate to external storage (e.g. GitHub Assets/R2) if JSON size exceeds 10MB
 
 const KANBAN_COLUMNS = [
   { id: 'backlog',    label: 'Backlog / ToDo',        states: ['Pending','ToDo',null],           icon: '📋' },
@@ -290,6 +291,8 @@ function getTaskColumn(task) {
 
 function buildTaskCard(task) {
   const isMinimized = localStorage.getItem(`task_minimized_${task.id}`) === 'true';
+  const hasImages = task.images && task.images.length > 0;
+  const isImagesExpanded = localStorage.getItem(`task_images_expanded_${task.id}`) === 'true';
   const card = document.createElement('div');
   card.className = `bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-sm cursor-grab active:cursor-grabbing hover:border-slate-500 transition-all group relative ${isMinimized ? 'py-2' : ''}`;
   card.draggable = true;
@@ -329,20 +332,20 @@ function buildTaskCard(task) {
       <div class="flex justify-between items-center gap-2">
         <div class="flex items-center gap-2 overflow-hidden">
           <span class="text-[9px] font-mono text-slate-500 flex-shrink-0">#${task.id}</span>
-          <button onclick="openEditTaskModal(${task.id})" class="text-[10px] text-slate-500 hover:text-white opacity-0 group-hover:opacity-100 transition-all flex-shrink-0">
+          <button onclick="openEditTaskModal('${task.id}')" class="text-[10px] text-slate-500 hover:text-white opacity-0 group-hover:opacity-100 transition-all flex-shrink-0">
             <i class="fa-solid fa-pencil"></i>
           </button>
           <p class="text-xs text-slate-200 truncate font-semibold">${task.descripcion}</p>
         </div>
         <div class="flex items-center gap-1 flex-shrink-0">
           ${canArchive ? `
-            <button onclick="handleArchiveTask(${task.id})" class="text-slate-500 hover:text-emerald-400 mr-1 transition-colors" title="Archivar">
+            <button onclick="handleArchiveTask('${task.id}')" class="text-slate-500 hover:text-emerald-400 mr-1 transition-colors" title="Archivar">
                 <i class="fa-solid fa-box-archive text-[10px]"></i>
             </button>
           ` : ''}
           <span class="text-[8px] font-bold px-1 py-0.5 rounded ${priorityColorsMinimized[task.prioridad] || 'bg-slate-700'}">${task.prioridad[0]}</span>
           <span class="text-[8px] font-bold px-1 py-0.5 rounded ${stateInfo.color}">${stateInfo.label}</span>
-          <button onclick="toggleTaskMinimize(${task.id})" class="text-slate-500 hover:text-white ml-1">
+          <button onclick="toggleTaskMinimize('${task.id}')" class="text-slate-500 hover:text-white ml-1">
             <i class="fa-solid fa-chevron-down"></i>
           </button>
         </div>
@@ -353,23 +356,39 @@ function buildTaskCard(task) {
       <div class="flex justify-between items-start mb-2">
         <div class="flex gap-2 items-center">
           <span class="text-[9px] font-mono text-slate-500">#${task.id}</span>
-          <button onclick="openEditTaskModal(${task.id})" class="text-[10px] text-slate-500 hover:text-white opacity-0 group-hover:opacity-100 transition-all">
+          <button onclick="openEditTaskModal('${task.id}')" class="text-[10px] text-slate-500 hover:text-white opacity-0 group-hover:opacity-100 transition-all">
             <i class="fa-solid fa-pencil"></i>
           </button>
         </div>
         <div class="flex gap-2 items-center">
           ${canArchive ? `
-            <button onclick="handleArchiveTask(${task.id})" class="text-[10px] font-bold text-slate-500 hover:text-emerald-400 flex items-center gap-1 px-2 py-0.5 bg-slate-900 rounded border border-slate-700 transition-all mr-2" title="Mover al Cementerio">
+            <button onclick="handleArchiveTask('${task.id}')" class="text-[10px] font-bold text-slate-500 hover:text-emerald-400 flex items-center gap-1 px-2 py-0.5 bg-slate-900 rounded border border-slate-700 transition-all mr-2" title="Mover al Cementerio">
                 <i class="fa-solid fa-box-archive"></i> ARCHIVAR
             </button>
           ` : ''}
           <span class="text-[9px] font-bold px-1.5 py-0.5 rounded ${priorityColors[task.prioridad] || 'bg-slate-700'}">${task.prioridad.toUpperCase()}</span>
-          <button onclick="toggleTaskMinimize(${task.id})" class="text-slate-500 hover:text-white">
+          <button onclick="toggleTaskMinimize('${task.id}')" class="text-slate-500 hover:text-white">
             <i class="fa-solid fa-chevron-up"></i>
           </button>
         </div>
       </div>
       <p class="text-sm text-slate-200 leading-snug mb-3">${task.descripcion}</p>
+
+      ${hasImages ? `
+      <div class="mb-3 border border-slate-700 rounded-lg overflow-hidden">
+        <button onclick="toggleCardImages('${task.id}')" class="w-full flex items-center justify-between p-2 bg-slate-900/50 hover:bg-slate-900 transition-all text-[10px] font-bold text-slate-400">
+            <span><i class="fa-solid fa-paperclip mr-1"></i> ${task.images.length} imágenes</span>
+            <i class="fa-solid fa-chevron-${isImagesExpanded ? 'up' : 'down'}"></i>
+        </button>
+        <div id="card-images-${task.id}" class="${isImagesExpanded ? '' : 'hidden'} p-2 bg-slate-950 grid grid-cols-3 gap-2">
+            ${task.images.map((img, idx) => `
+                <div class="aspect-square rounded border border-slate-800 overflow-hidden cursor-pointer hover:border-emerald-500 transition-all" onclick="openLightbox('${task.id}', ${idx})">
+                    <img src="${img.src}" class="w-full h-full object-cover" alt="Task image">
+                </div>
+            `).join('')}
+        </div>
+      </div>
+      ` : ''}
 
       <div class="mb-3">
           <select onchange="handleQuickStageUpdate(${task.id}, this.value)" class="w-full bg-slate-950/50 border border-slate-700 rounded text-[10px] p-1 text-slate-400 focus:text-white focus:border-indigo-500 outline-none">
@@ -424,6 +443,13 @@ function toggleTaskMinimize(taskId) {
   const current = localStorage.getItem(key) === 'true';
   localStorage.setItem(key, !current);
   renderKanbanBoard();
+}
+
+function toggleCardImages(taskId) {
+    const key = `task_images_expanded_${taskId}`;
+    const current = localStorage.getItem(key) === 'true';
+    localStorage.setItem(key, !current);
+    renderKanbanBoard();
 }
 
 function toggleAllTasks() {
@@ -1072,6 +1098,35 @@ function setupEventListeners() {
   if (taskSave) taskSave.onclick = handleCreateTask;
   if (qaCancel) qaCancel.onclick = () => document.getElementById('qa-assignment-modal').classList.add('hidden');
   if (assignCancel) assignCancel.onclick = () => document.getElementById('assignment-modal').classList.add('hidden');
+
+  // Image handling
+  const dropzone = document.getElementById('task-image-dropzone');
+  const fileInput = document.getElementById('task-image-input');
+  const taskModal = document.getElementById('create-task-modal');
+
+  if (dropzone && fileInput) {
+      dropzone.onclick = () => fileInput.click();
+      dropzone.ondragover = (e) => { e.preventDefault(); dropzone.classList.add('border-emerald-500', 'bg-emerald-500/10'); };
+      dropzone.ondragleave = () => dropzone.classList.remove('border-emerald-500', 'bg-emerald-500/10');
+      dropzone.ondrop = (e) => {
+          e.preventDefault();
+          dropzone.classList.remove('border-emerald-500', 'bg-emerald-500/10');
+          handleImageFiles(e.dataTransfer.files);
+      };
+      fileInput.onchange = (e) => handleImageFiles(e.target.files);
+  }
+
+  if (taskModal) {
+      taskModal.onpaste = (e) => {
+          const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+          for (const item of items) {
+              if (item.type.indexOf('image') !== -1) {
+                  const file = item.getAsFile();
+                  handleImageFiles([file]);
+              }
+          }
+      };
+  }
 }
 
 function showToast(mensaje, tipo = 'info', duracionMs = 4000) {
@@ -1138,6 +1193,13 @@ function openCreateTaskModal() {
   document.getElementById('task-email-responsable-input').value = '';
   document.getElementById('task-emails-asignados-input').value = '';
 
+  currentTaskImages = [];
+  renderImagePreviews();
+  const imageSection = document.getElementById('task-image-section');
+  if (imageSection) imageSection.classList.add('hidden');
+  const chevron = document.getElementById('task-image-chevron');
+  if (chevron) chevron.className = 'fa-solid fa-chevron-down';
+
   const checkboxes = document.querySelectorAll('#task-asignados-container input[name="asignados"]');
   checkboxes.forEach(cb => cb.checked = false);
 
@@ -1164,6 +1226,13 @@ function openEditTaskModal(taskId) {
     document.getElementById('task-detector-input').value = task.detectado_por || '';
     document.getElementById('task-email-responsable-input').value = task.email_responsable || '';
     document.getElementById('task-emails-asignados-input').value = (task.emails_asignados || []).join(', ');
+
+    currentTaskImages = JSON.parse(JSON.stringify(task.images || []));
+    renderImagePreviews();
+    const imageSection = document.getElementById('task-image-section');
+    if (imageSection) imageSection.classList.add('hidden');
+    const chevron = document.getElementById('task-image-chevron');
+    if (chevron) chevron.className = 'fa-solid fa-chevron-down';
 
     const checkboxes = document.querySelectorAll('#task-asignados-container input[name="asignados"]');
     checkboxes.forEach(cb => {
@@ -1252,7 +1321,8 @@ async function handleCreateTask() {
     detectado_por: detector,
     asignados: asignados,
     email_responsable: emailResponsable,
-    emails_asignados: emailsAsignados
+    emails_asignados: emailsAsignados,
+    images: currentTaskImages
   };
 
   showToast(UI_STRINGS.saving, 'info');
@@ -1325,7 +1395,7 @@ function renderTaskArchive() {
                     <span class="text-[9px] font-mono text-slate-600">#${task.id}</span>
                     <span class="text-[8px] font-bold px-1.5 py-0.5 rounded ${stateInfo.color} opacity-60">${stateInfo.label}</span>
                 </div>
-                <button onclick="handleRestoreTask(${task.id})" class="text-[10px] font-bold text-emerald-500 hover:text-emerald-400 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                <button onclick="handleRestoreTask('${task.id}')" class="text-[10px] font-bold text-emerald-500 hover:text-emerald-400 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
                     <i class="fa-solid fa-hand-holding-heart"></i> RESUCITAR
                 </button>
             </div>
@@ -1410,6 +1480,104 @@ function promptQAAssignment(taskId) {
       resolve(null);
     };
   });
+}
+
+function toggleTaskImageSection() {
+    const section = document.getElementById('task-image-section');
+    const chevron = document.getElementById('task-image-chevron');
+    if (section && chevron) {
+        section.classList.toggle('hidden');
+        chevron.classList.toggle('fa-chevron-up');
+        chevron.classList.toggle('fa-chevron-down');
+    }
+}
+
+function handleImageFiles(files) {
+    if (!files || files.length === 0) return;
+
+    for (const file of files) {
+        if (!file.type.startsWith('image/')) {
+            showToast(`Archivo no válido: ${file.name}. Solo se aceptan imágenes.`, 'warning');
+            continue;
+        }
+
+        if (file.size > 2 * 1024 * 1024) {
+            showToast(`Imagen demasiado grande: ${file.name}. Máximo 2MB.`, 'warning');
+            continue;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const imgObj = {
+                id: Math.random().toString(36).substr(2, 9),
+                name: file.name,
+                src: e.target.result,
+                createdAt: new Date().toISOString()
+            };
+            currentTaskImages.push(imgObj);
+            renderImagePreviews();
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function renderImagePreviews() {
+    const container = document.getElementById('task-image-previews');
+    if (!container) return;
+    container.innerHTML = '';
+
+    currentTaskImages.forEach((img, idx) => {
+        const div = document.createElement('div');
+        div.className = 'relative group aspect-square rounded-lg overflow-hidden border border-slate-700 bg-slate-950';
+        div.innerHTML = `
+            <img src="${img.src}" class="w-full h-full object-cover" alt="">
+            <div class="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                <button type="button" onclick="openLightbox('current', ${idx})" class="w-8 h-8 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-eye"></i>
+                </button>
+                <button type="button" onclick="removeTaskImage('${img.id}')" class="w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </div>
+            <div class="name-label absolute bottom-0 left-0 right-0 p-1 bg-slate-950/80 text-[8px] text-slate-300 truncate pointer-events-none">
+            </div>
+        `;
+        div.querySelector('.name-label').textContent = img.name;
+        container.appendChild(div);
+    });
+}
+
+function removeTaskImage(imgId) {
+    currentTaskImages = currentTaskImages.filter(img => img.id !== imgId);
+    renderImagePreviews();
+}
+
+function openLightbox(srcOrTaskId, imageIndex) {
+    const modal = document.getElementById('lightbox-modal');
+    const img = document.getElementById('lightbox-img');
+    if (!modal || !img) return;
+
+    if (imageIndex === undefined) {
+        // Fallback or direct src (discouraged for large base64)
+        img.src = srcOrTaskId;
+    } else {
+        if (srcOrTaskId === 'current') {
+            if (currentTaskImages[imageIndex]) {
+                img.src = currentTaskImages[imageIndex].src;
+            }
+        } else {
+            const task = currentTasks.find(t => String(t.id) === String(srcOrTaskId));
+            if (task && task.images && task.images[imageIndex]) {
+                img.src = task.images[imageIndex].src;
+            }
+        }
+    }
+    modal.classList.remove('hidden');
+}
+
+function closeLightbox() {
+    const modal = document.getElementById('lightbox-modal');
+    if (modal) modal.classList.add('hidden');
 }
 
 function toggleProfileEdit(memberName) {
