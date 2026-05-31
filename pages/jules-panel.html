@@ -243,6 +243,15 @@ permalink: /jules-panel/
     justify-content: space-between;
     align-items: center;
     margin-bottom: 32px;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 600px) {
+    .panel-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }
 
 .header-left {
@@ -282,6 +291,7 @@ permalink: /jules-panel/
     grid-template-columns: 320px 1fr;
     gap: 32px;
     min-width: 0;
+    max-width: 100%;
 }
 
 @media (max-width: 1024px) {
