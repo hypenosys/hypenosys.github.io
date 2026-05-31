@@ -66,63 +66,45 @@ async function handleDOMContentLoaded() {
   const code = urlParams.get('code');
 
   if (code) {
+    console.log('[DASHBOARD] OAuth code detected. Handling callback...');
     const loginOverlay = document.getElementById('login-overlay');
-    const originalOverlayHTML = loginOverlay.innerHTML;
     loginOverlay.classList.remove('hidden');
-    loginOverlay.innerHTML = `
-      <div class="text-center">
-        <div class="text-emerald-400 text-6xl mb-6 animate-spin"><i class="fa-solid fa-circle-notch"></i></div>
-        <h1 class="text-3xl font-bold mb-2">Autenticando con GitHub...</h1>
-        <p class="text-slate-400 mb-8 max-w-sm mx-auto">Intercambiando código de autorización por token de acceso.</p>
-      </div>
-    `;
+
+    // Save original HTML if needed, but we just want to show progress
+    const statusMsg = loginOverlay.querySelector('p');
+    if (statusMsg) statusMsg.textContent = 'Autenticando con GitHub...';
 
     try {
-      const resp = await fetch('https://hypenosys-gatekeeper-v2.axlffcc.workers.dev', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code })
-      });
-
-      const data = await resp.json();
-      console.log('[Gatekeeper Response]', JSON.stringify(data));
-
-      const token = data.access_token || data.token;
-
-      if (token) {
-        sessionStorage.setItem('gh_access_token', token.trim());
-        window.history.replaceState({}, document.title, window.location.pathname);
-        loginOverlay.classList.add('hidden');
-        loginOverlay.innerHTML = originalOverlayHTML;
+      const result = await window.githubApi.exchangeCodeForToken(code);
+      if (result.valid) {
+          window.history.replaceState({}, document.title, window.location.pathname);
+          await initDashboard();
       } else {
-        throw new Error(data.error || 'No se recibió el token de acceso.');
+          throw new Error('No autorizado');
       }
     } catch (err) {
-      console.error('OAuth Exchange Error:', err);
-      loginOverlay.innerHTML = originalOverlayHTML;
-      loginOverlay.classList.remove('hidden');
+      console.error('[DASHBOARD] OAuth Error:', err);
       showToast('Error de autenticación: ' + err.message, 'error');
-      return;
+      loginOverlay.classList.remove('hidden');
     }
+  } else {
+    await initDashboard();
   }
-
-  await initDashboard();
 }
 
 async function initDashboard() {
-  const token = sessionStorage.getItem('gh_access_token') || localStorage.getItem('github_token');
+  console.log('[DASHBOARD] Initializing Dashboard...');
+  const token = window.githubApi.getAuthToken();
   if (!token) {
+    console.log('[DASHBOARD] No token found during init.');
     document.getElementById('login-overlay').classList.remove('hidden');
     return;
-  }
-
-  if (!sessionStorage.getItem('gh_access_token')) {
-    sessionStorage.setItem('gh_access_token', token);
   }
 
   try {
     const { valid, user } = await window.githubApi.validateToken();
     if (!valid) {
+        console.log('[DASHBOARD] Token validation failed or unauthorized.');
         if (user) {
             document.getElementById('unauthorized-msg').textContent = `Tu cuenta de GitHub (${user.login}) no pertenece al equipo de Hypenosys.`;
             document.getElementById('unauthorized-overlay').classList.remove('hidden');
@@ -132,6 +114,8 @@ async function initDashboard() {
         return;
     }
 
+    console.log('[DASHBOARD] Access granted for:', user.login);
+    document.getElementById('login-overlay').classList.add('hidden');
     window.currentUser = user.login.toLowerCase();
 
     await refreshDashboardData();
@@ -1613,3 +1597,21 @@ function renderUserStatus(user) {
     </div>
   `;
 }
+
+/**
+ * Handle login from the dashboard overlay
+ */
+window.handleDashboardLogin = function() {
+    // Trigger the global auth manager login flow if available
+    if (window.authManager) {
+        window.authManager.handleLogin();
+    } else {
+        // Fallback if authManager isn't available for some reason
+        const rememberMe = document.getElementById('chk-remember-me-dashboard')?.checked || false;
+        sessionStorage.setItem('auth_remember_me', rememberMe);
+
+        const clientId = window.authManager?.clientId || 'Ov23liAVwbXNtvhkHJQe';
+        const scope = 'repo';
+        window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=${scope}`;
+    }
+};
