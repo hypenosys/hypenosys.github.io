@@ -77,9 +77,11 @@ permalink: /CHANGELOG.html
               <li>Botón de toggle inteligente en el Kanban de Operaciones para expandir o contraer todas las tareas de forma global, con persistencia en el navegador.</li>
               <li><strong>Alias de Repositorios en Jules Panel:</strong> Implementado sistema para asignar nombres personalizados (alias) a repositorios. Los alias son locales por usuario (<code>localStorage</code>) y no afectan a los datos reales de GitHub, facilitando la identificación de proyectos. Incluye selector con lápiz de edición, modal de configuración y persistencia tras recarga.</li>
               <li><strong>Soporte de Imágenes en Kanban:</strong> Implementado soporte para adjuntar imágenes a las tareas. Incluye carga mediante selección de archivos, arrastrar y soltar, y pegado directo desde el portapapeles (Ctrl+V). Las imágenes se visualizan en galerías colapsables dentro de las tarjetas del Kanban y en un visor Lightbox a pantalla completa. Persistencia basada en base64 integrada en el modelo de tareas existente.</li>
+              <li><strong>Auditoría de IDs de Tareas:</strong> Centralizada la comparación de IDs de tareas en <code>dashboard.js</code> mediante el helper <code>sameTaskId</code> y normalización con <code>String()</code> en <code>github-api.js</code>. Esto asegura que el sistema sea agnóstico al tipo de dato (número o cadena) y esté preparado para futuros IDs alfanuméricos/UUID.</li>
             </ul>
             <h5 class="text-danger">Fixed</h5>
             <ul class="tree-view mb-3">
+              <li><strong>Regresión en Botón de Edición:</strong> Corregido error que impedía abrir el modal de edición de tareas debido a comprobaciones de tipo estrictas (<code>===</code>) entre IDs numéricos y cadenas provenientes del DOM.</li>
               <li>Responsive layout and horizontal overflow issues on mobile (320px-430px) for Dashboard and Jules Panel.</li>
               <li>Markdown rendering in <code>progressUpdated</code> and <code>sessionCompleted</code> activities in Jules Panel.</li>
               <li>Removed duplicate "Jules Panel" title rendered by the Jekyll layout.</li>

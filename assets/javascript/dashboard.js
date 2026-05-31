@@ -14,6 +14,14 @@ const MEMBER_MAPPING = {
 const STAGES = ['Concepto / GDD', 'Pre-producción', 'Tools / Automation', 'Arte / Assets', 'Programación / Engine', 'QA / Testing', 'Build / Deploy', 'Post-launch'];
 const REFRESH_INTERVAL_MS = 30000; // 30 seconds
 
+/**
+ * Helper to compare task IDs agnostic of type (string/number)
+ */
+function sameTaskId(id1, id2) {
+    if (id1 === null || id1 === undefined || id2 === null || id2 === undefined) return false;
+    return String(id1) === String(id2);
+}
+
 let activeFilter = null;
 let activeStageFilter = null;
 let currentTasks = [];
@@ -274,7 +282,7 @@ function renderKanbanBoard() {
     cardsEl.ondrop = async (e) => {
       e.preventDefault();
       colEl.classList.remove('drag-over');
-      const taskId = parseInt(e.dataTransfer.getData('text/plain'), 10);
+      const taskId = e.dataTransfer.getData('text/plain');
       await handleCardDrop(taskId, col.id);
     };
   }
@@ -332,20 +340,20 @@ function buildTaskCard(task) {
       <div class="flex justify-between items-center gap-2">
         <div class="flex items-center gap-2 overflow-hidden">
           <span class="text-[9px] font-mono text-slate-500 flex-shrink-0">#${task.id}</span>
-          <button onclick="openEditTaskModal('${task.id}')" class="text-[10px] text-slate-500 hover:text-white opacity-0 group-hover:opacity-100 transition-all flex-shrink-0">
+          <button onclick="openEditTaskModal('${String(task.id)}')" class="text-[10px] text-slate-500 hover:text-white opacity-0 group-hover:opacity-100 transition-all flex-shrink-0">
             <i class="fa-solid fa-pencil"></i>
           </button>
           <p class="text-xs text-slate-200 truncate font-semibold">${task.descripcion}</p>
         </div>
         <div class="flex items-center gap-1 flex-shrink-0">
           ${canArchive ? `
-            <button onclick="handleArchiveTask('${task.id}')" class="text-slate-500 hover:text-emerald-400 mr-1 transition-colors" title="Archivar">
+            <button onclick="handleArchiveTask('${String(task.id)}')" class="text-slate-500 hover:text-emerald-400 mr-1 transition-colors" title="Archivar">
                 <i class="fa-solid fa-box-archive text-[10px]"></i>
             </button>
           ` : ''}
           <span class="text-[8px] font-bold px-1 py-0.5 rounded ${priorityColorsMinimized[task.prioridad] || 'bg-slate-700'}">${task.prioridad[0]}</span>
           <span class="text-[8px] font-bold px-1 py-0.5 rounded ${stateInfo.color}">${stateInfo.label}</span>
-          <button onclick="toggleTaskMinimize('${task.id}')" class="text-slate-500 hover:text-white ml-1">
+          <button onclick="toggleTaskMinimize('${String(task.id)}')" class="text-slate-500 hover:text-white ml-1">
             <i class="fa-solid fa-chevron-down"></i>
           </button>
         </div>
@@ -356,18 +364,18 @@ function buildTaskCard(task) {
       <div class="flex justify-between items-start mb-2">
         <div class="flex gap-2 items-center">
           <span class="text-[9px] font-mono text-slate-500">#${task.id}</span>
-          <button onclick="openEditTaskModal('${task.id}')" class="text-[10px] text-slate-500 hover:text-white opacity-0 group-hover:opacity-100 transition-all">
+          <button onclick="openEditTaskModal('${String(task.id)}')" class="text-[10px] text-slate-500 hover:text-white opacity-0 group-hover:opacity-100 transition-all">
             <i class="fa-solid fa-pencil"></i>
           </button>
         </div>
         <div class="flex gap-2 items-center">
           ${canArchive ? `
-            <button onclick="handleArchiveTask('${task.id}')" class="text-[10px] font-bold text-slate-500 hover:text-emerald-400 flex items-center gap-1 px-2 py-0.5 bg-slate-900 rounded border border-slate-700 transition-all mr-2" title="Mover al Cementerio">
+            <button onclick="handleArchiveTask('${String(task.id)}')" class="text-[10px] font-bold text-slate-500 hover:text-emerald-400 flex items-center gap-1 px-2 py-0.5 bg-slate-900 rounded border border-slate-700 transition-all mr-2" title="Mover al Cementerio">
                 <i class="fa-solid fa-box-archive"></i> ARCHIVAR
             </button>
           ` : ''}
           <span class="text-[9px] font-bold px-1.5 py-0.5 rounded ${priorityColors[task.prioridad] || 'bg-slate-700'}">${task.prioridad.toUpperCase()}</span>
-          <button onclick="toggleTaskMinimize('${task.id}')" class="text-slate-500 hover:text-white">
+          <button onclick="toggleTaskMinimize('${String(task.id)}')" class="text-slate-500 hover:text-white">
             <i class="fa-solid fa-chevron-up"></i>
           </button>
         </div>
@@ -376,13 +384,13 @@ function buildTaskCard(task) {
 
       ${hasImages ? `
       <div class="mb-3 border border-slate-700 rounded-lg overflow-hidden">
-        <button onclick="toggleCardImages('${task.id}')" class="w-full flex items-center justify-between p-2 bg-slate-900/50 hover:bg-slate-900 transition-all text-[10px] font-bold text-slate-400">
+        <button onclick="toggleCardImages('${String(task.id)}')" class="w-full flex items-center justify-between p-2 bg-slate-900/50 hover:bg-slate-900 transition-all text-[10px] font-bold text-slate-400">
             <span><i class="fa-solid fa-paperclip mr-1"></i> ${task.images.length} imágenes</span>
             <i class="fa-solid fa-chevron-${isImagesExpanded ? 'up' : 'down'}"></i>
         </button>
-        <div id="card-images-${task.id}" class="${isImagesExpanded ? '' : 'hidden'} p-2 bg-slate-950 grid grid-cols-3 gap-2">
+        <div id="card-images-${String(task.id)}" class="${isImagesExpanded ? '' : 'hidden'} p-2 bg-slate-950 grid grid-cols-3 gap-2">
             ${task.images.map((img, idx) => `
-                <div class="aspect-square rounded border border-slate-800 overflow-hidden cursor-pointer hover:border-emerald-500 transition-all" onclick="openLightbox('${task.id}', ${idx})">
+                <div class="aspect-square rounded border border-slate-800 overflow-hidden cursor-pointer hover:border-emerald-500 transition-all" onclick="openLightbox('${String(task.id)}', ${idx})">
                     <img src="${img.src}" class="w-full h-full object-cover" alt="Task image">
                 </div>
             `).join('')}
@@ -391,7 +399,7 @@ function buildTaskCard(task) {
       ` : ''}
 
       <div class="mb-3">
-          <select onchange="handleQuickStageUpdate(${task.id}, this.value)" class="w-full bg-slate-950/50 border border-slate-700 rounded text-[10px] p-1 text-slate-400 focus:text-white focus:border-indigo-500 outline-none">
+          <select onchange="handleQuickStageUpdate('${String(task.id)}', this.value)" class="w-full bg-slate-950/50 border border-slate-700 rounded text-[10px] p-1 text-slate-400 focus:text-white focus:border-indigo-500 outline-none">
               ${STAGES.map(s => `<option value="${s}" ${task.tema_principal === s ? 'selected' : ''}>${s}</option>`).join('')}
           </select>
       </div>
@@ -401,7 +409,7 @@ function buildTaskCard(task) {
           <span class="text-[9px] font-bold text-indigo-400 flex items-center gap-1">
               <i class="fa-solid fa-robot"></i> JULES
           </span>
-          <span id="jules-status-${task.id}" class="text-[8px] font-mono text-indigo-300 uppercase">Cargando...</span>
+          <span id="jules-status-${String(task.id)}" class="text-[8px] font-mono text-indigo-300 uppercase">Cargando...</span>
       </div>
       ` : ''}
 
@@ -416,7 +424,7 @@ function buildTaskCard(task) {
             <span class="text-[8px] font-bold px-1.5 py-0.5 rounded ${stateInfo.color}">${stateInfo.label.toUpperCase()}</span>
           </div>
 
-          <div onclick="openAssignmentModal(${task.id})" class="flex -space-x-1.5 cursor-pointer hover:opacity-80 transition-opacity min-h-[24px] items-center">
+          <div onclick="openAssignmentModal('${String(task.id)}')" class="flex -space-x-1.5 cursor-pointer hover:opacity-80 transition-opacity min-h-[24px] items-center">
             ${(task.asignados || []).length > 0
               ? task.asignados.map(handle => {
                   const name = MEMBER_MAPPING[handle] || handle;
@@ -439,14 +447,14 @@ function buildTaskCard(task) {
 }
 
 function toggleTaskMinimize(taskId) {
-  const key = `task_minimized_${taskId}`;
+  const key = `task_minimized_${String(taskId)}`;
   const current = localStorage.getItem(key) === 'true';
   localStorage.setItem(key, !current);
   renderKanbanBoard();
 }
 
 function toggleCardImages(taskId) {
-    const key = `task_images_expanded_${taskId}`;
+    const key = `task_images_expanded_${String(taskId)}`;
     const current = localStorage.getItem(key) === 'true';
     localStorage.setItem(key, !current);
     renderKanbanBoard();
@@ -728,7 +736,7 @@ function renderCriticalPathAlerts() {
               <i class="fa-solid ${a.type === 'error' ? 'fa-circle-exclamation' : a.type === 'warning' ? 'fa-triangle-exclamation' : 'fa-circle-info'}"></i>
               ${a.msg}
             </span>
-            ${a.taskId ? `<button onclick="scrollToTask(${a.taskId})" class="px-3 py-1 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-bold transition-all uppercase">Ver Tarea</button>` : ''}
+            ${a.taskId ? `<button onclick="scrollToTask('${String(a.taskId)}')" class="px-3 py-1 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-bold transition-all uppercase">Ver Tarea</button>` : ''}
           `;
           panel.appendChild(div);
         });
@@ -748,7 +756,7 @@ function scrollToTask(id) {
   // Simple search for the task card
   const cards = document.querySelectorAll('.kanban-cards > div');
   for (const card of cards) {
-    if (card.querySelector('.text-\\[9px\\]')?.textContent === `#${id}`) {
+    if (card.querySelector('.text-\\[9px\\]')?.textContent === `#${String(id)}`) {
       card.scrollIntoView({ behavior: 'smooth', block: 'center' });
       card.classList.add('ring-4', 'ring-emerald-500', 'ring-offset-4', 'ring-offset-slate-950');
       setTimeout(() => card.classList.remove('ring-4', 'ring-emerald-500', 'ring-offset-4', 'ring-offset-slate-950'), 3000);
@@ -942,8 +950,8 @@ function renderDependencyGraph() {
   }
 
   edges.forEach(e => {
-    const start = positions.get(e.from);
-    const end = positions.get(e.to);
+    const start = positions.get(String(e.from));
+    const end = positions.get(String(e.to));
     if (start && end) {
       const color = e.type === 'blocked_by' ? '#f87171' : '#fbbf24';
       const dash = e.type === 'blocked_by' ? '5,5' : '';
@@ -952,10 +960,10 @@ function renderDependencyGraph() {
   });
 
   positions.forEach((pos, id) => {
-    const t = uniqueNodes.find(n => n.id === id);
+    const t = uniqueNodes.find(n => sameTaskId(n.id, id));
     const color = t.estado === 'OK' ? '#10b981' : '#6366f1';
     svgHtml += `
-      <g class="cursor-pointer" onclick="scrollToTask(${id})">
+      <g class="cursor-pointer" onclick="scrollToTask('${String(id)}')">
         <rect x="${pos.x}" y="${pos.y}" width="150" height="40" rx="8" fill="#1e293b" stroke="${color}" stroke-width="1"/>
         <text x="${pos.x + 10}" y="${pos.y + 25}" fill="#f1f5f9" font-size="10" font-family="monospace">#${id} ${t.descripcion.substring(0, 15)}...</text>
       </g>
@@ -1207,7 +1215,7 @@ function openCreateTaskModal() {
 }
 
 function openEditTaskModal(taskId) {
-    const task = currentTasks.find(t => t.id === taskId);
+    const task = currentTasks.find(t => sameTaskId(t.id, taskId));
     if (!task) return;
 
     populateMemberSelects();
@@ -1243,7 +1251,7 @@ function openEditTaskModal(taskId) {
 }
 
 function openAssignmentModal(taskId) {
-    const task = currentTasks.find(t => t.id === taskId);
+    const task = currentTasks.find(t => sameTaskId(t.id, taskId));
     if (!task) return;
 
     const list = document.getElementById('assignment-list');
@@ -1330,7 +1338,7 @@ async function handleCreateTask() {
 
   try {
     if (taskId) {
-        await window.githubApi.updateTask(parseInt(taskId), taskData);
+        await window.githubApi.updateTask(taskId, taskData);
         showToast(`Tarea #${taskId} actualizada`, 'success');
     } else {
         const newTask = {
@@ -1395,7 +1403,7 @@ function renderTaskArchive() {
                     <span class="text-[9px] font-mono text-slate-600">#${task.id}</span>
                     <span class="text-[8px] font-bold px-1.5 py-0.5 rounded ${stateInfo.color} opacity-60">${stateInfo.label}</span>
                 </div>
-                <button onclick="handleRestoreTask('${task.id}')" class="text-[10px] font-bold text-emerald-500 hover:text-emerald-400 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                <button onclick="handleRestoreTask('${String(task.id)}')" class="text-[10px] font-bold text-emerald-500 hover:text-emerald-400 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
                     <i class="fa-solid fa-hand-holding-heart"></i> RESUCITAR
                 </button>
             </div>
@@ -1645,7 +1653,7 @@ function updateJulesBadges() {
     const cachedSessions = JSON.parse(localStorage.getItem('jules_sessions_cache') || '[]');
     currentTasks.forEach(t => {
         if (t.jules_session_id) {
-            const el = document.getElementById(`jules-status-${t.id}`);
+            const el = document.getElementById(`jules-status-${String(t.id)}`);
             if (el) {
                 const session = cachedSessions.find(s => s.name.endsWith(t.jules_session_id));
                 el.textContent = session ? session.state.replace(/_/g, ' ') : 'Desconocido';
