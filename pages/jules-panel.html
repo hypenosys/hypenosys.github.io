@@ -52,11 +52,18 @@ permalink: /jules-panel/
 
                 <div class="form-group">
                     <label class="form-label">Repositorio</label>
-                    <div class="select-wrapper">
-                        <select id="jules-repo-select" class="form-select">
-                            <option value="">Cargando fuentes...</option>
-                        </select>
-                        <i class="fa-solid fa-chevron-down select-icon"></i>
+                    <div id="jules-repo-real-name" style="font-size: 10px; color: var(--text-muted); font-family: monospace; margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: none;" title="Nombre real del repositorio"></div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div class="select-wrapper" style="flex: 1; min-width: 0;">
+                            <select id="jules-repo-select" class="form-select" style="min-height: 42px; width: 100%;">
+                                <option value="">Cargando fuentes...</option>
+                            </select>
+                            <i class="fa-solid fa-chevron-down select-icon"></i>
+                        </div>
+                        <button id="jules-edit-repo-alias-btn" title="Editar nombre local del repositorio"
+                                style="display: none; height: 42px; width: 42px; min-width: 42px; background: transparent; border: 1px solid var(--border-subtle); border-radius: 8px; color: var(--text-secondary); cursor: pointer; transition: all 0.15s ease; align-items: center; justify-content: center;">
+                            <i class="fa-solid fa-pencil"></i>
+                        </button>
                     </div>
                 </div>
 
@@ -184,6 +191,32 @@ permalink: /jules-panel/
                 </div>
             </div>
         </main>
+    </div>
+</div>
+
+<!-- Repo Alias Modal -->
+<div id="repo-alias-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4">
+    <div class="bg-slate-900 border border-purple-500/30 rounded-2xl shadow-2xl w-full max-w-md p-6">
+        <h3 class="text-xl font-bold text-white mb-2">Editar Alias Local</h3>
+        <p class="text-slate-400 text-[10px] uppercase tracking-widest mb-6">Este nombre solo será visible para ti</p>
+
+        <div class="form-group">
+            <label class="form-label">Nombre Real</label>
+            <div id="alias-modal-real-name" class="text-xs font-mono text-slate-500 bg-slate-950 p-3 rounded-lg border border-slate-800 break-all"></div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Alias del Repositorio</label>
+            <input type="text" id="alias-modal-input" class="form-input" placeholder="Ej: Centro Neural" maxlength="60">
+        </div>
+
+        <div class="flex flex-col gap-3 mt-8">
+            <div class="flex gap-3">
+                <button id="alias-modal-cancel-btn" class="flex-grow py-3 border border-slate-700 hover:bg-slate-800 rounded-lg font-bold text-sm transition-all">Cancelar</button>
+                <button id="alias-modal-save-btn" class="flex-grow py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-bold text-sm transition-all">Guardar</button>
+            </div>
+            <button id="alias-modal-restore-btn" class="w-full py-2 text-slate-500 hover:text-slate-300 text-[10px] font-bold uppercase tracking-widest transition-all">Restaurar nombre original</button>
+        </div>
     </div>
 </div>
 
@@ -961,6 +994,7 @@ permalink: /jules-panel/
 
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="{{ '/assets/javascript/jules-api.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/repo-aliases.js' | relative_url }}"></script>
 <script>
     // --- STATE ---
     let currentSources = [];
@@ -1059,8 +1093,9 @@ permalink: /jules-panel/
                 srcs.forEach(s => {
                     const opt = document.createElement('option');
                     opt.value = s.name;
-                    const repo = s.githubRepo?.repo || window.parseSourceName(s.name)?.repo || s.name;
-                    opt.textContent = `${owner}/${repo}`;
+                    const repoShortName = s.githubRepo?.repo || window.parseSourceName(s.name)?.repo || s.name;
+                    const fullRepoLabel = `${owner}/${repoShortName}`;
+                    opt.textContent = window.getRepoDisplayName(s.name, fullRepoLabel);
                     optgroup.appendChild(opt);
                 });
                 repoSelect.appendChild(optgroup);
@@ -1093,12 +1128,21 @@ permalink: /jules-panel/
       const branchSelect  = document.getElementById('jules-branch-input');
       const branchLoading = document.getElementById('jules-branch-loading');
       const branchStatus  = document.getElementById('jules-branch-status');
+      const realNameEl    = document.getElementById('jules-repo-real-name');
+      const editBtn       = document.getElementById('jules-edit-repo-alias-btn');
 
       if (!sourceName) {
         branchSelect.innerHTML = '<option value="">Selecciona una rama...</option>';
         branchStatus.textContent = '';
+        realNameEl.style.display = 'none';
+        editBtn.style.display = 'none';
         return;
       }
+
+      // Mostrar nombre real y habilitar lápiz
+      realNameEl.textContent = sourceName;
+      realNameEl.style.display = 'block';
+      editBtn.style.display = 'flex';
 
       // Estado: cargando
       branchLoading.style.display = 'block';
@@ -1154,6 +1198,55 @@ permalink: /jules-panel/
       .addEventListener('change', function() {
         if (this.value) localStorage.setItem('jules_selected_branch', this.value);
       });
+
+    // --- REPO ALIAS MODAL LOGIC ---
+    const aliasModal = document.getElementById('repo-alias-modal');
+    const aliasInput = document.getElementById('alias-modal-input');
+    const aliasRealName = document.getElementById('alias-modal-real-name');
+
+    document.getElementById('jules-edit-repo-alias-btn').onclick = () => {
+        const repoSelect = document.getElementById('jules-repo-select');
+        const sourceName = repoSelect.value;
+        if (!sourceName) return;
+
+        aliasRealName.textContent = sourceName;
+        aliasInput.value = window.getRepoAlias(sourceName) || '';
+        aliasModal.classList.remove('hidden');
+        aliasInput.focus();
+    };
+
+    document.getElementById('alias-modal-cancel-btn').onclick = () => {
+        aliasModal.classList.add('hidden');
+    };
+
+    document.getElementById('alias-modal-save-btn').onclick = () => {
+        const repoSelect = document.getElementById('jules-repo-select');
+        const sourceName = repoSelect.value;
+        const alias = aliasInput.value.trim();
+
+        if (!alias) {
+            showToast('El alias no puede estar vacío', 'error');
+            return;
+        }
+
+        window.setRepoAlias(sourceName, alias);
+        aliasModal.classList.add('hidden');
+        showToast('Alias guardado correctamente');
+
+        // Refrescar solo el dropdown para mantener el estado
+        initializeRepoSelector();
+    };
+
+    document.getElementById('alias-modal-restore-btn').onclick = () => {
+        const repoSelect = document.getElementById('jules-repo-select');
+        const sourceName = repoSelect.value;
+
+        window.removeRepoAlias(sourceName);
+        aliasModal.classList.add('hidden');
+        showToast('Nombre original restaurado');
+
+        initializeRepoSelector();
+    };
 
     // --- SESSION ACTIONS ---
     async function launchSession() {
