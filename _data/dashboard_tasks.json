@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-31T11:22:41.661Z",
-  "last_updated_by": "TopperH4rley",
+  "last_updated": "2026-05-31T12:16:19.803Z",
+  "last_updated_by": "Alex",
   "tasks": [
     {
       "id": 1,
@@ -368,6 +368,29 @@
       "limite": null,
       "comentario": "",
       "id": 18
+    },
+    {
+      "rama": "PRO",
+      "descripcion": "añadir imagenes al dashboard",
+      "tema_principal": "Programación / Engine",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Alex",
+      "asignados": [
+        "topperh4rley"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-05-31",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "id": 19
     }
   ]
 }
