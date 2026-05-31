@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-31T09:14:25.658Z",
-  "last_updated_by": "Alex",
+  "last_updated": "2026-05-31T09:25:54.720Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -258,7 +258,7 @@
     },
     {
       "rama": "PRO",
-      "descripcion": "Intentar que no se actualice siempre, si ya ha sincronizao una vez, si cambiamos vistas se puede quedar guardado en la sesión",
+      "descripcion": "Intentar que no se actualice siempre, si ya ha sincronizao una vez, si cambiamos vistas se puede quedar guardado en la sesión (recordar login, etc)",
       "tema_principal": "Programación / Engine",
       "prioridad": "Major",
       "milestone": "M1",
