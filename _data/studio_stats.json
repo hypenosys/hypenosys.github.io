@@ -1,12 +1,12 @@
 {
   "schema_version": "1.0.0",
-  "last_computed": "2026-05-31T14:57:49.951Z",
+  "last_computed": "2026-05-31T14:59:05.894Z",
   "global": {
-    "total_tasks": 14,
+    "total_tasks": 13,
     "total_ok": 3,
     "total_ko": 0,
     "total_uncertain": 3,
-    "total_obsolete": 2,
+    "total_obsolete": 3,
     "fixed_found_ratio": 0.1875,
     "verified_ratio": 0.1875,
     "by_priority": {
@@ -16,9 +16,9 @@
         "rate": 0
       },
       "Major": {
-        "total": 8,
+        "total": 7,
         "solved": 3,
-        "rate": 0.375
+        "rate": 0.42857142857142855
       },
       "Medium": {
         "total": 2,
