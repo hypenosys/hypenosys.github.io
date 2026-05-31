@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-31T09:25:54.720Z",
-  "last_updated_by": "Axlfc",
+  "last_updated": "2026-05-31T09:31:58.969Z",
+  "last_updated_by": "Alex",
   "tasks": [
     {
       "id": 1,
@@ -279,6 +279,27 @@
       "limite": null,
       "comentario": "",
       "id": 14
+    },
+    {
+      "rama": "PRO",
+      "descripcion": "copiar en la plataforma lo que jules diga!",
+      "tema_principal": "Programación / Engine",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Alex",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-05-31",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "id": 15
     }
   ]
 }
