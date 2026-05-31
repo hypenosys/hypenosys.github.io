@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-30T21:40:39.721Z",
-  "last_updated_by": "Sistema",
+  "last_updated": "2026-05-31T09:14:25.658Z",
+  "last_updated_by": "Alex",
   "tasks": [
     {
       "id": 1,
@@ -255,6 +255,30 @@
       "limite": null,
       "comentario": "",
       "id": 13
+    },
+    {
+      "rama": "PRO",
+      "descripcion": "Intentar que no se actualice siempre, si ya ha sincronizao una vez, si cambiamos vistas se puede quedar guardado en la sesión",
+      "tema_principal": "Programación / Engine",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Alex",
+      "asignados": [
+        "axlfc",
+        "topperh4rley"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-05-31",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "id": 14
     }
   ]
 }
