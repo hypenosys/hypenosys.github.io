@@ -129,7 +129,11 @@ class AuthManager {
     }
 
     handleLogin() {
-        const rememberMe = document.getElementById('chk-remember-me')?.checked || false;
+        // Prefer dashboard checkbox if present, then header checkbox
+        const chkDashboard = document.getElementById('chk-remember-me-dashboard');
+        const chkHeader = document.getElementById('chk-remember-me');
+        const rememberMe = (chkDashboard ? chkDashboard.checked : (chkHeader ? chkHeader.checked : false));
+
         sessionStorage.setItem('auth_remember_me', rememberMe);
 
         const scope = 'repo';

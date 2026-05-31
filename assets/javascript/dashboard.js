@@ -1614,15 +1614,15 @@ function renderUserStatus(user) {
  * Handle login from the dashboard overlay
  */
 window.handleDashboardLogin = function() {
-    const rememberMe = document.getElementById('chk-remember-me-dashboard')?.checked || false;
-    sessionStorage.setItem('auth_remember_me', rememberMe);
-
-    // Trigger the global auth manager login flow
+    // Trigger the global auth manager login flow if available
     if (window.authManager) {
         window.authManager.handleLogin();
     } else {
         // Fallback if authManager isn't available for some reason
-        const clientId = 'Ov23liAVwbXNtvhkHJQe';
+        const rememberMe = document.getElementById('chk-remember-me-dashboard')?.checked || false;
+        sessionStorage.setItem('auth_remember_me', rememberMe);
+
+        const clientId = window.authManager?.clientId || 'Ov23liAVwbXNtvhkHJQe';
         const scope = 'repo';
         window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=${scope}`;
     }
