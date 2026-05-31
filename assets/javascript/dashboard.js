@@ -21,7 +21,7 @@ let archivedTasks = [];
 let currentStats = null;
 let currentBudget = null;
 let currentProfiles = null;
-let currentTaskImages = [];
+let currentTaskImages = []; // TODO: Migrate to external storage (e.g. GitHub Assets/R2) if JSON size exceeds 10MB
 
 const KANBAN_COLUMNS = [
   { id: 'backlog',    label: 'Backlog / ToDo',        states: ['Pending','ToDo',null],           icon: '📋' },
