@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-31T10:09:59.823Z",
-  "last_updated_by": "TopperH4rley",
+  "last_updated": "2026-05-31T10:46:42.617Z",
+  "last_updated_by": "Axel",
   "tasks": [
     {
       "id": 1,
@@ -344,6 +344,27 @@
       "limite": null,
       "comentario": "",
       "id": 17
+    },
+    {
+      "rama": "PRO",
+      "descripcion": "sincronizar repo docs/ (público) con la documentación en la web de hypenosys.github.io",
+      "tema_principal": "Programación / Engine",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-05-31",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "id": 18
     }
   ]
 }
