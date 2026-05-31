@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-31T10:46:42.617Z",
-  "last_updated_by": "Axel",
+  "last_updated": "2026-05-31T10:46:58.166Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -307,7 +307,7 @@
       "tema_principal": "Programación / Engine",
       "prioridad": "Medium",
       "milestone": "M1",
-      "estado": "Pending",
+      "estado": "Working",
       "completitud": 0,
       "resuelto_por": "Axel",
       "detectado_por": "Alex",
