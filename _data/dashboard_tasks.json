@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-31T14:59:04.784Z",
+  "last_updated": "2026-05-31T17:31:36.304Z",
   "last_updated_by": "TopperH4rley",
   "tasks": [
     {
@@ -390,7 +390,7 @@
       "tema_principal": "Programación / Engine",
       "prioridad": "Major",
       "milestone": "M1",
-      "estado": "Pending",
+      "estado": "In Review",
       "completitud": 0,
       "resuelto_por": null,
       "detectado_por": "Alex",
@@ -405,7 +405,8 @@
       "apoyo": null,
       "limite": null,
       "comentario": "",
-      "id": 19
+      "id": 19,
+      "images": []
     },
     {
       "rama": "PRO",
