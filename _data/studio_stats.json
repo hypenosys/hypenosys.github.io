@@ -1,14 +1,14 @@
 {
   "schema_version": "1.0.0",
-  "last_computed": "2026-05-31T10:07:27.102Z",
+  "last_computed": "2026-05-31T10:09:34.912Z",
   "global": {
-    "total_tasks": 10,
+    "total_tasks": 11,
     "total_ok": 1,
     "total_ko": 0,
     "total_uncertain": 3,
     "total_obsolete": 2,
-    "fixed_found_ratio": 0.0833,
-    "verified_ratio": 0.0833,
+    "fixed_found_ratio": 0.0769,
+    "verified_ratio": 0.0769,
     "by_priority": {
       "Critical": {
         "total": 2,
@@ -16,9 +16,9 @@
         "rate": 0
       },
       "Major": {
-        "total": 4,
+        "total": 5,
         "solved": 1,
-        "rate": 0.25
+        "rate": 0.2
       },
       "Medium": {
         "total": 2,
@@ -54,15 +54,15 @@
       "fixed_ok": 1,
       "support": 0,
       "support_ok": 0,
-      "score": 0.6
+      "score": 0.5923
     },
     "Alex": {
-      "found": 5,
+      "found": 6,
       "fixed": 2,
       "fixed_ok": 0,
       "support": 0,
       "support_ok": 0,
-      "score": 0.125
+      "score": 0.1385
     },
     "Dídac": {
       "found": 2,
@@ -70,7 +70,7 @@
       "fixed_ok": 0,
       "support": 0,
       "support_ok": 0,
-      "score": 0.05
+      "score": 0.0462
     },
     "Javi": {
       "found": 1,
@@ -78,7 +78,7 @@
       "fixed_ok": 0,
       "support": 0,
       "support_ok": 0,
-      "score": 0.025
+      "score": 0.0231
     },
     "Mitxel": {
       "found": 0,
@@ -94,7 +94,7 @@
       "rank": 1,
       "medal": "🏆",
       "name": "Axel",
-      "score": 0.6,
+      "score": 0.5923,
       "found": 4,
       "fixed_ok": 1,
       "support_ok": 0
@@ -103,8 +103,8 @@
       "rank": 2,
       "medal": "🥇",
       "name": "Alex",
-      "score": 0.125,
-      "found": 5,
+      "score": 0.1385,
+      "found": 6,
       "fixed_ok": 0,
       "support_ok": 0
     },
@@ -112,7 +112,7 @@
       "rank": 3,
       "medal": "🥈",
       "name": "Dídac",
-      "score": 0.05,
+      "score": 0.0462,
       "found": 2,
       "fixed_ok": 0,
       "support_ok": 0
@@ -121,7 +121,7 @@
       "rank": 4,
       "medal": "🥉",
       "name": "Javi",
-      "score": 0.025,
+      "score": 0.0231,
       "found": 1,
       "fixed_ok": 0,
       "support_ok": 0
