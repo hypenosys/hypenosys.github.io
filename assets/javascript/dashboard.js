@@ -340,20 +340,20 @@ function buildTaskCard(task) {
       <div class="flex justify-between items-center gap-2">
         <div class="flex items-center gap-2 overflow-hidden">
           <span class="text-[9px] font-mono text-slate-500 flex-shrink-0">#${task.id}</span>
-          <button onclick="openEditTaskModal('${String(task.id)}')" class="text-[10px] text-slate-500 hover:text-white opacity-0 group-hover:opacity-100 transition-all flex-shrink-0">
+          <button onclick="openEditTaskModal('${task.id}')" class="text-[10px] text-slate-500 hover:text-white opacity-0 group-hover:opacity-100 transition-all flex-shrink-0">
             <i class="fa-solid fa-pencil"></i>
           </button>
           <p class="text-xs text-slate-200 truncate font-semibold">${task.descripcion}</p>
         </div>
         <div class="flex items-center gap-1 flex-shrink-0">
           ${canArchive ? `
-            <button onclick="handleArchiveTask('${String(task.id)}')" class="text-slate-500 hover:text-emerald-400 mr-1 transition-colors" title="Archivar">
+            <button onclick="handleArchiveTask('${task.id}')" class="text-slate-500 hover:text-emerald-400 mr-1 transition-colors" title="Archivar">
                 <i class="fa-solid fa-box-archive text-[10px]"></i>
             </button>
           ` : ''}
           <span class="text-[8px] font-bold px-1 py-0.5 rounded ${priorityColorsMinimized[task.prioridad] || 'bg-slate-700'}">${task.prioridad[0]}</span>
           <span class="text-[8px] font-bold px-1 py-0.5 rounded ${stateInfo.color}">${stateInfo.label}</span>
-          <button onclick="toggleTaskMinimize('${String(task.id)}')" class="text-slate-500 hover:text-white ml-1">
+          <button onclick="toggleTaskMinimize('${task.id}')" class="text-slate-500 hover:text-white ml-1">
             <i class="fa-solid fa-chevron-down"></i>
           </button>
         </div>
@@ -364,18 +364,18 @@ function buildTaskCard(task) {
       <div class="flex justify-between items-start mb-2">
         <div class="flex gap-2 items-center">
           <span class="text-[9px] font-mono text-slate-500">#${task.id}</span>
-          <button onclick="openEditTaskModal('${String(task.id)}')" class="text-[10px] text-slate-500 hover:text-white opacity-0 group-hover:opacity-100 transition-all">
+          <button onclick="openEditTaskModal('${task.id}')" class="text-[10px] text-slate-500 hover:text-white opacity-0 group-hover:opacity-100 transition-all">
             <i class="fa-solid fa-pencil"></i>
           </button>
         </div>
         <div class="flex gap-2 items-center">
           ${canArchive ? `
-            <button onclick="handleArchiveTask('${String(task.id)}')" class="text-[10px] font-bold text-slate-500 hover:text-emerald-400 flex items-center gap-1 px-2 py-0.5 bg-slate-900 rounded border border-slate-700 transition-all mr-2" title="Mover al Cementerio">
+            <button onclick="handleArchiveTask('${task.id}')" class="text-[10px] font-bold text-slate-500 hover:text-emerald-400 flex items-center gap-1 px-2 py-0.5 bg-slate-900 rounded border border-slate-700 transition-all mr-2" title="Mover al Cementerio">
                 <i class="fa-solid fa-box-archive"></i> ARCHIVAR
             </button>
           ` : ''}
           <span class="text-[9px] font-bold px-1.5 py-0.5 rounded ${priorityColors[task.prioridad] || 'bg-slate-700'}">${task.prioridad.toUpperCase()}</span>
-          <button onclick="toggleTaskMinimize('${String(task.id)}')" class="text-slate-500 hover:text-white">
+          <button onclick="toggleTaskMinimize('${task.id}')" class="text-slate-500 hover:text-white">
             <i class="fa-solid fa-chevron-up"></i>
           </button>
         </div>
@@ -384,13 +384,13 @@ function buildTaskCard(task) {
 
       ${hasImages ? `
       <div class="mb-3 border border-slate-700 rounded-lg overflow-hidden">
-        <button onclick="toggleCardImages('${String(task.id)}')" class="w-full flex items-center justify-between p-2 bg-slate-900/50 hover:bg-slate-900 transition-all text-[10px] font-bold text-slate-400">
+        <button onclick="toggleCardImages('${task.id}')" class="w-full flex items-center justify-between p-2 bg-slate-900/50 hover:bg-slate-900 transition-all text-[10px] font-bold text-slate-400">
             <span><i class="fa-solid fa-paperclip mr-1"></i> ${task.images.length} imágenes</span>
             <i class="fa-solid fa-chevron-${isImagesExpanded ? 'up' : 'down'}"></i>
         </button>
-        <div id="card-images-${String(task.id)}" class="${isImagesExpanded ? '' : 'hidden'} p-2 bg-slate-950 grid grid-cols-3 gap-2">
+        <div id="card-images-${task.id}" class="${isImagesExpanded ? '' : 'hidden'} p-2 bg-slate-950 grid grid-cols-3 gap-2">
             ${task.images.map((img, idx) => `
-                <div class="aspect-square rounded border border-slate-800 overflow-hidden cursor-pointer hover:border-emerald-500 transition-all" onclick="openLightbox('${String(task.id)}', ${idx})">
+                <div class="aspect-square rounded border border-slate-800 overflow-hidden cursor-pointer hover:border-emerald-500 transition-all" onclick="openLightbox('${task.id}', ${idx})">
                     <img src="${img.src}" class="w-full h-full object-cover" alt="Task image">
                 </div>
             `).join('')}
@@ -454,7 +454,7 @@ function toggleTaskMinimize(taskId) {
 }
 
 function toggleCardImages(taskId) {
-    const key = `task_images_expanded_${String(taskId)}`;
+    const key = `task_images_expanded_${taskId}`;
     const current = localStorage.getItem(key) === 'true';
     localStorage.setItem(key, !current);
     renderKanbanBoard();
@@ -1215,7 +1215,7 @@ function openCreateTaskModal() {
 }
 
 function openEditTaskModal(taskId) {
-    const task = currentTasks.find(t => sameTaskId(t.id, taskId));
+    const task = currentTasks.find(t => String(t.id) === String(taskId));
     if (!task) return;
 
     populateMemberSelects();
@@ -1251,7 +1251,7 @@ function openEditTaskModal(taskId) {
 }
 
 function openAssignmentModal(taskId) {
-    const task = currentTasks.find(t => sameTaskId(t.id, taskId));
+    const task = currentTasks.find(t => String(t.id) === String(taskId));
     if (!task) return;
 
     const list = document.getElementById('assignment-list');
@@ -1403,7 +1403,7 @@ function renderTaskArchive() {
                     <span class="text-[9px] font-mono text-slate-600">#${task.id}</span>
                     <span class="text-[8px] font-bold px-1.5 py-0.5 rounded ${stateInfo.color} opacity-60">${stateInfo.label}</span>
                 </div>
-                <button onclick="handleRestoreTask('${String(task.id)}')" class="text-[10px] font-bold text-emerald-500 hover:text-emerald-400 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                <button onclick="handleRestoreTask('${task.id}')" class="text-[10px] font-bold text-emerald-500 hover:text-emerald-400 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
                     <i class="fa-solid fa-hand-holding-heart"></i> RESUCITAR
                 </button>
             </div>
