@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-31T12:18:58.869Z",
+  "last_updated": "2026-05-31T12:24:44.772Z",
   "last_updated_by": "TopperH4rley",
   "tasks": [
     {
@@ -263,7 +263,7 @@
       "tema_principal": "Programación / Engine",
       "prioridad": "Major",
       "milestone": "M1",
-      "estado": "Working",
+      "estado": "OK",
       "completitud": 0,
       "resuelto_por": "Axel",
       "detectado_por": "Alex",
