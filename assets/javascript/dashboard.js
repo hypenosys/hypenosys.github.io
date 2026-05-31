@@ -110,14 +110,10 @@ async function handleDOMContentLoaded() {
 }
 
 async function initDashboard() {
-  const token = sessionStorage.getItem('gh_access_token') || localStorage.getItem('github_token');
+  const token = window.githubApi.getAuthToken();
   if (!token) {
     document.getElementById('login-overlay').classList.remove('hidden');
     return;
-  }
-
-  if (!sessionStorage.getItem('gh_access_token')) {
-    sessionStorage.setItem('gh_access_token', token);
   }
 
   try {
@@ -1613,3 +1609,21 @@ function renderUserStatus(user) {
     </div>
   `;
 }
+
+/**
+ * Handle login from the dashboard overlay
+ */
+window.handleDashboardLogin = function() {
+    // Trigger the global auth manager login flow if available
+    if (window.authManager) {
+        window.authManager.handleLogin();
+    } else {
+        // Fallback if authManager isn't available for some reason
+        const rememberMe = document.getElementById('chk-remember-me-dashboard')?.checked || false;
+        sessionStorage.setItem('auth_remember_me', rememberMe);
+
+        const clientId = window.authManager?.clientId || 'Ov23liAVwbXNtvhkHJQe';
+        const scope = 'repo';
+        window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=${scope}`;
+    }
+};
