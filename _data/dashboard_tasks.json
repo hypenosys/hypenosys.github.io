@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-31T12:18:28.328Z",
+  "last_updated": "2026-05-31T12:18:58.869Z",
   "last_updated_by": "TopperH4rley",
   "tasks": [
     {
@@ -86,6 +86,7 @@
       "id": 5,
       "asignados": [
         "topperh4rley",
+        "javi26031994-a11y",
         "dkdidac-design",
         "mitxel2022"
       ],
