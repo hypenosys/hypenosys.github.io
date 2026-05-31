@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-31T12:27:55.175Z",
-  "last_updated_by": "TopperH4rley",
+  "last_updated": "2026-05-31T13:43:22.588Z",
+  "last_updated_by": "Alex",
   "tasks": [
     {
       "id": 1,
@@ -392,6 +392,28 @@
       "limite": null,
       "comentario": "",
       "id": 19
+    },
+    {
+      "rama": "PRO",
+      "descripcion": "prueba",
+      "tema_principal": "Programación / Engine",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Alex",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-05-31",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "id": 20
     }
   ]
 }
