@@ -65,6 +65,7 @@ permalink: /CHANGELOG.html
             <h5 class="text-success">Added</h5>
             <ul class="tree-view mb-3">
               <li><strong>Sistema de Persistencia de Sesión:</strong> Implementada la opción "Remember me" utilizando <code>localStorage</code> para sesiones persistentes y <code>sessionStorage</code> para temporales.</li>
+              <li><strong>Auto-Login Mejorado:</strong> Corregido bug de persistencia que obligaba a re-autenticar tras refrescar la página. Ahora el sistema valida automáticamente el token guardado al cargar.</li>
               <li>Soporte para login automático al cargar la aplicación si el token sigue siendo válido.</li>
               <li>Protección contra bucles infinitos de redirección durante el flujo de autenticación.</li>
               <li>Funcionalidad de Archivo y Cementerio de Sesiones en el Jules Panel y Dashboard de Hypenosys, permitiendo la gestión local de sesiones inconcluyentes y en pausa.</li>

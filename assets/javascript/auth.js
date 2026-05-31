@@ -10,10 +10,12 @@ class AuthManager {
 
     async init() {
         this.bindEvents();
+
+        // Skip OAuth callback if we're on dashboard.html and it already handled it?
+        // Actually, better to centralize here.
         await this.handleOAuthCallback();
         await this.checkAuthState();
         
-        // ─── FIX: solo disparar authReady si el user está completo
         const currentUser = window.githubApi.user || null;
         document.dispatchEvent(new CustomEvent('authReady', { 
             detail: { user: currentUser } 
@@ -62,32 +64,15 @@ class AuthManager {
             this.showToast('Autenticando...', 'Intercambiando código con el gatekeeper...', 'info');
             
             try {
-                const response = await fetch('https://hypenosys-gatekeeper-v2.axlffcc.workers.dev', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ code })
-                });
-                const data = await response.json();
-
-                if (data.access_token) {
-                    const rememberMe = sessionStorage.getItem('auth_remember_me') === 'true';
-                    sessionStorage.removeItem('auth_remember_me');
-
-                    window.githubApi.setToken(data.access_token, rememberMe);
-                    const result = await window.githubApi.validateToken();
-                    if (result.valid) {
-                        this.updateHeaderUI(result.user);
-                        this.showToast('Éxito', 'Sesión iniciada correctamente.', 'success');
-                    } else if (result.user) {
-                        this.handleAuthError({ status: 403, type: 'ACL_DENIED' });
-                    } else {
-                        throw new Error('Token inválido tras el intercambio.');
-                    }
+                const result = await window.githubApi.exchangeCodeForToken(code);
+                if (result.valid) {
+                    this.updateHeaderUI(result.user);
+                    this.showToast('Éxito', 'Sesión iniciada correctamente.', 'success');
                 } else {
-                    throw new Error(data.error || 'No se recibió token del gatekeeper');
+                    this.handleAuthError({ status: result.user ? 403 : 401, type: result.user ? 'ACL_DENIED' : 'INVALID' });
                 }
             } catch (e) {
-                console.error('OAuth exchange failed:', e);
+                console.error('[AUTH] Exchange failed:', e);
                 this.showToast('Error', 'Fallo en la autenticación OAuth.', 'error');
             }
         }
@@ -206,8 +191,11 @@ class AuthManager {
         if (e.status === 403 && e.type === 'ACL_DENIED') {
             const msgEl = document.getElementById('access-denied-message');
             if (msgEl) msgEl.innerText = "Autenticado con éxito en GitHub, pero no tienes autorización explícita de la facción Hypenosys. Acceso revocado.";
-            $('#settingsModal').modal('hide');
-            $('#accessDeniedModal').modal('show');
+
+            if (window.jQuery && window.jQuery.fn.modal) {
+                $('#settingsModal').modal('hide');
+                $('#accessDeniedModal').modal('show');
+            }
 
             // For dashboard compatibility
             const dashUnauthorized = document.getElementById('unauthorized-overlay');

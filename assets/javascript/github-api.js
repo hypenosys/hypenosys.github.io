@@ -10,7 +10,14 @@ const DATA_BRANCH     = 'master';
 
 // Retrieve GitHub OAuth token from available storage
 function getAuthToken() {
-  const token = sessionStorage.getItem('gh_access_token') || localStorage.getItem('github_token');
+  const sessionToken = sessionStorage.getItem('gh_access_token');
+  const localToken = localStorage.getItem('github_token');
+
+  if (sessionToken) console.log('[AUTH] Token found in sessionStorage');
+  else if (localToken) console.log('[AUTH] Token found in localStorage');
+  else console.log('[AUTH] No token found');
+
+  const token = sessionToken || localToken;
   if (!token || typeof token !== 'string' || token.length < 10) {
     return null;
   }
@@ -498,7 +505,12 @@ const _originalValidateToken = validateToken;
 async function validateTokenAndStore() {
   const result = await _originalValidateToken();
   if (result.valid && result.user) {
+    console.log('[AUTH] Token valid:', result.user.login);
     _currentUser = result.user;
+  } else {
+    if (getAuthToken()) {
+      console.log('[AUTH] Token invalid, clearing auth');
+    }
   }
   return result;
 }
@@ -510,6 +522,9 @@ window.githubApi = {
   setToken(token, rememberMe = false) {
     if (!token) return;
     const cleanToken = token.trim();
+
+    console.log(`[AUTH] Setting token (rememberMe: ${rememberMe})`);
+
     // Clear both first to avoid mixed sessions
     this.clearAuth();
 
@@ -517,6 +532,31 @@ window.githubApi = {
       localStorage.setItem('github_token', cleanToken);
     } else {
       sessionStorage.setItem('gh_access_token', cleanToken);
+    }
+  },
+
+  async exchangeCodeForToken(code) {
+    console.log('[AUTH] Exchanging code for token...');
+    const rememberMe = sessionStorage.getItem('auth_remember_me') === 'true';
+    sessionStorage.removeItem('auth_remember_me');
+
+    try {
+      const response = await fetch('https://hypenosys-gatekeeper-v2.axlffcc.workers.dev', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code })
+      });
+      const data = await response.json();
+
+      if (data.access_token) {
+        this.setToken(data.access_token, rememberMe);
+        return await this.validateToken();
+      } else {
+        throw new Error(data.error || 'No se recibió token del gatekeeper');
+      }
+    } catch (e) {
+      console.error('[AUTH] Exchange failed:', e);
+      throw e;
     }
   },
   setRepo(repo) {
