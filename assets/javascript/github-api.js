@@ -87,12 +87,12 @@ async function putFileContent(filePath, sha, newContent, commitMessage) {
 
 // ─── MERGE STRATEGIES ─────────────────────────────────────────
 function mergeTaskArrays(localTasks, remoteTasks) {
-  const remoteMap = new Map(remoteTasks.map(t => [t.id, t]));
-  const localMap  = new Map(localTasks.map(t => [t.id, t]));
+  const remoteMap = new Map(remoteTasks.map(t => [String(t.id), t]));
+  const localMap  = new Map(localTasks.map(t => [String(t.id), t]));
   const merged    = [];
 
   for (const [id, remoteTask] of remoteMap) {
-    const localTask = localMap.get(id);
+    const localTask = localMap.get(String(id));
     if (!localTask) {
       merged.push(remoteTask);
     } else {
@@ -372,7 +372,7 @@ async function createTask(taskObject) {
 
 async function updateTask(taskId, taskDelta) {
   return atomicWrite('_data/dashboard_tasks.json', (db) => {
-    const taskIndex = db.tasks.findIndex(t => t.id === taskId);
+    const taskIndex = db.tasks.findIndex(t => String(t.id) === String(taskId));
     if (taskIndex === -1) throw new Error(`Tarea #${taskId} no encontrada.`);
     db.tasks[taskIndex] = { ...db.tasks[taskIndex], ...taskDelta };
     db.last_updated_by = _currentUser?.login || 'Sistema';
@@ -385,7 +385,7 @@ async function updateTask(taskId, taskDelta) {
 
 async function updateTaskStatus(taskId, newEstado, resolverHandle, testerHandle) {
   return atomicWrite('_data/dashboard_tasks.json', (db) => {
-    const task = db.tasks.find(t => t.id === taskId);
+    const task = db.tasks.find(t => String(t.id) === String(taskId));
     if (!task) throw new Error(`Tarea #${taskId} no encontrada en la base de datos.`);
     task.estado       = newEstado;
     if (resolverHandle) task.resuelto_por = resolverHandle;
@@ -407,7 +407,7 @@ async function archiveTask(taskId) {
 
   // 1. Remove from active tasks
   await atomicWrite('_data/dashboard_tasks.json', (db) => {
-    const idx = db.tasks.findIndex(t => t.id === taskId);
+    const idx = db.tasks.findIndex(t => String(t.id) === String(taskId));
     if (idx === -1) throw new Error(`Tarea #${taskId} no encontrada en activos.`);
     taskToArchive = db.tasks.splice(idx, 1)[0];
     db.last_updated_by = _currentUser?.login || 'Sistema';
@@ -418,7 +418,7 @@ async function archiveTask(taskId) {
 
   // 2. Add to archive
   await atomicWrite('_data/dashboard_tasks_archive.json', (db) => {
-    if (!db.tasks.find(t => t.id === taskId)) {
+    if (!db.tasks.find(t => String(t.id) === String(taskId))) {
       db.tasks.push(taskToArchive);
     }
     db.last_updated_by = _currentUser?.login || 'Sistema';
@@ -434,7 +434,7 @@ async function restoreTask(taskId) {
 
   // 1. Remove from archive
   await atomicWrite('_data/dashboard_tasks_archive.json', (db) => {
-    const idx = db.tasks.findIndex(t => t.id === taskId);
+    const idx = db.tasks.findIndex(t => String(t.id) === String(taskId));
     if (idx === -1) throw new Error(`Tarea #${taskId} no encontrada en el archivo.`);
     taskToRestore = db.tasks.splice(idx, 1)[0];
     db.last_updated_by = _currentUser?.login || 'Sistema';
@@ -445,7 +445,7 @@ async function restoreTask(taskId) {
 
   // 2. Add back to active tasks
   await atomicWrite('_data/dashboard_tasks.json', (db) => {
-    if (!db.tasks.find(t => t.id === taskId)) {
+    if (!db.tasks.find(t => String(t.id) === String(taskId))) {
       db.tasks.push(taskToRestore);
     }
     db.last_updated_by = _currentUser?.login || 'Sistema';
