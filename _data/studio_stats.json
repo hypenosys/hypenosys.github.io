@@ -1,14 +1,14 @@
 {
   "schema_version": "1.0.0",
-  "last_computed": "2026-05-31T09:31:59.984Z",
+  "last_computed": "2026-05-31T10:07:27.102Z",
   "global": {
-    "total_tasks": 9,
+    "total_tasks": 10,
     "total_ok": 1,
     "total_ko": 0,
     "total_uncertain": 3,
     "total_obsolete": 2,
-    "fixed_found_ratio": 0.0909,
-    "verified_ratio": 0.0909,
+    "fixed_found_ratio": 0.0833,
+    "verified_ratio": 0.0833,
     "by_priority": {
       "Critical": {
         "total": 2,
@@ -21,7 +21,7 @@
         "rate": 0.25
       },
       "Medium": {
-        "total": 1,
+        "total": 2,
         "solved": 0,
         "rate": 0
       },
@@ -50,19 +50,19 @@
   "members": {
     "Axel": {
       "found": 4,
-      "fixed": 3,
+      "fixed": 4,
       "fixed_ok": 1,
       "support": 0,
       "support_ok": 0,
-      "score": 0.6091
+      "score": 0.6
     },
     "Alex": {
-      "found": 4,
+      "found": 5,
       "fixed": 2,
       "fixed_ok": 0,
       "support": 0,
       "support_ok": 0,
-      "score": 0.1091
+      "score": 0.125
     },
     "Dídac": {
       "found": 2,
@@ -70,7 +70,7 @@
       "fixed_ok": 0,
       "support": 0,
       "support_ok": 0,
-      "score": 0.0545
+      "score": 0.05
     },
     "Javi": {
       "found": 1,
@@ -78,7 +78,7 @@
       "fixed_ok": 0,
       "support": 0,
       "support_ok": 0,
-      "score": 0.0273
+      "score": 0.025
     },
     "Mitxel": {
       "found": 0,
@@ -94,7 +94,7 @@
       "rank": 1,
       "medal": "🏆",
       "name": "Axel",
-      "score": 0.6091,
+      "score": 0.6,
       "found": 4,
       "fixed_ok": 1,
       "support_ok": 0
@@ -103,8 +103,8 @@
       "rank": 2,
       "medal": "🥇",
       "name": "Alex",
-      "score": 0.1091,
-      "found": 4,
+      "score": 0.125,
+      "found": 5,
       "fixed_ok": 0,
       "support_ok": 0
     },
@@ -112,7 +112,7 @@
       "rank": 3,
       "medal": "🥈",
       "name": "Dídac",
-      "score": 0.0545,
+      "score": 0.05,
       "found": 2,
       "fixed_ok": 0,
       "support_ok": 0
@@ -121,7 +121,7 @@
       "rank": 4,
       "medal": "🥉",
       "name": "Javi",
-      "score": 0.0273,
+      "score": 0.025,
       "found": 1,
       "fixed_ok": 0,
       "support_ok": 0
