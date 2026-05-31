@@ -1403,7 +1403,7 @@ function renderTaskArchive() {
                     <span class="text-[9px] font-mono text-slate-600">#${task.id}</span>
                     <span class="text-[8px] font-bold px-1.5 py-0.5 rounded ${stateInfo.color} opacity-60">${stateInfo.label}</span>
                 </div>
-                <button onclick="handleRestoreTask('${task.id}')" class="text-[10px] font-bold text-emerald-500 hover:text-emerald-400 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                <button onclick="handleRestoreTask('${String(task.id)}')" class="text-[10px] font-bold text-emerald-500 hover:text-emerald-400 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
                     <i class="fa-solid fa-hand-holding-heart"></i> RESUCITAR
                 </button>
             </div>
