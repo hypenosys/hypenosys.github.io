@@ -417,6 +417,24 @@
                         <!-- Checkboxes will be injected here -->
                     </div>
                 </div>
+
+                <!-- Imágenes / Referencias visuales -->
+                <div class="border border-slate-800 rounded-lg overflow-hidden">
+                    <button type="button" onclick="toggleTaskImageSection()" class="w-full flex items-center justify-between p-3 bg-slate-950 hover:bg-slate-900 transition-all text-xs font-bold text-slate-400 uppercase">
+                        <span><i class="fa-solid fa-images mr-2"></i> Imágenes / Referencias visuales</span>
+                        <i id="task-image-chevron" class="fa-solid fa-chevron-down"></i>
+                    </button>
+                    <div id="task-image-section" class="hidden p-4 bg-slate-900 space-y-4">
+                        <div id="task-image-dropzone" class="border-2 border-dashed border-slate-700 rounded-xl p-6 text-center hover:border-emerald-500/50 hover:bg-emerald-500/5 transition-all cursor-pointer">
+                            <i class="fa-solid fa-cloud-arrow-up text-2xl text-slate-600 mb-2"></i>
+                            <p class="text-xs text-slate-500">Pega una imagen, arrástrala aquí o selecciónala desde tu equipo</p>
+                            <input type="file" id="task-image-input" class="hidden" accept="image/*" multiple>
+                        </div>
+                        <div id="task-image-previews" class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                            <!-- Previews will be injected here -->
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="flex gap-3 mt-8">
                 <button id="task-cancel-btn" class="flex-grow py-2 border border-slate-700 hover:bg-slate-800 rounded-lg font-bold text-sm transition-all">Cancelar</button>
@@ -458,6 +476,14 @@
                 Cerrar Sesión e Reintentar
             </button>
         </div>
+    </div>
+
+    <!-- Lightbox Modal -->
+    <div id="lightbox-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/95 backdrop-blur-md p-4" onclick="closeLightbox()">
+        <button class="absolute top-6 right-6 text-white text-3xl hover:text-emerald-400 transition-colors">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <img id="lightbox-img" src="" alt="Vista ampliada" class="max-w-full max-h-full object-contain shadow-2xl rounded-lg" onclick="event.stopPropagation()">
     </div>
 
     <!-- User Assignment Modal -->
