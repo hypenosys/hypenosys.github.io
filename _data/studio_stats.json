@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_computed": "2026-05-31T12:16:20.835Z",
+  "last_computed": "2026-05-31T12:18:29.201Z",
   "global": {
     "total_tasks": 13,
     "total_ok": 2,
@@ -58,11 +58,11 @@
     },
     "Alex": {
       "found": 7,
-      "fixed": 2,
-      "fixed_ok": 0,
+      "fixed": 3,
+      "fixed_ok": 1,
       "support": 0,
       "support_ok": 0,
-      "score": 0.14
+      "score": 0.39
     },
     "Dídac": {
       "found": 2,
@@ -93,19 +93,19 @@
     {
       "rank": 1,
       "medal": "🏆",
-      "name": "Axel",
-      "score": 0.35,
-      "found": 5,
+      "name": "Alex",
+      "score": 0.39,
+      "found": 7,
       "fixed_ok": 1,
       "support_ok": 0
     },
     {
       "rank": 2,
       "medal": "🥇",
-      "name": "Alex",
-      "score": 0.14,
-      "found": 7,
-      "fixed_ok": 0,
+      "name": "Axel",
+      "score": 0.35,
+      "found": 5,
+      "fixed_ok": 1,
       "support_ok": 0
     },
     {
