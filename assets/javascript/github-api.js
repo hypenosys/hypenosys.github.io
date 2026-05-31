@@ -8,10 +8,12 @@ const REPO_OWNER      = 'hypenosys';
 const REPO_NAME       = 'hypenosys.github.io';
 const DATA_BRANCH     = 'master';
 
-// Retrieve GitHub OAuth token from sessionStorage (set during login)
+// Retrieve GitHub OAuth token from available storage
 function getAuthToken() {
   const token = sessionStorage.getItem('gh_access_token') || localStorage.getItem('github_token');
-  if (!token) throw new Error('No hay sesión activa de GitHub. Por favor, inicia sesión.');
+  if (!token || typeof token !== 'string' || token.length < 10) {
+    return null;
+  }
   return token.trim();
 }
 
@@ -19,6 +21,8 @@ function getAuthToken() {
 async function validateToken() {
   try {
     const token = getAuthToken();
+    if (!token) return { valid: false, user: null, error: 'No token' };
+
     const resp = await fetch(`${GITHUB_API_BASE}/user`, {
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -503,11 +507,17 @@ async function validateTokenAndStore() {
 window.githubApi = {
   // Auth methods (compatibilidad con auth-manager.js)
   get user() { return _currentUser; },
-  setToken(token) {
+  setToken(token, rememberMe = false) {
     if (!token) return;
     const cleanToken = token.trim();
-    sessionStorage.setItem('gh_access_token', cleanToken);
-    localStorage.setItem('github_token', cleanToken);
+    // Clear both first to avoid mixed sessions
+    this.clearAuth();
+
+    if (rememberMe) {
+      localStorage.setItem('github_token', cleanToken);
+    } else {
+      sessionStorage.setItem('gh_access_token', cleanToken);
+    }
   },
   setRepo(repo) {
       if (!repo) return;
@@ -516,6 +526,8 @@ window.githubApi = {
   clearAuth() {
     sessionStorage.removeItem('gh_access_token');
     localStorage.removeItem('github_token');
+    // Also clear jules sessions cache on logout for safety
+    localStorage.removeItem('jules_sessions_cache');
     _currentUser = null;
   },
 
