@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-31T10:47:27.625Z",
-  "last_updated_by": "Axlfc",
+  "last_updated": "2026-05-31T11:18:13.788Z",
+  "last_updated_by": "TopperH4rley",
   "tasks": [
     {
       "id": 1,
@@ -304,14 +304,16 @@
     {
       "rama": "PRO",
       "descripcion": "Poder ponder tags en los repositorios en el Panel de Jules para mejorar acessibilidad (Ex: Documentación; Website, Game Scripts...)",
-      "tema_principal": "Programación / Engine",
+      "tema_principal": "Arte / Assets",
       "prioridad": "Medium",
       "milestone": "M1",
       "estado": "Working",
       "completitud": 0,
       "resuelto_por": "Axel",
       "detectado_por": "Alex",
-      "asignados": [],
+      "asignados": [
+        "javi26031994-a11y"
+      ],
       "email_responsable": null,
       "emails_asignados": [],
       "rama2": null,
