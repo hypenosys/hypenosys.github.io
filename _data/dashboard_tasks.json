@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-31T12:24:44.772Z",
+  "last_updated": "2026-05-31T12:27:55.175Z",
   "last_updated_by": "TopperH4rley",
   "tasks": [
     {
@@ -303,7 +303,7 @@
       "id": 15
     },
     {
-      "rama": "PRO",
+      "rama": "ART",
       "descripcion": "Poder ponder tags en los repositorios en el Panel de Jules para mejorar acessibilidad (Ex: Documentación; Website, Game Scripts...) JAVI MODIFICAR EL ARTE PORQUE ESTA HORRENDO TODO",
       "tema_principal": "Arte / Assets",
       "prioridad": "Medium",
