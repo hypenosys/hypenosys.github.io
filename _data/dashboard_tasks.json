@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-31T10:07:26.069Z",
+  "last_updated": "2026-05-31T10:09:33.945Z",
   "last_updated_by": "Alex",
   "tasks": [
     {
@@ -321,6 +321,29 @@
       "limite": null,
       "comentario": "",
       "id": 16
+    },
+    {
+      "rama": "PRO",
+      "descripcion": "Hacer autologin de web hypenosys",
+      "tema_principal": "Programación / Engine",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Alex",
+      "asignados": [
+        "topperh4rley"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-05-31",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "id": 17
     }
   ]
 }
