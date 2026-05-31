@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-31T11:18:35.832Z",
+  "last_updated": "2026-05-31T11:22:41.661Z",
   "last_updated_by": "TopperH4rley",
   "tasks": [
     {
@@ -312,7 +312,8 @@
       "resuelto_por": "Axel",
       "detectado_por": "Alex",
       "asignados": [
-        "javi26031994-a11y"
+        "javi26031994-a11y",
+        "dkdidac-design"
       ],
       "email_responsable": null,
       "emails_asignados": [],
