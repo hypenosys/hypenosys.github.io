@@ -87,12 +87,12 @@ async function putFileContent(filePath, sha, newContent, commitMessage) {
 
 // ─── MERGE STRATEGIES ─────────────────────────────────────────
 function mergeTaskArrays(localTasks, remoteTasks) {
-  const remoteMap = new Map(remoteTasks.map(t => [t.id, t]));
-  const localMap  = new Map(localTasks.map(t => [t.id, t]));
+  const remoteMap = new Map(remoteTasks.map(t => [String(t.id), t]));
+  const localMap  = new Map(localTasks.map(t => [String(t.id), t]));
   const merged    = [];
 
   for (const [id, remoteTask] of remoteMap) {
-    const localTask = localMap.get(id);
+    const localTask = localMap.get(String(id));
     if (!localTask) {
       merged.push(remoteTask);
     } else {

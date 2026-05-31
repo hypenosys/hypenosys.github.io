@@ -14,6 +14,14 @@ const MEMBER_MAPPING = {
 const STAGES = ['Concepto / GDD', 'Pre-producción', 'Tools / Automation', 'Arte / Assets', 'Programación / Engine', 'QA / Testing', 'Build / Deploy', 'Post-launch'];
 const REFRESH_INTERVAL_MS = 30000; // 30 seconds
 
+/**
+ * Helper to compare task IDs agnostic of type (string/number)
+ */
+function sameTaskId(id1, id2) {
+    if (id1 === null || id1 === undefined || id2 === null || id2 === undefined) return false;
+    return String(id1) === String(id2);
+}
+
 let activeFilter = null;
 let activeStageFilter = null;
 let currentTasks = [];
@@ -274,7 +282,7 @@ function renderKanbanBoard() {
     cardsEl.ondrop = async (e) => {
       e.preventDefault();
       colEl.classList.remove('drag-over');
-      const taskId = parseInt(e.dataTransfer.getData('text/plain'), 10);
+      const taskId = e.dataTransfer.getData('text/plain');
       await handleCardDrop(taskId, col.id);
     };
   }
@@ -391,7 +399,7 @@ function buildTaskCard(task) {
       ` : ''}
 
       <div class="mb-3">
-          <select onchange="handleQuickStageUpdate(${task.id}, this.value)" class="w-full bg-slate-950/50 border border-slate-700 rounded text-[10px] p-1 text-slate-400 focus:text-white focus:border-indigo-500 outline-none">
+          <select onchange="handleQuickStageUpdate('${String(task.id)}', this.value)" class="w-full bg-slate-950/50 border border-slate-700 rounded text-[10px] p-1 text-slate-400 focus:text-white focus:border-indigo-500 outline-none">
               ${STAGES.map(s => `<option value="${s}" ${task.tema_principal === s ? 'selected' : ''}>${s}</option>`).join('')}
           </select>
       </div>
@@ -401,7 +409,7 @@ function buildTaskCard(task) {
           <span class="text-[9px] font-bold text-indigo-400 flex items-center gap-1">
               <i class="fa-solid fa-robot"></i> JULES
           </span>
-          <span id="jules-status-${task.id}" class="text-[8px] font-mono text-indigo-300 uppercase">Cargando...</span>
+          <span id="jules-status-${String(task.id)}" class="text-[8px] font-mono text-indigo-300 uppercase">Cargando...</span>
       </div>
       ` : ''}
 
@@ -416,7 +424,7 @@ function buildTaskCard(task) {
             <span class="text-[8px] font-bold px-1.5 py-0.5 rounded ${stateInfo.color}">${stateInfo.label.toUpperCase()}</span>
           </div>
 
-          <div onclick="openAssignmentModal(${task.id})" class="flex -space-x-1.5 cursor-pointer hover:opacity-80 transition-opacity min-h-[24px] items-center">
+          <div onclick="openAssignmentModal('${String(task.id)}')" class="flex -space-x-1.5 cursor-pointer hover:opacity-80 transition-opacity min-h-[24px] items-center">
             ${(task.asignados || []).length > 0
               ? task.asignados.map(handle => {
                   const name = MEMBER_MAPPING[handle] || handle;
@@ -439,7 +447,7 @@ function buildTaskCard(task) {
 }
 
 function toggleTaskMinimize(taskId) {
-  const key = `task_minimized_${taskId}`;
+  const key = `task_minimized_${String(taskId)}`;
   const current = localStorage.getItem(key) === 'true';
   localStorage.setItem(key, !current);
   renderKanbanBoard();
@@ -728,7 +736,7 @@ function renderCriticalPathAlerts() {
               <i class="fa-solid ${a.type === 'error' ? 'fa-circle-exclamation' : a.type === 'warning' ? 'fa-triangle-exclamation' : 'fa-circle-info'}"></i>
               ${a.msg}
             </span>
-            ${a.taskId ? `<button onclick="scrollToTask(${a.taskId})" class="px-3 py-1 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-bold transition-all uppercase">Ver Tarea</button>` : ''}
+            ${a.taskId ? `<button onclick="scrollToTask('${String(a.taskId)}')" class="px-3 py-1 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-bold transition-all uppercase">Ver Tarea</button>` : ''}
           `;
           panel.appendChild(div);
         });
@@ -748,7 +756,7 @@ function scrollToTask(id) {
   // Simple search for the task card
   const cards = document.querySelectorAll('.kanban-cards > div');
   for (const card of cards) {
-    if (card.querySelector('.text-\\[9px\\]')?.textContent === `#${id}`) {
+    if (card.querySelector('.text-\\[9px\\]')?.textContent === `#${String(id)}`) {
       card.scrollIntoView({ behavior: 'smooth', block: 'center' });
       card.classList.add('ring-4', 'ring-emerald-500', 'ring-offset-4', 'ring-offset-slate-950');
       setTimeout(() => card.classList.remove('ring-4', 'ring-emerald-500', 'ring-offset-4', 'ring-offset-slate-950'), 3000);
@@ -942,8 +950,8 @@ function renderDependencyGraph() {
   }
 
   edges.forEach(e => {
-    const start = positions.get(e.from);
-    const end = positions.get(e.to);
+    const start = positions.get(String(e.from));
+    const end = positions.get(String(e.to));
     if (start && end) {
       const color = e.type === 'blocked_by' ? '#f87171' : '#fbbf24';
       const dash = e.type === 'blocked_by' ? '5,5' : '';
@@ -952,10 +960,10 @@ function renderDependencyGraph() {
   });
 
   positions.forEach((pos, id) => {
-    const t = uniqueNodes.find(n => n.id === id);
+    const t = uniqueNodes.find(n => sameTaskId(n.id, id));
     const color = t.estado === 'OK' ? '#10b981' : '#6366f1';
     svgHtml += `
-      <g class="cursor-pointer" onclick="scrollToTask(${id})">
+      <g class="cursor-pointer" onclick="scrollToTask('${String(id)}')">
         <rect x="${pos.x}" y="${pos.y}" width="150" height="40" rx="8" fill="#1e293b" stroke="${color}" stroke-width="1"/>
         <text x="${pos.x + 10}" y="${pos.y + 25}" fill="#f1f5f9" font-size="10" font-family="monospace">#${id} ${t.descripcion.substring(0, 15)}...</text>
       </g>
@@ -1645,7 +1653,7 @@ function updateJulesBadges() {
     const cachedSessions = JSON.parse(localStorage.getItem('jules_sessions_cache') || '[]');
     currentTasks.forEach(t => {
         if (t.jules_session_id) {
-            const el = document.getElementById(`jules-status-${t.id}`);
+            const el = document.getElementById(`jules-status-${String(t.id)}`);
             if (el) {
                 const session = cachedSessions.find(s => s.name.endsWith(t.jules_session_id));
                 el.textContent = session ? session.state.replace(/_/g, ' ') : 'Desconocido';
