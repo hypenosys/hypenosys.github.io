@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-01T08:52:19.455Z",
+  "computed_at": "2026-06-01T09:13:36.664Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 15,
@@ -165,7 +165,7 @@
       },
       "workload": {
         "active_tasks": 8,
-        "story_points": 0
+        "story_points": 1
       }
     },
     "topperh4rley": {
