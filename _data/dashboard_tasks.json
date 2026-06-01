@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T09:28:52.821Z",
+  "last_updated": "2026-06-01T09:30:02.537Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -39,7 +39,7 @@
     },
     {
       "rama": "ART",
-      "descripcion": "Lluvia de ideas locas sobre mecánicas, historia, modos de juego, todo vale.",
+      "descripcion": "Lluvia de ideas locas sobre mecánicas, historia, modos de juego, todo vale. Va al repositorio de /docs",
       "tema_principal": "Concepto / GDD",
       "prioridad": "Critical",
       "milestone": "M1",
@@ -68,7 +68,7 @@
         "mitxel@hypenosys.com"
       ],
       "images": [],
-      "title": "BrainStorm",
+      "title": "Brainstorming",
       "task_type": "chore",
       "start_date": "2026-06-01",
       "due_date": "2026-06-30",
@@ -112,6 +112,20 @@
           "field": "tags",
           "old_value": "[]",
           "new_value": "[\"brainstorm\",\"design\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:30:01.956Z",
+          "field": "title",
+          "old_value": "BrainStorm",
+          "new_value": "Brainstorming"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:30:01.956Z",
+          "field": "descripcion",
+          "old_value": "Lluvia de ideas locas sobre mecánicas, historia, modos de juego, todo vale.",
+          "new_value": "Lluvia de ideas locas sobre mecánicas, historia, modos de juego, todo vale. Va al repositorio de /docs"
         }
       ]
     },
