@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T10:20:42.532Z",
-  "last_updated_by": "Sistema",
+  "last_updated": "2026-06-01T10:57:44.964Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -967,7 +967,7 @@
       "tema_principal": "Programación / Engine",
       "prioridad": "Cosmetic",
       "milestone": "M1",
-      "estado": "Pending",
+      "estado": "Working",
       "completitud": 0,
       "resuelto_por": "Axel",
       "detectado_por": "Axel",
@@ -1026,6 +1026,13 @@
           "field": "tags",
           "old_value": "[\"UX/UI\"]",
           "new_value": "[\"UX/UI\",\"bug\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T10:47:44.530Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
         }
       ],
       "id": 21
@@ -1090,6 +1097,62 @@
         }
       ],
       "id": 22
+    },
+    {
+      "title": "Añadir campo repositorio a las tasks",
+      "descripcion": "Depende de la tasca de pretify de los alias de los repositorios.",
+      "rama": "PRO",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc",
+        "topperh4rley"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-06-01",
+      "due_date": "2026-06-05",
+      "estimated_hours": 1,
+      "story_points": 1,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [
+        "16"
+      ],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-01",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T10:57:29.540Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T10:57:44.304Z",
+          "field": "blocked_by",
+          "old_value": "[]",
+          "new_value": "[\"16\"]"
+        }
+      ],
+      "id": 23
     }
   ]
 }

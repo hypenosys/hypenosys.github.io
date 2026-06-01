@@ -1,15 +1,15 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-01T10:20:45.502Z",
+  "computed_at": "2026-06-01T10:57:47.200Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 15,
+    "total_tasks": 16,
     "total_ok": 5,
     "total_ko": 0,
     "total_uncertain": 3,
     "total_obsolete": 3,
-    "fixed_found_ratio": 0.2778,
-    "verified_ratio": 0.2778
+    "fixed_found_ratio": 0.2632,
+    "verified_ratio": 0.2632
   },
   "group": {
     "velocity_trend": {
@@ -22,22 +22,22 @@
       "2026-W22": 5,
       "2026-W23": 0
     },
-    "bug_rate": 0.1,
-    "blocker_health": 0,
+    "bug_rate": 0.0909,
+    "blocker_health": 1,
     "tag_heatmap": {
-      "PRO": 5,
+      "PRO": 6,
       "brainstorm": 1,
       "design": 1,
       "research": 1,
       "DIS": 1,
       "chore": 1,
-      "feature": 4,
+      "feature": 5,
       "onboarding": 1,
       "ART": 1,
       "UX/UI": 1,
       "bug": 1
     },
-    "milestone_tasks_remaining": 10,
+    "milestone_tasks_remaining": 11,
     "hall_of_fame_winners": {
       "mvp": {
         "handle": "axlfc",
@@ -168,8 +168,8 @@
         "reprioritizations": 5
       },
       "workload": {
-        "active_tasks": 6,
-        "story_points": 7
+        "active_tasks": 7,
+        "story_points": 8
       }
     },
     "topperh4rley": {
@@ -209,8 +209,8 @@
         "reprioritizations": 5
       },
       "workload": {
-        "active_tasks": 8,
-        "story_points": 8
+        "active_tasks": 9,
+        "story_points": 9
       }
     },
     "dkdidac-design": {
