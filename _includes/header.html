@@ -28,6 +28,9 @@
             <i class="fas fa-tachometer-alt fa-sm fa-fw mr-1 text-purple"></i> Dashboard
           </a>
         </li>
+        <li class="nav-item {% if page.url == '/documentacion/' %}active{% endif %}">
+          <a class="nav-link" href="{{ '/documentacion/' | relative_url }}" {% if page.url == '/documentacion/' %}style="pointer-events: none; opacity: 0.5;"{% endif %}>Documentación</a>
+        </li>
         <li class="nav-item {% if page.url == '/guia-comandos/' %}active{% endif %}">
           <a class="nav-link" href="{{ '/guia-comandos/' | relative_url }}" {% if page.url == '/guia-comandos/' %}style="pointer-events: none; opacity: 0.5;"{% endif %}>Comandos</a>
         </li>
