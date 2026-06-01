@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-01T09:28:18.392Z",
+  "computed_at": "2026-06-01T09:28:55.015Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 15,
@@ -43,7 +43,7 @@
       "mvp": {
         "handle": "axlfc",
         "name": "Axel",
-        "value": 1
+        "value": 2
       },
       "bug_slayer": {
         "handle": "axlfc",
@@ -79,7 +79,7 @@
     "leaderboard": {
       "axlfc": {
         "member_name": "Axel",
-        "mvp_points": 1,
+        "mvp_points": 2,
         "bugs_solved": 0,
         "unblocked_count": 0,
         "velocity": 2,
@@ -89,7 +89,7 @@
       },
       "topperh4rley": {
         "member_name": "Alex",
-        "mvp_points": 1,
+        "mvp_points": 2,
         "bugs_solved": 0,
         "unblocked_count": 0,
         "velocity": 2,
@@ -332,7 +332,7 @@
         "mvp": {
           "handle": "axlfc",
           "name": "Axel",
-          "value": 1
+          "value": 2
         },
         "bug_slayer": {
           "handle": "axlfc",
@@ -368,7 +368,7 @@
       "leaderboard": {
         "axlfc": {
           "member_name": "Axel",
-          "mvp_points": 1,
+          "mvp_points": 2,
           "bugs_solved": 0,
           "unblocked_count": 0,
           "velocity": 2,
@@ -378,7 +378,7 @@
         },
         "topperh4rley": {
           "member_name": "Alex",
-          "mvp_points": 1,
+          "mvp_points": 2,
           "bugs_solved": 0,
           "unblocked_count": 0,
           "velocity": 2,
