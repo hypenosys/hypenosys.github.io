@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T09:22:12.800Z",
+  "last_updated": "2026-06-01T09:22:52.962Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -305,7 +305,29 @@
         "axel@hypenosys.com",
         "alex@hypenosys.com"
       ],
-      "images": []
+      "images": [],
+      "title": "Merge SVN Content/Scripts with upgraded github repo 'app'",
+      "task_type": "feature",
+      "start_date": "2026-06-01",
+      "due_date": "2026-06-30",
+      "estimated_hours": 4,
+      "story_points": 1,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:22:52.373Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-06-30"
+        }
+      ]
     },
     {
       "rama": "PRO",
