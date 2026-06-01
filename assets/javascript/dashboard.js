@@ -485,18 +485,7 @@ function buildTaskCard(task) {
             <i class="fa-solid fa-chevron-${isImagesExpanded ? 'up' : 'down'}"></i>
         </button>
         <div id="card-images-${task.id}" class="${isImagesExpanded ? '' : 'hidden'} p-2 bg-slate-950 grid grid-cols-3 gap-2">
-            ${task.images.map((img, idx) => {
-                const isLegacy = img.type === 'binary_legacy';
-                return `
-                <button type="button" class="aspect-square rounded border border-slate-800 overflow-hidden cursor-pointer hover:border-emerald-500 transition-all relative focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 select-none touch-manipulation"
-                     onpointerdown="event.preventDefault(); event.stopPropagation(); openLightbox('${task.id}', ${idx})"
-                     onclick="event.preventDefault(); event.stopPropagation();"
-                     onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openLightbox('${task.id}', ${idx}); }"
-                     draggable="false">
-                    <img src="${img.url}" class="w-full h-full object-cover pointer-events-none" alt="Task image" loading="lazy" draggable="false">
-                    ${isLegacy ? '<span class="absolute top-0.5 left-0.5 bg-amber-500 text-slate-950 text-[6px] font-black px-0.5 rounded shadow-sm">⚠️ LEGACY</span>' : ''}
-                </button>
-            `;}).join('')}
+            <!-- Thumbs injected via DOM to avoid touch ghost events -->
         </div>
       </div>
       ` : ''}
@@ -545,6 +534,33 @@ function buildTaskCard(task) {
         </div>
       </div>
     `;
+
+    if (hasImages) {
+        const grid = card.querySelector(`#card-images-${task.id}`);
+        if (grid) {
+            task.images.forEach((img, idx) => {
+                const thumbEl = document.createElement('div');
+                thumbEl.className = 'aspect-square rounded border border-slate-800 overflow-hidden cursor-pointer relative';
+                thumbEl.style.cssText = 'touch-action: manipulation; -webkit-tap-highlight-color: transparent; outline: none; user-select: none;';
+                thumbEl.setAttribute('role', 'button');
+                thumbEl.setAttribute('tabindex', '-1');
+
+                const isLegacy = img.type === 'binary_legacy';
+                thumbEl.innerHTML = `
+                    <img src="${img.url}" class="w-full h-full object-cover pointer-events-none" alt="Task image" loading="lazy" draggable="false">
+                    ${isLegacy ? '<span class="absolute top-0.5 left-0.5 bg-amber-500 text-slate-950 text-[6px] font-black px-0.5 rounded shadow-sm">⚠️ LEGACY</span>' : ''}
+                `;
+
+                thumbEl.addEventListener('pointerdown', (e) => {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    openLightbox(String(task.id), idx);
+                }, { capture: true });
+
+                grid.appendChild(thumbEl);
+            });
+        }
+    }
   }
   return card;
 }
@@ -2060,6 +2076,7 @@ function navigateLightbox(direction) {
 }
 
 function closeLightbox() {
+    document.activeElement?.blur();
     const modal = document.getElementById('lightbox-modal');
     if (modal) {
         modal.classList.add('hidden');
