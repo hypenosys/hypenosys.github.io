@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T09:20:43.560Z",
+  "last_updated": "2026-06-01T09:21:00.705Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -437,7 +437,7 @@
       "rama": "PRO",
       "descripcion": "copiar en la plataforma lo que jules diga!",
       "tema_principal": "Programación / Engine",
-      "prioridad": "Major",
+      "prioridad": "Medium",
       "milestone": "M1",
       "estado": "Pending",
       "completitud": 0,
@@ -456,10 +456,10 @@
       "images": [],
       "title": "copiar en la plataforma lo que jules diga!",
       "task_type": "feature",
-      "start_date": "2026-06-01",
-      "due_date": "2026-06-05",
-      "estimated_hours": 1,
-      "story_points": 1,
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
       "tags": [],
       "external_links": [],
       "subtasks": [],
@@ -474,6 +474,20 @@
           "field": "due_date",
           "old_value": null,
           "new_value": "2026-06-05"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:21:00.180Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Medium"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:21:00.180Z",
+          "field": "due_date",
+          "old_value": "2026-06-05",
+          "new_value": null
         }
       ]
     },
