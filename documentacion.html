@@ -112,6 +112,23 @@ permalink: /documentacion/
             color: var(--dracula-cyan);
             border-left: 3px solid var(--dracula-cyan);
         }
+
+        /* Mobile Sidebar Enhancement */
+        #sidebar.mobile-open {
+            display: flex !important;
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            width: 100%;
+            background-color: rgba(15, 23, 42, 0.95); /* Slate 950 semi-transparent */
+            backdrop-filter: blur(8px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
     </style>
 </head>
 <body class="h-full text-slate-100 flex flex-col">
@@ -138,6 +155,12 @@ permalink: /documentacion/
         <!-- Sidebar Navigation -->
         <aside id="sidebar" class="w-64 bg-slate-900/50 border-r border-slate-800 flex flex-col hidden md:flex">
             <div class="p-4 border-b border-slate-800">
+                <div class="flex items-center justify-between mb-4 md:hidden">
+                    <span class="font-bold text-indigo-400 uppercase text-xs tracking-widest">Explorador</span>
+                    <button onclick="toggleSidebar()" class="text-slate-400 hover:text-white">
+                        <i class="fa-solid fa-xmark text-xl"></i>
+                    </button>
+                </div>
                 <div class="relative">
                     <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
                     <input type="text" id="doc-search" placeholder="Buscar documento..."
@@ -242,7 +265,7 @@ permalink: /documentacion/
     </div>
 
     <!-- Mobile Navigation Toggle -->
-    <button onclick="toggleSidebar()" class="md:hidden fixed bottom-6 right-6 w-14 h-14 bg-indigo-600 text-white rounded-full shadow-2xl flex items-center justify-center z-50">
+    <button id="mobile-toggle" onclick="toggleSidebar()" class="md:hidden fixed bottom-6 right-6 w-14 h-14 bg-indigo-600 text-white rounded-full shadow-2xl flex items-center justify-center z-50">
         <i id="mobile-toggle-icon" class="fa-solid fa-list-ul text-xl"></i>
     </button>
 
@@ -437,17 +460,17 @@ permalink: /documentacion/
 
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.getElementById('mobile-toggle');
             const icon = document.getElementById('mobile-toggle-icon');
-            sidebar.classList.toggle('hidden');
-            sidebar.classList.toggle('fixed');
-            sidebar.classList.toggle('inset-0');
-            sidebar.classList.toggle('z-40');
-            sidebar.classList.toggle('w-full');
 
-            if (!sidebar.classList.contains('hidden')) {
+            sidebar.classList.toggle('mobile-open');
+
+            if (sidebar.classList.contains('mobile-open')) {
                 icon.classList.replace('fa-list-ul', 'fa-xmark');
+                toggleBtn.classList.add('hidden'); // Hide FAB when menu is open to use the X inside
             } else {
                 icon.classList.replace('fa-xmark', 'fa-list-ul');
+                toggleBtn.classList.remove('hidden');
             }
         }
 
