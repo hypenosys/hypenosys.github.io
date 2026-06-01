@@ -554,8 +554,16 @@ function buildTaskCard(task) {
                 thumbEl.addEventListener('pointerdown', (e) => {
                     e.preventDefault();
                     e.stopImmediatePropagation();
+                    card.draggable = false;
+                    setTimeout(() => { card.draggable = true; }, 300);
                     openLightbox(String(task.id), idx);
                 }, { capture: true });
+
+                thumbEl.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    openLightbox(String(task.id), idx);
+                }, { capture: true, passive: false });
 
                 grid.appendChild(thumbEl);
             });

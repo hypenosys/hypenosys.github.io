@@ -122,7 +122,9 @@ permalink: /CHANGELOG.html
                   <li>Eliminado el uso de etiquetas <code>&lt;button&gt;</code> y listeners inline en el Kanban para evitar conflictos de foco y competencia con el sistema de drag-and-drop.</li>
                   <li>Implementada inyección vía DOM de thumbnails usando <code>&lt;div role="button"&gt;</code> con <code>tabindex="-1"</code> para eliminar el anillo de foco y el retardo del navegador.</li>
                   <li>Uso de <code>pointerdown</code> con captura agresiva (<code>capture: true</code>), <code>preventDefault()</code> y <code>stopImmediatePropagation()</code> para garantizar apertura inmediata.</li>
+                  <li>Implementado bypass temporal de draggability del card padre y fallback de <code>touchstart</code> para máxima compatibilidad en tablets.</li>
                   <li>Limpieza de foco automática mediante <code>document.activeElement?.blur()</code> al cerrar el Lightbox.</li>
+                  <li>Eliminación global de anillos de foco y highlight táctil en elementos con <code>role="button"</code>.</li>
                 </ul>
               </li>
               <li><strong>Bug Follow-up — Retardo en apertura de Lightbox:</strong> Corregido definitivamente el problema donde las fotos de las tareas requerían dos interacciones para abrirse en dispositivos táctiles.
