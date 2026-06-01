@@ -108,7 +108,7 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-danger">Fixed</h5>
             <ul class="tree-view mb-3">
-              <li><strong>Error de Sincronización en Carga:</strong> Corregido crash fatal "Cannot read properties of undefined (reading 'all_time')" al cargar el dashboard con un archivo de estadísticas desactualizado. Se implementaron guards defensivos en todo el motor de renderizado de estadísticas y una lógica de migración catch-up automática.</li>
+              <li><strong>Error de Sincronización y Paneles Vacíos:</strong> Corregido crash fatal "Cannot read properties of undefined (reading 'all_time')" y optimizado el motor de estadísticas para evitar paneles vacíos tras la migración v1.1.0. Se implementaron fallbacks inteligentes (agrupación por creación si no hay completitud, etiquetas sintéticas desde tipo/rama) y se recalibraron las métricas grupales para incluir tareas activas.</li>
               <li><strong>Regresión en Botón de Edición:</strong> Corregido error que impedía abrir el modal de edición de tareas debido a comprobaciones de tipo estrictas (<code>===</code>) entre IDs numéricos y cadenas provenientes del DOM.</li>
               <li>Responsive layout and horizontal overflow issues on mobile (320px-430px) for Dashboard and Jules Panel.</li>
               <li>Markdown rendering in <code>progressUpdated</code> and <code>sessionCompleted</code> activities in Jules Panel.</li>

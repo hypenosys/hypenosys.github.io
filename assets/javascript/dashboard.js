@@ -246,8 +246,10 @@ async function refreshDashboardData() {
     currentProfiles = profilesRes.content;
 
     // Catch-up migration for studio_stats.json
-    if (currentStats && currentStats.schema_version !== "1.1.0") {
-        console.log(`[MIGRATION] studio_stats.json is version ${currentStats.schema_version}. Triggering recompute...`);
+    // Trigger if version is old, or if stats are zeroed out (no computed_at or no members)
+    const isStatsEmpty = !currentStats || !currentStats.computed_at || Object.keys(currentStats.members || {}).length === 0;
+    if (currentStats && (currentStats.schema_version !== "1.1.0" || isStatsEmpty)) {
+        console.log(`[MIGRATION] studio_stats.json needs update (v${currentStats.schema_version}, empty: ${isStatsEmpty}). Triggering recompute...`);
         await window.githubApi.recomputeAndSaveStats(migratedTasksData);
         const freshStats = await window.githubApi.fetchFileWithSha('_data/studio_stats.json');
         currentStats = freshStats.content;
@@ -296,9 +298,11 @@ function renderDashboard() {
 
 function renderStatsSummary() {
   const tasks = getFilteredTasks(currentTasks);
-  const activeTasks = tasks.filter(t => t.estado !== 'Obsolete');
+  const activeTasks = tasks.filter(t => !['OK', 'Closed', 'Obsolete'].includes(t.estado));
+  const completedTasks = tasks.filter(t => ['OK', 'Closed'].includes(t.estado));
+
   document.getElementById('stat-total-tasks').textContent = activeTasks.length;
-  document.getElementById('stat-ok-tasks').textContent    = tasks.filter(t => t.estado === 'OK').length;
+  document.getElementById('stat-ok-tasks').textContent    = completedTasks.length;
 
   const ratio = window.githubApi.computeFixedFoundRatio(tasks);
   document.getElementById('stat-fixed-ratio').textContent = `${(ratio * 100).toFixed(2)}%`;
