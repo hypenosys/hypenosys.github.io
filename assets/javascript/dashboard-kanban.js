@@ -214,11 +214,18 @@ function buildTaskCard(task) {
                     ${isLegacy ? '<span class="absolute top-0.5 left-0.5 bg-amber-500 text-slate-950 text-[6px] font-black px-0.5 rounded shadow-sm">⚠️ LEGACY</span>' : ''}
                 `;
 
-                thumbEl.addEventListener('click', (event) => {
-                    event.preventDefault();
-                    event.stopPropagation();
+                thumbEl.addEventListener('pointerdown', (e) => {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    card.draggable = false;
+                    setTimeout(() => { card.draggable = true; }, 300);
                     openLightbox(String(task.id), idx);
                 });
+
+                thumbEl.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                }, { capture: true });
 
                 thumbEl.addEventListener('dragstart', (event) => {
                     event.preventDefault();

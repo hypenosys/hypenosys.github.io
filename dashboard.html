@@ -36,6 +36,8 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
 
         [role="button"] { outline: none !important; -webkit-tap-highlight-color: transparent !important; }
+        .kanban-cards { touch-action: pan-x pan-y; }
+        .kanban-cards [role="button"] { touch-action: manipulation; }
     </style>
 </head>
 <body class="h-full text-slate-100 flex flex-col">
