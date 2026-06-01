@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T19:08:33.448Z",
+  "last_updated": "2026-06-01T19:09:00.055Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -990,7 +990,9 @@
       "subtasks": [],
       "acceptance_criteria": "",
       "blocks": [],
-      "blocked_by": [],
+      "blocked_by": [
+        "24"
+      ],
       "comments": [],
       "images": [],
       "rama2": null,
@@ -1055,6 +1057,13 @@
           "field": "descripcion",
           "old_value": "Al hacer clic en una de las fotos desde el dashboard ocurre un bug en el que nos da la falsa apariencia de que se va a abrir la imagen y al darle clic a una nueva tarea, entonces se abre la previsualización ese comportamiento no es el esperado.",
           "new_value": "Al hacer clic en una de las fotos desde el dashboard ocurre un bug en el que nos da la falsa apariencia de que se va a abrir la imagen y al darle clic a una nueva tarea, entonces se abre la previsualización ese comportamiento no es el esperado. Esta tarea es oficialmente una tocada de pelotas máxima certificada por Axl."
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T19:08:59.482Z",
+          "field": "blocked_by",
+          "old_value": "[]",
+          "new_value": "[\"24\"]"
         }
       ],
       "id": 21
