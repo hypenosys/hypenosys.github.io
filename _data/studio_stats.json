@@ -1,11 +1,11 @@
 {
   "schema_version": "1.0.0",
-  "last_computed": "2026-06-01T06:55:23.713Z",
+  "last_computed": "2026-06-01T06:55:46.030Z",
   "global": {
     "total_tasks": 13,
     "total_ok": 3,
     "total_ko": 0,
-    "total_uncertain": 3,
+    "total_uncertain": 4,
     "total_obsolete": 3,
     "fixed_found_ratio": 0.1875,
     "verified_ratio": 0.1875,
@@ -50,7 +50,7 @@
   "members": {
     "Axel": {
       "found": 5,
-      "fixed": 5,
+      "fixed": 6,
       "fixed_ok": 2,
       "support": 0,
       "support_ok": 0,
