@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_computed": "2026-06-01T07:24:24.436Z",
+  "last_computed": "2026-06-01T07:26:08.045Z",
   "global": {
     "total_tasks": 15,
     "total_ok": 3,
@@ -21,7 +21,7 @@
         "rate": 0.6
       },
       "Medium": {
-        "total": 4,
+        "total": 3,
         "solved": 0,
         "rate": 0
       },
@@ -31,7 +31,7 @@
         "rate": 0
       },
       "Cosmetic": {
-        "total": 1,
+        "total": 2,
         "solved": 0,
         "rate": 0
       },
