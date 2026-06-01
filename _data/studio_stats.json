@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-01T10:57:47.200Z",
+  "computed_at": "2026-06-01T11:18:48.613Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 16,
@@ -35,7 +35,8 @@
       "onboarding": 1,
       "ART": 1,
       "UX/UI": 1,
-      "bug": 1
+      "bug": 1,
+      "hard": 1
     },
     "milestone_tasks_remaining": 11,
     "hall_of_fame_winners": {
@@ -165,11 +166,11 @@
       "comment_activity": 0,
       "volatility": {
         "reopens": 0,
-        "reprioritizations": 5
+        "reprioritizations": 6
       },
       "workload": {
         "active_tasks": 7,
-        "story_points": 8
+        "story_points": 9
       }
     },
     "topperh4rley": {
@@ -206,11 +207,11 @@
       "comment_activity": 0,
       "volatility": {
         "reopens": 0,
-        "reprioritizations": 5
+        "reprioritizations": 6
       },
       "workload": {
         "active_tasks": 9,
-        "story_points": 9
+        "story_points": 10
       }
     },
     "dkdidac-design": {

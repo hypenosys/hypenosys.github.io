@@ -2085,6 +2085,7 @@ function navigateLightbox(direction) {
 }
 
 function closeLightbox() {
+    document.activeElement?.blur();
     const modal = document.getElementById('lightbox-modal');
     if (modal) {
         modal.classList.add('hidden');
