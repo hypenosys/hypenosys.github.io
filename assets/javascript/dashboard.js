@@ -488,12 +488,12 @@ function buildTaskCard(task) {
             ${task.images.map((img, idx) => {
                 const isLegacy = img.type === 'binary_legacy';
                 return `
-                <div class="aspect-square rounded border border-slate-800 overflow-hidden cursor-pointer hover:border-emerald-500 transition-all relative"
-                     onclick="event.stopPropagation(); openLightbox('${task.id}', ${idx})"
+                <button type="button" class="aspect-square rounded border border-slate-800 overflow-hidden cursor-pointer hover:border-emerald-500 transition-all relative focus:outline-none focus:border-slate-800"
+                     onpointerdown="event.preventDefault(); event.stopPropagation(); openLightbox('${task.id}', ${idx})"
                      draggable="false">
                     <img src="${img.url}" class="w-full h-full object-cover pointer-events-none" alt="Task image" loading="lazy" draggable="false">
                     ${isLegacy ? '<span class="absolute top-0.5 left-0.5 bg-amber-500 text-slate-950 text-[6px] font-black px-0.5 rounded shadow-sm">⚠️ LEGACY</span>' : ''}
-                </div>
+                </button>
             `;}).join('')}
         </div>
       </div>
@@ -1968,7 +1968,7 @@ function renderImagePreviews() {
         div.innerHTML = `
             <img src="${img.url}" class="w-full h-full object-cover" alt="">
             <div class="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                <button type="button" onclick="openLightbox('current', ${idx})" class="w-8 h-8 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center hover:scale-110 transition-transform">
+                <button type="button" onpointerdown="event.preventDefault(); event.stopPropagation(); openLightbox('current', ${idx})" class="w-8 h-8 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center hover:scale-110 transition-transform focus:outline-none focus:ring-2 focus:ring-emerald-500/50">
                     <i class="fa-solid fa-eye"></i>
                 </button>
                 <button type="button" onclick="removeTaskImage(${idx})" class="w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center hover:scale-110 transition-transform">
