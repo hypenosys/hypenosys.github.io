@@ -85,6 +85,25 @@ async function putFileContent(filePath, sha, newContent, commitMessage) {
   return { ok: response.ok, status: response.status, data: await response.json() };
 }
 
+async function deleteFile(filePath, sha, commitMessage) {
+  const url = `${GITHUB_API_BASE}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filePath}`;
+  const body = JSON.stringify({
+    message: commitMessage,
+    sha: sha,
+    branch: DATA_BRANCH
+  });
+  const response = await fetch(url, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${getAuthToken()}`,
+      'Accept': 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json'
+    },
+    body
+  });
+  return { ok: response.ok, status: response.status, data: await response.json() };
+}
+
 // ─── MERGE STRATEGIES ─────────────────────────────────────────
 function mergeTaskArrays(localTasks, remoteTasks) {
   const remoteMap = new Map(remoteTasks.map(t => [String(t.id), t]));
@@ -630,6 +649,7 @@ window.githubApi = {
   updateBudget,
   updateMemberProfile,
   recomputeAndSaveStats,
+  deleteFile,
 
   // Fórmulas
   computeFixedFoundRatio,

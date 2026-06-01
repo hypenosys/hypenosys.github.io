@@ -385,15 +385,18 @@ function buildTaskCard(task) {
       ${hasImages ? `
       <div class="mb-3 border border-slate-700 rounded-lg overflow-hidden">
         <button onclick="toggleCardImages('${task.id}')" class="w-full flex items-center justify-between p-2 bg-slate-900/50 hover:bg-slate-900 transition-all text-[10px] font-bold text-slate-400">
-            <span><i class="fa-solid fa-paperclip mr-1"></i> ${task.images.length} imágenes</span>
+            <span><i class="fa-solid fa-paperclip mr-1"></i> ${task.images.length} imagen${task.images.length === 1 ? '' : 'es'}</span>
             <i class="fa-solid fa-chevron-${isImagesExpanded ? 'up' : 'down'}"></i>
         </button>
         <div id="card-images-${task.id}" class="${isImagesExpanded ? '' : 'hidden'} p-2 bg-slate-950 grid grid-cols-3 gap-2">
-            ${task.images.map((img, idx) => `
-                <div class="aspect-square rounded border border-slate-800 overflow-hidden cursor-pointer hover:border-emerald-500 transition-all" onclick="openLightbox('${task.id}', ${idx})">
-                    <img src="${img.src}" class="w-full h-full object-cover" alt="Task image">
+            ${task.images.map((img, idx) => {
+                const isLegacy = img.type === 'binary_legacy';
+                return `
+                <div class="aspect-square rounded border border-slate-800 overflow-hidden cursor-pointer hover:border-emerald-500 transition-all relative" onclick="openLightbox('${task.id}', ${idx})">
+                    <img src="${img.url}" class="w-full h-full object-cover" alt="Task image" loading="lazy">
+                    ${isLegacy ? '<span class="absolute top-0.5 left-0.5 bg-amber-500 text-slate-950 text-[6px] font-black px-0.5 rounded shadow-sm">⚠️ LEGACY</span>' : ''}
                 </div>
-            `).join('')}
+            `;}).join('')}
         </div>
       </div>
       ` : ''}
@@ -1360,9 +1363,41 @@ async function handleCreateTask() {
 }
 
 async function handleArchiveTask(taskId) {
+    const task = currentTasks.find(t => String(t.id) === String(taskId));
+    if (!task) return;
+
     if (!confirm(`¿Estás seguro de que quieres enviar la tarea #${taskId} al Cementerio?`)) return;
+
+    const legacyImages = (task.images || []).filter(img => img.type === 'binary_legacy');
+    let deleteLegacy = false;
+
+    if (legacyImages.length > 0) {
+        deleteLegacy = confirm(`Esta tarea tiene ${legacyImages.length} imágenes antiguas (legacy). ¿Deseas eliminarlas definitivamente para ahorrar espacio en el repositorio?`);
+    }
+
     showToast(UI_STRINGS.saving, 'info');
+
     try {
+        if (deleteLegacy) {
+            for (const img of legacyImages) {
+                // If it's a relative path, try to delete it from GitHub
+                if (img.url && !img.url.startsWith('data:') && !img.url.startsWith('http')) {
+                    try {
+                        const fileData = await window.githubApi.getFile(img.url);
+                        if (fileData && fileData.sha) {
+                            await window.githubApi.deleteFile(img.url, fileData.sha, `chore: eliminar imagen legacy ${img.filename} al archivar tarea #${taskId}`);
+                        }
+                    } catch (e) {
+                        console.warn(`[ARCHIVE] Failed to delete file ${img.url}:`, e);
+                    }
+                }
+                // Clear the URL to "delete" Base64 or relative path from JSON
+                img.url = "";
+            }
+            // Update the task with cleared images before archiving
+            await window.githubApi.updateTask(taskId, { images: task.images });
+        }
+
         await window.githubApi.archiveTask(taskId);
         showToast(`Tarea #${taskId} enviada al Cementerio`, 'success');
         await refreshDashboardData();
@@ -1500,33 +1535,81 @@ function toggleTaskImageSection() {
     }
 }
 
-function handleImageFiles(files) {
+async function handleImageFiles(files) {
     if (!files || files.length === 0) return;
 
     for (const file of files) {
-        if (!file.type.startsWith('image/')) {
-            showToast(`Archivo no válido: ${file.name}. Solo se aceptan imágenes.`, 'warning');
+        const allowedTypes = ['image/png', 'image/jpeg', 'image/gif', 'image/webp'];
+        if (!allowedTypes.includes(file.type)) {
+            showToast(`Archivo no válido: ${file.name}. Solo se aceptan PNG, JPG, GIF y WEBP.`, 'warning');
             continue;
         }
 
-        if (file.size > 2 * 1024 * 1024) {
-            showToast(`Imagen demasiado grande: ${file.name}. Máximo 2MB.`, 'warning');
+        if (file.size > 10 * 1024 * 1024) {
+            showToast(`Imagen demasiado grande: ${file.name}. Máximo 10MB.`, 'warning');
             continue;
         }
 
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const imgObj = {
-                id: Math.random().toString(36).substr(2, 9),
-                name: file.name,
-                src: e.target.result,
-                createdAt: new Date().toISOString()
-            };
-            currentTaskImages.push(imgObj);
-            renderImagePreviews();
-        };
-        reader.readAsDataURL(file);
+        showToast(`Subiendo ${file.name} a Tumblr...`, 'info');
+
+        try {
+            const workerUrl = 'https://hypenosys-gatekeeper-v2.axlffcc.workers.dev/tumblr/upload';
+            const fd = new FormData();
+            fd.append('image', file);
+            fd.append('filename', file.name);
+
+            const res = await fetch(workerUrl, { method: 'POST', body: fd });
+            const data = await res.json();
+
+            if (data.success) {
+                const imgObj = {
+                    url: data.url,
+                    type: "url",
+                    tumblr_post_id: data.tumblr_post_id,
+                    filename: file.name,
+                    uploaded_at: new Date().toISOString()
+                };
+                currentTaskImages.push(imgObj);
+                renderImagePreviews();
+                showToast(`Imagen subida: ${file.name}`, 'success');
+            } else {
+                throw new Error(data.error || 'Error desconocido en el Worker');
+            }
+        } catch (err) {
+            console.error('[TUMBLR] Upload failed:', err);
+            showToast(`Error al subir imagen: ${err.message}. Intenta pegar la URL manualmente.`, 'error');
+        }
     }
+}
+
+function handleAddImageUrl() {
+    const input = document.getElementById('task-image-url-input');
+    const url = input.value.trim();
+
+    if (!url) return;
+    if (!url.startsWith('https://')) {
+        showToast('La URL debe empezar por https://', 'warning');
+        return;
+    }
+
+    let filename = 'URL Imagen';
+    try {
+        const urlObj = new URL(url);
+        filename = urlObj.hostname;
+    } catch(e) {}
+
+    const imgObj = {
+        url: url,
+        type: "url",
+        tumblr_post_id: null,
+        filename: filename,
+        uploaded_at: new Date().toISOString()
+    };
+
+    currentTaskImages.push(imgObj);
+    renderImagePreviews();
+    input.value = '';
+    showToast('URL añadida', 'success');
 }
 
 function renderImagePreviews() {
@@ -1535,28 +1618,33 @@ function renderImagePreviews() {
     container.innerHTML = '';
 
     currentTaskImages.forEach((img, idx) => {
+        const id = img.tumblr_post_id || idx;
         const div = document.createElement('div');
         div.className = 'relative group aspect-square rounded-lg overflow-hidden border border-slate-700 bg-slate-950';
+
+        const isLegacy = img.type === 'binary_legacy';
+
         div.innerHTML = `
-            <img src="${img.src}" class="w-full h-full object-cover" alt="">
+            <img src="${img.url}" class="w-full h-full object-cover" alt="">
             <div class="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                 <button type="button" onclick="openLightbox('current', ${idx})" class="w-8 h-8 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center hover:scale-110 transition-transform">
                     <i class="fa-solid fa-eye"></i>
                 </button>
-                <button type="button" onclick="removeTaskImage('${img.id}')" class="w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center hover:scale-110 transition-transform">
+                <button type="button" onclick="removeTaskImage(${idx})" class="w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center hover:scale-110 transition-transform">
                     <i class="fa-solid fa-trash"></i>
                 </button>
             </div>
+            ${isLegacy ? '<span class="absolute top-1 left-1 bg-amber-500 text-slate-950 text-[7px] font-black px-1 rounded">⚠️ LEGACY</span>' : ''}
             <div class="name-label absolute bottom-0 left-0 right-0 p-1 bg-slate-950/80 text-[8px] text-slate-300 truncate pointer-events-none">
             </div>
         `;
-        div.querySelector('.name-label').textContent = img.name;
+        div.querySelector('.name-label').textContent = img.filename || 'Imagen';
         container.appendChild(div);
     });
 }
 
-function removeTaskImage(imgId) {
-    currentTaskImages = currentTaskImages.filter(img => img.id !== imgId);
+function removeTaskImage(index) {
+    currentTaskImages.splice(index, 1);
     renderImagePreviews();
 }
 
@@ -1571,12 +1659,12 @@ function openLightbox(srcOrTaskId, imageIndex) {
     } else {
         if (srcOrTaskId === 'current') {
             if (currentTaskImages[imageIndex]) {
-                img.src = currentTaskImages[imageIndex].src;
+                img.src = currentTaskImages[imageIndex].url;
             }
         } else {
             const task = currentTasks.find(t => String(t.id) === String(srcOrTaskId));
             if (task && task.images && task.images[imageIndex]) {
-                img.src = task.images[imageIndex].src;
+                img.src = task.images[imageIndex].url;
             }
         }
     }
@@ -1791,3 +1879,5 @@ window.handleDashboardLogin = function() {
         window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=${scope}`;
     }
 };
+
+window.handleAddImageUrl = handleAddImageUrl;
