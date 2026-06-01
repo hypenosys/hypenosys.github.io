@@ -1,15 +1,15 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-01T19:09:02.741Z",
+  "computed_at": "2026-06-01T19:21:35.901Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 17,
-    "total_ok": 5,
+    "total_ok": 6,
     "total_ko": 0,
     "total_uncertain": 3,
     "total_obsolete": 4,
-    "fixed_found_ratio": 0.2381,
-    "verified_ratio": 0.2381
+    "fixed_found_ratio": 0.2857,
+    "verified_ratio": 0.2857
   },
   "group": {
     "velocity_trend": {
@@ -20,25 +20,25 @@
       "2026-W20": 0,
       "2026-W21": 4,
       "2026-W22": 5,
-      "2026-W23": 0
+      "2026-W23": 1
     },
-    "bug_rate": 0.0833,
+    "bug_rate": 0.0909,
     "blocker_health": 2,
     "tag_heatmap": {
-      "PRO": 7,
+      "PRO": 6,
       "brainstorm": 1,
       "design": 1,
       "research": 1,
       "DIS": 1,
       "chore": 1,
-      "feature": 6,
+      "feature": 5,
       "onboarding": 1,
       "ART": 1,
       "UX/UI": 1,
       "bug": 1,
       "hard": 1
     },
-    "milestone_tasks_remaining": 12,
+    "milestone_tasks_remaining": 11,
     "hall_of_fame_winners": {
       "mvp": {
         "handle": "axlfc",
@@ -53,7 +53,7 @@
       "unblocker": {
         "handle": "axlfc",
         "name": "Axel",
-        "value": 0
+        "value": 1
       },
       "velocity_king": {
         "handle": "axlfc",
@@ -81,7 +81,7 @@
         "member_name": "Axel",
         "mvp_points": 4,
         "bugs_solved": 0,
-        "unblocked_count": 0,
+        "unblocked_count": 1,
         "velocity": 2,
         "research_solved": 0,
         "art_tasks": 0,
@@ -91,7 +91,7 @@
         "member_name": "Alex",
         "mvp_points": 3,
         "bugs_solved": 0,
-        "unblocked_count": 0,
+        "unblocked_count": 1,
         "velocity": 2,
         "research_solved": 0,
         "art_tasks": 0,
@@ -133,9 +133,9 @@
     "axlfc": {
       "member_name": "Axel",
       "completed": {
-        "all_time": 7,
-        "milestone": 7,
-        "week": 3
+        "all_time": 8,
+        "milestone": 8,
+        "week": 4
       },
       "weekly_velocity": {
         "2026-W16": 0,
@@ -145,14 +145,14 @@
         "2026-W20": 0,
         "2026-W21": 3,
         "2026-W22": 4,
-        "2026-W23": 0
+        "2026-W23": 1
       },
       "type_breakdown": {
-        "feature": 6,
+        "feature": 7,
         "chore": 1
       },
       "rama_breakdown": {
-        "PRO": 7
+        "PRO": 8
       },
       "tag_frequency": {
         "jules": 1,
@@ -162,23 +162,23 @@
         "days": 0.5,
         "estimated_start": true
       },
-      "dependency_impact": 0,
+      "dependency_impact": 1,
       "comment_activity": 0,
       "volatility": {
         "reopens": 0,
         "reprioritizations": 5
       },
       "workload": {
-        "active_tasks": 7,
-        "story_points": 10
+        "active_tasks": 6,
+        "story_points": 9
       }
     },
     "topperh4rley": {
       "member_name": "Alex",
       "completed": {
-        "all_time": 7,
-        "milestone": 7,
-        "week": 3
+        "all_time": 8,
+        "milestone": 8,
+        "week": 4
       },
       "weekly_velocity": {
         "2026-W16": 0,
@@ -188,13 +188,13 @@
         "2026-W20": 0,
         "2026-W21": 3,
         "2026-W22": 4,
-        "2026-W23": 0
+        "2026-W23": 1
       },
       "type_breakdown": {
-        "feature": 7
+        "feature": 8
       },
       "rama_breakdown": {
-        "PRO": 7
+        "PRO": 8
       },
       "tag_frequency": {
         "jules": 1
@@ -203,15 +203,15 @@
         "days": 0.5,
         "estimated_start": true
       },
-      "dependency_impact": 0,
+      "dependency_impact": 1,
       "comment_activity": 0,
       "volatility": {
         "reopens": 0,
         "reprioritizations": 6
       },
       "workload": {
-        "active_tasks": 10,
-        "story_points": 11
+        "active_tasks": 9,
+        "story_points": 10
       }
     },
     "dkdidac-design": {
@@ -344,7 +344,7 @@
         "unblocker": {
           "handle": "axlfc",
           "name": "Axel",
-          "value": 0
+          "value": 1
         },
         "velocity_king": {
           "handle": "axlfc",
@@ -372,7 +372,7 @@
           "member_name": "Axel",
           "mvp_points": 4,
           "bugs_solved": 0,
-          "unblocked_count": 0,
+          "unblocked_count": 1,
           "velocity": 2,
           "research_solved": 0,
           "art_tasks": 0,
@@ -382,7 +382,7 @@
           "member_name": "Alex",
           "mvp_points": 3,
           "bugs_solved": 0,
-          "unblocked_count": 0,
+          "unblocked_count": 1,
           "velocity": 2,
           "research_solved": 0,
           "art_tasks": 0,
