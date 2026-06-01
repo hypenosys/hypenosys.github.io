@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T07:26:06.564Z",
+  "last_updated": "2026-06-01T07:26:26.402Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -804,7 +804,7 @@
       "rama": "PRO",
       "task_type": "feature",
       "tema_principal": "Programación / Engine",
-      "prioridad": "Major",
+      "prioridad": "Critical",
       "milestone": "M1",
       "estado": "Pending",
       "completitud": 0,
@@ -841,6 +841,13 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T07:26:25.897Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Critical"
         }
       ],
       "id": 22
