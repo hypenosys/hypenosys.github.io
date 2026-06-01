@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T09:24:12.018Z",
+  "last_updated": "2026-06-01T09:28:15.912Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -405,7 +405,7 @@
       "rama": "PRO",
       "descripcion": "programar botones en jules botones para archivar y eliminar sesiones inconcluyentes, y que estas sesiones sean sincronizadas con jules",
       "tema_principal": "Programación / Engine",
-      "prioridad": "Major",
+      "prioridad": "Minor",
       "milestone": "M1",
       "estado": "OK",
       "completitud": 1,
@@ -428,7 +428,52 @@
       "limite": null,
       "comentario": "",
       "id": 13,
-      "images": []
+      "images": [],
+      "title": "Programar botones en jules para archivar y eliminar sesiones",
+      "task_type": "feature",
+      "start_date": "2026-06-01",
+      "due_date": "2026-06-05",
+      "estimated_hours": 2,
+      "story_points": 1,
+      "tags": [
+        "jules"
+      ],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:28:15.065Z",
+          "field": "title",
+          "old_value": "programar botones en jules botones para archivar y eliminar",
+          "new_value": "Programar botones en jules para archivar y eliminar sesiones"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:28:15.065Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Minor"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:28:15.065Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-06-05"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:28:15.065Z",
+          "field": "tags",
+          "old_value": "[]",
+          "new_value": "[\"jules\"]"
+        }
+      ]
     },
     {
       "rama": "PRO",
