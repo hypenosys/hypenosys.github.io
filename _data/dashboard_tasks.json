@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T09:47:48.176Z",
+  "last_updated": "2026-06-01T09:49:05.874Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -841,8 +841,8 @@
       "tema_principal": "Programación / Engine",
       "prioridad": "Medium",
       "milestone": "M1",
-      "estado": "In Review",
-      "completitud": 0,
+      "estado": "OK",
+      "completitud": 1,
       "resuelto_por": "Axel",
       "detectado_por": "Alex",
       "asignados": [
@@ -861,17 +861,23 @@
       "images": [],
       "title": "cambiar sistema de imagenes a tumblr",
       "task_type": "feature",
-      "start_date": null,
-      "due_date": null,
-      "estimated_hours": null,
-      "story_points": null,
+      "start_date": "2026-06-01",
+      "due_date": "2026-06-01",
+      "estimated_hours": 2,
+      "story_points": 1,
       "tags": [],
       "external_links": [],
       "subtasks": [],
       "acceptance_criteria": "",
       "blocks": [],
       "blocked_by": [],
-      "comments": [],
+      "comments": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:48:53.716Z",
+          "body": "API Keys en el Cloudflare gatekeeper"
+        }
+      ],
       "change_log": [
         {
           "author_login": "axlfc",
@@ -907,6 +913,27 @@
           "field": "prioridad",
           "old_value": "Major",
           "new_value": "Medium"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:49:04.792Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "OK"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:49:04.792Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-06-01"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:49:04.792Z",
+          "field": "completitud",
+          "old_value": 0,
+          "new_value": 1
         }
       ]
     },
