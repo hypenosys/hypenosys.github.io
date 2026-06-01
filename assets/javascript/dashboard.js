@@ -405,27 +405,6 @@ function buildTaskCard(task) {
   });
   card.addEventListener('dragend', () => card.classList.remove('opacity-50'));
 
-  card.addEventListener('touchstart', function(e) {
-      const btn = e.target.closest('button[data-lightbox-task]');
-      if (!btn) return;
-      e.preventDefault();
-      e.stopImmediatePropagation();
-      const taskId = btn.getAttribute('data-lightbox-task');
-      const idx = parseInt(btn.getAttribute('data-lightbox-idx'), 10);
-      openLightbox(taskId, idx);
-  }, { capture: true, passive: false });
-
-  // Desktop/Mouse Support
-  card.addEventListener('click', function(e) {
-      const btn = e.target.closest('button[data-lightbox-task]');
-      if (!btn) return;
-      e.preventDefault();
-      e.stopImmediatePropagation();
-      const taskId = btn.getAttribute('data-lightbox-task');
-      const idx = parseInt(btn.getAttribute('data-lightbox-idx'), 10);
-      openLightbox(taskId, idx);
-  }, { capture: true });
-
   const priorityColors = {
     Critical: 'bg-red-500 text-slate-950 font-black',
     Major:    'bg-orange-500 text-slate-950 font-black',
@@ -456,20 +435,20 @@ function buildTaskCard(task) {
       <div class="flex justify-between items-center gap-2">
         <div class="flex items-center gap-2 overflow-hidden">
           <span class="text-[9px] font-mono text-slate-500 flex-shrink-0">#${task.id}</span>
-          <button onclick="openEditTaskModal('${task.id}')" class="text-[10px] text-slate-500 hover:text-white opacity-0 group-hover:opacity-100 transition-all flex-shrink-0">
+          <button onclick="event.stopPropagation(); openEditTaskModal('${task.id}')" class="text-[10px] text-slate-500 hover:text-white opacity-0 group-hover:opacity-100 transition-all flex-shrink-0">
             <i class="fa-solid fa-pencil"></i>
           </button>
           <p class="text-xs text-slate-200 truncate font-semibold">${task.title || task.descripcion}</p>
         </div>
         <div class="flex items-center gap-1 flex-shrink-0">
           ${canArchive ? `
-            <button onclick="handleArchiveTask('${task.id}')" class="text-slate-500 hover:text-emerald-400 mr-1 transition-colors" title="Archivar">
+            <button onclick="event.stopPropagation(); handleArchiveTask('${task.id}')" class="text-slate-500 hover:text-emerald-400 mr-1 transition-colors" title="Archivar">
                 <i class="fa-solid fa-box-archive text-[10px]"></i>
             </button>
           ` : ''}
           <span class="text-[8px] font-bold px-1 py-0.5 rounded ${priorityColorsMinimized[task.prioridad] || 'bg-slate-700'}">${task.prioridad[0]}</span>
           <span class="text-[8px] font-bold px-1 py-0.5 rounded ${stateInfo.color}">${stateInfo.label}</span>
-          <button onclick="toggleTaskMinimize('${task.id}')" class="text-slate-500 hover:text-white ml-1">
+          <button onclick="event.stopPropagation(); toggleTaskMinimize('${task.id}')" class="text-slate-500 hover:text-white ml-1">
             <i class="fa-solid fa-chevron-down"></i>
           </button>
         </div>
@@ -480,18 +459,18 @@ function buildTaskCard(task) {
       <div class="flex justify-between items-start mb-2">
         <div class="flex gap-2 items-center">
           <span class="text-[9px] font-mono text-slate-500">#${task.id}</span>
-          <button onclick="openEditTaskModal('${task.id}')" class="text-[10px] text-slate-500 hover:text-white opacity-0 group-hover:opacity-100 transition-all">
+          <button onclick="event.stopPropagation(); openEditTaskModal('${task.id}')" class="text-[10px] text-slate-500 hover:text-white opacity-0 group-hover:opacity-100 transition-all">
             <i class="fa-solid fa-pencil"></i>
           </button>
         </div>
         <div class="flex gap-2 items-center">
           ${canArchive ? `
-            <button onclick="handleArchiveTask('${task.id}')" class="text-[10px] font-bold text-slate-500 hover:text-emerald-400 flex items-center gap-1 px-2 py-0.5 bg-slate-900 rounded border border-slate-700 transition-all mr-2" title="Mover al Cementerio">
+            <button onclick="event.stopPropagation(); handleArchiveTask('${task.id}')" class="text-[10px] font-bold text-slate-500 hover:text-emerald-400 flex items-center gap-1 px-2 py-0.5 bg-slate-900 rounded border border-slate-700 transition-all mr-2" title="Mover al Cementerio">
                 <i class="fa-solid fa-box-archive"></i> ARCHIVAR
             </button>
           ` : ''}
           <span class="text-[9px] font-bold px-1.5 py-0.5 rounded ${priorityColors[task.prioridad] || 'bg-slate-700'}">${task.prioridad.toUpperCase()}</span>
-          <button onclick="toggleTaskMinimize('${task.id}')" class="text-slate-500 hover:text-white">
+          <button onclick="event.stopPropagation(); toggleTaskMinimize('${task.id}')" class="text-slate-500 hover:text-white">
             <i class="fa-solid fa-chevron-up"></i>
           </button>
         </div>
@@ -501,7 +480,7 @@ function buildTaskCard(task) {
 
       ${hasImages ? `
       <div class="mb-3 border border-slate-700 rounded-lg overflow-hidden">
-        <button onclick="toggleCardImages('${task.id}')" class="w-full flex items-center justify-between p-2 bg-slate-900/50 hover:bg-slate-900 transition-all text-[10px] font-bold text-slate-400">
+        <button onclick="event.stopPropagation(); toggleCardImages('${task.id}')" class="w-full flex items-center justify-between p-2 bg-slate-900/50 hover:bg-slate-900 transition-all text-[10px] font-bold text-slate-400">
             <span><i class="fa-solid fa-paperclip mr-1"></i> ${task.images.length} imagen${task.images.length === 1 ? '' : 'es'}</span>
             <i class="fa-solid fa-chevron-${isImagesExpanded ? 'up' : 'down'}"></i>
         </button>
@@ -512,7 +491,7 @@ function buildTaskCard(task) {
       ` : ''}
 
       <div class="mb-3">
-          <select onchange="handleQuickStageUpdate('${String(task.id)}', this.value)" class="w-full bg-slate-950/50 border border-slate-700 rounded text-[10px] p-1 text-slate-400 focus:text-white focus:border-indigo-500 outline-none">
+          <select onchange="event.stopPropagation(); handleQuickStageUpdate('${String(task.id)}', this.value)" class="w-full bg-slate-950/50 border border-slate-700 rounded text-[10px] p-1 text-slate-400 focus:text-white focus:border-indigo-500 outline-none">
               ${STAGES.map(s => `<option value="${s}" ${task.tema_principal === s ? 'selected' : ''}>${s}</option>`).join('')}
           </select>
       </div>
@@ -530,14 +509,14 @@ function buildTaskCard(task) {
         <div class="flex flex-col gap-2">
           <div class="flex items-center gap-2">
             <div class="flex -space-x-2">
-              ${task.resuelto_por ? `<div onclick="scrollToProfile('${task.resuelto_por}')" title="Resuelto por: ${task.resuelto_por}" class="w-6 h-6 rounded-full bg-emerald-500 border-2 border-slate-800 flex items-center justify-center text-[8px] font-bold text-slate-950 cursor-pointer hover:scale-110 transition-transform">${task.resuelto_por[0]}</div>` : ''}
-              ${task.detectado_por ? `<div onclick="scrollToProfile('${task.detectado_por}')" title="Detectado por: ${task.detectado_por}" class="w-6 h-6 rounded-full bg-indigo-500 border-2 border-slate-800 flex items-center justify-center text-[8px] font-bold text-white cursor-pointer hover:scale-110 transition-transform">${task.detectado_por[0]}</div>` : ''}
-              ${task.apoyo ? `<div onclick="scrollToProfile('${task.apoyo}')" title="Apoyo: ${task.apoyo}" class="w-6 h-6 rounded-full bg-purple-500 border-2 border-slate-800 flex items-center justify-center text-[8px] font-bold text-white cursor-pointer hover:scale-110 transition-transform">${task.apoyo[0]}</div>` : ''}
+              ${task.resuelto_por ? `<div onclick="event.stopPropagation(); scrollToProfile('${task.resuelto_por}')" title="Resuelto por: ${task.resuelto_por}" class="w-6 h-6 rounded-full bg-emerald-500 border-2 border-slate-800 flex items-center justify-center text-[8px] font-bold text-slate-950 cursor-pointer hover:scale-110 transition-transform">${task.resuelto_por[0]}</div>` : ''}
+              ${task.detectado_por ? `<div onclick="event.stopPropagation(); scrollToProfile('${task.detectado_por}')" title="Detectado por: ${task.detectado_por}" class="w-6 h-6 rounded-full bg-indigo-500 border-2 border-slate-800 flex items-center justify-center text-[8px] font-bold text-white cursor-pointer hover:scale-110 transition-transform">${task.detectado_por[0]}</div>` : ''}
+              ${task.apoyo ? `<div onclick="event.stopPropagation(); scrollToProfile('${task.apoyo}')" title="Apoyo: ${task.apoyo}" class="w-6 h-6 rounded-full bg-purple-500 border-2 border-slate-800 flex items-center justify-center text-[8px] font-bold text-white cursor-pointer hover:scale-110 transition-transform">${task.apoyo[0]}</div>` : ''}
             </div>
             <span class="text-[8px] font-bold px-1.5 py-0.5 rounded ${stateInfo.color}">${stateInfo.label.toUpperCase()}</span>
           </div>
 
-          <div onclick="openAssignmentModal('${String(task.id)}')" class="flex -space-x-1.5 cursor-pointer hover:opacity-80 transition-opacity min-h-[24px] items-center">
+          <div onclick="event.stopPropagation(); openAssignmentModal('${String(task.id)}')" class="flex -space-x-1.5 cursor-pointer hover:opacity-80 transition-opacity min-h-[24px] items-center">
             ${(task.asignados || []).length > 0
               ? task.asignados.map(handle => {
                   const name = MEMBER_MAPPING[handle] || handle;
@@ -572,8 +551,7 @@ function buildTaskCard(task) {
                     ${isLegacy ? '<span class="absolute top-0.5 left-0.5 bg-amber-500 text-slate-950 text-[6px] font-black px-0.5 rounded shadow-sm">⚠️ LEGACY</span>' : ''}
                     <button
                         type="button"
-                        data-lightbox-task="${String(task.id)}"
-                        data-lightbox-idx="${idx}"
+                        onclick="openImagePreview('${String(task.id)}', ${idx}, event)"
                         class="absolute inset-0 w-full h-full opacity-0"
                         style="touch-action: manipulation; -webkit-tap-highlight-color: transparent;"
                     ></button>
@@ -810,7 +788,10 @@ function renderHallOfFame() {
           const distinctiveBadge = getDistinctiveBadge(memberStats);
 
           card.className = 'bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col items-center text-center group hover:border-indigo-500/50 transition-all cursor-pointer';
-          card.onclick = () => openDeepDiveModal(winner.name);
+          card.onclick = (event) => {
+              if (event) event.stopPropagation();
+              openDeepDiveModal(winner.name);
+          };
 
           card.innerHTML = `
               <div class="text-2xl mb-2">${cat.icon}</div>
@@ -948,7 +929,10 @@ function renderCriticalPathAlerts() {
     if (isCollapsed) {
         const bar = document.createElement('div');
         bar.className = 'bg-slate-900 border border-slate-800 rounded-xl p-2 flex items-center justify-between cursor-pointer hover:bg-slate-800 transition-all';
-        bar.onclick = toggleAlertsPanel;
+        bar.onclick = (event) => {
+            if (event) event.stopPropagation();
+            toggleAlertsPanel();
+        };
         bar.innerHTML = `
             <div class="flex items-center gap-3">
                 <span class="bg-red-500 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full pulse-emerald">${alerts.length}</span>
@@ -1037,7 +1021,8 @@ function renderPipelineSwimlanes() {
 
     const card = document.createElement('div');
     card.className = 'min-w-[240px] bg-slate-950 border border-slate-800 rounded-xl p-4 flex flex-col gap-3 group hover:border-slate-600 transition-all cursor-pointer';
-    card.onclick = () => {
+    card.onclick = (event) => {
+        if (event) event.stopPropagation();
         activeFilter = null;
         activeStageFilter = stage;
         renderDashboard();
@@ -1204,7 +1189,7 @@ function renderDependencyGraph() {
     const t = uniqueNodes.find(n => sameTaskId(n.id, id));
     const color = t.estado === 'OK' ? '#10b981' : '#6366f1';
     svgHtml += `
-      <g class="cursor-pointer" onclick="scrollToTask('${String(id)}')">
+      <g class="cursor-pointer" onclick="event.stopPropagation(); scrollToTask('${String(id)}')">
         <rect x="${pos.x}" y="${pos.y}" width="150" height="40" rx="8" fill="#1e293b" stroke="${color}" stroke-width="1"/>
         <text x="${pos.x + 10}" y="${pos.y + 25}" fill="#f1f5f9" font-size="10" font-family="monospace">#${id} ${t.descripcion.substring(0, 15)}...</text>
       </g>
@@ -1304,16 +1289,16 @@ function renderTeamProfiles() {
       <div class="p-6">
         <div class="flex justify-between items-start mb-4">
           <div class="relative">
-            <img src="https://github.com/${profile.handle || 'ghost'}.png" class="w-16 h-16 rounded-2xl border-2 border-slate-800 shadow-xl bg-slate-800 cursor-pointer hover:scale-105 transition-transform" onclick="openDeepDiveModal('${name}')">
+            <img src="https://github.com/${profile.handle || 'ghost'}.png" class="w-16 h-16 rounded-2xl border-2 border-slate-800 shadow-xl bg-slate-800 cursor-pointer hover:scale-105 transition-transform" onclick="event.stopPropagation(); openDeepDiveModal('${name}')">
             <div class="absolute -bottom-1 -right-1 bg-slate-900 rounded-full p-1 border border-slate-800">
                 <div class="w-3 h-3 rounded-full bg-emerald-500 pulse-emerald"></div>
             </div>
           </div>
           <div class="flex gap-2">
-              <button onclick="openDeepDiveModal('${name}')" class="p-2 bg-slate-950 rounded-lg text-indigo-400 hover:text-white border border-slate-800 transition-all text-xs font-bold flex items-center gap-2" title="Deep Dive">
+              <button onclick="event.stopPropagation(); openDeepDiveModal('${name}')" class="p-2 bg-slate-950 rounded-lg text-indigo-400 hover:text-white border border-slate-800 transition-all text-xs font-bold flex items-center gap-2" title="Deep Dive">
                 <i class="fa-solid fa-chart-line"></i>
               </button>
-              ${isSelf ? `<button onclick="toggleProfileEdit('${name}')" class="p-2 text-slate-500 hover:text-white transition-colors"><i class="fa-solid fa-pencil"></i></button>` : ''}
+              ${isSelf ? `<button onclick="event.stopPropagation(); toggleProfileEdit('${name}')" class="p-2 text-slate-500 hover:text-white transition-colors"><i class="fa-solid fa-pencil"></i></button>` : ''}
           </div>
         </div>
         <h3 class="text-xl font-bold mb-1 text-white">${profile.display_name}</h3>
@@ -1330,10 +1315,10 @@ function renderTeamProfiles() {
         ` : ''}
 
         <div class="flex gap-3 text-slate-500">
-          ${profile.links.github ? `<a href="${profile.links.github}" target="_blank" class="hover:text-white"><i class="fa-brands fa-github"></i></a>` : ''}
-          ${profile.links.twitter ? `<a href="${profile.links.twitter}" target="_blank" class="hover:text-white"><i class="fa-brands fa-twitter"></i></a>` : ''}
-          ${profile.links.itch ? `<a href="${profile.links.itch}" target="_blank" class="hover:text-white"><i class="fa-brands fa-itch-io"></i></a>` : ''}
-          <button onclick="openDeepDiveModal('${name}')" class="ml-auto text-[10px] font-black text-indigo-400 hover:text-indigo-300 uppercase tracking-widest">VER STATS →</button>
+          ${profile.links.github ? `<a href="${profile.links.github}" target="_blank" onclick="event.stopPropagation()" class="hover:text-white"><i class="fa-brands fa-github"></i></a>` : ''}
+          ${profile.links.twitter ? `<a href="${profile.links.twitter}" target="_blank" onclick="event.stopPropagation()" class="hover:text-white"><i class="fa-brands fa-twitter"></i></a>` : ''}
+          ${profile.links.itch ? `<a href="${profile.links.itch}" target="_blank" onclick="event.stopPropagation()" class="hover:text-white"><i class="fa-brands fa-itch-io"></i></a>` : ''}
+          <button onclick="event.stopPropagation(); openDeepDiveModal('${name}')" class="ml-auto text-[10px] font-black text-indigo-400 hover:text-indigo-300 uppercase tracking-widest">VER STATS →</button>
         </div>
       </div>
 
@@ -2008,10 +1993,10 @@ function renderImagePreviews() {
         div.innerHTML = `
             <img src="${img.url}" class="w-full h-full object-cover" alt="">
             <div class="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                <button type="button" onpointerdown="event.preventDefault(); event.stopPropagation(); openLightbox('current', ${idx})" onclick="event.preventDefault(); event.stopPropagation();" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openLightbox('current', ${idx}); }" class="w-8 h-8 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center hover:scale-110 transition-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-white select-none touch-manipulation">
+                <button type="button" onclick="openImagePreview('current', ${idx}, event)" class="w-8 h-8 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center hover:scale-110 transition-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-white select-none touch-manipulation">
                     <i class="fa-solid fa-eye"></i>
                 </button>
-                <button type="button" onclick="removeTaskImage(${idx})" class="w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center hover:scale-110 transition-transform">
+                <button type="button" onclick="event.stopPropagation(); removeTaskImage(${idx})" class="w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center hover:scale-110 transition-transform">
                     <i class="fa-solid fa-trash"></i>
                 </button>
             </div>
@@ -2027,6 +2012,17 @@ function renderImagePreviews() {
 function removeTaskImage(index) {
     currentTaskImages.splice(index, 1);
     renderImagePreviews();
+}
+
+/**
+ * Entry point for image preview with event handling
+ */
+function openImagePreview(taskId, idx, event) {
+    if (event) {
+        if (typeof event.stopPropagation === 'function') event.stopPropagation();
+        if (typeof event.preventDefault === 'function') event.preventDefault();
+    }
+    openLightbox(taskId, idx);
 }
 
 function openLightbox(srcOrTaskId, imageIndex) {
@@ -2461,10 +2457,10 @@ function renderJulesSessions() {
                 <div class="flex justify-between items-start">
                     <span class="text-[9px] font-mono text-slate-600">#${id}</span>
                     <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button onclick="handleDashboardJulesArchive('${id}')" class="text-slate-500 hover:text-emerald-400" title="Archivar">
+                        <button onclick="event.stopPropagation(); handleDashboardJulesArchive('${id}')" class="text-slate-500 hover:text-emerald-400" title="Archivar">
                             <i class="fa-solid fa-box-archive text-xs"></i>
                         </button>
-                        <button onclick="handleDashboardJulesCemetery('${id}')" class="text-slate-500 hover:text-red-400" title="Al Cementerio">
+                        <button onclick="event.stopPropagation(); handleDashboardJulesCemetery('${id}')" class="text-slate-500 hover:text-red-400" title="Al Cementerio">
                             <i class="fa-solid fa-tombstone text-xs"></i>
                         </button>
                     </div>
