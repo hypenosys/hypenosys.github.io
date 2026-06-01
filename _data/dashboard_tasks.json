@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T06:55:06.512Z",
+  "last_updated": "2026-06-01T06:55:22.587Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -490,7 +490,31 @@
       "limite": null,
       "comentario": "",
       "id": 18,
-      "images": []
+      "images": [],
+      "title": "sincronizar repo docs/ (público) con la documentación en la",
+      "task_type": "feature",
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "infraestructura"
+      ],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T06:55:22.121Z",
+          "field": "tags",
+          "old_value": "[]",
+          "new_value": "[\"infraestructura\"]"
+        }
+      ]
     },
     {
       "rama": "PRO",
