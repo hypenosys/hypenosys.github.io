@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_computed": "2026-06-01T06:56:34.468Z",
+  "last_computed": "2026-06-01T06:57:40.314Z",
   "global": {
     "total_tasks": 13,
     "total_ok": 3,
@@ -16,9 +16,9 @@
         "rate": 0
       },
       "Major": {
-        "total": 6,
+        "total": 5,
         "solved": 3,
-        "rate": 0.5
+        "rate": 0.6
       },
       "Medium": {
         "total": 3,
@@ -26,7 +26,7 @@
         "rate": 0
       },
       "Minor": {
-        "total": 1,
+        "total": 2,
         "solved": 0,
         "rate": 0
       },
