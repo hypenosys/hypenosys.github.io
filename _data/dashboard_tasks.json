@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T19:08:20.978Z",
+  "last_updated": "2026-06-01T19:08:33.448Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1202,7 +1202,9 @@
       "external_links": [],
       "subtasks": [],
       "acceptance_criteria": "",
-      "blocks": [],
+      "blocks": [
+        "21"
+      ],
       "blocked_by": [],
       "comments": [],
       "images": [],
@@ -1233,6 +1235,13 @@
           "field": "estado",
           "old_value": "Pending",
           "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T19:08:32.638Z",
+          "field": "blocks",
+          "old_value": "[]",
+          "new_value": "[\"21\"]"
         }
       ],
       "id": 24
