@@ -117,6 +117,16 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-danger">Fixed</h5>
             <ul class="tree-view mb-3">
+              <li><strong>Lightbox — Rewrite de Interacción Táctil (Critical Fix):</strong> Corregido definitivamente el problema de "eventos fantasma" en dispositivos móviles donde los thumbnails requerían dos toques para abrirse o encolaban el evento para la siguiente interacción.
+                <ul>
+                  <li>Eliminado el uso de etiquetas <code>&lt;button&gt;</code> y listeners inline en el Kanban para evitar conflictos de foco y competencia con el sistema de drag-and-drop.</li>
+                  <li>Implementada inyección vía DOM de thumbnails usando <code>&lt;div role="button"&gt;</code> con <code>tabindex="-1"</code> para eliminar el anillo de foco y el retardo del navegador.</li>
+                  <li>Uso de <code>pointerdown</code> con captura agresiva (<code>capture: true</code>), <code>preventDefault()</code> y <code>stopImmediatePropagation()</code> para garantizar apertura inmediata.</li>
+                  <li>Implementado bypass temporal de draggability del card padre y fallback de <code>touchstart</code> para máxima compatibilidad en tablets.</li>
+                  <li>Limpieza de foco automática mediante <code>document.activeElement?.blur()</code> al cerrar el Lightbox.</li>
+                  <li>Eliminación global de anillos de foco y highlight táctil en elementos con <code>role="button"</code>.</li>
+                </ul>
+              </li>
               <li><strong>Bug Follow-up — Retardo en apertura de Lightbox:</strong> Corregido definitivamente el problema donde las fotos de las tareas requerían dos interacciones para abrirse en dispositivos táctiles.
                 <ul>
                   <li>Implementado el uso de <code>onpointerdown</code> con <code>event.preventDefault()</code> para interceptar la interacción antes de la separación de eventos de foco/click del navegador.</li>
