@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T10:20:42.532Z",
-  "last_updated_by": "Sistema",
+  "last_updated": "2026-06-01T10:47:45.200Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -967,7 +967,7 @@
       "tema_principal": "Programación / Engine",
       "prioridad": "Cosmetic",
       "milestone": "M1",
-      "estado": "Pending",
+      "estado": "Working",
       "completitud": 0,
       "resuelto_por": "Axel",
       "detectado_por": "Axel",
@@ -1026,6 +1026,13 @@
           "field": "tags",
           "old_value": "[\"UX/UI\"]",
           "new_value": "[\"UX/UI\",\"bug\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T10:47:44.530Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
         }
       ],
       "id": 21
