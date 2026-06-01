@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T09:30:02.537Z",
+  "last_updated": "2026-06-01T09:32:36.207Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -928,13 +928,13 @@
       "milestone": "M1",
       "estado": "Pending",
       "completitud": 0,
-      "resuelto_por": null,
+      "resuelto_por": "Axel",
       "detectado_por": "Axel",
       "asignados": [
         "axlfc",
         "topperh4rley"
       ],
-      "email_responsable": null,
+      "email_responsable": "axel@hypenosys.com",
       "emails_asignados": [],
       "start_date": "2026-06-01",
       "due_date": "2026-06-05",
