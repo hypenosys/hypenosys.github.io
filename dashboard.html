@@ -34,6 +34,8 @@
         .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        [role="button"] { outline: none !important; -webkit-tap-highlight-color: transparent !important; }
     </style>
 </head>
 <body class="h-full text-slate-100 flex flex-col">
@@ -691,7 +693,7 @@
     </div>
 
     <!-- Lightbox Modal -->
-    <div id="lightbox-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/95 backdrop-blur-md p-4" onclick="closeLightbox()">
+    <div id="lightbox-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/95 backdrop-blur-md p-4" onclick="if(!this._justOpened) closeLightbox()">
         <!-- Close Button -->
         <button onclick="closeLightbox()" class="absolute top-6 right-6 text-white/50 hover:text-white text-4xl transition-all z-[110]">
             <i class="fa-solid fa-xmark"></i>
