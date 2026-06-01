@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T07:21:10.596Z",
+  "last_updated": "2026-06-01T07:23:45.742Z",
   "last_updated_by": "Axel",
   "tasks": [
     {
@@ -771,6 +771,53 @@
         }
       ],
       "id": 21
+    },
+    {
+      "title": "Adoptar prácticas mobile first",
+      "descripcion": "Hay algunos botones que estamos obligados a hacer joven y que deberían mostrarse directamente en toda plataforma, por ejemplo: los jóvenes de las imágenes para verlas o borrarlas, O los botones de edición de las propias tasks, botoncitos de edicion, se tienen que poder ver directamente el icono sin hacer hover",
+      "rama": "PRO",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc",
+        "topperh4rley"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-01",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T07:23:45.046Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 22
     }
   ]
 }
