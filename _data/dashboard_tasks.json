@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T09:20:03.274Z",
+  "last_updated": "2026-06-01T09:20:43.560Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -453,7 +453,29 @@
       "limite": null,
       "comentario": "",
       "id": 15,
-      "images": []
+      "images": [],
+      "title": "copiar en la plataforma lo que jules diga!",
+      "task_type": "feature",
+      "start_date": "2026-06-01",
+      "due_date": "2026-06-05",
+      "estimated_hours": 1,
+      "story_points": 1,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:20:42.958Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-06-05"
+        }
+      ]
     },
     {
       "rama": "ART",
