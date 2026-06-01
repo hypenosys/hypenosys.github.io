@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-31T17:40:00.906Z",
-  "last_updated_by": "TopperH4rley",
+  "last_updated": "2026-06-01T05:59:18.477Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -324,6 +324,7 @@
       "resuelto_por": "Axel",
       "detectado_por": "Alex",
       "asignados": [
+        "topperh4rley",
         "javi26031994-a11y",
         "dkdidac-design"
       ],
@@ -350,6 +351,13 @@
           "filename": "image.png",
           "uploaded_at": "2026-05-31T14:57:46.319Z",
           "tumblr_post_id": null
+        },
+        {
+          "url": null,
+          "type": "url",
+          "tumblr_post_id": "818197083809021952",
+          "filename": "7020.png",
+          "uploaded_at": "2026-06-01T05:59:08.637Z"
         }
       ]
     },
