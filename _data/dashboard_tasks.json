@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T07:10:42.973Z",
+  "last_updated": "2026-06-01T07:10:56.483Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -133,10 +133,10 @@
       "comentario": "Capacitación del equipo en la navegación del motor, gestión de assets y flujo de trabajo con Blueprints.",
       "id": 5,
       "asignados": [
-        "topperh4rley",
-        "javi26031994-a11y",
         "dkdidac-design",
-        "mitxel2022"
+        "javi26031994-a11y",
+        "mitxel2022",
+        "topperh4rley"
       ],
       "email_responsable": "alex@hypenosys.com",
       "emails_asignados": [
@@ -144,7 +144,29 @@
         "didac@hypenosys.com",
         "mitxel@hypenosys.com"
       ],
-      "images": []
+      "images": [],
+      "title": "Tutorial Unreal Engine conceptos basicos",
+      "task_type": "chore",
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T07:10:55.955Z",
+          "field": "task_type",
+          "old_value": "feature",
+          "new_value": "chore"
+        }
+      ]
     },
     {
       "rama": "PRO",
