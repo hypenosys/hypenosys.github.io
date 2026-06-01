@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T07:09:54.336Z",
+  "last_updated": "2026-06-01T07:10:18.816Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -497,7 +497,7 @@
       "tema_principal": "Programación / Engine",
       "prioridad": "Minor",
       "milestone": "M1",
-      "estado": "Pending",
+      "estado": "Working",
       "completitud": 0,
       "resuelto_por": "Axel",
       "detectado_por": "Axel",
@@ -513,7 +513,7 @@
       "id": 18,
       "images": [],
       "title": "docs/ (público) autosync en hypenosys",
-      "task_type": "feature",
+      "task_type": "chore",
       "start_date": null,
       "due_date": null,
       "estimated_hours": null,
@@ -554,6 +554,20 @@
           "field": "title",
           "old_value": "sincronizar repo docs/ (público) con la documentación en la",
           "new_value": "docs/ (público) autosync en hypenosys"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T07:10:18.155Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T07:10:18.155Z",
+          "field": "task_type",
+          "old_value": "feature",
+          "new_value": "chore"
         }
       ]
     },
