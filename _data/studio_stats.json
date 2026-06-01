@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-01T09:24:17.772Z",
+  "computed_at": "2026-06-01T09:28:18.392Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 15,
@@ -153,7 +153,9 @@
       "rama_breakdown": {
         "PRO": 5
       },
-      "tag_frequency": {},
+      "tag_frequency": {
+        "jules": 1
+      },
       "avg_completion_speed": {
         "days": 0.5,
         "estimated_start": true
@@ -162,7 +164,7 @@
       "comment_activity": 0,
       "volatility": {
         "reopens": 0,
-        "reprioritizations": 4
+        "reprioritizations": 5
       },
       "workload": {
         "active_tasks": 8,
@@ -192,7 +194,9 @@
       "rama_breakdown": {
         "PRO": 6
       },
-      "tag_frequency": {},
+      "tag_frequency": {
+        "jules": 1
+      },
       "avg_completion_speed": {
         "days": 0.5,
         "estimated_start": true
@@ -201,7 +205,7 @@
       "comment_activity": 0,
       "volatility": {
         "reopens": 0,
-        "reprioritizations": 4
+        "reprioritizations": 5
       },
       "workload": {
         "active_tasks": 9,
