@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_computed": "2026-06-01T07:26:08.045Z",
+  "last_computed": "2026-06-01T07:26:27.638Z",
   "global": {
     "total_tasks": 15,
     "total_ok": 3,
@@ -11,14 +11,14 @@
     "verified_ratio": 0.1667,
     "by_priority": {
       "Critical": {
-        "total": 2,
+        "total": 3,
         "solved": 0,
         "rate": 0
       },
       "Major": {
-        "total": 5,
+        "total": 4,
         "solved": 3,
-        "rate": 0.6
+        "rate": 0.75
       },
       "Medium": {
         "total": 3,
