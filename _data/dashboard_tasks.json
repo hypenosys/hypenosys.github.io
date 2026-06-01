@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T11:18:45.439Z",
+  "last_updated": "2026-06-01T14:00:26.526Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -961,7 +961,7 @@
     },
     {
       "title": "Arreglar previsualización de fotos fuera del edit",
-      "descripcion": "Al hacer clic en una de las fotos desde el dashboard ocurre un bug en el que nos da la falsa apariencia de que se va a abrir la imagen y al darle clic a una nueva tarea, entonces se abre la previsualización ese comportamiento no es el esperado.",
+      "descripcion": "Al hacer clic en una de las fotos desde el dashboard ocurre un bug en el que nos da la falsa apariencia de que se va a abrir la imagen y al darle clic a una nueva tarea, entonces se abre la previsualización ese comportamiento no es el esperado. Esta tarea es oficialmente una tocada de pelotas máxima certificada por Axl.",
       "rama": "PRO",
       "task_type": "bug",
       "tema_principal": "Programación / Engine",
@@ -1048,6 +1048,13 @@
           "field": "tags",
           "old_value": "[\"UX/UI\",\"bug\"]",
           "new_value": "[\"UX/UI\",\"bug\",\"hard\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T14:00:25.953Z",
+          "field": "descripcion",
+          "old_value": "Al hacer clic en una de las fotos desde el dashboard ocurre un bug en el que nos da la falsa apariencia de que se va a abrir la imagen y al darle clic a una nueva tarea, entonces se abre la previsualización ese comportamiento no es el esperado.",
+          "new_value": "Al hacer clic en una de las fotos desde el dashboard ocurre un bug en el que nos da la falsa apariencia de que se va a abrir la imagen y al darle clic a una nueva tarea, entonces se abre la previsualización ese comportamiento no es el esperado. Esta tarea es oficialmente una tocada de pelotas máxima certificada por Axl."
         }
       ],
       "id": 21
