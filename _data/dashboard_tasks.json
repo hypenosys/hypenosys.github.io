@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T10:47:45.200Z",
-  "last_updated_by": "Axlfc",
+  "last_updated": "2026-06-01T10:57:30.020Z",
+  "last_updated_by": "Axel",
   "tasks": [
     {
       "id": 1,
@@ -1097,6 +1097,53 @@
         }
       ],
       "id": 22
+    },
+    {
+      "title": "Añadir campo repositorio a las tasks",
+      "descripcion": "Depende de la tasca de pretify de los alias de los repositorios.",
+      "rama": "PRO",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc",
+        "topperh4rley"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-06-01",
+      "due_date": "2026-06-05",
+      "estimated_hours": 1,
+      "story_points": 1,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-01",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T10:57:29.540Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 23
     }
   ]
 }
