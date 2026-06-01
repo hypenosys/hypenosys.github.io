@@ -549,38 +549,13 @@ function buildTaskCard(task) {
                 thumbEl.innerHTML = `
                     <img src="${img.url}" class="w-full h-full object-cover pointer-events-none" alt="Task image" loading="lazy" draggable="false">
                     ${isLegacy ? '<span class="absolute top-0.5 left-0.5 bg-amber-500 text-slate-950 text-[6px] font-black px-0.5 rounded shadow-sm">⚠️ LEGACY</span>' : ''}
+                    <button
+                        type="button"
+                        class="absolute inset-0 w-full h-full opacity-0"
+                        style="touch-action: manipulation; -webkit-tap-highlight-color: transparent;"
+                        onpointerdown="event.preventDefault(); event.stopImmediatePropagation(); var c = this.closest('[draggable]'); if(c){ c.draggable = false; setTimeout(function(){ c.draggable = true; }, 400); } openLightbox('${String(task.id)}', ${idx});"
+                    ></button>
                 `;
-
-                // DESPUÉS (fix móvil):
-                let touchMoved = false;
-                
-                thumbEl.addEventListener('touchstart', function(e) {
-                    touchMoved = false;
-                    e.stopPropagation();
-                    // Desactivar drag en el padre para que no robe el gesto
-                    card.draggable = false;
-                }, { passive: true, capture: true });
-                
-                thumbEl.addEventListener('touchmove', function(e) {
-                    touchMoved = true;
-                }, { passive: true });
-                
-                thumbEl.addEventListener('touchend', function(e) {
-                    card.draggable = true;
-                    if (!touchMoved) {
-                        e.preventDefault();
-                        e.stopImmediatePropagation();
-                        openLightbox(String(task.id), idx);
-                    }
-                }, { capture: true });
-                
-                // Mantener el pointerdown solo para desktop (mouse)
-                thumbEl.addEventListener('pointerdown', function(e) {
-                    if (e.pointerType === 'touch') return; // touch ya manejado arriba
-                    e.preventDefault();
-                    e.stopImmediatePropagation();
-                    openLightbox(String(task.id), idx);
-                }, { capture: true });
 
                 grid.appendChild(thumbEl);
             });

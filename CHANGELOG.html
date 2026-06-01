@@ -117,6 +117,7 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-danger">Fixed</h5>
             <ul class="tree-view mb-3">
+              <li><strong>Lightbox — Kanban Thumbnail Mobile Tap:</strong> Corregido el problema donde las miniaturas de imagen en las tarjetas del Kanban no abrían el visor en dispositivos móviles al entrar en conflicto con el gesto de arrastre (<code>draggable</code>). Se implementó un botón invisible con <code>onpointerdown</code> que suspende temporalmente la capacidad de arrastre del padre para asegurar la apertura inmediata del Lightbox.</li>
               <li><strong>Lightbox — Rewrite de Interacción Táctil (Critical Fix):</strong> Corregido definitivamente el problema de "eventos fantasma" en dispositivos móviles donde los thumbnails requerían dos toques para abrirse o encolaban el evento para la siguiente interacción.
                 <ul>
                   <li>Eliminado el uso de etiquetas <code>&lt;button&gt;</code> y listeners inline en el Kanban para evitar conflictos de foco y competencia con el sistema de drag-and-drop.</li>
