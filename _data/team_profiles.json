@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-22T22:04:07.404Z",
+  "last_updated": "2026-06-01T06:34:10.485Z",
   "members": {
     "Axel": {
       "handle": "Axlfc",
@@ -60,13 +60,14 @@
       "display_name": "Dídac",
       "role": "Main Art, Secondary Design",
       "avatar_url": "",
-      "bio": "",
+      "bio": "Si no tiene colores que te derritan las retinas, no es arte. Dídac vive en un mundo de 16 millones de colores y se conoce el nombre de todos. Menos del gris, el gris no existe.",
       "links": {
         "github": "https://github.com/dkdidac-design",
         "twitter": "",
         "itch": ""
       },
-      "color_accent": "#38bdf8"
+      "color_accent": "#38bdf8",
+      "portfolio": ""
     }
   }
 }
