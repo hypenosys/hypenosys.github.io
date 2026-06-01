@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T06:16:15.959Z",
+  "last_updated": "2026-06-01T06:47:52.632Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -324,9 +324,9 @@
       "resuelto_por": "Axel",
       "detectado_por": "Alex",
       "asignados": [
-        "topperh4rley",
+        "dkdidac-design",
         "javi26031994-a11y",
-        "dkdidac-design"
+        "topperh4rley"
       ],
       "email_responsable": null,
       "emails_asignados": [],
@@ -351,6 +351,28 @@
           "tumblr_post_id": "818198155896176640",
           "filename": "7020.png",
           "uploaded_at": "2026-06-01T06:16:11.128Z"
+        }
+      ],
+      "title": "Implementación de etiquetas de categorización en el listado de repositorios del Panel de Jules",
+      "task_type": "feature",
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T06:47:52.169Z",
+          "field": "title",
+          "old_value": "Poder ponder tags en los repositorios en el Panel de Jules",
+          "new_value": "Implementación de etiquetas de categorización en el listado de repositorios del Panel de Jules"
         }
       ]
     },
