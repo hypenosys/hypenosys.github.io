@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T09:32:36.207Z",
+  "last_updated": "2026-06-01T09:47:48.176Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -715,8 +715,8 @@
       "tema_principal": "Programación / Engine",
       "prioridad": "Minor",
       "milestone": "M1",
-      "estado": "In Review",
-      "completitud": 0.5,
+      "estado": "OK",
+      "completitud": 1,
       "resuelto_por": "Axel",
       "detectado_por": "Axel",
       "asignados": [
@@ -818,6 +818,20 @@
           "field": "estado",
           "old_value": "Working",
           "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:47:47.385Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "OK"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:47:47.385Z",
+          "field": "completitud",
+          "old_value": 0.5,
+          "new_value": 1
         }
       ]
     },
