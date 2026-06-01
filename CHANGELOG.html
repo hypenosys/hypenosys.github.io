@@ -117,6 +117,7 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-danger">Fixed</h5>
             <ul class="tree-view mb-3">
+              <li><strong>Lightbox — Kanban Thumbnail Mobile & Tablet Fix:</strong> Corregido el problema donde las miniaturas de imagen en las tarjetas del Kanban no abrían el visor en dispositivos móviles y tablets al entrar en conflicto con el sistema de arrastre (<code>draggable</code>). Se implementó un sistema de delegación de eventos en el card padre que intercepta tanto <code>touchstart</code> como <code>click</code> sobre botones de miniatura usando <code>capture: true</code>, garantizando una respuesta inmediata y compatibilidad total entre dispositivos táctiles y de escritorio.</li>
               <li><strong>Lightbox — Rewrite de Interacción Táctil (Critical Fix):</strong> Corregido definitivamente el problema de "eventos fantasma" en dispositivos móviles donde los thumbnails requerían dos toques para abrirse o encolaban el evento para la siguiente interacción.
                 <ul>
                   <li>Eliminado el uso de etiquetas <code>&lt;button&gt;</code> y listeners inline en el Kanban para evitar conflictos de foco y competencia con el sistema de drag-and-drop.</li>

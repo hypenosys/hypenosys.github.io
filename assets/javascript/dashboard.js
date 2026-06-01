@@ -405,6 +405,27 @@ function buildTaskCard(task) {
   });
   card.addEventListener('dragend', () => card.classList.remove('opacity-50'));
 
+  card.addEventListener('touchstart', function(e) {
+      const btn = e.target.closest('button[data-lightbox-task]');
+      if (!btn) return;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      const taskId = btn.getAttribute('data-lightbox-task');
+      const idx = parseInt(btn.getAttribute('data-lightbox-idx'), 10);
+      openLightbox(taskId, idx);
+  }, { capture: true, passive: false });
+
+  // Desktop/Mouse Support
+  card.addEventListener('click', function(e) {
+      const btn = e.target.closest('button[data-lightbox-task]');
+      if (!btn) return;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      const taskId = btn.getAttribute('data-lightbox-task');
+      const idx = parseInt(btn.getAttribute('data-lightbox-idx'), 10);
+      openLightbox(taskId, idx);
+  }, { capture: true });
+
   const priorityColors = {
     Critical: 'bg-red-500 text-slate-950 font-black',
     Major:    'bg-orange-500 text-slate-950 font-black',
@@ -549,38 +570,14 @@ function buildTaskCard(task) {
                 thumbEl.innerHTML = `
                     <img src="${img.url}" class="w-full h-full object-cover pointer-events-none" alt="Task image" loading="lazy" draggable="false">
                     ${isLegacy ? '<span class="absolute top-0.5 left-0.5 bg-amber-500 text-slate-950 text-[6px] font-black px-0.5 rounded shadow-sm">⚠️ LEGACY</span>' : ''}
+                    <button
+                        type="button"
+                        data-lightbox-task="${String(task.id)}"
+                        data-lightbox-idx="${idx}"
+                        class="absolute inset-0 w-full h-full opacity-0"
+                        style="touch-action: manipulation; -webkit-tap-highlight-color: transparent;"
+                    ></button>
                 `;
-
-                // DESPUÉS (fix móvil):
-                let touchMoved = false;
-                
-                thumbEl.addEventListener('touchstart', function(e) {
-                    touchMoved = false;
-                    e.stopPropagation();
-                    // Desactivar drag en el padre para que no robe el gesto
-                    card.draggable = false;
-                }, { passive: true, capture: true });
-                
-                thumbEl.addEventListener('touchmove', function(e) {
-                    touchMoved = true;
-                }, { passive: true });
-                
-                thumbEl.addEventListener('touchend', function(e) {
-                    card.draggable = true;
-                    if (!touchMoved) {
-                        e.preventDefault();
-                        e.stopImmediatePropagation();
-                        openLightbox(String(task.id), idx);
-                    }
-                }, { capture: true });
-                
-                // Mantener el pointerdown solo para desktop (mouse)
-                thumbEl.addEventListener('pointerdown', function(e) {
-                    if (e.pointerType === 'touch') return; // touch ya manejado arriba
-                    e.preventDefault();
-                    e.stopImmediatePropagation();
-                    openLightbox(String(task.id), idx);
-                }, { capture: true });
 
                 grid.appendChild(thumbEl);
             });
