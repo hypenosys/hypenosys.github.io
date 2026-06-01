@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T07:01:34.306Z",
+  "last_updated": "2026-06-01T07:09:54.336Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -512,7 +512,7 @@
       "comentario": "",
       "id": 18,
       "images": [],
-      "title": "sincronizar repo docs/ (público) con la documentación en la",
+      "title": "docs/ (público) autosync en hypenosys",
       "task_type": "feature",
       "start_date": null,
       "due_date": null,
@@ -522,7 +522,13 @@
         "infraestructura"
       ],
       "external_links": [],
-      "subtasks": [],
+      "subtasks": [
+        {
+          "id": 1780297783723,
+          "text": "asegurarse que obsidian funciona ok y sincroniza bien con /docs",
+          "done": false
+        }
+      ],
       "acceptance_criteria": "",
       "blocks": [],
       "blocked_by": [],
@@ -541,6 +547,13 @@
           "field": "prioridad",
           "old_value": "Major",
           "new_value": "Minor"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T07:09:53.783Z",
+          "field": "title",
+          "old_value": "sincronizar repo docs/ (público) con la documentación en la",
+          "new_value": "docs/ (público) autosync en hypenosys"
         }
       ]
     },
