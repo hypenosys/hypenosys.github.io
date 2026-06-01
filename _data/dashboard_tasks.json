@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T08:52:17.212Z",
+  "last_updated": "2026-06-01T09:13:33.608Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -563,14 +563,16 @@
       "prioridad": "Minor",
       "milestone": "M1",
       "estado": "Working",
-      "completitud": 0,
+      "completitud": 0.5,
       "resuelto_por": "Axel",
       "detectado_por": "Axel",
       "asignados": [
         "axlfc"
       ],
-      "email_responsable": null,
-      "emails_asignados": [],
+      "email_responsable": "axel@hypenosys.org",
+      "emails_asignados": [
+        "axel@hypenosys.org"
+      ],
       "rama2": null,
       "ver": true,
       "fecha": "2026-05-31",
@@ -581,10 +583,10 @@
       "images": [],
       "title": "docs/ (público) autosync en hypenosys",
       "task_type": "chore",
-      "start_date": null,
-      "due_date": null,
-      "estimated_hours": null,
-      "story_points": null,
+      "start_date": "2026-06-01",
+      "due_date": "2026-06-02",
+      "estimated_hours": 1,
+      "story_points": 1,
       "tags": [
         "infraestructura"
       ],
@@ -642,6 +644,20 @@
           "field": "asignados",
           "old_value": "[]",
           "new_value": "[\"axlfc\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:13:33.120Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-06-02"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:13:33.120Z",
+          "field": "completitud",
+          "old_value": 0,
+          "new_value": 0.5
         }
       ]
     },
