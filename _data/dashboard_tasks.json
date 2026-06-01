@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T07:10:56.483Z",
+  "last_updated": "2026-06-01T07:11:05.113Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -222,7 +222,29 @@
         "didac@hypenosys.com",
         "mitxel@hypenosys.com"
       ],
-      "images": []
+      "images": [],
+      "title": "Instalar Git, TortoiseSVN(add to path) + Unreal Engine 5.7.4",
+      "task_type": "chore",
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T07:11:04.400Z",
+          "field": "task_type",
+          "old_value": "feature",
+          "new_value": "chore"
+        }
+      ]
     },
     {
       "rama": "PRO",
