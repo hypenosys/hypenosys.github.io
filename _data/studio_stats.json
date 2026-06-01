@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-01T19:21:35.901Z",
+  "computed_at": "2026-06-01T20:30:37.851Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 17,
@@ -166,10 +166,10 @@
       "comment_activity": 0,
       "volatility": {
         "reopens": 0,
-        "reprioritizations": 5
+        "reprioritizations": 6
       },
       "workload": {
-        "active_tasks": 6,
+        "active_tasks": 7,
         "story_points": 9
       }
     },
