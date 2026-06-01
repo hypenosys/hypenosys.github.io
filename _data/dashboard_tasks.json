@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T06:56:33.347Z",
+  "last_updated": "2026-06-01T06:57:38.881Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -474,7 +474,7 @@
       "rama": "PRO",
       "descripcion": "sincronizar repo docs/ (público) con la documentación en la web de hypenosys.github.io",
       "tema_principal": "Programación / Engine",
-      "prioridad": "Major",
+      "prioridad": "Minor",
       "milestone": "M1",
       "estado": "Pending",
       "completitud": 0,
@@ -513,6 +513,13 @@
           "field": "tags",
           "old_value": "[]",
           "new_value": "[\"infraestructura\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T06:57:38.051Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Minor"
         }
       ]
     },
