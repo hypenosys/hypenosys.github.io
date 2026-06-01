@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T09:49:05.874Z",
+  "last_updated": "2026-06-01T09:49:55.721Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -73,7 +73,7 @@
       "start_date": "2026-06-01",
       "due_date": "2026-06-30",
       "estimated_hours": 12,
-      "story_points": 10,
+      "story_points": 5,
       "tags": [
         "brainstorm",
         "design"
