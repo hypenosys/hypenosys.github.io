@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-01T09:21:03.008Z",
+  "computed_at": "2026-06-01T09:22:15.126Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 15,
@@ -35,7 +35,8 @@
       "feature": 4,
       "ART": 1,
       "infraestructura": 1,
-      "UX/UI": 1
+      "UX/UI": 1,
+      "bug": 1
     },
     "milestone_tasks_remaining": 12,
     "hall_of_fame_winners": {
@@ -165,7 +166,7 @@
       },
       "workload": {
         "active_tasks": 8,
-        "story_points": 11
+        "story_points": 12
       }
     },
     "topperh4rley": {
@@ -204,7 +205,7 @@
       },
       "workload": {
         "active_tasks": 9,
-        "story_points": 11
+        "story_points": 12
       }
     },
     "dkdidac-design": {
