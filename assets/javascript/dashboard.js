@@ -22,6 +22,14 @@ function sameTaskId(id1, id2) {
     return String(id1) === String(id2);
 }
 
+/**
+ * Helper to check if a task is minimized, defaulting to true if no preference exists.
+ */
+function isTaskMinimized(taskId) {
+    const value = localStorage.getItem(`task_minimized_${String(taskId)}`);
+    return value === null ? true : value === 'true';
+}
+
 let activeFilter = null;
 let activeStageFilter = null;
 let currentTasks = [];
@@ -350,7 +358,7 @@ function renderKanbanBoard() {
   // Update Global Toggle Icon
   const globalToggle = document.getElementById('global-kanban-toggle');
   if (globalToggle) {
-    const anyExpanded = tasks.some(t => localStorage.getItem(`task_minimized_${t.id}`) !== 'true');
+    const anyExpanded = tasks.some(t => !isTaskMinimized(t.id));
     const icon = globalToggle.querySelector('i');
     if (icon) {
       icon.className = anyExpanded ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down';
@@ -393,13 +401,18 @@ function getTaskColumn(task) {
 }
 
 function buildTaskCard(task) {
-  const isMinimized = localStorage.getItem(`task_minimized_${task.id}`) === 'true';
+  const isMinimized = isTaskMinimized(task.id);
   const hasImages = task.images && task.images.length > 0;
   const isImagesExpanded = localStorage.getItem(`task_images_expanded_${task.id}`) === 'true';
   const card = document.createElement('div');
   card.className = `bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-sm cursor-grab active:cursor-grabbing hover:border-slate-500 transition-all group relative ${isMinimized ? 'py-2' : ''}`;
   card.draggable = true;
   card.addEventListener('dragstart', e => {
+    if (e.target.closest('button, select, input, textarea, a, [data-no-drag="true"]')) {
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
     e.dataTransfer.setData('text/plain', String(task.id));
     card.classList.add('opacity-50');
   });
@@ -544,18 +557,25 @@ function buildTaskCard(task) {
                 thumbEl.style.cssText = 'touch-action: manipulation; -webkit-tap-highlight-color: transparent; outline: none; user-select: none;';
                 thumbEl.setAttribute('role', 'button');
                 thumbEl.setAttribute('tabindex', '-1');
+                thumbEl.draggable = false;
+                thumbEl.dataset.noDrag = 'true';
 
                 const isLegacy = img.type === 'binary_legacy';
                 thumbEl.innerHTML = `
                     <img src="${img.url}" class="w-full h-full object-cover pointer-events-none" alt="Task image" loading="lazy" draggable="false">
                     ${isLegacy ? '<span class="absolute top-0.5 left-0.5 bg-amber-500 text-slate-950 text-[6px] font-black px-0.5 rounded shadow-sm">⚠️ LEGACY</span>' : ''}
-                    <button
-                        type="button"
-                        onclick="openImagePreview('${String(task.id)}', ${idx}, event)"
-                        class="absolute inset-0 w-full h-full opacity-0"
-                        style="touch-action: manipulation; -webkit-tap-highlight-color: transparent;"
-                    ></button>
                 `;
+
+                thumbEl.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    openLightbox(String(task.id), idx);
+                });
+
+                thumbEl.addEventListener('dragstart', (event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                });
 
                 grid.appendChild(thumbEl);
             });
@@ -567,7 +587,7 @@ function buildTaskCard(task) {
 
 function toggleTaskMinimize(taskId) {
   const key = `task_minimized_${String(taskId)}`;
-  const current = localStorage.getItem(key) === 'true';
+  const current = isTaskMinimized(taskId);
   localStorage.setItem(key, !current);
   renderKanbanBoard();
 }
@@ -581,10 +601,10 @@ function toggleCardImages(taskId) {
 
 function toggleAllTasks() {
   const tasks = getFilteredTasks(currentTasks.filter(t => t.estado !== 'Obsolete'));
-  const anyExpanded = tasks.some(t => localStorage.getItem(`task_minimized_${t.id}`) !== 'true');
+  const anyExpanded = tasks.some(t => !isTaskMinimized(t.id));
 
   // If any expanded -> minimize all. If all minimized -> expand all.
-  const newState = anyExpanded; // if anyExpanded is true, we want to minimize (set to true)
+  const newState = anyExpanded;
 
   tasks.forEach(t => {
     localStorage.setItem(`task_minimized_${t.id}`, newState);
@@ -1993,10 +2013,10 @@ function renderImagePreviews() {
         div.innerHTML = `
             <img src="${img.url}" class="w-full h-full object-cover" alt="">
             <div class="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                <button type="button" onclick="openImagePreview('current', ${idx}, event)" class="w-8 h-8 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center hover:scale-110 transition-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-white select-none touch-manipulation">
+                <button type="button" data-action="preview-image" class="w-8 h-8 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center hover:scale-110 transition-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-white select-none touch-manipulation">
                     <i class="fa-solid fa-eye"></i>
                 </button>
-                <button type="button" onclick="event.stopPropagation(); removeTaskImage(${idx})" class="w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center hover:scale-110 transition-transform">
+                <button type="button" data-action="remove-image" class="w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center hover:scale-110 transition-transform">
                     <i class="fa-solid fa-trash"></i>
                 </button>
             </div>
@@ -2004,6 +2024,21 @@ function renderImagePreviews() {
             <div class="name-label absolute bottom-0 left-0 right-0 p-1 bg-slate-950/80 text-[8px] text-slate-300 truncate pointer-events-none">
             </div>
         `;
+
+        const previewBtn = div.querySelector('[data-action="preview-image"]');
+        previewBtn.addEventListener('click', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            openLightbox('current', idx);
+        });
+
+        const removeBtn = div.querySelector('[data-action="remove-image"]');
+        removeBtn.addEventListener('click', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            removeTaskImage(idx);
+        });
+
         div.querySelector('.name-label').textContent = img.filename || 'Imagen';
         container.appendChild(div);
     });

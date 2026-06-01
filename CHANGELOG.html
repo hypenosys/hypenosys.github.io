@@ -117,6 +117,14 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-danger">Fixed</h5>
             <ul class="tree-view mb-3">
+              <li><strong>Kanban — Image Click & Drag Interference (Critical Fix):</strong> Solucionado el problema donde las miniaturas de imagen no abrían el visor de forma consistente debido a interferencias con el arrastre de la tarjeta y el uso de botones invisibles.
+                <ul>
+                  <li>Eliminados los botones invisibles sobre las miniaturas en favor de listeners directos.</li>
+                  <li>Implementado <code>data-no-drag="true"</code> y filtrado de <code>dragstart</code> para evitar el arrastre accidental al interactuar con imágenes, selectores o botones.</li>
+                  <li>Estandarizada la lógica de previsualización de imágenes tanto en el Kanban como en el Modal de Edición.</li>
+                  <li>Cambiado el estado por defecto de las tarjetas a <strong>minimizadas</strong> para una mejor visualización del tablero.</li>
+                </ul>
+              </li>
               <li><strong>Dashboard — Corregida regresión de clicks en tarjetas:</strong> Solucionado el problema de "clicks fantasma" donde pulsar el botón de edición o elementos internos podía disparar accidentalmente el visor de imágenes o interferir con la apertura de modales.
                 <ul>
                   <li>Se ha implementado <code>event.stopPropagation()</code> en todos los elementos interactivos de las tarjetas (botones, selectores, avatares).</li>
