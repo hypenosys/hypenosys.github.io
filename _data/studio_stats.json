@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-01T09:14:20.103Z",
+  "computed_at": "2026-06-01T09:20:05.968Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 15,
@@ -165,7 +165,7 @@
       },
       "workload": {
         "active_tasks": 8,
-        "story_points": 1
+        "story_points": 11
       }
     },
     "topperh4rley": {
@@ -204,7 +204,7 @@
       },
       "workload": {
         "active_tasks": 9,
-        "story_points": 1
+        "story_points": 11
       }
     },
     "dkdidac-design": {
@@ -282,7 +282,7 @@
       },
       "workload": {
         "active_tasks": 5,
-        "story_points": 1
+        "story_points": 11
       }
     },
     "mitxel2022": {
@@ -298,7 +298,7 @@
         "2026-W18": 0,
         "2026-W19": 0,
         "2026-W20": 0,
-        "2026-W21": 5,
+        "2026-W21": 14,
         "2026-W22": 1,
         "2026-W23": 0
       },
@@ -317,7 +317,7 @@
       },
       "workload": {
         "active_tasks": 5,
-        "story_points": 1
+        "story_points": 11
       }
     }
   },
