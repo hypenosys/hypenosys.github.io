@@ -56,7 +56,11 @@ function buildTaskCard(task) {
   card.className = `bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-sm cursor-grab active:cursor-grabbing hover:border-slate-500 transition-all group relative ${isMinimized ? 'py-2' : ''}`;
   card.draggable = true;
   card.addEventListener('dragstart', e => {
-    if (e.target.closest('button, select, input, textarea, a, [data-no-drag="true"]')) {
+    if (e.target.closest('[data-no-drag="true"]')) {
+        e.preventDefault();
+        return;
+    }
+    if (e.target.closest('button, select, input, textarea, a')) {
       e.preventDefault();
       e.stopPropagation();
       return;
@@ -202,7 +206,7 @@ function buildTaskCard(task) {
             task.images.forEach((img, idx) => {
                 const thumbEl = document.createElement('div');
                 thumbEl.className = 'aspect-square rounded border border-slate-800 overflow-hidden cursor-pointer relative';
-                thumbEl.style.cssText = 'touch-action: manipulation; -webkit-tap-highlight-color: transparent; outline: none; user-select: none;';
+                thumbEl.style.cssText = 'touch-action: none; -webkit-tap-highlight-color: transparent; outline: none; user-select: none;';
                 thumbEl.setAttribute('role', 'button');
                 thumbEl.setAttribute('tabindex', '-1');
                 thumbEl.draggable = false;
@@ -214,12 +218,21 @@ function buildTaskCard(task) {
                     ${isLegacy ? '<span class="absolute top-0.5 left-0.5 bg-amber-500 text-slate-950 text-[6px] font-black px-0.5 rounded shadow-sm">⚠️ LEGACY</span>' : ''}
                 `;
 
+                let _lightboxFired = false;
                 thumbEl.addEventListener('pointerdown', (e) => {
                     e.preventDefault();
                     e.stopImmediatePropagation();
+                    _lightboxFired = false;
                     card.draggable = false;
                     setTimeout(() => { card.draggable = true; }, 300);
+                    _lightboxFired = true;
                     openLightbox(String(task.id), idx);
+                });
+
+                thumbEl.addEventListener('pointercancel', (e) => {
+                    if (!_lightboxFired) {
+                        openLightbox(String(task.id), idx);
+                    }
                 });
 
                 thumbEl.addEventListener('click', (e) => {
