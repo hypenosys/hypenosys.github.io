@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T05:59:18.477Z",
+  "last_updated": "2026-06-01T06:07:47.420Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -351,13 +351,6 @@
           "filename": "image.png",
           "uploaded_at": "2026-05-31T14:57:46.319Z",
           "tumblr_post_id": null
-        },
-        {
-          "url": null,
-          "type": "url",
-          "tumblr_post_id": "818197083809021952",
-          "filename": "7020.png",
-          "uploaded_at": "2026-06-01T05:59:08.637Z"
         }
       ]
     },
