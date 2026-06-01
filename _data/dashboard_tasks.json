@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T18:57:24.114Z",
-  "last_updated_by": "Alex",
+  "last_updated": "2026-06-01T18:58:05.174Z",
+  "last_updated_by": "TopperH4rley",
   "tasks": [
     {
       "id": 1,
@@ -1231,7 +1231,7 @@
       "tema_principal": "Programación / Engine",
       "prioridad": "Major",
       "milestone": "M1",
-      "estado": "Pending",
+      "estado": "Obsolete",
       "completitud": 0,
       "resuelto_por": null,
       "detectado_por": "Alex",
@@ -1271,6 +1271,13 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "topperh4rley",
+          "timestamp": "2026-06-01T18:58:04.738Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Obsolete"
         }
       ],
       "id": 25
