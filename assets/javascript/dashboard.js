@@ -270,7 +270,7 @@ function renderDashboard() {
   renderJulesSessions();
   renderStatsSummary();
   renderKanbanBoard();
-  renderQAVelocityChart();
+  renderGroupStats();
   renderBurnoutGauge();
   renderBudgetChart();
   renderHallOfFame();
@@ -558,47 +558,82 @@ function toggleAllTasks() {
 
 // ─── CHART RENDERING ──────────────────────────────────────────
 
-function renderQAVelocityChart() {
-  const ctx = document.getElementById('qa-velocity-chart').getContext('2d');
-  if (!ctx || !currentTasks) return;
+function renderGroupStats() {
+  if (!currentStats || !currentStats.group) return;
+  const group = currentStats.group;
 
-  // Use either activeFilter or all members
-  const labels = activeFilter ? [activeFilter] : MEMBERS;
-  const filteredStats = window.githubApi.computeAllMemberStats(currentTasks, labels);
+  document.getElementById('group-bug-rate').textContent = `${(group.bug_rate * 100).toFixed(1)}%`;
+  document.getElementById('group-blocker-health').textContent = group.blocker_health;
+  document.getElementById('group-milestone-remaining').textContent = group.milestone_tasks_remaining;
 
-  const found = labels.map(name => filteredStats[name].found);
-  const fixedOK = labels.map(name => filteredStats[name].fixed_ok);
-  const support = labels.map(name => filteredStats[name].support_ok);
+  // Burnout from budget as before but updated UI id
+  const tasks = getFilteredTasks(currentTasks);
+  const milId = currentBudget?.burnout?.current_milestone || 'M1';
+  const milData = (currentBudget?.burnout?.milestones || []).find(m => m.id === milId);
+  const burnoutIndex = milData ? window.githubApi.computeBurnoutIndex(tasks, milId, milData.date_start, milData.date_end) : 0;
+  document.getElementById('group-burnout-index').textContent = `${(burnoutIndex * 100).toFixed(1)}%`;
 
-  if (window.__qaVelocityChart__) window.__qaVelocityChart__.destroy();
-  window.__qaVelocityChart__ = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [
-        { label: 'Bugs encontrados',   data: found,   backgroundColor: 'rgba(251,191,36,0.8)' },
-        { label: 'Bugs resueltos (OK)', data: fixedOK, backgroundColor: 'rgba(52,211,153,0.8)' },
-        { label: 'Apoyo con OK',        data: support, backgroundColor: 'rgba(139,92,246,0.8)' }
-      ]
-    },
-    options: {
-      indexAxis: 'y',
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { labels: { color: '#e2e8f0' } },
-        title:  { display: true, text: 'Velocidad QA', color: '#f1f5f9' }
-      },
-      scales: {
-        x: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(148,163,184,0.1)' } },
-        y: { ticks: { color: '#e2e8f0' }, grid: { display: false } }
-      }
-    }
-  });
+  renderGroupVelocityChart(group.velocity_trend);
+  renderGroupTagHeatmap(group.tag_heatmap);
+}
+
+let groupVelocityChart = null;
+function renderGroupVelocityChart(trend) {
+    const ctx = document.getElementById('group-velocity-chart').getContext('2d');
+    if (!ctx) return;
+
+    if (groupVelocityChart) groupVelocityChart.destroy();
+    groupVelocityChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: Object.keys(trend),
+            datasets: [{
+                label: 'Tareas Completadas',
+                data: Object.values(trend),
+                borderColor: '#6366f1',
+                backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                fill: true,
+                tension: 0.4,
+                pointRadius: 4,
+                pointBackgroundColor: '#6366f1'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { ticks: { color: '#64748b', font: { size: 10 } }, grid: { display: false } },
+                y: { ticks: { color: '#64748b', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' }, beginAtZero: true }
+            }
+        }
+    });
+}
+
+function renderGroupTagHeatmap(heatmap) {
+    const container = document.getElementById('group-tag-heatmap');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const sortedTags = Object.entries(heatmap).sort((a,b) => b[1] - a[1]);
+    const maxVal = sortedTags[0]?.[1] || 1;
+
+    sortedTags.forEach(([tag, val]) => {
+        const opacity = Math.max(0.2, val / maxVal);
+        const span = document.createElement('span');
+        span.className = 'px-3 py-1 rounded-full text-[10px] font-bold border transition-all hover:scale-110 cursor-default';
+        span.style.backgroundColor = `rgba(99, 102, 241, ${opacity * 0.2})`;
+        span.style.borderColor = `rgba(99, 102, 241, ${opacity})`;
+        span.style.color = `rgba(165, 180, 252, ${Math.min(1, opacity + 0.5)})`;
+        span.innerHTML = `${tag} <span class="ml-1 opacity-50">${val}</span>`;
+        container.appendChild(span);
+    });
 }
 
 function renderBurnoutGauge() {
-  const ctx = document.getElementById('burnout-gauge-canvas').getContext('2d');
+  const canvas = document.getElementById('burnout-gauge-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
   if (!ctx || !currentBudget) return;
 
   const tasks = getFilteredTasks(currentTasks);
@@ -644,7 +679,9 @@ function renderBurnoutGauge() {
 }
 
 function renderBudgetChart() {
-  const ctx = document.getElementById('budget-doughnut-canvas').getContext('2d');
+  const canvas = document.getElementById('budget-doughnut-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
   if (!ctx || !currentBudget) return;
 
   const categories = currentBudget.categories || [];
@@ -682,30 +719,68 @@ function renderBudgetChart() {
 }
 
 function renderHallOfFame() {
-  const container = document.getElementById('hall-of-fame-grid');
-  if (!container || !currentTasks) return;
+  const container = document.getElementById('hof-current-winners');
+  if (!container || !currentStats?.hall_of_fame?.current_milestone) return;
 
-  const hof = window.githubApi.computeHallOfFame(currentTasks, MEMBERS);
-  const filtered = activeFilter ? hof.filter(e => e.name === activeFilter) : hof;
-
+  const winners = currentStats.hall_of_fame.current_milestone.winners;
   container.innerHTML = '';
-  filtered.slice(0, 5).forEach(entry => {
-    const el = document.createElement('div');
-    el.className = 'flex items-center gap-4 bg-slate-950/50 p-3 rounded-xl border border-slate-800 cursor-pointer hover:bg-slate-900 transition-colors';
-    el.onclick = () => scrollToProfile(entry.name);
-    el.innerHTML = `
-      <div class="text-2xl">${entry.medal}</div>
-      <div class="flex-grow">
-        <div class="text-sm font-bold text-white">${entry.name}</div>
-        <div class="text-[10px] text-slate-500 uppercase tracking-widest font-mono">Score: ${(entry.score * 100).toFixed(1)}%</div>
-      </div>
-      <div class="flex gap-3 text-xs text-slate-400">
-        <span title="Encontrados">🔍 ${entry.found}</span>
-        <span title="Resueltos OK">✅ ${entry.fixed_ok}</span>
-      </div>
-    `;
-    container.appendChild(el);
+
+  const CATEGORIES = [
+      { id: 'mvp',           label: 'Milestone MVP', icon: '🏆', color: 'text-amber-400',  metric: 'pts' },
+      { id: 'bug_slayer',    label: 'Bug Slayer',    icon: '🐛', color: 'text-red-400',    metric: 'bugs' },
+      { id: 'unblocker',     label: 'Unblocker',     icon: '🔗', color: 'text-indigo-400', metric: 'tasks' },
+      { id: 'velocity_king', label: 'Velocity King', icon: '⚡', color: 'text-amber-400',  metric: 'sp/d' },
+      { id: 'researcher',    label: 'Researcher',    icon: '🧪', color: 'text-purple-400', metric: 'tasks' },
+      { id: 'art_lead',      label: 'Art Lead',      icon: '🎨', color: 'text-emerald-400',metric: 'tasks' },
+      { id: 'collaborator',  label: 'Collaborator',  icon: '💬', color: 'text-blue-400',   metric: 'comms' }
+  ];
+
+  CATEGORIES.forEach(cat => {
+      const winner = winners[cat.id];
+      if (!winner) return;
+
+      const memberStats = currentStats.members[winner.handle] || {};
+      const distinctiveBadge = getDistinctiveBadge(memberStats);
+
+      const card = document.createElement('div');
+      card.className = 'bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col items-center text-center group hover:border-indigo-500/50 transition-all cursor-pointer';
+      card.onclick = () => openDeepDiveModal(winner.name);
+
+      card.innerHTML = `
+          <div class="text-2xl mb-2">${cat.icon}</div>
+          <div class="text-[9px] font-black ${cat.color} uppercase tracking-tighter mb-1">${cat.label}</div>
+          <img src="https://github.com/${winner.handle}.png" class="w-12 h-12 rounded-full border-2 border-slate-800 mb-2 group-hover:scale-110 transition-transform shadow-lg">
+          <div class="text-xs font-bold text-white mb-1 truncate w-full">${winner.name}</div>
+          ${distinctiveBadge ? `<div class="text-[8px] font-black text-indigo-400 uppercase tracking-widest mb-1 italic opacity-80">${distinctiveBadge.label}</div>` : ''}
+          <div class="text-[10px] font-mono text-slate-500">${winner.value.toFixed(1)} ${cat.metric}</div>
+      `;
+      container.appendChild(card);
   });
+}
+
+function getDistinctiveBadge(stats) {
+    if (!stats || !stats.completed) return null;
+    const badges = getAvailableBadges(stats);
+    return badges.length > 0 ? badges[0] : null;
+}
+
+function getAvailableBadges(stats) {
+    const badges = [];
+    if (stats.dependency_impact >= 5) badges.push({ icon: '🔗', label: 'Unblocker' });
+    if (stats.type_breakdown?.['bug'] >= 10) badges.push({ icon: '🐛', label: 'Bug Slayer' });
+    if (stats.avg_completion_speed?.days <= 2 && stats.completed?.all_time >= 5) badges.push({ icon: '⚡', label: 'Velocity King' });
+    if (stats.comment_activity >= 10) badges.push({ icon: '💬', label: 'Collaborator' });
+    if (stats.type_breakdown?.['research'] >= 3) badges.push({ icon: '🧪', label: 'Researcher' });
+
+    // Tag intelligence
+    const sortedTags = Object.entries(stats.tag_frequency || {}).sort((a,b) => b[1] - a[1]);
+    if (sortedTags.length > 0) {
+        const [topTag, count] = sortedTags[0];
+        if (count >= 3) {
+            badges.push({ icon: '🔥', label: `${topTag.charAt(0).toUpperCase() + topTag.slice(1)} Spec` });
+        }
+    }
+    return badges;
 }
 
 function renderMilestoneProgress() {
@@ -1123,11 +1198,12 @@ function renderTeamProfiles() {
   if (!grid || !currentProfiles) return;
   grid.innerHTML = '';
 
-  const memberStats = window.githubApi.computeAllMemberStats(currentTasks, MEMBERS);
+  const membersData = currentStats?.members || {};
 
   Object.entries(currentProfiles.members).forEach(([name, profile]) => {
-    const stats = memberStats[name] || { found: 0, fixed_ok: 0, support_ok: 0, score: 0 };
     const isSelf = window.currentUser === (profile.handle || '').toLowerCase();
+    const handle = (profile.handle || '').toLowerCase();
+    const stats = membersData[handle] || membersData[name] || null;
     
     const card = document.createElement('div');
     card.id = `profile-card-${name.toLowerCase()}`;
@@ -1138,24 +1214,37 @@ function renderTeamProfiles() {
       <div class="h-2" style="background-color: ${profile.color_accent}"></div>
       <div class="p-6">
         <div class="flex justify-between items-start mb-4">
-          <img src="https://github.com/${profile.handle || 'ghost'}.png" class="w-16 h-16 rounded-2xl border-2 border-slate-800 shadow-xl bg-slate-800">
-          ${isSelf ? `<button onclick="toggleProfileEdit('${name}')" class="p-2 text-slate-500 hover:text-white transition-colors"><i class="fa-solid fa-pencil"></i></button>` : ''}
+          <div class="relative">
+            <img src="https://github.com/${profile.handle || 'ghost'}.png" class="w-16 h-16 rounded-2xl border-2 border-slate-800 shadow-xl bg-slate-800 cursor-pointer hover:scale-105 transition-transform" onclick="openDeepDiveModal('${name}')">
+            <div class="absolute -bottom-1 -right-1 bg-slate-900 rounded-full p-1 border border-slate-800">
+                <div class="w-3 h-3 rounded-full bg-emerald-500 pulse-emerald"></div>
+            </div>
+          </div>
+          <div class="flex gap-2">
+              <button onclick="openDeepDiveModal('${name}')" class="p-2 bg-slate-950 rounded-lg text-indigo-400 hover:text-white border border-slate-800 transition-all text-xs font-bold flex items-center gap-2" title="Deep Dive">
+                <i class="fa-solid fa-chart-line"></i>
+              </button>
+              ${isSelf ? `<button onclick="toggleProfileEdit('${name}')" class="p-2 text-slate-500 hover:text-white transition-colors"><i class="fa-solid fa-pencil"></i></button>` : ''}
+          </div>
         </div>
         <h3 class="text-xl font-bold mb-1 text-white">${profile.display_name}</h3>
         <div class="text-xs text-emerald-400 font-bold uppercase tracking-wider mb-3">${profile.role || 'Sin Rol'}</div>
         <p class="text-sm text-slate-400 leading-relaxed mb-4 h-12 overflow-hidden">${profile.bio || 'Sin biografía disponible.'}</p>
         
+        ${stats ? `
         <div class="grid grid-cols-2 gap-2 mb-4 bg-slate-950/50 p-3 rounded-xl border border-slate-800 text-[10px] font-mono">
-          <div class="text-slate-500">SCORE: <span class="text-emerald-400">${(stats.score * 100).toFixed(1)}%</span></div>
-          <div class="text-slate-500">FOUND: <span class="text-amber-400">${stats.found}</span></div>
-          <div class="text-slate-500">FIXED: <span class="text-emerald-400">${stats.fixed_ok}</span></div>
-          <div class="text-slate-500">SUPPORT: <span class="text-indigo-400">${stats.support_ok}</span></div>
+          <div class="text-slate-500">COMPLETADAS: <span class="text-emerald-400">${stats.completed.all_time}</span></div>
+          <div class="text-slate-500">VELOCITY: <span class="text-amber-400">${stats.avg_completion_speed.days}d</span></div>
+          <div class="text-slate-500">IMPACTO: <span class="text-indigo-400">${stats.dependency_impact}</span></div>
+          <div class="text-slate-500">VOLATILIDAD: <span class="text-red-400">${stats.volatility.reopens}</span></div>
         </div>
+        ` : ''}
 
         <div class="flex gap-3 text-slate-500">
           ${profile.links.github ? `<a href="${profile.links.github}" target="_blank" class="hover:text-white"><i class="fa-brands fa-github"></i></a>` : ''}
           ${profile.links.twitter ? `<a href="${profile.links.twitter}" target="_blank" class="hover:text-white"><i class="fa-brands fa-twitter"></i></a>` : ''}
           ${profile.links.itch ? `<a href="${profile.links.itch}" target="_blank" class="hover:text-white"><i class="fa-brands fa-itch-io"></i></a>` : ''}
+          <button onclick="openDeepDiveModal('${name}')" class="ml-auto text-[10px] font-black text-indigo-400 hover:text-indigo-300 uppercase tracking-widest">VER STATS →</button>
         </div>
       </div>
 
@@ -2308,3 +2397,194 @@ window.handleDashboardLogin = function() {
 };
 
 window.handleAddImageUrl = handleAddImageUrl;
+
+// ─── DEEP DIVE MODAL LOGIC ────────────────────────────────────
+
+let currentDeepDiveMember = null;
+let memberTypeChart = null;
+let memberRamaChart = null;
+let memberVelocityChart = null;
+
+function openDeepDiveModal(memberName) {
+    const profile = currentProfiles?.members[memberName];
+    if (!profile) return;
+    currentDeepDiveMember = memberName;
+
+    const handle = (profile.handle || '').toLowerCase();
+    const stats = currentStats?.members[handle] || currentStats?.members[memberName] || null;
+
+    // Header
+    document.getElementById('deep-dive-name').textContent = profile.display_name;
+    document.getElementById('deep-dive-role').textContent = profile.role || 'Sin Rol';
+    document.getElementById('deep-dive-avatar').innerHTML = `<img src="https://github.com/${profile.handle || 'ghost'}.png" class="w-full h-full object-cover">`;
+
+    // Tab: Profile
+    document.getElementById('deep-dive-bio').textContent = profile.bio || 'Sin biografía disponible.';
+    const skillsContainer = document.getElementById('deep-dive-skills');
+    skillsContainer.innerHTML = '';
+    // Use skills from team.json if available
+    const teamMember = currentBudget?.team?.find(m => m.name.includes(memberName));
+    const skills = teamMember?.skills || [];
+    skills.forEach(skill => {
+        const span = document.createElement('span');
+        span.className = 'px-2 py-1 bg-slate-800 border border-slate-700 rounded text-[10px] font-bold text-slate-300';
+        span.textContent = skill;
+        skillsContainer.appendChild(span);
+    });
+
+    const linksContainer = document.getElementById('deep-dive-links');
+    linksContainer.innerHTML = '';
+    if (profile.links.github) linksContainer.innerHTML += `<a href="${profile.links.github}" target="_blank" class="hover:text-white transition-colors"><i class="fa-brands fa-github"></i></a>`;
+    if (profile.links.twitter) linksContainer.innerHTML += `<a href="${profile.links.twitter}" target="_blank" class="hover:text-white transition-colors"><i class="fa-brands fa-twitter"></i></a>`;
+    if (profile.links.itch) linksContainer.innerHTML += `<a href="${profile.links.itch}" target="_blank" class="hover:text-white transition-colors"><i class="fa-brands fa-itch-io"></i></a>`;
+
+    // Tab: Performance
+    if (stats) {
+        document.getElementById('perf-completed-all').textContent = stats.completed.all_time;
+        document.getElementById('perf-completed-milestone').textContent = `${stats.completed.milestone} este milestone`;
+
+        const velocity = stats.avg_completion_speed.days;
+        const spVelocity = (stats.completed.all_time > 0) ? (stats.workload.story_points / (stats.avg_completion_speed.days || 1)).toFixed(1) : "0.0";
+        document.getElementById('perf-velocity').textContent = stats.avg_completion_speed.estimated_start ? `~${velocity}d` : `${velocity}d`;
+
+        document.getElementById('perf-impact').textContent = stats.dependency_impact;
+        document.getElementById('perf-comments').textContent = stats.comment_activity;
+        document.getElementById('perf-reopens').textContent = stats.volatility.reopens;
+        document.getElementById('perf-repriorities').textContent = stats.volatility.reprioritizations;
+        document.getElementById('perf-active-tasks').textContent = stats.workload.active_tasks;
+        document.getElementById('perf-active-sp').textContent = `${stats.workload.story_points} SP`;
+
+        // Badges
+        renderMemberBadges(stats);
+    }
+
+    // Default to Profile tab
+    switchDeepDiveTab('profile');
+
+    document.getElementById('member-deep-dive-modal').classList.remove('hidden');
+}
+
+function closeDeepDiveModal() {
+    document.getElementById('member-deep-dive-modal').classList.add('hidden');
+}
+
+function switchDeepDiveTab(tab) {
+    const isProfile = tab === 'profile';
+    document.getElementById('deep-dive-tab-profile').classList.toggle('hidden', !isProfile);
+    document.getElementById('deep-dive-tab-performance').classList.toggle('hidden', isProfile);
+
+    const btnProfile = document.getElementById('tab-btn-profile');
+    const btnPerf = document.getElementById('tab-btn-performance');
+
+    if (isProfile) {
+        btnProfile.className = 'px-4 py-1.5 text-xs font-bold rounded-lg transition-all bg-indigo-500 text-white shadow-lg';
+        btnPerf.className = 'px-4 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-white';
+    } else {
+        btnPerf.className = 'px-4 py-1.5 text-xs font-bold rounded-lg transition-all bg-indigo-500 text-white shadow-lg';
+        btnProfile.className = 'px-4 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-white';
+        // Initialize charts when tab becomes visible
+        setTimeout(renderMemberPerformanceCharts, 50);
+    }
+}
+
+function renderMemberPerformanceCharts() {
+    const profile = currentProfiles?.members[currentDeepDiveMember];
+    if (!profile) return;
+    const handle = (profile.handle || '').toLowerCase();
+    const stats = currentStats?.members[handle] || currentStats?.members[currentDeepDiveMember] || null;
+    if (!stats) return;
+
+    const ctxVel = document.getElementById('member-velocity-chart').getContext('2d');
+    const ctxType = document.getElementById('member-type-chart').getContext('2d');
+    const ctxRama = document.getElementById('member-rama-chart').getContext('2d');
+
+    if (memberVelocityChart) memberVelocityChart.destroy();
+    memberVelocityChart = new Chart(ctxVel, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(stats.weekly_velocity),
+            datasets: [{
+                label: 'SP Velocity',
+                data: Object.values(stats.weekly_velocity),
+                backgroundColor: 'rgba(99, 102, 241, 0.8)',
+                borderRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { ticks: { color: '#64748b', font: { size: 10 } }, grid: { display: false } },
+                y: { ticks: { color: '#64748b', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' }, beginAtZero: true }
+            }
+        }
+    });
+
+    if (memberTypeChart) memberTypeChart.destroy();
+    memberTypeChart = new Chart(ctxType, {
+        type: 'doughnut',
+        data: {
+            labels: Object.keys(stats.type_breakdown),
+            datasets: [{
+                data: Object.values(stats.type_breakdown),
+                backgroundColor: ['#6366f1', '#34d399', '#fbbf24', '#f87171', '#a78bfa'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 10 } } }
+            }
+        }
+    });
+
+    if (memberRamaChart) memberRamaChart.destroy();
+    memberRamaChart = new Chart(ctxRama, {
+        type: 'polarArea',
+        data: {
+            labels: Object.keys(stats.rama_breakdown),
+            datasets: [{
+                data: Object.values(stats.rama_breakdown),
+                backgroundColor: ['rgba(99, 102, 241, 0.5)', 'rgba(52, 211, 153, 0.5)', 'rgba(251, 191, 36, 0.5)', 'rgba(248, 113, 113, 0.5)'],
+                borderColor: '#1e293b',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                r: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { display: false } }
+            },
+            plugins: {
+                legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 10 } } }
+            }
+        }
+    });
+}
+
+function renderMemberBadges(stats) {
+    const container = document.getElementById('deep-dive-badges');
+    container.innerHTML = '';
+
+    const badges = getAvailableBadges(stats);
+
+    if (badges.length === 0) {
+        container.innerHTML = '<div class="text-[10px] text-slate-600 italic">Gana badges completando tareas y colaborando con el equipo.</div>';
+        return;
+    }
+
+    badges.forEach(b => {
+        const div = document.createElement('div');
+        div.className = `flex items-center gap-2 px-3 py-1.5 bg-slate-950 border border-indigo-500/30 text-indigo-400 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg`;
+        div.innerHTML = `<span>${b.icon}</span> ${b.label}`;
+        container.appendChild(div);
+    });
+}
+
+window.openDeepDiveModal = openDeepDiveModal;
+window.closeDeepDiveModal = closeDeepDiveModal;
+window.switchDeepDiveTab = switchDeepDiveTab;

@@ -219,36 +219,90 @@
             </div>
         </section>
 
-        <!-- Charts & Hall of Fame -->
-        <section id="charts" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- QA Velocity Chart -->
-            <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 lg:col-span-2">
-                <canvas id="qa-velocity-chart"></canvas>
+        <!-- Studio Group Stats Section -->
+        <section id="group-stats-section" class="space-y-8">
+            <div class="flex items-center justify-between">
+                <h2 class="text-2xl font-black flex items-center gap-3">
+                    <i class="fa-solid fa-chart-pie text-indigo-400"></i> STUDIO GROUP STATS
+                </h2>
+                <div id="milestone-badge" class="bg-indigo-900/30 text-indigo-400 px-4 py-1 rounded-full border border-indigo-500/30 text-xs font-black uppercase tracking-widest">
+                    Milestone: M1
+                </div>
             </div>
-            <!-- Burnout Gauge -->
-            <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 flex flex-col items-center justify-center">
-                <div class="relative w-full aspect-square max-w-[250px]">
-                    <canvas id="burnout-gauge-canvas"></canvas>
-                    <div class="absolute inset-0 flex flex-col items-center justify-center pt-8">
-                        <div id="burnout-index-value" class="text-4xl font-bold font-mono">0%</div>
-                        <div class="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">Stress Index</div>
+
+            <!-- Layer B Summary Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-10">
+                        <i class="fa-solid fa-bug text-4xl"></i>
+                    </div>
+                    <div class="text-[10px] font-black text-slate-500 uppercase mb-2 tracking-widest">Bug Rate</div>
+                    <div id="group-bug-rate" class="text-3xl font-black text-red-400 font-mono">0.0%</div>
+                    <div class="text-[10px] text-slate-500 mt-1">% de bugs sobre total completado</div>
+                </div>
+                <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-10">
+                        <i class="fa-solid fa-shield-halved text-4xl text-amber-400"></i>
+                    </div>
+                    <div class="text-[10px] font-black text-slate-500 uppercase mb-2 tracking-widest">Blocker Health</div>
+                    <div id="group-blocker-health" class="text-3xl font-black text-amber-400 font-mono">0</div>
+                    <div class="text-[10px] text-slate-500 mt-1">Tareas bloqueadas activas</div>
+                </div>
+                <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-10">
+                        <i class="fa-solid fa-fire text-4xl text-orange-400"></i>
+                    </div>
+                    <div class="text-[10px] font-black text-slate-500 uppercase mb-2 tracking-widest">Burnout Index</div>
+                    <div id="group-burnout-index" class="text-3xl font-black text-orange-400 font-mono">0%</div>
+                    <div class="text-[10px] text-slate-500 mt-1">Stress del equipo en Milestone</div>
+                </div>
+                <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-10">
+                        <i class="fa-solid fa-flag-checkered text-4xl text-emerald-400"></i>
+                    </div>
+                    <div class="text-[10px] font-black text-slate-500 uppercase mb-2 tracking-widest">Remaining</div>
+                    <div id="group-milestone-remaining" class="text-3xl font-black text-emerald-400 font-mono">0</div>
+                    <div class="text-[10px] text-slate-500 mt-1">Tareas para el siguiente ship</div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Velocity Trend Chart -->
+                <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 lg:col-span-2 flex flex-col">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-sm font-black text-slate-300 uppercase tracking-widest">Velocity Trend (Weekly)</h3>
+                        <div class="flex gap-2">
+                            <span class="flex items-center gap-1 text-[9px] font-bold text-slate-500"><span class="w-2 h-2 rounded-full bg-indigo-500"></span> Completadas</span>
+                        </div>
+                    </div>
+                    <div class="flex-grow min-h-[300px]">
+                        <canvas id="group-velocity-chart"></canvas>
+                    </div>
+                </div>
+                <!-- Tag Heatmap -->
+                <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 flex flex-col">
+                    <h3 class="text-sm font-black text-slate-300 uppercase tracking-widest mb-6">Tag Heatmap</h3>
+                    <div id="group-tag-heatmap" class="flex flex-wrap gap-2 content-start flex-grow">
+                        <!-- Heatmap tags injected here -->
                     </div>
                 </div>
             </div>
-        </section>
 
-        <section class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <!-- Budget Distribution -->
-            <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800">
-                <canvas id="budget-doughnut-canvas"></canvas>
-            </div>
-            <!-- Hall of Fame -->
-            <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 overflow-hidden">
-                <h3 class="text-lg font-bold mb-6 flex items-center gap-2">
-                    <i class="fa-solid fa-trophy text-amber-400"></i> QA Hall of Fame
-                </h3>
-                <div id="hall-of-fame-grid" class="space-y-4">
-                    <!-- HOF entries -->
+            <!-- Hall of Fame — Gamified Leaderboard -->
+            <div class="space-y-6">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-xl font-black flex items-center gap-3">
+                        <i class="fa-solid fa-trophy text-amber-400"></i> HALL OF FAME
+                    </h2>
+                    <div class="flex gap-2 bg-slate-950 p-1 rounded-lg border border-slate-800">
+                        <button id="hof-tab-current" class="px-4 py-1 text-[10px] font-bold rounded bg-indigo-500 text-white shadow-lg">Current</button>
+                        <button id="hof-tab-archive" class="px-4 py-1 text-[10px] font-bold rounded text-slate-500 hover:text-white transition-all">Archive</button>
+                    </div>
+                </div>
+
+                <!-- Current Milestone Winners -->
+                <div id="hof-current-winners" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-4">
+                    <!-- Winner cards injected here -->
                 </div>
             </div>
         </section>
@@ -642,6 +696,142 @@
             <i class="fa-solid fa-xmark"></i>
         </button>
         <img id="lightbox-img" src="" alt="Vista ampliada" class="max-w-full max-h-full object-contain shadow-2xl rounded-lg" onclick="event.stopPropagation()">
+    </div>
+
+    <!-- Member Deep Dive Modal -->
+    <div id="member-deep-dive-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-950/90 backdrop-blur-md p-4">
+        <div class="bg-slate-900 border border-indigo-500/30 rounded-2xl shadow-2xl w-full max-w-4xl p-0 max-h-[90vh] overflow-hidden flex flex-col">
+            <!-- Modal Header / Tabs -->
+            <div class="flex items-center justify-between border-b border-slate-800 bg-slate-950/50 px-6 py-4">
+                <div class="flex items-center gap-6">
+                    <div id="deep-dive-avatar" class="w-12 h-12 rounded-xl bg-slate-800 border-2 border-slate-700 overflow-hidden shadow-lg"></div>
+                    <div>
+                        <h3 id="deep-dive-name" class="text-xl font-bold text-white leading-none mb-1">Cargando...</h3>
+                        <div id="deep-dive-role" class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Rol del Miembro</div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 bg-slate-900 p-1 rounded-xl border border-slate-800">
+                    <button onclick="switchDeepDiveTab('profile')" id="tab-btn-profile" class="px-4 py-1.5 text-xs font-bold rounded-lg transition-all bg-indigo-500 text-white shadow-lg">Perfil</button>
+                    <button onclick="switchDeepDiveTab('performance')" id="tab-btn-performance" class="px-4 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-white">Performance</button>
+                </div>
+                <button onclick="closeDeepDiveModal()" class="text-slate-500 hover:text-white transition-colors">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Modal Content -->
+            <div class="flex-grow overflow-y-auto custom-scrollbar p-6">
+                <!-- Tab: Profile -->
+                <div id="deep-dive-tab-profile" class="space-y-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">Biografía</label>
+                            <p id="deep-dive-bio" class="text-sm text-slate-300 leading-relaxed italic">Sin biografía disponible.</p>
+                        </div>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">Habilidades & Rama</label>
+                                <div id="deep-dive-skills" class="flex flex-wrap gap-2"></div>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">Presencia en Redes</label>
+                                <div id="deep-dive-links" class="flex gap-4 text-xl text-slate-400"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Performance -->
+                <div id="deep-dive-tab-performance" class="hidden space-y-8">
+                    <!-- Quick Stats Cards -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-center">
+                            <div class="text-[9px] font-bold text-slate-500 uppercase mb-1">Completadas</div>
+                            <div id="perf-completed-all" class="text-2xl font-black text-white font-mono">0</div>
+                            <div id="perf-completed-milestone" class="text-[9px] text-slate-400 mt-1">0 este milestone</div>
+                        </div>
+                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-center">
+                            <div class="text-[9px] font-bold text-slate-500 uppercase mb-1">SP Velocity</div>
+                            <div id="perf-velocity" class="text-2xl font-black text-emerald-400 font-mono">0.0</div>
+                            <div class="text-[9px] text-slate-400 mt-1">Story Points / día</div>
+                        </div>
+                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-center">
+                            <div class="text-[9px] font-bold text-slate-500 uppercase mb-1">Dependency Impact</div>
+                            <div id="perf-impact" class="text-2xl font-black text-indigo-400 font-mono">0</div>
+                            <div class="text-[9px] text-slate-400 mt-1">Tareas desbloqueadas</div>
+                        </div>
+                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-center">
+                            <div class="text-[9px] font-bold text-slate-500 uppercase mb-1">Collaboration</div>
+                            <div id="perf-comments" class="text-2xl font-black text-amber-400 font-mono">0</div>
+                            <div class="text-[9px] text-slate-400 mt-1">Comentarios externos</div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Grid -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 h-[300px] lg:col-span-2">
+                            <h4 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-4">Weekly SP Velocity</h4>
+                            <canvas id="member-velocity-chart"></canvas>
+                        </div>
+                        <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 h-[300px]">
+                            <h4 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-4">Contribución por Tipo</h4>
+                            <canvas id="member-type-chart"></canvas>
+                        </div>
+                        <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 h-[300px] lg:col-span-3">
+                            <h4 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-4">Rama Distribution</h4>
+                            <canvas id="member-rama-chart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Quality & Intelligence -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">Tag Intelligence Badges</label>
+                                <div id="deep-dive-badges" class="flex flex-wrap gap-3">
+                                    <!-- Badges injected here -->
+                                </div>
+                            </div>
+                            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                                <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Quality Signals</label>
+                                <div class="flex justify-between items-center text-sm">
+                                    <span class="text-slate-400">Volatility (Reopened tasks):</span>
+                                    <span id="perf-reopens" class="font-bold text-red-400">0</span>
+                                </div>
+                                <div class="flex justify-between items-center text-sm mt-2">
+                                    <span class="text-slate-400">Reprioritizations:</span>
+                                    <span id="perf-repriorities" class="font-bold text-amber-400">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">Carga de Trabajo Actual</label>
+                            <div class="flex items-end justify-between mb-4">
+                                <div>
+                                    <div id="perf-active-tasks" class="text-3xl font-black text-white">0</div>
+                                    <div class="text-[10px] text-slate-500 uppercase">Tareas Activas</div>
+                                </div>
+                                <div class="text-right">
+                                    <div id="perf-active-sp" class="text-xl font-bold text-slate-300">0 SP</div>
+                                    <div class="text-[10px] text-slate-500 uppercase">Story Points</div>
+                                </div>
+                            </div>
+                            <div class="text-xs text-slate-400 italic">
+                                "La carga se calcula sobre tareas asignadas no finalizadas ni obsoletas."
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="bg-slate-950/50 border-t border-slate-800 px-6 py-4 flex justify-between items-center">
+                <div id="deep-dive-footer-info" class="text-[9px] font-mono text-slate-600 uppercase tracking-widest">
+                    Neural Stats Engine v1.1.0 • Hypenosys Ops
+                </div>
+                <button onclick="closeDeepDiveModal()" class="px-6 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-bold text-xs transition-all border border-slate-700">Cerrar</button>
+            </div>
+        </div>
     </div>
 
     <!-- User Assignment Modal -->
