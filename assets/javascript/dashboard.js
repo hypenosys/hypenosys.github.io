@@ -37,6 +37,11 @@ let currentBudget = null;
 let currentProfiles = null;
 let currentTaskImages = []; // TODO: Migrate to external storage (e.g. GitHub Assets/R2) if JSON size exceeds 10MB
 
+// Lightbox Global State
+let lightboxTask = null;
+let lightboxImages = [];
+let lightboxIndex = 0;
+
 const KANBAN_COLUMNS = [
   { id: 'backlog',    label: 'Backlog / ToDo',        states: ['Pending','ToDo',null],           icon: '📋' },
   { id: 'working',   label: 'En Progreso',             states: ['Working','KO'],                  icon: '⚡' },
@@ -483,8 +488,10 @@ function buildTaskCard(task) {
             ${task.images.map((img, idx) => {
                 const isLegacy = img.type === 'binary_legacy';
                 return `
-                <div class="aspect-square rounded border border-slate-800 overflow-hidden cursor-pointer hover:border-emerald-500 transition-all relative" onclick="openLightbox('${task.id}', ${idx})">
-                    <img src="${img.url}" class="w-full h-full object-cover" alt="Task image" loading="lazy">
+                <div class="aspect-square rounded border border-slate-800 overflow-hidden cursor-pointer hover:border-emerald-500 transition-all relative"
+                     onclick="event.stopPropagation(); openLightbox('${task.id}', ${idx})"
+                     draggable="false">
+                    <img src="${img.url}" class="w-full h-full object-cover pointer-events-none" alt="Task image" loading="lazy" draggable="false">
                     ${isLegacy ? '<span class="absolute top-0.5 left-0.5 bg-amber-500 text-slate-950 text-[6px] font-black px-0.5 rounded shadow-sm">⚠️ LEGACY</span>' : ''}
                 </div>
             `;}).join('')}
@@ -1310,6 +1317,16 @@ function renderTeamProfiles() {
 // ─── ACTIONS & EVENT HANDLERS ────────────────────────────────
 
 function setupEventListeners() {
+  // Lightbox keyboard support
+  document.addEventListener('keydown', (e) => {
+    const modal = document.getElementById('lightbox-modal');
+    if (modal && !modal.classList.contains('hidden')) {
+        if (e.key === 'Escape') closeLightbox();
+        if (e.key === 'ArrowLeft') navigateLightbox(-1);
+        if (e.key === 'ArrowRight') navigateLightbox(1);
+    }
+  });
+
   const taskCancel = document.getElementById('task-cancel-btn');
   const taskSave = document.getElementById('task-save-btn');
   const qaCancel = document.getElementById('qa-cancel-btn');
@@ -1977,27 +1994,77 @@ function openLightbox(srcOrTaskId, imageIndex) {
     const img = document.getElementById('lightbox-img');
     if (!modal || !img) return;
 
+    // Reset state
+    lightboxTask = null;
+    lightboxImages = [];
+    lightboxIndex = 0;
+
     if (imageIndex === undefined) {
-        // Fallback or direct src (discouraged for large base64)
+        // Fallback or direct src
         img.src = srcOrTaskId;
     } else {
         if (srcOrTaskId === 'current') {
-            if (currentTaskImages[imageIndex]) {
-                img.src = currentTaskImages[imageIndex].url;
-            }
+            lightboxImages = currentTaskImages;
+            lightboxIndex = imageIndex;
         } else {
-            const task = currentTasks.find(t => String(t.id) === String(srcOrTaskId));
-            if (task && task.images && task.images[imageIndex]) {
-                img.src = task.images[imageIndex].url;
+            const task = currentTasks.find(t => sameTaskId(t.id, srcOrTaskId));
+            if (task) {
+                lightboxTask = task;
+                lightboxImages = task.images || [];
+                lightboxIndex = imageIndex;
             }
         }
+
+        if (lightboxImages[lightboxIndex]) {
+            img.src = lightboxImages[lightboxIndex].url;
+        }
     }
+
+    updateLightboxUI();
     modal.classList.remove('hidden');
+}
+
+function updateLightboxUI() {
+    const prevBtn = document.getElementById('lightbox-prev');
+    const nextBtn = document.getElementById('lightbox-next');
+    const counter = document.getElementById('lightbox-counter');
+
+    if (lightboxImages.length > 1) {
+        if (prevBtn) prevBtn.classList.remove('hidden');
+        if (nextBtn) nextBtn.classList.remove('hidden');
+        if (counter) {
+            counter.classList.remove('hidden');
+            counter.textContent = `${lightboxIndex + 1} / ${lightboxImages.length}`;
+        }
+    } else {
+        if (prevBtn) prevBtn.classList.add('hidden');
+        if (nextBtn) nextBtn.classList.add('hidden');
+        if (counter) counter.classList.add('hidden');
+    }
+}
+
+function navigateLightbox(direction) {
+    if (lightboxImages.length <= 1) return;
+
+    lightboxIndex += direction;
+    if (lightboxIndex >= lightboxImages.length) lightboxIndex = 0;
+    if (lightboxIndex < 0) lightboxIndex = lightboxImages.length - 1;
+
+    const img = document.getElementById('lightbox-img');
+    if (img && lightboxImages[lightboxIndex]) {
+        img.src = lightboxImages[lightboxIndex].url;
+        updateLightboxUI();
+    }
 }
 
 function closeLightbox() {
     const modal = document.getElementById('lightbox-modal');
-    if (modal) modal.classList.add('hidden');
+    if (modal) {
+        modal.classList.add('hidden');
+        // Clear src to avoid flicker on next open
+        const img = document.getElementById('lightbox-img');
+        if (img) img.src = "";
+    }
 }
 
 function toggleProfileEdit(memberName) {
@@ -2638,3 +2705,6 @@ function renderMemberBadges(stats) {
 window.openDeepDiveModal = openDeepDiveModal;
 window.closeDeepDiveModal = closeDeepDiveModal;
 window.switchDeepDiveTab = switchDeepDiveTab;
+window.openLightbox = openLightbox;
+window.closeLightbox = closeLightbox;
+window.navigateLightbox = navigateLightbox;

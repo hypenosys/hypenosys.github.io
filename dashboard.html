@@ -692,10 +692,29 @@
 
     <!-- Lightbox Modal -->
     <div id="lightbox-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/95 backdrop-blur-md p-4" onclick="closeLightbox()">
-        <button class="absolute top-6 right-6 text-white text-3xl hover:text-emerald-400 transition-colors">
+        <!-- Close Button -->
+        <button onclick="closeLightbox()" class="absolute top-6 right-6 text-white/50 hover:text-white text-4xl transition-all z-[110]">
             <i class="fa-solid fa-xmark"></i>
         </button>
-        <img id="lightbox-img" src="" alt="Vista ampliada" class="max-w-full max-h-full object-contain shadow-2xl rounded-lg" onclick="event.stopPropagation()">
+
+        <!-- Navigation Buttons -->
+        <button id="lightbox-prev" onclick="navigateLightbox(-1); event.stopPropagation();" class="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-slate-900/50 text-white flex items-center justify-center hover:bg-emerald-500 hover:text-slate-950 transition-all z-[110] hidden">
+            <i class="fa-solid fa-chevron-left text-xl"></i>
+        </button>
+
+        <button id="lightbox-next" onclick="navigateLightbox(1); event.stopPropagation();" class="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-slate-900/50 text-white flex items-center justify-center hover:bg-emerald-500 hover:text-slate-950 transition-all z-[110] hidden">
+            <i class="fa-solid fa-chevron-right text-xl"></i>
+        </button>
+
+        <!-- Image Container -->
+        <div class="relative max-w-full max-h-full flex flex-col items-center">
+            <img id="lightbox-img" src="" alt="Vista ampliada" class="max-w-full max-h-[85vh] object-contain shadow-2xl rounded-lg border border-slate-800" onclick="event.stopPropagation()">
+
+            <!-- Counter & Label -->
+            <div id="lightbox-counter" class="mt-4 px-4 py-1.5 bg-slate-900/80 border border-slate-700 rounded-full text-xs font-mono text-slate-300 backdrop-blur-sm hidden">
+                1 / 1
+            </div>
+        </div>
     </div>
 
     <!-- Member Deep Dive Modal -->
