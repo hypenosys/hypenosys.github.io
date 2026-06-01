@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T06:55:44.912Z",
+  "last_updated": "2026-06-01T06:56:23.105Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -518,7 +518,7 @@
     },
     {
       "rama": "PRO",
-      "descripcion": "cambiar sistema de imagenes a turmblr",
+      "descripcion": "cambiar sistema de imagenes a API tumblr con bridge del gatekeeper de cloudflare para los secrets",
       "tema_principal": "Programación / Engine",
       "prioridad": "Major",
       "milestone": "M1",
@@ -540,7 +540,7 @@
       "comentario": "",
       "id": 19,
       "images": [],
-      "title": "cambiar sistema de imagenes a turmblr",
+      "title": "cambiar sistema de imagenes a tumblr",
       "task_type": "feature",
       "start_date": null,
       "due_date": null,
@@ -567,6 +567,20 @@
           "field": "asignados",
           "old_value": "[\"topperh4rley\"]",
           "new_value": "[\"axlfc\",\"topperh4rley\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T06:56:22.489Z",
+          "field": "title",
+          "old_value": "cambiar sistema de imagenes a turmblr",
+          "new_value": "cambiar sistema de imagenes a tumblr"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T06:56:22.489Z",
+          "field": "descripcion",
+          "old_value": "cambiar sistema de imagenes a turmblr",
+          "new_value": "cambiar sistema de imagenes a API tumblr con bridge del gatekeeper de cloudflare para los secrets"
         }
       ]
     },
