@@ -488,8 +488,9 @@ function buildTaskCard(task) {
             ${task.images.map((img, idx) => {
                 const isLegacy = img.type === 'binary_legacy';
                 return `
-                <button type="button" class="aspect-square rounded border border-slate-800 overflow-hidden cursor-pointer hover:border-emerald-500 transition-all relative focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50"
+                <button type="button" class="aspect-square rounded border border-slate-800 overflow-hidden cursor-pointer hover:border-emerald-500 transition-all relative focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 select-none touch-manipulation"
                      onpointerdown="event.preventDefault(); event.stopPropagation(); openLightbox('${task.id}', ${idx})"
+                     onclick="event.preventDefault(); event.stopPropagation();"
                      onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openLightbox('${task.id}', ${idx}); }"
                      draggable="false">
                     <img src="${img.url}" class="w-full h-full object-cover pointer-events-none" alt="Task image" loading="lazy" draggable="false">
@@ -1969,7 +1970,7 @@ function renderImagePreviews() {
         div.innerHTML = `
             <img src="${img.url}" class="w-full h-full object-cover" alt="">
             <div class="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                <button type="button" onpointerdown="event.preventDefault(); event.stopPropagation(); openLightbox('current', ${idx})" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openLightbox('current', ${idx}); }" class="w-8 h-8 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center hover:scale-110 transition-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-white">
+                <button type="button" onpointerdown="event.preventDefault(); event.stopPropagation(); openLightbox('current', ${idx})" onclick="event.preventDefault(); event.stopPropagation();" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openLightbox('current', ${idx}); }" class="w-8 h-8 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center hover:scale-110 transition-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-white select-none touch-manipulation">
                     <i class="fa-solid fa-eye"></i>
                 </button>
                 <button type="button" onclick="removeTaskImage(${idx})" class="w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center hover:scale-110 transition-transform">
