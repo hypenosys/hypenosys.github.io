@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T06:57:38.881Z",
+  "last_updated": "2026-06-01T06:57:49.432Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -260,7 +260,7 @@
       "rama": "PRO",
       "descripcion": "Completar onboarding y rellenar perfil dashboard",
       "tema_principal": "Concepto / GDD",
-      "prioridad": "Major",
+      "prioridad": "Medium",
       "milestone": "M1",
       "estado": "Pending",
       "completitud": 0.2,
@@ -304,6 +304,13 @@
           "field": "tags",
           "old_value": "[]",
           "new_value": "[\"onboarding\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T06:57:48.868Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Medium"
         }
       ]
     },
