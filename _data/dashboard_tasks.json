@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T07:23:58.334Z",
+  "last_updated": "2026-06-01T07:24:23.319Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -559,7 +559,9 @@
       "completitud": 0,
       "resuelto_por": "Axel",
       "detectado_por": "Axel",
-      "asignados": [],
+      "asignados": [
+        "axlfc"
+      ],
       "email_responsable": null,
       "emails_asignados": [],
       "rama2": null,
@@ -626,6 +628,13 @@
           "field": "task_type",
           "old_value": "feature",
           "new_value": "chore"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T07:24:22.668Z",
+          "field": "asignados",
+          "old_value": "[]",
+          "new_value": "[\"axlfc\"]"
         }
       ]
     },
