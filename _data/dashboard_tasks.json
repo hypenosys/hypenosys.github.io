@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T07:10:18.816Z",
+  "last_updated": "2026-06-01T07:10:42.973Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -283,7 +283,7 @@
       "id": 12,
       "images": [],
       "title": "Completar onboarding y rellenar perfil dashboard",
-      "task_type": "feature",
+      "task_type": "chore",
       "start_date": null,
       "due_date": null,
       "estimated_hours": null,
@@ -311,6 +311,13 @@
           "field": "prioridad",
           "old_value": "Major",
           "new_value": "Medium"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T07:10:42.298Z",
+          "field": "task_type",
+          "old_value": "feature",
+          "new_value": "chore"
         }
       ]
     },
