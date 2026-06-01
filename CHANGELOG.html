@@ -117,6 +117,13 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-danger">Fixed</h5>
             <ul class="tree-view mb-3">
+              <li><strong>Kanban — Solución Definitiva para Miniaturas (Nuclear Fix):</strong> Reemplazo completo del sistema de eventos táctiles por navegación nativa mediante etiquetas <code>&lt;a&gt;</code>.
+                <ul>
+                  <li>Eliminados todos los listeners de <code>pointerdown</code>, <code>touchstart</code> y <code>pointercancel</code> que causaban conflictos en tablets.</li>
+                  <li>Uso de <code>onclick</code> directo en el elemento anchor para máxima prioridad en el navegador.</li>
+                  <li>Optimizado el listener de <code>dragstart</code> del card padre para no interferir con los clics en las miniaturas, manteniendo la funcionalidad de arrastre del card desde el fondo.</li>
+                </ul>
+              </li>
               <li><strong>Lightbox — Pointer Events & Ghost Click Suppression:</strong> Reemplazo completo de <code>click</code> por <code>pointerdown</code> con <code>stopImmediatePropagation</code> en miniaturas del Kanban para una respuesta instantánea en tablets. Se ha añadido un listener de captura para anular "ghost clicks" y una breve suspensión del <code>draggable</code> del card (300ms) para evitar colisiones con el sistema de arrastre.</li>
               <li><strong>Kanban — Image Click & Drag Interference (Critical Fix):</strong> Solucionado el problema donde las miniaturas de imagen no abrían el visor de forma consistente debido a interferencias con el arrastre de la tarjeta y el uso de botones invisibles.
                 <ul>

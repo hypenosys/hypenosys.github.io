@@ -60,14 +60,14 @@ function buildTaskCard(task) {
         e.preventDefault();
         return;
     }
-    if (e.target.closest('button, select, input, textarea, a')) {
-      e.preventDefault();
-      e.stopPropagation();
-      return;
+    if (e.target.closest('button, select, input, textarea')) {
+        e.preventDefault();
+        e.stopPropagation();
+        return;
     }
     e.dataTransfer.setData('text/plain', String(task.id));
     card.classList.add('opacity-50');
-  });
+});
   card.addEventListener('dragend', () => card.classList.remove('opacity-50'));
 
   const priorityColors = {
@@ -204,11 +204,11 @@ function buildTaskCard(task) {
         const grid = card.querySelector(`#card-images-${task.id}`);
         if (grid) {
             task.images.forEach((img, idx) => {
-                const thumbEl = document.createElement('div');
-                thumbEl.className = 'aspect-square rounded border border-slate-800 overflow-hidden cursor-pointer relative';
-                thumbEl.style.cssText = 'touch-action: none; -webkit-tap-highlight-color: transparent; outline: none; user-select: none;';
-                thumbEl.setAttribute('role', 'button');
-                thumbEl.setAttribute('tabindex', '-1');
+                const thumbEl = document.createElement('a');
+                thumbEl.href = 'javascript:void(0)';
+                thumbEl.className = 'aspect-square rounded border border-slate-800 overflow-hidden cursor-pointer relative block';
+                thumbEl.style.cssText = '-webkit-tap-highlight-color: transparent; outline: none; user-select: none; display: block;';
+                thumbEl.setAttribute('tabindex', '0');
                 thumbEl.draggable = false;
                 thumbEl.dataset.noDrag = 'true';
 
@@ -218,32 +218,12 @@ function buildTaskCard(task) {
                     ${isLegacy ? '<span class="absolute top-0.5 left-0.5 bg-amber-500 text-slate-950 text-[6px] font-black px-0.5 rounded shadow-sm">⚠️ LEGACY</span>' : ''}
                 `;
 
-                let _lightboxFired = false;
-                thumbEl.addEventListener('pointerdown', (e) => {
+                thumbEl.onclick = function(e) {
                     e.preventDefault();
-                    e.stopImmediatePropagation();
-                    _lightboxFired = false;
-                    card.draggable = false;
-                    setTimeout(() => { card.draggable = true; }, 300);
-                    _lightboxFired = true;
+                    e.stopPropagation();
                     openLightbox(String(task.id), idx);
-                });
-
-                thumbEl.addEventListener('pointercancel', (e) => {
-                    if (!_lightboxFired) {
-                        openLightbox(String(task.id), idx);
-                    }
-                });
-
-                thumbEl.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopImmediatePropagation();
-                }, { capture: true });
-
-                thumbEl.addEventListener('dragstart', (event) => {
-                    event.preventDefault();
-                    event.stopPropagation();
-                });
+                    return false;
+                };
 
                 grid.appendChild(thumbEl);
             });
