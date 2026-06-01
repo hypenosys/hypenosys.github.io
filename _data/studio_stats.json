@@ -1,139 +1,97 @@
 {
-  "schema_version": "1.0.0",
-  "last_computed": "2026-06-01T07:26:27.638Z",
+  "schema_version": "1.1.0",
+  "computed_at": "2026-06-01T08:00:00.000Z",
+  "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 15,
-    "total_ok": 3,
+    "total_tasks": 0,
+    "total_ok": 0,
     "total_ko": 0,
-    "total_uncertain": 4,
-    "total_obsolete": 3,
-    "fixed_found_ratio": 0.1667,
-    "verified_ratio": 0.1667,
-    "by_priority": {
-      "Critical": {
-        "total": 3,
-        "solved": 0,
-        "rate": 0
-      },
-      "Major": {
-        "total": 4,
-        "solved": 3,
-        "rate": 0.75
-      },
-      "Medium": {
-        "total": 3,
-        "solved": 0,
-        "rate": 0
-      },
-      "Minor": {
-        "total": 2,
-        "solved": 0,
-        "rate": 0
-      },
-      "Cosmetic": {
-        "total": 2,
-        "solved": 0,
-        "rate": 0
-      },
-      "ToDo": {
-        "total": 1,
-        "solved": 0,
-        "rate": 0
-      },
-      "Obsolete": {
-        "total": 0,
-        "solved": 0,
-        "rate": 0
-      }
-    }
+    "total_uncertain": 0,
+    "total_obsolete": 0,
+    "fixed_found_ratio": 0,
+    "verified_ratio": 0
+  },
+  "group": {
+    "velocity_trend": {},
+    "bug_rate": 0,
+    "blocker_health": 0,
+    "tag_heatmap": {},
+    "milestone_tasks_remaining": 0,
+    "hall_of_fame_winners": {},
+    "leaderboard": {}
   },
   "members": {
-    "Axel": {
-      "found": 7,
-      "fixed": 6,
-      "fixed_ok": 2,
-      "support": 0,
-      "support_ok": 0,
-      "score": 0.45
+    "axlfc": {
+      "member_name": "Axel",
+      "completed": { "all_time": 0, "milestone": 0, "week": 0 },
+      "weekly_velocity": {},
+      "type_breakdown": {},
+      "rama_breakdown": {},
+      "tag_frequency": {},
+      "avg_completion_speed": { "days": 0, "estimated_start": false },
+      "dependency_impact": 0,
+      "comment_activity": 0,
+      "volatility": { "reopens": 0, "reprioritizations": 0 },
+      "workload": { "active_tasks": 0, "story_points": 0 }
     },
-    "Alex": {
-      "found": 8,
-      "fixed": 3,
-      "fixed_ok": 1,
-      "support": 0,
-      "support_ok": 0,
-      "score": 0.3
+    "topperh4rley": {
+      "member_name": "Alex",
+      "completed": { "all_time": 0, "milestone": 0, "week": 0 },
+      "weekly_velocity": {},
+      "type_breakdown": {},
+      "rama_breakdown": {},
+      "tag_frequency": {},
+      "avg_completion_speed": { "days": 0, "estimated_start": false },
+      "dependency_impact": 0,
+      "comment_activity": 0,
+      "volatility": { "reopens": 0, "reprioritizations": 0 },
+      "workload": { "active_tasks": 0, "story_points": 0 }
     },
-    "Dídac": {
-      "found": 2,
-      "fixed": 1,
-      "fixed_ok": 0,
-      "support": 0,
-      "support_ok": 0,
-      "score": 0.0333
+    "javi26031994-a11y": {
+      "member_name": "Javi",
+      "completed": { "all_time": 0, "milestone": 0, "week": 0 },
+      "weekly_velocity": {},
+      "type_breakdown": {},
+      "rama_breakdown": {},
+      "tag_frequency": {},
+      "avg_completion_speed": { "days": 0, "estimated_start": false },
+      "dependency_impact": 0,
+      "comment_activity": 0,
+      "volatility": { "reopens": 0, "reprioritizations": 0 },
+      "workload": { "active_tasks": 0, "story_points": 0 }
     },
-    "Javi": {
-      "found": 1,
-      "fixed": 1,
-      "fixed_ok": 0,
-      "support": 0,
-      "support_ok": 0,
-      "score": 0.0167
+    "dkdidac-design": {
+      "member_name": "Dídac",
+      "completed": { "all_time": 0, "milestone": 0, "week": 0 },
+      "weekly_velocity": {},
+      "type_breakdown": {},
+      "rama_breakdown": {},
+      "tag_frequency": {},
+      "avg_completion_speed": { "days": 0, "estimated_start": false },
+      "dependency_impact": 0,
+      "comment_activity": 0,
+      "volatility": { "reopens": 0, "reprioritizations": 0 },
+      "workload": { "active_tasks": 0, "story_points": 0 }
     },
-    "Mitxel": {
-      "found": 0,
-      "fixed": 2,
-      "fixed_ok": 0,
-      "support": 0,
-      "support_ok": 0,
-      "score": 0
+    "mitxel2022": {
+      "member_name": "Mitxel",
+      "completed": { "all_time": 0, "milestone": 0, "week": 0 },
+      "weekly_velocity": {},
+      "type_breakdown": {},
+      "rama_breakdown": {},
+      "tag_frequency": {},
+      "avg_completion_speed": { "days": 0, "estimated_start": false },
+      "dependency_impact": 0,
+      "comment_activity": 0,
+      "volatility": { "reopens": 0, "reprioritizations": 0 },
+      "workload": { "active_tasks": 0, "story_points": 0 }
     }
   },
-  "hall_of_fame": [
-    {
-      "rank": 1,
-      "medal": "🏆",
-      "name": "Axel",
-      "score": 0.45,
-      "found": 7,
-      "fixed_ok": 2,
-      "support_ok": 0
+  "hall_of_fame": {
+    "current_milestone": {
+      "winners": {},
+      "leaderboard": {}
     },
-    {
-      "rank": 2,
-      "medal": "🥇",
-      "name": "Alex",
-      "score": 0.3,
-      "found": 8,
-      "fixed_ok": 1,
-      "support_ok": 0
-    },
-    {
-      "rank": 3,
-      "medal": "🥈",
-      "name": "Dídac",
-      "score": 0.0333,
-      "found": 2,
-      "fixed_ok": 0,
-      "support_ok": 0
-    },
-    {
-      "rank": 4,
-      "medal": "🥉",
-      "name": "Javi",
-      "score": 0.0167,
-      "found": 1,
-      "fixed_ok": 0,
-      "support_ok": 0
-    },
-    {
-      "rank": 5,
-      "medal": "🎖",
-      "name": "Mitxel",
-      "score": 0,
-      "found": 0,
-      "fixed_ok": 0,
-      "support_ok": 0
-    }
-  ]
+    "archive": []
+  }
 }

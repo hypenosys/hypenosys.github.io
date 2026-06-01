@@ -800,8 +800,11 @@ function computeLayerA(allTasks, members, memberMapping, currentMilestone) {
             const weekNum = getWeekNumberForStats(d);
             weeklyVelocity[weekNum] = 0;
         }
-        completedTasks.forEach(t => {
-            const weekNum = getWeekNumberForStats(new Date(t.fecha));
+
+        const tasksToGroup = completedTasks.length > 0 ? completedTasks : memberTasks;
+        tasksToGroup.forEach(t => {
+            const dateStr = (completedTasks.length > 0) ? t.fecha : (t.fecha_creacion || t.fecha);
+            const weekNum = getWeekNumberForStats(new Date(dateStr));
             if (weeklyVelocity[weekNum] !== undefined) {
                 weeklyVelocity[weekNum] += (t.story_points || 1);
             }
@@ -852,32 +855,49 @@ function computeLayerB(allTasks, members, memberMapping, currentMilestone) {
         velocityTrend[weekNum] = 0;
     }
 
-    completedInMilestone.forEach(t => {
-        const weekNum = getWeekNumberForStats(new Date(t.fecha));
-        if (velocityTrend[weekNum] !== undefined) {
-            velocityTrend[weekNum]++;
-        }
-    });
+    if (completedInMilestone.length > 0) {
+        completedInMilestone.forEach(t => {
+            const weekNum = getWeekNumberForStats(new Date(t.fecha));
+            if (velocityTrend[weekNum] !== undefined) {
+                velocityTrend[weekNum]++;
+            }
+        });
+    } else {
+        // Fallback to creation signal if no tasks are completed yet
+        milestoneTasks.forEach(t => {
+            const dateStr = t.fecha_creacion || t.fecha;
+            const weekNum = getWeekNumberForStats(new Date(dateStr));
+            if (velocityTrend[weekNum] !== undefined) {
+                velocityTrend[weekNum]++;
+            }
+        });
+    }
 
-    // Bug rate
-    const totalCompleted = completedInMilestone.length;
-    const bugsCompleted = completedInMilestone.filter(t => t.task_type === 'bug').length;
-    const bugRate = totalCompleted > 0 ? (bugsCompleted / totalCompleted) : 0;
+    // Bug rate (Bugs vs Total Active)
+    const activeTasks = allTasks.filter(t => !['OK', 'Closed', 'Obsolete'].includes(t.estado));
+    const bugsActive = activeTasks.filter(t => t.task_type === 'bug').length;
+    const bugRate = activeTasks.length > 0 ? (bugsActive / activeTasks.length) : 0;
 
     // Blocker health
-    const activeTasks = allTasks.filter(t => !['OK', 'Closed', 'Obsolete'].includes(t.estado));
     const blockedTasksCount = activeTasks.filter(t => (t.blocked_by || []).length > 0).length;
 
     // Tag Heatmap
     const tagHeatmap = {};
     activeTasks.forEach(t => {
-        (t.tags || []).forEach(tag => {
-            tagHeatmap[tag] = (tagHeatmap[tag] || 0) + 1;
-        });
+        const tags = t.tags || [];
+        if (tags.length > 0) {
+            tags.forEach(tag => {
+                tagHeatmap[tag] = (tagHeatmap[tag] || 0) + 1;
+            });
+        } else {
+            // Fallback to task_type and rama as synthetic tags
+            if (t.task_type) tagHeatmap[t.task_type] = (tagHeatmap[t.task_type] || 0) + 1;
+            if (t.rama) tagHeatmap[t.rama] = (tagHeatmap[t.rama] || 0) + 1;
+        }
     });
 
     // Milestone Burndown (tasks remaining)
-    const remainingTasks = milestoneTasks.filter(t => t.estado !== 'OK' && t.estado !== 'Obsolete').length;
+    const remainingTasks = milestoneTasks.filter(t => !['OK', 'Closed', 'Obsolete'].includes(t.estado)).length;
 
     // Leaderboard & Winners
     const leaderboard = {};
