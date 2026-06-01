@@ -117,6 +117,13 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-danger">Fixed</h5>
             <ul class="tree-view mb-3">
+              <li><strong>Dashboard — Corregida regresión de clicks en tarjetas:</strong> Solucionado el problema de "clicks fantasma" donde pulsar el botón de edición o elementos internos podía disparar accidentalmente el visor de imágenes o interferir con la apertura de modales.
+                <ul>
+                  <li>Se ha implementado <code>event.stopPropagation()</code> en todos los elementos interactivos de las tarjetas (botones, selectores, avatares).</li>
+                  <li>Refactorizada la lógica del Lightbox para usar un handler dedicado <code>openImagePreview</code>, eliminando los listeners globales a nivel de tarjeta que causaban interferencias.</li>
+                  <li>Mejorada la responsividad y el <code>z-index</code> del Lightbox para garantizar una visualización correcta en dispositivos móviles.</li>
+                </ul>
+              </li>
               <li><strong>Lightbox — Kanban Thumbnail Mobile & Tablet Fix:</strong> Corregido el problema donde las miniaturas de imagen en las tarjetas del Kanban no abrían el visor en dispositivos móviles y tablets al entrar en conflicto con el sistema de arrastre (<code>draggable</code>). Se implementó un sistema de delegación de eventos en el card padre que intercepta tanto <code>touchstart</code> como <code>click</code> sobre botones de miniatura usando <code>capture: true</code>, garantizando una respuesta inmediata y compatibilidad total entre dispositivos táctiles y de escritorio.</li>
               <li><strong>Lightbox — Rewrite de Interacción Táctil (Critical Fix):</strong> Corregido definitivamente el problema de "eventos fantasma" en dispositivos móviles donde los thumbnails requerían dos toques para abrirse o encolaban el evento para la siguiente interacción.
                 <ul>
