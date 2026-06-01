@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T18:57:04.178Z",
-  "last_updated_by": "Axel",
+  "last_updated": "2026-06-01T18:57:24.114Z",
+  "last_updated_by": "Alex",
   "tasks": [
     {
       "id": 1,
@@ -1222,6 +1222,58 @@
         }
       ],
       "id": 24
+    },
+    {
+      "title": "1234",
+      "descripcion": "",
+      "rama": "PRO",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Alex",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [
+        {
+          "url": "https://64.media.tumblr.com/20630edd0a25aa9e7594ac22c0a793b3/14856a6474ec03dc-f7/s500x750/53274535dcf2e196565558b58a8e666eea0883cc.png",
+          "type": "url",
+          "tumblr_post_id": "818246041737510912",
+          "filename": "farming susha12.png",
+          "uploaded_at": "2026-06-01T18:57:15.150Z"
+        }
+      ],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-01",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "topperh4rley",
+          "timestamp": "2026-06-01T18:57:23.741Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 25
     }
   ]
 }
