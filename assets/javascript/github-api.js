@@ -204,38 +204,101 @@ async function atomicWrite(filePath, mutatorFn, commitMessage, mergeStrategyFn) 
 
 // ─── STATS RECOMPUTATION ──────────────────────────────────────
 async function recomputeAndSaveStats(tasksData) {
-  const tasks   = tasksData.tasks || [];
+  const activeTasks = tasksData.tasks || [];
+  let archivedTasks = [];
+  try {
+    const archiveRes = await window.githubApi.fetchFileWithSha('_data/dashboard_tasks_archive.json');
+    archivedTasks = archiveRes.content.tasks || [];
+  } catch (e) {
+    console.warn('[STATS] Could not fetch archived tasks for computation:', e);
+  }
+
+  const allTasks = [...activeTasks, ...archivedTasks];
   const members = ['Axel', 'Alex', 'Dídac', 'Javi', 'Mitxel'];
+  const memberMapping = {
+    'axlfc': 'Axel',
+    'topperh4rley': 'Alex',
+    'javi26031994-a11y': 'Javi',
+    'dkdidac-design': 'Dídac',
+    'mitxel2022': 'Mitxel'
+  };
+
+  // Get current milestone from budget
+  let currentMilestone = 'M1';
+  try {
+    const budgetRes = await window.githubApi.fetchFileWithSha('_data/studio_budget.json');
+    currentMilestone = budgetRes.content.burnout?.current_milestone || 'M1';
+  } catch (e) {
+    console.warn('[STATS] Could not fetch budget for current milestone:', e);
+  }
+
+  const layerA = computeLayerA(allTasks, members, memberMapping, currentMilestone);
+  const layerB = computeLayerB(allTasks, members, memberMapping, currentMilestone);
 
   const statsContent = {
-    schema_version: '1.0.0',
-    last_computed:  new Date().toISOString(),
+    schema_version: '1.1.0',
+    computed_at: new Date().toISOString(),
+    last_computed_milestone: currentMilestone,
     global: {
-      total_tasks:     tasks.filter(t => t.estado !== 'Obsolete').length,
-      total_ok:        tasks.filter(t => t.estado === 'OK').length,
-      total_ko:        tasks.filter(t => t.estado === 'KO').length,
-      total_uncertain: tasks.filter(t => ['?', 'In Review'].includes(t.estado)).length,
-      total_obsolete:  tasks.filter(t => t.estado === 'Obsolete').length,
-      fixed_found_ratio: parseFloat(computeFixedFoundRatio(tasks).toFixed(4)),
-      verified_ratio: tasks.length > 0 ? parseFloat((tasks.filter(t => t.estado === 'OK').length / tasks.length).toFixed(4)) : 0,
-      by_priority: {
-        Critical: computePriorityResolution(tasks, "Critical"),
-        Major:    computePriorityResolution(tasks, "Major"),
-        Medium:   computePriorityResolution(tasks, "Medium"),
-        Minor:    computePriorityResolution(tasks, "Minor"),
-        Cosmetic: computePriorityResolution(tasks, "Cosmetic"),
-        ToDo:     computePriorityResolution(tasks, "ToDo"),
-        Obsolete: computePriorityResolution(tasks, "Obsolete")
-      }
+      total_tasks: activeTasks.filter(t => t.estado !== 'Obsolete').length,
+      total_ok: activeTasks.filter(t => t.estado === 'OK').length,
+      total_ko: activeTasks.filter(t => t.estado === 'KO').length,
+      total_uncertain: activeTasks.filter(t => ['?', 'In Review'].includes(t.estado)).length,
+      total_obsolete: activeTasks.filter(t => t.estado === 'Obsolete').length,
+      fixed_found_ratio: parseFloat(computeFixedFoundRatio(activeTasks).toFixed(4)),
+      verified_ratio: activeTasks.length > 0 ? parseFloat((activeTasks.filter(t => t.estado === 'OK').length / activeTasks.length).toFixed(4)) : 0
     },
-    members: computeAllMemberStats(tasks, members),
-    hall_of_fame: computeHallOfFame(tasks, members)
+    group: layerB,
+    members: layerA
   };
+
+  // Milestone Reset Logic
+  try {
+    const oldStatsRes = await window.githubApi.fetchFileWithSha('_data/studio_stats.json');
+    const oldStats = oldStatsRes.content;
+
+    statsContent.hall_of_fame = oldStats.hall_of_fame || { current_milestone: {}, archive: [] };
+
+    if (oldStats.last_computed_milestone && oldStats.last_computed_milestone !== currentMilestone) {
+        console.log(`[STATS] Milestone changed from ${oldStats.last_computed_milestone} to ${currentMilestone}. Archiving HOF.`);
+
+        const archiveEntry = {
+            milestone: oldStats.last_computed_milestone,
+            archived_at: new Date().toISOString(),
+            winners: statsContent.hall_of_fame.current_milestone.winners || {},
+            leaderboard: statsContent.hall_of_fame.current_milestone.leaderboard || {}
+        };
+
+        if (!statsContent.hall_of_fame.archive) statsContent.hall_of_fame.archive = [];
+        statsContent.hall_of_fame.archive.push(archiveEntry);
+
+        // Reset current milestone HOF
+        statsContent.hall_of_fame.current_milestone = {
+            winners: layerB.hall_of_fame_winners,
+            leaderboard: layerB.leaderboard
+        };
+    } else {
+        // Just update current milestone HOF
+        statsContent.hall_of_fame.current_milestone = {
+            winners: layerB.hall_of_fame_winners,
+            leaderboard: layerB.leaderboard
+        };
+    }
+  } catch (e) {
+    console.warn('[STATS] Could not process milestone reset logic:', e);
+    statsContent.hall_of_fame = {
+        current_milestone: {
+            winners: layerB.hall_of_fame_winners,
+            leaderboard: layerB.leaderboard
+        },
+        archive: []
+    };
+  }
 
   await atomicWrite(
     '_data/studio_stats.json',
     () => statsContent,
-    'chore: recalcular studio_stats.json automáticamente',
+    'chore: recalcular studio_stats.json (Layer A & B)',
     null
   );
 }
@@ -247,60 +310,6 @@ function computeFixedFoundRatio(tasks) {
   const found = tasks.filter(t => t.detectado_por !== null && t.detectado_por !== "Unassigned").length;
   const fixed = tasks.filter(t => t.estado === "OK").length;
   return found > 0 ? fixed / found : 0;
-}
-
-function computeMemberFoundRate(tasks, member) {
-  const total = tasks.filter(t => t.detectado_por !== null).length;
-  const personal = tasks.filter(t => t.detectado_por === member).length;
-  return total > 0 ? personal / total : 0;
-}
-
-function computeMemberFixedOKRate(tasks, member) {
-  const total = tasks.filter(t => t.estado === "OK").length;
-  const personal = tasks.filter(t => t.resuelto_por === member && t.estado === "OK").length;
-  return total > 0 ? personal / total : 0;
-}
-
-function computeMemberSupportOKRate(tasks, member) {
-  const total = tasks.filter(t => t.estado === "OK").length;
-  const personal = tasks.filter(t => t.apoyo === member && t.estado === "OK").length;
-  return total > 0 ? personal / total : 0;
-}
-
-function computeMemberHoFScore(tasks, member) {
-  const fixRate    = computeMemberFixedOKRate(tasks, member);
-  const foundRate  = computeMemberFoundRate(tasks, member);
-  const supportRate= computeMemberSupportOKRate(tasks, member);
-  return (fixRate * 0.5) + (foundRate * 0.3) + (supportRate * 0.2);
-}
-
-function computePriorityResolution(tasks, priority) {
-  const total  = tasks.filter(t => t.prioridad === priority && t.estado !== "Obsolete").length;
-  const solved = tasks.filter(t => t.prioridad === priority && t.estado === "OK").length;
-  return { total, solved, rate: total > 0 ? solved / total : 0 };
-}
-
-function computeAllMemberStats(tasks, members) {
-  return members.reduce((acc, member) => {
-    acc[member] = {
-      found:      tasks.filter(t => t.detectado_por === member).length,
-      fixed:      tasks.filter(t => t.resuelto_por === member).length,
-      fixed_ok:   tasks.filter(t => t.resuelto_por === member && t.estado === 'OK').length,
-      support:    tasks.filter(t => t.apoyo === member).length,
-      support_ok: tasks.filter(t => t.apoyo === member && t.estado === 'OK').length,
-      score:      parseFloat(computeMemberHoFScore(tasks, member).toFixed(4))
-    };
-    return acc;
-  }, {});
-}
-
-function computeHallOfFame(tasks, members) {
-  const stats = computeAllMemberStats(tasks, members);
-  const MEDALS = ['🏆','🥇','🥈','🥉','🎖','🏅'];
-  return Object.entries(stats)
-    .sort(([,a],[,b]) => b.score - a.score)
-    .map(([name, s], i) => ({ rank: i + 1, medal: MEDALS[i] || '', name, score: s.score,
-                               found: s.found, fixed_ok: s.fixed_ok, support_ok: s.support_ok }));
 }
 
 // PART 1.3 — Burnout Schema
@@ -653,8 +662,8 @@ window.githubApi = {
 
   // Fórmulas
   computeFixedFoundRatio,
-  computeAllMemberStats,
-  computeHallOfFame,
+  computeLayerA,
+  computeLayerB,
   computeBurnoutIndex,
   roleMonthlyTotal,
   totalMonthlyExpenses,
@@ -680,3 +689,295 @@ class GitHubAPI {
     }
 }
 window.LegacyGitHubAPI = GitHubAPI;
+
+function computeLayerA(allTasks, members, memberMapping, currentMilestone) {
+    const stats = {};
+    const today = new Date();
+    const startOfWeek = new Date(today);
+    startOfWeek.setDate(today.getDate() - today.getDay());
+    startOfWeek.setHours(0,0,0,0);
+
+    members.forEach(member => {
+        const handle = Object.keys(memberMapping).find(h => memberMapping[h] === member);
+        const memberTasks = allTasks.filter(t =>
+            t.resuelto_por === member ||
+            (t.asignados && t.asignados.includes(handle))
+        );
+        const completedTasks = memberTasks.filter(t => t.estado === 'OK');
+
+        // Basic counts
+        const allTimeCompleted = completedTasks.length;
+        const milestoneCompleted = completedTasks.filter(t => t.milestone === currentMilestone).length;
+        const weekCompleted = completedTasks.filter(t => {
+            const completionDate = new Date(t.fecha);
+            return completionDate >= startOfWeek;
+        }).length;
+
+        // Breakdown by type
+        const typeBreakdown = {};
+        completedTasks.forEach(t => {
+            const type = t.task_type || 'feature';
+            typeBreakdown[type] = (typeBreakdown[type] || 0) + 1;
+        });
+
+        // Breakdown by rama
+        const ramaBreakdown = {};
+        completedTasks.forEach(t => {
+            ramaBreakdown[t.rama] = (ramaBreakdown[t.rama] || 0) + 1;
+        });
+
+        // Tag frequency
+        const tagFreq = {};
+        completedTasks.forEach(t => {
+            (t.tags || []).forEach(tag => {
+                tagFreq[tag] = (tagFreq[tag] || 0) + 1;
+            });
+        });
+
+        // Completion Speed (Weighted by Story Points or Hours)
+        let totalWeightedDays = 0;
+        let totalWeight = 0;
+        let hasEstimates = false;
+        completedTasks.forEach(t => {
+            const end = new Date(t.fecha);
+            const startStr = t.start_date || t.fecha_creacion || t.fecha;
+            const start = new Date(startStr);
+            if (!isNaN(start) && !isNaN(end)) {
+                const days = Math.max(0.5, (end - start) / (1000 * 60 * 60 * 24));
+                const weight = t.story_points || t.estimated_hours || 1;
+                totalWeightedDays += (days * weight);
+                totalWeight += weight;
+                if (!t.start_date) hasEstimates = true;
+            }
+        });
+        const avgSpeed = totalWeight > 0 ? totalWeightedDays / totalWeight : 0;
+
+        // Dependency Impact (how many tasks they unblocked)
+        let unblockedCount = 0;
+        completedTasks.forEach(t => {
+            const taskId = String(t.id);
+            const dependents = allTasks.filter(other => (other.blocked_by || []).includes(taskId));
+            unblockedCount += dependents.length;
+        });
+
+        // Comment activity (on others' tasks)
+        let commentCount = 0;
+        allTasks.forEach(t => {
+            const isAssigned = (t.asignados || []).includes(handle);
+            if (!isAssigned) {
+                (t.comments || []).forEach(c => {
+                    if (c.author_login === handle) commentCount++;
+                });
+            }
+        });
+
+        // Volatility
+        let reopens = 0;
+        let reprioritizations = 0;
+        memberTasks.forEach(t => {
+            (t.change_log || []).forEach(log => {
+                if (log.field === 'estado') {
+                    const terminalStates = ['OK', 'Closed', 'Done'];
+                    if (terminalStates.includes(log.old_value) && !terminalStates.includes(log.new_value)) {
+                        reopens++;
+                    }
+                }
+                if (log.field === 'prioridad') {
+                    reprioritizations++;
+                }
+            });
+        });
+
+        // Workload
+        const activeTasks = memberTasks.filter(t => !['OK', 'Closed', 'Obsolete'].includes(t.estado));
+        const totalStoryPoints = activeTasks.reduce((sum, t) => sum + (t.story_points || 0), 0);
+
+        // Weekly Velocity (last 8 weeks)
+        const weeklyVelocity = {};
+        for (let i = 7; i >= 0; i--) {
+            const d = new Date(today);
+            d.setDate(today.getDate() - (i * 7));
+            const weekNum = getWeekNumberForStats(d);
+            weeklyVelocity[weekNum] = 0;
+        }
+        completedTasks.forEach(t => {
+            const weekNum = getWeekNumberForStats(new Date(t.fecha));
+            if (weeklyVelocity[weekNum] !== undefined) {
+                weeklyVelocity[weekNum] += (t.story_points || 1);
+            }
+        });
+
+        stats[handle || member] = {
+            member_name: member,
+            completed: {
+                all_time: allTimeCompleted,
+                milestone: milestoneCompleted,
+                week: weekCompleted
+            },
+            weekly_velocity: weeklyVelocity,
+            type_breakdown: typeBreakdown,
+            rama_breakdown: ramaBreakdown,
+            tag_frequency: tagFreq,
+            avg_completion_speed: {
+                days: parseFloat(avgSpeed.toFixed(2)),
+                estimated_start: hasEstimates
+            },
+            dependency_impact: unblockedCount,
+            comment_activity: commentCount,
+            volatility: {
+                reopens,
+                reprioritizations
+            },
+            workload: {
+                active_tasks: activeTasks.length,
+                story_points: totalStoryPoints
+            }
+        };
+    });
+    return stats;
+}
+
+function computeLayerB(allTasks, members, memberMapping, currentMilestone) {
+    const today = new Date();
+    const milestoneTasks = allTasks.filter(t => t.milestone === currentMilestone);
+    const completedInMilestone = milestoneTasks.filter(t => t.estado === 'OK');
+
+    // Velocity Trend (completed tasks per week in this milestone)
+    // We'll return the last 8 weeks for the chart
+    const velocityTrend = {};
+    for (let i = 7; i >= 0; i--) {
+        const d = new Date(today);
+        d.setDate(today.getDate() - (i * 7));
+        const weekNum = getWeekNumberForStats(d);
+        velocityTrend[weekNum] = 0;
+    }
+
+    completedInMilestone.forEach(t => {
+        const weekNum = getWeekNumberForStats(new Date(t.fecha));
+        if (velocityTrend[weekNum] !== undefined) {
+            velocityTrend[weekNum]++;
+        }
+    });
+
+    // Bug rate
+    const totalCompleted = completedInMilestone.length;
+    const bugsCompleted = completedInMilestone.filter(t => t.task_type === 'bug').length;
+    const bugRate = totalCompleted > 0 ? (bugsCompleted / totalCompleted) : 0;
+
+    // Blocker health
+    const activeTasks = allTasks.filter(t => !['OK', 'Closed', 'Obsolete'].includes(t.estado));
+    const blockedTasksCount = activeTasks.filter(t => (t.blocked_by || []).length > 0).length;
+
+    // Tag Heatmap
+    const tagHeatmap = {};
+    activeTasks.forEach(t => {
+        (t.tags || []).forEach(tag => {
+            tagHeatmap[tag] = (tagHeatmap[tag] || 0) + 1;
+        });
+    });
+
+    // Milestone Burndown (tasks remaining)
+    const remainingTasks = milestoneTasks.filter(t => t.estado !== 'OK' && t.estado !== 'Obsolete').length;
+
+    // Leaderboard & Winners
+    const leaderboard = {};
+    members.forEach(member => {
+        const handle = Object.keys(memberMapping).find(h => memberMapping[h] === member);
+        const mTasks = milestoneTasks.filter(t => t.resuelto_por === member || (t.asignados && t.asignados.includes(handle)));
+        const mCompleted = mTasks.filter(t => t.estado === 'OK');
+
+        // MVP points (completitud points delivered)
+        const mvpPoints = mCompleted.reduce((sum, t) => sum + (t.completitud || 0), 0);
+
+        // Bug Slayer
+        const bugsSolved = mCompleted.filter(t => t.task_type === 'bug').length;
+
+        // Unblocker
+        let unblockedCount = 0;
+        mCompleted.forEach(t => {
+            const taskId = String(t.id);
+            const dependents = allTasks.filter(other => (other.blocked_by || []).includes(taskId));
+            unblockedCount += dependents.length;
+        });
+
+        // Velocity King (Story points per day)
+        let totalDays = 0;
+        let totalSP = 0;
+        mCompleted.forEach(t => {
+            const end = new Date(t.fecha);
+            const start = new Date(t.start_date || t.fecha_creacion || t.fecha);
+            const days = Math.max(0.5, (end - start) / (1000 * 60 * 60 * 24));
+            totalDays += days;
+            totalSP += (t.story_points || 1); // fallback to 1 SP if null
+        });
+        const velocity = totalDays > 0 ? totalSP / totalDays : 0;
+
+        // Researcher
+        const researchSolved = mCompleted.filter(t => t.task_type === 'research').length;
+
+        // Art Lead
+        const artTasks = mCompleted.filter(t => t.rama === 'ART').length;
+
+        // Collaborator
+        let commentCount = 0;
+        allTasks.forEach(t => {
+            const isAssigned = (t.asignados || []).includes(handle);
+            if (!isAssigned) {
+                (t.comments || []).forEach(c => {
+                    if (c.author_login === handle) commentCount++;
+                });
+            }
+        });
+
+        leaderboard[handle || member] = {
+            member_name: member,
+            mvp_points: mvpPoints,
+            bugs_solved: bugsSolved,
+            unblocked_count: unblockedCount,
+            velocity: velocity,
+            research_solved: researchSolved,
+            art_tasks: artTasks,
+            comments_left: commentCount
+        };
+    });
+
+    const winners = {
+        mvp: findWinner(leaderboard, 'mvp_points'),
+        bug_slayer: findWinner(leaderboard, 'bugs_solved'),
+        unblocker: findWinner(leaderboard, 'unblocked_count'),
+        velocity_king: findWinner(leaderboard, 'velocity'),
+        researcher: findWinner(leaderboard, 'research_solved'),
+        art_lead: findWinner(leaderboard, 'art_tasks'),
+        collaborator: findWinner(leaderboard, 'comments_left')
+    };
+
+    return {
+        velocity_trend: velocityTrend,
+        bug_rate: parseFloat(bugRate.toFixed(4)),
+        blocker_health: blockedTasksCount,
+        tag_heatmap: tagHeatmap,
+        milestone_tasks_remaining: remainingTasks,
+        hall_of_fame_winners: winners,
+        leaderboard: leaderboard
+    };
+}
+
+function findWinner(leaderboard, metric) {
+    let winner = null;
+    let maxVal = -1;
+    for (const [handle, stats] of Object.entries(leaderboard)) {
+        if (stats[metric] > maxVal) {
+            maxVal = stats[metric];
+            winner = { handle, name: stats.member_name, value: maxVal };
+        }
+    }
+    return winner;
+}
+
+function getWeekNumberForStats(d) {
+    d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+    const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+    const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+    return `${d.getUTCFullYear()}-W${weekNo}`;
+}
