@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T10:57:30.020Z",
-  "last_updated_by": "Axel",
+  "last_updated": "2026-06-01T10:57:44.964Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -1125,7 +1125,9 @@
       "subtasks": [],
       "acceptance_criteria": "",
       "blocks": [],
-      "blocked_by": [],
+      "blocked_by": [
+        "16"
+      ],
       "comments": [],
       "images": [],
       "rama2": null,
@@ -1141,6 +1143,13 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T10:57:44.304Z",
+          "field": "blocked_by",
+          "old_value": "[]",
+          "new_value": "[\"16\"]"
         }
       ],
       "id": 23
