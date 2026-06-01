@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T07:23:45.742Z",
-  "last_updated_by": "Axel",
+  "last_updated": "2026-06-01T07:23:58.334Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -738,7 +738,10 @@
       "completitud": 0,
       "resuelto_por": null,
       "detectado_por": "Axel",
-      "asignados": [],
+      "asignados": [
+        "axlfc",
+        "topperh4rley"
+      ],
       "email_responsable": null,
       "emails_asignados": [],
       "start_date": "2026-06-01",
@@ -768,6 +771,13 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T07:23:57.713Z",
+          "field": "asignados",
+          "old_value": "[]",
+          "new_value": "[\"axlfc\",\"topperh4rley\"]"
         }
       ],
       "id": 21
