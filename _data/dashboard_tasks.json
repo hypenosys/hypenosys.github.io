@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T09:28:15.912Z",
+  "last_updated": "2026-06-01T09:28:52.821Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -482,7 +482,7 @@
       "prioridad": "Major",
       "milestone": "M1",
       "estado": "OK",
-      "completitud": 0,
+      "completitud": 1,
       "resuelto_por": "Axel",
       "detectado_por": "Alex",
       "asignados": [
@@ -498,7 +498,36 @@
       "limite": null,
       "comentario": "",
       "id": 14,
-      "images": []
+      "images": [],
+      "title": "Intentar que no se actualice siempre, si ya ha sincronizao",
+      "task_type": "feature",
+      "start_date": "2026-06-01",
+      "due_date": "2026-06-05",
+      "estimated_hours": 1,
+      "story_points": 1,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:28:52.238Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-06-05"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:28:52.238Z",
+          "field": "completitud",
+          "old_value": 0,
+          "new_value": 1
+        }
+      ]
     },
     {
       "rama": "PRO",
