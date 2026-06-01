@@ -245,6 +245,14 @@ async function refreshDashboardData() {
     currentBudget   = budgetRes.content;
     currentProfiles = profilesRes.content;
 
+    // Catch-up migration for studio_stats.json
+    if (currentStats && currentStats.schema_version !== "1.1.0") {
+        console.log(`[MIGRATION] studio_stats.json is version ${currentStats.schema_version}. Triggering recompute...`);
+        await window.githubApi.recomputeAndSaveStats(migratedTasksData);
+        const freshStats = await window.githubApi.fetchFileWithSha('_data/studio_stats.json');
+        currentStats = freshStats.content;
+    }
+
     renderDashboard();
 
     document.getElementById('last-sync-timestamp').textContent =
@@ -559,12 +567,16 @@ function toggleAllTasks() {
 // ─── CHART RENDERING ──────────────────────────────────────────
 
 function renderGroupStats() {
-  if (!currentStats || !currentStats.group) return;
-  const group = currentStats.group;
+  if (!currentStats) return;
+  const group = currentStats.group || {};
 
-  document.getElementById('group-bug-rate').textContent = `${(group.bug_rate * 100).toFixed(1)}%`;
-  document.getElementById('group-blocker-health').textContent = group.blocker_health;
-  document.getElementById('group-milestone-remaining').textContent = group.milestone_tasks_remaining;
+  const bugRate = group.bug_rate || 0;
+  const blockerHealth = group.blocker_health || 0;
+  const milRemaining = group.milestone_tasks_remaining || 0;
+
+  document.getElementById('group-bug-rate').textContent = `${(bugRate * 100).toFixed(1)}%`;
+  document.getElementById('group-blocker-health').textContent = blockerHealth;
+  document.getElementById('group-milestone-remaining').textContent = milRemaining;
 
   // Burnout from budget as before but updated UI id
   const tasks = getFilteredTasks(currentTasks);
@@ -573,8 +585,8 @@ function renderGroupStats() {
   const burnoutIndex = milData ? window.githubApi.computeBurnoutIndex(tasks, milId, milData.date_start, milData.date_end) : 0;
   document.getElementById('group-burnout-index').textContent = `${(burnoutIndex * 100).toFixed(1)}%`;
 
-  renderGroupVelocityChart(group.velocity_trend);
-  renderGroupTagHeatmap(group.tag_heatmap);
+  renderGroupVelocityChart(group.velocity_trend || {});
+  renderGroupTagHeatmap(group.tag_heatmap || {});
 }
 
 let groupVelocityChart = null;
@@ -720,9 +732,12 @@ function renderBudgetChart() {
 
 function renderHallOfFame() {
   const container = document.getElementById('hof-current-winners');
-  if (!container || !currentStats?.hall_of_fame?.current_milestone) return;
+  if (!container) return;
 
-  const winners = currentStats.hall_of_fame.current_milestone.winners;
+  const hof = currentStats?.hall_of_fame || {};
+  const currentMilestone = hof.current_milestone || {};
+  const winners = currentMilestone.winners || {};
+
   container.innerHTML = '';
 
   const CATEGORIES = [
@@ -737,23 +752,34 @@ function renderHallOfFame() {
 
   CATEGORIES.forEach(cat => {
       const winner = winners[cat.id];
-      if (!winner) return;
-
-      const memberStats = currentStats.members[winner.handle] || {};
-      const distinctiveBadge = getDistinctiveBadge(memberStats);
-
       const card = document.createElement('div');
-      card.className = 'bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col items-center text-center group hover:border-indigo-500/50 transition-all cursor-pointer';
-      card.onclick = () => openDeepDiveModal(winner.name);
 
-      card.innerHTML = `
-          <div class="text-2xl mb-2">${cat.icon}</div>
-          <div class="text-[9px] font-black ${cat.color} uppercase tracking-tighter mb-1">${cat.label}</div>
-          <img src="https://github.com/${winner.handle}.png" class="w-12 h-12 rounded-full border-2 border-slate-800 mb-2 group-hover:scale-110 transition-transform shadow-lg">
-          <div class="text-xs font-bold text-white mb-1 truncate w-full">${winner.name}</div>
-          ${distinctiveBadge ? `<div class="text-[8px] font-black text-indigo-400 uppercase tracking-widest mb-1 italic opacity-80">${distinctiveBadge.label}</div>` : ''}
-          <div class="text-[10px] font-mono text-slate-500">${winner.value.toFixed(1)} ${cat.metric}</div>
-      `;
+      if (winner) {
+          const memberStats = (currentStats.members || {})[winner.handle] || {};
+          const distinctiveBadge = getDistinctiveBadge(memberStats);
+
+          card.className = 'bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col items-center text-center group hover:border-indigo-500/50 transition-all cursor-pointer';
+          card.onclick = () => openDeepDiveModal(winner.name);
+
+          card.innerHTML = `
+              <div class="text-2xl mb-2">${cat.icon}</div>
+              <div class="text-[9px] font-black ${cat.color} uppercase tracking-tighter mb-1">${cat.label}</div>
+              <img src="https://github.com/${winner.handle}.png" class="w-12 h-12 rounded-full border-2 border-slate-800 mb-2 group-hover:scale-110 transition-transform shadow-lg">
+              <div class="text-xs font-bold text-white mb-1 truncate w-full">${winner.name}</div>
+              ${distinctiveBadge ? `<div class="text-[8px] font-black text-indigo-400 uppercase tracking-widest mb-1 italic opacity-80">${distinctiveBadge.label}</div>` : ''}
+              <div class="text-[10px] font-mono text-slate-500">${winner.value.toFixed(1)} ${cat.metric}</div>
+          `;
+      } else {
+          card.className = 'bg-slate-900/50 border border-slate-800 border-dashed rounded-2xl p-4 flex flex-col items-center text-center opacity-50 grayscale';
+          card.innerHTML = `
+              <div class="text-2xl mb-2 opacity-30">${cat.icon}</div>
+              <div class="text-[9px] font-black text-slate-600 uppercase tracking-tighter mb-1">${cat.label}</div>
+              <div class="w-12 h-12 rounded-full border-2 border-slate-800 bg-slate-800 flex items-center justify-center mb-2">
+                  <i class="fa-solid fa-user-secret text-slate-700"></i>
+              </div>
+              <div class="text-[10px] font-bold text-slate-600 italic leading-tight">Sin datos aún para este milestone</div>
+          `;
+      }
       container.appendChild(card);
   });
 }
@@ -766,14 +792,21 @@ function getDistinctiveBadge(stats) {
 
 function getAvailableBadges(stats) {
     const badges = [];
-    if (stats.dependency_impact >= 5) badges.push({ icon: '🔗', label: 'Unblocker' });
-    if (stats.type_breakdown?.['bug'] >= 10) badges.push({ icon: '🐛', label: 'Bug Slayer' });
-    if (stats.avg_completion_speed?.days <= 2 && stats.completed?.all_time >= 5) badges.push({ icon: '⚡', label: 'Velocity King' });
-    if (stats.comment_activity >= 10) badges.push({ icon: '💬', label: 'Collaborator' });
-    if (stats.type_breakdown?.['research'] >= 3) badges.push({ icon: '🧪', label: 'Researcher' });
+    if (!stats) return badges;
+
+    const completed = stats.completed || {};
+    const avgSpeed = stats.avg_completion_speed || {};
+    const typeBreakdown = stats.type_breakdown || {};
+
+    if ((stats.dependency_impact || 0) >= 5) badges.push({ icon: '🔗', label: 'Unblocker' });
+    if ((typeBreakdown['bug'] || 0) >= 10) badges.push({ icon: '🐛', label: 'Bug Slayer' });
+    if ((avgSpeed.days || 999) <= 2 && (completed.all_time || 0) >= 5) badges.push({ icon: '⚡', label: 'Velocity King' });
+    if ((stats.comment_activity || 0) >= 10) badges.push({ icon: '💬', label: 'Collaborator' });
+    if ((typeBreakdown['research'] || 0) >= 3) badges.push({ icon: '🧪', label: 'Researcher' });
 
     // Tag intelligence
-    const sortedTags = Object.entries(stats.tag_frequency || {}).sort((a,b) => b[1] - a[1]);
+    const tagFrequency = stats.tag_frequency || {};
+    const sortedTags = Object.entries(tagFrequency).sort((a,b) => b[1] - a[1]);
     if (sortedTags.length > 0) {
         const [topTag, count] = sortedTags[0];
         if (count >= 3) {
@@ -1210,6 +1243,11 @@ function renderTeamProfiles() {
     card.className = `bg-slate-900 border ${isSelf ? 'border-emerald-500 ring-1 ring-emerald-500 pulse-emerald' : 'border-slate-800'} rounded-2xl overflow-hidden relative group transition-all`;
     card.dataset.member = name;
 
+    const completedAllTime = (stats && stats.completed) ? stats.completed.all_time || 0 : 0;
+    const velocityDays = (stats && stats.avg_completion_speed) ? stats.avg_completion_speed.days || 0 : 0;
+    const dependencyImpact = stats ? stats.dependency_impact || 0 : 0;
+    const volatilityReopens = (stats && stats.volatility) ? stats.volatility.reopens || 0 : 0;
+
     card.innerHTML = `
       <div class="h-2" style="background-color: ${profile.color_accent}"></div>
       <div class="p-6">
@@ -1233,10 +1271,10 @@ function renderTeamProfiles() {
         
         ${stats ? `
         <div class="grid grid-cols-2 gap-2 mb-4 bg-slate-950/50 p-3 rounded-xl border border-slate-800 text-[10px] font-mono">
-          <div class="text-slate-500">COMPLETADAS: <span class="text-emerald-400">${stats.completed.all_time}</span></div>
-          <div class="text-slate-500">VELOCITY: <span class="text-amber-400">${stats.avg_completion_speed.days}d</span></div>
-          <div class="text-slate-500">IMPACTO: <span class="text-indigo-400">${stats.dependency_impact}</span></div>
-          <div class="text-slate-500">VOLATILIDAD: <span class="text-red-400">${stats.volatility.reopens}</span></div>
+          <div class="text-slate-500">COMPLETADAS: <span class="text-emerald-400">${completedAllTime}</span></div>
+          <div class="text-slate-500">VELOCITY: <span class="text-amber-400">${velocityDays}d</span></div>
+          <div class="text-slate-500">IMPACTO: <span class="text-indigo-400">${dependencyImpact}</span></div>
+          <div class="text-slate-500">VOLATILIDAD: <span class="text-red-400">${volatilityReopens}</span></div>
         </div>
         ` : ''}
 
@@ -2440,19 +2478,24 @@ function openDeepDiveModal(memberName) {
 
     // Tab: Performance
     if (stats) {
-        document.getElementById('perf-completed-all').textContent = stats.completed.all_time;
-        document.getElementById('perf-completed-milestone').textContent = `${stats.completed.milestone} este milestone`;
+        const completed = stats.completed || {};
+        const avgSpeed = stats.avg_completion_speed || {};
+        const workload = stats.workload || {};
+        const volatility = stats.volatility || {};
 
-        const velocity = stats.avg_completion_speed.days;
-        const spVelocity = (stats.completed.all_time > 0) ? (stats.workload.story_points / (stats.avg_completion_speed.days || 1)).toFixed(1) : "0.0";
-        document.getElementById('perf-velocity').textContent = stats.avg_completion_speed.estimated_start ? `~${velocity}d` : `${velocity}d`;
+        document.getElementById('perf-completed-all').textContent = completed.all_time || 0;
+        document.getElementById('perf-completed-milestone').textContent = `${completed.milestone || 0} este milestone`;
 
-        document.getElementById('perf-impact').textContent = stats.dependency_impact;
-        document.getElementById('perf-comments').textContent = stats.comment_activity;
-        document.getElementById('perf-reopens').textContent = stats.volatility.reopens;
-        document.getElementById('perf-repriorities').textContent = stats.volatility.reprioritizations;
-        document.getElementById('perf-active-tasks').textContent = stats.workload.active_tasks;
-        document.getElementById('perf-active-sp').textContent = `${stats.workload.story_points} SP`;
+        const velocity = avgSpeed.days || 0;
+        const spVelocity = (completed.all_time > 0) ? ((workload.story_points || 0) / (avgSpeed.days || 1)).toFixed(1) : "0.0";
+        document.getElementById('perf-velocity').textContent = avgSpeed.estimated_start ? `~${velocity}d` : `${velocity}d`;
+
+        document.getElementById('perf-impact').textContent = stats.dependency_impact || 0;
+        document.getElementById('perf-comments').textContent = stats.comment_activity || 0;
+        document.getElementById('perf-reopens').textContent = volatility.reopens || 0;
+        document.getElementById('perf-repriorities').textContent = volatility.reprioritizations || 0;
+        document.getElementById('perf-active-tasks').textContent = workload.active_tasks || 0;
+        document.getElementById('perf-active-sp').textContent = `${workload.story_points || 0} SP`;
 
         // Badges
         renderMemberBadges(stats);
@@ -2498,14 +2541,15 @@ function renderMemberPerformanceCharts() {
     const ctxType = document.getElementById('member-type-chart').getContext('2d');
     const ctxRama = document.getElementById('member-rama-chart').getContext('2d');
 
+    const weeklyVelocity = stats.weekly_velocity || {};
     if (memberVelocityChart) memberVelocityChart.destroy();
     memberVelocityChart = new Chart(ctxVel, {
         type: 'bar',
         data: {
-            labels: Object.keys(stats.weekly_velocity),
+            labels: Object.keys(weeklyVelocity),
             datasets: [{
                 label: 'SP Velocity',
-                data: Object.values(stats.weekly_velocity),
+                data: Object.values(weeklyVelocity),
                 backgroundColor: 'rgba(99, 102, 241, 0.8)',
                 borderRadius: 4
             }]
@@ -2521,13 +2565,14 @@ function renderMemberPerformanceCharts() {
         }
     });
 
+    const typeBreakdown = stats.type_breakdown || {};
     if (memberTypeChart) memberTypeChart.destroy();
     memberTypeChart = new Chart(ctxType, {
         type: 'doughnut',
         data: {
-            labels: Object.keys(stats.type_breakdown),
+            labels: Object.keys(typeBreakdown),
             datasets: [{
-                data: Object.values(stats.type_breakdown),
+                data: Object.values(typeBreakdown),
                 backgroundColor: ['#6366f1', '#34d399', '#fbbf24', '#f87171', '#a78bfa'],
                 borderWidth: 0
             }]
@@ -2541,13 +2586,14 @@ function renderMemberPerformanceCharts() {
         }
     });
 
+    const ramaBreakdown = stats.rama_breakdown || {};
     if (memberRamaChart) memberRamaChart.destroy();
     memberRamaChart = new Chart(ctxRama, {
         type: 'polarArea',
         data: {
-            labels: Object.keys(stats.rama_breakdown),
+            labels: Object.keys(ramaBreakdown),
             datasets: [{
-                data: Object.values(stats.rama_breakdown),
+                data: Object.values(ramaBreakdown),
                 backgroundColor: ['rgba(99, 102, 241, 0.5)', 'rgba(52, 211, 153, 0.5)', 'rgba(251, 191, 36, 0.5)', 'rgba(248, 113, 113, 0.5)'],
                 borderColor: '#1e293b',
                 borderWidth: 2
