@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T09:22:52.962Z",
+  "last_updated": "2026-06-01T09:24:12.018Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -627,7 +627,7 @@
       "tema_principal": "Programación / Engine",
       "prioridad": "Minor",
       "milestone": "M1",
-      "estado": "Working",
+      "estado": "In Review",
       "completitud": 0.5,
       "resuelto_por": "Axel",
       "detectado_por": "Axel",
@@ -723,6 +723,13 @@
           "field": "completitud",
           "old_value": 0,
           "new_value": 0.5
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:24:11.216Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
         }
       ]
     },
