@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T07:11:10.415Z",
-  "last_updated_by": "Axlfc",
+  "last_updated": "2026-06-01T07:21:10.596Z",
+  "last_updated_by": "Axel",
   "tasks": [
     {
       "id": 1,
@@ -725,6 +725,52 @@
       "limite": null,
       "comentario": "",
       "id": 20
+    },
+    {
+      "title": "Arreglar previsualización de fotos fuera del edit",
+      "descripcion": "Al hacer clic en una de las fotos desde el dashboard ocurre un bug en el que nos da la falsa apariencia de que se va a abrir la imagen y al darle clic a una nueva tarea, entonces se abre la previsualización ese comportamiento no es el esperado.",
+      "rama": "PRO",
+      "task_type": "bug",
+      "tema_principal": "Programación / Engine",
+      "prioridad": "Cosmetic",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Axel",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-06-01",
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "UX/UI"
+      ],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-01",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T07:21:09.961Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 21
     }
   ]
 }
