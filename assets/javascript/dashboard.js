@@ -405,6 +405,27 @@ function buildTaskCard(task) {
   });
   card.addEventListener('dragend', () => card.classList.remove('opacity-50'));
 
+  card.addEventListener('touchstart', function(e) {
+      const btn = e.target.closest('button[data-lightbox-task]');
+      if (!btn) return;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      const taskId = btn.getAttribute('data-lightbox-task');
+      const idx = parseInt(btn.getAttribute('data-lightbox-idx'), 10);
+      openLightbox(taskId, idx);
+  }, { capture: true, passive: false });
+
+  // Desktop/Mouse Support
+  card.addEventListener('click', function(e) {
+      const btn = e.target.closest('button[data-lightbox-task]');
+      if (!btn) return;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      const taskId = btn.getAttribute('data-lightbox-task');
+      const idx = parseInt(btn.getAttribute('data-lightbox-idx'), 10);
+      openLightbox(taskId, idx);
+  }, { capture: true });
+
   const priorityColors = {
     Critical: 'bg-red-500 text-slate-950 font-black',
     Major:    'bg-orange-500 text-slate-950 font-black',
@@ -551,9 +572,10 @@ function buildTaskCard(task) {
                     ${isLegacy ? '<span class="absolute top-0.5 left-0.5 bg-amber-500 text-slate-950 text-[6px] font-black px-0.5 rounded shadow-sm">⚠️ LEGACY</span>' : ''}
                     <button
                         type="button"
+                        data-lightbox-task="${String(task.id)}"
+                        data-lightbox-idx="${idx}"
                         class="absolute inset-0 w-full h-full opacity-0"
                         style="touch-action: manipulation; -webkit-tap-highlight-color: transparent;"
-                        onpointerdown="event.preventDefault(); event.stopImmediatePropagation(); var c = this.closest('[draggable]'); if(c){ c.draggable = false; setTimeout(function(){ c.draggable = true; }, 400); } openLightbox('${String(task.id)}', ${idx});"
                     ></button>
                 `;
 
