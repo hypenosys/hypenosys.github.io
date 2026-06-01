@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T07:26:26.402Z",
+  "last_updated": "2026-06-01T08:52:17.212Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -800,7 +800,7 @@
     },
     {
       "title": "Adoptar prácticas mobile first",
-      "descripcion": "Hay algunos botones que estamos obligados a hacer joven y que deberían mostrarse directamente en toda plataforma, por ejemplo: los jóvenes de las imágenes para verlas o borrarlas, O los botones de edición de las propias tasks, botoncitos de edicion, se tienen que poder ver directamente el icono sin hacer hover",
+      "descripcion": "Hay algunos botones que estamos obligados a hacer hover y que deberían mostrarse directamente en toda plataforma, por ejemplo: los hovers de las imágenes para verlas o borrarlas, O los botones de edición de las propias tasks, botoncitos de edicion, se tienen que poder ver directamente el icono sin hacer hover, para asegurar accesibilidad en movil",
       "rama": "PRO",
       "task_type": "feature",
       "tema_principal": "Programación / Engine",
@@ -848,6 +848,13 @@
           "field": "prioridad",
           "old_value": "Major",
           "new_value": "Critical"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T08:52:16.775Z",
+          "field": "descripcion",
+          "old_value": "Hay algunos botones que estamos obligados a hacer joven y que deberían mostrarse directamente en toda plataforma, por ejemplo: los jóvenes de las imágenes para verlas o borrarlas, O los botones de edición de las propias tasks, botoncitos de edicion, se tienen que poder ver directamente el icono sin hacer hover",
+          "new_value": "Hay algunos botones que estamos obligados a hacer hover y que deberían mostrarse directamente en toda plataforma, por ejemplo: los hovers de las imágenes para verlas o borrarlas, O los botones de edición de las propias tasks, botoncitos de edicion, se tienen que poder ver directamente el icono sin hacer hover, para asegurar accesibilidad en movil"
         }
       ],
       "id": 22
