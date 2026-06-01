@@ -1,0 +1,508 @@
+---
+permalink: /documentacion/
+---
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-slate-950">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentación | Hypenosys</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+        :root {
+            --dracula-bg: #282a36;
+            --dracula-curr: #44475a;
+            --dracula-fg: #f8f8f2;
+            --dracula-comment: #6272a4;
+            --dracula-cyan: #8be9fd;
+            --dracula-green: #50fa7b;
+            --dracula-orange: #ffb86c;
+            --dracula-pink: #ff79c6;
+            --dracula-purple: #bd93f9;
+            --dracula-red: #ff5555;
+            --dracula-yellow: #f1fa8c;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: #0f172a; /* Slate 950 fallback */
+            color: #f8f8f2;
+        }
+
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+        /* Scrollbar custom */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        /* Markdown Styles */
+        .prose-dracula {
+            color: var(--dracula-fg);
+            max-width: none;
+        }
+        .prose-dracula h1, .prose-dracula h2, .prose-dracula h3, .prose-dracula h4 {
+            color: var(--dracula-purple);
+            font-weight: 700;
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 0.3em;
+        }
+        .prose-dracula h1 { font-size: 2.25rem; }
+        .prose-dracula h2 { font-size: 1.8rem; }
+        .prose-dracula h3 { font-size: 1.5rem; }
+
+        .prose-dracula p { margin-bottom: 1em; line-height: 1.7; }
+        .prose-dracula a { color: var(--dracula-cyan); text-decoration: none; border-bottom: 1px dashed var(--dracula-cyan); }
+        .prose-dracula a:hover { color: var(--dracula-pink); border-bottom-style: solid; }
+
+        .prose-dracula code {
+            background-color: #1e293b;
+            color: var(--dracula-green);
+            padding: 0.2em 0.4em;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+        }
+        .prose-dracula pre {
+            background-color: #1e293b;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            border: 1px solid #334155;
+            margin-bottom: 1.5em;
+        }
+        .prose-dracula pre code {
+            background-color: transparent;
+            padding: 0;
+            color: var(--dracula-fg);
+        }
+        .prose-dracula ul, .prose-dracula ol {
+            margin-bottom: 1em;
+            padding-left: 1.5em;
+        }
+        .prose-dracula ul { list-style-type: disc; }
+        .prose-dracula ol { list-style-type: decimal; }
+        .prose-dracula li { margin-bottom: 0.5em; }
+
+        .prose-dracula blockquote {
+            border-left: 4px solid var(--dracula-purple);
+            padding-left: 1em;
+            color: var(--dracula-comment);
+            font-style: italic;
+            margin-bottom: 1em;
+        }
+
+        .prose-dracula img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin: 1.5em 0;
+            border: 1px solid #334155;
+        }
+
+        /* Sidebar active link */
+        .sidebar-link.active {
+            background-color: #1e293b;
+            color: var(--dracula-cyan);
+            border-left: 3px solid var(--dracula-cyan);
+        }
+
+        /* Mobile Sidebar Enhancement */
+        #sidebar.mobile-open {
+            display: flex !important;
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            width: 100%;
+            background-color: rgba(15, 23, 42, 0.95); /* Slate 950 semi-transparent */
+            backdrop-filter: blur(8px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+    </style>
+</head>
+<body class="h-full text-slate-100 flex flex-col">
+
+    <!-- Top Navigation -->
+    <header class="bg-slate-900 border-b border-slate-800 px-4 md:px-6 py-4 flex justify-between items-center sticky top-0 z-40">
+        <div class="flex items-center gap-4">
+            <a href="/" class="text-emerald-400 text-2xl font-bold tracking-tighter flex items-center gap-2">
+                <i class="fa-solid fa-microchip"></i> HYPENOSYS <span class="text-slate-500 font-light text-sm tracking-normal">DOCS</span>
+            </a>
+            <nav class="hidden md:flex items-center ml-8 gap-6">
+                <a href="/" class="text-xs font-bold text-slate-400 hover:text-white transition-all uppercase">Inicio</a>
+                <a href="/dashboard.html" class="text-xs font-bold text-slate-400 hover:text-white transition-all uppercase">Dashboard</a>
+                <a href="/jules-panel/" class="text-xs font-bold text-slate-400 hover:text-white transition-all uppercase">Jules</a>
+            </nav>
+        </div>
+        <div class="flex items-center gap-4">
+            <div id="github-status-dot" class="w-2 h-2 rounded-full bg-slate-700"></div>
+            <span class="text-[10px] font-mono text-slate-500 uppercase tracking-widest hidden sm:inline">Repo Sincronizado</span>
+        </div>
+    </header>
+
+    <div class="flex flex-grow overflow-hidden">
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="w-64 bg-slate-900/50 border-r border-slate-800 flex flex-col hidden md:flex">
+            <div class="p-4 border-b border-slate-800">
+                <div class="flex items-center justify-between mb-4 md:hidden">
+                    <span class="font-bold text-indigo-400 uppercase text-xs tracking-widest">Explorador</span>
+                    <button onclick="toggleSidebar()" class="text-slate-400 hover:text-white">
+                        <i class="fa-solid fa-xmark text-xl"></i>
+                    </button>
+                </div>
+                <div class="relative">
+                    <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
+                    <input type="text" id="doc-search" placeholder="Buscar documento..."
+                           class="w-full bg-slate-950 border border-slate-800 rounded-lg py-2 pl-9 pr-3 text-xs text-slate-300 focus:outline-none focus:border-indigo-500">
+                </div>
+            </div>
+            <div id="sidebar-content" class="flex-grow overflow-y-auto custom-scrollbar p-2 space-y-1">
+                <div class="animate-pulse space-y-2 p-2">
+                    <div class="h-4 bg-slate-800 rounded w-3/4"></div>
+                    <div class="h-4 bg-slate-800 rounded w-1/2"></div>
+                    <div class="h-4 bg-slate-800 rounded w-5/6"></div>
+                </div>
+            </div>
+            <div class="p-4 border-t border-slate-800 text-[10px] text-slate-600 font-mono flex justify-between">
+                <span>v1.0.0</span>
+                <span>Hypenosys/Docs</span>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-grow overflow-y-auto custom-scrollbar bg-slate-950">
+            <div id="content-container" class="max-w-4xl mx-auto px-6 py-12">
+                <!-- Welcome Section (Default) -->
+                <div id="welcome-section" class="space-y-8">
+                    <div class="bg-indigo-900/20 border border-indigo-500/30 rounded-2xl p-8 text-center">
+                        <div class="w-20 h-20 bg-indigo-500/20 rounded-full flex items-center justify-center mx-auto mb-6 border border-indigo-500/30">
+                            <i class="fa-solid fa-book-open text-3xl text-indigo-400"></i>
+                        </div>
+                        <h1 class="text-4xl font-bold text-white mb-4">Centro de Documentación</h1>
+                        <p class="text-slate-400 max-w-xl mx-auto leading-relaxed">
+                            Bienvenido a la base de conocimientos central de Hypenosys. Aquí encontrarás el GDD, guías técnicas, lore y especificaciones del proyecto sincronizadas en tiempo real con nuestro repositorio de Obsidian.
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-slate-900 p-6 rounded-xl border border-slate-800 hover:border-indigo-500/50 transition-all cursor-pointer group" onclick="findAndLoad('GDD')">
+                            <i class="fa-solid fa-scroll text-2xl text-amber-400 mb-4 group-hover:scale-110 transition-transform"></i>
+                            <h3 class="font-bold text-white mb-2">GDD & Lore</h3>
+                            <p class="text-xs text-slate-500">Diseño de niveles, narrativa y mecánicas principales del juego.</p>
+                        </div>
+                        <div class="bg-slate-900 p-6 rounded-xl border border-slate-800 hover:border-emerald-500/50 transition-all cursor-pointer group" onclick="findAndLoad('Tech')">
+                            <i class="fa-solid fa-code text-2xl text-emerald-400 mb-4 group-hover:scale-110 transition-transform"></i>
+                            <h3 class="font-bold text-white mb-2">Technical Docs</h3>
+                            <p class="text-xs text-slate-500">Estándares de código, arquitectura de Unreal y automatización.</p>
+                        </div>
+                        <div class="bg-slate-900 p-6 rounded-xl border border-slate-800 hover:border-pink-500/50 transition-all cursor-pointer group" onclick="findAndLoad('Art')">
+                            <i class="fa-solid fa-palette text-2xl text-pink-400 mb-4 group-hover:scale-110 transition-transform"></i>
+                            <h3 class="font-bold text-white mb-2">Art Bible</h3>
+                            <p class="text-xs text-slate-500">Guías visuales, pipelines de assets y referencias estéticas.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Markdown Content Area (Hidden by default) -->
+                <div id="markdown-section" class="hidden">
+                    <div class="flex flex-wrap items-center justify-between gap-4 mb-8 pb-4 border-b border-slate-800">
+                        <div id="breadcrumb" class="flex items-center gap-2 text-xs font-mono text-slate-500">
+                            <button onclick="resetToWelcome()" class="hover:text-white transition-colors flex items-center gap-1">
+                                <i class="fa-solid fa-folder-open"></i>
+                                <span>docs</span>
+                            </button>
+                            <i class="fa-solid fa-chevron-right text-[8px]"></i>
+                            <span id="current-filename" class="text-indigo-400">archivo.md</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <a id="btn-edit-github" target="_blank" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg text-[10px] font-bold border border-slate-700 flex items-center gap-2 transition-all">
+                                <i class="fa-brands fa-github text-xs"></i> EDITAR EN GITHUB
+                            </a>
+                            <a id="btn-open-obsidian" class="bg-indigo-900/30 hover:bg-indigo-900/50 text-indigo-300 px-3 py-1.5 rounded-lg text-[10px] font-bold border border-indigo-500/30 flex items-center gap-2 transition-all">
+                                <i class="fa-solid fa-gem text-xs"></i> ABRIR EN OBSIDIAN
+                            </a>
+                        </div>
+                    </div>
+
+                    <div id="markdown-body" class="prose prose-dracula">
+                        <!-- Rendered Markdown goes here -->
+                    </div>
+
+                    <div class="mt-12 pt-8 border-t border-slate-800 flex justify-between items-center text-[10px] text-slate-600 font-mono">
+                        <span id="last-updated">Actualizado: ---</span>
+                        <a href="#" onclick="scrollToTop()" class="hover:text-white transition-colors">VOLVER ARRIBA <i class="fa-solid fa-arrow-up ml-1"></i></a>
+                    </div>
+                </div>
+
+                <!-- Loading State -->
+                <div id="loading-state" class="hidden flex flex-col items-center justify-center py-20 space-y-4">
+                    <div class="w-12 h-12 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin"></div>
+                    <p class="text-slate-500 font-mono text-xs uppercase tracking-widest">Sincronizando con el repositorio...</p>
+                </div>
+
+                <!-- Error State -->
+                <div id="error-state" class="hidden bg-red-900/20 border border-red-500/30 rounded-xl p-8 text-center">
+                    <i class="fa-solid fa-triangle-exclamation text-3xl text-red-500 mb-4"></i>
+                    <h3 class="text-white font-bold mb-2">Error de Sincronización</h3>
+                    <p id="error-message" class="text-slate-400 text-sm mb-6">No se pudo conectar con el repositorio de documentación.</p>
+                    <button onclick="location.reload()" class="bg-red-500/20 hover:bg-red-500/40 text-red-300 px-4 py-2 rounded-lg text-xs font-bold transition-all border border-red-500/30">
+                        REINTENTAR CONEXIÓN
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile Navigation Toggle -->
+    <button id="mobile-toggle" onclick="toggleSidebar()" class="md:hidden fixed bottom-6 right-6 w-14 h-14 bg-indigo-600 text-white rounded-full shadow-2xl flex items-center justify-center z-50">
+        <i id="mobile-toggle-icon" class="fa-solid fa-list-ul text-xl"></i>
+    </button>
+
+    <script>
+        const REPO_OWNER = 'hypenosys';
+        const REPO_NAME = 'docs';
+        const GITHUB_API = 'https://api.github.com';
+
+        let currentPath = '';
+        let allFilesFlattened = [];
+
+        async function init() {
+            try {
+                // Fetch root contents
+                const files = await fetchRepoContents('');
+                renderSidebar(files);
+                updateConnectionStatus(true);
+
+                // Fetch all files recursively for search and quick links
+                fetchAllFiles();
+
+                // Handle direct links to files via hash
+                if (window.location.hash) {
+                    const path = window.location.hash.substring(1);
+                    loadDocument(path);
+                }
+            } catch (error) {
+                console.error('Error initializing docs:', error);
+                showError('Error al cargar la estructura del repositorio. Verifica tu conexión.');
+                updateConnectionStatus(false);
+            }
+        }
+
+        async function fetchRepoContents(path) {
+            const response = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`);
+            if (!response.ok) throw new Error('Failed to fetch contents');
+            return await response.json();
+        }
+
+        async function fetchAllFiles() {
+            try {
+                const response = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/git/trees/main?recursive=1`);
+                if (!response.ok) return;
+                const data = await response.json();
+                allFilesFlattened = data.tree.filter(item => item.path.endsWith('.md'));
+            } catch (e) {
+                console.warn('Could not fetch recursive tree for search:', e);
+            }
+        }
+
+        function renderSidebar(files, container = document.getElementById('sidebar-content'), level = 0) {
+            if (level === 0) container.innerHTML = '';
+
+            // Sort: folders first, then files
+            const sorted = [...files].sort((a, b) => {
+                if (a.type === b.type) return a.name.localeCompare(b.name);
+                return a.type === 'dir' ? -1 : 1;
+            });
+
+            sorted.forEach(file => {
+                const item = document.createElement('div');
+                item.className = 'group';
+
+                const isDir = file.type === 'dir';
+                const padding = level * 12 + 8;
+
+                const link = document.createElement('button');
+                link.className = `sidebar-link w-full text-left px-3 py-2 rounded-lg text-xs transition-all flex items-center gap-2 hover:bg-slate-800 text-slate-400 hover:text-white`;
+                link.style.paddingLeft = `${padding}px`;
+                link.dataset.path = file.path;
+
+                const icon = isDir ? 'fa-folder text-amber-500/70' : 'fa-file-lines text-slate-500';
+                link.innerHTML = `<i class="fa-solid ${icon} w-4"></i> <span class="truncate">${file.name.replace('.md', '')}</span>`;
+
+                if (isDir) {
+                    link.onclick = async () => {
+                        const subContainerId = `dir-${file.sha}`;
+                        let subContainer = document.getElementById(subContainerId);
+
+                        if (subContainer) {
+                            subContainer.classList.toggle('hidden');
+                            link.querySelector('i').classList.toggle('fa-folder-open');
+                        } else {
+                            link.innerHTML = `<i class="fa-solid fa-spinner fa-spin w-4"></i> <span class="truncate">${file.name}</span>`;
+                            try {
+                                const subFiles = await fetchRepoContents(file.path);
+                                link.innerHTML = `<i class="fa-solid fa-folder-open text-amber-500/70 w-4"></i> <span class="truncate">${file.name}</span>`;
+                                subContainer = document.createElement('div');
+                                subContainer.id = subContainerId;
+                                item.appendChild(subContainer);
+                                renderSidebar(subFiles, subContainer, level + 1);
+                            } catch (e) {
+                                link.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-red-500 w-4"></i> <span class="truncate">${file.name}</span>`;
+                            }
+                        }
+                    };
+                } else {
+                    link.onclick = () => {
+                        setActiveLink(file.path);
+                        loadDocument(file.path);
+                        if (window.innerWidth < 768) toggleSidebar();
+                    };
+                }
+
+                item.appendChild(link);
+                container.appendChild(item);
+            });
+        }
+
+        function setActiveLink(path) {
+            document.querySelectorAll('.sidebar-link').forEach(el => {
+                if (el.dataset.path === path) {
+                    el.classList.add('active');
+                } else {
+                    el.classList.remove('active');
+                }
+            });
+        }
+
+        async function loadDocument(path) {
+            showLoading(true);
+            try {
+                const response = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`);
+                if (!response.ok) throw new Error('File not found');
+                const data = await response.json();
+
+                const content = atob(data.content.replace(/\n/g, ''));
+                const decodedContent = decodeURIComponent(escape(content));
+
+                renderMarkdown(decodedContent, path);
+                updateMetadata(data);
+
+                window.location.hash = path;
+                currentPath = path;
+            } catch (error) {
+                console.error('Error loading document:', error);
+                showError('No se pudo cargar el contenido del archivo.');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function renderMarkdown(md, path) {
+            const container = document.getElementById('markdown-body');
+            container.innerHTML = marked.parse(md);
+
+            document.getElementById('welcome-section').classList.add('hidden');
+            document.getElementById('markdown-section').classList.remove('hidden');
+            document.getElementById('current-filename').textContent = path.split('/').pop().replace('.md', '');
+
+            // Buttons
+            document.getElementById('btn-edit-github').href = `https://github.com/${REPO_OWNER}/${REPO_NAME}/edit/main/${path}`;
+            // Obsidian URI: obsidian://open?vault=docs&file=path%2Fto%2Ffile
+            const obsidianPath = encodeURIComponent(path.replace('.md', ''));
+            document.getElementById('btn-open-obsidian').href = `obsidian://open?vault=${REPO_NAME}&file=${obsidianPath}`;
+
+            scrollToTop();
+        }
+
+        function updateMetadata(data) {
+            document.getElementById('last-updated').textContent = `Archivo: ${data.name}`;
+        }
+
+        function showLoading(show) {
+            document.getElementById('loading-state').classList.toggle('hidden', !show);
+            if (show) {
+                document.getElementById('welcome-section').classList.add('hidden');
+                document.getElementById('markdown-section').classList.add('hidden');
+                document.getElementById('error-state').classList.add('hidden');
+            }
+        }
+
+        function showError(msg) {
+            document.getElementById('error-state').classList.remove('hidden');
+            document.getElementById('error-message').textContent = msg;
+            document.getElementById('welcome-section').classList.add('hidden');
+            document.getElementById('markdown-section').classList.add('hidden');
+            document.getElementById('loading-state').classList.add('hidden');
+        }
+
+        function resetToWelcome() {
+            document.getElementById('welcome-section').classList.remove('hidden');
+            document.getElementById('markdown-section').classList.add('hidden');
+            window.location.hash = '';
+            document.querySelectorAll('.sidebar-link').forEach(el => el.classList.remove('active'));
+        }
+
+        function updateConnectionStatus(ok) {
+            const dot = document.getElementById('github-status-dot');
+            dot.className = `w-2 h-2 rounded-full ${ok ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]' : 'bg-red-500'}`;
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.getElementById('mobile-toggle');
+            const icon = document.getElementById('mobile-toggle-icon');
+
+            sidebar.classList.toggle('mobile-open');
+
+            if (sidebar.classList.contains('mobile-open')) {
+                icon.classList.replace('fa-list-ul', 'fa-xmark');
+                toggleBtn.classList.add('hidden'); // Hide FAB when menu is open to use the X inside
+            } else {
+                icon.classList.replace('fa-xmark', 'fa-list-ul');
+                toggleBtn.classList.remove('hidden');
+            }
+        }
+
+        function scrollToTop() {
+            document.querySelector('main').scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function findAndLoad(keyword) {
+            const found = allFilesFlattened.find(f => f.path.toLowerCase().includes(keyword.toLowerCase()));
+            if (found) {
+                loadDocument(found.path);
+                setActiveLink(found.path);
+            } else {
+                console.log('No direct match found in loaded files');
+                // Try searching in sidebar items currently rendered
+                const link = Array.from(document.querySelectorAll('.sidebar-link')).find(el => el.textContent.toLowerCase().includes(keyword.toLowerCase()));
+                if (link) link.click();
+            }
+        }
+
+        // Search functionality
+        document.getElementById('doc-search').oninput = (e) => {
+            const term = e.target.value.toLowerCase();
+            const links = document.querySelectorAll('.sidebar-link');
+            links.forEach(link => {
+                const text = link.textContent.toLowerCase();
+                const isMatch = text.includes(term);
+                link.parentElement.classList.toggle('hidden', !isMatch);
+            });
+        };
+
+        init();
+    </script>
+</body>
+</html>
