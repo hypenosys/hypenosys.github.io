@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-01T09:20:05.968Z",
+  "computed_at": "2026-06-01T09:20:46.441Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 15,
@@ -32,7 +32,7 @@
       "DIS": 1,
       "chore": 1,
       "onboarding": 1,
-      "feature": 3,
+      "feature": 4,
       "ART": 1,
       "infraestructura": 1,
       "UX/UI": 1
