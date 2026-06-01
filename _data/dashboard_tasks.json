@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T10:57:44.964Z",
+  "last_updated": "2026-06-01T11:18:45.439Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -965,7 +965,7 @@
       "rama": "PRO",
       "task_type": "bug",
       "tema_principal": "Programación / Engine",
-      "prioridad": "Cosmetic",
+      "prioridad": "Major",
       "milestone": "M1",
       "estado": "Working",
       "completitud": 0,
@@ -980,10 +980,11 @@
       "start_date": "2026-06-01",
       "due_date": "2026-06-05",
       "estimated_hours": 1,
-      "story_points": 1,
+      "story_points": 2,
       "tags": [
         "UX/UI",
-        "bug"
+        "bug",
+        "hard"
       ],
       "external_links": [],
       "subtasks": [],
@@ -1033,6 +1034,20 @@
           "field": "estado",
           "old_value": "Pending",
           "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T11:18:44.829Z",
+          "field": "prioridad",
+          "old_value": "Cosmetic",
+          "new_value": "Major"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T11:18:44.829Z",
+          "field": "tags",
+          "old_value": "[\"UX/UI\",\"bug\"]",
+          "new_value": "[\"UX/UI\",\"bug\",\"hard\"]"
         }
       ],
       "id": 21
