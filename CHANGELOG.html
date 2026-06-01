@@ -117,6 +117,14 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-danger">Fixed</h5>
             <ul class="tree-view mb-3">
+              <li><strong>Bug Follow-up — Retardo en apertura de Lightbox:</strong> Corregido definitivamente el problema donde las fotos de las tareas requerían dos interacciones para abrirse en dispositivos táctiles.
+                <ul>
+                  <li>Implementado el uso de <code>onpointerdown</code> con <code>event.preventDefault()</code> para interceptar la interacción antes de la separación de eventos de foco/click del navegador.</li>
+                  <li>Migración de contenedores de imágenes a etiquetas semánticas <code>&lt;button&gt;</code> para mejorar la prioridad de eventos y la accesibilidad.</li>
+                  <li>Añadido soporte para teclado (Enter/Espacio) mediante <code>onkeydown</code> para mantener la accesibilidad universal.</li>
+                  <li>Uso de <code>focus-visible</code> para suprimir el anillo de foco en interacciones de puntero mientras se preserva para usuarios de teclado.</li>
+                </ul>
+              </li>
               <li><strong>Retardo en apertura de Lightbox:</strong> Corregido bug donde las fotos de las tareas no se abrían inmediatamente en dispositivos táctiles/tablets. Se implementó <code>event.stopPropagation()</code> y <code>draggable="false"</code> para evitar conflictos con el sistema de arrastre del Kanban.</li>
               <li><strong>Navegación en Lightbox:</strong> Añadidas flechas de navegación y contador de imágenes para permitir ciclar entre múltiples fotos de una tarea sin cerrar el visor.</li>
               <li><strong>Soporte de Teclado:</strong> Implementado cierre con Escape y navegación con flechas de dirección en el visor de imágenes.</li>
