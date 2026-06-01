@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T06:55:22.587Z",
+  "last_updated": "2026-06-01T06:55:44.912Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -522,11 +522,12 @@
       "tema_principal": "Programación / Engine",
       "prioridad": "Major",
       "milestone": "M1",
-      "estado": "Pending",
+      "estado": "In Review",
       "completitud": 0,
-      "resuelto_por": null,
+      "resuelto_por": "Axel",
       "detectado_por": "Alex",
       "asignados": [
+        "axlfc",
         "topperh4rley"
       ],
       "email_responsable": null,
@@ -538,7 +539,36 @@
       "limite": null,
       "comentario": "",
       "id": 19,
-      "images": []
+      "images": [],
+      "title": "cambiar sistema de imagenes a turmblr",
+      "task_type": "feature",
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T06:55:44.366Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T06:55:44.366Z",
+          "field": "asignados",
+          "old_value": "[\"topperh4rley\"]",
+          "new_value": "[\"axlfc\",\"topperh4rley\"]"
+        }
+      ]
     },
     {
       "rama": "PRO",
