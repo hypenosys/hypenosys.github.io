@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T07:24:23.319Z",
+  "last_updated": "2026-06-01T07:26:06.564Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -452,7 +452,7 @@
       "rama": "ART",
       "descripcion": "Actualmente es difícil identificar de un vistazo el propósito de cada repositorio. Se busca implementar un sistema de etiquetas visuales para categorizarlos de forma rápida.\nEjemplos de etiquetas a incluir:\n\n- Documentación\n\n- Website\n\n- Game Scripts\n\n- Herramientas internas\n\n---\n\nEl estado visual actual de la interfaz para esta funcionalidad requiere una revisión completa. Es necesario rediseñar los componentes visuales y el sistema de etiquetas antes de proceder con la implementación final, ya que el diseño previo no cumple con los estándares estandares de calidad de la plataforma.\n---\n\nPoder ponder tags en los repositorios en el Panel de Jules para mejorar acessibilidad (Ex: Documentación; Website, Game Scripts...) JAVI MODIFICAR EL ARTE PORQUE ESTA HORRENDO TODO\n\n",
       "tema_principal": "Arte / Assets",
-      "prioridad": "Medium",
+      "prioridad": "Cosmetic",
       "milestone": "M1",
       "estado": "Working",
       "completitud": 0,
@@ -522,6 +522,13 @@
           "field": "descripcion",
           "old_value": "Actualmente es difícil identificar de un vistazo el propósito de cada repositorio. Se busca implementar un sistema de etiquetas visuales para categorizarlos de forma rápida.\nEjemplos de etiquetas a incluir:\n\nDocumentación\n\nWebsite\n\nGame Scripts\n\nHerramientas internas\n\n---\n\nEl estado visual actual de la interfaz para esta funcionalidad requiere una revisión completa. Es necesario rediseñar los componentes visuales y el sistema de etiquetas antes de proceder con la implementación final, ya que el diseño previo no cumple con los estándares estandares de calidad de la plataforma.\n---\n\nPoder ponder tags en los repositorios en el Panel de Jules para mejorar acessibilidad (Ex: Documentación; Website, Game Scripts...) JAVI MODIFICAR EL ARTE PORQUE ESTA HORRENDO TODO\n\n",
           "new_value": "Actualmente es difícil identificar de un vistazo el propósito de cada repositorio. Se busca implementar un sistema de etiquetas visuales para categorizarlos de forma rápida.\nEjemplos de etiquetas a incluir:\n\n- Documentación\n\n- Website\n\n- Game Scripts\n\n- Herramientas internas\n\n---\n\nEl estado visual actual de la interfaz para esta funcionalidad requiere una revisión completa. Es necesario rediseñar los componentes visuales y el sistema de etiquetas antes de proceder con la implementación final, ya que el diseño previo no cumple con los estándares estandares de calidad de la plataforma.\n---\n\nPoder ponder tags en los repositorios en el Panel de Jules para mejorar acessibilidad (Ex: Documentación; Website, Game Scripts...) JAVI MODIFICAR EL ARTE PORQUE ESTA HORRENDO TODO\n\n"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T07:26:06.068Z",
+          "field": "prioridad",
+          "old_value": "Medium",
+          "new_value": "Cosmetic"
         }
       ]
     },
