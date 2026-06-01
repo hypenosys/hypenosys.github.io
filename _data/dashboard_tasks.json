@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T19:09:00.055Z",
+  "last_updated": "2026-06-01T19:21:32.825Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1193,7 +1193,7 @@
       "tema_principal": "Programación / Engine",
       "prioridad": "Major",
       "milestone": "M1",
-      "estado": "Working",
+      "estado": "OK",
       "completitud": 0,
       "resuelto_por": "Axel",
       "detectado_por": "Axel",
@@ -1251,6 +1251,13 @@
           "field": "blocks",
           "old_value": "[]",
           "new_value": "[\"21\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T19:21:32.334Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "OK"
         }
       ],
       "id": 24
