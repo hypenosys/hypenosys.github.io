@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T09:21:00.705Z",
+  "last_updated": "2026-06-01T09:22:12.800Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -820,11 +820,12 @@
       "email_responsable": null,
       "emails_asignados": [],
       "start_date": "2026-06-01",
-      "due_date": null,
-      "estimated_hours": null,
-      "story_points": null,
+      "due_date": "2026-06-05",
+      "estimated_hours": 1,
+      "story_points": 1,
       "tags": [
-        "UX/UI"
+        "UX/UI",
+        "bug"
       ],
       "external_links": [],
       "subtasks": [],
@@ -853,6 +854,20 @@
           "field": "asignados",
           "old_value": "[]",
           "new_value": "[\"axlfc\",\"topperh4rley\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:22:12.082Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-06-05"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:22:12.082Z",
+          "field": "tags",
+          "old_value": "[\"UX/UI\"]",
+          "new_value": "[\"UX/UI\",\"bug\"]"
         }
       ],
       "id": 21
