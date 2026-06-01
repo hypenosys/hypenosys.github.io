@@ -64,6 +64,15 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-success">Added</h5>
             <ul class="tree-view mb-3">
+              <li><strong>Sistema de Tareas v1.1.0:</strong> Evolución completa del schema de tareas para soportar gestión avanzada de proyectos.
+                <ul>
+                  <li><strong>Nuevos Campos:</strong> Título, Fechas de inicio/vencimiento, Horas estimadas, Story Points, Tipo de tarea (Feature/Bug/Chore/Research) y Criterios de Aceptación con Markdown.</li>
+                  <li><strong>Gestión de Listas:</strong> UI interactiva para Tags (chips), Enlaces Externos y Subtareas con estado de completitud.</li>
+                  <li><strong>Historial Automático:</strong> Sistema de <code>change_log</code> que registra cambios campo por campo en cada guardado, atribuyéndolos al usuario de GitHub autenticado.</li>
+                  <li><strong>Dependencias Mejoradas:</strong> Los campos "Bloquea" y "Bloqueada por" ahora resuelven automáticamente los IDs a títulos de tareas para mayor claridad.</li>
+                  <li><strong>Migración Automática:</strong> Lógica de actualización transparente de v1.0.0 a v1.1.0, incluyendo extracción inteligente de dependencias desde comentarios antiguos y generación de títulos.</li>
+                </ul>
+              </li>
               <li><strong>Sistema de Persistencia de Sesión:</strong> Implementada la opción "Remember me" utilizando <code>localStorage</code> para sesiones persistentes y <code>sessionStorage</code> para temporales.</li>
               <li><strong>Auto-Login Mejorado:</strong> Corregido bug de persistencia que obligaba a re-autenticar tras refrescar la página. Ahora el sistema valida automáticamente el token guardado al cargar.</li>
               <li>Soporte para login automático al cargar la aplicación si el token sigue siendo válido.</li>

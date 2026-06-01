@@ -6,6 +6,7 @@
     <title>Hypenosys Operational Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
@@ -21,6 +22,18 @@
         .toast--visible { transform: translateY(0); opacity: 1; }
         .pulse-emerald { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.7); animation: pulse-emerald 2s infinite; }
         @keyframes pulse-emerald { 0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(52, 211, 153, 0); } 100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); } }
+
+        /* Acceptance Criteria Preview Styling (Prose Fallback) */
+        #task-acceptance-preview ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 0.5rem; }
+        #task-acceptance-preview ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 0.5rem; }
+        #task-acceptance-preview p { margin-bottom: 0.5rem; }
+        #task-acceptance-preview code { background: #1e293b; padding: 0.1rem 0.3rem; border-radius: 0.2rem; font-family: monospace; }
+
+        /* Custom scrollbar for all overflow elements */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
     </style>
 </head>
 <body class="h-full text-slate-100 flex flex-col">
@@ -305,14 +318,22 @@
 
     <!-- Create/Edit Task Modal -->
     <div id="create-task-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4">
-        <div class="bg-slate-900 border border-emerald-500/30 rounded-2xl shadow-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto custom-scrollbar">
+        <div class="bg-slate-900 border border-emerald-500/30 rounded-2xl shadow-2xl w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto custom-scrollbar">
             <h3 id="task-modal-title" class="text-xl font-bold text-white mb-6">Crear Nueva Tarea</h3>
             <input type="hidden" id="task-id-input">
-            <div class="space-y-4">
+            <div class="space-y-6">
+                <!-- Título -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Descripción</label>
-                    <textarea id="task-desc-input" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-slate-100 focus:border-emerald-500 outline-none"></textarea>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Título</label>
+                    <input type="text" id="task-title-input" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-slate-100 focus:border-emerald-500 outline-none font-bold text-lg" placeholder="Resumen corto de la tarea">
                 </div>
+
+                <!-- Descripción -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Descripción Detallada</label>
+                    <textarea id="task-desc-input" rows="4" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-slate-100 focus:border-emerald-500 outline-none text-sm" placeholder="Explica los detalles técnicos o funcionales..."></textarea>
+                </div>
+
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Rama</label>
@@ -346,6 +367,15 @@
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Tipo de Tarea</label>
+                        <select id="task-type-input" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100">
+                            <option value="feature">Feature</option>
+                            <option value="bug">Bug</option>
+                            <option value="chore">Chore</option>
+                            <option value="research">Research</option>
+                        </select>
+                    </div>
+                    <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Milestone</label>
                         <select id="task-milestone-input" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100">
                             <option value="M1">M1</option>
@@ -353,6 +383,31 @@
                             <option value="M3">M3</option>
                         </select>
                     </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Fecha de Inicio</label>
+                        <input type="date" id="task-start-date-input" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100 focus:border-emerald-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Fecha de Vencimiento</label>
+                        <input type="date" id="task-due-date-input" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100 focus:border-emerald-500 outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Horas Estimadas</label>
+                        <input type="number" id="task-est-hours-input" step="0.5" min="0" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100 focus:border-emerald-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Story Points</label>
+                        <input type="number" id="task-points-input" step="1" min="0" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100 focus:border-emerald-500 outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Estado</label>
                         <select id="task-status-input" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100">
@@ -367,7 +422,6 @@
                             <option value="Obsolete">Obsolete</option>
                         </select>
                     </div>
-                </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Tema Principal (Stage)</label>
@@ -415,6 +469,93 @@
                     <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Equipo Asignado</label>
                     <div id="task-asignados-container" class="flex flex-wrap gap-2 p-3 bg-slate-950 border border-slate-800 rounded-lg">
                         <!-- Checkboxes will be injected here -->
+                    </div>
+                </div>
+
+                <!-- Tags -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Tags</label>
+                    <div class="flex gap-2 mb-2">
+                        <input type="text" id="task-tags-input" class="flex-grow bg-slate-950 border border-slate-800 rounded-lg p-2 text-sm text-slate-100 outline-none focus:border-emerald-500" placeholder="Añadir tag (presiona Enter o pulsa el +)">
+                        <button type="button" onclick="handleAddTag()" class="bg-slate-800 hover:bg-slate-700 text-emerald-400 py-2 px-4 rounded-lg text-xs font-bold border border-slate-800">+</button>
+                    </div>
+                    <div id="task-tags-container" class="flex flex-wrap gap-2 min-h-[40px] p-2 bg-slate-950/50 border border-slate-800 rounded-lg">
+                        <!-- Tag chips will be injected here -->
+                    </div>
+                </div>
+
+                <!-- Criterios de Aceptación -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Criterios de Aceptación (Markdown)</label>
+                    <textarea id="task-acceptance-input" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-slate-100 focus:border-emerald-500 outline-none text-sm mb-2" placeholder="Enumera qué debe pasar para dar esta tarea por válida..."></textarea>
+                    <div id="task-acceptance-preview" class="p-3 bg-slate-950 rounded-lg border border-slate-800 text-xs text-slate-400 prose prose-invert prose-sm max-w-none hidden">
+                        <!-- Preview injected here -->
+                    </div>
+                </div>
+
+                <!-- Enlaces Externos -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Enlaces Externos</label>
+                    <div class="flex flex-col sm:flex-row gap-2 mb-2">
+                        <input type="text" id="task-link-label-input" class="sm:w-1/3 bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-slate-100 outline-none focus:border-emerald-500" placeholder="Etiqueta (opcional)">
+                        <input type="text" id="task-link-url-input" class="flex-grow bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-slate-100 outline-none focus:border-emerald-500" placeholder="https://...">
+                        <button type="button" onclick="handleAddExternalLink()" class="bg-slate-800 hover:bg-slate-700 text-emerald-400 py-2 px-4 rounded-lg text-xs font-bold border border-slate-800">Añadir</button>
+                    </div>
+                    <div id="task-links-container" class="space-y-2 p-2 bg-slate-950/50 border border-slate-800 rounded-lg">
+                        <!-- Link pills injected here -->
+                    </div>
+                </div>
+
+                <!-- Subtareas -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Subtareas</label>
+                    <div class="flex gap-2 mb-2">
+                        <input type="text" id="task-subtask-input" class="flex-grow bg-slate-950 border border-slate-800 rounded-lg p-2 text-sm text-slate-100 outline-none focus:border-emerald-500" placeholder="Añadir subtarea...">
+                        <button type="button" onclick="handleAddSubtask()" class="bg-slate-800 hover:bg-slate-700 text-emerald-400 py-2 px-4 rounded-lg text-xs font-bold border border-slate-800">+</button>
+                    </div>
+                    <div id="task-subtasks-container" class="space-y-2 p-2 bg-slate-950/50 border border-slate-800 rounded-lg">
+                        <!-- Subtasks injected here -->
+                    </div>
+                </div>
+
+                <!-- Bloquea / Bloqueada por -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Bloquea a (IDs)</label>
+                        <input type="text" id="task-blocks-input" oninput="resolveTaskTitles('blocks')" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-sm text-slate-100 outline-none focus:border-emerald-500" placeholder="IDs sep. por coma">
+                        <div id="task-blocks-resolved" class="mt-1 space-y-1"></div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Bloqueada por (IDs)</label>
+                        <input type="text" id="task-blocked-by-input" oninput="resolveTaskTitles('blocked_by')" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-sm text-slate-100 outline-none focus:border-emerald-500" placeholder="IDs sep. por coma">
+                        <div id="task-blocked-by-resolved" class="mt-1 space-y-1"></div>
+                    </div>
+                </div>
+
+                <!-- Comentarios -->
+                <div class="border-t border-slate-800 pt-6">
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-comments text-indigo-400"></i> Comentarios
+                    </label>
+                    <div class="space-y-4">
+                        <div id="task-comments-list" class="space-y-3 mb-4 max-h-60 overflow-y-auto custom-scrollbar pr-2">
+                            <!-- Comments injected here -->
+                        </div>
+                        <div class="flex gap-2">
+                            <textarea id="task-new-comment-input" rows="2" class="flex-grow bg-slate-950 border border-slate-800 rounded-lg p-3 text-sm text-slate-100 outline-none focus:border-indigo-500" placeholder="Escribe un comentario..."></textarea>
+                            <button type="button" onclick="handleAddComment()" class="bg-indigo-500 hover:bg-indigo-600 text-white py-2 px-4 rounded-lg text-xs font-bold transition-all self-end">Publicar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Change Log -->
+                <div class="border-t border-slate-800 pt-6">
+                    <button type="button" onclick="toggleChangeLog()" class="w-full flex items-center justify-between text-xs font-bold text-slate-500 uppercase mb-4">
+                        <span><i class="fa-solid fa-history mr-2"></i> Historial de Cambios</span>
+                        <i id="task-changelog-chevron" class="fa-solid fa-chevron-down"></i>
+                    </button>
+                    <div id="task-changelog-container" class="hidden space-y-2 max-h-40 overflow-y-auto custom-scrollbar pr-2">
+                        <!-- Changelog entries injected here -->
                     </div>
                 </div>
 

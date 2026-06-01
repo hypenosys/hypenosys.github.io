@@ -27,6 +27,12 @@ let activeStageFilter = null;
 let currentTasks = [];
 let archivedTasks = [];
 let currentStats = null;
+
+// Modal local state for arrays
+let modalTags = [];
+let modalLinks = [];
+let modalSubtasks = [];
+let modalComments = [];
 let currentBudget = null;
 let currentProfiles = null;
 let currentTaskImages = []; // TODO: Migrate to external storage (e.g. GitHub Assets/R2) if JSON size exceeds 10MB
@@ -151,6 +157,75 @@ function startAutoRefresh() {
 
 // ─── DATA FETCHING ───────────────────────────────────────────
 
+/**
+ * Migrates tasks from schema 1.0.0 to 1.1.0
+ */
+function migrateTasks(data) {
+    if (!data || !data.schema_version) return data;
+
+    if (data.schema_version === "1.0.0") {
+        console.log(`[MIGRATION] Upgrading from ${data.schema_version} to 1.1.0`);
+
+        const tasks = data.tasks || [];
+        tasks.forEach(task => {
+            // Backfill title from descripcion
+            if (!task.title) {
+                let desc = task.descripcion || "";
+                let title = desc.substring(0, 60);
+                if (desc.length > 60) {
+                    const lastSpace = title.lastIndexOf(' ');
+                    if (lastSpace > 0) {
+                        title = title.substring(0, lastSpace);
+                    }
+                }
+                task.title = title.trim() || "Sin título";
+            }
+
+            // Defaults for new fields
+            if (task.due_date === undefined) task.due_date = task.limite || null;
+            if (task.start_date === undefined) task.start_date = null;
+            if (task.estimated_hours === undefined) task.estimated_hours = null;
+            if (task.story_points === undefined) task.story_points = null;
+            if (task.task_type === undefined) task.task_type = "feature";
+            if (task.tags === undefined) task.tags = [];
+            if (task.blocks === undefined) task.blocks = [];
+            if (task.blocked_by === undefined) task.blocked_by = [];
+            if (task.acceptance_criteria === undefined) task.acceptance_criteria = "";
+            if (task.external_links === undefined) task.external_links = [];
+            if (task.subtasks === undefined) task.subtasks = [];
+            if (task.comments === undefined) task.comments = [];
+            if (task.change_log === undefined) task.change_log = [];
+
+            // Migrate dependencies from comentario
+            if (task.comentario) {
+                const blockedByRegex = /#BLOCKED_BY:(\d+)/g;
+                let match;
+                while ((match = blockedByRegex.exec(task.comentario)) !== null) {
+                    if (!task.blocked_by.includes(match[1])) {
+                        task.blocked_by.push(match[1]);
+                    }
+                }
+
+                const blocksRegex = /#BLOCKS:(\d+)/g;
+                while ((match = blocksRegex.exec(task.comentario)) !== null) {
+                    if (!task.blocks.includes(match[1])) {
+                        task.blocks.push(match[1]);
+                    }
+                }
+
+                // Strip tokens from comentario
+                task.comentario = task.comentario
+                    .replace(/#BLOCKED_BY:\d+/g, '')
+                    .replace(/#BLOCKS:\d+/g, '')
+                    .trim();
+            }
+        });
+
+        data.schema_version = "1.1.0";
+    }
+    return data;
+}
+
 async function refreshDashboardData() {
   try {
     const [tasksRes, archiveRes, statsRes, budgetRes, profilesRes] = await Promise.all([
@@ -161,8 +236,11 @@ async function refreshDashboardData() {
       window.githubApi.fetchFileWithSha('_data/team_profiles.json')
     ]);
 
-    currentTasks    = tasksRes.content.tasks || [];
-    archivedTasks   = archiveRes.content.tasks || [];
+    const migratedTasksData = migrateTasks(tasksRes.content);
+    const migratedArchiveData = migrateTasks(archiveRes.content);
+
+    currentTasks    = migratedTasksData.tasks || [];
+    archivedTasks   = migratedArchiveData.tasks || [];
     currentStats    = statsRes.content;
     currentBudget   = budgetRes.content;
     currentProfiles = profilesRes.content;
@@ -343,7 +421,7 @@ function buildTaskCard(task) {
           <button onclick="openEditTaskModal('${task.id}')" class="text-[10px] text-slate-500 hover:text-white opacity-0 group-hover:opacity-100 transition-all flex-shrink-0">
             <i class="fa-solid fa-pencil"></i>
           </button>
-          <p class="text-xs text-slate-200 truncate font-semibold">${task.descripcion}</p>
+          <p class="text-xs text-slate-200 truncate font-semibold">${task.title || task.descripcion}</p>
         </div>
         <div class="flex items-center gap-1 flex-shrink-0">
           ${canArchive ? `
@@ -380,7 +458,8 @@ function buildTaskCard(task) {
           </button>
         </div>
       </div>
-      <p class="text-sm text-slate-200 leading-snug mb-3">${task.descripcion}</p>
+      <p class="text-sm text-slate-200 leading-snug mb-3 font-bold">${task.title || task.descripcion}</p>
+      ${task.title ? `<p class="text-[11px] text-slate-400 leading-tight mb-3 line-clamp-2">${task.descripcion}</p>` : ''}
 
       ${hasImages ? `
       <div class="mb-3 border border-slate-700 rounded-lg overflow-hidden">
@@ -905,13 +984,13 @@ function renderDependencyGraph() {
   const edges = [];
 
   tasks.forEach(t => {
-    const blockedBy = t.comentario?.match(/#BLOCKED_BY:(\d+)/);
-    const blocks = t.comentario?.match(/#BLOCKS:(\d+)/);
+    const blockedBy = t.blocked_by || [];
+    const blocks = t.blocks || [];
 
-    if (blockedBy || blocks) {
+    if (blockedBy.length > 0 || blocks.length > 0) {
       nodes.push(t);
-      if (blockedBy) edges.push({ from: parseInt(blockedBy[1]), to: t.id, type: 'blocked_by' });
-      if (blocks) edges.push({ from: t.id, to: parseInt(blocks[1]), type: 'blocks' });
+      blockedBy.forEach(id => edges.push({ from: parseInt(id), to: t.id, type: 'blocked_by' }));
+      blocks.forEach(id => edges.push({ from: t.id, to: parseInt(id), type: 'blocks' }));
     }
   });
 
@@ -1107,6 +1186,32 @@ function setupEventListeners() {
 
   if (taskCancel) taskCancel.onclick = () => document.getElementById('create-task-modal').classList.add('hidden');
   if (taskSave) taskSave.onclick = handleCreateTask;
+
+  const tagInput = document.getElementById('task-tags-input');
+  if (tagInput) {
+      tagInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') {
+              e.preventDefault();
+              handleAddTag();
+          }
+      });
+  }
+
+  const acceptanceInput = document.getElementById('task-acceptance-input');
+  if (acceptanceInput) {
+      const updatePreview = () => {
+          const preview = document.getElementById('task-acceptance-preview');
+          if (acceptanceInput.value.trim()) {
+              preview.classList.remove('hidden');
+              preview.innerHTML = marked.parse(acceptanceInput.value);
+          } else {
+              preview.classList.add('hidden');
+          }
+      };
+      acceptanceInput.addEventListener('input', updatePreview);
+      acceptanceInput.addEventListener('change', updatePreview);
+  }
+
   if (qaCancel) qaCancel.onclick = () => document.getElementById('qa-assignment-modal').classList.add('hidden');
   if (assignCancel) assignCancel.onclick = () => document.getElementById('assignment-modal').classList.add('hidden');
 
@@ -1192,8 +1297,10 @@ function openCreateTaskModal() {
   populateMemberSelects();
   document.getElementById('task-modal-title').textContent = 'Crear Nueva Tarea';
   document.getElementById('task-id-input').value = '';
+  document.getElementById('task-title-input').value = '';
   document.getElementById('task-desc-input').value = '';
   document.getElementById('task-rama-input').value = 'PRO';
+  document.getElementById('task-type-input').value = 'feature';
   document.getElementById('task-priority-input').value = 'Major';
   document.getElementById('task-milestone-input').value = 'M1';
   document.getElementById('task-topic-input').value = 'Programación / Engine';
@@ -1203,6 +1310,24 @@ function openCreateTaskModal() {
   document.getElementById('task-detector-input').value = activeFilter || '';
   document.getElementById('task-email-responsable-input').value = '';
   document.getElementById('task-emails-asignados-input').value = '';
+
+  document.getElementById('task-start-date-input').value = '';
+  document.getElementById('task-due-date-input').value = '';
+  document.getElementById('task-est-hours-input').value = '';
+  document.getElementById('task-points-input').value = '';
+  document.getElementById('task-acceptance-input').value = '';
+  document.getElementById('task-acceptance-preview').classList.add('hidden');
+  document.getElementById('task-blocks-input').value = '';
+  document.getElementById('task-blocked-by-input').value = '';
+  document.getElementById('task-new-comment-input').value = '';
+  document.getElementById('task-changelog-container').classList.add('hidden');
+  document.getElementById('task-changelog-chevron').className = 'fa-solid fa-chevron-down';
+
+  modalTags = [];
+  modalLinks = [];
+  modalSubtasks = [];
+  modalComments = [];
+  renderModalArrays();
 
   currentTaskImages = [];
   renderImagePreviews();
@@ -1224,8 +1349,10 @@ function openEditTaskModal(taskId) {
     populateMemberSelects();
     document.getElementById('task-modal-title').textContent = `Editar Tarea #${taskId}`;
     document.getElementById('task-id-input').value = taskId;
+    document.getElementById('task-title-input').value = task.title || '';
     document.getElementById('task-desc-input').value = task.descripcion || '';
     document.getElementById('task-rama-input').value = task.rama || 'PRO';
+    document.getElementById('task-type-input').value = task.task_type || 'feature';
     document.getElementById('task-priority-input').value = task.prioridad || 'Major';
     document.getElementById('task-milestone-input').value = task.milestone || 'M1';
     document.getElementById('task-topic-input').value = task.tema_principal || 'Programación / Engine';
@@ -1237,6 +1364,36 @@ function openEditTaskModal(taskId) {
     document.getElementById('task-detector-input').value = task.detectado_por || '';
     document.getElementById('task-email-responsable-input').value = task.email_responsable || '';
     document.getElementById('task-emails-asignados-input').value = (task.emails_asignados || []).join(', ');
+
+    document.getElementById('task-start-date-input').value = task.start_date || '';
+    document.getElementById('task-due-date-input').value = task.due_date || '';
+    document.getElementById('task-est-hours-input').value = task.estimated_hours || '';
+    document.getElementById('task-points-input').value = task.story_points || '';
+    document.getElementById('task-acceptance-input').value = task.acceptance_criteria || '';
+
+    const preview = document.getElementById('task-acceptance-preview');
+    if (task.acceptance_criteria) {
+        preview.classList.remove('hidden');
+        preview.innerHTML = marked.parse(task.acceptance_criteria);
+    } else {
+        preview.classList.add('hidden');
+    }
+
+    document.getElementById('task-blocks-input').value = (task.blocks || []).join(', ');
+    document.getElementById('task-blocked-by-input').value = (task.blocked_by || []).join(', ');
+    resolveTaskTitles('blocks');
+    resolveTaskTitles('blocked_by');
+    document.getElementById('task-new-comment-input').value = '';
+
+    document.getElementById('task-changelog-container').classList.add('hidden');
+    document.getElementById('task-changelog-chevron').className = 'fa-solid fa-chevron-down';
+    renderChangeLog(task.change_log || []);
+
+    modalTags = JSON.parse(JSON.stringify(task.tags || []));
+    modalLinks = JSON.parse(JSON.stringify(task.external_links || []));
+    modalSubtasks = JSON.parse(JSON.stringify(task.subtasks || []));
+    modalComments = JSON.parse(JSON.stringify(task.comments || []));
+    renderModalArrays();
 
     currentTaskImages = JSON.parse(JSON.stringify(task.images || []));
     renderImagePreviews();
@@ -1305,8 +1462,10 @@ async function handleQuickStageUpdate(taskId, newStage) {
 
 async function handleCreateTask() {
   const taskId = document.getElementById('task-id-input').value;
+  const title = document.getElementById('task-title-input').value;
   const desc = document.getElementById('task-desc-input').value;
   const rama = document.getElementById('task-rama-input').value;
+  const taskType = document.getElementById('task-type-input').value;
   const priority = document.getElementById('task-priority-input').value;
   const milestone = document.getElementById('task-milestone-input').value;
   const topic = document.getElementById('task-topic-input').value;
@@ -1318,11 +1477,21 @@ async function handleCreateTask() {
   const emailResponsable = document.getElementById('task-email-responsable-input').value || null;
   const emailsAsignados = (document.getElementById('task-emails-asignados-input').value || '').split(',').map(e => e.trim()).filter(e => e);
 
-  if (!desc) return showToast('La descripción es obligatoria', 'warning');
+  const startDate = document.getElementById('task-start-date-input').value || null;
+  const dueDate = document.getElementById('task-due-date-input').value || null;
+  const estHours = parseFloat(document.getElementById('task-est-hours-input').value) || null;
+  const points = parseInt(document.getElementById('task-points-input').value) || null;
+  const acceptance = document.getElementById('task-acceptance-input').value || "";
+  const blocks = document.getElementById('task-blocks-input').value.split(',').map(s => s.trim()).filter(s => s);
+  const blockedBy = document.getElementById('task-blocked-by-input').value.split(',').map(s => s.trim()).filter(s => s);
+
+  if (!title && !desc) return showToast('El título o la descripción son obligatorios', 'warning');
 
   const taskData = {
-    rama,
+    title,
     descripcion: desc,
+    rama,
+    task_type: taskType,
     tema_principal: topic,
     prioridad: priority,
     milestone,
@@ -1333,6 +1502,17 @@ async function handleCreateTask() {
     asignados: asignados,
     email_responsable: emailResponsable,
     emails_asignados: emailsAsignados,
+    start_date: startDate,
+    due_date: dueDate,
+    estimated_hours: estHours,
+    story_points: points,
+    tags: modalTags,
+    external_links: modalLinks,
+    subtasks: modalSubtasks,
+    acceptance_criteria: acceptance,
+    blocks: blocks,
+    blocked_by: blockedBy,
+    comments: modalComments,
     images: currentTaskImages
   };
 
@@ -1341,6 +1521,11 @@ async function handleCreateTask() {
 
   try {
     if (taskId) {
+        const oldTask = currentTasks.find(t => String(t.id) === String(taskId));
+        const changes = diffTasks(oldTask, taskData);
+        if (changes.length > 0) {
+            taskData.change_log = (oldTask.change_log || []).concat(changes);
+        }
         await window.githubApi.updateTask(taskId, taskData);
         showToast(`Tarea #${taskId} actualizada`, 'success');
     } else {
@@ -1351,7 +1536,14 @@ async function handleCreateTask() {
             fecha: new Date().toISOString().split('T')[0],
             apoyo: null,
             limite: null,
-            comentario: ''
+            comentario: '',
+            change_log: [{
+                author_login: window.currentUser || 'Unknown',
+                timestamp: new Date().toISOString(),
+                field: 'id',
+                old_value: null,
+                new_value: 'Created'
+            }]
         };
         await window.githubApi.createTask(newTask);
         showToast('Tarea creada correctamente', 'success');
@@ -1442,7 +1634,8 @@ function renderTaskArchive() {
                     <i class="fa-solid fa-hand-holding-heart"></i> RESUCITAR
                 </button>
             </div>
-            <p class="text-xs text-slate-400 line-clamp-2">${task.descripcion}</p>
+            <p class="text-xs text-slate-300 font-bold truncate">${task.title || task.descripcion}</p>
+            <p class="text-[10px] text-slate-500 line-clamp-1">${task.title ? task.descripcion : ''}</p>
             <div class="flex justify-between items-center mt-2 border-t border-slate-800 pt-2">
                 <span class="text-[8px] text-slate-600 font-mono">${task.fecha}</span>
                 <span class="text-[8px] text-slate-600 font-bold uppercase">${task.tema_principal}</span>
@@ -1735,6 +1928,240 @@ function getFilteredTasks(tasks) {
   }
 
   return filtered;
+}
+
+function handleAddTag() {
+    const input = document.getElementById('task-tags-input');
+    const val = input.value.trim();
+    if (val && !modalTags.includes(val)) {
+        modalTags.push(val);
+        input.value = '';
+        renderModalArrays();
+    }
+}
+
+function removeTag(idx) {
+    modalTags.splice(idx, 1);
+    renderModalArrays();
+}
+
+function handleAddExternalLink() {
+    const urlInput = document.getElementById('task-link-url-input');
+    const labelInput = document.getElementById('task-link-label-input');
+    const url = urlInput.value.trim();
+    let label = labelInput.value.trim();
+
+    if (!url) return;
+    if (!url.startsWith('http')) {
+        showToast('La URL debe empezar por http:// o https://', 'warning');
+        return;
+    }
+
+    if (!label) {
+        try {
+            label = new URL(url).hostname;
+        } catch (e) {
+            label = url;
+        }
+    }
+
+    modalLinks.push({ url, label });
+    urlInput.value = '';
+    labelInput.value = '';
+    renderModalArrays();
+}
+
+function removeExternalLink(idx) {
+    modalLinks.splice(idx, 1);
+    renderModalArrays();
+}
+
+function handleAddSubtask() {
+    const input = document.getElementById('task-subtask-input');
+    const val = input.value.trim();
+    if (val) {
+        modalSubtasks.push({ id: Date.now(), text: val, done: false });
+        input.value = '';
+        renderModalArrays();
+    }
+}
+
+function toggleSubtask(idx) {
+    modalSubtasks[idx].done = !modalSubtasks[idx].done;
+    renderModalArrays();
+}
+
+function removeSubtask(idx) {
+    modalSubtasks.splice(idx, 1);
+    renderModalArrays();
+}
+
+function handleAddComment() {
+    const input = document.getElementById('task-new-comment-input');
+    const val = input.value.trim();
+    if (val) {
+        modalComments.push({
+            author_login: window.currentUser || 'Unknown',
+            timestamp: new Date().toISOString(),
+            body: val
+        });
+        input.value = '';
+        renderModalArrays();
+    }
+}
+
+function removeComment(idx) {
+    modalComments.splice(idx, 1);
+    renderModalArrays();
+}
+
+function renderModalArrays() {
+    // Tags
+    const tagsContainer = document.getElementById('task-tags-container');
+    if (tagsContainer) {
+        tagsContainer.innerHTML = modalTags.map((tag, idx) => `
+            <span class="flex items-center gap-1 px-2 py-1 bg-slate-900 border border-[#50fa7b]/30 text-[#50fa7b] rounded-full text-[10px] font-bold">
+                ${tag}
+                <button type="button" onclick="removeTag(${idx})" class="hover:text-white transition-colors">×</button>
+            </span>
+        `).join('');
+    }
+
+    // Links
+    const linksContainer = document.getElementById('task-links-container');
+    if (linksContainer) {
+        linksContainer.innerHTML = modalLinks.map((link, idx) => `
+            <div class="flex items-center justify-between p-2 bg-slate-900 border border-slate-800 rounded-lg group">
+                <a href="${link.url}" target="_blank" class="text-[10px] text-emerald-400 font-bold hover:underline truncate flex-grow">
+                    <i class="fa-solid fa-link mr-1"></i> ${link.label}
+                </a>
+                <button type="button" onclick="removeExternalLink(${idx})" class="text-slate-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all">
+                    <i class="fa-solid fa-trash text-[10px]"></i>
+                </button>
+            </div>
+        `).join('');
+    }
+
+    // Subtasks
+    const subtasksContainer = document.getElementById('task-subtasks-container');
+    if (subtasksContainer) {
+        subtasksContainer.innerHTML = modalSubtasks.map((sub, idx) => `
+            <div class="flex items-center gap-3 p-2 bg-slate-900 border border-slate-800 rounded-lg group">
+                <input type="checkbox" ${sub.done ? 'checked' : ''} onclick="toggleSubtask(${idx})" class="w-4 h-4 rounded border-slate-700 text-emerald-500 bg-slate-950 focus:ring-emerald-500">
+                <span class="text-xs ${sub.done ? 'text-slate-600 line-through' : 'text-slate-300'} flex-grow">${sub.text}</span>
+                <button type="button" onclick="removeSubtask(${idx})" class="text-slate-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all">
+                    <i class="fa-solid fa-trash text-[10px]"></i>
+                </button>
+            </div>
+        `).join('');
+    }
+
+    // Comments
+    const commentsList = document.getElementById('task-comments-list');
+    if (commentsList) {
+        commentsList.innerHTML = modalComments.map((com, idx) => `
+            <div class="p-3 bg-slate-950 border border-slate-800 rounded-xl relative group">
+                <div class="flex justify-between items-start mb-1">
+                    <div class="flex items-center gap-2">
+                        <span class="text-[10px] font-bold text-indigo-400">${com.author_login}</span>
+                        <span class="text-[8px] text-slate-600 font-mono">${new Date(com.timestamp).toLocaleString()}</span>
+                    </div>
+                    <button type="button" onclick="removeComment(${idx})" class="text-slate-800 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all">
+                        <i class="fa-solid fa-trash text-[10px]"></i>
+                    </button>
+                </div>
+                <p class="text-xs text-slate-300 whitespace-pre-wrap">${com.body}</p>
+            </div>
+        `).join('');
+    }
+}
+
+function toggleChangeLog() {
+    const container = document.getElementById('task-changelog-container');
+    const chevron = document.getElementById('task-changelog-chevron');
+    container.classList.toggle('hidden');
+    chevron.classList.toggle('fa-chevron-down');
+    chevron.classList.toggle('fa-chevron-up');
+}
+
+function renderChangeLog(log) {
+    const container = document.getElementById('task-changelog-container');
+    if (!container) return;
+
+    if (log.length === 0) {
+        container.innerHTML = '<div class="text-[10px] text-slate-600 italic">Sin cambios registrados.</div>';
+        return;
+    }
+
+    container.innerHTML = log.slice().reverse().map(entry => `
+        <div class="p-2 border-l-2 border-slate-800 pl-3">
+            <div class="flex justify-between text-[8px] font-mono mb-1">
+                <span class="text-indigo-500">${entry.author_login}</span>
+                <span class="text-slate-600">${new Date(entry.timestamp).toLocaleString()}</span>
+            </div>
+            <div class="text-[9px] text-slate-400">
+                <span class="font-bold text-slate-500 uppercase">${entry.field}:</span>
+                <span class="text-red-900/70 line-through">${entry.old_value || 'null'}</span>
+                →
+                <span class="text-emerald-500/70">${entry.new_value || 'null'}</span>
+            </div>
+        </div>
+    `).join('');
+}
+
+function resolveTaskTitles(type) {
+    const inputId = type === 'blocks' ? 'task-blocks-input' : 'task-blocked-by-input';
+    const containerId = type === 'blocks' ? 'task-blocks-resolved' : 'task-blocked-by-resolved';
+    const input = document.getElementById(inputId);
+    const container = document.getElementById(containerId);
+    if (!input || !container) return;
+
+    const ids = input.value.split(',').map(s => s.trim()).filter(s => s);
+    container.innerHTML = ids.map(id => {
+        const task = currentTasks.find(t => String(t.id) === String(id));
+        if (task) {
+            return `<div class="text-[9px] text-slate-500 italic truncate">#${id}: ${task.title || task.descripcion}</div>`;
+        } else {
+            return `<div class="text-[9px] text-red-500/70 italic">#${id}: No encontrada</div>`;
+        }
+    }).join('');
+}
+
+function diffTasks(oldTask, newTask) {
+    const fields = ['title', 'descripcion', 'estado', 'prioridad', 'milestone', 'asignados', 'blocks', 'blocked_by', 'due_date', 'task_type', 'tags', 'completitud'];
+    const changes = [];
+    const timestamp = new Date().toISOString();
+    const author = window.currentUser || 'Unknown';
+
+    fields.forEach(field => {
+        let oldVal = oldTask ? oldTask[field] : null;
+        let newVal = newTask[field];
+
+        // Normalizar arrays para comparación
+        if (Array.isArray(oldVal) || Array.isArray(newVal)) {
+            const sOld = JSON.stringify((oldVal || []).sort());
+            const sNew = JSON.stringify((newVal || []).sort());
+            if (sOld !== sNew) {
+                changes.push({
+                    author_login: author,
+                    timestamp,
+                    field,
+                    old_value: sOld,
+                    new_value: sNew
+                });
+            }
+        } else if (oldVal != newVal) {
+            changes.push({
+                author_login: author,
+                timestamp,
+                field,
+                old_value: oldVal,
+                new_value: newVal
+            });
+        }
+    });
+
+    return changes;
 }
 
 function updateJulesBadges() {
