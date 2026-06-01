@@ -695,7 +695,7 @@
     </div>
 
     <!-- Lightbox Modal -->
-    <div id="lightbox-modal" class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-slate-950/95 backdrop-blur-md p-4" onclick="if(!this._justOpened) closeLightbox()">
+    <div id="lightbox-modal" class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-slate-950/95 backdrop-blur-md p-4" onclick="if(Date.now() - (this._lastOpenTime || 0) > 300) closeLightbox()">
         <!-- Close Button -->
         <button onclick="closeLightbox()" class="absolute top-4 right-4 md:top-6 md:right-6 text-white/50 hover:text-white text-3xl md:text-4xl transition-all z-[210]">
             <i class="fa-solid fa-xmark"></i>

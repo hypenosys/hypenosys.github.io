@@ -399,9 +399,8 @@ function openLightbox(srcOrTaskId, imageIndex) {
     const img = document.getElementById('lightbox-img');
     if (!modal || !img) return;
 
-    // Set guard to prevent immediate closure on touch bubbling
-    modal._justOpened = true;
-    setTimeout(() => { modal._justOpened = false; }, 300);
+    // Set guard timestamp to prevent immediate closure on event bubbling/desktop clicks
+    modal._lastOpenTime = Date.now();
 
     // Reset state
     lightboxTask = null;
