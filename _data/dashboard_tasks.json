@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T06:47:52.632Z",
+  "last_updated": "2026-06-01T06:54:48.598Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -39,7 +39,7 @@
     },
     {
       "rama": "ART",
-      "descripcion": "BrainStorm",
+      "descripcion": "Lluvia de ideas locas sobre mecánicas, historia, modos de juego, todo vale.",
       "tema_principal": "Concepto / GDD",
       "prioridad": "Critical",
       "milestone": "M1",
@@ -56,9 +56,9 @@
       "id": 4,
       "asignados": [
         "axlfc",
-        "topperh4rley",
         "javi26031994-a11y",
-        "mitxel2022"
+        "mitxel2022",
+        "topperh4rley"
       ],
       "email_responsable": "javi@hypenosys.com",
       "emails_asignados": [
@@ -67,7 +67,53 @@
         "javi@hypenosys.com",
         "mitxel@hypenosys.com"
       ],
-      "images": []
+      "images": [],
+      "title": "BrainStorm",
+      "task_type": "chore",
+      "start_date": "2026-06-01",
+      "due_date": "2026-06-30",
+      "estimated_hours": 12,
+      "story_points": null,
+      "tags": [
+        "brainstorm",
+        "design"
+      ],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T06:54:48.121Z",
+          "field": "descripcion",
+          "old_value": "BrainStorm",
+          "new_value": "Lluvia de ideas locas sobre mecánicas, historia, modos de juego, todo vale."
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T06:54:48.121Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-06-30"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T06:54:48.121Z",
+          "field": "task_type",
+          "old_value": "feature",
+          "new_value": "chore"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T06:54:48.121Z",
+          "field": "tags",
+          "old_value": "[]",
+          "new_value": "[\"brainstorm\",\"design\"]"
+        }
+      ]
     },
     {
       "rama": "DIS",
