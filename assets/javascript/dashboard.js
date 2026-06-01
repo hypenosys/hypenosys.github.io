@@ -485,7 +485,7 @@ function buildTaskCard(task) {
             <i class="fa-solid fa-chevron-${isImagesExpanded ? 'up' : 'down'}"></i>
         </button>
         <div id="card-images-${task.id}" class="${isImagesExpanded ? '' : 'hidden'} p-2 bg-slate-950 grid grid-cols-3 gap-2">
-            <!-- Thumbs injected via DOM to avoid touch ghost events -->
+            <!-- Thumbnails injected via DOM to avoid touch ghost events -->
         </div>
       </div>
       ` : ''}
@@ -551,19 +551,16 @@ function buildTaskCard(task) {
                     ${isLegacy ? '<span class="absolute top-0.5 left-0.5 bg-amber-500 text-slate-950 text-[6px] font-black px-0.5 rounded shadow-sm">⚠️ LEGACY</span>' : ''}
                 `;
 
-                thumbEl.addEventListener('pointerdown', (e) => {
+                thumbEl.addEventListener('pointerdown', function(e) {
                     e.preventDefault();
                     e.stopImmediatePropagation();
+
+                    // Prevent drag conflict
                     card.draggable = false;
                     setTimeout(() => { card.draggable = true; }, 300);
+
                     openLightbox(String(task.id), idx);
                 }, { capture: true });
-
-                thumbEl.addEventListener('touchstart', (e) => {
-                    e.preventDefault();
-                    e.stopImmediatePropagation();
-                    openLightbox(String(task.id), idx);
-                }, { capture: true, passive: false });
 
                 grid.appendChild(thumbEl);
             });
@@ -2020,6 +2017,10 @@ function openLightbox(srcOrTaskId, imageIndex) {
     const img = document.getElementById('lightbox-img');
     if (!modal || !img) return;
 
+    // Set guard to prevent immediate closure on touch bubbling
+    modal._justOpened = true;
+    setTimeout(() => { modal._justOpened = false; }, 300);
+
     // Reset state
     lightboxTask = null;
     lightboxImages = [];
@@ -2092,6 +2093,8 @@ function closeLightbox() {
         const img = document.getElementById('lightbox-img');
         if (img) img.src = "";
     }
+    // Phase 2 instruction: Call blur explicitly after close
+    document.activeElement?.blur();
 }
 
 function toggleProfileEdit(memberName) {
