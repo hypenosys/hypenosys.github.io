@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T18:58:25.304Z",
-  "last_updated_by": "Sistema",
+  "last_updated": "2026-06-01T18:58:36.283Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -1177,7 +1177,7 @@
       "id": 23
     },
     {
-      "title": "Particularizar funciones del dashboard.js en ficheros más pequeños",
+      "title": "Particularizar y extraer en funciones del dashboard.js en ficheros más pequeños",
       "descripcion": "",
       "rama": "PRO",
       "task_type": "feature",
@@ -1219,6 +1219,13 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T18:58:35.780Z",
+          "field": "title",
+          "old_value": "Particularizar funciones del dashboard.js en ficheros más pequeños",
+          "new_value": "Particularizar y extraer en funciones del dashboard.js en ficheros más pequeños"
         }
       ],
       "id": 24
