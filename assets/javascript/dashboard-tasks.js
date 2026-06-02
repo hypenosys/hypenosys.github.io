@@ -374,12 +374,15 @@ function renderImagePreviews() {
         const handlePreview = (event) => {
             if (event) {
                 event.preventDefault();
-                event.stopPropagation();
+                event.stopImmediatePropagation();
             }
+            document.activeElement?.blur();
             openLightbox('current', idx);
+            return false;
         };
-        previewBtn.addEventListener('pointerdown', handlePreview);
-        previewBtn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); });
+        previewBtn.onpointerdown = handlePreview;
+        previewBtn.ontouchstart = (e) => { e.preventDefault(); e.stopImmediatePropagation(); };
+        previewBtn.onclick = (e) => { e.preventDefault(); e.stopImmediatePropagation(); };
 
         const removeBtn = div.querySelector('[data-action="remove-image"]');
         removeBtn.addEventListener('click', (event) => {
