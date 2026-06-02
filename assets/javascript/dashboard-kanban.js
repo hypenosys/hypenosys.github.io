@@ -144,14 +144,8 @@ function buildTaskCard(task) {
       ${task.title ? `<p class="text-[11px] text-slate-400 leading-tight mb-3 line-clamp-2">${task.descripcion}</p>` : ''}
 
       ${hasImages ? `
-      <div class="mb-3 border border-slate-700 rounded-lg overflow-hidden">
-        <button onclick="event.stopPropagation(); toggleCardImages('${task.id}')" class="w-full flex items-center justify-between p-2 bg-slate-900/50 hover:bg-slate-900 transition-all text-[10px] font-bold text-slate-400">
-            <span><i class="fa-solid fa-paperclip mr-1"></i> ${task.images.length} imagen${task.images.length === 1 ? '' : 'es'}</span>
-            <i class="fa-solid fa-chevron-${isImagesExpanded ? 'up' : 'down'}"></i>
-        </button>
-        <div id="card-images-${task.id}" class="${isImagesExpanded ? '' : 'hidden'} p-2 bg-slate-950 grid grid-cols-3 gap-2">
-            <!-- Thumbnails injected via DOM to avoid touch ghost events -->
-        </div>
+      <div class="mb-3 grid grid-cols-3 gap-2" id="card-images-${task.id}">
+          <!-- Thumbnails injected via DOM to avoid touch ghost events -->
       </div>
       ` : ''}
 
@@ -204,11 +198,9 @@ function buildTaskCard(task) {
         const grid = card.querySelector(`#card-images-${task.id}`);
         if (grid) {
             task.images.forEach((img, idx) => {
-                const thumbEl = document.createElement('a');
-                thumbEl.href = 'javascript:void(0)';
-                thumbEl.className = 'aspect-square rounded border border-slate-800 overflow-hidden cursor-pointer relative block';
-                thumbEl.style.cssText = '-webkit-tap-highlight-color: transparent; outline: none; user-select: none; display: block;';
-                thumbEl.setAttribute('tabindex', '0');
+                const thumbEl = document.createElement('div');
+                thumbEl.className = 'aspect-square rounded border border-slate-800 overflow-hidden cursor-pointer relative block bg-slate-900';
+                thumbEl.style.cssText = 'touch-action: none; -webkit-tap-highlight-color: transparent; outline: none; user-select: none;';
                 thumbEl.draggable = false;
                 thumbEl.dataset.noDrag = 'true';
 
@@ -218,12 +210,20 @@ function buildTaskCard(task) {
                     ${isLegacy ? '<span class="absolute top-0.5 left-0.5 bg-amber-500 text-slate-950 text-[6px] font-black px-0.5 rounded shadow-sm">⚠️ LEGACY</span>' : ''}
                 `;
 
-                thumbEl.onclick = function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
+                const handleLightboxOpen = function(e) {
+                    if (e) {
+                        e.preventDefault();
+                        e.stopImmediatePropagation(); // More aggressive than stopPropagation
+                    }
                     openLightbox(String(task.id), idx);
                     return false;
                 };
+
+                // Use pointerdown for immediate response, bypasses drag delay
+                thumbEl.onpointerdown = handleLightboxOpen;
+                // Swallowing other events to prevent ghost clicks or parent reactions
+                thumbEl.ontouchstart = (e) => { e.preventDefault(); e.stopImmediatePropagation(); };
+                thumbEl.onclick = (e) => { e.preventDefault(); e.stopImmediatePropagation(); };
 
                 grid.appendChild(thumbEl);
             });
