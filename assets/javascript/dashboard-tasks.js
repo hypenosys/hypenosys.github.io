@@ -371,11 +371,15 @@ function renderImagePreviews() {
         `;
 
         const previewBtn = div.querySelector('[data-action="preview-image"]');
-        previewBtn.addEventListener('click', (event) => {
-            event.preventDefault();
-            event.stopPropagation();
+        const handlePreview = (event) => {
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
             openLightbox('current', idx);
-        });
+        };
+        previewBtn.addEventListener('pointerdown', handlePreview);
+        previewBtn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); });
 
         const removeBtn = div.querySelector('[data-action="remove-image"]');
         removeBtn.addEventListener('click', (event) => {
@@ -584,5 +588,7 @@ function openImagePreview(taskId, idx, event) {
         if (typeof event.stopPropagation === 'function') event.stopPropagation();
         if (typeof event.preventDefault === 'function') event.preventDefault();
     }
+    // Phase 3 Fix: ensure we don't have pending click states
+    document.activeElement?.blur();
     openLightbox(taskId, idx);
 }
