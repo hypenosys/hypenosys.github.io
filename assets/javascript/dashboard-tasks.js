@@ -376,12 +376,18 @@ function renderImagePreviews() {
                 event.preventDefault();
                 event.stopImmediatePropagation();
             }
+            // Prevent double firing
+            const now = Date.now();
+            if (previewBtn._lastTrigger && (now - previewBtn._lastTrigger < 100)) return false;
+            previewBtn._lastTrigger = now;
+
             document.activeElement?.blur();
             openLightbox('current', idx);
             return false;
         };
         previewBtn.onpointerdown = handlePreview;
-        previewBtn.ontouchstart = (e) => { e.preventDefault(); e.stopImmediatePropagation(); };
+        previewBtn.ontouchstart  = handlePreview;
+        previewBtn.onmousedown   = handlePreview;
         previewBtn.onclick = (e) => { e.preventDefault(); e.stopImmediatePropagation(); };
 
         const removeBtn = div.querySelector('[data-action="remove-image"]');
@@ -404,7 +410,10 @@ function removeTaskImage(index) {
 function openLightbox(srcOrTaskId, imageIndex) {
     const modal = document.getElementById('lightbox-modal');
     const img = document.getElementById('lightbox-img');
-    if (!modal || !img) return;
+    if (!modal || !img) {
+        console.error('[LIGHTBOX] Modal or Image element not found');
+        return;
+    }
 
     // Set guard timestamp to prevent immediate closure on event bubbling/desktop clicks
     modal._lastOpenTime = Date.now();
@@ -436,7 +445,10 @@ function openLightbox(srcOrTaskId, imageIndex) {
     }
 
     updateLightboxUI();
+    // Force visible immediately
+    modal.style.display = 'flex';
     modal.classList.remove('hidden');
+    console.log('[LIGHTBOX] Lightbox modal visible');
 }
 
 function updateLightboxUI() {
@@ -476,6 +488,7 @@ function closeLightbox() {
     document.activeElement?.blur();
     const modal = document.getElementById('lightbox-modal');
     if (modal) {
+        modal.style.display = 'none';
         modal.classList.add('hidden');
         // Clear src to avoid flicker on next open
         const img = document.getElementById('lightbox-img');

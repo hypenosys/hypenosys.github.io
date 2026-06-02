@@ -213,17 +213,29 @@ function buildTaskCard(task) {
                 const handleLightboxOpen = function(e) {
                     if (e) {
                         e.preventDefault();
-                        e.stopImmediatePropagation(); // More aggressive than stopPropagation
+                        e.stopImmediatePropagation();
                     }
+                    // Prevent double firing within 100ms
+                    const now = Date.now();
+                    if (thumbEl._lastTrigger && (now - thumbEl._lastTrigger < 100)) return false;
+                    thumbEl._lastTrigger = now;
+
+                    console.log(`[LIGHTBOX] Opening image ${idx} for task ${task.id} via ${e ? e.type : 'manual'}`);
                     openLightbox(String(task.id), idx);
                     return false;
                 };
 
-                // Use pointerdown for immediate response, bypasses drag delay
+                // Multiple triggers for robustness on different touch/mouse implementations
                 thumbEl.onpointerdown = handleLightboxOpen;
-                // Swallowing other events to prevent ghost clicks or parent reactions
-                thumbEl.ontouchstart = (e) => { e.preventDefault(); e.stopImmediatePropagation(); };
-                thumbEl.onclick = (e) => { e.preventDefault(); e.stopImmediatePropagation(); };
+                thumbEl.ontouchstart  = handleLightboxOpen;
+                thumbEl.onmousedown   = handleLightboxOpen;
+
+                // Explicitly swallow clicks to prevent bubbling
+                thumbEl.onclick = (e) => {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    return false;
+                };
 
                 grid.appendChild(thumbEl);
             });
