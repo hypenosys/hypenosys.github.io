@@ -371,11 +371,24 @@ function renderImagePreviews() {
         `;
 
         const previewBtn = div.querySelector('[data-action="preview-image"]');
-        previewBtn.addEventListener('click', (event) => {
-            event.preventDefault();
-            event.stopPropagation();
+        const handlePreview = (event) => {
+            if (event) {
+                event.preventDefault();
+                event.stopImmediatePropagation();
+            }
+            // Prevent double firing
+            const now = Date.now();
+            if (previewBtn._lastTrigger && (now - previewBtn._lastTrigger < 100)) return false;
+            previewBtn._lastTrigger = now;
+
+            document.activeElement?.blur();
             openLightbox('current', idx);
-        });
+            return false;
+        };
+        previewBtn.onpointerdown = handlePreview;
+        previewBtn.ontouchstart  = handlePreview;
+        previewBtn.onmousedown   = handlePreview;
+        previewBtn.onclick = (e) => { e.preventDefault(); e.stopImmediatePropagation(); };
 
         const removeBtn = div.querySelector('[data-action="remove-image"]');
         removeBtn.addEventListener('click', (event) => {
@@ -397,7 +410,10 @@ function removeTaskImage(index) {
 function openLightbox(srcOrTaskId, imageIndex) {
     const modal = document.getElementById('lightbox-modal');
     const img = document.getElementById('lightbox-img');
-    if (!modal || !img) return;
+    if (!modal || !img) {
+        console.error('[LIGHTBOX] Modal or Image element not found');
+        return;
+    }
 
     // Set guard timestamp to prevent immediate closure on event bubbling/desktop clicks
     modal._lastOpenTime = Date.now();
@@ -429,7 +445,10 @@ function openLightbox(srcOrTaskId, imageIndex) {
     }
 
     updateLightboxUI();
+    // Force visible immediately
+    modal.style.display = 'flex';
     modal.classList.remove('hidden');
+    console.log('[LIGHTBOX] Lightbox modal visible');
 }
 
 function updateLightboxUI() {
@@ -469,6 +488,7 @@ function closeLightbox() {
     document.activeElement?.blur();
     const modal = document.getElementById('lightbox-modal');
     if (modal) {
+        modal.style.display = 'none';
         modal.classList.add('hidden');
         // Clear src to avoid flicker on next open
         const img = document.getElementById('lightbox-img');
@@ -584,5 +604,7 @@ function openImagePreview(taskId, idx, event) {
         if (typeof event.stopPropagation === 'function') event.stopPropagation();
         if (typeof event.preventDefault === 'function') event.preventDefault();
     }
+    // Phase 3 Fix: ensure we don't have pending click states
+    document.activeElement?.blur();
     openLightbox(taskId, idx);
 }
