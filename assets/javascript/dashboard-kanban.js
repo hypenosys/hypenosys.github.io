@@ -218,12 +218,18 @@ function buildTaskCard(task) {
                     ${isLegacy ? '<span class="absolute top-0.5 left-0.5 bg-amber-500 text-slate-950 text-[6px] font-black px-0.5 rounded shadow-sm">⚠️ LEGACY</span>' : ''}
                 `;
 
-                thumbEl.onclick = function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
+                const handleLightboxOpen = function(e) {
+                    if (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
                     openLightbox(String(task.id), idx);
                     return false;
                 };
+
+                // Use pointerdown for immediate response, bypasses drag delay
+                thumbEl.onpointerdown = handleLightboxOpen;
+                thumbEl.onclick = (e) => { e.preventDefault(); e.stopPropagation(); };
 
                 grid.appendChild(thumbEl);
             });
