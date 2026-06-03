@@ -65,8 +65,43 @@ function removeRepoAlias(repoFullName) {
  * @returns {string} The name to display.
  */
 function getRepoDisplayName(repoFullName, originalName) {
-    const alias = getRepoAlias(repoFullName);
-    return alias || originalName || repoFullName;
+    if (!repoFullName) return originalName || '';
+
+    // Standardize possible formats to check for an alias
+    // 1. sources/github-owner-repo (New Jules format)
+    // 2. sources/github/owner/repo (Old format)
+    // 3. owner/repo (GitHub format)
+
+    let owner, repo;
+
+    if (repoFullName.startsWith('sources/github-')) {
+        const parts = repoFullName.replace('sources/github-', '').split('-');
+        owner = parts[0];
+        repo = parts.slice(1).join('-');
+    } else if (repoFullName.startsWith('sources/github/')) {
+        const parts = repoFullName.replace('sources/github/', '').split('/');
+        owner = parts[0];
+        repo = parts.slice(1).join('/');
+    } else if (repoFullName.includes('/')) {
+        const parts = repoFullName.split('/');
+        owner = parts[0];
+        repo = parts.slice(1).join('/');
+    }
+
+    if (owner && repo) {
+        const hyphenated = `sources/github-${owner}-${repo}`;
+        const slashed = `sources/github/${owner}/${repo}`;
+        const gh = `${owner}/${repo}`;
+
+        const alias = getRepoAlias(hyphenated) || getRepoAlias(slashed) || getRepoAlias(gh);
+        if (alias) return alias;
+    }
+
+    // Try exact match as last resort
+    const directAlias = getRepoAlias(repoFullName);
+    if (directAlias) return directAlias;
+
+    return originalName || repo || repoFullName;
 }
 
 // Expose to window
