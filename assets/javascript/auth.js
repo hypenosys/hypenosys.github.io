@@ -5,19 +5,30 @@
 class AuthManager {
     constructor() {
         this.clientId = 'Ov23liAVwbXNtvhkHJQe';
-        this.init();
+        this.isReady = this.init();
     }
 
     async init() {
         this.bindEvents();
 
+        const urlParams = new URLSearchParams(window.location.search);
+        const hasCode = urlParams.has('code');
+        const isDashboard = window.location.pathname.includes('dashboard');
+        const oauthInProgress = sessionStorage.getItem('oauth_in_progress') === 'true';
+
         // Skip OAuth callback if we're on dashboard.html — let dashboard-data.js handle it
         // to avoid race conditions and double exchange.
-        if (!window.location.pathname.includes('dashboard')) {
+        if (!isDashboard && hasCode) {
             await this.handleOAuthCallback();
         }
 
-        await this.checkAuthState();
+        // Skip auth check if we are on dashboard with a code or if an exchange is active
+        // This prevents AuthManager from showing "Logged Out" UI while dashboard-data.js is working
+        if (!(isDashboard && hasCode) && !oauthInProgress) {
+            await this.checkAuthState();
+        } else {
+            console.log('[AuthManager] Cooperative mode: deferring auth check to dashboard-data.js');
+        }
         
         const currentUser = window.githubApi.user || null;
         document.dispatchEvent(new CustomEvent('authReady', { 

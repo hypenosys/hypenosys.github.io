@@ -62,6 +62,16 @@ permalink: /CHANGELOG.html
         <h2 class="text-purple border-bottom border-purple pb-2 mb-4">[Unreleased]</h2>
         <div class="card mb-3">
           <div class="card-body">
+            <h5 class="text-success">Fixed</h5>
+            <ul class="tree-view mb-3">
+              <li><strong>OAuth Race Condition Fix:</strong> Implementada arquitectura cooperativa entre <code>AuthManager</code> y <code>dashboard-data.js</code>.
+                <ul>
+                  <li><strong>Modo Cooperativo:</strong> <code>AuthManager</code> ahora expone una promesa <code>isReady</code> y cede el control del intercambio del token OAuth al dashboard cuando se detecta un código en la URL.</li>
+                  <li><strong>Limpieza de URL:</strong> Se ha integrado <code>history.replaceState</code> para eliminar parámetros sensibles (<code>?code=</code>) inmediatamente después de la autenticación.</li>
+                  <li><strong>Gestión de Estado:</strong> Uso de <code>sessionStorage.oauth_in_progress</code> para evitar que los guards de autenticación interfieran durante el proceso de login.</li>
+                </ul>
+              </li>
+            </ul>
             <h5 class="text-success">Added</h5>
             <ul class="tree-view mb-3">
               <li><strong>Sistema Unificado de Perfiles:</strong> Migración total a <code>team_profiles.json</code> como única fuente de verdad, eliminando la dependencia de <code>team.json</code>.
