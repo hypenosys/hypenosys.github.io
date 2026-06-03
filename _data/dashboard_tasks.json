@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-03T07:35:34.141Z",
+  "last_updated": "2026-06-03T10:08:16.763Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -62,7 +62,7 @@
     },
     {
       "rama": "ART",
-      "descripcion": "Lluvia de ideas locas sobre mecánicas, historia, modos de juego, todo vale. Va al repositorio de /docs",
+      "descripcion": "Lluvia de ideas locas sobre mecánicas, historia, modos de juego, todo vale.",
       "tema_principal": "Concepto / GDD",
       "prioridad": "Critical",
       "milestone": "M1",
@@ -156,9 +156,23 @@
           "field": "repository",
           "old_value": null,
           "new_value": "hypenosys/app"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-03T10:07:04.082Z",
+          "field": "repository",
+          "old_value": "hypenosys/app",
+          "new_value": "hypenosys/docs"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-03T10:08:16.278Z",
+          "field": "descripcion",
+          "old_value": "Lluvia de ideas locas sobre mecánicas, historia, modos de juego, todo vale. Va al repositorio de /docs",
+          "new_value": "Lluvia de ideas locas sobre mecánicas, historia, modos de juego, todo vale."
         }
       ],
-      "repository": "hypenosys/app"
+      "repository": "hypenosys/docs"
     },
     {
       "rama": "DIS",
