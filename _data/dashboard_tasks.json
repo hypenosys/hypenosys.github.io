@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-03T06:10:18.129Z",
+  "last_updated": "2026-06-03T06:39:49.551Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -555,7 +555,7 @@
       "milestone": "M1",
       "estado": "Working",
       "completitud": 0,
-      "resuelto_por": "Alex",
+      "resuelto_por": "Dídac",
       "detectado_por": "Alex",
       "asignados": [
         "axlfc",
@@ -563,8 +563,11 @@
         "javi26031994-a11y",
         "topperh4rley"
       ],
-      "email_responsable": null,
-      "emails_asignados": [],
+      "email_responsable": "didac@hypenosys.com",
+      "emails_asignados": [
+        "alex@hypenosys.com",
+        "didac@hypenosys.com"
+      ],
       "rama2": null,
       "ver": true,
       "fecha": "2026-05-31",
@@ -590,10 +593,10 @@
       ],
       "title": "Implementación de etiquetas de categorización en el listado de repositorios del Panel de Jules",
       "task_type": "feature",
-      "start_date": null,
-      "due_date": null,
-      "estimated_hours": null,
-      "story_points": null,
+      "start_date": "2026-06-01",
+      "due_date": "2026-06-05",
+      "estimated_hours": 2,
+      "story_points": 1,
       "tags": [],
       "external_links": [],
       "subtasks": [],
@@ -636,6 +639,13 @@
           "field": "asignados",
           "old_value": "[\"dkdidac-design\",\"javi26031994-a11y\",\"topperh4rley\"]",
           "new_value": "[\"axlfc\",\"dkdidac-design\",\"javi26031994-a11y\",\"topperh4rley\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-03T06:39:48.709Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-06-05"
         }
       ]
     },
