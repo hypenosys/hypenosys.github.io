@@ -1095,40 +1095,77 @@ permalink: /jules-panel/
         }
 
         if (githubRepos.length > 0) {
+            // Populate immediately with what we have from GH API
             currentSources = githubRepos.map(r => ({
-                name: `sources/github/hypenosys/${r.name}`,
+                name: `sources/github-hypenosys-${r.name}`,
                 githubRepo: { owner: 'hypenosys', repo: r.name }
             }));
-            populateSelector(currentSources).then(() => {
-                repoSelect.disabled = false;
-            });
+            await populateSelector(currentSources);
+            repoSelect.disabled = false;
+            julesApiReady = true; // Allow immediate launch as per requirements
+            updateLaunchButtonState();
         }
 
         // PHASE 2: Jules API Enrichment (Parallel/Background)
         const julesPromise = window.loadAllSources();
+
+        // 8 seconds race for "Phase 2 initial load"
         const timeoutPromise = new Promise((_, reject) =>
             setTimeout(() => reject(new Error('TIMEOUT_PHASE2')), 8000)
         );
 
         Promise.race([julesPromise, timeoutPromise])
             .then(async sources => {
-                console.log('[Jules Panel] Phase 2 success:', sources.length, 'sources');
-                currentSources = sources;
-                window.julesSourcesCache = sources;
-                await populateSelector(sources);
-                julesApiReady = true;
-                updateLaunchButtonState();
+                console.log('[Jules Panel] Phase 2 initial resolved:', sources.length, 'sources');
+                processJulesEnrichment(sources);
             })
             .catch(err => {
-                console.warn('[Jules Panel] Phase 2 failed or timeout:', err.message);
+                console.warn('[Jules Panel] Phase 2 initial timeout or error:', err.message);
                 if (githubRepos.length === 0) {
                     repoSelect.innerHTML = '<option value="">Error de carga</option>';
                     showError('No se pudo conectar con GitHub ni con Jules API.');
                 }
-                // Habilitar de todas formas si tenemos algo de GH o si falló Jules
+                // Even if timeout, let Jules promise continue in background
+                julesPromise.then(sources => {
+                   console.log('[Jules Panel] Phase 2 late resolve:', sources.length, 'sources');
+                   processJulesEnrichment(sources);
+                }).catch(e => console.error('[Jules Panel] Phase 2 late failure:', e));
+
                 julesApiReady = true;
                 updateLaunchButtonState();
             });
+    }
+
+    async function processJulesEnrichment(sources) {
+        const repoSelect = document.getElementById('jules-repo-select');
+        window.julesSourcesCache = sources;
+
+        // Merge sources: Deduplicate and combine
+        const merged = [...currentSources];
+        sources.forEach(js => {
+            const owner = js.githubRepo?.owner || window.parseSourceName(js.name)?.owner;
+            const repo = js.githubRepo?.repo || window.parseSourceName(js.name)?.repo;
+
+            const existingIdx = merged.findIndex(ms => {
+                const mo = ms.githubRepo?.owner || window.parseSourceName(ms.name)?.owner;
+                const mr = ms.githubRepo?.repo || window.parseSourceName(ms.name)?.repo;
+                return mo === owner && mr === repo;
+            });
+    }
+
+            if (existingIdx >= 0) {
+                // Update with Jules data (keeping compatibility)
+                merged[existingIdx] = { ...merged[existingIdx], ...js };
+            } else {
+                merged.push(js);
+            }
+        });
+
+        currentSources = merged;
+        await populateSelector(merged);
+        repoSelect.disabled = false;
+        julesApiReady = true;
+        updateLaunchButtonState();
     }
 
     async function populateSelector(sources) {
@@ -1151,14 +1188,11 @@ permalink: /jules-panel/
                 const opt = document.createElement('option');
                 opt.value = s.name;
                 const repoShortName = s.githubRepo?.repo || window.parseSourceName(s.name)?.repo || s.name;
-                const julesAlias = s.displayName;
+                const julesDisplayName = s.displayName || repoShortName;
 
-                // Label Híbrido:
-                // 1. Alias local (Phase 1 & 2)
-                // 2. Jules displayName (Phase 2 only)
-                // 3. Repo short name (Phase 1 fallback)
-                const fallbackLabel = julesAlias || ((owner === 'hypenosys') ? repoShortName : `${owner}/${repoShortName}`);
-                opt.textContent = window.getRepoDisplayName(s.name, fallbackLabel);
+                // Display name priority: localStorage alias > Jules displayName > GitHub repo name
+                const displayLabel = window.getRepoDisplayName(s.name, julesDisplayName);
+                opt.textContent = displayLabel;
 
                 optgroup.appendChild(opt);
             });
