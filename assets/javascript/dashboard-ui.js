@@ -269,8 +269,8 @@ function renderTaskArchive() {
                     <span class="text-[9px] font-mono text-slate-600">#${task.id}</span>
                     <span class="text-[8px] font-bold px-1.5 py-0.5 rounded ${stateInfo.color} opacity-60">${stateInfo.label}</span>
                 </div>
-                <button onclick="handleRestoreTask('${task.id}')" class="text-[10px] font-bold text-emerald-500 hover:text-emerald-400 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
-                    <i class="fa-solid fa-hand-holding-heart"></i> RESUCITAR
+                <button onclick="handleRestoreTask('${task.id}')" class="action-btn text-emerald-500 hover:text-emerald-400 font-bold" title="Resucitar Tarea">
+                    <i class="fa-solid fa-hand-holding-heart"></i> <span class="text-[8px] ml-1">RESUCITAR</span>
                 </button>
             </div>
             <p class="text-xs text-slate-300 font-bold truncate">${task.title || task.descripcion}</p>
@@ -337,11 +337,11 @@ function renderJulesSessions() {
             <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 flex flex-col gap-3 group hover:border-indigo-500/50 transition-all">
                 <div class="flex justify-between items-start">
                     <span class="text-[9px] font-mono text-slate-600">#${id}</span>
-                    <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button onclick="event.stopPropagation(); handleDashboardJulesArchive('${id}')" class="text-slate-500 hover:text-emerald-400" title="Archivar">
+                    <div class="flex gap-1">
+                        <button onclick="event.stopPropagation(); handleDashboardJulesArchive('${id}')" class="action-btn action-btn--secondary text-slate-500 hover:text-emerald-400" title="Archivar">
                             <i class="fa-solid fa-box-archive text-xs"></i>
                         </button>
-                        <button onclick="event.stopPropagation(); handleDashboardJulesCemetery('${id}')" class="text-slate-500 hover:text-red-400" title="Al Cementerio">
+                        <button onclick="event.stopPropagation(); handleDashboardJulesCemetery('${id}')" class="action-btn action-btn--secondary text-slate-500 hover:text-red-400" title="Al Cementerio">
                             <i class="fa-solid fa-tombstone text-xs"></i>
                         </button>
                     </div>
