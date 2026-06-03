@@ -20,7 +20,7 @@ function renderModalArrays() {
                 <a href="${link.url}" target="_blank" class="text-[10px] text-emerald-400 font-bold hover:underline truncate flex-grow">
                     <i class="fa-solid fa-link mr-1"></i> ${link.label}
                 </a>
-                <button type="button" onclick="removeExternalLink(${idx})" class="text-slate-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all">
+                <button type="button" onclick="removeExternalLink(${idx})" class="action-btn action-btn--secondary text-slate-600 hover:text-red-400" title="Eliminar enlace">
                     <i class="fa-solid fa-trash text-[10px]"></i>
                 </button>
             </div>
@@ -34,7 +34,7 @@ function renderModalArrays() {
             <div class="flex items-center gap-3 p-2 bg-slate-900 border border-slate-800 rounded-lg group">
                 <input type="checkbox" ${sub.done ? 'checked' : ''} onclick="toggleSubtask(${idx})" class="w-4 h-4 rounded border-slate-700 text-emerald-500 bg-slate-950 focus:ring-emerald-500">
                 <span class="text-xs ${sub.done ? 'text-slate-600 line-through' : 'text-slate-300'} flex-grow">${sub.text}</span>
-                <button type="button" onclick="removeSubtask(${idx})" class="text-slate-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all">
+                <button type="button" onclick="removeSubtask(${idx})" class="action-btn action-btn--secondary text-slate-600 hover:text-red-400" title="Eliminar subtarea">
                     <i class="fa-solid fa-trash text-[10px]"></i>
                 </button>
             </div>
@@ -51,7 +51,7 @@ function renderModalArrays() {
                         <span class="text-[10px] font-bold text-indigo-400">${com.author_login}</span>
                         <span class="text-[8px] text-slate-600 font-mono">${new Date(com.timestamp).toLocaleString()}</span>
                     </div>
-                    <button type="button" onclick="removeComment(${idx})" class="text-slate-800 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all">
+                    <button type="button" onclick="removeComment(${idx})" class="action-btn action-btn--secondary text-slate-800 hover:text-red-400" title="Eliminar comentario">
                         <i class="fa-solid fa-trash text-[10px]"></i>
                     </button>
                 </div>

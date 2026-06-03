@@ -1,6 +1,17 @@
 /* HYPENOSYS — TASKS MODULE */
 
+function switchTaskModalTab(tabId) {
+    const tabs = ['info', 'team', 'extra'];
+    tabs.forEach(t => {
+        const content = document.getElementById(`task-tab-content-${t}`);
+        const link = document.getElementById(`task-tab-${t}`);
+        if (content) content.classList.toggle('hidden', t !== tabId);
+        if (link) link.classList.toggle('active', t === tabId);
+    });
+}
+
 function openCreateTaskModal() {
+  switchTaskModalTab('info');
   populateMemberSelects();
   document.getElementById('task-modal-title').textContent = 'Crear Nueva Tarea';
   document.getElementById('task-id-input').value = '';
@@ -53,6 +64,7 @@ function openEditTaskModal(taskId) {
     const task = currentTasks.find(t => String(t.id) === String(taskId));
     if (!task) return;
 
+    switchTaskModalTab('info');
     populateMemberSelects();
     document.getElementById('task-modal-title').textContent = `Editar Tarea #${taskId}`;
     document.getElementById('task-id-input').value = taskId;
@@ -351,51 +363,70 @@ function renderImagePreviews() {
     currentTaskImages.forEach((img, idx) => {
         const id = img.tumblr_post_id || idx;
         const div = document.createElement('div');
-        div.className = 'relative group aspect-square rounded-lg overflow-hidden border border-slate-700 bg-slate-950';
+        div.className = 'flex flex-col rounded-lg overflow-hidden border border-slate-700 bg-slate-950';
 
         const isLegacy = img.type === 'binary_legacy';
 
         div.innerHTML = `
-            <img src="${img.url}" class="w-full h-full object-cover" alt="">
-            <div class="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                <button type="button" data-action="preview-image" class="w-8 h-8 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center hover:scale-110 transition-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-white select-none touch-manipulation">
-                    <i class="fa-solid fa-eye"></i>
+            <div class="relative aspect-square group overflow-hidden">
+                <img src="${img.url}" class="w-full h-full object-cover" alt="">
+                <!-- Desktop Overlay -->
+                <div class="desktop-only absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                    <button type="button" data-action="preview-image-desktop" class="w-8 h-8 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center hover:scale-110 transition-transform focus:outline-none select-none">
+                        <i class="fa-solid fa-eye"></i>
+                    </button>
+                    <button type="button" data-action="remove-image-desktop" class="w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+                ${isLegacy ? '<span class="absolute top-1 left-1 bg-amber-500 text-slate-950 text-[7px] font-black px-1 rounded">⚠️ LEGACY</span>' : ''}
+            </div>
+            <!-- Mobile Action Bar (Always Visible) -->
+            <div class="mobile-only flex border-t border-slate-800">
+                <button type="button" data-action="preview-image-mobile" class="flex-grow py-2 text-emerald-400 bg-slate-900/50 flex items-center justify-center border-r border-slate-800">
+                    <i class="fa-solid fa-eye mr-2"></i> VER
                 </button>
-                <button type="button" data-action="remove-image" class="w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center hover:scale-110 transition-transform">
-                    <i class="fa-solid fa-trash"></i>
+                <button type="button" data-action="remove-image-mobile" class="flex-grow py-2 text-red-400 bg-slate-900/50 flex items-center justify-center">
+                    <i class="fa-solid fa-trash mr-2"></i> BORRAR
                 </button>
             </div>
-            ${isLegacy ? '<span class="absolute top-1 left-1 bg-amber-500 text-slate-950 text-[7px] font-black px-1 rounded">⚠️ LEGACY</span>' : ''}
-            <div class="name-label absolute bottom-0 left-0 right-0 p-1 bg-slate-950/80 text-[8px] text-slate-300 truncate pointer-events-none">
+            <div class="name-label p-1 bg-slate-950 text-[8px] text-slate-400 truncate text-center">
             </div>
         `;
 
-        const previewBtn = div.querySelector('[data-action="preview-image"]');
-        const handlePreview = (event) => {
-            if (event) {
-                event.preventDefault();
-                event.stopImmediatePropagation();
-            }
-            // Prevent double firing
-            const now = Date.now();
-            if (previewBtn._lastTrigger && (now - previewBtn._lastTrigger < 100)) return false;
-            previewBtn._lastTrigger = now;
-
-            document.activeElement?.blur();
-            openLightbox('current', idx);
-            return false;
+        const attachPreviewLogic = (btn) => {
+            if (!btn) return;
+            const handlePreview = (event) => {
+                if (event) {
+                    event.preventDefault();
+                    event.stopImmediatePropagation();
+                }
+                const now = Date.now();
+                if (btn._lastTrigger && (now - btn._lastTrigger < 100)) return false;
+                btn._lastTrigger = now;
+                document.activeElement?.blur();
+                openLightbox('current', idx);
+                return false;
+            };
+            btn.onpointerdown = handlePreview;
+            btn.ontouchstart  = handlePreview;
+            btn.onmousedown   = handlePreview;
+            btn.onclick = (e) => { e.preventDefault(); e.stopImmediatePropagation(); };
         };
-        previewBtn.onpointerdown = handlePreview;
-        previewBtn.ontouchstart  = handlePreview;
-        previewBtn.onmousedown   = handlePreview;
-        previewBtn.onclick = (e) => { e.preventDefault(); e.stopImmediatePropagation(); };
 
-        const removeBtn = div.querySelector('[data-action="remove-image"]');
-        removeBtn.addEventListener('click', (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            removeTaskImage(idx);
-        });
+        const attachRemoveLogic = (btn) => {
+            if (!btn) return;
+            btn.addEventListener('click', (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                removeTaskImage(idx);
+            });
+        };
+
+        attachPreviewLogic(div.querySelector('[data-action="preview-image-desktop"]'));
+        attachPreviewLogic(div.querySelector('[data-action="preview-image-mobile"]'));
+        attachRemoveLogic(div.querySelector('[data-action="remove-image-desktop"]'));
+        attachRemoveLogic(div.querySelector('[data-action="remove-image-mobile"]'));
 
         div.querySelector('.name-label').textContent = img.filename || 'Imagen';
         container.appendChild(div);
