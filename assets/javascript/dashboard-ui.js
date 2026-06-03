@@ -474,20 +474,27 @@ function setupEventListeners() {
   if (assignCancel) assignCancel.onclick = () => document.getElementById('assignment-modal').classList.add('hidden');
 
   // Image handling
-  const dropzone = document.getElementById('task-image-dropzone');
   const fileInput = document.getElementById('task-image-input');
   const taskModal = document.getElementById('create-task-modal');
+  const imageSection = document.getElementById('task-image-section');
 
-  if (dropzone && fileInput) {
-      dropzone.onclick = () => fileInput.click();
-      dropzone.ondragover = (e) => { e.preventDefault(); dropzone.classList.add('border-emerald-500', 'bg-emerald-500/10'); };
-      dropzone.ondragleave = () => dropzone.classList.remove('border-emerald-500', 'bg-emerald-500/10');
-      dropzone.ondrop = (e) => {
+  if (fileInput) {
+      fileInput.onchange = (e) => handleImageFiles(e.target.files);
+  }
+
+  if (imageSection) {
+      imageSection.ondragover = (e) => {
           e.preventDefault();
-          dropzone.classList.remove('border-emerald-500', 'bg-emerald-500/10');
+          imageSection.classList.add('border-emerald-500', 'bg-emerald-500/10');
+      };
+      imageSection.ondragleave = () => {
+          imageSection.classList.remove('border-emerald-500', 'bg-emerald-500/10');
+      };
+      imageSection.ondrop = (e) => {
+          e.preventDefault();
+          imageSection.classList.remove('border-emerald-500', 'bg-emerald-500/10');
           handleImageFiles(e.dataTransfer.files);
       };
-      fileInput.onchange = (e) => handleImageFiles(e.target.files);
   }
 
   if (taskModal) {
@@ -573,4 +580,3 @@ window.handleDashboardLogin = function() {
     }
 };
 
-window.handleAddImageUrl = handleAddImageUrl;
