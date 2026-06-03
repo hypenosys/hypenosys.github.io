@@ -1,44 +1,5 @@
 /* HYPENOSYS — DATA MODULE */
 
-// El listener de authReady se registra aquí en el scope global del script,
-// ANTES de cualquier DOMContentLoaded, garantizando que nunca se pierde el evento.
-document.addEventListener('authReady', async (e) => {
-    console.log('[DASHBOARD] authReady received. Starting initialization...');
-    await handleDOMContentLoaded();
-});
-
-async function handleDOMContentLoaded() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const code = urlParams.get('code');
-
-  if (code) {
-    console.log('[DASHBOARD] OAuth code detected. Handling callback...');
-    const loginOverlay = document.getElementById('login-overlay');
-    if (loginOverlay) {
-        loginOverlay.classList.remove('hidden');
-        const statusMsg = loginOverlay.querySelector('p');
-        if (statusMsg) statusMsg.textContent = 'Autenticando con GitHub...';
-    }
-
-    try {
-      const result = await window.githubApi.exchangeCodeForToken(code);
-      if (result.valid) {
-          window.history.replaceState({}, document.title, window.location.pathname);
-          await initDashboard();
-      } else {
-          throw new Error('No autorizado');
-      }
-    } catch (err) {
-      console.error('[DASHBOARD] OAuth Error:', err);
-      showToast('Error de autenticación: ' + err.message, 'error');
-      const loginOverlay = document.getElementById('login-overlay');
-      if (loginOverlay) loginOverlay.classList.remove('hidden');
-    }
-  } else {
-    await initDashboard();
-  }
-}
-
 async function initDashboard() {
   if (window._dashboardInitialized) {
       console.warn('[DASHBOARD] initDashboard called twice — ignoring.');
@@ -199,3 +160,41 @@ async function refreshDashboardData() {
     showToast(msg, 'error');
   }
 }
+
+document.addEventListener('DOMContentLoaded', async () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+
+    if (code) {
+        // Handle OAuth callback immediately — do not wait for authReady
+        console.log('[DASHBOARD] OAuth code detected on DOMContentLoaded. Handling immediately...');
+        const loginOverlay = document.getElementById('login-overlay');
+        if (loginOverlay) {
+            loginOverlay.classList.remove('hidden');
+            const statusMsg = loginOverlay.querySelector('p');
+            if (statusMsg) statusMsg.textContent = 'Autenticando con GitHub...';
+        }
+        try {
+            const result = await window.githubApi.exchangeCodeForToken(code);
+            window.history.replaceState({}, document.title, window.location.pathname);
+            if (result.valid) {
+                await initDashboard();
+            } else {
+                throw new Error('No autorizado');
+            }
+        } catch (err) {
+            console.error('[DASHBOARD] OAuth Error:', err);
+            showToast('Error de autenticación: ' + err.message, 'error');
+            const loginOverlay = document.getElementById('login-overlay');
+            if (loginOverlay) loginOverlay.classList.remove('hidden');
+        }
+    } else {
+        // No code — wait for authReady from auth.js, then init
+        document.addEventListener('authReady', async () => {
+            console.log('[DASHBOARD] authReady received. Starting initialization...');
+            if (!window._dashboardInitialized) {
+                await initDashboard();
+            }
+        });
+    }
+});
