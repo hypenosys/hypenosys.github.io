@@ -9,6 +9,13 @@ class AuthManager {
     }
 
     async init() {
+        if (window.HYPENOSYS_AUTH_OWNER === 'dashboard') {
+            console.log('[AuthManager] Dashboard owner mode. Skipping core init.');
+            this.bindEvents();
+            this.isReady = Promise.resolve();
+            return;
+        }
+
         this.bindEvents();
 
         // 1. First, check if we already have a valid session
@@ -16,6 +23,8 @@ class AuthManager {
 
         // 2. Only if no user, try handling OAuth callback
         if (!window.githubApi.user) {
+            // JULES-NOTE: GATEKEEPER-REVIEW-NEEDED
+            // Client-side code exchange is deprecated. Gatekeeper should handle this.
             await this.handleOAuthCallback();
 
             // 3. Re-verify auth state if exchange happened
@@ -65,31 +74,10 @@ class AuthManager {
     }
 
     async handleOAuthCallback() {
-        // If we already have a token, do not attempt to exchange a code
-        if (window.githubApi.getAuthToken()) {
-            return;
-        }
-
-        const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get('code');
-        if (code) {
-            // NOTE: dashboard-data.js owns this for dashboard.html
-            // This is primarily for the landing page.
-            this.showToast('Autenticando...', 'Intercambiando código con el gatekeeper...', 'info');
-            
-            try {
-                const result = await window.githubApi.exchangeCodeForToken(code);
-                if (result.valid) {
-                    this.updateHeaderUI(result.user);
-                    this.showToast('Éxito', 'Sesión iniciada correctamente.', 'success');
-                } else {
-                    this.handleAuthError({ status: result.user ? 403 : 401, type: result.user ? 'ACL_DENIED' : 'INVALID' });
-                }
-            } catch (e) {
-                console.error('[AUTH] Exchange failed:', e);
-                this.showToast('Error', 'Fallo en la autenticación OAuth.', 'error');
-            }
-        }
+        // JULES-NOTE: GATEKEEPER-REVIEW-NEEDED
+        // URL-based auth logic is being deprecated.
+        // Gatekeeper should exchange code and deliver token directly.
+        return;
     }
 
     async checkAuthState() {
@@ -199,7 +187,7 @@ class AuthManager {
         // Clear session on security-related errors
         if (e.status === 401 || (e.status === 403 && e.type === 'ACL_DENIED') || e.type === 'INVALID') {
             window.githubApi.clearAuth();
-            this.updateHeaderUI(null);
+            this.resetAuthUI();
         }
 
         if (e.status === 403 && e.type === 'ACL_DENIED') {
@@ -228,7 +216,31 @@ class AuthManager {
 
     handleLogout() {
         window.githubApi.clearAuth();
-        window.location.reload();
+        this.resetAuthUI();
+    }
+
+    resetAuthUI() {
+        // Manual UI reset without page reload
+        this.updateHeaderUI(null);
+
+        // Clear specific dashboard state if present
+        if (window.HYPENOSYS_AUTH_OWNER === 'dashboard') {
+            const loginOverlay = document.getElementById('login-overlay');
+            if (loginOverlay) loginOverlay.classList.remove('hidden');
+
+            // Clear other dashboard UI elements
+            const dashUserStatus = document.getElementById('user-status');
+            const dashUserStatusMobile = document.getElementById('user-status-mobile');
+            if (dashUserStatus) dashUserStatus.innerHTML = '';
+            if (dashUserStatusMobile) dashUserStatusMobile.innerHTML = '';
+
+            // Clear task counts/data
+            const taskCounts = document.querySelectorAll('.col-count');
+            taskCounts.forEach(el => el.textContent = '0');
+
+            const taskContainers = document.querySelectorAll('.kanban-cards');
+            taskContainers.forEach(el => el.innerHTML = '');
+        }
     }
 
     updateHeaderUI(user) {

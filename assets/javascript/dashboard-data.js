@@ -1,19 +1,35 @@
 /* HYPENOSYS — DATA MODULE */
 
 async function handleDOMContentLoaded() {
-  // Wait for AuthManager to complete its sequential flow
-  if (window.authManager && window.authManager.isReady) {
-    await window.authManager.isReady;
-  }
+  console.log('[DASHBOARD] Checking auth state...');
 
-  // Gate Check: AuthManager has finished, so user should be available if logged in
-  if (window.githubApi.user) {
-    await initDashboard();
+  // 1. Check for existing token in storage (Zero URL rule)
+  const token = window.githubApi.getAuthToken();
+
+  if (token) {
+    try {
+      const result = await window.githubApi.validateToken();
+      if (result.valid) {
+        await initDashboard();
+      } else {
+        showLockScreen();
+      }
+    } catch (e) {
+      console.error('[DASHBOARD] Auth validation failed:', e);
+      showLockScreen();
+    }
   } else {
-    console.log('[DASHBOARD] Access denied. Showing lock screen.');
-    const loginOverlay = document.getElementById('login-overlay');
-    if (loginOverlay) loginOverlay.classList.remove('hidden');
+    // JULES-NOTE: GATEKEEPER-REVIEW-NEEDED
+    // If the Gatekeeper exchanges the code and returns a token via script/callback,
+    // we need to listen for it here. For now, we show the lock screen if no token.
+    showLockScreen();
   }
+}
+
+function showLockScreen() {
+  console.log('[DASHBOARD] Access denied. Showing lock screen.');
+  const loginOverlay = document.getElementById('login-overlay');
+  if (loginOverlay) loginOverlay.classList.remove('hidden');
 }
 
 async function initDashboard() {
