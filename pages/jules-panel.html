@@ -1015,26 +1015,30 @@ permalink: /jules-panel/
         const gate    = document.getElementById("jules-auth-gate");
         const panel   = document.getElementById("jules-main-panel");
 
-        loading.classList.add('hidden');
+        try {
+            const token = sessionStorage.getItem("gh_access_token")
+                       || localStorage.getItem("github_token");
 
-        const token = sessionStorage.getItem("gh_access_token")
-                   || localStorage.getItem("github_token");
+            if (!token || !user) {
+                if (gate) gate.classList.remove('hidden');
+                if (panel) panel.classList.add('hidden');
+                return;
+            }
 
-        if (!token || !user) {
-            gate.classList.remove('hidden');
-            panel.classList.add('hidden');
-            return;
-        }
+            // Usuario válido — mostrar panel
+            if (gate) gate.classList.add('hidden');
+            if (panel) panel.classList.remove('hidden');
 
-        // Usuario válido — mostrar panel
-        gate.classList.add('hidden');
-        panel.classList.remove('hidden');
-
-        updateKeyState();
-        if (window.julesApi.apiKey) {
-            initializeRepoSelector();
-            refreshSessions();
-            startPolling();
+            updateKeyState();
+            if (window.julesApi.apiKey) {
+                initializeRepoSelector();
+                refreshSessions();
+                startPolling();
+            }
+        } catch (e) {
+            console.error('[Jules Panel] Error en initJulesPanel:', e);
+        } finally {
+            if (loading) loading.classList.add('hidden');
         }
     }
 
@@ -1097,7 +1101,7 @@ permalink: /jules-panel/
         if (githubRepos.length > 0) {
             // Populate immediately with what we have from GH API
             currentSources = githubRepos.map(r => ({
-                name: `sources/github-hypenosys-${r.name}`,
+                name: `sources/github/hypenosys/${r.name}`,
                 githubRepo: { owner: 'hypenosys', repo: r.name }
             }));
             await populateSelector(currentSources);
@@ -2369,19 +2373,26 @@ permalink: /jules-panel/
 
     // ── Arranque del Jules Panel ──────────────────────────────────────
     (function arrancarPanel() {
+      let arrancado = false;
+
       function iniciar(user) {
+        if (arrancado) return;
+        arrancado = true;
+
         const loading = document.getElementById('auth-loading');
-        if (loading) loading.classList.add('hidden');
         const panel = document.getElementById('jules-main-panel');
-        if (panel) panel.classList.remove('hidden');
 
-        try { window.julesSessionsCache = window.julesSessionsCache || []; }
-        catch(e) {}
-        try { initJulesPanel(user); }
-        catch(e) { console.error('[Jules] initJulesPanel falló:', e); }
-
-        renderArchivedCount();
-        renderCemeteryCount();
+        try {
+            window.julesSessionsCache = window.julesSessionsCache || [];
+            initJulesPanel(user);
+        } catch(e) {
+            console.error('[Jules] Error durante el arranque:', e);
+        } finally {
+            if (loading) loading.classList.add('hidden');
+            // No mostramos el panel por defecto aquí, initJulesPanel decide si mostrar panel o gate
+            renderArchivedCount();
+            renderCemeteryCount();
+        }
       }
 
       // Caso 1: authReady ya se disparó (auth.js cargó antes que este script)
@@ -2391,19 +2402,17 @@ permalink: /jules-panel/
       }
 
       // Caso 2: Esperamos el evento
-      let arrancado = false;
       document.addEventListener('authReady', function(e) {
-        if (arrancado) return;
-        arrancado = true;
         iniciar(e.detail?.user || null);
       });
 
-      // Caso 3: Failsafe — si en 6s no llega nada, arrancar igualmente
+      // Caso 3: Failsafe — si en 4s no llega nada, arrancar igualmente
+      // Reducido de 6s a 4s para mejorar UX en fallos
       setTimeout(function() {
-        if (arrancado) return;
-        arrancado = true;
-        console.warn('[Jules] authReady timeout — arrancando sin esperar auth');
-        iniciar(window.githubApi?.user || null);
-      }, 6000);
+        if (!arrancado) {
+          console.warn('[Jules] authReady timeout — arrancando failsafe');
+          iniciar(window.githubApi?.user || null);
+        }
+      }, 4000);
     })();
 </script>
