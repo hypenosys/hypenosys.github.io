@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-03T06:09:51.100Z",
+  "last_updated": "2026-06-03T06:09:57.645Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -146,6 +146,132 @@
           "timestamp": "2026-06-01T09:28:52.238Z",
           "field": "completitud",
           "old_value": 0,
+          "new_value": 1
+        }
+      ]
+    },
+    {
+      "rama": "PRO",
+      "descripcion": "sincronizar repo docs/ (público) con la documentación en la web de hypenosys.github.io",
+      "tema_principal": "Programación / Engine",
+      "prioridad": "Minor",
+      "milestone": "M1",
+      "estado": "OK",
+      "completitud": 1,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc"
+      ],
+      "email_responsable": "axel@hypenosys.org",
+      "emails_asignados": [
+        "axel@hypenosys.org"
+      ],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-05-31",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "id": 18,
+      "images": [],
+      "title": "docs/ (público) autosync en hypenosys",
+      "task_type": "chore",
+      "start_date": "2026-06-01",
+      "due_date": "2026-06-02",
+      "estimated_hours": 1,
+      "story_points": 1,
+      "tags": [
+        "infraestructura"
+      ],
+      "external_links": [],
+      "subtasks": [
+        {
+          "id": 1780297783723,
+          "text": "asegurarse que obsidian funciona ok y sincroniza bien con /docs",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T06:55:22.121Z",
+          "field": "tags",
+          "old_value": "[]",
+          "new_value": "[\"infraestructura\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T06:57:38.051Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Minor"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T07:09:53.783Z",
+          "field": "title",
+          "old_value": "sincronizar repo docs/ (público) con la documentación en la",
+          "new_value": "docs/ (público) autosync en hypenosys"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T07:10:18.155Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T07:10:18.155Z",
+          "field": "task_type",
+          "old_value": "feature",
+          "new_value": "chore"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T07:24:22.668Z",
+          "field": "asignados",
+          "old_value": "[]",
+          "new_value": "[\"axlfc\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:13:33.120Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-06-02"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:13:33.120Z",
+          "field": "completitud",
+          "old_value": 0,
+          "new_value": 0.5
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:24:11.216Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:47:47.385Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "OK"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:47:47.385Z",
+          "field": "completitud",
+          "old_value": 0.5,
           "new_value": 1
         }
       ]
