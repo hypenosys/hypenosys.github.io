@@ -1,15 +1,15 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-03T06:10:12.418Z",
+  "computed_at": "2026-06-03T06:10:21.097Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 7,
-    "total_ok": 7,
+    "total_tasks": 13,
+    "total_ok": 2,
     "total_ko": 0,
-    "total_uncertain": 0,
-    "total_obsolete": 0,
-    "fixed_found_ratio": 1.1667,
-    "verified_ratio": 1
+    "total_uncertain": 3,
+    "total_obsolete": 4,
+    "fixed_found_ratio": 0.1176,
+    "verified_ratio": 0.1176
   },
   "group": {
     "velocity_trend": {
@@ -18,19 +18,32 @@
       "2026-W18": 0,
       "2026-W19": 0,
       "2026-W20": 0,
-      "2026-W21": 8,
-      "2026-W22": 6,
+      "2026-W21": 4,
+      "2026-W22": 5,
       "2026-W23": 0
     },
-    "bug_rate": 0,
-    "blocker_health": 0,
-    "tag_heatmap": {},
-    "milestone_tasks_remaining": 0,
+    "bug_rate": 0.0909,
+    "blocker_health": 2,
+    "tag_heatmap": {
+      "PRO": 6,
+      "brainstorm": 1,
+      "design": 1,
+      "research": 1,
+      "DIS": 1,
+      "chore": 1,
+      "feature": 5,
+      "onboarding": 1,
+      "ART": 1,
+      "UX/UI": 1,
+      "bug": 1,
+      "hard": 1
+    },
+    "milestone_tasks_remaining": 11,
     "hall_of_fame_winners": {
       "mvp": {
         "handle": "axlfc",
         "name": "Axel",
-        "value": 6
+        "value": 4
       },
       "bug_slayer": {
         "handle": "axlfc",
@@ -66,7 +79,7 @@
     "leaderboard": {
       "axlfc": {
         "member_name": "Axel",
-        "mvp_points": 6,
+        "mvp_points": 4,
         "bugs_solved": 0,
         "unblocked_count": 0,
         "velocity": 2,
@@ -76,7 +89,7 @@
       },
       "topperh4rley": {
         "member_name": "Alex",
-        "mvp_points": 4,
+        "mvp_points": 3,
         "bugs_solved": 0,
         "unblocked_count": 0,
         "velocity": 2,
@@ -120,9 +133,9 @@
     "axlfc": {
       "member_name": "Axel",
       "completed": {
-        "all_time": 12,
-        "milestone": 12,
-        "week": 6
+        "all_time": 7,
+        "milestone": 7,
+        "week": 3
       },
       "weekly_velocity": {
         "2026-W16": 0,
@@ -130,19 +143,20 @@
         "2026-W18": 0,
         "2026-W19": 0,
         "2026-W20": 0,
-        "2026-W21": 6,
-        "2026-W22": 6,
+        "2026-W21": 3,
+        "2026-W22": 4,
         "2026-W23": 0
       },
       "type_breakdown": {
-        "feature": 10,
-        "chore": 2
+        "feature": 6,
+        "chore": 1
       },
       "rama_breakdown": {
-        "PRO": 12
+        "PRO": 7
       },
       "tag_frequency": {
-        "infraestructura": 2
+        "jules": 1,
+        "infraestructura": 1
       },
       "avg_completion_speed": {
         "days": 0.5,
@@ -152,19 +166,19 @@
       "comment_activity": 0,
       "volatility": {
         "reopens": 0,
-        "reprioritizations": 4
+        "reprioritizations": 6
       },
       "workload": {
-        "active_tasks": 0,
-        "story_points": 0
+        "active_tasks": 7,
+        "story_points": 10
       }
     },
     "topperh4rley": {
       "member_name": "Alex",
       "completed": {
-        "all_time": 10,
-        "milestone": 10,
-        "week": 4
+        "all_time": 7,
+        "milestone": 7,
+        "week": 3
       },
       "weekly_velocity": {
         "2026-W16": 0,
@@ -172,15 +186,56 @@
         "2026-W18": 0,
         "2026-W19": 0,
         "2026-W20": 0,
-        "2026-W21": 6,
+        "2026-W21": 3,
         "2026-W22": 4,
         "2026-W23": 0
       },
       "type_breakdown": {
-        "feature": 10
+        "feature": 7
       },
       "rama_breakdown": {
-        "PRO": 10
+        "PRO": 7
+      },
+      "tag_frequency": {
+        "jules": 1
+      },
+      "avg_completion_speed": {
+        "days": 0.5,
+        "estimated_start": true
+      },
+      "dependency_impact": 0,
+      "comment_activity": 0,
+      "volatility": {
+        "reopens": 0,
+        "reprioritizations": 6
+      },
+      "workload": {
+        "active_tasks": 9,
+        "story_points": 11
+      }
+    },
+    "dkdidac-design": {
+      "member_name": "Dídac",
+      "completed": {
+        "all_time": 1,
+        "milestone": 1,
+        "week": 0
+      },
+      "weekly_velocity": {
+        "2026-W16": 0,
+        "2026-W17": 0,
+        "2026-W18": 0,
+        "2026-W19": 0,
+        "2026-W20": 0,
+        "2026-W21": 1,
+        "2026-W22": 0,
+        "2026-W23": 0
+      },
+      "type_breakdown": {
+        "feature": 1
+      },
+      "rama_breakdown": {
+        "PRO": 1
       },
       "tag_frequency": {},
       "avg_completion_speed": {
@@ -194,12 +249,12 @@
         "reprioritizations": 2
       },
       "workload": {
-        "active_tasks": 0,
-        "story_points": 0
+        "active_tasks": 5,
+        "story_points": 1
       }
     },
-    "dkdidac-design": {
-      "member_name": "Dídac",
+    "javi26031994-a11y": {
+      "member_name": "Javi",
       "completed": {
         "all_time": 2,
         "milestone": 2,
@@ -230,50 +285,11 @@
       "comment_activity": 0,
       "volatility": {
         "reopens": 0,
-        "reprioritizations": 0
+        "reprioritizations": 2
       },
       "workload": {
-        "active_tasks": 0,
-        "story_points": 0
-      }
-    },
-    "javi26031994-a11y": {
-      "member_name": "Javi",
-      "completed": {
-        "all_time": 4,
-        "milestone": 4,
-        "week": 0
-      },
-      "weekly_velocity": {
-        "2026-W16": 0,
-        "2026-W17": 0,
-        "2026-W18": 0,
-        "2026-W19": 0,
-        "2026-W20": 0,
-        "2026-W21": 4,
-        "2026-W22": 0,
-        "2026-W23": 0
-      },
-      "type_breakdown": {
-        "feature": 4
-      },
-      "rama_breakdown": {
-        "PRO": 4
-      },
-      "tag_frequency": {},
-      "avg_completion_speed": {
-        "days": 0.5,
-        "estimated_start": true
-      },
-      "dependency_impact": 0,
-      "comment_activity": 0,
-      "volatility": {
-        "reopens": 0,
-        "reprioritizations": 0
-      },
-      "workload": {
-        "active_tasks": 0,
-        "story_points": 0
+        "active_tasks": 5,
+        "story_points": 6
       }
     },
     "mitxel2022": {
@@ -289,8 +305,8 @@
         "2026-W18": 0,
         "2026-W19": 0,
         "2026-W20": 0,
-        "2026-W21": 0,
-        "2026-W22": 0,
+        "2026-W21": 9,
+        "2026-W22": 1,
         "2026-W23": 0
       },
       "type_breakdown": {},
@@ -304,11 +320,11 @@
       "comment_activity": 0,
       "volatility": {
         "reopens": 0,
-        "reprioritizations": 0
+        "reprioritizations": 1
       },
       "workload": {
-        "active_tasks": 0,
-        "story_points": 0
+        "active_tasks": 5,
+        "story_points": 6
       }
     }
   },
@@ -318,7 +334,7 @@
         "mvp": {
           "handle": "axlfc",
           "name": "Axel",
-          "value": 6
+          "value": 4
         },
         "bug_slayer": {
           "handle": "axlfc",
@@ -354,7 +370,7 @@
       "leaderboard": {
         "axlfc": {
           "member_name": "Axel",
-          "mvp_points": 6,
+          "mvp_points": 4,
           "bugs_solved": 0,
           "unblocked_count": 0,
           "velocity": 2,
@@ -364,7 +380,7 @@
         },
         "topperh4rley": {
           "member_name": "Alex",
-          "mvp_points": 4,
+          "mvp_points": 3,
           "bugs_solved": 0,
           "unblocked_count": 0,
           "velocity": 2,
