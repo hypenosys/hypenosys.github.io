@@ -62,6 +62,20 @@ permalink: /CHANGELOG.html
         <h2 class="text-purple border-bottom border-purple pb-2 mb-4">[Unreleased]</h2>
         <div class="card mb-3">
           <div class="card-body">
+            <h5 class="text-success">Changed</h5>
+            <ul class="tree-view mb-3">
+              <li><strong>Filtro de Miembros Optimizado:</strong> Rediseño del selector de equipo en el Dashboard para mejorar la usabilidad en dispositivos móviles y tablets.
+                <ul>
+                  <li><strong>Layout de Chips Horizontales:</strong> Reemplazada la lista vertical por una fila única de chips/pills compactos con scroll horizontal suave.</li>
+                  <li><strong>Indicador de Scroll Visual:</strong> Añadido un gradiente de desvanecimiento (fade) en el borde derecho para indicar intuitivamente la existencia de más miembros.</li>
+                  <li><strong>Diseño Responsivo:</strong> Implementadas clases dinámicas que ajustan el padding y tamaño de fuente entre mobile (xs) y desktop (sm).</li>
+                  <li><strong>Consistencia Visual:</strong> El diseño de chips ahora es uniforme en todas las resoluciones, manteniendo el esquema de colores Dracula y el resaltado del filtro activo con el color accent verde.</li>
+                  <li><strong>Reset Inteligente:</strong> El chip "Todos" ahora siempre aparece en primera posición y resetea todos los filtros (miembros y etapas) al pulsarse.</li>
+                  <li><strong>Layout Híbrido de Header:</strong> Implementado sistema de dos filas para móvil/tablet (Fila 1: Branding y Acciones, Fila 2: Chips) y fila única consolidada para desktop, garantizando visibilidad total sin desbordamientos.</li>
+                  <li><strong>Optimización de Espacio:</strong> Ocultado el timestamp de sincronización en móvil y simplificado el botón "Quick Jules" a solo icono para maximizar el área de trabajo en pantallas pequeñas.</li>
+                </ul>
+              </li>
+            </ul>
             <h5 class="text-success">Added</h5>
             <ul class="tree-view mb-3">
               <li><strong>Sincronización de Documentación:</strong> Nueva sección de Documentación que lee en tiempo real el repositorio público <code>hypenosys/docs</code>.

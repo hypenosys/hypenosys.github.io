@@ -39,11 +39,16 @@ function renderMemberToggles() {
   if (!container) return;
   container.innerHTML = '';
 
+  const baseClasses = "font-bold rounded-md transition-all flex-shrink-0";
+  const mobileClasses = "px-2 py-0.5 text-xs";
+  const desktopClasses = "lg:px-3 lg:py-1 lg:text-sm";
+
   const allBtn = document.createElement('button');
   allBtn.textContent = '👥 Todos';
   allBtn.className = (activeFilter === null && activeStageFilter === null)
-    ? 'px-3 py-1 text-xs font-bold rounded-md bg-emerald-500 text-slate-950 transition-all'
-    : 'px-3 py-1 text-xs font-bold rounded-md text-slate-400 hover:text-white transition-all';
+    ? `${baseClasses} ${mobileClasses} ${desktopClasses} bg-emerald-500 text-slate-950`
+    : `${baseClasses} ${mobileClasses} ${desktopClasses} text-slate-400 hover:text-white`;
+
   allBtn.addEventListener('click', () => {
     activeFilter = null;
     activeStageFilter = null;
@@ -55,8 +60,9 @@ function renderMemberToggles() {
     const btn = document.createElement('button');
     btn.textContent = member;
     btn.className = activeFilter === member
-      ? 'px-3 py-1 text-xs font-bold rounded-md bg-emerald-500 text-slate-950 transition-all'
-      : 'px-3 py-1 text-xs font-bold rounded-md text-slate-400 hover:text-white transition-all';
+      ? `${baseClasses} ${mobileClasses} ${desktopClasses} bg-emerald-500 text-slate-950`
+      : `${baseClasses} ${mobileClasses} ${desktopClasses} text-slate-400 hover:text-white`;
+
     btn.addEventListener('click', () => {
       activeFilter = (activeFilter === member) ? null : member;
       renderDashboard();
@@ -375,13 +381,21 @@ function updateJulesBadges() {
 }
 
 function renderUserStatus(user) {
-  const container = document.getElementById('user-status');
-  if (!container) return;
-  container.innerHTML = `
-    <div class="flex flex-col items-end">
+  const containerDesktop = document.getElementById('user-status');
+  const containerMobile = document.getElementById('user-status-mobile');
+
+  const html = `
+    <div class="flex flex-col items-end hidden lg:flex">
       <span class="text-[10px] font-bold text-white leading-none">${user.login}</span>
       <span class="text-[9px] text-emerald-500 font-mono">ONLINE</span>
     </div>
+    <div class="pulse-emerald rounded-full">
+      ${window.HypenosysUI.renderAvatar(user)}
+    </div>
+  `;
+
+  if (containerDesktop) containerDesktop.innerHTML = html;
+  if (containerMobile) containerMobile.innerHTML = `
     <div class="pulse-emerald rounded-full">
       ${window.HypenosysUI.renderAvatar(user)}
     </div>
