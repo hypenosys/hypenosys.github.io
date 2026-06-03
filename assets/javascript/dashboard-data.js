@@ -1,28 +1,47 @@
+/*
+ * ⚠️  AUTH CRITICAL FILE — DO NOT MODIFY AUTH FLOW
+ * Last known working state: commit 3d5b28f2d94ae3facd456d967c2ddacb710de923
+ *
+ * FORBIDDEN in this file:
+ * - Any changes to OAuth callback handling
+ * - Any changes to token storage key names
+ * - Any changes to whitelist array
+ * - Any changes to script load order dependencies
+ *
+ * Future features must be added AROUND this logic, never inside it.
+ * If auth breaks after any commit, revert this file to 3d5b28f immediately.
+ */
+
 /* HYPENOSYS — DATA MODULE */
 
 async function handleDOMContentLoaded() {
-  console.log('[DASHBOARD] Checking auth state...');
+  const urlParams = new URLSearchParams(window.location.search);
+  const code = urlParams.get('code');
 
-  // 1. Check for existing token in storage (Zero URL rule)
-  const token = window.githubApi.getAuthToken();
+  if (code) {
+    console.log('[DASHBOARD] OAuth code detected. Handling callback...');
+    const loginOverlay = document.getElementById('login-overlay');
+    loginOverlay.classList.remove('hidden');
 
-  if (token) {
+    // Save original HTML if needed, but we just want to show progress
+    const statusMsg = loginOverlay.querySelector('p');
+    if (statusMsg) statusMsg.textContent = 'Autenticando con GitHub...';
+
     try {
-      const result = await window.githubApi.validateToken();
+      const result = await window.githubApi.exchangeCodeForToken(code);
       if (result.valid) {
-        await initDashboard();
+          window.history.replaceState({}, document.title, window.location.pathname);
+          await initDashboard();
       } else {
-        showLockScreen();
+          throw new Error('No autorizado');
       }
-    } catch (e) {
-      console.error('[DASHBOARD] Auth validation failed:', e);
-      showLockScreen();
+    } catch (err) {
+      console.error('[DASHBOARD] OAuth Error:', err);
+      showToast('Error de autenticación: ' + err.message, 'error');
+      loginOverlay.classList.remove('hidden');
     }
   } else {
-    // JULES-NOTE: GATEKEEPER-REVIEW-NEEDED
-    // If the Gatekeeper exchanges the code and returns a token via script/callback,
-    // we need to listen for it here. For now, we show the lock screen if no token.
-    showLockScreen();
+    await initDashboard();
   }
 }
 
@@ -35,15 +54,26 @@ function showLockScreen() {
 async function initDashboard() {
   console.log('[DASHBOARD] Initializing Dashboard...');
   window.userReposCache = []; // Reset/init cache
-
-  const user = window.githubApi.user;
-  if (!user) {
+  const token = window.githubApi.getAuthToken();
+  if (!token) {
+    console.log('[DASHBOARD] No token found during init.');
     document.getElementById('login-overlay').classList.remove('hidden');
     return;
   }
 
   try {
-    // Note: user is already validated by AuthManager/GitHubAPI before getting here
+    const { valid, user } = await window.githubApi.validateToken();
+    if (!valid) {
+        console.log('[DASHBOARD] Token validation failed or unauthorized.');
+        if (user) {
+            document.getElementById('unauthorized-msg').textContent = `Tu cuenta de GitHub (${user.login}) no pertenece al equipo de Hypenosys.`;
+            document.getElementById('unauthorized-overlay').classList.remove('hidden');
+        } else {
+            document.getElementById('login-overlay').classList.remove('hidden');
+        }
+        return;
+    }
+
     console.log('[DASHBOARD] Access granted for:', user.login);
     document.getElementById('login-overlay').classList.add('hidden');
     window.currentUser = user.login.toLowerCase();
@@ -52,7 +82,7 @@ async function initDashboard() {
 
     // Set default filter to current user if they match
     const memberMatch = MEMBERS.find(m => m.toLowerCase() === window.currentUser ||
-                                          (currentProfiles && currentProfiles.members[m] && (currentProfiles.members[m].github_username || currentProfiles.members[m].handle || '').toLowerCase() === window.currentUser));
+                                          (currentProfiles && currentProfiles.members[m] && currentProfiles.members[m].handle.toLowerCase() === window.currentUser));
     if (memberMatch) activeFilter = memberMatch;
 
     startAutoRefresh();

@@ -62,6 +62,15 @@ permalink: /CHANGELOG.html
         <h2 class="text-purple border-bottom border-purple pb-2 mb-4">[Unreleased]</h2>
         <div class="card mb-3">
           <div class="card-body">
+            <h5 class="text-danger">Emergency Rollback & Lock</h5>
+            <ul class="tree-view mb-0">
+              <li><strong>Stable Auth Restoration:</strong> Reverted `auth.js`, `dashboard-data.js`, `github-api.js`, and `dashboard.html` to their exact state in commit `3d5b28f`.</li>
+              <li><strong>Auth Flow Lock:</strong> Added a mandatory warning comment to auth-critical files to prevent future breaking modifications to the OAuth flow.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="card mb-3">
+          <div class="card-body">
             <h5 class="text-success">Fixed</h5>
             <ul class="tree-view mb-3">
               <li><strong>Restauración Crítica de Auth y Renderizado (Ops Dashboard):</strong> Solución integral a los fallos de carga y autenticación del dashboard tras la unificación de perfiles.
