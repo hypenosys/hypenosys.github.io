@@ -35,7 +35,8 @@
         "didac@hypenosys.com",
         "mitxel@hypenosys.com"
       ],
-      "images": []
+      "images": [],
+      "repository": null
     },
     {
       "rama": "ART",
@@ -127,7 +128,8 @@
           "old_value": "Lluvia de ideas locas sobre mecánicas, historia, modos de juego, todo vale.",
           "new_value": "Lluvia de ideas locas sobre mecánicas, historia, modos de juego, todo vale. Va al repositorio de /docs"
         }
-      ]
+      ],
+      "repository": null
     },
     {
       "rama": "DIS",
@@ -187,7 +189,8 @@
           "old_value": "chore",
           "new_value": "research"
         }
-      ]
+      ],
+      "repository": null
     },
     {
       "rama": "PRO",
@@ -215,7 +218,8 @@
         "didac@hypenosys.com",
         "mitxel@hypenosys.com"
       ],
-      "images": []
+      "images": [],
+      "repository": null
     },
     {
       "rama": "PRO",
@@ -265,7 +269,8 @@
           "old_value": "feature",
           "new_value": "chore"
         }
-      ]
+      ],
+      "repository": null
     },
     {
       "rama": "PRO",
@@ -291,7 +296,8 @@
       "emails_asignados": [
         "mitxel@hypenosys.com"
       ],
-      "images": []
+      "images": [],
+      "repository": null
     },
     {
       "rama": "PRO",
@@ -341,7 +347,8 @@
           "old_value": null,
           "new_value": "2026-06-30"
         }
-      ]
+      ],
+      "repository": null
     },
     {
       "rama": "PRO",
@@ -413,7 +420,8 @@
           "old_value": null,
           "new_value": "2026-06-15"
         }
-      ]
+      ],
+      "repository": null
     },
     {
       "rama": "PRO",
@@ -487,7 +495,8 @@
           "old_value": "[]",
           "new_value": "[\"jules\"]"
         }
-      ]
+      ],
+      "repository": null
     },
     {
       "rama": "PRO",
@@ -545,7 +554,8 @@
           "old_value": "2026-06-05",
           "new_value": null
         }
-      ]
+      ],
+      "repository": null
     },
     {
       "rama": "ART",
@@ -647,7 +657,8 @@
           "old_value": null,
           "new_value": "2026-06-05"
         }
-      ]
+      ],
+      "repository": null
     },
     {
       "rama": "PRO",
@@ -671,7 +682,8 @@
       "limite": null,
       "comentario": "",
       "id": 17,
-      "images": []
+      "images": [],
+      "repository": null
     },
     {
       "rama": "PRO",
@@ -693,7 +705,8 @@
       "apoyo": null,
       "limite": null,
       "comentario": "",
-      "id": 20
+      "id": 20,
+      "repository": null
     },
     {
       "title": "Arreglar previsualización de fotos fuera del edit",
@@ -808,7 +821,8 @@
           "new_value": "[\"24\"]"
         }
       ],
-      "id": 21
+      "id": 21,
+      "repository": null
     },
     {
       "title": "Adoptar prácticas mobile first",
@@ -891,7 +905,8 @@
           "new_value": "2026-06-05"
         }
       ],
-      "id": 22
+      "id": 22,
+      "repository": null
     },
     {
       "title": "Añadir campo repositorio a las tasks",
@@ -947,7 +962,8 @@
           "new_value": "[\"16\"]"
         }
       ],
-      "id": 23
+      "id": 23,
+      "repository": null
     },
     {
       "title": "1234",
@@ -1006,7 +1022,8 @@
           "new_value": "Obsolete"
         }
       ],
-      "id": 25
+      "id": 25,
+      "repository": null
     }
   ]
 }

@@ -53,6 +53,7 @@ function buildTaskCard(task) {
   const hasImages = task.images && task.images.length > 0;
   const isImagesExpanded = localStorage.getItem(`task_images_expanded_${task.id}`) === 'true';
   const card = document.createElement('div');
+  card.id = `card-${task.id}`;
   card.className = `bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-sm cursor-grab active:cursor-grabbing hover:border-slate-500 transition-all group relative ${isMinimized ? 'py-2' : ''}`;
   card.draggable = true;
   card.addEventListener('dragstart', e => {
@@ -117,6 +118,20 @@ function buildTaskCard(task) {
     <i class="fa-solid fa-arrow-right"></i>
   </button>` : '<div class="action-btn opacity-0 pointer-events-none"></div>';
 
+  const repoDisplay = task.repository ? (() => {
+      const fullName = task.repository;
+      const parts = fullName.split('/');
+      const shortName = parts.length > 1 ? parts.slice(1).join('/') : fullName;
+      let display = shortName;
+      if (window.getRepoDisplayName) {
+          display = window.getRepoDisplayName(fullName, shortName);
+          if (display === shortName) {
+              display = window.getRepoDisplayName(`sources/github/${fullName}`, shortName);
+          }
+      }
+      return `<span class="text-[8px] font-bold text-slate-500 uppercase tracking-tighter truncate max-w-[80px]" title="Repo: ${fullName}">${display}</span>`;
+  })() : '<span class="text-[8px] font-bold text-slate-600">—</span>';
+
   if (isMinimized) {
     card.innerHTML = `
       <!-- Desktop & Global Minimized Layout -->
@@ -141,6 +156,7 @@ function buildTaskCard(task) {
       <!-- Compact Movement Actions -->
       <div class="flex justify-between items-center mt-2 pt-2 border-t border-slate-700/50">
         ${movePrevBtn}
+        ${repoDisplay}
         ${moveNextBtn}
       </div>
     `;
@@ -227,6 +243,7 @@ function buildTaskCard(task) {
       <!-- Row 5: Movement Acciones -->
       <div class="flex justify-between items-center mt-4 pt-2 border-t border-slate-700/50">
         ${movePrevBtn}
+        ${repoDisplay}
         ${moveNextBtn}
       </div>
     `;

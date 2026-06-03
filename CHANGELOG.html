@@ -78,6 +78,14 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-success">Added</h5>
             <ul class="tree-view mb-3">
+              <li><strong>Visualización de Repositorio en Kanban:</strong> Implementada la visualización del repositorio asignado en las tarjetas del Kanban.
+                <ul>
+                  <li><strong>Integración en Cards:</strong> El repositorio (o su alias) se muestra centrado en el footer de la card, entre las flechas de navegación, tanto en modo expandido como minimizado.</li>
+                  <li><strong>Selector Dinámico en Modal:</strong> Añadido campo "Repositorio" en la pestaña Info del modal de tareas, que se popula automáticamente con los repositorios de la organización Hypenosys vía GitHub API.</li>
+                  <li><strong>Caché de Rendimiento:</strong> Los repositorios se cargan en background una sola vez al inicializar el dashboard para garantizar una interfaz fluida.</li>
+                  <li><strong>Soporte de Alias:</strong> Integración con el sistema de alias existente para mostrar nombres amigables en lugar del nombre técnico del repo.</li>
+                </ul>
+              </li>
               <li><strong>Sincronización de Documentación:</strong> Nueva sección de Documentación que lee en tiempo real el repositorio público <code>hypenosys/docs</code>.
                 <ul>
                   <li><strong>Arquitectura Live-Sync:</strong> Integración directa con la API de GitHub para cargar y renderizar Markdown en tiempo de ejecución, eliminando la necesidad de copias manuales.</li>

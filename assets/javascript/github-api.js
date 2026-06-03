@@ -484,6 +484,30 @@ async function restoreTask(taskId) {
   });
 }
 
+async function getOrgRepos() {
+  try {
+    const token = getAuthToken();
+    if (!token) return [];
+
+    const resp = await fetch(`${GITHUB_API_BASE}/orgs/${REPO_OWNER}/repos?per_page=100`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    });
+
+    if (!resp.ok) {
+      console.warn('[GITHUB-API] Error fetching org repos:', resp.status);
+      return [];
+    }
+
+    return await resp.json();
+  } catch (err) {
+    console.error('[GITHUB-API] Error in getOrgRepos:', err);
+    return [];
+  }
+}
+
 async function updateMemberProfile(memberName, profileDelta) {
   // 1. Update team_profiles.json
   await atomicWrite('_data/team_profiles.json', (db) => {
@@ -656,6 +680,7 @@ window.githubApi = {
   archiveTask,
   restoreTask,
   updateBudget,
+  getOrgRepos,
   updateMemberProfile,
   recomputeAndSaveStats,
   deleteFile,
