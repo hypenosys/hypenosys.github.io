@@ -1,373 +1,201 @@
-/**
- * Global Authentication and Header UI Manager
- */
+/* HYPENOSYS — DATA MODULE */
 
-class AuthManager {
-    constructor() {
-        this.clientId = 'Ov23liAVwbXNtvhkHJQe';
-        this.init();
+// El listener de authReady se registra aquí en el scope global del script,
+// ANTES de cualquier DOMContentLoaded, garantizando que nunca se pierde el evento.
+document.addEventListener('authReady', async (e) => {
+    console.log('[DASHBOARD] authReady received. Starting initialization...');
+    await handleDOMContentLoaded();
+});
+
+async function handleDOMContentLoaded() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const code = urlParams.get('code');
+
+  if (code) {
+    console.log('[DASHBOARD] OAuth code detected. Handling callback...');
+    const loginOverlay = document.getElementById('login-overlay');
+    if (loginOverlay) {
+        loginOverlay.classList.remove('hidden');
+        const statusMsg = loginOverlay.querySelector('p');
+        if (statusMsg) statusMsg.textContent = 'Autenticando con GitHub...';
     }
 
-    async init() {
-        this.bindEvents();
-
-        const isDashboard = window.location.pathname.includes('dashboard');
-        if (isDashboard) {
-            console.log('[AUTH] Dashboard detected. Delegating auth control to dashboard-data.js');
-            // setTimeout(0) garantiza que el evento se dispara DESPUÉS de que
-            // todos los listeners DOMContentLoaded se hayan registrado,
-            // evitando la race condition donde authReady se pierde.
-            setTimeout(() => {
-                document.dispatchEvent(new CustomEvent('authReady', {
-                    detail: { user: window.githubApi.user || null }
-                }));
-            }, 0);
-            return;
-        }
-
-        await this.handleOAuthCallback();
-        await this.checkAuthState();
-
-        const currentUser = window.githubApi.user || null;
-        document.dispatchEvent(new CustomEvent('authReady', {
-            detail: { user: currentUser }
-        }));
+    try {
+      const result = await window.githubApi.exchangeCodeForToken(code);
+      if (result.valid) {
+          window.history.replaceState({}, document.title, window.location.pathname);
+          await initDashboard();
+      } else {
+          throw new Error('No autorizado');
+      }
+    } catch (err) {
+      console.error('[DASHBOARD] OAuth Error:', err);
+      showToast('Error de autenticación: ' + err.message, 'error');
+      const loginOverlay = document.getElementById('login-overlay');
+      if (loginOverlay) loginOverlay.classList.remove('hidden');
     }
-
-    bindEvents() {
-        document.getElementById('btn-save-settings')?.addEventListener('click', () => this.handleSaveSettings());
-        document.getElementById('btn-logout-denied')?.addEventListener('click', () => this.handleLogout());
-
-        document.addEventListener('click', (e) => {
-            if (e.target.closest('#btn-sign-in')) this.handleLogin();
-            if (e.target.closest('#btn-logout')) this.handleLogout();
-            if (e.target.closest('#btn-open-settings')) $('#settingsModal').modal('show');
-            if (e.target.closest('#btn-open-profile')) this.showProfileModal();
-        });
-
-        $('#settingsModal').on('shown.bs.modal', () => {
-            document.getElementById('input-pat').value = localStorage.getItem('github_token') || '';
-            document.getElementById('input-repo').value = localStorage.getItem('github_repo') || 'hypenosys/hypenosys.github.io';
-            document.getElementById('input-jules-key-modal').value = localStorage.getItem('jules_api_key') || '';
-        });
-
-        document.getElementById('btn-save-profile')?.addEventListener('click', () => this.handleSaveProfile());
-    }
-
-    async handleOAuthCallback() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get('code');
-        if (code) {
-            window.history.replaceState({}, document.title, window.location.pathname);
-            this.showToast('Autenticando...', 'Intercambiando código con el gatekeeper...', 'info');
-            try {
-                const result = await window.githubApi.exchangeCodeForToken(code);
-                if (result.valid) {
-                    this.updateHeaderUI(result.user);
-                    this.showToast('Éxito', 'Sesión iniciada correctamente.', 'success');
-                } else {
-                    this.handleAuthError({ status: result.user ? 403 : 401, type: result.user ? 'ACL_DENIED' : 'INVALID' });
-                }
-            } catch (e) {
-                console.error('[AUTH] Exchange failed:', e);
-                this.showToast('Error', 'Fallo en la autenticación OAuth.', 'error');
-            }
-        }
-    }
-
-    async checkAuthState() {
-        const token = window.githubApi.getAuthToken();
-        if (!token) {
-            this.updateHeaderUI(null);
-            return;
-        }
-
-        const lastAttempt = parseInt(sessionStorage.getItem('auth_last_attempt') || '0');
-        const now = Date.now();
-        if (now - lastAttempt < 2000) {
-            console.warn('[AuthManager] Deteniendo posible bucle de redirección/validación.');
-            return;
-        }
-        sessionStorage.setItem('auth_last_attempt', now.toString());
-
-        try {
-            const result = await window.githubApi.validateToken();
-            if (result.valid) {
-                this.updateHeaderUI(result.user);
-                if (document.getElementById('dream-team-container')) {
-                    await this.renderDreamTeamComponent();
-                }
-            } else {
-                this.handleAuthError({
-                    status: result.user ? 403 : 401,
-                    type: result.user ? 'ACL_DENIED' : 'INVALID'
-                });
-            }
-        } catch (e) {
-            this.handleAuthError(e);
-        }
-    }
-
-    handleLogin() {
-        const chkDashboard = document.getElementById('chk-remember-me-dashboard');
-        const chkHeader = document.getElementById('chk-remember-me');
-        const rememberMe = (chkDashboard ? chkDashboard.checked : (chkHeader ? chkHeader.checked : false));
-        sessionStorage.setItem('auth_remember_me', rememberMe);
-        const scope = 'repo';
-        window.location.href = `https://github.com/login/oauth/authorize?client_id=${this.clientId}&scope=${scope}`;
-    }
-
-    async handleSaveSettings() {
-        const btn = document.getElementById('btn-save-settings');
-        const originalHtml = btn.innerHTML;
-        const token = document.getElementById('input-pat').value.trim();
-        const repo = document.getElementById('input-repo').value.trim();
-        const julesKey = document.getElementById('input-jules-key-modal').value.trim();
-
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Conectando...';
-
-        try {
-            if (token) window.githubApi.setToken(token);
-            window.githubApi.setRepo(repo);
-            const user = await window.githubApi.validateToken();
-            this.updateHeaderUI(user);
-
-            if (!julesKey) throw new Error("Se requiere una Jules API Key para conectar con el agente de IA.");
-
-            try {
-                await window.julesApiCall('GET', '/sources', null, julesKey);
-                localStorage.setItem('jules_api_key', julesKey);
-            } catch (julesErr) {
-                console.error("Jules validation failed:", julesErr);
-                throw new Error("Jules API Key inválida o error de conexión: " + julesErr.message);
-            }
-
-            $('#settingsModal').modal('hide');
-            this.showToast('Éxito', 'Conexión establecida con GitHub y Jules.', 'success');
-            document.dispatchEvent(new CustomEvent('settingsSaved'));
-
-            if (window.location.pathname.includes('dashboard') || window.location.pathname.includes('jules-panel')) {
-                setTimeout(() => window.location.reload(), 1000);
-            }
-        } catch (e) {
-            console.error("Save settings failed:", e);
-            this.showToast('Error de Conexión', e.message, 'error');
-        } finally {
-            btn.disabled = false;
-            btn.innerHTML = originalHtml;
-        }
-    }
-
-    showSettingsModal() {
-        $('#settingsModal').modal('show');
-    }
-
-    handleAuthError(e) {
-        if (e.status === 401 || (e.status === 403 && e.type === 'ACL_DENIED') || e.type === 'INVALID') {
-            window.githubApi.clearAuth();
-            this.updateHeaderUI(null);
-        }
-
-        if (e.status === 403 && e.type === 'ACL_DENIED') {
-            const msgEl = document.getElementById('access-denied-message');
-            if (msgEl) msgEl.innerText = "Autenticado con éxito en GitHub, pero no tienes autorización explícita de la facción Hypenosys. Acceso revocado.";
-
-            if (window.jQuery && window.jQuery.fn.modal) {
-                $('#settingsModal').modal('hide');
-                $('#accessDeniedModal').modal('show');
-            }
-
-            const dashUnauthorized = document.getElementById('unauthorized-overlay');
-            if (dashUnauthorized) dashUnauthorized.classList.remove('hidden');
-
-        } else if (e.status === 401 || e.type === 'INVALID') {
-            this.showToast('Sesión Expirada', 'Tu token es inválido o ha caducado. Por favor, vuelve a iniciar sesión.', 'error');
-            const loginOverlay = document.getElementById('login-overlay');
-            if (loginOverlay) loginOverlay.classList.remove('hidden');
-        } else {
-            this.showToast('Error', e.message || 'Ocurrió un error inesperado.', 'error');
-        }
-    }
-
-    handleLogout() {
-        window.githubApi.clearAuth();
-        window.location.reload();
-    }
-
-    updateHeaderUI(user) {
-        const container = document.getElementById('auth-nav-container');
-        const leftContainer = document.getElementById('auth-nav-container-left');
-        if (!container) return;
-
-        if (user && !user.login) {
-            console.warn('[AuthManager] updateHeaderUI llamado con user sin login:', user);
-            return;
-        }
-
-        if (user) {
-            if (leftContainer) leftContainer.innerHTML = '';
-            container.innerHTML = `
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="mr-2 d-none d-lg-inline text-gray-400 small font-weight-mono">${user.login}</span>
-                        <div class="position-relative">
-                            ${window.HypenosysUI.renderAvatar(user)}
-                            <span class="connectivity-dot"></span>
-                        </div>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in bg-dark border-purple" aria-labelledby="userDropdown">
-                        <a class="dropdown-item text-white" href="#" id="btn-open-profile">
-                            <i class="fas fa-user fa-sm fa-fw mr-2 text-purple"></i> Mi Perfil
-                        </a>
-                        <a class="dropdown-item text-white" href="#" id="btn-open-settings">
-                            <i class="fas fa-cog fa-sm fa-fw mr-2 text-purple"></i> Ajustes Avanzados
-                        </a>
-                        <div class="dropdown-divider border-purple"></div>
-                        <a class="dropdown-item text-white" href="#" id="btn-logout">
-                            <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-purple"></i> Cerrar Sesión
-                        </a>
-                    </div>
-                </li>
-            `;
-        } else {
-            if (leftContainer) leftContainer.innerHTML = '';
-            container.innerHTML = `
-                <li class="nav-item d-flex align-items-center">
-                    <div class="custom-control custom-checkbox mr-3 d-none d-md-block">
-                        <input type="checkbox" class="custom-control-input" id="chk-remember-me">
-                        <label class="custom-control-label text-gray-400 small" for="chk-remember-me" style="cursor:pointer">Remember me</label>
-                    </div>
-                    <button id="btn-sign-in" class="btn btn-outline-purple btn-sm ml-lg-1 mt-1 mt-lg-0">
-                        <i class="fa-brands fa-github mr-1"></i> Log in with GitHub
-                    </button>
-                </li>
-            `;
-        }
-    }
-
-    async renderDreamTeamComponent() {
-        const container = document.getElementById('dream-team-container');
-        if (!container) return;
-        try {
-            const response = await fetch('/_data/team.json');
-            const team = await response.json();
-            container.innerHTML = team.map(member => `
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <div class="card h-100 team-card shadow-sm">
-                        <div class="team-img-container">
-                            <img src="${member.image}" class="card-img-top team-img" alt="${member.name}">
-                        </div>
-                        <div class="card-body d-flex flex-column">
-                            <h4 class="card-title text-purple font-weight-bold">${member.name.toUpperCase()}</h4>
-                            <div class="role-tag mb-3 small">${member.role}</div>
-                            <p class="card-text flex-grow-1 text-light">${member.description}</p>
-                            <div class="mt-3">
-                                ${member.skills.map(skill => `<span class="badge badge-skill mr-1 mb-1">${skill}</span>`).join('')}
-                            </div>
-                            <div class="mt-4 pt-3 border-top border-dark d-flex flex-wrap">
-                                ${member.github ? `<a href="${member.github}" class="btn btn-sm btn-outline-purple mr-2 mb-2" target="_blank">GitHub</a>` : ''}
-                                ${member.portfolio ? `<a href="${member.portfolio}" class="btn btn-sm btn-outline-purple mr-2 mb-2" target="_blank">Portfolio</a>` : ''}
-                                ${(member.extra_links || []).map(link => `<a href="${link.url}" class="btn btn-sm btn-outline-purple mr-2 mb-2" target="_blank">${link.name}</a>`).join('')}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        } catch (e) {
-            console.error('Failed to render team component:', e);
-        }
-    }
-
-    async showProfileModal() {
-        if (!window.githubApi.user) return;
-        const login = window.githubApi.user.login;
-        this.showToast('Cargando...', 'Obteniendo datos del equipo...', 'info');
-        try {
-            const fileData = await window.githubApi.getFile('_data/team.json');
-            const team = JSON.parse(decodeURIComponent(escape(atob(fileData.content))));
-            const member = team.find(m => m.github && m.github.toLowerCase().includes(login.toLowerCase()));
-            if (!member) {
-                this.showToast('Aviso', 'No se encontró tu perfil en el archivo team.json.', 'warning');
-                return;
-            }
-            document.getElementById('edit-profile-name').value = member.name || '';
-            document.getElementById('edit-profile-role').value = member.role || '';
-            document.getElementById('edit-profile-desc').value = member.description || '';
-            document.getElementById('edit-profile-portfolio').value = member.portfolio || '';
-            document.getElementById('input-jules-key').value = localStorage.getItem('jules_api_key') || '';
-            this.currentTeamData = team;
-            this.currentFileSha = fileData.sha;
-            this.currentMemberIndex = team.indexOf(member);
-            $('#profileModal').modal('show');
-        } catch (e) {
-            this.showToast('Error', 'No se pudo cargar el perfil para editar.', 'error');
-        }
-    }
-
-    async handleSaveProfile() {
-        const name = document.getElementById('edit-profile-name').value.trim();
-        const role = document.getElementById('edit-profile-role').value.trim();
-        const desc = document.getElementById('edit-profile-desc').value.trim();
-        const portfolio = document.getElementById('edit-profile-portfolio').value.trim();
-        const julesKey = document.getElementById('input-jules-key').value.trim();
-
-        if (julesKey) {
-            localStorage.setItem('jules_api_key', julesKey);
-        } else {
-            localStorage.removeItem('jules_api_key');
-        }
-
-        if (!name || !role) {
-            this.showToast('Error', 'Nombre y Rol son campos obligatorios.', 'error');
-            return;
-        }
-
-        const btn = document.getElementById('btn-save-profile');
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Guardando...';
-
-        try {
-            const login = window.githubApi.user.login;
-            const profilesRes = await window.githubApi.fetchFileWithSha('_data/team_profiles.json');
-            const profiles = profilesRes.content.members;
-            const memberEntry = Object.entries(profiles).find(([k, v]) => v.handle.toLowerCase() === login.toLowerCase());
-            if (!memberEntry) throw new Error("No se encontró perfil de equipo vinculado a este GitHub.");
-
-            const memberName = memberEntry[0];
-            const profileDelta = { display_name: name, role, bio: desc, portfolio };
-            await window.githubApi.updateMemberProfile(memberName, profileDelta);
-
-            this.showToast('Éxito', 'Perfil actualizado correctamente. Refrescando...', 'success');
-            $('#profileModal').modal('hide');
-            await this.renderDreamTeamComponent();
-        } catch (e) {
-            console.error(e);
-            this.showToast('Error', 'Fallo al guardar los cambios: ' + e.message, 'error');
-        } finally {
-            btn.disabled = false;
-            btn.innerHTML = 'Guardar Cambios';
-        }
-    }
-
-    showToast(title, message, type = 'info') {
-        const container = document.getElementById('toast-container');
-        if (!container) return;
-        const toast = document.createElement('div');
-        toast.className = `custom-toast ${type}`;
-        toast.innerHTML = `
-            <div class="toast-header">
-                <strong class="mr-auto">${title}</strong>
-                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast">&times;</button>
-            </div>
-            <div class="toast-body">${message}</div>
-        `;
-        container.appendChild(toast);
-        setTimeout(() => { $(toast).fadeOut(500, () => toast.remove()); }, 5000);
-        $(toast).find('.close').on('click', () => toast.remove());
-    }
+  } else {
+    await initDashboard();
+  }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    window.authManager = new AuthManager();
-});
+async function initDashboard() {
+  if (window._dashboardInitialized) {
+      console.warn('[DASHBOARD] initDashboard called twice — ignoring.');
+      return;
+  }
+  window._dashboardInitialized = true;
+
+  console.log('[DASHBOARD] Initializing Dashboard...');
+  window.userReposCache = [];
+
+  const token = window.githubApi.getAuthToken();
+  if (!token) {
+    console.log('[DASHBOARD] No token found during init.');
+    document.getElementById('login-overlay').classList.remove('hidden');
+    return;
+  }
+
+  try {
+    const { valid, user } = await window.githubApi.validateToken();
+    if (!valid) {
+        console.log('[DASHBOARD] Token validation failed or unauthorized.');
+        if (user) {
+            document.getElementById('unauthorized-msg').textContent = `Tu cuenta de GitHub (${user.login}) no pertenece al equipo de Hypenosys.`;
+            document.getElementById('unauthorized-overlay').classList.remove('hidden');
+        } else {
+            document.getElementById('login-overlay').classList.remove('hidden');
+        }
+        return;
+    }
+
+    console.log('[DASHBOARD] Access granted for:', user.login);
+    document.getElementById('login-overlay').classList.add('hidden');
+    window.currentUser = user.login.toLowerCase();
+
+    await refreshDashboardData();
+
+    const memberMatch = MEMBERS.find(m => m.toLowerCase() === window.currentUser ||
+                                          (currentProfiles && currentProfiles.members[m] && currentProfiles.members[m].handle.toLowerCase() === window.currentUser));
+    if (memberMatch) activeFilter = memberMatch;
+
+    startAutoRefresh();
+    renderUserStatus(user);
+    setupEventListeners();
+    renderDashboard();
+
+    window.githubApi.getOrgRepos().then(repos => {
+        window.userReposCache = repos;
+        console.log('[DASHBOARD] Org repos cached:', repos.length);
+    });
+
+  } catch (err) {
+    console.error('[DASHBOARD] Init error:', err);
+    window._dashboardInitialized = false; // reset para permitir reintento
+    document.getElementById('login-overlay').classList.remove('hidden');
+  }
+}
+
+function startAutoRefresh() {
+  setInterval(refreshDashboardData, REFRESH_INTERVAL_MS);
+}
+
+/**
+ * Migrates tasks from schema 1.0.0 to 1.1.0
+ */
+function migrateTasks(data) {
+    if (!data || !data.schema_version) return data;
+
+    if (data.schema_version === "1.0.0") {
+        console.log(`[MIGRATION] Upgrading from ${data.schema_version} to 1.1.0`);
+
+        const tasks = data.tasks || [];
+        tasks.forEach(task => {
+            if (!task.title) {
+                let desc = task.descripcion || "";
+                let title = desc.substring(0, 60);
+                if (desc.length > 60) {
+                    const lastSpace = title.lastIndexOf(' ');
+                    if (lastSpace > 0) title = title.substring(0, lastSpace);
+                }
+                task.title = title.trim() || "Sin título";
+            }
+
+            if (task.due_date === undefined) task.due_date = task.limite || null;
+            if (task.start_date === undefined) task.start_date = null;
+            if (task.estimated_hours === undefined) task.estimated_hours = null;
+            if (task.story_points === undefined) task.story_points = null;
+            if (task.task_type === undefined) task.task_type = "feature";
+            if (task.tags === undefined) task.tags = [];
+            if (task.blocks === undefined) task.blocks = [];
+            if (task.blocked_by === undefined) task.blocked_by = [];
+            if (task.acceptance_criteria === undefined) task.acceptance_criteria = "";
+            if (task.external_links === undefined) task.external_links = [];
+            if (task.subtasks === undefined) task.subtasks = [];
+            if (task.comments === undefined) task.comments = [];
+            if (task.change_log === undefined) task.change_log = [];
+
+            if (task.comentario) {
+                const blockedByRegex = /#BLOCKED_BY:(\d+)/g;
+                let match;
+                while ((match = blockedByRegex.exec(task.comentario)) !== null) {
+                    if (!task.blocked_by.includes(match[1])) task.blocked_by.push(match[1]);
+                }
+                const blocksRegex = /#BLOCKS:(\d+)/g;
+                while ((match = blocksRegex.exec(task.comentario)) !== null) {
+                    if (!task.blocks.includes(match[1])) task.blocks.push(match[1]);
+                }
+                task.comentario = task.comentario
+                    .replace(/#BLOCKED_BY:\d+/g, '')
+                    .replace(/#BLOCKS:\d+/g, '')
+                    .trim();
+            }
+        });
+
+        data.schema_version = "1.1.0";
+    }
+    return data;
+}
+
+async function refreshDashboardData() {
+  try {
+    const [tasksRes, archiveRes, statsRes, budgetRes, profilesRes] = await Promise.all([
+      window.githubApi.fetchFileWithSha('_data/dashboard_tasks.json'),
+      window.githubApi.fetchFileWithSha('_data/dashboard_tasks_archive.json'),
+      window.githubApi.fetchFileWithSha('_data/studio_stats.json'),
+      window.githubApi.fetchFileWithSha('_data/studio_budget.json'),
+      window.githubApi.fetchFileWithSha('_data/team_profiles.json')
+    ]);
+
+    const migratedTasksData = migrateTasks(tasksRes.content);
+    const migratedArchiveData = migrateTasks(archiveRes.content);
+
+    currentTasks    = migratedTasksData.tasks || [];
+    archivedTasks   = migratedArchiveData.tasks || [];
+    currentStats    = statsRes.content;
+    currentBudget   = budgetRes.content;
+    currentProfiles = profilesRes.content;
+
+    const isStatsEmpty = !currentStats || !currentStats.computed_at || Object.keys(currentStats.members || {}).length === 0;
+    if (currentStats && (currentStats.schema_version !== "1.1.0" || isStatsEmpty)) {
+        console.log(`[MIGRATION] studio_stats.json needs update. Triggering recompute...`);
+        await window.githubApi.recomputeAndSaveStats(migratedTasksData);
+        const freshStats = await window.githubApi.fetchFileWithSha('_data/studio_stats.json');
+        currentStats = freshStats.content;
+    }
+
+    renderDashboard();
+
+    const tsEl = document.getElementById('last-sync-timestamp');
+    if (tsEl) tsEl.textContent = `Última sincronización: ${new Date().toLocaleTimeString('es-ES')}`;
+
+  } catch (err) {
+    let msg = `Error de sincronización: ${err.message}`;
+    if (err.message.includes('401')) msg = "Token inválido o expirado. Por favor, vuelve a iniciar sesión.";
+    if (err.message.includes('403')) msg = "Sin permisos de escritura en el repositorio.";
+    if (err.message.includes('404')) msg = "Archivo no encontrado en el repositorio.";
+    if (err.message.includes('409')) msg = "Conflicto detectado — ejecutando sincronización automática...";
+    if (err.name === 'TypeError' && err.message === 'Failed to fetch') msg = "Error de red — comprueba tu conexión e inténtalo de nuevo.";
+    showToast(msg, 'error');
+  }
+}
