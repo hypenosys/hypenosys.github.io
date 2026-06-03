@@ -11,57 +11,46 @@ class AuthManager {
     async init() {
         this.bindEvents();
 
-        // Si estamos en el dashboard, delegamos el control de la autenticación
-        // a dashboard-data.js para evitar conflictos y parpadeos (double-flash).
         const isDashboard = window.location.pathname.includes('dashboard');
         if (isDashboard) {
             console.log('[AUTH] Dashboard detected. Delegating auth control to dashboard-data.js');
-            document.dispatchEvent(new CustomEvent('authReady', {
-                detail: { user: window.githubApi.user || null }
-            }));
+            // setTimeout(0) garantiza que el evento se dispara DESPUÉS de que
+            // todos los listeners DOMContentLoaded se hayan registrado,
+            // evitando la race condition donde authReady se pierde.
+            setTimeout(() => {
+                document.dispatchEvent(new CustomEvent('authReady', {
+                    detail: { user: window.githubApi.user || null }
+                }));
+            }, 0);
             return;
         }
 
         await this.handleOAuthCallback();
         await this.checkAuthState();
-        
+
         const currentUser = window.githubApi.user || null;
-        document.dispatchEvent(new CustomEvent('authReady', { 
-            detail: { user: currentUser } 
+        document.dispatchEvent(new CustomEvent('authReady', {
+            detail: { user: currentUser }
         }));
     }
 
     bindEvents() {
-        // Settings Modal: Save Button (Legacy - still useful for manual repo setting if needed)
         document.getElementById('btn-save-settings')?.addEventListener('click', () => this.handleSaveSettings());
-
-        // Access Denied Modal: Logout Button
         document.getElementById('btn-logout-denied')?.addEventListener('click', () => this.handleLogout());
 
-        // Header events are handled via data-attributes or dynamic injection
         document.addEventListener('click', (e) => {
-            if (e.target.closest('#btn-sign-in')) {
-                this.handleLogin();
-            }
-            if (e.target.closest('#btn-logout')) {
-                this.handleLogout();
-            }
-            if (e.target.closest('#btn-open-settings')) {
-                $('#settingsModal').modal('show');
-            }
-            if (e.target.closest('#btn-open-profile')) {
-                this.showProfileModal();
-            }
+            if (e.target.closest('#btn-sign-in')) this.handleLogin();
+            if (e.target.closest('#btn-logout')) this.handleLogout();
+            if (e.target.closest('#btn-open-settings')) $('#settingsModal').modal('show');
+            if (e.target.closest('#btn-open-profile')) this.showProfileModal();
         });
 
-        // Initialize modal inputs when shown
         $('#settingsModal').on('shown.bs.modal', () => {
             document.getElementById('input-pat').value = localStorage.getItem('github_token') || '';
             document.getElementById('input-repo').value = localStorage.getItem('github_repo') || 'hypenosys/hypenosys.github.io';
             document.getElementById('input-jules-key-modal').value = localStorage.getItem('jules_api_key') || '';
         });
 
-        // Profile Modal Save
         document.getElementById('btn-save-profile')?.addEventListener('click', () => this.handleSaveProfile());
     }
 
@@ -71,7 +60,6 @@ class AuthManager {
         if (code) {
             window.history.replaceState({}, document.title, window.location.pathname);
             this.showToast('Autenticando...', 'Intercambiando código con el gatekeeper...', 'info');
-            
             try {
                 const result = await window.githubApi.exchangeCodeForToken(code);
                 if (result.valid) {
@@ -94,7 +82,6 @@ class AuthManager {
             return;
         }
 
-        // Prevent infinite reload loops
         const lastAttempt = parseInt(sessionStorage.getItem('auth_last_attempt') || '0');
         const now = Date.now();
         if (now - lastAttempt < 2000) {
@@ -111,7 +98,6 @@ class AuthManager {
                     await this.renderDreamTeamComponent();
                 }
             } else {
-                // If token exists but is invalid, clear and show UI
                 this.handleAuthError({
                     status: result.user ? 403 : 401,
                     type: result.user ? 'ACL_DENIED' : 'INVALID'
@@ -123,13 +109,10 @@ class AuthManager {
     }
 
     handleLogin() {
-        // Prefer dashboard checkbox if present, then header checkbox
         const chkDashboard = document.getElementById('chk-remember-me-dashboard');
         const chkHeader = document.getElementById('chk-remember-me');
         const rememberMe = (chkDashboard ? chkDashboard.checked : (chkHeader ? chkHeader.checked : false));
-
         sessionStorage.setItem('auth_remember_me', rememberMe);
-
         const scope = 'repo';
         window.location.href = `https://github.com/login/oauth/authorize?client_id=${this.clientId}&scope=${scope}`;
     }
@@ -137,7 +120,6 @@ class AuthManager {
     async handleSaveSettings() {
         const btn = document.getElementById('btn-save-settings');
         const originalHtml = btn.innerHTML;
-
         const token = document.getElementById('input-pat').value.trim();
         const repo = document.getElementById('input-repo').value.trim();
         const julesKey = document.getElementById('input-jules-key-modal').value.trim();
@@ -146,19 +128,14 @@ class AuthManager {
         btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Conectando...';
 
         try {
-            // 1. Validar Token de GitHub (si se proporciona)
             if (token) window.githubApi.setToken(token);
             window.githubApi.setRepo(repo);
             const user = await window.githubApi.validateToken();
             this.updateHeaderUI(user);
 
-            // 2. Validar Jules API Key (Obligatorio para guardar/conectar)
-            if (!julesKey) {
-                throw new Error("Se requiere una Jules API Key para conectar con el agente de IA.");
-            }
+            if (!julesKey) throw new Error("Se requiere una Jules API Key para conectar con el agente de IA.");
 
             try {
-                // Intentamos una llamada mínima a Jules para validar la clave
                 await window.julesApiCall('GET', '/sources', null, julesKey);
                 localStorage.setItem('jules_api_key', julesKey);
             } catch (julesErr) {
@@ -166,11 +143,8 @@ class AuthManager {
                 throw new Error("Jules API Key inválida o error de conexión: " + julesErr.message);
             }
 
-            // Si todo OK, cerramos y notificamos
             $('#settingsModal').modal('hide');
             this.showToast('Éxito', 'Conexión establecida con GitHub y Jules.', 'success');
-
-            // Dispatch event for other components (like Jules Panel) to refresh
             document.dispatchEvent(new CustomEvent('settingsSaved'));
 
             if (window.location.pathname.includes('dashboard') || window.location.pathname.includes('jules-panel')) {
@@ -179,7 +153,6 @@ class AuthManager {
         } catch (e) {
             console.error("Save settings failed:", e);
             this.showToast('Error de Conexión', e.message, 'error');
-            // NO cerramos el modal si hay error
         } finally {
             btn.disabled = false;
             btn.innerHTML = originalHtml;
@@ -191,7 +164,6 @@ class AuthManager {
     }
 
     handleAuthError(e) {
-        // Clear session on security-related errors
         if (e.status === 401 || (e.status === 403 && e.type === 'ACL_DENIED') || e.type === 'INVALID') {
             window.githubApi.clearAuth();
             this.updateHeaderUI(null);
@@ -206,14 +178,11 @@ class AuthManager {
                 $('#accessDeniedModal').modal('show');
             }
 
-            // For dashboard compatibility
             const dashUnauthorized = document.getElementById('unauthorized-overlay');
             if (dashUnauthorized) dashUnauthorized.classList.remove('hidden');
 
         } else if (e.status === 401 || e.type === 'INVALID') {
             this.showToast('Sesión Expirada', 'Tu token es inválido o ha caducado. Por favor, vuelve a iniciar sesión.', 'error');
-
-            // Show login overlay if on dashboard
             const loginOverlay = document.getElementById('login-overlay');
             if (loginOverlay) loginOverlay.classList.remove('hidden');
         } else {
@@ -231,7 +200,6 @@ class AuthManager {
         const leftContainer = document.getElementById('auth-nav-container-left');
         if (!container) return;
 
-        // ─── FIX: guard contra user incompleto
         if (user && !user.login) {
             console.warn('[AuthManager] updateHeaderUI llamado con user sin login:', user);
             return;
@@ -250,17 +218,14 @@ class AuthManager {
                     </a>
                     <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in bg-dark border-purple" aria-labelledby="userDropdown">
                         <a class="dropdown-item text-white" href="#" id="btn-open-profile">
-                            <i class="fas fa-user fa-sm fa-fw mr-2 text-purple"></i>
-                            Mi Perfil
+                            <i class="fas fa-user fa-sm fa-fw mr-2 text-purple"></i> Mi Perfil
                         </a>
                         <a class="dropdown-item text-white" href="#" id="btn-open-settings">
-                            <i class="fas fa-cog fa-sm fa-fw mr-2 text-purple"></i>
-                            Ajustes Avanzados
+                            <i class="fas fa-cog fa-sm fa-fw mr-2 text-purple"></i> Ajustes Avanzados
                         </a>
                         <div class="dropdown-divider border-purple"></div>
                         <a class="dropdown-item text-white" href="#" id="btn-logout">
-                            <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-purple"></i>
-                            Cerrar Sesión
+                            <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-purple"></i> Cerrar Sesión
                         </a>
                     </div>
                 </li>
@@ -281,16 +246,12 @@ class AuthManager {
         }
     }
 
-    // --- Profile Editing and Team Rendering ---
-
     async renderDreamTeamComponent() {
         const container = document.getElementById('dream-team-container');
         if (!container) return;
-
         try {
             const response = await fetch('/_data/team.json');
             const team = await response.json();
-            
             container.innerHTML = team.map(member => `
                 <div class="col-lg-4 col-md-6 mb-4">
                     <div class="card h-100 team-card shadow-sm">
@@ -320,30 +281,24 @@ class AuthManager {
 
     async showProfileModal() {
         if (!window.githubApi.user) return;
-        
         const login = window.githubApi.user.login;
         this.showToast('Cargando...', 'Obteniendo datos del equipo...', 'info');
-        
         try {
             const fileData = await window.githubApi.getFile('_data/team.json');
             const team = JSON.parse(decodeURIComponent(escape(atob(fileData.content))));
             const member = team.find(m => m.github && m.github.toLowerCase().includes(login.toLowerCase()));
-            
             if (!member) {
                 this.showToast('Aviso', 'No se encontró tu perfil en el archivo team.json.', 'warning');
                 return;
             }
-
             document.getElementById('edit-profile-name').value = member.name || '';
             document.getElementById('edit-profile-role').value = member.role || '';
             document.getElementById('edit-profile-desc').value = member.description || '';
             document.getElementById('edit-profile-portfolio').value = member.portfolio || '';
             document.getElementById('input-jules-key').value = localStorage.getItem('jules_api_key') || '';
-            
             this.currentTeamData = team;
             this.currentFileSha = fileData.sha;
             this.currentMemberIndex = team.indexOf(member);
-
             $('#profileModal').modal('show');
         } catch (e) {
             this.showToast('Error', 'No se pudo cargar el perfil para editar.', 'error');
@@ -374,28 +329,17 @@ class AuthManager {
 
         try {
             const login = window.githubApi.user.login;
-
-            // Map GitHub login to Member Name in team_profiles.json
             const profilesRes = await window.githubApi.fetchFileWithSha('_data/team_profiles.json');
             const profiles = profilesRes.content.members;
             const memberEntry = Object.entries(profiles).find(([k, v]) => v.handle.toLowerCase() === login.toLowerCase());
-
             if (!memberEntry) throw new Error("No se encontró perfil de equipo vinculado a este GitHub.");
 
             const memberName = memberEntry[0];
-            const profileDelta = {
-                display_name: name,
-                role: role,
-                bio: desc,
-                portfolio: portfolio
-            };
-
+            const profileDelta = { display_name: name, role, bio: desc, portfolio };
             await window.githubApi.updateMemberProfile(memberName, profileDelta);
-            
+
             this.showToast('Éxito', 'Perfil actualizado correctamente. Refrescando...', 'success');
             $('#profileModal').modal('hide');
-            
-            // Refresh UI
             await this.renderDreamTeamComponent();
         } catch (e) {
             console.error(e);
@@ -409,7 +353,6 @@ class AuthManager {
     showToast(title, message, type = 'info') {
         const container = document.getElementById('toast-container');
         if (!container) return;
-
         const toast = document.createElement('div');
         toast.className = `custom-toast ${type}`;
         toast.innerHTML = `
@@ -419,18 +362,12 @@ class AuthManager {
             </div>
             <div class="toast-body">${message}</div>
         `;
-
         container.appendChild(toast);
-
-        setTimeout(() => {
-            $(toast).fadeOut(500, () => toast.remove());
-        }, 5000);
-
+        setTimeout(() => { $(toast).fadeOut(500, () => toast.remove()); }, 5000);
         $(toast).find('.close').on('click', () => toast.remove());
     }
 }
 
-// Initialize on DOM load
 document.addEventListener('DOMContentLoaded', () => {
     window.authManager = new AuthManager();
 });
