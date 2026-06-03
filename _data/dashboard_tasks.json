@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-03T10:08:16.763Z",
+  "last_updated": "2026-06-03T11:24:29.192Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -39,10 +39,10 @@
       "repository": "hypenosys/hypenosys.github.io",
       "title": "Configuración inicial del dashboard operacional",
       "task_type": "feature",
-      "start_date": null,
-      "due_date": null,
-      "estimated_hours": null,
-      "story_points": null,
+      "start_date": "2026-06-01",
+      "due_date": "2026-06-30",
+      "estimated_hours": 1,
+      "story_points": 1,
       "tags": [],
       "external_links": [],
       "subtasks": [],
@@ -57,6 +57,13 @@
           "field": "repository",
           "old_value": null,
           "new_value": "hypenosys/hypenosys.github.io"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-03T11:24:28.628Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-06-30"
         }
       ]
     },
