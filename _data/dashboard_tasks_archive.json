@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-03T06:10:23.953Z",
+  "last_updated": "2026-06-03T12:11:18.012Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -454,6 +454,88 @@
         }
       ],
       "id": 24
+    },
+    {
+      "rama": "PRO",
+      "descripcion": "programar botones en jules botones para archivar y eliminar sesiones inconcluyentes, y que estas sesiones sean sincronizadas con jules",
+      "tema_principal": "Programación / Engine",
+      "prioridad": "Minor",
+      "milestone": "M1",
+      "estado": "OK",
+      "completitud": 1,
+      "resuelto_por": "Axel",
+      "detectado_por": "Alex",
+      "asignados": [
+        "axlfc",
+        "topperh4rley"
+      ],
+      "email_responsable": "alex@hypenosys.com",
+      "emails_asignados": [
+        "alex@hypenosys.com",
+        "didac@hypenosys.com",
+        "mitxel@hypenosys.com"
+      ],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-05-26",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "id": 13,
+      "images": [],
+      "title": "Programar botones en jules para archivar y eliminar sesiones",
+      "task_type": "feature",
+      "start_date": "2026-06-01",
+      "due_date": "2026-06-05",
+      "estimated_hours": 2,
+      "story_points": 1,
+      "tags": [
+        "jules"
+      ],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:28:15.065Z",
+          "field": "title",
+          "old_value": "programar botones en jules botones para archivar y eliminar",
+          "new_value": "Programar botones en jules para archivar y eliminar sesiones"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:28:15.065Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Minor"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:28:15.065Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-06-05"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:28:15.065Z",
+          "field": "tags",
+          "old_value": "[]",
+          "new_value": "[\"jules\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-03T07:35:21.459Z",
+          "field": "repository",
+          "old_value": null,
+          "new_value": "hypenosys/hypenosys.github.io"
+        }
+      ],
+      "repository": "hypenosys/hypenosys.github.io"
     }
   ]
 }
