@@ -1,17 +1,3 @@
-/*
- * ⚠️  AUTH CRITICAL FILE — DO NOT MODIFY AUTH FLOW
- * Last known working state: commit 3d5b28f2d94ae3facd456d967c2ddacb710de923
- *
- * FORBIDDEN in this file:
- * - Any changes to OAuth callback handling
- * - Any changes to token storage key names
- * - Any changes to whitelist array
- * - Any changes to script load order dependencies
- *
- * Future features must be added AROUND this logic, never inside it.
- * If auth breaks after any commit, revert this file to 3d5b28f immediately.
- */
-
 /* HYPENOSYS — DATA MODULE */
 
 async function handleDOMContentLoaded() {
@@ -43,12 +29,6 @@ async function handleDOMContentLoaded() {
   } else {
     await initDashboard();
   }
-}
-
-function showLockScreen() {
-  console.log('[DASHBOARD] Access denied. Showing lock screen.');
-  const loginOverlay = document.getElementById('login-overlay');
-  if (loginOverlay) loginOverlay.classList.remove('hidden');
 }
 
 async function initDashboard() {
