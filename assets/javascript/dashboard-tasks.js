@@ -8,6 +8,10 @@ function switchTaskModalTab(tabId) {
         if (content) content.classList.toggle('hidden', t !== tabId);
         if (link) link.classList.toggle('active', t === tabId);
     });
+
+    if (tabId === 'extra') {
+        renderImagePreviews();
+    }
 }
 
 function openCreateTaskModal() {
@@ -49,10 +53,6 @@ function openCreateTaskModal() {
 
   currentTaskImages = [];
   renderImagePreviews();
-  const imageSection = document.getElementById('task-image-section');
-  if (imageSection) imageSection.classList.add('hidden');
-  const chevron = document.getElementById('task-image-chevron');
-  if (chevron) chevron.className = 'fa-solid fa-chevron-down';
 
   const checkboxes = document.querySelectorAll('#task-asignados-container input[name="asignados"]');
   checkboxes.forEach(cb => cb.checked = false);
@@ -116,10 +116,6 @@ function openEditTaskModal(taskId) {
 
     currentTaskImages = JSON.parse(JSON.stringify(task.images || []));
     renderImagePreviews();
-    const imageSection = document.getElementById('task-image-section');
-    if (imageSection) imageSection.classList.add('hidden');
-    const chevron = document.getElementById('task-image-chevron');
-    if (chevron) chevron.className = 'fa-solid fa-chevron-down';
 
     const checkboxes = document.querySelectorAll('#task-asignados-container input[name="asignados"]');
     checkboxes.forEach(cb => {
@@ -325,112 +321,66 @@ async function handleImageFiles(files) {
     }
 }
 
-function handleAddImageUrl() {
-    const input = document.getElementById('task-image-url-input');
-    const url = input.value.trim();
-
-    if (!url) return;
-    if (!url.startsWith('https://')) {
-        showToast('La URL debe empezar por https://', 'warning');
-        return;
-    }
-
-    let filename = 'URL Imagen';
-    try {
-        const urlObj = new URL(url);
-        filename = urlObj.hostname;
-    } catch(e) {}
-
-    const imgObj = {
-        url: url,
-        type: "url",
-        tumblr_post_id: null,
-        filename: filename,
-        uploaded_at: new Date().toISOString()
-    };
-
-    currentTaskImages.push(imgObj);
-    renderImagePreviews();
-    input.value = '';
-    showToast('URL añadida', 'success');
-}
 
 function renderImagePreviews() {
-    const container = document.getElementById('task-image-previews');
+    const container = document.getElementById('task-image-grid');
     if (!container) return;
     container.innerHTML = '';
 
+    // Render existing images
     currentTaskImages.forEach((img, idx) => {
-        const id = img.tumblr_post_id || idx;
-        const div = document.createElement('div');
-        div.className = 'flex flex-col rounded-lg overflow-hidden border border-slate-700 bg-slate-950';
+        const thumb = document.createElement('div');
+        thumb.className = 'image-thumb group';
 
         const isLegacy = img.type === 'binary_legacy';
 
-        div.innerHTML = `
-            <div class="relative aspect-square group overflow-hidden">
-                <img src="${img.url}" class="w-full h-full object-cover" alt="">
-                <!-- Desktop Overlay -->
-                <div class="desktop-only absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                    <button type="button" data-action="preview-image-desktop" class="w-8 h-8 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center hover:scale-110 transition-transform focus:outline-none select-none">
-                        <i class="fa-solid fa-eye"></i>
-                    </button>
-                    <button type="button" data-action="remove-image-desktop" class="w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center hover:scale-110 transition-transform">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-                ${isLegacy ? '<span class="absolute top-1 left-1 bg-amber-500 text-slate-950 text-[7px] font-black px-1 rounded">⚠️ LEGACY</span>' : ''}
-            </div>
-            <!-- Mobile Action Bar (Always Visible) -->
-            <div class="mobile-only flex border-t border-slate-800">
-                <button type="button" data-action="preview-image-mobile" class="flex-grow py-2 text-emerald-400 bg-slate-900/50 flex items-center justify-center border-r border-slate-800">
-                    <i class="fa-solid fa-eye mr-2"></i> VER
+        thumb.innerHTML = `
+            <img src="${img.url}" class="w-full h-full object-cover" alt="">
+            <div class="image-thumb-actions">
+                <button type="button" data-action="preview" class="text-emerald-400 hover:scale-125 transition-transform p-1">
+                    <i class="fa-solid fa-eye"></i>
                 </button>
-                <button type="button" data-action="remove-image-mobile" class="flex-grow py-2 text-red-400 bg-slate-900/50 flex items-center justify-center">
-                    <i class="fa-solid fa-trash mr-2"></i> BORRAR
+                <button type="button" data-action="remove" class="text-red-400 hover:scale-125 transition-transform p-1">
+                    <i class="fa-solid fa-trash"></i>
                 </button>
             </div>
-            <div class="name-label p-1 bg-slate-950 text-[8px] text-slate-400 truncate text-center">
-            </div>
+            ${isLegacy ? '<span class="absolute top-1 left-1 bg-amber-500 text-slate-950 text-[7px] font-black px-1 rounded">⚠️</span>' : ''}
         `;
 
-        const attachPreviewLogic = (btn) => {
-            if (!btn) return;
-            const handlePreview = (event) => {
-                if (event) {
-                    event.preventDefault();
-                    event.stopImmediatePropagation();
-                }
-                const now = Date.now();
-                if (btn._lastTrigger && (now - btn._lastTrigger < 100)) return false;
-                btn._lastTrigger = now;
-                document.activeElement?.blur();
-                openLightbox('current', idx);
-                return false;
-            };
-            btn.onpointerdown = handlePreview;
-            btn.ontouchstart  = handlePreview;
-            btn.onmousedown   = handlePreview;
-            btn.onclick = (e) => { e.preventDefault(); e.stopImmediatePropagation(); };
+        const viewBtn = thumb.querySelector('[data-action="preview"]');
+        const removeBtn = thumb.querySelector('[data-action="remove"]');
+
+        viewBtn.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            document.activeElement?.blur();
+            openLightbox('current', idx);
         };
 
-        const attachRemoveLogic = (btn) => {
-            if (!btn) return;
-            btn.addEventListener('click', (event) => {
-                event.preventDefault();
-                event.stopPropagation();
-                removeTaskImage(idx);
-            });
+        removeBtn.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            removeTaskImage(idx);
         };
 
-        attachPreviewLogic(div.querySelector('[data-action="preview-image-desktop"]'));
-        attachPreviewLogic(div.querySelector('[data-action="preview-image-mobile"]'));
-        attachRemoveLogic(div.querySelector('[data-action="remove-image-desktop"]'));
-        attachRemoveLogic(div.querySelector('[data-action="remove-image-mobile"]'));
-
-        div.querySelector('.name-label').textContent = img.filename || 'Imagen';
-        container.appendChild(div);
+        container.appendChild(thumb);
     });
+
+    // Add button
+    const addBtn = document.createElement('div');
+    addBtn.className = 'image-add-btn';
+    addBtn.onclick = () => document.getElementById('task-image-input').click();
+
+    if (currentTaskImages.length === 0) {
+        addBtn.innerHTML = `
+            <i class="fa-solid fa-plus text-xl mb-1"></i>
+            <span class="text-[10px] font-bold">Añadir imagen</span>
+        `;
+    } else {
+        addBtn.innerHTML = `<i class="fa-solid fa-plus text-xl"></i>`;
+    }
+
+    container.appendChild(addBtn);
 }
 
 function removeTaskImage(index) {
@@ -529,15 +479,6 @@ function closeLightbox() {
     document.activeElement?.blur();
 }
 
-function toggleTaskImageSection() {
-    const section = document.getElementById('task-image-section');
-    const chevron = document.getElementById('task-image-chevron');
-    if (section && chevron) {
-        section.classList.toggle('hidden');
-        chevron.classList.toggle('fa-chevron-up');
-        chevron.classList.toggle('fa-chevron-down');
-    }
-}
 
 function diffTasks(oldTask, newTask) {
     const fields = ['title', 'descripcion', 'estado', 'prioridad', 'milestone', 'asignados', 'blocks', 'blocked_by', 'due_date', 'task_type', 'tags', 'completitud'];

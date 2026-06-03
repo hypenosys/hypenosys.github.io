@@ -136,9 +136,18 @@ permalink: /CHANGELOG.html
                   <li><strong>Overlays de Imagen Responsivos:</strong> Las acciones de ver/borrar imágenes ahora se muestran en una barra de botones fija debajo de la imagen en mobile, preservando el overlay solo en desktop.</li>
                 </ul>
               </li>
+              <li><strong>Gestión de Imágenes en Tareas:</strong> Restauración completa de la sección de imágenes en la pestaña "Extra" del modal de tareas.
+                <ul>
+                  <li><strong>Grid de Miniaturas:</strong> Implementado layout responsivo de 80x80px para previsualizar imágenes adjuntas.</li>
+                  <li><strong>Acciones Directas:</strong> Botones de visualización (Lightbox) y borrado siempre visibles en mobile y por hover en desktop.</li>
+                  <li><strong>Flujo de Subida:</strong> Integración del botón "+" para subidas directas a través del worker de Tumblr y restauración del soporte Drag & Drop.</li>
+                  <li><strong>Refresco Automático:</strong> La galería se actualiza dinámicamente al cambiar a la pestaña "Extra" o realizar modificaciones.</li>
+                </ul>
+              </li>
             </ul>
             <h5 class="text-danger">Fixed</h5>
             <ul class="tree-view mb-3">
+              <li><strong>Layout de Tabs en Modal:</strong> Corregido error que renderizaba los tabs en vertical; ahora se fuerzan a una fila horizontal (flex-row) en todas las resoluciones.</li>
               <li><strong>Lightbox — Nuclear Minimalist Fix:</strong> Rediseño total de la interacción de imágenes en el Kanban para eliminar fricción y "clics fantasma".
                 <ul>
                     <li>Eliminado el botón colapsable "{n} imagenes" en favor de una previsualización directa y minimalista en la tarjeta.</li>

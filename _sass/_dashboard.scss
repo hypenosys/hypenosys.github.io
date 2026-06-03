@@ -348,7 +348,8 @@ $dashboard-danger: #ff5555;  // Dracula Red
 
 // Modal Task Tabs Styling
 .modal-tabs {
-  display: flex;
+  display: flex !important;
+  flex-direction: row !important;
   overflow-x: auto;
   border-bottom: 1px solid rgba($white, 0.1);
   margin-bottom: 1.5rem;
@@ -391,5 +392,85 @@ $dashboard-danger: #ff5555;  // Dracula Red
 .desktop-only {
   @media (max-width: 768px) {
     display: none !important;
+  }
+}
+
+// Image Grid Styling
+.image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.image-thumb {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.image-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-thumb-actions {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-around;
+  padding: 4px;
+  background: rgba(0,0,0,0.6);
+
+  /* Mobile: siempre visible */
+  opacity: 1;
+
+  /* Desktop: solo en hover */
+  @media (hover: hover) {
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+}
+
+.image-thumb:hover .image-thumb-actions {
+  opacity: 1;
+}
+
+.image-add-btn {
+  aspect-ratio: 1;
+  border: 2px dashed rgba(255,255,255,0.2);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: rgba(255,255,255,0.4);
+  transition: all 0.2s;
+  background: transparent;
+
+  &:hover {
+    border-color: rgba(255,255,255,0.5);
+    color: rgba(255,255,255,0.8);
+    background: rgba(255,255,255,0.05);
+  }
+
+  i {
+    font-size: 1.25rem;
+    margin-bottom: 4px;
+  }
+
+  span {
+    font-size: 9px;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 0 4px;
   }
 }
