@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-03T07:35:34.141Z",
+  "last_updated": "2026-06-03T10:07:04.678Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -156,9 +156,16 @@
           "field": "repository",
           "old_value": null,
           "new_value": "hypenosys/app"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-03T10:07:04.082Z",
+          "field": "repository",
+          "old_value": "hypenosys/app",
+          "new_value": "hypenosys/docs"
         }
       ],
-      "repository": "hypenosys/app"
+      "repository": "hypenosys/docs"
     },
     {
       "rama": "DIS",
