@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-05-26T18:18:52.789Z",
+  "last_updated": "2026-06-03T06:10:23.953Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -95,6 +95,365 @@
         "javi26031994-a11y"
       ],
       "images": []
+    },
+    {
+      "rama": "PRO",
+      "descripcion": "Intentar que no se actualice siempre, si ya ha sincronizao una vez, si cambiamos vistas se puede quedar guardado en la sesión (recordar login, etc)",
+      "tema_principal": "Programación / Engine",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "OK",
+      "completitud": 1,
+      "resuelto_por": "Axel",
+      "detectado_por": "Alex",
+      "asignados": [
+        "axlfc",
+        "topperh4rley"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-05-31",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "id": 14,
+      "images": [],
+      "title": "Intentar que no se actualice siempre, si ya ha sincronizao",
+      "task_type": "feature",
+      "start_date": "2026-06-01",
+      "due_date": "2026-06-05",
+      "estimated_hours": 1,
+      "story_points": 1,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:28:52.238Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-06-05"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:28:52.238Z",
+          "field": "completitud",
+          "old_value": 0,
+          "new_value": 1
+        }
+      ]
+    },
+    {
+      "rama": "PRO",
+      "descripcion": "sincronizar repo docs/ (público) con la documentación en la web de hypenosys.github.io",
+      "tema_principal": "Programación / Engine",
+      "prioridad": "Minor",
+      "milestone": "M1",
+      "estado": "OK",
+      "completitud": 1,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc"
+      ],
+      "email_responsable": "axel@hypenosys.org",
+      "emails_asignados": [
+        "axel@hypenosys.org"
+      ],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-05-31",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "id": 18,
+      "images": [],
+      "title": "docs/ (público) autosync en hypenosys",
+      "task_type": "chore",
+      "start_date": "2026-06-01",
+      "due_date": "2026-06-02",
+      "estimated_hours": 1,
+      "story_points": 1,
+      "tags": [
+        "infraestructura"
+      ],
+      "external_links": [],
+      "subtasks": [
+        {
+          "id": 1780297783723,
+          "text": "asegurarse que obsidian funciona ok y sincroniza bien con /docs",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T06:55:22.121Z",
+          "field": "tags",
+          "old_value": "[]",
+          "new_value": "[\"infraestructura\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T06:57:38.051Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Minor"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T07:09:53.783Z",
+          "field": "title",
+          "old_value": "sincronizar repo docs/ (público) con la documentación en la",
+          "new_value": "docs/ (público) autosync en hypenosys"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T07:10:18.155Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T07:10:18.155Z",
+          "field": "task_type",
+          "old_value": "feature",
+          "new_value": "chore"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T07:24:22.668Z",
+          "field": "asignados",
+          "old_value": "[]",
+          "new_value": "[\"axlfc\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:13:33.120Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-06-02"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:13:33.120Z",
+          "field": "completitud",
+          "old_value": 0,
+          "new_value": 0.5
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:24:11.216Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:47:47.385Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "OK"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:47:47.385Z",
+          "field": "completitud",
+          "old_value": 0.5,
+          "new_value": 1
+        }
+      ]
+    },
+    {
+      "rama": "PRO",
+      "descripcion": "cambiar sistema de imagenes a API tumblr con bridge del gatekeeper de cloudflare para los secrets",
+      "tema_principal": "Programación / Engine",
+      "prioridad": "Medium",
+      "milestone": "M1",
+      "estado": "OK",
+      "completitud": 1,
+      "resuelto_por": "Axel",
+      "detectado_por": "Alex",
+      "asignados": [
+        "axlfc",
+        "topperh4rley"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-05-31",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "id": 19,
+      "images": [],
+      "title": "cambiar sistema de imagenes a tumblr",
+      "task_type": "feature",
+      "start_date": "2026-06-01",
+      "due_date": "2026-06-01",
+      "estimated_hours": 2,
+      "story_points": 1,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:48:53.716Z",
+          "body": "API Keys en el Cloudflare gatekeeper"
+        }
+      ],
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T06:55:44.366Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T06:55:44.366Z",
+          "field": "asignados",
+          "old_value": "[\"topperh4rley\"]",
+          "new_value": "[\"axlfc\",\"topperh4rley\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T06:56:22.489Z",
+          "field": "title",
+          "old_value": "cambiar sistema de imagenes a turmblr",
+          "new_value": "cambiar sistema de imagenes a tumblr"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T06:56:22.489Z",
+          "field": "descripcion",
+          "old_value": "cambiar sistema de imagenes a turmblr",
+          "new_value": "cambiar sistema de imagenes a API tumblr con bridge del gatekeeper de cloudflare para los secrets"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T06:56:32.816Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Medium"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:49:04.792Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "OK"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:49:04.792Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-06-01"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:49:04.792Z",
+          "field": "completitud",
+          "old_value": 0,
+          "new_value": 1
+        }
+      ]
+    },
+    {
+      "title": "Particularizar y extraer en funciones del dashboard.js en ficheros más pequeños",
+      "descripcion": "",
+      "rama": "PRO",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "OK",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc",
+        "topperh4rley"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-06-01",
+      "due_date": "2026-06-05",
+      "estimated_hours": 4,
+      "story_points": 1,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [
+        "21"
+      ],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-01",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T18:57:03.559Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T18:58:35.780Z",
+          "field": "title",
+          "old_value": "Particularizar funciones del dashboard.js en ficheros más pequeños",
+          "new_value": "Particularizar y extraer en funciones del dashboard.js en ficheros más pequeños"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T19:08:20.305Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T19:08:32.638Z",
+          "field": "blocks",
+          "old_value": "[]",
+          "new_value": "[\"21\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T19:21:32.334Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "OK"
+        }
+      ],
+      "id": 24
     }
   ]
 }
