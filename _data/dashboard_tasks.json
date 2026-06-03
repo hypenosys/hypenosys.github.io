@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-03T06:51:36.892Z",
-  "last_updated_by": "Sistema",
+  "last_updated": "2026-06-03T07:33:30.568Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -127,9 +127,16 @@
           "field": "descripcion",
           "old_value": "Lluvia de ideas locas sobre mecánicas, historia, modos de juego, todo vale.",
           "new_value": "Lluvia de ideas locas sobre mecánicas, historia, modos de juego, todo vale. Va al repositorio de /docs"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-03T07:33:29.024Z",
+          "field": "repository",
+          "old_value": null,
+          "new_value": "hypenosys/app"
         }
       ],
-      "repository": null
+      "repository": "hypenosys/app"
     },
     {
       "rama": "DIS",
