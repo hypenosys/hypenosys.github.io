@@ -37,7 +37,7 @@ async function initDashboard() {
     await refreshDashboardData();
 
     const memberMatch = MEMBERS.find(m => m.toLowerCase() === window.currentUser ||
-                                          (currentProfiles && currentProfiles.members[m] && currentProfiles.members[m].handle.toLowerCase() === window.currentUser));
+                                          (currentProfiles && currentProfiles.members[m] && currentProfiles.members[m].github_username.toLowerCase() === window.currentUser));
     if (memberMatch) activeFilter = memberMatch;
 
     startAutoRefresh();

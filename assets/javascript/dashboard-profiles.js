@@ -8,7 +8,7 @@ function renderTeamProfiles() {
   const membersData = currentStats?.members || {};
 
   Object.entries(currentProfiles.members).forEach(([name, profile]) => {
-    const ghUser = (profile.github_username || profile.handle || '').toLowerCase();
+    const ghUser = (profile.github_username || '').toLowerCase();
     const isSelf = window.currentUser === ghUser;
     const stats = membersData[ghUser] || membersData[name] || null;
 
@@ -54,7 +54,7 @@ function renderTeamProfiles() {
         ` : ''}
 
         <div class="flex gap-3 text-slate-500">
-          <a href="https://github.com/${profile.github_username || profile.handle}" target="_blank" onclick="event.stopPropagation()" class="hover:text-white"><i class="fa-brands fa-github"></i></a>
+          <a href="https://github.com/${profile.github_username}" target="_blank" onclick="event.stopPropagation()" class="hover:text-white"><i class="fa-brands fa-github"></i></a>
           ${profile.social?.twitter ? `<a href="https://twitter.com/${profile.social.twitter}" target="_blank" onclick="event.stopPropagation()" class="hover:text-white"><i class="fa-brands fa-twitter"></i></a>` : ''}
           ${profile.social?.itchio ? `<a href="https://itch.io/profile/${profile.social.itchio}" target="_blank" onclick="event.stopPropagation()" class="hover:text-white"><i class="fa-brands fa-itch-io"></i></a>` : ''}
           <button onclick="event.stopPropagation(); openDeepDiveModal('${name}')" class="ml-auto text-[10px] font-black text-indigo-400 hover:text-indigo-300 uppercase tracking-widest">VER STATS →</button>
@@ -168,7 +168,7 @@ function switchDeepDiveTab(tab) {
 function renderMemberPerformanceCharts() {
     const profile = currentProfiles?.members[currentDeepDiveMember];
     if (!profile) return;
-    const ghUser = (profile.github_username || profile.handle || '').toLowerCase();
+    const ghUser = (profile.github_username || '').toLowerCase();
     const stats = currentStats?.members[ghUser] || currentStats?.members[currentDeepDiveMember] || null;
     if (!stats) return;
 

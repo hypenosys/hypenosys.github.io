@@ -331,7 +331,7 @@ class AuthManager {
             const login = window.githubApi.user.login;
             const profilesRes = await window.githubApi.fetchFileWithSha('_data/team_profiles.json');
             const profiles = profilesRes.content.members;
-            const memberEntry = Object.entries(profiles).find(([k, v]) => v.handle.toLowerCase() === login.toLowerCase());
+            const memberEntry = Object.entries(profiles).find(([k, v]) => v.github_username.toLowerCase() === login.toLowerCase());
             if (!memberEntry) throw new Error("No se encontró perfil de equipo vinculado a este GitHub.");
 
             const memberName = memberEntry[0];
