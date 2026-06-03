@@ -21,7 +21,7 @@ class AuthManager {
                 document.dispatchEvent(new CustomEvent('authReady', {
                     detail: { user: window.githubApi.user || null }
                 }));
-            }, 0);
+            }, 50);
             return;
         }
 
