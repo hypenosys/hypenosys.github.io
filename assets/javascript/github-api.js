@@ -509,44 +509,31 @@ async function getOrgRepos() {
 }
 
 async function updateMemberProfile(memberName, profileDelta) {
-  // 1. Update team_profiles.json
-  await atomicWrite('_data/team_profiles.json', (db) => {
+  // Update team_profiles.json — NOW THE SINGLE SOURCE OF TRUTH
+  return await atomicWrite('_data/team_profiles.json', (db) => {
     if (!db.members[memberName]) throw new Error(`Miembro ${memberName} no encontrado en team_profiles.json.`);
-    db.members[memberName] = { ...db.members[memberName], ...profileDelta };
+
+    // Deep merge delta
+    db.members[memberName] = {
+      ...db.members[memberName],
+      ...profileDelta,
+      social: { ...(db.members[memberName].social || {}), ...(profileDelta.social || {}) },
+      stats: { ...(db.members[memberName].stats || {}), ...(profileDelta.stats || {}) }
+    };
+
     db.last_updated = new Date().toISOString();
     return db;
-  }, `chore: actualizar perfil de ${memberName} (profiles)`, (local, remote) => {
+  }, `chore: actualizar perfil de ${memberName} (Unified System)`, (local, remote) => {
+    // 409 Conflict Merge Strategy
     const merged = { ...remote };
-    merged.members[memberName] = { ...remote.members[memberName], ...local.members[memberName] };
+    merged.members[memberName] = {
+      ...remote.members[memberName],
+      ...local.members[memberName],
+      social: { ...(remote.members[memberName].social || {}), ...(local.members[memberName].social || {}) },
+      stats: { ...(remote.members[memberName].stats || {}), ...(local.members[memberName].stats || {}) }
+    };
     return merged;
   });
-
-  // 2. Sync with team.json
-  try {
-    const profilesRes = await fetchFileWithSha('_data/team_profiles.json');
-    const profile = profilesRes.content.members[memberName];
-
-    await atomicWrite('_data/team.json', (team) => {
-      const memberIndex = team.findIndex(m =>
-        (m.github && m.github.toLowerCase().includes(profile.handle.toLowerCase())) ||
-        (m.name.toLowerCase().includes(memberName.toLowerCase()))
-      );
-      if (memberIndex !== -1) {
-        team[memberIndex].name = profile.display_name;
-        team[memberIndex].role = profile.role;
-        team[memberIndex].description = profile.bio;
-        team[memberIndex].image = `https://github.com/${profile.handle}.png`;
-        if (profile.links && profile.links.github) team[memberIndex].github = profile.links.github;
-        if (profile.portfolio) team[memberIndex].portfolio = profile.portfolio;
-      }
-      return team;
-    }, `chore: sincronizar team.json con perfil de ${memberName}`, (local, remote) => {
-       // Simple replacement for team.json sync
-       return local;
-    });
-  } catch (err) {
-    console.error('Failed to sync team.json:', err);
-  }
 }
 
 // ─── STATE ────────────────────────────────────────────────────
@@ -602,6 +589,8 @@ window.githubApi = {
 
       if (data.access_token) {
         this.setToken(data.access_token, rememberMe);
+        // Safety delay to ensure storage commit before validation
+        await new Promise(res => setTimeout(res, 200));
         return await this.validateToken();
       } else {
         throw new Error(data.error || 'No se recibió token del gatekeeper');
@@ -672,6 +661,10 @@ window.githubApi = {
 
   // Core API
   validateToken: validateTokenAndStore,
+  async fetchProfiles() {
+    const res = await this.fetchFileWithSha('_data/team_profiles.json');
+    return res.content;
+  },
   getAuthToken,
   fetchFileWithSha,
   createTask,

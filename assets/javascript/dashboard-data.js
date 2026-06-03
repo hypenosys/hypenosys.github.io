@@ -1,30 +1,44 @@
 /* HYPENOSYS — DATA MODULE */
 
 async function handleDOMContentLoaded() {
+  // Wait for AuthManager to be ready (cooperative initialization)
+  if (window.authManager && window.authManager.isReady) {
+    await window.authManager.isReady;
+  }
+
   const urlParams = new URLSearchParams(window.location.search);
   const code = urlParams.get('code');
 
   if (code) {
     console.log('[DASHBOARD] OAuth code detected. Handling callback...');
-    const loginOverlay = document.getElementById('login-overlay');
-    loginOverlay.classList.remove('hidden');
+    sessionStorage.setItem('oauth_in_progress', 'true');
 
-    // Save original HTML if needed, but we just want to show progress
-    const statusMsg = loginOverlay.querySelector('p');
-    if (statusMsg) statusMsg.textContent = 'Autenticando con GitHub...';
+    const loginOverlay = document.getElementById('login-overlay');
+    if (loginOverlay) {
+        loginOverlay.classList.remove('hidden');
+        const statusMsg = loginOverlay.querySelector('p');
+        if (statusMsg) statusMsg.textContent = 'Autenticando con GitHub...';
+    }
 
     try {
       const result = await window.githubApi.exchangeCodeForToken(code);
+      sessionStorage.removeItem('oauth_in_progress');
+
+      // Clean URL immediately after exchange
+      window.history.replaceState({}, document.title, window.location.pathname);
+
       if (result.valid) {
-          window.history.replaceState({}, document.title, window.location.pathname);
+          // Safety delay for storage commit persistence
+          await new Promise(res => setTimeout(res, 200));
           await initDashboard();
       } else {
           throw new Error('No autorizado');
       }
     } catch (err) {
+      sessionStorage.removeItem('oauth_in_progress');
       console.error('[DASHBOARD] OAuth Error:', err);
       showToast('Error de autenticación: ' + err.message, 'error');
-      loginOverlay.classList.remove('hidden');
+      if (loginOverlay) loginOverlay.classList.remove('hidden');
     }
   } else {
     await initDashboard();

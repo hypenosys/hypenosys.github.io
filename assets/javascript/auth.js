@@ -5,16 +5,30 @@
 class AuthManager {
     constructor() {
         this.clientId = 'Ov23liAVwbXNtvhkHJQe';
-        this.init();
+        this.isReady = this.init();
     }
 
     async init() {
         this.bindEvents();
 
-        // Skip OAuth callback if we're on dashboard.html and it already handled it?
-        // Actually, better to centralize here.
-        await this.handleOAuthCallback();
-        await this.checkAuthState();
+        const urlParams = new URLSearchParams(window.location.search);
+        const hasCode = urlParams.has('code');
+        const isDashboard = window.location.pathname.includes('dashboard');
+        const oauthInProgress = sessionStorage.getItem('oauth_in_progress') === 'true';
+
+        // Skip OAuth callback if we're on dashboard.html — let dashboard-data.js handle it
+        // to avoid race conditions and double exchange.
+        if (!isDashboard && hasCode) {
+            await this.handleOAuthCallback();
+        }
+
+        // Skip auth check if we are on dashboard with a code or if an exchange is active
+        // This prevents AuthManager from showing "Logged Out" UI while dashboard-data.js is working
+        if (!(isDashboard && hasCode) && !oauthInProgress) {
+            await this.checkAuthState();
+        } else {
+            console.log('[AuthManager] Cooperative mode: deferring auth check to dashboard-data.js');
+        }
         
         const currentUser = window.githubApi.user || null;
         document.dispatchEvent(new CustomEvent('authReady', { 
@@ -34,13 +48,13 @@ class AuthManager {
             if (e.target.closest('#btn-sign-in')) {
                 this.handleLogin();
             }
-            if (e.target.closest('#btn-logout')) {
+            if (e.target.closest('#btn-logout') || e.target.closest('#btn-logout-dash')) {
                 this.handleLogout();
             }
-            if (e.target.closest('#btn-open-settings')) {
+            if (e.target.closest('#btn-open-settings') || e.target.closest('#btn-open-settings-dash')) {
                 $('#settingsModal').modal('show');
             }
-            if (e.target.closest('#btn-open-profile')) {
+            if (e.target.closest('#btn-open-profile') || e.target.closest('#btn-open-profile-dash')) {
                 this.showProfileModal();
             }
         });
@@ -220,7 +234,11 @@ class AuthManager {
     updateHeaderUI(user) {
         const container = document.getElementById('auth-nav-container');
         const leftContainer = document.getElementById('auth-nav-container-left');
-        if (!container) return;
+
+        // Support both Landing Page (Bootstrap) and Dashboard (Tailwind/Custom)
+        const isDashboard = !!document.getElementById('user-status');
+
+        if (!container && !isDashboard) return;
 
         // ─── FIX: guard contra user incompleto
         if (user && !user.login) {
@@ -230,7 +248,8 @@ class AuthManager {
 
         if (user) {
             if (leftContainer) leftContainer.innerHTML = '';
-            container.innerHTML = `
+
+            const dropdownHtml = `
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span class="mr-2 d-none d-lg-inline text-gray-400 small font-weight-mono">${user.login}</span>
@@ -256,6 +275,43 @@ class AuthManager {
                     </div>
                 </li>
             `;
+
+            if (container) {
+                container.innerHTML = dropdownHtml;
+            }
+
+            // Dashboard integration
+            if (isDashboard) {
+                const dashboardUserStatus = document.getElementById('user-status');
+                const dashboardUserStatusMobile = document.getElementById('user-status-mobile');
+                const dashHtml = `
+                    <div class="dropdown">
+                        <button class="flex items-center gap-3 focus:outline-none" id="userDropdownDash" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <div class="hidden lg:flex flex-col items-end">
+                                <span class="text-[10px] font-bold text-white leading-none">${user.login}</span>
+                                <span class="text-[9px] text-emerald-500 font-mono">ONLINE</span>
+                            </div>
+                            <div class="pulse-emerald rounded-full">
+                                ${window.HypenosysUI.renderAvatar(user)}
+                            </div>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in bg-dark border-purple" aria-labelledby="userDropdownDash" style="background-color: #1a1a1a;">
+                            <a class="dropdown-item text-white" href="#" id="btn-open-profile-dash">
+                                <i class="fas fa-user fa-sm fa-fw mr-2 text-purple"></i> Mi Perfil
+                            </a>
+                            <a class="dropdown-item text-white" href="#" id="btn-open-settings-dash">
+                                <i class="fas fa-cog fa-sm fa-fw mr-2 text-purple"></i> Ajustes
+                            </a>
+                            <div class="dropdown-divider border-purple"></div>
+                            <a class="dropdown-item text-white" href="#" id="btn-logout-dash">
+                                <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-purple"></i> Logout
+                            </a>
+                        </div>
+                    </div>
+                `;
+                if (dashboardUserStatus) dashboardUserStatus.innerHTML = dashHtml;
+                if (dashboardUserStatusMobile) dashboardUserStatusMobile.innerHTML = dashHtml;
+            }
         } else {
             if (leftContainer) leftContainer.innerHTML = '';
             container.innerHTML = `
@@ -279,26 +335,27 @@ class AuthManager {
         if (!container) return;
 
         try {
-            const response = await fetch('/_data/team.json');
-            const team = await response.json();
+            const profiles = await window.githubApi.fetchProfiles();
+            const members = Object.entries(profiles.members);
             
-            container.innerHTML = team.map(member => `
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <div class="card h-100 team-card shadow-sm">
+            container.innerHTML = members.map(([name, profile]) => `
+                <div class="col-lg-4 col-md-6 mb-4" data-member="${name}">
+                    <div class="card h-100 team-card shadow-sm" style="border-top: 3px solid ${profile.color_accent || 'transparent'}">
                         <div class="team-img-container">
-                            <img src="${member.image}" class="card-img-top team-img" alt="${member.name}">
+                            <img src="${profile.avatar_url || 'https://github.com/' + profile.github_username + '.png'}" class="card-img-top team-img" alt="${profile.display_name}">
                         </div>
                         <div class="card-body d-flex flex-column">
-                            <h4 class="card-title text-purple font-weight-bold">${member.name.toUpperCase()}</h4>
-                            <div class="role-tag mb-3 small">${member.role}</div>
-                            <p class="card-text flex-grow-1 text-light">${member.description}</p>
+                            <h4 class="card-title text-purple font-weight-bold">${(profile.display_name || name).toUpperCase()}</h4>
+                            <div class="role-tag mb-1 small text-white-50">${profile.role || ''}</div>
+                            <div class="lead-role-tag mb-3 x-small text-purple font-weight-bold uppercase" style="font-size: 0.7rem;">${profile.lead_role || ''}</div>
+                            <p class="card-text flex-grow-1 text-light small">${profile.bio || ''}</p>
                             <div class="mt-3">
-                                ${member.skills.map(skill => `<span class="badge badge-skill mr-1 mb-1">${skill}</span>`).join('')}
+                                ${(profile.skills || []).map(skill => `<span class="badge badge-skill mr-1 mb-1">${skill}</span>`).join('')}
                             </div>
                             <div class="mt-4 pt-3 border-top border-dark d-flex flex-wrap">
-                                ${member.github ? `<a href="${member.github}" class="btn btn-sm btn-outline-purple mr-2 mb-2" target="_blank">GitHub</a>` : ''}
-                                ${member.portfolio ? `<a href="${member.portfolio}" class="btn btn-sm btn-outline-purple mr-2 mb-2" target="_blank">Portfolio</a>` : ''}
-                                ${(member.extra_links || []).map(link => `<a href="${link.url}" class="btn btn-sm btn-outline-purple mr-2 mb-2" target="_blank">${link.name}</a>`).join('')}
+                                <a href="https://github.com/${profile.github_username}" class="btn btn-sm btn-outline-purple mr-2 mb-2" target="_blank">GitHub</a>
+                                ${profile.portfolio_url ? `<a href="${profile.portfolio_url}" class="btn btn-sm btn-outline-purple mr-2 mb-2" target="_blank">Portfolio</a>` : ''}
+                                ${(profile.extra_links || []).map(link => `<a href="${link.url}" class="btn btn-sm btn-outline-purple mr-2 mb-2" target="_blank">${link.label}</a>`).join('')}
                             </div>
                         </div>
                     </div>
@@ -309,50 +366,89 @@ class AuthManager {
         }
     }
 
-    async showProfileModal() {
+    async showProfileModal(targetMemberName = null) {
         if (!window.githubApi.user) return;
         
         const login = window.githubApi.user.login;
-        this.showToast('Cargando...', 'Obteniendo datos del equipo...', 'info');
+        this.showToast('Cargando...', 'Obteniendo perfiles del equipo...', 'info');
         
         try {
-            const fileData = await window.githubApi.getFile('_data/team.json');
-            const team = JSON.parse(decodeURIComponent(escape(atob(fileData.content))));
-            const member = team.find(m => m.github && m.github.toLowerCase().includes(login.toLowerCase()));
+            const profiles = await window.githubApi.fetchProfiles();
+            const members = profiles.members;
             
-            if (!member) {
-                this.showToast('Aviso', 'No se encontró tu perfil en el archivo team.json.', 'warning');
+            // Find current user's profile
+            const currentUserEntry = Object.entries(members).find(([k, v]) => v.github_username.toLowerCase() === login.toLowerCase());
+            if (!currentUserEntry) {
+                this.showToast('Aviso', 'Tu GitHub no está vinculado a ningún perfil de equipo.', 'warning');
                 return;
             }
 
-            document.getElementById('edit-profile-name').value = member.name || '';
-            document.getElementById('edit-profile-role').value = member.role || '';
-            document.getElementById('edit-profile-desc').value = member.description || '';
-            document.getElementById('edit-profile-portfolio').value = member.portfolio || '';
+            const currentUserProfile = currentUserEntry[1];
+            const isLandingAdmin = currentUserProfile.is_admin === true;
+            
+            // Determine who we are editing
+            let memberName = targetMemberName || currentUserEntry[0];
+            let profile = members[memberName];
+
+            if (!profile) {
+                this.showToast('Error', `Perfil de ${memberName} no encontrado.`, 'error');
+                return;
+            }
+
+            // Populate Modal
+            document.getElementById('profile-modal-title').textContent = (memberName === currentUserEntry[0]) ? 'EDITAR MI PERFIL' : `EDITANDO PERFIL DE: ${memberName.toUpperCase()}`;
+            document.getElementById('edit-profile-avatar-preview').src = profile.avatar_url || `https://github.com/${profile.github_username}.png`;
+            document.getElementById('edit-profile-name').value = profile.display_name || '';
+            document.getElementById('edit-profile-role').value = profile.role || '';
+            document.getElementById('edit-profile-lead-role').value = profile.lead_role || '';
+            document.getElementById('edit-profile-desc').value = profile.bio || '';
+            document.getElementById('edit-profile-portfolio').value = profile.portfolio_url || '';
+            document.getElementById('edit-profile-color').value = profile.color_accent || '#bd93f9';
+            document.getElementById('edit-profile-color-hex').value = (profile.color_accent || '#bd93f9').toUpperCase();
+            document.getElementById('edit-profile-skills').value = (profile.skills || []).join(', ');
+            document.getElementById('edit-profile-twitter').value = profile.social?.twitter || '';
+            document.getElementById('edit-profile-itch').value = profile.social?.itchio || '';
             document.getElementById('input-jules-key').value = localStorage.getItem('jules_api_key') || '';
             
-            this.currentTeamData = team;
-            this.currentFileSha = fileData.sha;
-            this.currentMemberIndex = team.indexOf(member);
-            
+            if (window.profileEditUI) {
+                window.profileEditUI.setExtraLinks(profile.extra_links || []);
+            }
+
+            // Admin Logic
+            const adminContainer = document.getElementById('admin-member-selector-container');
+            if (isLandingAdmin && adminContainer) {
+                adminContainer.classList.remove('hidden');
+                const select = document.getElementById('admin-member-select');
+                select.innerHTML = Object.keys(members).map(m => `<option value="${m}" ${m === memberName ? 'selected' : ''}>${m}</option>`).join('');
+                select.onchange = (e) => this.showProfileModal(e.target.value);
+            } else if (adminContainer) {
+                adminContainer.classList.add('hidden');
+            }
+
+            this.editingMemberName = memberName;
             $('#profileModal').modal('show');
         } catch (e) {
-            this.showToast('Error', 'No se pudo cargar el perfil para editar.', 'error');
+            console.error(e);
+            this.showToast('Error', 'No se pudo cargar el perfil: ' + e.message, 'error');
         }
     }
 
     async handleSaveProfile() {
+        if (!this.editingMemberName) return;
+
         const name = document.getElementById('edit-profile-name').value.trim();
         const role = document.getElementById('edit-profile-role').value.trim();
+        const leadRole = document.getElementById('edit-profile-lead-role').value.trim();
         const desc = document.getElementById('edit-profile-desc').value.trim();
         const portfolio = document.getElementById('edit-profile-portfolio').value.trim();
+        const color = document.getElementById('edit-profile-color').value;
+        const skillsStr = document.getElementById('edit-profile-skills').value;
+        const twitter = document.getElementById('edit-profile-twitter').value.trim();
+        const itch = document.getElementById('edit-profile-itch').value.trim();
         const julesKey = document.getElementById('input-jules-key').value.trim();
 
-        if (julesKey) {
-            localStorage.setItem('jules_api_key', julesKey);
-        } else {
-            localStorage.removeItem('jules_api_key');
-        }
+        if (julesKey) localStorage.setItem('jules_api_key', julesKey);
+        else localStorage.removeItem('jules_api_key');
 
         if (!name || !role) {
             this.showToast('Error', 'Nombre y Rol son campos obligatorios.', 'error');
@@ -360,40 +456,43 @@ class AuthManager {
         }
 
         const btn = document.getElementById('btn-save-profile');
+        const originalHtml = btn.innerHTML;
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Guardando...';
 
         try {
-            const login = window.githubApi.user.login;
-            
-            // Map GitHub login to Member Name in team_profiles.json
-            const profilesRes = await window.githubApi.fetchFileWithSha('_data/team_profiles.json');
-            const profiles = profilesRes.content.members;
-            const memberEntry = Object.entries(profiles).find(([k, v]) => v.handle.toLowerCase() === login.toLowerCase());
-
-            if (!memberEntry) throw new Error("No se encontró perfil de equipo vinculado a este GitHub.");
-
-            const memberName = memberEntry[0];
             const profileDelta = {
                 display_name: name,
                 role: role,
+                lead_role: leadRole,
                 bio: desc,
-                portfolio: portfolio
+                portfolio_url: portfolio,
+                color_accent: color,
+                skills: skillsStr.split(',').map(s => s.trim()).filter(s => s),
+                social: {
+                    twitter: twitter,
+                    itchio: itch
+                },
+                extra_links: window.profileEditUI ? window.profileEditUI.getExtraLinks() : []
             };
 
-            await window.githubApi.updateMemberProfile(memberName, profileDelta);
+            await window.githubApi.updateMemberProfile(this.editingMemberName, profileDelta);
             
-            this.showToast('Éxito', 'Perfil actualizado correctamente. Refrescando...', 'success');
+            this.showToast('Éxito', 'Perfil actualizado correctamente. Sincronizando UI...', 'success');
             $('#profileModal').modal('hide');
             
-            // Refresh UI
-            await this.renderDreamTeamComponent();
+            // Global UI refresh strategy
+            if (window.refreshDashboardData) {
+                await window.refreshDashboardData();
+            } else if (document.getElementById('dream-team-container')) {
+                await this.renderDreamTeamComponent();
+            }
         } catch (e) {
             console.error(e);
-            this.showToast('Error', 'Fallo al guardar los cambios: ' + e.message, 'error');
+            this.showToast('Error', 'Fallo al guardar: ' + e.message, 'error');
         } finally {
             btn.disabled = false;
-            btn.innerHTML = 'Guardar Cambios';
+            btn.innerHTML = originalHtml;
         }
     }
 
