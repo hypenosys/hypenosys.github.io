@@ -109,13 +109,13 @@ function buildTaskCard(task) {
     <i class="fa-solid fa-chevron-${isMinimized ? 'down' : 'up'}"></i>
   </button>`;
 
-  const movePrevBtn = currentColIdx > 0 ? `<button onclick="event.stopPropagation(); handleMoveCard('${task.id}', -1)" class="action-btn mobile-only text-indigo-400" title="Estado Anterior">
+  const movePrevBtn = currentColIdx > 0 ? `<button onclick="event.stopPropagation(); handleMoveCard('${task.id}', -1)" class="action-btn text-indigo-400" title="Estado Anterior">
     <i class="fa-solid fa-arrow-left"></i>
-  </button>` : '<div class="action-btn mobile-only opacity-0 pointer-events-none"></div>';
+  </button>` : '<div class="action-btn opacity-0 pointer-events-none"></div>';
 
-  const moveNextBtn = currentColIdx < KANBAN_COLUMNS.length - 1 ? `<button onclick="event.stopPropagation(); handleMoveCard('${task.id}', 1)" class="action-btn mobile-only text-emerald-400" title="Siguiente Estado">
+  const moveNextBtn = currentColIdx < KANBAN_COLUMNS.length - 1 ? `<button onclick="event.stopPropagation(); handleMoveCard('${task.id}', 1)" class="action-btn text-emerald-400" title="Siguiente Estado">
     <i class="fa-solid fa-arrow-right"></i>
-  </button>` : '<div class="action-btn mobile-only opacity-0 pointer-events-none"></div>';
+  </button>` : '<div class="action-btn opacity-0 pointer-events-none"></div>';
 
   if (isMinimized) {
     card.innerHTML = `
@@ -123,52 +123,45 @@ function buildTaskCard(task) {
       <div class="flex justify-between items-center gap-2">
         <div class="flex items-center gap-2 overflow-hidden">
           <span class="text-[9px] font-mono text-slate-500 flex-shrink-0">#${task.id}</span>
-          <div class="desktop-only flex items-center">
+          <div class="flex items-center">
             ${editBtn}
           </div>
           <p class="text-xs text-slate-200 truncate font-semibold">${task.title || task.descripcion}</p>
         </div>
         <div class="flex items-center gap-1 flex-shrink-0">
-          <div class="desktop-only flex items-center">
+          <div class="flex items-center">
             ${archiveBtn}
           </div>
           <span class="text-[8px] font-bold px-1 py-0.5 rounded ${priorityColorsMinimized[task.prioridad] || 'bg-slate-700'}">${task.prioridad[0]}</span>
           <span class="text-[8px] font-bold px-1 py-0.5 rounded ${stateInfo.color}">${stateInfo.label}</span>
-          <div class="desktop-only">
+          <div class="flex items-center">
             ${minimizeBtn}
           </div>
         </div>
       </div>
 
       <!-- Mobile-only compact actions (visible when minimized on touch) -->
-      <div class="mobile-only flex justify-between items-center mt-2 pt-2 border-t border-slate-700/50">
-        <div class="flex items-center">
-          ${movePrevBtn}
-          ${moveNextBtn}
-        </div>
-        <div class="flex items-center">
-          ${editBtn}
-          ${archiveBtn}
-          ${minimizeBtn}
-        </div>
+      <div class="md:hidden flex justify-between items-center mt-2 pt-2 border-t border-slate-700/50">
+        ${movePrevBtn}
+        ${moveNextBtn}
       </div>
     `;
   } else {
     card.innerHTML = `
-      <!-- Row 1: Meta-info & Desktop Primary Actions -->
+      <!-- Row 1: Meta-info & Primary Actions -->
       <div class="flex justify-between items-start mb-2">
         <div class="flex gap-2 items-center">
           <span class="text-[9px] font-mono text-slate-500">#${task.id}</span>
-          <div class="desktop-only">
+          <div class="flex items-center">
              ${editBtn}
           </div>
           <span class="text-[9px] font-bold px-1.5 py-0.5 rounded ${priorityColors[task.prioridad] || 'bg-slate-700'}">${task.prioridad.toUpperCase()}</span>
         </div>
         <div class="flex gap-1 items-center">
-          <div class="desktop-only flex items-center">
+          <div class="flex items-center">
             ${archiveBtn}
           </div>
-          <div class="desktop-only">
+          <div class="flex items-center">
             ${minimizeBtn}
           </div>
         </div>
@@ -191,7 +184,7 @@ function buildTaskCard(task) {
       </div>
       ` : ''}
 
-      <div class="mb-3 desktop-only">
+      <div class="mb-3 hidden md:block">
           <select onchange="event.stopPropagation(); handleQuickStageUpdate('${String(task.id)}', this.value)" class="w-full bg-slate-950/50 border border-slate-700 rounded text-[10px] p-1 text-slate-400 focus:text-white focus:border-indigo-500 outline-none">
               ${STAGES.map(s => `<option value="${s}" ${task.tema_principal === s ? 'selected' : ''}>${s}</option>`).join('')}
           </select>
@@ -235,17 +228,10 @@ function buildTaskCard(task) {
         </div>
       </div>
 
-      <!-- Row 5: Acciones SIEMPRE VISIBLES (Mobile-only) -->
-      <div class="mobile-only flex justify-between items-center mt-4 pt-2 border-t border-slate-700/50">
-        <div class="flex items-center">
-          ${movePrevBtn}
-          ${moveNextBtn}
-        </div>
-        <div class="flex items-center">
-          ${editBtn}
-          ${archiveBtn}
-          ${minimizeBtn}
-        </div>
+      <!-- Row 5: Acciones (Mobile-only) -->
+      <div class="md:hidden flex justify-between items-center mt-4 pt-2 border-t border-slate-700/50">
+        ${movePrevBtn}
+        ${moveNextBtn}
       </div>
     `;
 
