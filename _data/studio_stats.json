@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-03T04:50:14.006Z",
+  "computed_at": "2026-06-03T06:09:26.417Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 17,
@@ -170,7 +170,7 @@
       },
       "workload": {
         "active_tasks": 7,
-        "story_points": 9
+        "story_points": 10
       }
     },
     "topperh4rley": {
@@ -211,7 +211,7 @@
       },
       "workload": {
         "active_tasks": 9,
-        "story_points": 10
+        "story_points": 11
       }
     },
     "dkdidac-design": {
