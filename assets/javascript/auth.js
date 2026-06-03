@@ -11,23 +11,17 @@ class AuthManager {
     async init() {
         this.bindEvents();
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const hasCode = urlParams.has('code');
-        const isDashboard = window.location.pathname.includes('dashboard');
-        const oauthInProgress = sessionStorage.getItem('oauth_in_progress') === 'true';
+        // 1. First, check if we already have a valid session
+        await this.checkAuthState();
 
-        // Skip OAuth callback if we're on dashboard.html — let dashboard-data.js handle it
-        // to avoid race conditions and double exchange.
-        if (!isDashboard && hasCode) {
+        // 2. Only if no user, try handling OAuth callback
+        if (!window.githubApi.user) {
             await this.handleOAuthCallback();
-        }
 
-        // Skip auth check if we are on dashboard with a code or if an exchange is active
-        // This prevents AuthManager from showing "Logged Out" UI while dashboard-data.js is working
-        if (!(isDashboard && hasCode) && !oauthInProgress) {
-            await this.checkAuthState();
-        } else {
-            console.log('[AuthManager] Cooperative mode: deferring auth check to dashboard-data.js');
+            // 3. Re-verify auth state if exchange happened
+            if (window.githubApi.getAuthToken()) {
+                await this.checkAuthState();
+            }
         }
         
         const currentUser = window.githubApi.user || null;
@@ -71,10 +65,16 @@ class AuthManager {
     }
 
     async handleOAuthCallback() {
+        // If we already have a token, do not attempt to exchange a code
+        if (window.githubApi.getAuthToken()) {
+            return;
+        }
+
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get('code');
         if (code) {
-            window.history.replaceState({}, document.title, window.location.pathname);
+            // NOTE: dashboard-data.js owns this for dashboard.html
+            // This is primarily for the landing page.
             this.showToast('Autenticando...', 'Intercambiando código con el gatekeeper...', 'info');
             
             try {
@@ -417,12 +417,12 @@ class AuthManager {
             // Admin Logic
             const adminContainer = document.getElementById('admin-member-selector-container');
             if (isLandingAdmin && adminContainer) {
-                adminContainer.classList.remove('hidden');
+                adminContainer.style.display = 'block';
                 const select = document.getElementById('admin-member-select');
                 select.innerHTML = Object.keys(members).map(m => `<option value="${m}" ${m === memberName ? 'selected' : ''}>${m}</option>`).join('');
                 select.onchange = (e) => this.showProfileModal(e.target.value);
             } else if (adminContainer) {
-                adminContainer.classList.add('hidden');
+                adminContainer.style.display = 'none';
             }
 
             this.editingMemberName = memberName;

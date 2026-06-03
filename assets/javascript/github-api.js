@@ -38,8 +38,20 @@ async function validateToken() {
     });
     if (!resp.ok) return { valid: false, user: null };
     const user = await resp.json();
-    const ALLOWED = ['axlfc', 'mitxel2022', 'topperh4rley', 'dkdidac-design', 'javi26031994-a11y'];
-    return { valid: ALLOWED.includes(user.login.toLowerCase()), user };
+
+    // Validate against team_profiles.json (Dynamic Whitelist)
+    try {
+        const { content: profiles } = await fetchFileWithSha('_data/team_profiles.json');
+        const isMember = Object.values(profiles.members).some(m =>
+            (m.github_username || m.handle || '').toLowerCase() === user.login.toLowerCase()
+        );
+        return { valid: isMember, user };
+    } catch (e) {
+        console.warn('[AUTH] Could not fetch profiles for whitelist check. Falling back to allowed if valid user.', e);
+        // If we can't fetch profiles, we fall back to standard GitHub validation for now
+        // to avoid locking out the team if the file is missing or corrupted.
+        return { valid: true, user };
+    }
   } catch (err) {
     return { valid: false, user: null };
   }

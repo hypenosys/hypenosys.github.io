@@ -64,11 +64,11 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-success">Fixed</h5>
             <ul class="tree-view mb-3">
-              <li><strong>OAuth Race Condition Fix:</strong> Implementada arquitectura cooperativa entre <code>AuthManager</code> y <code>dashboard-data.js</code>.
+              <li><strong>OAuth Race Condition Fix:</strong> Simplificación del flujo de autenticación para garantizar estabilidad y persistencia de sesión.
                 <ul>
-                  <li><strong>Modo Cooperativo:</strong> <code>AuthManager</code> ahora expone una promesa <code>isReady</code> y cede el control del intercambio del token OAuth al dashboard cuando se detecta un código en la URL.</li>
-                  <li><strong>Limpieza de URL:</strong> Se ha integrado <code>history.replaceState</code> para eliminar parámetros sensibles (<code>?code=</code>) inmediatamente después de la autenticación.</li>
-                  <li><strong>Gestión de Estado:</strong> Uso de <code>sessionStorage.oauth_in_progress</code> para evitar que los guards de autenticación interfieran durante el proceso de login.</li>
+                  <li><strong>Flujo Secuencial Robusto:</strong> <code>AuthManager</code> ahora prioriza la detección de sesiones activas antes de intentar intercambios de código OAuth, evitando fallos en recargas de página.</li>
+                  <li><strong>Arquitectura Unificada:</strong> Eliminada la lógica duplicada y cooperativa compleja en favor de una fuente de verdad única en <code>auth.js</code>.</li>
+                  <li><strong>Respeto de URL:</strong> Se ha eliminado toda manipulación manual de la URL del navegador, confiando plenamente en el estado de la sesión y el gatekeeper de Cloudflare.</li>
                 </ul>
               </li>
             </ul>

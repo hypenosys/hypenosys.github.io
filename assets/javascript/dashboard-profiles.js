@@ -8,9 +8,9 @@ function renderTeamProfiles() {
   const membersData = currentStats?.members || {};
 
   Object.entries(currentProfiles.members).forEach(([name, profile]) => {
-    const isSelf = window.currentUser === (profile.handle || '').toLowerCase();
-    const handle = (profile.handle || '').toLowerCase();
-    const stats = membersData[handle] || membersData[name] || null;
+    const ghUser = (profile.github_username || profile.handle || '').toLowerCase();
+    const isSelf = window.currentUser === ghUser;
+    const stats = membersData[ghUser] || membersData[name] || null;
 
     const card = document.createElement('div');
     card.id = `profile-card-${name.toLowerCase()}`;
@@ -54,7 +54,7 @@ function renderTeamProfiles() {
         ` : ''}
 
         <div class="flex gap-3 text-slate-500">
-          <a href="https://github.com/${profile.github_username}" target="_blank" onclick="event.stopPropagation()" class="hover:text-white"><i class="fa-brands fa-github"></i></a>
+          <a href="https://github.com/${profile.github_username || profile.handle}" target="_blank" onclick="event.stopPropagation()" class="hover:text-white"><i class="fa-brands fa-github"></i></a>
           ${profile.social?.twitter ? `<a href="https://twitter.com/${profile.social.twitter}" target="_blank" onclick="event.stopPropagation()" class="hover:text-white"><i class="fa-brands fa-twitter"></i></a>` : ''}
           ${profile.social?.itchio ? `<a href="https://itch.io/profile/${profile.social.itchio}" target="_blank" onclick="event.stopPropagation()" class="hover:text-white"><i class="fa-brands fa-itch-io"></i></a>` : ''}
           <button onclick="event.stopPropagation(); openDeepDiveModal('${name}')" class="ml-auto text-[10px] font-black text-indigo-400 hover:text-indigo-300 uppercase tracking-widest">VER STATS →</button>
@@ -85,13 +85,13 @@ function openDeepDiveModal(memberName) {
     if (!profile) return;
     currentDeepDiveMember = memberName;
 
-    const handle = (profile.handle || '').toLowerCase();
-    const stats = currentStats?.members[handle] || currentStats?.members[memberName] || null;
+    const ghUser = (profile.github_username || profile.handle || '').toLowerCase();
+    const stats = currentStats?.members[ghUser] || currentStats?.members[memberName] || null;
 
     // Header
     document.getElementById('deep-dive-name').textContent = profile.display_name;
     document.getElementById('deep-dive-role').textContent = profile.role || 'Sin Rol';
-    document.getElementById('deep-dive-avatar').innerHTML = `<img src="https://github.com/${profile.handle || 'ghost'}.png" class="w-full h-full object-cover">`;
+    document.getElementById('deep-dive-avatar').innerHTML = `<img src="https://github.com/${ghUser || 'ghost'}.png" class="w-full h-full object-cover">`;
 
     // Tab: Profile
     document.getElementById('deep-dive-bio').textContent = profile.bio || 'Sin biografía disponible.';
@@ -168,8 +168,8 @@ function switchDeepDiveTab(tab) {
 function renderMemberPerformanceCharts() {
     const profile = currentProfiles?.members[currentDeepDiveMember];
     if (!profile) return;
-    const handle = (profile.handle || '').toLowerCase();
-    const stats = currentStats?.members[handle] || currentStats?.members[currentDeepDiveMember] || null;
+    const ghUser = (profile.github_username || profile.handle || '').toLowerCase();
+    const stats = currentStats?.members[ghUser] || currentStats?.members[currentDeepDiveMember] || null;
     if (!stats) return;
 
     const ctxVel = document.getElementById('member-velocity-chart').getContext('2d');
