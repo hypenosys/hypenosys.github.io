@@ -38,6 +38,10 @@
         [role="button"] { outline: none !important; -webkit-tap-highlight-color: transparent !important; }
         .kanban-cards { touch-action: pan-x pan-y; }
         .kanban-cards [role="button"] { touch-action: manipulation; }
+
+        /* Chips horizontal scroll */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="h-full text-slate-100 flex flex-col">
@@ -54,8 +58,11 @@
                 <a href="#charts" class="text-xs font-bold text-slate-400 hover:text-white transition-all uppercase">Analytics</a>
                 <a href="/tech-stack/" class="text-xs font-bold text-slate-400 hover:text-white transition-all uppercase">Tech Stack</a>
             </div>
-            <div id="member-filters" class="flex flex-wrap items-center justify-center gap-2 bg-slate-950 p-1 rounded-lg border border-slate-800">
-                <!-- Member filters injected here -->
+            <div class="relative max-w-full overflow-hidden">
+                <div id="member-filters" class="flex items-center gap-2 bg-slate-950 p-1 rounded-lg border border-slate-800 overflow-x-auto no-scrollbar whitespace-nowrap scroll-smooth pr-10">
+                    <!-- Member filters injected here -->
+                </div>
+                <div class="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-r from-transparent via-slate-950/50 to-slate-950 pointer-events-none rounded-r-lg z-10"></div>
             </div>
         </div>
         <div class="flex flex-wrap items-center justify-center gap-4 md:gap-6">
