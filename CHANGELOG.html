@@ -64,6 +64,14 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-success">Changed</h5>
             <ul class="tree-view mb-3">
+              <li><strong>Estrategia de Carga Híbrida en Jules Panel:</strong> Optimización radical del selector de repositorios para eliminar tiempos de espera y timeouts.
+                <ul>
+                  <li><strong>Phase 1 (GitHub API):</strong> Carga inmediata de repositorios de la organización Hypenosys utilizando caché local o GitHub API directa. Los repositorios están disponibles para selección instantánea con etiquetas de nombre corto.</li>
+                  <li><strong>Phase 2 (Jules API Enrichment):</strong> Enriquecimiento en segundo plano de las etiquetas con alias oficiales de Jules y adición de repositorios de otras organizaciones, con un timeout de seguridad de 8 segundos.</li>
+                  <li><strong>Gestión de Estado de Sesión:</strong> El botón "Lanzar Sesión" ahora muestra un estado de verificación visual y se habilita automáticamente tras la validación con la API de Jules, garantizando compatibilidad total.</li>
+                  <li><strong>Persistencia Inteligente:</strong> Se preserva la selección del usuario y la rama elegida durante el proceso de enriquecimiento, evitando reseteos de formulario.</li>
+                </ul>
+              </li>
               <li><strong>Filtro de Miembros Optimizado:</strong> Rediseño del selector de equipo en el Dashboard para mejorar la usabilidad en dispositivos móviles y tablets.
                 <ul>
                   <li><strong>Layout de Chips Horizontales:</strong> Reemplazada la lista vertical por una fila única de chips/pills compactos con scroll horizontal suave.</li>
