@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-03T04:50:11.363Z",
+  "last_updated": "2026-06-03T06:09:23.643Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1090,20 +1090,20 @@
       "tema_principal": "Programación / Engine",
       "prioridad": "Critical",
       "milestone": "M1",
-      "estado": "Pending",
+      "estado": "Working",
       "completitud": 0,
-      "resuelto_por": null,
+      "resuelto_por": "Axel",
       "detectado_por": "Axel",
       "asignados": [
         "axlfc",
         "topperh4rley"
       ],
-      "email_responsable": null,
+      "email_responsable": "axel@hypenosys.com",
       "emails_asignados": [],
-      "start_date": null,
-      "due_date": null,
-      "estimated_hours": null,
-      "story_points": null,
+      "start_date": "2026-06-03",
+      "due_date": "2026-06-05",
+      "estimated_hours": 2,
+      "story_points": 1,
       "tags": [],
       "external_links": [],
       "subtasks": [],
@@ -1147,6 +1147,20 @@
           "field": "descripcion",
           "old_value": "Hay algunos botones que estamos obligados a hacer joven y que deberían mostrarse directamente en toda plataforma, por ejemplo: los jóvenes de las imágenes para verlas o borrarlas, O los botones de edición de las propias tasks, botoncitos de edicion, se tienen que poder ver directamente el icono sin hacer hover",
           "new_value": "Hay algunos botones que estamos obligados a hacer hover y que deberían mostrarse directamente en toda plataforma, por ejemplo: los hovers de las imágenes para verlas o borrarlas, O los botones de edición de las propias tasks, botoncitos de edicion, se tienen que poder ver directamente el icono sin hacer hover, para asegurar accesibilidad en movil"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-03T06:09:23.159Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-03T06:09:23.159Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-06-05"
         }
       ],
       "id": 22
