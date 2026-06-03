@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-03T04:20:30.613Z",
-  "last_updated_by": "Axel",
+  "last_updated": "2026-06-03T04:50:11.363Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -1001,7 +1001,13 @@
       "blocked_by": [
         "24"
       ],
-      "comments": [],
+      "comments": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-03T04:50:00.055Z",
+          "body": "xD arreglando esto nos hemos cargado la subida de imágenes"
+        }
+      ],
       "images": [],
       "rama2": null,
       "ver": true,
