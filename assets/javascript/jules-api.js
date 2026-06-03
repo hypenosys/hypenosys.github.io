@@ -64,7 +64,7 @@ async function julesApiCall(method, endpoint, body = null, customKey = null) {
 async function loadAllSources() {
     let all = [], token = null;
     do {
-        const url = `/sources${token ? `?pageToken=${token}` : ''}`;
+        const url = `/sources?pageSize=100${token ? `&pageToken=${token}` : ''}`;
         const data = await julesApiCall('GET', url);
         all = all.concat(data.sources || []);
         token = data.nextPageToken || null;
@@ -140,7 +140,12 @@ window.loadAllSources = loadAllSources;
  */
 function parseSourceName(sourceName) {
   if (!sourceName) return null;
-  // Formato: sources/github/{owner}/{repo}
+  // Formato 1 (Nuevo): sources/github-{owner}-{repo}
+  if (sourceName.startsWith('sources/github-')) {
+      const parts = sourceName.replace('sources/github-', '').split('-');
+      return { owner: parts[0], repo: parts.slice(1).join('-') };
+  }
+  // Formato 2 (Viejo): sources/github/{owner}/{repo}
   const parts = sourceName.split('/');
   if (parts.length >= 4 && parts[1] === 'github') {
     return { owner: parts[2], repo: parts.slice(3).join('/') };

@@ -122,13 +122,7 @@ function buildTaskCard(task) {
       const fullName = task.repository;
       const parts = fullName.split('/');
       const shortName = parts.length > 1 ? parts.slice(1).join('/') : fullName;
-      let display = shortName;
-      if (window.getRepoDisplayName) {
-          display = window.getRepoDisplayName(fullName, shortName);
-          if (display === shortName) {
-              display = window.getRepoDisplayName(`sources/github/${fullName}`, shortName);
-          }
-      }
+      const display = window.getRepoDisplayName ? window.getRepoDisplayName(fullName, shortName) : shortName;
       return `<span class="text-[8px] font-bold text-slate-500 uppercase tracking-tighter truncate max-w-[80px]" title="Repo: ${fullName}">${display}</span>`;
   })() : '<span class="text-[8px] font-bold text-slate-600">—</span>';
 
