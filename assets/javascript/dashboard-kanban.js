@@ -132,11 +132,11 @@ function buildTaskCard(task) {
       <div class="flex justify-between items-center gap-2">
         <div class="flex items-center gap-2 overflow-hidden">
           <span class="text-[9px] font-mono text-slate-500 flex-shrink-0">#${task.id}</span>
+          ${editBtn}
           <p class="text-xs text-slate-200 truncate font-semibold">${task.title || task.descripcion}</p>
         </div>
         <div class="flex items-center gap-1 flex-shrink-0">
           <div class="flex items-center">
-            ${editBtn}
             ${archiveBtn}
           </div>
           <span class="text-[8px] font-bold px-1 py-0.5 rounded ${priorityColorsMinimized[task.prioridad] || 'bg-slate-700'}">${task.prioridad[0]}</span>
@@ -160,11 +160,11 @@ function buildTaskCard(task) {
       <div class="flex justify-between items-start mb-2">
         <div class="flex gap-2 items-center">
           <span class="text-[9px] font-mono text-slate-500">#${task.id}</span>
+          ${editBtn}
           <span class="text-[9px] font-bold px-1.5 py-0.5 rounded ${priorityColors[task.prioridad] || 'bg-slate-700'}">${task.prioridad.toUpperCase()}</span>
         </div>
         <div class="flex gap-1 items-center">
           <div class="flex items-center">
-            ${editBtn}
             ${archiveBtn}
           </div>
           <div class="flex items-center">
