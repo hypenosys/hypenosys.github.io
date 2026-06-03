@@ -17,6 +17,7 @@ function switchTaskModalTab(tabId) {
 function openCreateTaskModal() {
   switchTaskModalTab('info');
   populateMemberSelects();
+  populateRepoSelect();
   document.getElementById('task-modal-title').textContent = 'Crear Nueva Tarea';
   document.getElementById('task-id-input').value = '';
   document.getElementById('task-title-input').value = '';
@@ -26,6 +27,7 @@ function openCreateTaskModal() {
   document.getElementById('task-priority-input').value = 'Major';
   document.getElementById('task-milestone-input').value = 'M1';
   document.getElementById('task-topic-input').value = 'Programación / Engine';
+  document.getElementById('task-repo-input').value = '';
   document.getElementById('task-status-input').value = 'Pending';
   document.getElementById('task-completion-input').value = '0';
   document.getElementById('task-resolver-input').value = '';
@@ -66,6 +68,7 @@ function openEditTaskModal(taskId) {
 
     switchTaskModalTab('info');
     populateMemberSelects();
+    populateRepoSelect();
     document.getElementById('task-modal-title').textContent = `Editar Tarea #${taskId}`;
     document.getElementById('task-id-input').value = taskId;
     document.getElementById('task-title-input').value = task.title || '';
@@ -75,6 +78,7 @@ function openEditTaskModal(taskId) {
     document.getElementById('task-priority-input').value = task.prioridad || 'Major';
     document.getElementById('task-milestone-input').value = task.milestone || 'M1';
     document.getElementById('task-topic-input').value = task.tema_principal || 'Programación / Engine';
+    document.getElementById('task-repo-input').value = task.repository || '';
     let status = task.estado || 'Pending';
     if (status === '?') status = 'In Review';
     document.getElementById('task-status-input').value = status;
@@ -134,6 +138,7 @@ async function handleCreateTask() {
   const priority = document.getElementById('task-priority-input').value;
   const milestone = document.getElementById('task-milestone-input').value;
   const topic = document.getElementById('task-topic-input').value;
+  const repository = document.getElementById('task-repo-input').value || null;
   const status = document.getElementById('task-status-input').value;
   const completion = parseFloat(document.getElementById('task-completion-input').value) || 0;
   const resolver = document.getElementById('task-resolver-input').value || null;
@@ -158,6 +163,7 @@ async function handleCreateTask() {
     rama,
     task_type: taskType,
     tema_principal: topic,
+    repository: repository,
     prioridad: priority,
     milestone,
     estado: status,
@@ -481,7 +487,7 @@ function closeLightbox() {
 
 
 function diffTasks(oldTask, newTask) {
-    const fields = ['title', 'descripcion', 'estado', 'prioridad', 'milestone', 'asignados', 'blocks', 'blocked_by', 'due_date', 'task_type', 'tags', 'completitud'];
+    const fields = ['title', 'descripcion', 'estado', 'prioridad', 'milestone', 'asignados', 'blocks', 'blocked_by', 'due_date', 'task_type', 'tags', 'completitud', 'repository'];
     const changes = [];
     const timestamp = new Date().toISOString();
     const author = window.currentUser || 'Unknown';

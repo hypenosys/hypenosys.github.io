@@ -185,6 +185,42 @@ function openAssignmentModal(taskId) {
     };
 }
 
+function populateRepoSelect() {
+    const repoSelect = document.getElementById('task-repo-input');
+    if (!repoSelect) return;
+
+    // Use cached repos
+    const repos = window.userReposCache || [];
+
+    let html = '<option value="">-- Sin asignar --</option>';
+
+    repos.forEach(repo => {
+        const fullName = repo.full_name; // owner/repo
+        const shortName = repo.name;
+        // Check if there's an alias in localStorage for this repo
+        // Note: repo-aliases.js handles this via getRepoDisplayName
+        // But the user said: "If the repo has an alias, show the alias; if not, show the short name."
+        // And for the value: "The value saved in dashboard_tasks.json must be the full name (owner/repo)"
+
+        // We use the full_name to look up alias if it exists in the project's system
+        // The project uses full_name or sources/github/owner/repo for aliases.
+        // Let's try both to be safe or just use getRepoDisplayName
+
+        let displayName = shortName;
+        if (window.getRepoDisplayName) {
+            displayName = window.getRepoDisplayName(fullName, shortName);
+            // Also try with prefix if not found
+            if (displayName === shortName) {
+                displayName = window.getRepoDisplayName(`sources/github/${fullName}`, shortName);
+            }
+        }
+
+        html += `<option value="${fullName}">${displayName}</option>`;
+    });
+
+    repoSelect.innerHTML = html;
+}
+
 function populateMemberSelects() {
     const resolverSelect = document.getElementById('task-resolver-input');
     const detectorSelect = document.getElementById('task-detector-input');

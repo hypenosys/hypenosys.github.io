@@ -33,6 +33,7 @@ async function handleDOMContentLoaded() {
 
 async function initDashboard() {
   console.log('[DASHBOARD] Initializing Dashboard...');
+  window.userReposCache = []; // Reset/init cache
   const token = window.githubApi.getAuthToken();
   if (!token) {
     console.log('[DASHBOARD] No token found during init.');
@@ -68,6 +69,12 @@ async function initDashboard() {
     renderUserStatus(user);
     setupEventListeners();
     renderDashboard();
+
+    // Background fetch of repos
+    window.githubApi.getOrgRepos().then(repos => {
+        window.userReposCache = repos;
+        console.log('[DASHBOARD] Org repos cached:', repos.length);
+    });
 
   } catch (err) {
     console.error(err);
