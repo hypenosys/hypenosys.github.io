@@ -11,8 +11,17 @@ class AuthManager {
     async init() {
         this.bindEvents();
 
-        // Skip OAuth callback if we're on dashboard.html and it already handled it?
-        // Actually, better to centralize here.
+        // Si estamos en el dashboard, delegamos el control de la autenticación
+        // a dashboard-data.js para evitar conflictos y parpadeos (double-flash).
+        const isDashboard = window.location.pathname.includes('dashboard');
+        if (isDashboard) {
+            console.log('[AUTH] Dashboard detected. Delegating auth control to dashboard-data.js');
+            document.dispatchEvent(new CustomEvent('authReady', {
+                detail: { user: window.githubApi.user || null }
+            }));
+            return;
+        }
+
         await this.handleOAuthCallback();
         await this.checkAuthState();
         

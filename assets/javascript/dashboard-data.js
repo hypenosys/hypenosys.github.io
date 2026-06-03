@@ -32,6 +32,7 @@ async function handleDOMContentLoaded() {
 }
 
 async function initDashboard() {
+  window._dashboardInitialized = true;
   console.log('[DASHBOARD] Initializing Dashboard...');
   window.userReposCache = []; // Reset/init cache
   const token = window.githubApi.getAuthToken();
@@ -201,4 +202,17 @@ async function refreshDashboardData() {
   }
 }
 
-document.addEventListener('DOMContentLoaded', handleDOMContentLoaded);
+document.addEventListener('authReady', async (e) => {
+    console.log('[DASHBOARD] authReady received. Starting initialization...');
+    await handleDOMContentLoaded();
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    // If authManager failed to fire authReady for any reason, fallback
+    setTimeout(() => {
+        if (!window._dashboardInitialized) {
+            console.warn('[DASHBOARD] authReady timeout. Falling back to manual check...');
+            handleDOMContentLoaded();
+        }
+    }, 3000);
+});
