@@ -1,59 +1,33 @@
 /* HYPENOSYS — DATA MODULE */
 
 async function handleDOMContentLoaded() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const code = urlParams.get('code');
+  // Wait for AuthManager to complete its sequential flow
+  if (window.authManager && window.authManager.isReady) {
+    await window.authManager.isReady;
+  }
 
-  if (code) {
-    console.log('[DASHBOARD] OAuth code detected. Handling callback...');
-    const loginOverlay = document.getElementById('login-overlay');
-    loginOverlay.classList.remove('hidden');
-
-    // Save original HTML if needed, but we just want to show progress
-    const statusMsg = loginOverlay.querySelector('p');
-    if (statusMsg) statusMsg.textContent = 'Autenticando con GitHub...';
-
-    try {
-      const result = await window.githubApi.exchangeCodeForToken(code);
-      if (result.valid) {
-          window.history.replaceState({}, document.title, window.location.pathname);
-          await initDashboard();
-      } else {
-          throw new Error('No autorizado');
-      }
-    } catch (err) {
-      console.error('[DASHBOARD] OAuth Error:', err);
-      showToast('Error de autenticación: ' + err.message, 'error');
-      loginOverlay.classList.remove('hidden');
-    }
-  } else {
+  // Gate Check: AuthManager has finished, so user should be available if logged in
+  if (window.githubApi.user) {
     await initDashboard();
+  } else {
+    console.log('[DASHBOARD] Access denied. Showing lock screen.');
+    const loginOverlay = document.getElementById('login-overlay');
+    if (loginOverlay) loginOverlay.classList.remove('hidden');
   }
 }
 
 async function initDashboard() {
   console.log('[DASHBOARD] Initializing Dashboard...');
   window.userReposCache = []; // Reset/init cache
-  const token = window.githubApi.getAuthToken();
-  if (!token) {
-    console.log('[DASHBOARD] No token found during init.');
+
+  const user = window.githubApi.user;
+  if (!user) {
     document.getElementById('login-overlay').classList.remove('hidden');
     return;
   }
 
   try {
-    const { valid, user } = await window.githubApi.validateToken();
-    if (!valid) {
-        console.log('[DASHBOARD] Token validation failed or unauthorized.');
-        if (user) {
-            document.getElementById('unauthorized-msg').textContent = `Tu cuenta de GitHub (${user.login}) no pertenece al equipo de Hypenosys.`;
-            document.getElementById('unauthorized-overlay').classList.remove('hidden');
-        } else {
-            document.getElementById('login-overlay').classList.remove('hidden');
-        }
-        return;
-    }
-
+    // Note: user is already validated by AuthManager/GitHubAPI before getting here
     console.log('[DASHBOARD] Access granted for:', user.login);
     document.getElementById('login-overlay').classList.add('hidden');
     window.currentUser = user.login.toLowerCase();
@@ -62,7 +36,7 @@ async function initDashboard() {
 
     // Set default filter to current user if they match
     const memberMatch = MEMBERS.find(m => m.toLowerCase() === window.currentUser ||
-                                          (currentProfiles && currentProfiles.members[m] && currentProfiles.members[m].handle.toLowerCase() === window.currentUser));
+                                          (currentProfiles && currentProfiles.members[m] && (currentProfiles.members[m].github_username || currentProfiles.members[m].handle || '').toLowerCase() === window.currentUser));
     if (memberMatch) activeFilter = memberMatch;
 
     startAutoRefresh();

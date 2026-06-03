@@ -38,8 +38,20 @@ async function validateToken() {
     });
     if (!resp.ok) return { valid: false, user: null };
     const user = await resp.json();
-    const ALLOWED = ['axlfc', 'mitxel2022', 'topperh4rley', 'dkdidac-design', 'javi26031994-a11y'];
-    return { valid: ALLOWED.includes(user.login.toLowerCase()), user };
+
+    // Validate against team_profiles.json (Dynamic Whitelist)
+    try {
+        const { content: profiles } = await fetchFileWithSha('_data/team_profiles.json');
+        const isMember = Object.values(profiles.members).some(m =>
+            (m.github_username || m.handle || '').toLowerCase() === user.login.toLowerCase()
+        );
+        return { valid: isMember, user };
+    } catch (e) {
+        console.warn('[AUTH] Could not fetch profiles for whitelist check. Falling back to allowed if valid user.', e);
+        // If we can't fetch profiles, we fall back to standard GitHub validation for now
+        // to avoid locking out the team if the file is missing or corrupted.
+        return { valid: true, user };
+    }
   } catch (err) {
     return { valid: false, user: null };
   }
@@ -509,44 +521,31 @@ async function getOrgRepos() {
 }
 
 async function updateMemberProfile(memberName, profileDelta) {
-  // 1. Update team_profiles.json
-  await atomicWrite('_data/team_profiles.json', (db) => {
+  // Update team_profiles.json — NOW THE SINGLE SOURCE OF TRUTH
+  return await atomicWrite('_data/team_profiles.json', (db) => {
     if (!db.members[memberName]) throw new Error(`Miembro ${memberName} no encontrado en team_profiles.json.`);
-    db.members[memberName] = { ...db.members[memberName], ...profileDelta };
+
+    // Deep merge delta
+    db.members[memberName] = {
+      ...db.members[memberName],
+      ...profileDelta,
+      social: { ...(db.members[memberName].social || {}), ...(profileDelta.social || {}) },
+      stats: { ...(db.members[memberName].stats || {}), ...(profileDelta.stats || {}) }
+    };
+
     db.last_updated = new Date().toISOString();
     return db;
-  }, `chore: actualizar perfil de ${memberName} (profiles)`, (local, remote) => {
+  }, `chore: actualizar perfil de ${memberName} (Unified System)`, (local, remote) => {
+    // 409 Conflict Merge Strategy
     const merged = { ...remote };
-    merged.members[memberName] = { ...remote.members[memberName], ...local.members[memberName] };
+    merged.members[memberName] = {
+      ...remote.members[memberName],
+      ...local.members[memberName],
+      social: { ...(remote.members[memberName].social || {}), ...(local.members[memberName].social || {}) },
+      stats: { ...(remote.members[memberName].stats || {}), ...(local.members[memberName].stats || {}) }
+    };
     return merged;
   });
-
-  // 2. Sync with team.json
-  try {
-    const profilesRes = await fetchFileWithSha('_data/team_profiles.json');
-    const profile = profilesRes.content.members[memberName];
-
-    await atomicWrite('_data/team.json', (team) => {
-      const memberIndex = team.findIndex(m =>
-        (m.github && m.github.toLowerCase().includes(profile.handle.toLowerCase())) ||
-        (m.name.toLowerCase().includes(memberName.toLowerCase()))
-      );
-      if (memberIndex !== -1) {
-        team[memberIndex].name = profile.display_name;
-        team[memberIndex].role = profile.role;
-        team[memberIndex].description = profile.bio;
-        team[memberIndex].image = `https://github.com/${profile.handle}.png`;
-        if (profile.links && profile.links.github) team[memberIndex].github = profile.links.github;
-        if (profile.portfolio) team[memberIndex].portfolio = profile.portfolio;
-      }
-      return team;
-    }, `chore: sincronizar team.json con perfil de ${memberName}`, (local, remote) => {
-       // Simple replacement for team.json sync
-       return local;
-    });
-  } catch (err) {
-    console.error('Failed to sync team.json:', err);
-  }
 }
 
 // ─── STATE ────────────────────────────────────────────────────
@@ -672,6 +671,10 @@ window.githubApi = {
 
   // Core API
   validateToken: validateTokenAndStore,
+  async fetchProfiles() {
+    const res = await this.fetchFileWithSha('_data/team_profiles.json');
+    return res.content;
+  },
   getAuthToken,
   fetchFileWithSha,
   createTask,

@@ -62,8 +62,28 @@ permalink: /CHANGELOG.html
         <h2 class="text-purple border-bottom border-purple pb-2 mb-4">[Unreleased]</h2>
         <div class="card mb-3">
           <div class="card-body">
+            <h5 class="text-success">Fixed</h5>
+            <ul class="tree-view mb-3">
+              <li><strong>OAuth Race Condition Fix:</strong> Simplificación del flujo de autenticación para garantizar estabilidad y persistencia de sesión.
+                <ul>
+                  <li><strong>Flujo Secuencial Robusto:</strong> <code>AuthManager</code> ahora prioriza la detección de sesiones activas antes de intentar intercambios de código OAuth, evitando fallos en recargas de página.</li>
+                  <li><strong>Arquitectura Unificada:</strong> Eliminada la lógica duplicada y cooperativa compleja en favor de una fuente de verdad única en <code>auth.js</code>.</li>
+                  <li><strong>Respeto de URL:</strong> Se ha eliminado toda manipulación manual de la URL del navegador, confiando plenamente en el estado de la sesión y el gatekeeper de Cloudflare.</li>
+                </ul>
+              </li>
+            </ul>
             <h5 class="text-success">Added</h5>
             <ul class="tree-view mb-3">
+              <li><strong>Sistema Unificado de Perfiles:</strong> Migración total a <code>team_profiles.json</code> como única fuente de verdad, eliminando la dependencia de <code>team.json</code>.
+                <ul>
+                  <li><strong>Nuevo Schema v2.0:</strong> Implementados campos de <code>lead_role</code>, <code>is_admin</code>, <code>skills</code>, <code>extra_links</code> dinámicos, y redes sociales (Twitter/Itch).</li>
+                  <li><strong>Modal Compartido:</strong> Nuevo partial <code>_includes/profile_modal.html</code> que unifica la edición de perfiles con soporte para todos los nuevos campos y sincronización de color de acento.</li>
+                  <li><strong>Modo Administrador:</strong> Usuarios con <code>is_admin: true</code> pueden editar cualquier perfil del equipo mediante un selector integrado en el modal.</li>
+                  <li><strong>Runtime Fetch:</strong> La landing page ahora carga los datos del equipo dinámicamente vía API de GitHub, garantizando que los cambios sean visibles al instante sin redespliegues.</li>
+                  <li><strong>Fix en Ops Dashboard:</strong> El avatar del dashboard ahora es un dropdown funcional con acceso a "Mi Perfil", "Ajustes" y "Logout", consistente con la landing page.</li>
+                  <li><strong>Escritura Atómica:</strong> Refactorizado <code>github-api.js</code> para manejar actualizaciones complejas del perfil con resolución de conflictos 409.</li>
+                </ul>
+              </li>
               <li><strong>Aliases de Repositorios en Dashboard:</strong> Implementada la visualización de aliases personalizados en el modal de tareas y en el footer de las Kanban cards.</li>
             </ul>
           </div>
