@@ -62,6 +62,21 @@ permalink: /CHANGELOG.html
         <h2 class="text-purple border-bottom border-purple pb-2 mb-4">[Unreleased]</h2>
         <div class="card mb-3">
           <div class="card-body">
+            <h5 class="text-success">Fixed</h5>
+            <ul class="tree-view mb-0">
+              <li><strong>Sincronización Crítica de Auth (Dashboard):</strong> Eliminación definitiva de condiciones de carrera (race conditions) entre <code>auth.js</code> y <code>dashboard-data.js</code> mediante la implementación de un flujo dirigido por eventos.
+                <ul>
+                  <li><strong>Event-Driven Bootstrapping:</strong> El dashboard ahora espera exclusivamente al evento <code>authReady</code> emitido por <code>AuthManager</code> antes de intentar cargar datos de la API de GitHub.</li>
+                  <li><strong>Mecanismo Failsafe:</strong> Implementado un timeout de seguridad de 3 segundos que fuerza la inicialización manual si el gestor global falla, garantizando que el dashboard nunca se quede bloqueado.</li>
+                  <li><strong>Inclusión Global de Auth:</strong> Añadido <code>auth.js</code> a <code>dashboard.html</code> para unificar el estado de sesión con el resto del sitio y permitir delegación correcta de <code>handleDashboardLogin()</code>.</li>
+                  <li><strong>Guard de Inicialización:</strong> Introducida la variable <code>window._dashboardInitialized</code> para prevenir dobles cargas o estados inconsistentes durante el arranque.</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="card mb-3">
+          <div class="card-body">
             <h5 class="text-danger">Emergency Rollback & Lock</h5>
             <ul class="tree-view mb-0">
               <li><strong>Stable Auth Restoration:</strong> Reverted `auth.js`, `dashboard-data.js`, `github-api.js`, and `dashboard.html` to their exact state in commit `3d5b28f`.</li>
