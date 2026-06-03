@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-03T11:24:29.192Z",
+  "last_updated": "2026-06-03T12:10:50.192Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -914,7 +914,7 @@
       "descripcion": "Hay algunos botones que estamos obligados a hacer hover y que deberían mostrarse directamente en toda plataforma, por ejemplo: los hovers de las imágenes para verlas o borrarlas, O los botones de edición de las propias tasks, botoncitos de edicion, se tienen que poder ver directamente el icono sin hacer hover, para asegurar accesibilidad en movil",
       "rama": "PRO",
       "task_type": "feature",
-      "tema_principal": "Programación / Engine",
+      "tema_principal": "Tools / Automation",
       "prioridad": "Critical",
       "milestone": "M1",
       "estado": "Fixed",
