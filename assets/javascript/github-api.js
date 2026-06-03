@@ -528,14 +528,14 @@ async function updateMemberProfile(memberName, profileDelta) {
 
     await atomicWrite('_data/team.json', (team) => {
       const memberIndex = team.findIndex(m =>
-        (m.github && m.github.toLowerCase().includes(profile.handle.toLowerCase())) ||
+        (m.github && m.github.toLowerCase().includes(profile.github_username.toLowerCase())) ||
         (m.name.toLowerCase().includes(memberName.toLowerCase()))
       );
       if (memberIndex !== -1) {
         team[memberIndex].name = profile.display_name;
         team[memberIndex].role = profile.role;
         team[memberIndex].description = profile.bio;
-        team[memberIndex].image = `https://github.com/${profile.handle}.png`;
+        team[memberIndex].image = `https://github.com/${profile.github_username}.png`;
         if (profile.links && profile.links.github) team[memberIndex].github = profile.links.github;
         if (profile.portfolio) team[memberIndex].portfolio = profile.portfolio;
       }

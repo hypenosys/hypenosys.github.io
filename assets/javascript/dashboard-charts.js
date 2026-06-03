@@ -427,7 +427,7 @@ function renderPipelineSwimlanes() {
       </div>
       <div class="flex justify-between items-center">
         <div class="flex -space-x-1.5">
-            ${assignees.slice(0, 4).map(name => `<img src="https://github.com/${currentProfiles?.members[name]?.handle || 'ghost'}.png" class="w-5 h-5 rounded-full border border-slate-900" title="${name}">`).join('')}
+            ${assignees.slice(0, 4).map(name => `<img src="https://github.com/${currentProfiles?.members[name]?.github_username || 'ghost'}.png" class="w-5 h-5 rounded-full border border-slate-900" title="${name}">`).join('')}
             ${assignees.length > 4 ? `<div class="w-5 h-5 rounded-full bg-slate-800 border border-slate-900 flex items-center justify-center text-[8px] font-bold">+${assignees.length - 4}</div>` : ''}
         </div>
         <span class="text-[10px] font-bold text-slate-400">${pct.toFixed(0)}%</span>
