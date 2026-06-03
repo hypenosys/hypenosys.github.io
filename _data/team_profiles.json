@@ -1,73 +1,178 @@
 {
-  "schema_version": "1.0.0",
-  "last_updated": "2026-06-01T06:34:10.485Z",
+  "schema_version": "2.0.0",
+  "last_updated": "2025-01-24T12:00:00.000Z",
   "members": {
     "Axel": {
-      "handle": "Axlfc",
+      "github_username": "Axlfc",
       "display_name": "Axel (El Afaces)",
       "role": "3D Animator & Network Systems Admin",
-      "avatar_url": "",
+      "lead_role": "Lead de Tools & Automation",
       "bio": "Especialista en animación 3D y entornos interactivos. El motor que mantiene la infraestructura en pie y los personajes en movimiento.",
-      "links": {
-        "github": "https://github.com/Axlfc",
+      "avatar_url": "https://github.com/Axlfc.png",
+      "portfolio_url": "https://axlfc.github.io",
+      "color_accent": "#bd93f9",
+      "is_admin": true,
+      "skills": [
+        "HTML",
+        "CSS",
+        "Javascript",
+        "Python",
+        "PHP",
+        "Bash",
+        "C#"
+      ],
+      "extra_links": [
+        {
+          "label": "GitHub",
+          "url": "https://github.com/Axlfc"
+        },
+        {
+          "label": "Music",
+          "url": "https://usuaris.tinet.cat/~afaces"
+        },
+        {
+          "label": "YouTube",
+          "url": "https://www.youtube.com/c/el_afaces"
+        },
+        {
+          "label": "LinkedIn",
+          "url": "https://www.linkedin.com/in/axelcurros/"
+        }
+      ],
+      "social": {
         "twitter": "",
-        "itch": ""
+        "itchio": ""
       },
-      "color_accent": "#34d399",
-      "portfolio": "https://axlfc.github.io"
-    },
-    "Mitxel": {
-      "handle": "mitxel2022",
-      "display_name": "Mitxel",
-      "role": "Main Design, Secondary Art",
-      "avatar_url": "",
-      "bio": "",
-      "links": {
-        "github": "https://github.com/mitxel2022",
-        "twitter": "",
-        "itch": ""
-      },
-      "color_accent": "#6366f1"
+      "stats": {
+        "completadas": 0,
+        "velocity": "0.5d",
+        "impacto": 0,
+        "volatilidad": 0
+      }
     },
     "Alex": {
-      "handle": "TopperH4rley",
+      "github_username": "TopperH4rley",
       "display_name": "Alex",
       "role": "Main Programming, Secondary Design",
-      "avatar_url": "",
-      "bio": "",
-      "links": {
-        "github": "https://github.com/TopperH4rley",
+      "lead_role": "Lead de Programación",
+      "bio": "El Alex. Capaz de convertir café en código y bugs en 'features experimentales'. Si ves un commit a las 4 AM, es él. O un bot que ha programado para que trabaje por él.",
+      "avatar_url": "assets/images/upload_soul.svg",
+      "portfolio_url": "",
+      "color_accent": "#f87171",
+      "is_admin": false,
+      "skills": [
+        "Programming",
+        "Design"
+      ],
+      "extra_links": [
+        {
+          "label": "GitHub",
+          "url": "https://github.com/TopperH4rley"
+        }
+      ],
+      "social": {
         "twitter": "",
-        "itch": ""
+        "itchio": ""
       },
-      "color_accent": "#f87171"
+      "stats": {
+        "completadas": 0,
+        "velocity": "0.5d",
+        "impacto": 0,
+        "volatilidad": 0
+      }
     },
     "Javi": {
-      "handle": "javi26031994-a11y",
+      "github_username": "javi26031994-a11y",
       "display_name": "Javi",
       "role": "Main Design, Secondary Art",
-      "avatar_url": "",
-      "bio": "",
-      "links": {
-        "github": "https://github.com/javi26031994-a11y",
+      "lead_role": "Lead de Diseño",
+      "bio": "Arquitecto de sueños y pesadillas (según el día). Si el juego es bonito pero te explota la cabeza, Javi ha pasado por ahí. Su ratón tiene más kilómetros que un taxi.",
+      "avatar_url": "https://github.com/javi26031994-a11y.png",
+      "portfolio_url": "",
+      "color_accent": "#fbbf24",
+      "is_admin": false,
+      "skills": [
+        "Design",
+        "Art"
+      ],
+      "extra_links": [
+        {
+          "label": "GitHub",
+          "url": "https://github.com/javi26031994-a11y"
+        }
+      ],
+      "social": {
         "twitter": "",
-        "itch": ""
+        "itchio": ""
       },
-      "color_accent": "#fbbf24"
+      "stats": {
+        "completadas": 0,
+        "velocity": "0.5d",
+        "impacto": 0,
+        "volatilidad": 0
+      }
     },
     "Dídac": {
-      "handle": "dkdidac-design",
+      "github_username": "dkdidac-design",
       "display_name": "Dídac",
       "role": "Main Art, Secondary Design",
-      "avatar_url": "",
+      "lead_role": "Lead de Arte",
       "bio": "Si no tiene colores que te derritan las retinas, no es arte. Dídac vive en un mundo de 16 millones de colores y se conoce el nombre de todos. Menos del gris, el gris no existe.",
-      "links": {
-        "github": "https://github.com/dkdidac-design",
-        "twitter": "",
-        "itch": ""
-      },
+      "avatar_url": "https://github.com/dkdidac-design.png",
+      "portfolio_url": "",
       "color_accent": "#38bdf8",
-      "portfolio": ""
+      "is_admin": false,
+      "skills": [
+        "Art",
+        "Design"
+      ],
+      "extra_links": [
+        {
+          "label": "GitHub",
+          "url": "https://github.com/dkdidac-design"
+        }
+      ],
+      "social": {
+        "twitter": "",
+        "itchio": ""
+      },
+      "stats": {
+        "completadas": 0,
+        "velocity": "0.5d",
+        "impacto": 0,
+        "volatilidad": 0
+      }
+    },
+    "Mitxel": {
+      "github_username": "mitxel2022",
+      "display_name": "Mitxel",
+      "role": "Main Design, Secondary Art",
+      "lead_role": "Lead de Arte & Diseño",
+      "bio": "Diseñador de niveles que te harán cuestionar tu cordura. Mitxel cree que un pasillo recto es un desperdicio de espacio. Si te pierdes, es que el diseño funciona.",
+      "avatar_url": "assets/images/upload_soul.svg",
+      "portfolio_url": "",
+      "color_accent": "#6366f1",
+      "is_admin": false,
+      "skills": [
+        "Design",
+        "Art"
+      ],
+      "extra_links": [
+        {
+          "label": "GitHub",
+          "url": "https://github.com/mitxel2022"
+        }
+      ],
+      "social": {
+        "twitter": "",
+        "itchio": ""
+      },
+      "stats": {
+        "completadas": 0,
+        "velocity": "0.5d",
+        "impacto": 0,
+        "volatilidad": 0
+      }
     }
   }
 }

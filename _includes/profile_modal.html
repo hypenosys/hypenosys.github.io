@@ -1,0 +1,174 @@
+<!-- Unified Profile Editing Modal -->
+<div class="modal fade" id="profileModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content shadow-lg bg-dark text-white border-purple">
+            <div class="modal-header border-purple bg-black-transparent">
+                <h5 class="modal-title text-purple font-weight-bold d-flex align-items-center">
+                    <i class="fas fa-user-edit mr-3"></i>
+                    <span id="profile-modal-title">EDITAR MI PERFIL</span>
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body p-4">
+                <!-- Admin Selector -->
+                <div id="admin-member-selector-container" class="mb-4 p-3 bg-black border border-purple rounded hidden">
+                    <label class="text-purple small font-weight-bold uppercase mb-2 d-block">Modo Administrador: Editar perfil de</label>
+                    <select id="admin-member-select" class="form-control bg-dark text-white border-purple">
+                        <!-- Options injected dynamically -->
+                    </select>
+                </div>
+
+                <div class="row">
+                    <!-- Column 1: Identity -->
+                    <div class="col-lg-4 border-right border-purple">
+                        <h6 class="text-purple font-weight-bold uppercase small mb-3 border-bottom border-purple pb-2">Identidad Visual</h6>
+                        <div class="text-center mb-4">
+                            <div class="position-relative d-inline-block">
+                                <img id="edit-profile-avatar-preview" src="" class="rounded-circle border border-purple shadow-lg" style="width: 120px; height: 120px; object-fit: cover; background: #1a1a1a;">
+                                <div class="mt-2 small text-muted">Imagen sincronizada de GitHub</div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="text-purple small font-weight-bold uppercase">Nombre Público</label>
+                            <input type="text" id="edit-profile-name" class="form-control bg-dark text-white border-purple" placeholder="Ej: Axel (El Afaces)">
+                        </div>
+                        <div class="form-group">
+                            <label class="text-purple small font-weight-bold uppercase">Color de Acento</label>
+                            <div class="input-group">
+                                <input type="color" id="edit-profile-color" class="form-control bg-dark border-purple p-1" style="height: 38px; max-width: 60px;">
+                                <input type="text" id="edit-profile-color-hex" class="form-control bg-dark text-white border-purple font-weight-mono" placeholder="#000000">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Column 2: Professional -->
+                    <div class="col-lg-4 border-right border-purple">
+                        <h6 class="text-purple font-weight-bold uppercase small mb-3 border-bottom border-purple pb-2">Roles & Bio</h6>
+                        <div class="form-group">
+                            <label class="text-purple small font-weight-bold uppercase">Rol Profesional</label>
+                            <input type="text" id="edit-profile-role" class="form-control bg-dark text-white border-purple" placeholder="Ej: 3D Animator">
+                        </div>
+                        <div class="form-group">
+                            <label class="text-purple small font-weight-bold uppercase">Lead Role (Estudio)</label>
+                            <input type="text" id="edit-profile-lead-role" class="form-control bg-dark text-white border-purple" placeholder="Ej: Lead de Tools & Automation">
+                        </div>
+                        <div class="form-group">
+                            <label class="text-purple small font-weight-bold uppercase">Descripción / Bio</label>
+                            <textarea id="edit-profile-desc" class="form-control bg-dark text-white border-purple" rows="6" placeholder="Cuéntanos sobre ti..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Column 3: Skills & Links -->
+                    <div class="col-lg-4">
+                        <h6 class="text-purple font-weight-bold uppercase small mb-3 border-bottom border-purple pb-2">Habilidades & Enlaces</h6>
+                        <div class="form-group">
+                            <label class="text-purple small font-weight-bold uppercase">Habilidades (Separadas por coma)</label>
+                            <input type="text" id="edit-profile-skills" class="form-control bg-dark text-white border-purple" placeholder="C#, Unreal, Blender...">
+                        </div>
+                        <div class="form-group">
+                            <label class="text-purple small font-weight-bold uppercase">Portfolio URL</label>
+                            <input type="url" id="edit-profile-portfolio" class="form-control bg-dark text-white border-purple" placeholder="https://...">
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label class="text-purple small font-weight-bold uppercase">Twitter</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text bg-dark border-purple text-muted">@</span></div>
+                                        <input type="text" id="edit-profile-twitter" class="form-control bg-dark text-white border-purple" placeholder="usuario">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label class="text-purple small font-weight-bold uppercase">Itch.io</label>
+                                    <input type="text" id="edit-profile-itch" class="form-control bg-dark text-white border-purple" placeholder="usuario">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="text-purple small font-weight-bold uppercase d-flex justify-between">
+                                Enlaces Extra
+                                <button type="button" onclick="window.profileEditUI.addExtraLink()" class="btn btn-link btn-sm text-purple p-0">
+                                    <i class="fas fa-plus-circle"></i> Añadir
+                                </button>
+                            </label>
+                            <div id="edit-profile-extra-links" class="custom-scrollbar" style="max-height: 150px; overflow-y: auto;">
+                                <!-- Links dynamic list -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer / Config Section -->
+                <div class="mt-4 pt-4 border-top border-purple">
+                    <div class="row align-items-end">
+                        <div class="col-md-8">
+                            <div class="form-group mb-0">
+                                <label class="text-purple small font-weight-bold uppercase">Jules API Key</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text bg-dark border-purple"><i class="fas fa-robot"></i></span></div>
+                                    <input type="password" id="input-jules-key" class="form-control bg-dark text-white border-purple" placeholder="AIza...">
+                                </div>
+                                <small class="text-muted">Se guarda solo en tu navegador para el Jules Panel.</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-right">
+                            <button type="button" class="btn btn-outline-secondary px-4 mr-2" data-dismiss="modal">Cancelar</button>
+                            <button type="button" id="btn-save-profile" class="btn btn-purple px-5 shadow-lg">
+                                <i class="fas fa-save mr-2"></i> Guardar Cambios
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Logic to handle extra links UI in the modal
+window.profileEditUI = {
+    addExtraLink(label = '', url = '') {
+        const container = document.getElementById('edit-profile-extra-links');
+        const div = document.createElement('div');
+        div.className = 'input-group mb-2 extra-link-row';
+        div.innerHTML = `
+            <input type="text" class="form-control form-control-sm bg-dark text-white border-purple link-label" placeholder="Etiqueta" value="${label}">
+            <input type="url" class="form-control form-control-sm bg-dark text-white border-purple link-url" placeholder="URL" value="${url}">
+            <div class="input-group-append">
+                <button class="btn btn-outline-danger btn-sm" type="button" onclick="this.closest('.extra-link-row').remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        `;
+        container.appendChild(div);
+    },
+    getExtraLinks() {
+        const rows = document.querySelectorAll('.extra-link-row');
+        return Array.from(rows).map(row => ({
+            label: row.querySelector('.link-label').value.trim(),
+            url: row.querySelector('.link-url').value.trim()
+        })).filter(l => l.label && l.url);
+    },
+    setExtraLinks(links = []) {
+        const container = document.getElementById('edit-profile-extra-links');
+        container.innerHTML = '';
+        links.forEach(l => this.addExtraLink(l.label, l.url));
+    }
+};
+
+// Sync color picker and hex input
+document.getElementById('edit-profile-color')?.addEventListener('input', (e) => {
+    document.getElementById('edit-profile-color-hex').value = e.target.value.toUpperCase();
+});
+document.getElementById('edit-profile-color-hex')?.addEventListener('input', (e) => {
+    const val = e.target.value;
+    if (/^#[0-9A-F]{6}$/i.test(val)) {
+        document.getElementById('edit-profile-color').value = val;
+    }
+});
+</script>
