@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-03T03:30:51.475Z",
+  "last_updated": "2026-06-03T04:50:11.363Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -975,10 +975,10 @@
       "tema_principal": "Programación / Engine",
       "prioridad": "Major",
       "milestone": "M1",
-      "estado": "Working",
+      "estado": "Fixed",
       "completitud": 0,
       "resuelto_por": "Axel",
-      "detectado_por": "Axel",
+      "detectado_por": "Alex",
       "asignados": [
         "axlfc",
         "topperh4rley"
@@ -1001,7 +1001,13 @@
       "blocked_by": [
         "24"
       ],
-      "comments": [],
+      "comments": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-03T04:50:00.055Z",
+          "body": "xD arreglando esto nos hemos cargado la subida de imágenes"
+        }
+      ],
       "images": [],
       "rama2": null,
       "ver": true,
