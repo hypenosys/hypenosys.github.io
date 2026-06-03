@@ -64,6 +64,16 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-success">Fixed</h5>
             <ul class="tree-view mb-3">
+              <li><strong>Restauración Crítica de Auth y Renderizado (Ops Dashboard):</strong> Solución integral a los fallos de carga y autenticación del dashboard tras la unificación de perfiles.
+                <ul>
+                  <li><strong>Jekyll Front Matter:</strong> Añadido el bloque de front matter a <code>dashboard.html</code>, permitiendo que Jekyll procese correctamente los tags Liquid (soluciona el error donde <code>profile_modal.html</code> se mostraba como texto plano).</li>
+                  <li><strong>Arquitectura "Zero URL":</strong> Eliminada toda manipulación de la URL (<code>?code=</code>, <code>history.replaceState</code>) en favor de una gestión de tokens puramente basada en storage, delegando el intercambio OAuth al Gatekeeper.</li>
+                  <li><strong>Eliminación de Race Conditions:</strong> Implementado el guard <code>HYPENOSYS_AUTH_OWNER</code> para que <code>dashboard-data.js</code> tome el control total de la autenticación en el dashboard, evitando conflictos con el inicializador global de <code>AuthManager</code>.</li>
+                  <li><strong>Flujo "No Reload":</strong> Reemplazados los refrescos de página forzados (<code>location.reload()</code>) por reseteos manuales del DOM al cerrar sesión o detectar errores, garantizando una experiencia fluida y sin parpadeos.</li>
+                  <li><strong>Carga de Tareas Garantizada:</strong> Reestructurada la inicialización para que la descarga de tareas desde <code>dashboard_tasks.json</code> solo comience tras la validación exitosa del token.</li>
+                  <li><strong>Script Load Order:</strong> Ajustado el orden de carga en el HTML para garantizar que las dependencias de Bootstrap, jQuery y los módulos de Hypenosys se inicialicen en la secuencia correcta.</li>
+                </ul>
+              </li>
               <li><strong>OAuth Race Condition Fix:</strong> Simplificación del flujo de autenticación para garantizar estabilidad y persistencia de sesión.
                 <ul>
                   <li><strong>Flujo Secuencial Robusto:</strong> <code>AuthManager</code> ahora prioriza la detección de sesiones activas antes de intentar intercambios de código OAuth, evitando fallos en recargas de página.</li>
