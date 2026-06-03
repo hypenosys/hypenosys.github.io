@@ -601,6 +601,8 @@ window.githubApi = {
 
       if (data.access_token) {
         this.setToken(data.access_token, rememberMe);
+        // Safety delay to ensure storage commit before validation
+        await new Promise(res => setTimeout(res, 200));
         return await this.validateToken();
       } else {
         throw new Error(data.error || 'No se recibió token del gatekeeper');
