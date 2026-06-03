@@ -23,6 +23,13 @@ class AuthManager {
     }
 
     async init() {
+        if (window.HYPENOSYS_AUTH_OWNER === 'dashboard') {
+            console.log('[AuthManager] Dashboard owner mode. Skipping core init.');
+            this.bindEvents();
+            this.isReady = Promise.resolve();
+            return;
+        }
+
         this.bindEvents();
 
         // Skip OAuth callback if we're on dashboard.html and it already handled it?
@@ -199,7 +206,7 @@ class AuthManager {
         // Clear session on security-related errors
         if (e.status === 401 || (e.status === 403 && e.type === 'ACL_DENIED') || e.type === 'INVALID') {
             window.githubApi.clearAuth();
-            this.updateHeaderUI(null);
+            this.resetAuthUI();
         }
 
         if (e.status === 403 && e.type === 'ACL_DENIED') {
@@ -228,7 +235,31 @@ class AuthManager {
 
     handleLogout() {
         window.githubApi.clearAuth();
-        window.location.reload();
+        this.resetAuthUI();
+    }
+
+    resetAuthUI() {
+        // Manual UI reset without page reload
+        this.updateHeaderUI(null);
+
+        // Clear specific dashboard state if present
+        if (window.HYPENOSYS_AUTH_OWNER === 'dashboard') {
+            const loginOverlay = document.getElementById('login-overlay');
+            if (loginOverlay) loginOverlay.classList.remove('hidden');
+
+            // Clear other dashboard UI elements
+            const dashUserStatus = document.getElementById('user-status');
+            const dashUserStatusMobile = document.getElementById('user-status-mobile');
+            if (dashUserStatus) dashUserStatus.innerHTML = '';
+            if (dashUserStatusMobile) dashUserStatusMobile.innerHTML = '';
+
+            // Clear task counts/data
+            const taskCounts = document.querySelectorAll('.col-count');
+            taskCounts.forEach(el => el.textContent = '0');
+
+            const taskContainers = document.querySelectorAll('.kanban-cards');
+            taskContainers.forEach(el => el.innerHTML = '');
+        }
     }
 
     updateHeaderUI(user) {

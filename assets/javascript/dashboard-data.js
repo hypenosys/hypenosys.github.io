@@ -45,6 +45,12 @@ async function handleDOMContentLoaded() {
   }
 }
 
+function showLockScreen() {
+  console.log('[DASHBOARD] Access denied. Showing lock screen.');
+  const loginOverlay = document.getElementById('login-overlay');
+  if (loginOverlay) loginOverlay.classList.remove('hidden');
+}
+
 async function initDashboard() {
   console.log('[DASHBOARD] Initializing Dashboard...');
   window.userReposCache = []; // Reset/init cache
