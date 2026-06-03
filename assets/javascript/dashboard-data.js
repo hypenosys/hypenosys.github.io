@@ -204,7 +204,7 @@ async function refreshDashboardData() {
 
 document.addEventListener('authReady', async (e) => {
     console.log('[DASHBOARD] authReady received. Starting initialization...');
-    await initDashboard();
+    await handleDOMContentLoaded();
 });
 
 document.addEventListener('DOMContentLoaded', () => {

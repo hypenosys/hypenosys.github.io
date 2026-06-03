@@ -70,6 +70,7 @@ permalink: /CHANGELOG.html
                   <li><strong>Mecanismo Failsafe:</strong> Implementado un timeout de seguridad de 3 segundos que fuerza la inicialización manual si el gestor global falla, garantizando que el dashboard nunca se quede bloqueado.</li>
                   <li><strong>Inclusión Global de Auth:</strong> Añadido <code>auth.js</code> a <code>dashboard.html</code> para unificar el estado de sesión con el resto del sitio y permitir delegación correcta de <code>handleDashboardLogin()</code>.</li>
                   <li><strong>Guard de Inicialización:</strong> Introducida la variable <code>window._dashboardInitialized</code> para prevenir dobles cargas o estados inconsistentes durante el arranque.</li>
+                  <li><strong>Guard de Ruta (isDashboard):</strong> <code>AuthManager</code> ahora evita validaciones activas en el dashboard para delegar el control y eliminar parpadeos visuales (double-flash).</li>
                 </ul>
               </li>
             </ul>
