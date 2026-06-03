@@ -39,11 +39,16 @@ function renderMemberToggles() {
   if (!container) return;
   container.innerHTML = '';
 
+  const baseClasses = "font-bold rounded-md transition-all flex-shrink-0";
+  const mobileClasses = "px-2 py-0.5 text-xs";
+  const desktopClasses = "lg:px-3 lg:py-1 lg:text-sm";
+
   const allBtn = document.createElement('button');
   allBtn.textContent = '👥 Todos';
   allBtn.className = (activeFilter === null && activeStageFilter === null)
-    ? 'px-3 py-1 text-xs font-bold rounded-md bg-emerald-500 text-slate-950 transition-all'
-    : 'px-3 py-1 text-xs font-bold rounded-md text-slate-400 hover:text-white transition-all';
+    ? `${baseClasses} ${mobileClasses} ${desktopClasses} bg-emerald-500 text-slate-950`
+    : `${baseClasses} ${mobileClasses} ${desktopClasses} text-slate-400 hover:text-white`;
+
   allBtn.addEventListener('click', () => {
     activeFilter = null;
     activeStageFilter = null;
@@ -55,8 +60,9 @@ function renderMemberToggles() {
     const btn = document.createElement('button');
     btn.textContent = member;
     btn.className = activeFilter === member
-      ? 'px-3 py-1 text-xs font-bold rounded-md bg-emerald-500 text-slate-950 transition-all'
-      : 'px-3 py-1 text-xs font-bold rounded-md text-slate-400 hover:text-white transition-all';
+      ? `${baseClasses} ${mobileClasses} ${desktopClasses} bg-emerald-500 text-slate-950`
+      : `${baseClasses} ${mobileClasses} ${desktopClasses} text-slate-400 hover:text-white`;
+
     btn.addEventListener('click', () => {
       activeFilter = (activeFilter === member) ? null : member;
       renderDashboard();
