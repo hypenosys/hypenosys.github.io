@@ -11,9 +11,12 @@ class AuthManager {
     async init() {
         this.bindEvents();
 
-        // Skip OAuth callback if we're on dashboard.html and it already handled it?
-        // Actually, better to centralize here.
-        await this.handleOAuthCallback();
+        // Skip OAuth callback if we're on dashboard.html — let dashboard-data.js handle it
+        // to avoid race conditions and double exchange.
+        if (!window.location.pathname.includes('dashboard')) {
+            await this.handleOAuthCallback();
+        }
+
         await this.checkAuthState();
         
         const currentUser = window.githubApi.user || null;
