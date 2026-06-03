@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-03T07:34:42.976Z",
+  "last_updated": "2026-06-03T07:34:57.245Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -22,10 +22,10 @@
       "completitud": 0.6,
       "asignados": [
         "axlfc",
-        "topperh4rley",
-        "javi26031994-a11y",
         "dkdidac-design",
-        "mitxel2022"
+        "javi26031994-a11y",
+        "mitxel2022",
+        "topperh4rley"
       ],
       "email_responsable": "axel@hypenosys.com",
       "emails_asignados": [
@@ -36,7 +36,29 @@
         "mitxel@hypenosys.com"
       ],
       "images": [],
-      "repository": null
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "Configuración inicial del dashboard operacional",
+      "task_type": "feature",
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-03T07:34:56.611Z",
+          "field": "repository",
+          "old_value": null,
+          "new_value": "hypenosys/hypenosys.github.io"
+        }
+      ]
     },
     {
       "rama": "ART",
