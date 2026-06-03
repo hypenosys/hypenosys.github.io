@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-03T06:10:02.289Z",
+  "last_updated": "2026-06-03T06:10:18.129Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -938,83 +938,6 @@
         }
       ],
       "id": 23
-    },
-    {
-      "title": "Particularizar y extraer en funciones del dashboard.js en ficheros más pequeños",
-      "descripcion": "",
-      "rama": "PRO",
-      "task_type": "feature",
-      "tema_principal": "Programación / Engine",
-      "prioridad": "Major",
-      "milestone": "M1",
-      "estado": "OK",
-      "completitud": 0,
-      "resuelto_por": "Axel",
-      "detectado_por": "Axel",
-      "asignados": [
-        "axlfc",
-        "topperh4rley"
-      ],
-      "email_responsable": null,
-      "emails_asignados": [],
-      "start_date": "2026-06-01",
-      "due_date": "2026-06-05",
-      "estimated_hours": 4,
-      "story_points": 1,
-      "tags": [],
-      "external_links": [],
-      "subtasks": [],
-      "acceptance_criteria": "",
-      "blocks": [
-        "21"
-      ],
-      "blocked_by": [],
-      "comments": [],
-      "images": [],
-      "rama2": null,
-      "ver": true,
-      "fecha": "2026-06-01",
-      "apoyo": null,
-      "limite": null,
-      "comentario": "",
-      "change_log": [
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-01T18:57:03.559Z",
-          "field": "id",
-          "old_value": null,
-          "new_value": "Created"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-01T18:58:35.780Z",
-          "field": "title",
-          "old_value": "Particularizar funciones del dashboard.js en ficheros más pequeños",
-          "new_value": "Particularizar y extraer en funciones del dashboard.js en ficheros más pequeños"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-01T19:08:20.305Z",
-          "field": "estado",
-          "old_value": "Pending",
-          "new_value": "Working"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-01T19:08:32.638Z",
-          "field": "blocks",
-          "old_value": "[]",
-          "new_value": "[\"21\"]"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-01T19:21:32.334Z",
-          "field": "estado",
-          "old_value": "Working",
-          "new_value": "OK"
-        }
-      ],
-      "id": 24
     },
     {
       "title": "1234",
