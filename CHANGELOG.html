@@ -114,6 +114,14 @@ permalink: /CHANGELOG.html
                 </ul>
               </li>
               <li><strong>Soporte de Imágenes en Kanban:</strong> Implementado soporte para adjuntar imágenes a las tareas. Incluye carga mediante selección de archivos, arrastrar y soltar, y pegado directo desde el portapapeles (Ctrl+V). Las imágenes se visualizan en galerías colapsables dentro de las tarjetas del Kanban y en un visor Lightbox a pantalla completa.</li>
+              <li><strong>Prácticas Mobile-First Transversales:</strong> Rediseño global de la interfaz para máxima accesibilidad y UX en dispositivos móviles y tablets.
+                <ul>
+                  <li><strong>Visibilidad de Acciones WCAG:</strong> Introducción de la clase <code>.action-btn</code> con touch targets de 44x44px. Los botones críticos ahora son siempre visibles en dispositivos táctiles (detección via <code>hover: none</code>) y mantienen una visibilidad base del 45-70% en desktop, eliminando el patrón de "oculto hasta hover".</li>
+                  <li><strong>Kanban Mobile Layout:</strong> Reestructuración de las tarjetas en un layout de 5 filas (Meta, Título, Datos Clave, Equipo y Acciones). Implementados botones de transición de estado ("Anterior/Siguiente") para mobile, eliminando la dependencia del drag-and-drop.</li>
+                  <li><strong>Sistema de Tabs en Modal:</strong> El modal de tareas ahora cuenta con un sistema de 3 pestañas (Info, Equipo & Fechas, Extra) para evitar el scroll infinito en pantallas pequeñas, con reseteo automático al abrir.</li>
+                  <li><strong>Overlays de Imagen Responsivos:</strong> Las acciones de ver/borrar imágenes ahora se muestran en una barra de botones fija debajo de la imagen en mobile, preservando el overlay solo en desktop.</li>
+                </ul>
+              </li>
             </ul>
             <h5 class="text-danger">Fixed</h5>
             <ul class="tree-view mb-3">

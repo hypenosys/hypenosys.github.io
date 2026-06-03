@@ -92,64 +92,106 @@ function buildTaskCard(task) {
 
   const estado = task.estado === '?' ? 'In Review' : (task.estado || 'Pending');
   const stateInfo = STATE_CONFIG[estado] || { color: 'bg-slate-700', label: estado };
-
   const canArchive = ['OK', 'Closed', 'Obsolete'].includes(estado);
+  const currentColId = getTaskColumn(task);
+  const currentColIdx = KANBAN_COLUMNS.findIndex(c => c.id === currentColId);
+
+  // Common Action Buttons Components
+  const editBtn = `<button onclick="event.stopPropagation(); openEditTaskModal('${task.id}')" class="action-btn text-slate-400 hover:text-white" title="Editar Tarea">
+    <i class="fa-solid fa-pencil"></i>
+  </button>`;
+
+  const archiveBtn = canArchive ? `<button onclick="event.stopPropagation(); handleArchiveTask('${task.id}')" class="action-btn action-btn--secondary text-slate-500 hover:text-emerald-400" title="Archivar Tarea">
+    <i class="fa-solid fa-box-archive"></i>
+  </button>` : '';
+
+  const minimizeBtn = `<button onclick="event.stopPropagation(); toggleTaskMinimize('${task.id}')" class="action-btn text-slate-500 hover:text-white" title="${isMinimized ? 'Expandir' : 'Contraer'}">
+    <i class="fa-solid fa-chevron-${isMinimized ? 'down' : 'up'}"></i>
+  </button>`;
+
+  const movePrevBtn = currentColIdx > 0 ? `<button onclick="event.stopPropagation(); handleMoveCard('${task.id}', -1)" class="action-btn mobile-only text-indigo-400" title="Estado Anterior">
+    <i class="fa-solid fa-arrow-left"></i>
+  </button>` : '<div class="action-btn mobile-only opacity-0 pointer-events-none"></div>';
+
+  const moveNextBtn = currentColIdx < KANBAN_COLUMNS.length - 1 ? `<button onclick="event.stopPropagation(); handleMoveCard('${task.id}', 1)" class="action-btn mobile-only text-emerald-400" title="Siguiente Estado">
+    <i class="fa-solid fa-arrow-right"></i>
+  </button>` : '<div class="action-btn mobile-only opacity-0 pointer-events-none"></div>';
 
   if (isMinimized) {
     card.innerHTML = `
+      <!-- Desktop & Global Minimized Layout -->
       <div class="flex justify-between items-center gap-2">
         <div class="flex items-center gap-2 overflow-hidden">
           <span class="text-[9px] font-mono text-slate-500 flex-shrink-0">#${task.id}</span>
-          <button onclick="event.stopPropagation(); openEditTaskModal('${task.id}')" class="text-[10px] text-slate-500 hover:text-white opacity-0 group-hover:opacity-100 transition-all flex-shrink-0">
-            <i class="fa-solid fa-pencil"></i>
-          </button>
+          <div class="desktop-only flex items-center">
+            ${editBtn}
+          </div>
           <p class="text-xs text-slate-200 truncate font-semibold">${task.title || task.descripcion}</p>
         </div>
         <div class="flex items-center gap-1 flex-shrink-0">
-          ${canArchive ? `
-            <button onclick="event.stopPropagation(); handleArchiveTask('${task.id}')" class="text-slate-500 hover:text-emerald-400 mr-1 transition-colors" title="Archivar">
-                <i class="fa-solid fa-box-archive text-[10px]"></i>
-            </button>
-          ` : ''}
+          <div class="desktop-only flex items-center">
+            ${archiveBtn}
+          </div>
           <span class="text-[8px] font-bold px-1 py-0.5 rounded ${priorityColorsMinimized[task.prioridad] || 'bg-slate-700'}">${task.prioridad[0]}</span>
           <span class="text-[8px] font-bold px-1 py-0.5 rounded ${stateInfo.color}">${stateInfo.label}</span>
-          <button onclick="event.stopPropagation(); toggleTaskMinimize('${task.id}')" class="text-slate-500 hover:text-white ml-1">
-            <i class="fa-solid fa-chevron-down"></i>
-          </button>
+          <div class="desktop-only">
+            ${minimizeBtn}
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile-only compact actions (visible when minimized on touch) -->
+      <div class="mobile-only flex justify-between items-center mt-2 pt-2 border-t border-slate-700/50">
+        <div class="flex items-center">
+          ${movePrevBtn}
+          ${moveNextBtn}
+        </div>
+        <div class="flex items-center">
+          ${editBtn}
+          ${archiveBtn}
+          ${minimizeBtn}
         </div>
       </div>
     `;
   } else {
     card.innerHTML = `
+      <!-- Row 1: Meta-info & Desktop Primary Actions -->
       <div class="flex justify-between items-start mb-2">
         <div class="flex gap-2 items-center">
           <span class="text-[9px] font-mono text-slate-500">#${task.id}</span>
-          <button onclick="event.stopPropagation(); openEditTaskModal('${task.id}')" class="text-[10px] text-slate-500 hover:text-white opacity-0 group-hover:opacity-100 transition-all">
-            <i class="fa-solid fa-pencil"></i>
-          </button>
-        </div>
-        <div class="flex gap-2 items-center">
-          ${canArchive ? `
-            <button onclick="event.stopPropagation(); handleArchiveTask('${task.id}')" class="text-[10px] font-bold text-slate-500 hover:text-emerald-400 flex items-center gap-1 px-2 py-0.5 bg-slate-900 rounded border border-slate-700 transition-all mr-2" title="Mover al Cementerio">
-                <i class="fa-solid fa-box-archive"></i> ARCHIVAR
-            </button>
-          ` : ''}
+          <div class="desktop-only">
+             ${editBtn}
+          </div>
           <span class="text-[9px] font-bold px-1.5 py-0.5 rounded ${priorityColors[task.prioridad] || 'bg-slate-700'}">${task.prioridad.toUpperCase()}</span>
-          <button onclick="event.stopPropagation(); toggleTaskMinimize('${task.id}')" class="text-slate-500 hover:text-white">
-            <i class="fa-solid fa-chevron-up"></i>
-          </button>
+        </div>
+        <div class="flex gap-1 items-center">
+          <div class="desktop-only flex items-center">
+            ${archiveBtn}
+          </div>
+          <div class="desktop-only">
+            ${minimizeBtn}
+          </div>
         </div>
       </div>
+
+      <!-- Row 2: Título (prominente) -->
       <p class="text-sm text-slate-200 leading-snug mb-3 font-bold">${task.title || task.descripcion}</p>
       ${task.title ? `<p class="text-[11px] text-slate-400 leading-tight mb-3 line-clamp-2">${task.descripcion}</p>` : ''}
 
+      <!-- Row 3: Datos clave / Milestone · Story Points · Stage -->
+      <div class="flex flex-wrap items-center gap-2 mb-3">
+        <span class="text-[9px] bg-slate-900 border border-slate-700 px-2 py-0.5 rounded text-slate-400 font-bold uppercase">${task.milestone}</span>
+        ${task.story_points ? `<span class="text-[9px] bg-indigo-900/30 border border-indigo-500/30 px-2 py-0.5 rounded text-indigo-300 font-bold font-mono">${task.story_points} SP</span>` : ''}
+        <span class="text-[9px] font-bold px-1.5 py-0.5 rounded ${stateInfo.color}">${stateInfo.label.toUpperCase()}</span>
+      </div>
+
       ${hasImages ? `
       <div class="mb-3 grid grid-cols-3 gap-2" id="card-images-${task.id}">
-          <!-- Thumbnails injected via DOM to avoid touch ghost events -->
+          <!-- Thumbnails injected via DOM -->
       </div>
       ` : ''}
 
-      <div class="mb-3">
+      <div class="mb-3 desktop-only">
           <select onchange="event.stopPropagation(); handleQuickStageUpdate('${String(task.id)}', this.value)" class="w-full bg-slate-950/50 border border-slate-700 rounded text-[10px] p-1 text-slate-400 focus:text-white focus:border-indigo-500 outline-none">
               ${STAGES.map(s => `<option value="${s}" ${task.tema_principal === s ? 'selected' : ''}>${s}</option>`).join('')}
           </select>
@@ -164,6 +206,7 @@ function buildTaskCard(task) {
       </div>
       ` : ''}
 
+      <!-- Row 4: Personas / Team & Branch -->
       <div class="flex justify-between items-end">
         <div class="flex flex-col gap-2">
           <div class="flex items-center gap-2">
@@ -172,7 +215,6 @@ function buildTaskCard(task) {
               ${task.detectado_por ? `<div onclick="event.stopPropagation(); scrollToProfile('${task.detectado_por}')" title="Detectado por: ${task.detectado_por}" class="w-6 h-6 rounded-full bg-indigo-500 border-2 border-slate-800 flex items-center justify-center text-[8px] font-bold text-white cursor-pointer hover:scale-110 transition-transform">${task.detectado_por[0]}</div>` : ''}
               ${task.apoyo ? `<div onclick="event.stopPropagation(); scrollToProfile('${task.apoyo}')" title="Apoyo: ${task.apoyo}" class="w-6 h-6 rounded-full bg-purple-500 border-2 border-slate-800 flex items-center justify-center text-[8px] font-bold text-white cursor-pointer hover:scale-110 transition-transform">${task.apoyo[0]}</div>` : ''}
             </div>
-            <span class="text-[8px] font-bold px-1.5 py-0.5 rounded ${stateInfo.color}">${stateInfo.label.toUpperCase()}</span>
           </div>
 
           <div onclick="event.stopPropagation(); openAssignmentModal('${String(task.id)}')" class="flex -space-x-1.5 cursor-pointer hover:opacity-80 transition-opacity min-h-[24px] items-center">
@@ -186,10 +228,23 @@ function buildTaskCard(task) {
                  </div>`
             }
           </div>
-          ${task.email_responsable ? `<div class="text-[8px] text-slate-500 mt-1 flex items-center gap-1"><i class="fa-solid fa-envelope text-[7px]"></i> ${task.email_responsable}</div>` : ''}
         </div>
-        <div class="text-[9px] font-bold text-slate-500 uppercase tracking-tighter">
-          ${task.rama}${task.rama2 ? ` / ${task.rama2}` : ''}
+        <div class="text-[9px] font-bold text-slate-500 uppercase tracking-tighter text-right">
+          <div class="mb-1">${task.rama}${task.rama2 ? ` / ${task.rama2}` : ''}</div>
+          ${task.email_responsable ? `<div class="text-[8px] text-slate-600 flex items-center justify-end gap-1 font-normal lowercase tracking-normal"><i class="fa-solid fa-envelope text-[7px]"></i> ${task.email_responsable}</div>` : ''}
+        </div>
+      </div>
+
+      <!-- Row 5: Acciones SIEMPRE VISIBLES (Mobile-only) -->
+      <div class="mobile-only flex justify-between items-center mt-4 pt-2 border-t border-slate-700/50">
+        <div class="flex items-center">
+          ${movePrevBtn}
+          ${moveNextBtn}
+        </div>
+        <div class="flex items-center">
+          ${editBtn}
+          ${archiveBtn}
+          ${minimizeBtn}
         </div>
       </div>
     `;
@@ -337,4 +392,18 @@ async function handleQuickStageUpdate(taskId, newStage) {
     } catch (err) {
         showToast(`Error: ${err.message}`, 'error');
     }
+}
+
+async function handleMoveCard(taskId, direction) {
+    const task = currentTasks.find(t => String(t.id) === String(taskId));
+    if (!task) return;
+
+    const currentColId = getTaskColumn(task);
+    const currentIndex = KANBAN_COLUMNS.findIndex(c => c.id === currentColId);
+    const nextIndex = currentIndex + direction;
+
+    if (nextIndex < 0 || nextIndex >= KANBAN_COLUMNS.length) return;
+
+    const targetCol = KANBAN_COLUMNS[nextIndex];
+    await handleCardDrop(taskId, targetCol.id);
 }
