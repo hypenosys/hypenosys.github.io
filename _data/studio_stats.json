@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-03T07:34:45.261Z",
+  "computed_at": "2026-06-03T07:34:59.738Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 13,
@@ -25,13 +25,13 @@
     "bug_rate": 0,
     "blocker_health": 1,
     "tag_heatmap": {
+      "feature": 6,
       "PRO": 6,
       "brainstorm": 1,
       "design": 1,
       "research": 1,
       "DIS": 1,
       "chore": 1,
-      "feature": 5,
       "onboarding": 1,
       "ART": 1
     },
