@@ -48,7 +48,7 @@ class AuthManager {
             if (e.target.closest('#btn-sign-in')) {
                 this.handleLogin();
             }
-            if (e.target.closest('#btn-logout')) {
+            if (e.target.closest('#btn-logout') || e.target.closest('#btn-logout-dash')) {
                 this.handleLogout();
             }
             if (e.target.closest('#btn-open-settings') || e.target.closest('#btn-open-settings-dash')) {

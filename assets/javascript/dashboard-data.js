@@ -28,6 +28,8 @@ async function handleDOMContentLoaded() {
       window.history.replaceState({}, document.title, window.location.pathname);
 
       if (result.valid) {
+          // Safety delay for storage commit persistence
+          await new Promise(res => setTimeout(res, 200));
           await initDashboard();
       } else {
           throw new Error('No autorizado');
