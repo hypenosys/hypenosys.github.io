@@ -381,25 +381,10 @@ function updateJulesBadges() {
 }
 
 function renderUserStatus(user) {
-  const containerDesktop = document.getElementById('user-status');
-  const containerMobile = document.getElementById('user-status-mobile');
-
-  const html = `
-    <div class="flex flex-col items-end hidden lg:flex">
-      <span class="text-[10px] font-bold text-white leading-none">${user.login}</span>
-      <span class="text-[9px] text-emerald-500 font-mono">ONLINE</span>
-    </div>
-    <div class="pulse-emerald rounded-full">
-      ${window.HypenosysUI.renderAvatar(user)}
-    </div>
-  `;
-
-  if (containerDesktop) containerDesktop.innerHTML = html;
-  if (containerMobile) containerMobile.innerHTML = `
-    <div class="pulse-emerald rounded-full">
-      ${window.HypenosysUI.renderAvatar(user)}
-    </div>
-  `;
+  // Handled by AuthManager.updateHeaderUI in unified system
+  if (window.authManager) {
+    window.authManager.updateHeaderUI(user);
+  }
 }
 
 function showToast(mensaje, tipo = 'info', duracionMs = 4000) {

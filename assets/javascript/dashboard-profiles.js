@@ -27,7 +27,7 @@ function renderTeamProfiles() {
       <div class="p-6">
         <div class="flex justify-between items-start mb-4">
           <div class="relative">
-            <img src="https://github.com/${profile.handle || 'ghost'}.png" class="w-16 h-16 rounded-2xl border-2 border-slate-800 shadow-xl bg-slate-800 cursor-pointer hover:scale-105 transition-transform" onclick="event.stopPropagation(); openDeepDiveModal('${name}')">
+            <img src="${profile.avatar_url || 'https://github.com/' + (profile.github_username || 'ghost') + '.png'}" class="w-16 h-16 rounded-2xl border-2 border-slate-800 shadow-xl bg-slate-800 cursor-pointer hover:scale-105 transition-transform" onclick="event.stopPropagation(); openDeepDiveModal('${name}')">
             <div class="absolute -bottom-1 -right-1 bg-slate-900 rounded-full p-1 border border-slate-800">
                 <div class="w-3 h-3 rounded-full bg-emerald-500 pulse-emerald"></div>
             </div>
@@ -36,11 +36,12 @@ function renderTeamProfiles() {
               <button onclick="event.stopPropagation(); openDeepDiveModal('${name}')" class="p-2 bg-slate-950 rounded-lg text-indigo-400 hover:text-white border border-slate-800 transition-all text-xs font-bold flex items-center gap-2" title="Deep Dive">
                 <i class="fa-solid fa-chart-line"></i>
               </button>
-              ${isSelf ? `<button onclick="event.stopPropagation(); toggleProfileEdit('${name}')" class="p-2 text-slate-500 hover:text-white transition-colors"><i class="fa-solid fa-pencil"></i></button>` : ''}
+              ${isSelf ? `<button onclick="event.stopPropagation(); window.authManager.showProfileModal('${name}')" class="p-2 text-slate-500 hover:text-white transition-colors" title="Editar Mi Perfil"><i class="fa-solid fa-pencil"></i></button>` : ''}
           </div>
         </div>
         <h3 class="text-xl font-bold mb-1 text-white">${profile.display_name}</h3>
-        <div class="text-xs text-emerald-400 font-bold uppercase tracking-wider mb-3">${profile.role || 'Sin Rol'}</div>
+        <div class="text-[10px] text-emerald-400 font-bold uppercase tracking-wider mb-0">${profile.role || 'Sin Rol'}</div>
+        <div class="text-[9px] text-purple-400 font-bold uppercase tracking-widest mb-3" style="font-size: 0.65rem;">${profile.lead_role || ''}</div>
         <p class="text-sm text-slate-400 leading-relaxed mb-4 h-12 overflow-hidden">${profile.bio || 'Sin biografía disponible.'}</p>
 
         ${stats ? `
@@ -53,23 +54,10 @@ function renderTeamProfiles() {
         ` : ''}
 
         <div class="flex gap-3 text-slate-500">
-          ${profile.links.github ? `<a href="${profile.links.github}" target="_blank" onclick="event.stopPropagation()" class="hover:text-white"><i class="fa-brands fa-github"></i></a>` : ''}
-          ${profile.links.twitter ? `<a href="${profile.links.twitter}" target="_blank" onclick="event.stopPropagation()" class="hover:text-white"><i class="fa-brands fa-twitter"></i></a>` : ''}
-          ${profile.links.itch ? `<a href="${profile.links.itch}" target="_blank" onclick="event.stopPropagation()" class="hover:text-white"><i class="fa-brands fa-itch-io"></i></a>` : ''}
+          <a href="https://github.com/${profile.github_username}" target="_blank" onclick="event.stopPropagation()" class="hover:text-white"><i class="fa-brands fa-github"></i></a>
+          ${profile.social?.twitter ? `<a href="https://twitter.com/${profile.social.twitter}" target="_blank" onclick="event.stopPropagation()" class="hover:text-white"><i class="fa-brands fa-twitter"></i></a>` : ''}
+          ${profile.social?.itchio ? `<a href="https://itch.io/profile/${profile.social.itchio}" target="_blank" onclick="event.stopPropagation()" class="hover:text-white"><i class="fa-brands fa-itch-io"></i></a>` : ''}
           <button onclick="event.stopPropagation(); openDeepDiveModal('${name}')" class="ml-auto text-[10px] font-black text-indigo-400 hover:text-indigo-300 uppercase tracking-widest">VER STATS →</button>
-        </div>
-      </div>
-
-      <!-- Edit Overlay -->
-      <div id="edit-overlay-${name}" class="hidden absolute inset-0 bg-slate-900 z-10 p-6 flex flex-col gap-3">
-        <div class="text-xs font-bold text-slate-500 uppercase">Editar Perfil</div>
-        <input type="text" id="edit-name-${name}" value="${profile.display_name}" class="bg-slate-950 border border-slate-800 rounded p-2 text-sm text-white" placeholder="Nombre">
-        <input type="text" id="edit-role-${name}" value="${profile.role}" class="bg-slate-950 border border-slate-800 rounded p-2 text-sm text-white" placeholder="Rol">
-        <input type="url" id="edit-portfolio-${name}" value="${profile.portfolio || ''}" class="bg-slate-950 border border-slate-800 rounded p-2 text-sm text-white" placeholder="Portfolio URL">
-        <textarea id="edit-bio-${name}" class="bg-slate-950 border border-slate-800 rounded p-2 text-sm text-white flex-grow" placeholder="Bio">${profile.bio}</textarea>
-        <div class="flex gap-2">
-          <button onclick="saveProfileEdit('${name}')" class="flex-grow py-2 bg-emerald-500 text-slate-950 font-bold rounded text-xs">Guardar</button>
-          <button onclick="toggleProfileEdit('${name}')" class="py-2 px-4 border border-slate-700 rounded text-xs text-white">X</button>
         </div>
       </div>
     `;
@@ -77,30 +65,7 @@ function renderTeamProfiles() {
   });
 }
 
-function toggleProfileEdit(memberName) {
-  const overlay = document.getElementById(`edit-overlay-${memberName}`);
-  if (overlay) overlay.classList.toggle('hidden');
-}
-
-async function saveProfileEdit(memberName) {
-  const profileDelta = {
-    display_name: document.getElementById(`edit-name-${memberName}`).value,
-    role: document.getElementById(`edit-role-${memberName}`).value,
-    portfolio: document.getElementById(`edit-portfolio-${memberName}`).value,
-    bio: document.getElementById(`edit-bio-${memberName}`).value
-  };
-
-  showToast(UI_STRINGS.saving, 'info');
-
-  try {
-    await window.githubApi.updateMemberProfile(memberName, profileDelta);
-    showToast(UI_STRINGS.saved, 'success');
-    toggleProfileEdit(memberName);
-    await refreshDashboardData();
-  } catch (err) {
-    showToast(`Fallo al guardar: ${err.message}`, 'error');
-  }
-}
+// Removed toggleProfileEdit and saveProfileEdit as they are replaced by the unified AuthManager modal
 
 function scrollToProfile(memberName) {
   const card = document.getElementById(`profile-card-${memberName.toLowerCase()}`);
@@ -132,9 +97,7 @@ function openDeepDiveModal(memberName) {
     document.getElementById('deep-dive-bio').textContent = profile.bio || 'Sin biografía disponible.';
     const skillsContainer = document.getElementById('deep-dive-skills');
     skillsContainer.innerHTML = '';
-    // Use skills from team.json if available
-    const teamMember = currentBudget?.team?.find(m => m.name.includes(memberName));
-    const skills = teamMember?.skills || [];
+    const skills = profile.skills || [];
     skills.forEach(skill => {
         const span = document.createElement('span');
         span.className = 'px-2 py-1 bg-slate-800 border border-slate-700 rounded text-[10px] font-bold text-slate-300';
