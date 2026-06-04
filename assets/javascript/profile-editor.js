@@ -22,7 +22,148 @@
         }
 
         init() {
+            this.injectModal();
             this.bindEvents();
+        }
+
+        injectModal() {
+            if (document.getElementById('modalEditProfile')) return;
+
+            const modalHtml = `
+            <div class="modal fade" id="modalEditProfile" tabindex="-1" role="dialog" aria-labelledby="modalEditProfileLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                    <div class="modal-content bg-slate-900 border border-slate-800 text-slate-100 rounded-2xl overflow-hidden shadow-2xl">
+                        <div class="modal-header border-b border-slate-800 p-6 flex justify-between items-center">
+                            <h5 class="modal-title font-bold text-xl flex items-center gap-3" id="modalEditProfileLabel">
+                                <div class="w-10 h-10 rounded-full bg-indigo-900/30 flex items-center justify-center text-indigo-400 border border-indigo-500/30">
+                                    <i class="fa-solid fa-user-gear"></i>
+                                </div>
+                                Mi Perfil de Operaciones
+                            </h5>
+                            <button type="button" class="close text-slate-500 hover:text-white transition-colors outline-none text-2xl" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body p-0">
+                            <!-- Tabs Navigation -->
+                            <ul class="nav nav-tabs border-b border-slate-800 bg-slate-950/30 px-6" id="profileTabs" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <a class="nav-link active bg-transparent border-0 text-slate-400 py-4 px-6 font-bold text-[10px] uppercase tracking-widest hover:text-white transition-all cursor-pointer" id="mi-perfil-tab" data-toggle="tab" href="#mi-perfil-pane" role="tab" aria-controls="mi-perfil-pane" aria-selected="true">
+                                        <i class="fa-solid fa-id-card mr-2"></i> Mi Perfil
+                                    </a>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <a class="nav-link bg-transparent border-0 text-slate-400 py-4 px-6 font-bold text-[10px] uppercase tracking-widest hover:text-white transition-all cursor-pointer" id="config-api-tab" data-toggle="tab" href="#config-api-pane" role="tab" aria-controls="config-api-pane" aria-selected="false">
+                                        <i class="fa-solid fa-key mr-2"></i> Configuración API
+                                    </a>
+                                </li>
+                            </ul>
+
+                            <div class="tab-content p-6 max-h-[60vh] overflow-y-auto custom-scrollbar" id="profileTabsContent">
+                                <!-- Mi Perfil Tab -->
+                                <div class="tab-pane fade show active" id="mi-perfil-pane" role="tabpanel" aria-labelledby="mi-perfil-tab">
+                                    <div class="space-y-6">
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div>
+                                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2 tracking-widest">Nombre Público</label>
+                                                <input type="text" id="prof-display-name" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-100 focus:border-indigo-500 outline-none transition-all text-sm" placeholder="Ej: Axel (El Afaces)">
+                                            </div>
+                                            <div>
+                                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2 tracking-widest">Rol / Especialidad</label>
+                                                <input type="text" id="prof-role" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-100 focus:border-indigo-500 outline-none transition-all text-sm" placeholder="Ej: Lead Developer">
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2 tracking-widest">Biografía Corta</label>
+                                            <textarea id="prof-bio" rows="3" maxlength="200" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-100 focus:border-indigo-500 outline-none transition-all text-sm" placeholder="Cuéntanos un poco sobre ti..."></textarea>
+                                            <div class="text-right mt-1">
+                                                <small id="prof-bio-counter" class="text-[9px] font-mono text-slate-600 uppercase tracking-widest">0 / 200 caracteres</small>
+                                            </div>
+                                        </div>
+
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div>
+                                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2 tracking-widest">URL del Avatar</label>
+                                                <div class="flex gap-4">
+                                                    <div class="flex-grow">
+                                                        <input type="text" id="prof-avatar-url" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-100 focus:border-indigo-500 outline-none transition-all text-[11px] font-mono" placeholder="https://github.com/usuario.png">
+                                                    </div>
+                                                    <div class="w-12 h-12 rounded-xl bg-slate-800 border border-slate-700 overflow-hidden flex-shrink-0 shadow-lg">
+                                                        <img id="prof-avatar-preview" src="assets/images/upload_soul.svg" class="w-full h-full object-cover">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2 tracking-widest">Email de Contacto</label>
+                                                <input type="email" id="prof-email" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-100 focus:border-indigo-500 outline-none transition-all text-sm" placeholder="usuario@hypenosys.com">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Configuración API Tab -->
+                                <div class="tab-pane fade" id="config-api-pane" role="tabpanel" aria-labelledby="config-api-tab">
+                                    <div class="space-y-6">
+                                        <!-- Warning Banner -->
+                                        <div class="bg-amber-900/10 border border-amber-500/20 rounded-xl p-4 flex gap-4">
+                                            <div class="text-amber-500 text-xl flex-shrink-0"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                                            <div class="text-[10px] text-amber-200/60 leading-relaxed uppercase tracking-wider">
+                                                <strong class="text-amber-400 block mb-1 font-black">Atención: Seguridad de Datos</strong>
+                                                Tu API key se guarda <span class="text-amber-300">solo en este navegador</span> (localStorage). Nunca se sube a GitHub ni se comparte con otros miembros del equipo.
+                                            </div>
+                                        </div>
+
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div>
+                                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2 tracking-widest">Proveedor de IA</label>
+                                                <select id="prof-ai-provider" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-100 focus:border-indigo-500 outline-none transition-all text-sm">
+                                                    <option value="none">Ninguno (Desactivado)</option>
+                                                    <option value="anthropic">Anthropic (Claude)</option>
+                                                    <option value="openai">OpenAI (GPT)</option>
+                                                    <option value="gemini">Google Gemini</option>
+                                                    <option value="mistral">Mistral AI</option>
+                                                    <option value="openrouter">OpenRouter</option>
+                                                    <option value="ollama">Ollama (Local)</option>
+                                                    <option value="custom">Custom Endpoint</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2 tracking-widest">Modelo Sugerido / Manual</label>
+                                                <input type="text" id="prof-ai-model" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-100 focus:border-indigo-500 outline-none transition-all text-[11px] font-mono" placeholder="modelo-id">
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2 tracking-widest">API Key</label>
+                                            <div class="relative">
+                                                <input type="password" id="prof-ai-key" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 pr-12 text-slate-100 focus:border-indigo-500 outline-none transition-all font-mono text-[11px]" placeholder="sk-...">
+                                                <button type="button" id="toggle-ai-key" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition-colors">
+                                                    <i class="fa-solid fa-eye"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div id="container-ai-base-url" class="hidden">
+                                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2 tracking-widest">Base URL (API Endpoint)</label>
+                                            <input type="text" id="prof-ai-url" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-100 focus:border-indigo-500 outline-none transition-all text-[11px] font-mono" placeholder="http://localhost:11434/v1">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer border-t border-slate-800 p-6 bg-slate-950/50 flex gap-3">
+                            <button type="button" class="flex-grow py-3 border border-slate-700 hover:bg-slate-800 rounded-xl font-bold text-xs transition-all uppercase tracking-widest" data-dismiss="modal">Cancelar</button>
+                            <button type="button" id="btn-save-profile-editor" class="flex-grow py-3 bg-emerald-500 hover:bg-emerald-600 text-slate-950 rounded-xl font-bold text-xs transition-all uppercase tracking-widest shadow-lg shadow-emerald-500/10">Guardar Perfil</button>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+
+            const wrapper = document.createElement('div');
+            wrapper.id = 'profile-editor-modal-wrapper';
+            wrapper.innerHTML = modalHtml;
+            document.body.appendChild(wrapper);
         }
 
         bindEvents() {
@@ -76,16 +217,21 @@
             }
 
             const login = window.githubApi.user.login;
+            console.log(`[ProfileEditor] Opening modal for user: ${login}`);
 
-            // Show loading state or modal immediately
-            $('#modalEditProfile').modal('show');
-
+            // Populate fields FIRST to avoid flashing empty modal
             try {
                 const profilesRes = await window.githubApi.fetchFileWithSha('_data/team_profiles.json');
                 const profiles = profilesRes.content.members || {};
+                console.log('[ProfileEditor] Fetched profiles:', profiles);
 
-                // Find entry by github_login (case insensitive) or create defaults
-                let memberData = Object.values(profiles).find(m => (m.github_login || m.github_username)?.toLowerCase() === login.toLowerCase());
+                // Find entry by github_login (case insensitive)
+                let memberData = Object.values(profiles).find(m => {
+                    const mLogin = (m.github_login || m.github_username || "").toLowerCase();
+                    return mLogin === login.toLowerCase();
+                });
+
+                console.log('[ProfileEditor] Matched member data:', memberData);
 
                 if (!memberData) {
                     console.log(`[ProfileEditor] No entry found for ${login}, using defaults.`);
@@ -124,6 +270,9 @@
                 this.updateAvatarPreview();
                 this.handleProviderChange(); // To show/hide base url
 
+                // Show modal AFTER populating
+                .modal('show');
+
             } catch (err) {
                 console.error('[ProfileEditor] Error loading profile:', err);
                 window.hypeToast('Error al cargar datos del perfil', 'error');
@@ -156,8 +305,6 @@
             // Update placeholder
             if (modelInput) {
                 modelInput.placeholder = PROVIDER_DEFAULTS[provider] || 'modelo-id';
-                // If switching and current model is empty or was a default, we could update it
-                // but usually it's better to just leave what's there or use placeholder
             }
 
             // Show/Hide base URL
@@ -198,7 +345,10 @@
                 // 1. Update team_profiles.json
                 await window.githubApi.atomicWrite('_data/team_profiles.json', (db) => {
                     db.members = db.members || {};
-                    let memberKey = Object.keys(db.members).find(k => (db.members[k].github_login || db.members[k].github_username)?.toLowerCase() === login.toLowerCase());
+                    let memberKey = Object.keys(db.members).find(k => {
+                        const m = db.members[k];
+                        return (m.github_login || m.github_username)?.toLowerCase() === login.toLowerCase();
+                    });
 
                     if (!memberKey) {
                         // User doesn't exist, create entry using login as key
@@ -210,7 +360,7 @@
 
                     db.members[memberKey] = {
                         ...db.members[memberKey],
-                        github_login: login, // Requirement 5
+                        github_login: login,
                         github_username: login, // Backward compatibility
                         display_name,
                         role,
@@ -230,11 +380,10 @@
                 await window.githubApi.atomicWrite('_data/team.json', (team) => {
                     if (!Array.isArray(team)) return team;
 
-                    // Precise match: check if URL ends with /login (case insensitive)
                     const searchLogin = login.toLowerCase();
                     const memberIndex = team.findIndex(m => {
                         if (!m.github) return false;
-                        const url = m.github.toLowerCase().replace(/\/$/, ""); // remove trailing slash
+                        const url = m.github.toLowerCase().replace(/\/$/, "");
                         return url.endsWith('/' + searchLogin) || url === searchLogin;
                     });
 
@@ -264,7 +413,7 @@
                 }
 
                 window.hypeToast('Perfil actualizado correctamente ✓', 'success');
-                $('#modalEditProfile').modal('hide');
+                .modal('hide');
 
             } catch (err) {
                 console.error('[ProfileEditor] Save failed:', err);
