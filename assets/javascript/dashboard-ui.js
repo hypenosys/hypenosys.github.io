@@ -454,27 +454,31 @@ function setupDropdownToggle(idSuffix) {
 }
 
 function showToast(mensaje, tipo = 'info', duracionMs = 4000) {
-  let container = document.getElementById('toast-container');
-  if (!container) {
-    container = document.createElement('div');
-    container.id = 'toast-container';
-    container.className = 'fixed bottom-4 right-4 flex flex-col gap-2 z-50';
-    document.body.appendChild(container);
+  if (window.hypeToast) {
+    window.hypeToast(mensaje, tipo, duracionMs);
+  } else {
+    let container = document.getElementById('toast-container');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'toast-container';
+      container.className = 'fixed bottom-4 right-4 flex flex-col gap-2 z-50';
+      document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    const icons = { success: 'fa-circle-check', error: 'fa-circle-xmark', info: 'fa-circle-info', warning: 'fa-triangle-exclamation' };
+    const colors = { success: 'border-emerald-500 text-emerald-400', error: 'border-red-500 text-red-400', info: 'border-indigo-500 text-indigo-400', warning: 'border-amber-500 text-amber-400' };
+
+    toast.className = `toast bg-slate-900 border-l-4 p-4 rounded-xl shadow-2xl flex items-center gap-3 min-w-[300px] ${colors[tipo]}`;
+    toast.innerHTML = `<i class="fa-solid ${icons[tipo]} text-xl"></i> <span class="text-sm font-semibold text-slate-100">${mensaje}</span>`;
+
+    container.appendChild(toast);
+    requestAnimationFrame(() => toast.classList.add('toast--visible'));
+    setTimeout(() => {
+      toast.classList.remove('toast--visible');
+      toast.addEventListener('transitionend', () => toast.remove());
+    }, duracionMs);
   }
-
-  const toast = document.createElement('div');
-  const icons = { success: 'fa-circle-check', error: 'fa-circle-xmark', info: 'fa-circle-info', warning: 'fa-triangle-exclamation' };
-  const colors = { success: 'border-emerald-500 text-emerald-400', error: 'border-red-500 text-red-400', info: 'border-indigo-500 text-indigo-400', warning: 'border-amber-500 text-amber-400' };
-
-  toast.className = `toast bg-slate-900 border-l-4 p-4 rounded-xl shadow-2xl flex items-center gap-3 min-w-[300px] ${colors[tipo]}`;
-  toast.innerHTML = `<i class="fa-solid ${icons[tipo]} text-xl"></i> <span class="text-sm font-semibold text-slate-100">${mensaje}</span>`;
-
-  container.appendChild(toast);
-  requestAnimationFrame(() => toast.classList.add('toast--visible'));
-  setTimeout(() => {
-    toast.classList.remove('toast--visible');
-    toast.addEventListener('transitionend', () => toast.remove());
-  }, duracionMs);
 }
 
 function setupEventListeners() {

@@ -14,7 +14,7 @@
       <ul class="navbar-nav mr-auto" id="auth-nav-container-left">
         <!-- Auth status injected here by auth.js -->
       </ul>
-      <ul class="navbar-nav ml-auto">
+      <ul class="navbar-nav ml-auto" id="main-nav-links">
         {%- for path in page_paths -%}
           {%- assign my_page = site.pages | where: "path", path | first -%}
           {%- if my_page.title -%}
@@ -28,19 +28,33 @@
             <i class="fas fa-tachometer-alt fa-sm fa-fw mr-1 text-purple"></i> Dashboard
           </a>
         </li>
-        <li class="nav-item {% if page.url == '/documentacion/' %}active{% endif %}">
-          <a class="nav-link" href="{{ '/documentacion/' | relative_url }}" {% if page.url == '/documentacion/' %}style="pointer-events: none; opacity: 0.5;"{% endif %}>Documentación</a>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ '/documentacion/' | relative_url }}">Documentación</a>
         </li>
-        <li class="nav-item {% if page.url == '/guia-comandos/' %}active{% endif %}">
-          <a class="nav-link" href="{{ '/guia-comandos/' | relative_url }}" {% if page.url == '/guia-comandos/' %}style="pointer-events: none; opacity: 0.5;"{% endif %}>Comandos</a>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ '/guia-comandos/' | relative_url }}">Comandos</a>
         </li>
-        <li class="nav-item {% if page.url == '/tech-stack/' %}active{% endif %}">
-          <a class="nav-link" href="{{ '/tech-stack/' | relative_url }}" {% if page.url == '/tech-stack/' %}style="pointer-events: none; opacity: 0.5;"{% endif %}>Tech Stack</a>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ '/tech-stack/' | relative_url }}">Tech Stack</a>
         </li>
-        <li class="nav-item {% if page.url == '/jules-panel/' %}active{% endif %}">
-          <a class="nav-link" href="{{ '/jules-panel/' | relative_url }}" {% if page.url == '/jules-panel/' %}style="pointer-events: none; opacity: 0.5;"{% endif %}>Jules</a>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ '/jules-panel/' | relative_url }}">Jules</a>
         </li>
       </ul>
+
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          const currentPath = window.location.pathname;
+          const navLinks = document.querySelectorAll('#main-nav-links .nav-link');
+
+          navLinks.forEach(link => {
+            const href = link.getAttribute('href');
+            if (href === currentPath || (currentPath === '/' && href === '/index.html') || (href !== '/' && currentPath.startsWith(href))) {
+              link.parentElement.classList.add('active');
+            }
+          });
+        });
+      </script>
       <ul class="navbar-nav ml-auto" id="auth-nav-container">
         <!-- Auth status injected here by auth.js -->
       </ul>

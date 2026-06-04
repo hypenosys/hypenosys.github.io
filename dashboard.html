@@ -20,6 +20,25 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
         .toast { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform: translateY(100px); opacity: 0; }
         .toast--visible { transform: translateY(0); opacity: 1; }
+
+        .hype-toast {
+            background: #111114;
+            color: #f8f8f8;
+            border: 1px solid #2a2a35;
+            border-left-width: 4px;
+            border-radius: 8px;
+            padding: 12px 16px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+            min-width: 250px;
+            max-width: 90vw;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        .hype-toast--visible {
+            transform: translateX(0);
+            opacity: 1;
+        }
         .pulse-emerald { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.7); animation: pulse-emerald 2s infinite; }
         @keyframes pulse-emerald { 0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(52, 211, 153, 0); } 100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); } }
 
@@ -893,7 +912,15 @@
         </div>
     </div>
 
+    <!-- Global Hype Toast Container -->
+    <div id="hype-toast-container" class="fixed bottom-4 right-4 z-[9999] flex flex-col gap-2 pointer-events-none"></div>
+
     <!-- Scripts -->
+    <script>
+      if (!sessionStorage.getItem('gh_access_token') && !localStorage.getItem('github_token')) {
+        window.location.href = '/';
+      }
+    </script>
     <script src="assets/javascript/github-api.js"></script>
     <script src="assets/javascript/ui-components.js"></script>
     <script src="assets/javascript/auth.js"></script>
