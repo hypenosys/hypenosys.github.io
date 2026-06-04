@@ -64,6 +64,13 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-success">Fixed</h5>
             <ul class="tree-view mb-0">
+              <li><strong>Surgical Fixes (Ops Dashboard & Landing):</strong> Resolución de 3 bugs específicos tras el rollback de autenticación.
+                <ul>
+                  <li><strong>Avatar del Dashboard:</strong> Restaurada la visualización del avatar y nombre del usuario en el header (desktop y mobile) mediante la vinculación correcta con <code>HypenosysUI</code> y llamadas explícitas post-inicialización.</li>
+                  <li><strong>Persistencia de Sesión:</strong> Implementada la restauración proactiva de sesión al cargar el dashboard, validando tokens existentes en <code>localStorage</code>/<code>sessionStorage</code> antes de la carga de datos.</li>
+                  <li><strong>Dream Team (Landing):</strong> Restaurado el renderizado estático (Jekyll build-time) de la sección de equipo, eliminando el cuelgue en "Conectando..." causado por fallos en el fetch runtime.</li>
+                </ul>
+              </li>
               <li><strong>Sincronización Crítica de Auth (Dashboard):</strong> Eliminación definitiva de condiciones de carrera (race conditions) entre <code>auth.js</code> y <code>dashboard-data.js</code> mediante la implementación de un flujo dirigido por eventos.
                 <ul>
                   <li><strong>Event-Driven Bootstrapping:</strong> El dashboard ahora espera exclusivamente al evento <code>authReady</code> emitido por <code>AuthManager</code> antes de intentar cargar datos de la API de GitHub.</li>
