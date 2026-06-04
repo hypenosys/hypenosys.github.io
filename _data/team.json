@@ -34,7 +34,7 @@
     "name": "Alex",
     "role": "Main Programming, Secondary Design",
     "description": "El Alex. Capaz de convertir café en código y bugs en 'features experimentales'. Si ves un commit a las 4 AM, es él. O un bot que ha programado para que trabaje por él.",
-    "image": "assets/images/upload_soul.svg",
+    "image": "https://github.com/TopperH4rley.png",
     "skills": [
       "Programming",
       "Design"
@@ -67,7 +67,7 @@
     "name": "Mitxel",
     "role": "Main Design, Secondary Art",
     "description": "Diseñador de niveles que te harán cuestionar tu cordura. Mitxel cree que un pasillo recto es un desperdicio de espacio. Si te pierdes, es que el diseño funciona.",
-    "image": "assets/images/upload_soul.svg",
+    "image": "https://github.com/mitxel2022.png",
     "skills": [
       "Design",
       "Art"

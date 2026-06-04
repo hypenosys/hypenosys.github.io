@@ -187,6 +187,10 @@ class AuthManager {
         }
     }
 
+    logout() {
+        this.handleLogout();
+    }
+
     handleLogout() {
         window.githubApi.clearAuth();
         window.location.reload();
@@ -335,7 +339,20 @@ class AuthManager {
             const profileDelta = { display_name: name, role, bio: desc, portfolio };
             await window.githubApi.updateMemberProfile(memberName, profileDelta);
 
-            this.showToast('Éxito', 'Perfil actualizado correctamente. Refrescando...', 'success');
+            // Propagate changes to dashboard if present
+            if (window.currentProfiles && window.currentProfiles.members[memberName]) {
+                window.currentProfiles.members[memberName] = {
+                    ...window.currentProfiles.members[memberName],
+                    ...profileDelta,
+                    display_name: name, // map display_name to display_name
+                    bio: desc           // map bio to bio
+                };
+                if (typeof window.renderTeamProfiles === 'function') {
+                    window.renderTeamProfiles();
+                }
+            }
+
+            this.showToast('Éxito', 'Cambios guardados. La homepage se actualizará en ~1-2 min tras el build de GitHub Pages.', 'success');
             $('#profileModal').modal('hide');
             await this.renderDreamTeamComponent();
         } catch (e) {
