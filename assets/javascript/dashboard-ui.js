@@ -401,7 +401,7 @@ function renderUserStatus(user) {
       <!-- Dropdown menu (Tailwind) -->
       <div id="user-menu-${idSuffix}" class="hidden absolute right-0 z-50 mt-2 w-48 origin-top-right rounded-xl bg-slate-900 border border-slate-800 shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none overflow-hidden" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button-${idSuffix}" tabindex="-1">
         <div class="py-1" role="none">
-          <button onclick="window.authManager.showProfileModal()" class="flex items-center w-full px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-colors" role="menuitem">
+          <button onclick="if(window.profileEditor) window.profileEditor.openModal(); else window.authManager.showProfileModal();" class="flex items-center w-full px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-colors" role="menuitem">
             <i class="fas fa-user fa-sm fa-fw mr-3 text-indigo-400"></i> Mi Perfil
           </button>
           <button onclick="window.authManager.showSettingsModal()" class="flex items-center w-full px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-colors" role="menuitem">
