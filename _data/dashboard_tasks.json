@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-04T09:26:42.987Z",
-  "last_updated_by": "Axel",
+  "last_updated": "2026-06-04T09:27:07.113Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -1055,7 +1055,9 @@
       ],
       "acceptance_criteria": "CHAT CORE\n- Interfaz multi-sesión: sidebar con historial de conversaciones nombradas\n- Sesiones persistidas en localStorage con timestamps y resumen auto-generado\n- Streaming de respuestas en tiempo real (SSE / text_stream)\n- Soporte de Extended Thinking: toggle que activa reasoning visible al usuario\n- Markdown rendering completo en respuestas (código, tablas, listas)\n- Copiar mensaje, regenerar respuesta, editar mensaje anterior\n\nCONFIGURACIÓN POR SESIÓN\n- Model selector: claude-sonnet-4-6 por defecto, opción Opus\n- System prompt editable por sesión (con plantillas: \"Dev Assistant\", \"Code Review\", \"Hypenosys Ops\")\n- Max tokens y temperatura configurables en panel avanzado\n\nTOOL USE — INTEGRACIÓN CON HYPENOSYS\n- Claude puede llamar una tool \"create_task\" que escribe en dashboard_tasks.json via github-api.js\n- Claude puede llamar \"notify_member\" que envía email al responsable (campo email del perfil)\n- Claude puede llamar \"read_repo_context\" que lee archivos del repo vía GitHub API\n- Las tool calls son visibles en la UI como \"acciones ejecutadas\" con estado\n\nCAPACIDADES EXTRA\n- Upload de imágenes y documentos (PDF/texto) como contexto de la conversación\n- Exportar conversación como Markdown\n- Búsqueda en historial de conversaciones\n\nUX/UI\n- Layout: sidebar de sesiones (izq) + área de chat (centro) + panel de info/tools (der, colapsable)\n- Burbujas de chat diferenciadas user/assistant con avatares\n- Indicador de thinking animado cuando Extended Thinking está activo\n- Token counter en tiempo real\n- Tema Dracula consistente",
       "blocks": [],
-      "blocked_by": [],
+      "blocked_by": [
+        "27"
+      ],
       "comments": [],
       "images": [],
       "rama2": null,
@@ -1071,6 +1073,13 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-04T09:27:06.639Z",
+          "field": "blocked_by",
+          "old_value": "[]",
+          "new_value": "[\"27\"]"
         }
       ],
       "id": 29
