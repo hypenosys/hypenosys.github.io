@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-04T17:04:44.174Z",
+  "last_updated": "2026-06-04T17:52:23.533Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -184,7 +184,7 @@
     {
       "rama": "DIS",
       "descripcion": "Tutorial Unreal Engine conceptos basicos",
-      "tema_principal": "Post-launch",
+      "tema_principal": "Pre-producción",
       "prioridad": "ToDo",
       "milestone": "M1",
       "estado": "In Review",
