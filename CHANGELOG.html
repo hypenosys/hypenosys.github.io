@@ -64,6 +64,16 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-success">Added</h5>
             <ul class="tree-view mb-3">
+              <li><strong>Team Profile Editor (Dashboard):</strong>
+                <ul>
+                  <li>Integrated a new profile editor modal with two tabs: "Mi Perfil" and "Configuración API".</li>
+                  <li>Fields for display name, role, bio (with real-time counter), avatar (with live preview), and contact email.</li>
+                  <li><strong>AI Intelligence:</strong> Configuration for providers like Anthropic, OpenAI, Gemini, and Mistral, with updated 2026 model IDs (e.g., Claude 4.6).</li>
+                  <li><strong>Security:</strong> AI API keys are stored exclusively in <code>localStorage</code> (never uploaded to GitHub) with a persistent warning banner.</li>
+                  <li><strong>Persistence:</strong> Synchronized saving to <code>team_profiles.json</code> (Schema v2.0) and <code>team.json</code> via <code>atomicWrite</code>.</li>
+                  <li><strong>UI Integration:</strong> Added a "Mi Perfil" entry to the dashboard navbar dropdown and fixed a regression where dropdown buttons were unresponsive in <code>dashboard.html</code>.</li>
+                </ul>
+              </li>
               <li><strong>Unified Auth Dropdown (Dashboard):</strong> Replaced the simple avatar with a functional Tailwind-compatible dropdown in the dashboard header, consistent with the rest of the site.</li>
               <li><strong>Team Profile Management:</strong>
                 <ul>
