@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-04T09:11:07.308Z",
-  "last_updated_by": "Axlfc",
+  "last_updated": "2026-06-04T09:23:39.997Z",
+  "last_updated_by": "Axel",
   "tasks": [
     {
       "id": 1,
@@ -912,6 +912,92 @@
         }
       ],
       "id": 27
+    },
+    {
+      "title": "Nueva página \"GitHub Operations\" — Hub completo de gestión de repositorios",
+      "descripcion": "Crear una página dedicada /github-ops/ que use la GitHub REST API al máximo aprovechando el token OAuth ya existente. La página actuará como un clon funcional de GitHub adaptado al workflow del estudio: gestión de PRs (abrir, revisar, mergear, cerrar), issues, branches, commits, Actions/Workflows y notificaciones, todo desde Hypenosys sin abrir github.com. Diseño UX/UI godmode con estética Dracula, navegación por repositorios de la organización, diff viewer inline, y sistema de notificaciones en tiempo real via polling de la Notifications API.",
+      "rama": "PRO",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Major",
+      "milestone": "M2",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc",
+        "topperh4rley"
+      ],
+      "email_responsable": "axel@hypenosys.com",
+      "emails_asignados": [
+        "alex@hypenosys.com"
+      ],
+      "start_date": "2026-06-04",
+      "due_date": "2026-06-07",
+      "estimated_hours": 4,
+      "story_points": 1,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [
+        {
+          "id": 1780564938683,
+          "text": "Crear github-ops.html y github-ops.js con arquitectura modular por sección",
+          "done": false
+        },
+        {
+          "id": 1780564954345,
+          "text": "Módulo PR Manager (list + diff viewer + actions)",
+          "done": false
+        },
+        {
+          "id": 1780564965375,
+          "text": "Módulo Issues Manager",
+          "done": false
+        },
+        {
+          "id": 1780564975703,
+          "text": "Módulo Branches & Commits viewer",
+          "done": false
+        },
+        {
+          "id": 1780564986181,
+          "text": "Módulo Actions/Workflows runner",
+          "done": false
+        },
+        {
+          "id": 1780564998085,
+          "text": "Sistema de notificaciones con polling (30s interval)",
+          "done": false
+        },
+        {
+          "id": 1780565011115,
+          "text": "Componente diff viewer con syntax highlighting",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "REPOS & ORGANIZACIÓN\n- Listar todos los repos de la org con stats (stars, forks, último commit, lenguaje)\n- Selector de repo global persistido en sessionStorage\n\nPULL REQUESTS\n- Listar PRs (open/closed/merged) con filtros por autor, label, milestone\n- Ver diff inline con syntax highlighting por lenguaje\n- Aprobar / Request Changes / Merge / Close PR directamente\n- Ver y añadir review comments por línea de código\n- Ver checks de CI/CD y su estado (Actions API)\n\nISSUES\n- Listar, crear, editar, cerrar issues\n- Asignar labels, assignees, milestones\n- Comentar en issues\n\nBRANCHES & COMMITS\n- Listar branches con estado de protección\n- Ver historial de commits con avatar del autor\n- Ver commit individual con diff\n\nACTIONS / WORKFLOWS\n- Listar workflows y sus últimas ejecuciones\n- Ver logs de un workflow run\n- Re-trigger (workflow_dispatch) desde la UI\n\nNOTIFICACIONES\n- Badge de notificaciones no leídas en el nav\n- Panel de notificaciones (PRs, Issues, menciones)\n- Marcar como leídas vía API\n\nUX/UI\n- Layout tipo IDE: sidebar de repos + panel principal + panel de detalle\n- Tema Dracula consistente con el resto de Hypenosys\n- Skeleton loaders, toasts de confirmación, atajos de teclado\n- Todo paginado con infinite scroll o \"Load more\"",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-04",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-04T09:23:38.111Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 28
     }
   ]
 }
