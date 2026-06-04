@@ -5,10 +5,13 @@ layout: null
 <html lang="es" class="h-full bg-slate-950">
 <head>
     <meta charset="UTF-8">
-    <script src="{{ '/assets/javascript/bootstrap/jquery.min.js' | relative_url }}"></script>
-    <script src="{{ '/assets/javascript/bootstrap/bootstrap.bundle.min.js' | relative_url }}"></script>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hypenosys Operational Dashboard</title>
+    <link rel="stylesheet" href="{{ "/assets/main.css" | relative_url }}">
+    <script src="{{ "/assets/javascript/bootstrap/jquery.min.js" | relative_url }}"></script>
+    <script src="{{ "/assets/javascript/bootstrap/bootstrap.bundle.min.js" | relative_url }}"></script>
+    <script src="{{ "/assets/javascript/ui-components.js" | relative_url }}"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -993,23 +996,22 @@ layout: null
     <!-- Scripts -->
     <script>
       if (!sessionStorage.getItem('gh_access_token') && !localStorage.getItem('github_token')) {
-        window.location.href = '/';
+        window.location.href = '{{ "/" | relative_url }}';
       }
     </script>
-    <script src="assets/javascript/github-api.js"></script>
-    <script src="assets/javascript/ui-components.js"></script>
-    <script src="assets/javascript/auth.js"></script>
-    <script src="assets/javascript/repo-aliases.js"></script>
+    <script src="{{ "/assets/javascript/github-api.js" | relative_url }}"></script>
+    <script src="{{ "/assets/javascript/auth.js" | relative_url }}"></script>
+    <script src="{{ "/assets/javascript/repo-aliases.js" | relative_url }}"></script>
 
     <!-- Dashboard Modular Architecture -->
-    <script src="assets/javascript/dashboard-config.js"></script>
-    <script src="assets/javascript/dashboard-data.js"></script>
-    <script src="assets/javascript/dashboard-kanban.js"></script>
-    <script src="assets/javascript/dashboard-charts.js"></script>
-    <script src="assets/javascript/dashboard-tasks.js"></script>
-    <script src="assets/javascript/dashboard-modals.js"></script>
-    <script src="assets/javascript/dashboard-profiles.js"></script>
-    <script src="assets/javascript/dashboard-ui.js"></script>
-    <script src="assets/javascript/profile-editor.js"></script>
+    <script src="{{ "/assets/javascript/dashboard-config.js" | relative_url }}"></script>
+    <script src="{{ "/assets/javascript/dashboard-data.js" | relative_url }}"></script>
+    <script src="{{ "/assets/javascript/dashboard-kanban.js" | relative_url }}"></script>
+    <script src="{{ "/assets/javascript/dashboard-charts.js" | relative_url }}"></script>
+    <script src="{{ "/assets/javascript/dashboard-tasks.js" | relative_url }}"></script>
+    <script src="{{ "/assets/javascript/dashboard-modals.js" | relative_url }}"></script>
+    <script src="{{ "/assets/javascript/dashboard-profiles.js" | relative_url }}"></script>
+    <script src="{{ "/assets/javascript/dashboard-ui.js" | relative_url }}"></script>
+    <script src="{{ "/assets/javascript/profile-editor.js" | relative_url }}"></script>
 </body>
 </html>
