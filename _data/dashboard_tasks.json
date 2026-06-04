@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-04T08:39:58.536Z",
-  "last_updated_by": "Axel",
+  "last_updated": "2026-06-04T08:40:12.670Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -753,7 +753,7 @@
       "task_type": "feature",
       "tema_principal": "Programación / Engine",
       "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Major",
+      "prioridad": "Medium",
       "milestone": "M1",
       "estado": "Pending",
       "completitud": 0,
@@ -806,6 +806,13 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-04T08:40:12.143Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Medium"
         }
       ],
       "id": 26
