@@ -62,6 +62,21 @@ permalink: /CHANGELOG.html
         <h2 class="text-purple border-bottom border-purple pb-2 mb-4">[Unreleased]</h2>
         <div class="card mb-3">
           <div class="card-body">
+            <h5 class="text-success">Fixed</h5>
+            <ul class="tree-view mb-3">
+              <li><strong>Dashboard UI & Modals:</strong>
+                <ul>
+                  <li>Restaurado el estilo de los modales de Perfil y Ajustes en <code>dashboard.html</code> mediante la inclusión de <code>assets/main.css</code>.</li>
+                  <li>Corregida la posición de los modales (ahora centrados con overlay oscuro) y la visibilidad de los inputs.</li>
+                  <li>Estandarizados todos los enlaces a recursos locales (JS/CSS) usando el filtro <code>relative_url</code> de Jekyll.</li>
+                  <li>Sincronizado el orden de carga de scripts para garantizar que jQuery y Bootstrap se inicialicen correctamente antes de los módulos del dashboard.</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="card mb-3">
+          <div class="card-body">
             <h5 class="text-success">Added</h5>
             <ul class="tree-view mb-3">
               <li><strong>Team Profile Editor (Dashboard):</strong>
