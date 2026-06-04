@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-04T17:04:15.903Z",
+  "last_updated": "2026-06-04T17:04:28.085Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -325,9 +325,16 @@
           "field": "task_type",
           "old_value": "feature",
           "new_value": "chore"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-04T17:04:27.566Z",
+          "field": "repository",
+          "old_value": null,
+          "new_value": "hypenosys/app"
         }
       ],
-      "repository": null
+      "repository": "hypenosys/app"
     },
     {
       "rama": "PRO",
