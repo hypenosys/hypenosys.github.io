@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-04T08:51:21.600Z",
-  "last_updated_by": "Axel",
+  "last_updated": "2026-06-04T08:51:47.380Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -876,7 +876,9 @@
       ],
       "acceptance_criteria": "- Cada tarjeta Kanban muestra un botón 🤖 visible solo para usuarios autenticados\n- Al pulsar, se construye un prompt estructurado con todos los campos de la tarea (título, descripción, criterios de aceptación, subtareas, rama, milestone)\n- Si la tarea referencia imágenes, el sistema avisa: \"Jules no soporta imágenes, se excluirán\"\n- Si faltan campos críticos (descripción, criterios), se muestra un checklist de lo que falta antes de enviar\n- Al confirmar, redirige al Jules Panel con el prompt precargado y la tarea vinculada por ID\n- La tarjeta Kanban muestra badge de estado Jules: Ninguna / Planificando / Ejecutando / PR Abierto / Fallida\n- El badge muestra el avatar del miembro que inició la sesión\n- El estado se persiste en dashboard_tasks.json bajo un campo jules_session: { session_id, initiated_by, status, pr_url }\n- [OPCIONAL] Campo en _config.yml o _data/ para activar Claude API como orquestador desatendido de Jules\n- [OPCIONAL] Si Claude API está activo, el botón 🤖 ofrece modo \"Autónomo\" además de \"Manual\"",
       "blocks": [],
-      "blocked_by": [],
+      "blocked_by": [
+        "26"
+      ],
       "comments": [],
       "images": [],
       "rama2": null,
@@ -892,6 +894,13 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-04T08:51:46.719Z",
+          "field": "blocked_by",
+          "old_value": "[]",
+          "new_value": "[\"26\"]"
         }
       ],
       "id": 27
