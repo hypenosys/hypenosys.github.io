@@ -1,9 +1,9 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-04T08:40:14.682Z",
+  "computed_at": "2026-06-04T08:51:23.896Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 9,
+    "total_tasks": 10,
     "total_ok": 0,
     "total_ko": 0,
     "total_uncertain": 3,
@@ -33,9 +33,11 @@
       "DIS": 1,
       "chore": 1,
       "onboarding": 1,
-      "ART": 1
+      "ART": 1,
+      "Infraestructura": 1,
+      "jules": 1
     },
-    "milestone_tasks_remaining": 9,
+    "milestone_tasks_remaining": 10,
     "hall_of_fame_winners": {
       "mvp": {
         "handle": "axlfc",
@@ -170,8 +172,8 @@
         "reprioritizations": 7
       },
       "workload": {
-        "active_tasks": 5,
-        "story_points": 10
+        "active_tasks": 6,
+        "story_points": 14
       }
     },
     "topperh4rley": {
@@ -215,8 +217,8 @@
         "reprioritizations": 7
       },
       "workload": {
-        "active_tasks": 7,
-        "story_points": 11
+        "active_tasks": 8,
+        "story_points": 15
       }
     },
     "dkdidac-design": {
