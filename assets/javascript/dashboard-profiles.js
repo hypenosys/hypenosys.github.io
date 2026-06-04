@@ -1,5 +1,21 @@
 /* HYPENOSYS — PROFILES MODULE */
 
+/**
+ * Resolves avatar URL based on production rules:
+ * 1. avatar_url if it starts with http
+ * 2. https://github.com/<username>.png?size=200
+ * 3. assets/images/upload_soul.svg
+ */
+function resolveAvatarUrl(profile) {
+  if (profile.avatar_url && profile.avatar_url.startsWith('http')) {
+    return profile.avatar_url;
+  }
+  if (profile.github_username) {
+    return `https://github.com/${profile.github_username}.png?size=200`;
+  }
+  return 'assets/images/upload_soul.svg';
+}
+
 function renderTeamProfiles() {
   const grid = document.getElementById('team-profiles-grid');
   if (!grid || !currentProfiles || !currentProfiles.members) return;
@@ -7,10 +23,32 @@ function renderTeamProfiles() {
 
   const membersData = currentStats?.members || {};
 
+  // Setup event delegation for the grid if not already done
+  if (!grid._hasProfileListeners) {
+    grid.addEventListener('click', (e) => {
+        const editBtn = e.target.closest('[data-action="edit-profile"]');
+        if (editBtn) {
+            e.stopPropagation();
+            if (window.authManager) window.authManager.showProfileModal();
+            return;
+        }
+
+        const statsBtn = e.target.closest('[data-action="view-stats"]');
+        if (statsBtn) {
+            e.stopPropagation();
+            const memberName = statsBtn.dataset.member;
+            if (memberName) openDeepDiveModal(memberName);
+            return;
+        }
+    });
+    grid._hasProfileListeners = true;
+  }
+
   Object.entries(currentProfiles.members).forEach(([name, profile]) => {
     const ghUser = (profile.github_username || '').toLowerCase();
-    const isSelf = window.currentUser === ghUser;
+    const isSelf = (window.currentUser && ghUser) ? window.currentUser === ghUser : false;
     const stats = membersData[ghUser] || membersData[name] || null;
+    const avatarUrl = resolveAvatarUrl(profile);
 
     const card = document.createElement('div');
     card.id = `profile-card-${name.toLowerCase()}`;
@@ -27,16 +65,16 @@ function renderTeamProfiles() {
       <div class="p-6">
         <div class="flex justify-between items-start mb-4">
           <div class="relative">
-            <img src="${profile.avatar_url || 'https://github.com/' + (profile.github_username || 'ghost') + '.png'}" class="w-16 h-16 rounded-2xl border-2 border-slate-800 shadow-xl bg-slate-800 cursor-pointer hover:scale-105 transition-transform" onclick="event.stopPropagation(); openDeepDiveModal('${name}')">
+            <img src="${avatarUrl}" class="w-16 h-16 rounded-2xl border-2 border-slate-800 shadow-xl bg-slate-800 cursor-pointer hover:scale-105 transition-transform" onclick="event.stopPropagation(); openDeepDiveModal('${name}')">
             <div class="absolute -bottom-1 -right-1 bg-slate-900 rounded-full p-1 border border-slate-800">
                 <div class="w-3 h-3 rounded-full bg-emerald-500 pulse-emerald"></div>
             </div>
           </div>
           <div class="flex gap-2">
-              <button onclick="event.stopPropagation(); openDeepDiveModal('${name}')" class="p-2 bg-slate-950 rounded-lg text-indigo-400 hover:text-white border border-slate-800 transition-all text-xs font-bold flex items-center gap-2" title="Deep Dive">
+              <button data-action="view-stats" data-member="${name}" class="p-2 bg-slate-950 rounded-lg text-indigo-400 hover:text-white border border-slate-800 transition-all text-xs font-bold flex items-center gap-2" title="Deep Dive">
                 <i class="fa-solid fa-chart-line"></i>
               </button>
-              ${isSelf ? `<button onclick="event.stopPropagation(); window.authManager.showProfileModal('${name}')" class="p-2 text-slate-500 hover:text-white transition-colors" title="Editar Mi Perfil"><i class="fa-solid fa-pencil"></i></button>` : ''}
+              ${isSelf ? `<button data-action="edit-profile" class="p-2 text-slate-500 hover:text-white transition-colors" title="Editar Mi Perfil"><i class="fa-solid fa-pencil"></i></button>` : ''}
           </div>
         </div>
         <h3 class="text-xl font-bold mb-1 text-white">${profile.display_name}</h3>
@@ -57,13 +95,16 @@ function renderTeamProfiles() {
           <a href="https://github.com/${profile.github_username}" target="_blank" onclick="event.stopPropagation()" class="hover:text-white"><i class="fa-brands fa-github"></i></a>
           ${profile.social?.twitter ? `<a href="https://twitter.com/${profile.social.twitter}" target="_blank" onclick="event.stopPropagation()" class="hover:text-white"><i class="fa-brands fa-twitter"></i></a>` : ''}
           ${profile.social?.itchio ? `<a href="https://itch.io/profile/${profile.social.itchio}" target="_blank" onclick="event.stopPropagation()" class="hover:text-white"><i class="fa-brands fa-itch-io"></i></a>` : ''}
-          <button onclick="event.stopPropagation(); openDeepDiveModal('${name}')" class="ml-auto text-[10px] font-black text-indigo-400 hover:text-indigo-300 uppercase tracking-widest">VER STATS →</button>
+          <button data-action="view-stats" data-member="${name}" class="ml-auto text-[10px] font-black text-indigo-400 hover:text-indigo-300 uppercase tracking-widest">VER STATS →</button>
         </div>
       </div>
     `;
     grid.appendChild(card);
   });
 }
+
+// Attach to window for global access (used in auth.js handleSaveProfile)
+window.renderTeamProfiles = renderTeamProfiles;
 
 // Removed toggleProfileEdit and saveProfileEdit as they are replaced by the unified AuthManager modal
 
@@ -87,11 +128,12 @@ function openDeepDiveModal(memberName) {
 
     const ghUser = (profile.github_username || profile.handle || '').toLowerCase();
     const stats = currentStats?.members[ghUser] || currentStats?.members[memberName] || null;
+    const avatarUrl = resolveAvatarUrl(profile);
 
     // Header
     document.getElementById('deep-dive-name').textContent = profile.display_name;
     document.getElementById('deep-dive-role').textContent = profile.role || 'Sin Rol';
-    document.getElementById('deep-dive-avatar').innerHTML = `<img src="https://github.com/${ghUser || 'ghost'}.png" class="w-full h-full object-cover">`;
+    document.getElementById('deep-dive-avatar').innerHTML = `<img src="${avatarUrl}" class="w-full h-full object-cover">`;
 
     // Tab: Profile
     document.getElementById('deep-dive-bio').textContent = profile.bio || 'Sin biografía disponible.';
@@ -141,6 +183,9 @@ function openDeepDiveModal(memberName) {
 
     document.getElementById('member-deep-dive-modal').classList.remove('hidden');
 }
+
+// Attach to window for global access from onclick handlers
+window.openDeepDiveModal = openDeepDiveModal;
 
 function closeDeepDiveModal() {
     document.getElementById('member-deep-dive-modal').classList.add('hidden');

@@ -388,21 +388,68 @@ function renderUserStatus(user) {
 
   const avatarHtml = window.HypenosysUI.renderAvatar(user);
 
-  if (desktop) {
-    desktop.innerHTML = `
-      <span class="text-xs font-bold text-slate-400 hidden xl:inline">${user.login}</span>
-      <div class="cursor-pointer" onclick="window.authManager.showProfileModal()">
-        ${avatarHtml}
+  const dropdownHtml = (idSuffix) => `
+    <div class="relative inline-block text-left" id="user-dropdown-container-${idSuffix}">
+      <button type="button" class="flex items-center gap-3 focus:outline-none" id="user-menu-button-${idSuffix}">
+        <span class="text-xs font-bold text-slate-400 hidden xl:inline">${user.login}</span>
+        <div class="relative">
+          ${avatarHtml}
+          <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-slate-900 rounded-full"></span>
+        </div>
+      </button>
+
+      <!-- Dropdown menu (Tailwind) -->
+      <div id="user-menu-${idSuffix}" class="hidden absolute right-0 z-50 mt-2 w-48 origin-top-right rounded-xl bg-slate-900 border border-slate-800 shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none overflow-hidden" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button-${idSuffix}" tabindex="-1">
+        <div class="py-1" role="none">
+          <button onclick="window.authManager.showProfileModal()" class="flex items-center w-full px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-colors" role="menuitem">
+            <i class="fas fa-user fa-sm fa-fw mr-3 text-indigo-400"></i> Mi Perfil
+          </button>
+          <button onclick="window.authManager.showSettingsModal()" class="flex items-center w-full px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-colors" role="menuitem">
+            <i class="fas fa-cog fa-sm fa-fw mr-3 text-indigo-400"></i> Ajustes Avanzados
+          </button>
+          <div class="border-t border-slate-800 my-1"></div>
+          <button onclick="window.authManager.logout()" class="flex items-center w-full px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 hover:text-red-400 transition-colors" role="menuitem">
+            <i class="fas fa-sign-out-alt fa-sm fa-fw mr-3 text-indigo-400"></i> Cerrar Sesión
+          </button>
+        </div>
       </div>
-    `;
+    </div>
+  `;
+
+  if (desktop) {
+    desktop.innerHTML = dropdownHtml('desktop');
+    setupDropdownToggle('desktop');
   }
 
   if (mobile) {
-    mobile.innerHTML = `
-      <div class="cursor-pointer" onclick="window.authManager.showProfileModal()">
-        ${avatarHtml}
-      </div>
-    `;
+    mobile.innerHTML = dropdownHtml('mobile');
+    setupDropdownToggle('mobile');
+  }
+}
+
+function setupDropdownToggle(idSuffix) {
+  const btn = document.getElementById(`user-menu-button-${idSuffix}`);
+  const menu = document.getElementById(`user-menu-${idSuffix}`);
+
+  if (!btn || !menu) return;
+
+  btn.onclick = (e) => {
+    e.stopPropagation();
+    menu.classList.toggle('hidden');
+  };
+
+  // Close when clicking outside - ensure only one listener exists globally
+  if (!window._dropdownGlobalListener) {
+    document.addEventListener('click', (e) => {
+      document.querySelectorAll('[id^="user-menu-"]').forEach(m => {
+        const suffix = m.id.replace('user-menu-', '');
+        const b = document.getElementById(`user-menu-button-${suffix}`);
+        if (b && !b.contains(e.target) && !m.contains(e.target)) {
+          m.classList.add('hidden');
+        }
+      });
+    }, { passive: true });
+    window._dropdownGlobalListener = true;
   }
 }
 
