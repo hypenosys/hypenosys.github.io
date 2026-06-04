@@ -179,6 +179,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             window.history.replaceState({}, document.title, window.location.pathname);
             if (result.valid) {
                 await initDashboard();
+                // BUG 1 Fix: Explicit call after initDashboard
+                renderUserStatus(result.user);
             } else {
                 throw new Error('No autorizado');
             }
@@ -189,12 +191,38 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (loginOverlay) loginOverlay.classList.remove('hidden');
         }
     } else {
-        // No code — wait for authReady from auth.js, then init
-        document.addEventListener('authReady', async () => {
-            console.log('[DASHBOARD] authReady received. Starting initialization...');
-            if (!window._dashboardInitialized) {
-                await initDashboard();
+        // Proactive session restoration
+        const token = window.githubApi.getAuthToken();
+        if (token) {
+            console.log('[DASHBOARD] Existing token found. Validating...');
+            try {
+                const { valid, user } = await window.githubApi.validateToken();
+                if (valid) {
+                    await initDashboard();
+                    // BUG 1 Fix: Ensure renderUserStatus is called after initDashboard
+                    renderUserStatus(user);
+                } else {
+                    console.warn('[DASHBOARD] Session restoration failed validation.');
+                    document.getElementById('login-overlay').classList.remove('hidden');
+                }
+            } catch (err) {
+                console.error('[DASHBOARD] Session restoration error:', err);
+                document.getElementById('login-overlay').classList.remove('hidden');
             }
-        });
+        } else {
+            // No code, no token — wait for authReady as fallback
+            document.addEventListener('authReady', async (event) => {
+                console.log('[DASHBOARD] authReady received. Starting initialization...');
+                if (!window._dashboardInitialized) {
+                    await initDashboard();
+                    // BUG 1 Fix: Explicit call after initDashboard
+                    if (event.detail && event.detail.user) {
+                        renderUserStatus(event.detail.user);
+                    } else if (window.githubApi.user) {
+                        renderUserStatus(window.githubApi.user);
+                    }
+                }
+            });
+        }
     }
 });

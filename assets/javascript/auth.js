@@ -94,9 +94,6 @@ class AuthManager {
             const result = await window.githubApi.validateToken();
             if (result.valid) {
                 this.updateHeaderUI(result.user);
-                if (document.getElementById('dream-team-container')) {
-                    await this.renderDreamTeamComponent();
-                }
             } else {
                 this.handleAuthError({
                     status: result.user ? 403 : 401,

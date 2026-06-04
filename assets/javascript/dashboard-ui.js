@@ -381,9 +381,28 @@ function updateJulesBadges() {
 }
 
 function renderUserStatus(user) {
-  // Handled by AuthManager.updateHeaderUI in unified system
-  if (window.authManager) {
-    window.authManager.updateHeaderUI(user);
+  if (!user) return;
+
+  const desktop = document.getElementById('user-status');
+  const mobile = document.getElementById('user-status-mobile');
+
+  const avatarHtml = window.HypenosysUI.renderAvatar(user);
+
+  if (desktop) {
+    desktop.innerHTML = `
+      <span class="text-xs font-bold text-slate-400 hidden xl:inline">${user.login}</span>
+      <div class="cursor-pointer" onclick="window.authManager.showProfileModal()">
+        ${avatarHtml}
+      </div>
+    `;
+  }
+
+  if (mobile) {
+    mobile.innerHTML = `
+      <div class="cursor-pointer" onclick="window.authManager.showProfileModal()">
+        ${avatarHtml}
+      </div>
+    `;
   }
 }
 
