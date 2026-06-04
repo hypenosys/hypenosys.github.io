@@ -992,6 +992,11 @@ permalink: /jules-panel/
     }
 </style>
 
+<script>
+  if (!sessionStorage.getItem('gh_access_token') && !localStorage.getItem('github_token')) {
+    window.location.href = '/';
+  }
+</script>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="{{ '/assets/javascript/jules-api.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/repo-aliases.js' | relative_url }}"></script>

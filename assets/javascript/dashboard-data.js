@@ -62,13 +62,15 @@ function startAutoRefresh() {
 }
 
 /**
- * Migrates tasks from schema 1.0.0 to 1.1.0
+ * Migrates tasks from schema 1.0.0 to 1.2.0
  */
-function migrateTasks(data) {
+async function migrateTasks(data) {
     if (!data || !data.schema_version) return data;
+    let isDirty = false;
 
-    if (data.schema_version === "1.0.0") {
-        console.log(`[MIGRATION] Upgrading from ${data.schema_version} to 1.1.0`);
+    if (data.schema_version === "1.0.0" || data.schema_version === "1.1.0") {
+        console.log(`[MIGRATION] Upgrading from ${data.schema_version} to 1.2.0`);
+        isDirty = true;
 
         const tasks = data.tasks || [];
         tasks.forEach(task => {
@@ -96,6 +98,11 @@ function migrateTasks(data) {
             if (task.comments === undefined) task.comments = [];
             if (task.change_log === undefined) task.change_log = [];
 
+            // New fields for 1.2.0
+            if (task.jules_session === undefined) task.jules_session = null;
+            if (task.repository === undefined) task.repository = "";
+            if (task.branch === undefined) task.branch = "Programación (PRO)";
+
             if (task.comentario) {
                 const blockedByRegex = /#BLOCKED_BY:(\d+)/g;
                 let match;
@@ -113,8 +120,21 @@ function migrateTasks(data) {
             }
         });
 
-        data.schema_version = "1.1.0";
+        data.schema_version = "1.2.0";
     }
+
+    if (isDirty) {
+        try {
+            console.log(`[MIGRATION] Persisting schema changes to GitHub...`);
+            await window.githubApi.atomicWrite('_data/dashboard_tasks.json', data, `chore: migrate dashboard_tasks.json to schema 1.2.0`);
+            if (window.hypeToast) {
+                window.hypeToast(`Schema migrado: ${data.tasks.length} tareas actualizadas`, 'success');
+            }
+        } catch (err) {
+            console.error(`[MIGRATION] Failed to persist migration:`, err);
+        }
+    }
+
     return data;
 }
 
@@ -128,8 +148,8 @@ async function refreshDashboardData() {
       window.githubApi.fetchFileWithSha('_data/team_profiles.json')
     ]);
 
-    const migratedTasksData = migrateTasks(tasksRes.content);
-    const migratedArchiveData = migrateTasks(archiveRes.content);
+    const migratedTasksData = await migrateTasks(tasksRes.content);
+    const migratedArchiveData = await migrateTasks(archiveRes.content);
 
     currentTasks    = migratedTasksData.tasks || [];
     archivedTasks   = migratedArchiveData.tasks || [];
