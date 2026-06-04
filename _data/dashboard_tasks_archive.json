@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-03T12:11:18.012Z",
+  "last_updated": "2026-06-04T08:29:23.209Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -535,6 +535,97 @@
           "new_value": "hypenosys/hypenosys.github.io"
         }
       ],
+      "repository": "hypenosys/hypenosys.github.io"
+    },
+    {
+      "title": "Adoptar prácticas mobile first",
+      "descripcion": "Hay algunos botones que estamos obligados a hacer hover y que deberían mostrarse directamente en toda plataforma, por ejemplo: los hovers de las imágenes para verlas o borrarlas, O los botones de edición de las propias tasks, botoncitos de edicion, se tienen que poder ver directamente el icono sin hacer hover, para asegurar accesibilidad en movil",
+      "rama": "PRO",
+      "task_type": "feature",
+      "tema_principal": "Tools / Automation",
+      "prioridad": "Critical",
+      "milestone": "M1",
+      "estado": "OK",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc",
+        "topperh4rley"
+      ],
+      "email_responsable": "axel@hypenosys.com",
+      "emails_asignados": [],
+      "start_date": "2026-06-03",
+      "due_date": "2026-06-05",
+      "estimated_hours": 2,
+      "story_points": 1,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [
+        {
+          "url": "https://64.media.tumblr.com/35172566d5b12b663591b037b7c4902c/0adcd7d05c8fd382-6b/s1280x1920/67ff833b6ae3ddfc1d54930d8117640dff148f72.png",
+          "type": "url",
+          "tumblr_post_id": "818368948942864384",
+          "filename": "1000052439.png",
+          "uploaded_at": "2026-06-03T03:30:48.057Z"
+        }
+      ],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-01",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T07:23:45.046Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T07:26:25.897Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Critical"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T08:52:16.775Z",
+          "field": "descripcion",
+          "old_value": "Hay algunos botones que estamos obligados a hacer joven y que deberían mostrarse directamente en toda plataforma, por ejemplo: los jóvenes de las imágenes para verlas o borrarlas, O los botones de edición de las propias tasks, botoncitos de edicion, se tienen que poder ver directamente el icono sin hacer hover",
+          "new_value": "Hay algunos botones que estamos obligados a hacer hover y que deberían mostrarse directamente en toda plataforma, por ejemplo: los hovers de las imágenes para verlas o borrarlas, O los botones de edición de las propias tasks, botoncitos de edicion, se tienen que poder ver directamente el icono sin hacer hover, para asegurar accesibilidad en movil"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-03T06:09:23.159Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-03T06:09:23.159Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-06-05"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-03T07:35:09.003Z",
+          "field": "repository",
+          "old_value": null,
+          "new_value": "hypenosys/hypenosys.github.io"
+        }
+      ],
+      "id": 22,
       "repository": "hypenosys/hypenosys.github.io"
     }
   ]
