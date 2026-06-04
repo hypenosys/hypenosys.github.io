@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-04T17:03:53.929Z",
-  "last_updated_by": "Sistema",
+  "last_updated": "2026-06-04T17:04:15.903Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -238,9 +238,16 @@
           "field": "task_type",
           "old_value": "chore",
           "new_value": "research"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-04T17:04:15.430Z",
+          "field": "repository",
+          "old_value": null,
+          "new_value": "hypenosys/app"
         }
       ],
-      "repository": null
+      "repository": "hypenosys/app"
     },
     {
       "rama": "PRO",
