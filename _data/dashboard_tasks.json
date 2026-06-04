@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-04T08:29:17.369Z",
+  "last_updated": "2026-06-04T08:29:35.396Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -703,129 +703,6 @@
       "comentario": "",
       "id": 20,
       "repository": null
-    },
-    {
-      "title": "Arreglar previsualización de fotos fuera del edit",
-      "descripcion": "Al hacer clic en una de las fotos desde el dashboard ocurre un bug en el que nos da la falsa apariencia de que se va a abrir la imagen y al darle clic a una nueva tarea, entonces se abre la previsualización ese comportamiento no es el esperado. Esta tarea es oficialmente una tocada de pelotas máxima certificada por Axl.",
-      "rama": "PRO",
-      "task_type": "bug",
-      "tema_principal": "Programación / Engine",
-      "prioridad": "Major",
-      "milestone": "M1",
-      "estado": "OK",
-      "completitud": 0,
-      "resuelto_por": "Axel",
-      "detectado_por": "Alex",
-      "asignados": [
-        "axlfc",
-        "topperh4rley"
-      ],
-      "email_responsable": "axel@hypenosys.com",
-      "emails_asignados": [],
-      "start_date": "2026-06-01",
-      "due_date": "2026-06-05",
-      "estimated_hours": 1,
-      "story_points": 2,
-      "tags": [
-        "UX/UI",
-        "bug",
-        "hard"
-      ],
-      "external_links": [],
-      "subtasks": [],
-      "acceptance_criteria": "",
-      "blocks": [],
-      "blocked_by": [
-        "24"
-      ],
-      "comments": [
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-03T04:50:00.055Z",
-          "body": "xD arreglando esto nos hemos cargado la subida de imágenes"
-        }
-      ],
-      "images": [],
-      "rama2": null,
-      "ver": true,
-      "fecha": "2026-06-01",
-      "apoyo": null,
-      "limite": null,
-      "comentario": "",
-      "change_log": [
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-01T07:21:09.961Z",
-          "field": "id",
-          "old_value": null,
-          "new_value": "Created"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-01T07:23:57.713Z",
-          "field": "asignados",
-          "old_value": "[]",
-          "new_value": "[\"axlfc\",\"topperh4rley\"]"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-01T09:22:12.082Z",
-          "field": "due_date",
-          "old_value": null,
-          "new_value": "2026-06-05"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-01T09:22:12.082Z",
-          "field": "tags",
-          "old_value": "[\"UX/UI\"]",
-          "new_value": "[\"UX/UI\",\"bug\"]"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-01T10:47:44.530Z",
-          "field": "estado",
-          "old_value": "Pending",
-          "new_value": "Working"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-01T11:18:44.829Z",
-          "field": "prioridad",
-          "old_value": "Cosmetic",
-          "new_value": "Major"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-01T11:18:44.829Z",
-          "field": "tags",
-          "old_value": "[\"UX/UI\",\"bug\"]",
-          "new_value": "[\"UX/UI\",\"bug\",\"hard\"]"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-01T14:00:25.953Z",
-          "field": "descripcion",
-          "old_value": "Al hacer clic en una de las fotos desde el dashboard ocurre un bug en el que nos da la falsa apariencia de que se va a abrir la imagen y al darle clic a una nueva tarea, entonces se abre la previsualización ese comportamiento no es el esperado.",
-          "new_value": "Al hacer clic en una de las fotos desde el dashboard ocurre un bug en el que nos da la falsa apariencia de que se va a abrir la imagen y al darle clic a una nueva tarea, entonces se abre la previsualización ese comportamiento no es el esperado. Esta tarea es oficialmente una tocada de pelotas máxima certificada por Axl."
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-01T19:08:59.482Z",
-          "field": "blocked_by",
-          "old_value": "[]",
-          "new_value": "[\"24\"]"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-03T07:35:33.565Z",
-          "field": "repository",
-          "old_value": null,
-          "new_value": "hypenosys/hypenosys.github.io"
-        }
-      ],
-      "id": 21,
-      "repository": "hypenosys/hypenosys.github.io"
     },
     {
       "title": "Añadir campo repositorio a las tasks",
