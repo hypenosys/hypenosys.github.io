@@ -29,7 +29,8 @@ function renderTeamProfiles() {
         const editBtn = e.target.closest('[data-action="edit-profile"]');
         if (editBtn) {
             e.stopPropagation();
-            if (window.authManager) window.authManager.showProfileModal();
+            if (window.profileEditor) window.profileEditor.openModal();
+            else if (window.authManager) window.authManager.showProfileModal();
             return;
         }
 
