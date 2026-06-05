@@ -188,6 +188,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (code) {
         // Handle OAuth callback immediately — do not wait for authReady
         console.log('[DASHBOARD] OAuth code detected on DOMContentLoaded. Handling immediately...');
+
+        // Evitar que AuthManager procese el mismo código simultáneamente
+        if (window._oauthExchanging) return;
+        window._oauthExchanging = true;
+
+        // Limpiar URL inmediatamente para evitar re-procesamientos
+        window.history.replaceState({}, document.title, window.location.pathname);
+
         const loginOverlay = document.getElementById('login-overlay');
         if (loginOverlay) {
             loginOverlay.classList.remove('hidden');
@@ -196,19 +204,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         try {
             const result = await window.githubApi.exchangeCodeForToken(code);
-            window.history.replaceState({}, document.title, window.location.pathname);
             if (result.valid) {
                 await initDashboard();
                 // BUG 1 Fix: Explicit call after initDashboard
                 renderUserStatus(result.user);
             } else {
-                throw new Error('No autorizado');
+                throw new Error(result.user ? 'No autorizado' : 'Token inválido');
             }
         } catch (err) {
             console.error('[DASHBOARD] OAuth Error:', err);
-            showToast('Error de autenticación: ' + err.message, 'error');
-            const loginOverlay = document.getElementById('login-overlay');
-            if (loginOverlay) loginOverlay.classList.remove('hidden');
+
+            // Si hay un error, mostramos el toast y redirigimos tras un breve delay
+            if (window.hypeToast) {
+                window.hypeToast('Error de autenticación: ' + err.message, 'error');
+            } else {
+                alert('Error de autenticación: ' + err.message);
+            }
+
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 3000);
         }
     } else {
         // Proactive session restoration
