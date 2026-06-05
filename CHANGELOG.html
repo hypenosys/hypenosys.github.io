@@ -64,14 +64,22 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-success">Added</h5>
             <ul class="tree-view mb-3">
-              <li><strong>Claude Neural Chat:</strong>
+              <li><strong>Claude Chat & Local Ollama Integration:</strong>
                 <ul>
-                  <li>Nueva interfaz de chat privada en <code>/claude-chat/</code> con estética Dracula.</li>
-                  <li>Conexión directa con la API de Claude (claude-3-5-sonnet) con soporte para streaming (SSE).</li>
-                  <li>Implementado <strong>Extended Thinking</strong> para razonamiento complejo.</li>
-                  <li>Persistencia de múltiples sesiones de chat en <code>localStorage</code>.</li>
-                  <li>Integración como Orquestador: Claude puede crear tareas directamente en el Dashboard de Hypenosys.</li>
-                  <li>Escaneo y selección de modelos locales vía <strong>Ollama</strong>.</li>
+                  <li>Nueva interfaz de chat neuronal en <code>/claude-chat.html</code> integrada con el sistema de autenticación global.</li>
+                  <li>Soporte para <strong>Ollama</strong> como backend privado y local, con descubrimiento automático en red local (escaneo de rangos /24).</li>
+                  <li>Herramientas de descubrimiento local con concurrencia limitada (8) y gestión de timeouts para seguridad y rendimiento.</li>
+                  <li>Listado dinámico y selección de modelos de Ollama mediante el endpoint <code>/api/tags</code>.</li>
+                  <li>Acceso rápido a Claude Chat desde el header autenticado de Jules Panel.</li>
+                  <li>Configuración de IA persistida localmente en <code>localStorage</code>, sincronizando solo información no sensible (proveedor y modelo) con GitHub.</li>
+                  <li>Mensajes de error detallados para fallos de red, contenido mixto (HTTP/HTTPS) y CORS.</li>
+                </ul>
+              </li>
+              <li><strong>GitHub API & Auth improvements:</strong>
+                <ul>
+                  <li>Implementado wrapper seguro <code>updateMemberAiConfig</code> en <code>github-api.js</code> para proteger datos sensibles.</li>
+                  <li>Refactorizada la autenticación en Jules Panel y Claude Chat para eliminar redirecciones destructivas y bucles infinitos.</li>
+                  <li>Centralizada la lógica de intercambio de tokens en <code>AuthManager</code>.</li>
                 </ul>
               </li>
               <li><strong>GitHub Hub (Jules Panel Upgrade):</strong>
