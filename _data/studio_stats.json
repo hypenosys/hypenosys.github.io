@@ -1,12 +1,12 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-05T18:50:52.675Z",
+  "computed_at": "2026-06-05T18:51:07.674Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 10,
     "total_ok": 0,
     "total_ko": 0,
-    "total_uncertain": 5,
+    "total_uncertain": 6,
     "total_obsolete": 5,
     "fixed_found_ratio": 0,
     "verified_ratio": 0
