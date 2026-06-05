@@ -18,7 +18,7 @@
 
                 <div class="form-group">
                     <label for="ai_provider" class="text-gray-400 small font-weight-bold uppercase">Proveedor de IA</label>
-                    <select id="ai_provider" class="form-control bg-dark text-white border-purple" onchange="window.authManager.handleProviderChange()">
+                    <select id="ai_provider" class="form-control bg-dark text-white border-purple" onchange="if(window.authManager) window.authManager.handleProviderChange()">
                         <option value="none">Ninguno</option>
                         <option value="anthropic">Anthropic (Claude)</option>
                         <option value="openai">OpenAI (ChatGPT)</option>
@@ -35,7 +35,7 @@
                     <input type="text" id="ai_model" class="form-control bg-dark text-white border-purple" placeholder="Selecciona un proveedor">
                 </div>
 
-                <div class="form-group">
+                <div id="group-api-key" class="form-group">
                     <label for="ai_api_key" class="text-gray-400 small font-weight-bold uppercase">API Key</label>
                     <div class="input-group">
                         <input type="password" id="ai_api_key" class="form-control bg-dark text-white border-purple" placeholder="sk-...">
@@ -47,13 +47,18 @@
                     </div>
                 </div>
 
+                <div id="group-ollama-no-key" class="alert alert-info bg-black border-purple text-white-50 small mb-4" style="display: none;">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    Ollama local no requiere API Key. La Base URL se guarda solo en este navegador.
+                </div>
+
                 <div id="group-base-url" class="form-group" style="display: none;">
                     <label for="ai_base_url" class="text-gray-400 small font-weight-bold uppercase">Base URL / Endpoint</label>
                     <div class="input-group">
                         <input type="text" id="ai_base_url" class="form-control bg-dark text-white border-purple" placeholder="http://localhost:11434">
                         <div id="ollama-scan-btn-group" class="input-group-append" style="display: none;">
-                            <button id="btn-scan-ollama" class="btn btn-outline-purple" type="button" onclick="window.ollamaUI.startScan()">
-                                <i class="fas fa-search"></i> BUSCAR
+                            <button id="btn-load-ollama-models" class="btn btn-outline-purple" type="button" onclick="window.ollamaUI.refreshModels()">
+                                <i class="fas fa-sync-alt"></i> CARGAR MODELOS
                             </button>
                         </div>
                     </div>
@@ -63,7 +68,14 @@
                 <div id="group-ollama-discovery" style="display: none;">
                     <div class="form-group">
                         <label for="ollama-scan-range" class="text-gray-400 small font-weight-bold uppercase">Rango de Búsqueda (Opcional)</label>
-                        <input type="text" id="ollama-scan-range" class="form-control form-control-sm bg-dark text-white border-purple" placeholder="localhost, 192.168.1.0/24">
+                        <div class="input-group">
+                            <input type="text" id="ollama-scan-range" class="form-control form-control-sm bg-dark text-white border-purple" placeholder="localhost, 192.168.1.0/24">
+                            <div class="input-group-append">
+                                <button id="btn-scan-ollama-range" class="btn btn-outline-purple btn-sm" type="button" onclick="window.ollamaUI.startScan()">
+                                    <i class="fas fa-search"></i> BUSCAR EN RANGO
+                                </button>
+                            </div>
+                        </div>
                     </div>
                     <div id="group-ollama-endpoints" class="form-group" style="display: none;">
                         <label for="ollama-endpoints-select" class="text-gray-400 small font-weight-bold uppercase">Endpoints Detectados</label>

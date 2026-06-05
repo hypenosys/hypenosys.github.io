@@ -108,6 +108,16 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-success">Fixed</h5>
             <ul class="tree-view mb-3">
+              <li><strong>Ollama Integration Fixes:</strong>
+                <ul>
+                  <li>Resuelto bug donde la carga de modelos estaba vinculada incorrectamente al rango de escaneo en lugar de a la Base URL.</li>
+                  <li>Separadas las acciones de <strong>CARGAR MODELOS</strong> (vía Base URL directa) y <strong>BUSCAR EN RANGO</strong> (vía escaneo de red).</li>
+                  <li>Mejorado el reporte de errores mostrando el endpoint exacto probado y proporcionando contexto detallado (CORS, mixed content, timeout).</li>
+                  <li>Ocultado el campo API Key para el proveedor Ollama, sustituyéndolo por un mensaje informativo.</li>
+                  <li>Garantizada la carga global de scripts de Ollama en el footer para evitar errores de "undefined" al abrir el modal de configuración.</li>
+                  <li>Añadidos guards defensivos para verificar la disponibilidad de los módulos antes de interactuar con la UI.</li>
+                </ul>
+              </li>
               <li><strong>Kanban Subtasks:</strong> Reemplazados los iconos rotos por botones funcionales de búsqueda en GitHub y eliminación con confirmación de 2 segundos.</li>
               <li><strong>UX Stability:</strong> Implementada supresión de saltos de scroll (Scroll Jump Suppression) durante el polling de la API de Jules.</li>
             </ul>
