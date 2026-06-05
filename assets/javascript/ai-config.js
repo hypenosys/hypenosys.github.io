@@ -15,6 +15,9 @@ class OllamaUI {
         return window.ollamaDiscovery;
     }
 
+    /**
+     * "BUSCAR EN RANGO" logic: uses ollama-scan-range
+     */
     async startScan() {
         if (!this.discovery) {
             this.showError('Módulo Ollama no cargado. Recarga la página o revisa la carga de scripts.');
@@ -27,7 +30,7 @@ class OllamaUI {
         const selectGroup = document.getElementById('group-ollama-endpoints');
         const select = document.getElementById('ollama-endpoints-select');
 
-        if (!btn) return; // Guard for UI elements
+        if (!btn) return;
 
         const originalHtml = btn.innerHTML;
         btn.disabled = true;
@@ -35,7 +38,7 @@ class OllamaUI {
 
         if (status) {
             status.style.display = 'block';
-            status.textContent = 'Iniciando escaneo...';
+            status.textContent = 'Iniciando escaneo de red...';
         }
 
         if (selectGroup) selectGroup.style.display = 'none';
@@ -78,7 +81,7 @@ class OllamaUI {
             this.showError(msg);
         } finally {
             btn.disabled = false;
-            btn.innerHTML = originalHtml;
+            btn.innerHTML = '<i class="fas fa-search"></i> BUSCAR EN RANGO';
         }
     }
 
@@ -86,10 +89,14 @@ class OllamaUI {
         const baseUrlInput = document.getElementById('ai_base_url');
         if (baseUrlInput) {
             baseUrlInput.value = endpoint;
+            // When selecting an endpoint from discovery, automatically load its models
             this.refreshModels();
         }
     }
 
+    /**
+     * "CARGAR MODELOS" logic: uses ai_base_url directly
+     */
     async refreshModels() {
         if (!this.discovery) {
             this.showError('Módulo Ollama no cargado. Recarga la página o revisa la carga de scripts.');
@@ -130,7 +137,7 @@ class OllamaUI {
 
         if (status) {
             status.style.display = 'block';
-            status.textContent = `Conectando a ${endpoint}/api/tags ...`;
+            status.textContent = `Probando conexión con ${endpoint}/api/tags ...`;
         }
 
         try {
@@ -153,7 +160,6 @@ class OllamaUI {
                     } else if (modelInput && models.some(m => m.name === modelInput.value)) {
                         select.value = modelInput.value;
                     } else if (modelInput) {
-                        // Current model not in list, add it as an option but keep it selected
                         const opt = document.createElement('option');
                         opt.value = modelInput.value;
                         opt.textContent = `${modelInput.value} (Actual)`;
@@ -162,7 +168,7 @@ class OllamaUI {
                     }
                 }
 
-                if (status) status.textContent = `Modelos cargados desde ${endpoint}`;
+                if (status) status.textContent = `Modelos cargados exitosamente desde ${endpoint}`;
                 this.showSuccess(`Modelos cargados correctamente desde ${endpoint}`);
             } else {
                 if (select) {
@@ -170,7 +176,7 @@ class OllamaUI {
                     noneOpt.textContent = 'No se encontraron modelos';
                     select.appendChild(noneOpt);
                 }
-                if (status) status.textContent = `No hay modelos en ${endpoint}`;
+                if (status) status.textContent = `No se detectaron modelos en ${endpoint}`;
                 this.showError(`No se encontraron modelos en ${endpoint}/api/tags`);
             }
         } catch (e) {
@@ -180,7 +186,7 @@ class OllamaUI {
             if (select) {
                 select.innerHTML = '';
                 const errorOpt = document.createElement('option');
-                errorOpt.textContent = 'Error al cargar';
+                errorOpt.textContent = 'Error de conexión';
                 select.appendChild(errorOpt);
             }
 
@@ -190,7 +196,7 @@ class OllamaUI {
         } finally {
             if (btn) {
                 btn.disabled = false;
-                btn.innerHTML = originalBtnHtml;
+                btn.innerHTML = '<i class="fas fa-sync-alt"></i> CARGAR MODELOS';
             }
         }
     }
@@ -201,7 +207,7 @@ class OllamaUI {
         } else if (window.authManager && typeof window.authManager.showToast === 'function') {
             window.authManager.showToast('Error Ollama', msg, 'error');
         } else {
-            alert(msg);
+            console.error('[OllamaUI] ' + msg);
         }
     }
 
@@ -209,9 +215,10 @@ class OllamaUI {
         if (window.hypeToast) {
             window.hypeToast(msg, 'success');
         } else if (window.authManager && typeof window.authManager.showToast === 'function') {
-            window.authManager.showToast('Ollama', msg, 'success');
+            window.authManager.showToast('Éxito Ollama', msg, 'success');
         }
     }
 }
 
+// Instantiate globally
 window.ollamaUI = new OllamaUI();
