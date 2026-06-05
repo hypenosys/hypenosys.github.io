@@ -92,7 +92,26 @@ permalink: /jules-panel/
                   <div id="jules-branch-status" style="
                     font-size:10px; color:#6b7280;
                     margin-top:4px; min-height:14px;
+                    display: flex; justify-content: space-between; align-items: center;
                   "></div>
+
+                  <!-- New Branch Form -->
+                  <div id="new-branch-form" style="max-height:0; overflow:hidden; transition:max-height 200ms ease-out; margin-top: 12px; display: flex; flex-direction: column; gap: 8px;">
+                      <input id="new-branch-name" type="text" placeholder="feature/nombre-feature"
+                             style="width: 100%; background: #0d0d0f; border: 1px solid #2a2a35; color: #f8f8f2; border-radius: 6px; padding: 6px 10px; font-size: 12px; outline: none;" />
+                      <div id="branch-name-error" style="color: #ff5555; font-size: 9px; display: none;">Nombre de rama inválido</div>
+                      <select id="new-branch-base" style="width: 100%; background: #0d0d0f; border: 1px solid #2a2a35; color: #f8f8f2; border-radius: 6px; padding: 6px 10px; font-size: 12px; outline: none;">
+                          <!-- Populated via API -->
+                      </select>
+                      <div style="display:flex; gap:8px;">
+                          <button id="new-branch-create" style="flex: 1; background: #50fa7b; color: #18181c; border: none; border-radius: 4px; padding: 6px; font-size: 11px; font-weight: 700; cursor: pointer;">CREAR</button>
+                          <button id="new-branch-cancel" style="flex: 1; background: transparent; border: 1px solid #2a2a35; color: #6272a4; border-radius: 4px; padding: 6px; font-size: 11px; font-weight: 700; cursor: pointer;">CANCELAR</button>
+                      </div>
+                  </div>
+
+                  <button id="btn-show-new-branch" style="background: transparent; border: 1px dashed #2a2a35; color: #6272a4; width: 100%; padding: 6px; border-radius: 6px; font-size: 10px; font-weight: 700; cursor: pointer; margin-top: 8px; transition: all 0.2s;">
+                      <i class="fas fa-plus mr-1"></i> NUEVA RAMA
+                  </button>
                 </div>
 
                 <div id="repo-error-container"></div>
@@ -130,49 +149,43 @@ permalink: /jules-panel/
             </section>
         </aside>
 
-        <!-- Main Content / Sessions -->
-        <main class="panel-content">
+        <main class="panel-sessions" style="display: flex; flex-direction: column; gap: 24px;">
             <div class="content-header">
                 <div class="flex justify-between items-end mb-4">
-                    <h2 class="section-title mb-0 border-0 p-0">Historial de Sesiones</h2>
-                    <span id="jules-last-update" class="text-[9px] text-slate-600 font-bold uppercase tracking-tighter">Última actualización: hace 0 segundos</span>
+                    <h2 class="section-title mb-0 border-0 p-0">Sesiones</h2>
+                    <span id="jules-last-update" class="text-[9px] text-slate-600 font-bold uppercase tracking-tighter">hace 0s</span>
                 </div>
                 <div class="session-filters">
                     <button class="filter-chip active" data-filter="all">Todas</button>
-                        <button class="filter-chip" data-filter="IN_PROGRESS">En curso</button>
-                        <button class="filter-chip" data-filter="AWAITING_PLAN_APPROVAL">Esperando</button>
-                    <button class="filter-chip" data-filter="COMPLETED">Completadas</button>
-                    <button class="filter-chip" data-filter="FAILED">Fallidas</button>
+                    <button class="filter-chip" data-filter="IN_PROGRESS">En curso</button>
+                    <button class="filter-chip" data-filter="AWAITING_PLAN_APPROVAL">Esperando</button>
                 </div>
 
-                <div style="margin-top:12px;border-top:1px solid #1e1e2a;padding-top:12px;display:flex;flex-direction:column;gap:12px;">
+                <div style="margin-top:12px;border-top:1px solid #1e1e2a;padding-top:12px;display:flex;flex-direction:row;gap:12px; flex-wrap: wrap;">
                   <div>
                     <button onclick="toggleArchive()"
                       style="font-size:11px;color:#6b7280;background:none;border:none;
                              cursor:pointer;display:flex;align-items:center;gap:6px;">
-                      📦 Archivo
-                      <span id="archive-count" style="background:#2a2a35;border-radius:10px;
+                      📦 <span id="archive-count" style="background:#2a2a35;border-radius:10px;
                         padding:1px 7px;font-size:10px;">0</span>
                     </button>
-
-                    <div id="archive-panel" class="hidden" style="margin-top:12px;">
-                      <div id="archive-list"></div>
-                    </div>
                   </div>
 
-                  <div id="jules-cemetery-section">
+                  <div>
                     <button onclick="toggleCemetery()"
                       style="font-size:11px;color:#6b7280;background:none;border:none;
                              cursor:pointer;display:flex;align-items:center;gap:6px;">
-                      🪦 Cementerio de Sesiones
-                      <span id="cemetery-count" style="background:#2a2a35;border-radius:10px;
+                      🪦 <span id="cemetery-count" style="background:#2a2a35;border-radius:10px;
                         padding:1px 7px;font-size:10px;">0</span>
                     </button>
-
-                    <div id="cemetery-panel" class="hidden" style="margin-top:12px;">
-                      <div id="cemetery-list"></div>
-                    </div>
                   </div>
+                </div>
+
+                <div id="archive-panel" class="hidden" style="margin-top:12px; width: 100%;">
+                  <div id="archive-list"></div>
+                </div>
+                <div id="cemetery-panel" class="hidden" style="margin-top:12px; width: 100%;">
+                  <div id="cemetery-list"></div>
                 </div>
             </div>
 
@@ -182,40 +195,111 @@ permalink: /jules-panel/
                 </div>
                 <div id="jules-empty-message" class="hidden text-center py-12 opacity-40">
                     <i class="fa-solid fa-inbox text-4xl mb-3"></i>
-                    <p class="text-xs font-bold uppercase tracking-widest">No hay sesiones que mostrar</p>
+                    <p class="text-xs font-bold uppercase tracking-widest">Sin sesiones</p>
                 </div>
                 <div id="pagination-container" class="pagination-footer hidden">
                     <button id="btn-load-more" class="btn btn--secondary w-full py-3 mt-4 font-bold text-[11px] uppercase tracking-widest">
-                        Cargar más sesiones
+                        Cargar más
                     </button>
                 </div>
             </div>
         </main>
+
+        <!-- Right Side: GitHub Hub (60%) -->
+        <section id="gh-hub" class="panel-hub">
+            <div class="gh-hub-tabs" role="tablist" aria-label="GitHub Hub">
+                <button role="tab" class="active" data-tab="pull-requests" aria-controls="panel-pr">
+                    PRs <span class="hub-badge" id="pr-badge">0</span>
+                </button>
+                <button role="tab" data-tab="issues" aria-controls="panel-issues">
+                    Issues <span class="hub-badge" id="issues-badge">0</span>
+                </button>
+                <button role="tab" data-tab="branches" aria-controls="panel-branches">
+                    Branches
+                </button>
+                <button role="tab" data-tab="actions" aria-controls="panel-actions">
+                    Actions
+                </button>
+                <button role="tab" data-tab="notifications" aria-controls="panel-notifs">
+                    Notifs <span class="hub-badge" id="notif-badge">0</span>
+                </button>
+            </div>
+
+            <div class="gh-hub-content custom-scrollbar">
+                <div id="panel-pr"          class="tab-panel" role="tabpanel"></div>
+                <div id="panel-issues"      class="tab-panel" role="tabpanel" style="display:none;"></div>
+                <div id="panel-branches"    class="tab-panel" role="tabpanel" style="display:none;"></div>
+                <div id="panel-actions"     class="tab-panel" role="tabpanel" style="display:none;"></div>
+                <div id="panel-notifs"      class="tab-panel" role="tabpanel" style="display:none;"></div>
+            </div>
+        </section>
     </div>
 </div>
 
-<!-- Repo Alias Modal -->
-<div id="repo-alias-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4">
-    <div class="bg-slate-900 border border-purple-500/30 rounded-2xl shadow-2xl w-full max-w-md p-6">
-        <h3 class="text-xl font-bold text-white mb-2">Editar Alias Local</h3>
-        <p class="text-slate-400 text-[10px] uppercase tracking-widest mb-6">Este nombre solo será visible para ti</p>
+<!-- Repo Config Modal -->
+<div id="repo-config-backdrop" role="presentation"
+     style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85);
+            z-index:8000; align-items:center; justify-content:center; backdrop-blur: 4px;">
+    <div id="repo-config-modal" role="dialog" aria-modal="true" aria-labelledby="repo-modal-title"
+         style="z-index:8001; background:#18181c; border:1px solid #2a2a35;
+                border-radius:12px; min-width:420px; max-width:600px; width:90vw; padding: 24px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);">
 
-        <div class="form-group">
-            <label class="form-label">Nombre Real</label>
-            <div id="alias-modal-real-name" class="text-xs font-mono text-slate-500 bg-slate-950 p-3 rounded-lg border border-slate-800 break-all"></div>
-        </div>
-
-        <div class="form-group">
-            <label class="form-label">Alias del Repositorio</label>
-            <input type="text" id="alias-modal-input" class="form-input" placeholder="Ej: Centro Neural" maxlength="60">
-        </div>
-
-        <div class="flex flex-col gap-3 mt-8">
-            <div class="flex gap-3">
-                <button id="alias-modal-cancel-btn" class="flex-grow py-3 border border-slate-700 hover:bg-slate-800 rounded-lg font-bold text-sm transition-all">Cancelar</button>
-                <button id="alias-modal-save-btn" class="flex-grow py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-bold text-sm transition-all">Guardar</button>
+        <!-- HEADER -->
+        <div class="repo-modal-header" style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px; border-bottom: 1px solid #2a2a35; padding-bottom: 16px;">
+            <i id="repo-modal-icon" class="fas fa-folder" style="color:#6272a4; font-size:1.4em;"></i>
+            <div>
+                <h3 id="repo-modal-title" style="color:#f8f8f2; margin:0; font-size: 1.2rem;">Configurar Repositorio</h3>
+                <span id="repo-modal-real-name" style="color:#6272a4; font-size:0.7rem; font-family: monospace; display: block; margin-top: 2px;"></span>
             </div>
-            <button id="alias-modal-restore-btn" class="w-full py-2 text-slate-500 hover:text-slate-300 text-[10px] font-bold uppercase tracking-widest transition-all">Restaurar nombre original</button>
+            <button id="repo-modal-close" aria-label="Cerrar modal"
+                    style="margin-left:auto; background:transparent; border:none;
+                           color:#6272a4; font-size:1.4rem; cursor:pointer;">&times;</button>
+        </div>
+
+        <!-- SECCIÓN ALIAS -->
+        <div class="repo-modal-section" style="margin-bottom: 24px;">
+            <label style="color:#8be9fd; font-size:0.7rem; letter-spacing:0.1em; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; display: block;">ALIAS</label>
+            <div style="display:flex; gap:8px; align-items:center;">
+                <input id="repo-alias-input" type="text" placeholder="Nombre personalizado..."
+                       style="flex:1; background:#0d0d0f; border:1px solid #2a2a35;
+                              color:#f8f8f2; border-radius:8px; padding:8px 12px; font-size: 13px; outline: none;"/>
+                <button id="repo-alias-reset"
+                        style="background:transparent; border:1px solid #2a2a35;
+                               color:#6272a4; border-radius:8px; padding:8px 12px;
+                               font-size:0.7rem; cursor:pointer; white-space:nowrap; font-weight: 700;">
+                    RESTAURAR
+                </button>
+            </div>
+        </div>
+
+        <!-- SECCIÓN CATEGORÍAS -->
+        <div class="repo-modal-section" style="margin-bottom: 24px;">
+            <label style="color:#bd93f9; font-size:0.7rem; letter-spacing:0.1em; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; display: block;">CATEGORÍAS</label>
+            <div id="repo-tags-grid" style="display:flex; flex-wrap:wrap; gap:8px;">
+                <!-- Generado por JS -->
+            </div>
+        </div>
+
+        <!-- SECCIÓN ICONO -->
+        <div class="repo-modal-section" style="margin-bottom: 32px;">
+            <label style="color:#50fa7b; font-size:0.7rem; letter-spacing:0.1em; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; display: block;">ICONO</label>
+            <div id="repo-icons-grid" style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
+                <!-- Generado por JS -->
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="repo-modal-footer" style="display:flex; justify-content:flex-end; gap:12px; border-top: 1px solid #2a2a35; padding-top: 20px;">
+            <button id="repo-modal-cancel"
+                    style="background:transparent; border: 1px solid #2a2a35;
+                           color:#f8f8f2; border-radius:8px; padding:10px 20px; cursor:pointer; font-size: 13px; font-weight: 600;">
+                Cancelar
+            </button>
+            <button id="repo-modal-save"
+                    style="background:#bd93f9; border:none; color:#18181c;
+                           border-radius:8px; padding:10px 20px; font-weight:700; cursor:pointer; font-size: 13px;">
+                Guardar cambios
+            </button>
         </div>
     </div>
 </div>
@@ -321,14 +405,24 @@ permalink: /jules-panel/
 
 .panel-grid {
     display: grid;
-    grid-template-columns: 320px 1fr;
+    grid-template-columns: 320px 0.4fr 0.6fr;
     gap: 32px;
     min-width: 0;
     max-width: 100%;
 }
 
+@media (max-width: 1400px) {
+    .panel-grid {
+        grid-template-columns: 320px 1fr;
+    }
+    .panel-hub {
+        grid-column: 1 / -1;
+    }
+}
+
 @media (max-width: 1024px) {
     .panel-grid { grid-template-columns: 1fr; }
+    .panel-hub { grid-column: auto; }
 }
 
 .panel-sidebar {
@@ -868,15 +962,19 @@ permalink: /jules-panel/
     position: fixed;
     bottom: 24px;
     right: 24px;
-    background: rgba(16,185,129,0.1);
+        background: #111114;
     border: 1px solid var(--status-completed);
+        border-left-width: 4px;
     color: var(--status-completed);
     border-radius: 8px;
     padding: 12px 18px;
     font-size: 13px;
     font-weight: 500;
-    z-index: 1000;
-    animation: toastIn 0.25s ease, toastOut 0.25s ease 3.75s forwards;
+        z-index: 9999;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+        display: flex;
+        align-items: center;
+        gap: 10px;
 }
 
 @keyframes slideDown { from { transform: translateY(-8px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
@@ -898,6 +996,149 @@ permalink: /jules-panel/
 .dl-add { color: #86efac; background: rgba(16,185,129,0.06); }
 .dl-del { color: #fca5a5; background: rgba(239,68,68,0.06); }
 .dl-hunk { color: #93c5fd; background: rgba(59,130,246,0.06); }
+
+.repo-tag-pill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border: 1px solid currentColor;
+  background: rgba(255, 255, 255, 0.1);
+  white-space: nowrap;
+}
+
+/* Custom Dropdown Styles */
+.custom-dropdown {
+    position: relative;
+    width: 100%;
+}
+.custom-dropdown-trigger {
+    width: 100%;
+    min-height: 42px;
+    background: var(--bg-input);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    color: var(--text-primary);
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.15s ease;
+}
+.custom-dropdown-trigger:hover {
+    border-color: var(--accent-primary);
+}
+.custom-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    width: 100%;
+    max-height: 300px;
+    overflow-y: auto;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    z-index: 7000;
+    display: none;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+}
+.custom-dropdown-item {
+    padding: 10px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    transition: background 0.15s ease;
+}
+.custom-dropdown-item:hover {
+    background: var(--bg-card-hover);
+}
+.custom-dropdown-item .repo-config-btn {
+    margin-left: auto;
+    opacity: 0;
+    transition: opacity 150ms ease;
+    color: var(--text-muted);
+}
+.custom-dropdown-item:hover .repo-config-btn {
+    opacity: 1;
+}
+
+/* HUB STYLES */
+#gh-hub {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.gh-hub-tabs {
+    display: flex;
+    background: #0d0d0f;
+    border-bottom: 1px solid var(--border-subtle);
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+.gh-hub-tabs::-webkit-scrollbar { display: none; }
+.gh-hub-tabs button {
+    padding: 12px 16px;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+}
+.gh-hub-tabs button:hover { color: var(--text-primary); }
+.gh-hub-tabs button.active {
+    color: #bd93f9;
+    border-bottom-color: #bd93f9;
+    background: rgba(189, 147, 249, 0.05);
+}
+.hub-badge {
+    background: #44475a;
+    color: #f8f8f2;
+    padding: 1px 5px;
+    border-radius: 10px;
+    font-size: 9px;
+    margin-left: 4px;
+}
+.gh-hub-content {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+    min-height: 400px;
+}
+
+/* SKELETONS */
+.skeleton-row {
+  height: 52px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #18181c 25%, #2a2a35 50%, #18181c 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite linear;
+  margin-bottom: 8px;
+}
+@keyframes skeleton-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skeleton-avatar { width: 24px; height: 24px; border-radius: 50%; background: #2a2a35; }
+.skeleton-text-sm { height: 11px; border-radius: 3px; background: #2a2a35; width: 40px; }
+.skeleton-text-lg { height: 15px; border-radius: 3px; background: #2a2a35; width: 60%; }
+.skeleton-pill    { height: 18px; width: 60px; border-radius: 9px; background: #2a2a35; }
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -1011,6 +1252,91 @@ permalink: /jules-panel/
 <script src="{{ '/assets/javascript/jules-api.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/repo-aliases.js' | relative_url }}"></script>
 <script>
+    // --- GLOBAL STATE & QUEUE ---
+    window.JulesPanelState = {
+        activeRepo:          localStorage.getItem('hypenosys_active_repo') || null,
+        activeBranch:        localStorage.getItem('hypenosys_active_branch') || null,
+        activeSession:       null,
+        pollingTimer:        null,
+        hubActiveTab:        sessionStorage.getItem('hypenosys_hub_active_tab') || 'pull-requests',
+        rateLimitRemaining:  999,
+        requestQueue:        [],
+        isDispatching:       false,
+    };
+
+    class GHAPIQueue {
+        constructor() {
+            this.queue = [];
+            this.running = false;
+            this.minInterval = 300;
+        }
+
+        enqueue(fn, priority = 1) {
+            return new Promise((resolve, reject) => {
+                this.queue.push({ fn, priority, resolve, reject });
+                this.queue.sort((a, b) => a.priority - b.priority);
+                this.dispatch();
+            });
+        }
+
+        async dispatch() {
+            if (this.running) return;
+            if (!this.queue.length) return;
+
+            if (window.JulesPanelState.rateLimitRemaining <= 5) {
+                const next = this.queue[0];
+                if (next.priority > 0) return;
+            }
+
+            this.running = true;
+            const { fn, resolve, reject } = this.queue.shift();
+            try {
+                const result = await fn();
+                resolve(result);
+            } catch(e) {
+                reject(e);
+            }
+            this.running = false;
+            setTimeout(() => this.dispatch(), this.minInterval);
+        }
+    }
+
+    window.GHQueue = new GHAPIQueue();
+
+    function updateRateLimit(remaining) {
+        if (remaining === null || remaining === undefined) return;
+        const count = parseInt(remaining, 10);
+        window.JulesPanelState.rateLimitRemaining = count;
+
+        if (count <= 10 && count > 0) {
+            showToast(`⚠️ GitHub API: ${count} peticiones restantes`, 'warning');
+        } else if (count === 0) {
+            showToast(`🚫 GitHub API: Rate limit alcanzado`, 'error');
+        }
+    }
+
+    function getGitHubToken() {
+        return sessionStorage.getItem('gh_access_token')
+            || localStorage.getItem('gh_access_token')
+            || sessionStorage.getItem('github_token')
+            || localStorage.getItem('github_token')
+            || null;
+    }
+
+    function handleGlobalAuthError() {
+        // Law 9: Token expiry handling
+        const hubContent = document.querySelector('.gh-hub-content');
+        if (hubContent) {
+            hubContent.innerHTML = `
+                <div style="text-align:center; padding:60px 20px; background:rgba(255,85,85,0.05); border:1px solid #ff5555; border-radius:12px;">
+                    <i class="fas fa-user-lock text-4xl mb-4" style="color:#ff5555;"></i>
+                    <h3 style="color:#f8f8f2; margin-bottom:12px;">Sesión GitHub expirada — reconéctate.</h3>
+                    <button onclick="window.authManager.handleLogin()" class="btn--primary" style="width:auto; padding:10px 24px; background:#ff5555; color:white;">RECONECTAR AHORA</button>
+                </div>
+            `;
+        }
+    }
+
     // --- STATE ---
     let currentSources = [];
     let currentSessions = [];
@@ -1049,6 +1375,7 @@ permalink: /jules-panel/
                 initializeRepoSelector();
                 refreshSessions();
                 startPolling();
+                initHub();
             }
         } catch (e) {
             console.error('[Jules Panel] Error en initJulesPanel:', e);
@@ -1078,6 +1405,151 @@ permalink: /jules-panel/
             `;
         }
     }
+
+    // --- BRANCH CREATION LOGIC (Quest 4) ---
+    function isValidBranchName(name) {
+        const forbidden = /[\s~\^:?*\[\\]|\.{2}|\/\/|\.lock$/;
+        return name.length > 0 && !forbidden.test(name) && !name.startsWith('-');
+    }
+
+    async function fetchAllBranches(owner, repo, token) {
+        let branches = [];
+        let page = 1;
+        const MAX_PAGES = 3;
+
+        while (page <= MAX_PAGES) {
+            const res = await fetch(
+                `https://api.github.com/repos/${owner}/${repo}/branches?per_page=100&page=${page}`,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            updateRateLimit(res.headers.get('X-RateLimit-Remaining'));
+            const data = await res.json();
+            if (!data.length) break;
+            branches = branches.concat(data);
+            if (data.length < 100) break;
+            page++;
+        }
+
+        const defaultBranch = window.JulesPanelState.activeBranch || 'main';
+        branches.sort((a, b) => {
+            if (a.name === defaultBranch) return -1;
+            if (b.name === defaultBranch) return  1;
+            return a.name.localeCompare(b.name);
+        });
+
+        if (branches.length >= 300) {
+            branches.push({ name: '…' });
+        }
+
+        return branches;
+    }
+
+    async function createBranch(owner, repo, newName, baseBranch, token) {
+        const refRes = await fetch(
+            `https://api.github.com/repos/${owner}/${repo}/git/ref/heads/${baseBranch}`,
+            { headers: { Authorization: `Bearer ${token}` } }
+        );
+        updateRateLimit(refRes.headers.get('X-RateLimit-Remaining'));
+        if (!refRes.ok) throw new Error(`No se pudo obtener la rama base: ${baseBranch}`);
+        const { object: { sha } } = await refRes.json();
+
+        const createRes = await fetch(
+            `https://api.github.com/repos/${owner}/${repo}/git/refs`,
+            {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ ref: `refs/heads/${newName}`, sha }),
+            }
+        );
+        updateRateLimit(createRes.headers.get('X-RateLimit-Remaining'));
+
+        if (createRes.status === 422) throw new Error(`La rama "${newName}" ya existe`);
+        if (createRes.status === 403) {
+            const err = await createRes.json();
+            if (err.message && err.message.includes('insufficient_scope')) {
+                throw new Error(`Token sin permisos para esta acción (scope requerido: workflow o write:repo)`);
+            }
+            throw new Error(err.message || 'Error 403: Acceso denegado');
+        }
+        if (!createRes.ok) {
+            const err = await createRes.json();
+            throw new Error(err.message || 'Error desconocido al crear la rama');
+        }
+        return await createRes.json();
+    }
+
+    document.getElementById('btn-show-new-branch').onclick = () => {
+        const form = document.getElementById('new-branch-form');
+        const repoVal = document.getElementById('jules-repo-select').value;
+        if (!repoVal) return showToast('Selecciona un repositorio primero', 'error');
+
+        const isOpen = form.style.maxHeight !== '0px' && form.style.maxHeight !== '';
+        if (!isOpen) {
+            // Populate base branches
+            const baseSelect = document.getElementById('new-branch-base');
+            const currentBranches = Array.from(document.getElementById('jules-branch-input').options).map(o => o.value);
+            baseSelect.innerHTML = currentBranches.map(b => `<option value="${b}">${b}</option>`).join('');
+            baseSelect.value = document.getElementById('jules-branch-input').value;
+
+            form.style.maxHeight = '200px';
+        } else {
+            form.style.maxHeight = '0';
+        }
+    };
+
+    document.getElementById('new-branch-cancel').onclick = () => {
+        document.getElementById('new-branch-form').style.maxHeight = '0';
+    };
+
+    document.getElementById('new-branch-create').onclick = async () => {
+        const nameIn = document.getElementById('new-branch-name');
+        const baseIn = document.getElementById('new-branch-base');
+        const errorEl = document.getElementById('branch-name-error');
+        const newName = nameIn.value.trim();
+        const baseBranch = baseIn.value;
+        const repoVal = document.getElementById('jules-repo-select').value;
+        const parsed = window.parseSourceName(repoVal);
+
+        if (!isValidBranchName(newName)) {
+            nameIn.style.borderColor = '#ff5555';
+            errorEl.style.display = 'block';
+            return;
+        }
+
+        nameIn.style.borderColor = '#2a2a35';
+        errorEl.style.display = 'none';
+
+        const btn = document.getElementById('new-branch-create');
+        btn.disabled = true;
+        btn.textContent = 'CREANDO...';
+
+        try {
+            const token = getGitHubToken();
+            await createBranch(parsed.owner, parsed.repo, newName, baseBranch, token);
+
+            showToast(`✓ Rama '${newName}' creada desde '${baseBranch}'`);
+
+            // Refresh branch list without reload
+            const sourceObj = window.julesSourcesCache?.find(s => s.name === repoVal);
+            await onRepoSelected(repoVal, sourceObj);
+
+            // Select new branch
+            const branchSelect = document.getElementById('jules-branch-input');
+            branchSelect.value = newName;
+            $(branchSelect).trigger('change');
+
+            document.getElementById('new-branch-form').style.maxHeight = '0';
+            nameIn.value = '';
+        } catch (e) {
+            showToast(e.message, 'error');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'CREAR';
+        }
+    };
 
     // --- REPOSITORY LOGIC ---
     function updateLaunchButtonState() {
@@ -1186,9 +1658,39 @@ permalink: /jules-panel/
         updateLaunchButtonState();
     }
 
+    const REPO_TAG_METADATA = {
+        "Website":      { color: "#8be9fd" }, // cyan
+        "Documentación": { color: "#bd93f9" }, // purple
+        "Game Scripts": { color: "#50fa7b" }, // green
+        "Herramientas internas": { color: "#ff79c6" }, // pink
+        "Assets":       { color: "#f1fa8c" }, // yellow
+        "Archivado":    { color: "#6272a4" }  // gray
+    };
+
+    function getRepoTags(repoName) {
+        try {
+            const stored = localStorage.getItem('hypenosys_repo_tags');
+            const allTags = stored ? JSON.parse(stored) : {};
+            return allTags[repoName] || [];
+        } catch (e) { return []; }
+    }
+
+    function getRepoIcon(repoName) {
+        try {
+            const stored = localStorage.getItem('hypenosys_repo_icons');
+            const allIcons = stored ? JSON.parse(stored) : {};
+            return allIcons[repoName] || 'fa-folder';
+        } catch (e) { return 'fa-folder'; }
+    }
+
     async function populateSelector(sources) {
         const repoSelect = document.getElementById('jules-repo-select');
+        const customMenu = document.getElementById('jules-repo-custom-menu');
+        const customLabel = document.getElementById('jules-repo-custom-label');
         const currentVal = repoSelect.value;
+
+        customMenu.innerHTML = '';
+        repoSelect.innerHTML = '<option value="">— Escoge un repositorio —</option>';
 
         // Agrupar por owner
         const groups = {};
@@ -1198,45 +1700,127 @@ permalink: /jules-panel/
             groups[owner].push(s);
         });
 
-        repoSelect.innerHTML = '<option value="">— Escoge un repositorio —</option>';
         Object.entries(groups).sort(([a], [b]) => a.localeCompare(b)).forEach(([owner, srcs]) => {
+            const groupHeader = document.createElement('div');
+            groupHeader.className = 'text-[10px] font-bold text-slate-500 uppercase px-3 py-2 border-b border-slate-800 bg-slate-900/30';
+            groupHeader.textContent = owner;
+            customMenu.appendChild(groupHeader);
+
             const optgroup = document.createElement('optgroup');
             optgroup.label = owner;
+
             srcs.forEach(s => {
-                const opt = document.createElement('option');
-                opt.value = s.name;
                 const repoShortName = s.githubRepo?.repo || window.parseSourceName(s.name)?.repo || s.name;
                 const julesDisplayName = s.displayName || repoShortName;
-
-                // Display name priority: localStorage alias > Jules displayName > GitHub repo name
                 const displayLabel = window.getRepoDisplayName(s.name, julesDisplayName);
-                opt.textContent = displayLabel;
+                const tags = getRepoTags(s.name);
+                const icon = getRepoIcon(s.name);
 
+                // Native select
+                const opt = document.createElement('option');
+                opt.value = s.name;
+                opt.textContent = displayLabel;
                 optgroup.appendChild(opt);
+
+                // Custom item
+                const item = document.createElement('div');
+                item.className = 'custom-dropdown-item';
+                item.dataset.value = s.name;
+
+                let tagsHtml = '';
+                if (tags.length > 0) {
+                    tagsHtml = tags.slice(0, 2).map(t => {
+                        const color = REPO_TAG_METADATA[t]?.color || "#6272a4";
+                        return `<span class="repo-tag-pill" style="color: ${color}">${t}</span>`;
+                    }).join('');
+                    if (tags.length > 2) {
+                        tagsHtml += `<span class="repo-tag-pill" style="color: #6272a4">+${tags.length - 2}</span>`;
+                    }
+                }
+
+                const iconColor = REPO_TAG_METADATA[tags[0]]?.color || "#6272a4";
+
+                item.innerHTML = `
+                    <i class="fas ${icon} mr-2" style="color: ${iconColor}; width: 14px; text-align: center;"></i>
+                    <span style="flex: 1; min-width: 0; truncate;">${displayLabel}</span>
+                    <div class="flex gap-1 overflow-hidden" style="max-width: 120px;">${tagsHtml}</div>
+                    <button class="repo-config-btn" onclick="event.stopPropagation(); openRepoModal('${s.name}')">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                `;
+
+                item.tabIndex = 0;
+                item.onclick = async () => {
+                    repoSelect.value = s.name;
+                    window.JulesPanelState.activeRepo = s.name;
+                    localStorage.setItem('hypenosys_active_repo', s.name);
+                    $(repoSelect).trigger('change');
+                    customMenu.style.display = 'none';
+                    updateRepoActiveTags(s.name);
+                };
+
+                item.onkeydown = (e) => {
+                    if (e.key === 'Enter') item.click();
+                    if (e.key === 'ArrowDown') item.nextElementSibling?.focus();
+                    if (e.key === 'ArrowUp') item.previousElementSibling?.focus();
+                    if (e.key === 'Escape') customMenu.style.display = 'none';
+                };
+
+                customMenu.appendChild(item);
             });
             repoSelect.appendChild(optgroup);
         });
 
-        // Restaurar selección o aplicar la guardada
+        // Toggle logic for custom dropdown (Quest 3.5)
+        const trigger = document.getElementById('jules-repo-custom-trigger');
+        trigger.tabIndex = 0;
+        trigger.onclick = (e) => {
+            e.stopPropagation();
+            const isOpen = customMenu.style.display === 'block';
+            customMenu.style.display = isOpen ? 'none' : 'block';
+            if (!isOpen) {
+                const firstItem = customMenu.querySelector('.custom-dropdown-item');
+                if (firstItem) firstItem.focus();
+            }
+        };
+
+        trigger.onkeydown = (e) => {
+            if (e.key === 'Enter' || e.key === 'ArrowDown') trigger.click();
+        };
+        document.addEventListener('click', () => customMenu.style.display = 'none');
+
+        // Restaurar selección
+        const lastSource = localStorage.getItem('jules_selected_source');
         if (currentVal && sources.some(s => s.name === currentVal)) {
             repoSelect.value = currentVal;
-        } else {
-            const lastSource = localStorage.getItem('jules_selected_source');
-            if (lastSource && sources.some(s => s.name === lastSource)) {
-                repoSelect.value = lastSource;
-                const sourceObj = sources.find(s => s.name === lastSource);
-                await onRepoSelected(lastSource, sourceObj);
-                const lastBranch = localStorage.getItem('jules_selected_branch');
-                if (lastBranch) {
-                    document.getElementById('jules-branch-input').value = lastBranch;
-                }
-            }
+        } else if (lastSource && sources.some(s => s.name === lastSource)) {
+            repoSelect.value = lastSource;
+        }
+
+        if (repoSelect.value) {
+            const sourceName = repoSelect.value;
+            const sourceObj = sources.find(s => s.name === sourceName);
+            const repoShortName = sourceObj?.githubRepo?.repo || window.parseSourceName(sourceName)?.repo || sourceName;
+            const julesDisplayName = sourceObj?.displayName || repoShortName;
+            customLabel.textContent = window.getRepoDisplayName(sourceName, julesDisplayName);
+            updateRepoActiveTags(sourceName);
+            if (!currentVal) await onRepoSelected(sourceName, sourceObj);
         }
 
         const repoStatus = document.getElementById('repo-error-container');
         if (repoStatus && sources.length > 0) {
             repoStatus.innerHTML = `<div class="text-[10px] text-emerald-500 mt-2 font-bold uppercase tracking-wider">${sources.length} repositorios conectados</div>`;
         }
+    }
+
+    function updateRepoActiveTags(sourceName) {
+        const container = document.getElementById('repo-active-tags');
+        if (!container) return;
+        const tags = getRepoTags(sourceName);
+        container.innerHTML = tags.map(t => {
+            const color = REPO_TAG_METADATA[t]?.color || "#6272a4";
+            return `<span class="repo-tag-pill" style="color: ${color}">${t}</span>`;
+        }).join('');
     }
 
     async function onRepoSelected(sourceName, sourceObject) {
@@ -1286,6 +1870,8 @@ permalink: /jules-panel/
         // Persistir
         localStorage.setItem('jules_selected_branch', best);
         localStorage.setItem('jules_selected_source', sourceName);
+        window.JulesPanelState.activeBranch = best;
+        localStorage.setItem('hypenosys_active_branch', best);
 
       } catch(err) {
         // Fallback: ramas estándar siempre disponibles
@@ -1314,53 +1900,196 @@ permalink: /jules-panel/
         if (this.value) localStorage.setItem('jules_selected_branch', this.value);
       });
 
-    // --- REPO ALIAS MODAL LOGIC ---
-    const aliasModal = document.getElementById('repo-alias-modal');
-    const aliasInput = document.getElementById('alias-modal-input');
-    const aliasRealName = document.getElementById('alias-modal-real-name');
+    // --- REPO CONFIG MODAL LOGIC ---
+    let currentConfigRepo = null;
+    const REPO_ICON_OPTIONS = [
+        { icon: 'fa-globe',   context: 'Website', color: '#8be9fd' },
+        { icon: 'fa-gamepad', context: 'Game',    color: '#50fa7b' },
+        { icon: 'fa-book',    context: 'Docs',    color: '#bd93f9' },
+        { icon: 'fa-tools',   context: 'Tools',   color: '#ff79c6' },
+        { icon: 'fa-image',   context: 'Assets',  color: '#f1fa8c' },
+        { icon: 'fa-archive', context: 'Archive', color: '#6272a4' },
+        { icon: 'fa-code',    context: 'Code',    color: '#8be9fd' },
+        { icon: 'fa-robot',   context: 'AI',      color: '#bd93f9' }
+    ];
 
-    document.getElementById('jules-edit-repo-alias-btn').onclick = () => {
-        const repoSelect = document.getElementById('jules-repo-select');
-        const sourceName = repoSelect.value;
-        if (!sourceName) return;
+    function openRepoModal(repoName) {
+        currentConfigRepo = repoName;
+        const backdrop = document.getElementById('repo-config-backdrop');
+        const modal    = document.getElementById('repo-config-modal');
+        const aliasIn  = document.getElementById('repo-alias-input');
+        const realName = document.getElementById('repo-modal-real-name');
+        const iconEl   = document.getElementById('repo-modal-icon');
 
-        aliasRealName.textContent = sourceName;
-        aliasInput.value = window.getRepoAlias(sourceName) || '';
-        aliasModal.classList.remove('hidden');
-        aliasInput.focus();
-    };
+        realName.textContent = repoName;
+        aliasIn.value = window.getRepoAlias(repoName) || '';
 
-    document.getElementById('alias-modal-cancel-btn').onclick = () => {
-        aliasModal.classList.add('hidden');
-    };
+        // Render Tags
+        const tagsGrid = document.getElementById('repo-tags-grid');
+        const activeTags = getRepoTags(repoName);
+        tagsGrid.innerHTML = Object.keys(REPO_TAG_METADATA).map(tag => {
+            const isActive = activeTags.includes(tag);
+            const color = REPO_TAG_METADATA[tag].color;
+            return `
+                <button class="repo-tag-pill" data-tag="${tag}"
+                        style="color: ${color}; background: ${isActive ? 'color-mix(in srgb, '+color+' 25%, transparent)' : 'transparent'};
+                               border-color: ${isActive ? color : '#2a2a35'}; cursor: pointer;">
+                    ${tag}
+                </button>
+            `;
+        }).join('');
 
-    document.getElementById('alias-modal-save-btn').onclick = () => {
-        const repoSelect = document.getElementById('jules-repo-select');
-        const sourceName = repoSelect.value;
-        const alias = aliasInput.value.trim();
+        // Render Icons
+        const iconsGrid = document.getElementById('repo-icons-grid');
+        const activeIcon = getRepoIcon(repoName);
+        iconsGrid.innerHTML = REPO_ICON_OPTIONS.map(opt => {
+            const isActive = activeIcon === opt.icon;
+            return `
+                <button class="repo-icon-btn" data-icon="${opt.icon}" title="${opt.context}"
+                        style="background: ${isActive ? '#2a2a35' : 'transparent'}; border: 1px solid ${isActive ? opt.color : '#2a2a35'};
+                               color: ${opt.color}; padding: 8px; border-radius: 8px; cursor: pointer; transition: all 0.15s;">
+                    <i class="fas ${opt.icon}"></i>
+                </button>
+            `;
+        }).join('');
 
-        if (!alias) {
-            showToast('El alias no puede estar vacío', 'error');
-            return;
+        iconEl.className = `fas ${activeIcon}`;
+        iconEl.style.color = REPO_TAG_METADATA[activeTags[0]]?.color || '#6272a4';
+
+        backdrop.style.display = 'flex';
+        modal.style.opacity    = '0';
+        modal.style.transform  = 'scale(0.95)';
+        modal.style.transition = 'opacity 150ms ease-out, transform 150ms ease-out';
+
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                modal.style.opacity   = '1';
+                modal.style.transform = 'scale(1)';
+            });
+        });
+
+        trapFocus(modal);
+        aliasIn.focus();
+    }
+
+    function closeRepoModal() {
+        const backdrop = document.getElementById('repo-config-backdrop');
+        const modal    = document.getElementById('repo-config-modal');
+
+        modal.style.opacity   = '0';
+        modal.style.transform = 'scale(0.95)';
+        modal.style.transition = 'opacity 100ms ease-in, transform 100ms ease-in';
+
+        setTimeout(() => {
+            backdrop.style.display = 'none';
+            releaseFocus();
+        }, 100);
+    }
+
+    function trapFocus(modal) {
+        const focusables = modal.querySelectorAll(
+            'a, button, input, textarea, select, [tabindex]:not([tabindex="-1"])'
+        );
+        const first = focusables[0];
+        const last  = focusables[focusables.length - 1];
+
+        modal._focusTrapHandler = function(e) {
+            if (e.key === 'Tab') {
+                if (e.shiftKey && document.activeElement === first) {
+                    e.preventDefault(); last.focus();
+                } else if (!e.shiftKey && document.activeElement === last) {
+                    e.preventDefault(); first.focus();
+                }
+            }
+            if (e.key === 'Escape') closeRepoModal();
+        };
+        modal.addEventListener('keydown', modal._focusTrapHandler);
+    }
+
+    function releaseFocus() {
+        const modal = document.getElementById('repo-config-modal');
+        if (modal._focusTrapHandler) {
+            modal.removeEventListener('keydown', modal._focusTrapHandler);
         }
+    }
 
-        window.setRepoAlias(sourceName, alias);
-        aliasModal.classList.add('hidden');
-        showToast('Alias guardado correctamente');
+    // Modal Interactions
+    document.getElementById('repo-config-backdrop').onclick = (e) => {
+        if (e.target.id === 'repo-config-backdrop') closeRepoModal();
+    };
+    document.getElementById('repo-modal-close').onclick = closeRepoModal;
+    document.getElementById('repo-modal-cancel').onclick = closeRepoModal;
 
-        // Refrescar solo el dropdown para mantener el estado
-        initializeRepoSelector();
+    document.getElementById('repo-tags-grid').addEventListener('click', (e) => {
+        const btn = e.target.closest('.repo-tag-pill');
+        if (!btn) return;
+        const tag = btn.dataset.tag;
+        const color = REPO_TAG_METADATA[tag].color;
+        const isActive = btn.style.backgroundColor !== 'transparent';
+
+        if (isActive) {
+            btn.style.backgroundColor = 'transparent';
+            btn.style.borderColor = '#2a2a35';
+        } else {
+            btn.style.backgroundColor = `color-mix(in srgb, ${color} 25%, transparent)`;
+            btn.style.borderColor = color;
+        }
+    });
+
+    document.getElementById('repo-icons-grid').addEventListener('click', (e) => {
+        const btn = e.target.closest('.repo-icon-btn');
+        if (!btn) return;
+        document.querySelectorAll('.repo-icon-btn').forEach(b => {
+            b.style.background = 'transparent';
+            b.style.borderColor = '#2a2a35';
+        });
+        const icon = btn.dataset.icon;
+        const color = REPO_ICON_OPTIONS.find(o => o.icon === icon).color;
+        btn.style.background = '#2a2a35';
+        btn.style.borderColor = color;
+        document.getElementById('repo-modal-icon').className = `fas ${icon}`;
+    });
+
+    document.getElementById('repo-alias-reset').onclick = () => {
+        document.getElementById('repo-alias-input').value = '';
     };
 
-    document.getElementById('alias-modal-restore-btn').onclick = () => {
-        const repoSelect = document.getElementById('jules-repo-select');
-        const sourceName = repoSelect.value;
+    document.getElementById('repo-modal-save').onclick = () => {
+        const alias = document.getElementById('repo-alias-input').value.trim();
+        const tags = Array.from(document.querySelectorAll('#repo-tags-grid .repo-tag-pill'))
+            .filter(b => b.style.backgroundColor !== 'transparent')
+            .map(b => b.dataset.tag);
+        const iconBtn = Array.from(document.querySelectorAll('#repo-icons-grid .repo-icon-btn'))
+            .find(b => b.style.background !== 'transparent');
+        const icon = iconBtn ? iconBtn.dataset.icon : 'fa-folder';
 
-        window.removeRepoAlias(sourceName);
-        aliasModal.classList.add('hidden');
-        showToast('Nombre original restaurado');
+        try {
+            // Save Alias
+            if (alias) window.setRepoAlias(currentConfigRepo, alias);
+            else window.removeRepoAlias(currentConfigRepo);
 
-        initializeRepoSelector();
+            // Save Tags
+            const allTagsStored = localStorage.getItem('hypenosys_repo_tags');
+            const allTags = allTagsStored ? JSON.parse(allTagsStored) : {};
+            allTags[currentConfigRepo] = tags;
+            localStorage.setItem('hypenosys_repo_tags', JSON.stringify(allTags));
+
+            // Save Icon
+            const allIconsStored = localStorage.getItem('hypenosys_repo_icons');
+            const allIcons = allIconsStored ? JSON.parse(allIconsStored) : {};
+            allIcons[currentConfigRepo] = icon;
+            localStorage.setItem('hypenosys_repo_icons', JSON.stringify(allIcons));
+
+            showToast('Configuración del repositorio guardada');
+            closeRepoModal();
+            initializeRepoSelector(); // Refresh UI
+        } catch (e) {
+            if (e.name === 'QuotaExceededError') {
+                showToast('Error: almacenamiento local lleno.', 'error');
+            } else {
+                showToast('Error al guardar la configuración', 'error');
+            }
+        }
     };
 
     // --- SESSION ACTIONS ---
@@ -1460,6 +2189,20 @@ permalink: /jules-panel/
 
         const canArchive = ['COMPLETED', 'FAILED', 'PAUSED'].includes(state);
 
+        // state-aware buttons (Quest 5.1)
+        let mainActionBtn = '';
+        if (state === 'IN_PROGRESS') {
+            mainActionBtn = `<button class="btn" style="background:#8be9fd; color:#18181c;">CONTROL →</button>`;
+        } else if (state === 'COMPLETED') {
+            mainActionBtn = `<button class="btn" style="background:#50fa7b; color:#18181c;">→ Detalles</button>`;
+        } else if (state === 'AWAITING_PLAN_APPROVAL' || state === 'AWAITING_USER_FEEDBACK') {
+            mainActionBtn = `<button class="btn" style="background:#f1fa8c; color:#18181c;" onclick="approvePlan('${s.name}')">→ Revisar</button>`;
+        } else if (state === 'FAILED') {
+            mainActionBtn = `<button class="btn" style="background:#ff5555; color:#f8f8f2;">↺ Reintentar</button>`;
+        } else if (state === 'QUEUED' || state === 'PLANNING') {
+            mainActionBtn = `<button class="btn" style="background:#bd93f9; color:#f8f8f2;">→ Ver plan</button>`;
+        }
+
         return `
             <div class="session-card__header">
                 <div class="session-card__left">
@@ -1494,15 +2237,12 @@ permalink: /jules-panel/
                 <span class="meta-tag"><i class="fa-solid fa-calendar mr-1 opacity-50"></i> ${new Date(s.createTime).toLocaleDateString()}</span>
             </div>
 
-            <div class="session-card__actions">
-                <button class="btn btn--approve" data-role="approve-btn" onclick="approvePlan('${s.name}')" style="display: ${state === 'AWAITING_PLAN_APPROVAL' ? '' : 'none'}">
-                    ✅ Aprobar Plan
-                </button>
+            <div class="session-card__actions" data-role="actions-container">
+                ${mainActionBtn}
 
                 <a href="${s.url}" target="_blank" class="btn btn--secondary">
                     Ver en consola <i class="fa-solid fa-external-link ml-1 text-[10px]"></i>
                 </a>
-
 
                 <button class="btn btn--ghost" data-role="archive-btn"
                         onclick="archiveSession('${idSafe}')"
@@ -1551,12 +2291,34 @@ permalink: /jules-panel/
         const timeEl = cardEl.querySelector('[data-role="time"]');
         if (timeEl) timeEl.textContent = getTimeAgo(session.createTime);
 
-        // Botón aprobar plan
-        const approveBtn = cardEl.querySelector('[data-role="approve-btn"]');
-        if (approveBtn) {
-            approveBtn.style.display = state === 'AWAITING_PLAN_APPROVAL' ? '' : 'none';
-        }
+        // Update actions (Quest 5.1)
+        const actionsContainer = cardEl.querySelector('[data-role="actions-container"]');
+        if (actionsContainer) {
+            let mainActionBtn = '';
+            if (state === 'IN_PROGRESS') {
+                mainActionBtn = `<button class="btn" style="background:#8be9fd; color:#18181c;">CONTROL →</button>`;
+            } else if (state === 'COMPLETED') {
+                mainActionBtn = `<button class="btn" style="background:#50fa7b; color:#18181c;">→ Detalles</button>`;
+            } else if (state === 'AWAITING_PLAN_APPROVAL' || state === 'AWAITING_USER_FEEDBACK') {
+                mainActionBtn = `<button class="btn" style="background:#f1fa8c; color:#18181c;" onclick="approvePlan('${session.name}')">→ Revisar</button>`;
+            } else if (state === 'FAILED') {
+                mainActionBtn = `<button class="btn" style="background:#ff5555; color:#f8f8f2;">↺ Reintentar</button>`;
+            } else if (state === 'QUEUED' || state === 'PLANNING') {
+                mainActionBtn = `<button class="btn" style="background:#bd93f9; color:#f8f8f2;">→ Ver plan</button>`;
+            }
 
+            const existingMain = actionsContainer.querySelector('.btn:not(.btn--secondary):not(.btn--ghost)');
+            if (existingMain) {
+                const temp = document.createElement('div');
+                temp.innerHTML = mainActionBtn;
+                const newNode = temp.firstChild;
+                if (newNode && existingMain.innerHTML !== newNode.innerHTML) {
+                    actionsContainer.replaceChild(newNode, existingMain);
+                }
+            } else {
+                 actionsContainer.insertAdjacentHTML('afterbegin', mainActionBtn);
+            }
+        }
 
         // Botones Header
         const archiveBtnHeader = cardEl.querySelector('.session-card__right button[title="Archivar sesión"]');
@@ -1698,8 +2460,21 @@ permalink: /jules-panel/
         stopPolling();
         sessionPollInterval = setInterval(() => {
             if (!document.hidden) {
-                refreshSessions();
-                activeActivityPolls.forEach(id => refreshActivities(id));
+                // Quest 5.2: Scroll Jump Suppression
+                const container = document.getElementById('jules-sessions-list');
+                const scrollTop = container.scrollTop;
+
+                refreshSessions().then(() => {
+                    container.scrollTop = scrollTop;
+                });
+
+                activeActivityPolls.forEach(id => {
+                    const activityLog = document.querySelector(`#activities-${id} .activity-log`);
+                    const logScrollTop = activityLog ? activityLog.scrollTop : 0;
+                    refreshActivities(id).then(() => {
+                        if (activityLog) activityLog.scrollTop = logScrollTop;
+                    });
+                });
             }
         }, 15000);
     }
@@ -2129,6 +2904,742 @@ permalink: /jules-panel/
       return html + diffsHtml;
     }
 
+    // --- HUB LOGIC (Quest 7) ---
+    const HUB_TABS = ['pull-requests', 'issues', 'branches', 'actions', 'notifications'];
+
+    function initHub() {
+        const tabs = document.querySelectorAll('.gh-hub-tabs button');
+        tabs.forEach(tab => {
+            tab.onclick = () => {
+                const targetTab = tab.dataset.tab;
+                switchTab(targetTab);
+            };
+        });
+
+        // Restore active tab
+        const savedTab = sessionStorage.getItem('hypenosys_hub_active_tab') || 'pull-requests';
+        switchTab(savedTab);
+    }
+
+    function switchTab(tabId) {
+        window.JulesPanelState.hubActiveTab = tabId;
+        sessionStorage.setItem('hypenosys_hub_active_tab', tabId);
+
+        // UI Tabs
+        document.querySelectorAll('.gh-hub-tabs button').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.tab === tabId);
+        });
+
+        // UI Panels
+        const panelPrefix = 'panel-';
+        const shortIds = {
+            'pull-requests': 'pr',
+            'issues': 'issues',
+            'branches': 'branches',
+            'actions': 'actions',
+            'notifications': 'notifs'
+        };
+
+        HUB_TABS.forEach(t => {
+            const el = document.getElementById(`panel-${shortIds[t]}`);
+            if (el) el.style.display = (t === tabId) ? 'block' : 'none';
+        });
+
+        // Load content if needed
+        loadTabContent(tabId);
+    }
+
+    function showHubSkeleton(panelId) {
+        const panel = document.getElementById(panelId);
+        if (!panel) return;
+        panel.innerHTML = `
+            <div class="skeleton-row" style="display:flex; align-items:center; gap:12px; padding:0 12px;">
+                <div class="skeleton-avatar"></div>
+                <div class="skeleton-text-lg"></div>
+                <div class="skeleton-pill" style="margin-left:auto;"></div>
+            </div>
+        `.repeat(5);
+    }
+
+    async function loadTabContent(tabId, force = false) {
+        const mapping = {
+            'pull-requests': 'panel-pr',
+            'issues': 'panel-issues',
+            'branches': 'panel-branches',
+            'actions': 'panel-actions',
+            'notifications': 'panel-notifs'
+        };
+        const panelId = mapping[tabId];
+        const panel = document.getElementById(panelId);
+
+        // Cache logic: don't reload if loaded in last 60s
+        const now = Date.now();
+        const lastFetch = parseInt(panel.dataset.fetchedAt || '0', 10);
+        if (!force && panel.dataset.loaded === 'true' && (now - lastFetch < 60000)) {
+            return;
+        }
+
+        showHubSkeleton(panelId);
+
+        try {
+            const repoVal = document.getElementById('jules-repo-select').value;
+            if (!repoVal) {
+                panel.innerHTML = `<div style="text-align:center; padding:40px; color:#6272a4;">Selecciona un repositorio para ver el Hub</div>`;
+                return;
+            }
+            const parsed = window.parseSourceName(repoVal);
+
+            if (tabId === 'pull-requests') await fetchHubPRs(parsed.owner, parsed.repo);
+            else if (tabId === 'issues') await fetchHubIssues(parsed.owner, parsed.repo);
+            else if (tabId === 'branches') await fetchHubBranches(parsed.owner, parsed.repo);
+            else if (tabId === 'actions') await fetchHubActions(parsed.owner, parsed.repo);
+            else if (tabId === 'notifications') await fetchHubNotifs();
+        } catch (e) {
+            if (e.message.includes('401')) {
+                handleGlobalAuthError();
+            } else {
+                panel.innerHTML = `<div class="error-banner">Error cargando ${tabId}: ${e.message}</div>`;
+            }
+        }
+    }
+
+    // --- HUB TAB: PULL REQUESTS ---
+    async function fetchHubPRs(owner, repo, page = 1) {
+        const token = getGitHubToken();
+        const res = await window.GHQueue.enqueue(() => fetch(
+            `https://api.github.com/repos/${owner}/${repo}/pulls?state=open&per_page=20&page=${page}`,
+            { headers: { Authorization: `Bearer ${token}` } }
+        ), 1);
+        updateRateLimit(res.headers.get('X-RateLimit-Remaining'));
+        const prs = await res.json();
+
+        const panel = document.getElementById('panel-pr');
+        if (prs.length === 0 && page === 1) {
+            panel.innerHTML = `<div style="text-align:center; padding:40px; color:#6272a4;">No hay pull requests abiertos en este repositorio.</div>`;
+            panel.dataset.loaded = 'true';
+            panel.dataset.fetchedAt = Date.now();
+            return;
+        }
+
+        const prRows = await Promise.all(prs.map(async pr => {
+            const relativeTime = getTimeAgo(pr.updated_at);
+            // CI Status
+            const checkRes = await window.GHQueue.enqueue(() => fetch(
+                `https://api.github.com/repos/${owner}/${repo}/commits/${pr.head.sha}/check-runs`,
+                { headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github.v3+json' } }
+            ), 1);
+            const checkData = await checkRes.json();
+            const checks = checkData.check_runs || [];
+            let ciIcon = '⚪';
+            if (checks.length > 0) {
+                const allSuccess = checks.every(c => c.conclusion === 'success');
+                const anyFailure = checks.some(c => c.conclusion === 'failure' || c.conclusion === 'action_required');
+                ciIcon = anyFailure ? '🔴' : (allSuccess ? '🟢' : '🟡');
+            }
+
+            const labels = (pr.labels || []).map(l => `
+                <span class="repo-tag-pill" style="color: #${l.color}; border-color: #${l.color}; background: rgba(0,0,0,0.2); font-size: 9px;">${l.name}</span>
+            `).join('');
+
+            return `
+                <div class="pr-row" style="padding: 12px; border-bottom: 1px solid #2a2a35; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 4px;">
+                        <span style="color: #6272a4; font-family: monospace; font-size: 11px;">#${pr.number}</span>
+                        <a href="javascript:void(0)" onclick="togglePRDiff('${owner}', '${repo}', ${pr.number}, this)" style="color: #f8f8f2; font-weight: 600; text-decoration: none; font-size: 13px; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${pr.title}">${pr.title}</a>
+                        <div class="pr-actions" style="display: flex; gap: 8px;">
+                            <button onclick="handlePRAction('${owner}', '${repo}', ${pr.number}, 'APPROVE', this)" class="btn--ghost" style="padding: 2px 6px; font-size: 9px; color: #50fa7b; border-color: #50fa7b;">APROBAR</button>
+                            <button onclick="confirmMerge('${owner}', '${repo}', ${pr.number}, this)" class="btn--ghost" style="padding: 2px 6px; font-size: 9px; color: #8be9fd; border-color: #8be9fd;">MERGE</button>
+                            <button onclick="handlePRAction('${owner}', '${repo}', ${pr.number}, 'CLOSE', this)" class="btn--ghost" style="padding: 2px 6px; font-size: 9px; color: #ff5555; border-color: #ff5555;">CERRAR</button>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px; font-size: 10px; color: #6272a4;">
+                        <img src="${pr.user.avatar_url}" style="width: 16px; height: 16px; border-radius: 50%;" />
+                        <span>${pr.user.login}</span>
+                        <span>•</span>
+                        <span>${relativeTime}</span>
+                        <span>•</span>
+                        <span>${ciIcon} CI</span>
+                        <div style="display: flex; gap: 4px; margin-left: auto;">${labels}</div>
+                    </div>
+                    <div id="pr-diff-${pr.number}" class="pr-diff-container" style="display: none; margin-top: 12px; border: 1px solid #2a2a35; border-radius: 6px; overflow: hidden; background: #0d0d0f;"></div>
+                </div>
+            `;
+        }));
+
+        const html = prRows.join('');
+        const loadMore = prs.length === 20 ? `<button onclick="fetchHubPRs('${owner}', '${repo}', ${page + 1})" class="btn--secondary" style="width:100%; margin-top:16px;">Cargar más PRs</button>` : '';
+
+        if (page === 1) panel.innerHTML = html + loadMore;
+        else panel.innerHTML += html + loadMore;
+
+        panel.dataset.loaded = 'true';
+        panel.dataset.fetchedAt = Date.now();
+        document.getElementById('pr-badge').textContent = prs.length;
+    }
+
+    async function togglePRDiff(owner, repo, prNumber, trigger) {
+        const container = document.getElementById(`pr-diff-${prNumber}`);
+        if (container.style.display === 'block') {
+            container.style.display = 'none';
+            return;
+        }
+
+        container.style.display = 'block';
+        container.innerHTML = `<div style="padding:20px; text-align:center;"><i class="fas fa-circle-notch fa-spin"></i> Cargando diff...</div>`;
+
+        try {
+            const token = getGitHubToken();
+            const res = await window.GHQueue.enqueue(() => fetch(
+                `https://api.github.com/repos/${owner}/${repo}/pulls/${prNumber}/files`,
+                { headers: { Authorization: `Bearer ${token}` } }
+            ), 1);
+            const files = await res.json();
+            container.innerHTML = renderDiff(files);
+        } catch (e) {
+            container.innerHTML = `<div style="padding:12px; color:#ff5555;">Error: ${e.message}</div>`;
+        }
+    }
+
+    function renderDiff(files) {
+        if (!files || files.length === 0) return '<div style="padding:12px;">No hay cambios detectados.</div>';
+        return files.map(file => {
+            const lines = (file.patch || '').split('\n').slice(0, 200);
+            const rendered = lines.map(line => {
+                let bg = 'transparent', color = '#f8f8f2';
+                if (line.startsWith('+') && !line.startsWith('+++')) { bg='rgba(80,250,123,0.12)'; color='#50fa7b'; }
+                if (line.startsWith('-') && !line.startsWith('---')) { bg='rgba(255,85,85,0.12)';  color='#ff5555'; }
+                if (line.startsWith('@@'))                           { color='#8be9fd'; }
+                return `<div style="background:${bg};color:${color};padding:0 8px;font-family:monospace;font-size:0.72rem;white-space:pre;">${escapeHtml(line)}</div>`;
+            }).join('');
+
+            const truncated = (file.patch || '').split('\n').length > 200 ? `<div style="padding:8px; text-align:center; font-size:10px; color:#6272a4;">… (ver más en GitHub)</div>` : '';
+
+            return `
+                <div class="diff-file">
+                    <div style="background:#18181c; padding:4px 8px; font-size:11px; font-weight:700; color:#bd93f9; border-bottom:1px solid #2a2a35; display:flex; justify-content:space-between;">
+                        <span>${file.filename}</span>
+                        <span style="color:#6272a4;">${file.status} • ${file.additions}+ ${file.deletions}-</span>
+                    </div>
+                    <div style="overflow-x: auto;">${rendered}</div>
+                    ${truncated}
+                </div>
+            `;
+        }).join('');
+    }
+
+    async function handlePRAction(owner, repo, prNumber, action, btn) {
+        const token = getGitHubToken();
+        const originalText = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = '...';
+
+        try {
+            let res;
+            if (action === 'APPROVE') {
+                res = await fetch(`https://api.github.com/repos/${owner}/${repo}/pulls/${prNumber}/reviews`, {
+                    method: 'POST',
+                    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ event: 'APPROVE' })
+                });
+            } else if (action === 'CLOSE') {
+                res = await fetch(`https://api.github.com/repos/${owner}/${repo}/pulls/${prNumber}`, {
+                    method: 'PATCH',
+                    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ state: 'closed' })
+                });
+            }
+
+            updateRateLimit(res.headers.get('X-RateLimit-Remaining'));
+            if (!res.ok) throw new Error(res.status === 403 ? 'Error 403: Scope insuficiente' : `Error ${res.status}`);
+
+            showToast(`PR #${prNumber} actualizado: ${action}`);
+            loadTabContent('pull-requests', true);
+        } catch (e) {
+            showToast(e.message, 'error');
+            btn.disabled = false;
+            btn.textContent = originalText;
+        }
+    }
+
+    function confirmMerge(owner, repo, prNumber, btn) {
+        if (btn.dataset.confirmPending === 'true') {
+            clearTimeout(parseInt(btn.dataset.confirmTimer, 10));
+            executeMerge(owner, repo, prNumber, btn);
+        } else {
+            btn.dataset.confirmPending = 'true';
+            btn.textContent = '¿CONFIRMAR?';
+            btn.style.color = '#ff5555';
+            btn.style.borderColor = '#ff5555';
+
+            const timer = setTimeout(() => {
+                btn.dataset.confirmPending = 'false';
+                btn.textContent = 'MERGE';
+                btn.style.color = '#8be9fd';
+                btn.style.borderColor = '#8be9fd';
+            }, 2000);
+            btn.dataset.confirmTimer = timer;
+        }
+    }
+
+    async function executeMerge(owner, repo, prNumber, btn) {
+        const token = getGitHubToken();
+        btn.disabled = true;
+        btn.textContent = 'MERGEANDO...';
+
+        try {
+            const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/pulls/${prNumber}/merge`, {
+                method: 'PUT',
+                headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ merge_method: 'squash' })
+            });
+            updateRateLimit(res.headers.get('X-RateLimit-Remaining'));
+            if (!res.ok) throw new Error(`Merge fallido: ${res.status}`);
+
+            showToast(`✓ PR #${prNumber} mergeado con éxito`);
+            loadTabContent('pull-requests', true);
+        } catch (e) {
+            showToast(e.message, 'error');
+            btn.disabled = false;
+            btn.textContent = 'MERGE';
+        }
+    }
+
+    // --- HUB TAB: ISSUES ---
+    async function fetchHubIssues(owner, repo, page = 1) {
+        const token = getGitHubToken();
+        const res = await window.GHQueue.enqueue(() => fetch(
+            `https://api.github.com/repos/${owner}/${repo}/issues?state=open&per_page=20&page=${page}`,
+            { headers: { Authorization: `Bearer ${token}` } }
+        ), 1);
+        updateRateLimit(res.headers.get('X-RateLimit-Remaining'));
+        const allItems = await res.json();
+        // Filter out PRs
+        const issues = allItems.filter(item => !item.pull_request);
+
+        const panel = document.getElementById('panel-issues');
+        if (issues.length === 0 && page === 1) {
+            panel.innerHTML = renderIssueCreateForm(owner, repo) + `<div style="text-align:center; padding:40px; color:#6272a4;">No hay issues abiertos.</div>`;
+            panel.dataset.loaded = 'true';
+            panel.dataset.fetchedAt = Date.now();
+            return;
+        }
+
+        const issueRows = issues.map(issue => {
+            const labels = (issue.labels || []).map(l => `
+                <span class="repo-tag-pill" style="color: #${l.color}; border-color: #${l.color}; background: rgba(0,0,0,0.2); font-size: 9px;">${l.name}</span>
+            `).join('');
+
+            return `
+                <div class="issue-row" style="padding: 12px; border-bottom: 1px solid #2a2a35;">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 4px;">
+                        <span style="color: #6272a4; font-family: monospace; font-size: 11px;">#${issue.number}</span>
+                        <span style="color: #f8f8f2; font-weight: 600; font-size: 13px; flex: 1;">${issue.title}</span>
+                        <div class="issue-actions">
+                            <button onclick="handleIssueAction('${owner}', '${repo}', ${issue.number}, 'close', this)" class="btn--ghost" style="padding: 2px 6px; font-size: 9px; color: #ff5555; border-color: #ff5555;">CERRAR</button>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px; font-size: 10px; color: #6272a4;">
+                        <span>${getTimeAgo(issue.created_at)}</span>
+                        <div style="display: flex; gap: 4px; margin-left: auto;">${labels}</div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        const form = renderIssueCreateForm(owner, repo);
+        const loadMore = issues.length === 20 ? `<button onclick="fetchHubIssues('${owner}', '${repo}', ${page + 1})" class="btn--secondary" style="width:100%; margin-top:16px;">Cargar más Issues</button>` : '';
+
+        if (page === 1) panel.innerHTML = form + issueRows + loadMore;
+        else panel.innerHTML += issueRows + loadMore;
+
+        panel.dataset.loaded = 'true';
+        panel.dataset.fetchedAt = Date.now();
+        document.getElementById('issues-badge').textContent = issues.length;
+    }
+
+    function renderIssueCreateForm(owner, repo) {
+        return `
+            <details style="margin-bottom: 20px; border: 1px solid #2a2a35; border-radius: 8px; background: rgba(255,255,255,0.02);">
+                <summary style="padding: 12px; cursor: pointer; color: #50fa7b; font-weight: 700; font-size: 12px; list-style: none;">
+                    <i class="fas fa-plus-circle mr-2"></i> NUEVO ISSUE
+                </summary>
+                <div style="padding: 16px; display: flex; flex-direction: column; gap: 12px; border-top: 1px solid #2a2a35;">
+                    <input id="new-issue-title" type="text" placeholder="Título del issue" style="width: 100%; background: #0d0d0f; border: 1px solid #2a2a35; color: #f8f8f2; border-radius: 6px; padding: 8px 12px; font-size: 13px;" />
+                    <textarea id="new-issue-body" rows="4" placeholder="Descripción (Markdown)" style="width: 100%; background: #0d0d0f; border: 1px solid #2a2a35; color: #f8f8f2; border-radius: 6px; padding: 8px 12px; font-size: 13px;"></textarea>
+                    <button onclick="submitNewIssue('${owner}', '${repo}', this)" style="background: #50fa7b; color: #18181c; border: none; border-radius: 6px; padding: 10px; font-weight: 700; cursor: pointer; transition: opacity 0.2s;">CREAR ISSUE</button>
+                </div>
+            </details>
+        `;
+    }
+
+    async function submitNewIssue(owner, repo, btn) {
+        const title = document.getElementById('new-issue-title').value.trim();
+        const body = document.getElementById('new-issue-body').value.trim();
+        if (!title) return showToast('El título es obligatorio', 'error');
+
+        btn.disabled = true;
+        btn.textContent = 'CREANDO...';
+
+        try {
+            const token = getGitHubToken();
+            const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues`, {
+                method: 'POST',
+                headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title, body })
+            });
+            updateRateLimit(res.headers.get('X-RateLimit-Remaining'));
+            if (!res.ok) throw new Error(`Fallo: ${res.status}`);
+
+            showToast('Issue creado correctamente');
+            loadTabContent('issues', true);
+        } catch (e) {
+            showToast(e.message, 'error');
+            btn.disabled = false;
+            btn.textContent = 'CREAR ISSUE';
+        }
+    }
+
+    async function handleIssueAction(owner, repo, number, action, btn) {
+        const token = getGitHubToken();
+        try {
+            const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${number}`, {
+                method: 'PATCH',
+                headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ state: action === 'close' ? 'closed' : 'open' })
+            });
+            updateRateLimit(res.headers.get('X-RateLimit-Remaining'));
+            if (!res.ok) throw new Error(`Fallo: ${res.status}`);
+
+            showToast(`Issue #${number} actualizado`);
+            loadTabContent('issues', true);
+        } catch (e) {
+            showToast(e.message, 'error');
+        }
+    }
+
+    // --- HUB TAB: BRANCHES ---
+    async function fetchHubBranches(owner, repo) {
+        const token = getGitHubToken();
+        const branches = await fetchAllBranches(owner, repo, token);
+
+        const panel = document.getElementById('panel-branches');
+        const branchRows = branches.map(branch => {
+            const isProtected = branch.protected;
+            const sha = branch.commit ? branch.commit.sha.substring(0, 7) : '---';
+
+            return `
+                <div class="branch-row" style="padding: 12px; border-bottom: 1px solid #2a2a35; display: flex; align-items: center; gap: 12px;">
+                    <i class="fas fa-code-branch" style="color: #6272a4;"></i>
+                    <span style="color: #f8f8f2; font-weight: 600; font-size: 13px; flex: 1;">${branch.name} ${isProtected ? '🔒' : ''}</span>
+                    <span style="color: #6272a4; font-family: monospace; font-size: 11px;">${sha}</span>
+                    <div class="branch-actions">
+                        ${!isProtected ? `<button onclick="confirmDeleteBranch('${owner}', '${repo}', '${branch.name}', this)" class="btn--ghost" style="padding: 2px 6px; font-size: 9px; color: #ff5555; border-color: #ff5555;">BORRAR</button>` : `<span title="Rama protegida" style="font-size: 9px; color: #6272a4; cursor: help; border: 1px solid #2a2a35; padding: 2px 6px; border-radius: 4px;">PROTEGIDA</span>`}
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        const createBtn = `
+            <button onclick="document.getElementById('btn-show-new-branch').click()" class="btn--primary" style="margin-bottom: 16px; width: auto; align-self: flex-start;">
+                <i class="fas fa-plus mr-1"></i> NUEVA RAMA
+            </button>
+        `;
+
+        panel.innerHTML = `<div style="display:flex; flex-direction:column;">${createBtn}${branchRows}</div>`;
+        panel.dataset.loaded = 'true';
+        panel.dataset.fetchedAt = Date.now();
+    }
+
+    function confirmDeleteBranch(owner, repo, branchName, btn) {
+        if (btn.dataset.confirmPending === 'true') {
+            clearTimeout(parseInt(btn.dataset.confirmTimer, 10));
+            executeDeleteBranch(owner, repo, branchName, btn);
+        } else {
+            btn.dataset.confirmPending = 'true';
+            btn.textContent = '¿SEGURO?';
+            const timer = setTimeout(() => {
+                btn.dataset.confirmPending = 'false';
+                btn.textContent = 'BORRAR';
+            }, 2000);
+            btn.dataset.confirmTimer = timer;
+        }
+    }
+
+    async function executeDeleteBranch(owner, repo, branchName, btn) {
+        const token = getGitHubToken();
+        btn.disabled = true;
+        btn.textContent = '...';
+
+        try {
+            const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/git/refs/heads/${branchName}`, {
+                method: 'DELETE',
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            updateRateLimit(res.headers.get('X-RateLimit-Remaining'));
+
+            if (!res.ok) throw new Error(`Fallo: ${res.status}`);
+
+            showToast(`Rama '${branchName}' eliminada`);
+            btn.closest('.branch-row').remove();
+            // Also refresh branch selects
+            const repoVal = document.getElementById('jules-repo-select').value;
+            const sourceObj = window.julesSourcesCache?.find(s => s.name === repoVal);
+            await onRepoSelected(repoVal, sourceObj);
+        } catch (e) {
+            showToast(e.message, 'error');
+            btn.disabled = false;
+            btn.textContent = 'BORRAR';
+        }
+    }
+
+    // --- HUB TAB: ACTIONS ---
+    async function fetchHubActions(owner, repo) {
+        const token = getGitHubToken();
+        const runsRes = await window.GHQueue.enqueue(() => fetch(
+            `https://api.github.com/repos/${owner}/${repo}/actions/runs?per_page=15`,
+            { headers: { Authorization: `Bearer ${token}` } }
+        ), 1);
+        updateRateLimit(runsRes.headers.get('X-RateLimit-Remaining'));
+        const { workflow_runs } = await runsRes.json();
+
+        const workflowsRes = await window.GHQueue.enqueue(() => fetch(
+            `https://api.github.com/repos/${owner}/${repo}/actions/workflows`,
+            { headers: { Authorization: `Bearer ${token}` } }
+        ), 1);
+        const { workflows } = await workflowsRes.json();
+
+        const panel = document.getElementById('panel-actions');
+        if (!workflow_runs || workflow_runs.length === 0) {
+            panel.innerHTML = `<div style="text-align:center; padding:40px; color:#6272a4;">No hay workflows configurados o ejecuciones recientes.</div>`;
+            panel.dataset.loaded = 'true';
+            panel.dataset.fetchedAt = Date.now();
+            return;
+        }
+
+        const runRows = workflow_runs.map(run => {
+            const statusColor = run.status === 'completed'
+                ? (run.conclusion === 'success' ? '#50fa7b' : '#ff5555')
+                : '#f1fa8c';
+            const duration = run.status === 'completed'
+                ? Math.floor((new Date(run.updated_at) - new Date(run.created_at)) / 1000) + 's'
+                : '...';
+
+            return `
+                <div class="action-row" style="padding: 12px; border-bottom: 1px solid #2a2a35;">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 4px;">
+                        <span style="color: ${statusColor}; font-size: 14px;">${run.conclusion === 'success' ? '●' : '○'}</span>
+                        <span style="color: #f8f8f2; font-weight: 600; font-size: 13px; flex: 1;">${run.name} <span style="font-weight:400; color:#6272a4; font-size:11px;">#${run.run_number}</span></span>
+                        <button onclick="toggleActionLogs('${owner}', '${repo}', ${run.id}, this)" class="btn--ghost" style="padding: 2px 6px; font-size: 9px; color: #bd93f9; border-color: #bd93f9;">LOGS</button>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px; font-size: 10px; color: #6272a4;">
+                        <span>${run.head_branch}</span>
+                        <span>•</span>
+                        <span>${run.actor.login}</span>
+                        <span>•</span>
+                        <span>${getTimeAgo(run.updated_at)}</span>
+                        <span style="margin-left: auto;">${duration}</span>
+                    </div>
+                    <div id="action-logs-${run.id}" class="action-logs-container" style="display: none; margin-top: 12px; border: 1px solid #2a2a35; border-radius: 6px; overflow: hidden; background: #0d0d0f;"></div>
+                </div>
+            `;
+        }).join('');
+
+        const dispatchButtons = workflows.filter(w => w.state === 'active').map(w => `
+            <button onclick="dispatchWorkflow('${owner}', '${repo}', ${w.id}, this)" class="btn--secondary" style="font-size:10px; padding: 4px 8px; margin-right: 4px; margin-bottom: 4px;">
+                <i class="fas fa-play mr-1"></i> ${w.name}
+            </button>
+        `).join('');
+
+        panel.innerHTML = `<div style="margin-bottom: 20px; display:flex; flex-wrap:wrap;">${dispatchButtons}</div>` + runRows;
+        panel.dataset.loaded = 'true';
+        panel.dataset.fetchedAt = Date.now();
+    }
+
+    async function dispatchWorkflow(owner, repo, workflowId, btn) {
+        const token = getGitHubToken();
+        const branch = window.JulesPanelState.activeBranch || 'main';
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-1"></i> ENVIANDO';
+
+        try {
+            const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/actions/workflows/${workflowId}/dispatches`, {
+                method: 'POST',
+                headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ref: branch })
+            });
+            updateRateLimit(res.headers.get('X-RateLimit-Remaining'));
+
+            if (res.status === 403) throw new Error('Error 403: Scope insuficiente (workflow)');
+            if (!res.ok) throw new Error(`Fallo: ${res.status}`);
+
+            showToast(`Workflow disparado en rama '${branch}'`);
+            setTimeout(() => loadTabContent('actions', true), 2000);
+        } catch (e) {
+            showToast(e.message, 'error');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = `<i class="fas fa-play mr-1"></i> RE-TRIGGER`;
+        }
+    }
+
+    async function toggleActionLogs(owner, repo, runId, trigger) {
+        const container = document.getElementById(`action-logs-${runId}`);
+        if (container.style.display === 'block') {
+            container.style.display = 'none';
+            return;
+        }
+
+        container.style.display = 'block';
+        container.innerHTML = `<div style="padding:20px; text-align:center;"><i class="fas fa-circle-notch fa-spin"></i> Cargando logs...</div>`;
+
+        try {
+            const token = getGitHubToken();
+            // Get jobs first to get the job_id
+            const jobsRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/actions/runs/${runId}/jobs`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const { jobs } = await jobsRes.json();
+            if (!jobs || jobs.length === 0) throw new Error('No se encontraron jobs');
+
+            const jobId = jobs[0].id;
+            const logRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/actions/jobs/${jobId}/logs`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            const text = await logRes.text();
+            const lines = text.split('\n').slice(-50); // last 50 lines
+            const coloredLines = lines.map(line => {
+                let color = '#f8f8f2';
+                if (line.toLowerCase().includes('error')) color = '#ff5555';
+                else if (line.toLowerCase().includes('warn')) color = '#f1fa8c';
+                else if (line.includes('✓') || line.toLowerCase().includes('success')) color = '#50fa7b';
+                return `<div style="color: ${color}; white-space: pre-wrap;">${escapeHtml(line)}</div>`;
+            }).join('');
+
+            container.innerHTML = `<pre style="padding: 12px; margin:0; font-size: 10px; max-height: 300px; overflow-y: auto; font-family: monospace; background: #000;">${coloredLines}</pre>`;
+        } catch (e) {
+            container.innerHTML = `<div style="padding:12px; color:#ff5555; font-size:11px;">No se pudieron cargar los logs: ${e.message}</div>`;
+        }
+    }
+
+    // --- HUB TAB: NOTIFICATIONS ---
+    function apiUrlToHtmlUrl(apiUrl) {
+        return apiUrl
+            .replace('https://api.github.com/repos/', 'https://github.com/')
+            .replace('/pulls/', '/pull/')
+            .replace('/commits/', '/commit/');
+    }
+
+    async function fetchHubNotifs() {
+        const token = getGitHubToken();
+        const res = await window.GHQueue.enqueue(() => fetch(
+            `https://api.github.com/notifications?all=false&per_page=30`,
+            { headers: { Authorization: `Bearer ${token}` } }
+        ), 1);
+        updateRateLimit(res.headers.get('X-RateLimit-Remaining'));
+        const notifs = await res.json();
+
+        const panel = document.getElementById('panel-notifs');
+        if (!notifs || notifs.length === 0) {
+            panel.innerHTML = `<div style="text-align:center; padding:40px; color:#6272a4;">Estás al día. Sin notificaciones no leídas.</div>`;
+            panel.dataset.loaded = 'true';
+            panel.dataset.fetchedAt = Date.now();
+            document.getElementById('notif-badge').textContent = '0';
+            return;
+        }
+
+        const notifRows = notifs.map(n => {
+            const htmlUrl = apiUrlToHtmlUrl(n.subject.url || '');
+            const typeIcon = n.subject.type === 'PullRequest' ? 'fa-code-pull-request' : (n.subject.type === 'Issue' ? 'fa-circle-exclamation' : 'fa-bell');
+
+            return `
+                <div class="notif-row" style="padding: 12px; border-bottom: 1px solid #2a2a35; display: flex; align-items: flex-start; gap: 12px;">
+                    <i class="fas ${typeIcon}" style="color: #bd93f9; margin-top: 4px;"></i>
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+                            <span style="font-size: 9px; color: #6272a4; font-weight: 700;">${n.repository.full_name}</span>
+                            <span style="font-size: 9px; color: #6272a4;">${getTimeAgo(n.updated_at)}</span>
+                        </div>
+                        <a href="${htmlUrl}" target="_blank" style="color: #f8f8f2; text-decoration: none; font-size: 12px; font-weight: ${n.unread ? '700' : '400'}; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                            ${n.subject.title}
+                        </a>
+                    </div>
+                    <button onclick="markNotifAsRead('${n.id}', this)" class="btn--ghost" style="padding: 4px; border: none;" title="Marcar como leída">
+                        <i class="fas fa-check" style="color: #50fa7b; font-size: 10px;"></i>
+                    </button>
+                </div>
+            `;
+        }).join('');
+
+        const header = `
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 12px;">
+                <button onclick="confirmMarkAllRead(this)" class="btn--ghost" style="font-size: 10px; color: #6272a4; border-color: #2a2a35;">MARCAR TODAS COMO LEÍDAS</button>
+            </div>
+        `;
+
+        panel.innerHTML = header + notifRows;
+        panel.dataset.loaded = 'true';
+        panel.dataset.fetchedAt = Date.now();
+        document.getElementById('notif-badge').textContent = notifs.length;
+    }
+
+    async function markNotifAsRead(threadId, btn) {
+        const token = getGitHubToken();
+        btn.disabled = true;
+        try {
+            const res = await fetch(`https://api.github.com/notifications/threads/${threadId}`, {
+                method: 'PATCH',
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            updateRateLimit(res.headers.get('X-RateLimit-Remaining'));
+            if (!res.ok) throw new Error(`Fallo: ${res.status}`);
+
+            btn.closest('.notif-row').style.opacity = '0.3';
+            btn.remove();
+            const badge = document.getElementById('notif-badge');
+            badge.textContent = Math.max(0, parseInt(badge.textContent, 10) - 1);
+        } catch (e) {
+            showToast(e.message, 'error');
+            btn.disabled = false;
+        }
+    }
+
+    function confirmMarkAllRead(btn) {
+        if (btn.dataset.confirmPending === 'true') {
+            clearTimeout(parseInt(btn.dataset.confirmTimer, 10));
+            markAllNotifsRead(btn);
+        } else {
+            btn.dataset.confirmPending = 'true';
+            btn.textContent = '¿ESTÁS SEGURO?';
+            const timer = setTimeout(() => {
+                btn.dataset.confirmPending = 'false';
+                btn.textContent = 'MARCAR TODAS COMO LEÍDAS';
+            }, 2000);
+            btn.dataset.confirmTimer = timer;
+        }
+    }
+
+    async function markAllNotifsRead(btn) {
+        const token = getGitHubToken();
+        btn.disabled = true;
+        try {
+            const res = await fetch(`https://api.github.com/notifications`, {
+                method: 'PUT',
+                headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ read: true })
+            });
+            updateRateLimit(res.headers.get('X-RateLimit-Remaining'));
+            if (!res.ok) throw new Error(`Fallo: ${res.status}`);
+
+            showToast('Todas las notificaciones marcadas como leídas');
+            loadTabContent('notifications', true);
+        } catch (e) {
+            showToast(e.message, 'error');
+            btn.disabled = false;
+            btn.textContent = 'MARCAR TODAS COMO LEÍDAS';
+        }
+    }
+
     // --- COMMANDS ---
     async function approvePlan(sessionId) {
         try {
@@ -2207,13 +3718,23 @@ permalink: /jules-panel/
 
     // --- HELPERS (User Patterns) ---
     function showToast(msg, type = 'success') {
+        const container = document.getElementById('jules-toast-container');
+        // Law 7: Max 3 toasts
+        const activeToasts = container.querySelectorAll('.toast-success');
+        if (activeToasts.length >= 3) {
+            activeToasts[0].remove();
+        }
+
         const t = document.createElement('div');
         t.className = `toast-success`;
-        t.style.borderColor = type === 'success' ? '#10b981' : '#ef4444';
-        t.style.color = type === 'success' ? '#10b981' : '#ef4444';
-        t.textContent = msg;
-        document.getElementById('jules-toast-container').appendChild(t);
-        setTimeout(() => t.remove(), 4200);
+        const color = type === 'success' ? '#50fa7b' : (type === 'error' ? '#ff5555' : (type === 'warning' ? '#f1fa8c' : '#8be9fd'));
+        t.style.borderColor = color;
+        t.style.color = color;
+        t.innerHTML = `${msg} <button onclick="this.parentElement.remove()" style="margin-left:10px; background:none; border:none; color:inherit; cursor:pointer;">&times;</button>`;
+        container.appendChild(t);
+
+        const duration = type === 'error' ? 6000 : (type === 'warning' ? 4000 : 3000);
+        setTimeout(() => { if (t.parentNode) t.remove(); }, duration);
     }
 
     function showError(msg) {
