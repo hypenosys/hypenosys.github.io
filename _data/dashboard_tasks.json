@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-05T16:11:39.934Z",
+  "last_updated": "2026-06-05T16:12:11.590Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -562,7 +562,7 @@
       "tema_principal": "Programación / Engine",
       "prioridad": "Medium",
       "milestone": "M1",
-      "estado": "Pending",
+      "estado": "Obsolete",
       "completitud": 0,
       "resuelto_por": null,
       "detectado_por": "Alex",
@@ -618,6 +618,13 @@
           "field": "repository",
           "old_value": null,
           "new_value": "hypenosys/hypenosys.github.io"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-05T16:12:10.895Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Obsolete"
         }
       ],
       "repository": "hypenosys/hypenosys.github.io"
