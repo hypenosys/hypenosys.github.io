@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-05T18:51:04.368Z",
-  "last_updated_by": "Axlfc",
+  "last_updated": "2026-06-05T18:51:22.351Z",
+  "last_updated_by": "Sistema",
   "tasks": [
     {
       "id": 1,
@@ -487,7 +487,7 @@
       "tema_principal": "Concepto / GDD",
       "prioridad": "Medium",
       "milestone": "M1",
-      "estado": "In Review",
+      "estado": "OK",
       "completitud": 0.2,
       "resuelto_por": "Alex",
       "detectado_por": "Axel",
