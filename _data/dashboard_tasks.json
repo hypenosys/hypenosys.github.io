@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-05T16:45:10.882Z",
-  "last_updated_by": "Sistema",
+  "last_updated": "2026-06-05T16:46:06.805Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -21,15 +21,13 @@
       "milestone": "M1",
       "completitud": 0.6,
       "asignados": [
-        "axlfc",
         "dkdidac-design",
         "javi26031994-a11y",
         "mitxel2022",
         "topperh4rley"
       ],
-      "email_responsable": "axel@hypenosys.com",
+      "email_responsable": "alex@hypenosys.com",
       "emails_asignados": [
-        "axel@hypenosys.com",
         "alex@hypenosys.com",
         "javi@hypenosys.com",
         "didac@hypenosys.com",
@@ -64,6 +62,13 @@
           "field": "due_date",
           "old_value": null,
           "new_value": "2026-06-30"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-05T16:46:06.282Z",
+          "field": "asignados",
+          "old_value": "[\"axlfc\",\"dkdidac-design\",\"javi26031994-a11y\",\"mitxel2022\",\"topperh4rley\"]",
+          "new_value": "[\"dkdidac-design\",\"javi26031994-a11y\",\"mitxel2022\",\"topperh4rley\"]"
         }
       ]
     },
