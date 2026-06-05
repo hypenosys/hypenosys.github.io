@@ -522,36 +522,35 @@ class AuthManager {
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Guardando...';
 
-        try {
-            // Save sensitive + all to localStorage
-            const localConfig = { provider, model, api_key: apiKey, base_url: baseUrl };
-            localStorage.setItem('hy_ai_config', JSON.stringify(localConfig));
+        // 1. Local saving (Mandatory and non-blocking)
+        const localConfig = { provider, model, api_key: apiKey, base_url: baseUrl };
+        localStorage.setItem('hy_ai_config', JSON.stringify(localConfig));
 
-            // Sync non-sensitive to team_profiles.json via safe public wrapper
+        if (window.hypeToast) {
+            window.hypeToast('Configuración guardada localmente ✓', 'success');
+        } else {
+            this.showToast('Éxito', 'Configuración guardada localmente.', 'success');
+        }
+        $('#modalApiConfig').modal('hide');
+        btn.disabled = false;
+        btn.innerHTML = 'Guardar Configuración';
+
+        // 2. GitHub sync (Optional and non-blocking)
+        // We only sync provider and model. Never base_url or api_key.
+        try {
             const profilesRes = await window.githubApi.fetchFileWithSha('_data/team_profiles.json');
             const memberEntry = Object.entries(profilesRes.content.members).find(([k, v]) => v.github_username.toLowerCase() === login.toLowerCase());
 
             if (memberEntry) {
                 const memberName = memberEntry[0];
                 await window.githubApi.updateMemberAiConfig(memberName, { provider, model });
+                console.log('[AUTH] GitHub sync successful for provider/model');
             }
-
-            if (window.hypeToast) {
-                window.hypeToast('Configuración API guardada ✓', 'success');
-            } else {
-                this.showToast('Éxito', 'Configuración API guardada correctamente.', 'success');
-            }
-            $('#modalApiConfig').modal('hide');
         } catch (e) {
-            console.error(e);
+            console.warn('[AUTH] GitHub sync failed (non-blocking):', e);
             if (window.hypeToast) {
-                window.hypeToast('Error al guardar. Inténtalo de nuevo.', 'error');
-            } else {
-                this.showToast('Error', 'Fallo al guardar la configuración: ' + e.message, 'error');
+                window.hypeToast('Aviso: No se pudo sincronizar con GitHub, pero los cambios se guardaron en este navegador.', 'warning', 5000);
             }
-        } finally {
-            btn.disabled = false;
-            btn.innerHTML = 'Guardar Configuración';
         }
     }
 
