@@ -993,9 +993,19 @@ permalink: /jules-panel/
 </style>
 
 <script>
-  if (!sessionStorage.getItem('gh_access_token') && !localStorage.getItem('github_token')) {
-    window.location.href = '/';
-  }
+  // Auth Guard: Detectar si hay un token o un código OAuth en proceso
+  (function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const hasCode = urlParams.has('code');
+    const hasToken = sessionStorage.getItem('gh_access_token') || localStorage.getItem('github_token');
+
+    if (!hasToken && !hasCode) {
+      console.warn('[AUTH] No se detectó sesión ni código OAuth. Redirigiendo al Home.');
+      window.location.href = '{{ "/" | relative_url }}';
+    } else if (hasCode) {
+      console.log('[AUTH] Código OAuth detectado. Bloqueando redirección para procesar intercambio.');
+    }
+  })();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="{{ '/assets/javascript/jules-api.js' | relative_url }}"></script>

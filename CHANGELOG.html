@@ -64,6 +64,14 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-success">Fixed</h5>
             <ul class="tree-view mb-3">
+              <li><strong>Auth & Routing (Critical Fix):</strong>
+                <ul>
+                  <li>Eliminado el bucle de redirección infinito en el Dashboard y Jules Panel mediante un nuevo sistema de Guards que detectan y esperan el intercambio del código OAuth.</li>
+                  <li>Implementada la limpieza inmediata del parámetro <code>?code=</code> de la URL tras su detección para prevenir re-procesamientos accidentales.</li>
+                  <li>Introducido un bloqueo global (<code>window._oauthExchanging</code>) para eliminar condiciones de carrera entre los módulos de autenticación y datos.</li>
+                  <li>Mejorado el manejo de errores en el intercambio de tokens con redirección automática al Home y feedback visual mediante toasts en caso de fallo.</li>
+                </ul>
+              </li>
               <li><strong>Dashboard UI & Modals:</strong>
                 <ul>
                   <li>Restaurado el estilo de los modales de Perfil y Ajustes en <code>dashboard.html</code> mediante la inclusión de <code>assets/main.css</code>.</li>

@@ -996,9 +996,19 @@ layout: null
 
     <!-- Scripts -->
     <script>
-      if (!sessionStorage.getItem('gh_access_token') && !localStorage.getItem('github_token')) {
-        window.location.href = '{{ "/" | relative_url }}';
-      }
+      // Auth Guard: Detectar si hay un token o un código OAuth en proceso
+      (function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const hasCode = urlParams.has('code');
+        const hasToken = sessionStorage.getItem('gh_access_token') || localStorage.getItem('github_token');
+
+        if (!hasToken && !hasCode) {
+          console.warn('[AUTH] No se detectó sesión ni código OAuth. Redirigiendo al Home.');
+          window.location.href = '{{ "/" | relative_url }}';
+        } else if (hasCode) {
+          console.log('[AUTH] Código OAuth detectado. Bloqueando redirección para procesar intercambio.');
+        }
+      })();
     </script>
     <script src="{{ "/assets/javascript/github-api.js" | relative_url }}"></script>
     <script src="{{ "/assets/javascript/auth.js" | relative_url }}"></script>

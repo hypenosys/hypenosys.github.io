@@ -12,11 +12,28 @@ class AuthManager {
         this.bindEvents();
 
         const isDashboard = window.location.pathname.includes('dashboard');
-        if (isDashboard) {
-            console.log('[AUTH] Dashboard detected. Delegating auth control to dashboard-data.js');
-            // setTimeout(0) garantiza que el evento se dispara DESPUÉS de que
-            // todos los listeners DOMContentLoaded se hayan registrado,
-            // evitando la race condition donde authReady se pierde.
+        const isJules = window.location.pathname.includes('jules-panel');
+
+        if (isDashboard || isJules) {
+            console.log('[AUTH] Protected page detected. Handling OAuth callback if present...');
+
+            try {
+                const result = await this.handleOAuthCallback();
+                if (result) {
+                    console.log('[AUTH] OAuth exchange successful via AuthManager');
+                    document.dispatchEvent(new CustomEvent('authReady', {
+                        detail: { user: result.user }
+                    }));
+                    return;
+                }
+            } catch (e) {
+                console.error('[AUTH] OAuth exchange failed in init:', e);
+                return;
+            }
+
+            console.log('[AUTH] No OAuth code or exchange completed. Checking existing session...');
+            await this.checkAuthState();
+
             setTimeout(() => {
                 document.dispatchEvent(new CustomEvent('authReady', {
                     detail: { user: window.githubApi.user || null }
@@ -57,25 +74,59 @@ class AuthManager {
         document.getElementById('btn-save-api-config')?.addEventListener('click', () => this.handleSaveApiConfig());
     }
 
+    /**
+     * FIX: Se implementó un bloqueo global (window._oauthExchanging) y limpieza inmediata
+     * de la URL para prevenir bucles de redirección infinitos. El guard de las páginas
+     * protegidas ahora detecta el parámetro 'code' y espera a que este proceso termine
+     * antes de rebotar al index.
+     */
     async handleOAuthCallback() {
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get('code');
         if (code) {
+            if (window._oauthExchanging) {
+                console.log('[AUTH] OAuth exchange already in progress, skipping duplicate.');
+                return null;
+            }
+            window._oauthExchanging = true;
+
+            console.log('[AUTH] Consuming OAuth code...');
+            // Limpiar la URL inmediatamente para evitar re-procesamientos
             window.history.replaceState({}, document.title, window.location.pathname);
+
             this.showToast('Autenticando...', 'Intercambiando código con el gatekeeper...', 'info');
             try {
                 const result = await window.githubApi.exchangeCodeForToken(code);
                 if (result.valid) {
                     this.updateHeaderUI(result.user);
                     this.showToast('Éxito', 'Sesión iniciada correctamente.', 'success');
+                    return result; // Retornar resultado para coordinar con dashboard-data.js
                 } else {
-                    this.handleAuthError({ status: result.user ? 403 : 401, type: result.user ? 'ACL_DENIED' : 'INVALID' });
+                    const err = {
+                        status: result.user ? 403 : 401,
+                        type: result.user ? 'ACL_DENIED' : 'INVALID',
+                        message: result.user ? 'Usuario no autorizado' : 'Token inválido'
+                    };
+                    this.handleAuthError(err);
+                    throw err;
                 }
             } catch (e) {
                 console.error('[AUTH] Exchange failed:', e);
-                this.showToast('Error', 'Fallo en la autenticación OAuth.', 'error');
+                this.showToast('Error', 'Fallo en la autenticación OAuth: ' + (e.message || 'Error desconocido'), 'error');
+
+                // Si el intercambio falla y estamos en una página protegida, redirigir al home
+                if (window.location.pathname.includes('dashboard') || window.location.pathname.includes('jules-panel')) {
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 3000);
+                }
+                throw e;
+            } finally {
+                // No reseteamos _oauthExchanging para evitar que otros disparadores lo intenten de nuevo
+                // ya que el código ya fue consumido y la URL limpiada.
             }
         }
+        return null;
     }
 
     async checkAuthState() {
