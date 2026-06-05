@@ -404,6 +404,9 @@ function renderUserStatus(user) {
           <button onclick="if(window.profileEditor) window.profileEditor.openModal(); else if(window.authManager) window.authManager.showProfileModal();" class="flex items-center w-full px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-colors" role="menuitem">
             <i class="fas fa-user fa-sm fa-fw mr-3 text-indigo-400"></i> Mi Perfil
           </button>
+          <button onclick="window.authManager.showApiConfigModal()" class="flex items-center w-full px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-colors" role="menuitem">
+            <i class="fas fa-key fa-sm fa-fw mr-3 text-indigo-400"></i> Configuración API
+          </button>
           <button onclick="window.authManager.showSettingsModal()" class="flex items-center w-full px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-colors" role="menuitem">
             <i class="fas fa-cog fa-sm fa-fw mr-3 text-indigo-400"></i> Ajustes Avanzados
           </button>

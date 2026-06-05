@@ -43,6 +43,7 @@ class AuthManager {
             if (e.target.closest('#btn-logout')) this.handleLogout();
             if (e.target.closest('#btn-open-settings')) $('#settingsModal').modal('show');
             if (e.target.closest('#btn-open-profile')) this.showProfileModal();
+            if (e.target.closest('#btn-open-api-config')) this.showApiConfigModal();
         });
 
         $('#settingsModal').on('shown.bs.modal', () => {
@@ -52,6 +53,7 @@ class AuthManager {
         });
 
         document.getElementById('btn-save-profile')?.addEventListener('click', () => this.handleSaveProfile());
+        document.getElementById('btn-save-api-config')?.addEventListener('click', () => this.handleSaveApiConfig());
     }
 
     async handleOAuthCallback() {
@@ -221,6 +223,9 @@ class AuthManager {
                         <a class="dropdown-item text-white" href="#" id="btn-open-profile">
                             <i class="fas fa-user fa-sm fa-fw mr-2 text-purple"></i> Mi Perfil
                         </a>
+                        <a class="dropdown-item text-white" href="#" id="btn-open-api-config">
+                            <i class="fas fa-key fa-sm fa-fw mr-2 text-purple"></i> Configuración API
+                        </a>
                         <a class="dropdown-item text-white" href="#" id="btn-open-settings">
                             <i class="fas fa-cog fa-sm fa-fw mr-2 text-purple"></i> Ajustes Avanzados
                         </a>
@@ -364,6 +369,120 @@ class AuthManager {
         }
     }
 
+    handleProviderChange() {
+        const provider = document.getElementById('ai_provider').value;
+        const modelInput = document.getElementById('ai_model');
+        const baseUrlGroup = document.getElementById('group-base-url');
+        const baseUrlInput = document.getElementById('ai_base_url');
+
+        const suggestions = {
+            'anthropic': 'claude-sonnet-4-6-20260217',
+            'openai': 'gpt-5',
+            'gemini': 'gemini-2.5-flash',
+            'mistral': 'mistral-large-latest',
+            'openrouter': 'openrouter/auto',
+            'ollama': 'llama3',
+            'none': '',
+            'custom': ''
+        };
+
+        if (suggestions[provider] !== undefined) {
+            modelInput.placeholder = suggestions[provider] || (provider === 'custom' ? '' : 'Selecciona un proveedor');
+        }
+
+        if (provider === 'ollama' || provider === 'custom') {
+            baseUrlGroup.style.display = 'block';
+            if (!baseUrlInput.value && provider === 'ollama') {
+                baseUrlInput.value = 'http://localhost:11434/v1';
+            }
+        } else {
+            baseUrlGroup.style.display = 'none';
+        }
+    }
+
+    async showApiConfigModal() {
+        if (!window.githubApi.user) {
+            this.showToast('Error', 'Debes estar autenticado para configurar la API.', 'error');
+            return;
+        }
+
+        const login = window.githubApi.user.login;
+        let config = JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
+
+        // Fallback to team_profiles.json if localStorage is empty for provider/model
+        if (!config.provider || !config.model) {
+            try {
+                const profilesRes = await window.githubApi.fetchFileWithSha('_data/team_profiles.json');
+                const profiles = profilesRes.content.members;
+                const memberEntry = Object.values(profiles).find(v => v.github_username.toLowerCase() === login.toLowerCase());
+                if (memberEntry && memberEntry.ai_config) {
+                    config.provider = config.provider || memberEntry.ai_config.provider;
+                    config.model = config.model || memberEntry.ai_config.model;
+                }
+            } catch (e) {
+                console.warn('[AuthManager] No se pudo cargar team_profiles para fallback de API config:', e);
+            }
+        }
+
+        document.getElementById('ai_provider').value = config.provider || 'none';
+        document.getElementById('ai_model').value = config.model || '';
+        document.getElementById('ai_api_key').value = config.api_key || '';
+        document.getElementById('ai_base_url').value = config.base_url || '';
+
+        this.handleProviderChange();
+        $('#modalApiConfig').modal('show');
+    }
+
+    async handleSaveApiConfig() {
+        if (!window.githubApi.user) return;
+        const login = window.githubApi.user.login;
+
+        const provider = document.getElementById('ai_provider').value;
+        const model = document.getElementById('ai_model').value.trim();
+        const apiKey = document.getElementById('ai_api_key').value.trim();
+        const baseUrl = document.getElementById('ai_base_url').value.trim();
+
+        const btn = document.getElementById('btn-save-api-config');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Guardando...';
+
+        try {
+            // Save sensitive + all to localStorage
+            const localConfig = { provider, model, api_key: apiKey, base_url: baseUrl };
+            localStorage.setItem('hy_ai_config', JSON.stringify(localConfig));
+
+            // Sync non-sensitive to team_profiles.json
+            const profilesRes = await window.githubApi.fetchFileWithSha('_data/team_profiles.json');
+            const profiles = profilesRes.content;
+            const memberEntry = Object.entries(profiles.members).find(([k, v]) => v.github_username.toLowerCase() === login.toLowerCase());
+
+            if (memberEntry) {
+                const memberName = memberEntry[0];
+                const updatedProfiles = JSON.parse(JSON.stringify(profiles));
+                updatedProfiles.members[memberName].ai_config = { provider, model };
+
+                await window.githubApi.atomicWrite('_data/team_profiles.json', updatedProfiles, `Update AI config for ${login}`, profilesRes.sha);
+            }
+
+            if (window.hypeToast) {
+                window.hypeToast('Configuración API guardada ✓', 'success');
+            } else {
+                this.showToast('Éxito', 'Configuración API guardada correctamente.', 'success');
+            }
+            $('#modalApiConfig').modal('hide');
+        } catch (e) {
+            console.error(e);
+            if (window.hypeToast) {
+                window.hypeToast('Error al guardar. Inténtalo de nuevo.', 'error');
+            } else {
+                this.showToast('Error', 'Fallo al guardar la configuración: ' + e.message, 'error');
+            }
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = 'Guardar Configuración';
+        }
+    }
+
     showToast(title, message, type = 'info') {
         const container = document.getElementById('toast-container');
         if (!container) return;
@@ -385,3 +504,15 @@ class AuthManager {
 document.addEventListener('DOMContentLoaded', () => {
     window.authManager = new AuthManager();
 });
+
+function togglePasswordVisibility(id) {
+    const input = document.getElementById(id);
+    const btn = input.nextElementSibling.querySelector('i');
+    if (input.type === 'password') {
+        input.type = 'text';
+        btn.classList.replace('fa-eye', 'fa-eye-slash');
+    } else {
+        input.type = 'password';
+        btn.classList.replace('fa-eye-slash', 'fa-eye');
+    }
+}
