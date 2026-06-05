@@ -2554,7 +2554,7 @@ permalink: /jules-panel/
 
                 if (!owner || !repo || !prNumber) return;
 
-                const token = window.githubApi.token || localStorage.getItem('github_token');
+                const token = window.githubApi.getAuthToken();
                 const prResp = await fetch(`https://api.github.com/repos/${owner}/${repo}/pulls/${prNumber}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });

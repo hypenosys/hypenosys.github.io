@@ -19,26 +19,29 @@ class OllamaDiscovery {
         if (this.isScanning) return [];
         this.isScanning = true;
 
-        const targets = this.parseInput(input);
-        const discovered = [];
-        let completed = 0;
+        try {
+            const targets = this.parseInput(input);
+            const discovered = [];
+            let completed = 0;
 
-        const chunks = this.chunkArray(targets, this.concurrencyLimit);
+            const chunks = this.chunkArray(targets, this.concurrencyLimit);
 
-        for (const chunk of chunks) {
-            const results = await Promise.all(chunk.map(async (ip) => {
-                const endpoint = this.formatEndpoint(ip);
-                const isValid = await this.checkOllama(endpoint);
-                completed++;
-                if (onProgress) onProgress(completed, targets.length, ip, isValid);
-                return isValid ? endpoint : null;
-            }));
+            for (const chunk of chunks) {
+                const results = await Promise.all(chunk.map(async (ip) => {
+                    const endpoint = this.formatEndpoint(ip);
+                    const isValid = await this.checkOllama(endpoint);
+                    completed++;
+                    if (onProgress) onProgress(completed, targets.length, ip, isValid);
+                    return isValid ? endpoint : null;
+                }));
 
-            results.filter(r => r !== null).forEach(r => discovered.push(r));
+                results.filter(r => r !== null).forEach(r => discovered.push(r));
+            }
+
+            return discovered;
+        } finally {
+            this.isScanning = false;
         }
-
-        this.isScanning = false;
-        return discovered;
     }
 
     parseInput(input) {

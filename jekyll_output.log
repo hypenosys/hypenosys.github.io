@@ -5,11 +5,11 @@ To use retry middleware with Faraday v2.0+, install `faraday-retry` gem
  Incremental build: disabled. Enable with --incremental
       Generating...
        Jekyll Feed: Generating feed for posts
-                    done in 5.271 seconds.
+                    done in 7.804 seconds.
  Auto-regeneration: disabled when running server detached.
     Server address: http://127.0.0.1:4000
-Server detached with pid '57043'. Run `pkill -f jekyll' or `kill -9 57043' to stop the server.
-[2026-06-05 18:12:47] FATAL SignalException: SIGTERM
+Server detached with pid '133190'. Run `pkill -f jekyll' or `kill -9 133190' to stop the server.
+[2026-06-05 18:24:34] FATAL SignalException: SIGTERM
 	/tmp/vendor/bundle/ruby/3.2.0/gems/webrick-1.9.2/lib/webrick/server.rb:173:in `select'
 	/tmp/vendor/bundle/ruby/3.2.0/gems/webrick-1.9.2/lib/webrick/server.rb:173:in `block in start'
 	/tmp/vendor/bundle/ruby/3.2.0/gems/webrick-1.9.2/lib/webrick/server.rb:32:in `start'

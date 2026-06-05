@@ -5,6 +5,65 @@ hide_title: true
 permalink: /claude-chat.html
 ---
 
+<!-- Custom CSS for Claude Chat Interface -->
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+    #claude-main-interface {
+        font-family: 'Inter', sans-serif;
+        background-color: #282a36;
+        color: #f8f8f2;
+    }
+    .dracula-bg { background-color: #282a36; }
+    .dracula-surface { background-color: #44475a; }
+    .dracula-purple { color: #bd93f9; }
+    .dracula-cyan { color: #8be9fd; }
+    .dracula-green { color: #50fa7b; }
+    .dracula-pink { color: #ff79c6; }
+
+    .chat-container { height: 100%; overflow-y: auto; }
+    .sidebar { background-color: #1e1f29; }
+    .message-user { background-color: #44475a; border-radius: 12px 12px 0 12px; }
+    .message-claude { background-color: #383a59; border-radius: 12px 12px 12px 0; }
+
+    .thinking-block {
+        border-left: 2px solid #6272a4;
+        background: rgba(98, 114, 164, 0.1);
+        padding: 8px 12px;
+        margin-bottom: 12px;
+        font-size: 0.85rem;
+        color: #6272a4;
+        font-style: italic;
+    }
+
+    /* Custom scrollbar for chat */
+    .chat-container::-webkit-scrollbar { width: 6px; }
+    .chat-container::-webkit-scrollbar-track { background: transparent; }
+    .chat-container::-webkit-scrollbar-thumb { background: #44475a; border-radius: 10px; }
+    .chat-container::-webkit-scrollbar-thumb:hover { background: #6272a4; }
+
+    #claude-main-interface pre {
+        background: #1e1f29;
+        padding: 12px;
+        border-radius: 8px;
+        overflow-x: auto;
+        margin: 8px 0;
+        border: 1px solid #44475a;
+    }
+    #claude-main-interface code {
+        font-family: 'JetBrains Mono', monospace;
+        color: #50fa7b;
+    }
+
+    .pulse { animation: pulse 2s infinite; }
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
+    }
+</style>
+
+<!-- Auth Loading Skeleton -->
 <div id="claude-auth-loading" class="fixed inset-0 z-[100] flex items-center justify-center bg-[#282a36]">
     <div class="text-center">
         <div class="text-[#bd93f9] text-6xl mb-6 animate-spin"><i class="fa-solid fa-circle-notch"></i></div>
@@ -12,6 +71,7 @@ permalink: /claude-chat.html
     </div>
 </div>
 
+<!-- Access Restricted Gate -->
 <div id="claude-auth-gate" class="bg-[#282a36] text-[#f8f8f2] min-h-[80vh] flex items-center justify-center hidden">
     <div class="text-center">
         <div class="text-[#bd93f9] text-6xl mb-6"><i class="fa-solid fa-brain"></i></div>
@@ -23,50 +83,9 @@ permalink: /claude-chat.html
     </div>
 </div>
 
+<!-- Main Claude Interface -->
 <div id="claude-main-interface" class="h-[calc(100vh-100px)] flex overflow-hidden hidden border border-[#44475a] rounded-xl shadow-2xl">
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #282a36; color: #f8f8f2; }
-        .dracula-bg { background-color: #282a36; }
-        .dracula-surface { background-color: #44475a; }
-        .dracula-purple { color: #bd93f9; }
-        .dracula-cyan { color: #8be9fd; }
-        .dracula-green { color: #50fa7b; }
-        .dracula-pink { color: #ff79c6; }
 
-        .chat-container { height: calc(100vh - 160px); overflow-y: auto; }
-        .sidebar { background-color: #1e1f29; }
-        .message-user { background-color: #44475a; border-radius: 12px 12px 0 12px; }
-        .message-claude { background-color: #383a59; border-radius: 12px 12px 12px 0; }
-
-        .thinking-block {
-            border-left: 2px solid #6272a4;
-            background: rgba(98, 114, 164, 0.1);
-            padding: 8px 12px;
-            margin-bottom: 12px;
-            font-size: 0.85rem;
-            color: #6272a4;
-            font-style: italic;
-        }
-
-        /* Custom scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #44475a; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #6272a4; }
-
-        pre { background: #1e1f29; padding: 12px; border-radius: 8px; overflow-x: auto; margin: 8px 0; border: 1px solid #44475a; }
-        code { font-family: 'JetBrains Mono', monospace; color: #50fa7b; }
-
-        .pulse { animation: pulse 2s infinite; }
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
-        }
-
-        .hidden { display: none !important; }
-    </style>
-</head>
     <!-- Sidebar -->
     <aside class="sidebar w-64 flex-shrink-0 flex flex-col border-r border-[#44475a]">
         <div class="p-4 border-b border-[#44475a] flex items-center justify-between">
@@ -182,34 +201,6 @@ permalink: /claude-chat.html
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="{{ '/assets/javascript/ollama-discovery.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/ai-config.js' | relative_url }}"></script>
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
-    #claude-main-interface { font-family: 'Inter', sans-serif; background-color: #282a36; color: #f8f8f2; }
-    .dracula-bg { background-color: #282a36; }
-    .dracula-surface { background-color: #44475a; }
-    .dracula-purple { color: #bd93f9; }
-    .dracula-cyan { color: #8be9fd; }
-    .dracula-green { color: #50fa7b; }
-    .dracula-pink { color: #ff79c6; }
-
-    .chat-container { height: 100%; overflow-y: auto; }
-    .sidebar { background-color: #1e1f29; }
-    .message-user { background-color: #44475a; border-radius: 12px 12px 0 12px; }
-    .message-claude { background-color: #383a59; border-radius: 12px 12px 12px 0; }
-
-    .thinking-block {
-        border-left: 2px solid #6272a4;
-        background: rgba(98, 114, 164, 0.1);
-        padding: 8px 12px;
-        margin-bottom: 12px;
-        font-size: 0.85rem;
-        color: #6272a4;
-        font-style: italic;
-    }
-
-    pre { background: #1e1f29; padding: 12px; border-radius: 8px; overflow-x: auto; margin: 8px 0; border: 1px solid #44475a; }
-    code { font-family: 'JetBrains Mono', monospace; color: #50fa7b; }
-</style>
 
 <script>
         let currentSessionId = null;

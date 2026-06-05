@@ -115,14 +115,13 @@ class AuthManager {
                 console.error('[AUTH] Exchange failed:', e);
                 this.showToast('Error', 'Fallo en la autenticación OAuth: ' + (e.message || 'Error desconocido'), 'error');
 
-                // Si el intercambio falla y estamos en una página protegida, redirigir al home
-            if (window.location.pathname.includes('dashboard') ||
-                window.location.pathname.includes('jules-panel') ||
-                window.location.pathname.includes('claude-chat')) {
-                    setTimeout(() => {
-                        window.location.href = '/';
-                    }, 3000);
-                }
+            // En páginas protegidas, simplemente limpiar y disparar authReady con null
+            // para que los gates locales tomen el control en lugar de redirigir al home.
+            window.githubApi.clearAuth();
+            document.dispatchEvent(new CustomEvent('authReady', {
+                detail: { user: null }
+            }));
+
                 throw e;
             } finally {
                 // No reseteamos _oauthExchanging para evitar que otros disparadores lo intenten de nuevo
