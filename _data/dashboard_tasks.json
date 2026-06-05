@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-05T16:12:11.590Z",
+  "last_updated": "2026-06-05T16:13:56.649Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -931,7 +931,7 @@
       "id": 27
     },
     {
-      "title": "Nueva página \"GitHub Operations\" — Hub completo de gestión de repositorios",
+      "title": "Nueva página \"GitHub (Team) Ops\" — Hub completo de gestión de repositorios, conectado con Jules y Claude",
       "descripcion": "Crear una página dedicada /github-ops/ que use la GitHub REST API al máximo aprovechando el token OAuth ya existente. La página actuará como un clon funcional de GitHub adaptado al workflow del estudio: gestión de PRs (abrir, revisar, mergear, cerrar), issues, branches, commits, Actions/Workflows y notificaciones, todo desde Hypenosys sin abrir github.com. Diseño UX/UI godmode con estética Dracula, navegación por repositorios de la organización, diff viewer inline, y sistema de notificaciones en tiempo real via polling de la Notifications API.",
       "rama": "PRO",
       "task_type": "feature",
@@ -1012,6 +1012,13 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-05T16:13:55.858Z",
+          "field": "title",
+          "old_value": "Nueva página \"GitHub Operations\" — Hub completo de gestión de repositorios",
+          "new_value": "Nueva página \"GitHub (Team) Ops\" — Hub completo de gestión de repositorios, conectado con Jules y Claude"
         }
       ],
       "id": 28
