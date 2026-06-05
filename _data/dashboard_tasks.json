@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-05T16:02:47.601Z",
+  "last_updated": "2026-06-05T16:08:34.893Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -365,7 +365,7 @@
     },
     {
       "rama": "PRO",
-      "descripcion": "Merge SVN Content/Scripts with upgraded github repo 'app' 5.7.4",
+      "descripcion": "Merge SVN Content/Scripts SVN folder syncing with upgraded an upgraded github repo 'app' to 5.7.4",
       "tema_principal": "Programación / Engine",
       "prioridad": "Major",
       "milestone": "M3",
@@ -396,9 +396,22 @@
       "due_date": "2026-06-30",
       "estimated_hours": 4,
       "story_points": 1,
-      "tags": [],
+      "tags": [
+        "git"
+      ],
       "external_links": [],
-      "subtasks": [],
+      "subtasks": [
+        {
+          "id": 1780675597610,
+          "text": "clonar repo hypenosys/app",
+          "done": false
+        },
+        {
+          "id": 1780675637546,
+          "text": "ponerla al día a la versión",
+          "done": false
+        }
+      ],
       "acceptance_criteria": "",
       "blocks": [],
       "blocked_by": [],
@@ -445,6 +458,20 @@
           "field": "task_type",
           "old_value": "feature",
           "new_value": "chore"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-05T16:08:34.339Z",
+          "field": "descripcion",
+          "old_value": "Merge SVN Content/Scripts with upgraded github repo 'app' 5.7.4",
+          "new_value": "Merge SVN Content/Scripts SVN folder syncing with upgraded an upgraded github repo 'app' to 5.7.4"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-05T16:08:34.339Z",
+          "field": "tags",
+          "old_value": "[]",
+          "new_value": "[\"git\"]"
         }
       ],
       "repository": "hypenosys/app"
