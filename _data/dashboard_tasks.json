@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-04T17:52:23.533Z",
+  "last_updated": "2026-06-05T16:02:47.601Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -367,8 +367,8 @@
       "rama": "PRO",
       "descripcion": "Merge SVN Content/Scripts with upgraded github repo 'app' 5.7.4",
       "tema_principal": "Programación / Engine",
-      "prioridad": "Minor",
-      "milestone": "M1",
+      "prioridad": "Major",
+      "milestone": "M3",
       "estado": "Working",
       "completitud": 0.75,
       "resuelto_por": "Alex",
@@ -390,8 +390,8 @@
         "alex@hypenosys.com"
       ],
       "images": [],
-      "title": "Merge SVN Content/Scripts with upgraded github repo 'app'",
-      "task_type": "feature",
+      "title": "Content/Scripts github sync repo 'app' which is Unreal upgraded to 5.7.4",
+      "task_type": "chore",
       "start_date": "2026-06-01",
       "due_date": "2026-06-30",
       "estimated_hours": 4,
@@ -417,6 +417,34 @@
           "field": "repository",
           "old_value": null,
           "new_value": "hypenosys/app"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-05T16:02:46.750Z",
+          "field": "title",
+          "old_value": "Merge SVN Content/Scripts with upgraded github repo 'app'",
+          "new_value": "Content/Scripts github sync repo 'app' which is Unreal upgraded to 5.7.4"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-05T16:02:46.750Z",
+          "field": "prioridad",
+          "old_value": "Minor",
+          "new_value": "Major"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-05T16:02:46.750Z",
+          "field": "milestone",
+          "old_value": "M1",
+          "new_value": "M3"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-05T16:02:46.750Z",
+          "field": "task_type",
+          "old_value": "feature",
+          "new_value": "chore"
         }
       ],
       "repository": "hypenosys/app"
