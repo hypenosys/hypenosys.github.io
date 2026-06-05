@@ -27,16 +27,21 @@ function renderModalArrays() {
         `).join('');
     }
 
-    // Subtasks
+    // Subtasks (Quest 6)
     const subtasksContainer = document.getElementById('task-subtasks-container');
     if (subtasksContainer) {
         subtasksContainer.innerHTML = modalSubtasks.map((sub, idx) => `
-            <div class="flex items-center gap-3 p-2 bg-slate-900 border border-slate-800 rounded-lg group">
+            <div class="flex items-center gap-3 p-2 bg-slate-900 border border-slate-800 rounded-lg group" data-subtask-item data-subtask-text="${sub.text}" data-subtask-id="${sub.id || idx}">
                 <input type="checkbox" ${sub.done ? 'checked' : ''} onclick="toggleSubtask(${idx})" class="w-4 h-4 rounded border-slate-700 text-emerald-500 bg-slate-950 focus:ring-emerald-500">
                 <span class="text-xs ${sub.done ? 'text-slate-600 line-through' : 'text-slate-300'} flex-grow">${sub.text}</span>
-                <button type="button" onclick="removeSubtask(${idx})" class="action-btn action-btn--secondary text-slate-600 hover:text-red-400" title="Eliminar subtarea">
-                    <i class="fa-solid fa-trash text-[10px]"></i>
-                </button>
+                <div style="display:flex; gap:4px;">
+                    <button type="button" data-subtask-github class="subtask-action-btn" title="Buscar en GitHub">
+                        <i class="fa-brands fa-github"></i>
+                    </button>
+                    <button type="button" data-subtask-delete class="subtask-action-btn" title="Eliminar subtarea">
+                        <i class="fa-solid fa-trash-alt"></i>
+                    </button>
+                </div>
             </div>
         `).join('');
     }
@@ -126,6 +131,59 @@ function removeSubtask(idx) {
     modalSubtasks.splice(idx, 1);
     renderModalArrays();
 }
+
+// Quest 6: Event Delegation for Subtask Buttons
+document.addEventListener('click', function(e) {
+    const ghBtn = e.target.closest('[data-subtask-github]');
+    if (ghBtn) {
+        const item = ghBtn.closest('[data-subtask-item]');
+        const text = item.dataset.subtaskText;
+        const repoSelect = document.getElementById('task-repo-input');
+        const repoFull = repoSelect ? repoSelect.value : '';
+        const repoName = repoFull.split('/')[1] || '';
+
+        window.open(
+            `https://github.com/hypenosys/${repoName}/issues?q=${encodeURIComponent(text)}`,
+            '_blank', 'noopener,noreferrer'
+        );
+        return;
+    }
+
+    const delBtn = e.target.closest('[data-subtask-delete]');
+    if (delBtn) {
+        if (delBtn.dataset.confirmPending === 'true') {
+            clearTimeout(parseInt(delBtn.dataset.confirmTimer, 10));
+            const item = delBtn.closest('[data-subtask-item]');
+            // Finding index again because the array might have shifted
+            const subId = item.dataset.subtaskId;
+            const idx = modalSubtasks.findIndex(s => String(s.id || '') === String(subId));
+            if (idx !== -1) {
+                removeSubtask(idx);
+            } else {
+                // fallback to original index strategy if no ID
+                const allItems = Array.from(document.querySelectorAll('#task-subtasks-container [data-subtask-item]'));
+                const elementIdx = allItems.indexOf(item);
+                removeSubtask(elementIdx);
+            }
+        } else {
+            delBtn.dataset.confirmPending = 'true';
+            delBtn.dataset.originalHtml = delBtn.innerHTML;
+            delBtn.textContent = '¿Seguro?';
+            delBtn.style.color = '#ff5555';
+            delBtn.style.borderColor = '#ff5555';
+            delBtn.classList.add('blink-border');
+
+            const timer = setTimeout(() => {
+                delBtn.dataset.confirmPending = 'false';
+                delBtn.innerHTML = delBtn.dataset.originalHtml;
+                delBtn.style.color = '';
+                delBtn.style.borderColor = '';
+                delBtn.classList.remove('blink-border');
+            }, 2000);
+            delBtn.dataset.confirmTimer = timer;
+        }
+    }
+});
 
 function handleAddComment() {
     const input = document.getElementById('task-new-comment-input');

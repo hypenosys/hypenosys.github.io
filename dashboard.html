@@ -66,6 +66,28 @@ layout: null
         .kanban-cards { touch-action: pan-x pan-y; }
         .kanban-cards [role="button"] { touch-action: manipulation; }
 
+        .subtask-action-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            padding: 3px 6px;
+            cursor: pointer;
+            transition: all 150ms ease;
+            font-size: 11px;
+        }
+        [data-subtask-github] { color: #bd93f9; }
+        [data-subtask-github]:hover { color: #ff79c6; border-color: #ff79c6; background: rgba(255,121,198,0.1); }
+        [data-subtask-delete] { color: #6272a4; }
+        [data-subtask-delete]:hover { color: #ff5555; border-color: #ff5555; background: rgba(255,85,85,0.1); }
+
+        @keyframes blink-border {
+            0%, 100% { border-color: #ff5555; }
+            50% { border-color: transparent; }
+        }
+        .blink-border {
+            animation: blink-border 0.5s step-end infinite;
+        }
+
         /* Profile Editor Modal Custom Styles */
         #modalEditProfile .nav-tabs .nav-link.active {
             border-bottom: 2px solid #818cf8 !important;
