@@ -1,6 +1,6 @@
 {
   "schema_version": "2.0.0",
-  "last_updated": "2026-06-05T19:00:32.935Z",
+  "last_updated": "2026-06-05T19:00:40.607Z",
   "members": {
     "Axel": {
       "github_username": "Axlfc",
@@ -86,7 +86,7 @@
       },
       "ai_config": {
         "provider": "ollama",
-        "model": "ollama"
+        "model": "gema4:e4b"
       }
     },
     "Javi": {
