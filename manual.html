@@ -1,0 +1,1603 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manual Operativo | Hypenosys</title>
+<meta name="description" content="Manual técnico completo del sistema operativo Hypenosys: Dashboard, Kanban, Jules Panel, GitHub API, autenticación y mantenimiento.">
+<style>
+/* ═══════════════════════════════════════════════
+   TOKENS & BASE — Hypenosys Dark Neural System
+═══════════════════════════════════════════════ */
+:root {
+  --bg:        #0a0a0f;
+  --bg2:       #0f0f1a;
+  --bg3:       #141425;
+  --surface:   #1a1a2e;
+  --surface2:  #1e1e35;
+  --border:    #2a2a4a;
+  --border2:   #3a3a6a;
+  --text:      #e2e2f0;
+  --text2:     #9090b8;
+  --text3:     #5a5a80;
+  --accent:    #7c6af0;
+  --accent2:   #5d4ed4;
+  --cyan:      #4ecdc4;
+  --green:     #56d364;
+  --amber:     #e3b341;
+  --red:       #f85149;
+  --pink:      #d86dd8;
+  --radius:    6px;
+  --radius2:   10px;
+  --mono:      'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+  --sans:      'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; font-size: 15px; }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  min-height: 100vh;
+}
+
+/* ═══ TYPOGRAPHY ═══ */
+h1 { font-size: 2.4rem; font-weight: 700; letter-spacing: -0.03em; }
+h2 { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 1rem; color: #fff; }
+h3 { font-size: 1.15rem; font-weight: 600; margin-bottom: .6rem; color: var(--text); }
+h4 { font-size: .95rem; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: .06em; margin-bottom: .4rem; }
+p  { color: var(--text2); margin-bottom: .8rem; }
+a  { color: var(--accent); text-decoration: none; }
+a:hover { color: var(--cyan); text-decoration: underline; }
+code { font-family: var(--mono); background: var(--surface2); border: 1px solid var(--border); padding: .1em .4em; border-radius: 3px; font-size: .82rem; color: var(--cyan); }
+pre { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.1rem 1.3rem; overflow-x: auto; margin: .8rem 0; }
+pre code { background: none; border: none; padding: 0; font-size: .8rem; color: var(--text2); }
+strong { color: var(--text); }
+ul, ol { padding-left: 1.4rem; color: var(--text2); }
+li { margin-bottom: .25rem; }
+hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+/* ═══ SCROLLBAR ═══ */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+/* ═══ NAV ═══ */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  height: 52px;
+  background: rgba(10,10,15,.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 0;
+  padding: 0 1.5rem;
+}
+.nav-brand {
+  font-family: var(--mono); font-size: .85rem; font-weight: 700;
+  color: var(--accent); letter-spacing: .1em; text-transform: uppercase;
+  margin-right: auto; white-space: nowrap;
+}
+.nav-links { display: flex; gap: 0; }
+.nav-links a {
+  display: block; padding: .35rem .75rem;
+  font-size: .78rem; font-weight: 500; color: var(--text2);
+  text-transform: uppercase; letter-spacing: .05em;
+  border-radius: var(--radius); transition: color .15s, background .15s;
+}
+.nav-links a:hover { color: var(--text); background: var(--surface); text-decoration: none; }
+.nav-links a.active { color: var(--accent); }
+.nav-search { display: flex; align-items: center; margin-left: .75rem; }
+.nav-search input {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: .3rem .7rem;
+  color: var(--text); font-size: .78rem; width: 160px;
+  outline: none; transition: border-color .2s, width .2s;
+}
+.nav-search input:focus { border-color: var(--accent); width: 220px; }
+.nav-search input::placeholder { color: var(--text3); }
+.nav-menu-btn { display: none; background: none; border: none; color: var(--text2); cursor: pointer; font-size: 1.2rem; padding: .3rem; }
+
+/* ═══ LAYOUT ═══ */
+.layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: calc(100vh - 52px);
+  margin-top: 52px;
+}
+
+/* ═══ SIDEBAR ═══ */
+.sidebar {
+  position: sticky; top: 52px; height: calc(100vh - 52px);
+  overflow-y: auto; background: var(--bg2);
+  border-right: 1px solid var(--border);
+  padding: 1.2rem .8rem;
+}
+.sidebar-section { margin-bottom: 1.4rem; }
+.sidebar-label {
+  font-family: var(--mono); font-size: .65rem;
+  text-transform: uppercase; letter-spacing: .1em;
+  color: var(--text3); padding: 0 .5rem; margin-bottom: .4rem;
+}
+.sidebar a {
+  display: flex; align-items: center; gap: .4rem;
+  padding: .32rem .5rem;
+  font-size: .78rem; color: var(--text2);
+  border-radius: var(--radius); transition: all .15s;
+  border-left: 2px solid transparent;
+}
+.sidebar a:hover { color: var(--text); background: var(--surface); text-decoration: none; }
+.sidebar a.active { color: var(--accent); border-left-color: var(--accent); background: var(--surface); }
+.sidebar a .num { font-family: var(--mono); font-size: .65rem; color: var(--text3); min-width: 1.4rem; }
+
+/* ═══ CONTENT ═══ */
+.content { padding: 2.5rem 3rem 4rem; max-width: 960px; }
+
+.section { margin-bottom: 3rem; scroll-margin-top: 70px; }
+
+/* ═══ HERO ═══ */
+.hero {
+  padding: 2.8rem 2.5rem 2.5rem;
+  background: linear-gradient(135deg, var(--bg2) 0%, #0d0d20 50%, #0f0a1e 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius2);
+  margin-bottom: 2.5rem;
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; top: -60px; right: -60px;
+  width: 280px; height: 280px;
+  background: radial-gradient(circle, rgba(124,106,240,.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-eyebrow {
+  font-family: var(--mono); font-size: .7rem;
+  color: var(--accent); text-transform: uppercase; letter-spacing: .15em;
+  margin-bottom: .6rem;
+}
+.hero h1 { color: #fff; margin-bottom: .5rem; }
+.hero p { font-size: 1rem; color: var(--text2); margin-bottom: 1.4rem; max-width: 540px; }
+.badges { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 1.5rem; }
+.badge {
+  font-family: var(--mono); font-size: .65rem;
+  padding: .2rem .55rem; border-radius: 20px;
+  border: 1px solid var(--border2); color: var(--text2);
+  background: var(--surface);
+}
+.badge.accent { border-color: var(--accent); color: var(--accent); }
+.badge.cyan   { border-color: var(--cyan); color: var(--cyan); }
+.badge.green  { border-color: var(--green); color: var(--green); }
+.hero-btns { display: flex; flex-wrap: wrap; gap: .6rem; }
+.btn {
+  display: inline-flex; align-items: center; gap: .4rem;
+  padding: .45rem 1rem; border-radius: var(--radius);
+  font-size: .78rem; font-weight: 600; cursor: pointer;
+  transition: all .15s; white-space: nowrap; text-decoration: none;
+}
+.btn-primary { background: var(--accent); color: #fff; border: 1px solid var(--accent); }
+.btn-primary:hover { background: var(--accent2); text-decoration: none; color: #fff; }
+.btn-ghost { background: transparent; color: var(--text2); border: 1px solid var(--border2); }
+.btn-ghost:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
+
+/* ═══ SECTION HEADER ═══ */
+.section-hdr {
+  display: flex; align-items: center; gap: .7rem;
+  padding-bottom: .75rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1.4rem;
+}
+.section-hdr .icon {
+  width: 28px; height: 28px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--radius); display: flex; align-items: center; justify-content: center;
+  font-size: .85rem; flex-shrink: 0;
+}
+.section-num { font-family: var(--mono); font-size: .7rem; color: var(--text3); }
+
+/* ═══ CARDS & GRIDS ═══ */
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: .9rem; margin-bottom: 1rem; }
+.grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: .9rem; margin-bottom: 1rem; }
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius2); padding: 1rem 1.1rem;
+}
+.card:hover { border-color: var(--border2); }
+.card h3 { font-size: .88rem; margin-bottom: .35rem; }
+.card p { font-size: .8rem; margin-bottom: 0; }
+
+/* ═══ CALLOUTS ═══ */
+.callout {
+  display: flex; gap: .75rem;
+  padding: .85rem 1rem;
+  border-radius: var(--radius); margin: .8rem 0;
+  border-left: 3px solid;
+}
+.callout-icon { font-size: .95rem; flex-shrink: 0; margin-top: .05rem; }
+.callout-body { flex: 1; }
+.callout-body strong { display: block; font-size: .78rem; text-transform: uppercase; letter-spacing: .06em; margin-bottom: .2rem; }
+.callout-body p { margin: 0; font-size: .82rem; }
+.callout.info    { background: rgba(78,205,196,.07); border-color: var(--cyan); }
+.callout.info .callout-body strong { color: var(--cyan); }
+.callout.warning { background: rgba(227,179,65,.07); border-color: var(--amber); }
+.callout.warning .callout-body strong { color: var(--amber); }
+.callout.danger  { background: rgba(248,81,73,.07); border-color: var(--red); }
+.callout.danger .callout-body strong { color: var(--red); }
+.callout.success { background: rgba(86,211,100,.07); border-color: var(--green); }
+.callout.success .callout-body strong { color: var(--green); }
+.callout.dev     { background: rgba(124,106,240,.07); border-color: var(--accent); }
+.callout.dev .callout-body strong { color: var(--accent); }
+
+/* ═══ TABLES ═══ */
+.tbl-wrap { overflow-x: auto; margin: .8rem 0; border-radius: var(--radius); border: 1px solid var(--border); }
+table { width: 100%; border-collapse: collapse; font-size: .8rem; }
+thead tr { background: var(--surface2); }
+th { text-align: left; padding: .55rem .8rem; font-size: .7rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--text3); border-bottom: 1px solid var(--border); white-space: nowrap; }
+td { padding: .5rem .8rem; border-bottom: 1px solid var(--border); color: var(--text2); vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255,255,255,.018); }
+td code { font-size: .75rem; }
+.tag-risk-high  { color: var(--red); font-weight: 600; }
+.tag-risk-med   { color: var(--amber); font-weight: 600; }
+.tag-risk-low   { color: var(--green); font-weight: 600; }
+.tag-status     { font-family: var(--mono); font-size: .68rem; padding: .1rem .4rem; border-radius: 3px; }
+.tag-actual     { background: rgba(86,211,100,.12); color: var(--green); }
+.tag-observed   { background: rgba(78,205,196,.12); color: var(--cyan); }
+.tag-recommended{ background: rgba(124,106,240,.12); color: var(--accent); }
+.tag-pending    { background: rgba(227,179,65,.12); color: var(--amber); }
+
+/* ═══ ACCORDIONS ═══ */
+details {
+  border: 1px solid var(--border);
+  border-radius: var(--radius); margin-bottom: .5rem;
+  background: var(--surface);
+}
+details[open] { border-color: var(--border2); }
+summary {
+  padding: .7rem 1rem; cursor: pointer;
+  font-size: .85rem; font-weight: 600; color: var(--text);
+  display: flex; align-items: center; gap: .5rem;
+  list-style: none; user-select: none;
+}
+summary::-webkit-details-marker { display: none; }
+summary::after { content: '▸'; margin-left: auto; color: var(--text3); font-size: .75rem; transition: transform .2s; }
+details[open] summary::after { transform: rotate(90deg); }
+summary:hover { color: var(--accent); }
+.details-body { padding: .2rem 1rem 1rem; border-top: 1px solid var(--border); }
+.details-body p { font-size: .82rem; }
+
+/* ═══ FLOW DIAGRAM ═══ */
+.flow {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0;
+  padding: 1rem; background: var(--bg2);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  margin: .8rem 0; overflow-x: auto;
+}
+.flow-node {
+  background: var(--surface2); border: 1px solid var(--border2);
+  border-radius: var(--radius); padding: .3rem .6rem;
+  font-family: var(--mono); font-size: .72rem; color: var(--text);
+  white-space: nowrap;
+}
+.flow-node.accent { border-color: var(--accent); color: var(--accent); }
+.flow-node.cyan   { border-color: var(--cyan); color: var(--cyan); }
+.flow-node.green  { border-color: var(--green); color: var(--green); }
+.flow-arrow { color: var(--text3); font-size: .8rem; padding: 0 .3rem; }
+
+/* ═══ CHECKLIST ═══ */
+.checklist { list-style: none; padding: 0; }
+.checklist li { display: flex; align-items: flex-start; gap: .5rem; padding: .28rem 0; font-size: .82rem; color: var(--text2); }
+.checklist li::before { content: '□'; font-family: var(--mono); color: var(--accent); flex-shrink: 0; margin-top: .05rem; }
+
+/* ═══ GLOSSARY ═══ */
+.glossary dt { font-family: var(--mono); font-size: .82rem; color: var(--cyan); font-weight: 600; margin-top: .9rem; }
+.glossary dd { font-size: .8rem; color: var(--text2); margin-left: 1rem; margin-top: .15rem; }
+
+/* ═══ SEARCH HIGHLIGHT ═══ */
+mark { background: rgba(124,106,240,.35); color: var(--accent); border-radius: 2px; }
+
+/* ═══ SEARCH RESULTS PANEL ═══ */
+#search-results {
+  display: none; position: fixed; top: 60px; right: 1.5rem;
+  width: 320px; max-height: 360px; overflow-y: auto;
+  background: var(--bg2); border: 1px solid var(--border2);
+  border-radius: var(--radius2); z-index: 300; padding: .5rem;
+  box-shadow: 0 12px 40px rgba(0,0,0,.6);
+}
+#search-results.active { display: block; }
+.sr-item {
+  display: block; padding: .5rem .7rem;
+  border-radius: var(--radius); font-size: .78rem; color: var(--text2);
+  cursor: pointer; transition: background .12s;
+}
+.sr-item:hover { background: var(--surface); color: var(--text); text-decoration: none; }
+.sr-item strong { color: var(--text); display: block; font-size: .8rem; }
+.sr-no { padding: .6rem .7rem; font-size: .78rem; color: var(--text3); }
+
+/* ═══ MOBILE NAV DRAWER ═══ */
+#sidebar-drawer {
+  display: none;
+  position: fixed; top: 52px; left: 0; bottom: 0; width: 260px;
+  background: var(--bg2); border-right: 1px solid var(--border);
+  z-index: 150; overflow-y: auto; padding: 1rem .8rem;
+  transform: translateX(-100%); transition: transform .25s;
+}
+#sidebar-drawer.open { transform: none; }
+.drawer-overlay {
+  display: none; position: fixed; inset: 0; z-index: 140;
+  background: rgba(0,0,0,.5); backdrop-filter: blur(2px);
+}
+.drawer-overlay.open { display: block; }
+
+/* ═══ SECTION STATUS PILL ═══ */
+.status-pill {
+  font-family: var(--mono); font-size: .62rem;
+  padding: .12rem .45rem; border-radius: 20px;
+  display: inline-block; margin-left: .4rem;
+}
+
+/* ═══ BACK TO TOP ═══ */
+#btt {
+  position: fixed; bottom: 1.5rem; right: 1.5rem;
+  width: 36px; height: 36px;
+  background: var(--surface2); border: 1px solid var(--border2);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  color: var(--text2); font-size: .85rem; cursor: pointer;
+  opacity: 0; pointer-events: none; transition: opacity .2s;
+  z-index: 100; text-decoration: none;
+}
+#btt.show { opacity: 1; pointer-events: auto; }
+#btt:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
+
+/* ═══ FOOTER ═══ */
+footer {
+  grid-column: 2;
+  padding: 1.2rem 3rem;
+  border-top: 1px solid var(--border);
+  background: var(--bg2);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: .5rem;
+}
+footer span { font-family: var(--mono); font-size: .7rem; color: var(--text3); }
+footer a { font-size: .7rem; color: var(--text3); }
+footer a:hover { color: var(--accent); }
+
+/* ═══ RESPONSIVE ═══ */
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .layout { grid-template-columns: 1fr; }
+  .content { padding: 1.5rem 1.2rem 3rem; }
+  footer { grid-column: 1; }
+  .nav-links { display: none; }
+  .nav-menu-btn { display: block; }
+  .nav-search input { width: 120px; }
+  .nav-search input:focus { width: 160px; }
+  h1 { font-size: 1.8rem; }
+  .grid2, .grid3 { grid-template-columns: 1fr; }
+  #sidebar-drawer { display: block; }
+}
+@media (max-width: 500px) {
+  .hero { padding: 1.5rem 1.2rem; }
+  .hero-btns { flex-direction: column; }
+  .btn { justify-content: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a class="nav-brand" href="https://hypenosys.github.io/">HYPENOSYS</a>
+  <div class="nav-links">
+    <a href="https://hypenosys.github.io/">Home</a>
+    <a href="https://hypenosys.github.io/dashboard.html">Dashboard</a>
+    <a href="https://hypenosys.github.io/documentacion/">Docs</a>
+    <a href="https://hypenosys.github.io/jules-panel/">Jules</a>
+    <a href="manual.html" class="active">Manual</a>
+  </div>
+  <div class="nav-search">
+    <input type="search" id="q" placeholder="Buscar…" autocomplete="off" aria-label="Buscar en el manual">
+  </div>
+  <button class="nav-menu-btn" id="drawerBtn" aria-label="Menú">☰</button>
+</nav>
+
+<!-- SEARCH RESULTS -->
+<div id="search-results" role="listbox" aria-label="Resultados de búsqueda"></div>
+
+<!-- MOBILE DRAWER -->
+<div class="drawer-overlay" id="overlay"></div>
+<nav id="sidebar-drawer" aria-label="Navegación móvil"></nav>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar" aria-label="Índice del manual">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Inicio</div>
+      <a href="#hero">⬡ Manual Operativo</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Sistema</div>
+      <a href="#s1"><span class="num">01</span> Resumen ejecutivo</a>
+      <a href="#s2"><span class="num">02</span> Mapa del sistema</a>
+      <a href="#s3"><span class="num">03</span> Repositorio</a>
+      <a href="#s4"><span class="num">04</span> Páginas principales</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Operaciones</div>
+      <a href="#s5"><span class="num">05</span> Dashboard</a>
+      <a href="#s6"><span class="num">06</span> Kanban</a>
+      <a href="#s7"><span class="num">07</span> Imágenes</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Técnico</div>
+      <a href="#s8"><span class="num">08</span> Autenticación</a>
+      <a href="#s9"><span class="num">09</span> GitHub API</a>
+      <a href="#s10"><span class="num">10</span> Jules Panel</a>
+      <a href="#s11"><span class="num">11</span> Documentación</a>
+      <a href="#s12"><span class="num">12</span> _data JSON</a>
+      <a href="#s13"><span class="num">13</span> Módulos JS</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Flujos</div>
+      <a href="#s14"><span class="num">14</span> Flujos internos</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">DevOps</div>
+      <a href="#s15"><span class="num">15</span> Instalación local</a>
+      <a href="#s16"><span class="num">16</span> Despliegue</a>
+      <a href="#s17"><span class="num">17</span> Mantenimiento</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Referencia</div>
+      <a href="#s18"><span class="num">18</span> Troubleshooting</a>
+      <a href="#s19"><span class="num">19</span> Seguridad</a>
+      <a href="#s20"><span class="num">20</span> Roadmap</a>
+      <a href="#s21"><span class="num">21</span> Glosario</a>
+      <a href="#s22"><span class="num">22</span> Anexos</a>
+    </div>
+  </aside>
+
+  <!-- CONTENT -->
+  <main class="content" id="main">
+
+    <!-- HERO -->
+    <div class="hero" id="hero">
+      <div class="hero-eyebrow">Manual Técnico v1.0 · Hypenosys Indie Studio</div>
+      <h1>Manual Operativo<br>de Hypenosys</h1>
+      <p>Centro de operaciones, documentación técnica y guía de mantenimiento. Arquitectura real basada en auditoría del repositorio <code>hypenosys/hypenosys.github.io</code>.</p>
+      <div class="badges">
+        <span class="badge accent">Jekyll</span>
+        <span class="badge cyan">GitHub Pages</span>
+        <span class="badge">GitHub API</span>
+        <span class="badge">Jules AI</span>
+        <span class="badge">Kanban</span>
+        <span class="badge green">Data-as-Code</span>
+        <span class="badge">Unreal Engine 5</span>
+      </div>
+      <div class="hero-btns">
+        <a href="https://hypenosys.github.io/dashboard.html" class="btn btn-primary">⬡ Dashboard</a>
+        <a href="https://hypenosys.github.io/documentacion/" class="btn btn-ghost">📖 Documentación</a>
+        <a href="https://hypenosys.github.io/jules-panel/" class="btn btn-ghost">🤖 Jules Panel</a>
+        <a href="https://github.com/hypenosys/hypenosys.github.io" class="btn btn-ghost" target="_blank" rel="noopener">⎔ Repositorio</a>
+      </div>
+    </div>
+
+    <!-- ══════════ 01 RESUMEN ══════════ -->
+    <section class="section" id="s1">
+      <div class="section-hdr">
+        <div class="icon">01</div>
+        <div><h2 style="margin:0">Resumen Ejecutivo</h2><span class="section-num">Qué es y para qué sirve Hypenosys</span></div>
+      </div>
+      <p>Hypenosys es un <strong>estudio indie</strong> que desarrolla videojuegos con Unreal Engine 5. Su web (<code>hypenosys.github.io</code>) funciona simultáneamente como <strong>sitio público</strong>, <strong>centro de mando operativo</strong> y <strong>plataforma de documentación interna</strong>, todo sobre GitHub Pages sin servidor tradicional.</p>
+      <div class="grid3">
+        <div class="card">
+          <h3>🎮 Estudio</h3>
+          <p>Equipo de 5 personas: Axel, Alex, Javi, Dídac, Mitxel. Roles: programación, arte, diseño, animación, sistemas.</p>
+        </div>
+        <div class="card">
+          <h3>⬡ Dashboard</h3>
+          <p>Kanban operativo con Kanban, pipeline, métricas QA, milestones, Hall of Fame y perfiles del equipo.</p>
+        </div>
+        <div class="card">
+          <h3>🔗 Persistencia</h3>
+          <p>Sin base de datos. Los datos viven en <code>_data/*.json</code> en el repo. Las escrituras usan GitHub Contents API con tokens PAT.</p>
+        </div>
+        <div class="card">
+          <h3>🤖 Jules</h3>
+          <p>Agente IA de Google para automatizar tareas en ramas del repositorio. Integrado desde el Jules Panel.</p>
+        </div>
+        <div class="card">
+          <h3>📦 Despliegue</h3>
+          <p>GitHub Pages + Jekyll. Sin backend, sin CI custom. El build ocurre automáticamente en cada push a la rama principal.</p>
+        </div>
+        <div class="card">
+          <h3>🔒 Acceso</h3>
+          <p>Autenticación via GitHub OAuth + lista blanca de usuarios. El dashboard requiere autenticación y pertenencia al equipo.</p>
+        </div>
+      </div>
+      <div class="callout info">
+        <div class="callout-icon">ℹ</div>
+        <div class="callout-body"><strong>Data-as-Code</strong><p>Todo el estado operativo (tareas, configuraciones, perfiles) se persiste como JSON en el repositorio Git. No hay base de datos externa. El historial de Git es el historial de datos.</p></div>
+      </div>
+    </section>
+
+    <!-- ══════════ 02 MAPA ══════════ -->
+    <section class="section" id="s2">
+      <div class="section-hdr">
+        <div class="icon">02</div>
+        <div><h2 style="margin:0">Mapa General del Sistema</h2><span class="section-num">Arquitectura de alto nivel</span></div>
+      </div>
+      <h4>Flujo de datos</h4>
+      <div class="flow">
+        <span class="flow-node">Usuario</span><span class="flow-arrow">→</span>
+        <span class="flow-node cyan">GitHub Pages</span><span class="flow-arrow">→</span>
+        <span class="flow-node">Frontend Jekyll</span><span class="flow-arrow">→</span>
+        <span class="flow-node">Dashboard / Docs / Jules</span><span class="flow-arrow">→</span>
+        <span class="flow-node cyan">GitHub API</span><span class="flow-arrow">→</span>
+        <span class="flow-node accent">_data/*.json</span><span class="flow-arrow">→</span>
+        <span class="flow-node green">Commit repo</span>
+      </div>
+      <h4>Flujo de autenticación</h4>
+      <div class="flow">
+        <span class="flow-node">Frontend público</span><span class="flow-arrow">→</span>
+        <span class="flow-node">GitHub OAuth / PAT</span><span class="flow-arrow">→</span>
+        <span class="flow-node accent">Lista blanca equipo</span><span class="flow-arrow">→</span>
+        <span class="flow-node">Operaciones restringidas</span><span class="flow-arrow">→</span>
+        <span class="flow-node green">Escritura JSON / API</span>
+      </div>
+      <div class="callout warning">
+        <div class="callout-icon">⚠</div>
+        <div class="callout-body"><strong>Sin capa de servidor</strong><p>Toda la lógica corre en el navegador del usuario. El PAT se almacena en <code>localStorage</code>. Ver sección 08 para riesgos y sección 19 para recomendaciones de seguridad.</p></div>
+      </div>
+      <h4>Componentes principales</h4>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Componente</th><th>Tecnología</th><th>Responsabilidad</th><th>Estado</th></tr></thead>
+          <tbody>
+            <tr><td>Sitio público</td><td>Jekyll + Liquid</td><td>Páginas, layouts, includes, SEO</td><td><span class="tag-status tag-actual">actual</span></td></tr>
+            <tr><td>Dashboard Ops</td><td>HTML + JS vanilla</td><td>Kanban, métricas, perfiles, pipeline</td><td><span class="tag-status tag-actual">actual</span></td></tr>
+            <tr><td>Jules Panel</td><td>HTML + JS vanilla</td><td>Control de agente IA Jules</td><td><span class="tag-status tag-actual">actual</span></td></tr>
+            <tr><td>Centro de Docs</td><td>Jekyll + Markdown</td><td>GDD, Art Bible, Technical Docs</td><td><span class="tag-status tag-actual">actual</span></td></tr>
+            <tr><td>GitHub Contents API</td><td>REST API v3</td><td>Lectura/escritura de _data JSON</td><td><span class="tag-status tag-actual">actual</span></td></tr>
+            <tr><td>Auth Layer</td><td>GitHub OAuth / PAT</td><td>Control acceso equipo</td><td><span class="tag-status tag-actual">actual</span></td></tr>
+            <tr><td>Cloudflare Worker</td><td>—</td><td>Proxy seguro para tokens</td><td><span class="tag-status tag-recommended">recomendado</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ══════════ 03 REPOSITORIO ══════════ -->
+    <section class="section" id="s3">
+      <div class="section-hdr">
+        <div class="icon">03</div>
+        <div><h2 style="margin:0">Estructura del Repositorio</h2><span class="section-num">Archivos y carpetas reales observados</span></div>
+      </div>
+      <div class="callout dev">
+        <div class="callout-icon">🔬</div>
+        <div class="callout-body"><strong>Dev Note</strong><p>Estructura inferida de las páginas públicas desplegadas y patrones Jekyll estándar. Rutas marcadas con <span class="tag-status tag-pending">pendiente</span> requieren confirmación manual.</p></div>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Ruta</th><th>Tipo</th><th>Responsabilidad</th><th>Riesgo</th></tr></thead>
+          <tbody>
+            <tr><td><code>index.html / index.md</code></td><td>Página</td><td>Home público del estudio</td><td class="tag-risk-low">Bajo</td></tr>
+            <tr><td><code>dashboard.html</code></td><td>Página</td><td>Centro de operaciones Kanban</td><td class="tag-risk-high">Alto</td></tr>
+            <tr><td><code>jules-panel/</code></td><td>Directorio</td><td>Panel de control del agente Jules</td><td class="tag-risk-med">Medio</td></tr>
+            <tr><td><code>documentacion/</code></td><td>Directorio</td><td>Centro de documentación</td><td class="tag-risk-low">Bajo</td></tr>
+            <tr><td><code>guia-comandos/</code></td><td>Directorio</td><td>Guía técnica de comandos y flujos</td><td class="tag-risk-low">Bajo</td></tr>
+            <tr><td><code>tech-stack/</code></td><td>Directorio</td><td>Stack tecnológico del proyecto</td><td class="tag-risk-low">Bajo</td></tr>
+            <tr><td><code>CHANGELOG.html</code></td><td>Página</td><td>Historial de cambios del proyecto</td><td class="tag-risk-low">Bajo</td></tr>
+            <tr><td><code>guia-ue5-svn/</code></td><td>Directorio</td><td>Guía de supervivencia UE5 + SVN</td><td class="tag-risk-low">Bajo</td></tr>
+            <tr><td><code>estructura_del_proyecto/</code></td><td>Directorio</td><td>Documento de estructura general</td><td class="tag-risk-low">Bajo</td></tr>
+            <tr><td><code>plan_de_arranque/</code></td><td>Directorio</td><td>Plan de arranque del proyecto</td><td class="tag-risk-low">Bajo</td></tr>
+            <tr><td><code>_data/</code></td><td>Jekyll data</td><td>JSON: tareas, team, configuración</td><td class="tag-risk-high">Alto</td></tr>
+            <tr><td><code>_layouts/</code></td><td>Jekyll</td><td>Plantillas base de páginas</td><td class="tag-risk-med">Medio</td></tr>
+            <tr><td><code>_includes/</code></td><td>Jekyll</td><td>Nav, footer, componentes reutilizables</td><td class="tag-risk-med">Medio</td></tr>
+            <tr><td><code>assets/css/</code></td><td>Estilos</td><td>CSS global del sitio</td><td class="tag-risk-med">Medio</td></tr>
+            <tr><td><code>assets/javascript/</code></td><td>Scripts</td><td>Módulos JS del dashboard y paneles</td><td class="tag-risk-high">Alto</td></tr>
+            <tr><td><code>_config.yml</code></td><td>Jekyll config</td><td>Configuración base del sitio Jekyll</td><td class="tag-risk-high">Alto</td></tr>
+            <tr><td><code>Gemfile</code></td><td>Ruby</td><td>Dependencias Jekyll</td><td class="tag-risk-low">Bajo</td></tr>
+            <tr><td><code>manual.html</code></td><td>Página</td><td>Este manual operativo</td><td class="tag-risk-low">Bajo</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ══════════ 04 PÁGINAS ══════════ -->
+    <section class="section" id="s4">
+      <div class="section-hdr">
+        <div class="icon">04</div>
+        <div><h2 style="margin:0">Páginas Principales</h2><span class="section-num">Inventario de rutas y propósitos</span></div>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Página</th><th>Ruta</th><th>Propósito</th><th>Auth</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Home</strong></td><td><code>/</code></td><td>Presentación del estudio, equipo, project hub</td><td>No</td></tr>
+            <tr><td><strong>Dashboard</strong></td><td><code>/dashboard.html</code></td><td>Kanban, métricas, pipeline, perfiles</td><td>Sí</td></tr>
+            <tr><td><strong>Documentación</strong></td><td><code>/documentacion/</code></td><td>GDD, Art Bible, Technical Docs, explorador</td><td>No</td></tr>
+            <tr><td><strong>Jules Panel</strong></td><td><code>/jules-panel/</code></td><td>Control agente IA Jules</td><td>Sí</td></tr>
+            <tr><td><strong>Comandos</strong></td><td><code>/guia-comandos/</code></td><td>Guía técnica de flujos y comandos</td><td>No</td></tr>
+            <tr><td><strong>Tech Stack</strong></td><td><code>/tech-stack/</code></td><td>Stack tecnológico del proyecto</td><td>No</td></tr>
+            <tr><td><strong>Changelog</strong></td><td><code>/CHANGELOG.html</code></td><td>Historial de versiones y cambios</td><td>No</td></tr>
+            <tr><td><strong>Estructura</strong></td><td><code>/estructura_del_proyecto/</code></td><td>Documentación de estructura</td><td>No</td></tr>
+            <tr><td><strong>Plan Arranque</strong></td><td><code>/plan_de_arranque/</code></td><td>Plan de inicio del proyecto</td><td>No</td></tr>
+            <tr><td><strong>Guía UE5+SVN</strong></td><td><code>/guia-ue5-svn/</code></td><td>Guía de supervivencia UE5 + SVN</td><td>No</td></tr>
+            <tr><td><strong>Manual</strong></td><td><code>/manual.html</code></td><td>Este documento</td><td>No</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ══════════ 05 DASHBOARD ══════════ -->
+    <section class="section" id="s5">
+      <div class="section-hdr">
+        <div class="icon">05</div>
+        <div><h2 style="margin:0">Dashboard Operacional</h2><span class="section-num">Neural Operations Center</span></div>
+      </div>
+      <p>El dashboard es el núcleo de gestión del estudio. Requiere autenticación GitHub y pertenencia a la lista blanca del equipo. Funciona como un <strong>project management tool</strong> completo sobre el navegador.</p>
+      <div class="grid2">
+        <div class="card">
+          <h3>📊 Métricas rápidas</h3>
+          <ul>
+            <li><strong>Tareas Activas</strong> — contador live de tareas en curso</li>
+            <li><strong>QA Velocity Ratio</strong> — ratio global Fixed/Found de bugs</li>
+            <li><strong>Progreso Milestone</strong> — % completado del milestone activo (M1/M2/M3)</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>⬡ Jules Neural Ops</h3>
+          <ul>
+            <li>Monitor de sesiones activas del agente Jules</li>
+            <li>Sincronización con Jules Panel</li>
+            <li>Vista de sesiones recientes</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>📈 Production Pipeline</h3>
+          <ul>
+            <li><strong>Milestone Burndown</strong> — gráfico de tareas restantes por fecha</li>
+            <li><strong>Dependency Graph</strong> — grafo de dependencias entre tareas</li>
+            <li><strong>Velocity Tracker</strong> — creadas vs completadas por semana</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>📊 Studio Group Stats</h3>
+          <ul>
+            <li><strong>Bug Rate</strong> — % bugs sobre total completado</li>
+            <li><strong>Blocker Health</strong> — tareas bloqueadas activas</li>
+            <li><strong>Burnout Index</strong> — stress del equipo en milestone</li>
+            <li><strong>Velocity Trend</strong> — completadas semanales</li>
+            <li><strong>Tag Heatmap</strong> — distribución de tags</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>🏆 Hall of Fame</h3>
+          <ul>
+            <li>Vista Current: contribuciones en milestone activo</li>
+            <li>Vista Archive: contribuciones históricas</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>⚰️ Cementerio de Tareas</h3>
+          <ul>
+            <li>Tareas archivadas y fuera de producción</li>
+            <li>Histórico de decisiones descartadas</li>
+          </ul>
+        </div>
+      </div>
+      <h4>Perfiles del Equipo</h4>
+      <p>Modal con stats por miembro: tareas completadas, SP velocity, dependency impact, collaboration score, weekly SP velocity chart, contribución por tipo, rama distribution, tag intelligence badges. <span class="tag-status tag-observed">observado en frontend</span></p>
+      <h4>Modales operativos</h4>
+      <p>Crear tarea, editar tarea, mover a QA (asignar tester/resolutor), asignar equipo, ampliar imagen (lightbox), editar perfil, configuración del sistema, configuración API de IA.</p>
+    </section>
+
+    <!-- ══════════ 06 KANBAN ══════════ -->
+    <section class="section" id="s6">
+      <div class="section-hdr">
+        <div class="icon">06</div>
+        <div><h2 style="margin:0">Sistema Kanban</h2><span class="section-num">Gestión de tareas operativas</span></div>
+      </div>
+      <h4>Columnas / Estados</h4>
+      <div class="flow">
+        <span class="flow-node">Backlog/ToDo</span><span class="flow-arrow">→</span>
+        <span class="flow-node accent">En Progreso</span><span class="flow-arrow">→</span>
+        <span class="flow-node cyan">QA Verification</span><span class="flow-arrow">→</span>
+        <span class="flow-node green">Completado</span>
+      </div>
+      <h4>Estados internos de tarea</h4>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Estado</th><th>Significado</th></tr></thead>
+          <tbody>
+            <tr><td><code>Pending</code></td><td>Creada, aún no priorizada</td></tr>
+            <tr><td><code>ToDo</code></td><td>Priorizada, en backlog activo</td></tr>
+            <tr><td><code>Working</code></td><td>En progreso activo</td></tr>
+            <tr><td><code>KO</code></td><td>Fallida o bloqueada críticamente</td></tr>
+            <tr><td><code>Fixed</code></td><td>Implementada, pendiente QA</td></tr>
+            <tr><td><code>In Review</code></td><td>En revisión de código o diseño</td></tr>
+            <tr><td><code>OK</code></td><td>Aprobada por QA</td></tr>
+            <tr><td><code>Closed</code></td><td>Completada y cerrada</td></tr>
+            <tr><td><code>Obsolete</code></td><td>Descartada / archivada</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h4>Campos de tarea</h4>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr></thead>
+          <tbody>
+            <tr><td><code>id</code></td><td>String/Number</td><td>Identificador único. Atención: posibles conflictos ID numérico vs string</td></tr>
+            <tr><td><code>title</code></td><td>String</td><td>Título descriptivo de la tarea</td></tr>
+            <tr><td><code>description</code></td><td>Markdown</td><td>Descripción detallada</td></tr>
+            <tr><td><code>type</code></td><td>Enum</td><td>Feature / Bug / Chore / Research</td></tr>
+            <tr><td><code>priority</code></td><td>Enum</td><td>Critical / Major / Medium / Minor / Cosmetic / ToDo</td></tr>
+            <tr><td><code>milestone</code></td><td>Enum</td><td>M1 / M2 / M3</td></tr>
+            <tr><td><code>branch</code></td><td>Enum</td><td>Programación (PRO) / Arte (ART) / Diseño (DIS)</td></tr>
+            <tr><td><code>repo</code></td><td>String</td><td>Repositorio asignado o "Sin asignar"</td></tr>
+            <tr><td><code>stage</code></td><td>Enum</td><td>Tema principal: Concepto, Pre-producción, Tools, Arte, Programación, QA, Build, Post-launch</td></tr>
+            <tr><td><code>resolvedBy</code></td><td>String</td><td>Lead resolutor (Axel/Alex/Dídac/Javi/Mitxel)</td></tr>
+            <tr><td><code>detectedBy</code></td><td>String</td><td>Tester que detectó el issue</td></tr>
+            <tr><td><code>team</code></td><td>String[]</td><td>Equipo asignado</td></tr>
+            <tr><td><code>email</code></td><td>String</td><td>Email del responsable principal</td></tr>
+            <tr><td><code>startDate</code></td><td>Date</td><td>Fecha de inicio</td></tr>
+            <tr><td><code>dueDate</code></td><td>Date</td><td>Fecha de vencimiento</td></tr>
+            <tr><td><code>estimatedHours</code></td><td>Number</td><td>Horas estimadas</td></tr>
+            <tr><td><code>storyPoints</code></td><td>Number</td><td>Story points para velocity tracking</td></tr>
+            <tr><td><code>status</code></td><td>Enum</td><td>Estado actual (ver tabla de estados)</td></tr>
+            <tr><td><code>completion</code></td><td>Float 0-1</td><td>Porcentaje de completitud</td></tr>
+            <tr><td><code>tags</code></td><td>String[]</td><td>Etiquetas libres para categorización</td></tr>
+            <tr><td><code>acceptanceCriteria</code></td><td>Markdown</td><td>Criterios para marcar como OK</td></tr>
+            <tr><td><code>externalLinks</code></td><td>Array</td><td>URLs de referencia externas</td></tr>
+            <tr><td><code>subtasks</code></td><td>Array</td><td>Subtareas anidadas</td></tr>
+            <tr><td><code>blockedBy</code></td><td>ID[]</td><td>IDs de tareas que bloquean a esta</td></tr>
+            <tr><td><code>blocks</code></td><td>ID[]</td><td>IDs de tareas que esta tarea bloquea</td></tr>
+            <tr><td><code>comments</code></td><td>Array</td><td>Comentarios del equipo</td></tr>
+            <tr><td><code>images</code></td><td>Array</td><td>Imágenes adjuntas (base64 o referencia)</td></tr>
+            <tr><td><code>changeHistory</code></td><td>Array</td><td>Historial de cambios de la tarea</td></tr>
+            <tr><td><code>published</code></td><td>Boolean</td><td>Si la tarea es pública</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout warning">
+        <div class="callout-icon">⚠</div>
+        <div class="callout-body"><strong>ID Numérico vs String</strong><p>Existe un bug conocido donde los IDs de tarea pueden ser number en algunos contextos y string en otros. Las comparaciones con <code>===</code> fallan. Usar siempre <code>String(id)</code> al comparar. Ver sección 18 Troubleshooting.</p></div>
+      </div>
+    </section>
+
+    <!-- ══════════ 07 IMÁGENES ══════════ -->
+    <section class="section" id="s7">
+      <div class="section-hdr">
+        <div class="icon">07</div>
+        <div><h2 style="margin:0">Gestión de Imágenes</h2><span class="section-num">Adjuntos visuales en tareas</span></div>
+      </div>
+      <p>Las tareas del Kanban admiten imágenes adjuntas. <span class="tag-status tag-observed">observado en frontend</span>: existe un lightbox para ampliar imágenes y controles de eliminación dentro del modal de tarea.</p>
+      <div class="grid2">
+        <div class="card">
+          <h3>📎 Añadir imagen</h3>
+          <p>Input de archivo, drag &amp; drop o paste de portapapeles. Se convierte a base64 y se almacena en el objeto de tarea.</p>
+        </div>
+        <div class="card">
+          <h3>🔍 Lightbox</h3>
+          <p>Clic en miniatura abre vista ampliada. Navegación entre imágenes de la misma tarea. Z-index debe ser superior al modal de tarea.</p>
+        </div>
+      </div>
+      <div class="callout danger">
+        <div class="callout-icon">⚠</div>
+        <div class="callout-body"><strong>Riesgo: Base64 en JSON</strong><p>Las imágenes en base64 pueden inflar el archivo JSON a varios MB, ralentizar la lectura via GitHub API, superar el límite de 100MB por archivo y degradar el rendimiento del dashboard. Límite recomendado: 500KB por imagen, máx. 5 imágenes por tarea.</p></div>
+      </div>
+      <h4>Recomendaciones futuras</h4>
+      <ul>
+        <li>Comprimir imágenes con Canvas API antes de guardar</li>
+        <li>Generar thumbnails para la vista de lista</li>
+        <li>Usar GitHub Releases como CDN de assets</li>
+        <li>Carpeta <code>/assets/uploads/</code> con commits directos</li>
+        <li>Lazy loading con <code>loading="lazy"</code> e IntersectionObserver</li>
+        <li>Almacenamiento externo (Cloudinary, S3) a largo plazo</li>
+      </ul>
+    </section>
+
+    <!-- ══════════ 08 AUTH ══════════ -->
+    <section class="section" id="s8">
+      <div class="section-hdr">
+        <div class="icon">08</div>
+        <div><h2 style="margin:0">Autenticación y Sesión</h2><span class="section-num">Control de acceso y persistencia de credenciales</span></div>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <h3>🔐 Flujo de acceso</h3>
+          <ol style="padding-left:1.2rem;color:var(--text2);font-size:.8rem;">
+            <li>Usuario pulsa "Identificarse con GitHub"</li>
+            <li>GitHub OAuth / PAT manual introducido</li>
+            <li>Sistema verifica username contra lista blanca</li>
+            <li>Acceso concedido → sesión activa</li>
+            <li>Acceso denegado → pantalla "Acceso Denegado"</li>
+          </ol>
+        </div>
+        <div class="card">
+          <h3>💾 Almacenamiento</h3>
+          <ul style="font-size:.8rem;">
+            <li><code>localStorage</code> — PAT GitHub, "Remember me", configuración del sistema</li>
+            <li><code>sessionStorage</code> — sesión activa si no se marca "Remember me"</li>
+            <li><code>localStorage</code> — Jules API Key (por miembro)</li>
+            <li><code>localStorage</code> — configuración proveedor IA (modelo, API key, endpoint)</li>
+          </ul>
+        </div>
+      </div>
+      <h4>Configuraciones almacenadas</h4>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Dato</th><th>Storage</th><th>Persistencia</th><th>Riesgo</th></tr></thead>
+          <tbody>
+            <tr><td>GitHub PAT</td><td><code>localStorage</code></td><td>Permanente si remember me</td><td class="tag-risk-high">Alto</td></tr>
+            <tr><td>Repositorio objetivo</td><td><code>localStorage</code></td><td>Permanente</td><td class="tag-risk-low">Bajo</td></tr>
+            <tr><td>Jules API Key</td><td><code>localStorage</code></td><td>Permanente por miembro</td><td class="tag-risk-high">Alto</td></tr>
+            <tr><td>Proveedor IA + modelo</td><td><code>localStorage</code></td><td>Permanente</td><td class="tag-risk-med">Medio</td></tr>
+            <tr><td>AI API Key</td><td><code>localStorage</code></td><td>Permanente</td><td class="tag-risk-high">Alto</td></tr>
+            <tr><td>Sesión activa</td><td><code>sessionStorage</code></td><td>Solo pestaña activa</td><td class="tag-risk-low">Bajo</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout danger">
+        <div class="callout-icon">⚠</div>
+        <div class="callout-body"><strong>Riesgo crítico: Tokens en localStorage</strong><p><code>localStorage</code> es accesible por cualquier script de la página y vulnerable a XSS. Un PAT con scope <code>repo</code> permite leer y escribir todos los repositorios privados del usuario. Migrar a Cloudflare Worker que actúe como proxy, eliminando el token del cliente.</p></div>
+      </div>
+      <h4>Proveedores IA soportados <span class="tag-status tag-observed">observado</span></h4>
+      <p>Anthropic (Claude), OpenAI (ChatGPT), Google Gemini, Mistral AI, OpenRouter, Ollama (local), Custom OpenAI-compatible.</p>
+    </section>
+
+    <!-- ══════════ 09 GITHUB API ══════════ -->
+    <section class="section" id="s9">
+      <div class="section-hdr">
+        <div class="icon">09</div>
+        <div><h2 style="margin:0">Integración GitHub API</h2><span class="section-num">Lectura, escritura y control de conflictos</span></div>
+      </div>
+      <p>El sistema usa la <strong>GitHub Contents API</strong> (<code>GET/PUT /repos/{owner}/{repo}/contents/{path}</code>) para leer y escribir los archivos JSON de <code>_data/</code> directamente desde el navegador.</p>
+      <h4>Flujo de escritura</h4>
+      <div class="flow">
+        <span class="flow-node">GET archivo actual</span><span class="flow-arrow">→</span>
+        <span class="flow-node accent">Obtener SHA</span><span class="flow-arrow">→</span>
+        <span class="flow-node">Modificar datos</span><span class="flow-arrow">→</span>
+        <span class="flow-node cyan">PUT con SHA</span><span class="flow-arrow">→</span>
+        <span class="flow-node green">Commit automático</span>
+      </div>
+      <div class="callout info">
+        <div class="callout-icon">ℹ</div>
+        <div class="callout-body"><strong>SHA obligatorio en escritura</strong><p>La GitHub Contents API requiere el <code>sha</code> del archivo actual para actualizarlo. Sin SHA correcto la API devuelve <code>409 Conflict</code>. El SHA debe obtenerse en el mismo GET previo a la escritura, no cachearse.</p></div>
+      </div>
+      <h4>Troubleshooting de API</h4>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Error</th><th>Causa probable</th><th>Solución</th></tr></thead>
+          <tbody>
+            <tr><td><code>401 Unauthorized</code></td><td>Token inválido o expirado</td><td>Regenerar PAT en GitHub Settings → Developer settings</td></tr>
+            <tr><td><code>403 Forbidden</code></td><td>Token sin scope <code>repo</code> o repo privado</td><td>Crear PAT con scope <code>repo</code></td></tr>
+            <tr><td><code>404 Not Found</code></td><td>Ruta incorrecta o rama equivocada</td><td>Verificar ruta exacta del archivo y nombre de rama</td></tr>
+            <tr><td><code>409 Conflict</code></td><td>SHA desactualizado (write concurrente)</td><td>Re-GET antes de PUT; nunca cachear SHA</td></tr>
+            <tr><td>JSON inválido</td><td>Guardado parcial o carácter especial</td><td>Validar con <code>JSON.parse()</code> antes de PUT; usar <code>try/catch</code></td></tr>
+            <tr><td>Rate limit</td><td>Demasiadas peticiones (5000/h autenticado)</td><td>Cachear lecturas; agrupar escrituras</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h4>Buenas prácticas</h4>
+      <ul>
+        <li>Siempre hacer GET → modificar → PUT en una sola operación secuencial</li>
+        <li>Validar el JSON con <code>JSON.parse()</code> antes de codificar a base64 para el PUT</li>
+        <li>Implementar lock optimista: si SHA en servidor ≠ SHA local, pedir confirmación al usuario</li>
+        <li>Loguear cada commit en consola con ruta y SHA para facilitar debugging</li>
+        <li>Nunca almacenar el SHA entre sesiones; siempre refrescarlo</li>
+      </ul>
+    </section>
+
+    <!-- ══════════ 10 JULES ══════════ -->
+    <section class="section" id="s10">
+      <div class="section-hdr">
+        <div class="icon">10</div>
+        <div><h2 style="margin:0">Jules Panel</h2><span class="section-num">Control del agente IA autónomo</span></div>
+      </div>
+      <p>Jules es el agente IA de Google (<a href="https://jules.google.com" target="_blank" rel="noopener">jules.google.com</a>) que ejecuta tareas de programación de forma autónoma en ramas de repositorios GitHub. El Jules Panel de Hypenosys es una interfaz personalizada para controlarlo.</p>
+      <div class="grid2">
+        <div class="card">
+          <h3>⚙️ Configuración de sesión</h3>
+          <ul style="font-size:.8rem;">
+            <li>Selección de repositorio (con alias visual)</li>
+            <li>Selección o creación de rama</li>
+            <li>Título de sesión (opcional)</li>
+            <li>Toggle: requerir aprobación humana</li>
+            <li>Toggle: auto-crear PR al finalizar</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>📋 Vistas disponibles</h3>
+          <ul style="font-size:.8rem;">
+            <li><strong>Sesiones</strong> — listado con filtros y estado</li>
+            <li><strong>PRs</strong> — pull requests del repositorio</li>
+            <li><strong>Issues</strong> — issues activos</li>
+            <li><strong>Branches</strong> — ramas del repositorio</li>
+            <li><strong>Actions</strong> — GitHub Actions workflows</li>
+            <li><strong>Notificaciones</strong> — alertas del repositorio</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout info">
+        <div class="callout-icon">ℹ</div>
+        <div class="callout-body"><strong>Alias de repositorio</strong><p>El Jules Panel permite configurar un nombre visual (alias) diferente al nombre real del repositorio en GitHub. El nombre real se usa en las llamadas API; el alias solo es visual. Configurado via <code>localStorage</code>.</p></div>
+      </div>
+      <h4>Dependencias</h4>
+      <ul>
+        <li>Jules API Key — obtenida en <a href="https://jules.google.com/settings" target="_blank" rel="noopener">jules.google.com/settings</a>, guardada en <code>localStorage</code></li>
+        <li>GitHub PAT — necesario para acceso a repositorios privados</li>
+        <li>Configuración de repositorio objetivo</li>
+      </ul>
+    </section>
+
+    <!-- ══════════ 11 DOCS ══════════ -->
+    <section class="section" id="s11">
+      <div class="section-hdr">
+        <div class="icon">11</div>
+        <div><h2 style="margin:0">Centro de Documentación</h2><span class="section-num">/documentacion/</span></div>
+      </div>
+      <p>Sección pública de documentación del proyecto. <span class="tag-status tag-observed">observado en frontend</span>: contiene explorador de docs, sincronización con repositorio y múltiples categorías.</p>
+      <div class="grid3">
+        <div class="card">
+          <h3>📖 GDD &amp; Lore</h3>
+          <p>Game Design Document y documentación de universo narrativo.</p>
+        </div>
+        <div class="card">
+          <h3>⚙️ Technical Docs</h3>
+          <p>Arquitectura, flujos técnicos, APIs, configuración.</p>
+        </div>
+        <div class="card">
+          <h3>🎨 Art Bible</h3>
+          <p>Guía visual, paletas, referencias de estilo, assets.</p>
+        </div>
+      </div>
+      <p>Botones de acción observados: <strong>Editar en GitHub</strong> (abre el archivo en github.com/edit), <strong>Abrir en Obsidian</strong> (usa el protocolo <code>obsidian://</code> para abrir el vault local).</p>
+      <div class="callout dev">
+        <div class="callout-icon">🔬</div>
+        <div class="callout-body"><strong>Pendiente de auditar</strong><p>La sincronización exacta con el repositorio y los estados de error específicos requieren revisión del código fuente de <code>/documentacion/</code>.</p></div>
+      </div>
+    </section>
+
+    <!-- ══════════ 12 DATA ══════════ -->
+    <section class="section" id="s12">
+      <div class="section-hdr">
+        <div class="icon">12</div>
+        <div><h2 style="margin:0">Archivos _data JSON</h2><span class="section-num">Capa de persistencia Data-as-Code</span></div>
+      </div>
+      <div class="callout warning">
+        <div class="callout-icon">⚠</div>
+        <div class="callout-body"><strong>Estructura pendiente de auditoría completa</strong><p>Los nombres y estructura exacta de los JSON requieren acceso directo al repositorio. Lo siguiente se infiere de la UI observada.</p></div>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Archivo probable</th><th>Propósito inferido</th><th>Quién escribe</th><th>Estado</th></tr></thead>
+          <tbody>
+            <tr><td><code>_data/tasks.json</code> (o similar)</td><td>Tareas del Kanban con todos los campos</td><td>Dashboard (crear/editar/archivar)</td><td><span class="tag-status tag-pending">pendiente</span></td></tr>
+            <tr><td><code>_data/team.json</code> (o similar)</td><td>Perfiles del equipo, bio, skills, colores</td><td>Modal de edición de perfil</td><td><span class="tag-status tag-pending">pendiente</span></td></tr>
+            <tr><td><code>_data/config.json</code> (o similar)</td><td>Configuración del sistema, milestones activos</td><td>Modal de configuración</td><td><span class="tag-status tag-pending">pendiente</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h4>Ejemplo mínimo de tarea</h4>
+      <pre><code>{
+  "id": "task-001",
+  "title": "Implementar sistema de movimiento",
+  "type": "Feature",
+  "priority": "Major",
+  "status": "Working",
+  "milestone": "M1",
+  "branch": "PRO",
+  "storyPoints": 5,
+  "completion": 0.4,
+  "tags": ["gameplay", "ue5"],
+  "assignedTo": "Alex",
+  "createdAt": "2025-01-15T10:00:00Z"
+}</code></pre>
+      <div class="callout danger">
+        <div class="callout-icon">⚠</div>
+        <div class="callout-body"><strong>Riesgo: Corrupción de JSON</strong><p>Un error de red durante un PUT puede dejar el JSON parcialmente escrito. Siempre: (1) validar con <code>JSON.parse()</code> antes de PUT, (2) mantener backup del JSON previo, (3) implementar retry con exponential backoff.</p></div>
+      </div>
+    </section>
+
+    <!-- ══════════ 13 JS MÓDULOS ══════════ -->
+    <section class="section" id="s13">
+      <div class="section-hdr">
+        <div class="icon">13</div>
+        <div><h2 style="margin:0">Módulos JavaScript</h2><span class="section-num">Arquitectura frontend</span></div>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Módulo probable</th><th>Responsabilidad</th><th>Riesgos clave</th></tr></thead>
+          <tbody>
+            <tr><td><code>dashboard.js</code></td><td>Orquestador principal del dashboard: init, render Kanban, métricas, modales</td><td>God object, acoplamiento alto</td></tr>
+            <tr><td><code>github-api.js</code></td><td>Capa de abstracción sobre GitHub Contents API: GET, PUT, manejo SHA</td><td>Race conditions en escrituras concurrentes</td></tr>
+            <tr><td><code>auth.js</code></td><td>Login GitHub, lista blanca, sessionStorage/localStorage</td><td>PAT expuesto en memoria</td></tr>
+            <tr><td><code>jules.js</code></td><td>Integración Jules API: lanzar sesión, listar sesiones, PRs, Issues</td><td>API key en localStorage</td></tr>
+            <tr><td><code>kanban.js</code></td><td>Render de columnas, drag, creación/edición de tareas, QA flow</td><td>Comparación IDs num vs string</td></tr>
+            <tr><td><code>images.js</code> (o lightbox)</td><td>Upload, base64, preview, lightbox, z-index modal</td><td>JSON inflation, z-index conflicto</td></tr>
+            <tr><td><code>team.js</code> (o profiles)</td><td>Render perfiles equipo, modal stats, velocity charts</td><td>Datos hardcoded vs _data</td></tr>
+            <tr><td><code>repo-aliases.js</code></td><td>Mapeo nombre real ↔ alias visual de repositorios Jules</td><td>Desincronización alias/nombre real</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout dev">
+        <div class="callout-icon">🔬</div>
+        <div class="callout-body"><strong>Dev Note</strong><p>Los nombres exactos de archivos JS requieren auditoría de <code>assets/javascript/</code>. Los nombres anteriores son inferidos de la funcionalidad observada.</p></div>
+      </div>
+    </section>
+
+    <!-- ══════════ 14 FLUJOS ══════════ -->
+    <section class="section" id="s14">
+      <div class="section-hdr">
+        <div class="icon">14</div>
+        <div><h2 style="margin:0">Flujos Internos</h2><span class="section-num">Step-by-step de operaciones críticas</span></div>
+      </div>
+
+      <details>
+        <summary>14.1 Crear una tarea</summary>
+        <div class="details-body">
+          <div class="flow" style="flex-direction:column;align-items:flex-start;gap:.3rem">
+            <div style="display:flex;align-items:center;gap:.4rem"><span class="flow-node">1. Click "Nueva Tarea"</span><span class="flow-arrow">→ abre modal con pestañas Info/Equipo &amp; Fechas/Extra</span></div>
+            <div style="display:flex;align-items:center;gap:.4rem"><span class="flow-node">2. Rellenar campos</span><span class="flow-arrow">→ validación frontend (título obligatorio mínimo)</span></div>
+            <div style="display:flex;align-items:center;gap:.4rem"><span class="flow-node">3. Click "Guardar Tarea"</span><span class="flow-arrow">→ genera ID único, objeto JS en memoria</span></div>
+            <div style="display:flex;align-items:center;gap:.4rem"><span class="flow-node accent">4. GET _data/tasks.json</span><span class="flow-arrow">→ obtiene SHA actual</span></div>
+            <div style="display:flex;align-items:center;gap:.4rem"><span class="flow-node accent">5. Push tarea al array</span><span class="flow-arrow">→ serializar a base64</span></div>
+            <div style="display:flex;align-items:center;gap:.4rem"><span class="flow-node accent">6. PUT con SHA</span><span class="flow-arrow">→ commit automático al repo</span></div>
+            <div style="display:flex;align-items:center;gap:.4rem"><span class="flow-node green">7. Re-render Kanban</span><span class="flow-arrow">→ nueva tarjeta aparece en columna correcta</span></div>
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>14.2 Editar una tarea</summary>
+        <div class="details-body">
+          <p>Click "Edit" en tarjeta → modal precargado con datos actuales → modificar campos → "Guardar Tarea" → GET SHA → encontrar tarea por ID en array → reemplazar objeto → PUT → re-render. <strong>Bug frecuente:</strong> si el ID en memoria es number y en JSON es string, el <code>find()</code> falla silenciosamente. Solución: <code>tasks.find(t =&gt; String(t.id) === String(targetId))</code>.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>14.3 Mover a QA</summary>
+        <div class="details-body">
+          <p>Botón "QA" en tarjeta → modal de QA Verification → seleccionar Tester (Detectado por) y Resolutor (Resuelto por) → Confirmar → cambia estado a <code>Fixed</code> o <code>In Review</code> → actualiza métricas QA Velocity Ratio → persiste en JSON.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>14.4 Archivar tarea (Cementerio)</summary>
+        <div class="details-body">
+          <p>Acción archivar → estado cambia a <code>Obsolete</code> → tarea sale del Kanban activo → aparece en "Cementerio de Tareas" → persiste en JSON. Las métricas de milestone la excluyen pero las del historial la incluyen.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>14.5 Añadir imagen a tarea</summary>
+        <div class="details-body">
+          <p>Input file / drag-drop / paste → FileReader.readAsDataURL() → preview en modal → validar tamaño (recomendado &lt; 500KB) → añadir a array <code>images</code> del objeto tarea → al guardar, se persiste como base64 en JSON → en la tarjeta se muestra miniatura → click miniatura abre lightbox → lightbox z-index debe superar al modal de tarea.</p>
+          <div class="callout warning"><div class="callout-icon">⚠</div><div class="callout-body"><strong>Z-index</strong><p>El lightbox debe tener z-index mayor que el modal de tarea. Si el lightbox queda "detrás", aumentar su z-index en CSS a un valor superior al modal.</p></div></div>
+        </div>
+      </details>
+
+      <details>
+        <summary>14.6 Lanzar sesión de Jules</summary>
+        <div class="details-body">
+          <p>Jules Panel → seleccionar repositorio (nombre real, no alias) → seleccionar/crear rama → escribir prompt o vincular tarea → configurar opciones (aprobación, auto-PR) → Lanzar → Jules API recibe la petición → respuesta con session ID → panel muestra la sesión en lista → polling periódico para actualizar estado.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>14.7 Login persistente</summary>
+        <div class="details-body">
+          <p>Pantalla de login → introducir GitHub token (PAT) → llamada a GitHub API <code>/user</code> para verificar → extraer <code>login</code> username → comparar con lista blanca hardcodeada en JS → si match: guardar en <code>localStorage</code> (o <code>sessionStorage</code> si no hay "Remember me") → redirigir al dashboard → en cada carga del dashboard verificar que el token almacenado sigue siendo válido.</p>
+        </div>
+      </details>
+    </section>
+
+    <!-- ══════════ 15 INSTALACIÓN ══════════ -->
+    <section class="section" id="s15">
+      <div class="section-hdr">
+        <div class="icon">15</div>
+        <div><h2 style="margin:0">Instalación Local</h2><span class="section-num">Levantar el sitio en desarrollo</span></div>
+      </div>
+      <h4>Prerrequisitos</h4>
+      <ul>
+        <li>Ruby ≥ 3.0 (<code>ruby -v</code> para verificar)</li>
+        <li>Bundler (<code>gem install bundler</code>)</li>
+        <li>Git</li>
+      </ul>
+      <h4>Setup</h4>
+      <pre><code>git clone https://github.com/hypenosys/hypenosys.github.io.git
+cd hypenosys.github.io
+bundle install
+bundle exec jekyll serve --livereload</code></pre>
+      <p>Acceder en <code>http://localhost:4000</code>. LiveReload recarga automáticamente al guardar cambios.</p>
+      <div class="callout warning">
+        <div class="callout-icon">⚠</div>
+        <div class="callout-body"><strong>Funciones que no operan en local</strong><p>El Dashboard y Jules Panel requieren un PAT de GitHub válido y conexión a internet. La autenticación GitHub OAuth puede no funcionar con <code>localhost</code>. Las escrituras a <code>_data/</code> van contra el repositorio real en GitHub, no en local.</p></div>
+      </div>
+      <h4>Alternativa sin Jekyll (solo páginas estáticas)</h4>
+      <pre><code># Con Python 3
+python -m http.server 8080
+
+# Con Node.js (npx serve)
+npx serve . -p 8080</code></pre>
+      <p>Las páginas Liquid/Jekyll no renderizarán. Solo funcionan las páginas HTML puras (<code>dashboard.html</code>, <code>jules-panel/index.html</code>, <code>manual.html</code>).</p>
+    </section>
+
+    <!-- ══════════ 16 DESPLIEGUE ══════════ -->
+    <section class="section" id="s16">
+      <div class="section-hdr">
+        <div class="icon">16</div>
+        <div><h2 style="margin:0">Despliegue en GitHub Pages</h2><span class="section-num">Publicación automática</span></div>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <h3>⚙️ Configuración</h3>
+          <ul style="font-size:.8rem;">
+            <li>Repositorio: <code>hypenosys/hypenosys.github.io</code></li>
+            <li>Tipo: repositorio de organización (<code>*.github.io</code>)</li>
+            <li>Rama de despliegue: <code>main</code> (o <code>master</code>)</li>
+            <li>Build: Jekyll automático en cada push</li>
+            <li>URL: <code>https://hypenosys.github.io/</code></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>✅ Checklist post-deploy</h3>
+          <ul class="checklist" style="font-size:.8rem;">
+            <li>Verificar que <code>manual.html</code> carga en la URL pública</li>
+            <li>Comprobar que la navegación superior enlaza correctamente</li>
+            <li>Verificar que no hay rutas absolutas (<code>/</code> vs relativas)</li>
+            <li>Comprobar assets (CSS, JS) con devtools Network</li>
+            <li>Test responsive en móvil</li>
+            <li>Verificar que el CHANGELOG se actualizó</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout info">
+        <div class="callout-icon">ℹ</div>
+        <div class="callout-body"><strong>Tiempo de propagación</strong><p>Los cambios en GitHub Pages pueden tardar entre 30 segundos y 5 minutos en publicarse. Si el sitio no actualiza, forzar recarga con <code>Ctrl+Shift+R</code> para evitar caché del navegador.</p></div>
+      </div>
+    </section>
+
+    <!-- ══════════ 17 MANTENIMIENTO ══════════ -->
+    <section class="section" id="s17">
+      <div class="section-hdr">
+        <div class="icon">17</div>
+        <div><h2 style="margin:0">Mantenimiento</h2><span class="section-num">Checklists operativas</span></div>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <h4>➕ Añadir página nueva</h4>
+          <ul class="checklist">
+            <li>Crear archivo <code>.html</code> o directorio con <code>index.md</code></li>
+            <li>Añadir front matter Jekyll si usa layout</li>
+            <li>Enlazar en navegación principal</li>
+            <li>Añadir referencia en Home si es relevante</li>
+            <li>Actualizar CHANGELOG</li>
+            <li>Verificar despliegue post-push</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4>📦 Añadir campo a tarea</h4>
+          <ul class="checklist">
+            <li>Añadir campo al modal de creación (HTML)</li>
+            <li>Añadir campo al modal de edición (HTML)</li>
+            <li>Actualizar el objeto JS de tarea</li>
+            <li>Actualizar render de tarjeta Kanban si procede</li>
+            <li>Actualizar schema de validación si existe</li>
+            <li>Documentar en sección 06 de este manual</li>
+            <li>Migrar tareas existentes en JSON (añadir campo con valor default)</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4>🎨 Actualizar estilos</h4>
+          <ul class="checklist">
+            <li>Identificar el CSS correcto (<code>assets/css/</code>)</li>
+            <li>Modificar variables CSS <code>:root</code> si es cambio global</li>
+            <li>Revisar responsive a 320px, 768px, 1280px</li>
+            <li>Verificar contraste de colores (WCAG AA mínimo)</li>
+            <li>Comprobar que no rompe el dashboard ni Jules</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4>🔒 Revisión de seguridad</h4>
+          <ul class="checklist">
+            <li>Verificar que no hay tokens en código fuente</li>
+            <li>Revisar que inputs de tarea se sanitizan antes de renderizar</li>
+            <li>Comprobar que la lista blanca de usuarios es correcta</li>
+            <li>Verificar scopes del PAT usado</li>
+            <li>Revisar que no hay <code>console.log</code> con datos sensibles</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════ 18 TROUBLESHOOTING ══════════ -->
+    <section class="section" id="s18">
+      <div class="section-hdr">
+        <div class="icon">18</div>
+        <div><h2 style="margin:0">Troubleshooting</h2><span class="section-num">Diagnóstico y resolución de problemas</span></div>
+      </div>
+
+      <details>
+        <summary>🔴 No carga el dashboard / pantalla en blanco</summary>
+        <div class="details-body">
+          <p><strong>Causa:</strong> Error JS en la inicialización. Abrir DevTools → Console y buscar el error. Causas frecuentes: módulo JS no encontrado (ruta rota), JSON malformado en <code>_data/</code>, token expirado que bloquea el init.</p>
+          <p><strong>Solución:</strong> Revisar Network tab para confirmar que todos los <code>.js</code> cargan con 200. Verificar que <code>_data/*.json</code> es JSON válido con <code>JSON.parse()</code> en consola.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>🔴 No guarda cambios (silencioso)</summary>
+        <div class="details-body">
+          <p><strong>Causa:</strong> 401 (token inválido), 409 (SHA desactualizado), o error de red silenciado. <strong>Archivo:</strong> <code>github-api.js</code> o equivalente.</p>
+          <p><strong>Solución:</strong> Añadir <code>console.error</code> al catch de las promesas de escritura. Verificar respuesta de la API en Network tab. Regenerar PAT si es 401.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>🔴 Token inválido / Remember me no persiste</summary>
+        <div class="details-body">
+          <p><strong>Causa:</strong> El PAT fue regenerado o revocado en GitHub. O el dominio del sitio cambió y localStorage se limpió. <strong>Storage:</strong> <code>localStorage</code>.</p>
+          <p><strong>Solución:</strong> Abrir DevTools → Application → Local Storage → eliminar la entrada del token → volver a hacer login con PAT nuevo.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>🔴 Edit Task no responde / modal no precarga datos</summary>
+        <div class="details-body">
+          <p><strong>Causa más frecuente:</strong> El ID en el DOM (atributo <code>data-id</code>) es string pero en el array de tareas en memoria es number. <code>tasks.find(t =&gt; t.id === clickedId)</code> devuelve <code>undefined</code>.</p>
+          <p><strong>Solución:</strong> <code>tasks.find(t =&gt; String(t.id) === String(clickedId))</code>. Normalizar todos los IDs a string en el momento de cargar el JSON.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>🔴 Ghost clicks en móvil (doble disparo)</summary>
+        <div class="details-body">
+          <p><strong>Causa:</strong> El evento <code>touchend</code> dispara también un <code>click</code> sintético 300ms después. Los listeners duplicados ejecutan la acción dos veces.</p>
+          <p><strong>Solución:</strong> Usar solo <code>addEventListener('click', ...)</code> y añadir <code>touch-action: manipulation</code> en CSS a los elementos interactivos. O usar <code>{ passive: false }</code> + <code>preventDefault()</code> en touch.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>🔴 Lightbox queda detrás del modal</summary>
+        <div class="details-body">
+          <p><strong>Causa:</strong> Z-index del lightbox menor al del modal de tarea.</p>
+          <p><strong>Solución:</strong> Asegurar que el lightbox tiene <code>z-index</code> superior al modal. Valores recomendados: Modal tarea: 1000, Lightbox: 2000, Navegación: 500.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>🔴 JSON corrupto en _data</summary>
+        <div class="details-body">
+          <p><strong>Causa:</strong> Escritura interrumpida (pérdida de red durante PUT) o error al serializar.</p>
+          <p><strong>Solución:</strong> Ir a <code>github.com/hypenosys/hypenosys.github.io/commits/main</code> → encontrar el último commit válido → ver el JSON en ese commit → restaurar manualmente via GitHub web editor o CLI: <code>git revert &lt;commit-sha&gt;</code>.</p>
+          <p><strong>Prevención:</strong> Validar con <code>JSON.stringify(data)</code> + <code>JSON.parse()</code> antes de cualquier PUT.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>🔴 Jules no lanza sesión / no aparecen repositorios</summary>
+        <div class="details-body">
+          <p><strong>Causas:</strong> Jules API Key inválida, PAT sin permisos sobre el repo, o alias de repositorio configurado incorrectamente (se envía el alias en lugar del nombre real).</p>
+          <p><strong>Solución:</strong> Verificar que la Jules API Key está en localStorage del miembro. Confirmar que el nombre real del repositorio (no el alias) se usa en las llamadas API. Revisar consola para errores de CORS o 401.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>🔴 Assets no cargan en GitHub Pages</summary>
+        <div class="details-body">
+          <p><strong>Causa:</strong> Rutas absolutas (<code>/assets/...</code>) que funcionan en local pero en un subpath de GitHub Pages fallan. O archivos con nombres en mayúsculas/minúsculas distintos al import.</p>
+          <p><strong>Solución:</strong> Usar rutas relativas o el filtro Jekyll <code>{{ "/assets/css/main.css" | relative_url }}</code>. En <code>_config.yml</code>, configurar <code>baseurl</code> correctamente (vacío para repositorios <code>*.github.io</code>).</p>
+        </div>
+      </details>
+    </section>
+
+    <!-- ══════════ 19 SEGURIDAD ══════════ -->
+    <section class="section" id="s19">
+      <div class="section-hdr">
+        <div class="icon">19</div>
+        <div><h2 style="margin:0">Seguridad</h2><span class="section-num">Riesgos actuales y mitigaciones</span></div>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Riesgo</th><th>Severidad</th><th>Estado</th><th>Mitigación</th></tr></thead>
+          <tbody>
+            <tr><td>PAT GitHub en <code>localStorage</code></td><td class="tag-risk-high">Crítico</td><td><span class="tag-status tag-actual">actual</span></td><td>Migrar a Cloudflare Worker como proxy</td></tr>
+            <tr><td>Jules API Key en <code>localStorage</code></td><td class="tag-risk-high">Alto</td><td><span class="tag-status tag-actual">actual</span></td><td>Proxy server-side o variables de entorno</td></tr>
+            <tr><td>AI API Key en <code>localStorage</code></td><td class="tag-risk-high">Alto</td><td><span class="tag-status tag-actual">actual</span></td><td>Proxy server-side</td></tr>
+            <tr><td>XSS via contenido de tareas</td><td class="tag-risk-high">Alto</td><td><span class="tag-status tag-pending">pendiente auditar</span></td><td>Sanitizar con DOMPurify antes de <code>innerHTML</code></td></tr>
+            <tr><td>Control de acceso solo en UI</td><td class="tag-risk-med">Medio</td><td><span class="tag-status tag-actual">actual</span></td><td>Aceptable para equipo interno; no exponer datos sensibles</td></tr>
+            <tr><td>PAT scope excesivo (<code>repo</code>)</td><td class="tag-risk-med">Medio</td><td><span class="tag-status tag-actual">actual</span></td><td>Usar Fine-Grained PAT con permisos mínimos por repositorio</td></tr>
+            <tr><td>JSON corrupto por escritura concurrente</td><td class="tag-risk-med">Medio</td><td><span class="tag-status tag-actual">actual</span></td><td>Lock optimista + SHA check + validación pre-PUT</td></tr>
+            <tr><td>Base64 images inflando JSON</td><td class="tag-risk-med">Medio</td><td><span class="tag-status tag-actual">actual</span></td><td>Límite de tamaño + migración a storage externo</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout success">
+        <div class="callout-icon">✓</div>
+        <div class="callout-body"><strong>Arquitectura Cloudflare Worker (recomendada)</strong><p>Crear un Worker que reciba peticiones del frontend con un token de sesión temporal, ejecute las llamadas a GitHub API con el PAT almacenado como variable de entorno del Worker, y retorne solo los datos necesarios. El PAT nunca llega al navegador del usuario.</p></div>
+      </div>
+      <h4>GitHub PAT mínimo recomendado (Fine-Grained)</h4>
+      <ul>
+        <li>Repositorio: solo <code>hypenosys/hypenosys.github.io</code></li>
+        <li>Permisos: <code>Contents: Read &amp; Write</code>, <code>Metadata: Read</code></li>
+        <li>Expiración: 90 días máximo, con renovación programada</li>
+      </ul>
+    </section>
+
+    <!-- ══════════ 20 ROADMAP ══════════ -->
+    <section class="section" id="s20">
+      <div class="section-hdr">
+        <div class="icon">20</div>
+        <div><h2 style="margin:0">Roadmap Técnico</h2><span class="section-num">Mejoras priorizadas por impacto</span></div>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Mejora</th><th>Impacto</th><th>Esfuerzo</th><th>Prioridad</th></tr></thead>
+          <tbody>
+            <tr><td>Cloudflare Worker como proxy de tokens</td><td class="tag-risk-high">Crítico</td><td>Medio</td><td>🔥 P0</td></tr>
+            <tr><td>DOMPurify para sanitizar inputs de tareas</td><td class="tag-risk-high">Alto</td><td>Bajo</td><td>🔥 P0</td></tr>
+            <tr><td>Validación <code>JSON.parse()</code> pre-PUT obligatoria</td><td class="tag-risk-high">Alto</td><td>Bajo</td><td>🔥 P0</td></tr>
+            <tr><td>Normalización de IDs a String al cargar JSON</td><td class="tag-risk-med">Medio</td><td>Bajo</td><td>P1</td></tr>
+            <tr><td>Fine-Grained PAT con scopes mínimos</td><td class="tag-risk-med">Medio</td><td>Bajo</td><td>P1</td></tr>
+            <tr><td>Compresión de imágenes pre-base64 (Canvas API)</td><td class="tag-risk-med">Medio</td><td>Medio</td><td>P1</td></tr>
+            <tr><td>Schema JSON para tareas (validación de campos)</td><td class="tag-risk-low">Calidad</td><td>Medio</td><td>P2</td></tr>
+            <tr><td>Sistema de migraciones para <code>_data</code></td><td class="tag-risk-low">Mantenibilidad</td><td>Alto</td><td>P2</td></tr>
+            <tr><td>Tests con Playwright (E2E dashboard)</td><td class="tag-risk-low">Calidad</td><td>Alto</td><td>P3</td></tr>
+            <tr><td>Historial de cambios por tarea individual</td><td class="tag-risk-low">UX</td><td>Medio</td><td>P3</td></tr>
+            <tr><td>Exportación Markdown/PDF del manual</td><td class="tag-risk-low">UX</td><td>Bajo</td><td>P3</td></tr>
+            <tr><td>Roles y permisos diferenciados (lead vs viewer)</td><td class="tag-risk-low">Seguridad</td><td>Alto</td><td>P3</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ══════════ 21 GLOSARIO ══════════ -->
+    <section class="section" id="s21">
+      <div class="section-hdr">
+        <div class="icon">21</div>
+        <div><h2 style="margin:0">Glosario Técnico</h2><span class="section-num">Diccionario de términos del sistema</span></div>
+      </div>
+      <dl class="glossary">
+        <dt>Data-as-Code</dt>
+        <dd>Patrón arquitectónico donde los datos de aplicación se almacenan como archivos en un repositorio Git. El historial Git actúa como base de datos con versionado, auditoría y rollback gratuitos. Hypenosys usa <code>_data/*.json</code> comprometidos en GitHub.</dd>
+
+        <dt>GitHub Contents API</dt>
+        <dd>Endpoint REST de GitHub (<code>GET/PUT /repos/{owner}/{repo}/contents/{path}</code>) que permite leer y escribir archivos en un repositorio directamente desde el navegador, incluyendo la creación de commits automáticos. Docs: <a href="https://docs.github.com/en/rest/repos/contents" target="_blank" rel="noopener">docs.github.com/en/rest/repos/contents</a></dd>
+
+        <dt>SHA (Secure Hash Algorithm)</dt>
+        <dd>En el contexto de GitHub API, el hash del objeto Git que representa el estado actual de un archivo. Necesario para actualizar archivos (PUT). Si el SHA enviado no coincide con el del servidor, la API devuelve <code>409 Conflict</code> para prevenir sobrescrituras accidentales.</dd>
+
+        <dt>PAT (Personal Access Token)</dt>
+        <dd>Token de autenticación de GitHub que actúa como contraseña de API. Reemplaza a las contraseñas básicas. Puede ser Classic (acceso amplio por scopes) o Fine-Grained (permisos por repositorio específico). Docs: <a href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens" target="_blank" rel="noopener">docs.github.com/en/authentication</a></dd>
+
+        <dt>OAuth</dt>
+        <dd>Protocolo de autorización estándar (OAuth 2.0) que permite a aplicaciones de terceros acceder a recursos en nombre del usuario sin compartir credenciales. GitHub OAuth Apps permiten el flujo de autorización web con redirect_uri.</dd>
+
+        <dt>Jules</dt>
+        <dd>Agente de IA de Google (<a href="https://jules.google.com" target="_blank" rel="noopener">jules.google.com</a>) que ejecuta tareas de programación de forma autónoma en ramas de repositorios GitHub: lee código, implementa cambios, crea commits y opcionalmente abre PRs.</dd>
+
+        <dt>Kanban</dt>
+        <dd>Metodología de gestión visual de trabajo originada en Toyota. Las tareas se representan como tarjetas que fluyen entre columnas que representan estados del proceso (Backlog → En Progreso → QA → Completado).</dd>
+
+        <dt>QA Velocity Ratio</dt>
+        <dd>Métrica operativa de Hypenosys. Ratio entre bugs marcados como Fixed y bugs encontrados (Found) en el mismo período. Un ratio cercano a 1.0 indica que se resuelven los bugs tan rápido como se encuentran.</dd>
+
+        <dt>Story Points</dt>
+        <dd>Unidad relativa de estimación de esfuerzo en metodologías ágiles. No representan horas sino complejidad relativa. Se usan para calcular la velocidad del equipo (SP completados por sprint/semana).</dd>
+
+        <dt>Milestone</dt>
+        <dd>Hito o punto de entrega en la planificación del proyecto. En Hypenosys: M1, M2, M3. Agrupa tareas por objetivo de release y permite calcular el burndown chart.</dd>
+
+        <dt>Lightbox</dt>
+        <dd>Patrón UI donde al hacer clic en una imagen se muestra ampliada en una capa superpuesta (overlay) oscureciendo el fondo. Común en galerías y sistemas de adjuntos.</dd>
+
+        <dt>localStorage</dt>
+        <dd>API del navegador (<code>window.localStorage</code>) para almacenar pares clave-valor de forma persistente entre sesiones. Los datos persisten aunque se cierre el navegador. Accesible por cualquier JS del mismo origen. Límite ~5MB.</dd>
+
+        <dt>sessionStorage</dt>
+        <dd>Igual que localStorage pero los datos se eliminan al cerrar la pestaña o el navegador. Más seguro para datos de sesión temporal.</dd>
+
+        <dt>GitHub Pages</dt>
+        <dd>Servicio de hosting estático gratuito de GitHub. Publica automáticamente el contenido del repositorio (con o sin Jekyll) en <code>https://{user}.github.io/{repo}</code>. Sin servidor, sin base de datos, sin costes de hosting.</dd>
+
+        <dt>Jekyll</dt>
+        <dd>Generador de sitios estáticos (<a href="https://jekyllrb.com" target="_blank" rel="noopener">jekyllrb.com</a>) escrito en Ruby, integrado nativamente con GitHub Pages. Procesa Markdown, Liquid templates, front matter YAML y la carpeta <code>_data/</code> para generar HTML estático.</dd>
+      </dl>
+    </section>
+
+    <!-- ══════════ 22 ANEXOS ══════════ -->
+    <section class="section" id="s22">
+      <div class="section-hdr">
+        <div class="icon">22</div>
+        <div><h2 style="margin:0">Anexos</h2><span class="section-num">Checklists, tablas de referencia y ejemplos</span></div>
+      </div>
+
+      <h3>Checklist de Release</h3>
+      <ul class="checklist">
+        <li>Todas las tareas del milestone en estado Closed u OK</li>
+        <li>QA Velocity Ratio ≥ 0.95 en el milestone</li>
+        <li>No hay Blocker Health activos (tareas bloqueadas)</li>
+        <li>CHANGELOG.html actualizado con número de versión y fecha</li>
+        <li>Build de Jekyll pasa sin errores (revisar Actions en GitHub)</li>
+        <li>Assets verificados en GitHub Pages (Network 200)</li>
+        <li>Responsive verificado en mobile/tablet/desktop</li>
+        <li>No hay tokens ni API keys en el código fuente</li>
+        <li>Backup de <code>_data/*.json</code> confirmado (commit previo limpio)</li>
+      </ul>
+
+      <h3 style="margin-top:1.5rem">Checklist de Auditoría</h3>
+      <ul class="checklist">
+        <li>Revisar <code>localStorage</code> en DevTools: ningún valor sensible sin cifrar</li>
+        <li>Buscar <code>console.log</code> con tokens o datos de usuario en JS</li>
+        <li>Verificar que el PAT tiene solo los scopes necesarios</li>
+        <li>Comprobar que inputs de tareas pasan por sanitización</li>
+        <li>Revisar que el lightbox tiene z-index correcto</li>
+        <li>Validar que todos los JSON en <code>_data/</code> son válidos (<code>JSON.parse()</code>)</li>
+        <li>Verificar que no hay rutas absolutas hardcodeadas que rompan en subpaths</li>
+        <li>Comprobar que IDs de tareas se comparan siempre como String</li>
+      </ul>
+
+      <h3 style="margin-top:1.5rem">Tabla de Archivos Críticos</h3>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Archivo</th><th>Si se rompe</th><th>Backup</th></tr></thead>
+          <tbody>
+            <tr><td><code>_data/tasks.json</code></td><td>Kanban vacío, pérdida de todas las tareas</td><td>Git history</td></tr>
+            <tr><td><code>_config.yml</code></td><td>Build Jekyll falla, sitio no se publica</td><td>Git history</td></tr>
+            <tr><td><code>dashboard.html</code></td><td>Dashboard inaccesible</td><td>Git history</td></tr>
+            <tr><td><code>assets/javascript/</code></td><td>Funcionalidades del dashboard rotas</td><td>Git history</td></tr>
+            <tr><td><code>_layouts/default.html</code></td><td>Todas las páginas Jekyll sin layout</td><td>Git history</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 style="margin-top:1.5rem">Ejemplo de Commit Seguro (GitHub API)</h3>
+      <pre><code>// 1. Obtener estado actual con SHA
+const getRes = await fetch(
+  `https://api.github.com/repos/hypenosys/hypenosys.github.io/contents/_data/tasks.json`,
+  { headers: { Authorization: `token ${pat}`, Accept: 'application/vnd.github.v3+json' } }
+);
+const current = await getRes.json();
+const sha = current.sha;
+
+// 2. Modificar datos
+const tasks = JSON.parse(atob(current.content.replace(/\n/g, '')));
+tasks.push(newTask);
+
+// 3. Validar antes de guardar
+const jsonStr = JSON.stringify(tasks, null, 2);
+JSON.parse(jsonStr); // Lanza excepción si inválido
+
+// 4. PUT con SHA
+const putRes = await fetch(
+  `https://api.github.com/repos/hypenosys/hypenosys.github.io/contents/_data/tasks.json`,
+  {
+    method: 'PUT',
+    headers: { Authorization: `token ${pat}`, Accept: 'application/vnd.github.v3+json' },
+    body: JSON.stringify({
+      message: `ops: add task "${newTask.title}"`,
+      content: btoa(unescape(encodeURIComponent(jsonStr))),
+      sha: sha
+    })
+  }
+);</code></pre>
+
+      <h3 style="margin-top:1.5rem">Tabla de Riesgos</h3>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Riesgo</th><th>Probabilidad</th><th>Impacto</th><th>Acción</th></tr></thead>
+          <tbody>
+            <tr><td>PAT comprometido via XSS</td><td class="tag-risk-med">Media</td><td class="tag-risk-high">Crítico</td><td>Migrar a proxy server-side</td></tr>
+            <tr><td>JSON corrupto por fallo de red</td><td class="tag-risk-med">Media</td><td class="tag-risk-high">Alto</td><td>Validar pre-PUT + retry</td></tr>
+            <tr><td>Conflicto SHA escritura concurrente</td><td class="tag-risk-low">Baja</td><td class="tag-risk-med">Medio</td><td>Lock optimista + merge manual</td></tr>
+            <tr><td>JSON inflado por base64 images</td><td class="tag-risk-high">Alta</td><td class="tag-risk-med">Medio</td><td>Límite de tamaño + compresión</td></tr>
+            <tr><td>Build Jekyll falla en GitHub Pages</td><td class="tag-risk-low">Baja</td><td class="tag-risk-high">Alto</td><td>Verificar en Actions post-push</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <hr>
+    <p style="font-family:var(--mono);font-size:.72rem;color:var(--text3);text-align:center">
+      Manual Operativo de Hypenosys · v1.0 · Generado 2026 · 
+      <a href="https://github.com/hypenosys/hypenosys.github.io" target="_blank" rel="noopener">hypenosys/hypenosys.github.io</a>
+    </p>
+
+  </main><!-- /content -->
+
+</div><!-- /layout -->
+
+<!-- FOOTER -->
+<footer>
+  <span>HYPENOSYS · Neural Operations Center</span>
+  <div style="display:flex;gap:1rem">
+    <a href="https://hypenosys.github.io/">Home</a>
+    <a href="https://hypenosys.github.io/dashboard.html">Dashboard</a>
+    <a href="https://hypenosys.github.io/documentacion/">Docs</a>
+    <a href="https://github.com/hypenosys/hypenosys.github.io" target="_blank" rel="noopener">GitHub</a>
+  </div>
+  <span>© 2026 Hypenosys Indie Studio</span>
+</footer>
+
+<!-- BACK TO TOP -->
+<a href="#hero" id="btt" aria-label="Volver arriba">↑</a>
+
+<script>
+(function() {
+  'use strict';
+
+  /* ── SEARCH ENGINE ── */
+  const sections = [];
+  document.querySelectorAll('.section[id]').forEach(sec => {
+    const h2 = sec.querySelector('h2');
+    const text = sec.textContent.toLowerCase();
+    if (h2) sections.push({ id: sec.id, title: h2.textContent.trim(), text });
+  });
+
+  const q = document.getElementById('q');
+  const res = document.getElementById('search-results');
+
+  function doSearch(val) {
+    val = val.trim().toLowerCase();
+    if (val.length < 2) { res.classList.remove('active'); return; }
+    const hits = sections.filter(s => s.text.includes(val)).slice(0, 8);
+    if (hits.length === 0) {
+      res.innerHTML = '<div class="sr-no">Sin resultados</div>';
+    } else {
+      res.innerHTML = hits.map(h =>
+        `<a class="sr-item" href="#${h.id}"><strong>${h.title}</strong></a>`
+      ).join('');
+    }
+    res.classList.add('active');
+  }
+
+  q.addEventListener('input', e => doSearch(e.target.value));
+  q.addEventListener('keydown', e => { if (e.key === 'Escape') { res.classList.remove('active'); q.value = ''; } });
+  document.addEventListener('click', e => { if (!res.contains(e.target) && e.target !== q) res.classList.remove('active'); });
+  res.addEventListener('click', e => {
+    const a = e.target.closest('a');
+    if (a) { res.classList.remove('active'); q.value = ''; }
+  });
+
+  /* ── SIDEBAR ACTIVE STATE ── */
+  const sidebarLinks = document.querySelectorAll('.sidebar a[href^="#"]');
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        sidebarLinks.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`.sidebar a[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-52px 0px -60% 0px', threshold: 0 });
+  document.querySelectorAll('.section[id]').forEach(s => io.observe(s));
+
+  /* ── BACK TO TOP ── */
+  const btt = document.getElementById('btt');
+  window.addEventListener('scroll', () => btt.classList.toggle('show', window.scrollY > 400), { passive: true });
+
+  /* ── MOBILE DRAWER ── */
+  const drawer = document.getElementById('sidebar-drawer');
+  const overlay = document.getElementById('overlay');
+  const btn = document.getElementById('drawerBtn');
+  const sidebar = document.getElementById('sidebar');
+
+  // Clone sidebar into drawer for mobile
+  drawer.innerHTML = sidebar.innerHTML;
+
+  function closeDrawer() { drawer.classList.remove('open'); overlay.classList.remove('open'); }
+  btn.addEventListener('click', () => { drawer.classList.toggle('open'); overlay.classList.toggle('open'); });
+  overlay.addEventListener('click', closeDrawer);
+  drawer.querySelectorAll('a').forEach(a => a.addEventListener('click', closeDrawer));
+
+})();
+</script>
+</body>
+</html>
