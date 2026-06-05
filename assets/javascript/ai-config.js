@@ -61,9 +61,9 @@ class OllamaUI {
                     });
                 }
 
-                // Select first one by default if base_url is empty
+                // If only one is found, or base_url is empty, select it automatically
                 const baseUrlInput = document.getElementById('ai_base_url');
-                if (baseUrlInput && !baseUrlInput.value) {
+                if (baseUrlInput && (discovered.length === 1 || !baseUrlInput.value)) {
                     this.selectEndpoint(discovered[0]);
                 }
 
