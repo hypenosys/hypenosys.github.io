@@ -39,8 +39,13 @@ permalink: /jules-panel/
                 <p class="panel-subtitle">Neural Operations & Repository Automation</p>
             </div>
         </div>
-        <div id="jules-api-indicator-container">
-            <!-- Dinámico: api-key-indicator -->
+        <div class="flex items-center gap-3">
+            <a href="/claude-chat.html" class="btn btn--secondary" style="background: rgba(189, 147, 249, 0.1); border-color: #bd93f9; color: #bd93f9; font-weight: 700;">
+                <i class="fa-solid fa-comments mr-2"></i> Claude Chat
+            </a>
+            <div id="jules-api-indicator-container">
+                <!-- Dinámico: api-key-indicator -->
+            </div>
         </div>
     </header>
 
@@ -1233,24 +1238,11 @@ permalink: /jules-panel/
     }
 </style>
 
-<script>
-  // Auth Guard: Detectar si hay un token o un código OAuth en proceso
-  (function() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const hasCode = urlParams.has('code');
-    const hasToken = sessionStorage.getItem('gh_access_token') || localStorage.getItem('github_token');
-
-    if (!hasToken && !hasCode) {
-      console.warn('[AUTH] No se detectó sesión ni código OAuth. Redirigiendo al Home.');
-      window.location.href = '{{ "/" | relative_url }}';
-    } else if (hasCode) {
-      console.log('[AUTH] Código OAuth detectado. Bloqueando redirección para procesar intercambio.');
-    }
-  })();
-</script>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="{{ '/assets/javascript/jules-api.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/repo-aliases.js' | relative_url }}"></script>
+    <script src="{{ '/assets/javascript/ollama-discovery.js' | relative_url }}"></script>
+    <script src="{{ '/assets/javascript/ai-config.js' | relative_url }}"></script>
 <script>
     // --- GLOBAL STATE & QUEUE ---
     window.JulesPanelState = {
@@ -2562,7 +2554,7 @@ permalink: /jules-panel/
 
                 if (!owner || !repo || !prNumber) return;
 
-                const token = window.githubApi.token || localStorage.getItem('github_token');
+                const token = window.githubApi.getAuthToken();
                 const prResp = await fetch(`https://api.github.com/repos/${owner}/${repo}/pulls/${prNumber}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });

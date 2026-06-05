@@ -549,6 +549,25 @@ async function updateMemberProfile(memberName, profileDelta) {
   }
 }
 
+/**
+ * Public safe wrapper to update non-sensitive AI configuration
+ */
+async function updateMemberAiConfig(memberName, aiConfig) {
+  const { provider, model } = aiConfig;
+  return atomicWrite('_data/team_profiles.json', (db) => {
+    if (!db.members[memberName]) throw new Error(`Miembro ${memberName} no encontrado en team_profiles.json.`);
+    db.members[memberName].ai_config = { provider, model };
+    db.last_updated = new Date().toISOString();
+    return db;
+  }, `chore: actualizar config AI de ${memberName}`, (local, remote) => {
+    const merged = { ...remote };
+    if (merged.members[memberName]) {
+        merged.members[memberName].ai_config = local.members[memberName].ai_config;
+    }
+    return merged;
+  });
+}
+
 // ─── STATE ────────────────────────────────────────────────────
 let _currentUser = null;
 
@@ -682,6 +701,7 @@ window.githubApi = {
   updateBudget,
   getOrgRepos,
   updateMemberProfile,
+  updateMemberAiConfig,
   recomputeAndSaveStats,
   deleteFile,
 

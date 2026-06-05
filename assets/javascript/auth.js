@@ -13,8 +13,9 @@ class AuthManager {
 
         const isDashboard = window.location.pathname.includes('dashboard');
         const isJules = window.location.pathname.includes('jules-panel');
+        const isClaude = window.location.pathname.includes('claude-chat') || window.location.pathname.includes('cloude-chat');
 
-        if (isDashboard || isJules) {
+        if (isDashboard || isJules || isClaude) {
             console.log('[AUTH] Protected page detected. Handling OAuth callback if present...');
 
             try {
@@ -114,12 +115,13 @@ class AuthManager {
                 console.error('[AUTH] Exchange failed:', e);
                 this.showToast('Error', 'Fallo en la autenticación OAuth: ' + (e.message || 'Error desconocido'), 'error');
 
-                // Si el intercambio falla y estamos en una página protegida, redirigir al home
-                if (window.location.pathname.includes('dashboard') || window.location.pathname.includes('jules-panel')) {
-                    setTimeout(() => {
-                        window.location.href = '/';
-                    }, 3000);
-                }
+            // En páginas protegidas, simplemente limpiar y disparar authReady con null
+            // para que los gates locales tomen el control en lugar de redirigir al home.
+            window.githubApi.clearAuth();
+            document.dispatchEvent(new CustomEvent('authReady', {
+                detail: { user: null }
+            }));
+
                 throw e;
             } finally {
                 // No reseteamos _oauthExchanging para evitar que otros disparadores lo intenten de nuevo
@@ -198,7 +200,9 @@ class AuthManager {
             this.showToast('Éxito', 'Conexión establecida con GitHub y Jules.', 'success');
             document.dispatchEvent(new CustomEvent('settingsSaved'));
 
-            if (window.location.pathname.includes('dashboard') || window.location.pathname.includes('jules-panel')) {
+            if (window.location.pathname.includes('dashboard') ||
+                window.location.pathname.includes('jules-panel') ||
+                window.location.pathname.includes('claude-chat')) {
                 setTimeout(() => window.location.reload(), 1000);
             }
         } catch (e) {
@@ -515,6 +519,11 @@ class AuthManager {
         const baseUrlGroup = document.getElementById('group-base-url');
         const baseUrlInput = document.getElementById('ai_base_url');
 
+        // Ollama UI groups
+        const ollamaScanBtnGroup = document.getElementById('ollama-scan-btn-group');
+        const ollamaDiscoveryGroup = document.getElementById('group-ollama-discovery');
+        const ollamaModelsGroup = document.getElementById('group-ollama-models');
+
         const suggestions = {
             'anthropic': 'claude-sonnet-4-6-20260217',
             'openai': 'gpt-5',
@@ -533,10 +542,20 @@ class AuthManager {
         if (provider === 'ollama' || provider === 'custom') {
             baseUrlGroup.style.display = 'block';
             if (!baseUrlInput.value && provider === 'ollama') {
-                baseUrlInput.value = 'http://localhost:11434/v1';
+                baseUrlInput.value = 'http://localhost:11434';
             }
         } else {
             baseUrlGroup.style.display = 'none';
+        }
+
+        if (provider === 'ollama') {
+            ollamaScanBtnGroup.style.display = 'block';
+            ollamaDiscoveryGroup.style.display = 'block';
+            ollamaModelsGroup.style.display = 'block';
+        } else {
+            ollamaScanBtnGroup.style.display = 'none';
+            ollamaDiscoveryGroup.style.display = 'none';
+            ollamaModelsGroup.style.display = 'none';
         }
     }
 
@@ -591,17 +610,13 @@ class AuthManager {
             const localConfig = { provider, model, api_key: apiKey, base_url: baseUrl };
             localStorage.setItem('hy_ai_config', JSON.stringify(localConfig));
 
-            // Sync non-sensitive to team_profiles.json
+            // Sync non-sensitive to team_profiles.json via safe public wrapper
             const profilesRes = await window.githubApi.fetchFileWithSha('_data/team_profiles.json');
-            const profiles = profilesRes.content;
-            const memberEntry = Object.entries(profiles.members).find(([k, v]) => v.github_username.toLowerCase() === login.toLowerCase());
+            const memberEntry = Object.entries(profilesRes.content.members).find(([k, v]) => v.github_username.toLowerCase() === login.toLowerCase());
 
             if (memberEntry) {
                 const memberName = memberEntry[0];
-                const updatedProfiles = JSON.parse(JSON.stringify(profiles));
-                updatedProfiles.members[memberName].ai_config = { provider, model };
-
-                await window.githubApi.atomicWrite('_data/team_profiles.json', updatedProfiles, `Update AI config for ${login}`, profilesRes.sha);
+                await window.githubApi.updateMemberAiConfig(memberName, { provider, model });
             }
 
             if (window.hypeToast) {
