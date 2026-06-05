@@ -1,25 +1,24 @@
-<!-- AI API Configuration Modal -->
+<!-- Modal Configuración API -->
 <div class="modal fade" id="modalApiConfig" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content shadow-lg bg-dark text-white border-purple">
-            <div class="modal-header border-purple bg-black-transparent">
-                <h5 class="modal-title text-purple font-weight-bold d-flex align-items-center">
-                    <i class="fas fa-robot mr-3"></i>
-                    <span>CONFIGURACIÓN API</span>
+            <div class="modal-header border-purple">
+                <h5 class="modal-title text-purple font-weight-bold">
+                    <i class="fas fa-key mr-2"></i> CONFIGURACIÓN API DE IA
                 </h5>
                 <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body p-4">
-                <div class="alert alert-warning bg-black border-warning text-warning small mb-4" style="background: rgba(255, 193, 7, 0.05); border: 1px solid #ffc107;">
+            <div class="modal-body">
+                <div class="alert alert-warning bg-black border-warning text-warning small mb-4" style="border-width: 2px;">
                     <i class="fas fa-exclamation-triangle mr-2"></i>
                     Tu API key se guarda solo en este navegador. Nunca se sube a GitHub.
                 </div>
 
                 <div class="form-group">
-                    <label class="text-purple small font-weight-bold uppercase">Proveedor de IA</label>
-                    <select id="api-config-provider" class="form-control bg-dark text-white border-purple" onchange="window.apiConfigUI.handleProviderChange()">
+                    <label for="ai_provider" class="text-gray-400 small font-weight-bold uppercase">Proveedor de IA</label>
+                    <select id="ai_provider" class="form-control bg-dark text-white border-purple" onchange="window.authManager.handleProviderChange()">
                         <option value="none">Ninguno</option>
                         <option value="anthropic">Anthropic (Claude)</option>
                         <option value="openai">OpenAI (ChatGPT)</option>
@@ -27,81 +26,36 @@
                         <option value="mistral">Mistral AI</option>
                         <option value="openrouter">OpenRouter</option>
                         <option value="ollama">Ollama (Local)</option>
-                        <option value="custom">Custom (OpenAI API Compatible)</option>
+                        <option value="custom">Custom (OpenAI Compatible)</option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label class="text-purple small font-weight-bold uppercase">Modelo</label>
-                    <input type="text" id="api-config-model" class="form-control bg-dark text-white border-purple" placeholder="Selecciona un proveedor">
+                    <label for="ai_model" class="text-gray-400 small font-weight-bold uppercase">Modelo</label>
+                    <input type="text" id="ai_model" class="form-control bg-dark text-white border-purple" placeholder="Selecciona un proveedor">
                 </div>
 
                 <div class="form-group">
-                    <label class="text-purple small font-weight-bold uppercase">API Key</label>
+                    <label for="ai_api_key" class="text-gray-400 small font-weight-bold uppercase">API Key</label>
                     <div class="input-group">
-                        <input type="password" id="api-config-key" class="form-control bg-dark text-white border-purple" placeholder="sk-...">
+                        <input type="password" id="ai_api_key" class="form-control bg-dark text-white border-purple" placeholder="sk-...">
                         <div class="input-group-append">
-                            <button class="btn btn-outline-purple" type="button" onclick="window.apiConfigUI.toggleKeyVisibility()">
-                                <i class="fas fa-eye" id="api-config-key-icon"></i>
+                            <button class="btn btn-outline-purple" type="button" onclick="togglePasswordVisibility('ai_api_key')">
+                                <i class="fas fa-eye"></i>
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <div class="form-group" id="api-config-base-url-container" style="display: none;">
-                    <label class="text-purple small font-weight-bold uppercase">Base URL</label>
-                    <input type="text" id="api-config-base-url" class="form-control bg-dark text-white border-purple" placeholder="http://localhost:11434/v1">
+                <div id="group-base-url" class="form-group" style="display: none;">
+                    <label for="ai_base_url" class="text-gray-400 small font-weight-bold uppercase">Base URL</label>
+                    <input type="text" id="ai_base_url" class="form-control bg-dark text-white border-purple" placeholder="http://localhost:11434/v1">
                 </div>
             </div>
             <div class="modal-footer border-purple">
-                <button type="button" class="btn btn-outline-secondary px-4" data-dismiss="modal">Cancelar</button>
-                <button type="button" id="btn-save-api-config" class="btn btn-purple px-5 shadow-lg">
-                    <i class="fas fa-save mr-2"></i> Guardar Configuración
-                </button>
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" id="btn-save-api-config" class="btn btn-purple">Guardar Configuración</button>
             </div>
         </div>
     </div>
 </div>
-
-<script>
-window.apiConfigUI = {
-    placeholders: {
-        'anthropic': 'claude-sonnet-4-6-20260217',
-        'openai': 'gpt-5',
-        'gemini': 'gemini-2.5-flash',
-        'mistral': 'mistral-large-latest',
-        'openrouter': 'openrouter/auto',
-        'ollama': 'llama3',
-        'custom': '',
-        'none': 'Selecciona un proveedor'
-    },
-    handleProviderChange() {
-        const provider = document.getElementById('api-config-provider').value;
-        const modelInput = document.getElementById('api-config-model');
-        const baseUrlContainer = document.getElementById('api-config-base-url-container');
-        const baseUrlInput = document.getElementById('api-config-base-url');
-
-        modelInput.placeholder = this.placeholders[provider] || '';
-
-        if (provider === 'ollama' || provider === 'custom') {
-            baseUrlContainer.style.display = 'block';
-            if (provider === 'ollama' && !baseUrlInput.value) {
-                baseUrlInput.value = 'http://localhost:11434/v1';
-            }
-        } else {
-            baseUrlContainer.style.display = 'none';
-        }
-    },
-    toggleKeyVisibility() {
-        const input = document.getElementById('api-config-key');
-        const icon = document.getElementById('api-config-key-icon');
-        if (input.type === 'password') {
-            input.type = 'text';
-            icon.classList.replace('fa-eye', 'fa-eye-slash');
-        } else {
-            input.type = 'password';
-            icon.classList.replace('fa-eye-slash', 'fa-eye');
-        }
-    }
-};
-</script>
