@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-05T16:13:56.649Z",
+  "last_updated": "2026-06-05T16:14:46.267Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -677,8 +677,10 @@
       "start_date": "2026-06-01",
       "due_date": "2026-06-07",
       "estimated_hours": 2,
-      "story_points": 2,
-      "tags": [],
+      "story_points": 5,
+      "tags": [
+        "UX/UI"
+      ],
       "external_links": [],
       "subtasks": [],
       "acceptance_criteria": "",
@@ -748,6 +750,13 @@
           "field": "asignados",
           "old_value": "[\"axlfc\",\"dkdidac-design\",\"javi26031994-a11y\",\"topperh4rley\"]",
           "new_value": "[\"dkdidac-design\",\"javi26031994-a11y\",\"topperh4rley\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-05T16:14:45.831Z",
+          "field": "tags",
+          "old_value": "[]",
+          "new_value": "[\"UX/UI\"]"
         }
       ],
       "repository": "hypenosys/hypenosys.github.io"
