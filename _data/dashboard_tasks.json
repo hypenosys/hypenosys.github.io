@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-05T16:46:06.805Z",
+  "last_updated": "2026-06-05T16:46:41.909Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -11,8 +11,8 @@
       "descripcion": "Configuración inicial del dashboard operacional",
       "fecha": "2025-01-01",
       "tema_principal": "QA / Testing",
-      "detectado_por": "Axel",
-      "resuelto_por": "Axel",
+      "detectado_por": "Alex",
+      "resuelto_por": null,
       "apoyo": null,
       "estado": "In Review",
       "prioridad": "Medium",
