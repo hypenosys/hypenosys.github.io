@@ -62,6 +62,47 @@ permalink: /CHANGELOG.html
         <h2 class="text-purple border-bottom border-purple pb-2 mb-4">[Unreleased]</h2>
         <div class="card mb-3">
           <div class="card-body">
+            <h5 class="text-success">Added</h5>
+            <ul class="tree-view mb-3">
+              <li><strong>Claude Neural Chat:</strong>
+                <ul>
+                  <li>Nueva interfaz de chat privada en <code>/claude-chat/</code> con estética Dracula.</li>
+                  <li>Conexión directa con la API de Claude (claude-3-5-sonnet) con soporte para streaming (SSE).</li>
+                  <li>Implementado <strong>Extended Thinking</strong> para razonamiento complejo.</li>
+                  <li>Persistencia de múltiples sesiones de chat en <code>localStorage</code>.</li>
+                  <li>Integración como Orquestador: Claude puede crear tareas directamente en el Dashboard de Hypenosys.</li>
+                  <li>Escaneo y selección de modelos locales vía <strong>Ollama</strong>.</li>
+                </ul>
+              </li>
+              <li><strong>GitHub Hub (Jules Panel Upgrade):</strong>
+                <ul>
+                  <li>Panel de gestión integral de repositorios integrado en Jules Panel (60% de ancho).</li>
+                  <li><strong>Pull Requests:</strong> Listado con estado de CI, etiquetas y visor de diffs inline con resaltado de sintaxis.</li>
+                  <li><strong>Issues:</strong> Gestión de issues con formulario de creación rápida.</li>
+                  <li><strong>Branches:</strong> Listado de ramas y creación/borrado sin recargar la página.</li>
+                  <li><strong>Actions:</strong> Monitorización de workflows, visualización de logs (últimas 50 líneas) y disparo manual de ejecuciones.</li>
+                  <li><strong>Notifications:</strong> Centro de notificaciones unificado con marcado de lectura individual y masivo.</li>
+                </ul>
+              </li>
+              <li><strong>Configuración Avanzada de Repositorios:</strong>
+                <ul>
+                  <li>Nuevo modal de configuración (hijo directo de <code>body</code>) con focus trap.</li>
+                  <li>Sistema de <strong>Tags</strong> y <strong>Iconos</strong> personalizados por repositorio persistidos localmente.</li>
+                  <li>Migración a Custom Dropdown para la selección de repositorios, mejorando la UX y la navegación por teclado.</li>
+                </ul>
+              </li>
+              <li><strong>Infraestructura de API (GHAPIQueue):</strong>
+                <ul>
+                  <li>Implementada cola de peticiones con prioridades para evitar condiciones de carrera y gestionar el Rate Limit de GitHub de forma inteligente.</li>
+                  <li>Detección automática de expiración de token con redirección al flujo de login sin recarga forzada.</li>
+                </ul>
+              </li>
+            </ul>
+            <h5 class="text-success">Fixed</h5>
+            <ul class="tree-view mb-3">
+              <li><strong>Kanban Subtasks:</strong> Reemplazados los iconos rotos por botones funcionales de búsqueda en GitHub y eliminación con confirmación de 2 segundos.</li>
+              <li><strong>UX Stability:</strong> Implementada supresión de saltos de scroll (Scroll Jump Suppression) durante el polling de la API de Jules.</li>
+            </ul>
             <h5 class="text-success">Fixed</h5>
             <ul class="tree-view mb-3">
               <li><strong>Auth & Routing (Critical Fix):</strong>
