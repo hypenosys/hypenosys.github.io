@@ -21,6 +21,8 @@ class OllamaDiscovery {
 
         try {
             const targets = this.parseInput(input);
+            if (targets.length === 0) return [];
+
             const discovered = [];
             let completed = 0;
 
@@ -48,9 +50,30 @@ class OllamaDiscovery {
         const trimmed = input.trim();
         if (!trimmed) return ['localhost'];
 
+        // Comma separated list
+        if (trimmed.includes(',')) {
+            return trimmed.split(',')
+                .map(s => s.trim())
+                .filter(s => this.isValidHost(s));
+        }
+
         // CIDR /24 range
-        if (trimmed.includes('/24')) {
-            const base = trimmed.split('/24')[0].split('.').slice(0, 3).join('.');
+        if (trimmed.includes('/')) {
+            const [ip, mask] = trimmed.split('/');
+            if (mask !== '24') {
+                alert('Solo se permiten rangos /24 para evitar saturación de red.');
+                return [];
+            }
+            if (!this.isValidIP(ip)) {
+                alert('IP base inválida para el rango.');
+                return [];
+            }
+            if (!this.isPrivateIP(ip)) {
+                if (!confirm('La IP indicada no parece privada. ¿Deseas escanear una red pública? Esto podría ser bloqueado por el navegador.')) {
+                    return [];
+                }
+            }
+            const base = ip.split('.').slice(0, 3).join('.');
             const hosts = [];
             for (let i = 1; i < 255; i++) {
                 hosts.push(`${base}.${i}`);
@@ -58,12 +81,41 @@ class OllamaDiscovery {
             return hosts;
         }
 
-        // Comma separated list
-        if (trimmed.includes(',')) {
-            return trimmed.split(',').map(s => s.trim()).filter(Boolean);
+        if (this.isValidHost(trimmed)) {
+            return [trimmed];
         }
 
-        return [trimmed];
+        alert('Formato de host o IP inválido.');
+        return [];
+    }
+
+    isValidHost(host) {
+        if (host === 'localhost') return true;
+        return this.isValidIP(host) || this.isValidHostname(host);
+    }
+
+    isValidIP(ip) {
+        const parts = ip.split('.');
+        if (parts.length !== 4) return false;
+        return parts.every(p => {
+            const n = parseInt(p, 10);
+            return !isNaN(n) && n >= 0 && n <= 255 && String(n) === p;
+        });
+    }
+
+    isValidHostname(hostname) {
+        const re = /^(?!-)[A-Za-z0-9-]{1,63}(?<!-)(\.[A-Za-z0-9-]{1,63})*$/;
+        return re.test(hostname);
+    }
+
+    isPrivateIP(ip) {
+        const parts = ip.split('.').map(p => parseInt(p, 10));
+        if (parts[0] === 10) return true;
+        if (parts[0] === 172 && parts[1] >= 16 && parts[1] <= 31) return true;
+        if (parts[0] === 192 && parts[1] === 168) return true;
+        if (parts[0] === 127) return true;
+        if (parts[0] === 100 && parts[1] >= 64 && parts[1] <= 127) return true; // Tailscale / CGNAT
+        return false;
     }
 
     formatEndpoint(host) {

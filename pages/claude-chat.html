@@ -388,8 +388,12 @@ permalink: /claude-chat.html
         }
 
         async function sendMessageOllama(session, config) {
-            const baseUrl = config.base_url || 'http://localhost:11434';
+            const baseUrl = config.base_url;
             const model = config.model || 'llama3';
+
+            if (!baseUrl) {
+                throw new Error('Base URL de Ollama no configurada. Por favor, configura el endpoint en API CONFIG.');
+            }
 
             const response = await fetch(`${baseUrl}/api/chat`, {
                 method: 'POST',
@@ -581,11 +585,12 @@ permalink: /claude-chat.html
                 }
             }
 
-            if (window.authManager && window.githubApi?.user !== undefined) {
+            // Centralized event-driven start
+            document.addEventListener('authReady', (e) => iniciar(e.detail?.user || null));
+
+            // Immediate check if AuthManager already fired or is loaded
+            if (window.githubApi?.user !== undefined) {
                 iniciar(window.githubApi.user);
-            } else {
-                document.addEventListener('authReady', (e) => iniciar(e.detail?.user || null));
-                setTimeout(() => { if (!arrancado) iniciar(window.githubApi?.user || null); }, 4000);
             }
         })();
     </script>

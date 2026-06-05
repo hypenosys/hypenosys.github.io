@@ -30,9 +30,13 @@ class OllamaUI {
             if (discovered.length > 0) {
                 status.textContent = `Escaneo completado. Se encontraron ${discovered.length} instancias.`;
                 selectGroup.style.display = 'block';
-                select.innerHTML = discovered.map(endpoint =>
-                    `<option value="${endpoint}">${endpoint}</option>`
-                ).join('');
+
+                discovered.forEach(endpoint => {
+                    const opt = document.createElement('option');
+                    opt.value = endpoint;
+                    opt.textContent = endpoint;
+                    select.appendChild(opt);
+                });
 
                 // Select first one by default if base_url is empty
                 const baseUrlInput = document.getElementById('ai_base_url');
@@ -65,14 +69,21 @@ class OllamaUI {
             return;
         }
 
-        select.innerHTML = '<option value="">Cargando modelos...</option>';
+        select.innerHTML = '';
+        const loadingOpt = document.createElement('option');
+        loadingOpt.textContent = 'Cargando modelos...';
+        select.appendChild(loadingOpt);
 
         try {
             const models = await this.discovery.fetchModels(endpoint);
+            select.innerHTML = '';
             if (models.length > 0) {
-                select.innerHTML = models.map(m =>
-                    `<option value="${m.name}">${m.name}</option>`
-                ).join('');
+                models.forEach(m => {
+                    const opt = document.createElement('option');
+                    opt.value = m.name;
+                    opt.textContent = m.name;
+                    select.appendChild(opt);
+                });
 
                 // If model input is empty, pick the first one
                 if (!modelInput.value) {
@@ -89,11 +100,16 @@ class OllamaUI {
                     select.value = modelInput.value;
                 }
             } else {
-                select.innerHTML = '<option value="">No se encontraron modelos</option>';
+                const noneOpt = document.createElement('option');
+                noneOpt.textContent = 'No se encontraron modelos';
+                select.appendChild(noneOpt);
             }
         } catch (e) {
             const errorMsg = this.discovery.getErrorMessage(e, endpoint);
-            select.innerHTML = `<option value="">Error: ${e.message}</option>`;
+            select.innerHTML = '';
+            const errorOpt = document.createElement('option');
+            errorOpt.textContent = `Error: ${e.message}`;
+            select.appendChild(errorOpt);
             alert(`Error al cargar modelos: ${errorMsg}`);
         }
     }
