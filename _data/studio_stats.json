@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-04T17:52:29.591Z",
+  "computed_at": "2026-06-05T16:02:50.915Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 12,
@@ -25,19 +25,19 @@
     "bug_rate": 0,
     "blocker_health": 2,
     "tag_heatmap": {
-      "feature": 6,
+      "feature": 5,
       "PRO": 6,
       "brainstorm": 1,
       "design": 1,
       "research": 1,
       "DIS": 1,
-      "chore": 1,
+      "chore": 2,
       "onboarding": 1,
       "ART": 1,
       "Infraestructura": 1,
       "jules": 1
     },
-    "milestone_tasks_remaining": 8,
+    "milestone_tasks_remaining": 7,
     "hall_of_fame_winners": {
       "mvp": {
         "handle": "axlfc",
@@ -169,7 +169,7 @@
       "comment_activity": 0,
       "volatility": {
         "reopens": 0,
-        "reprioritizations": 6
+        "reprioritizations": 7
       },
       "workload": {
         "active_tasks": 6,
@@ -214,7 +214,7 @@
       "comment_activity": 0,
       "volatility": {
         "reopens": 0,
-        "reprioritizations": 7
+        "reprioritizations": 8
       },
       "workload": {
         "active_tasks": 9,
