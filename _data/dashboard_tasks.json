@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-06T10:08:09.541Z",
+  "last_updated": "2026-06-06T10:08:32.023Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1248,7 +1248,7 @@
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Medium",
       "milestone": "M1",
-      "estado": "Pending",
+      "estado": "Working",
       "completitud": 0,
       "resuelto_por": null,
       "detectado_por": "Axel",
@@ -1328,6 +1328,13 @@
           "field": "task_type",
           "old_value": "feature",
           "new_value": "bug"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T10:08:31.419Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
         }
       ],
       "id": 31
