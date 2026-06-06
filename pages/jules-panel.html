@@ -49,6 +49,16 @@ permalink: /jules-panel/
         </div>
     </header>
 
+<!-- Production Gap: Offline Banner -->
+<div id="offline-banner" class="hidden bg-orange-600 text-white text-center py-2 text-xs font-bold sticky top-0 z-[200]">
+    <i class="fas fa-wifi-slash mr-2"></i> MODO OFFLINE: Usando datos cacheados
+</div>
+
+<!-- Production Gap: Rate Limit Warning -->
+<div id="ratelimit-banner" class="hidden bg-red-600 text-white text-center py-2 text-xs font-bold sticky top-0 z-[200]">
+    <i class="fas fa-exclamation-triangle mr-2"></i> RATE LIMIT CRÍTICO: <span id="rl-count">0</span> peticiones restantes
+</div>
+
     <div class="panel-grid">
         <!-- Sidebar / Config -->
         <aside class="panel-sidebar">
@@ -156,44 +166,67 @@ permalink: /jules-panel/
 
         <main class="panel-sessions" style="display: flex; flex-direction: column; gap: 24px;">
             <div class="content-header">
-                <div class="flex justify-between items-end mb-4">
-                    <h2 class="section-title mb-0 border-0 p-0">Sesiones</h2>
-                    <span id="jules-last-update" class="text-[9px] text-slate-600 font-bold uppercase tracking-tighter">hace 0s</span>
-                </div>
-                <div class="session-filters">
-                    <button class="filter-chip active" data-filter="all">Todas</button>
-                    <button class="filter-chip" data-filter="IN_PROGRESS">En curso</button>
-                    <button class="filter-chip" data-filter="AWAITING_PLAN_APPROVAL">Esperando</button>
-                </div>
-
-                <div style="margin-top:12px;border-top:1px solid #1e1e2a;padding-top:12px;display:flex;flex-direction:row;gap:12px; flex-wrap: wrap;">
-                  <div>
-                    <button onclick="toggleArchive()"
-                      style="font-size:11px;color:#6b7280;background:none;border:none;
-                             cursor:pointer;display:flex;align-items:center;gap:6px;">
-                      📦 <span id="archive-count" style="background:#2a2a35;border-radius:10px;
-                        padding:1px 7px;font-size:10px;">0</span>
-                    </button>
-                  </div>
-
-                  <div>
-                    <button onclick="toggleCemetery()"
-                      style="font-size:11px;color:#6b7280;background:none;border:none;
-                             cursor:pointer;display:flex;align-items:center;gap:6px;">
-                      🪦 <span id="cemetery-count" style="background:#2a2a35;border-radius:10px;
-                        padding:1px 7px;font-size:10px;">0</span>
-                    </button>
-                  </div>
+                <div class="flex justify-between items-center mb-4">
+                    <div class="flex gap-2">
+                        <button id="view-mode-kanban" class="filter-chip active">Tablero</button>
+                        <button id="view-mode-sessions" class="filter-chip">Sesiones</button>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div id="alert-counter" class="hidden bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full animate-pulse">0 ALERTAS</div>
+                        <span id="jules-last-update" class="text-[9px] text-slate-600 font-bold uppercase tracking-tighter">hace 0s</span>
+                    </div>
                 </div>
 
-                <div id="archive-panel" class="hidden" style="margin-top:12px; width: 100%;">
-                  <div id="archive-list"></div>
+                <div id="sessions-header-ui">
+                    <div class="session-filters">
+                        <button class="filter-chip active" data-filter="all">Todas</button>
+                        <button class="filter-chip" data-filter="IN_PROGRESS">En curso</button>
+                        <button class="filter-chip" data-filter="AWAITING_PLAN_APPROVAL">Esperando</button>
+                    </div>
+
+                    <div style="margin-top:12px;border-top:1px solid #1e1e2a;padding-top:12px;display:flex;flex-direction:row;gap:12px; flex-wrap: wrap;">
+                      <div>
+                        <button onclick="toggleArchive()"
+                          style="font-size:11px;color:#6b7280;background:none;border:none;
+                                 cursor:pointer;display:flex;align-items:center;gap:6px;">
+                          📦 <span id="archive-count" style="background:#2a2a35;border-radius:10px;
+                            padding:1px 7px;font-size:10px;">0</span>
+                        </button>
+                      </div>
+
+                      <div>
+                        <button onclick="toggleCemetery()"
+                          style="font-size:11px;color:#6b7280;background:none;border:none;
+                                 cursor:pointer;display:flex;align-items:center;gap:6px;">
+                          🪦 <span id="cemetery-count" style="background:#2a2a35;border-radius:10px;
+                            padding:1px 7px;font-size:10px;">0</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div id="archive-panel" class="hidden" style="margin-top:12px; width: 100%;">
+                      <div id="archive-list"></div>
+                    </div>
+                    <div id="cemetery-panel" class="hidden" style="margin-top:12px; width: 100%;">
+                      <div id="cemetery-list"></div>
+                    </div>
                 </div>
-                <div id="cemetery-panel" class="hidden" style="margin-top:12px; width: 100%;">
-                  <div id="cemetery-list"></div>
+
+                <!-- Kanban Header Filters -->
+                <div id="kanban-header-ui" class="hidden">
+                    <div class="flex gap-2 flex-wrap mb-3">
+                        <select id="filter-asignado" class="form-select text-[11px] py-1" style="width: auto;">
+                            <option value="">Miembro...</option>
+                        </select>
+                        <select id="filter-repo" class="form-select text-[11px] py-1" style="width: auto;">
+                            <option value="">Repo...</option>
+                        </select>
+                        <button id="btn-new-task" class="btn btn--primary" style="min-height: 32px; padding: 0 12px; font-size: 11px;">+ NUEVA TAREA</button>
+                    </div>
                 </div>
             </div>
 
+            <!-- View: Sessions -->
             <div id="sessions-container">
                 <div id="jules-sessions-list">
                     <!-- Dinámico: session-cards -->
@@ -206,6 +239,36 @@ permalink: /jules-panel/
                     <button id="btn-load-more" class="btn btn--secondary w-full py-3 mt-4 font-bold text-[11px] uppercase tracking-widest">
                         Cargar más
                     </button>
+                </div>
+            </div>
+
+            <!-- View: Kanban -->
+            <div id="kanban-container" class="hidden">
+                <div class="kanban-board">
+                    <div class="kanban-column" data-status="BACKLOG">
+                        <h3 class="section-title">Backlog</h3>
+                        <div class="kanban-cards-list"></div>
+                    </div>
+                    <div class="kanban-column" data-status="TODO">
+                        <h3 class="section-title">Todo</h3>
+                        <div class="kanban-cards-list"></div>
+                    </div>
+                    <div class="kanban-column" data-status="WORKING">
+                        <h3 class="section-title">Working</h3>
+                        <div class="kanban-cards-list"></div>
+                    </div>
+                    <div class="kanban-column" data-status="REVIEW">
+                        <h3 class="section-title">Review</h3>
+                        <div class="kanban-cards-list"></div>
+                    </div>
+                    <div class="kanban-column" data-status="DONE">
+                        <h3 class="section-title">Done</h3>
+                        <div class="kanban-cards-list"></div>
+                    </div>
+                    <div class="kanban-column" data-status="BLOCKED">
+                        <h3 class="section-title">Blocked</h3>
+                        <div class="kanban-cards-list"></div>
+                    </div>
                 </div>
             </div>
         </main>
@@ -228,6 +291,9 @@ permalink: /jules-panel/
                 <button role="tab" data-tab="notifications" aria-controls="panel-notifs">
                     Notifs <span class="hub-badge" id="notif-badge">0</span>
                 </button>
+                <button role="tab" data-tab="explorer" aria-controls="panel-explorer">
+                    Explorer
+                </button>
             </div>
 
             <div class="gh-hub-content custom-scrollbar">
@@ -236,6 +302,7 @@ permalink: /jules-panel/
                 <div id="panel-branches"    class="tab-panel" role="tabpanel" style="display:none;"></div>
                 <div id="panel-actions"     class="tab-panel" role="tabpanel" style="display:none;"></div>
                 <div id="panel-notifs"      class="tab-panel" role="tabpanel" style="display:none;"></div>
+                <div id="panel-explorer"    class="tab-panel" role="tabpanel" style="display:none;"></div>
             </div>
         </section>
     </div>
@@ -349,14 +416,15 @@ permalink: /jules-panel/
     min-height: 100vh;
     font-family: inherit;
     padding: 24px;
-    width: 100%;
+    width: 100vw;
     max-width: 100%;
     overflow-x: hidden;
+    position: relative;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 768px) {
     .jules-panel-container {
-        padding: 16px;
+        padding: 12px;
     }
 }
 
@@ -367,13 +435,21 @@ permalink: /jules-panel/
     margin-bottom: 32px;
     gap: 16px;
     flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg-page);
+    padding: 10px 0;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
     .panel-header {
-        flex-direction: column;
-        align-items: flex-start;
+        flex-direction: row;
+        align-items: center;
+        margin-bottom: 16px;
     }
+    .panel-subtitle { display: none; }
+    .panel-title { font-size: 18px; }
 }
 
 .header-left {
@@ -426,8 +502,29 @@ permalink: /jules-panel/
 }
 
 @media (max-width: 1024px) {
-    .panel-grid { grid-template-columns: 1fr; }
+    .panel-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
     .panel-hub { grid-column: auto; }
+}
+
+/* Mobile Kanban Snap */
+@media (max-width: 768px) {
+    .kanban-board {
+        display: flex !important;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        gap: 12px;
+        padding-bottom: 16px;
+        margin: 0 -12px;
+        padding: 0 12px;
+    }
+    .kanban-column {
+        flex: 0 0 85vw;
+        scroll-snap-align: start;
+        max-width: 85vw;
+    }
 }
 
 .panel-sidebar {
@@ -695,11 +792,14 @@ permalink: /jules-panel/
 .btn {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 6px;
-    padding: 6px 14px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 500;
+    padding: 10px 16px; /* Aumentado para touch targets */
+    min-height: 44px;    /* Touch target */
+    min-width: 44px;     /* Touch target */
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
     cursor: pointer;
     border: none;
     transition: all 0.15s ease;
@@ -1241,6 +1341,10 @@ permalink: /jules-panel/
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="{{ '/assets/javascript/jules-api.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/github-api-ops.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/github-context.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/task-engine.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/kanban-ui.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/gh-explorer.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/repo-aliases.js' | relative_url }}"></script>
     <script src="{{ '/assets/javascript/ollama-discovery.js' | relative_url }}"></script>
     <script src="{{ '/assets/javascript/ai-config.js' | relative_url }}"></script>
@@ -1295,6 +1399,22 @@ permalink: /jules-panel/
     }
 
     window.GHQueue = new GHAPIQueue();
+
+    window.addEventListener('ghRateLimitUpdate', (e) => {
+        const { remaining } = e.detail;
+        const banner = document.getElementById('ratelimit-banner');
+        const count = document.getElementById('rl-count');
+
+        if (remaining < 100) {
+            banner.classList.remove('hidden');
+            count.textContent = remaining;
+        } else {
+            banner.classList.add('hidden');
+        }
+    });
+
+    window.addEventListener('online', () => document.getElementById('offline-banner').classList.add('hidden'));
+    window.addEventListener('offline', () => document.getElementById('offline-banner').classList.remove('hidden'));
 
     function updateRateLimit(remaining) {
         if (remaining === null || remaining === undefined) return;
@@ -1381,6 +1501,7 @@ permalink: /jules-panel/
             if (window.julesApi.apiKey) {
                 initializeRepoSelector();
                 refreshSessions();
+                window.kanbanUI.init();
                 startPolling();
                 initHub();
             }
@@ -1584,90 +1705,56 @@ permalink: /jules-panel/
         julesApiReady = false;
         updateLaunchButtonState();
 
-        // PHASE 1: GitHub API (Immediate) using githubOps (sessionStorage focus)
-        let githubRepos = window.userReposCache || [];
-        if (githubRepos.length === 0 && window.githubOps) {
-            try {
-                githubRepos = await window.githubOps.fetchRepositories();
-                window.userReposCache = githubRepos;
-            } catch (e) {
-                console.warn('[Jules Panel] Error fetching GH repos for Phase 1 via githubOps:', e);
-            }
-        }
+        try {
+            // PHASE 1: Load from github-context.js (Org Repos)
+            const githubRepos = await window.githubContext.getRepos();
 
-        if (githubRepos.length > 0) {
-            // Populate immediately with what we have from GH API
-            // Fix BUG #3: Use repo names exactly from GitHub Org
             currentSources = githubRepos.map(r => ({
                 name: `sources/github/${r.full_name}`,
-                githubRepo: { owner: r.full_name.split('/')[0], repo: r.name },
+                githubRepo: { owner: r.owner, repo: r.name },
                 displayName: r.name
             }));
+
             await populateSelector(currentSources);
             repoSelect.disabled = false;
-            julesApiReady = true; // Allow immediate launch as per requirements
+            julesApiReady = true;
             updateLaunchButtonState();
+
+            // PHASE 2: Background enrichment from Jules API
+            window.loadAllSources().then(sources => {
+                window.julesSourcesCache = sources;
+                const merged = [...currentSources];
+                sources.forEach(js => {
+                    const owner = js.githubRepo?.owner || window.parseSourceName(js.name)?.owner;
+                    const repo = js.githubRepo?.repo || window.parseSourceName(js.name)?.repo;
+
+                    const existingIdx = merged.findIndex(ms => {
+                        const mo = ms.githubRepo?.owner || window.parseSourceName(ms.name)?.owner;
+                        const mr = ms.githubRepo?.repo || window.parseSourceName(ms.name)?.repo;
+                        return mo === owner && mr === repo;
+                    });
+
+                    if (existingIdx >= 0) {
+                        merged[existingIdx] = { ...merged[existingIdx], ...js };
+                    } else {
+                        merged.push(js);
+                    }
+                });
+                currentSources = merged;
+                populateSelector(merged);
+            }).catch(e => console.warn('[Jules Panel] Jules enrichment failed:', e));
+
+        } catch (e) {
+            console.error('[Jules Panel] Repo initialization failed:', e);
+            repoSelect.innerHTML = '<option value="">Error de carga</option>';
+            repoStatus.innerHTML = `
+                <div class="error-banner">
+                    <span>No se pudo conectar con GitHub.</span>
+                    <button onclick="initializeRepoSelector()" class="btn--secondary" style="font-size: 10px; padding: 4px 8px;">Reintentar</button>
+                    <button onclick="window.authManager.showSettingsModal()" class="btn--secondary" style="font-size: 10px; padding: 4px 8px;">Configurar Token</button>
+                </div>
+            `;
         }
-
-        // PHASE 2: Jules API Enrichment (Parallel/Background)
-        const julesPromise = window.loadAllSources();
-
-        // 8 seconds race for "Phase 2 initial load"
-        const timeoutPromise = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('TIMEOUT_PHASE2')), 8000)
-        );
-
-        Promise.race([julesPromise, timeoutPromise])
-            .then(async sources => {
-                console.log('[Jules Panel] Phase 2 initial resolved:', sources.length, 'sources');
-                processJulesEnrichment(sources);
-            })
-            .catch(err => {
-                console.warn('[Jules Panel] Phase 2 initial timeout or error:', err.message);
-                if (githubRepos.length === 0) {
-                    repoSelect.innerHTML = '<option value="">Error de carga</option>';
-                    showError('No se pudo conectar con GitHub ni con Jules API.');
-                }
-                // Even if timeout, let Jules promise continue in background
-                julesPromise.then(sources => {
-                   console.log('[Jules Panel] Phase 2 late resolve:', sources.length, 'sources');
-                   processJulesEnrichment(sources);
-                }).catch(e => console.error('[Jules Panel] Phase 2 late failure:', e));
-
-                julesApiReady = true;
-                updateLaunchButtonState();
-            });
-    }
-
-    async function processJulesEnrichment(sources) {
-        const repoSelect = document.getElementById('jules-repo-select');
-        window.julesSourcesCache = sources;
-
-        // Merge sources: Deduplicate and combine
-        const merged = [...currentSources];
-        sources.forEach(js => {
-            const owner = js.githubRepo?.owner || window.parseSourceName(js.name)?.owner;
-            const repo = js.githubRepo?.repo || window.parseSourceName(js.name)?.repo;
-
-            const existingIdx = merged.findIndex(ms => {
-                const mo = ms.githubRepo?.owner || window.parseSourceName(ms.name)?.owner;
-                const mr = ms.githubRepo?.repo || window.parseSourceName(ms.name)?.repo;
-                return mo === owner && mr === repo;
-            });
-
-            if (existingIdx >= 0) {
-                // Update with Jules data (keeping compatibility)
-                merged[existingIdx] = { ...merged[existingIdx], ...js };
-            } else {
-                merged.push(js);
-            }
-        });
-
-        currentSources = merged;
-        await populateSelector(merged);
-        repoSelect.disabled = false;
-        julesApiReady = true;
-        updateLaunchButtonState();
     }
 
     const REPO_TAG_METADATA = {
@@ -1850,6 +1937,10 @@ permalink: /jules-panel/
         return;
       }
 
+      // Parse repo info
+      const parsed = window.parseSourceName(sourceName);
+      const repoName = parsed ? parsed.repo : sourceName;
+
       // Mostrar nombre real y habilitar lápiz
       realNameEl.textContent = sourceName;
       realNameEl.style.display = 'block';
@@ -1862,17 +1953,32 @@ permalink: /jules-panel/
       branchStatus.textContent = '';
 
       try {
-        const branches = await window.loadBranchesForRepo(sourceName, sourceObject);
+        const branches = await window.githubContext.getBranches(repoName);
+        const prs = await window.githubContext.getPRs(repoName);
+        const repoData = (await window.githubContext.getRepos()).find(r => r.name === repoName);
+        const defaultBranch = repoData ? repoData.default_branch : 'main';
 
-        // Poblar el <select> con todas las ramas
+        // Poblar el <select> con metadatos
         branchSelect.innerHTML = branches
-          .map(b => `<option value="${b}">${b}</option>`)
+          .map(b => {
+            const hasPR = prs.some(pr => pr.head === b.name);
+            const isDefault = b.name === defaultBranch;
+            const time = getTimeAgo(b.last_commit.date);
+            let label = b.name;
+            if (isDefault) label += ' ★';
+            if (hasPR) label += ' [PR]';
+            label += ` (${time})`;
+            return `<option value="${b.name}">${label}</option>`;
+          })
           .join('');
 
-        // Autoseleccionar: main > master > develop > primera disponible
-        const preferred = ['main', 'master', 'develop', 'feat', 'staging'];
-        const best = preferred.find(p => branches.includes(p)) || branches[0] || '';
-        branchSelect.value = best;
+        // Autoseleccionar
+        const lastSelected = localStorage.getItem('jules_selected_branch');
+        if (lastSelected && branches.some(b => b.name === lastSelected)) {
+            branchSelect.value = lastSelected;
+        } else {
+            branchSelect.value = branches.some(b => b.name === defaultBranch) ? defaultBranch : branches[0].name;
+        }
 
         // Estado: éxito
         const n = branches.length;
@@ -1880,19 +1986,20 @@ permalink: /jules-panel/
         branchStatus.style.color = '#10b981';
 
         // Persistir
+        const best = branchSelect.value;
         localStorage.setItem('jules_selected_branch', best);
         localStorage.setItem('jules_selected_source', sourceName);
         window.JulesPanelState.activeBranch = best;
         localStorage.setItem('hypenosys_active_branch', best);
 
       } catch(err) {
-        // Fallback: ramas estándar siempre disponibles
+        console.error('[Jules Panel] Error loading branches:', err);
         const fallback = ['main', 'master', 'develop', 'staging', 'production'];
         branchSelect.innerHTML = fallback
           .map(b => `<option value="${b}">${b}</option>`)
           .join('');
         branchSelect.value = 'main';
-        branchStatus.textContent = 'Ramas por defecto (repo privado o error de red)';
+        branchStatus.textContent = 'Ramas por defecto (error de red o rate limit)';
         branchStatus.style.color = '#f59e0b';
       } finally {
         branchLoading.style.display = 'none';
@@ -2508,7 +2615,10 @@ permalink: /jules-panel/
             const secs = Math.floor((Date.now() - lastRefreshTime) / 1000);
             el.textContent = `Última actualización: hace ${secs} segundos`;
         }
-    }, 1000);
+        if (window.kanbanUI && document.getElementById('kanban-container') && !document.getElementById('kanban-container').classList.contains('hidden')) {
+            window.kanbanUI.refresh();
+        }
+    }, 15000);
 
     // --- ACTIVITY LOGIC ---
     function escapeHtml(str) {
@@ -3006,6 +3116,7 @@ permalink: /jules-panel/
             else if (tabId === 'branches') await fetchHubBranches(parsed.owner, parsed.repo);
             else if (tabId === 'actions') await fetchHubActions(parsed.owner, parsed.repo);
             else if (tabId === 'notifications') await fetchHubNotifs();
+            else if (tabId === 'explorer') await window.ghExplorer.init();
         } catch (e) {
             if (e.message.includes('401')) {
                 handleGlobalAuthError();

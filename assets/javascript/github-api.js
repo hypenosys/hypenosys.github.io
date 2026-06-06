@@ -167,6 +167,15 @@ async function atomicWrite(filePath, mutatorFn, commitMessage, mergeStrategyFn) 
         newContent.last_updated = new Date().toISOString();
       }
 
+      // Audit Log Implementation (Gap de Producción)
+      if (!newContent._audit_log) newContent._audit_log = [];
+      newContent._audit_log.unshift({
+          action: commitMessage,
+          user: _currentUser?.login || 'Sistema',
+          timestamp: new Date().toISOString()
+      });
+      if (newContent._audit_log.length > 500) newContent._audit_log.pop();
+
       const result = await putFileContent(filePath, remoteSha, newContent, commitMessage);
 
       if (result.ok) {

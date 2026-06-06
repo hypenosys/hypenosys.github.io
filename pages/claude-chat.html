@@ -267,6 +267,11 @@ permalink: /claude-chat.html
 
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="{{ '/assets/javascript/jules-api.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/github-api-ops.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/github-context.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/task-engine.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/god-mode-tools.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/ollama-discovery.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/ai-config.js' | relative_url }}"></script>
 
@@ -328,7 +333,7 @@ permalink: /claude-chat.html
             loadSession(id);
         }
 
-        function loadSession(id) {
+        async function loadSession(id) {
             currentSessionId = id;
             const session = sessions.find(s => s.id === id);
             if (!session) return;
@@ -339,6 +344,13 @@ permalink: /claude-chat.html
             // Sync UI with session settings
             isThinkingEnabled = !!session.thinking;
             toggleThinkingBtn.classList.toggle('dracula-cyan', isThinkingEnabled);
+
+            // Enrich System Prompt with God Mode context
+            const activeRepo = localStorage.getItem('hypenosys_active_repo');
+            const godContext = await window.godModeTools.getGodModeSystemPrompt(activeRepo);
+            if (!session.baseSystemPrompt) session.baseSystemPrompt = session.systemPrompt || 'Eres Claude, un asistente experto para el estudio de videojuegos Hypenosys.';
+            session.systemPrompt = session.baseSystemPrompt + '\n' + godContext;
+
             document.getElementById('system-prompt-input').value = session.systemPrompt || '';
         }
 
@@ -435,9 +447,38 @@ permalink: /claude-chat.html
             // Opcionalmente abrir el panel si no está abierto
         }
 
+        function handleSlashCommand(command) {
+            const parts = command.split(' ');
+            const cmd = parts[0].toLowerCase();
+            const args = parts.slice(1).join(' ');
+
+            switch(cmd) {
+                case '/tarea':
+                    appendSystemMessage('Comando detectado: /tarea. El asistente God Mode procesará tu descripción.', 'info');
+                    chatInput.value = 'Crea una tarea: ' + args;
+                    sendMessage();
+                    break;
+                case '/move':
+                    appendSystemMessage('Comando detectado: /move. Indica ID y estado.', 'info');
+                    break;
+                case '/jules':
+                    window.location.href = '/jules-panel/';
+                    break;
+                default:
+                    appendSystemMessage('Comando desconocido: ' + cmd, 'error');
+            }
+        }
+
         async function sendMessage() {
             const content = chatInput.value.trim();
             if (!content || sendBtn.disabled) return;
+
+            // God Mode Command Interception
+            if (content.startsWith('/')) {
+                handleSlashCommand(content);
+                chatInput.value = '';
+                return;
+            }
 
             // Auto-create session if none exists
             if (!currentSessionId) {

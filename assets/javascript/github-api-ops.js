@@ -73,5 +73,59 @@
 
     // Export to window
     window.githubOps = githubOps;
+
+    /**
+     * ATOMIC TASK MANAGEMENT (Bloque 2)
+     */
+    window.taskOps = {
+        FILE_PATH: '_data/dashboard_tasks.json',
+
+        /**
+         * createTask(task)
+         */
+        createTask: async (task) => {
+            return await window.githubApi.atomicWrite(window.taskOps.FILE_PATH, (db) => {
+                const now = new Date().toISOString();
+                const newTask = {
+                    ...task,
+                    id: task.id || `TASK-${Date.now()}`,
+                    created_at: now,
+                    updated_at: now,
+                    jules_loop_estado: task.jules_loop_estado || 'sin_loop'
+                };
+                if (!db.tasks) db.tasks = [];
+                db.tasks.push(newTask);
+                db.last_updated = now;
+                return db;
+            }, `feat: nueva tarea ${task.titulo}`);
+        },
+
+        /**
+         * updateTask(taskId, delta)
+         */
+        updateTask: async (taskId, delta) => {
+            return await window.githubApi.atomicWrite(window.taskOps.FILE_PATH, (db) => {
+                const idx = db.tasks.findIndex(t => t.id === taskId);
+                if (idx === -1) throw new Error(`Tarea ${taskId} no encontrada`);
+
+                db.tasks[idx] = {
+                    ...db.tasks[idx],
+                    ...delta,
+                    updated_at: new Date().toISOString()
+                };
+                db.last_updated = new Date().toISOString();
+                return db;
+            }, `chore: actualizar tarea ${taskId}`);
+        },
+
+        /**
+         * getAllTasks()
+         */
+        getAllTasks: async () => {
+            const { content } = await window.githubApi.fetchFileWithSha(window.taskOps.FILE_PATH);
+            return content.tasks || [];
+        }
+    };
+
     console.log('[GITHUB-OPS] Library loaded (sessionStorage focus)');
 })();
