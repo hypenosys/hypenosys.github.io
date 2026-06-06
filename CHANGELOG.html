@@ -64,6 +64,16 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-success">Added</h5>
             <ul class="tree-view mb-3">
+              <li><strong>Claude Chat God Mode UI:</strong>
+                <ul>
+                  <li>Rediseño total de la interfaz con estética Dracula/Obsidian premium (gradientes, efectos de cristal, animaciones sutiles).</li>
+                  <li>Implementación de <strong>Streaming</strong> progresivo (token-by-token) para una experiencia fluida.</li>
+                  <li>Soporte nativo para <strong>Extended Thinking</strong> (Claude 3.7 Sonnet) con bloques de razonamiento visuales.</li>
+                  <li>Integración de "Enviar a Jules" para exportar prompts directamente al Panel de Operaciones.</li>
+                  <li>Sistema de persistencia de sesiones locales en <code>localStorage</code>.</li>
+                  <li>Auto-expand de textarea y atajos de teclado (Ctrl+Enter) mejorados.</li>
+                </ul>
+              </li>
               <li><strong>Claude Chat & Local Ollama Integration:</strong>
                 <ul>
                   <li>Nueva interfaz de chat neuronal en <code>/claude-chat.html</code> integrada con el sistema de autenticación global.</li>
@@ -108,6 +118,19 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-success">Fixed</h5>
             <ul class="tree-view mb-3">
+              <li><strong>Ollama Connectivity & Mixed Content:</strong>
+                <ul>
+                  <li>Implementado detector de bloqueos de contenido mixto (HTTPS/HTTP) con instrucciones detalladas de configuración de Chrome Flags.</li>
+                  <li>Añadido flag de "Local Network Bypass" en el modal de configuración de API.</li>
+                  <li>Sincronización dinámica de modelos mediante el endpoint <code>/api/tags</code> con fallback inteligente.</li>
+                </ul>
+              </li>
+              <li><strong>Jules Panel Repo Sync:</strong>
+                <ul>
+                  <li>Corregida la desincronización de nombres de repositorios usando la nueva librería <code>github-api-ops.js</code>.</li>
+                  <li>Añadido soporte para alias locales persistentes en el selector de repositorios.</li>
+                </ul>
+              </li>
               <li><strong>Kanban Subtasks:</strong> Reemplazados los iconos rotos por botones funcionales de búsqueda en GitHub y eliminación con confirmación de 2 segundos.</li>
               <li><strong>UX Stability:</strong> Implementada supresión de saltos de scroll (Scroll Jump Suppression) durante el polling de la API de Jules.</li>
             </ul>

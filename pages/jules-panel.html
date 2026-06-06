@@ -1240,6 +1240,7 @@ permalink: /jules-panel/
 
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="{{ '/assets/javascript/jules-api.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/github-api-ops.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/repo-aliases.js' | relative_url }}"></script>
     <script src="{{ '/assets/javascript/ollama-discovery.js' | relative_url }}"></script>
     <script src="{{ '/assets/javascript/ai-config.js' | relative_url }}"></script>
@@ -1315,6 +1316,20 @@ permalink: /jules-panel/
             || null;
     }
 
+    function checkClaudeClipboard() {
+        const clipboard = localStorage.getItem('jules_clipboard');
+        if (clipboard) {
+            const promptInput = document.getElementById('jules-prompt-input');
+            if (promptInput) {
+                promptInput.value = clipboard;
+                promptInput.classList.add('animate-pulse');
+                setTimeout(() => promptInput.classList.remove('animate-pulse'), 2000);
+                showToast('Contenido importado de Claude Chat');
+                localStorage.removeItem('jules_clipboard');
+            }
+        }
+    }
+
     function handleGlobalAuthError() {
         // Law 9: Token expiry handling
         const hubContent = document.querySelector('.gh-hub-content');
@@ -1369,6 +1384,9 @@ permalink: /jules-panel/
                 startPolling();
                 initHub();
             }
+
+            // FEATURE #3: Check for incoming clipboard from Claude Chat (GOD MODE INTEGRATION)
+            checkClaudeClipboard();
         } catch (e) {
             console.error('[Jules Panel] Error en initJulesPanel:', e);
         } finally {
@@ -1566,22 +1584,24 @@ permalink: /jules-panel/
         julesApiReady = false;
         updateLaunchButtonState();
 
-        // PHASE 1: GitHub API (Immediate)
+        // PHASE 1: GitHub API (Immediate) using githubOps (sessionStorage focus)
         let githubRepos = window.userReposCache || [];
-        if (githubRepos.length === 0 && window.githubApi) {
+        if (githubRepos.length === 0 && window.githubOps) {
             try {
-                githubRepos = await window.githubApi.getOrgRepos();
+                githubRepos = await window.githubOps.fetchRepositories();
                 window.userReposCache = githubRepos;
             } catch (e) {
-                console.warn('[Jules Panel] Error fetching GH repos for Phase 1:', e);
+                console.warn('[Jules Panel] Error fetching GH repos for Phase 1 via githubOps:', e);
             }
         }
 
         if (githubRepos.length > 0) {
             // Populate immediately with what we have from GH API
+            // Fix BUG #3: Use repo names exactly from GitHub Org
             currentSources = githubRepos.map(r => ({
-                name: `sources/github/hypenosys/${r.name}`,
-                githubRepo: { owner: 'hypenosys', repo: r.name }
+                name: `sources/github/${r.full_name}`,
+                githubRepo: { owner: r.full_name.split('/')[0], repo: r.name },
+                displayName: r.name
             }));
             await populateSelector(currentSources);
             repoSelect.disabled = false;
