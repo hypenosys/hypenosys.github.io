@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-06T15:21:19.908Z",
+  "last_updated": "2026-06-06T15:21:43.870Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1685,7 +1685,7 @@
       "task_type": "feature",
       "tema_principal": "Tools / Automation",
       "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Major",
+      "prioridad": "ToDo",
       "milestone": "M2",
       "estado": "Pending",
       "completitud": 0,
@@ -1702,10 +1702,10 @@
       "estimated_hours": 2,
       "story_points": 2,
       "tags": [
-        "svn",
-        "neural-chat",
+        "infraestructura",
         "jules-panel",
-        "infraestructura"
+        "neural-chat",
+        "svn"
       ],
       "external_links": [],
       "subtasks": [],
@@ -1735,6 +1735,13 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T15:21:43.306Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "ToDo"
         }
       ],
       "id": 35
