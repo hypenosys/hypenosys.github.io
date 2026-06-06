@@ -10,14 +10,14 @@ const DATA_BRANCH     = 'master';
 
 // Retrieve GitHub OAuth token from available storage
 function getAuthToken() {
-  const sessionToken = sessionStorage.getItem('gh_access_token');
-  const localToken = localStorage.getItem('github_token');
+  if (window.githubContext && window.githubContext.getAuthToken) {
+    return window.githubContext.getAuthToken();
+  }
+  const token = sessionStorage.getItem('gh_access_token')
+    || localStorage.getItem('gh_access_token')
+    || sessionStorage.getItem('github_token')
+    || localStorage.getItem('github_token');
 
-  if (sessionToken) console.log('[AUTH] Token found in sessionStorage');
-  else if (localToken) console.log('[AUTH] Token found in localStorage');
-  else console.log('[AUTH] No token found');
-
-  const token = sessionToken || localToken;
   if (!token || typeof token !== 'string' || token.length < 10) {
     return null;
   }
