@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-06T10:04:34.106Z",
-  "last_updated_by": "Axel",
+  "last_updated": "2026-06-06T10:06:57.659Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -1263,16 +1263,37 @@
       "estimated_hours": 4,
       "story_points": 4,
       "tags": [
-        "bug",
-        "UX/UI"
+        "UX/UI",
+        "bug"
       ],
       "external_links": [],
       "subtasks": [],
       "acceptance_criteria": "",
       "blocks": [],
       "blocked_by": [],
-      "comments": [],
-      "images": [],
+      "comments": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T10:06:53.716Z",
+          "body": "Se ha escapado el texto con las batticks (```)"
+        }
+      ],
+      "images": [
+        {
+          "url": "https://64.media.tumblr.com/01352f03135f95e9523c1cbcb9463b01/6cb7bf48446dbfae-1a/s1280x1920/e180a980cca794ea55e76698f1e1129bcc238030.png",
+          "type": "url",
+          "tumblr_post_id": "818665621118156800",
+          "filename": "1000052807.png",
+          "uploaded_at": "2026-06-06T10:06:16.582Z"
+        },
+        {
+          "url": "https://64.media.tumblr.com/222b1c2e3a4b052c0ee8a94cc55217e1/78299e332b2c0852-9c/s1280x1920/f59c5928ee5b641da47d4a7db4eac890c9ca7bf8.png",
+          "type": "url",
+          "tumblr_post_id": "818665626369392640",
+          "filename": "1000052808.png",
+          "uploaded_at": "2026-06-06T10:06:21.587Z"
+        }
+      ],
       "rama2": null,
       "ver": true,
       "fecha": "2026-06-06",
