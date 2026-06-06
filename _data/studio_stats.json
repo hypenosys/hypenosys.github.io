@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-06T15:18:55.570Z",
+  "computed_at": "2026-06-06T15:21:09.361Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 16,
@@ -174,7 +174,7 @@
       "comment_activity": 1,
       "volatility": {
         "reopens": 0,
-        "reprioritizations": 8
+        "reprioritizations": 9
       },
       "workload": {
         "active_tasks": 9,
@@ -221,7 +221,7 @@
       "comment_activity": 0,
       "volatility": {
         "reopens": 0,
-        "reprioritizations": 13
+        "reprioritizations": 14
       },
       "workload": {
         "active_tasks": 13,
@@ -263,7 +263,7 @@
       "comment_activity": 0,
       "volatility": {
         "reopens": 0,
-        "reprioritizations": 7
+        "reprioritizations": 8
       },
       "workload": {
         "active_tasks": 8,
@@ -305,7 +305,7 @@
       "comment_activity": 0,
       "volatility": {
         "reopens": 0,
-        "reprioritizations": 3
+        "reprioritizations": 4
       },
       "workload": {
         "active_tasks": 5,
