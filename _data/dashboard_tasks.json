@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-06T15:21:43.870Z",
+  "last_updated": "2026-06-06T15:42:36.802Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1634,7 +1634,7 @@
       "task_type": "bug",
       "tema_principal": "Programación / Engine",
       "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Medium",
+      "prioridad": "Critical",
       "milestone": "M1",
       "estado": "Working",
       "completitud": 0,
@@ -1642,8 +1642,8 @@
       "detectado_por": "Axel",
       "asignados": [
         "axlfc",
-        "topperh4rley",
-        "dkdidac-design"
+        "dkdidac-design",
+        "topperh4rley"
       ],
       "email_responsable": null,
       "emails_asignados": [],
@@ -1674,6 +1674,13 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T15:42:36.344Z",
+          "field": "prioridad",
+          "old_value": "Medium",
+          "new_value": "Critical"
         }
       ],
       "id": 34
@@ -1745,6 +1752,13 @@
         }
       ],
       "id": 35
+    }
+  ],
+  "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #34",
+      "user": "Axlfc",
+      "timestamp": "2026-06-06T15:42:36.803Z"
     }
   ]
 }
