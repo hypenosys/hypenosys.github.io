@@ -64,6 +64,16 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-success">Added</h5>
             <ul class="tree-view mb-3">
+              <li><strong>Jules Panel Evolution (Kanban & God Mode):</strong>
+                <ul>
+                  <li>Implementación de un sistema <strong>Kanban</strong> transversal integrado en el Jules Panel, con soporte para columnas de estado, badges de prioridad y avatares de asignados.</li>
+                  <li>Activación del <strong>Neural Chat God Mode</strong>: El asistente ahora tiene contexto en tiempo real del Kanban y los repositorios de GitHub, permitiendo gestionar tareas mediante lenguaje natural y comandos <code>/</code>.</li>
+                  <li>Nuevo <strong>GitHub Explorer</strong>: Un navegador de repositorios estilo VSCode integrado en el panel para explorar ramas, commits y visualizar diffs con resaltado de sintaxis.</li>
+                  <li>Creación de <code>github-context.js</code>: Capa de servicios centralizada para la API de GitHub con caché de 5 minutos, cola de peticiones y reintentos exponenciales.</li>
+                  <li>Sistema de <strong>Alertas Automáticas</strong>: Detección visual de tareas bloqueadas (+48h en WORKING), urgentes (vencimiento <24h) y estados del loop Jules.</li>
+                  <li><strong>Gaps de Producción:</strong> Implementado log de auditoría (<code>_audit_log</code>) en transacciones atómicas, banners de estado offline y avisos de rate limit crítico.</li>
+                </ul>
+              </li>
               <li><strong>Claude Chat God Mode UI:</strong>
                 <ul>
                   <li>Rediseño total de la interfaz con estética Dracula/Obsidian premium (gradientes, efectos de cristal, animaciones sutiles).</li>
