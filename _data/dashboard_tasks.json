@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-06T09:58:01.517Z",
+  "last_updated": "2026-06-06T09:59:21.549Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1073,11 +1073,11 @@
       "id": 28
     },
     {
-      "title": "Nueva página \"Claude Neural Chat\" — Interfaz de chat privado con Claude API",
+      "title": "Nueva página \"Claude Neural Chat\" — Interfaz de chat privado con Claude API / local AI ollama support",
       "descripcion": "Crear una página /claude-chat/ con una interfaz estilo ChatGPT pero con estética Dracula, conectada directamente a la API de Claude (claude-sonnet-4-6). Sesiones de chat múltiples y persistidas en localStorage, streaming de respuestas en tiempo real via SSE, soporte de Extended Thinking para razonamiento complejo, system prompts configurables por sesión, y capacidad de usar Claude como orquestador que puede crear tasks en el dashboard de Hypenosys y notificar a responsables — sentando las bases del flujo end-to-end autónomo.",
       "rama": "PRO",
       "task_type": "feature",
-      "tema_principal": "Programación / Engine",
+      "tema_principal": "Tools / Automation",
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Major",
       "milestone": "M2",
@@ -1169,6 +1169,13 @@
           "field": "estado",
           "old_value": "Pending",
           "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T09:59:21.111Z",
+          "field": "title",
+          "old_value": "Nueva página \"Claude Neural Chat\" — Interfaz de chat privado con Claude API",
+          "new_value": "Nueva página \"Claude Neural Chat\" — Interfaz de chat privado con Claude API / local AI ollama support"
         }
       ],
       "id": 29
