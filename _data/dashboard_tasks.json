@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-06T09:59:38.141Z",
-  "last_updated_by": "Sistema",
+  "last_updated": "2026-06-06T10:00:27.391Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -1186,7 +1186,7 @@
       "rama": "PRO",
       "task_type": "feature",
       "tema_principal": "Tools / Automation",
-      "repository": null,
+      "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Major",
       "milestone": "M1",
       "estado": "Pending",
@@ -1221,6 +1221,13 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T10:00:26.961Z",
+          "field": "repository",
+          "old_value": null,
+          "new_value": "hypenosys/hypenosys.github.io"
         }
       ],
       "id": 30
