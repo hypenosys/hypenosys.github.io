@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-06T10:06:57.659Z",
+  "last_updated": "2026-06-06T10:08:09.541Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1241,12 +1241,12 @@
     },
     {
       "title": "Jules Neural Operation en dashboard en móvil ",
-      "descripcion": "Se ve fatality, debería mostrarse mejor con Markdown, siguiendo la estética de la web",
+      "descripcion": "Se ve fatality, debería mostrarse mejor con Markdown, siguiendo la estética de la web (cuidadoito con las batticks ```)",
       "rama": "ART",
-      "task_type": "feature",
-      "tema_principal": "Arte / Assets",
+      "task_type": "bug",
+      "tema_principal": "Tools / Automation",
       "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Major",
+      "prioridad": "Medium",
       "milestone": "M1",
       "estado": "Pending",
       "completitud": 0,
@@ -1307,6 +1307,27 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T10:08:09.053Z",
+          "field": "descripcion",
+          "old_value": "Se ve fatality, debería mostrarse mejor con Markdown, siguiendo la estética de la web",
+          "new_value": "Se ve fatality, debería mostrarse mejor con Markdown, siguiendo la estética de la web (cuidadoito con las batticks ```)"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T10:08:09.053Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Medium"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T10:08:09.053Z",
+          "field": "task_type",
+          "old_value": "feature",
+          "new_value": "bug"
         }
       ],
       "id": 31
