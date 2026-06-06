@@ -22,9 +22,19 @@ permalink: /claude-chat.html
     .dracula-pink { color: #ff79c6; }
 
     .chat-container { height: 100%; overflow-y: auto; }
-    .sidebar { background-color: #1e1f29; }
-    .message-user { background-color: #44475a; border-radius: 12px 12px 0 12px; }
-    .message-claude { background-color: #383a59; border-radius: 12px 12px 12px 0; }
+    .sidebar { background-color: #1e1f29; border-right: 1px solid rgba(189, 147, 249, 0.1); }
+    .message-user {
+        background: linear-gradient(135deg, #44475a 0%, #383a59 100%);
+        border-radius: 18px 18px 2px 18px;
+        border: 1px solid rgba(139, 233, 253, 0.2);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    .message-claude {
+        background: linear-gradient(135deg, #282a36 0%, #383a59 100%);
+        border-radius: 18px 18px 18px 2px;
+        border: 1px solid rgba(189, 147, 249, 0.2);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
 
     .thinking-block {
         border-left: 2px solid #6272a4;
@@ -60,6 +70,40 @@ permalink: /claude-chat.html
         0% { opacity: 1; }
         50% { opacity: 0.5; }
         100% { opacity: 1; }
+    }
+
+    /* Thinking Animation */
+    .thinking-dots span {
+        animation: thinking-dots 1.4s infinite both;
+        display: inline-block;
+        font-size: 1.5rem;
+        line-height: 1;
+        margin: 0 1px;
+    }
+    .thinking-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .thinking-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes thinking-dots {
+        0% { opacity: 0.2; transform: scale(0.8); }
+        20% { opacity: 1; transform: scale(1.1); }
+        100% { opacity: 0.2; transform: scale(0.8); }
+    }
+
+    .message-bubble {
+        transition: all 0.3s ease;
+        position: relative;
+    }
+    .message-bubble:hover .message-actions {
+        opacity: 1;
+    }
+    .message-actions {
+        position: absolute;
+        bottom: -25px;
+        right: 0;
+        opacity: 0;
+        transition: opacity 0.2s;
+        display: flex;
+        gap: 8px;
     }
 </style>
 
@@ -121,15 +165,21 @@ permalink: /claude-chat.html
     <main class="flex-grow flex flex-col relative bg-[#282a36]">
 
         <!-- Header -->
-        <header class="h-14 border-b border-[#44475a] flex items-center justify-between px-6">
+        <header class="h-16 border-b border-[#44475a]/50 flex items-center justify-between px-6 bg-[#1e1f29]/50 backdrop-blur-md sticky top-0 z-10">
             <div class="flex items-center gap-3">
-                <div id="session-title" class="font-bold text-sm">Nueva Conversación</div>
-                <span id="model-badge" class="text-[10px] bg-[#44475a] px-2 py-0.5 rounded text-[#8be9fd] font-bold">CLAUDE-3.5-SONNET</span>
-            </div>
-            <div class="flex items-center gap-4">
-                <div id="connection-status" class="flex items-center gap-2 text-[10px] font-bold text-[#6272a4]">
-                    <span class="w-2 h-2 rounded-full bg-[#50fa7b]"></span> ONLINE
+                <div id="session-title" class="font-bold text-base tracking-tight text-white/90">Nueva Conversación</div>
+                <div class="flex gap-2">
+                    <span id="model-badge" class="text-[9px] bg-[#bd93f9]/10 border border-[#bd93f9]/30 px-2 py-0.5 rounded-full text-[#bd93f9] font-black tracking-widest uppercase">SONNET-3.5</span>
+                    <span id="provider-badge" class="text-[9px] bg-[#8be9fd]/10 border border-[#8be9fd]/30 px-2 py-0.5 rounded-full text-[#8be9fd] font-black tracking-widest uppercase">ANTHROPIC</span>
                 </div>
+            </div>
+            <div class="flex items-center gap-6">
+                <div id="connection-status" class="flex items-center gap-2 text-[10px] font-black tracking-widest text-[#50fa7b] bg-[#50fa7b]/5 px-3 py-1 rounded-full border border-[#50fa7b]/20">
+                    <span class="w-1.5 h-1.5 rounded-full bg-[#50fa7b] shadow-[0_0_8px_#50fa7b] animate-pulse"></span> ONLINE
+                </div>
+                <button onclick="openSettings()" class="text-[#6272a4] hover:text-[#bd93f9] transition-all">
+                    <i class="fas fa-sliders-h"></i>
+                </button>
             </div>
         </header>
 
@@ -156,9 +206,9 @@ permalink: /claude-chat.html
                     <i class="fas fa-circle-notch fa-spin mr-1"></i> CLAUDE ESTÁ PENSANDO...
                 </div>
 
-                <div class="dracula-surface border border-[#44475a] rounded-xl p-2 flex flex-col gap-2 focus-within:border-[#bd93f9] transition-all">
-                    <textarea id="chat-input" rows="1" placeholder="Escribe un mensaje..."
-                              class="w-full bg-transparent border-none text-white p-2 text-sm focus:ring-0 resize-none outline-none"></textarea>
+                <div class="bg-[#1e1f29] border border-[#44475a] rounded-2xl p-3 flex flex-col gap-2 focus-within:border-[#bd93f9]/50 focus-within:shadow-[0_0_20px_rgba(189,147,249,0.1)] transition-all duration-500">
+                    <textarea id="chat-input" rows="1" placeholder="¿En qué puedo ayudarte hoy?"
+                              class="w-full bg-transparent border-none text-white/90 p-2 text-sm focus:ring-0 resize-none outline-none placeholder:text-[#6272a4]/50 custom-scrollbar"></textarea>
                     <div class="flex justify-between items-center px-2 pb-1">
                         <div class="flex gap-4">
                             <button id="toggle-thinking" title="Toggle Extended Thinking" class="text-[#6272a4] hover:text-[#8be9fd] transition-colors">
@@ -214,6 +264,15 @@ permalink: /claude-chat.html
         const thinkingIndicator = document.getElementById('thinking-indicator');
         const toggleThinkingBtn = document.getElementById('toggle-thinking');
 
+        function escapeHtml(str) {
+            return String(str ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
         function init() {
             renderSessionList();
             if (sessions.length > 0) {
@@ -222,7 +281,14 @@ permalink: /claude-chat.html
 
             const config = JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
             const provider = config.provider || 'anthropic';
-            document.getElementById('model-badge').textContent = (config.model || 'CLAUDE-3.5-SONNET').toUpperCase();
+
+            // UI Update for Badges
+            const modelName = config.model || (provider === 'ollama' ? 'llama3' : 'claude-3-5-sonnet-20241022');
+            document.getElementById('model-badge').textContent = modelName.split('/').pop().toUpperCase();
+            document.getElementById('provider-badge').textContent = provider.toUpperCase();
+
+            // REAL-TIME Connection Status (GOD MODE Feature)
+            checkConnection(provider, config);
 
             if (provider === 'ollama') {
                 document.getElementById('ollama-quick-config').classList.remove('hidden');
@@ -291,23 +357,46 @@ permalink: /claude-chat.html
             const session = sessions.find(s => s.id === currentSessionId);
             if (!session) return;
             chatMessages.innerHTML = session.messages.map(m => `
-                <div class="flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}">
-                    <div class="max-w-[85%] p-4 ${m.role === 'user' ? 'message-user' : 'message-claude shadow-xl'}">
-                        <div class="text-[10px] font-bold uppercase mb-2 ${m.role === 'user' ? 'dracula-cyan' : 'dracula-purple'}">
-                            ${m.role === 'user' ? 'TÚ' : 'CLAUDE'}
+                <div class="flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} group mb-4">
+                    <div class="max-w-[85%] p-4 ${m.role === 'user' ? 'message-user' : 'message-claude shadow-xl'} relative message-bubble">
+                        <div class="text-[10px] font-black tracking-widest uppercase mb-2 ${m.role === 'user' ? 'text-[#8be9fd]' : 'text-[#bd93f9]'} opacity-70">
+                            ${m.role === 'user' ? 'NEURAL LINK: USER' : 'NEURAL LINK: CLAUDE'}
                         </div>
-                        <div class="prose prose-invert text-sm prose-pre:bg-[#1e1f29]">
+                        ${m.thinking ? `<div class="thinking-block">${escapeHtml(m.thinking)}</div>` : ''}
+                        <div class="prose prose-invert text-sm prose-pre:bg-[#1e1f29] prose-pre:border prose-pre:border-[#44475a] selection:bg-[#bd93f9]/30">
                             ${marked.parse(m.content)}
                         </div>
+
+                        ${m.role !== 'user' ? `
+                        <div class="message-actions opacity-0 group-hover:opacity-100 transition-opacity absolute -bottom-6 left-0 flex gap-2">
+                            <button onclick="copyToClipboard(\`${m.content.replace(/`/g, '\\`').replace(/\${/g, '\\${')}\`)" class="text-[9px] font-bold text-[#6272a4] hover:text-[#bd93f9] flex items-center gap-1 bg-[#1e1f29] px-2 py-0.5 rounded border border-[#44475a]">
+                                <i class="fas fa-copy"></i> COPIAR
+                            </button>
+                            <button onclick="sendToJules(\`${m.content.replace(/`/g, '\\`').replace(/\${/g, '\\${')}\`)" class="text-[9px] font-bold text-[#6272a4] hover:text-[#50fa7b] flex items-center gap-1 bg-[#1e1f29] px-2 py-0.5 rounded border border-[#44475a]">
+                                <i class="fas fa-bolt"></i> ENVIAR A JULES
+                            </button>
+                        </div>
+                        ` : ''}
                     </div>
                 </div>
             `).join('');
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text);
+            showToast('Copiado al portapapeles');
+        }
+
+        function sendToJules(text) {
+            localStorage.setItem('jules_clipboard', text);
+            showToast('Contenido enviado a Jules Panel');
+            // Opcionalmente abrir el panel si no está abierto
+        }
+
         async function sendMessage() {
             const content = chatInput.value.trim();
-            if (!content || !currentSessionId) return;
+            if (!content || !currentSessionId || sendBtn.disabled) return;
 
             const config = JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
             const provider = config.provider || 'none';
@@ -331,8 +420,11 @@ permalink: /claude-chat.html
             renderMessages();
             renderSessionList();
 
+            // FEATURE #1: Thinking Animation UI
             thinkingIndicator.classList.remove('hidden');
+            thinkingIndicator.innerHTML = '<div class="thinking-dots"><span>.</span><span>.</span><span>.</span></div>';
             sendBtn.disabled = true;
+            chatInput.disabled = true;
 
             try {
                 if (provider === 'ollama') {
@@ -348,6 +440,9 @@ permalink: /claude-chat.html
             } finally {
                 thinkingIndicator.classList.add('hidden');
                 sendBtn.disabled = false;
+                chatInput.disabled = false;
+                chatInput.focus();
+                chatMessages.scrollTop = chatMessages.scrollHeight;
             }
         }
 
@@ -384,7 +479,7 @@ permalink: /claude-chat.html
                 throw new Error(errData.error?.message || `API Error: ${response.status}`);
             }
 
-            await consumeStream(response, session, 'content_block_delta', (data) => data.delta.text);
+            await consumeStream(response, session, 'anthropic');
         }
 
         async function sendMessageOllama(session, config) {
@@ -413,21 +508,53 @@ permalink: /claude-chat.html
             await consumeStream(response, session, null, (data) => data.message?.content || '');
         }
 
-        async function consumeStream(response, session, deltaType, extractorFn) {
+        async function checkConnection(provider, config) {
+            const statusBadge = document.getElementById('connection-status');
+
+            try {
+                if (provider === 'ollama') {
+                    const baseUrl = config.base_url || 'http://localhost:11434';
+                    const response = await fetch(`${baseUrl}/api/tags`).catch(() => null);
+                    if (response && response.ok) {
+                        statusBadge.className = "flex items-center gap-2 text-[10px] font-black tracking-widest text-[#50fa7b] bg-[#50fa7b]/5 px-3 py-1 rounded-full border border-[#50fa7b]/20";
+                        statusBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-[#50fa7b] shadow-[0_0_8px_#50fa7b] animate-pulse"></span> OLLAMA: ONLINE';
+                    } else {
+                        throw new Error();
+                    }
+                } else {
+                    const key = config.api_key;
+                    if (key && key.startsWith('sk-')) {
+                        statusBadge.className = "flex items-center gap-2 text-[10px] font-black tracking-widest text-[#8be9fd] bg-[#8be9fd]/5 px-3 py-1 rounded-full border border-[#8be9fd]/20";
+                        statusBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-[#8be9fd] shadow-[0_0_8px_#8be9fd] animate-pulse"></span> ANTHROPIC: READY';
+                    } else {
+                        statusBadge.className = "flex items-center gap-2 text-[10px] font-black tracking-widest text-[#ff5555] bg-[#ff5555]/5 px-3 py-1 rounded-full border border-[#ff5555]/20";
+                        statusBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-[#ff5555] shadow-[0_0_8px_#ff5555]"></span> CONFIG REQUIRED';
+                    }
+                }
+            } catch (e) {
+                statusBadge.className = "flex items-center gap-2 text-[10px] font-black tracking-widest text-[#ff5555] bg-[#ff5555]/5 px-3 py-1 rounded-full border border-[#ff5555]/20";
+                statusBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-[#ff5555] shadow-[0_0_8px_#ff5555]"></span> OFFLINE';
+            }
+        }
+
+        async function consumeStream(response, session, provider) {
             const reader = response.body.getReader();
             const decoder = new TextDecoder();
             let aiContent = '';
+            let thinkingContent = '';
 
             const msgDiv = document.createElement('div');
-            msgDiv.className = 'flex justify-start';
+            msgDiv.className = 'flex justify-start group mb-4';
             msgDiv.innerHTML = `
-                <div class="max-w-[85%] p-4 message-claude shadow-xl">
-                    <div class="text-[10px] font-bold uppercase mb-2 dracula-purple">ASSISTANT</div>
+                <div class="max-w-[85%] p-4 message-claude shadow-xl relative message-bubble">
+                    <div class="text-[10px] font-black tracking-widest uppercase mb-2 text-[#bd93f9] opacity-70">NEURAL LINK: CLAUDE</div>
+                    <div id="thinking-block" class="thinking-block hidden"></div>
                     <div class="prose prose-invert text-sm" id="streaming-content"></div>
                 </div>
             `;
             chatMessages.appendChild(msgDiv);
             const streamEl = msgDiv.querySelector('#streaming-content');
+            const thinkEl = msgDiv.querySelector('#thinking-block');
 
             while (true) {
                 const { done, value } = await reader.read();
@@ -446,21 +573,34 @@ permalink: /claude-chat.html
                             data = JSON.parse(line);
                         }
 
-                        if (!deltaType || data.type === deltaType) {
-                            const text = extractorFn(data);
-                            if (text) {
-                                aiContent += text;
-                                streamEl.innerHTML = marked.parse(aiContent);
-                                chatMessages.scrollTop = chatMessages.scrollHeight;
+                        if (provider === 'anthropic') {
+                            if (data.type === 'content_block_delta') {
+                                if (data.delta.type === 'text_delta') {
+                                    aiContent += data.delta.text;
+                                } else if (data.delta.type === 'thinking_delta') {
+                                    thinkingContent += data.delta.thinking;
+                                    thinkEl.classList.remove('hidden');
+                                    thinkEl.textContent = thinkingContent;
+                                }
                             }
+                        } else {
+                            // Ollama
+                            aiContent += data.message?.content || '';
                         }
-                    } catch (e) {
-                        console.warn('Error parsing stream line:', e, line);
-                    }
+
+                        if (aiContent) {
+                            streamEl.innerHTML = marked.parse(aiContent);
+                        }
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    } catch (e) {}
                 }
             }
 
-            session.messages.push({ role: 'assistant', content: aiContent });
+            session.messages.push({
+                role: 'assistant',
+                content: aiContent,
+                thinking: thinkingContent || undefined
+            });
             saveSessions();
             renderMessages();
         }
@@ -470,8 +610,21 @@ permalink: /claude-chat.html
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 sendMessage();
+                chatInput.style.height = 'auto';
             }
         };
+
+        // Auto-expand textarea (GOD MODE UX)
+        chatInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+            if (this.scrollHeight > 200) {
+                this.style.overflowY = 'scroll';
+                this.style.height = '200px';
+            } else {
+                this.style.overflowY = 'hidden';
+            }
+        });
 
         toggleThinkingBtn.onclick = () => {
             isThinkingEnabled = !isThinkingEnabled;

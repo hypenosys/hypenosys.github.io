@@ -76,41 +76,71 @@ class OllamaUI {
 
         try {
             const models = await this.discovery.fetchModels(endpoint);
-            select.innerHTML = '';
-            if (models.length > 0) {
-                models.forEach(m => {
-                    const opt = document.createElement('option');
-                    opt.value = m.name;
-                    opt.textContent = m.name;
-                    select.appendChild(opt);
-                });
-
-                // If model input is empty, pick the first one
-                if (!modelInput.value) {
-                    modelInput.value = models[0].name;
-                    select.value = models[0].name;
-                } else if (models.some(m => m.name === modelInput.value)) {
-                    select.value = modelInput.value;
-                } else {
-                    // Current model not in list, add it as an option but keep it selected
-                    const opt = document.createElement('option');
-                    opt.value = modelInput.value;
-                    opt.textContent = `${modelInput.value} (Actual)`;
-                    select.prepend(opt);
-                    select.value = modelInput.value;
-                }
-            } else {
-                const noneOpt = document.createElement('option');
-                noneOpt.textContent = 'No se encontraron modelos';
-                select.appendChild(noneOpt);
-            }
+            this.populateModelSelect(models);
         } catch (e) {
             const errorMsg = this.discovery.getErrorMessage(e, endpoint);
-            select.innerHTML = '';
-            const errorOpt = document.createElement('option');
-            errorOpt.textContent = `Error: ${e.message}`;
-            select.appendChild(errorOpt);
-            alert(`Error al cargar modelos: ${errorMsg}`);
+            console.warn('[Ollama] Failed to fetch models, using static fallback.', e);
+
+            // Fallback static list
+            const fallbackModels = [
+                { name: 'cogito:8b' },
+                { name: 'qwen2.5:14b' },
+                { name: 'phi4:latest' },
+                { name: 'gemma4:e4b' },
+                { name: 'qwen3:14b' },
+                { name: 'llava:13b' },
+                { name: 'nomic-embed-text:latest' },
+                { name: 'qwen3:8b' }
+            ];
+
+            this.populateModelSelect(fallbackModels, true);
+
+            // If it was a mixed content error, show the detailed alert
+            if (errorMsg.includes('Mixed Content')) {
+                alert(errorMsg);
+            }
+        }
+    }
+
+    populateModelSelect(models, isFallback = false) {
+        const select = document.getElementById('ollama-models-select');
+        const modelInput = document.getElementById('ai_model');
+
+        select.innerHTML = '';
+
+        if (isFallback) {
+            const header = document.createElement('option');
+            header.disabled = true;
+            header.textContent = '-- Lista Estática (Fallback) --';
+            select.appendChild(header);
+        }
+
+        if (models.length > 0) {
+            models.forEach(m => {
+                const opt = document.createElement('option');
+                opt.value = m.name;
+                opt.textContent = m.name;
+                select.appendChild(opt);
+            });
+
+            // If model input is empty, pick the first one
+            if (!modelInput.value) {
+                modelInput.value = models[0].name;
+                select.value = models[0].name;
+            } else if (models.some(m => m.name === modelInput.value)) {
+                select.value = modelInput.value;
+            } else {
+                // Current model not in list, add it as an option but keep it selected
+                const opt = document.createElement('option');
+                opt.value = modelInput.value;
+                opt.textContent = `${modelInput.value} (Actual)`;
+                select.prepend(opt);
+                select.value = modelInput.value;
+            }
+        } else {
+            const noneOpt = document.createElement('option');
+            noneOpt.textContent = 'No se encontraron modelos';
+            select.appendChild(noneOpt);
         }
     }
 }

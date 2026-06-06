@@ -144,6 +144,12 @@ class OllamaDiscovery {
             return !!data.models;
         } catch (e) {
             clearTimeout(timeoutId);
+
+            // Check for Mixed Content explicitly during scan
+            if (window.location.protocol === 'https:' && endpoint.startsWith('http:')) {
+                console.warn('[Ollama] Mixed Content detected during scan for:', endpoint);
+            }
+
             return false;
         }
     }
@@ -156,6 +162,8 @@ class OllamaDiscovery {
             return data.models || [];
         } catch (e) {
             console.error('[Ollama] Failed to fetch models:', e);
+            // Architectural Note: Future proxy relay would be implemented here
+            // to bypass Mixed Content restrictions from the server side.
             throw e;
         }
     }
@@ -172,15 +180,25 @@ class OllamaDiscovery {
      * Map common network errors to user-friendly messages.
      */
     getErrorMessage(error, endpoint) {
-        const msg = error.message.toLowerCase();
-        if (msg.includes('failed to fetch') || msg.includes('networkerror')) {
-            if (window.location.protocol === 'https:' && endpoint.startsWith('http:')) {
-                return "Error de Contenido Mixto (HTTPS vs HTTP). El navegador bloquea peticiones HTTP desde HTTPS. Prueba usar una IP con HTTPS o desactiva la protección de red privada en el navegador.";
-            }
-            return "Error de red. Asegúrate de que Ollama está corriendo, el puerto es correcto y no hay bloqueos de firewall o Tailscale.";
+        const msg = (error.message || "").toLowerCase();
+
+        // Mixed Content Detection
+        if (window.location.protocol === 'https:' && endpoint.startsWith('http:')) {
+            return `BLOQUEO DE SEGURIDAD (Mixed Content): El navegador impide conectar a Ollama (HTTP) desde este sitio (HTTPS).
+
+            SOLUCIÓN PARA VPN/LOCAL:
+            1. Abre Chrome/Brave en: chrome://flags/#unsafely-treat-insecure-origin-as-secure
+            2. Añade "${endpoint}" a la lista.
+            3. Cambia a "Enabled" y reinicia el navegador.
+
+            O usa una extensión como 'Allow CORS: Access-Control-Allow-Origin'.`;
+        }
+
+        if (msg.includes('failed to fetch') || msg.includes('networkerror') || error instanceof TypeError) {
+            return "Error de red. Asegúrate de que Ollama está corriendo en " + endpoint + ", el puerto 11434 está abierto y no hay bloqueos de Firewall/VPN.";
         }
         if (msg.includes('abort')) return "Tiempo de espera agotado (Timeout).";
-        return error.message;
+        return error.message || "Error de conexión desconocido.";
     }
 }
 

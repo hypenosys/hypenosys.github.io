@@ -587,6 +587,7 @@ class AuthManager {
         document.getElementById('ai_model').value = config.model || '';
         document.getElementById('ai_api_key').value = config.api_key || '';
         document.getElementById('ai_base_url').value = config.base_url || '';
+        document.getElementById('ai_local_network').checked = !!config.local_network;
 
         this.handleProviderChange();
         $('#modalApiConfig').modal('show');
@@ -600,6 +601,7 @@ class AuthManager {
         const model = document.getElementById('ai_model').value.trim();
         const apiKey = document.getElementById('ai_api_key').value.trim();
         const baseUrl = document.getElementById('ai_base_url').value.trim();
+        const localNetwork = document.getElementById('ai_local_network').checked;
 
         const btn = document.getElementById('btn-save-api-config');
         btn.disabled = true;
@@ -607,7 +609,7 @@ class AuthManager {
 
         try {
             // Save sensitive + all to localStorage
-            const localConfig = { provider, model, api_key: apiKey, base_url: baseUrl };
+            const localConfig = { provider, model, api_key: apiKey, base_url: baseUrl, local_network: localNetwork };
             localStorage.setItem('hy_ai_config', JSON.stringify(localConfig));
 
             // Sync non-sensitive to team_profiles.json via safe public wrapper
