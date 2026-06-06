@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-06T10:00:51.462Z",
-  "last_updated_by": "Axlfc",
+  "last_updated": "2026-06-06T10:04:34.106Z",
+  "last_updated_by": "Axel",
   "tasks": [
     {
       "id": 1,
@@ -1238,6 +1238,57 @@
         }
       ],
       "id": 30
+    },
+    {
+      "title": "Jules Neural Operation en dashboard en móvil ",
+      "descripcion": "Se ve fatality, debería mostrarse mejor con Markdown, siguiendo la estética de la web",
+      "rama": "ART",
+      "task_type": "feature",
+      "tema_principal": "Arte / Assets",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc",
+        "dkdidac-design"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-06-06",
+      "due_date": "2026-06-14",
+      "estimated_hours": 4,
+      "story_points": 4,
+      "tags": [
+        "bug",
+        "UX/UI"
+      ],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T10:04:33.597Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 31
     }
   ]
 }
