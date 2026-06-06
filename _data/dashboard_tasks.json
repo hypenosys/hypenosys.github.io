@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-06T11:39:17.154Z",
+  "last_updated": "2026-06-06T11:39:56.005Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1304,7 +1304,7 @@
       "task_type": "bug",
       "tema_principal": "Tools / Automation",
       "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Major",
+      "prioridad": "Cosmetic",
       "milestone": "M1",
       "estado": "Working",
       "completitud": 0,
@@ -1430,6 +1430,13 @@
           "field": "blocks",
           "old_value": "[]",
           "new_value": "[\"34\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T11:39:41.990Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Cosmetic"
         }
       ],
       "id": 31
