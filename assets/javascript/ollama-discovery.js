@@ -119,13 +119,15 @@ class OllamaDiscovery {
     }
 
     formatEndpoint(host) {
-        let endpoint = host;
+        let endpoint = host.trim();
         if (!endpoint.startsWith('http')) {
             endpoint = `http://${endpoint}`;
         }
         if (!endpoint.includes(':', 6)) { // check if port is missing (skipping http:// part)
             endpoint = `${endpoint}:11434`;
         }
+        // Remove trailing slash or /v1 if present
+        endpoint = endpoint.replace(/\/+$/, '').replace(/\/v1$/, '');
         return endpoint;
     }
 
@@ -136,7 +138,8 @@ class OllamaDiscovery {
         try {
             const response = await fetch(`${endpoint}/api/tags`, {
                 signal: controller.signal,
-                mode: 'cors'
+                mode: 'cors',
+                credentials: 'omit'
             });
             clearTimeout(timeoutId);
             if (!response.ok) return false;
@@ -155,8 +158,13 @@ class OllamaDiscovery {
     }
 
     async fetchModels(endpoint) {
+        // Sanitize endpoint just in case it wasn't already
+        const cleanEndpoint = endpoint.replace(/\/+$/, '').replace(/\/v1$/, '');
         try {
-            const response = await fetch(`${endpoint}/api/tags`);
+            const response = await fetch(`${cleanEndpoint}/api/tags`, {
+                mode: 'cors',
+                credentials: 'omit'
+            });
             if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
             const data = await response.json();
             return data.models || [];

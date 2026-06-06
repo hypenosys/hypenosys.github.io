@@ -77,27 +77,28 @@ class OllamaUI {
         try {
             const models = await this.discovery.fetchModels(endpoint);
             this.populateModelSelect(models);
+            select.disabled = false;
         } catch (e) {
             const errorMsg = this.discovery.getErrorMessage(e, endpoint);
-            console.warn('[Ollama] Failed to fetch models, using static fallback.', e);
+            console.warn('[Ollama] Failed to fetch models. Disabling dropdown and focusing manual input.', e);
 
-            // Fallback static list
-            const fallbackModels = [
-                { name: 'cogito:8b' },
-                { name: 'qwen2.5:14b' },
-                { name: 'phi4:latest' },
-                { name: 'gemma4:e4b' },
-                { name: 'qwen3:14b' },
-                { name: 'llava:13b' },
-                { name: 'nomic-embed-text:latest' },
-                { name: 'qwen3:8b' }
-            ];
+            select.innerHTML = '';
+            const noneOpt = document.createElement('option');
+            noneOpt.textContent = 'No disponible (usa campo superior)';
+            select.appendChild(noneOpt);
+            select.disabled = true;
 
-            this.populateModelSelect(fallbackModels, true);
+            // Focus the manual model input
+            modelInput.focus();
 
             // If it was a mixed content error, show the detailed alert
             if (errorMsg.includes('Mixed Content')) {
-                alert(errorMsg);
+                // Check if we should use hypeToast or standard alert
+                if (window.authManager && window.authManager.showToast) {
+                    window.authManager.showToast('Error de Conexión', errorMsg, 'error');
+                } else {
+                    alert(errorMsg);
+                }
             }
         }
     }

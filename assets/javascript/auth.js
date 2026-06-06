@@ -548,14 +548,18 @@ class AuthManager {
             baseUrlGroup.style.display = 'none';
         }
 
+        const ollamaHelpBlock = document.getElementById('ollama-help-block');
+
         if (provider === 'ollama') {
             ollamaScanBtnGroup.style.display = 'block';
             ollamaDiscoveryGroup.style.display = 'block';
             ollamaModelsGroup.style.display = 'block';
+            if (ollamaHelpBlock) ollamaHelpBlock.classList.remove('hidden');
         } else {
             ollamaScanBtnGroup.style.display = 'none';
             ollamaDiscoveryGroup.style.display = 'none';
             ollamaModelsGroup.style.display = 'none';
+            if (ollamaHelpBlock) ollamaHelpBlock.classList.add('hidden');
         }
     }
 

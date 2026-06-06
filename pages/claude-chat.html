@@ -149,6 +149,13 @@ permalink: /claude-chat.html
              <button onclick="openSettings()" class="w-full text-left text-[10px] font-bold text-[#8be9fd] hover:text-white transition-all flex items-center gap-2 p-2 bg-[#44475a]/30 rounded">
                 <i class="fas fa-search"></i> BUSCAR OLLAMA
             </button>
+            <div id="sidebar-ollama-warning" class="mt-2 p-2 bg-red-900/20 border border-red-500/50 rounded text-[9px] text-red-200 hidden">
+                <div class="flex justify-between items-center mb-1">
+                    <span class="font-bold">OLLAMA OFFLINE</span>
+                    <button onclick="navigator.clipboard.writeText('OLLAMA_ORIGINS=* ollama serve'); if(window.authManager) window.authManager.showToast('Copiado', 'Comando copiado', 'info'); else showToast('Comando copiado')" class="hover:text-white"><i class="fas fa-copy"></i></button>
+                </div>
+                <code>OLLAMA_ORIGINS=*</code>
+            </div>
         </div>
 
         <div class="p-4 border-t border-[#44475a] space-y-2">
@@ -196,6 +203,17 @@ permalink: /claude-chat.html
                     <button onclick="quickPrompt('¿Qué tareas críticas hay hoy?')" class="p-3 dracula-surface border border-[#6272a4] rounded-lg text-xs hover:border-[#bd93f9] transition-all">Tareas críticas</button>
                     <button onclick="quickPrompt('Explícame el flujo SVN del estudio')" class="p-3 dracula-surface border border-[#6272a4] rounded-lg text-xs hover:border-[#bd93f9] transition-all">Flujo SVN</button>
                 </div>
+            </div>
+        </div>
+
+        <!-- Debug Panel (Collapsible) -->
+        <div id="debug-panel" class="hidden mx-6 mb-2 border border-[#44475a] rounded-lg bg-black/40 overflow-hidden transition-all duration-300">
+            <div class="flex justify-between items-center p-2 bg-[#1e1f29] border-b border-[#44475a] cursor-pointer" onclick="toggleDebugPanel()">
+                <span class="text-[10px] font-bold text-[#6272a4] uppercase tracking-widest"><i class="fas fa-bug mr-2"></i> Stream Debug Console</span>
+                <i id="debug-chevron" class="fas fa-chevron-up text-[#6272a4] text-[10px]"></i>
+            </div>
+            <div id="debug-log" class="p-2 h-32 overflow-y-auto font-mono text-[9px] text-[#50fa7b] space-y-1 custom-scrollbar">
+                <!-- Debug messages -->
             </div>
         </div>
 
@@ -353,9 +371,32 @@ permalink: /claude-chat.html
             else if (sessions.length === 0) chatMessages.innerHTML = '';
         }
 
+        function appendSystemMessage(msg, type = 'error') {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'flex justify-center mb-4';
+            const bgColor = type === 'error' ? 'bg-red-900/20' : 'bg-blue-900/20';
+            const borderColor = type === 'error' ? 'border-red-500' : 'border-blue-500';
+            const textColor = type === 'error' ? 'text-red-200' : 'text-blue-200';
+
+            msgDiv.innerHTML = `
+                <div class="max-w-[90%] p-3 rounded-lg border-l-4 ${bgColor} ${borderColor} ${textColor} text-xs font-mono shadow-lg">
+                    <div class="flex items-center gap-2 mb-1 uppercase font-black tracking-tighter opacity-70">
+                        <i class="fas ${type === 'error' ? 'fa-exclamation-triangle' : 'fa-info-circle'}"></i>
+                        SYSTEM MESSAGE: ${type}
+                    </div>
+                    <div>${escapeHtml(msg)}</div>
+                </div>
+            `;
+            chatMessages.appendChild(msgDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
         function renderMessages() {
             const session = sessions.find(s => s.id === currentSessionId);
-            if (!session) return;
+            if (!session) {
+                chatMessages.innerHTML = '';
+                return;
+            }
             chatMessages.innerHTML = session.messages.map(m => `
                 <div class="flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} group mb-4">
                     <div class="max-w-[85%] p-4 ${m.role === 'user' ? 'message-user' : 'message-claude shadow-xl'} relative message-bubble">
@@ -396,7 +437,12 @@ permalink: /claude-chat.html
 
         async function sendMessage() {
             const content = chatInput.value.trim();
-            if (!content || !currentSessionId || sendBtn.disabled) return;
+            if (!content || sendBtn.disabled) return;
+
+            // Auto-create session if none exists
+            if (!currentSessionId) {
+                createNewSession();
+            }
 
             const config = JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
             const provider = config.provider || 'none';
@@ -435,8 +481,9 @@ permalink: /claude-chat.html
                     throw new Error(`Proveedor ${provider} no implementado aún en Claude Chat.`);
                 }
             } catch (e) {
+                console.error('[ClaudeChat] Send error:', e);
                 const errorMsg = provider === 'ollama' ? window.ollamaDiscovery.getErrorMessage(e, config.base_url) : e.message;
-                alert(`Error: ${errorMsg}`);
+                appendSystemMessage(errorMsg, 'error');
             } finally {
                 thinkingIndicator.classList.add('hidden');
                 sendBtn.disabled = false;
@@ -483,7 +530,8 @@ permalink: /claude-chat.html
         }
 
         async function sendMessageOllama(session, config) {
-            const baseUrl = config.base_url;
+            let baseUrl = config.base_url || '';
+            baseUrl = baseUrl.trim().replace(/\/+$/, '').replace(/\/v1$/, '');
             const model = config.model || 'llama3';
 
             if (!baseUrl) {
@@ -493,6 +541,8 @@ permalink: /claude-chat.html
             const response = await fetch(`${baseUrl}/api/chat`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
+                mode: 'cors',
+                credentials: 'omit',
                 body: JSON.stringify({
                     model: model,
                     messages: [
@@ -505,19 +555,25 @@ permalink: /claude-chat.html
 
             if (!response.ok) throw new Error(`Ollama Error: ${response.status}`);
 
-            await consumeStream(response, session, null, (data) => data.message?.content || '');
+            await consumeStream(response, session, 'ollama');
         }
 
         async function checkConnection(provider, config) {
             const statusBadge = document.getElementById('connection-status');
+            const sidebarWarning = document.getElementById('sidebar-ollama-warning');
 
             try {
                 if (provider === 'ollama') {
-                    const baseUrl = config.base_url || 'http://localhost:11434';
-                    const response = await fetch(`${baseUrl}/api/tags`).catch(() => null);
+                    let baseUrl = config.base_url || 'http://localhost:11434';
+                    baseUrl = baseUrl.trim().replace(/\/+$/, '').replace(/\/v1$/, '');
+                    const response = await fetch(`${baseUrl}/api/tags`, {
+                        mode: 'cors',
+                        credentials: 'omit'
+                    }).catch(() => null);
                     if (response && response.ok) {
                         statusBadge.className = "flex items-center gap-2 text-[10px] font-black tracking-widest text-[#50fa7b] bg-[#50fa7b]/5 px-3 py-1 rounded-full border border-[#50fa7b]/20";
                         statusBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-[#50fa7b] shadow-[0_0_8px_#50fa7b] animate-pulse"></span> OLLAMA: ONLINE';
+                        if (sidebarWarning) sidebarWarning.classList.add('hidden');
                     } else {
                         throw new Error();
                     }
@@ -534,6 +590,42 @@ permalink: /claude-chat.html
             } catch (e) {
                 statusBadge.className = "flex items-center gap-2 text-[10px] font-black tracking-widest text-[#ff5555] bg-[#ff5555]/5 px-3 py-1 rounded-full border border-[#ff5555]/20";
                 statusBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-[#ff5555] shadow-[0_0_8px_#ff5555]"></span> OFFLINE';
+                if (provider === 'ollama' && sidebarWarning) sidebarWarning.classList.remove('hidden');
+            }
+        }
+
+        let debugEvents = [];
+        function logDebug(msg, type = 'info') {
+            const log = document.getElementById('debug-log');
+            const time = new Date().toLocaleTimeString();
+            debugEvents.unshift({ time, msg, type });
+            if (debugEvents.length > 50) debugEvents.pop();
+
+            const color = type === 'error' ? 'text-red-400' : (type === 'warn' ? 'text-yellow-400' : 'text-[#50fa7b]');
+
+            const entry = document.createElement('div');
+            entry.className = `border-b border-[#44475a]/30 pb-1 mb-1 ${color}`;
+            entry.innerHTML = `<span class="opacity-40">[${time}]</span> <span class="font-bold">${type.toUpperCase()}:</span> ${escapeHtml(msg)}`;
+
+            log.prepend(entry);
+            if (log.children.length > 50) {
+                log.lastElementChild.remove();
+            }
+
+            if (type === 'error') {
+                document.getElementById('debug-panel').classList.remove('hidden');
+            }
+        }
+
+        function toggleDebugPanel() {
+            const log = document.getElementById('debug-log');
+            const chev = document.getElementById('debug-chevron');
+            if (log.classList.contains('hidden')) {
+                log.classList.remove('hidden');
+                chev.classList.replace('fa-chevron-down', 'fa-chevron-up');
+            } else {
+                log.classList.add('hidden');
+                chev.classList.replace('fa-chevron-up', 'fa-chevron-down');
             }
         }
 
@@ -542,6 +634,7 @@ permalink: /claude-chat.html
             const decoder = new TextDecoder();
             let aiContent = '';
             let thinkingContent = '';
+            let buffer = '';
 
             const msgDiv = document.createElement('div');
             msgDiv.className = 'flex justify-start group mb-4';
@@ -556,44 +649,65 @@ permalink: /claude-chat.html
             const streamEl = msgDiv.querySelector('#streaming-content');
             const thinkEl = msgDiv.querySelector('#thinking-block');
 
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
+            logDebug(`Stream started (Provider: ${provider})`, 'info');
 
-                const chunk = decoder.decode(value);
-                const lines = chunk.split('\n');
+            try {
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
 
-                for (const line of lines) {
-                    if (!line.trim()) continue;
-                    try {
-                        let data;
-                        if (line.startsWith('data: ')) {
-                            data = JSON.parse(line.substring(6));
-                        } else {
-                            data = JSON.parse(line);
-                        }
+                    const chunk = decoder.decode(value, { stream: true });
+                    buffer += chunk;
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop(); // Keep incomplete line in buffer
 
-                        if (provider === 'anthropic') {
-                            if (data.type === 'content_block_delta') {
-                                if (data.delta.type === 'text_delta') {
-                                    aiContent += data.delta.text;
-                                } else if (data.delta.type === 'thinking_delta') {
-                                    thinkingContent += data.delta.thinking;
-                                    thinkEl.classList.remove('hidden');
-                                    thinkEl.textContent = thinkingContent;
+                    for (const line of lines) {
+                        const trimmedLine = line.trim();
+                        if (!trimmedLine) continue;
+
+                        try {
+                            let data;
+                            if (trimmedLine.startsWith('data: ')) {
+                                data = JSON.parse(trimmedLine.substring(6));
+                            } else {
+                                data = JSON.parse(trimmedLine);
+                            }
+
+                            if (provider === 'anthropic') {
+                                if (data.type === 'content_block_delta') {
+                                    if (data.delta.type === 'text_delta') {
+                                        aiContent += data.delta.text;
+                                    } else if (data.delta.type === 'thinking_delta') {
+                                        thinkingContent += data.delta.thinking;
+                                        thinkEl.classList.remove('hidden');
+                                        thinkEl.textContent = thinkingContent;
+                                    }
+                                }
+                            } else if (provider === 'ollama') {
+                                // NDJSON nativo de Ollama: .message.content
+                                if (data.message && data.message.content) {
+                                    aiContent += data.message.content;
+                                } else if (data.response) { // Fallback for /api/generate
+                                    aiContent += data.response;
+                                }
+
+                                if (data.error) {
+                                    logDebug(`Ollama stream error: ${data.error}`, 'error');
                                 }
                             }
-                        } else {
-                            // Ollama
-                            aiContent += data.message?.content || '';
-                        }
 
-                        if (aiContent) {
-                            streamEl.innerHTML = marked.parse(aiContent);
+                            if (aiContent) {
+                                streamEl.innerHTML = marked.parse(aiContent);
+                            }
+                            chatMessages.scrollTop = chatMessages.scrollHeight;
+                        } catch (e) {
+                            logDebug(`JSON parse error: ${e.message} in line: ${trimmedLine}`, 'warn');
                         }
-                        chatMessages.scrollTop = chatMessages.scrollHeight;
-                    } catch (e) {}
+                    }
                 }
+            } catch (e) {
+                logDebug(`Stream read error: ${e.message}`, 'error');
+                throw e;
             }
 
             session.messages.push({
