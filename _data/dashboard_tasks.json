@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-06T15:21:07.010Z",
+  "last_updated": "2026-06-06T15:21:19.908Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -372,7 +372,7 @@
       "rama": "PRO",
       "descripcion": "Merge SVN Content/Scripts SVN folder syncing with upgraded an upgraded github repo 'app' to 5.7.4",
       "tema_principal": "Tools / Automation",
-      "prioridad": "Major",
+      "prioridad": "ToDo",
       "milestone": "M3",
       "estado": "Pending",
       "completitud": 0.75,
@@ -477,6 +477,13 @@
           "field": "tags",
           "old_value": "[]",
           "new_value": "[\"git\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T15:21:19.422Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "ToDo"
         }
       ],
       "repository": "hypenosys/app"
