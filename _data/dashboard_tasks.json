@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-06T11:43:48.626Z",
-  "last_updated_by": "Axel",
+  "last_updated": "2026-06-06T11:44:30.436Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -1111,7 +1111,6 @@
       "asignados": [
         "axlfc",
         "dkdidac-design",
-        "javi26031994-a11y",
         "topperh4rley"
       ],
       "email_responsable": "didac@hypenosys.com",
@@ -1213,6 +1212,13 @@
           "field": "completitud",
           "old_value": 0,
           "new_value": 0.3
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T11:44:29.878Z",
+          "field": "asignados",
+          "old_value": "[\"axlfc\",\"dkdidac-design\",\"javi26031994-a11y\",\"topperh4rley\"]",
+          "new_value": "[\"axlfc\",\"dkdidac-design\",\"topperh4rley\"]"
         }
       ],
       "id": 29
