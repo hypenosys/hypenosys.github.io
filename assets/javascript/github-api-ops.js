@@ -13,8 +13,11 @@
          * Retrieves the token specifically from sessionStorage
          */
         getToken: () => {
+            // Unified key: gh_access_token (checks session then local)
+            // Fallback to localStorage('github_token') for legacy support
             return sessionStorage.getItem('gh_access_token') ||
-                   sessionStorage.getItem('github_token');
+                   localStorage.getItem('gh_access_token') ||
+                   localStorage.getItem('github_token');
         },
 
         getHeaders: () => {
