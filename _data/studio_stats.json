@@ -1,15 +1,15 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-06T14:38:48.983Z",
+  "computed_at": "2026-06-06T14:38:57.062Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 15,
-    "total_ok": 1,
+    "total_ok": 2,
     "total_ko": 0,
     "total_uncertain": 4,
     "total_obsolete": 5,
-    "fixed_found_ratio": 0.05,
-    "verified_ratio": 0.05
+    "fixed_found_ratio": 0.1,
+    "verified_ratio": 0.1
   },
   "group": {
     "velocity_trend": {
@@ -22,11 +22,11 @@
       "2026-W22": 6,
       "2026-W23": 5
     },
-    "bug_rate": 0.1429,
-    "blocker_health": 2,
+    "bug_rate": 0.1538,
+    "blocker_health": 1,
     "tag_heatmap": {
-      "feature": 5,
-      "PRO": 6,
+      "feature": 4,
+      "PRO": 5,
       "brainstorm": 1,
       "design": 1,
       "research": 1,
@@ -133,9 +133,9 @@
     "axlfc": {
       "member_name": "Axel",
       "completed": {
-        "all_time": 12,
+        "all_time": 13,
         "milestone": 12,
-        "week": 8
+        "week": 9
       },
       "weekly_velocity": {
         "2026-W16": 0,
@@ -145,15 +145,15 @@
         "2026-W20": 0,
         "2026-W21": 3,
         "2026-W22": 4,
-        "2026-W23": 6
+        "2026-W23": 11
       },
       "type_breakdown": {
-        "feature": 10,
+        "feature": 11,
         "chore": 1,
         "bug": 1
       },
       "rama_breakdown": {
-        "PRO": 12
+        "PRO": 13
       },
       "tag_frequency": {
         "infraestructura": 1,
@@ -166,23 +166,23 @@
         "days": 0.5,
         "estimated_start": true
       },
-      "dependency_impact": 2,
+      "dependency_impact": 3,
       "comment_activity": 1,
       "volatility": {
         "reopens": 0,
         "reprioritizations": 8
       },
       "workload": {
-        "active_tasks": 9,
-        "story_points": 27
+        "active_tasks": 8,
+        "story_points": 22
       }
     },
     "topperh4rley": {
       "member_name": "Alex",
       "completed": {
-        "all_time": 13,
+        "all_time": 14,
         "milestone": 13,
-        "week": 8
+        "week": 9
       },
       "weekly_velocity": {
         "2026-W16": 0,
@@ -192,15 +192,15 @@
         "2026-W20": 0,
         "2026-W21": 3,
         "2026-W22": 5,
-        "2026-W23": 6
+        "2026-W23": 11
       },
       "type_breakdown": {
         "chore": 1,
-        "feature": 11,
+        "feature": 12,
         "bug": 1
       },
       "rama_breakdown": {
-        "PRO": 13
+        "PRO": 14
       },
       "tag_frequency": {
         "onboarding": 1,
@@ -213,23 +213,23 @@
         "days": 0.5,
         "estimated_start": true
       },
-      "dependency_impact": 2,
+      "dependency_impact": 3,
       "comment_activity": 0,
       "volatility": {
         "reopens": 0,
         "reprioritizations": 13
       },
       "workload": {
-        "active_tasks": 13,
-        "story_points": 37
+        "active_tasks": 12,
+        "story_points": 32
       }
     },
     "dkdidac-design": {
       "member_name": "Dídac",
       "completed": {
-        "all_time": 2,
+        "all_time": 3,
         "milestone": 2,
-        "week": 0
+        "week": 1
       },
       "weekly_velocity": {
         "2026-W16": 0,
@@ -239,14 +239,14 @@
         "2026-W20": 0,
         "2026-W21": 1,
         "2026-W22": 1,
-        "2026-W23": 0
+        "2026-W23": 5
       },
       "type_breakdown": {
         "chore": 1,
-        "feature": 1
+        "feature": 2
       },
       "rama_breakdown": {
-        "PRO": 2
+        "PRO": 3
       },
       "tag_frequency": {
         "onboarding": 1
@@ -255,15 +255,15 @@
         "days": 0.5,
         "estimated_start": true
       },
-      "dependency_impact": 0,
+      "dependency_impact": 1,
       "comment_activity": 0,
       "volatility": {
         "reopens": 0,
         "reprioritizations": 7
       },
       "workload": {
-        "active_tasks": 9,
-        "story_points": 23
+        "active_tasks": 8,
+        "story_points": 18
       }
     },
     "javi26031994-a11y": {
