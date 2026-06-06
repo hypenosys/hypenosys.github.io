@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-06T10:10:56.624Z",
-  "last_updated_by": "Axlfc",
+  "last_updated": "2026-06-06T10:14:44.986Z",
+  "last_updated_by": "Axel",
   "tasks": [
     {
       "id": 1,
@@ -1354,6 +1354,63 @@
         }
       ],
       "id": 31
+    },
+    {
+      "title": "Filtrar tareas por tag",
+      "descripcion": "",
+      "rama": "PRO",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "repository": null,
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc",
+        "topperh4rley",
+        "dkdidac-design"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-06-06",
+      "due_date": "2026-06-14",
+      "estimated_hours": 2,
+      "story_points": 2,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "Se añade un botón que permite filtrar por cualquier categoría",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [
+        {
+          "url": "https://64.media.tumblr.com/e0ea65800deb62bc2217cc25c0ec83d0/20ecb733aaf443c5-19/s1280x1920/f6377d98fd32a173e80a79fc485420ecb151b541.png",
+          "type": "url",
+          "tumblr_post_id": "818666100701200384",
+          "filename": "1000052809.png",
+          "uploaded_at": "2026-06-06T10:13:54.109Z"
+        }
+      ],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T10:14:44.489Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 32
     }
   ]
 }
