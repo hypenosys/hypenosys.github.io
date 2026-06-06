@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-06T09:56:31.770Z",
+  "last_updated": "2026-06-06T09:58:01.517Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -858,7 +858,7 @@
     },
     {
       "title": "Botón \"🤖 Enviar a Jules\" en tarjetas Kanban con estado de sesión Neural Operations",
-      "descripcion": "Añadir un botón con icono de robot en cada tarjeta del Kanban que estructure y envíe toda la información de la tarea al panel de Jules. El sistema debe validar que el prompt sea completo antes de enviarlo (avisando de campos vacíos o imágenes referenciadas, ya que Jules API no acepta imágenes). Además, cada tarea debe poder mostrar si ya tiene una sesión Jules activa asociada, quién la inició y en qué estado se encuentra (planificando, ejecutando, PR abierto, fallida). Se deja arquitectura abierta para integrar Claude API como capa conversacional que gestione la interacción con Jules de forma desatendida.",
+      "descripcion": "Añadir un botón con icono de robot en cada tarjeta del Kanban que estructure y envíe toda la información de la tarea al panel de Jules. El sistema debe validar que el prompt sea completo antes de enviarlo, podría ser interceptado por claude chat (avisando de campos vacíos o imágenes referenciadas, ya que Jules API no acepta imágenes; Podemos programar nuestro propio sistema de reconocimiento). Además, cada tarea debe poder mostrar si ya tiene una sesión Jules activa asociada, quién la inició y en qué estado se encuentra (planificando, ejecutando, PR abierto, fallida). Se deja arquitectura abierta para integrar Claude API/Ollama como capa conversacional que gestione la interacción con Jules de forma desatendida.",
       "rama": "PRO",
       "task_type": "feature",
       "tema_principal": "Programación / Engine",
@@ -947,6 +947,13 @@
           "field": "milestone",
           "old_value": "M1",
           "new_value": "M2"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T09:58:00.973Z",
+          "field": "descripcion",
+          "old_value": "Añadir un botón con icono de robot en cada tarjeta del Kanban que estructure y envíe toda la información de la tarea al panel de Jules. El sistema debe validar que el prompt sea completo antes de enviarlo (avisando de campos vacíos o imágenes referenciadas, ya que Jules API no acepta imágenes). Además, cada tarea debe poder mostrar si ya tiene una sesión Jules activa asociada, quién la inició y en qué estado se encuentra (planificando, ejecutando, PR abierto, fallida). Se deja arquitectura abierta para integrar Claude API como capa conversacional que gestione la interacción con Jules de forma desatendida.",
+          "new_value": "Añadir un botón con icono de robot en cada tarjeta del Kanban que estructure y envíe toda la información de la tarea al panel de Jules. El sistema debe validar que el prompt sea completo antes de enviarlo, podría ser interceptado por claude chat (avisando de campos vacíos o imágenes referenciadas, ya que Jules API no acepta imágenes; Podemos programar nuestro propio sistema de reconocimiento). Además, cada tarea debe poder mostrar si ya tiene una sesión Jules activa asociada, quién la inició y en qué estado se encuentra (planificando, ejecutando, PR abierto, fallida). Se deja arquitectura abierta para integrar Claude API/Ollama como capa conversacional que gestione la interacción con Jules de forma desatendida."
         }
       ],
       "id": 27
