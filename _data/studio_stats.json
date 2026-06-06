@@ -1,15 +1,15 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-06T10:10:58.621Z",
+  "computed_at": "2026-06-06T10:14:47.161Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 12,
+    "total_tasks": 13,
     "total_ok": 1,
     "total_ko": 0,
     "total_uncertain": 4,
     "total_obsolete": 5,
-    "fixed_found_ratio": 0.0588,
-    "verified_ratio": 0.0588
+    "fixed_found_ratio": 0.0556,
+    "verified_ratio": 0.0556
   },
   "group": {
     "velocity_trend": {
@@ -22,11 +22,11 @@
       "2026-W22": 6,
       "2026-W23": 5
     },
-    "bug_rate": 0.0909,
+    "bug_rate": 0.0833,
     "blocker_health": 2,
     "tag_heatmap": {
-      "feature": 4,
-      "PRO": 5,
+      "feature": 5,
+      "PRO": 6,
       "brainstorm": 1,
       "design": 1,
       "research": 1,
@@ -38,7 +38,7 @@
       "jules": 1,
       "bug": 1
     },
-    "milestone_tasks_remaining": 7,
+    "milestone_tasks_remaining": 8,
     "hall_of_fame_winners": {
       "mvp": {
         "handle": "axlfc",
@@ -173,8 +173,8 @@
         "reprioritizations": 8
       },
       "workload": {
-        "active_tasks": 6,
-        "story_points": 20
+        "active_tasks": 7,
+        "story_points": 22
       }
     },
     "topperh4rley": {
@@ -220,8 +220,8 @@
         "reprioritizations": 8
       },
       "workload": {
-        "active_tasks": 8,
-        "story_points": 22
+        "active_tasks": 9,
+        "story_points": 24
       }
     },
     "dkdidac-design": {
@@ -262,8 +262,8 @@
         "reprioritizations": 3
       },
       "workload": {
-        "active_tasks": 6,
-        "story_points": 15
+        "active_tasks": 7,
+        "story_points": 17
       }
     },
     "javi26031994-a11y": {
