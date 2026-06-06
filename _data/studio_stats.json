@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-06T10:16:22.802Z",
+  "computed_at": "2026-06-06T10:17:07.975Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 13,
@@ -170,7 +170,7 @@
       "comment_activity": 0,
       "volatility": {
         "reopens": 0,
-        "reprioritizations": 9
+        "reprioritizations": 10
       },
       "workload": {
         "active_tasks": 7,
@@ -259,7 +259,7 @@
       "comment_activity": 0,
       "volatility": {
         "reopens": 0,
-        "reprioritizations": 4
+        "reprioritizations": 5
       },
       "workload": {
         "active_tasks": 7,
