@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-06T11:37:36.664Z",
-  "last_updated_by": "Axel",
+  "last_updated": "2026-06-06T11:38:32.992Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -1320,7 +1320,9 @@
       "external_links": [],
       "subtasks": [],
       "acceptance_criteria": "",
-      "blocks": [],
+      "blocks": [
+        "34"
+      ],
       "blocked_by": [],
       "comments": [
         {
@@ -1414,6 +1416,13 @@
           "field": "title",
           "old_value": "BUG: Jules Neural Operation en dashboard en móvil ",
           "new_value": "BUG VISUAL: Jules Neural Operation en dashboard en móvil "
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T11:38:32.246Z",
+          "field": "blocks",
+          "old_value": "[]",
+          "new_value": "[\"34\"]"
         }
       ],
       "id": 31
