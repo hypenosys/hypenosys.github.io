@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-06T10:16:20.448Z",
+  "last_updated": "2026-06-06T10:17:05.907Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1291,13 +1291,13 @@
       "id": 30
     },
     {
-      "title": "Jules Neural Operation en dashboard en móvil ",
-      "descripcion": "Se ve fatality, debería mostrarse mejor con Markdown, siguiendo la estética de la web (cuidadoito con las batticks ```)",
+      "title": "BUG: Jules Neural Operation en dashboard en móvil ",
+      "descripcion": "Se ve fatality, debería mostrarse mejor con Markdown, siguiendo la estética de la web (cuidadito con las batticks ```)",
       "rama": "ART",
       "task_type": "bug",
       "tema_principal": "Tools / Automation",
       "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Medium",
+      "prioridad": "Major",
       "milestone": "M1",
       "estado": "Working",
       "completitud": 0,
@@ -1386,6 +1386,27 @@
           "field": "estado",
           "old_value": "Pending",
           "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T10:17:05.370Z",
+          "field": "title",
+          "old_value": "Jules Neural Operation en dashboard en móvil ",
+          "new_value": "BUG: Jules Neural Operation en dashboard en móvil "
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T10:17:05.370Z",
+          "field": "descripcion",
+          "old_value": "Se ve fatality, debería mostrarse mejor con Markdown, siguiendo la estética de la web (cuidadoito con las batticks ```)",
+          "new_value": "Se ve fatality, debería mostrarse mejor con Markdown, siguiendo la estética de la web (cuidadito con las batticks ```)"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T10:17:05.370Z",
+          "field": "prioridad",
+          "old_value": "Medium",
+          "new_value": "Major"
         }
       ],
       "id": 31
