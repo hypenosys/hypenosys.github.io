@@ -21,9 +21,10 @@
      * Helper: Get Auth Token (Unified logic)
      */
     function getAuthToken() {
+        // Unified key: gh_access_token (checks session then local)
+        // Fallback to localStorage('github_token') for legacy support
         const token = sessionStorage.getItem('gh_access_token')
             || localStorage.getItem('gh_access_token')
-            || sessionStorage.getItem('github_token')
             || localStorage.getItem('github_token');
         return (token && token.length > 10) ? token.trim() : null;
     }

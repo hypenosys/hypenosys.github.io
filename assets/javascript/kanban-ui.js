@@ -3,6 +3,8 @@
  */
 
 (function() {
+    const STATUS_FLOW = ['BACKLOG', 'TODO', 'WORKING', 'REVIEW', 'DONE', 'BLOCKED'];
+
     const kanbanUI = {
         init: async () => {
             kanbanUI.bindEvents();
@@ -125,8 +127,11 @@
             };
             const loop = loopStates[task.jules_loop_estado] || loopStates['sin_loop'];
 
+            const currentIdx = STATUS_FLOW.indexOf(task.estado);
+            const nextStatus = STATUS_FLOW[(currentIdx + 1) % STATUS_FLOW.length];
+
             return `
-                <div class="session-card kanban-card mb-3 p-3" data-id="${task.id}" style="cursor: pointer;">
+                <div class="session-card kanban-card mb-3 p-3" data-id="${task.id}">
                     <div class="flex justify-between items-start mb-2">
                         <span class="text-[10px] font-bold text-slate-500">${task.id}</span>
                         <div class="flex gap-1">
@@ -151,13 +156,62 @@
                         <div class="text-[10px] text-slate-400 flex items-center gap-1">
                             <i class="fas fa-code-branch opacity-50"></i> ${task.repo || '---'}
                         </div>
-                        ${task.jules_session_url ? `
-                            <button onclick="window.open('${task.jules_session_url}', '_blank'); event.stopPropagation();" class="text-[9px] bg-purple-900/30 text-purple-400 border border-purple-500/30 px-2 py-0.5 rounded hover:bg-purple-900/50 transition-all">⚡ JULES</button>
-                        ` : ''}
+                        <div class="flex gap-1">
+                            ${task.jules_session_url ? `
+                                <button onclick="window.open('${task.jules_session_url}', '_blank'); event.stopPropagation();" class="text-[9px] bg-purple-900/30 text-purple-400 border border-purple-500/30 px-2 py-0.5 rounded hover:bg-purple-900/50 transition-all">⚡ JULES</button>
+                            ` : ''}
+                            <button onclick="window.kanbanUI.moveTask('${task.id}', '${nextStatus}', this)" class="text-[9px] bg-slate-700 text-slate-300 border border-slate-600 px-2 py-0.5 rounded hover:bg-slate-600 transition-all">MOVER →</button>
+                        </div>
                     </div>
                     ${alertHtml}
                 </div>
             `;
+        },
+
+        moveTask: async (taskId, newStatus, btn) => {
+            const originalHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
+
+            try {
+                // Gap en paso 6: Verify write permissions
+                const token = window.githubApi.getAuthToken();
+                const repo = localStorage.getItem('github_repo') || 'hypenosys/hypenosys.github.io';
+                const [owner, repoName] = repo.split('/');
+
+                const permissionRes = await fetch(`https://api.github.com/repos/${owner}/${repoName}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const repoData = await permissionRes.json();
+
+                if (!repoData.permissions || !repoData.permissions.push) {
+                    throw new Error("Token sin permisos de escritura en este repositorio.");
+                }
+
+                await window.taskOps.updateTask(taskId, { estado: newStatus });
+
+                if (window.logHypenosysAction) {
+                    window.logHypenosysAction('task_move', `Tarea ${taskId} movida a ${newStatus}`);
+                }
+
+                if (window.showToast) window.showToast(`Tarea ${taskId} movida a ${newStatus}`);
+
+                // Refresh cemetery count in Jules Panel if active
+                if (typeof window.renderCemeteryCount === 'function') {
+                    window.renderCemeteryCount();
+                    const cemeteryPanel = document.getElementById('cemetery-panel');
+                    if (cemeteryPanel && !cemeteryPanel.classList.contains('hidden')) {
+                        window.renderCemetery();
+                    }
+                }
+
+                await kanbanUI.refresh();
+            } catch (e) {
+                console.error('[Kanban] Move failed:', e);
+                if (window.showToast) window.showToast(e.message, 'error');
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+            }
         },
 
         updateAlerts: (tasks) => {

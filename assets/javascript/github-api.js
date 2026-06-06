@@ -10,12 +10,10 @@ const DATA_BRANCH     = 'master';
 
 // Retrieve GitHub OAuth token from available storage
 function getAuthToken() {
-  if (window.githubContext && window.githubContext.getAuthToken) {
-    return window.githubContext.getAuthToken();
-  }
+  // Unified key: gh_access_token (checks session then local)
+  // Fallback to localStorage('github_token') for legacy support
   const token = sessionStorage.getItem('gh_access_token')
     || localStorage.getItem('gh_access_token')
-    || sessionStorage.getItem('github_token')
     || localStorage.getItem('github_token');
 
   if (!token || typeof token !== 'string' || token.length < 10) {
@@ -56,6 +54,9 @@ async function fetchFileWithSha(filePath) {
     }
   });
   if (!response.ok) {
+    if (response.status === 404) {
+      return { content: null, sha: null };
+    }
     const err = await response.json();
     throw new Error(`Error leyendo ${filePath}: ${err.message}`);
   }
@@ -160,7 +161,14 @@ async function atomicWrite(filePath, mutatorFn, commitMessage, mergeStrategyFn) 
   while (attempt < MAX_RETRIES) {
     attempt++;
     try {
-      const { content: remoteContent, sha: remoteSha } = await fetchFileWithSha(filePath);
+      let { content: remoteContent, sha: remoteSha } = await fetchFileWithSha(filePath);
+
+      // Gap Transversal: Handle missing file
+      if (remoteContent === null && filePath.endsWith('.json')) {
+          console.warn(`[AtomicWrite] File ${filePath} not found. Initializing with default structure.`);
+          remoteContent = { tasks: [], _audit_log: [], _version: 1 };
+      }
+
       const newContent = await mutatorFn(remoteContent);
 
       if (newContent.last_updated !== undefined) {
@@ -603,13 +611,13 @@ window.githubApi = {
     if (!token) return;
     const cleanToken = token.trim();
 
-    console.log(`[AUTH] Setting token (rememberMe: ${rememberMe})`);
+    console.log(`[AUTH] Setting token under unified key gh_access_token (rememberMe: ${rememberMe})`);
 
-    // Clear both first to avoid mixed sessions
+    // Clear old keys first to avoid mixed sessions
     this.clearAuth();
 
     if (rememberMe) {
-      localStorage.setItem('github_token', cleanToken);
+      localStorage.setItem('gh_access_token', cleanToken);
     } else {
       sessionStorage.setItem('gh_access_token', cleanToken);
     }
@@ -644,8 +652,10 @@ window.githubApi = {
       localStorage.setItem('github_repo', repo);
   },
   clearAuth() {
-    sessionStorage.removeItem('gh_access_token');
+    localStorage.removeItem('gh_access_token');
     localStorage.removeItem('github_token');
+    sessionStorage.removeItem('gh_access_token');
+    sessionStorage.removeItem('github_token');
     // Also clear jules sessions cache on logout for safety
     localStorage.removeItem('jules_sessions_cache');
     _currentUser = null;
