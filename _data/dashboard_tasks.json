@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-06T09:56:19.164Z",
-  "last_updated_by": "Axel",
+  "last_updated": "2026-06-06T09:56:31.770Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -371,7 +371,7 @@
     {
       "rama": "PRO",
       "descripcion": "Merge SVN Content/Scripts SVN folder syncing with upgraded an upgraded github repo 'app' to 5.7.4",
-      "tema_principal": "Programación / Engine",
+      "tema_principal": "Tools / Automation",
       "prioridad": "Major",
       "milestone": "M3",
       "estado": "Pending",
