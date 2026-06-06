@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-06T11:31:56.227Z",
+  "computed_at": "2026-06-06T11:32:30.771Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 14,
@@ -173,8 +173,8 @@
         "reprioritizations": 10
       },
       "workload": {
-        "active_tasks": 7,
-        "story_points": 22
+        "active_tasks": 8,
+        "story_points": 26
       }
     },
     "topperh4rley": {
@@ -220,8 +220,8 @@
         "reprioritizations": 9
       },
       "workload": {
-        "active_tasks": 9,
-        "story_points": 24
+        "active_tasks": 10,
+        "story_points": 28
       }
     },
     "dkdidac-design": {
@@ -262,8 +262,8 @@
         "reprioritizations": 5
       },
       "workload": {
-        "active_tasks": 7,
-        "story_points": 17
+        "active_tasks": 8,
+        "story_points": 21
       }
     },
     "javi26031994-a11y": {
@@ -304,8 +304,8 @@
         "reprioritizations": 2
       },
       "workload": {
-        "active_tasks": 5,
-        "story_points": 16
+        "active_tasks": 6,
+        "story_points": 20
       }
     },
     "mitxel2022": {
