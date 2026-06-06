@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-06T11:31:53.588Z",
-  "last_updated_by": "Axel",
+  "last_updated": "2026-06-06T11:32:27.648Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -1498,17 +1498,22 @@
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Major",
       "milestone": "M1",
-      "estado": "Pending",
+      "estado": "ToDo",
       "completitud": 0,
       "resuelto_por": null,
       "detectado_por": "Axel",
-      "asignados": [],
+      "asignados": [
+        "axlfc",
+        "dkdidac-design",
+        "javi26031994-a11y",
+        "topperh4rley"
+      ],
       "email_responsable": null,
       "emails_asignados": [],
-      "start_date": null,
-      "due_date": null,
-      "estimated_hours": null,
-      "story_points": null,
+      "start_date": "2026-06-06",
+      "due_date": "2026-06-14",
+      "estimated_hours": 4,
+      "story_points": 4,
       "tags": [],
       "external_links": [],
       "subtasks": [],
@@ -1530,6 +1535,27 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T11:32:25.673Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "ToDo"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T11:32:25.673Z",
+          "field": "asignados",
+          "old_value": "[]",
+          "new_value": "[\"axlfc\",\"dkdidac-design\",\"javi26031994-a11y\",\"topperh4rley\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T11:32:25.673Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-06-14"
         }
       ],
       "id": 33
