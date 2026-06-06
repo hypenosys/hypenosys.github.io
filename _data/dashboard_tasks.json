@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-06T10:14:44.986Z",
-  "last_updated_by": "Axel",
+  "last_updated": "2026-06-06T10:15:17.008Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -1356,13 +1356,13 @@
       "id": 31
     },
     {
-      "title": "Filtrar tareas por tag",
+      "title": "Filtrar tareas por tag en /dashboard",
       "descripcion": "",
       "rama": "PRO",
       "task_type": "feature",
       "tema_principal": "Programación / Engine",
-      "repository": null,
-      "prioridad": "Major",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Medium",
       "milestone": "M1",
       "estado": "Pending",
       "completitud": 0,
@@ -1370,8 +1370,8 @@
       "detectado_por": "Axel",
       "asignados": [
         "axlfc",
-        "topperh4rley",
-        "dkdidac-design"
+        "dkdidac-design",
+        "topperh4rley"
       ],
       "email_responsable": null,
       "emails_asignados": [],
@@ -1408,6 +1408,27 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T10:15:16.557Z",
+          "field": "title",
+          "old_value": "Filtrar tareas por tag",
+          "new_value": "Filtrar tareas por tag en /dashboard"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T10:15:16.557Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Medium"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T10:15:16.557Z",
+          "field": "repository",
+          "old_value": null,
+          "new_value": "hypenosys/hypenosys.github.io"
         }
       ],
       "id": 32
