@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-06T10:08:32.023Z",
+  "last_updated": "2026-06-06T10:09:02.166Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -916,7 +916,8 @@
       "acceptance_criteria": "- Cada tarjeta Kanban muestra un botón 🤖 visible solo para usuarios autenticados\n- Al pulsar, se construye un prompt estructurado con todos los campos de la tarea (título, descripción, criterios de aceptación, subtareas, rama, milestone)\n- Si la tarea referencia imágenes, el sistema avisa: \"Jules no soporta imágenes, se excluirán\"\n- Si faltan campos críticos (descripción, criterios), se muestra un checklist de lo que falta antes de enviar\n- Al confirmar, redirige al Jules Panel con el prompt precargado y la tarea vinculada por ID\n- La tarjeta Kanban muestra badge de estado Jules: Ninguna / Planificando / Ejecutando / PR Abierto / Fallida\n- El badge muestra el avatar del miembro que inició la sesión\n- El estado se persiste en dashboard_tasks.json bajo un campo jules_session: { session_id, initiated_by, status, pr_url }\n- [OPCIONAL] Campo en _config.yml o _data/ para activar Claude API como orquestador desatendido de Jules\n- [OPCIONAL] Si Claude API está activo, el botón 🤖 ofrece modo \"Autónomo\" además de \"Manual\"",
       "blocks": [],
       "blocked_by": [
-        "26"
+        "26",
+        "30"
       ],
       "comments": [],
       "images": [],
@@ -954,6 +955,13 @@
           "field": "descripcion",
           "old_value": "Añadir un botón con icono de robot en cada tarjeta del Kanban que estructure y envíe toda la información de la tarea al panel de Jules. El sistema debe validar que el prompt sea completo antes de enviarlo (avisando de campos vacíos o imágenes referenciadas, ya que Jules API no acepta imágenes). Además, cada tarea debe poder mostrar si ya tiene una sesión Jules activa asociada, quién la inició y en qué estado se encuentra (planificando, ejecutando, PR abierto, fallida). Se deja arquitectura abierta para integrar Claude API como capa conversacional que gestione la interacción con Jules de forma desatendida.",
           "new_value": "Añadir un botón con icono de robot en cada tarjeta del Kanban que estructure y envíe toda la información de la tarea al panel de Jules. El sistema debe validar que el prompt sea completo antes de enviarlo, podría ser interceptado por claude chat (avisando de campos vacíos o imágenes referenciadas, ya que Jules API no acepta imágenes; Podemos programar nuestro propio sistema de reconocimiento). Además, cada tarea debe poder mostrar si ya tiene una sesión Jules activa asociada, quién la inició y en qué estado se encuentra (planificando, ejecutando, PR abierto, fallida). Se deja arquitectura abierta para integrar Claude API/Ollama como capa conversacional que gestione la interacción con Jules de forma desatendida."
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T10:09:01.672Z",
+          "field": "blocked_by",
+          "old_value": "[\"26\"]",
+          "new_value": "[\"26\",\"30\"]"
         }
       ],
       "id": 27
