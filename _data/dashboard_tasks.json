@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-06T11:33:06.743Z",
-  "last_updated_by": "Axlfc",
+  "last_updated": "2026-06-06T11:37:36.664Z",
+  "last_updated_by": "Axel",
   "tasks": [
     {
       "id": 1,
@@ -1566,6 +1566,57 @@
         }
       ],
       "id": 33
+    },
+    {
+      "title": "Se ha roto la carga de los repositorios en el panel de jules.",
+      "descripcion": "se queda cargando. la vista el panel de Jules en movil es terrible y provoca debordamiento",
+      "rama": "PRO",
+      "task_type": "bug",
+      "tema_principal": "Programación / Engine",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Medium",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc",
+        "topperh4rley",
+        "dkdidac-design"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-06-06",
+      "due_date": "2026-06-14",
+      "estimated_hours": 2,
+      "story_points": 2,
+      "tags": [
+        "bug"
+      ],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T11:37:35.976Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 34
     }
   ]
 }
