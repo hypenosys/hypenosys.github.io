@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-06T11:44:33.000Z",
+  "computed_at": "2026-06-06T11:45:07.432Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 15,
@@ -73,7 +73,7 @@
       "collaborator": {
         "handle": "axlfc",
         "name": "Axel",
-        "value": 0
+        "value": 1
       }
     },
     "leaderboard": {
@@ -85,7 +85,7 @@
         "velocity": 2.1666666666666665,
         "research_solved": 0,
         "art_tasks": 0,
-        "comments_left": 0
+        "comments_left": 1
       },
       "topperh4rley": {
         "member_name": "Alex",
@@ -167,14 +167,14 @@
         "estimated_start": true
       },
       "dependency_impact": 2,
-      "comment_activity": 0,
+      "comment_activity": 1,
       "volatility": {
         "reopens": 0,
-        "reprioritizations": 11
+        "reprioritizations": 8
       },
       "workload": {
-        "active_tasks": 10,
-        "story_points": 31
+        "active_tasks": 9,
+        "story_points": 27
       }
     },
     "topperh4rley": {
@@ -217,11 +217,11 @@
       "comment_activity": 0,
       "volatility": {
         "reopens": 0,
-        "reprioritizations": 10
+        "reprioritizations": 13
       },
       "workload": {
-        "active_tasks": 12,
-        "story_points": 33
+        "active_tasks": 13,
+        "story_points": 37
       }
     },
     "dkdidac-design": {
@@ -386,7 +386,7 @@
         "collaborator": {
           "handle": "axlfc",
           "name": "Axel",
-          "value": 0
+          "value": 1
         }
       },
       "leaderboard": {
@@ -398,7 +398,7 @@
           "velocity": 2.1666666666666665,
           "research_solved": 0,
           "art_tasks": 0,
-          "comments_left": 0
+          "comments_left": 1
         },
         "topperh4rley": {
           "member_name": "Alex",
