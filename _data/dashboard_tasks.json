@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-06T14:08:59.303Z",
-  "last_updated_by": "Sistema",
+  "last_updated": "2026-06-06T14:38:46.724Z",
+  "last_updated_by": "Axel",
   "tasks": [
     {
       "id": 1,
@@ -1232,10 +1232,10 @@
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Major",
       "milestone": "M1",
-      "estado": "Working",
+      "estado": "Fixed",
       "completitud": 0.5,
       "resuelto_por": "Axel",
-      "detectado_por": "Axel",
+      "detectado_por": "Alex",
       "asignados": [
         "axlfc",
         "topperh4rley"
