@@ -18,12 +18,13 @@
     };
 
     /**
-     * Helper: Get Auth Token (matches github-api.js logic)
+     * Helper: Get Auth Token (Unified logic)
      */
     function getAuthToken() {
-        const sessionToken = sessionStorage.getItem('gh_access_token');
-        const localToken = localStorage.getItem('github_token');
-        const token = sessionToken || localToken;
+        const token = sessionStorage.getItem('gh_access_token')
+            || localStorage.getItem('gh_access_token')
+            || sessionStorage.getItem('github_token')
+            || localStorage.getItem('github_token');
         return (token && token.length > 10) ? token.trim() : null;
     }
 
@@ -124,6 +125,7 @@
     }
 
     const githubContext = {
+        getAuthToken,
         /**
          * getRepos() -> List org repos
          */

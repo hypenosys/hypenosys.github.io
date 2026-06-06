@@ -1429,6 +1429,9 @@ permalink: /jules-panel/
     }
 
     function getGitHubToken() {
+        if (window.githubContext && window.githubContext.getAuthToken) {
+            return window.githubContext.getAuthToken();
+        }
         return sessionStorage.getItem('gh_access_token')
             || localStorage.getItem('gh_access_token')
             || sessionStorage.getItem('github_token')
@@ -1706,8 +1709,23 @@ permalink: /jules-panel/
         updateLaunchButtonState();
 
         try {
+            // BUG #2 FIX: Load repo-map.json for enrichment
+            let repoMap = {};
+            try {
+                const mapRes = await fetch('/assets/data/repo-map.json');
+                if (mapRes.ok) repoMap = await mapRes.json();
+            } catch (e) { console.warn('[Jules Panel] Could not load repo-map.json:', e); }
+
             // PHASE 1: Load from github-context.js (Org Repos)
             const githubRepos = await window.githubContext.getRepos();
+
+            // Dynamic enrichment
+            githubRepos.forEach(r => {
+                if (!repoMap[r.name]) {
+                    repoMap[r.name] = { "proyecto": r.name, "equipo": [], "tipo": "web" };
+                }
+            });
+            window.repoMap = repoMap; // Store in memory for other components
 
             currentSources = githubRepos.map(r => ({
                 name: `sources/github/${r.full_name}`,
@@ -1747,11 +1765,28 @@ permalink: /jules-panel/
         } catch (e) {
             console.error('[Jules Panel] Repo initialization failed:', e);
             repoSelect.innerHTML = '<option value="">Error de carga</option>';
+
+            let errorMsg = 'No se pudo conectar con GitHub.';
+            if (!getGitHubToken()) {
+                errorMsg = 'Token de GitHub no configurado.';
+            } else if (e.message.includes('403')) {
+                errorMsg = 'GitHub API 403: Token sin permisos suficientes o Rate Limit alcanzado.';
+            } else if (e.message.includes('401')) {
+                errorMsg = 'GitHub API 401: Token inválido o expirado.';
+            } else {
+                errorMsg = `Error: ${e.message}`;
+            }
+
             repoStatus.innerHTML = `
                 <div class="error-banner">
-                    <span>No se pudo conectar con GitHub.</span>
-                    <button onclick="initializeRepoSelector()" class="btn--secondary" style="font-size: 10px; padding: 4px 8px;">Reintentar</button>
-                    <button onclick="window.authManager.showSettingsModal()" class="btn--secondary" style="font-size: 10px; padding: 4px 8px;">Configurar Token</button>
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <span style="font-weight: 700;">${errorMsg}</span>
+                        <span style="font-size: 10px; opacity: 0.8;">Verifica tu conexión y permisos del token.</span>
+                    </div>
+                    <div style="margin-left: auto; display: flex; gap: 8px;">
+                        <button onclick="initializeRepoSelector()" class="btn--secondary" style="font-size: 10px; padding: 4px 8px; min-height: 30px;">Reintentar</button>
+                        <button onclick="window.authManager.showSettingsModal()" class="btn--secondary" style="font-size: 10px; padding: 4px 8px; min-height: 30px;">Configurar Token</button>
+                    </div>
                 </div>
             `;
         }
