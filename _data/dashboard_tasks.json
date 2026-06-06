@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-06T22:02:24.580Z",
+  "last_updated": "2026-06-06T22:02:59.118Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -989,7 +989,7 @@
       "id": 27
     },
     {
-      "title": "Upgrade Jules Panel with \"GitHub (Team) Ops\" — Hub completo de gestión de repositorios, conectado con Jules y Claude",
+      "title": "Mobile first: Upgrade Jules Panel with \"GitHub (Team) Ops\" — Hub completo de gestión de repositorios, conectado con Jules y Claude",
       "descripcion": "Crear una página dedicada /github-ops/ que use la GitHub REST API al máximo aprovechando el token OAuth ya existente. La página actuará como un clon funcional de GitHub adaptado al workflow del estudio: gestión de PRs (abrir, revisar, mergear, cerrar), issues, branches, commits, Actions/Workflows y notificaciones, todo desde Hypenosys sin abrir github.com. Diseño UX/UI godmode con estética Dracula, navegación por repositorios de la organización, diff viewer inline, y sistema de notificaciones en tiempo real via polling de la Notifications API.",
       "rama": "PRO",
       "task_type": "feature",
@@ -1098,6 +1098,13 @@
           "field": "estado",
           "old_value": "Pending",
           "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T22:02:58.274Z",
+          "field": "title",
+          "old_value": "Upgrade Jules Panel with \"GitHub (Team) Ops\" — Hub completo de gestión de repositorios, conectado con Jules y Claude",
+          "new_value": "Mobile first: Upgrade Jules Panel with \"GitHub (Team) Ops\" — Hub completo de gestión de repositorios, conectado con Jules y Claude"
         }
       ],
       "id": 28
@@ -1778,6 +1785,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #28",
+      "user": "Axlfc",
+      "timestamp": "2026-06-06T22:02:59.118Z"
+    },
     {
       "action": "chore: actualizar tarea #30",
       "user": "Axlfc",
