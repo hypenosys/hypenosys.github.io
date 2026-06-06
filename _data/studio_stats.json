@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-06T10:06:59.698Z",
+  "computed_at": "2026-06-06T10:08:11.780Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 12,
@@ -22,7 +22,7 @@
       "2026-W22": 6,
       "2026-W23": 5
     },
-    "bug_rate": 0,
+    "bug_rate": 0.0909,
     "blocker_health": 2,
     "tag_heatmap": {
       "feature": 4,
@@ -170,7 +170,7 @@
       "comment_activity": 0,
       "volatility": {
         "reopens": 0,
-        "reprioritizations": 7
+        "reprioritizations": 8
       },
       "workload": {
         "active_tasks": 6,
@@ -259,7 +259,7 @@
       "comment_activity": 0,
       "volatility": {
         "reopens": 0,
-        "reprioritizations": 2
+        "reprioritizations": 3
       },
       "workload": {
         "active_tasks": 6,
