@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-06T15:21:22.160Z",
+  "computed_at": "2026-06-06T15:21:46.222Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 16,
@@ -37,10 +37,10 @@
       "Infraestructura": 1,
       "jules": 1,
       "bug": 2,
-      "svn": 1,
-      "neural-chat": 1,
+      "infraestructura": 1,
       "jules-panel": 1,
-      "infraestructura": 1
+      "neural-chat": 1,
+      "svn": 1
     },
     "milestone_tasks_remaining": 10,
     "hall_of_fame_winners": {
@@ -174,7 +174,7 @@
       "comment_activity": 1,
       "volatility": {
         "reopens": 0,
-        "reprioritizations": 10
+        "reprioritizations": 11
       },
       "workload": {
         "active_tasks": 9,
@@ -221,7 +221,7 @@
       "comment_activity": 0,
       "volatility": {
         "reopens": 0,
-        "reprioritizations": 15
+        "reprioritizations": 16
       },
       "workload": {
         "active_tasks": 13,
