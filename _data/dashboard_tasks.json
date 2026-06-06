@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-06T11:32:27.648Z",
+  "last_updated": "2026-06-06T11:33:06.743Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1291,7 +1291,7 @@
       "id": 30
     },
     {
-      "title": "BUG: Jules Neural Operation en dashboard en móvil ",
+      "title": "BUG VISUAL: Jules Neural Operation en dashboard en móvil ",
       "descripcion": "Se ve fatality, debería mostrarse mejor con Markdown, siguiendo la estética de la web (cuidadito con las batticks ```)",
       "rama": "ART",
       "task_type": "bug",
@@ -1407,6 +1407,13 @@
           "field": "prioridad",
           "old_value": "Medium",
           "new_value": "Major"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T11:33:06.040Z",
+          "field": "title",
+          "old_value": "BUG: Jules Neural Operation en dashboard en móvil ",
+          "new_value": "BUG VISUAL: Jules Neural Operation en dashboard en móvil "
         }
       ],
       "id": 31
