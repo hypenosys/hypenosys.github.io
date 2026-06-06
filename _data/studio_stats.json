@@ -1,15 +1,15 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-05T18:51:24.586Z",
+  "computed_at": "2026-06-06T09:56:21.320Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 10,
+    "total_tasks": 11,
     "total_ok": 1,
     "total_ko": 0,
     "total_uncertain": 5,
     "total_obsolete": 5,
-    "fixed_found_ratio": 0.0667,
-    "verified_ratio": 0.0667
+    "fixed_found_ratio": 0.0625,
+    "verified_ratio": 0.0625
   },
   "group": {
     "velocity_trend": {
@@ -25,8 +25,8 @@
     "bug_rate": 0,
     "blocker_health": 2,
     "tag_heatmap": {
-      "feature": 3,
-      "PRO": 4,
+      "feature": 4,
+      "PRO": 5,
       "brainstorm": 1,
       "design": 1,
       "research": 1,
@@ -37,7 +37,7 @@
       "Infraestructura": 1,
       "jules": 1
     },
-    "milestone_tasks_remaining": 5,
+    "milestone_tasks_remaining": 6,
     "hall_of_fame_winners": {
       "mvp": {
         "handle": "axlfc",
