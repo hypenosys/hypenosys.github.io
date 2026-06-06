@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-06T11:38:32.992Z",
+  "last_updated": "2026-06-06T11:39:17.154Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -485,7 +485,7 @@
       "rama": "PRO",
       "descripcion": "Completar onboarding y rellenar perfil dashboard",
       "tema_principal": "Concepto / GDD",
-      "prioridad": "Medium",
+      "prioridad": "Minor",
       "milestone": "M1",
       "estado": "OK",
       "completitud": 0.2,
@@ -564,6 +564,13 @@
           "field": "estado",
           "old_value": "Working",
           "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T11:39:15.880Z",
+          "field": "prioridad",
+          "old_value": "Medium",
+          "new_value": "Minor"
         }
       ],
       "repository": "hypenosys/hypenosys.github.io"
