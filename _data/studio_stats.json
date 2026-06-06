@@ -1,15 +1,15 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-06T14:38:57.062Z",
+  "computed_at": "2026-06-06T15:18:55.570Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 15,
+    "total_tasks": 16,
     "total_ok": 2,
     "total_ko": 0,
     "total_uncertain": 4,
     "total_obsolete": 5,
-    "fixed_found_ratio": 0.1,
-    "verified_ratio": 0.1
+    "fixed_found_ratio": 0.0952,
+    "verified_ratio": 0.0952
   },
   "group": {
     "velocity_trend": {
@@ -22,7 +22,7 @@
       "2026-W22": 6,
       "2026-W23": 5
     },
-    "bug_rate": 0.1538,
+    "bug_rate": 0.1429,
     "blocker_health": 1,
     "tag_heatmap": {
       "feature": 4,
@@ -36,7 +36,11 @@
       "UX/UI": 2,
       "Infraestructura": 1,
       "jules": 1,
-      "bug": 2
+      "bug": 2,
+      "svn": 1,
+      "neural-chat": 1,
+      "jules-panel": 1,
+      "infraestructura": 1
     },
     "milestone_tasks_remaining": 10,
     "hall_of_fame_winners": {
@@ -173,8 +177,8 @@
         "reprioritizations": 8
       },
       "workload": {
-        "active_tasks": 8,
-        "story_points": 22
+        "active_tasks": 9,
+        "story_points": 24
       }
     },
     "topperh4rley": {
@@ -220,8 +224,8 @@
         "reprioritizations": 13
       },
       "workload": {
-        "active_tasks": 12,
-        "story_points": 32
+        "active_tasks": 13,
+        "story_points": 34
       }
     },
     "dkdidac-design": {
