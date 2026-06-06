@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-05T18:51:22.351Z",
-  "last_updated_by": "Sistema",
+  "last_updated": "2026-06-06T09:56:19.164Z",
+  "last_updated_by": "Axel",
   "tasks": [
     {
       "id": 1,
@@ -1165,6 +1165,51 @@
         }
       ],
       "id": 29
+    },
+    {
+      "title": "La API de Claude Chat si seleccionamos ollama tiene que ser ollama, no Anthropic",
+      "descripcion": "También podría ser llama-cpp-python, o andar por el puerto standsr de ollama tipo oculentacion M5Stack",
+      "rama": "PRO",
+      "task_type": "feature",
+      "tema_principal": "Tools / Automation",
+      "repository": null,
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Axel",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T09:56:18.686Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 30
     }
   ]
 }
