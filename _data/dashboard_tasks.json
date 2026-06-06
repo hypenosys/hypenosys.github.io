@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-06T10:09:02.166Z",
+  "last_updated": "2026-06-06T10:10:56.624Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -917,6 +917,7 @@
       "blocks": [],
       "blocked_by": [
         "26",
+        "29",
         "30"
       ],
       "comments": [],
@@ -962,6 +963,13 @@
           "field": "blocked_by",
           "old_value": "[\"26\"]",
           "new_value": "[\"26\",\"30\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T10:10:56.145Z",
+          "field": "blocked_by",
+          "old_value": "[\"26\",\"30\"]",
+          "new_value": "[\"26\",\"29\",\"30\"]"
         }
       ],
       "id": 27
