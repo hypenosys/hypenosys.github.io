@@ -1022,10 +1022,15 @@ layout: null
       (function() {
         const urlParams = new URLSearchParams(window.location.search);
         const hasCode = urlParams.has('code');
-        const hasToken = sessionStorage.getItem('gh_access_token') || localStorage.getItem('github_token');
+
+        // Unificado: Chequear todas las posibles keys
+        const hasToken = sessionStorage.getItem('gh_access_token')
+                      || localStorage.getItem('gh_access_token')
+                      || localStorage.getItem('github_token');
 
         if (!hasToken && !hasCode) {
-          console.warn('[AUTH] No se detectó sesión ni código OAuth. Redirigiendo al Home.');
+          console.warn('[AUTH] No se detectó sesión ni código OAuth. Ocultando contenido.');
+          // En lugar de redirección con params, simplemente mandamos al home limpio o mostramos overlay
           window.location.href = '{{ "/" | relative_url }}';
         } else if (hasCode) {
           console.log('[AUTH] Código OAuth detectado. Bloqueando redirección para procesar intercambio.');

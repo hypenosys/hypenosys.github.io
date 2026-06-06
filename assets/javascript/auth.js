@@ -164,7 +164,8 @@ class AuthManager {
     handleLogin() {
         const chkDashboard = document.getElementById('chk-remember-me-dashboard');
         const chkHeader = document.getElementById('chk-remember-me');
-        const rememberMe = (chkDashboard ? chkDashboard.checked : (chkHeader ? chkHeader.checked : false));
+        const chkJules = document.getElementById('chk-remember-me-jules');
+        const rememberMe = (chkDashboard?.checked || chkHeader?.checked || chkJules?.checked || false);
         sessionStorage.setItem('auth_remember_me', rememberMe);
         const scope = 'repo';
         window.location.href = `https://github.com/login/oauth/authorize?client_id=${this.clientId}&scope=${scope}`;
@@ -198,12 +199,16 @@ class AuthManager {
 
             $('#settingsModal').modal('hide');
             this.showToast('Éxito', 'Conexión establecida con GitHub y Jules.', 'success');
-            document.dispatchEvent(new CustomEvent('settingsSaved'));
 
-            if (window.location.pathname.includes('dashboard') ||
-                window.location.pathname.includes('jules-panel') ||
-                window.location.pathname.includes('claude-chat')) {
-                setTimeout(() => window.location.reload(), 1000);
+            // Dispatch events
+            document.dispatchEvent(new CustomEvent('settingsSaved'));
+            window.dispatchEvent(new Event('tokenUpdated'));
+
+            // No reload, surgical update instead
+            if (window.location.pathname.includes('jules-panel')) {
+                if (typeof window.initializeRepoSelector === 'function') {
+                    window.initializeRepoSelector();
+                }
             }
         } catch (e) {
             console.error("Save settings failed:", e);
@@ -257,6 +262,8 @@ class AuthManager {
     updateHeaderUI(user) {
         const container = document.getElementById('auth-nav-container');
         const leftContainer = document.getElementById('auth-nav-container-left');
+        const chkHeader = document.getElementById('chk-remember-me');
+        if (chkHeader) chkHeader.parentElement.remove(); // Remove legacy checkbox UI
         if (!container) return;
 
         if (user && !user.login) {
