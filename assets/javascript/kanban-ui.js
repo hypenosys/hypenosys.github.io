@@ -111,7 +111,19 @@
                 'MEDIUM': 'bg-yellow-500',
                 'LOW': 'bg-slate-500'
             };
+
+            const statusBadgeColors = {
+                'BACKLOG': 'bg-slate-600',
+                'TODO': 'bg-yellow-600',
+                'WORKING': 'bg-blue-600',
+                'REVIEW': 'bg-purple-600',
+                'DONE': 'bg-green-600',
+                'BLOCKED': 'bg-red-600'
+            };
+
             const color = priorityColors[task.prioridad] || 'bg-slate-500';
+            const statusColor = statusBadgeColors[task.estado] || 'bg-slate-500';
+
             const alerts = window.taskEngine.computeAlerts(task);
             const alertHtml = alerts.map(a => `
                 <div class="text-[9px] font-bold text-red-400 mt-1 uppercase">⚠️ ${a.message}</div>
@@ -131,17 +143,39 @@
             const nextStatus = STATUS_FLOW[(currentIdx + 1) % STATUS_FLOW.length];
 
             const parsedTitle = typeof marked !== 'undefined' ? marked.parseInline(task.titulo) : task.titulo;
+            const description = task.descripcion || task.description || '';
+            const truncatedDesc = description.length > 80 ? description.substring(0, 77) + '...' : description;
+
+            // Robot button action
+            const openInClaude = (taskId) => {
+                const url = `https://hypenosys.github.io/claude-chat.html?task_id=${taskId}&from=jules-panel`;
+                window.open(url, '_blank');
+            };
+            // Expose to window for inline onclick
+            window._openTaskInClaude = openInClaude;
 
             return `
                 <div class="session-card kanban-card mb-3 p-3" data-id="${task.id}">
                     <div class="flex justify-between items-start mb-2">
-                        <span class="text-[10px] font-bold text-slate-500">${task.id}</span>
-                        <div class="flex gap-1">
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] font-bold text-slate-500">${task.id}</span>
+                            <span class="badge ${statusColor} text-white text-[8px] px-1.5 py-0.5 rounded-full uppercase font-black tracking-tighter">${task.estado}</span>
+                        </div>
+                        <div class="flex items-center gap-1">
                             <div class="w-3 h-3 rounded-full ${loop.color}" title="Loop Jules: ${task.jules_loop_estado}"></div>
                             <span class="badge ${color} text-white text-[9px] px-2 py-0.5 rounded">${task.prioridad}</span>
                         </div>
                     </div>
-                    <h4 class="text-sm font-bold mb-2 line-clamp-2 prose prose-invert">${parsedTitle}</h4>
+                    <h4 class="text-sm font-bold mb-1 line-clamp-2 prose prose-invert flex justify-between items-start gap-2">
+                        <strong>${parsedTitle}</strong>
+                        <button onclick="window._openTaskInClaude('${task.id}')"
+                                class="btn-robot-task flex-shrink-0"
+                                title="Abrir en Claude Chat"
+                                style="background: transparent; border: 1px solid #bd93f9; color: #bd93f9; border-radius: 4px; padding: 2px 6px; font-size: 12px; cursor: pointer;">
+                            🤖
+                        </button>
+                    </h4>
+                    ${truncatedDesc ? `<p class="text-[11px] text-slate-400 mb-2 italic line-clamp-2">${truncatedDesc}</p>` : ''}
                     <div class="flex items-center gap-2 mb-2">
                         ${(task.asignado_a || []).map(a => `
                             <div class="w-6 h-6 rounded-full bg-purple-600 flex items-center justify-center text-[10px] font-bold" title="${a}">

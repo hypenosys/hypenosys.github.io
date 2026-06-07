@@ -125,6 +125,24 @@ permalink: /CHANGELOG.html
                   <li>Detección automática de expiración de token con redirección al flujo de login sin recarga forzada.</li>
                 </ul>
               </li>
+              <li><strong>Claude Chat Evolution:</strong>
+                <ul>
+                  <li>Fix crítico para <strong>NVIDIA NIM</strong>: Optimización de headers y payload (1024 max tokens) para compatibilidad total.</li>
+                  <li>Inyección dinámica de NIM como proveedor predefinido en el modal de configuración con autorrelleno de URL.</li>
+                  <li><strong>Gestión de Sesiones:</strong> Botón "Nueva Conversación", historial de las últimas 10 sesiones con iconos de <strong>Exportar (JSON)</strong> y eliminar.</li>
+                  <li>Títulos auto-generados (40 chars) y restauración automática de la última sesión activa.</li>
+                  <li><strong>Acceso Real-Time a Docs:</strong> Nueva clase <code>HypenosysDocsContext</code> para polling (60s) del repositorio <code>hypenosys/docs</code> e inyección de contexto en el system prompt.</li>
+                  <li>Badge de estado de sincronización de documentación (live/syncing/error) en el header.</li>
+                  <li><strong>Vinculación de Tareas:</strong> Soporte para parámetro <code>task_id</code> en URL, carga de contexto desde el Dashboard y banner informativo con inyección en el prompt.</li>
+                  <li><strong>Gestión de Perfiles:</strong> Implementado botón de eliminar (✕) con confirmación para perfiles de IA guardados directamente en el modal de configuración.</li>
+                </ul>
+              </li>
+              <li><strong>Jules Panel - Robot Task Integration:</strong>
+                <ul>
+                  <li>Añadido botón 🤖 en cada tarjeta del Kanban para abrir la tarea directamente en Claude Chat con todo su contexto.</li>
+                  <li>Mejora visual de tarjetas: Títulos en negrita, badges de estado por colores y descripción truncada a 80 caracteres.</li>
+                </ul>
+              </li>
               <li><strong>Claude Chat Adaptive UI & AI Profiles:</strong>
                 <ul>
                   <li>Implementado proveedor <strong>Custom</strong> (OpenAI-compatible) con autodescubrimiento y clasificación de modelos por tipo (Vision, Audio, Reasoning, etc.).</li>
