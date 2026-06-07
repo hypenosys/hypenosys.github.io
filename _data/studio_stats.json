@@ -1,15 +1,15 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-07T11:21:58.695Z",
+  "computed_at": "2026-06-07T11:22:21.182Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 17,
-    "total_ok": 17,
+    "total_tasks": 14,
+    "total_ok": 1,
     "total_ko": 0,
-    "total_uncertain": 0,
-    "total_obsolete": 0,
-    "fixed_found_ratio": 1.0625,
-    "verified_ratio": 1
+    "total_uncertain": 4,
+    "total_obsolete": 5,
+    "fixed_found_ratio": 0.0526,
+    "verified_ratio": 0.0526
   },
   "group": {
     "velocity_trend": {
@@ -18,34 +18,51 @@
       "2026-W18": 0,
       "2026-W19": 0,
       "2026-W20": 0,
-      "2026-W21": 8,
-      "2026-W22": 10,
-      "2026-W23": 14
+      "2026-W21": 4,
+      "2026-W22": 6,
+      "2026-W23": 7
     },
-    "bug_rate": 0,
-    "blocker_health": 0,
-    "tag_heatmap": {},
-    "milestone_tasks_remaining": 0,
+    "bug_rate": 0.0769,
+    "blocker_health": 1,
+    "tag_heatmap": {
+      "feature": 4,
+      "PRO": 5,
+      "brainstorm": 1,
+      "design": 1,
+      "research": 1,
+      "DIS": 2,
+      "chore": 2,
+      "git": 1,
+      "UX/UI": 2,
+      "Infraestructura": 1,
+      "jules": 1,
+      "bug": 1,
+      "infraestructura": 1,
+      "jules-panel": 1,
+      "neural-chat": 1,
+      "svn": 1
+    },
+    "milestone_tasks_remaining": 8,
     "hall_of_fame_winners": {
       "mvp": {
         "handle": "axlfc",
         "name": "Axel",
-        "value": 9
+        "value": 4.5
       },
       "bug_slayer": {
         "handle": "axlfc",
         "name": "Axel",
-        "value": 4
+        "value": 2
       },
       "unblocker": {
         "handle": "axlfc",
         "name": "Axel",
-        "value": 4
+        "value": 3
       },
       "velocity_king": {
         "handle": "dkdidac-design",
         "name": "Dídac",
-        "value": 3
+        "value": 2.6666666666666665
       },
       "researcher": {
         "handle": "axlfc",
@@ -60,43 +77,43 @@
       "collaborator": {
         "handle": "axlfc",
         "name": "Axel",
-        "value": 0
+        "value": 1
       }
     },
     "leaderboard": {
       "axlfc": {
         "member_name": "Axel",
-        "mvp_points": 9,
-        "bugs_solved": 4,
-        "unblocked_count": 4,
+        "mvp_points": 4.5,
+        "bugs_solved": 2,
+        "unblocked_count": 3,
         "velocity": 2.5714285714285716,
         "research_solved": 0,
         "art_tasks": 0,
-        "comments_left": 0
+        "comments_left": 1
       },
       "topperh4rley": {
         "member_name": "Alex",
-        "mvp_points": 7,
-        "bugs_solved": 4,
-        "unblocked_count": 4,
-        "velocity": 2.5714285714285716,
+        "mvp_points": 3.7,
+        "bugs_solved": 2,
+        "unblocked_count": 3,
+        "velocity": 2.533333333333333,
         "research_solved": 0,
         "art_tasks": 0,
         "comments_left": 0
       },
       "dkdidac-design": {
         "member_name": "Dídac",
-        "mvp_points": 0,
-        "bugs_solved": 2,
+        "mvp_points": 0.2,
+        "bugs_solved": 1,
         "unblocked_count": 0,
-        "velocity": 3,
+        "velocity": 2.6666666666666665,
         "research_solved": 0,
         "art_tasks": 0,
         "comments_left": 0
       },
       "javi26031994-a11y": {
         "member_name": "Javi",
-        "mvp_points": 0,
+        "mvp_points": 0.2,
         "bugs_solved": 0,
         "unblocked_count": 0,
         "velocity": 2,
@@ -106,10 +123,10 @@
       },
       "mitxel2022": {
         "member_name": "Mitxel",
-        "mvp_points": 0,
+        "mvp_points": 0.2,
         "bugs_solved": 0,
         "unblocked_count": 0,
-        "velocity": 0,
+        "velocity": 2,
         "research_solved": 0,
         "art_tasks": 0,
         "comments_left": 0
@@ -120,8 +137,8 @@
     "axlfc": {
       "member_name": "Axel",
       "completed": {
-        "all_time": 30,
-        "milestone": 28,
+        "all_time": 15,
+        "milestone": 14,
         "week": 0
       },
       "weekly_velocity": {
@@ -130,45 +147,45 @@
         "2026-W18": 0,
         "2026-W19": 0,
         "2026-W20": 0,
-        "2026-W21": 6,
-        "2026-W22": 8,
-        "2026-W23": 32
+        "2026-W21": 3,
+        "2026-W22": 4,
+        "2026-W23": 16
       },
       "type_breakdown": {
-        "feature": 24,
-        "chore": 2,
-        "bug": 4
+        "feature": 12,
+        "chore": 1,
+        "bug": 2
       },
       "rama_breakdown": {
-        "PRO": 30
+        "PRO": 15
       },
       "tag_frequency": {
-        "infraestructura": 2,
-        "jules": 2,
-        "UX/UI": 2,
-        "bug": 4,
-        "hard": 2
+        "infraestructura": 1,
+        "jules": 1,
+        "UX/UI": 1,
+        "bug": 2,
+        "hard": 1
       },
       "avg_completion_speed": {
         "days": 0.5,
         "estimated_start": true
       },
       "dependency_impact": 4,
-      "comment_activity": 0,
+      "comment_activity": 1,
       "volatility": {
         "reopens": 0,
-        "reprioritizations": 16
+        "reprioritizations": 13
       },
       "workload": {
-        "active_tasks": 0,
-        "story_points": 0
+        "active_tasks": 7,
+        "story_points": 19
       }
     },
     "topperh4rley": {
       "member_name": "Alex",
       "completed": {
-        "all_time": 30,
-        "milestone": 28,
+        "all_time": 16,
+        "milestone": 15,
         "week": 0
       },
       "weekly_velocity": {
@@ -177,22 +194,24 @@
         "2026-W18": 0,
         "2026-W19": 0,
         "2026-W20": 0,
-        "2026-W21": 6,
-        "2026-W22": 8,
-        "2026-W23": 32
+        "2026-W21": 3,
+        "2026-W22": 5,
+        "2026-W23": 16
       },
       "type_breakdown": {
-        "feature": 26,
-        "bug": 4
+        "chore": 1,
+        "feature": 13,
+        "bug": 2
       },
       "rama_breakdown": {
-        "PRO": 30
+        "PRO": 16
       },
       "tag_frequency": {
-        "jules": 2,
-        "UX/UI": 2,
-        "bug": 4,
-        "hard": 2
+        "onboarding": 1,
+        "jules": 1,
+        "UX/UI": 1,
+        "bug": 2,
+        "hard": 1
       },
       "avg_completion_speed": {
         "days": 0.5,
@@ -202,18 +221,62 @@
       "comment_activity": 0,
       "volatility": {
         "reopens": 0,
-        "reprioritizations": 14
+        "reprioritizations": 18
       },
       "workload": {
-        "active_tasks": 0,
-        "story_points": 0
+        "active_tasks": 12,
+        "story_points": 29
       }
     },
     "dkdidac-design": {
       "member_name": "Dídac",
       "completed": {
-        "all_time": 6,
-        "milestone": 4,
+        "all_time": 4,
+        "milestone": 3,
+        "week": 0
+      },
+      "weekly_velocity": {
+        "2026-W16": 0,
+        "2026-W17": 0,
+        "2026-W18": 0,
+        "2026-W19": 0,
+        "2026-W20": 0,
+        "2026-W21": 1,
+        "2026-W22": 1,
+        "2026-W23": 7
+      },
+      "type_breakdown": {
+        "chore": 1,
+        "feature": 2,
+        "bug": 1
+      },
+      "rama_breakdown": {
+        "PRO": 4
+      },
+      "tag_frequency": {
+        "onboarding": 1,
+        "bug": 1
+      },
+      "avg_completion_speed": {
+        "days": 0.5,
+        "estimated_start": true
+      },
+      "dependency_impact": 1,
+      "comment_activity": 0,
+      "volatility": {
+        "reopens": 0,
+        "reprioritizations": 10
+      },
+      "workload": {
+        "active_tasks": 7,
+        "story_points": 16
+      }
+    },
+    "javi26031994-a11y": {
+      "member_name": "Javi",
+      "completed": {
+        "all_time": 3,
+        "milestone": 3,
         "week": 0
       },
       "weekly_velocity": {
@@ -223,18 +286,18 @@
         "2026-W19": 0,
         "2026-W20": 0,
         "2026-W21": 2,
-        "2026-W22": 0,
-        "2026-W23": 14
+        "2026-W22": 1,
+        "2026-W23": 0
       },
       "type_breakdown": {
-        "feature": 4,
-        "bug": 2
+        "chore": 1,
+        "feature": 2
       },
       "rama_breakdown": {
-        "PRO": 6
+        "PRO": 3
       },
       "tag_frequency": {
-        "bug": 2
+        "onboarding": 1
       },
       "avg_completion_speed": {
         "days": 0.5,
@@ -247,54 +310,15 @@
         "reprioritizations": 4
       },
       "workload": {
-        "active_tasks": 0,
-        "story_points": 0
-      }
-    },
-    "javi26031994-a11y": {
-      "member_name": "Javi",
-      "completed": {
-        "all_time": 4,
-        "milestone": 4,
-        "week": 0
-      },
-      "weekly_velocity": {
-        "2026-W16": 0,
-        "2026-W17": 0,
-        "2026-W18": 0,
-        "2026-W19": 0,
-        "2026-W20": 0,
-        "2026-W21": 4,
-        "2026-W22": 0,
-        "2026-W23": 0
-      },
-      "type_breakdown": {
-        "feature": 4
-      },
-      "rama_breakdown": {
-        "PRO": 4
-      },
-      "tag_frequency": {},
-      "avg_completion_speed": {
-        "days": 0.5,
-        "estimated_start": true
-      },
-      "dependency_impact": 0,
-      "comment_activity": 0,
-      "volatility": {
-        "reopens": 0,
-        "reprioritizations": 0
-      },
-      "workload": {
-        "active_tasks": 0,
-        "story_points": 0
+        "active_tasks": 5,
+        "story_points": 15
       }
     },
     "mitxel2022": {
       "member_name": "Mitxel",
       "completed": {
-        "all_time": 0,
-        "milestone": 0,
+        "all_time": 1,
+        "milestone": 1,
         "week": 0
       },
       "weekly_velocity": {
@@ -304,25 +328,31 @@
         "2026-W19": 0,
         "2026-W20": 0,
         "2026-W21": 0,
-        "2026-W22": 0,
+        "2026-W22": 1,
         "2026-W23": 0
       },
-      "type_breakdown": {},
-      "rama_breakdown": {},
-      "tag_frequency": {},
+      "type_breakdown": {
+        "chore": 1
+      },
+      "rama_breakdown": {
+        "PRO": 1
+      },
+      "tag_frequency": {
+        "onboarding": 1
+      },
       "avg_completion_speed": {
-        "days": 0,
+        "days": 0.5,
         "estimated_start": false
       },
       "dependency_impact": 0,
       "comment_activity": 0,
       "volatility": {
         "reopens": 0,
-        "reprioritizations": 0
+        "reprioritizations": 2
       },
       "workload": {
-        "active_tasks": 0,
-        "story_points": 0
+        "active_tasks": 4,
+        "story_points": 6
       }
     }
   },
@@ -332,22 +362,22 @@
         "mvp": {
           "handle": "axlfc",
           "name": "Axel",
-          "value": 9
+          "value": 4.5
         },
         "bug_slayer": {
           "handle": "axlfc",
           "name": "Axel",
-          "value": 4
+          "value": 2
         },
         "unblocker": {
           "handle": "axlfc",
           "name": "Axel",
-          "value": 4
+          "value": 3
         },
         "velocity_king": {
           "handle": "dkdidac-design",
           "name": "Dídac",
-          "value": 3
+          "value": 2.6666666666666665
         },
         "researcher": {
           "handle": "axlfc",
@@ -362,43 +392,43 @@
         "collaborator": {
           "handle": "axlfc",
           "name": "Axel",
-          "value": 0
+          "value": 1
         }
       },
       "leaderboard": {
         "axlfc": {
           "member_name": "Axel",
-          "mvp_points": 9,
-          "bugs_solved": 4,
-          "unblocked_count": 4,
+          "mvp_points": 4.5,
+          "bugs_solved": 2,
+          "unblocked_count": 3,
           "velocity": 2.5714285714285716,
           "research_solved": 0,
           "art_tasks": 0,
-          "comments_left": 0
+          "comments_left": 1
         },
         "topperh4rley": {
           "member_name": "Alex",
-          "mvp_points": 7,
-          "bugs_solved": 4,
-          "unblocked_count": 4,
-          "velocity": 2.5714285714285716,
+          "mvp_points": 3.7,
+          "bugs_solved": 2,
+          "unblocked_count": 3,
+          "velocity": 2.533333333333333,
           "research_solved": 0,
           "art_tasks": 0,
           "comments_left": 0
         },
         "dkdidac-design": {
           "member_name": "Dídac",
-          "mvp_points": 0,
-          "bugs_solved": 2,
+          "mvp_points": 0.2,
+          "bugs_solved": 1,
           "unblocked_count": 0,
-          "velocity": 3,
+          "velocity": 2.6666666666666665,
           "research_solved": 0,
           "art_tasks": 0,
           "comments_left": 0
         },
         "javi26031994-a11y": {
           "member_name": "Javi",
-          "mvp_points": 0,
+          "mvp_points": 0.2,
           "bugs_solved": 0,
           "unblocked_count": 0,
           "velocity": 2,
@@ -408,10 +438,10 @@
         },
         "mitxel2022": {
           "member_name": "Mitxel",
-          "mvp_points": 0,
+          "mvp_points": 0.2,
           "bugs_solved": 0,
           "unblocked_count": 0,
-          "velocity": 0,
+          "velocity": 2,
           "research_solved": 0,
           "art_tasks": 0,
           "comments_left": 0
@@ -424,7 +454,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-06-07T11:21:59.578Z"
+      "timestamp": "2026-06-07T11:22:22.004Z"
     }
   ]
 }
