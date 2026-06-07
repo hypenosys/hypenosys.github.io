@@ -72,7 +72,6 @@ class AuthManager {
         });
 
         document.getElementById('btn-save-profile')?.addEventListener('click', () => this.handleSaveProfile());
-        document.getElementById('btn-save-api-config')?.addEventListener('click', () => this.handleSaveApiConfig());
     }
 
     /**
@@ -374,93 +373,6 @@ class AuthManager {
         }
     }
 
-    async showApiConfigModal() {
-        if (!window.githubApi.user) {
-            this.showToast('Error', 'Debes estar autenticado para configurar la API.', 'error');
-            return;
-        }
-
-        const config = JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
-        let provider = config.provider || 'none';
-        let model = config.model || '';
-
-        // Fallback to team_profiles.json if localStorage is empty for provider/model
-        if (provider === 'none' || !model) {
-            try {
-                const profilesRes = await window.githubApi.fetchFileWithSha('_data/team_profiles.json');
-                const login = window.githubApi.user.login;
-                const memberEntry = Object.values(profilesRes.content.members).find(m => m.github_username.toLowerCase() === login.toLowerCase());
-                if (memberEntry && memberEntry.ai_config) {
-                    provider = provider === 'none' ? (memberEntry.ai_config.provider || 'none') : provider;
-                    model = !model ? (memberEntry.ai_config.model || '') : model;
-                }
-            } catch (e) {
-                console.warn('[AUTH] Could not fetch team_profiles for AI fallback:', e);
-            }
-        }
-
-        document.getElementById('api-config-provider').value = provider;
-        document.getElementById('api-config-model').value = model;
-        document.getElementById('api-config-key').value = config.api_key || '';
-        document.getElementById('api-config-base-url').value = config.base_url || '';
-
-        if (window.apiConfigUI) {
-            window.apiConfigUI.handleProviderChange();
-        }
-
-        $('#modalApiConfig').modal('show');
-    }
-
-    async handleSaveApiConfig() {
-        const provider = document.getElementById('api-config-provider').value;
-        const model = document.getElementById('api-config-model').value.trim();
-        const apiKey = document.getElementById('api-config-key').value.trim();
-        const baseUrl = document.getElementById('api-config-base-url').value.trim();
-
-        // 1. Save to localStorage (All)
-        const config = { provider, model, api_key: apiKey, base_url: baseUrl };
-        localStorage.setItem('hy_ai_config', JSON.stringify(config));
-
-        const btn = document.getElementById('btn-save-api-config');
-        const originalHtml = btn.innerHTML;
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Guardando...';
-
-        try {
-            const login = window.githubApi.user.login;
-            const profilesRes = await window.githubApi.fetchFileWithSha('_data/team_profiles.json');
-            const memberEntry = Object.entries(profilesRes.content.members).find(([k, v]) => v.github_username.toLowerCase() === login.toLowerCase());
-
-            if (memberEntry) {
-                const memberName = memberEntry[0];
-                await window.githubApi.atomicWrite('_data/team_profiles.json', (db) => {
-                    db.members[memberName].ai_config = { provider, model };
-                    return db;
-                }, `chore: actualizar configuración AI de ${memberName}`, (local, remote) => {
-                    const merged = { ...remote };
-                    merged.members[memberName] = { ...remote.members[memberName], ...local.members[memberName] };
-                    return merged;
-                });
-            }
-
-            if (window.hypeToast) {
-                window.hypeToast('Configuración API guardada ✓', 'success', 3000);
-            } else {
-                this.showToast('Éxito', 'Configuración API guardada ✓', 'success');
-            }
-            $('#modalApiConfig').modal('hide');
-        } catch (e) {
-            console.error('[AUTH] Save AI config failed:', e);
-            if (window.hypeToast) {
-                window.hypeToast('Error al guardar. Inténtalo de nuevo.', 'error');
-            } else {
-                this.showToast('Error', 'Fallo al guardar la configuración AI: ' + e.message, 'error');
-            }
-        } finally {
-            btn.disabled = false;
-            btn.innerHTML = originalHtml;
-        }
-    }
 
     async handleSaveProfile() {
         const name = document.getElementById('edit-profile-name').value.trim();
@@ -520,66 +432,6 @@ class AuthManager {
         }
     }
 
-    handleProviderChange() {
-        const provider = document.getElementById('ai_provider').value;
-        const modelInput = document.getElementById('ai_model');
-        const baseUrlGroup = document.getElementById('group-base-url');
-        const baseUrlInput = document.getElementById('ai_base_url');
-
-        // Ollama UI groups
-        const ollamaScanBtnGroup = document.getElementById('ollama-scan-btn-group');
-        const ollamaDiscoveryGroup = document.getElementById('group-ollama-discovery');
-        const ollamaModelsGroup = document.getElementById('group-ollama-models');
-
-        const suggestions = {
-            'anthropic': 'claude-sonnet-4-6-20260217',
-            'openai': 'gpt-5',
-            'gemini': 'gemini-2.5-flash',
-            'mistral': 'mistral-large-latest',
-            'openrouter': 'openrouter/auto',
-            'ollama': 'llama3',
-            'none': '',
-            'custom': ''
-        };
-
-        if (suggestions[provider] !== undefined) {
-            modelInput.placeholder = suggestions[provider] || (provider === 'custom' ? '' : 'Selecciona un proveedor');
-        }
-
-        if (provider === 'ollama' || provider === 'custom') {
-            baseUrlGroup.style.display = 'block';
-            if (!baseUrlInput.value && provider === 'ollama') {
-                baseUrlInput.value = 'http://localhost:11434';
-            }
-        } else {
-            baseUrlGroup.style.display = 'none';
-        }
-
-        const ollamaHelpBlock = document.getElementById('ollama-help-block');
-
-        const discoverGroup = document.getElementById('group-discover-models');
-
-        if (provider === 'ollama') {
-            ollamaScanBtnGroup.style.display = 'block';
-            ollamaDiscoveryGroup.style.display = 'block';
-            ollamaModelsGroup.style.display = 'block';
-            if (ollamaHelpBlock) ollamaHelpBlock.classList.remove('hidden');
-            if (discoverGroup) discoverGroup.style.display = 'block';
-        } else if (provider === 'custom' || provider === 'openrouter' || provider === 'openai') {
-            ollamaScanBtnGroup.style.display = 'none';
-            ollamaDiscoveryGroup.style.display = 'none';
-            ollamaModelsGroup.style.display = 'none';
-            if (ollamaHelpBlock) ollamaHelpBlock.classList.add('hidden');
-            if (discoverGroup) discoverGroup.style.display = 'block';
-        } else {
-            ollamaScanBtnGroup.style.display = 'none';
-            ollamaDiscoveryGroup.style.display = 'none';
-            ollamaModelsGroup.style.display = 'none';
-            if (ollamaHelpBlock) ollamaHelpBlock.classList.add('hidden');
-            if (discoverGroup) discoverGroup.style.display = 'none';
-        }
-    }
-
     async showApiConfigModal() {
         if (!window.githubApi.user) {
             this.showToast('Error', 'Debes estar autenticado para configurar la API.', 'error');
@@ -610,7 +462,9 @@ class AuthManager {
         document.getElementById('ai_base_url').value = config.base_url || '';
         document.getElementById('ai_local_network').checked = !!config.local_network;
 
-        this.handleProviderChange();
+        if (window.ollamaUI) {
+            window.ollamaUI.handleProviderChange();
+        }
         $('#modalApiConfig').modal('show');
     }
 
