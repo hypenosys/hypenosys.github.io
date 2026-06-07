@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-07T16:14:51.468Z",
-  "last_updated_by": "Axlfc",
+  "last_updated": "2026-06-07T18:54:32.059Z",
+  "last_updated_by": "Axel",
   "tasks": [
     {
       "id": 1,
@@ -1660,9 +1660,62 @@
         }
       ],
       "id": 38
+    },
+    {
+      "title": "Añadir repo hypenosys/scripts a claude-chat",
+      "descripcion": "Ahora está docs (check verde por verificar) ",
+      "rama": "PRO",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Major",
+      "milestone": "M2",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc",
+        "topperh4rley"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-06-07",
+      "due_date": "2026-06-14",
+      "estimated_hours": 4,
+      "story_points": 2,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-07",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T18:54:31.515Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 39
     }
   ],
   "_audit_log": [
+    {
+      "action": "feat: nueva tarea #1780858471516 añadida",
+      "user": "Axlfc",
+      "timestamp": "2026-06-07T18:54:32.060Z"
+    },
     {
       "action": "chore: actualizar tarea #38",
       "user": "Axlfc",
