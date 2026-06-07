@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-07T20:09:21.544Z",
+  "last_updated": "2026-06-07T20:10:17.051Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1705,7 +1705,7 @@
       "id": 37
     },
     {
-      "title": "comfyui generate image flux dev image or text context and flux kontext up to 2 images and text ",
+      "title": "generate image or text context and flux dev or kontext up to 2 images and text ",
       "descripcion": "also there is music generation and animation and key to key with available comfyui workflows (as API) expose in n8n and update to tumblr",
       "rama": "PRO",
       "task_type": "feature",
@@ -1787,6 +1787,13 @@
           "field": "descripcion",
           "old_value": "also there is music generation and animation and key to key with available comfyui workflows (as API) expose in n8n ",
           "new_value": "also there is music generation and animation and key to key with available comfyui workflows (as API) expose in n8n and update to tumblr"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T20:10:16.600Z",
+          "field": "title",
+          "old_value": "comfyui generate image flux dev image or text context and flux kontext up to 2 images and text ",
+          "new_value": "generate image or text context and flux dev or kontext up to 2 images and text "
         }
       ],
       "id": 38
@@ -2048,6 +2055,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #38",
+      "user": "Axlfc",
+      "timestamp": "2026-06-07T20:10:17.052Z"
+    },
     {
       "action": "chore: actualizar tarea #11",
       "user": "Axlfc",
