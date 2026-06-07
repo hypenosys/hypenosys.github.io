@@ -136,9 +136,17 @@ permalink: /claude-chat.html
             <h1 class="font-bold text-sm tracking-tighter flex items-center gap-2">
                 <i class="fas fa-brain dracula-purple"></i> CLAUDE NEURAL
             </h1>
-            <button onclick="createNewSession()" class="text-[#6272a4] hover:text-white transition-colors">
-                <i class="fas fa-plus-square"></i>
+        </div>
+
+        <!-- Session Controls -->
+        <div class="p-3 border-b border-[#44475a]">
+            <button onclick="createNewSession()" class="w-full py-2 bg-[#44475a] hover:bg-[#6272a4] text-white text-xs font-bold rounded-lg transition-all border border-[#6272a4] flex items-center justify-center gap-2">
+                <i class="fas fa-plus"></i> NUEVA CONVERSACIÓN
             </button>
+        </div>
+
+        <div class="px-3 pt-3">
+            <h2 class="text-[10px] font-bold text-[#6272a4] uppercase tracking-widest">Historial de sesiones</h2>
         </div>
 
         <div id="session-list" class="flex-grow overflow-y-auto p-2 space-y-1">
@@ -194,6 +202,7 @@ permalink: /claude-chat.html
                 </div>
             </div>
             <div class="flex items-center gap-6">
+                <div id="docs-status-badge" class="hidden"></div>
                 <div id="connection-status" class="flex items-center gap-2 text-[10px] font-black tracking-widest text-[#50fa7b] bg-[#50fa7b]/5 px-3 py-1 rounded-full border border-[#50fa7b]/20">
                     <span class="w-1.5 h-1.5 rounded-full bg-[#50fa7b] shadow-[0_0_8px_#50fa7b] animate-pulse"></span> ONLINE
                 </div>
@@ -322,12 +331,247 @@ permalink: /claude-chat.html
 <script src="{{ '/assets/javascript/ai-config.js' | relative_url }}"></script>
 
 <script>
+        const NVIDIA_NIM_CATALOG = {
+          chat: [
+            // ── Nemotron ──
+            { id: 'nvidia/nemotron-3-ultra-550b-a55b',        label: 'Nemotron 3 Ultra 550B' },
+            { id: 'nvidia/nemotron-3-super-120b-a12b',        label: 'Nemotron 3 Super 120B' },
+            { id: 'nvidia/nemotron-nano-4b-v1.1',             label: 'Nemotron Nano 4B' },
+            // ── Llama ──
+            { id: 'meta/llama-3.3-70b-instruct',              label: 'Llama 3.3 70B Instruct' },
+            { id: 'meta/llama-3.1-405b-instruct',             label: 'Llama 3.1 405B Instruct' },
+            { id: 'meta/llama-3.1-70b-instruct',              label: 'Llama 3.1 70B Instruct' },
+            { id: 'meta/llama-3.1-8b-instruct',               label: 'Llama 3.1 8B Instruct' },
+            // ── Qwen ──
+            { id: 'qwen/qwen3-235b-a22b',                     label: 'Qwen 3 235B' },
+            { id: 'qwen/qwen2.5-72b-instruct',                label: 'Qwen 2.5 72B Instruct' },
+            { id: 'qwen/qwen2.5-coder-32b-instruct',          label: 'Qwen 2.5 Coder 32B' },
+            // ── DeepSeek ──
+            { id: 'deepseek-ai/deepseek-r1',                  label: 'DeepSeek R1' },
+            { id: 'deepseek-ai/deepseek-v4-flash',            label: 'DeepSeek V4 Flash 284B' },
+            // ── Mistral ──
+            { id: 'mistralai/mistral-large-2-instruct',       label: 'Mistral Large 2' },
+            { id: 'mistralai/mixtral-8x22b-instruct-v0.1',    label: 'Mixtral 8x22B' },
+            { id: 'mistralai/mistral-small-24b-instruct-2501',label: 'Mistral Small 24B' },
+            // ── Google ──
+            { id: 'google/gemma-3-27b-it',                    label: 'Gemma 3 27B' },
+            { id: 'google/gemma-3-9b-it',                     label: 'Gemma 3 9B' },
+            // ── Microsoft ──
+            { id: 'microsoft/phi-4',                          label: 'Phi 4' },
+            { id: 'microsoft/phi-4-mini-instruct',            label: 'Phi 4 Mini' },
+            // ── Otros ──
+            { id: 'gpt-oss/gpt-oss-120b',                     label: 'GPT-OSS 120B' },
+            { id: 'zhipuai/glm-5.1',                          label: 'GLM 5.1' },
+            { id: 'moonshotai/kimi-k2',                       label: 'Kimi K2' },
+            { id: 'sarvam/sarvam-m',                          label: 'Sarvam-M (Indic languages)' },
+          ],
+
+          vision: [
+            // Omni (texto + imagen + vídeo + audio)
+            { id: 'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning', label: 'Nemotron 3 Nano Omni 30B 🔮 (imagen/vídeo/audio/texto)' },
+            // VLMs
+            { id: 'nvidia/llama-3.1-nemotron-nano-vl-8b-v1',       label: 'Llama Nemotron Nano VL 8B (imagen+texto)' },
+            { id: 'nvidia/nemotron-nano-12b-v2-vl',                 label: 'Nemotron Nano 12B VL (multi-imagen, vídeo)' },
+            { id: 'meta/llama-4-scout-17b-16e-instruct',            label: 'Llama 4 Scout 17B (multimodal, 10M ctx)' },
+            { id: 'meta/llama-4-maverick-17b-128e-instruct',        label: 'Llama 4 Maverick 17B (multimodal 128 MoE)' },
+            { id: 'meta/llama-3.2-90b-vision-instruct',             label: 'Llama 3.2 90B Vision' },
+            { id: 'meta/llama-3.2-11b-vision-instruct',             label: 'Llama 3.2 11B Vision' },
+            { id: 'google/gemma-3-27b-it',                          label: 'Gemma 3 27B (imagen+texto)' },
+            { id: 'nvidia/nemotron-parse',                          label: 'Nemotron Parse (OCR / extracción doc)' },
+            { id: 'nvidia/nemoretriever-parse',                     label: 'NemoRetriever Parse (OCR doc)' },
+          ],
+
+          speech: [
+            // ASR (reconocimiento de voz)
+            { id: 'nvidia/parakeet-ctc-1.1b-asr',           label: 'Parakeet CTC 1.1B ASR (inglés, streaming)' },
+            { id: 'nvidia/parakeet-rnnt-1.1b-multilingual',  label: 'Parakeet RNNT 1.1B ASR (multilingüe)' },
+            { id: 'nvidia/canary-1b-asr',                    label: 'Canary 1B ASR (25 idiomas europeos)' },
+            { id: 'nvidia/nemotron-speech-streaming',         label: 'Nemotron Speech Streaming (ultra-low latency)' },
+            // TTS (síntesis de voz)
+            { id: 'nvidia/magpie-tts-multilingual',           label: 'MagpieTTS Multilingual (9 idiomas, TTS)' },
+          ],
+
+          embeddings: [
+            { id: 'nvidia/llama-nemotron-embed-1b-v2',        label: 'Llama Nemotron Embed 1B v2 (multilingual, 8192 tokens)' },
+            { id: 'nvidia/llama-embed-nemotron-8b',           label: 'Llama Embed Nemotron 8B (MMTEB top)' },
+            { id: 'nvidia/nv-embed-v2',                       label: 'NV-Embed v2' },
+            { id: 'nvidia/llama-3.2-nv-embedqa-1b-v2',        label: 'NV EmbedQA 1B v2' },
+            { id: 'nvidia/nvclip',                             label: 'NV-CLIP (imagen + texto, multimodal embed)' },
+          ],
+        };
+
+        const OLLAMA_DEFAULT_CATALOG = [
+          // ── Chat general ──
+          { id: 'llama3.3',            label: 'Llama 3.3 8B' },
+          { id: 'llama3.3:70b',        label: 'Llama 3.3 70B' },
+          { id: 'llama4-scout',        label: 'Llama 4 Scout (multimodal, 10M ctx)' },
+          { id: 'qwen3:7b',            label: 'Qwen 3 7B' },
+          { id: 'qwen3:30b',           label: 'Qwen 3 30B' },
+          { id: 'qwen3.6:27b',         label: 'Qwen 3.6 27B (77.2% SWE-bench)' },
+          { id: 'mistral',             label: 'Mistral 7B' },
+          { id: 'mistral-small:24b',   label: 'Mistral Small 24B (function calling)' },
+          { id: 'devstral-small:24b',  label: 'Devstral Small 24B (agentic coding)' },
+          { id: 'phi4',                label: 'Phi 4' },
+          { id: 'phi4-mini',           label: 'Phi 4 Mini' },
+          // ── Razonamiento ──
+          { id: 'deepseek-r1:7b',      label: 'DeepSeek R1 7B (razonamiento)' },
+          { id: 'deepseek-r1:32b',     label: 'DeepSeek R1 32B (razonamiento)' },
+          { id: 'gpt-oss:20b',         label: 'GPT-OSS 20B (razonamiento ajustable)' },
+          // ── Coding ──
+          { id: 'qwen2.5-coder:7b',    label: 'Qwen 2.5 Coder 7B' },
+          { id: 'qwen2.5-coder:32b',   label: 'Qwen 2.5 Coder 32B (92.7% HumanEval)' },
+          { id: 'kimi-k2.6',           label: 'Kimi K2.6 (SWE-Bench 58.6, MoE)' },
+          // ── Visión ──
+          { id: 'gemma4:e4b',          label: 'Gemma 4 4B (visión + tool calling)' },
+          { id: 'gemma4:12b',          label: 'Gemma 4 12B (visión + OCR)' },
+          { id: 'llava:13b',           label: 'LLaVA 13B (imagen+texto)' },
+          // ── Embeddings locales ──
+          { id: 'nomic-embed-text',    label: 'Nomic Embed Text (embeddings)' },
+          { id: 'mxbai-embed-large',   label: 'MxBai Embed Large (embeddings)' },
+          { id: 'all-minilm',          label: 'All MiniLM (embeddings, ligero)' },
+        ];
+
+        class HypenosysDocsContext {
+            constructor() {
+                this.REPO = 'hypenosys/docs';
+                this.API_BASE = `https://api.github.com/repos/${this.REPO}`;
+                this.cache = new Map();
+                this.lastCommitSha = null;
+                this.POLL_INTERVAL = 60000; // 60s
+                this._poller = null;
+            }
+
+            getHeaders() {
+                const headers = { 'Accept': 'application/vnd.github.v3+json' };
+                const token = window.AuthManager?.getValidToken?.() || window.githubApi?.getAuthToken?.();
+                if (token) {
+                    headers['Authorization'] = `token ${token}`;
+                }
+                return headers;
+            }
+
+            async getLatestCommitSha() {
+                try {
+                    const r = await fetch(`${this.API_BASE}/commits/HEAD`, { headers: this.getHeaders() });
+                    if (!r.ok) return null;
+                    const d = await r.json();
+                    return d.sha;
+                } catch (e) {
+                    return null;
+                }
+            }
+
+            async hasNewCommits() {
+                const sha = await this.getLatestCommitSha();
+                if (!sha) return false;
+                if (sha !== this.lastCommitSha) {
+                    this.lastCommitSha = sha;
+                    this.cache.clear(); // Invalidar cache al detectar cambios
+                    return true;
+                }
+                return false;
+            }
+
+            async listFiles(path = '') {
+                const cacheKey = `list:${path}`;
+                if (this.cache.has(cacheKey)) return this.cache.get(cacheKey);
+                try {
+                    const r = await fetch(`${this.API_BASE}/contents/${path}`, { headers: this.getHeaders() });
+                    if (!r.ok) return [];
+                    const files = await r.json();
+                    this.cache.set(cacheKey, files);
+                    return files;
+                } catch (e) {
+                    return [];
+                }
+            }
+
+            async readFile(path) {
+                const cacheKey = `file:${path}`;
+                if (this.cache.has(cacheKey)) return this.cache.get(cacheKey);
+                try {
+                    const r = await fetch(`${this.API_BASE}/contents/${path}`, { headers: this.getHeaders() });
+                    if (!r.ok) return null;
+                    const d = await r.json();
+                    const content = atob(d.content.replace(/\n/g, ''));
+                    this.cache.set(cacheKey, content);
+                    return content;
+                } catch (e) {
+                    return null;
+                }
+            }
+
+            async buildContextSnapshot(maxFiles = 10) {
+                this.updateStatus('syncing');
+                try {
+                    // Leer el árbol de archivos y los primeros N documentos
+                    const files = await this.listFiles('');
+                    const mdFiles = files.filter(f => f.name.endsWith('.md') || f.type === 'dir').slice(0, maxFiles);
+
+                    let context = `## Repositorio hypenosys/docs (snapshot ${new Date().toISOString()})\n\n`;
+
+                    for (const f of mdFiles) {
+                        if (f.type === 'file') {
+                            const content = await this.readFile(f.path);
+                            if (content) {
+                                context += `### ${f.path}\n${content.slice(0, 2000)}\n\n`;
+                            }
+                        }
+                    }
+                    this.updateStatus('live');
+                    return context;
+                } catch (e) {
+                    this.updateStatus('error');
+                    return "";
+                }
+            }
+
+            startPolling(onUpdate) {
+                this.updateStatus('live');
+                this._poller = setInterval(async () => {
+                    const changed = await this.hasNewCommits();
+                    if (changed && onUpdate) onUpdate();
+                }, this.POLL_INTERVAL);
+            }
+
+            stopPolling() {
+                if (this._poller) clearInterval(this._poller);
+            }
+
+            updateStatus(status) {
+                const badge = document.getElementById('docs-status-badge');
+                if (!badge) return;
+
+                badge.className = 'flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[9px] font-bold border transition-all';
+
+                if (status === 'live') {
+                    badge.classList.add('bg-[#50fa7b]/10', 'text-[#50fa7b]', 'border-[#50fa7b]/20');
+                    badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-[#50fa7b]"></span> docs: live';
+                } else if (status === 'syncing') {
+                    badge.classList.add('bg-[#f1fa8c]/10', 'text-[#f1fa8c]', 'border-[#f1fa8c]/20');
+                    badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-[#f1fa8c] animate-pulse"></span> docs: syncing';
+                } else if (status === 'error') {
+                    badge.classList.add('bg-[#ff5555]/10', 'text-[#ff5555]', 'border-[#ff5555]/20');
+                    badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-[#ff5555]"></span> docs: error';
+                }
+            }
+        }
+
+        window.docsContext = new HypenosysDocsContext();
+
         let currentSessionId = null;
         let sessions = JSON.parse(localStorage.getItem('claude_chat_sessions') || '[]');
         let isThinkingEnabled = false;
         let attachedImage = null;
         let mediaRecorder = null;
         let audioChunks = [];
+
+        // Migrate sessions if needed
+        sessions = sessions.map(s => ({
+            ...s,
+            task_ref: s.task_ref || null
+        }));
+        localStorage.setItem('claude_chat_sessions', JSON.stringify(sessions));
 
         // UI Elements
         const chatMessages = document.getElementById('chat-messages');
@@ -345,7 +589,70 @@ permalink: /claude-chat.html
                 .replace(/'/g, '&#039;');
         }
 
+        async function loadTaskContext(taskId) {
+            try {
+                const owner = 'hypenosys';
+                const repo = 'hypenosys.github.io';
+                const path = '_data/dashboard_tasks.json';
+                const branch = 'feature/team-profiles-dashboard';
+                const token = window.AuthManager?.getValidToken?.() || window.githubApi?.getAuthToken?.();
+
+                const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${branch}`;
+                const headers = { 'Accept': 'application/vnd.github.v3+json' };
+                if (token) headers['Authorization'] = `token ${token}`;
+
+                const r = await fetch(url, { headers });
+                if (!r.ok) return null;
+
+                const d = await r.json();
+                const content = JSON.parse(atob(d.content.replace(/\n/g, '')));
+                const tasks = content.tasks || [];
+
+                return tasks.find(t => String(t.id) === String(taskId));
+            } catch (e) {
+                console.error('[Claude] Error loading task context:', e);
+                return null;
+            }
+        }
+
+        function showTaskContextBanner(task) {
+            const banner = document.createElement('div');
+            banner.id = 'task-context-banner';
+            banner.className = 'mx-6 mt-4 p-3 bg-[#bd93f9]/10 border border-[#bd93f9]/30 rounded-lg flex items-center justify-between animate-slide-down';
+            banner.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-[#bd93f9]/20 flex items-center justify-center text-[#bd93f9]">
+                        <i class="fas fa-briefcase text-xs"></i>
+                    </div>
+                    <div>
+                        <div class="text-[10px] font-bold text-[#bd93f9] uppercase tracking-widest">Contexto de Tarea</div>
+                        <div class="text-sm font-bold text-white/90">${task.titulo || task.title}</div>
+                    </div>
+                </div>
+                <button onclick="this.parentElement.remove(); window._activeTaskContext = null;" class="text-[#6272a4] hover:text-white transition-all">
+                    <i class="fas fa-times text-xs"></i>
+                </button>
+            `;
+            const header = document.querySelector('header');
+            header.after(banner);
+        }
+
         async function init() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const taskId = urlParams.get('task_id');
+
+            if (taskId) {
+                const task = await loadTaskContext(taskId);
+                if (task) {
+                    window._activeTaskContext = task;
+                    showTaskContextBanner(task);
+
+                    // Strip taskId from URL
+                    const newUrl = window.location.pathname + (window.location.search.includes('from=jules-panel') ? '?from=jules-panel' : '');
+                    window.history.replaceState({}, document.title, newUrl);
+                }
+            }
+
             renderSessionList();
             if (sessions.length > 0) {
                 loadSession(sessions[0].id);
@@ -368,6 +675,282 @@ permalink: /claude-chat.html
 
             adaptUI(config);
             setupProfileSelector();
+            setupApiModalEnhancements();
+
+            // Start docs polling
+            const docsBadge = document.getElementById('docs-status-badge');
+            if (docsBadge) docsBadge.classList.remove('hidden');
+            window.docsContext.startPolling(() => {
+                if (window.authManager) window.authManager.showToast('Docs Actualizados', 'Se han detectado cambios en el repositorio de documentación.', 'info');
+                else showToast('Documentación actualizada');
+            });
+        }
+
+        function setupApiModalEnhancements() {
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                        const modal = mutation.target;
+                        if (modal.classList.contains('show')) {
+                            injectNIMOption();
+                            injectProfileManager();
+                        }
+                    }
+                });
+            });
+
+            const apiModal = document.getElementById('modalApiConfig');
+            if (apiModal) {
+                observer.observe(apiModal, { attributes: true });
+            }
+        }
+
+        function injectProfileManager() {
+            const modalBody = document.querySelector('#modalApiConfig .modal-body');
+            if (!modalBody) return;
+
+            let managerContainer = document.getElementById('profile-manager-container');
+            if (!managerContainer) {
+                managerContainer = document.createElement('div');
+                managerContainer.id = 'profile-manager-container';
+                managerContainer.className = 'form-group mt-4 border-t border-purple pt-3';
+                managerContainer.innerHTML = `
+                    <label class="text-gray-400 small font-weight-bold uppercase mb-2">Perfiles Guardados</label>
+                    <div id="profile-manager-list" class="space-y-1"></div>
+                `;
+                modalBody.appendChild(managerContainer);
+            }
+            renderProfileManagerList();
+        }
+
+        function renderProfileManagerList() {
+            const listContainer = document.getElementById('profile-manager-list');
+            if (!listContainer) return;
+
+            const profiles = JSON.parse(localStorage.getItem('ai_profiles') || '{}');
+            const profileEntries = Object.entries(profiles);
+
+            if (profileEntries.length === 0) {
+                listContainer.innerHTML = '<div class="text-[10px] text-gray-500 italic">No hay perfiles guardados</div>';
+                return;
+            }
+
+            listContainer.innerHTML = profileEntries.map(([id, p]) => {
+                const name = p.name || id;
+                return `
+                    <div class="profile-item d-flex justify-content-between align-items-center mb-1 bg-dark/30 p-2 rounded border border-purple/20 hover:border-purple/50 transition-all">
+                        <button class="btn-load-profile text-[11px] text-white hover:text-[#bd93f9] font-bold transition-all bg-transparent border-none p-0 flex-grow text-left truncate mr-2"
+                                onclick="window.selectProfile('${id}')" title="Cargar perfil">
+                            <i class="fas fa-id-card mr-2 opacity-50"></i>${name}
+                        </button>
+                        <button class="btn-delete-profile btn btn-sm"
+                                onclick="window._deleteProfileFromModal('${id}', '${name}')"
+                                style="color:#ff5555; background:rgba(255,85,85,0.1); border:1px solid rgba(255,85,85,0.2); padding:2px 8px; border-radius:4px;"
+                                title="Eliminar perfil">
+                            <i class="fas fa-trash-alt text-[10px]"></i>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        window._enhancedDiscoverModels = async () => {
+            const provider = document.getElementById('ai_provider').value;
+            const baseUrl = (document.getElementById('ai_base_url').value || '').trim();
+            const apiKey = document.getElementById('ai_api_key').value;
+            const modelInput = document.getElementById('ai_model');
+
+            const discoverBtn = document.querySelector('#group-discover-models button');
+            const originalText = discoverBtn.innerHTML;
+
+            // Handle UI feedback area
+            let feedbackEl = document.getElementById('discover-feedback');
+            if (!feedbackEl) {
+                feedbackEl = document.createElement('div');
+                feedbackEl.id = 'discover-feedback';
+                feedbackEl.className = 'text-[10px] mt-2 font-bold';
+                modelInput.parentElement.after(feedbackEl);
+            }
+            feedbackEl.innerHTML = '';
+            feedbackEl.className = 'text-[10px] mt-2 font-bold';
+
+            if (provider === 'nvidia_nim') {
+                // Task: NO fetch. Render grouped list.
+                const select = document.createElement('select');
+                select.className = 'form-control bg-dark text-white border-purple mt-2';
+                select.innerHTML = '<option value="">-- Selecciona modelo NIM --</option>';
+
+                const groups = [
+                    { label: '🤖 Chat', key: 'chat' },
+                    { label: '👁️ Visión & Multimodal', key: 'vision' },
+                    { label: '🎙️ Voz (ASR/TTS)', key: 'speech' },
+                    { label: '🔍 Embeddings', key: 'embeddings' }
+                ];
+
+                groups.forEach(g => {
+                    const optgroup = document.createElement('optgroup');
+                    optgroup.label = g.label;
+                    NVIDIA_NIM_CATALOG[g.key].forEach(m => {
+                        const opt = document.createElement('option');
+                        opt.value = m.id;
+                        opt.textContent = m.label;
+                        optgroup.appendChild(opt);
+                    });
+                    select.appendChild(optgroup);
+                });
+
+                select.onchange = () => { if (select.value) modelInput.value = select.value; };
+                feedbackEl.appendChild(select);
+                return;
+            }
+
+            if (provider === 'ollama') {
+                discoverBtn.disabled = true;
+                discoverBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+                try {
+                    const controller = new AbortController();
+                    const id = setTimeout(() => controller.abort(), 3000);
+
+                    const res = await fetch(`${baseUrl}/models`, {
+                        headers: { 'Authorization': 'Bearer ollama' },
+                        signal: controller.signal
+                    });
+                    clearTimeout(id);
+
+                    if (res.ok) {
+                        const data = await res.json();
+                        const models = data.data || [];
+                        if (models.length > 0) {
+                            const select = document.createElement('select');
+                            select.className = 'form-control bg-dark text-white border-purple mt-2';
+                            select.innerHTML = models.map(m => `<option value="${m.id}">${m.id}</option>`).join('');
+                            select.onchange = () => { modelInput.value = select.value; };
+                            feedbackEl.appendChild(select);
+                        } else {
+                            throw new Error("No hay modelos instalados");
+                        }
+                    } else {
+                        throw new Error("Ollama offline");
+                    }
+                } catch (e) {
+                    feedbackEl.className += ' text-orange-400';
+                    feedbackEl.innerHTML = '⚠️ Ollama no detectado — catálogo de referencia';
+
+                    const select = document.createElement('select');
+                    select.className = 'form-control bg-dark text-white border-purple mt-2';
+                    select.innerHTML = '<option value="">-- Catálogo Ollama --</option>' +
+                        OLLAMA_DEFAULT_CATALOG.map(m => `<option value="${m.id}">${m.label}</option>`).join('');
+                    select.onchange = () => { if (select.value) modelInput.value = select.value; };
+                    feedbackEl.appendChild(select);
+                } finally {
+                    discoverBtn.disabled = false;
+                    discoverBtn.innerHTML = originalText;
+                }
+                return;
+            }
+
+            // Custom / Others
+            discoverBtn.disabled = true;
+            discoverBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            try {
+                const res = await fetch(`${baseUrl}/models`, {
+                    headers: { 'Authorization': `Bearer ${apiKey}` }
+                });
+                const data = await res.json();
+                const models = data.data || [];
+
+                if (models.length > 0) {
+                    const select = document.createElement('select');
+                    select.className = 'form-control bg-dark text-white border-purple mt-2';
+                    select.innerHTML = models.map(m => `<option value="${m.id}">${m.id}</option>`).join('');
+                    select.onchange = () => { modelInput.value = select.value; };
+                    feedbackEl.appendChild(select);
+                } else {
+                    throw new Error("No se encontraron modelos");
+                }
+            } catch (e) {
+                feedbackEl.className += ' text-red-500';
+                feedbackEl.innerText = `Error: ${e.message}`;
+            } finally {
+                discoverBtn.disabled = false;
+                discoverBtn.innerHTML = originalText;
+            }
+        };
+
+        window._deleteProfileFromModal = (id, name) => {
+            if (confirm(`¿Eliminar perfil "${name}"?`)) {
+                let profiles = JSON.parse(localStorage.getItem('ai_profiles') || '{}');
+                delete profiles[id];
+                localStorage.setItem('ai_profiles', JSON.stringify(profiles));
+
+                if (localStorage.getItem('activeProfile') === id) {
+                    localStorage.removeItem('activeProfile');
+                }
+
+                renderProfileManagerList();
+                if (typeof window.loadProfiles === 'function') window.loadProfiles();
+            }
+        };
+
+        function injectNIMOption() {
+            const providerSelect = document.getElementById('ai_provider');
+            if (!providerSelect) return;
+
+            if (!providerSelect.querySelector('option[value="nvidia_nim"]')) {
+                const nimOpt = document.createElement('option');
+                nimOpt.value = 'nvidia_nim';
+                nimOpt.textContent = 'NVIDIA NIM';
+                providerSelect.appendChild(nimOpt);
+            }
+
+            // Ensure we handle provider change with autocomplete
+            const originalOnChange = providerSelect.onchange;
+            providerSelect.onchange = (e) => {
+                const val = providerSelect.value;
+                const modelInput = document.getElementById('ai_model');
+                const baseUrlInput = document.getElementById('ai_base_url');
+
+                if (val === 'nvidia_nim') {
+                    baseUrlInput.value = 'https://integrate.api.nvidia.com/v1';
+                    modelInput.value = 'nvidia/nemotron-3-ultra-550b-a55b';
+                    handleNIMSelection();
+                } else if (val === 'ollama') {
+                    baseUrlInput.value = 'http://localhost:11434/v1';
+                    modelInput.value = 'llama3.3';
+                    if (originalOnChange) originalOnChange.call(providerSelect, e);
+                } else if (originalOnChange) {
+                    originalOnChange.call(providerSelect, e);
+                }
+            };
+
+            // Redirect DESCUBRIR button
+            const discoverBtn = document.querySelector('#group-discover-models button');
+            if (discoverBtn) {
+                discoverBtn.onclick = () => window._enhancedDiscoverModels();
+            }
+        }
+
+        function handleNIMSelection() {
+            const modelInput = document.getElementById('ai_model');
+            const baseUrlInput = document.getElementById('ai_base_url');
+            const apiKeyInput = document.getElementById('ai_api_key');
+            const baseUrlGroup = document.getElementById('group-base-url');
+
+            baseUrlInput.value = 'https://integrate.api.nvidia.com/v1';
+            modelInput.placeholder = 'nvidia/nemotron-3-ultra-550b-a55b';
+            apiKeyInput.placeholder = 'Tu API key empieza con nvapi-';
+            baseUrlGroup.style.display = 'block';
+
+            // Hide Ollama specific groups
+            ['ollama-scan-btn-group', 'group-ollama-discovery', 'group-ollama-models'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = 'none';
+            });
+            const ollamaHelp = document.getElementById('ollama-help-block');
+            if (ollamaHelp) ollamaHelp.classList.add('hidden');
+            const discoverGroup = document.getElementById('group-discover-models');
+            if (discoverGroup) discoverGroup.style.display = 'block';
         }
 
         function getActiveConfig() {
@@ -559,13 +1142,14 @@ permalink: /claude-chat.html
         }
 
         function createNewSession() {
-            const id = Date.now().toString();
+            const id = 'session_' + Date.now();
             const newSession = {
                 id,
                 title: 'Nueva Conversación',
                 messages: [],
                 systemPrompt: 'Eres Claude, un asistente experto para el estudio de videojuegos Hypenosys.',
-                createdAt: new Date().toISOString()
+                createdAt: new Date().toISOString(),
+                task_ref: null
             };
             sessions.unshift(newSession);
             saveSessions();
@@ -606,14 +1190,38 @@ permalink: /claude-chat.html
 
         function renderSessionList() {
             const list = document.getElementById('session-list');
-            list.innerHTML = sessions.map(s => `
-                <div onclick="loadSession('${s.id}')" class="p-2 rounded cursor-pointer text-xs transition-all ${currentSessionId === s.id ? 'bg-[#44475a] text-white' : 'text-[#6272a4] hover:bg-[#44475a]/50'} flex justify-between group">
-                    <span class="truncate">${s.title}</span>
-                    <button onclick="event.stopPropagation(); deleteSession('${s.id}')" class="opacity-0 group-hover:opacity-100 hover:text-[#ff5555] transition-all">
-                        <i class="fas fa-trash-alt text-[10px]"></i>
-                    </button>
+            const recentSessions = sessions.slice(0, 10);
+            list.innerHTML = recentSessions.map(s => `
+                <div onclick="loadSession('${s.id}')" class="p-2 rounded cursor-pointer text-xs transition-all ${currentSessionId === s.id ? 'bg-[#44475a] text-white' : 'text-[#6272a4] hover:bg-[#44475a]/50'} flex items-center justify-between group">
+                    <span class="truncate flex-grow">${s.title}</span>
+                    <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                        <button onclick="event.stopPropagation(); exportSession('${s.id}')" class="hover:text-[#50fa7b]" title="Exportar">
+                            <i class="fas fa-download text-[10px]"></i>
+                        </button>
+                        <button onclick="event.stopPropagation(); deleteSession('${s.id}')" class="hover:text-[#ff5555]" title="Eliminar">
+                            <i class="fas fa-trash-alt text-[10px]"></i>
+                        </button>
+                    </div>
                 </div>
             `).join('');
+        }
+
+        function exportSession(id) {
+            const session = sessions.find(s => s.id === id);
+            if (!session) return;
+
+            const date = new Date().toISOString().split('T')[0];
+            const filename = `hypenosys-chat-${id}-${date}.json`;
+            const blob = new Blob([JSON.stringify(session, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         }
 
         function deleteSession(id) {
@@ -743,6 +1351,28 @@ permalink: /claude-chat.html
             }
         }
 
+        async function buildSystemPrompt(userMessage, basePrompt) {
+            const docKeywords = ['documentación', 'docs', 'readme', 'manual', 'cómo funciona', 'qué es', 'explica', 'describe'];
+            const needsDocs = docKeywords.some(k => userMessage.toLowerCase().includes(k));
+
+            let systemPrompt = basePrompt || "Eres Claude Neural, el asistente de Hypenosys. Tienes acceso a la documentación del proyecto.";
+
+            if (window._activeTaskContext) {
+                systemPrompt += `\n\n## Tarea activa en contexto\n` +
+                    `Título: ${window._activeTaskContext.titulo || window._activeTaskContext.title}\n` +
+                    `Descripción: ${window._activeTaskContext.descripcion || window._activeTaskContext.description}\n` +
+                    `Estado: ${window._activeTaskContext.estado || window._activeTaskContext.status}\n` +
+                    `Prioridad: ${window._activeTaskContext.prioridad || window._activeTaskContext.priority}\n` +
+                    `Repositorio: ${window._activeTaskContext.repo || 'N/A'}\n`;
+            }
+
+            if (needsDocs) {
+                const docsSnap = await window.docsContext.buildContextSnapshot(8);
+                systemPrompt += `\n\n${docsSnap}`;
+            }
+            return systemPrompt;
+        }
+
         async function sendMessage() {
             const content = chatInput.value.trim();
             if ((!content && !attachedImage) || sendBtn.disabled) return;
@@ -778,9 +1408,11 @@ permalink: /claude-chat.html
             // Clear attached image
             if (attachedImage) removeAttachedImage();
 
-            // Set title from first message
-            if (session.title === 'Nueva Conversación') {
-                session.title = content.substring(0, 30) + (content.length > 30 ? '...' : '');
+            // Set title from first message (Tarea 2.5 - 40 chars)
+            if (session.title === 'Nueva Conversación' && content) {
+                session.title = content.substring(0, 40) + (content.length > 40 ? '...' : '');
+                saveSessions();
+                renderSessionList();
             }
 
             chatInput.value = '';
@@ -806,7 +1438,7 @@ permalink: /claude-chat.html
                     await sendMessageOllama(session, config);
                 } else if (provider === 'anthropic') {
                     await sendMessageAnthropic(session, config);
-                } else if (provider === 'custom' || provider === 'openai' || provider === 'openrouter') {
+                } else if (provider === 'custom' || provider === 'openai' || provider === 'openrouter' || provider === 'nvidia_nim') {
                     await sendMessageCustom(session, config);
                 } else {
                     throw new Error(`Proveedor ${provider} no implementado aún en Claude Chat.`);
@@ -828,11 +1460,14 @@ permalink: /claude-chat.html
             const apiKey = config.api_key;
             if (!apiKey) throw new Error('Anthropic API Key no configurada.');
 
+            const lastUserMessage = session.messages[session.messages.length - 1].content;
+            const dynamicSystemPrompt = await buildSystemPrompt(lastUserMessage, session.systemPrompt);
+
             const requestBody = {
                 model: config.model || 'claude-3-5-sonnet-20241022',
                 max_tokens: 4096,
                 messages: session.messages.map(m => ({ role: m.role, content: m.content })),
-                system: session.systemPrompt,
+                system: dynamicSystemPrompt,
                 stream: true
             };
 
@@ -869,6 +1504,9 @@ permalink: /claude-chat.html
                 throw new Error('Base URL de Ollama no configurada. Por favor, configura el endpoint en API CONFIG.');
             }
 
+            const lastUserMessage = session.messages[session.messages.length - 1].content;
+            const dynamicSystemPrompt = await buildSystemPrompt(lastUserMessage, session.systemPrompt);
+
             const response = await fetch(`${baseUrl}/api/chat`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -877,7 +1515,7 @@ permalink: /claude-chat.html
                 body: JSON.stringify({
                     model: model,
                     messages: [
-                        { role: 'system', content: session.systemPrompt },
+                        { role: 'system', content: dynamicSystemPrompt },
                         ...session.messages.map(m => ({ role: m.role, content: m.content }))
                     ],
                     stream: true
@@ -918,11 +1556,54 @@ permalink: /claude-chat.html
             }
         }
 
-        async function sendMessageCustom(session, config) {
-            const baseUrl = (config.base_url || '').trim().replace(/\/+$/, '');
-            const apiKey = config.api_key;
-            const model = config.model;
+        async function callCustomProvider(config, messages) {
+            const baseUrl = (config.base_url || '').replace(/\/$/, '');
+            const endpoint = `${baseUrl}/chat/completions`;
 
+            const payload = {
+                model: config.model,
+                messages: messages,
+                max_tokens: 1024,
+                temperature: 0.7,
+                stream: false
+            };
+
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${config.api_key}`
+            };
+
+            // Detect NIM provider automatically
+            const isNIM = (config.base_url || '').includes('nvidia.com') ||
+                          (config.model || '').startsWith('nvidia/') ||
+                          (config.model || '').startsWith('meta/') ||
+                          (config.model || '').startsWith('mistralai/');
+
+            if (isNIM) {
+                headers['x-requested-with'] = 'XMLHttpRequest';
+            }
+
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                const err = await response.text();
+                throw new Error(`NIM/Custom API error ${response.status}: ${err}`);
+            }
+
+            const data = await response.json();
+
+            // OpenAI-compatible response format
+            return data.choices?.[0]?.message?.content
+                || data.choices?.[0]?.text
+                || JSON.stringify(data);
+        }
+
+        async function sendMessageCustom(session, config) {
+            const baseUrl = (config.base_url || '').trim();
             if (!baseUrl) throw new Error('Base URL no configurada para proveedor Custom.');
 
             const modelType = config.modelType || 'chat';
@@ -939,35 +1620,14 @@ permalink: /claude-chat.html
                 return { role: m.role, content: m.content };
             });
 
-            // Special case for Reasoning (add system prompt if it's the first message or use internal one)
-            if (modelType === 'code') {
-                const sysMsg = { role: "system", content: "You are an expert coding assistant. Always respond with clean, well-commented code." };
-                messages.unshift(sysMsg);
-            } else if (session.systemPrompt) {
-                messages.unshift({ role: 'system', content: session.systemPrompt });
+            const lastUserMessage = session.messages[session.messages.length - 1].content;
+            const dynamicSystemPrompt = await buildSystemPrompt(lastUserMessage, session.systemPrompt);
+
+            if (dynamicSystemPrompt) {
+                messages.unshift({ role: 'system', content: dynamicSystemPrompt });
             }
 
-            const response = await fetch(`${baseUrl}/chat/completions`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${apiKey}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    model: model,
-                    messages: messages,
-                    max_tokens: 1024,
-                    stream: false
-                })
-            });
-
-            if (!response.ok) {
-                const errData = await response.json().catch(() => ({}));
-                throw new Error(errData.error?.message || `API Error: ${response.status}`);
-            }
-
-            const data = await response.json();
-            const aiContent = data.choices[0].message.content;
+            const aiContent = await callCustomProvider(config, messages);
 
             session.messages.push({
                 role: 'assistant',
