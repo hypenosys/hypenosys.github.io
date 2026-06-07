@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-07T19:18:37.170Z",
+  "last_updated": "2026-06-07T19:19:37.399Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1532,7 +1532,7 @@
       "title": "Añadir NVIDIA NIM como provider en la configuración de Claude Neural Chat",
       "descripcion": "",
       "rama": "PRO",
-      "task_type": "feature",
+      "task_type": "research",
       "tema_principal": "Programación / Engine",
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Minor",
@@ -1571,6 +1571,13 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:19:36.619Z",
+          "field": "task_type",
+          "old_value": "feature",
+          "new_value": "research"
         }
       ],
       "id": 36
@@ -1847,6 +1854,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #36",
+      "user": "Axlfc",
+      "timestamp": "2026-06-07T19:19:37.399Z"
+    },
     {
       "action": "chore: actualizar tarea #32",
       "user": "Axlfc",
