@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-07T19:16:53.022Z",
+  "computed_at": "2026-06-07T19:17:04.935Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 18,
@@ -25,13 +25,13 @@
     "bug_rate": 0.0588,
     "blocker_health": 3,
     "tag_heatmap": {
-      "feature": 7,
+      "feature": 6,
       "PRO": 8,
       "brainstorm": 1,
       "design": 1,
       "research": 1,
       "DIS": 2,
-      "chore": 2,
+      "chore": 3,
       "git": 1,
       "UX/UI": 2,
       "Infraestructura": 1,
@@ -455,7 +455,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-06-07T19:16:53.970Z"
+      "timestamp": "2026-06-07T19:17:06.003Z"
     }
   ]
 }
