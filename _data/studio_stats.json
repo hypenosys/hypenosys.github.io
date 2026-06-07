@@ -1,15 +1,15 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-07T19:22:24.490Z",
+  "computed_at": "2026-06-07T19:24:00.153Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 18,
+    "total_tasks": 19,
     "total_ok": 1,
     "total_ko": 0,
     "total_uncertain": 6,
     "total_obsolete": 5,
     "fixed_found_ratio": 0.0435,
-    "verified_ratio": 0.0435
+    "verified_ratio": 0.0417
   },
   "group": {
     "velocity_trend": {
@@ -22,11 +22,11 @@
       "2026-W22": 6,
       "2026-W23": 7
     },
-    "bug_rate": 0.1176,
+    "bug_rate": 0.1111,
     "blocker_health": 3,
     "tag_heatmap": {
-      "feature": 4,
-      "PRO": 8,
+      "feature": 5,
+      "PRO": 9,
       "brainstorm": 1,
       "design": 1,
       "research": 2,
@@ -43,7 +43,7 @@
       "svn": 1,
       "n8n": 1
     },
-    "milestone_tasks_remaining": 10,
+    "milestone_tasks_remaining": 11,
     "hall_of_fame_winners": {
       "mvp": {
         "handle": "axlfc",
@@ -178,7 +178,7 @@
         "reprioritizations": 14
       },
       "workload": {
-        "active_tasks": 10,
+        "active_tasks": 11,
         "story_points": 23
       }
     },
@@ -225,7 +225,7 @@
         "reprioritizations": 19
       },
       "workload": {
-        "active_tasks": 15,
+        "active_tasks": 16,
         "story_points": 33
       }
     },
@@ -455,7 +455,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-06-07T19:22:25.459Z"
+      "timestamp": "2026-06-07T19:24:01.160Z"
     }
   ]
 }
