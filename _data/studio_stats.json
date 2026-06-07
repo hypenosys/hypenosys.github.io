@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-07T19:14:33.458Z",
+  "computed_at": "2026-06-07T19:14:56.667Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 18,
@@ -23,7 +23,7 @@
       "2026-W23": 7
     },
     "bug_rate": 0.0588,
-    "blocker_health": 2,
+    "blocker_health": 3,
     "tag_heatmap": {
       "feature": 7,
       "PRO": 8,
@@ -455,7 +455,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-06-07T19:14:34.449Z"
+      "timestamp": "2026-06-07T19:14:57.808Z"
     }
   ]
 }
