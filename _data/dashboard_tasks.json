@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-07T20:09:03.262Z",
+  "last_updated": "2026-06-07T20:09:21.544Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -395,7 +395,7 @@
         "alex@hypenosys.com"
       ],
       "images": [],
-      "title": "upgrade repo 'app' to Unreal 5.7.4",
+      "title": "upgrade 'app' to Unreal 5.7.4",
       "task_type": "chore",
       "start_date": "2026-06-01",
       "due_date": "2026-06-30",
@@ -512,6 +512,13 @@
           "field": "descripcion",
           "old_value": "Merge SVN Content/Scripts SVN folder syncing with upgraded an upgraded github repo 'app' to 5.7.4",
           "new_value": "Merge to SVN Content/Scripts git folder syncing with github repo 'app' sync to 5.7.4"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T20:09:21.058Z",
+          "field": "title",
+          "old_value": "upgrade repo 'app' to Unreal 5.7.4",
+          "new_value": "upgrade 'app' to Unreal 5.7.4"
         }
       ],
       "repository": "hypenosys/app"
@@ -2041,6 +2048,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #11",
+      "user": "Axlfc",
+      "timestamp": "2026-06-07T20:09:21.544Z"
+    },
     {
       "action": "chore: actualizar tarea #11",
       "user": "Axlfc",
