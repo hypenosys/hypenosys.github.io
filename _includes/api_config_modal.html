@@ -32,7 +32,34 @@
 
                 <div class="form-group">
                     <label for="ai_model" class="text-gray-400 small font-weight-bold uppercase">Modelo</label>
-                    <input type="text" id="ai_model" class="form-control bg-dark text-white border-purple" placeholder="Selecciona un proveedor">
+                    <div class="input-group">
+                        <input type="text" id="ai_model" class="form-control bg-dark text-white border-purple" placeholder="Selecciona un proveedor">
+                        <div class="input-group-append" id="group-discover-models" style="display: none;">
+                            <button class="btn btn-outline-purple" type="button" onclick="window.ollamaUI.discoverCustomModels()">
+                                <i class="fas fa-search"></i> DESCUBRIR
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="group-model-type" class="form-group" style="display: none;">
+                    <label class="text-gray-400 small font-weight-bold uppercase">Tipo de Modelo</label>
+                    <div id="model-type-selector" class="d-flex flex-wrap gap-1">
+                        <button class="btn btn-xs btn-outline-purple active" data-type="chat">💬 Chat</button>
+                        <button class="btn btn-xs btn-outline-purple" data-type="vision">👁 Vision</button>
+                        <button class="btn btn-xs btn-outline-purple" data-type="audio">🎵 Audio</button>
+                        <button class="btn btn-xs btn-outline-purple" data-type="image-gen">🖼 Imagen</button>
+                        <button class="btn btn-xs btn-outline-purple" data-type="code">💻 Código</button>
+                        <button class="btn btn-xs btn-outline-purple" data-type="reasoning">🧠 Reasoning</button>
+                        <button class="btn btn-xs btn-outline-purple" data-type="safety">🛡 Safety</button>
+                    </div>
+                </div>
+
+                <div id="group-custom-models" class="form-group" style="display: none;">
+                    <label class="text-gray-400 small font-weight-bold uppercase">Modelos Detectados</label>
+                    <select id="custom-models-select" class="form-control bg-dark text-white border-purple" onchange="window.ollamaUI.selectCustomModel(this.value)">
+                        <option value="">Carga modelos primero...</option>
+                    </select>
                 </div>
 
                 <div class="form-group">
@@ -116,9 +143,17 @@
                     </div>
                 </div>
             </div>
-            <div class="modal-footer border-purple">
-                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancelar</button>
-                <button type="button" id="btn-save-api-config" class="btn btn-purple">Guardar Configuración</button>
+            <div class="modal-footer border-purple flex-column">
+                <div class="w-100 d-flex gap-2 mb-3">
+                    <input type="text" id="ai_profile_name" class="form-control bg-dark text-white border-purple" placeholder="Nombre del perfil (ej: NIM Chat)">
+                    <button type="button" class="btn btn-outline-purple" onclick="window.ollamaUI.saveAsProfile()">
+                        <i class="fas fa-save mr-1"></i> GUARDAR PERFIL
+                    </button>
+                </div>
+                <div class="w-100 d-flex justify-content-end">
+                    <button type="button" class="btn btn-outline-secondary mr-2" data-dismiss="modal">Cancelar</button>
+                    <button type="button" id="btn-save-api-config" class="btn btn-purple">Guardar Configuración</button>
+                </div>
             </div>
         </div>
     </div>

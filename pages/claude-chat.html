@@ -175,9 +175,22 @@ permalink: /claude-chat.html
         <header class="h-16 border-b border-[#44475a]/50 flex items-center justify-between px-6 bg-[#1e1f29]/50 backdrop-blur-md sticky top-0 z-10">
             <div class="flex items-center gap-3">
                 <div id="session-title" class="font-bold text-base tracking-tight text-white/90">Nueva Conversación</div>
-                <div class="flex gap-2">
-                    <span id="model-badge" class="text-[9px] bg-[#bd93f9]/10 border border-[#bd93f9]/30 px-2 py-0.5 rounded-full text-[#bd93f9] font-black tracking-widest uppercase">SONNET-3.5</span>
-                    <span id="provider-badge" class="text-[9px] bg-[#8be9fd]/10 border border-[#8be9fd]/30 px-2 py-0.5 rounded-full text-[#8be9fd] font-black tracking-widest uppercase">ANTHROPIC</span>
+                <div class="relative group" id="profile-selector-container">
+                    <button id="active-profile-btn" class="flex items-center gap-2 bg-[#44475a]/50 hover:bg-[#44475a] border border-[#bd93f9]/30 px-3 py-1 rounded-full transition-all">
+                        <span id="active-profile-name" class="text-[10px] font-black tracking-widest uppercase text-[#bd93f9]">ANTHROPIC</span>
+                        <i class="fas fa-chevron-down text-[8px] text-[#bd93f9]/50"></i>
+                    </button>
+                    <!-- Two-level dropdown -->
+                    <div id="profile-dropdown" class="hidden absolute top-full left-0 mt-2 w-72 bg-[#1e1f29] border border-[#44475a] rounded-xl shadow-2xl z-50 overflow-hidden">
+                        <div id="profile-list" class="max-h-96 overflow-y-auto py-2 custom-scrollbar">
+                            <!-- Dynamic content -->
+                        </div>
+                        <div class="p-2 border-t border-[#44475a]">
+                            <button onclick="openSettings()" class="w-full text-left text-[10px] font-bold text-[#bd93f9] hover:bg-[#44475a] p-2 rounded transition-all">
+                                <i class="fas fa-plus mr-2"></i> AÑADIR CONFIGURACIÓN
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="flex items-center gap-6">
@@ -224,17 +237,50 @@ permalink: /claude-chat.html
                     <i class="fas fa-circle-notch fa-spin mr-1"></i> CLAUDE ESTÁ PENSANDO...
                 </div>
 
+                <!-- Adaptative UI Components -->
+                <div id="vision-preview" class="hidden mb-2 relative w-24 h-24">
+                    <img id="preview-img" class="w-full h-full object-cover rounded-lg border border-[#bd93f9]/30" src="" />
+                    <button onclick="removeAttachedImage()" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] hover:bg-red-600 transition-all">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
                 <div class="bg-[#1e1f29] border border-[#44475a] rounded-2xl p-3 flex flex-col gap-2 focus-within:border-[#bd93f9]/50 focus-within:shadow-[0_0_20px_rgba(189,147,249,0.1)] transition-all duration-500">
-                    <textarea id="chat-input" rows="1" placeholder="¿En qué puedo ayudarte hoy?"
-                              class="w-full bg-transparent border-none text-white/90 p-2 text-sm focus:ring-0 resize-none outline-none placeholder:text-[#6272a4]/50 custom-scrollbar"></textarea>
+                    <div class="flex items-center gap-2">
+                        <textarea id="chat-input" rows="1" placeholder="¿En qué puedo ayudarte hoy?"
+                                  class="w-full bg-transparent border-none text-white/90 p-2 text-sm focus:ring-0 resize-none outline-none placeholder:text-[#6272a4]/50 custom-scrollbar"></textarea>
+
+                        <div id="audio-record-container" class="hidden">
+                            <button id="record-btn" class="w-10 h-10 rounded-full bg-[#ff5555]/10 border border-[#ff5555]/30 text-[#ff5555] flex items-center justify-center hover:bg-[#ff5555]/20 transition-all">
+                                <i class="fas fa-microphone"></i>
+                            </button>
+                        </div>
+                    </div>
+
                     <div class="flex justify-between items-center px-2 pb-1">
-                        <div class="flex gap-4">
+                        <div class="flex gap-4 items-center">
+                            <button id="attach-btn" title="Adjuntar imagen" class="hidden text-[#6272a4] hover:text-[#bd93f9] transition-colors">
+                                <i class="fas fa-paperclip text-xs"></i>
+                            </button>
+                            <input type="file" id="image-input" class="hidden" accept="image/*" />
+
+                            <button id="toggle-input-mode" title="Cambiar a teclado" class="hidden text-[#6272a4] hover:text-[#50fa7b] transition-colors">
+                                <i class="fas fa-keyboard text-xs"></i>
+                            </button>
+
                             <button id="toggle-thinking" title="Toggle Extended Thinking" class="text-[#6272a4] hover:text-[#8be9fd] transition-colors">
                                 <i class="fas fa-brain text-xs"></i>
                             </button>
                             <button onclick="openSystemPrompt()" title="System Prompt" class="text-[#6272a4] hover:text-[#bd93f9] transition-colors">
                                 <i class="fas fa-terminal text-xs"></i>
                             </button>
+
+                            <!-- Resolution Selector (hidden by default) -->
+                            <select id="image-resolution" class="hidden bg-[#0d0d0f] border border-[#44475a] text-[#6272a4] text-[10px] rounded px-2 py-1 outline-none focus:border-[#bd93f9]">
+                                <option value="512x512">512x512</option>
+                                <option value="1024x1024" selected>1024x1024</option>
+                                <option value="1792x1024">1792x1024</option>
+                            </select>
                         </div>
                         <button id="send-btn" class="bg-[#bd93f9] text-[#282a36] px-4 py-1.5 rounded-lg font-bold text-xs hover:opacity-90 transition-all flex items-center gap-2">
                             <span>ENVIAR</span>
@@ -279,6 +325,9 @@ permalink: /claude-chat.html
         let currentSessionId = null;
         let sessions = JSON.parse(localStorage.getItem('claude_chat_sessions') || '[]');
         let isThinkingEnabled = false;
+        let attachedImage = null;
+        let mediaRecorder = null;
+        let audioChunks = [];
 
         // UI Elements
         const chatMessages = document.getElementById('chat-messages');
@@ -296,19 +345,19 @@ permalink: /claude-chat.html
                 .replace(/'/g, '&#039;');
         }
 
-        function init() {
+        async function init() {
             renderSessionList();
             if (sessions.length > 0) {
                 loadSession(sessions[0].id);
             }
 
-            const config = JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
+            // Load profiles and set active
+            await loadProfiles();
+
+            const config = getActiveConfig();
             const provider = config.provider || 'anthropic';
 
-            // UI Update for Badges
-            const modelName = config.model || (provider === 'ollama' ? 'llama3' : 'claude-3-5-sonnet-20241022');
-            document.getElementById('model-badge').textContent = modelName.split('/').pop().toUpperCase();
-            document.getElementById('provider-badge').textContent = provider.toUpperCase();
+            updateActiveProfileUI(config);
 
             // REAL-TIME Connection Status (GOD MODE Feature)
             checkConnection(provider, config);
@@ -316,6 +365,194 @@ permalink: /claude-chat.html
             if (provider === 'ollama') {
                 document.getElementById('ollama-quick-config').classList.remove('hidden');
             }
+
+            adaptUI(config);
+            setupProfileSelector();
+        }
+
+        function getActiveConfig() {
+            const activeProfileId = localStorage.getItem('activeProfile');
+            const profiles = JSON.parse(localStorage.getItem('ai_profiles') || '{}');
+
+            if (activeProfileId && profiles[activeProfileId]) {
+                return profiles[activeProfileId];
+            }
+
+            return JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
+        }
+
+        async function loadProfiles() {
+            let profiles = JSON.parse(localStorage.getItem('ai_profiles') || '{}');
+
+            // Auto-detect NVIDIA NIM
+            const currentConfig = JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
+            if (currentConfig.base_url?.includes('integrate.api.nvidia.com')) {
+                profiles['nvidia-nim'] = {
+                    ...currentConfig,
+                    id: 'nvidia-nim',
+                    name: 'NVIDIA NIM',
+                    provider: 'custom',
+                    modelType: 'chat'
+                };
+            }
+
+            // Auto-detect Ollama
+            try {
+                const res = await fetch('http://localhost:11434/api/tags').catch(() => null);
+                if (res && res.ok) {
+                    const data = await res.json();
+                    profiles['ollama-local'] = {
+                        id: 'ollama-local',
+                        name: 'Ollama (Local)',
+                        provider: 'ollama',
+                        base_url: 'http://localhost:11434/v1',
+                        api_key: 'ollama',
+                        models: data.models.map(m => m.name),
+                        model: data.models[0]?.name || 'llama3'
+                    };
+                }
+            } catch (e) {}
+
+            localStorage.setItem('ai_profiles', JSON.stringify(profiles));
+            renderProfileDropdown();
+        }
+
+        function renderProfileDropdown() {
+            const list = document.getElementById('profile-list');
+            const profiles = JSON.parse(localStorage.getItem('ai_profiles') || '{}');
+            const activeId = localStorage.getItem('activeProfile');
+
+            list.innerHTML = Object.values(profiles).map(p => {
+                const isNvidia = p.id === 'nvidia-nim';
+                const isOllama = p.id === 'ollama-local';
+                const icon = isOllama ? '🟢' : (isNvidia ? '⚡' : '👤');
+
+                let modelsHtml = '';
+                if (p.models && p.models.length > 0) {
+                    modelsHtml = `
+                        <div class="pl-6 space-y-1 mt-1">
+                            ${p.models.slice(0, 10).map(m => `
+                                <div onclick="selectModelFromProfile('${p.id}', '${m}')" class="text-[9px] text-[#6272a4] hover:text-white cursor-pointer truncate">
+                                    ${m}
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+
+                return `
+                    <div class="px-3 py-2 border-b border-[#44475a]/30">
+                        <div onclick="selectProfile('${p.id}')" class="flex items-center justify-between cursor-pointer group">
+                            <div class="flex items-center gap-2">
+                                <span class="text-[10px]">${icon}</span>
+                                <span class="text-[10px] font-bold ${p.id === activeId ? 'text-[#bd93f9]' : 'text-slate-400'}">${p.name}</span>
+                            </div>
+                            <button onclick="event.stopPropagation(); deleteProfile('${p.id}')" class="opacity-0 group-hover:opacity-100 text-[#ff5555] text-[10px]">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                        ${modelsHtml}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function selectProfile(id) {
+            localStorage.setItem('activeProfile', id);
+            const profiles = JSON.parse(localStorage.getItem('ai_profiles') || '{}');
+            const config = profiles[id];
+            localStorage.setItem('hy_ai_config', JSON.stringify(config));
+
+            updateActiveProfileUI(config);
+            adaptUI(config);
+            checkConnection(config.provider, config);
+            document.getElementById('profile-dropdown').classList.add('hidden');
+        }
+
+        function selectModelFromProfile(profileId, model) {
+            localStorage.setItem('activeProfile', profileId);
+            const profiles = JSON.parse(localStorage.getItem('ai_profiles') || '{}');
+            const config = { ...profiles[profileId], model: model };
+
+            // Detect model type from name
+            config.modelType = detectModelType(model);
+
+            localStorage.setItem('hy_ai_config', JSON.stringify(config));
+            updateActiveProfileUI(config);
+            adaptUI(config);
+            checkConnection(config.provider, config);
+            document.getElementById('profile-dropdown').classList.add('hidden');
+        }
+
+        function deleteProfile(id) {
+            if (!confirm('¿Seguro que quieres eliminar este perfil?')) return;
+            let profiles = JSON.parse(localStorage.getItem('ai_profiles') || '{}');
+            delete profiles[id];
+            localStorage.setItem('ai_profiles', JSON.stringify(profiles));
+            if (localStorage.getItem('activeProfile') === id) {
+                localStorage.removeItem('activeProfile');
+            }
+            renderProfileDropdown();
+        }
+
+        function detectModelType(modelId) {
+            const m = modelId.toLowerCase();
+            if (/vl|vision|visual|llava|pixtral|intern-vl/.test(m)) return 'vision';
+            if (/embed|e5-|nv-embed|retrieval/.test(m)) return 'embedding';
+            if (/rerank/.test(m)) return 'reranking';
+            if (/asr|tts|whisper|canary|parakeet|fastpitch/.test(m)) return 'audio';
+            if (/stable-diffusion|flux|sdxl|imagen|dall/.test(m)) return 'image-gen';
+            if (/cosmos|video|wan/.test(m)) return 'video';
+            if (/code|starcoder|deepseek-coder|qwen-coder/.test(m)) return 'code';
+            if (/thinking|r1|o1|qwq/.test(m)) return 'reasoning';
+            if (/guard|shield|llama-guard|nemo-guard/.test(m)) return 'safety';
+            return 'chat';
+        }
+
+        function updateActiveProfileUI(config) {
+            const nameEl = document.getElementById('active-profile-name');
+            const model = config.model || 'SONNET-3.5';
+            nameEl.textContent = model.split('/').pop().toUpperCase();
+        }
+
+        function adaptUI(config) {
+            const type = config.modelType || 'chat';
+
+            // Reset UI
+            document.getElementById('image-resolution').classList.add('hidden');
+            document.getElementById('audio-record-container').classList.add('hidden');
+            document.getElementById('chat-input').classList.remove('hidden');
+            document.getElementById('attach-btn').classList.add('hidden');
+            document.getElementById('toggle-input-mode').classList.add('hidden');
+
+            if (type === 'image-gen') {
+                document.getElementById('image-resolution').classList.remove('hidden');
+            } else if (type === 'audio') {
+                if (!config.useTextInAudioMode) {
+                    document.getElementById('audio-record-container').classList.remove('hidden');
+                    document.getElementById('chat-input').classList.add('hidden');
+                    document.getElementById('toggle-input-mode').classList.remove('hidden');
+                } else {
+                    document.getElementById('toggle-input-mode').classList.remove('hidden');
+                    document.getElementById('toggle-input-mode').innerHTML = '<i class="fas fa-microphone text-xs"></i>';
+                }
+            } else if (type === 'vision') {
+                document.getElementById('attach-btn').classList.remove('hidden');
+            }
+        }
+
+        function setupProfileSelector() {
+            const btn = document.getElementById('active-profile-btn');
+            const dropdown = document.getElementById('profile-dropdown');
+
+            btn.onclick = (e) => {
+                e.stopPropagation();
+                dropdown.classList.toggle('hidden');
+            };
+
+            document.addEventListener('click', () => {
+                dropdown.classList.add('hidden');
+            });
         }
 
         function createNewSession() {
@@ -409,15 +646,46 @@ permalink: /claude-chat.html
                 chatMessages.innerHTML = '';
                 return;
             }
-            chatMessages.innerHTML = session.messages.map(m => `
+            chatMessages.innerHTML = session.messages.map(m => {
+                let content = m.content;
+                let reasoningHtml = '';
+
+                // Handle <think> blocks for Reasoning
+                if (content.includes('<think>')) {
+                    const parts = content.split(/<\/?think>/);
+                    if (parts.length >= 3) {
+                        const reasoning = parts[1];
+                        content = parts.slice(2).join('');
+                        reasoningHtml = `
+                            <details class="mb-4 border-l-2 border-orange-400 bg-orange-400/5 rounded-r-lg overflow-hidden">
+                                <summary class="p-2 text-[10px] font-bold text-orange-400 cursor-pointer hover:bg-orange-400/10 transition-all uppercase tracking-widest">
+                                    <i class="fas fa-brain mr-2"></i> Razonamiento interno
+                                </summary>
+                                <div class="p-3 text-xs text-orange-200/70 italic bg-black/20">
+                                    ${escapeHtml(reasoning)}
+                                </div>
+                            </details>
+                        `;
+                    }
+                }
+
+                // Handle Safety classification
+                let safetyBadge = '';
+                if (m.flagged || m.categories) {
+                    safetyBadge = `<div class="mb-2 px-2 py-1 rounded bg-red-500/20 border border-red-500/50 text-red-400 text-[9px] font-bold uppercase tracking-widest">⚠️ SAFETY ALERT: FLAG DETECTED</div>`;
+                }
+
+                return `
                 <div class="flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} group mb-4">
                     <div class="max-w-[85%] p-4 ${m.role === 'user' ? 'message-user' : 'message-claude shadow-xl'} relative message-bubble">
                         <div class="text-[10px] font-black tracking-widest uppercase mb-2 ${m.role === 'user' ? 'text-[#8be9fd]' : 'text-[#bd93f9]'} opacity-70">
                             ${m.role === 'user' ? 'NEURAL LINK: USER' : 'NEURAL LINK: CLAUDE'}
                         </div>
+                        ${safetyBadge}
                         ${m.thinking ? `<div class="thinking-block">${escapeHtml(m.thinking)}</div>` : ''}
+                        ${reasoningHtml}
                         <div class="prose prose-invert text-sm prose-pre:bg-[#1e1f29] prose-pre:border prose-pre:border-[#44475a] selection:bg-[#bd93f9]/30">
-                            ${marked.parse(m.content)}
+                            ${marked.parse(content)}
                         </div>
 
                         ${m.role !== 'user' ? `
@@ -471,7 +739,7 @@ permalink: /claude-chat.html
 
         async function sendMessage() {
             const content = chatInput.value.trim();
-            if (!content || sendBtn.disabled) return;
+            if ((!content && !attachedImage) || sendBtn.disabled) return;
 
             // God Mode Command Interception
             if (content.startsWith('/')) {
@@ -495,7 +763,14 @@ permalink: /claude-chat.html
             }
 
             const session = sessions.find(s => s.id === currentSessionId);
-            session.messages.push({ role: 'user', content });
+            session.messages.push({
+                role: 'user',
+                content: content,
+                image: attachedImage || undefined
+            });
+
+            // Clear attached image
+            if (attachedImage) removeAttachedImage();
 
             // Set title from first message
             if (session.title === 'Nueva Conversación') {
@@ -514,10 +789,19 @@ permalink: /claude-chat.html
             chatInput.disabled = true;
 
             try {
-                if (provider === 'ollama') {
+                const modelType = config.modelType || 'chat';
+
+                if (modelType === 'image-gen') {
+                    await sendMessageImageGen(session, config);
+                } else if (modelType === 'audio' && !config.useTextInAudioMode) {
+                    // ASR handled by recording, but if they click send...
+                    if (content) await sendMessageCustom(session, config);
+                } else if (provider === 'ollama') {
                     await sendMessageOllama(session, config);
                 } else if (provider === 'anthropic') {
                     await sendMessageAnthropic(session, config);
+                } else if (provider === 'custom' || provider === 'openai' || provider === 'openrouter') {
+                    await sendMessageCustom(session, config);
                 } else {
                     throw new Error(`Proveedor ${provider} no implementado aún en Claude Chat.`);
                 }
@@ -597,6 +881,139 @@ permalink: /claude-chat.html
             if (!response.ok) throw new Error(`Ollama Error: ${response.status}`);
 
             await consumeStream(response, session, 'ollama');
+        }
+
+        async function playTTS(text, config) {
+            const baseUrl = (config.base_url || '').trim().replace(/\/+$/, '');
+            const apiKey = config.api_key;
+
+            try {
+                const response = await fetch(`${baseUrl}/audio/speech`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${apiKey}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        model: config.model,
+                        input: text,
+                        voice: 'default'
+                    })
+                });
+
+                if (!response.ok) return;
+
+                const blob = await response.blob();
+                const url = URL.createObjectURL(blob);
+                const audio = new Audio(url);
+                audio.play();
+            } catch (e) {
+                console.error('TTS failed:', e);
+            }
+        }
+
+        async function sendMessageCustom(session, config) {
+            const baseUrl = (config.base_url || '').trim().replace(/\/+$/, '');
+            const apiKey = config.api_key;
+            const model = config.model;
+
+            if (!baseUrl) throw new Error('Base URL no configurada para proveedor Custom.');
+
+            const modelType = config.modelType || 'chat';
+            const messages = session.messages.map(m => {
+                if (modelType === 'vision' && m.image) {
+                    return {
+                        role: m.role,
+                        content: [
+                            { type: "image_url", image_url: { url: m.image } },
+                            { type: "text", text: m.content }
+                        ]
+                    };
+                }
+                return { role: m.role, content: m.content };
+            });
+
+            // Special case for Reasoning (add system prompt if it's the first message or use internal one)
+            if (modelType === 'code') {
+                const sysMsg = { role: "system", content: "You are an expert coding assistant. Always respond with clean, well-commented code." };
+                messages.unshift(sysMsg);
+            } else if (session.systemPrompt) {
+                messages.unshift({ role: 'system', content: session.systemPrompt });
+            }
+
+            const response = await fetch(`${baseUrl}/chat/completions`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${apiKey}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    model: model,
+                    messages: messages,
+                    max_tokens: 1024,
+                    stream: false
+                })
+            });
+
+            if (!response.ok) {
+                const errData = await response.json().catch(() => ({}));
+                throw new Error(errData.error?.message || `API Error: ${response.status}`);
+            }
+
+            const data = await response.json();
+            const aiContent = data.choices[0].message.content;
+
+            session.messages.push({
+                role: 'assistant',
+                content: aiContent
+            });
+
+            // If model type is TTS, play response
+            if (modelType === 'audio' && config.ttsEnabled) {
+                playTTS(aiContent, config);
+            }
+
+            saveSessions();
+            renderMessages();
+        }
+
+        async function sendMessageImageGen(session, config) {
+            const baseUrl = (config.base_url || '').trim().replace(/\/+$/, '');
+            const apiKey = config.api_key;
+            const model = config.model;
+            const resolution = document.getElementById('image-resolution')?.value || '1024x1024';
+
+            const lastMessage = session.messages[session.messages.length - 1];
+
+            const response = await fetch(`${baseUrl}/images/generations`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${apiKey}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    model: model,
+                    prompt: lastMessage.content,
+                    n: 1,
+                    size: resolution
+                })
+            });
+
+            if (!response.ok) {
+                const errData = await response.json().catch(() => ({}));
+                throw new Error(errData.error?.message || `API Error: ${response.status}`);
+            }
+
+            const data = await response.json();
+            const imageUrl = data.data[0].url;
+
+            session.messages.push({
+                role: 'assistant',
+                content: `![Generada](${imageUrl})`
+            });
+
+            saveSessions();
+            renderMessages();
         }
 
         async function checkConnection(provider, config) {
@@ -861,6 +1278,100 @@ permalink: /claude-chat.html
         function quickPrompt(text) {
             chatInput.value = text;
             sendMessage();
+        }
+
+        // Adaptative UI Handlers
+        document.getElementById('attach-btn').onclick = () => document.getElementById('image-input').click();
+
+        document.getElementById('image-input').onchange = (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                attachedImage = ev.target.result;
+                document.getElementById('preview-img').src = attachedImage;
+                document.getElementById('vision-preview').classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        };
+
+        function removeAttachedImage() {
+            attachedImage = null;
+            document.getElementById('vision-preview').classList.add('hidden');
+            document.getElementById('image-input').value = '';
+        }
+
+        document.getElementById('toggle-input-mode').onclick = () => {
+            const config = getActiveConfig();
+            config.useTextInAudioMode = !config.useTextInAudioMode;
+            localStorage.setItem('hy_ai_config', JSON.stringify(config));
+
+            const profiles = JSON.parse(localStorage.getItem('ai_profiles') || '{}');
+            const activeId = localStorage.getItem('activeProfile');
+            if (activeId && profiles[activeId]) {
+                profiles[activeId].useTextInAudioMode = config.useTextInAudioMode;
+                localStorage.setItem('ai_profiles', JSON.stringify(profiles));
+            }
+
+            adaptUI(config);
+        };
+
+        const recordBtn = document.getElementById('record-btn');
+        recordBtn.onmousedown = async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+
+                mediaRecorder.ondataavailable = (e) => audioChunks.push(e.data);
+                mediaRecorder.onstop = async () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    await sendAudioTranscription(audioBlob);
+                };
+
+                mediaRecorder.start();
+                recordBtn.classList.add('pulse', 'bg-red-500/40');
+            } catch (e) {
+                appendSystemMessage('Error al acceder al micrófono: ' + e.message, 'error');
+            }
+        };
+
+        recordBtn.onmouseup = () => {
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                mediaRecorder.stop();
+                recordBtn.classList.remove('pulse', 'bg-red-500/40');
+            }
+        };
+
+        async function sendAudioTranscription(blob) {
+            const config = getActiveConfig();
+            const baseUrl = (config.base_url || '').trim().replace(/\/+$/, '');
+            const apiKey = config.api_key;
+
+            const formData = new FormData();
+            formData.append('file', blob, 'recording.webm');
+            formData.append('model', config.model);
+
+            thinkingIndicator.classList.remove('hidden');
+
+            try {
+                const response = await fetch(`${baseUrl}/audio/transcriptions`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${apiKey}` },
+                    body: formData
+                });
+
+                if (!response.ok) throw new Error('Transcripción fallida');
+
+                const data = await response.json();
+                chatInput.value = data.text;
+                sendMessage();
+            } catch (e) {
+                appendSystemMessage('Error de transcripción: ' + e.message, 'error');
+            } finally {
+                thinkingIndicator.classList.add('hidden');
+            }
         }
 
         // Auto-resize textarea

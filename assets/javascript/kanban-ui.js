@@ -130,6 +130,8 @@
             const currentIdx = STATUS_FLOW.indexOf(task.estado);
             const nextStatus = STATUS_FLOW[(currentIdx + 1) % STATUS_FLOW.length];
 
+            const parsedTitle = typeof marked !== 'undefined' ? marked.parseInline(task.titulo) : task.titulo;
+
             return `
                 <div class="session-card kanban-card mb-3 p-3" data-id="${task.id}">
                     <div class="flex justify-between items-start mb-2">
@@ -139,7 +141,7 @@
                             <span class="badge ${color} text-white text-[9px] px-2 py-0.5 rounded">${task.prioridad}</span>
                         </div>
                     </div>
-                    <h4 class="text-sm font-bold mb-2 line-clamp-2">${task.titulo}</h4>
+                    <h4 class="text-sm font-bold mb-2 line-clamp-2 prose prose-invert">${parsedTitle}</h4>
                     <div class="flex items-center gap-2 mb-2">
                         ${(task.asignado_a || []).map(a => `
                             <div class="w-6 h-6 rounded-full bg-purple-600 flex items-center justify-center text-[10px] font-bold" title="${a}">

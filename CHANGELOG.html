@@ -125,6 +125,15 @@ permalink: /CHANGELOG.html
                   <li>Detección automática de expiración de token con redirección al flujo de login sin recarga forzada.</li>
                 </ul>
               </li>
+              <li><strong>Claude Chat Adaptive UI & AI Profiles:</strong>
+                <ul>
+                  <li>Implementado proveedor <strong>Custom</strong> (OpenAI-compatible) con autodescubrimiento y clasificación de modelos por tipo (Vision, Audio, Reasoning, etc.).</li>
+                  <li>Nueva interfaz adaptativa que activa controles específicos según el modelo: adjuntar imágenes para <strong>Multimodal</strong>, grabación/transcripción para <strong>Audio ASR</strong>, síntesis de voz para <strong>Audio TTS</strong>, y selector de resolución para <strong>Generación de Imágenes</strong>.</li>
+                  <li>Sistema avanzado de <strong>Perfiles de IA</strong> con selector de dos niveles (Proveedor > Modelo) en el header y persistencia global.</li>
+                  <li>Autodetección de <strong>NVIDIA NIM</strong> y <strong>Ollama Local</strong> con mapeo automático de configuraciones.</li>
+                  <li>Soporte visual para bloques de razonamiento (<code>&lt;think&gt;</code>) y badges de seguridad (Safety Guardrails).</li>
+                </ul>
+              </li>
             </ul>
             <h5 class="text-success">Fixed</h5>
             <ul class="tree-view mb-3">
@@ -452,6 +461,7 @@ permalink: /CHANGELOG.html
               <li><strong>Regresión en Botón de Edición:</strong> Corregido error que impedía abrir el modal de edición de tareas debido a comprobaciones de tipo estrictas (<code>===</code>) entre IDs numéricos y cadenas provenientes del DOM.</li>
               <li>Responsive layout and horizontal overflow issues on mobile (320px-430px) for Dashboard and Jules Panel.</li>
               <li>Markdown rendering in <code>progressUpdated</code> and <code>sessionCompleted</code> activities in Jules Panel.</li>
+              <li>Corregido el renderizado de Markdown en los títulos de tareas y sesiones del Jules Panel mediante <code>marked.parseInline()</code>.</li>
               <li>Removed duplicate "Jules Panel" title rendered by the Jekyll layout.</li>
               <li>Applied active state and disabled link for "Jules" in the navbar when on the Jules Panel page.</li>
               <li>Active state highlighting for "Comandos" and "Tech Stack" links in the main navigation.</li>
