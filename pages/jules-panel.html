@@ -2483,7 +2483,8 @@ permalink: /jules-panel/
     function buildCardHtml(s, idSafe) {
         const state = s.state || 'QUEUED';
         const timeAgo = getTimeAgo(s.createTime);
-        const truncatedTitle = s.title || (s.prompt.length > 60 ? s.prompt.substring(0, 57) + '...' : s.prompt);
+        const rawTitle = s.title || (s.prompt.length > 60 ? s.prompt.substring(0, 57) + '...' : s.prompt);
+        const truncatedTitle = typeof marked !== 'undefined' ? marked.parseInline(rawTitle) : rawTitle;
         const repoLabel = s.sourceContext?.source?.split('/').slice(-2).join('/') || 'Repo';
         const branchLabel = s.sourceContext?.githubRepoContext?.startingBranch || '---';
 
@@ -2522,7 +2523,7 @@ permalink: /jules-panel/
                 </div>
             </div>
 
-            <h3 class="session-card__title">${truncatedTitle}</h3>
+            <h3 class="session-card__title prose prose-invert">${truncatedTitle}</h3>
 
             ${state === 'IN_PROGRESS' ? `
               <div class="working-indicator" data-role="working-indicator">
