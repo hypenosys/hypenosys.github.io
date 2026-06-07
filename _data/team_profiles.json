@@ -1,6 +1,6 @@
 {
   "schema_version": "2.0.0",
-  "last_updated": "2026-06-07T12:14:11.340Z",
+  "last_updated": "2026-06-07T13:23:46.483Z",
   "members": {
     "Axel": {
       "github_username": "Axlfc",
@@ -50,7 +50,7 @@
         "volatilidad": 0
       },
       "ai_config": {
-        "provider": "custom",
+        "provider": "nvidia_nim",
         "model": "nvidia/nemotron-3-ultra-550b-a55b"
       }
     },
@@ -184,6 +184,41 @@
     }
   },
   "_audit_log": [
+    {
+      "action": "chore: actualizar config AI de Axel",
+      "user": "Axlfc",
+      "timestamp": "2026-06-07T13:23:46.483Z"
+    },
+    {
+      "action": "chore: actualizar config AI de Axel",
+      "user": "Axlfc",
+      "timestamp": "2026-06-07T13:10:35.054Z"
+    },
+    {
+      "action": "chore: actualizar config AI de Axel",
+      "user": "Axlfc",
+      "timestamp": "2026-06-07T13:10:09.133Z"
+    },
+    {
+      "action": "chore: actualizar config AI de Axel",
+      "user": "Axlfc",
+      "timestamp": "2026-06-07T13:08:17.949Z"
+    },
+    {
+      "action": "chore: actualizar config AI de Axel",
+      "user": "Axlfc",
+      "timestamp": "2026-06-07T13:06:28.870Z"
+    },
+    {
+      "action": "chore: actualizar config AI de Axel",
+      "user": "Axlfc",
+      "timestamp": "2026-06-07T13:04:12.103Z"
+    },
+    {
+      "action": "chore: actualizar config AI de Alex",
+      "user": "TopperH4rley",
+      "timestamp": "2026-06-07T12:18:53.515Z"
+    },
     {
       "action": "chore: actualizar config AI de Axel",
       "user": "Axlfc",
