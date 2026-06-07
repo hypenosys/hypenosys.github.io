@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-07T11:22:19.106Z",
-  "last_updated_by": "Axlfc",
+  "last_updated": "2026-06-07T11:26:48.651Z",
+  "last_updated_by": "Axel",
   "tasks": [
     {
       "id": 1,
@@ -1551,9 +1551,59 @@
         }
       ],
       "id": 36
+    },
+    {
+      "title": "EDITAR ALIAS / CONFIG Arreglar edit aliases Lightbox en panel de Jules ",
+      "descripcion": "se rompió la lógica de visualización de como seteamos aliases de los repositorios en el panel de Jules hacer que l botón funcione",
+      "rama": "PRO",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Axel",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-07",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T11:26:48.195Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 37
     }
   ],
   "_audit_log": [
+    {
+      "action": "feat: nueva tarea #1780831608195 añadida",
+      "user": "Axlfc",
+      "timestamp": "2026-06-07T11:26:48.651Z"
+    },
     {
       "action": "chore: actualizar tarea #35",
       "user": "Axlfc",
