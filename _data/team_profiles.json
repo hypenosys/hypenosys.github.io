@@ -1,6 +1,6 @@
 {
   "schema_version": "2.0.0",
-  "last_updated": "2026-06-07T13:06:28.870Z",
+  "last_updated": "2026-06-07T13:08:17.949Z",
   "members": {
     "Axel": {
       "github_username": "Axlfc",
@@ -50,8 +50,8 @@
         "volatilidad": 0
       },
       "ai_config": {
-        "provider": "nvidia_nim",
-        "model": "nemotron-3-ultra-550b-a55b"
+        "provider": "custom",
+        "model": "nvidia/nemotron-3-ultra-550b-a55b"
       }
     },
     "Alex": {
@@ -184,6 +184,11 @@
     }
   },
   "_audit_log": [
+    {
+      "action": "chore: actualizar config AI de Axel",
+      "user": "Axlfc",
+      "timestamp": "2026-06-07T13:08:17.949Z"
+    },
     {
       "action": "chore: actualizar config AI de Axel",
       "user": "Axlfc",
