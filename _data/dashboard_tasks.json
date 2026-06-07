@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-07T19:33:27.614Z",
+  "last_updated": "2026-06-07T19:35:08.365Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1744,7 +1744,7 @@
     },
     {
       "title": "Añadir repo hypenosys/scripts a claude-chat",
-      "descripcion": "Ahora está docs (check verde por verificar) ",
+      "descripcion": "Ahora está docs (check verde por verificar) . Queremos sincronizar la carpeta de los scripts de hypenosys/scripts en la carpeta Scripts del SVN.",
       "rama": "PRO",
       "task_type": "chore",
       "tema_principal": "Programación / Engine",
@@ -1793,6 +1793,13 @@
           "field": "task_type",
           "old_value": "feature",
           "new_value": "chore"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:35:07.866Z",
+          "field": "descripcion",
+          "old_value": "Ahora está docs (check verde por verificar) ",
+          "new_value": "Ahora está docs (check verde por verificar) . Queremos sincronizar la carpeta de los scripts de hypenosys/scripts en la carpeta Scripts del SVN."
         }
       ],
       "id": 39
@@ -1992,6 +1999,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #39",
+      "user": "Axlfc",
+      "timestamp": "2026-06-07T19:35:08.365Z"
+    },
     {
       "action": "chore: actualizar tarea #42",
       "user": "Axlfc",
