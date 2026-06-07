@@ -1,15 +1,15 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-07T11:26:50.532Z",
+  "computed_at": "2026-06-07T16:13:30.514Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 15,
+    "total_tasks": 16,
     "total_ok": 1,
     "total_ko": 0,
     "total_uncertain": 4,
     "total_obsolete": 5,
-    "fixed_found_ratio": 0.05,
-    "verified_ratio": 0.05
+    "fixed_found_ratio": 0.0476,
+    "verified_ratio": 0.0476
   },
   "group": {
     "velocity_trend": {
@@ -22,11 +22,11 @@
       "2026-W22": 6,
       "2026-W23": 7
     },
-    "bug_rate": 0.0714,
+    "bug_rate": 0.0667,
     "blocker_health": 1,
     "tag_heatmap": {
-      "feature": 5,
-      "PRO": 6,
+      "feature": 6,
+      "PRO": 7,
       "brainstorm": 1,
       "design": 1,
       "research": 1,
@@ -177,8 +177,8 @@
         "reprioritizations": 13
       },
       "workload": {
-        "active_tasks": 7,
-        "story_points": 19
+        "active_tasks": 8,
+        "story_points": 20
       }
     },
     "topperh4rley": {
@@ -224,8 +224,8 @@
         "reprioritizations": 18
       },
       "workload": {
-        "active_tasks": 12,
-        "story_points": 29
+        "active_tasks": 13,
+        "story_points": 30
       }
     },
     "dkdidac-design": {
@@ -454,7 +454,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-06-07T11:26:51.519Z"
+      "timestamp": "2026-06-07T16:13:31.407Z"
     }
   ]
 }
