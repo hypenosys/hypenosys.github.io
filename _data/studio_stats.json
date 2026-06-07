@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-07T16:13:30.514Z",
+  "computed_at": "2026-06-07T16:14:53.579Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 16,
@@ -25,8 +25,8 @@
     "bug_rate": 0.0667,
     "blocker_health": 1,
     "tag_heatmap": {
-      "feature": 6,
-      "PRO": 7,
+      "feature": 5,
+      "PRO": 6,
       "brainstorm": 1,
       "design": 1,
       "research": 1,
@@ -40,7 +40,8 @@
       "infraestructura": 1,
       "jules-panel": 1,
       "neural-chat": 1,
-      "svn": 1
+      "svn": 1,
+      "n8n": 1
     },
     "milestone_tasks_remaining": 9,
     "hall_of_fame_winners": {
@@ -454,7 +455,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-06-07T16:13:31.407Z"
+      "timestamp": "2026-06-07T16:14:54.486Z"
     }
   ]
 }
