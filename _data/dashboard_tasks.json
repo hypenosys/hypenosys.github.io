@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-07T19:01:37.288Z",
-  "last_updated_by": "Axel",
+  "last_updated": "2026-06-07T19:02:15.135Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -1722,13 +1722,16 @@
       "completitud": 0,
       "resuelto_por": null,
       "detectado_por": "Axel",
-      "asignados": [],
+      "asignados": [
+        "axlfc",
+        "topperh4rley"
+      ],
       "email_responsable": null,
       "emails_asignados": [],
-      "start_date": null,
-      "due_date": null,
-      "estimated_hours": null,
-      "story_points": null,
+      "start_date": "2026-06-07",
+      "due_date": "2026-06-14",
+      "estimated_hours": 2,
+      "story_points": 1,
       "tags": [],
       "external_links": [],
       "subtasks": [],
@@ -1750,12 +1753,31 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:02:13.802Z",
+          "field": "asignados",
+          "old_value": "[]",
+          "new_value": "[\"axlfc\",\"topperh4rley\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:02:13.802Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-06-14"
         }
       ],
       "id": 40
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #40",
+      "user": "Axlfc",
+      "timestamp": "2026-06-07T19:02:15.135Z"
+    },
     {
       "action": "feat: nueva tarea #1780858896843 añadida",
       "user": "Axlfc",
