@@ -7,9 +7,21 @@ permalink: /jules-panel/
 
 <!-- Auth Loading Skeleton -->
 <div id="auth-loading" class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950">
-    <div class="text-center">
-        <div class="text-purple-500 text-6xl mb-6 animate-spin"><i class="fa-solid fa-circle-notch"></i></div>
-        <h1 class="text-xl font-bold text-slate-400">Verificando credenciales...</h1>
+    <div class="text-center max-w-sm px-6">
+        <div id="auth-loading-spinner" class="text-purple-500 text-6xl mb-6 animate-spin"><i class="fa-solid fa-circle-notch"></i></div>
+        <div id="auth-loading-icon-error" class="hidden text-red-500 text-6xl mb-6"><i class="fa-solid fa-triangle-exclamation"></i></div>
+
+        <h1 id="auth-loading-text" class="text-xl font-bold text-slate-400 transition-colors">Verificando credenciales...</h1>
+        <p id="auth-loading-subtext" class="text-slate-500 text-sm mt-4 hidden">La conexión está tardando más de lo esperado. Podría haber un problema con la API de GitHub o tu conexión.</p>
+
+        <div id="auth-error-actions" class="mt-8 flex flex-col gap-3 hidden">
+            <button onclick="window.location.reload()" class="bg-purple-600 hover:bg-purple-500 py-3 px-8 rounded-xl font-bold transition-all shadow-lg">
+                <i class="fa-solid fa-rotate-right mr-2"></i> REINTENTAR CARGA
+            </button>
+            <button onclick="forceOpenPanel()" class="bg-slate-800 hover:bg-slate-700 py-3 px-8 rounded-xl font-bold transition-all border border-slate-700 text-slate-300 text-xs">
+                IGNORAR Y ENTRAR (MODO LECTURA)
+            </button>
+        </div>
     </div>
 </div>
 
@@ -4639,13 +4651,49 @@ permalink: /jules-panel/
         iniciar(e.detail?.user || null);
       });
 
-      // Caso 3: Failsafe — si en 4s no llega nada, arrancar igualmente
-      // Reducido de 6s a 4s para mejorar UX en fallos
+      // Caso 3: Failsafe mejorado — si en 5s no llega nada, mostrar error pero permitir bypass
       setTimeout(function() {
         if (!arrancado) {
-          console.warn('[Jules] authReady timeout — arrancando failsafe');
-          iniciar(window.githubApi?.user || null);
+          console.warn('[Jules] authReady timeout — mostrando controles de emergencia');
+
+          const loadingText = document.getElementById('auth-loading-text');
+          const loadingSubtext = document.getElementById('auth-loading-subtext');
+          const errorActions = document.getElementById('auth-error-actions');
+          const spinner = document.getElementById('auth-loading-spinner');
+          const errorIcon = document.getElementById('auth-loading-icon-error');
+
+          if (loadingText) {
+              loadingText.textContent = "Error de Verificación";
+              loadingText.classList.replace('text-slate-400', 'text-red-400');
+          }
+          if (loadingSubtext) loadingSubtext.classList.remove('hidden');
+          if (errorActions) errorActions.classList.remove('hidden');
+          if (spinner) spinner.classList.add('hidden');
+          if (errorIcon) errorIcon.classList.remove('hidden');
+
+          // Si detectamos que hay un token pero la carga falló, podemos intentar un inicio silencioso
+          if (localStorage.getItem('gh_access_token') || localStorage.getItem('github_token')) {
+              console.log('[Jules] Token detectado — habilitando bypass directo');
+          }
         }
-      }, 4000);
+      }, 5000);
     })();
+
+    // Función de emergencia para entrar al panel si el auth ready se cuelga
+    window.forceOpenPanel = function() {
+        console.warn('[Jules] Entrada forzada al panel (bypass authReady)');
+        const loading = document.getElementById('auth-loading');
+        const panel = document.getElementById('jules-main-panel');
+        if (loading) loading.classList.add('hidden');
+        if (panel) panel.classList.remove('hidden');
+
+        // Intentar arrancar con lo que tengamos
+        if (window.githubApi?.user) {
+            initJulesPanel(window.githubApi.user);
+        } else {
+            initJulesPanel(null);
+        }
+
+        showToast("⚠️ Modo de emergencia activado. Algunas funciones podrían fallar.", "warning");
+    };
 </script>
