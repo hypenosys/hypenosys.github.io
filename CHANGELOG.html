@@ -165,6 +165,7 @@ permalink: /CHANGELOG.html
               </li>
               <li><strong>Critical Auth & Jules Panel Fixes:</strong>
                 <ul>
+                  <li><strong>Fix Auth Hang:</strong> Añadido timeout de 5s a la verificación de credenciales con UI de recuperación (reintento y entrada forzada) para evitar bloqueos en el arranque.</li>
                   <li>Corregido crash "Cannot set properties of null" en Jules Panel mediante la implementación de los elementos HTML del Custom Dropdown.</li>
                   <li>Unificación del sistema de tokens (sessionStorage -> localStorage) para garantizar persistencia y compatibilidad con "Remember Me".</li>
                   <li>Resuelto bloqueo de acceso al Dashboard unificando la lógica de validación de tokens en el Auth Guard.</li>
@@ -413,7 +414,7 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-danger">Fixed</h5>
             <ul class="tree-view mb-3">
-              <li><strong>Auth Hang en Jules Panel:</strong> Corregido error de sintaxis en <code>jules-panel.html</code> que bloqueaba la ejecución del script de autenticación y dejaba el panel atascado en "Verificando credenciales...".</li>
+              <li><strong>Auth Hang en Jules Panel:</strong> Corregido error de sintaxis (variable session y panel re-declarada) en <code>jules-panel.html</code> que bloqueaba la ejecución del script de autenticación y dejaba el panel atascado en "Verificando credenciales...".</li>
               <li><strong>Duplicación de Iconos en Kanban:</strong> Eliminada la duplicación de botones de acción (editar, archivar, colapsar) mediante la unificación de bloques responsivos.
                 <ul>
                   <li>Migración de clases custom <code>.desktop-only</code>/<code>.mobile-only</code> a clases nativas de Tailwind CSS (<code>md:hidden</code>, <code>hidden md:flex</code>).</li>
