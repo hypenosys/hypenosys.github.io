@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-07T10:55:08.842Z",
+  "last_updated": "2026-06-07T11:21:56.726Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1144,9 +1144,102 @@
         }
       ],
       "id": 30
+    },
+    {
+      "title": "Se ha roto la carga de las branches de los repositorios en el panel de jules.",
+      "descripcion": "se queda cargando. la vista el panel de Jules en movil es terrible y provoca debordamiento",
+      "rama": "PRO",
+      "task_type": "bug",
+      "tema_principal": "Programación / Engine",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Medium",
+      "milestone": "M1",
+      "estado": "OK",
+      "completitud": 0,
+      "resuelto_por": "Alex",
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc",
+        "dkdidac-design",
+        "topperh4rley"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-06-06",
+      "due_date": "2026-06-14",
+      "estimated_hours": 2,
+      "story_points": 2,
+      "tags": [
+        "bug"
+      ],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [
+        "27"
+      ],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T11:37:35.976Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T15:42:36.344Z",
+          "field": "prioridad",
+          "old_value": "Medium",
+          "new_value": "Critical"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T15:42:48.487Z",
+          "field": "prioridad",
+          "old_value": "Critical",
+          "new_value": "Medium"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T15:42:48.487Z",
+          "field": "blocks",
+          "old_value": "[]",
+          "new_value": "[\"27\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T22:03:38.840Z",
+          "field": "title",
+          "old_value": "Se ha roto la carga de los repositorios en el panel de jules.",
+          "new_value": "Se ha roto la carga de las branches de los repositorios en el panel de jules."
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T10:55:50.406Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "OK"
+        }
+      ],
+      "id": 34
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: tarea #34 movida al archivo",
+      "user": "Axlfc",
+      "timestamp": "2026-06-07T11:21:56.726Z"
+    },
     {
       "action": "chore: tarea #30 movida al archivo",
       "user": "Axlfc",
