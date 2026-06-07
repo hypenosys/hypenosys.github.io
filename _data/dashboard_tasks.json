@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-07T10:54:50.539Z",
+  "last_updated": "2026-06-07T10:55:04.539Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1117,103 +1117,6 @@
       "id": 28
     },
     {
-      "title": "La API de Claude Chat si seleccionamos ollama tiene que ser ollama, no Anthropic",
-      "descripcion": "También podría ser llama-cpp-python, o andar por el puerto standsr de ollama tipo documentacion M5Stack",
-      "rama": "PRO",
-      "task_type": "feature",
-      "tema_principal": "Tools / Automation",
-      "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Major",
-      "milestone": "M1",
-      "estado": "OK",
-      "completitud": 0.5,
-      "resuelto_por": "Axel",
-      "detectado_por": "Alex",
-      "asignados": [
-        "axlfc",
-        "topperh4rley"
-      ],
-      "email_responsable": null,
-      "emails_asignados": [],
-      "start_date": "2026-06-06",
-      "due_date": "2026-06-14",
-      "estimated_hours": 3,
-      "story_points": 3,
-      "tags": [],
-      "external_links": [],
-      "subtasks": [],
-      "acceptance_criteria": "",
-      "blocks": [],
-      "blocked_by": [],
-      "comments": [],
-      "images": [],
-      "rama2": null,
-      "ver": true,
-      "fecha": "2026-06-06",
-      "apoyo": null,
-      "limite": null,
-      "comentario": "",
-      "change_log": [
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-06T09:56:18.686Z",
-          "field": "id",
-          "old_value": null,
-          "new_value": "Created"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-06T10:00:26.961Z",
-          "field": "repository",
-          "old_value": null,
-          "new_value": "hypenosys/hypenosys.github.io"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-06T10:00:50.913Z",
-          "field": "descripcion",
-          "old_value": "También podría ser llama-cpp-python, o andar por el puerto standsr de ollama tipo oculentacion M5Stack",
-          "new_value": "También podría ser llama-cpp-python, o andar por el puerto standsr de ollama tipo documentacion M5Stack"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-06T10:15:51.581Z",
-          "field": "estado",
-          "old_value": "Pending",
-          "new_value": "Working"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-06T10:15:51.581Z",
-          "field": "due_date",
-          "old_value": null,
-          "new_value": "2026-06-14"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-06T10:15:51.581Z",
-          "field": "completitud",
-          "old_value": 0,
-          "new_value": 0.5
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-06T11:41:45.816Z",
-          "field": "asignados",
-          "old_value": "[]",
-          "new_value": "[\"axlfc\",\"topperh4rley\"]"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-06T22:02:24.114Z",
-          "field": "estado",
-          "old_value": "Fixed",
-          "new_value": "OK"
-        }
-      ],
-      "id": 30
-    },
-    {
       "title": "BUG VISUAL: Jules Neural Operation en dashboard en móvil ",
       "descripcion": "Se ve fatality, debería mostrarse mejor con Markdown, siguiendo la estética de la web (cuidadito con las batticks ```)",
       "rama": "ART",
@@ -1725,6 +1628,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: archivar tarea #30",
+      "user": "Axlfc",
+      "timestamp": "2026-06-07T10:55:04.539Z"
+    },
     {
       "action": "chore: archivar tarea #29",
       "user": "Axlfc",
