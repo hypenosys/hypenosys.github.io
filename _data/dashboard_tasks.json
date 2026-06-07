@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-07T19:21:07.323Z",
+  "last_updated": "2026-06-07T19:21:45.511Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -661,8 +661,8 @@
       "tema_principal": "Arte / Assets",
       "prioridad": "Cosmetic",
       "milestone": "M1",
-      "estado": "Working",
-      "completitud": 0,
+      "estado": "In Review",
+      "completitud": 0.5,
       "resuelto_por": "Dídac",
       "detectado_por": "Alex",
       "asignados": [
@@ -783,6 +783,20 @@
           "field": "tags",
           "old_value": "[]",
           "new_value": "[\"UX/UI\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:21:44.778Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:21:44.778Z",
+          "field": "completitud",
+          "old_value": 0,
+          "new_value": 0.5
         }
       ],
       "repository": "hypenosys/hypenosys.github.io"
@@ -1861,6 +1875,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #16",
+      "user": "Axlfc",
+      "timestamp": "2026-06-07T19:21:45.511Z"
+    },
     {
       "action": "chore: actualizar tarea #37",
       "user": "Axlfc",
