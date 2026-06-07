@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-07T19:35:08.365Z",
+  "last_updated": "2026-06-07T19:37:14.228Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -373,7 +373,7 @@
       "descripcion": "Merge SVN Content/Scripts SVN folder syncing with upgraded an upgraded github repo 'app' to 5.7.4",
       "tema_principal": "Tools / Automation",
       "prioridad": "ToDo",
-      "milestone": "M3",
+      "milestone": "M1",
       "estado": "Pending",
       "completitud": 0.75,
       "resuelto_por": "Alex",
@@ -395,11 +395,11 @@
         "alex@hypenosys.com"
       ],
       "images": [],
-      "title": "Content/Scripts github sync repo 'app' which is Unreal upgraded to 5.7.4",
+      "title": "upgrade repo 'app' which is Unreal upgraded to 5.7.4",
       "task_type": "chore",
       "start_date": "2026-06-01",
       "due_date": "2026-06-30",
-      "estimated_hours": 4,
+      "estimated_hours": 2,
       "story_points": 1,
       "tags": [
         "git"
@@ -484,6 +484,20 @@
           "field": "prioridad",
           "old_value": "Major",
           "new_value": "ToDo"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:37:13.662Z",
+          "field": "title",
+          "old_value": "Content/Scripts github sync repo 'app' which is Unreal upgraded to 5.7.4",
+          "new_value": "upgrade repo 'app' which is Unreal upgraded to 5.7.4"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:37:13.662Z",
+          "field": "milestone",
+          "old_value": "M3",
+          "new_value": "M1"
         }
       ],
       "repository": "hypenosys/app"
@@ -1999,6 +2013,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #11",
+      "user": "Axlfc",
+      "timestamp": "2026-06-07T19:37:14.228Z"
+    },
     {
       "action": "chore: actualizar tarea #39",
       "user": "Axlfc",
