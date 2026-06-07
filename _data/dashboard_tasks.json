@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-07T09:51:55.747Z",
-  "last_updated_by": "TopperH4rley",
+  "last_updated": "2026-06-07T10:53:25.267Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -1659,7 +1659,7 @@
       "milestone": "M1",
       "estado": "Working",
       "completitud": 0,
-      "resuelto_por": null,
+      "resuelto_por": "Alex",
       "detectado_por": "Axel",
       "asignados": [
         "axlfc",
@@ -1853,6 +1853,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #34",
+      "user": "Axlfc",
+      "timestamp": "2026-06-07T10:53:25.267Z"
+    },
     {
       "action": "chore: actualizar tarea #36",
       "user": "TopperH4rley",
