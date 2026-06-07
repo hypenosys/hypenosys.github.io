@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-07T19:37:14.228Z",
+  "last_updated": "2026-06-07T19:38:16.729Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1467,13 +1467,13 @@
     },
     {
       "title": "Integración SVN en Claude Neural Chat y Jules Panel",
-      "descripcion": "El Neural Chat (God Mode) y el Jules Panel deben poder efectuar acciones sobre el repositorio SVN de Hypenosys.\nActualmente las credenciales SVN no están introducidas en la plataforma. Esta tarea cubre la integración completa.",
+      "descripcion": "El Neural Chat (God Mode) y el Jules Panel deben poder efectuar acciones sobre el repositorio SVN de Hypenosys.\nActualmente las credenciales SVN no están introducidas en la plataforma. Esta tarea cubre la integración completa. Esto sucederá cuando esté el agente cognito montado en el SVN ",
       "rama": "PRO",
       "task_type": "feature",
       "tema_principal": "Tools / Automation",
       "repository": "hypenosys/app",
       "prioridad": "ToDo",
-      "milestone": "M3",
+      "milestone": "M1",
       "estado": "Pending",
       "completitud": 0,
       "resuelto_por": "Axel",
@@ -1559,6 +1559,20 @@
           "field": "blocked_by",
           "old_value": "[]",
           "new_value": "[\"39\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:38:16.102Z",
+          "field": "descripcion",
+          "old_value": "El Neural Chat (God Mode) y el Jules Panel deben poder efectuar acciones sobre el repositorio SVN de Hypenosys.\nActualmente las credenciales SVN no están introducidas en la plataforma. Esta tarea cubre la integración completa.",
+          "new_value": "El Neural Chat (God Mode) y el Jules Panel deben poder efectuar acciones sobre el repositorio SVN de Hypenosys.\nActualmente las credenciales SVN no están introducidas en la plataforma. Esta tarea cubre la integración completa. Esto sucederá cuando esté el agente cognito montado en el SVN "
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:38:16.102Z",
+          "field": "milestone",
+          "old_value": "M3",
+          "new_value": "M1"
         }
       ],
       "id": 35
@@ -2013,6 +2027,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #35",
+      "user": "Axlfc",
+      "timestamp": "2026-06-07T19:38:16.729Z"
+    },
     {
       "action": "chore: actualizar tarea #11",
       "user": "Axlfc",
