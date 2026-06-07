@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-07T16:13:28.268Z",
-  "last_updated_by": "Axel",
+  "last_updated": "2026-06-07T16:14:51.468Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -1599,7 +1599,7 @@
     },
     {
       "title": "comfyui generate image flux dev image or text context and flux kontext up to 2 images and text ",
-      "descripcion": "also there is music generation and animation and key to key with available comfyui workflows (as API)",
+      "descripcion": "also there is music generation and animation and key to key with available comfyui workflows (as API) expose in n8n ",
       "rama": "PRO",
       "task_type": "feature",
       "tema_principal": "Programación / Engine",
@@ -1620,7 +1620,9 @@
       "due_date": null,
       "estimated_hours": 2,
       "story_points": 1,
-      "tags": [],
+      "tags": [
+        "n8n"
+      ],
       "external_links": [],
       "subtasks": [],
       "acceptance_criteria": "",
@@ -1641,12 +1643,31 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T16:14:50.972Z",
+          "field": "descripcion",
+          "old_value": "also there is music generation and animation and key to key with available comfyui workflows (as API)",
+          "new_value": "also there is music generation and animation and key to key with available comfyui workflows (as API) expose in n8n "
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T16:14:50.972Z",
+          "field": "tags",
+          "old_value": "[]",
+          "new_value": "[\"n8n\"]"
         }
       ],
       "id": 38
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #38",
+      "user": "Axlfc",
+      "timestamp": "2026-06-07T16:14:51.468Z"
+    },
     {
       "action": "feat: nueva tarea #1780848807662 añadida",
       "user": "Axlfc",
