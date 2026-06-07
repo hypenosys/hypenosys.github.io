@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-07T11:21:52.272Z",
+  "last_updated": "2026-06-07T11:22:19.106Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1431,7 +1431,7 @@
       "tema_principal": "Tools / Automation",
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "ToDo",
-      "milestone": "M2",
+      "milestone": "M3",
       "estado": "Pending",
       "completitud": 0,
       "resuelto_por": "Axel",
@@ -1494,6 +1494,13 @@
           "field": "title",
           "old_value": "Integración SVN en Neural Chat y Jules Panel",
           "new_value": "Integración SVN en Claude Neural Chat y Jules Panel"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T11:22:18.670Z",
+          "field": "milestone",
+          "old_value": "M2",
+          "new_value": "M3"
         }
       ],
       "id": 35
@@ -1547,6 +1554,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #35",
+      "user": "Axlfc",
+      "timestamp": "2026-06-07T11:22:19.106Z"
+    },
     {
       "action": "chore: archivar tarea #34",
       "user": "Axlfc",
