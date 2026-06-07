@@ -128,6 +128,14 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-success">Fixed</h5>
             <ul class="tree-view mb-3">
+              <li><strong>Jules Panel Selector & Branch Loading:</strong>
+                <ul>
+                  <li>Corregido bug donde el selector de repositorio no actualizaba el repositorio activo al hacer clic.</li>
+                  <li>Restaurada la carga automática de ramas al cambiar a cualquier repositorio, incluyendo repositorios personales.</li>
+                  <li>Implementado agrupamiento dinámico en el selector: HYPENOSYS (primero), otros propietarios (alfabéticamente) y usuario autenticado (al final).</li>
+                  <li>Actualizada la infraestructura de <code>github-context.js</code> para soportar múltiples propietarios (multi-owner) de forma nativa.</li>
+                </ul>
+              </li>
               <li><strong>Critical Auth & Jules Panel Fixes:</strong>
                 <ul>
                   <li>Corregido crash "Cannot set properties of null" en Jules Panel mediante la implementación de los elementos HTML del Custom Dropdown.</li>

@@ -1915,13 +1915,33 @@ permalink: /jules-panel/
 
             // Agrupar por owner
             const groups = {};
+            const currentUser = window.githubApi.user?.login;
+
             filteredSources.forEach(s => {
                 const owner = s.githubRepo?.owner || window.parseSourceName(s.name)?.owner || 'Otros';
                 if (!groups[owner]) groups[owner] = [];
                 groups[owner].push(s);
             });
 
-            Object.entries(groups).sort(([a], [b]) => a.localeCompare(b)).forEach(([owner, srcs]) => {
+            // Ordenar grupos: HYPENOSYS primero, luego otros alfabéticamente, luego el usuario actual al final
+            const sortedOwners = Object.keys(groups).sort((a, b) => {
+                const aUpper = a.toUpperCase();
+                const bUpper = b.toUpperCase();
+                const userUpper = currentUser?.toUpperCase();
+
+                if (aUpper === 'HYPENOSYS') return -1;
+                if (bUpper === 'HYPENOSYS') return 1;
+
+                if (userUpper) {
+                    if (aUpper === userUpper) return 1;
+                    if (bUpper === userUpper) return -1;
+                }
+
+                return aUpper.localeCompare(bUpper);
+            });
+
+            sortedOwners.forEach(owner => {
+                const srcs = groups[owner];
                 const groupHeader = document.createElement('div');
                 groupHeader.className = 'group-header-text text-[10px] font-bold text-slate-500 uppercase px-3 py-2 border-b border-slate-800 bg-slate-900/30';
                 groupHeader.textContent = owner;
@@ -1966,7 +1986,17 @@ permalink: /jules-panel/
                     repoSelect.value = s.name;
                     window.JulesPanelState.activeRepo = s.name;
                     localStorage.setItem('hypenosys_active_repo', s.name);
+                    localStorage.setItem('jules_selected_source', s.name);
+
+                    // Actualizar el label visual
+                    customLabel.textContent = displayLabel;
+
+                    // Trigger functional changes (branch loading, etc)
+                    await onRepoSelected(s.name, s);
+
+                    // Sync with other potential listeners
                     $(repoSelect).trigger('change');
+
                     customMenu.style.display = 'none';
                     updateRepoActiveTags(s.name);
                 };
@@ -2076,6 +2106,7 @@ permalink: /jules-panel/
       // Parse repo info
       const parsed = window.parseSourceName(sourceName);
       const repoName = parsed ? parsed.repo : sourceName;
+      const repoOwner = parsed ? parsed.owner : null;
 
       // Mostrar nombre real y habilitar lápiz
       realNameEl.textContent = sourceName;
@@ -2089,9 +2120,9 @@ permalink: /jules-panel/
       branchStatus.textContent = '';
 
       try {
-        const branches = await window.githubContext.getBranches(repoName);
-        const prs = await window.githubContext.getPRs(repoName);
-        const repoData = (await window.githubContext.getRepos()).find(r => r.name === repoName);
+        const branches = await window.githubContext.getBranches(repoName, repoOwner || undefined);
+        const prs = await window.githubContext.getPRs(repoName, repoOwner || undefined);
+        const repoData = (await window.githubContext.getRepos()).find(r => r.name === repoName && (repoOwner ? r.owner === repoOwner : true));
         const defaultBranch = repoData ? repoData.default_branch : 'main';
 
         // Poblar el <select> con metadatos

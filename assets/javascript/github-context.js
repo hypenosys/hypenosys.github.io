@@ -151,16 +151,16 @@
         },
 
         /**
-         * getBranches(repo)
+         * getBranches(repo, owner)
          */
-        getBranches: async (repoName) => {
-            const key = `branches_${repoName}`;
-            const url = `${GITHUB_API_BASE}/repos/${ORG_NAME}/${repoName}/branches?per_page=100`;
+        getBranches: async (repoName, owner = ORG_NAME) => {
+            const key = `branches_${owner}_${repoName}`;
+            const url = `${GITHUB_API_BASE}/repos/${owner}/${repoName}/branches?per_page=100`;
             const branches = await fetchWithCache(key, url);
 
             // Fetch last commit for each branch in parallel
             return await Promise.all(branches.map(async b => {
-                const commitInfo = await githubContext.getCommit(repoName, b.commit.sha);
+                const commitInfo = await githubContext.getCommit(repoName, b.commit.sha, owner);
                 return {
                     name: b.name,
                     protected: b.protected,
@@ -175,20 +175,20 @@
         },
 
         /**
-         * getCommit(repo, sha)
+         * getCommit(repo, sha, owner)
          */
-        getCommit: async (repoName, sha) => {
-            const key = `commit_${repoName}_${sha}`;
-            const url = `${GITHUB_API_BASE}/repos/${ORG_NAME}/${repoName}/commits/${sha}`;
+        getCommit: async (repoName, sha, owner = ORG_NAME) => {
+            const key = `commit_${owner}_${repoName}_${sha}`;
+            const url = `${GITHUB_API_BASE}/repos/${owner}/${repoName}/commits/${sha}`;
             return await fetchWithCache(key, url);
         },
 
         /**
-         * getPRs(repo)
+         * getPRs(repo, owner)
          */
-        getPRs: async (repoName) => {
-            const key = `prs_${repoName}`;
-            const url = `${GITHUB_API_BASE}/repos/${ORG_NAME}/${repoName}/pulls?state=open&per_page=50`;
+        getPRs: async (repoName, owner = ORG_NAME) => {
+            const key = `prs_${owner}_${repoName}`;
+            const url = `${GITHUB_API_BASE}/repos/${owner}/${repoName}/pulls?state=open&per_page=50`;
             const prs = await fetchWithCache(key, url);
             return prs.map(pr => ({
                 number: pr.number,
@@ -204,11 +204,11 @@
         },
 
         /**
-         * getCommits(repo, branch, limit)
+         * getCommits(repo, branch, limit, owner)
          */
-        getCommits: async (repoName, branch = 'master', limit = 10) => {
-            const key = `commits_${repoName}_${branch}_${limit}`;
-            const url = `${GITHUB_API_BASE}/repos/${ORG_NAME}/${repoName}/commits?sha=${branch}&per_page=${limit}`;
+        getCommits: async (repoName, branch = 'master', limit = 10, owner = ORG_NAME) => {
+            const key = `commits_${owner}_${repoName}_${branch}_${limit}`;
+            const url = `${GITHUB_API_BASE}/repos/${owner}/${repoName}/commits?sha=${branch}&per_page=${limit}`;
             const commits = await fetchWithCache(key, url);
             return commits.map(c => ({
                 sha: c.sha,
@@ -222,13 +222,13 @@
         },
 
         /**
-         * getRepoContext(repo)
+         * getRepoContext(repo, owner)
          */
-        getRepoContext: async (repoName) => {
+        getRepoContext: async (repoName, owner = ORG_NAME) => {
             const [repos, prs, branches] = await Promise.all([
-                githubContext.getRepos(),
-                githubContext.getPRs(repoName),
-                githubContext.getBranches(repoName)
+                githubContext.getRepos(), // Still mostly org focused for now
+                githubContext.getPRs(repoName, owner),
+                githubContext.getBranches(repoName, owner)
             ]);
             const repo = repos.find(r => r.name === repoName);
             return {
