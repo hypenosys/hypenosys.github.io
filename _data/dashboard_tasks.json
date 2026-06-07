@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-07T20:12:03.974Z",
+  "last_updated": "2026-06-07T20:12:31.931Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2003,7 +2003,7 @@
       "descripcion": "Tambien un boton que lleve el boton para ir a la sesión asociada de Claude-Chat en cada card y el estado de esa sesión de Jules",
       "rama": "PRO",
       "task_type": "feature",
-      "tema_principal": "Programación / Engine",
+      "tema_principal": "Tools / Automation",
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Minor",
       "milestone": "M2",
@@ -2062,6 +2062,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #42",
+      "user": "Axlfc",
+      "timestamp": "2026-06-07T20:12:31.931Z"
+    },
     {
       "action": "chore: actualizar tarea #41",
       "user": "Axlfc",
