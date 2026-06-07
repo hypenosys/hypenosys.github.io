@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-07T20:10:39.048Z",
+  "last_updated": "2026-06-07T20:11:52.617Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1655,7 +1655,7 @@
     {
       "title": "EDITAR ALIAS / CONFIG Arreglar edit aliases Lightbox en panel de Jules ",
       "descripcion": "se rompió la lógica de visualización de como seteamos aliases de los repositorios en el panel de Jules hacer que l botón funcione",
-      "rama": "PRO",
+      "rama": "ART",
       "task_type": "feature",
       "tema_principal": "Programación / Engine",
       "repository": "hypenosys/hypenosys.github.io",
@@ -2062,6 +2062,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #37",
+      "user": "Axlfc",
+      "timestamp": "2026-06-07T20:11:52.617Z"
+    },
     {
       "action": "chore: actualizar tarea #39",
       "user": "Axlfc",
