@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-07T19:19:37.399Z",
+  "last_updated": "2026-06-07T19:20:44.289Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1632,7 +1632,7 @@
       "descripcion": "also there is music generation and animation and key to key with available comfyui workflows (as API) expose in n8n and update to tumblr",
       "rama": "PRO",
       "task_type": "feature",
-      "tema_principal": "Tools / Automation",
+      "tema_principal": "Programación / Engine",
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Major",
       "milestone": "M2",
@@ -1854,6 +1854,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #38",
+      "user": "Axlfc",
+      "timestamp": "2026-06-07T19:20:44.289Z"
+    },
     {
       "action": "chore: actualizar tarea #36",
       "user": "Axlfc",
