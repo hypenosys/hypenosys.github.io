@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-06T22:07:05.088Z",
-  "last_updated_by": "Axel",
+  "last_updated": "2026-06-07T09:51:55.747Z",
+  "last_updated_by": "TopperH4rley",
   "tasks": [
     {
       "id": 1,
@@ -1817,7 +1817,9 @@
       "completitud": 0,
       "resuelto_por": null,
       "detectado_por": "Axel",
-      "asignados": [],
+      "asignados": [
+        "topperh4rley"
+      ],
       "email_responsable": null,
       "emails_asignados": [],
       "start_date": null,
@@ -1851,6 +1853,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #36",
+      "user": "TopperH4rley",
+      "timestamp": "2026-06-07T09:51:55.747Z"
+    },
     {
       "action": "feat: nueva tarea #1780783624609 añadida",
       "user": "Axlfc",
