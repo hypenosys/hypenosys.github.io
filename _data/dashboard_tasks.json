@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-07T19:14:30.963Z",
+  "last_updated": "2026-06-07T19:14:54.024Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1456,7 +1456,9 @@
       "subtasks": [],
       "acceptance_criteria": "",
       "blocks": [],
-      "blocked_by": [],
+      "blocked_by": [
+        "39"
+      ],
       "comments": [],
       "images": [
         {
@@ -1508,6 +1510,13 @@
           "field": "repository",
           "old_value": "hypenosys/hypenosys.github.io",
           "new_value": "hypenosys/app"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:14:53.440Z",
+          "field": "blocked_by",
+          "old_value": "[]",
+          "new_value": "[\"39\"]"
         }
       ],
       "id": 35
@@ -1796,6 +1805,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #35",
+      "user": "Axlfc",
+      "timestamp": "2026-06-07T19:14:54.024Z"
+    },
     {
       "action": "chore: actualizar tarea #38",
       "user": "Axlfc",
