@@ -165,6 +165,7 @@ permalink: /CHANGELOG.html
               </li>
               <li><strong>Critical Auth & Jules Panel Fixes:</strong>
                 <ul>
+                  <li><strong>Fix Auth Hang:</strong> Añadido timeout de 5s a la verificación de credenciales con UI de recuperación (reintento y entrada forzada) para evitar bloqueos en el arranque.</li>
                   <li>Corregido crash "Cannot set properties of null" en Jules Panel mediante la implementación de los elementos HTML del Custom Dropdown.</li>
                   <li>Unificación del sistema de tokens (sessionStorage -> localStorage) para garantizar persistencia y compatibilidad con "Remember Me".</li>
                   <li>Resuelto bloqueo de acceso al Dashboard unificando la lógica de validación de tokens en el Auth Guard.</li>

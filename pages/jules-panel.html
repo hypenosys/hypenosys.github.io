@@ -7,9 +7,21 @@ permalink: /jules-panel/
 
 <!-- Auth Loading Skeleton -->
 <div id="auth-loading" class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950">
-    <div class="text-center">
-        <div class="text-purple-500 text-6xl mb-6 animate-spin"><i class="fa-solid fa-circle-notch"></i></div>
-        <h1 class="text-xl font-bold text-slate-400">Verificando credenciales...</h1>
+    <div class="text-center max-w-sm px-6">
+        <div id="auth-loading-spinner" class="text-purple-500 text-6xl mb-6 animate-spin"><i class="fa-solid fa-circle-notch"></i></div>
+        <div id="auth-loading-icon-error" class="hidden text-red-500 text-6xl mb-6"><i class="fa-solid fa-triangle-exclamation"></i></div>
+
+        <h1 id="auth-loading-text" class="text-xl font-bold text-slate-400 transition-colors">Verificando credenciales...</h1>
+        <p id="auth-loading-subtext" class="text-slate-500 text-sm mt-4 hidden">La conexión está tardando más de lo esperado. Podría haber un problema con la API de GitHub o tu conexión.</p>
+
+        <div id="auth-error-actions" class="mt-8 flex flex-col gap-3 hidden">
+            <button onclick="window.location.reload()" class="bg-purple-600 hover:bg-purple-500 py-3 px-8 rounded-xl font-bold transition-all shadow-lg">
+                <i class="fa-solid fa-rotate-right mr-2"></i> REINTENTAR CARGA
+            </button>
+            <button onclick="forceOpenPanel()" class="bg-slate-800 hover:bg-slate-700 py-3 px-8 rounded-xl font-bold transition-all border border-slate-700 text-slate-300 text-xs">
+                IGNORAR Y ENTRAR (MODO LECTURA)
+            </button>
+        </div>
     </div>
 </div>
 
@@ -65,9 +77,17 @@ permalink: /jules-panel/
     <i class="fas fa-exclamation-triangle mr-2"></i> RATE LIMIT CRÍTICO: <span id="rl-count">0</span> peticiones restantes
 </div>
 
+    <!-- Mobile Section Tabs -->
+    <div class="mobile-section-tabs md:hidden flex border-b border-slate-800 mb-4 overflow-x-auto" role="tablist" aria-label="Secciones del Panel">
+        <button class="mobile-tab-btn active" data-target="panel-sidebar" role="tab" aria-selected="true" aria-controls="panel-sidebar">Config</button>
+        <button class="mobile-tab-btn" data-target="panel-sessions" role="tab" aria-selected="false" aria-controls="panel-sessions">Sesiones</button>
+        <button class="mobile-tab-btn" data-target="gh-hub" role="tab" aria-selected="false" aria-controls="gh-hub">GitHub Hub</button>
+        <button class="mobile-tab-btn" data-target="activity-log-section" role="tab" aria-selected="false" aria-controls="activity-log-section">Actividad</button>
+    </div>
+
     <div class="panel-grid">
         <!-- Sidebar / Config -->
-        <aside class="panel-sidebar">
+        <aside id="panel-sidebar" class="panel-sidebar mobile-section">
             <section class="config-section">
                 <h2 class="section-title">Configuración</h2>
 
@@ -188,7 +208,7 @@ permalink: /jules-panel/
             </section>
 
             <!-- Activity Log Section -->
-            <section class="activity-log-section bg-slate-900/40 border border-slate-800 rounded-xl p-4 mt-4">
+            <section id="activity-log-section" class="activity-log-section mobile-section hidden md:block bg-slate-900/40 border border-slate-800 rounded-xl p-4 mt-4">
                 <h2 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 flex justify-between items-center">
                     <span>Registro de Actividad</span>
                     <i class="fas fa-history opacity-50"></i>
@@ -199,7 +219,7 @@ permalink: /jules-panel/
             </section>
         </aside>
 
-        <main class="panel-sessions" style="display: flex; flex-direction: column; gap: 24px;">
+        <main id="panel-sessions" class="panel-sessions mobile-section hidden md:flex" style="flex-direction: column; gap: 24px;">
             <div class="content-header">
                 <div class="flex justify-between items-center mb-4">
                     <div class="flex gap-2">
@@ -309,7 +329,7 @@ permalink: /jules-panel/
         </main>
 
         <!-- Right Side: GitHub Hub (60%) -->
-        <section id="gh-hub" class="panel-hub">
+        <section id="gh-hub" class="panel-hub mobile-section hidden md:flex">
             <div class="gh-hub-tabs" role="tablist" aria-label="GitHub Hub">
                 <button role="tab" class="active" data-tab="pull-requests" aria-controls="panel-pr">
                     PRs <span class="hub-badge" id="pr-badge">0</span>
@@ -410,6 +430,11 @@ permalink: /jules-panel/
         </div>
     </div>
 </div>
+
+<!-- Mobile FAB -->
+<button id="mobile-fab" class="md:hidden fixed bottom-6 right-6 w-14 h-14 bg-purple-600 text-white rounded-full shadow-2xl flex items-center justify-center z-[500] hover:bg-purple-500 transition-all active:scale-95" aria-label="Nueva Sesión">
+    <i class="fa-solid fa-plus text-xl" aria-hidden="true"></i>
+</button>
 
 <!-- Toast Container -->
 <div id="jules-toast-container"></div>
@@ -542,6 +567,45 @@ permalink: /jules-panel/
         gap: 16px;
     }
     .panel-hub { grid-column: auto; }
+}
+
+@media (max-width: 768px) {
+    .panel-grid {
+        display: block;
+    }
+    .mobile-section.hidden {
+        display: none !important;
+    }
+    .mobile-section {
+        display: block !important;
+        animation: fadeIn 0.3s ease;
+    }
+}
+
+.mobile-tab-btn {
+    flex: 1;
+    padding: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    background: transparent;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    cursor: pointer;
+}
+.mobile-tab-btn.active {
+    color: var(--accent-secondary);
+    border-bottom-color: var(--accent-secondary);
+    background: rgba(139, 92, 246, 0.05);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 /* Mobile Kanban Snap */
@@ -689,14 +753,19 @@ permalink: /jules-panel/
     border-radius: 10px;
     padding: 16px 20px;
     margin-bottom: 12px;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
     overflow: hidden;
     min-width: 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 .session-card:hover {
     border-color: var(--border-accent);
-    box-shadow: 0 0 0 1px var(--accent-glow), 0 4px 20px rgba(0,0,0,0.4);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    transform: translateY(-2px);
 }
+.session-card[data-state="COMPLETED"] { border-left: 4px solid var(--status-completed); }
+.session-card[data-state="FAILED"] { border-left: 4px solid var(--status-failed); }
+.session-card[data-state="PAUSED"] { border-left: 4px solid var(--status-queued); }
 .session-card[data-state="RUNNING"],
 .session-card[data-state="IN_PROGRESS"],
 .session-card[data-state="PLANNING"] {
@@ -910,6 +979,47 @@ permalink: /jules-panel/
 }
 .btn--ghost:hover { color: var(--text-primary); border-color: var(--text-secondary); }
 
+.activity-sticky-badge {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--bg-panel);
+    padding: 8px;
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex;
+    justify-content: center;
+}
+
+.quick-commands {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 8px 0;
+    margin-bottom: 8px;
+    scrollbar-width: none;
+}
+.quick-commands::-webkit-scrollbar { display: none; }
+
+.cmd-btn {
+    background: rgba(189, 147, 249, 0.1);
+    border: 1px solid rgba(189, 147, 249, 0.3);
+    color: #bd93f9;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+}
+.cmd-btn:hover {
+    background: rgba(189, 147, 249, 0.2);
+    border-color: #bd93f9;
+}
+
 /* Activity Log */
 .session-card__activities-toggle {
     margin-top: 12px;
@@ -1012,8 +1122,20 @@ permalink: /jules-panel/
     flex-wrap: wrap;
     margin-bottom: 16px;
 }
+
+@media (max-width: 768px) {
+    .session-filters {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 8px;
+        -webkit-overflow-scrolling: touch;
+    }
+    .filter-chip {
+        white-space: nowrap;
+    }
+}
 .filter-chip {
-    padding: 4px 12px;
+    padding: 10px 16px;
     border-radius: 20px;
     font-size: 11px;
     font-weight: 500;
@@ -1023,6 +1145,9 @@ permalink: /jules-panel/
     color: var(--text-muted);
     transition: all 0.15s;
     outline: none;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
 }
 .filter-chip:hover { border-color: var(--accent-primary); color: var(--text-primary); }
 .filter-chip.active {
@@ -1129,6 +1254,10 @@ permalink: /jules-panel/
 .field-error { font-size: 10px; color: var(--status-failed); margin-top: 4px; font-weight: 600; }
 .hidden { display: none !important; }
 
+#mobile-fab {
+    box-shadow: 0 4px 20px rgba(124, 58, 237, 0.4);
+}
+
 .dl {
   padding: 0 6px;
   font-family: 'Courier New', monospace;
@@ -1228,22 +1357,28 @@ permalink: /jules-panel/
     background: #0d0d0f;
     border-bottom: 1px solid var(--border-subtle);
     overflow-x: auto;
-    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
 }
-.gh-hub-tabs::-webkit-scrollbar { display: none; }
+.gh-hub-tabs::-webkit-scrollbar { height: 4px; }
+.gh-hub-tabs::-webkit-scrollbar-thumb { background: var(--border-subtle); border-radius: 2px; }
 .gh-hub-tabs button {
-    padding: 12px 16px;
+    padding: 12px 12px;
     background: transparent;
     border: none;
     border-bottom: 2px solid transparent;
     color: var(--text-muted);
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
     cursor: pointer;
     white-space: nowrap;
     transition: all 0.2s;
+    min-width: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .gh-hub-tabs button:hover { color: var(--text-primary); }
 .gh-hub-tabs button.active {
@@ -1395,7 +1530,7 @@ permalink: /jules-panel/
         activeBranch:        localStorage.getItem('hypenosys_active_branch') || null,
         activeSession:       null,
         pollingTimer:        null,
-        hubActiveTab:        sessionStorage.getItem('hypenosys_hub_active_tab') || 'pull-requests',
+        hubActiveTab:        localStorage.getItem('hypenosys_hub_active_tab') || 'pull-requests',
         rateLimitRemaining:  999,
         requestQueue:        [],
         isDispatching:       false,
@@ -1520,6 +1655,68 @@ permalink: /jules-panel/
     // IDs de sesiones con historial actualmente expandido (usando idSafe)
     const expandedActivities = new Set();
 
+    // --- MOBILE TABS LOGIC ---
+    function initMobileFAB() {
+        const fab = document.getElementById('mobile-fab');
+        if (!fab) return;
+
+        fab.addEventListener('click', () => {
+            // Switch to Config tab where "New Session" is
+            const configTab = document.querySelector('.mobile-tab-btn[data-target="panel-sidebar"]');
+            if (configTab) {
+                configTab.click();
+                // Scroll to New Session section
+                const newSessionSection = document.querySelector('.new-session-section');
+                if (newSessionSection) {
+                    newSessionSection.scrollIntoView({ behavior: 'smooth' });
+                    // Pulse the section
+                    newSessionSection.classList.add('ring-2', 'ring-purple-500');
+                    setTimeout(() => newSessionSection.classList.remove('ring-2', 'ring-purple-500'), 2000);
+                }
+            }
+        });
+    }
+
+    function initMobileTabs() {
+        const buttons = document.querySelectorAll('.mobile-tab-btn');
+        const sections = document.querySelectorAll('.mobile-section');
+
+        const setActiveMobileTab = (target) => {
+            localStorage.setItem('jules_mobile_active_tab', target);
+            buttons.forEach(b => {
+                const isActive = b.dataset.target === target;
+                b.classList.toggle('active', isActive);
+                b.setAttribute('aria-selected', isActive ? 'true' : 'false');
+            });
+
+            sections.forEach(s => {
+                if (s.id === target) {
+                    s.classList.remove('hidden');
+                    s.classList.add('flex', 'md:flex');
+                    if (s.tagName === 'ASIDE' || s.tagName === 'SECTION') {
+                         s.classList.remove('flex', 'md:flex');
+                    }
+                } else {
+                    s.classList.add('hidden');
+                    s.classList.remove('flex', 'md:flex');
+                }
+            });
+
+            if (target === 'gh-hub') {
+                const activeTab = localStorage.getItem('hypenosys_hub_active_tab') || 'pull-requests';
+                loadTabContent(activeTab);
+            }
+        };
+
+        buttons.forEach(btn => {
+            btn.addEventListener('click', () => setActiveMobileTab(btn.dataset.target));
+        });
+
+        // Restore saved tab or default
+        const savedTab = localStorage.getItem('jules_mobile_active_tab') || 'panel-sidebar';
+        setActiveMobileTab(savedTab);
+    }
+
     // --- INITIALIZATION ---
     async function initJulesPanel(user) {
         const loading = document.getElementById("auth-loading");
@@ -1547,6 +1744,8 @@ permalink: /jules-panel/
                 window.kanbanUI.init();
                 startPolling();
                 initHub();
+                initMobileTabs();
+                initMobileFAB();
             }
 
             // FEATURE #3: Check for incoming clipboard from Claude Chat (GOD MODE INTEGRATION)
@@ -1562,6 +1761,16 @@ permalink: /jules-panel/
         } finally {
             if (loading) loading.classList.add('hidden');
         }
+    }
+
+    function getSkeletonHtml(count = 3) {
+        return `
+            <div class="flex flex-col gap-4 p-4">
+                ${Array(count).fill(0).map(() => `
+                    <div class="skeleton-row w-full rounded-lg" style="height: 100px;"></div>
+                `).join('')}
+            </div>
+        `;
     }
 
     // --- API KEY UI ---
@@ -2447,6 +2656,13 @@ permalink: /jules-panel/
     document.getElementById('jules-launch-btn').onclick = launchSession;
 
     async function refreshSessions(loadMore = false) {
+        const list = document.getElementById('jules-sessions-list');
+        const emptyMsg = document.getElementById('jules-empty-message');
+
+        if (!loadMore && (!currentSessions || currentSessions.length === 0)) {
+            list.innerHTML = getSkeletonHtml(5);
+        }
+
         try {
             const data = await window.julesApi.getSessions(30, loadMore ? nextPageToken : null);
             const newSessions = data.sessions || [];
@@ -2464,6 +2680,13 @@ permalink: /jules-panel/
             lastRefreshTime = Date.now();
 
             renderSessions();
+
+            if (!loadMore && currentSessions.length === 0) {
+                emptyMsg.classList.remove('hidden');
+                list.innerHTML = '';
+            } else {
+                emptyMsg.classList.add('hidden');
+            }
 
             const pagContainer = document.getElementById('pagination-container');
             if (nextPageToken) pagContainer.classList.remove('hidden');
@@ -2554,7 +2777,14 @@ permalink: /jules-panel/
 
             ${!['FAILED', 'COMPLETED'].includes(state) ? `
                 <div class="session-card__message">
+                    <div class="quick-commands">
+                        <button class="cmd-btn" onclick="insertCommand('${s.name}', '/ fix bug')">/ fix bug</button>
+                        <button class="cmd-btn" onclick="insertCommand('${s.name}', '/ añadir mejora')">/ añadir mejora</button>
+                        <button class="cmd-btn" onclick="insertCommand('${s.name}', '/ revisar PR')">/ revisar PR</button>
+                        <button class="cmd-btn" onclick="insertCommand('${s.name}', '/ explicar cambios')">/ explicar cambios</button>
+                    </div>
                     <textarea
+                        id="msg-input-${idSafe}"
                         class="message-input"
                         placeholder="Escribe tu mensaje..."
                         rows="2"
@@ -2572,6 +2802,8 @@ permalink: /jules-panel/
                 </button>
             </div>
             <div class="session-card__activities hidden" id="activities-${idSafe}">
+                <!-- Sticky Badge Placeholder -->
+                <div class="activity-sticky-badge hidden" id="sticky-badge-${idSafe}"></div>
                 <!-- Dinámico -->
             </div>
 
@@ -2964,6 +3196,15 @@ permalink: /jules-panel/
 
         try {
             const data = await window.julesApi.getActivities(sessionId, 50);
+            const session = currentSessions.find(s => s.name === sessionId);
+
+            // Update sticky badge
+            const stickyBadge = document.getElementById(`sticky-badge-${idSafe}`);
+            if (stickyBadge && session) {
+                stickyBadge.innerHTML = getStateBadge(session.state);
+                stickyBadge.classList.remove('hidden');
+            }
+
             let activities = (data.activities || [])
               .filter((a, i, arr) => arr.findIndex(x => x.id === a.id) === i);
 
@@ -3094,18 +3335,23 @@ permalink: /jules-panel/
         const stepsHtml = steps
           .sort((a, b) => (a.index || 0) - (b.index || 0))
           .map(s => `
-            <div style="display:flex;gap:8px;padding:4px 0;border-bottom:1px solid #1e1e2a;">
-              <span style="color:#7c3aed;font-weight:700;min-width:18px;">
-                ${(s.index || 0) + 1}.
-              </span>
-              <div>
-                <div style="color:#e2e8f0;font-size:12px;font-weight:500;">
-                  ${s.title || 'Sin título'}
+            <div style="padding:8px 0;border-bottom:1px solid #1e1e2a;">
+              <div style="display:flex;gap:8px;">
+                <span style="color:#7c3aed;font-weight:700;min-width:18px;">
+                  ${(s.index || 0) + 1}.
+                </span>
+                <div style="flex: 1;">
+                  <div style="color:#e2e8f0;font-size:12px;font-weight:500;">
+                    ${s.title || 'Sin título'}
+                  </div>
+                  ${s.description ? `
+                    <div style="color:#6b7280;font-size:11px;margin-top:2px;">
+                      ${s.description}
+                    </div>` : ''}
                 </div>
-                ${s.description ? `
-                  <div style="color:#6b7280;font-size:11px;margin-top:2px;">
-                    ${s.description}
-                  </div>` : ''}
+                <button class="btn-icon" title="Comentar en este paso" onclick="commentOnStep('${activity.name?.split('/activities/')[0]}', ${(s.index || 0) + 1}, '${escapeHtml(s.title)}')">
+                  <i class="fa-solid fa-comment-dots text-[10px]"></i>
+                </button>
               </div>
             </div>
           `).join('');
@@ -3224,7 +3470,7 @@ permalink: /jules-panel/
 
         // DO NOT switchTab here to avoid fetch on load (Checklist #6)
         // Just set the active class on the tab button from storage
-        const savedTab = sessionStorage.getItem('hypenosys_hub_active_tab') || 'pull-requests';
+        const savedTab = localStorage.getItem('hypenosys_hub_active_tab') || 'pull-requests';
         document.querySelectorAll('.gh-hub-tabs button').forEach(btn => {
             btn.classList.toggle('active', btn.dataset.tab === savedTab);
         });
@@ -3242,7 +3488,7 @@ permalink: /jules-panel/
 
     function switchTab(tabId) {
         window.JulesPanelState.hubActiveTab = tabId;
-        sessionStorage.setItem('hypenosys_hub_active_tab', tabId);
+        localStorage.setItem('hypenosys_hub_active_tab', tabId);
 
         // UI Tabs
         document.querySelectorAll('.gh-hub-tabs button').forEach(btn => {
@@ -3326,6 +3572,9 @@ permalink: /jules-panel/
     // --- HUB TAB: PULL REQUESTS ---
     async function fetchHubPRs(owner, repo, page = 1) {
         const token = getGitHubToken();
+        const panel = document.getElementById('panel-pr');
+        if (page === 1) panel.innerHTML = getSkeletonHtml(5);
+
         const res = await window.GHQueue.enqueue(() => fetch(
             `https://api.github.com/repos/${owner}/${repo}/pulls?state=open&per_page=20&page=${page}`,
             { headers: { Authorization: `Bearer ${token}` } }
@@ -3333,7 +3582,6 @@ permalink: /jules-panel/
         updateRateLimit(res.headers.get('X-RateLimit-Remaining'));
         const prs = await res.json();
 
-        const panel = document.getElementById('panel-pr');
         if (prs.length === 0 && page === 1) {
             panel.innerHTML = `<div style="text-align:center; padding:40px; color:#6272a4;">No hay pull requests abiertos en este repositorio.</div>`;
             panel.dataset.loaded = 'true';
@@ -3527,6 +3775,9 @@ permalink: /jules-panel/
     // --- HUB TAB: ISSUES ---
     async function fetchHubIssues(owner, repo, page = 1) {
         const token = getGitHubToken();
+        const panel = document.getElementById('panel-issues');
+        if (page === 1) panel.innerHTML = getSkeletonHtml(5);
+
         const res = await window.GHQueue.enqueue(() => fetch(
             `https://api.github.com/repos/${owner}/${repo}/issues?state=open&per_page=20&page=${page}`,
             { headers: { Authorization: `Bearer ${token}` } }
@@ -3536,7 +3787,6 @@ permalink: /jules-panel/
         // Filter out PRs
         const issues = allItems.filter(item => !item.pull_request);
 
-        const panel = document.getElementById('panel-issues');
         if (issues.length === 0 && page === 1) {
             panel.innerHTML = renderIssueCreateForm(owner, repo) + `<div style="text-align:center; padding:40px; color:#6272a4;">No hay issues abiertos.</div>`;
             panel.dataset.loaded = 'true';
@@ -3639,10 +3889,12 @@ permalink: /jules-panel/
 
     // --- HUB TAB: BRANCHES ---
     async function fetchHubBranches(owner, repo) {
+        const panel = document.getElementById('panel-branches');
+        panel.innerHTML = getSkeletonHtml(5);
+
         const token = getGitHubToken();
         const branches = await fetchAllBranches(owner, repo, token);
 
-        const panel = document.getElementById('panel-branches');
         const branchRows = branches.map(branch => {
             const isProtected = branch.protected;
             const sha = branch.commit ? branch.commit.sha.substring(0, 7) : '---';
@@ -3714,6 +3966,9 @@ permalink: /jules-panel/
 
     // --- HUB TAB: ACTIONS ---
     async function fetchHubActions(owner, repo) {
+        const panel = document.getElementById('panel-actions');
+        panel.innerHTML = getSkeletonHtml(5);
+
         const token = getGitHubToken();
         const runsRes = await window.GHQueue.enqueue(() => fetch(
             `https://api.github.com/repos/${owner}/${repo}/actions/runs?per_page=15`,
@@ -3851,6 +4106,9 @@ permalink: /jules-panel/
     }
 
     async function fetchHubNotifs() {
+        const panel = document.getElementById('panel-notifs');
+        panel.innerHTML = getSkeletonHtml(5);
+
         const token = getGitHubToken();
         const res = await window.GHQueue.enqueue(() => fetch(
             `https://api.github.com/notifications?all=false&per_page=30`,
@@ -4052,6 +4310,25 @@ permalink: /jules-panel/
 
             showToast('Sesión eliminada correctamente');
         } catch (e) { handleApiError(e); }
+    }
+
+    function insertCommand(sessionId, cmd) {
+        const idSafe = getIdSafe(sessionId);
+        const input = document.getElementById(`msg-input-${idSafe}`);
+        if (input) {
+            input.value = cmd + ' ' + input.value;
+            input.focus();
+        }
+    }
+
+    function commentOnStep(sessionId, stepIndex, stepTitle) {
+        const idSafe = getIdSafe(sessionId);
+        const input = document.getElementById(`msg-input-${idSafe}`);
+        if (input) {
+            input.value = `Respecto al paso ${stepIndex} (${stepTitle}): ` + input.value;
+            input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            input.focus();
+        }
     }
 
     async function sendMessage(sessionId, textarea) {
@@ -4374,13 +4651,49 @@ permalink: /jules-panel/
         iniciar(e.detail?.user || null);
       });
 
-      // Caso 3: Failsafe — si en 4s no llega nada, arrancar igualmente
-      // Reducido de 6s a 4s para mejorar UX en fallos
+      // Caso 3: Failsafe mejorado — si en 5s no llega nada, mostrar error pero permitir bypass
       setTimeout(function() {
         if (!arrancado) {
-          console.warn('[Jules] authReady timeout — arrancando failsafe');
-          iniciar(window.githubApi?.user || null);
+          console.warn('[Jules] authReady timeout — mostrando controles de emergencia');
+
+          const loadingText = document.getElementById('auth-loading-text');
+          const loadingSubtext = document.getElementById('auth-loading-subtext');
+          const errorActions = document.getElementById('auth-error-actions');
+          const spinner = document.getElementById('auth-loading-spinner');
+          const errorIcon = document.getElementById('auth-loading-icon-error');
+
+          if (loadingText) {
+              loadingText.textContent = "Error de Verificación";
+              loadingText.classList.replace('text-slate-400', 'text-red-400');
+          }
+          if (loadingSubtext) loadingSubtext.classList.remove('hidden');
+          if (errorActions) errorActions.classList.remove('hidden');
+          if (spinner) spinner.classList.add('hidden');
+          if (errorIcon) errorIcon.classList.remove('hidden');
+
+          // Si detectamos que hay un token pero la carga falló, podemos intentar un inicio silencioso
+          if (localStorage.getItem('gh_access_token') || localStorage.getItem('github_token')) {
+              console.log('[Jules] Token detectado — habilitando bypass directo');
+          }
         }
-      }, 4000);
+      }, 5000);
     })();
+
+    // Función de emergencia para entrar al panel si el auth ready se cuelga
+    window.forceOpenPanel = function() {
+        console.warn('[Jules] Entrada forzada al panel (bypass authReady)');
+        const loading = document.getElementById('auth-loading');
+        const panel = document.getElementById('jules-main-panel');
+        if (loading) loading.classList.add('hidden');
+        if (panel) panel.classList.remove('hidden');
+
+        // Intentar arrancar con lo que tengamos
+        if (window.githubApi?.user) {
+            initJulesPanel(window.githubApi.user);
+        } else {
+            initJulesPanel(null);
+        }
+
+        showToast("⚠️ Modo de emergencia activado. Algunas funciones podrían fallar.", "warning");
+    };
 </script>
