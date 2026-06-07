@@ -1,6 +1,6 @@
 {
   "schema_version": "2.0.0",
-  "last_updated": "2026-06-07T09:26:57.155Z",
+  "last_updated": "2026-06-07T09:39:04.991Z",
   "members": {
     "Axel": {
       "github_username": "Axlfc",
@@ -86,7 +86,7 @@
       },
       "ai_config": {
         "provider": "ollama",
-        "model": "phi4:latest"
+        "model": "gemma4:e4b"
       }
     },
     "Javi": {
@@ -184,6 +184,11 @@
     }
   },
   "_audit_log": [
+    {
+      "action": "chore: actualizar config AI de Alex",
+      "user": "TopperH4rley",
+      "timestamp": "2026-06-07T09:39:04.991Z"
+    },
     {
       "action": "chore: actualizar config AI de Alex",
       "user": "TopperH4rley",
