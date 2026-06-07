@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-07T19:14:54.024Z",
+  "last_updated": "2026-06-07T19:15:32.096Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1615,10 +1615,10 @@
     },
     {
       "title": "comfyui generate image flux dev image or text context and flux kontext up to 2 images and text ",
-      "descripcion": "also there is music generation and animation and key to key with available comfyui workflows (as API) expose in n8n ",
+      "descripcion": "also there is music generation and animation and key to key with available comfyui workflows (as API) expose in n8n and update to tumblr",
       "rama": "PRO",
       "task_type": "feature",
-      "tema_principal": "Programación / Engine",
+      "tema_principal": "Tools / Automation",
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Major",
       "milestone": "M2",
@@ -1689,6 +1689,13 @@
           "field": "blocked_by",
           "old_value": "[]",
           "new_value": "[\"35\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:15:31.614Z",
+          "field": "descripcion",
+          "old_value": "also there is music generation and animation and key to key with available comfyui workflows (as API) expose in n8n ",
+          "new_value": "also there is music generation and animation and key to key with available comfyui workflows (as API) expose in n8n and update to tumblr"
         }
       ],
       "id": 38
@@ -1805,6 +1812,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #38",
+      "user": "Axlfc",
+      "timestamp": "2026-06-07T19:15:32.096Z"
+    },
     {
       "action": "chore: actualizar tarea #35",
       "user": "Axlfc",
