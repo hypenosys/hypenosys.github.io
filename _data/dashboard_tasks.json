@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-08T10:30:44.665Z",
+  "last_updated": "2026-06-08T10:34:27.348Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1904,14 +1904,14 @@
     },
     {
       "title": "Cloudflare: Protección en las subidas a Tumblr por si peta la subida imágenes",
-      "descripcion": "Arreglar subida de imagenes en las tasks mobil, si no hay disponibilidad de cloudflare no se puede, mostrar aviso. añadir webhook de n8n para identificar imágenes NO permitidas.",
+      "descripcion": "Implementar filtro de subida de imagenes en las tasks mobil, si no hay disponibilidad de cloudflare no se puede, mostrar aviso para ambos casos añadir webhook de n8n para identificar imágenes NO permitidas. workflow de n8n de reconocimiento de nsfw",
       "rama": "PRO",
       "task_type": "bug",
       "tema_principal": "Tools / Automation",
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Major",
       "milestone": "M1",
-      "estado": "In Review",
+      "estado": "Working",
       "completitud": 1,
       "resuelto_por": null,
       "detectado_por": "Axel",
@@ -1923,7 +1923,7 @@
       "emails_asignados": [],
       "start_date": "2026-06-07",
       "due_date": "2026-06-14",
-      "estimated_hours": 2,
+      "estimated_hours": 4,
       "story_points": 1,
       "tags": [],
       "external_links": [],
@@ -2045,6 +2045,20 @@
           "field": "descripcion",
           "old_value": "Arreglar subida de imagenes en las tasks mobil, si no hay disponibilidad de cloudflare no se puede, mostrar aviso",
           "new_value": "Arreglar subida de imagenes en las tasks mobil, si no hay disponibilidad de cloudflare no se puede, mostrar aviso. añadir webhook de n8n para identificar imágenes NO permitidas."
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:34:26.741Z",
+          "field": "descripcion",
+          "old_value": "Arreglar subida de imagenes en las tasks mobil, si no hay disponibilidad de cloudflare no se puede, mostrar aviso. añadir webhook de n8n para identificar imágenes NO permitidas.",
+          "new_value": "Implementar filtro de subida de imagenes en las tasks mobil, si no hay disponibilidad de cloudflare no se puede, mostrar aviso para ambos casos añadir webhook de n8n para identificar imágenes NO permitidas. workflow de n8n de reconocimiento de nsfw"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:34:26.741Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "Working"
         }
       ],
       "id": 40
@@ -2168,6 +2182,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #40",
+      "user": "Axlfc",
+      "timestamp": "2026-06-08T10:34:27.348Z"
+    },
     {
       "action": "chore: actualizar tarea #40",
       "user": "Axlfc",
