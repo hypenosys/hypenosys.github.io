@@ -641,35 +641,59 @@ permalink: /claude-chat.html
             const urlParams = new URLSearchParams(window.location.search);
             const taskId = urlParams.get('task_id');
 
-            if (taskId) {
-                const task = await loadTaskContext(taskId);
-                if (task) {
-                    window._activeTaskContext = task;
-                    showTaskContextBanner(task);
-
-                    // If we have a task context and no session is active or it's a new one,
-                    // pre-fill the chat input with a structured request for Jules.
-                    if (!currentSessionId || sessions.find(s => s.id === currentSessionId)?.messages.length === 0) {
-                        const prompt = `Hola Claude. Ayúdame a preparar un prompt para Jules basado en esta tarea:
-Título: ${task.titulo || task.title}
-Descripción: ${task.descripcion || task.description}
-Criterios: ${task.acceptance_criteria || 'Ver descripción'}
-
-Analiza los requisitos y genera una instrucción técnica precisa que pueda enviar a Jules.`;
-                        chatInput.value = prompt;
-                        chatInput.style.height = 'auto';
-                        chatInput.style.height = (chatInput.scrollHeight) + 'px';
-                    }
-
-                    // Strip taskId from URL
-                    const newUrl = window.location.pathname + (window.location.search.includes('from=jules-panel') ? '?from=jules-panel' : '');
-                    window.history.replaceState({}, document.title, newUrl);
-                }
-            }
-
+            // 1. Initialize session UI first
             renderSessionList();
             if (sessions.length > 0) {
                 loadSession(sessions[0].id);
+            }
+
+            // 2. Load Task Context
+            let task = null;
+            const cachedTask = localStorage.getItem('claude_task_context');
+
+            if (cachedTask) {
+                try {
+                    const parsed = JSON.parse(cachedTask);
+                    if (taskId && String(parsed.id) === String(taskId)) {
+                        task = parsed;
+                    }
+                } catch (e) {
+                    console.error('[Claude] Error parsing cached task:', e);
+                }
+            }
+
+            if (taskId && !task) {
+                task = await loadTaskContext(taskId);
+            }
+
+            if (task) {
+                window._activeTaskContext = task;
+                showTaskContextBanner(task);
+
+                // Force a new session if coming from a task and the current one is not empty
+                const currentSession = sessions.find(s => s.id === currentSessionId);
+                if (currentSession && currentSession.messages.length > 0) {
+                    createNewSession();
+                } else if (!currentSessionId) {
+                    createNewSession();
+                }
+
+                // Pre-fill the chat input with context
+                const prompt = `Aquí tienes el contexto de la tarea. Ayúdame a implementarla o dame los próximos pasos.
+Título: ${task.titulo || task.title}
+Descripción: ${task.descripcion || task.description}
+Criterios: ${task.acceptance_criteria || 'Ver descripción'}`;
+
+                chatInput.value = prompt;
+                chatInput.style.height = 'auto';
+                chatInput.style.height = (chatInput.scrollHeight) + 'px';
+
+                // Strip taskId from URL
+                const newUrl = window.location.pathname + (window.location.search.includes('from=dashboard') || window.location.search.includes('from=jules-panel') ? `?from=${urlParams.get('from')}` : '');
+                window.history.replaceState({}, document.title, newUrl);
+
+                // Clear cache
+                localStorage.removeItem('claude_task_context');
             }
 
             // Load profiles and set active

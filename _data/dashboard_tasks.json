@@ -1016,6 +1016,11 @@
           "id": 1780563057273,
           "text": "Vincular tarjeta ↔ sesión Jules por ID en jules-panel.html",
           "done": false
+        },
+        {
+          "id": 1780936990388,
+          "text": "BUG: Botón robot no pre-rellena contexto en Claude Chat (tags: frontend, ux, bug)",
+          "done": false
         }
       ],
       "acceptance_criteria": "El botón genere el prompt correcto y lo cargue en el panel.",
