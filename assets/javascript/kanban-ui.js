@@ -147,7 +147,23 @@
             const truncatedDesc = description.length > 80 ? description.substring(0, 77) + '...' : description;
 
             // Robot button action
-            const openInClaude = (taskId) => {
+            const openInClaude = async (taskId) => {
+                const tasks = await window.taskOps.getAllTasks();
+                const task = tasks.find(t => String(t.id) === String(taskId));
+                if (task) {
+                    const payload = {
+                        titulo: task.titulo || task.title || '',
+                        descripcion: task.descripcion || task.description || '',
+                        acceptance_criteria: task.acceptance_criteria || '',
+                        tags: task.tags || [],
+                        prioridad: task.prioridad || '',
+                        asignados: task.asignado_a || task.asignados || [],
+                        comments: task.comments || [],
+                        estimated_hours: task.estimated_hours || '',
+                        repositorio: task.repo || task.repository || ''
+                    };
+                    localStorage.setItem('claude_task_context', JSON.stringify(payload));
+                }
                 const url = `https://hypenosys.github.io/claude-chat.html?task_id=${taskId}&from=jules-panel`;
                 window.open(url, '_blank');
             };

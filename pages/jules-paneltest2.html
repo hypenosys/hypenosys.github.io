@@ -2066,6 +2066,20 @@ body{
     function openTaskInClaude(taskId) {
         const task = window.JulesPanelState.tasks.find(t => String(t.id) === String(taskId));
         if (!task) return;
+
+        const payload = {
+            titulo: task.titulo || task.title || '',
+            descripcion: task.descripcion || task.description || '',
+            acceptance_criteria: task.acceptance_criteria || '',
+            tags: task.tags || [],
+            prioridad: task.prioridad || '',
+            asignados: task.asignados || task.asignado_a || [],
+            comments: task.comments || [],
+            estimated_hours: task.estimated_hours || '',
+            repositorio: task.repository || task.repo || ''
+        };
+        localStorage.setItem('claude_task_context', JSON.stringify(payload));
+
         if (task.images && task.images.length > 0) {
             showToast("Jules no acepta imágenes, se excluirán del prompt.", "amber");
         }

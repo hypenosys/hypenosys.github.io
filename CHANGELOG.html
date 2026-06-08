@@ -195,6 +195,14 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-success">Fixed</h5>
             <ul class="tree-view mb-3">
+              <li><strong>Robot Button Context in Claude Chat:</strong>
+                <ul>
+                  <li>Implementada la transferencia de contexto enriquecido de tareas (título, descripción, criterios, tags, prioridad, asignados, comentarios, estimación y repositorio) mediante <code>localStorage</code> al pulsar el botón robot.</li>
+                  <li>Actualizada la interfaz de Claude Chat para renderizar dinámicamente solo los campos presentes con iconos y etiquetas descriptivas en español.</li>
+                  <li>Optimización del flujo de sesiones: creación automática de nuevas sesiones si la actual tiene mensajes previos al recibir contexto de tarea.</li>
+                  <li>Corregido el fallo de carga de contexto que dependía de llamadas a la API de GitHub con ramas hardcodeadas.</li>
+                </ul>
+              </li>
               <li><strong>Jules Panel Selector & Branch Loading:</strong>
                 <ul>
                   <li>Corregido bug donde el selector de repositorio no actualizaba el repositorio activo al hacer clic.</li>

@@ -102,7 +102,7 @@ function buildTaskCard(task) {
     <i class="fa-solid fa-pencil"></i>
   </button>`;
 
-  const robotBtn = `<button onclick="event.stopPropagation(); window.location.href='/claude-chat.html?task_id=${task.id}&from=dashboard'" class="action-btn text-indigo-400 hover:text-white" title="Enviar a Claude Chat (Neural Ops)">
+  const robotBtn = `<button onclick="event.stopPropagation(); window._openTaskInClaudeWithContext('${task.id}')" class="action-btn text-indigo-400 hover:text-white" title="Enviar a Claude Chat (Neural Ops)">
     <i class="fa-solid fa-robot"></i>
   </button>`;
 
@@ -412,3 +412,24 @@ async function handleMoveCard(taskId, direction) {
     const targetCol = KANBAN_COLUMNS[nextIndex];
     await handleCardDrop(taskId, targetCol.id);
 }
+
+window._openTaskInClaudeWithContext = function(taskId) {
+  if (typeof currentTasks !== 'undefined') {
+    const task = currentTasks.find(t => String(t.id) === String(taskId));
+    if (task) {
+      const payload = {
+        titulo: task.title || task.titulo || '',
+        descripcion: task.descripcion || task.description || '',
+        acceptance_criteria: task.acceptance_criteria || '',
+        tags: task.tags || [],
+        prioridad: task.prioridad || '',
+        asignados: task.asignados || task.asignado_a || [],
+        comments: task.comments || [],
+        estimated_hours: task.estimated_hours || '',
+        repositorio: task.repository || task.repo || ''
+      };
+      localStorage.setItem('claude_task_context', JSON.stringify(payload));
+    }
+  }
+  window.location.href = `/claude-chat.html?task_id=${taskId}&from=dashboard`;
+};
