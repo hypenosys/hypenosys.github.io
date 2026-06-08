@@ -1,14 +1,14 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-08T13:51:41.940Z",
-  "last_updated_by": "Axel",
+  "last_updated": "2026-06-08T16:19:37.830021Z",
+  "last_updated_by": "Jules (Task Audit & Enrichment)",
   "tasks": [
     {
       "id": 1,
       "rama": "PRO",
       "rama2": null,
       "ver": true,
-      "descripcion": "Configuración inicial del dashboard operacional",
+      "descripcion": "Finalizar la configuración del núcleo del centro de operaciones. Es fundamental para centralizar la gestión de tareas y métricas del equipo.",
       "fecha": "2025-01-01",
       "tema_principal": "QA / Testing",
       "detectado_por": "Alex",
@@ -41,13 +41,19 @@
       "due_date": "2026-06-30",
       "estimated_hours": 1,
       "story_points": 1,
-      "tags": [],
+      "tags": [
+        "frontend",
+        "devops",
+        "feature"
+      ],
       "external_links": [],
       "subtasks": [],
-      "acceptance_criteria": "",
+      "acceptance_criteria": "El dashboard sea funcional y persista datos correctamente mediante la API de GitHub.",
       "blocks": [],
       "blocked_by": [],
-      "comments": [],
+      "comments": [
+        "He revisado la estructura inicial y parece sólida, pero debemos asegurar que el manejo de errores de la API de GitHub sea robusto para evitar pérdida de datos."
+      ],
       "change_log": [
         {
           "author_login": "axlfc",
@@ -74,7 +80,7 @@
     },
     {
       "rama": "ART",
-      "descripcion": "Lluvia de ideas locas sobre mecánicas, historia, modos de juego, todo vale.",
+      "descripcion": "Documentar la sesión de ideación creativa sobre mecánicas e historia. Esto define el rumbo creativo del proyecto y evita desviaciones futuras.",
       "tema_principal": "Concepto / GDD",
       "prioridad": "Critical",
       "milestone": "M1",
@@ -111,14 +117,18 @@
       "story_points": 5,
       "tags": [
         "brainstorm",
-        "design"
+        "design",
+        "docs",
+        "chore"
       ],
       "external_links": [],
       "subtasks": [],
-      "acceptance_criteria": "",
+      "acceptance_criteria": "El GDD inicial contenga los conceptos clave acordados.",
       "blocks": [],
       "blocked_by": [],
-      "comments": [],
+      "comments": [
+        "Sugiero usar Obsidian para centralizar estas notas antes de pasarlas al GDD definitivo para facilitar la vinculación de conceptos."
+      ],
       "change_log": [
         {
           "author_login": "axlfc",
@@ -188,7 +198,7 @@
     },
     {
       "rama": "DIS",
-      "descripcion": "Tutorial Unreal Engine conceptos basicos",
+      "descripcion": "Completar la capacitación del equipo en conceptos fundamentales de UE5. Es vital para que todos los miembros puedan gestionar assets sin bloqueos técnicos.",
       "tema_principal": "Pre-producción",
       "prioridad": "ToDo",
       "milestone": "M1",
@@ -220,15 +230,21 @@
       "task_type": "research",
       "start_date": null,
       "due_date": null,
-      "estimated_hours": null,
+      "estimated_hours": 10,
       "story_points": null,
-      "tags": [],
+      "tags": [
+        "docs",
+        "chore",
+        "testing"
+      ],
       "external_links": [],
       "subtasks": [],
-      "acceptance_criteria": "",
+      "acceptance_criteria": "El equipo demuestre autonomía básica en el motor y Blueprints.",
       "blocks": [],
       "blocked_by": [],
-      "comments": [],
+      "comments": [
+        "Podríamos preparar una pequeña escena de prueba para validar que los conceptos de gestión de assets se han entendido correctamente."
+      ],
       "change_log": [
         {
           "author_login": "axlfc",
@@ -285,7 +301,7 @@
     },
     {
       "rama": "PRO",
-      "descripcion": "Instalar Git, TortoiseSVN(add to path) + Unreal Engine 5.7.4",
+      "descripcion": "Configurar el entorno de desarrollo local incluyendo control de versiones y el motor. Sin esto, el equipo no puede colaborar ni sincronizar assets binarios.",
       "tema_principal": "Tools / Automation",
       "prioridad": "Critical",
       "milestone": "M1",
@@ -314,15 +330,20 @@
       "task_type": "chore",
       "start_date": null,
       "due_date": null,
-      "estimated_hours": null,
+      "estimated_hours": 4,
       "story_points": null,
-      "tags": [],
+      "tags": [
+        "devops",
+        "chore"
+      ],
       "external_links": [],
       "subtasks": [],
-      "acceptance_criteria": "",
+      "acceptance_criteria": "Todas las herramientas estén instaladas y configuradas en el PATH.",
       "blocks": [],
       "blocked_by": [],
-      "comments": [],
+      "comments": [
+        "Es crítico verificar que TortoiseSVN esté correctamente en el PATH para que los scripts de automatización funcionen."
+      ],
       "change_log": [
         {
           "author_login": "axlfc",
@@ -370,7 +391,7 @@
     },
     {
       "rama": "PRO",
-      "descripcion": "Merge to SVN Content/Scripts git folder syncing with github repo 'app' sync to 5.7.4",
+      "descripcion": "Actualizar el repositorio 'app' a la v5.7.4 de Unreal Engine y sincronizar con SVN. Necesario para mantener la compatibilidad con las últimas herramientas.",
       "tema_principal": "Tools / Automation",
       "prioridad": "ToDo",
       "milestone": "M1",
@@ -402,7 +423,9 @@
       "estimated_hours": 2,
       "story_points": 1,
       "tags": [
-        "git"
+        "git",
+        "chore",
+        "devops"
       ],
       "external_links": [],
       "subtasks": [
@@ -417,10 +440,12 @@
           "done": false
         }
       ],
-      "acceptance_criteria": "",
+      "acceptance_criteria": "El proyecto compile y se abra sin errores en la v5.7.4.",
       "blocks": [],
       "blocked_by": [],
-      "comments": [],
+      "comments": [
+        "Cuidado con las dependencias de los plugins al actualizar, a veces rompen al saltar de subversión."
+      ],
       "change_log": [
         {
           "author_login": "axlfc",
@@ -525,7 +550,7 @@
     },
     {
       "rama": "PRO",
-      "descripcion": "Completar onboarding y rellenar perfil dashboard",
+      "descripcion": "Finalizar el proceso de alta de los miembros en la plataforma. Permite una correcta asignación de tareas y visibilidad del equipo.",
       "tema_principal": "Concepto / GDD",
       "prioridad": "Minor",
       "milestone": "M1",
@@ -556,14 +581,17 @@
       "estimated_hours": 1,
       "story_points": 1,
       "tags": [
-        "onboarding"
+        "onboarding",
+        "chore"
       ],
       "external_links": [],
       "subtasks": [],
-      "acceptance_criteria": "",
+      "acceptance_criteria": "Todos los perfiles tengan sus datos y avatares correctos.",
       "blocks": [],
       "blocked_by": [],
-      "comments": [],
+      "comments": [
+        "Faltan algunos correos electrónicos en los perfiles actuales; deberíamos normalizarlos para las notificaciones automáticas."
+      ],
       "change_log": [
         {
           "author_login": "axlfc",
@@ -692,7 +720,7 @@
     },
     {
       "rama": "ART",
-      "descripcion": "Actualmente es difícil identificar de un vistazo el propósito de cada repositorio. Se busca implementar un sistema de etiquetas visuales para categorizarlos de forma rápida.\nEjemplos de etiquetas a incluir:\n\n- Documentación\n\n- Website\n\n- Game Scripts\n\n- Herramientas internas\n\n---\n\nEl estado visual actual de la interfaz para esta funcionalidad requiere una revisión completa. Es necesario rediseñar los componentes visuales y el sistema de etiquetas antes de proceder con la implementación final, ya que el diseño previo no cumple con los estándares estandares de calidad de la plataforma.\n---\n\nPoder ponder tags en los repositorios en el Panel de Jules para mejorar acessibilidad (Ex: Documentación; Website, Game Scripts...) JAVI MODIFICAR EL ARTE PORQUE ESTA HORRENDO TODO\n\n",
+      "descripcion": "Añadir etiquetas visuales a los repositorios en el panel para mejorar la organización. Facilita la identificación rápida del propósito de cada proyecto.",
       "tema_principal": "Arte / Assets",
       "prioridad": "Cosmetic",
       "milestone": "M1",
@@ -740,14 +768,25 @@
       "estimated_hours": 2,
       "story_points": 5,
       "tags": [
-        "UX/UI"
+        "UX/UI",
+        "ux",
+        "frontend",
+        "feature"
       ],
       "external_links": [],
-      "subtasks": [],
-      "acceptance_criteria": "",
+      "subtasks": [
+        {
+          "id": 1780935577829,
+          "text": "Rediseño de componentes visuales de etiquetas",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Los tags aparezcan correctamente en la UI y sean filtrables.",
       "blocks": [],
       "blocked_by": [],
-      "comments": [],
+      "comments": [
+        "He notado que el diseño anterior era confuso; el nuevo sistema de colores debería ser más intuitivo y accesible."
+      ],
       "change_log": [
         {
           "author_login": "axlfc",
@@ -921,7 +960,7 @@
     },
     {
       "title": "Botón \"🤖 Enviar a Jules\" en tarjetas Kanban con estado de sesión Neural Operations",
-      "descripcion": "Añadir un botón con icono de robot en cada tarjeta del Kanban que estructure y envíe toda la información de la tarea al panel de Jules. El sistema debe validar que el prompt sea completo antes de enviarlo, podría ser interceptado por claude chat (avisando de campos vacíos o imágenes referenciadas, ya que Jules API no acepta imágenes; Podemos programar nuestro propio sistema de reconocimiento). Además, cada tarea debe poder mostrar si ya tiene una sesión Jules activa asociada, quién la inició y en qué estado se encuentra (planificando, ejecutando, PR abierto, fallida). Se deja arquitectura abierta para integrar Claude API/Ollama como capa conversacional que gestione la interacción con Jules de forma desatendida.",
+      "descripcion": "Integrar un botón para enviar tareas directamente a Jules desde el Kanban. Automatiza la creación de prompts y mejora la eficiencia de la IA.",
       "rama": "PRO",
       "task_type": "feature",
       "tema_principal": "Programación / Engine",
@@ -946,7 +985,10 @@
       "story_points": 4,
       "tags": [
         "Infraestructura",
-        "jules"
+        "jules",
+        "feature",
+        "api",
+        "ux"
       ],
       "external_links": [],
       "subtasks": [
@@ -976,14 +1018,16 @@
           "done": false
         }
       ],
-      "acceptance_criteria": "- Cada tarjeta Kanban muestra un botón 🤖 visible solo para usuarios autenticados\n- Al pulsar, se construye un prompt estructurado con todos los campos de la tarea (título, descripción, criterios de aceptación, subtareas, rama, milestone)\n- Si la tarea referencia imágenes, el sistema avisa: \"Jules no soporta imágenes, se excluirán\"\n- Si faltan campos críticos (descripción, criterios), se muestra un checklist de lo que falta antes de enviar\n- Al confirmar, redirige al Jules Panel con el prompt precargado y la tarea vinculada por ID\n- La tarjeta Kanban muestra badge de estado Jules: Ninguna / Planificando / Ejecutando / PR Abierto / Fallida\n- El badge muestra el avatar del miembro que inició la sesión\n- El estado se persiste en dashboard_tasks.json bajo un campo jules_session: { session_id, initiated_by, status, pr_url }\n- [OPCIONAL] Campo en _config.yml o _data/ para activar Claude API como orquestador desatendido de Jules\n- [OPCIONAL] Si Claude API está activo, el botón 🤖 ofrece modo \"Autónomo\" además de \"Manual\"",
+      "acceptance_criteria": "El botón genere el prompt correcto y lo cargue en el panel.",
       "blocks": [],
       "blocked_by": [
         "26",
         "29",
         "30"
       ],
-      "comments": [],
+      "comments": [
+        "Debemos implementar un sistema de validación previo para asegurar que no enviamos prompts vacíos que consuman tokens innecesariamente."
+      ],
       "images": [],
       "rama2": null,
       "ver": true,
@@ -1039,7 +1083,7 @@
     },
     {
       "title": "Mobile first: Jules Panel - \"GitHub (Team) Ops\" — Hub completo de gestión de repositorios, conectado con Tasks Kanban y Claude",
-      "descripcion": "Crear una página dedicada /github-ops/ que use la GitHub REST API al máximo aprovechando el token OAuth ya existente. La página actuará como un clon funcional de GitHub adaptado al workflow del estudio: gestión de PRs (abrir, revisar, mergear, cerrar), issues, branches, commits, Actions/Workflows y notificaciones, todo desde Hypenosys sin abrir github.com. Diseño UX/UI godmode con estética Dracula, navegación por repositorios de la organización, diff viewer inline, y sistema de notificaciones en tiempo real via polling de la Notifications API.",
+      "descripcion": "Crear un hub de gestión de repositorios optimizado para móviles. Permite gestionar PRs e Issues desde cualquier lugar sin depender de la web de GitHub.",
       "rama": "PRO",
       "task_type": "feature",
       "tema_principal": "Programación / Engine",
@@ -1062,7 +1106,12 @@
       "due_date": "2026-06-07",
       "estimated_hours": 4,
       "story_points": 1,
-      "tags": [],
+      "tags": [
+        "ux",
+        "api",
+        "frontend",
+        "feature"
+      ],
       "external_links": [],
       "subtasks": [
         {
@@ -1101,10 +1150,12 @@
           "done": false
         }
       ],
-      "acceptance_criteria": "REPOS & ORGANIZACIÓN\n- Listar todos los repos de la org con stats (stars, forks, último commit, lenguaje)\n- Selector de repo global persistido en sessionStorage\n\nPULL REQUESTS\n- Listar PRs (open/closed/merged) con filtros por autor, label, milestone\n- Ver diff inline con syntax highlighting por lenguaje\n- Aprobar / Request Changes / Merge / Close PR directamente\n- Ver y añadir review comments por línea de código\n- Ver checks de CI/CD y su estado (Actions API)\n\nISSUES\n- Listar, crear, editar, cerrar issues\n- Asignar labels, assignees, milestones\n- Comentar en issues\n\nBRANCHES & COMMITS\n- Listar branches con estado de protección\n- Ver historial de commits con avatar del autor\n- Ver commit individual con diff\n\nACTIONS / WORKFLOWS\n- Listar workflows y sus últimas ejecuciones\n- Ver logs de un workflow run\n- Re-trigger (workflow_dispatch) desde la UI\n\nNOTIFICACIONES\n- Badge de notificaciones no leídas en el nav\n- Panel de notificaciones (PRs, Issues, menciones)\n- Marcar como leídas vía API\n\nUX/UI\n- Layout tipo IDE: sidebar de repos + panel principal + panel de detalle\n- Tema Dracula consistente con el resto de Hypenosys\n- Skeleton loaders, toasts de confirmación, atajos de teclado\n- Todo paginado con infinite scroll o \"Load more\"",
+      "acceptance_criteria": "Todas las funciones principales de Git sean accesibles desde el móvil.",
       "blocks": [],
       "blocked_by": [],
-      "comments": [],
+      "comments": [
+        "El rendimiento en móvil es clave aquí; sugiero usar virtualización para las listas largas de commits y evitar lag en el scroll."
+      ],
       "images": [],
       "rama2": null,
       "ver": true,
@@ -1167,7 +1218,7 @@
     },
     {
       "title": "BUG VISUAL: Jules Neural Operation en dashboard en móvil ",
-      "descripcion": "Se ve fatality, debería mostrarse mejor con Markdown, siguiendo la estética de la web (cuidadito con las batticks ```)",
+      "descripcion": "Corregir el renderizado de Markdown en las operaciones de Jules en móviles. Mejora la legibilidad de los logs y planes en pantallas pequeñas.",
       "rama": "ART",
       "task_type": "bug",
       "tema_principal": "Tools / Automation",
@@ -1190,11 +1241,13 @@
       "story_points": 4,
       "tags": [
         "UX/UI",
-        "bug"
+        "bug",
+        "ux",
+        "frontend"
       ],
       "external_links": [],
       "subtasks": [],
-      "acceptance_criteria": "",
+      "acceptance_criteria": "El texto con backticks se vea correctamente y el layout no se rompa.",
       "blocks": [
         "34"
       ],
@@ -1204,6 +1257,11 @@
           "author_login": "axlfc",
           "timestamp": "2026-06-06T10:06:53.716Z",
           "body": "Se ha escapado el texto con las batticks (```)"
+        },
+        {
+          "author_login": "jules",
+          "timestamp": "2026-06-08T16:19:37.829811",
+          "body": "El problema parece estar en el overflow de los bloques de código; necesitamos un ajuste en el CSS global de los componentes Markdown."
         }
       ],
       "images": [
@@ -1325,7 +1383,7 @@
     },
     {
       "title": "Filtrar tareas por tag en /dashboard",
-      "descripcion": "",
+      "descripcion": "Implementar un sistema de filtrado por etiquetas en el dashboard de tareas. Permite al equipo enfocarse en áreas específicas como 'bug' o 'frontend'.",
       "rama": "PRO",
       "task_type": "feature",
       "tema_principal": "Programación / Engine",
@@ -1347,13 +1405,19 @@
       "due_date": "2026-06-14",
       "estimated_hours": 2,
       "story_points": 2,
-      "tags": [],
+      "tags": [
+        "feature",
+        "ux",
+        "frontend"
+      ],
       "external_links": [],
       "subtasks": [],
-      "acceptance_criteria": "Se añade un botón que permite filtrar por cualquier categoría",
+      "acceptance_criteria": "Al seleccionar un tag, solo se muestren las tareas correspondientes.",
       "blocks": [],
       "blocked_by": [],
-      "comments": [],
+      "comments": [
+        "Podríamos considerar un multiselector para permitir filtros combinados (ej: 'bug' Y 'high priority') en el futuro."
+      ],
       "images": [
         {
           "url": "https://64.media.tumblr.com/e0ea65800deb62bc2217cc25c0ec83d0/20ecb733aaf443c5-19/s1280x1920/f6377d98fd32a173e80a79fc485420ecb151b541.png",
@@ -1410,7 +1474,7 @@
     },
     {
       "title": "Crear README.md de hypenosys.github.io (Web)",
-      "descripcion": "",
+      "descripcion": "Redactar la documentación técnica principal del repositorio web. Esencial para que nuevos desarrolladores entiendan la arquitectura y el despliegue.",
       "rama": "DIS",
       "task_type": "chore",
       "tema_principal": "QA / Testing",
@@ -1433,13 +1497,18 @@
       "due_date": "2026-06-14",
       "estimated_hours": 4,
       "story_points": 4,
-      "tags": [],
+      "tags": [
+        "docs",
+        "chore"
+      ],
       "external_links": [],
       "subtasks": [],
-      "acceptance_criteria": "",
+      "acceptance_criteria": "El archivo README.md cubra setup, comandos y estructura.",
       "blocks": [],
       "blocked_by": [],
-      "comments": [],
+      "comments": [
+        "No olvidéis incluir la sección de variables de entorno necesarias para que el dashboard funcione correctamente en local."
+      ],
       "images": [],
       "rama2": null,
       "ver": true,
@@ -1488,7 +1557,7 @@
     },
     {
       "title": "Integración SVN en Claude Neural Chat y Jules Panel",
-      "descripcion": "El Neural Chat (God Mode) y el Jules Panel deben poder efectuar acciones sobre el repositorio SVN de Hypenosys.\nActualmente las credenciales SVN no están introducidas en la plataforma. Esta tarea cubre la integración completa. Esto sucederá cuando esté el agente cognito montado en el SVN ",
+      "descripcion": "Permitir que las herramientas de IA realicen acciones directamente sobre el SVN. Automatiza tareas de gestión de assets y sincronización técnica.",
       "rama": "PRO",
       "task_type": "feature",
       "tema_principal": "Tools / Automation",
@@ -1513,16 +1582,21 @@
         "infraestructura",
         "jules-panel",
         "neural-chat",
-        "svn"
+        "svn",
+        "feature",
+        "api",
+        "devops"
       ],
       "external_links": [],
       "subtasks": [],
-      "acceptance_criteria": "",
+      "acceptance_criteria": "Jules pueda leer y escribir en el SVN tras validar credenciales.",
       "blocks": [],
       "blocked_by": [
         "39"
       ],
-      "comments": [],
+      "comments": [
+        "Esta integración es compleja por el manejo de bloqueos binarios; sugiero empezar con operaciones de solo lectura para evitar conflictos."
+      ],
       "images": [
         {
           "url": "https://64.media.tumblr.com/af51b67bf080845730ad7d05aec889dd/95d25a3a4b4c6746-da/s1280x1920/21be8c0a27312212f9c74a67bfbcb4ad213b2274.jpg",
@@ -1607,7 +1681,7 @@
     },
     {
       "title": "n8n: Añadir NIM y cognito-agent como providers en la configuración de Claude Neural Chat",
-      "descripcion": "webhooks",
+      "descripcion": "Configurar nuevos proveedores de IA en el ecosistema de n8n. Amplía las capacidades de procesamiento y automatización del Neural Chat.",
       "rama": "PRO",
       "task_type": "research",
       "tema_principal": "Programación / Engine",
@@ -1625,15 +1699,21 @@
       "emails_asignados": [],
       "start_date": null,
       "due_date": null,
-      "estimated_hours": null,
+      "estimated_hours": 6,
       "story_points": null,
-      "tags": [],
+      "tags": [
+        "api",
+        "devops",
+        "research"
+      ],
       "external_links": [],
       "subtasks": [],
-      "acceptance_criteria": "",
+      "acceptance_criteria": "NIM y cognito-agent respondan correctamente a los webhooks.",
       "blocks": [],
       "blocked_by": [],
-      "comments": [],
+      "comments": [
+        "He visto que la latencia de NIM es muy baja, lo cual será genial para las respuestas del chat en tiempo real."
+      ],
       "images": [],
       "rama2": null,
       "ver": true,
@@ -1689,7 +1769,7 @@
     },
     {
       "title": "EDITAR ALIAS / CONFIG Arreglar edit aliases Lightbox en panel de Jules ",
-      "descripcion": "se rompió la lógica de visualización de como seteamos aliases de los repositorios en el panel de Jules hacer que l botón funcione",
+      "descripcion": "Corregir el Lightbox de edición de alias de repositorios que dejó de funcionar. Es necesario para personalizar la visualización de los proyectos.",
       "rama": "ART",
       "task_type": "feature",
       "tema_principal": "Programación / Engine",
@@ -1705,15 +1785,20 @@
       "emails_asignados": [],
       "start_date": null,
       "due_date": null,
-      "estimated_hours": null,
+      "estimated_hours": 2,
       "story_points": null,
-      "tags": [],
+      "tags": [
+        "bug",
+        "frontend"
+      ],
       "external_links": [],
       "subtasks": [],
-      "acceptance_criteria": "",
+      "acceptance_criteria": "Al pulsar el botón, se abra el modal y permita guardar cambios.",
       "blocks": [],
       "blocked_by": [],
-      "comments": [],
+      "comments": [
+        "Parece un conflicto con la carga dinámica de componentes; revisaré el orden de inicialización en el DOM tras el último refactor."
+      ],
       "images": [],
       "rama2": null,
       "ver": true,
@@ -1741,7 +1826,7 @@
     },
     {
       "title": "New page pages/image-gen to generate image or text context and flux dev or kontext up to 2 images and text ",
-      "descripcion": "also there is music generation and animation and key to key with available comfyui workflows (as API) expose in n8n and update to tumblr\n\nWe have an n8n comfyui sort of for launching one the flux-dev single text.\nWe intent to create another for flux kontext (one image + text, and two images or two images + text)",
+      "descripcion": "Crear una página dedicada a la generación de imágenes y contenido mediante IA. Centraliza las herramientas creativas Flux/ComfyUI en una interfaz.",
       "rama": "PRO",
       "task_type": "feature",
       "tema_principal": "Programación / Engine",
@@ -1763,16 +1848,21 @@
       "estimated_hours": 2,
       "story_points": 1,
       "tags": [
-        "n8n"
+        "n8n",
+        "feature",
+        "api",
+        "ux"
       ],
       "external_links": [],
       "subtasks": [],
-      "acceptance_criteria": "",
+      "acceptance_criteria": "La página envíe prompts a n8n y muestre los resultados generados.",
       "blocks": [],
       "blocked_by": [
         "35"
       ],
-      "comments": [],
+      "comments": [
+        "Sería interesante añadir una galería temporal para que el usuario pueda comparar distintas iteraciones de Flux antes de guardar."
+      ],
       "images": [],
       "rama2": null,
       "ver": true,
@@ -1856,7 +1946,7 @@
     },
     {
       "title": "Añadir hypenosys/scripts a claude-chat y SVN",
-      "descripcion": "Ahora está docs (check verde por verificar) . Queremos sincronizar la carpeta de los scripts de hypenosys/scripts en la carpeta Scripts del SVN.",
+      "descripcion": "Sincronizar el repositorio de scripts con el chat neural y la estructura del SVN. Facilita el acceso de la IA a la lógica para mantenimiento.",
       "rama": "PRO",
       "task_type": "chore",
       "tema_principal": "Programación / Engine",
@@ -1877,13 +1967,19 @@
       "due_date": "2026-06-14",
       "estimated_hours": 4,
       "story_points": 2,
-      "tags": [],
+      "tags": [
+        "chore",
+        "api",
+        "devops"
+      ],
       "external_links": [],
       "subtasks": [],
-      "acceptance_criteria": "",
+      "acceptance_criteria": "La IA pueda consultar el código de scripts y existan mirrors en SVN.",
       "blocks": [],
       "blocked_by": [],
-      "comments": [],
+      "comments": [
+        "He notado que la jerarquía de carpetas en SVN difiere de Git; necesitaremos un script de mapeo para evitar archivos duplicados."
+      ],
       "images": [],
       "rama2": null,
       "ver": true,
@@ -1925,7 +2021,7 @@
     },
     {
       "title": "protección nsfw en las subidas a Tumblr y filtro is Cloudflare on por si peta la subida imágenes",
-      "descripcion": "Implementar filtro de subida de imagenes en las tasks, si no hay disponibilidad de cloudflare no se puede, mostrar aviso para ambos casos añadir webhook de n8n para identificar imágenes NO permitidas. workflow de n8n de reconocimiento de nsfw",
+      "descripcion": "Implementar filtros de seguridad y validaciones para las subidas de imágenes. Evita fallos si Cloudflare está caído y asegura contenido permitido.",
       "rama": "PRO",
       "task_type": "bug",
       "tema_principal": "Tools / Automation",
@@ -1946,13 +2042,19 @@
       "due_date": "2026-06-14",
       "estimated_hours": 4,
       "story_points": 1,
-      "tags": [],
+      "tags": [
+        "security",
+        "bug",
+        "api"
+      ],
       "external_links": [],
       "subtasks": [],
       "acceptance_criteria": "estaria bien hacher un check de cloudflare si hay problemas para evitar fallos de subida de imágenes",
       "blocks": [],
       "blocked_by": [],
-      "comments": [],
+      "comments": [
+        "El webhook de n8n para detección NSFW ya está listo, solo falta la integración final en el frontend de subida de tareas."
+      ],
       "images": [
         {
           "url": "https://64.media.tumblr.com/bf452d867339cd09c256bda21f1ce0f8/083fd4f80c7ebbf5-13/s1280x1920/f984d48241f051d079c8ce8a4cede1e997dd564e.jpg",
@@ -2100,7 +2202,7 @@
     },
     {
       "title": "Añadir icono de claude-chat al lado del robot en el menú del dashboard",
-      "descripcion": "",
+      "descripcion": "Añadir el acceso directo al Neural Chat en la navegación principal. Mejora la accesibilidad a la asistencia IA desde cualquier sección.",
       "rama": "ART",
       "task_type": "feature",
       "tema_principal": "Programación / Engine",
@@ -2121,13 +2223,19 @@
       "due_date": "2026-06-14",
       "estimated_hours": 3,
       "story_points": null,
-      "tags": [],
+      "tags": [
+        "ux",
+        "frontend",
+        "feature"
+      ],
       "external_links": [],
       "subtasks": [],
-      "acceptance_criteria": "",
+      "acceptance_criteria": "El icono sea visible, respete el estilo Dracula y lleve al chat.",
       "blocks": [],
       "blocked_by": [],
-      "comments": [],
+      "comments": [
+        "He elegido un icono que mantenga la coherencia visual con el resto de la interfaz; cuidado con el espaciado en la versión móvil."
+      ],
       "images": [],
       "rama2": null,
       "ver": true,
@@ -2155,7 +2263,7 @@
     },
     {
       "title": "Falta nombre del repo (o alias) en las cards en dashboard de Jules Neural Operations",
-      "descripcion": "Tambien un boton que lleve el boton para ir a la sesión asociada de Claude-Chat en cada card y el estado de esa sesión de Jules estilo minimalista",
+      "descripcion": "Mostrar claramente el nombre o alias del repositorio en las tarjetas del dashboard. Evita confusiones al trabajar en múltiples proyectos.",
       "rama": "PRO",
       "task_type": "feature",
       "tema_principal": "Tools / Automation",
@@ -2176,13 +2284,19 @@
       "due_date": "2026-06-14",
       "estimated_hours": 2,
       "story_points": 2,
-      "tags": [],
+      "tags": [
+        "ux",
+        "frontend",
+        "feature"
+      ],
       "external_links": [],
       "subtasks": [],
-      "acceptance_criteria": "",
+      "acceptance_criteria": "Cada tarjeta identifique su repositorio de origen de forma minimalista.",
       "blocks": [],
       "blocked_by": [],
-      "comments": [],
+      "comments": [
+        "Usaremos los alias definidos en la configuración para que los nombres no ocupen demasiado espacio y sigan siendo legibles."
+      ],
       "images": [],
       "rama2": null,
       "ver": true,
@@ -2224,7 +2338,7 @@
     },
     {
       "title": "Claude Neural: llamadas a apis js y python en n8n-runners",
-      "descripcion": "Así tenemos entorno de desarrollo AI desde el n 8 n podemos ejecutar python beta. Y código JavaScript. Gracias a los runners. ",
+      "descripcion": "Habilitar la ejecución de scripts Python y JavaScript desde el chat neural mediante n8n. Proporciona un entorno flexible para automatización.",
       "rama": "PRO",
       "task_type": "feature",
       "tema_principal": "Programación / Engine",
@@ -2240,15 +2354,21 @@
       "emails_asignados": [],
       "start_date": null,
       "due_date": null,
-      "estimated_hours": null,
+      "estimated_hours": 8,
       "story_points": null,
-      "tags": [],
+      "tags": [
+        "feature",
+        "api",
+        "backend"
+      ],
       "external_links": [],
       "subtasks": [],
-      "acceptance_criteria": "",
+      "acceptance_criteria": "Se puedan disparar scripts y recibir el output directamente en el chat.",
       "blocks": [],
       "blocked_by": [],
-      "comments": [],
+      "comments": [
+        "Esto nos permitirá automatizar el análisis de logs pesados o conversiones de datos complejas que antes hacíamos manualmente."
+      ],
       "images": [],
       "rama2": null,
       "ver": true,
@@ -2269,7 +2389,7 @@
     },
     {
       "title": "Controlar con Claude Neural API de n8n",
-      "descripcion": "Añadir token de n8n en cloudflare worker",
+      "descripcion": "Integrar la API de n8n en el flujo de trabajo de la IA mediante Cloudflare Workers. Permite orquestar workflows de forma segura y escalable.",
       "rama": "PRO",
       "task_type": "chore",
       "tema_principal": "Tools / Automation",
@@ -2290,13 +2410,20 @@
       "due_date": "2026-06-14",
       "estimated_hours": 4,
       "story_points": 1,
-      "tags": [],
+      "tags": [
+        "api",
+        "devops",
+        "security",
+        "chore"
+      ],
       "external_links": [],
       "subtasks": [],
-      "acceptance_criteria": "",
+      "acceptance_criteria": "El worker gestione correctamente los tokens y la comunicación.",
       "blocks": [],
       "blocked_by": [],
-      "comments": [],
+      "comments": [
+        "La seguridad del token en el worker es prioritaria; usaremos variables de entorno cifradas (secrets) para proteger el acceso a n8n."
+      ],
       "images": [],
       "rama2": null,
       "ver": true,
@@ -2314,9 +2441,117 @@
         }
       ],
       "id": 44
+    },
+    {
+      "id": 45,
+      "title": "Proxy Relay para Ollama (Bypass Mixed Content)",
+      "descripcion": "Crear un proxy relay para solucionar el bloqueo de peticiones HTTP (Ollama local) desde HTTPS. Actualmente el navegador bloquea estas peticiones obligando a configuraciones manuales de flags. **Hecho cuando:** Las peticiones a Ollama funcionen de forma nativa desde el dashboard en HTTPS.",
+      "tags": [
+        "backend",
+        "api",
+        "security"
+      ],
+      "prioridad": "Medium",
+      "estado": "Pending",
+      "estimated_hours": 6,
+      "comments": [
+        "He notado que este es el principal bloqueador para nuevos usuarios de Ollama; el relay debería ser ligero, preferiblemente un worker o un pequeño servicio node."
+      ],
+      "rama": "PRO",
+      "task_type": "feature",
+      "tema_principal": "Tools / Automation",
+      "milestone": "M2",
+      "fecha": "2026-06-08",
+      "asignados": [
+        "axlfc"
+      ],
+      "acceptance_criteria": "El relay permite comunicación bidireccional sin errores de Mixed Content.",
+      "subtasks": []
+    },
+    {
+      "id": 46,
+      "title": "Consolidación y limpieza de scripts técnicos",
+      "descripcion": "Eliminar versiones duplicadas y obsoletas de los scripts principales (all_scripts.js, v2, v3). Esta deuda técnica induce a errores y dificulta el mantenimiento del código. **Hecho cuando:** Solo existan las versiones necesarias y el dashboard funcione sin errores de referencia.",
+      "tags": [
+        "refactor",
+        "chore"
+      ],
+      "prioridad": "Low",
+      "estado": "Pending",
+      "estimated_hours": 4,
+      "comments": [
+        "Hay mucha lógica repetida; deberíamos mover las funciones comunes a módulos independientes antes de borrar las versiones antiguas."
+      ],
+      "rama": "PRO",
+      "task_type": "chore",
+      "tema_principal": "QA / Testing",
+      "milestone": "M1",
+      "fecha": "2026-06-08",
+      "asignados": [
+        "axlfc"
+      ],
+      "acceptance_criteria": "Reducción del tamaño total de scripts y eliminación de redundancias.",
+      "subtasks": []
+    },
+    {
+      "id": 47,
+      "title": "Decomisionado de Paneles Jules obsoletos",
+      "descripcion": "Archivar o eliminar las versiones de prueba de los paneles Jules (jules-panel.html, jules-paneltest.html). jules-paneltest2.html es ahora el estándar y mantener los anteriores genera confusión. **Hecho cuando:** Solo el panel v2 esté activo y las rutas antiguas redirijan o estén borradas.",
+      "tags": [
+        "refactor",
+        "chore"
+      ],
+      "prioridad": "Medium",
+      "estado": "Pending",
+      "estimated_hours": 2,
+      "comments": [
+        "Debemos asegurar que no hay links internos apuntando a las versiones antiguas en la documentación o en el tech-stack."
+      ],
+      "rama": "PRO",
+      "task_type": "chore",
+      "tema_principal": "QA / Testing",
+      "milestone": "M1",
+      "fecha": "2026-06-08",
+      "asignados": [
+        "axlfc"
+      ],
+      "acceptance_criteria": "Limpieza del directorio de páginas y actualización de enlaces.",
+      "subtasks": []
+    },
+    {
+      "id": 48,
+      "title": "Implementación de Error Boundaries en Dashboard",
+      "descripcion": "Implementar un sistema de Error Boundaries para aislar fallos en componentes críticos del dashboard. Evita que un error en la API de GitHub o en las métricas tumbe toda la interfaz. **Hecho cuando:** Al fallar un componente, se muestre un estado de fallback elegante sin afectar al resto.",
+      "tags": [
+        "frontend",
+        "ux",
+        "stability"
+      ],
+      "prioridad": "High",
+      "estado": "Pending",
+      "estimated_hours": 4,
+      "comments": [
+        "Podemos usar un componente de orden superior para envolver las tarjetas del Kanban y los gráficos de éxito."
+      ],
+      "rama": "PRO",
+      "task_type": "feature",
+      "tema_principal": "QA / Testing",
+      "milestone": "M2",
+      "fecha": "2026-06-08",
+      "asignados": [
+        "axlfc",
+        "topperh4rley"
+      ],
+      "acceptance_criteria": "Los errores se capturan y loguean sin romper la sesión del usuario.",
+      "subtasks": []
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore(tasks): audit completo, enriquecimiento de 22 tareas y creación de 4 nuevas tareas de infraestructura",
+      "user": "Jules",
+      "timestamp": "2026-06-08T16:19:37.830026Z"
+    },
     {
       "action": "feat: nueva tarea #1780926700884 añadida",
       "user": "Axlfc",
