@@ -652,11 +652,9 @@ permalink: /claude-chat.html
             const cachedTask = localStorage.getItem('claude_task_context');
 
             if (cachedTask) {
+                localStorage.removeItem('claude_task_context');
                 try {
-                    const parsed = JSON.parse(cachedTask);
-                    if (taskId && String(parsed.id) === String(taskId)) {
-                        task = parsed;
-                    }
+                    task = JSON.parse(cachedTask);
                 } catch (e) {
                     console.error('[Claude] Error parsing cached task:', e);
                 }
@@ -679,33 +677,49 @@ permalink: /claude-chat.html
                 }
 
                 // Pre-fill the chat input with context
-                let prompt = `Aquí tienes el contexto de la tarea. Ayúdame a implementarla o dame los próximos pasos.\n`;
+                let prompt = `Aquí tienes el contexto de la tarea. Ayúdame a implementarla o dame los próximos pasos.`;
 
-                if (task.titulo) prompt += `\n📌 Título: ${task.titulo}`;
-                if (task.descripcion) prompt += `\n📝 Descripción: ${task.descripcion}`;
-                if (task.acceptance_criteria) prompt += `\n✅ Criterios de aceptación: ${task.acceptance_criteria}`;
-                if (task.tags && task.tags.length > 0) prompt += `\n🏷️ Tags: ${Array.isArray(task.tags) ? task.tags.join(', ') : task.tags}`;
-                if (task.prioridad) prompt += `\n⚡ Prioridad: ${task.prioridad}`;
-                if (task.asignados && task.asignados.length > 0) prompt += `\n👥 Asignados: ${Array.isArray(task.asignados) ? task.asignados.join(', ') : task.asignados}`;
-                if (task.estimated_hours) prompt += `\n⏱️ Estimación: ${task.estimated_hours}h`;
-                if (task.comments && task.comments.length > 0) {
-                    const commentText = Array.isArray(task.comments)
-                        ? task.comments.map(c => typeof c === 'string' ? c : (c.body || '')).filter(Boolean).join(' | ')
-                        : task.comments;
-                    if (commentText) prompt += `\n💬 Comentarios: ${commentText}`;
+                const t = task;
+                const getVal = (val) => (val && (!Array.isArray(val) || val.length > 0)) ? val : null;
+
+                const titulo = getVal(t.titulo || t.title);
+                const descripcion = getVal(t.descripcion || t.description);
+                const criteria = getVal(t.acceptance_criteria);
+                const tags = getVal(t.tags);
+                const prioridad = getVal(t.prioridad || t.priority);
+                const asignados = getVal(t.asignados);
+                const estimation = getVal(t.estimated_hours);
+                const comments = getVal(t.comments);
+                const repositorio = getVal(t.repositorio || t.repository || t.repo);
+
+                let fields = [];
+                if (titulo) fields.push(`📌 Título: ${titulo}`);
+                if (descripcion) fields.push(`📝 Descripción: ${descripcion}`);
+                if (criteria) fields.push(`✅ Criterios de aceptación: ${criteria}`);
+                if (tags) fields.push(`🏷️ Tags: ${Array.isArray(tags) ? tags.join(', ') : tags}`);
+                if (prioridad) fields.push(`⚡ Prioridad: ${prioridad}`);
+                if (asignados) fields.push(`👥 Asignados: ${Array.isArray(asignados) ? asignados.join(', ') : asignados}`);
+                if (estimation) fields.push(`⏱️ Estimación: ${estimation}h`);
+                if (comments) {
+                    const commentText = Array.isArray(comments)
+                        ? comments.map(c => typeof c === 'string' ? c : (c.body || '')).filter(Boolean).join(' | ')
+                        : comments;
+                    if (commentText) fields.push(`💬 Comentarios: ${commentText}`);
                 }
-                if (task.repositorio) prompt += `\n🗂️ Repositorio: ${task.repositorio}`;
+                if (repositorio) fields.push(`🗂️ Repositorio: ${repositorio}`);
+
+                if (fields.length > 0) {
+                    prompt += '\n\n' + fields.join('\n');
+                }
 
                 chatInput.value = prompt;
-                chatInput.style.height = 'auto';
-                chatInput.style.height = (chatInput.scrollHeight) + 'px';
+
+                // Disparar redimensionado automático
+                chatInput.dispatchEvent(new Event('input'));
 
                 // Strip taskId from URL
                 const newUrl = window.location.pathname + (window.location.search.includes('from=dashboard') || window.location.search.includes('from=jules-panel') ? `?from=${urlParams.get('from')}` : '');
                 window.history.replaceState({}, document.title, newUrl);
-
-                // Clear cache
-                localStorage.removeItem('claude_task_context');
             }
 
             // Load profiles and set active
