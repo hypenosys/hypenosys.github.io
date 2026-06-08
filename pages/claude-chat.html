@@ -105,6 +105,76 @@ permalink: /claude-chat.html
         display: flex;
         gap: 8px;
     }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 768px) {
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            z-index: 50;
+            width: 280px;
+            transform: translateX(-100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background-color: #1e1f29;
+            box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+        }
+        .sidebar.open {
+            transform: translateX(0);
+        }
+        .sidebar-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 40;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .sidebar-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+        #claude-main-interface {
+            flex-direction: column;
+            border-radius: 0;
+            border: none;
+            height: 100vh;
+            width: 100vw;
+            max-width: 100%;
+        }
+        main {
+            width: 100% !important;
+            flex-grow: 1;
+            overflow-x: hidden;
+        }
+        header {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+        .mobile-toggle {
+            display: flex !important;
+        }
+    }
+
+    .mobile-toggle {
+        display: none;
+        align-items: center;
+        justify-content: center;
+        min-width: 40px;
+        height: 40px;
+        color: #bd93f9;
+        font-size: 1.25rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        z-index: 20;
+    }
+    .mobile-toggle:hover {
+        background: rgba(189, 147, 249, 0.1);
+        border-radius: 8px;
+    }
 </style>
 
 <!-- Auth Loading Skeleton -->
@@ -126,6 +196,9 @@ permalink: /claude-chat.html
         </button>
     </div>
 </div>
+
+<!-- Sidebar Overlay -->
+<div id="sidebar-overlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
 
 <!-- Main Claude Interface -->
 <div id="claude-main-interface" class="h-[calc(100vh-100px)] flex overflow-hidden hidden border border-[#44475a] rounded-xl shadow-2xl">
@@ -182,6 +255,9 @@ permalink: /claude-chat.html
         <!-- Header -->
         <header class="h-16 border-b border-[#44475a]/50 flex items-center justify-between px-6 bg-[#1e1f29]/50 backdrop-blur-md sticky top-0 z-10">
             <div class="flex items-center gap-3">
+                <button onclick="toggleSidebar()" class="mobile-toggle" title="Abrir menú">
+                    <i class="fas fa-bars"></i>
+                </button>
                 <div id="session-title" class="font-bold text-base tracking-tight text-white/90">Nueva Conversación</div>
                 <div class="relative group" id="profile-selector-container">
                     <button id="active-profile-btn" class="flex items-center gap-2 bg-[#44475a]/50 hover:bg-[#44475a] border border-[#bd93f9]/30 px-3 py-1 rounded-full transition-all">
@@ -579,6 +655,21 @@ permalink: /claude-chat.html
         const sendBtn = document.getElementById('send-btn');
         const thinkingIndicator = document.getElementById('thinking-indicator');
         const toggleThinkingBtn = document.getElementById('toggle-thinking');
+
+        // Mobile Sidebar Management
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+
+        function closeSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.remove('open');
+            overlay.classList.remove('active');
+        }
 
         function escapeHtml(str) {
             return String(str ?? '')
@@ -1225,6 +1316,12 @@ permalink: /claude-chat.html
             currentSessionId = id;
             const session = sessions.find(s => s.id === id);
             if (!session) return;
+
+            // Close sidebar on mobile after selecting a session
+            if (window.innerWidth <= 768) {
+                closeSidebar();
+            }
+
             document.getElementById('session-title').textContent = session.title;
             renderMessages();
             document.getElementById('welcome-screen')?.classList.add('hidden');
