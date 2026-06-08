@@ -241,7 +241,14 @@ function buildTaskCard(task) {
           </div>
         </div>
         <div class="text-[9px] font-bold text-slate-500 uppercase tracking-tighter text-right">
-          <div class="mb-1">${task.rama}${task.rama2 ? ` / ${task.rama2}` : ''}</div>
+          <div class="mb-1 flex justify-end">
+            ${task.rama ? `
+              <a href="https://github.com/${task.repository || task.repo || 'hypenosys/hypenosys.github.io'}/tree/${task.rama}" target="_blank" class="text-[#bd93f9] hover:text-[#ff79c6] flex items-center gap-1 font-mono bg-[#bd93f9]/10 px-1.5 py-0.5 rounded transition-colors" title="Ver rama en GitHub">
+                <i class="fa-solid fa-code-branch"></i> ${task.rama}
+              </a>
+            ` : '—'}
+            ${task.rama2 ? ` / ${task.rama2}` : ''}
+          </div>
           ${task.email_responsable ? `<div class="text-[8px] text-slate-600 flex items-center justify-end gap-1 font-normal lowercase tracking-normal"><i class="fa-solid fa-envelope text-[7px]"></i> ${task.email_responsable}</div>` : ''}
         </div>
       </div>
@@ -426,7 +433,8 @@ window._openTaskInClaudeWithContext = function(taskId) {
         asignados: task.asignados || task.asignado_a || [],
         comments: task.comments || [],
         estimated_hours: task.estimated_hours || '',
-        repositorio: task.repository || task.repo || ''
+        repositorio: task.repository || task.repo || '',
+        rama: task.rama || task.branch || ''
       };
       localStorage.setItem('claude_task_context', JSON.stringify(payload));
     }
