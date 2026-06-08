@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-08T16:19:37.830021Z",
-  "last_updated_by": "Jules (Task Audit & Enrichment)",
+  "last_updated": "2026-06-08T18:44:36.934Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -967,8 +967,8 @@
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Major",
       "milestone": "M2",
-      "estado": "Working",
-      "completitud": 0,
+      "estado": "In Review",
+      "completitud": 0.5,
       "resuelto_por": "Axel",
       "detectado_por": "Axel",
       "asignados": [
@@ -985,9 +985,9 @@
       "story_points": 4,
       "tags": [
         "Infraestructura",
-        "jules",
-        "feature",
         "api",
+        "feature",
+        "jules",
         "ux"
       ],
       "external_links": [],
@@ -1082,6 +1082,20 @@
           "field": "blocked_by",
           "old_value": "[\"26\",\"30\"]",
           "new_value": "[\"26\",\"29\",\"30\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T18:44:36.016Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T18:44:36.016Z",
+          "field": "completitud",
+          "old_value": 0,
+          "new_value": 0.5
         }
       ],
       "id": 27
@@ -2552,6 +2566,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #27",
+      "user": "Axlfc",
+      "timestamp": "2026-06-08T18:44:36.934Z"
+    },
     {
       "action": "chore(tasks): audit completo, enriquecimiento de 22 tareas y creación de 4 nuevas tareas de infraestructura",
       "user": "Jules",
