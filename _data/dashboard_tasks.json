@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-07T20:12:31.931Z",
+  "last_updated": "2026-06-08T10:17:33.433Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2000,7 +2000,7 @@
     },
     {
       "title": "Falta nombre del repo (o alias) en las cards en dashboard de Jules Neural Operations",
-      "descripcion": "Tambien un boton que lleve el boton para ir a la sesión asociada de Claude-Chat en cada card y el estado de esa sesión de Jules",
+      "descripcion": "Tambien un boton que lleve el boton para ir a la sesión asociada de Claude-Chat en cada card y el estado de esa sesión de Jules estilo minimalista",
       "rama": "PRO",
       "task_type": "feature",
       "tema_principal": "Tools / Automation",
@@ -2056,12 +2056,24 @@
           "field": "descripcion",
           "old_value": "Tambien un boton que lleve el boton para ir a la sesión asociada de Claude-Chat",
           "new_value": "Tambien un boton que lleve el boton para ir a la sesión asociada de Claude-Chat en cada card y el estado de esa sesión de Jules"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:17:32.838Z",
+          "field": "descripcion",
+          "old_value": "Tambien un boton que lleve el boton para ir a la sesión asociada de Claude-Chat en cada card y el estado de esa sesión de Jules",
+          "new_value": "Tambien un boton que lleve el boton para ir a la sesión asociada de Claude-Chat en cada card y el estado de esa sesión de Jules estilo minimalista"
         }
       ],
       "id": 42
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #42",
+      "user": "Axlfc",
+      "timestamp": "2026-06-08T10:17:33.433Z"
+    },
     {
       "action": "chore: actualizar tarea #42",
       "user": "Axlfc",
