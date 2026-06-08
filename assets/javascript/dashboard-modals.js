@@ -263,6 +263,16 @@ function populateRepoSelect() {
     });
 
     repoSelect.innerHTML = html;
+
+    // Bug 2: Ensure branch listener is attached once
+    if (!repoSelect._branchListenerAttached) {
+        repoSelect.addEventListener('change', (e) => {
+            if (typeof updateBranchList === 'function') {
+                updateBranchList(e.target.value);
+            }
+        });
+        repoSelect._branchListenerAttached = true;
+    }
 }
 
 function populateMemberSelects() {
