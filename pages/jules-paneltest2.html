@@ -1824,7 +1824,7 @@ body{
         document.querySelectorAll('#view-hub .dr-tab').forEach(t => t.classList.remove('active'));
         if(el) el.classList.add('active');
         document.querySelectorAll('.hub-panel').forEach(p => p.style.display = 'none');
-        const panel = $(`panel-${{ 'pull-requests': 'pr', 'issues': 'issues', 'branches': 'branches', 'actions': 'actions', 'notifications': 'notifs' }[tabId]}`);
+        const panel = $(`panel-${ { 'pull-requests': 'pr', 'issues': 'issues', 'branches': 'branches', 'actions': 'actions', 'notifications': 'notifs' }[tabId]}`);
         if(panel) panel.style.display = 'block';
         await loadHubContent(tabId);
     }
@@ -1832,7 +1832,7 @@ body{
     async function loadHubContent(tabId, force = false) {
         const repoVal = window.JulesPanelState.activeRepo; if (!repoVal) return;
         const parsed = window.parseSourceName(repoVal); if (!parsed) return;
-        const panel = $(`panel-${{ 'pull-requests': 'pr', 'issues': 'issues', 'branches': 'branches', 'actions': 'actions', 'notifications': 'notifs' }[tabId]}`);
+        const panel = $(`panel-${ { 'pull-requests': 'pr', 'issues': 'issues', 'branches': 'branches', 'actions': 'actions', 'notifications': 'notifs' }[tabId]}`);
         const now = Date.now(), lastFetch = parseInt(panel.dataset.fetchedAt || '0', 10);
         if (!force && panel.dataset.loaded === 'true' && (now - lastFetch < 60000)) return;
         panel.innerHTML = '<div style="padding:40px; text-align:center; color:var(--text3);">Cargando...</div>';
