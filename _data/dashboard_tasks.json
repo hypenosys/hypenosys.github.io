@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-08T10:17:33.433Z",
+  "last_updated": "2026-06-08T10:18:01.633Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1897,7 +1897,15 @@
       "blocks": [],
       "blocked_by": [],
       "comments": [],
-      "images": [],
+      "images": [
+        {
+          "url": "https://64.media.tumblr.com/bf452d867339cd09c256bda21f1ce0f8/083fd4f80c7ebbf5-13/s1280x1920/f984d48241f051d079c8ce8a4cede1e997dd564e.jpg",
+          "type": "url",
+          "tumblr_post_id": "818847550169841664",
+          "filename": "7598.jpg",
+          "uploaded_at": "2026-06-08T10:17:58.371Z"
+        }
+      ],
       "rama2": null,
       "ver": true,
       "fecha": "2026-06-07",
@@ -2069,6 +2077,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #40",
+      "user": "Axlfc",
+      "timestamp": "2026-06-08T10:18:01.633Z"
+    },
     {
       "action": "chore: actualizar tarea #42",
       "user": "Axlfc",
