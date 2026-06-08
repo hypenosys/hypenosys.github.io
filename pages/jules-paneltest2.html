@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: null
 title: Jules Panel V2
 hide_title: true
 permalink: /jules-panel-v2/
@@ -18,6 +18,8 @@ permalink: /jules-panel-v2/
 /* ─── VARIABLES ─── */
 :root {
   --bg: #07070a;
+  --header-h: 48px;
+  --nav-h: 64px;
   --bg-gradient: radial-gradient(circle at 50% -20%, #150d35 0%, #07070a 60%);
   --surface: rgba(13,13,20,0.8);
   --surface-opaque: #0d0d14;
@@ -66,6 +68,7 @@ body{
   color:var(--text);
   height:100%;font-size:14px;line-height:1.5;
   overflow-x:hidden;display:flex;flex-direction:column;
+  -webkit-text-size-adjust: 100%;
 }
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:transparent}
@@ -249,11 +252,12 @@ body{
 
 /* ─── STATS ROW ─── */
 .stats-row{
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-  gap:14px;padding:22px 30px 12px;
+  display:grid;grid-template-columns:repeat(2,1fr);
+  gap:10px;padding:12px;
 }
 .stat-tile{
-  padding:16px 20px;border-radius:var(--r-lg);position:relative;overflow:hidden;cursor:pointer;
+  padding:14px;border-radius:var(--r-md);position:relative;overflow:hidden;
+  height:120px;display:flex;flex-direction:column;justify-content:center;
 }
 .stat-tile::before{
   content:'';position:absolute;top:0;left:0;width:100%;height:2px;
@@ -262,8 +266,8 @@ body{
 .stat-tile:hover::before{background:var(--accent-grad)}
 .stat-tile.accent::before{background:var(--accent-grad)}
 .stat-tile.accent{border-color:var(--border-accent);box-shadow:0 0 20px rgba(124,58,237,.08) inset}
-.stat-num{font-family:var(--font-mono);font-size:28px;font-weight:600;color:var(--text);line-height:1.2;margin-bottom:3px}
-.stat-lbl{font-size:11.5px;color:var(--text2);font-weight:500;text-transform:uppercase;letter-spacing:.04em}
+.stat-num{font-family:var(--font-mono);font-size:36px;font-weight:700;color:var(--text);line-height:1;margin-bottom:4px}
+.stat-lbl{font-size:10px;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:.1em}
 .stat-delta{
   font-family:var(--font-mono);font-size:10px;font-weight:600;margin-top:5px;
   padding:2px 6px;border-radius:var(--r-full);display:inline-flex;align-items:center;gap:3px;
@@ -742,34 +746,35 @@ body{
 
 /* ─── MOBILE HEADER ─── */
 .mobile-hdr{
-  display:none;height:54px;border-bottom:1px solid var(--border);
-  background:rgba(8,8,14,.95);
-  align-items:center;justify-content:space-between;padding:0 16px;
+  display:none;height:48px;border-bottom:1px solid var(--border);
+  background:var(--bg);
+  align-items:center;justify-content:space-between;padding:0 12px;
   position:sticky;top:0;z-index:90;
-  /* Fix: no backdrop-filter on mobile header to avoid animation stall */
 }
 .mob-menu-btn{
-  background:none;border:1px solid var(--border);color:var(--text);cursor:pointer;
-  display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:var(--r-sm);
+  background:none;border:none;color:var(--text);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;width:38px;height:38px;
   -webkit-tap-highlight-color:transparent;
 }
-.mobile-tabs-nav{
-  display:none;border-bottom:1px solid var(--border);
-  background:rgba(8,8,14,.95);
-  overflow-x:auto;white-space:nowrap;
-  /* Fix: solid bg instead of translucent, avoid backdrop-filter causing animation lag */
-  -webkit-overflow-scrolling:touch;
-  position:sticky;top:54px;z-index:89;
+.mobile-bottom-nav{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;height:64px;
+  background:var(--surface-opaque);border-top:1px solid var(--border);
+  z-index:100;
+  grid-template-columns:repeat(5,1fr);
+  padding-bottom:env(safe-area-inset-bottom);
 }
-.mobile-tabs-nav::-webkit-scrollbar{display:none}
 .mtab{
-  display:inline-flex;align-items:center;gap:6px;padding:12px 16px;
-  font-size:13px;font-weight:600;color:var(--text2);border:none;background:none;
-  cursor:pointer;border-bottom:2px solid transparent;transition:color var(--t-fast),border-color var(--t-fast);
-  /* Fix: only transition color/border, not background, to avoid animation stall */
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  font-size:10px;font-weight:700;color:var(--text3);border:none;background:none;
+  cursor:pointer;transition:all var(--t-fast);
   -webkit-tap-highlight-color:transparent;
+  text-transform:uppercase;letter-spacing:0.02em;
 }
-.mtab.active{color:var(--accent2);border-bottom-color:var(--accent)}
+.mtab svg{width:20px;height:20px;stroke-width:2;transition:transform 0.2s ease}
+.mtab:active{opacity:0.6;transform:scale(0.95)}
+.mtab.active{color:var(--accent2)}
+.mtab.active svg{color:var(--accent);transform:translateY(-2px)}
 .mob-panel{display:none;flex-direction:column;gap:16px;padding:16px}
 .mob-panel.active{display:flex}
 
@@ -795,42 +800,114 @@ body{
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .kb-card{animation:fadeIn .2s ease forwards}
 
-/* ─── BREAKPOINTS ─── */
+.mobile-fab{
+  display:none;
+  position:fixed;bottom:80px;right:20px;
+  width:56px;height:56px;border-radius:28px;
+  background:var(--accent-grad);color:#fff;
+  border:none;box-shadow:0 4px 15px rgba(124,58,237,0.4);
+  align-items:center;justify-content:center;z-index:90;
+  cursor:pointer;transition:transform 0.2s ease;
+}
+.mobile-fab:active{transform:scale(0.9) rotate(90deg)}
+
+.mobile-only { display: none }
+.desktop-only { display: inline-flex }
+@media(max-width:767px) {
+  .desktop-only { display: none !important }
+  .mobile-only { display: block }
+  .mobile-fab { display: flex }
+}
+
+/* ─── BREAKPOINTS & RESPONSIVE ─── */
+
+/* Mobile Base (< 768px) */
+.main{padding-bottom:var(--nav-h)}
+#mob-menu-btn{display:none} /* Removed hamburger per requirements */
+
+/* Tablet & Desktop (>= 768px) */
+@media(min-width:768px){
+  .mobile-hdr, .mobile-bottom-nav { display:none !important }
+  .stats-row{
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    padding:22px 30px 12px; gap:14px;
+  }
+  .stat-tile{ height:auto; padding:16px 20px; border-radius:var(--r-lg) }
+  .stat-num{ font-size:28px }
+  .stat-lbl{ font-size:11.5px }
+  .main{ padding-bottom:0 }
+
+  /* Desktop constraints reset */
+  .view { height: auto !important; overflow: visible !important }
+  #view-kanban, #view-metrics, #view-hub { padding: 22px 30px }
+  .dash-grid .view { padding: 0 }
+
+  /* Desktop Dashboard: show all sub-views in the grid if dashboard is active */
+  #view-dashboard.active ~ .dash-grid .view { display: block !important }
+}
+
 @media(max-width:1140px){
   .dash-grid{grid-template-columns:1fr 1fr}
   .kanban-board{grid-template-columns:repeat(2,1fr)}
   .metrics-grid{grid-template-columns:1fr}
 }
-@media(max-width:900px){
-  .sidebar{
-    display:none;
-    /* Fix: use translate3d for GPU-accelerated open/close, avoids stall */
-  }
-  .sidebar.mob-open{
-    display:flex;position:fixed;top:0;left:0;height:100vh;width:260px;
-    box-shadow:12px 0 40px rgba(0,0,0,.8);z-index:100;
-    animation:slideInSidebar .22s cubic-bezier(.16,1,.3,1);
-  }
-  @keyframes slideInSidebar{
-    from{transform:translate3d(-100%,0,0)}
-    to{transform:translate3d(0,0,0)}
-  }
+
+@media(max-width:767px){
+  header.site-header { display: none !important }
+  footer.site-footer { display: none !important }
+  .py-5 { padding-top: 0 !important; padding-bottom: 0 !important }
+  .container.page-content { padding: 0 !important; max-width: 100% !important; margin: 0 !important }
+
+  .sidebar{ display:none }
   .dheader{display:none}
   .mobile-hdr{display:flex}
-  .mobile-tabs-nav{display:block}
-  .stats-row{padding:14px 16px 8px;grid-template-columns:repeat(2,1fr)}
-  .dash-grid{display:none}
-  #view-kanban{padding:14px 16px}
-  .kanban-board{grid-template-columns:1fr}
-  #view-metrics{padding:14px 16px}
-  .metrics-grid{grid-template-columns:1fr}
-  /* Fix: drawer full-width on mobile */
+  .mobile-bottom-nav{display:grid}
+
+  /* Force views to take full height minus bars */
+  .view{ padding: 12px; height: calc(100vh - var(--header-h) - var(--nav-h)); overflow-y: auto }
+  .view.active { display: flex !important; flex-direction: column; gap: 12px }
+
+  /* Make cards within views fill space if needed */
+  .view.active .card { flex: 1; min-height: 0; display: flex; flex-direction: column }
+  .view.active .card-body { flex: 1; overflow-y: auto }
+
+  /* On mobile, dash-grid is transparent, it's the views inside that handle layout */
+  .dash-grid { display: contents }
+  #view-dashboard .dash-grid { display:none } /* Hide the grid containers if any */
+
+  /* Kanban mobile layout */
+  #view-kanban{padding:12px}
+  .kanban-board{display:flex; overflow-x:auto; scroll-snap-type:x mandatory; gap:12px; padding-bottom:12px}
+  .kb-col{flex:0 0 85vw; scroll-snap-align:start; max-height:calc(100vh - 200px); overflow-y:auto}
+
+  /* Metrics mobile */
+  #view-metrics{padding:12px}
+
+  /* Cards density */
+  .card-body{padding:12px 14px}
+  .card-head{padding:12px 14px}
+
+  /* Active states for touch */
+  .btn:active, .stat-tile:active, .repo-item:active, .fpill:active, .mtab:active {
+    opacity: 0.7 !important;
+    transform: scale(0.97) !important;
+    transition: all 0.1s ease !important;
+  }
+
+  /* Typography for mobile metrics */
+  .stat-num { font-size: 36px !important; font-weight: 800 !important; }
+  .stat-lbl { font-size: 10px !important; letter-spacing: 0.1em !important; }
+
+  /* Collapsible history arrow */
+  details summary svg { transition: transform 0.2s ease; }
+  details[open] summary svg { transform: rotate(180deg); }
+
+  /* Drawer full width */
   .drawer{width:100vw;right:-100vw}
-  /* Fix: notif panel full-width on mobile */
-  .notif-panel{width:calc(100vw - 32px);right:16px}
+  .notif-panel{width:calc(100vw - 24px);right:12px; top:54px}
 }
+
 @media(max-width:480px){
-  .stats-row{grid-template-columns:1fr}
   .opts-grid{grid-template-columns:1fr}
   .session-foot{flex-direction:column;align-items:stretch}
   .session-foot .btn{width:100%;justify-content:center}
@@ -879,32 +956,42 @@ body{
 
 <!-- ══ MOBILE HEADER ══ -->
 <header class="mobile-hdr" id="mob-hdr">
-  <button class="mob-menu-btn" id="mob-menu-btn" aria-label="Menú">
-    <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
-  </button>
-  <div style="display:flex;align-items:center;gap:8px">
+  <div style="display:flex;align-items:center;gap:10px">
     <div class="logo-gem">J</div>
-    <span class="logo-text">HYPENOSYS</span>
   </div>
-  <div style="display:flex;align-items:center;gap:8px">
-    <div class="notif-bell" id="mob-notif-bell" onclick="toggleNotifPanel()">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-      <span class="notif-pip hidden" id="mob-notif-pip">0</span>
+  <div style="display:flex;align-items:center;gap:12px">
+    <div class="notif-bell" id="mob-notif-bell" onclick="toggleNotifPanel()" style="border:none; background:none; width:40px; height:40px">
+      <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+      <span class="notif-pip hidden" id="mob-notif-pip" style="top:4px; right:4px">0</span>
     </div>
-    <button class="btn-claude btn-sm" onclick="openClaudeChat()">
-      <span class="claude-icon">C</span>Chat
-    </button>
+    <div class="notif-bell" onclick="openClaudeChat()" style="border:none; background:none; width:40px; height:40px">
+      <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+    </div>
   </div>
 </header>
 
-<!-- ══ MOBILE TABS ══ -->
-<nav class="mobile-tabs-nav" id="mob-tabs">
-  <button class="mtab active" data-tab="dashboard">Dashboard</button>
-  <button class="mtab" data-tab="kanban">Kanban</button>
-  <button class="mtab" data-tab="metrics">Métricas</button>
-  <button class="mtab" data-tab="config">Config</button>
-  <button class="mtab" data-tab="session">Tarea</button>
-  <button class="mtab" data-tab="history">Historial</button>
+<!-- ══ MOBILE TABS (Bottom Bar) ══ -->
+<nav class="mobile-bottom-nav" id="mob-tabs">
+  <button class="mtab active" data-tab="dashboard">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+    <span>Dashboard</span>
+  </button>
+  <button class="mtab" data-tab="kanban">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+    <span>Kanban</span>
+  </button>
+  <button class="mtab" data-tab="metrics">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2"/></svg>
+    <span>Métricas</span>
+  </button>
+  <button class="mtab" data-tab="neural">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+    <span>Neural</span>
+  </button>
+  <button class="mtab" data-tab="config">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+    <span>Config</span>
+  </button>
 </nav>
 
 <!-- ══ SIDEBAR BACKDROP (mobile) ══ -->
@@ -1012,18 +1099,18 @@ body{
           <div class="stat-delta delta-up">▲ +1 hoy</div>
           <div class="stat-icon">⚡</div>
         </div>
-        <div class="stat-tile glass" onclick="focusRepos()">
+        <div class="stat-tile glass" onclick="switchView('config')">
           <div class="stat-num" id="s-repos">5</div>
           <div class="stat-lbl">Repos Conectados</div>
           <div class="stat-icon">📁</div>
         </div>
-        <div class="stat-tile glass" onclick="clearFilters()">
+        <div class="stat-tile glass" onclick="switchView('metrics')">
           <div class="stat-num" id="s-total">47</div>
           <div class="stat-lbl">Sesiones Totales</div>
           <div class="stat-delta delta-up">▲ +8 semana</div>
           <div class="stat-icon">📈</div>
         </div>
-        <div class="stat-tile glass" onclick="focusBranch()">
+        <div class="stat-tile glass" onclick="switchView('config')">
           <div class="stat-num" id="s-branches">4</div>
           <div class="stat-lbl">Ramas Activas</div>
           <div class="stat-icon">⌥</div>
@@ -1031,138 +1118,145 @@ body{
       </section>
 
       <section class="dash-grid">
-        <!-- COL 1 -->
-        <div class="card glass">
-          <div class="card-head">
-            <div class="card-title">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-              Configuración Repo
+        <!-- ─── CONFIG VIEW ─── -->
+        <div class="view" id="view-config">
+          <div class="card glass">
+            <div class="card-head">
+              <div class="card-title">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                Configuración Repo
+              </div>
             </div>
-          </div>
-          <div class="card-body">
-            <span class="cfg-label">Selector de Repositorio</span>
-            <div class="custom-dropdown" id="repo-context-dropdown">
-                <div class="custom-dropdown-trigger" id="repo-trigger">
-                    <span id="repo-label">Cargando fuentes...</span>
-                    <svg width="10" height="6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4"/></svg>
-                </div>
-                <div class="custom-dropdown-menu" id="repo-menu" style="display:none">
-                    <div style="padding:8px; border-bottom: 1px solid var(--border);">
-                        <input type="text" id="repo-search" class="cfg-input" style="font-size:12px; height:32px" placeholder="Buscar repo...">
-                    </div>
-                    <div id="repo-items-container"></div>
-                </div>
-            </div>
-            <div style="display:none"><select id="jules-repo-select"></select></div>
-            <span class="cfg-label">Ruta repositorio</span>
-            <div class="cfg-path" id="cfg-path">sources/github/hypenosys/web</div>
-            <label class="cfg-label" for="alias-in">Alias visual</label>
-            <input class="cfg-input" id="alias-in" value="Web" style="margin-bottom:14px">
-            <label class="cfg-label" for="branch-sel">Rama activa</label>
-            <div class="sel-wrap">
-              <select class="cfg-input" id="branch-sel" style="padding:8px 30px 8px 12px;appearance:none;cursor:pointer"></select>
-            </div>
-            <div class="branch-meta" id="branch-meta"><span class="u-dot"></span><span>4 ramas cargadas</span></div>
-            <button class="btn btn-ghost" style="width:100%;justify-content:center;font-size:12px;padding:7px" id="new-branch-btn">+ Nueva rama</button>
-            <div class="mini-chart-box">
-              <div class="mini-chart-title">Actividad commits / semana</div>
-              <svg class="svg-chart" viewBox="0 0 200 56" id="repo-chart">
-                <defs><linearGradient id="cg" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient></defs>
-                <path fill="none" stroke="url(#cg)" stroke-width="2.5" stroke-linecap="round"/>
-              </svg>
+            <div class="card-body">
+              <span class="cfg-label">Selector de Repositorio</span>
+              <div class="custom-dropdown" id="repo-context-dropdown">
+                  <div class="custom-dropdown-trigger" id="repo-trigger">
+                      <span id="repo-label">Cargando fuentes...</span>
+                      <svg width="10" height="6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4"/></svg>
+                  </div>
+                  <div class="custom-dropdown-menu" id="repo-menu" style="display:none">
+                      <div style="padding:8px; border-bottom: 1px solid var(--border);">
+                          <input type="text" id="repo-search" class="cfg-input" style="font-size:12px; height:32px" placeholder="Buscar repo...">
+                      </div>
+                      <div id="repo-items-container"></div>
+                  </div>
+              </div>
+              <div style="display:none"><select id="jules-repo-select"></select></div>
+              <span class="cfg-label">Ruta repositorio</span>
+              <div class="cfg-path" id="cfg-path">sources/github/hypenosys/web</div>
+              <label class="cfg-label" for="alias-in">Alias visual</label>
+              <input class="cfg-input" id="alias-in" value="Web" style="margin-bottom:14px">
+              <label class="cfg-label" for="branch-sel">Rama activa</label>
+              <div class="sel-wrap">
+                <select class="cfg-input" id="branch-sel" style="padding:8px 30px 8px 12px;appearance:none;cursor:pointer"></select>
+              </div>
+              <div class="branch-meta" id="branch-meta"><span class="u-dot"></span><span>4 ramas cargadas</span></div>
+              <button class="btn btn-ghost" style="width:100%;justify-content:center;font-size:12px;padding:7px" id="new-branch-btn">+ Nueva rama</button>
+              <div class="mini-chart-box">
+                <div class="mini-chart-title">Actividad commits / semana</div>
+                <svg class="svg-chart" viewBox="0 0 200 56" id="repo-chart">
+                  <defs><linearGradient id="cg" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient></defs>
+                  <path fill="none" stroke="url(#cg)" stroke-width="2.5" stroke-linecap="round"/>
+                </svg>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- COL 2 -->
-        <div class="session-card glass" id="session-anchor">
-          <div class="card-head" style="padding:14px 18px">
-            <div class="card-title">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-              Nueva Tarea Jules
+      <!-- ─── NEURAL VIEW (Tarea + Telemetry) ─── -->
+      <div class="view" id="view-neural">
+        <!-- Session Card -->
+          <div class="session-card glass">
+            <div class="card-head" style="padding:14px 18px">
+              <div class="card-title">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                Nueva Tarea Jules
+              </div>
+            </div>
+            <textarea class="prompt-area" id="session-prompt" placeholder="¿Qué debe hacer Jules?&#10;&#10;Ej: Refactoriza el componente Header para que sea responsive, usa variables HSL en index.css y añade un menú hamburguesa con animación suave..."></textarea>
+            <div class="opts-grid">
+              <div class="opt-pill active" id="opt-auto">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                Modo Automático
+              </div>
+              <div class="opt-pill" id="opt-review">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                Revisar Cambios
+              </div>
+              <div class="opt-pill" id="opt-tests">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                Crear Tests
+              </div>
+              <div class="opt-pill" id="opt-branch">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7v8a2 2 0 002 2h6M8 7a2 2 114 0 2 2 0 01-4 0zm8 8a2 2 114 0 2 2 0 01-4 0z"/></svg>
+                Rama Dedicada
+              </div>
+            </div>
+            <div class="session-foot">
+              <div class="meta-tag">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+                <span id="sess-ctx">Web: master</span>
+              </div>
+              <button class="btn btn-primary" id="launch-btn">
+                <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                Iniciar Ejecución
+              </button>
             </div>
           </div>
-          <textarea class="prompt-area" id="session-prompt" placeholder="¿Qué debe hacer Jules?&#10;&#10;Ej: Refactoriza el componente Header para que sea responsive, usa variables HSL en index.css y añade un menú hamburguesa con animación suave..."></textarea>
-          <div class="opts-grid">
-            <div class="opt-pill active" id="opt-auto">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-              Modo Automático
+
+        <!-- Telemetry Card -->
+          <div class="card glass">
+            <div class="card-head">
+              <div class="card-title">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2"/></svg>
+                Monitoreo Neural
+              </div>
+              <div class="live-badge"><span class="live-dot"></span>LIVE</div>
             </div>
-            <div class="opt-pill" id="opt-review">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-              Revisar Cambios
+            <div class="card-body">
+              <div class="tel-box" id="tel-box"></div>
             </div>
-            <div class="opt-pill" id="opt-tests">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
-              Crear Tests
-            </div>
-            <div class="opt-pill" id="opt-branch">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7v8a2 2 0 002 2h6M8 7a2 2 0 114 0 2 2 0 01-4 0zm8 8a2 2 0 114 0 2 2 0 01-4 0z"/></svg>
-              Rama Dedicada
-            </div>
-          </div>
-          <div class="session-foot">
-            <div class="meta-tag">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
-              <span id="sess-ctx">Web: master</span>
-            </div>
-            <button class="btn btn-primary" id="launch-btn">
-              <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-              Iniciar Ejecución
-            </button>
           </div>
         </div>
 
-        <!-- COL 3 -->
-        <div class="card glass">
-          <div class="card-head">
-            <div class="card-title">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2"/></svg>
-              Monitoreo Neural
+        <!-- ─── HISTORY VIEW ─── -->
+        <div class="view" id="view-history">
+          <div class="card glass table-card">
+            <div class="card-head">
+              <div class="card-title">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                Historial de Sesiones
+              </div>
             </div>
-            <div class="live-badge"><span class="live-dot"></span>LIVE</div>
-          </div>
-          <div class="card-body">
-            <div class="tel-box" id="tel-box"></div>
-          </div>
-        </div>
-
-        <!-- TABLE -->
-        <div class="card glass table-card">
-          <div class="card-head">
-            <div class="card-title">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-              Historial de Sesiones
+            <div class="filter-bar">
+              <div class="search-wrap">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <input type="text" class="search-in" id="tbl-search" placeholder="Buscar sesión...">
+              </div>
+              <div class="filter-pills" id="filter-pills">
+                <button class="fpill active" data-filter="all">Todos</button>
+                <button class="fpill" data-filter="running">Activos</button>
+                <button class="fpill" data-filter="done">Completados</button>
+                <button class="fpill" data-filter="error">Errores</button>
+                <button class="fpill" data-filter="pending">Cola</button>
+              </div>
             </div>
-          </div>
-          <div class="filter-bar">
-            <div class="search-wrap">
-              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-              <input type="text" class="search-in" id="tbl-search" placeholder="Buscar sesión...">
+            <div class="tbl-wrap">
+              <table class="stbl">
+                <thead>
+                  <tr>
+                    <th style="width:90px">ID</th>
+                    <th>Tarea</th>
+                    <th>Repositorio</th>
+                    <th>Rama</th>
+                    <th style="width:120px">Estado</th>
+                    <th style="width:90px">Duración</th>
+                    <th style="width:110px">Fecha</th>
+                  </tr>
+                </thead>
+                <tbody id="tbl-body"></tbody>
+              </table>
             </div>
-            <div class="filter-pills" id="filter-pills">
-              <button class="fpill active" data-filter="all">Todos</button>
-              <button class="fpill" data-filter="running">Activos</button>
-              <button class="fpill" data-filter="done">Completados</button>
-              <button class="fpill" data-filter="error">Errores</button>
-              <button class="fpill" data-filter="pending">Cola</button>
-            </div>
-          </div>
-          <div class="tbl-wrap">
-            <table class="stbl">
-              <thead>
-                <tr>
-                  <th style="width:90px">ID</th>
-                  <th>Tarea</th>
-                  <th>Repositorio</th>
-                  <th>Rama</th>
-                  <th style="width:120px">Estado</th>
-                  <th style="width:90px">Duración</th>
-                  <th style="width:110px">Fecha</th>
-                </tr>
-              </thead>
-              <tbody id="tbl-body"></tbody>
-            </table>
           </div>
         </div>
       </section>
@@ -1174,10 +1268,15 @@ body{
         <div class="kanban-title">Kanban — Tareas Jules</div>
         <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <div class="live-badge"><span class="live-dot"></span>TIEMPO REAL</div>
-          <button class="btn btn-ghost btn-sm" onclick="switchView('dashboard',document.getElementById('nav-dashboard'))">← Dashboard</button>
-          <button class="btn btn-primary btn-sm" onclick="openNewTaskModal()">+ Nueva Tarea</button>
+          <button class="btn btn-ghost btn-sm desktop-only" onclick="switchView('dashboard',document.getElementById('nav-dashboard'))">← Dashboard</button>
+          <button class="btn btn-primary btn-sm desktop-only" onclick="openNewTaskModal()">+ Nueva Tarea</button>
         </div>
       </div>
+
+      <!-- Mobile FAB -->
+      <button class="mobile-fab" onclick="openNewTaskModal()" aria-label="Nueva Tarea">
+        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"/></svg>
+      </button>
       <div class="kanban-board" id="kanban-board">
         <div class="kb-col" id="col-pending" ondragover="onDragOver(event,'pending')" ondrop="onDrop(event,'pending')" ondragleave="onDragLeave(event)">
           <div class="kb-col-head">
@@ -1219,7 +1318,7 @@ body{
       <div class="metrics-header">
         <div class="metrics-title">Métricas & Rendimiento</div>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="btn btn-ghost btn-sm" onclick="switchView('dashboard',document.getElementById('nav-dashboard'))">← Dashboard</button>
+          <button class="btn btn-ghost btn-sm desktop-only" onclick="switchView('dashboard',document.getElementById('nav-dashboard'))">← Dashboard</button>
           <div class="live-badge" style="margin-left:4px"><span class="live-dot"></span>LIVE</div>
         </div>
       </div>
@@ -1292,6 +1391,22 @@ body{
           <div class="timeline-wrap" id="token-timeline"></div>
         </div>
       </div>
+
+      <!-- Mobile History Container -->
+      <div class="mobile-only" style="margin-top:20px">
+          <details class="card glass">
+              <summary class="card-head" style="cursor:pointer; list-style:none; display:flex; justify-content:space-between; align-items:center">
+                  <div class="card-title">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    Historial de Sesiones
+                  </div>
+                  <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="transition:transform 0.3s ease"><path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </summary>
+              <div class="card-body" id="mobile-history-list" style="padding:0">
+                  <!-- JS will populate this with a compact version of the history -->
+              </div>
+          </details>
+      </div>
     </div>
 
 
@@ -1332,13 +1447,6 @@ body{
   </main>
 </div>
 
-<!-- ══ MOBILE PANELS ══ -->
-<div id="mob-panel-dashboard" class="mob-panel active"></div>
-<div id="mob-panel-kanban" class="mob-panel"></div>
-<div id="mob-panel-metrics" class="mob-panel"></div>
-<div id="mob-panel-config" class="mob-panel"></div>
-<div id="mob-panel-session" class="mob-panel"></div>
-<div id="mob-panel-history" class="mob-panel"></div>
 </div><!-- app-root -->
 
 <!-- ══ NOTIFICATION PANEL ══ -->
@@ -1652,6 +1760,7 @@ body{
         addTel("SYSTEM", `Iniciado como ${user ? user.login : "Invitado"}`, "success");
         await initializeRepoSelector();
         await refreshSessions();
+        switchView(window.JulesPanelState.currentView || 'dashboard');
         startPolling();
     }
 
@@ -1761,10 +1870,33 @@ body{
     function renderHistoryTable(sessions) {
         const body = $('tbl-body'); if (!body) return;
         if (!sessions.length) { body.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--text3);">Sin sesiones</td></tr>'; return; }
+
+        // Desktop Table
         body.innerHTML = sessions.map(s => {
             const statusLabel = { 'IN_PROGRESS': 'activo', 'COMPLETED': 'listo', 'FAILED': 'error', 'QUEUED': 'cola', 'PLANNING': 'planificando', 'AWAITING_PLAN_APPROVAL': 'esperando' }[s.state] || 'listo';
             return `<tr onclick="openDrawer('${s.name}')"><td><span class="sid">${s.name.split('/').pop()}</span></td><td class="tdesc">${escapeHtml(s.title || s.prompt)}</td><td class="tmono">${s.sourceContext?.source?.split('/').pop() || '---'}</td><td class="tmono">${s.sourceContext?.githubRepoContext?.startingBranch || '---'}</td><td><span class="sbadge ${s.state.toLowerCase().replace(/_/g, '-')}"><span class="pulse-dot"></span>${statusLabel}</span></td><td class="tmono">${getTimeAgo(s.createTime)}</td><td class="tmono">${new Date(s.createTime).toLocaleDateString()}</td></tr>`;
         }).join('');
+
+        // Mobile compact list
+        const mobList = $('mobile-history-list');
+        if (mobList) {
+          mobList.innerHTML = sessions.map(s => {
+            const statusLabel = { 'IN_PROGRESS': 'activo', 'COMPLETED': 'listo', 'FAILED': 'error', 'QUEUED': 'cola', 'PLANNING': 'planificando', 'AWAITING_PLAN_APPROVAL': 'esperando' }[s.state] || 'listo';
+            return `
+              <div onclick="openDrawer('${s.name}')" style="padding:14px; border-bottom:1px solid var(--border); display:flex; flex-direction:column; gap:6px">
+                <div style="display:flex; justify-content:space-between; align-items:center">
+                  <span class="sid">${s.name.split('/').pop()}</span>
+                  <span class="sbadge ${s.state.toLowerCase().replace(/_/g, '-')}">${statusLabel}</span>
+                </div>
+                <div style="font-weight:600; color:var(--text); font-size:13px" class="tdesc">${escapeHtml(s.title || s.prompt)}</div>
+                <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--text3)">
+                  <span>${s.sourceContext?.source?.split('/').pop() || '---'}</span>
+                  <span>${getTimeAgo(s.createTime)}</span>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
     }
 
     function renderKanban(sessions) {
@@ -1805,12 +1937,44 @@ body{
 
     /* ─── NAVIGATION ─── */
     async function switchView(view, navEl) {
+        const isMobile = window.innerWidth < 768;
+
+        // Handle explicit Metrics call to ensure history is rendered
+        if (view === 'metrics' || view === 'history') {
+          // history view is part of desktop dash but separate on mobile history is now under metrics mobile
+        }
+
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-        document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
-        const target = $(`view-${view}`); if (target) target.classList.add('active'); if (navEl) navEl.classList.add('active');
+        document.querySelectorAll('.nav-link, .mtab').forEach(n => n.classList.remove('active'));
+
+        if (view === 'dashboard' && !isMobile) {
+          // Desktop Dashboard: show all sub-views in the grid
+          $('view-dashboard').classList.add('active');
+          $('view-config').classList.add('active');
+          $('view-session').classList.add('active');
+          $('view-neural').classList.add('active');
+          $('view-history').classList.add('active');
+        } else {
+          const target = $(`view-${view}`);
+          if (target) target.classList.add('active');
+        }
+
+        if (navEl) {
+          navEl.classList.add('active');
+        } else {
+          const sidebarLink = $(`nav-${view}`);
+          if(sidebarLink) sidebarLink.classList.add('active');
+          const mobileTab = document.querySelector(`.mtab[data-tab="${view}"]`);
+          if(mobileTab) mobileTab.classList.add('active');
+        }
+
         window.JulesPanelState.currentView = view;
         if (view === 'kanban') refreshSessions();
-        if (view === 'metrics') renderMetrics();
+        if (view === 'metrics' || (view === 'dashboard' && !isMobile)) {
+          renderMetrics();
+          if (window.julesSessionsCache) renderHistoryTable(window.julesSessionsCache);
+        }
+        if (view === 'neural') { /* No specific logic for neural yet */ }
         if (view === 'hub') {
             const activeTab = localStorage.getItem('hypenosys_hub_active_tab') || 'pull-requests';
             const tabEl = document.querySelector(`.dr-tab[data-tab="${activeTab}"]`);
@@ -1968,4 +2132,9 @@ body{
     if($('launch-btn')) $('launch-btn').onclick = launchSession;
     if($('dr-overlay')) $('dr-overlay').onclick = closeDrawer;
     if($('dr-close')) $('dr-close').onclick = closeDrawer;
+
+    // Mobile tabs listeners
+    document.querySelectorAll('.mtab').forEach(tab => {
+      tab.onclick = () => switchView(tab.dataset.tab, tab);
+    });
 </script></body></html>
