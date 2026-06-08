@@ -1,37 +1,37 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-07T20:12:33.961Z",
+  "computed_at": "2026-06-08T13:51:45.236Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 20,
+    "total_tasks": 22,
     "total_ok": 1,
     "total_ko": 0,
-    "total_uncertain": 6,
+    "total_uncertain": 7,
     "total_obsolete": 5,
-    "fixed_found_ratio": 0.0417,
-    "verified_ratio": 0.04
+    "fixed_found_ratio": 0.0385,
+    "verified_ratio": 0.037
   },
   "group": {
     "velocity_trend": {
-      "2026-W16": 0,
       "2026-W17": 0,
       "2026-W18": 0,
       "2026-W19": 0,
       "2026-W20": 0,
       "2026-W21": 4,
       "2026-W22": 6,
-      "2026-W23": 7
+      "2026-W23": 7,
+      "2026-W24": 0
     },
-    "bug_rate": 0.1053,
+    "bug_rate": 0.0952,
     "blocker_health": 3,
     "tag_heatmap": {
-      "feature": 6,
-      "PRO": 8,
+      "feature": 7,
+      "PRO": 10,
       "brainstorm": 1,
       "design": 1,
       "research": 2,
       "DIS": 2,
-      "chore": 3,
+      "chore": 4,
       "git": 1,
       "UX/UI": 2,
       "Infraestructura": 1,
@@ -144,14 +144,14 @@
         "week": 0
       },
       "weekly_velocity": {
-        "2026-W16": 0,
         "2026-W17": 0,
         "2026-W18": 0,
         "2026-W19": 0,
         "2026-W20": 0,
         "2026-W21": 3,
         "2026-W22": 4,
-        "2026-W23": 16
+        "2026-W23": 16,
+        "2026-W24": 0
       },
       "type_breakdown": {
         "feature": 12,
@@ -175,8 +175,8 @@
       "dependency_impact": 4,
       "comment_activity": 1,
       "volatility": {
-        "reopens": 0,
-        "reprioritizations": 14
+        "reopens": 1,
+        "reprioritizations": 15
       },
       "workload": {
         "active_tasks": 12,
@@ -191,14 +191,14 @@
         "week": 0
       },
       "weekly_velocity": {
-        "2026-W16": 0,
         "2026-W17": 0,
         "2026-W18": 0,
         "2026-W19": 0,
         "2026-W20": 0,
         "2026-W21": 3,
         "2026-W22": 5,
-        "2026-W23": 16
+        "2026-W23": 16,
+        "2026-W24": 0
       },
       "type_breakdown": {
         "chore": 1,
@@ -222,12 +222,12 @@
       "dependency_impact": 4,
       "comment_activity": 0,
       "volatility": {
-        "reopens": 0,
-        "reprioritizations": 19
+        "reopens": 1,
+        "reprioritizations": 21
       },
       "workload": {
-        "active_tasks": 17,
-        "story_points": 35
+        "active_tasks": 18,
+        "story_points": 36
       }
     },
     "dkdidac-design": {
@@ -238,14 +238,14 @@
         "week": 0
       },
       "weekly_velocity": {
-        "2026-W16": 0,
         "2026-W17": 0,
         "2026-W18": 0,
         "2026-W19": 0,
         "2026-W20": 0,
         "2026-W21": 1,
         "2026-W22": 1,
-        "2026-W23": 7
+        "2026-W23": 7,
+        "2026-W24": 0
       },
       "type_breakdown": {
         "chore": 1,
@@ -282,14 +282,14 @@
         "week": 0
       },
       "weekly_velocity": {
-        "2026-W16": 0,
         "2026-W17": 0,
         "2026-W18": 0,
         "2026-W19": 0,
         "2026-W20": 0,
         "2026-W21": 2,
         "2026-W22": 1,
-        "2026-W23": 0
+        "2026-W23": 0,
+        "2026-W24": 0
       },
       "type_breakdown": {
         "chore": 1,
@@ -324,14 +324,14 @@
         "week": 0
       },
       "weekly_velocity": {
-        "2026-W16": 0,
         "2026-W17": 0,
         "2026-W18": 0,
         "2026-W19": 0,
         "2026-W20": 0,
         "2026-W21": 0,
         "2026-W22": 1,
-        "2026-W23": 0
+        "2026-W23": 0,
+        "2026-W24": 0
       },
       "type_breakdown": {
         "chore": 1
@@ -353,8 +353,8 @@
         "reprioritizations": 2
       },
       "workload": {
-        "active_tasks": 4,
-        "story_points": 6
+        "active_tasks": 5,
+        "story_points": 7
       }
     }
   },
@@ -456,7 +456,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-06-07T20:12:34.844Z"
+      "timestamp": "2026-06-08T13:51:47.133Z"
     }
   ]
 }

@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-07T20:12:31.931Z",
-  "last_updated_by": "Axlfc",
+  "last_updated": "2026-06-08T13:51:41.940Z",
+  "last_updated_by": "Axel",
   "tasks": [
     {
       "id": 1,
@@ -1495,7 +1495,7 @@
       "repository": "hypenosys/app",
       "prioridad": "ToDo",
       "milestone": "M1",
-      "estado": "Pending",
+      "estado": "In Review",
       "completitud": 0,
       "resuelto_por": "Axel",
       "detectado_por": "Axel",
@@ -1594,18 +1594,25 @@
           "field": "milestone",
           "old_value": "M3",
           "new_value": "M1"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:40:16.753Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "In Review"
         }
       ],
       "id": 35
     },
     {
-      "title": "Añadir NVIDIA NIM como provider en la configuración de Claude Neural Chat",
-      "descripcion": "",
+      "title": "n8n: Añadir NIM y cognito-agent como providers en la configuración de Claude Neural Chat",
+      "descripcion": "webhooks",
       "rama": "PRO",
       "task_type": "research",
       "tema_principal": "Programación / Engine",
       "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Minor",
+      "prioridad": "Medium",
       "milestone": "M2",
       "estado": "Working",
       "completitud": 0,
@@ -1648,6 +1655,34 @@
           "field": "task_type",
           "old_value": "feature",
           "new_value": "research"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:29:39.989Z",
+          "field": "title",
+          "old_value": "Añadir NVIDIA NIM como provider en la configuración de Claude Neural Chat",
+          "new_value": "n8n: Añadir NVIDIA NIM y cognito-agent como providers en la configuración de Claude Neural Chat"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:29:39.989Z",
+          "field": "prioridad",
+          "old_value": "Minor",
+          "new_value": "Medium"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T12:27:44.014Z",
+          "field": "title",
+          "old_value": "n8n: Añadir NVIDIA NIM y cognito-agent como providers en la configuración de Claude Neural Chat",
+          "new_value": "n8n: Añadir NIM y cognito-agent como providers en la configuración de Claude Neural Chat"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T12:27:44.014Z",
+          "field": "descripcion",
+          "old_value": "",
+          "new_value": "webhooks"
         }
       ],
       "id": 36
@@ -1705,13 +1740,13 @@
       "id": 37
     },
     {
-      "title": "generate image or text context and flux dev or kontext up to 2 images and text ",
-      "descripcion": "also there is music generation and animation and key to key with available comfyui workflows (as API) expose in n8n and update to tumblr",
+      "title": "New page pages/image-gen to generate image or text context and flux dev or kontext up to 2 images and text ",
+      "descripcion": "also there is music generation and animation and key to key with available comfyui workflows (as API) expose in n8n and update to tumblr\n\nWe have an n8n comfyui sort of for launching one the flux-dev single text.\nWe intent to create another for flux kontext (one image + text, and two images or two images + text)",
       "rama": "PRO",
       "task_type": "feature",
       "tema_principal": "Programación / Engine",
       "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Major",
+      "prioridad": "Minor",
       "milestone": "M2",
       "estado": "ToDo",
       "completitud": 0,
@@ -1794,6 +1829,27 @@
           "field": "title",
           "old_value": "comfyui generate image flux dev image or text context and flux kontext up to 2 images and text ",
           "new_value": "generate image or text context and flux dev or kontext up to 2 images and text "
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:27:54.393Z",
+          "field": "title",
+          "old_value": "generate image or text context and flux dev or kontext up to 2 images and text ",
+          "new_value": "New page pages/image-gen to generate image or text context and flux dev or kontext up to 2 images and text "
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:27:54.393Z",
+          "field": "descripcion",
+          "old_value": "also there is music generation and animation and key to key with available comfyui workflows (as API) expose in n8n and update to tumblr",
+          "new_value": "also there is music generation and animation and key to key with available comfyui workflows (as API) expose in n8n and update to tumblr\n\nWe have an n8n comfyui sort of for launching one the flux-dev single text.\nWe intent to create another for flux kontext (one image + text, and two images or two images + text)"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:28:15.486Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Minor"
         }
       ],
       "id": 38
@@ -1868,16 +1924,16 @@
       "id": 39
     },
     {
-      "title": "Movil: Fallo tumblr subida imágenes",
-      "descripcion": "Arreglar subida de imagenes en las tasks mobil",
+      "title": "protección nsfw en las subidas a Tumblr y filtro is Cloudflare on por si peta la subida imágenes",
+      "descripcion": "Implementar filtro de subida de imagenes en las tasks, si no hay disponibilidad de cloudflare no se puede, mostrar aviso para ambos casos añadir webhook de n8n para identificar imágenes NO permitidas. workflow de n8n de reconocimiento de nsfw",
       "rama": "PRO",
       "task_type": "bug",
       "tema_principal": "Tools / Automation",
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Major",
       "milestone": "M1",
-      "estado": "Pending",
-      "completitud": 0,
+      "estado": "Working",
+      "completitud": 1,
       "resuelto_por": null,
       "detectado_por": "Axel",
       "asignados": [
@@ -1888,16 +1944,31 @@
       "emails_asignados": [],
       "start_date": "2026-06-07",
       "due_date": "2026-06-14",
-      "estimated_hours": 2,
+      "estimated_hours": 4,
       "story_points": 1,
       "tags": [],
       "external_links": [],
       "subtasks": [],
-      "acceptance_criteria": "",
+      "acceptance_criteria": "estaria bien hacher un check de cloudflare si hay problemas para evitar fallos de subida de imágenes",
       "blocks": [],
       "blocked_by": [],
       "comments": [],
-      "images": [],
+      "images": [
+        {
+          "url": "https://64.media.tumblr.com/bf452d867339cd09c256bda21f1ce0f8/083fd4f80c7ebbf5-13/s1280x1920/f984d48241f051d079c8ce8a4cede1e997dd564e.jpg",
+          "type": "url",
+          "tumblr_post_id": "818847550169841664",
+          "filename": "7598.jpg",
+          "uploaded_at": "2026-06-08T10:17:58.371Z"
+        },
+        {
+          "url": "https://64.media.tumblr.com/64ec33bd09cced9bb711c6b9a7096e4d/84757efe98ef2157-fe/s1280x1920/58e07c2a0e5a6db433aeb7b21427587ed9c1fdc5.png",
+          "type": "url",
+          "tumblr_post_id": "818847600116711424",
+          "filename": "1000052877.png",
+          "uploaded_at": "2026-06-08T10:18:45.188Z"
+        }
+      ],
       "rama2": null,
       "ver": true,
       "fecha": "2026-06-07",
@@ -1946,6 +2017,83 @@
           "field": "task_type",
           "old_value": "feature",
           "new_value": "bug"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:19:21.486Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "OK"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:19:21.486Z",
+          "field": "completitud",
+          "old_value": 0,
+          "new_value": 1
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:20:43.388Z",
+          "field": "estado",
+          "old_value": "OK",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:22:32.289Z",
+          "field": "title",
+          "old_value": "Movil: Fallo tumblr subida imágenes",
+          "new_value": "Protección Cloudflare: Fallo tumblr subida imágenes"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:22:32.289Z",
+          "field": "descripcion",
+          "old_value": "Arreglar subida de imagenes en las tasks mobil",
+          "new_value": "Arreglar subida de imagenes en las tasks mobil, si no hay disponibilidad de cloudflare no se puede, mostrar aviso"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:30:44.047Z",
+          "field": "title",
+          "old_value": "Protección Cloudflare: Fallo tumblr subida imágenes",
+          "new_value": "Cloudflare: Protección en las subidas a Tumblr por si peta la subida imágenes"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:30:44.047Z",
+          "field": "descripcion",
+          "old_value": "Arreglar subida de imagenes en las tasks mobil, si no hay disponibilidad de cloudflare no se puede, mostrar aviso",
+          "new_value": "Arreglar subida de imagenes en las tasks mobil, si no hay disponibilidad de cloudflare no se puede, mostrar aviso. añadir webhook de n8n para identificar imágenes NO permitidas."
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:34:26.741Z",
+          "field": "descripcion",
+          "old_value": "Arreglar subida de imagenes en las tasks mobil, si no hay disponibilidad de cloudflare no se puede, mostrar aviso. añadir webhook de n8n para identificar imágenes NO permitidas.",
+          "new_value": "Implementar filtro de subida de imagenes en las tasks mobil, si no hay disponibilidad de cloudflare no se puede, mostrar aviso para ambos casos añadir webhook de n8n para identificar imágenes NO permitidas. workflow de n8n de reconocimiento de nsfw"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:34:26.741Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:35:24.249Z",
+          "field": "title",
+          "old_value": "Cloudflare: Protección en las subidas a Tumblr por si peta la subida imágenes",
+          "new_value": "protección nsfw en las subidas a Tumblr y filtro is Cloudflare on por si peta la subida imágenes"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:35:24.249Z",
+          "field": "descripcion",
+          "old_value": "Implementar filtro de subida de imagenes en las tasks mobil, si no hay disponibilidad de cloudflare no se puede, mostrar aviso para ambos casos añadir webhook de n8n para identificar imágenes NO permitidas. workflow de n8n de reconocimiento de nsfw",
+          "new_value": "Implementar filtro de subida de imagenes en las tasks, si no hay disponibilidad de cloudflare no se puede, mostrar aviso para ambos casos añadir webhook de n8n para identificar imágenes NO permitidas. workflow de n8n de reconocimiento de nsfw"
         }
       ],
       "id": 40
@@ -1959,7 +2107,7 @@
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Cosmetic",
       "milestone": "M1",
-      "estado": "Pending",
+      "estado": "Working",
       "completitud": 0,
       "resuelto_por": null,
       "detectado_por": "Unassigned",
@@ -1994,13 +2142,20 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:40:33.588Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
         }
       ],
       "id": 41
     },
     {
       "title": "Falta nombre del repo (o alias) en las cards en dashboard de Jules Neural Operations",
-      "descripcion": "Tambien un boton que lleve el boton para ir a la sesión asociada de Claude-Chat en cada card y el estado de esa sesión de Jules",
+      "descripcion": "Tambien un boton que lleve el boton para ir a la sesión asociada de Claude-Chat en cada card y el estado de esa sesión de Jules estilo minimalista",
       "rama": "PRO",
       "task_type": "feature",
       "tema_principal": "Tools / Automation",
@@ -2056,12 +2211,197 @@
           "field": "descripcion",
           "old_value": "Tambien un boton que lleve el boton para ir a la sesión asociada de Claude-Chat",
           "new_value": "Tambien un boton que lleve el boton para ir a la sesión asociada de Claude-Chat en cada card y el estado de esa sesión de Jules"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:17:32.838Z",
+          "field": "descripcion",
+          "old_value": "Tambien un boton que lleve el boton para ir a la sesión asociada de Claude-Chat en cada card y el estado de esa sesión de Jules",
+          "new_value": "Tambien un boton que lleve el boton para ir a la sesión asociada de Claude-Chat en cada card y el estado de esa sesión de Jules estilo minimalista"
         }
       ],
       "id": 42
+    },
+    {
+      "title": "Claude Neural: llamadas a apis js y python en n8n-runners",
+      "descripcion": "Así tenemos entorno de desarrollo AI desde el n 8 n podemos ejecutar python beta. Y código JavaScript. Gracias a los runners. ",
+      "rama": "PRO",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Major",
+      "milestone": "M3",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Axel",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-08",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:39:44.850Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 43
+    },
+    {
+      "title": "Controlar con Claude Neural API de n8n",
+      "descripcion": "Añadir token de n8n en cloudflare worker",
+      "rama": "PRO",
+      "task_type": "chore",
+      "tema_principal": "Tools / Automation",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Major",
+      "milestone": "M3",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Axel",
+      "asignados": [
+        "topperh4rley",
+        "mitxel2022"
+      ],
+      "email_responsable": "axel@hypenosys.com",
+      "emails_asignados": [],
+      "start_date": "2026-06-08",
+      "due_date": "2026-06-14",
+      "estimated_hours": 4,
+      "story_points": 1,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-08",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T13:51:40.884Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 44
     }
   ],
   "_audit_log": [
+    {
+      "action": "feat: nueva tarea #1780926700884 añadida",
+      "user": "Axlfc",
+      "timestamp": "2026-06-08T13:51:41.940Z"
+    },
+    {
+      "action": "chore: actualizar tarea #36",
+      "user": "Axlfc",
+      "timestamp": "2026-06-08T12:27:44.643Z"
+    },
+    {
+      "action": "chore: actualizar tarea #41",
+      "user": "Axlfc",
+      "timestamp": "2026-06-08T10:40:34.201Z"
+    },
+    {
+      "action": "chore: actualizar tarea #35",
+      "user": "Axlfc",
+      "timestamp": "2026-06-08T10:40:17.313Z"
+    },
+    {
+      "action": "feat: nueva tarea #1780915184851 añadida",
+      "user": "Axlfc",
+      "timestamp": "2026-06-08T10:39:45.451Z"
+    },
+    {
+      "action": "chore: actualizar tarea #40",
+      "user": "Axlfc",
+      "timestamp": "2026-06-08T10:35:24.901Z"
+    },
+    {
+      "action": "chore: actualizar tarea #40",
+      "user": "Axlfc",
+      "timestamp": "2026-06-08T10:34:27.348Z"
+    },
+    {
+      "action": "chore: actualizar tarea #40",
+      "user": "Axlfc",
+      "timestamp": "2026-06-08T10:30:44.665Z"
+    },
+    {
+      "action": "chore: actualizar tarea #36",
+      "user": "Axlfc",
+      "timestamp": "2026-06-08T10:29:40.660Z"
+    },
+    {
+      "action": "chore: actualizar tarea #38",
+      "user": "Axlfc",
+      "timestamp": "2026-06-08T10:28:16.173Z"
+    },
+    {
+      "action": "chore: actualizar tarea #38",
+      "user": "Axlfc",
+      "timestamp": "2026-06-08T10:27:54.978Z"
+    },
+    {
+      "action": "chore: actualizar tarea #40",
+      "user": "Axlfc",
+      "timestamp": "2026-06-08T10:22:32.815Z"
+    },
+    {
+      "action": "chore: actualizar tarea #40",
+      "user": "Axlfc",
+      "timestamp": "2026-06-08T10:20:44.066Z"
+    },
+    {
+      "action": "chore: actualizar tarea #40",
+      "user": "Axlfc",
+      "timestamp": "2026-06-08T10:19:21.963Z"
+    },
+    {
+      "action": "chore: actualizar tarea #40",
+      "user": "Axlfc",
+      "timestamp": "2026-06-08T10:18:49.616Z"
+    },
+    {
+      "action": "chore: actualizar tarea #40",
+      "user": "Axlfc",
+      "timestamp": "2026-06-08T10:18:01.633Z"
+    },
+    {
+      "action": "chore: actualizar tarea #42",
+      "user": "Axlfc",
+      "timestamp": "2026-06-08T10:17:33.433Z"
+    },
     {
       "action": "chore: actualizar tarea #42",
       "user": "Axlfc",
