@@ -842,8 +842,9 @@ body{
   #view-kanban, #view-metrics, #view-hub { padding: 22px 30px }
   .dash-grid .view { padding: 0 }
 
-  /* Desktop Dashboard: show all sub-views in the grid if dashboard is active */
-  #view-dashboard.active ~ .dash-grid .view { display: block !important }
+  /* Desktop Dashboard Grid */
+  #view-dashboard.active .dash-grid { display: grid !important }
+  #view-dashboard.active .view { display: block !important }
 }
 
 @media(max-width:1140px){
@@ -876,9 +877,17 @@ body{
   #view-dashboard .dash-grid { display:none } /* Hide the grid containers if any */
 
   /* Kanban mobile layout */
-  #view-kanban{padding:12px}
-  .kanban-board{display:flex; overflow-x:auto; scroll-snap-type:x mandatory; gap:12px; padding-bottom:12px}
-  .kb-col{flex:0 0 85vw; scroll-snap-align:start; max-height:calc(100vh - 200px); overflow-y:auto}
+  #view-kanban{padding:12px; flex-direction:column; overflow:hidden}
+  .kanban-board{
+    display:flex; flex:1; overflow-x:auto; scroll-snap-type:x mandatory;
+    gap:0; padding-bottom:0; margin:0 -12px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .kb-col{
+    flex:0 0 100vw; scroll-snap-align:start;
+    height:calc(100vh - var(--header-h) - var(--nav-h) - 120px);
+    overflow-y:auto; border:none; border-radius:0; background:transparent;
+  }
 
   /* Metrics mobile */
   #view-metrics{padding:12px}
@@ -958,6 +967,7 @@ body{
 <header class="mobile-hdr" id="mob-hdr">
   <div style="display:flex;align-items:center;gap:10px">
     <div class="logo-gem">J</div>
+    <div class="avatar" id="mob-avatar" style="width:28px; height:28px; font-size:10px; display:none">?</div>
   </div>
   <div style="display:flex;align-items:center;gap:12px">
     <div class="notif-bell" id="mob-notif-bell" onclick="toggleNotifPanel()" style="border:none; background:none; width:40px; height:40px">
@@ -1048,9 +1058,9 @@ body{
 
     <div class="sb-footer">
       <div class="user-row" onclick="openApiModal()">
-        <div class="avatar">TH</div>
+        <div class="avatar" id="sb-avatar">?</div>
         <div>
-          <div class="user-name">Miembro Hypenosys</div>
+          <div class="user-name" id="sb-user-name">Miembro Hypenosys</div>
           <div class="user-online"><span class="u-dot"></span>API Activa</div>
         </div>
       </div>
@@ -1080,6 +1090,13 @@ body{
           <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
           Docs
         </button>
+        <div id="hdr-user" style="display:none; align-items:center; gap:8px; margin-right:10px; padding-right:10px; border-right:1px solid var(--border)">
+            <div class="avatar" id="hdr-avatar" style="width:26px; height:26px; font-size:10px">?</div>
+            <div style="display:flex; flex-direction:column; line-height:1">
+                <span id="hdr-username" style="font-size:12px; font-weight:700; color:var(--text)">...</span>
+                <span id="hdr-role" style="font-size:9px; color:var(--text3); text-transform:uppercase">Miembro</span>
+            </div>
+        </div>
         <button class="btn btn-ghost btn-sm" onclick="openApiModal()">
           <span class="u-dot" style="margin-right:3px"></span>API Key
         </button>
@@ -1118,109 +1135,115 @@ body{
       </section>
 
       <section class="dash-grid">
-        <!-- ─── CONFIG VIEW ─── -->
-        <div class="view" id="view-config">
-          <div class="card glass">
-            <div class="card-head">
-              <div class="card-title">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                Configuración Repo
+        <!-- Dashboard grid content moved to independent views below -->
+      </section>
+    </div>
+
+    <!-- ─── CONFIG VIEW ─── -->
+    <div class="view" id="view-config">
+      <div class="card glass">
+        <div class="card-head">
+          <div class="card-title">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            Configuración Repo
+          </div>
+        </div>
+        <div class="card-body">
+          <span class="cfg-label">Selector de Repositorio</span>
+          <div class="custom-dropdown" id="repo-context-dropdown">
+              <div class="custom-dropdown-trigger" id="repo-trigger">
+                  <span id="repo-label">Cargando fuentes...</span>
+                  <svg width="10" height="6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4"/></svg>
               </div>
-            </div>
-            <div class="card-body">
-              <span class="cfg-label">Selector de Repositorio</span>
-              <div class="custom-dropdown" id="repo-context-dropdown">
-                  <div class="custom-dropdown-trigger" id="repo-trigger">
-                      <span id="repo-label">Cargando fuentes...</span>
-                      <svg width="10" height="6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4"/></svg>
+              <div class="custom-dropdown-menu" id="repo-menu" style="display:none">
+                  <div style="padding:8px; border-bottom: 1px solid var(--border);">
+                      <input type="text" id="repo-search" class="cfg-input" style="font-size:12px; height:32px" placeholder="Buscar repo...">
                   </div>
-                  <div class="custom-dropdown-menu" id="repo-menu" style="display:none">
-                      <div style="padding:8px; border-bottom: 1px solid var(--border);">
-                          <input type="text" id="repo-search" class="cfg-input" style="font-size:12px; height:32px" placeholder="Buscar repo...">
-                      </div>
-                      <div id="repo-items-container"></div>
-                  </div>
+                  <div id="repo-items-container"></div>
               </div>
-              <div style="display:none"><select id="jules-repo-select"></select></div>
-              <span class="cfg-label">Ruta repositorio</span>
-              <div class="cfg-path" id="cfg-path">sources/github/hypenosys/web</div>
-              <label class="cfg-label" for="alias-in">Alias visual</label>
-              <input class="cfg-input" id="alias-in" value="Web" style="margin-bottom:14px">
-              <label class="cfg-label" for="branch-sel">Rama activa</label>
-              <div class="sel-wrap">
-                <select class="cfg-input" id="branch-sel" style="padding:8px 30px 8px 12px;appearance:none;cursor:pointer"></select>
-              </div>
-              <div class="branch-meta" id="branch-meta"><span class="u-dot"></span><span>4 ramas cargadas</span></div>
-              <button class="btn btn-ghost" style="width:100%;justify-content:center;font-size:12px;padding:7px" id="new-branch-btn">+ Nueva rama</button>
-              <div class="mini-chart-box">
-                <div class="mini-chart-title">Actividad commits / semana</div>
-                <svg class="svg-chart" viewBox="0 0 200 56" id="repo-chart">
-                  <defs><linearGradient id="cg" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient></defs>
-                  <path fill="none" stroke="url(#cg)" stroke-width="2.5" stroke-linecap="round"/>
-                </svg>
-              </div>
+          </div>
+          <div style="display:none"><select id="jules-repo-select"></select></div>
+          <span class="cfg-label">Ruta repositorio</span>
+          <div class="cfg-path" id="cfg-path">sources/github/hypenosys/web</div>
+          <label class="cfg-label" for="alias-in">Alias visual</label>
+          <input class="cfg-input" id="alias-in" value="Web" style="margin-bottom:14px">
+          <label class="cfg-label" for="branch-sel">Rama activa</label>
+          <div class="sel-wrap">
+            <select class="cfg-input" id="branch-sel" style="padding:8px 30px 8px 12px;appearance:none;cursor:pointer"></select>
+          </div>
+          <div class="branch-meta" id="branch-meta"><span class="u-dot"></span><span>4 ramas cargadas</span></div>
+          <button class="btn btn-ghost" style="width:100%;justify-content:center;font-size:12px;padding:7px" id="new-branch-btn">+ Nueva rama</button>
+          <div class="mini-chart-box">
+            <div class="mini-chart-title">Actividad commits / semana</div>
+            <svg class="svg-chart" viewBox="0 0 200 56" id="repo-chart">
+              <defs><linearGradient id="cg" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient></defs>
+              <path fill="none" stroke="url(#cg)" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── NEURAL VIEW (Tarea + Telemetry) ─── -->
+    <div class="view" id="view-neural">
+      <!-- Session Card -->
+        <div class="session-card glass">
+          <div class="card-head" style="padding:14px 18px">
+            <div class="card-title">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              Nueva Tarea Jules
             </div>
+          </div>
+          <textarea class="prompt-area" id="session-prompt" placeholder="¿Qué debe hacer Jules?&#10;&#10;Ej: Refactoriza el componente Header para que sea responsive, usa variables HSL en index.css y añade un menú hamburguesa con animación suave..."></textarea>
+          <div class="opts-grid">
+            <div class="opt-pill active" id="opt-auto">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+              Modo Automático
+            </div>
+            <div class="opt-pill" id="opt-review">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+              Revisar Cambios
+            </div>
+            <div class="opt-pill" id="opt-tests">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+              Crear Tests
+            </div>
+            <div class="opt-pill" id="opt-branch">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7v8a2 2 0 002 2h6M8 7a2 2 114 0 2 2 0 01-4 0zm8 8a2 2 114 0 2 2 0 01-4 0z"/></svg>
+              Rama Dedicada
+            </div>
+          </div>
+          <div class="session-foot">
+            <div class="meta-tag">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+              <span id="sess-ctx">Web: master</span>
+            </div>
+            <button class="btn btn-primary" id="launch-btn">
+              <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              Iniciar Ejecución
+            </button>
           </div>
         </div>
 
-      <!-- ─── NEURAL VIEW (Tarea + Telemetry) ─── -->
-      <div class="view" id="view-neural">
-        <!-- Session Card -->
-          <div class="session-card glass">
-            <div class="card-head" style="padding:14px 18px">
-              <div class="card-title">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                Nueva Tarea Jules
-              </div>
+      <!-- Telemetry Card -->
+        <div class="card glass">
+          <div class="card-head">
+            <div class="card-title">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2"/></svg>
+              Monitoreo Neural
             </div>
-            <textarea class="prompt-area" id="session-prompt" placeholder="¿Qué debe hacer Jules?&#10;&#10;Ej: Refactoriza el componente Header para que sea responsive, usa variables HSL en index.css y añade un menú hamburguesa con animación suave..."></textarea>
-            <div class="opts-grid">
-              <div class="opt-pill active" id="opt-auto">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                Modo Automático
-              </div>
-              <div class="opt-pill" id="opt-review">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-                Revisar Cambios
-              </div>
-              <div class="opt-pill" id="opt-tests">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
-                Crear Tests
-              </div>
-              <div class="opt-pill" id="opt-branch">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7v8a2 2 0 002 2h6M8 7a2 2 114 0 2 2 0 01-4 0zm8 8a2 2 114 0 2 2 0 01-4 0z"/></svg>
-                Rama Dedicada
-              </div>
-            </div>
-            <div class="session-foot">
-              <div class="meta-tag">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
-                <span id="sess-ctx">Web: master</span>
-              </div>
-              <button class="btn btn-primary" id="launch-btn">
-                <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                Iniciar Ejecución
-              </button>
-            </div>
+            <div class="live-badge"><span class="live-dot"></span>LIVE</div>
           </div>
-
-        <!-- Telemetry Card -->
-          <div class="card glass">
-            <div class="card-head">
-              <div class="card-title">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2"/></svg>
-                Monitoreo Neural
-              </div>
-              <div class="live-badge"><span class="live-dot"></span>LIVE</div>
-            </div>
-            <div class="card-body">
-              <div class="tel-box" id="tel-box"></div>
+          <div class="card-body">
+            <div class="tel-box" id="tel-box">
+              <div class="notif-empty" style="padding: 40px; text-align: center; color: var(--text3);">Sin actividad en esta sesión</div>
             </div>
           </div>
         </div>
+    </div>
 
-        <!-- ─── HISTORY VIEW ─── -->
-        <div class="view" id="view-history">
+    <!-- ─── HISTORY VIEW ─── -->
+    <div class="view" id="view-history">
           <div class="card glass table-card">
             <div class="card-head">
               <div class="card-title">
@@ -1273,6 +1296,24 @@ body{
         </div>
       </div>
 
+      <!-- Kanban Mobile Tabs -->
+      <div class="mobile-only" style="margin-bottom:15px">
+        <div style="display:flex; background:rgba(0,0,0,0.2); border-radius:var(--r-md); padding:4px; gap:4px; overflow-x:auto">
+          <button class="fpill active" style="flex:1; font-size:10px; padding:6px 4px; white-space:nowrap" onclick="scrollToKanbanCol('pending', this)" id="m-tab-pending">
+            COLA <span class="nav-badge" style="margin-left:4px" id="m-count-pending">0</span>
+          </button>
+          <button class="fpill" style="flex:1; font-size:10px; padding:6px 4px; white-space:nowrap" onclick="scrollToKanbanCol('running', this)" id="m-tab-running">
+            PROGRESO <span class="nav-badge" style="margin-left:4px" id="m-count-running">0</span>
+          </button>
+          <button class="fpill" style="flex:1; font-size:10px; padding:6px 4px; white-space:nowrap" onclick="scrollToKanbanCol('done', this)" id="m-tab-done">
+            LISTO <span class="nav-badge" style="margin-left:4px" id="m-count-done">0</span>
+          </button>
+          <button class="fpill" style="flex:1; font-size:10px; padding:6px 4px; white-space:nowrap" onclick="scrollToKanbanCol('error', this)" id="m-tab-error">
+            ERROR <span class="nav-badge" style="margin-left:4px" id="m-count-error">0</span>
+          </button>
+        </div>
+      </div>
+
       <!-- Mobile FAB -->
       <button class="mobile-fab" onclick="openNewTaskModal()" aria-label="Nueva Tarea">
         <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"/></svg>
@@ -1304,11 +1345,11 @@ body{
         </div>
         <div class="kb-col" id="col-error" ondragover="onDragOver(event,'error')" ondrop="onDrop(event,'error')" ondragleave="onDragLeave(event)">
           <div class="kb-col-head">
-            <div class="kb-col-name"><span class="col-dot" style="background:var(--red)"></span>Error</div>
+            <div class="kb-col-name"><span class="col-dot" style="background:var(--red)"></span>Bloqueado</div>
             <span class="kb-count" id="kb-count-error">0</span>
           </div>
           <div class="kb-cards" id="kb-error"></div>
-          <div class="kb-add" onclick="openNewTaskModal('error')">+ Revisar error</div>
+          <div class="kb-add" onclick="openNewTaskModal('error')">+ Revisar bloqueo</div>
         </div>
       </div>
     </div>
@@ -1654,7 +1695,9 @@ body{
         currentView:         'dashboard',
         metricsWindow:       30,
         notifications:       [],
-        unreadCount:         0
+        unreadCount:         0,
+        tasks:               [],
+        linkedTaskId:        localStorage.getItem('jules_linked_task_id') || null
     };
 
     class GHAPIQueue {
@@ -1728,6 +1771,11 @@ body{
       const d=new Date();
       const ts=`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;
       const box=$('tel-box'); if(!box) return;
+
+      // Remove empty state message if it exists
+      const emptyMsg = box.querySelector('.notif-empty');
+      if (emptyMsg) emptyMsg.remove();
+
       const line=document.createElement('div');
       line.className=`tel-line ${type}`;
       line.innerHTML=`<div class="tel-head"><span class="tel-time">${ts}</span><span class="tel-tag ${type}">${tag}</span></div><div class="tel-msg">${msg}</div>`;
@@ -1757,11 +1805,56 @@ body{
         if (!user && !getGitHubToken()) { showAuthCard("auth-card-login"); return; }
         $("auth-overlay").classList.remove("show");
         $("app-root").classList.remove("locked");
-        addTel("SYSTEM", `Iniciado como ${user ? user.login : "Invitado"}`, "success");
+
+        if (user) {
+            updateUserUI(user);
+            addTel("SYSTEM", `Iniciado como ${user.login}`, "success");
+        } else {
+            addTel("SYSTEM", `Iniciado como Invitado`, "success");
+        }
+
         await initializeRepoSelector();
-        await refreshSessions();
+        await refreshDashboard();
         switchView(window.JulesPanelState.currentView || 'dashboard');
+        checkClipboard();
         startPolling();
+    }
+
+    async function updateUserUI(user) {
+        const avatarUrl = user.avatar_url || `https://github.com/${user.login}.png`;
+
+        // Sidebar
+        if ($('sb-avatar')) {
+            $('sb-avatar').innerHTML = `<img src="${avatarUrl}" style="width:100%; height:100%; border-radius:50%">`;
+        }
+        if ($('sb-user-name')) {
+            $('sb-user-name').textContent = user.login;
+        }
+
+        // Mobile Header
+        if ($('mob-avatar')) {
+            $('mob-avatar').style.display = 'flex';
+            $('mob-avatar').innerHTML = `<img src="${avatarUrl}" style="width:100%; height:100%; border-radius:50%">`;
+        }
+
+        // Desktop Header
+        if ($('hdr-user')) {
+            $('hdr-user').style.display = 'flex';
+            $('hdr-avatar').innerHTML = `<img src="${avatarUrl}" style="width:100%; height:100%; border-radius:50%">`;
+            $('hdr-username').textContent = user.login;
+        }
+
+        // Try to fetch role from team.json
+        try {
+            const res = await fetch('/_data/team.json');
+            if (res.ok) {
+                const team = await res.json();
+                const member = team.find(m => m.github && m.github.toLowerCase().includes(user.login.toLowerCase()));
+                if (member && member.role) {
+                    if ($('hdr-role')) $('hdr-role').textContent = member.role;
+                }
+            }
+        } catch (e) { console.warn("Could not fetch user role", e); }
     }
 
     /* ─── REPO & BRANCH ─── */
@@ -1846,15 +1939,22 @@ body{
         renderItems();
     }
 
-    /* ─── SESSIONS ─── */
-    async function refreshSessions() {
+    /* ─── DASHBOARD DATA ─── */
+    async function refreshDashboard() {
         try {
-            const data = await window.julesApi.getSessions(window.JulesPanelState.metricsWindow || 30);
-            const sessions = data.sessions || [];
+            const [sessionData, tasks] = await Promise.all([
+                window.julesApi.getSessions(window.JulesPanelState.metricsWindow || 30),
+                window.taskOps.getAllTasks()
+            ]);
+
+            const sessions = sessionData.sessions || [];
             window.julesSessionsCache = sessions;
+            window.JulesPanelState.tasks = tasks;
+
             renderHistoryTable(sessions);
-            renderKanban(sessions);
+            renderKanban(tasks, sessions);
             updateStats();
+
             sessions.forEach(s => {
                 if (s.state === 'AWAITING_PLAN_APPROVAL' || s.state === 'AWAITING_USER_FEEDBACK') {
                     const idSafe = s.name.split('/').pop();
@@ -1864,8 +1964,10 @@ body{
                     }
                 }
             });
-        } catch (e) { console.error('[Jules] refreshSessions error:', e); }
+        } catch (e) { console.error('[Jules] refreshDashboard error:', e); }
     }
+
+    async function refreshSessions() { await refreshDashboard(); }
 
     function renderHistoryTable(sessions) {
         const body = $('tbl-body'); if (!body) return;
@@ -1899,13 +2001,119 @@ body{
         }
     }
 
-    function renderKanban(sessions) {
-        const columns = { 'pending': ['QUEUED', 'PLANNING'], 'running': ['IN_PROGRESS', 'AWAITING_PLAN_APPROVAL', 'AWAITING_USER_FEEDBACK'], 'done': ['COMPLETED'], 'error': ['FAILED'] };
+    function renderKanban(tasks, sessions) {
+        const columns = {
+            'pending': ['Pending', 'ToDo'],
+            'running': ['Working', 'In Review'],
+            'done': ['Fixed', 'OK', 'Closed'],
+            'error': ['KO']
+        };
+
         Object.keys(columns).forEach(colId => {
-            const colEl = $(`kb-${colId}`), countEl = $(`kb-count-${colId}`); if (!colEl) return;
-            const items = sessions.filter(s => columns[colId].includes(s.state));
+            const colEl = $(`kb-${colId}`), countEl = $(`kb-count-${colId}`), mCountEl = $(`m-count-${colId}`);
+            if (!colEl) return;
+
+            const items = tasks.filter(t => columns[colId].includes(t.estado));
             if (countEl) countEl.textContent = items.length;
-            colEl.innerHTML = items.map(s => `<div class="kb-card ${colId}" onclick="openDrawer('${s.name}')"><div class="kb-card-id">${s.name.split('/').pop()}</div><div class="kb-card-task">${escapeHtml(s.title || s.prompt)}</div><div class="kb-card-meta"><span class="kb-card-repo">${s.sourceContext?.source?.split('/').pop() || '---'}</span><span class="kb-card-time">${getTimeAgo(s.createTime)}</span></div></div>`).join('');
+            if (mCountEl) mCountEl.textContent = items.length;
+
+            colEl.innerHTML = items.map(t => {
+                const jSession = t.jules_session || (sessions.find(s => s.name.endsWith(t.id)) ? { session_id: sessions.find(s => s.name.endsWith(t.id)).name.split('/').pop(), status: 'ACTIVE', initiated_by: '?' } : null);
+                const isBlocked = (t.blocked_by && t.blocked_by.length > 0);
+                const blocksOthers = (t.blocks && t.blocks.length > 0);
+
+                let sessionHtml = '';
+                if (jSession) {
+                    sessionHtml = `
+                        <div style="margin-top:8px; padding-top:8px; border-top:1px solid var(--border); display:flex; align-items:center; justify-content:space-between">
+                            <div style="display:flex; align-items:center; gap:5px">
+                                <img src="https://github.com/${jSession.initiated_by}.png" style="width:16px; height:16px; border-radius:50%; border:1px solid var(--accent)">
+                                <span style="font-size:9px; color:var(--accent2); font-weight:600">${jSession.status}</span>
+                            </div>
+                            <span style="font-size:9px; color:var(--text3); font-family:var(--font-mono)">#${jSession.session_id}</span>
+                        </div>
+                    `;
+                }
+
+                const blockBadge = isBlocked ? `<span title="Bloqueada por otras tareas" style="color:var(--red); font-size:10px">🚫</span>` : '';
+                const blocksBadge = blocksOthers ? `<span title="Bloquea a otras tareas" style="color:var(--amber); font-size:10px">⚠️</span>` : '';
+
+                const onClick = jSession ? `onclick="openDrawer('${jSession.session_id}')"` : `onclick="showToast('Tarea #${t.id}: ${escapeHtml(t.prioridad)}','info')"`;
+
+                return `
+                    <div class="kb-card ${colId}" ${onClick}>
+                        <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:5px">
+                            <div class="kb-card-id">#${t.id} ${blockBadge} ${blocksBadge}</div>
+                            <button onclick="event.stopPropagation(); openTaskInClaude('${t.id}')"
+                                    style="background:none; border:1px solid var(--border-accent); color:var(--accent2); border-radius:4px; padding:2px 5px; font-size:10px; cursor:pointer"
+                                    title="Enviar a Claude Chat">🤖</button>
+                        </div>
+                        <div class="kb-card-task">${escapeHtml(t.title || t.descripcion)}</div>
+                        <div class="kb-card-meta">
+                            <span class="kb-card-repo">${t.repository?.split('/').pop() || '---'}</span>
+                            <span class="kb-card-time">${t.prioridad}</span>
+                        </div>
+                        <div style="display:flex; margin-top:8px; gap:4px">
+                            ${(t.asignados || []).map(a => `<img src="https://github.com/${a}.png" style="width:18px; height:18px; border-radius:50%; border:1px solid var(--border)" title="${a}">`).join('')}
+                        </div>
+                        ${sessionHtml}
+                    </div>
+                `;
+            }).join('');
+        });
+    }
+
+    function openTaskInClaude(taskId) {
+        const task = window.JulesPanelState.tasks.find(t => String(t.id) === String(taskId));
+        if (!task) return;
+        if (task.images && task.images.length > 0) {
+            showToast("Jules no acepta imágenes, se excluirán del prompt.", "amber");
+        }
+        window.location.href = `/claude-chat.html?task_id=${taskId}&from=jules-panel`;
+    }
+
+    function checkClipboard() {
+        const content = localStorage.getItem('jules_clipboard');
+        if (content) {
+            const promptArea = $('session-prompt');
+            if (promptArea) {
+                promptArea.value = content;
+                showToast("Prompt importado desde Claude Chat", "green");
+                switchView('neural');
+                localStorage.removeItem('jules_clipboard');
+
+                const taskId = localStorage.getItem('jules_linked_task_id');
+                if (taskId) {
+                    window.JulesPanelState.linkedTaskId = taskId;
+                    localStorage.removeItem('jules_linked_task_id');
+                }
+            }
+        }
+    }
+
+    function scrollToKanbanCol(colId, btn) {
+        const col = $(`col-${colId}`);
+        if (col) {
+            col.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+            document.querySelectorAll('#view-kanban .fpill').forEach(p => p.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+        }
+    }
+
+    // Sync mobile tabs with swipe scroll
+    if ($('kanban-board')) {
+        $('kanban-board').addEventListener('scroll', () => {
+            if (window.innerWidth >= 768) return;
+            const board = $('kanban-board');
+            const scrollLeft = board.scrollLeft;
+            const width = board.offsetWidth;
+            const index = Math.round(scrollLeft / width);
+            const colIds = ['pending', 'running', 'done', 'error'];
+            const activeColId = colIds[index];
+
+            document.querySelectorAll('#view-kanban .fpill').forEach(p => p.classList.remove('active'));
+            const activeTab = $(`m-tab-${activeColId}`);
+            if (activeTab) activeTab.classList.add('active');
         });
     }
 
@@ -1930,7 +2138,20 @@ body{
             const res = await window.julesApi.createSession(body);
             showToast("Sesión iniciada correctamente", "green");
             addTel("JULES", `Sesión iniciada: ${res.name.split('/').pop()}`, "success");
-            $('session-prompt').value = ''; await refreshSessions();
+
+            if (window.JulesPanelState.linkedTaskId) {
+                await window.taskOps.updateTask(window.JulesPanelState.linkedTaskId, {
+                    jules_session: {
+                        session_id: res.name.split('/').pop(),
+                        initiated_by: window.githubApi.user?.login || 'Invitado',
+                        status: 'PLANNING',
+                        updated_at: new Date().toISOString()
+                    }
+                });
+                window.JulesPanelState.linkedTaskId = null;
+            }
+
+            $('session-prompt').value = ''; await refreshDashboard();
         } catch (e) { showToast(e.message || "Error al lanzar sesión", "red"); }
         finally { btn.disabled = false; btn.innerHTML = originalText; }
     }
@@ -1939,24 +2160,30 @@ body{
     async function switchView(view, navEl) {
         const isMobile = window.innerWidth < 768;
 
-        // Handle explicit Metrics call to ensure history is rendered
-        if (view === 'metrics' || view === 'history') {
-          // history view is part of desktop dash but separate on mobile history is now under metrics mobile
-        }
-
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
         document.querySelectorAll('.nav-link, .mtab').forEach(n => n.classList.remove('active'));
 
         if (view === 'dashboard' && !isMobile) {
-          // Desktop Dashboard: show all sub-views in the grid
+          // Desktop Dashboard: show main views in layout
           $('view-dashboard').classList.add('active');
           $('view-config').classList.add('active');
-          $('view-session').classList.add('active');
           $('view-neural').classList.add('active');
           $('view-history').classList.add('active');
+
+          // Re-insert views into dash-grid for desktop if not already there
+          const grid = document.querySelector('#view-dashboard .dash-grid');
+          if (grid) {
+              grid.appendChild($('view-config'));
+              grid.appendChild($('view-neural'));
+              grid.appendChild($('view-history'));
+          }
         } else {
           const target = $(`view-${view}`);
-          if (target) target.classList.add('active');
+          if (target) {
+              target.classList.add('active');
+              // Move out of grid if it's mobile or specific view
+              document.querySelector('.main').appendChild(target);
+          }
         }
 
         if (navEl) {
@@ -2106,7 +2333,15 @@ body{
 
     /* ─── POLLING ─── */
     let sessionPollInterval = null;
-    function startPolling() { stopPolling(); sessionPollInterval = setInterval(() => { if (!document.hidden) refreshSessions(); }, 15000); }
+    function startPolling() {
+        stopPolling();
+        sessionPollInterval = setInterval(() => {
+            if (!document.hidden) {
+                refreshDashboard();
+                checkClipboard();
+            }
+        }, 15000);
+    }
     function stopPolling() { if (sessionPollInterval) clearInterval(sessionPollInterval); }
     document.addEventListener('visibilitychange', () => document.hidden ? stopPolling() : startPolling());
     window.addEventListener('beforeunload', stopPolling);
