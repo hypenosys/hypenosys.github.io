@@ -217,7 +217,8 @@
                             </div>
                             ${branchName ? `
                                 <a href="${branchUrl}" target="_blank" class="text-[10px] text-[#bd93f9] hover:text-[#ff79c6] flex items-center gap-1 font-mono bg-[#bd93f9]/10 px-1.5 py-0.5 rounded transition-colors" title="Ver rama en GitHub">
-                                    <i class="fas fa-code-branch"></i> ${branchName}
+                                    <svg width="10" height="10" fill="currentColor" viewBox="0 0 16 16" style="display:inline-block; vertical-align:text-bottom;"><path fill-rule="evenodd" d="M11.5 14a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm-9-11a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm3 2a2.502 2.502 0 0 1 1.987 1.027c.187.245.313.519.372.808l1.459-1.458a2.5 2.5 0 1 1 .707.707l-1.458 1.459c.289.06.563.185.808.372A2.5 2.5 0 1 1 11.5 11a2.502 2.502 0 0 1-1.027-1.987c-.187-.245-.313-.519-.372-.808L8.641 9.664a2.502 2.502 0 0 1-1.141 1.141l-1.459 1.459c.289.06.563.185.808.372A2.5 2.5 0 1 1 2.5 11a2.502 2.502 0 0 1 1.027-1.987c.187-.245.313-.519.372-.808l1.459-1.459A2.502 2.502 0 0 1 5.5 5z"/></svg>
+                                    ${branchName}
                                 </a>
                             ` : ''}
                         </div>

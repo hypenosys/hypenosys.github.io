@@ -59,6 +59,7 @@ permalink: /jules-panel-v2/
   --t-norm: 0.25s cubic-bezier(0.4,0,0.2,1);
   --shadow-glow: 0 0 24px rgba(124,58,237,0.25);
 }
+.hidden { display: none !important; }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;outline:none}
 html{height:100%;scroll-behavior:smooth}
 body{
@@ -1804,7 +1805,6 @@ body{
 <script src="{{ '/assets/javascript/repo-aliases.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/ollama-discovery.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/ai-config.js' | relative_url }}"></script>
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
     window.JulesPanelState = {
         activeRepo:          localStorage.getItem('hypenosys_active_repo') || null,
@@ -2048,11 +2048,25 @@ body{
             const branches = await window.githubContext.getBranches(repoName, repoOwner || undefined);
             const repoData = (await window.githubContext.getRepos()).find(r => r.name === repoName && (repoOwner ? r.owner === repoOwner : true));
             const defaultBranch = repoData ? repoData.default_branch : 'main';
-            branchSelect.innerHTML = branches.map(b => `<option value="${b.name}" ${b.name === defaultBranch ? 'selected' : ''}>${b.name}${b.name === defaultBranch ? ' ★' : ''}</option>`).join('');
-            const lastSelected = localStorage.getItem('jules_selected_branch');
-            if (lastSelected && branches.some(b => b.name === lastSelected)) branchSelect.value = lastSelected;
-            if(branchMeta) branchMeta.innerHTML = `<span class="u-dot"></span><span>${branches.length} ramas</span>`;
-            const activeBranch = branchSelect.value;
+
+            if (branches && branches.length > 0) {
+                branchSelect.innerHTML = branches.map(b => {
+                    const bName = (typeof b === 'string') ? b : (b.name || '');
+                    return `<option value="${bName}" ${bName === defaultBranch ? 'selected' : ''}>${bName}${bName === defaultBranch ? ' ★' : ''}</option>`;
+                }).join('');
+
+                const lastSelected = localStorage.getItem('jules_selected_branch');
+                if (lastSelected && branches.some(b => (typeof b === 'string' ? b : b.name) === lastSelected)) {
+                    branchSelect.value = lastSelected;
+                }
+
+                if(branchMeta) branchMeta.innerHTML = `<span class="u-dot"></span><span>${branches.length} ramas cargadas</span>`;
+            } else {
+                branchSelect.innerHTML = `<option value="${defaultBranch}">${defaultBranch} ★</option>`;
+                if(branchMeta) branchMeta.innerHTML = `<span class="u-dot"></span><span>0 ramas (usando default)</span>`;
+            }
+
+            const activeBranch = branchSelect.value || defaultBranch;
             if(sessCtx) sessCtx.textContent = `${displayLabel}: ${activeBranch}`;
             window.JulesPanelState.activeBranch = activeBranch;
             checkBranchWarning();
@@ -2213,9 +2227,17 @@ body{
                                     title="Enviar a Claude Chat">🤖</button>
                         </div>
                         <div class="kb-card-task">${escapeHtml(t.title || t.descripcion)}</div>
-                        <div class="kb-card-meta">
-                            <span class="kb-card-repo">${t.repository?.split('/').pop() || '---'}</span>
-                            <span class="kb-card-time">${t.prioridad}</span>
+                        <div class="kb-card-meta" style="display:flex; justify-content:space-between; align-items:center">
+                            <div style="display:flex; flex-direction:column; gap:2px">
+                                <span class="kb-card-repo">${t.repository?.split('/').pop() || '---'}</span>
+                                <span class="kb-card-time">${t.prioridad}</span>
+                            </div>
+                            ${(t.rama || t.branch) ? `
+                                <div style="font-size:10px; color:var(--accent2); background:rgba(124,58,237,0.1); padding:2px 6px; border-radius:4px; font-family:var(--font-mono); display:flex; align-items:center; gap:4px">
+                                    <svg width="10" height="10" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.5 14a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm-9-11a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm3 2a2.502 2.502 0 0 1 1.987 1.027c.187.245.313.519.372.808l1.459-1.458a2.5 2.5 0 1 1 .707.707l-1.458 1.459c.289.06.563.185.808.372A2.5 2.5 0 1 1 11.5 11a2.502 2.502 0 0 1-1.027-1.987c-.187-.245-.313-.519-.372-.808L8.641 9.664a2.502 2.502 0 0 1-1.141 1.141l-1.459 1.459c.289.06.563.185.808.372A2.5 2.5 0 1 1 2.5 11a2.502 2.502 0 0 1 1.027-1.987c.187-.245.313-.519.372-.808l1.459-1.459A2.502 2.502 0 0 1 5.5 5z"/></svg>
+                                    ${t.rama || t.branch}
+                                </div>
+                            ` : ''}
                         </div>
                         <div style="display:flex; margin-top:8px; gap:4px">
                             ${(t.asignados || []).map(a => `<img src="https://github.com/${a}.png" style="width:18px; height:18px; border-radius:50%; border:1px solid var(--border)" title="${a}">`).join('')}
@@ -2240,7 +2262,8 @@ body{
             asignados: task.asignados || task.asignado_a || [],
             comments: task.comments || [],
             estimated_hours: task.estimated_hours || '',
-            repositorio: task.repository || task.repo || ''
+            repositorio: task.repository || task.repo || '',
+            rama: task.rama || task.branch || ''
         };
         localStorage.setItem('claude_task_context', JSON.stringify(payload));
 
@@ -2496,7 +2519,10 @@ body{
           renderMetrics();
           if (window.julesSessionsCache) renderHistoryTable(window.julesSessionsCache);
         }
-        if (view === 'neural') { /* No specific logic for neural yet */ }
+        if (view === 'neural') {
+            if($('v2-thinking-indicator')) $('v2-thinking-indicator').classList.add('hidden');
+            renderChatV2Messages();
+        }
         if (view === 'hub') {
             const activeTab = localStorage.getItem('hypenosys_hub_active_tab') || 'pull-requests';
             const tabEl = document.querySelector(`.dr-tab[data-tab="${activeTab}"]`);
@@ -2822,13 +2848,15 @@ body{
     async function callCustomProvider(config, messages) {
         const baseUrl = (config.base_url || 'https://api.anthropic.com/v1').replace(/\/$/, '');
         const isAnthropic = baseUrl.includes('anthropic.com');
+        const isOllama = baseUrl.includes('localhost') || baseUrl.includes('127.0.0.1');
         const endpoint = isAnthropic ? `${baseUrl}/messages` : `${baseUrl}/chat/completions`;
+        const apiKey = config.api_key || config.apiKey || '';
 
         const headers = { 'Content-Type': 'application/json' };
         let body = {};
 
         if (isAnthropic) {
-            headers['x-api-key'] = config.api_key;
+            headers['x-api-key'] = apiKey;
             headers['anthropic-version'] = '2023-06-01';
             headers['anthropic-dangerous-direct-browser-access'] = 'true';
             body = {
@@ -2838,9 +2866,9 @@ body{
                 messages: messages.filter(m => m.role !== 'system')
             };
         } else {
-            headers['Authorization'] = `Bearer ${config.api_key}`;
+            if (!isOllama) headers['Authorization'] = `Bearer ${apiKey}`;
             body = {
-                model: config.model,
+                model: config.model || 'llama3',
                 messages: messages,
                 temperature: 0.7
             };
