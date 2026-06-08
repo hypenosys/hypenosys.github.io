@@ -1,15 +1,15 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-08T10:35:27.892Z",
+  "computed_at": "2026-06-08T10:39:48.006Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 20,
+    "total_tasks": 21,
     "total_ok": 1,
     "total_ko": 0,
     "total_uncertain": 6,
     "total_obsolete": 5,
-    "fixed_found_ratio": 0.0417,
-    "verified_ratio": 0.04
+    "fixed_found_ratio": 0.04,
+    "verified_ratio": 0.0385
   },
   "group": {
     "velocity_trend": {
@@ -22,11 +22,11 @@
       "2026-W23": 7,
       "2026-W24": 0
     },
-    "bug_rate": 0.1053,
+    "bug_rate": 0.1,
     "blocker_health": 3,
     "tag_heatmap": {
-      "feature": 6,
-      "PRO": 8,
+      "feature": 7,
+      "PRO": 9,
       "brainstorm": 1,
       "design": 1,
       "research": 2,
@@ -456,7 +456,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-06-08T10:35:28.878Z"
+      "timestamp": "2026-06-08T10:39:49.021Z"
     }
   ]
 }
