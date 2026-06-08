@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-08T10:40:34.201Z",
+  "last_updated": "2026-06-08T12:27:44.643Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1606,8 +1606,8 @@
       "id": 35
     },
     {
-      "title": "n8n: Añadir NVIDIA NIM y cognito-agent como providers en la configuración de Claude Neural Chat",
-      "descripcion": "",
+      "title": "n8n: Añadir NIM y cognito-agent como providers en la configuración de Claude Neural Chat",
+      "descripcion": "webhooks",
       "rama": "PRO",
       "task_type": "research",
       "tema_principal": "Programación / Engine",
@@ -1669,6 +1669,20 @@
           "field": "prioridad",
           "old_value": "Minor",
           "new_value": "Medium"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T12:27:44.014Z",
+          "field": "title",
+          "old_value": "n8n: Añadir NVIDIA NIM y cognito-agent como providers en la configuración de Claude Neural Chat",
+          "new_value": "n8n: Añadir NIM y cognito-agent como providers en la configuración de Claude Neural Chat"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T12:27:44.014Z",
+          "field": "descripcion",
+          "old_value": "",
+          "new_value": "webhooks"
         }
       ],
       "id": 36
@@ -2255,6 +2269,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #36",
+      "user": "Axlfc",
+      "timestamp": "2026-06-08T12:27:44.643Z"
+    },
     {
       "action": "chore: actualizar tarea #41",
       "user": "Axlfc",
