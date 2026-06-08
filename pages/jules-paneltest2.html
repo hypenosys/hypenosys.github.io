@@ -785,6 +785,62 @@ body{
 }
 .sidebar-backdrop.open{display:block}
 
+/* ─── CHAT V2 STYLES ─── */
+.message-user {
+    align-self: flex-end;
+    background: var(--surface2);
+    border-radius: 18px 18px 4px 18px;
+    border: 1px solid var(--border2);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    padding: 14px 18px;
+    max-width: 85%;
+    margin-left: 20%;
+}
+.message-claude {
+    align-self: flex-start;
+    background: linear-gradient(135deg, #150d35 0%, #0d0d14 100%);
+    border-radius: 18px 18px 18px 4px;
+    border: 1px solid var(--border-accent);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    padding: 14px 18px;
+    max-width: 85%;
+    margin-right: 20%;
+}
+.message-system {
+    align-self: center;
+    background: rgba(255,255,255,0.03);
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text3);
+    max-width: 90%;
+    text-align: center;
+}
+.thinking-block {
+    border-left: 2px solid #6272a4;
+    background: rgba(98, 114, 164, 0.1);
+    padding: 8px 12px;
+    margin-bottom: 12px;
+    font-size: 0.85rem;
+    color: #6272a4;
+    font-style: italic;
+}
+.prose-invert { color: #f8f8f2; }
+.prose-invert pre {
+    background: #1e1f29;
+    padding: 12px;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 8px 0;
+    border: 1px solid #44475a;
+}
+.prose-invert code {
+    font-family: var(--font-mono);
+    color: #50fa7b;
+}
+
 /* ─── ANIMATIONS ─── */
 /* Fix: use will-change only on elements that actually animate, and use transform3d for GPU compositing */
 @keyframes ringpulse{
@@ -996,6 +1052,10 @@ body{
   </button>
   <button class="mtab" data-tab="neural">
     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+    <span>Ops</span>
+  </button>
+  <button class="mtab" data-tab="chat">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
     <span>Neural</span>
   </button>
   <button class="mtab" data-tab="config">
@@ -1040,6 +1100,10 @@ body{
         GitHub Hub
         <span class="nav-badge" id="hub-notif-badge">0</span>
       </a>
+      <a class="nav-link" id="nav-chat" onclick="switchView('chat',this)">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></svg>
+        Neural Chat
+      </a>
       <a class="nav-link" id="nav-docs" onclick="openDocs()">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
         Documentación
@@ -1083,8 +1147,8 @@ body{
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
           <span class="notif-pip hidden" id="notif-pip">0</span>
         </div>
-        <button class="btn-claude" onclick="openClaudeChat()">
-          <span class="claude-icon">C</span>Claude Chat
+        <button class="btn-claude" onclick="switchView('chat')">
+          <span class="claude-icon">C</span>Neural Chat
         </button>
         <button class="btn btn-ghost btn-sm" onclick="openDocs()">
           <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
@@ -1458,6 +1522,57 @@ body{
     </div>
 
 
+    <!-- ─── NEURAL CHAT VIEW ─── -->
+    <div class="view" id="view-chat" style="padding: 0; background: #07070a; flex-direction: column; height: calc(100vh - var(--header-h));">
+        <!-- Task Context Header (Integrated) -->
+        <div id="v2-task-context" class="hidden" style="background: rgba(124, 58, 237, 0.05); border-bottom: 1px solid var(--border); padding: 12px 24px;">
+            <details style="width: 100%;">
+                <summary style="list-style: none; cursor: pointer; display: flex; align-items:center; justify-content: space-between;">
+                    <div style="display:flex; align-items:center; gap:10px">
+                        <span style="font-size: 14px;">📋</span>
+                        <div>
+                            <div style="font-size: 9px; font-weight: 800; color: var(--accent2); text-transform: uppercase;">Contexto de Tarea</div>
+                            <div id="v2-task-title" style="font-size: 13px; font-weight: 700; color: var(--text);">Cargando tarea...</div>
+                        </div>
+                    </div>
+                    <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="opacity: 0.5;"><path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </summary>
+                <div id="v2-task-details" style="padding-top: 15px; font-size: 12px; color: var(--text2); display: flex; flex-direction: column; gap: 8px;">
+                    <!-- Details populated via JS -->
+                </div>
+            </details>
+        </div>
+
+        <div class="chat-container-v2" id="v2-chat-messages" style="flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 20px;">
+            <div id="v2-welcome-screen" style="height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0.4; text-align: center; gap: 15px;">
+                <div style="font-size: 48px;">🧠</div>
+                <h2 style="font-family: var(--font-head); font-weight: 700; font-size: 20px;">Neural Context Explorer</h2>
+                <p style="max-width: 300px; font-size: 13px;">Pregunta a Claude sobre el código, las tareas o solicita ayuda para redactar prompts para Jules.</p>
+            </div>
+        </div>
+
+        <!-- Live Monitoring Bar for Chat -->
+        <div id="chat-live-monitor" class="hidden" style="background: rgba(124, 58, 237, 0.1); border-top: 1px solid var(--border-accent); padding: 10px 24px; font-size: 11px; color: var(--accent2); display: flex; align-items:center; gap: 12px;">
+            <span class="live-dot" style="width:7px; height:7px"></span>
+            <span id="chat-live-status">Monitoreando actividad neural...</span>
+        </div>
+
+        <div class="chat-input-area" style="padding: 24px; background: rgba(0,0,0,0.3); border-top: 1px solid var(--border);">
+            <div style="max-width: 900px; margin: 0 auto; position: relative; display: flex; flex-direction: column; gap: 12px;">
+                <div id="v2-thinking-indicator" class="hidden" style="font-size: 10px; font-weight: 800; color: var(--cyan); letter-spacing: 0.05em;">
+                    CLAUDE ESTÁ PROCESANDO...
+                </div>
+                <div style="position: relative;">
+                    <textarea id="v2-chat-input" placeholder="Pregunta algo..."
+                        style="width: 100%; background: var(--surface-opaque); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 16px 60px 16px 16px; color: #fff; resize: none; font-size: 14px; min-height: 56px; max-height: 200px; font-family: var(--font-ui); transition: border-color 0.3s;"></textarea>
+                    <button id="v2-send-btn" style="position: absolute; right: 12px; top: 11px; width: 34px; height: 34px; border-radius: 12px; background: var(--accent-grad); color: #fff; border: none; cursor: pointer; display: flex; align-items:center; justify-content:center; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- ─── HUB VIEW ─── -->
     <div class="view" id="view-hub" style="padding: 22px 30px;">
         <div class="metrics-header" style="margin-bottom: 20px;">
@@ -1689,6 +1804,7 @@ body{
 <script src="{{ '/assets/javascript/repo-aliases.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/ollama-discovery.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/ai-config.js' | relative_url }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
     window.JulesPanelState = {
         activeRepo:          localStorage.getItem('hypenosys_active_repo') || null,
@@ -1788,6 +1904,11 @@ body{
       line.innerHTML=`<div class="tel-head"><span class="tel-time">${ts}</span><span class="tel-tag ${type}">${tag}</span></div><div class="tel-msg">${msg}</div>`;
       box.appendChild(line);
       box.scrollTop=box.scrollHeight;
+
+      // Broadcast activity to Neural Chat
+      localStorage.setItem('jules_live_telemetry', JSON.stringify({
+          tag, msg, type, timestamp: d.toISOString()
+      }));
     }
 
     /* ─── AUTH ─── */
@@ -1973,21 +2094,28 @@ body{
             renderKanban(tasks, sessions);
             updateStats();
 
-            // FEATURE 2: Emit latest output to localStorage
+            // FEATURE 2: Emit latest output to localStorage AND trigger analysis in Chat
             if (sessions.length > 0) {
                 const latest = sessions[0];
                 const lastOutputStr = localStorage.getItem('jules_last_output');
                 const lastOutput = lastOutputStr ? JSON.parse(lastOutputStr) : null;
+                const sessionId = latest.name.split('/').pop();
 
                 // Only emit if it's a new session or status changed
-                if (!lastOutput || lastOutput.session_id !== latest.name.split('/').pop() || lastOutput.status !== latest.state) {
-                    localStorage.setItem('jules_last_output', JSON.stringify({
-                        session_id: latest.name.split('/').pop(),
+                if (!lastOutput || lastOutput.session_id !== sessionId || lastOutput.status !== latest.state) {
+                    const payload = {
+                        session_id: sessionId,
                         status: latest.state,
                         title: latest.title || latest.prompt,
                         repo: latest.sourceContext?.source?.split('/').pop() || '---',
                         timestamp: new Date().toISOString()
-                    }));
+                    };
+                    localStorage.setItem('jules_last_output', JSON.stringify(payload));
+
+                    // If integrated chat is active and session completed, trigger analysis
+                    if (['COMPLETED', 'FAILED'].includes(latest.state)) {
+                        triggerAutomatedAnalysis(payload);
+                    }
                 }
             }
 
@@ -2126,6 +2254,16 @@ body{
         const payloadStr = localStorage.getItem('jules_task_payload');
         const promptArea = $('session-prompt');
 
+        if (payloadStr) {
+            try {
+                const payload = JSON.parse(payloadStr);
+                // Also update Task Context for integrated chat
+                if (payload.source_task) {
+                    showTaskContextInChat(payload.source_task);
+                }
+            } catch(e){}
+        }
+
         if (payloadStr && promptArea) {
             try {
                 const payload = JSON.parse(payloadStr);
@@ -2139,9 +2277,11 @@ body{
                     formattedPrompt += `[CONTEXTO NEURAL]\n${payload.session_context}\n\n`;
                 }
 
-                formattedPrompt += `[RESPUESTA DE CLAUDE]\n${payload.claude_response}`;
+                if (payload.claude_response) {
+                    formattedPrompt += `[RESPUESTA DE CLAUDE]\n${payload.claude_response}`;
+                }
 
-                promptArea.value = formattedPrompt;
+                promptArea.value = formattedPrompt.trim();
                 window.JulesPanelState.activePayload = payload;
 
                 showToast("Neural Link: Payload cargado con éxito", "green");
@@ -2182,6 +2322,24 @@ body{
                 }
             }
         }
+    }
+
+    function showTaskContextInChat(task) {
+        const banner = $('v2-task-context');
+        const title = $('v2-task-title');
+        const details = $('v2-task-details');
+        if (!banner || !title || !details) return;
+
+        banner.classList.remove('hidden');
+        title.textContent = task.titulo || task.title || `#${task.id}`;
+
+        let html = '';
+        if (task.descripcion) html += `<div><strong>Descripción:</strong> ${task.descripcion}</div>`;
+        if (task.acceptance_criteria) html += `<div><strong>Criterios:</strong> ${task.acceptance_criteria}</div>`;
+        if (task.rama) html += `<div><strong>Rama:</strong> <code>${task.rama}</code></div>`;
+
+        details.innerHTML = html;
+        window.JulesPanelState.activePayload = { ...window.JulesPanelState.activePayload, source_task: task };
     }
 
     function checkBranchWarning() {
@@ -2248,14 +2406,30 @@ body{
     }
 
     async function launchSession() {
-        const prompt = $('session-prompt').value.trim();
+        let prompt = $('session-prompt').value.trim();
         if (!prompt) { $('session-prompt').focus(); showToast("Escribe una tarea para Jules", "red"); return; }
         const source = window.JulesPanelState.activeRepo, branch = window.JulesPanelState.activeBranch || 'master';
         if (!source) { showToast("Selecciona un repositorio", "red"); return; }
+
+        // Enhance prompt based on options
+        if ($('opt-tests').classList.contains('active')) {
+            prompt += "\n\nIMPORTANTE: Genera tests unitarios automáticos para cubrir estos cambios.";
+        }
+        if ($('opt-branch').classList.contains('active')) {
+            prompt += `\n\nIMPORTANTE: Crea y trabaja en una nueva rama dedicada para esta tarea (ej: jules/task-${Date.now()}).`;
+        }
+
         const btn = $('launch-btn'); btn.disabled = true; const originalText = btn.innerHTML; btn.innerHTML = 'Iniciando...';
         try {
             const body = { prompt, sourceContext: { source, githubRepoContext: { startingBranch: branch } } };
-            if ($('opt-review').classList.contains('active')) body.requirePlanApproval = true;
+
+            // Si Modo Automático está activo, nos aseguramos de que requirePlanApproval sea false
+            if ($('opt-auto').classList.contains('active')) {
+                body.requirePlanApproval = false;
+            } else if ($('opt-review').classList.contains('active')) {
+                body.requirePlanApproval = true;
+            }
+
             const res = await window.julesApi.createSession(body);
             showToast("Sesión iniciada correctamente", "green");
             addTel("JULES", `Sesión iniciada: ${res.name.split('/').pop()}`, "success");
@@ -2485,9 +2659,212 @@ body{
     function openDocs(){ alert("📚 Jules Agent V2 - Premium Neural Interface"); }
 
     /* ─── EVENT LISTENERS ─── */
+    document.querySelectorAll('.opt-pill').forEach(pill => {
+        pill.onclick = () => {
+            pill.classList.toggle('active');
+            // If Auto is enabled, Review might be redundant or contradictory?
+            // For now, let's allow free toggling unless logic dictates otherwise.
+            if (pill.id === 'opt-auto' && pill.classList.contains('active')) {
+                $('opt-review').classList.remove('active');
+            } else if (pill.id === 'opt-review' && pill.classList.contains('active')) {
+                $('opt-auto').classList.remove('active');
+            }
+        };
+    });
+
     if($('launch-btn')) $('launch-btn').onclick = launchSession;
     if($('dr-overlay')) $('dr-overlay').onclick = closeDrawer;
     if($('dr-close')) $('dr-close').onclick = closeDrawer;
+
+    /* ─── NEURAL CHAT V2 LOGIC ─── */
+    let chatV2Messages = [];
+
+    async function triggerAutomatedAnalysis(output) {
+        const analyzedKey = `v2_jules_analyzed_${output.session_id}_${output.status}`;
+        if (localStorage.getItem(analyzedKey)) return;
+        localStorage.setItem(analyzedKey, 'true');
+
+        chatV2Messages.push({ role: 'system', content: `Analizando resultado de Jules (Sesión #${output.session_id})...` });
+        renderChatV2Messages();
+
+        try {
+            const config = window.aiConfig?.getActiveConfig() || JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
+            const prompt = `Jules ha completado una operación (Estado: ${output.status}).\n\nDETALLES:\n- Sesión: #${output.session_id}\n- Tarea: ${output.title}\n- Repo: ${output.repo}\n\nAnaliza el resultado y prepara un resumen accionable.`;
+
+            const messages = [
+                { role: 'system', content: 'Eres un analista de operaciones de agentes autónomos.' },
+                { role: 'user', content: prompt }
+            ];
+
+            const analysis = await callCustomProvider(config, messages);
+            chatV2Messages.push({ role: 'assistant', content: `[ANÁLISIS AUTOMÁTICO JULES]\n\n${analysis}` });
+            renderChatV2Messages();
+        } catch(e) {
+            console.error("Auto-analysis failed", e);
+        }
+    }
+
+    // Listener for real-time telemetry from Jules
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'jules_live_telemetry' && e.newValue) {
+            const tel = JSON.parse(e.newValue);
+            showChatLiveActivity(tel);
+        }
+    });
+
+    let activityTimeout = null;
+    function showChatLiveActivity(tel) {
+        const monitor = $('chat-live-monitor');
+        const status = $('chat-live-status');
+        if (!monitor || !status) return;
+
+        monitor.classList.remove('hidden');
+        status.textContent = `[${tel.tag}] ${tel.msg}`;
+
+        // Auto-hide after 10 seconds of inactivity unless it's a critical update
+        if (activityTimeout) clearTimeout(activityTimeout);
+        activityTimeout = setTimeout(() => {
+            monitor.classList.add('hidden');
+        }, 10000);
+    }
+
+    async function sendChatV2Msg() {
+        const input = $('v2-chat-input');
+        const content = input.value.trim();
+        if (!content) return;
+
+        // Add user message
+        const userMsg = { role: 'user', content };
+        chatV2Messages.push(userMsg);
+        renderChatV2Messages();
+        input.value = '';
+        input.style.height = 'auto';
+
+        const thinking = $('v2-thinking-indicator');
+        thinking.classList.remove('hidden');
+
+        try {
+            const config = window.aiConfig?.getActiveConfig() || JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
+            const systemPrompt = "Eres Claude, un asistente experto integrado en el panel de control de Hypenosys.";
+
+            // Build context from active task if exists
+            let fullPrompt = content;
+            if (window.JulesPanelState.activePayload?.source_task) {
+                const t = window.JulesPanelState.activePayload.source_task;
+                fullPrompt = `[CONTEXTO TAREA #${t.id}: ${t.titulo}]\n${content}`;
+            }
+
+            const messages = [
+                { role: 'system', content: systemPrompt },
+                ...chatV2Messages.map(m => ({ role: m.role, content: m.content }))
+            ];
+
+            // For now, use a simplified non-streaming call for the integrated tab
+            // In a real scenario, we'd port the full consumeStream logic
+            const response = await callCustomProvider(config, messages);
+
+            chatV2Messages.push({ role: 'assistant', content: response });
+            renderChatV2Messages();
+        } catch (e) {
+            console.error('[ChatV2] Error:', e);
+            showToast("Error en comunicación con Claude", "red");
+        } finally {
+            thinking.classList.add('hidden');
+        }
+    }
+
+    function renderChatV2Messages() {
+        const container = $('v2-chat-messages');
+        if (!container) return;
+
+        if (chatV2Messages.length === 0) {
+            // Restore welcome screen if no messages
+            container.innerHTML = `
+                <div id="v2-welcome-screen" style="height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0.4; text-align: center; gap: 15px;">
+                    <div style="font-size: 48px;">🧠</div>
+                    <h2 style="font-family: var(--font-head); font-weight: 700; font-size: 20px;">Neural Context Explorer</h2>
+                    <p style="max-width: 300px; font-size: 13px;">Pregunta a Claude sobre el código, las tareas o solicita ayuda para redactar prompts para Jules.</p>
+                </div>`;
+            return;
+        }
+
+        container.innerHTML = chatV2Messages.map((m, idx) => {
+            if (m.role === 'system') {
+                return `<div class="message-system">${m.content}</div>`;
+            }
+            return `
+            <div class="message-${m.role === 'user' ? 'user' : 'claude'}">
+                <div style="font-size: 10px; font-weight: 800; opacity: 0.5; margin-bottom: 8px; letter-spacing: 0.05em;">
+                    ${m.role === 'user' ? 'DESARROLLADOR' : 'CLAUDE NEURAL'}
+                </div>
+                <div class="prose-invert" style="font-size: 13.5px; line-height: 1.6;">
+                    ${marked.parse(m.content)}
+                </div>
+                ${m.role === 'assistant' ? `
+                    <button onclick="copyToJulesPrompt(${idx})" style="margin-top: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--accent2); font-size: 10px; padding: 4px 8px; border-radius: 4px; cursor: pointer;">
+                        📥 USAR COMO PROMPT
+                    </button>
+                ` : ''}
+            </div>`;
+        }).join('');
+        container.scrollTop = container.scrollHeight;
+    }
+
+    window.copyToJulesPrompt = (idx) => {
+        const msg = chatV2Messages[idx];
+        if (msg && msg.role === 'assistant') {
+            $('session-prompt').value = msg.content;
+            showToast("Prompt copiado a la sección Neural", "green");
+            switchView('neural');
+        }
+    };
+
+    async function callCustomProvider(config, messages) {
+        const baseUrl = (config.base_url || 'https://api.anthropic.com/v1').replace(/\/$/, '');
+        const isAnthropic = baseUrl.includes('anthropic.com');
+        const endpoint = isAnthropic ? `${baseUrl}/messages` : `${baseUrl}/chat/completions`;
+
+        const headers = { 'Content-Type': 'application/json' };
+        let body = {};
+
+        if (isAnthropic) {
+            headers['x-api-key'] = config.api_key;
+            headers['anthropic-version'] = '2023-06-01';
+            headers['anthropic-dangerous-direct-browser-access'] = 'true';
+            body = {
+                model: config.model || 'claude-3-5-sonnet-20241022',
+                max_tokens: 1024,
+                system: messages.find(m => m.role === 'system')?.content,
+                messages: messages.filter(m => m.role !== 'system')
+            };
+        } else {
+            headers['Authorization'] = `Bearer ${config.api_key}`;
+            body = {
+                model: config.model,
+                messages: messages,
+                temperature: 0.7
+            };
+        }
+
+        const res = await fetch(endpoint, { method: 'POST', headers, body: JSON.stringify(body) });
+        if (!res.ok) throw new Error(`API Error: ${res.status}`);
+        const data = await res.json();
+        return isAnthropic ? data.content[0].text : data.choices[0].message.content;
+    }
+
+    if($('v2-send-btn')) $('v2-send-btn').onclick = sendChatV2Msg;
+    if($('v2-chat-input')) {
+        $('v2-chat-input').onkeydown = (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendChatV2Msg();
+            }
+        };
+        $('v2-chat-input').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 200) + 'px';
+        });
+    }
 
     // Mobile tabs listeners
     document.querySelectorAll('.mtab').forEach(tab => {

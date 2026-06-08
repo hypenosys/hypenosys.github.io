@@ -24,15 +24,15 @@ permalink: /claude-chat.html
     .chat-container { height: 100%; overflow-y: auto; }
     .sidebar { background-color: #1e1f29; border-right: 1px solid rgba(189, 147, 249, 0.1); }
     .message-user {
-        background: linear-gradient(135deg, #44475a 0%, #383a59 100%);
-        border-radius: 18px 18px 2px 18px;
+        background: #44475a;
+        border-radius: 18px 18px 4px 18px;
         border: 1px solid rgba(139, 233, 253, 0.2);
         box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
     .message-claude {
-        background: linear-gradient(135deg, #282a36 0%, #383a59 100%);
-        border-radius: 18px 18px 18px 2px;
-        border: 1px solid rgba(189, 147, 249, 0.2);
+        background: linear-gradient(135deg, #1e1f29 0%, #282a36 100%);
+        border-radius: 18px 18px 18px 4px;
+        border: 1px solid rgba(189, 147, 249, 0.3);
         box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     }
 
@@ -108,6 +108,19 @@ permalink: /claude-chat.html
 
     /* Mobile Responsiveness */
     @media (max-width: 768px) {
+        header {
+            gap: 10px;
+        }
+        #session-title {
+            font-size: 13px;
+            max-width: 140px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        #profile-selector-container {
+            display: none;
+        }
         .sidebar {
             position: fixed;
             top: 0;
@@ -151,11 +164,19 @@ permalink: /claude-chat.html
             overflow-x: hidden;
         }
         header {
-            padding-left: 1rem;
-            padding-right: 1rem;
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
         }
         .mobile-toggle {
             display: flex !important;
+        }
+        #connection-status span:not(.w-1.5) {
+            display: none;
+        }
+        #connection-status {
+            padding: 4px;
+            min-width: 24px;
+            justify-content: center;
         }
     }
 
@@ -790,20 +811,30 @@ permalink: /claude-chat.html
         function showTaskContextBanner(task) {
             const banner = document.createElement('div');
             banner.id = 'task-context-banner';
-            banner.className = 'mx-6 mt-4 p-3 bg-[#bd93f9]/10 border border-[#bd93f9]/30 rounded-lg flex items-center justify-between animate-slide-down';
+            banner.className = 'mx-6 mt-4 bg-[#bd93f9]/5 border border-[#bd93f9]/20 rounded-lg overflow-hidden animate-slide-down';
             banner.innerHTML = `
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-full bg-[#bd93f9]/20 flex items-center justify-center text-[#bd93f9]">
-                        <i class="fas fa-briefcase text-xs"></i>
+                <details class="w-full">
+                    <summary class="p-3 cursor-pointer list-none flex items-center justify-between hover:bg-[#bd93f9]/10 transition-all">
+                        <div class="flex items-center gap-3">
+                            <div class="w-6 h-6 rounded-full bg-[#bd93f9]/20 flex items-center justify-center text-[#bd93f9]">
+                                <i class="fas fa-briefcase text-[10px]"></i>
+                            </div>
+                            <div>
+                                <div class="text-[9px] font-bold text-[#bd93f9] uppercase tracking-widest opacity-70">Contexto de Tarea</div>
+                                <div class="text-xs font-bold text-white/90">${task.titulo || task.title}</div>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-down text-[10px] text-[#6272a4]"></i>
+                    </summary>
+                    <div class="p-4 border-t border-[#bd93f9]/10 text-xs text-[#6272a4] space-y-2">
+                        ${task.descripcion ? `<div><strong>Descripción:</strong> ${task.descripcion}</div>` : ''}
+                        ${task.acceptance_criteria ? `<div><strong>Criterios:</strong> ${task.acceptance_criteria}</div>` : ''}
+                        ${task.rama ? `<div><strong>Rama:</strong> <code class="text-[#50fa7b]">${task.rama}</code></div>` : ''}
+                        <button onclick="document.getElementById('task-context-banner').remove(); window._activeTaskContext = null;" class="mt-2 text-[9px] text-red-400 hover:text-red-300 uppercase font-bold tracking-tighter">
+                            <i class="fas fa-trash-alt mr-1"></i> Eliminar contexto
+                        </button>
                     </div>
-                    <div>
-                        <div class="text-[10px] font-bold text-[#bd93f9] uppercase tracking-widest">Contexto de Tarea</div>
-                        <div class="text-sm font-bold text-white/90">${task.titulo || task.title}</div>
-                    </div>
-                </div>
-                <button onclick="this.parentElement.remove(); window._activeTaskContext = null;" class="text-[#6272a4] hover:text-white transition-all">
-                    <i class="fas fa-times text-xs"></i>
-                </button>
+                </details>
             `;
             const header = document.querySelector('header');
             header.after(banner);
