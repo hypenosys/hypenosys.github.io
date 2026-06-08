@@ -531,11 +531,15 @@ layout: null
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Rama</label>
-                            <select id="task-rama-input" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100">
-                                <option value="PRO">Programación (PRO)</option>
-                                <option value="ART">Arte (ART)</option>
-                                <option value="DIS">Diseño (DIS)</option>
-                            </select>
+                            <div class="flex gap-2">
+                                <select id="task-rama-input" class="flex-grow bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100">
+                                    <option value="">-- Seleccionar repo primero --</option>
+                                </select>
+                                <input type="text" id="task-rama-manual" class="hidden flex-grow bg-slate-950 border border-indigo-500 rounded-lg p-2 text-slate-100" placeholder="Nombre de rama">
+                                <button type="button" id="btn-rama-toggle" onclick="toggleRamaManual()" class="bg-slate-800 hover:bg-slate-700 text-slate-400 px-3 rounded-lg border border-slate-700" title="Alternar entrada manual">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </button>
+                            </div>
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Repositorio</label>

@@ -2203,7 +2203,8 @@ body{
         if (expectedBranch && currentBranch && expectedBranch !== currentBranch) {
             banner.classList.remove('hidden');
             banner.style.display = 'flex';
-            text.innerHTML = `<strong>⚠️ ADVERTENCIA DE RAMA:</strong> La rama actual (<code>${currentBranch}</code>) no coincide con la rama esperada para la tarea <strong>#${task.id}</strong> (<code>${expectedBranch}</code>).`;
+            const taskTitle = task.titulo || task.title || `#${task.id}`;
+            text.innerHTML = `<strong>⚠️ ADVERTENCIA DE RAMA:</strong> La rama actual (<code>${currentBranch}</code>) no coincide con la rama esperada para la tarea <strong>${taskTitle}</strong> (<code>${expectedBranch}</code>).`;
             addTel("SECURITY", `Desviación de rama detectada: ${currentBranch} vs ${expectedBranch}`, "warn");
         } else {
             banner.classList.add('hidden');

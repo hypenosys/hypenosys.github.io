@@ -22,7 +22,9 @@ function openCreateTaskModal() {
   document.getElementById('task-id-input').value = '';
   document.getElementById('task-title-input').value = '';
   document.getElementById('task-desc-input').value = '';
-  document.getElementById('task-rama-input').value = 'PRO';
+  document.getElementById('task-rama-input').value = '';
+  document.getElementById('task-rama-manual').value = '';
+  toggleRamaManual(false);
   document.getElementById('task-type-input').value = 'feature';
   document.getElementById('task-priority-input').value = 'Major';
   document.getElementById('task-milestone-input').value = 'M1';
@@ -73,7 +75,12 @@ function openEditTaskModal(taskId) {
     document.getElementById('task-id-input').value = taskId;
     document.getElementById('task-title-input').value = task.title || '';
     document.getElementById('task-desc-input').value = task.descripcion || '';
-    document.getElementById('task-rama-input').value = task.rama || 'PRO';
+
+    // Handle branch initialization
+    const branch = task.rama || '';
+    document.getElementById('task-rama-manual').value = branch;
+    updateBranchList(task.repository, branch);
+
     document.getElementById('task-type-input').value = task.task_type || 'feature';
     document.getElementById('task-priority-input').value = task.prioridad || 'Major';
     document.getElementById('task-milestone-input').value = task.milestone || 'M1';
@@ -133,7 +140,11 @@ async function handleCreateTask() {
   const taskId = document.getElementById('task-id-input').value;
   const title = document.getElementById('task-title-input').value;
   const desc = document.getElementById('task-desc-input').value;
-  const rama = document.getElementById('task-rama-input').value;
+
+  const ramaInput = document.getElementById('task-rama-input');
+  const ramaManual = document.getElementById('task-rama-manual');
+  const rama = ramaInput.classList.contains('hidden') ? ramaManual.value : ramaInput.value;
+
   const taskType = document.getElementById('task-type-input').value;
   const priority = document.getElementById('task-priority-input').value;
   const milestone = document.getElementById('task-milestone-input').value;
@@ -585,4 +596,69 @@ function openImagePreview(taskId, idx, event) {
     // Phase 3 Fix: ensure we don't have pending click states
     document.activeElement?.blur();
     openLightbox(taskId, idx);
+}
+
+/**
+ * Bug 2: Dynamic branch selector and manual entry
+ */
+function toggleRamaManual(forceManual = null) {
+    const select = document.getElementById('task-rama-input');
+    const manual = document.getElementById('task-rama-manual');
+    const btn = document.getElementById('btn-rama-toggle');
+    const isManual = forceManual !== null ? forceManual : select.classList.contains('hidden');
+
+    if (!isManual) {
+        select.classList.remove('hidden');
+        manual.classList.add('hidden');
+        btn.innerHTML = '<i class="fa-solid fa-pen-to-square"></i>';
+        btn.title = "Introducir manualmente";
+    } else {
+        select.classList.add('hidden');
+        manual.classList.remove('hidden');
+        btn.innerHTML = '<i class="fa-solid fa-list"></i>';
+        btn.title = "Seleccionar de la lista";
+        manual.focus();
+    }
+}
+
+async function updateBranchList(repoFullName, currentBranch = null) {
+    const select = document.getElementById('task-rama-input');
+    const manual = document.getElementById('task-rama-manual');
+    if (!select) return;
+
+    if (!repoFullName) {
+        select.innerHTML = '<option value="">-- Seleccionar repo primero --</option>';
+        return;
+    }
+
+    select.innerHTML = '<option value="">Cargando ramas...</option>';
+    select.disabled = true;
+
+    try {
+        const [owner, repo] = repoFullName.split('/');
+        const branches = await window.githubContext.getBranches(repo, owner);
+
+        if (branches && branches.length > 0) {
+            select.innerHTML = branches.map(b =>
+                `<option value="${b.name}" ${b.name === currentBranch ? 'selected' : ''}>${b.name}</option>`
+            ).join('');
+
+            // Si la rama actual no está en la lista, activar modo manual
+            if (currentBranch && !branches.some(b => b.name === currentBranch)) {
+                manual.value = currentBranch;
+                toggleRamaManual(true);
+            } else if (!currentBranch) {
+                toggleRamaManual(false);
+            }
+        } else {
+            throw new Error("No branches found");
+        }
+    } catch (e) {
+        console.warn("[Branches] Error fetching branches, fallback to manual:", e);
+        select.innerHTML = '<option value="">Error al cargar ramas</option>';
+        if (currentBranch) manual.value = currentBranch;
+        toggleRamaManual(true);
+    } finally {
+        select.disabled = false;
+    }
 }
