@@ -146,6 +146,11 @@
             const description = task.descripcion || task.description || '';
             const truncatedDesc = description.length > 80 ? description.substring(0, 77) + '...' : description;
 
+            // Branch Link Logic
+            const repoFullName = task.repo || task.repository || '';
+            const branchName = task.rama || task.branch || '';
+            const branchUrl = (repoFullName && branchName) ? `https://github.com/${repoFullName}/tree/${branchName}` : '#';
+
             // Robot button action
             const openInClaude = async (taskId) => {
                 const tasks = await window.taskOps.getAllTasks();
@@ -160,7 +165,8 @@
                         asignados: task.asignado_a || task.asignados || [],
                         comments: task.comments || [],
                         estimated_hours: task.estimated_hours || '',
-                        repositorio: task.repo || task.repository || ''
+                        repositorio: task.repo || task.repository || '',
+                        rama: task.rama || task.branch || ''
                     };
                     localStorage.setItem('claude_task_context', JSON.stringify(payload));
                 }
@@ -204,11 +210,18 @@
                             <span class="text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded border border-slate-700">${tag}</span>
                         `).join('')}
                     </div>
-                    <div class="flex justify-between items-center mt-3">
-                        <div class="text-[10px] text-slate-400 flex items-center gap-1">
-                            <i class="fas fa-code-branch opacity-50"></i> ${task.repo || '---'}
+                    <div class="flex flex-col gap-1.5 mt-3 pt-2 border-t border-slate-700/50">
+                        <div class="flex justify-between items-center">
+                            <div class="text-[10px] text-slate-400 flex items-center gap-1 truncate max-w-[150px]" title="Repositorio">
+                                <i class="fas fa-folder opacity-50"></i> ${task.repo || '---'}
+                            </div>
+                            ${branchName ? `
+                                <a href="${branchUrl}" target="_blank" class="text-[10px] text-[#bd93f9] hover:text-[#ff79c6] flex items-center gap-1 font-mono bg-[#bd93f9]/10 px-1.5 py-0.5 rounded transition-colors" title="Ver rama en GitHub">
+                                    <i class="fas fa-code-branch"></i> ${branchName}
+                                </a>
+                            ` : ''}
                         </div>
-                        <div class="flex gap-1">
+                        <div class="flex justify-end gap-1">
                             ${task.jules_session_url ? `
                                 <button onclick="window.open('${task.jules_session_url}', '_blank'); event.stopPropagation();" class="text-[9px] bg-purple-900/30 text-purple-400 border border-purple-500/30 px-2 py-0.5 rounded hover:bg-purple-900/50 transition-all">⚡ JULES</button>
                             ` : ''}

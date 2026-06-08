@@ -863,6 +863,7 @@ permalink: /claude-chat.html
                 const estimation = getVal(t.estimated_hours);
                 const comments = getVal(t.comments);
                 const repositorio = getVal(t.repositorio || t.repository || t.repo);
+                const rama = getVal(t.rama || t.branch);
 
                 let fields = [];
                 if (titulo) fields.push(`📌 Título: ${titulo}`);
@@ -879,6 +880,7 @@ permalink: /claude-chat.html
                     if (commentText) fields.push(`💬 Comentarios: ${commentText}`);
                 }
                 if (repositorio) fields.push(`🗂️ Repositorio: ${repositorio}`);
+                if (rama) fields.push(`🌿 Rama: ${rama}`);
 
                 if (fields.length > 0) {
                     prompt += '\n\n' + fields.join('\n');
@@ -1682,6 +1684,7 @@ permalink: /claude-chat.html
                 user_note: userNote,
                 session_context: sessionContext,
                 source_task: task || null,
+                rama: task ? (task.rama || task.branch) : null,
                 timestamp: new Date().toISOString()
             };
 
@@ -2039,6 +2042,8 @@ permalink: /claude-chat.html
         }
 
         async function compactSession(session) {
+            // Preservation of window._activeTaskContext is implicit as it's a global variable
+            // not touched by this function. We just ensure we don't clear it.
             session._compacting = true;
             console.log(`[Neural Link] Compacting session ${session.id}...`);
 

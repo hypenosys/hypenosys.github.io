@@ -5,7 +5,7 @@
   "tasks": [
     {
       "id": 1,
-      "rama": "PRO",
+      "rama": "feature/dashboard-core-setup",
       "rama2": null,
       "ver": true,
       "descripcion": "Finalizar la configuración del núcleo del centro de operaciones. Es fundamental para centralizar la gestión de tareas y métricas del equipo.",
@@ -79,7 +79,7 @@
       ]
     },
     {
-      "rama": "ART",
+      "rama": "docs/brainstorming-ideation",
       "descripcion": "Documentar la sesión de ideación creativa sobre mecánicas e historia. Esto define el rumbo creativo del proyecto y evita desviaciones futuras.",
       "tema_principal": "Concepto / GDD",
       "prioridad": "Critical",
@@ -197,7 +197,7 @@
       "repository": "hypenosys/docs"
     },
     {
-      "rama": "DIS",
+      "rama": "research/ue5-fundamentals",
       "descripcion": "Completar la capacitación del equipo en conceptos fundamentales de UE5. Es vital para que todos los miembros puedan gestionar assets sin bloqueos técnicos.",
       "tema_principal": "Pre-producción",
       "prioridad": "ToDo",
@@ -300,7 +300,7 @@
       "repository": null
     },
     {
-      "rama": "PRO",
+      "rama": "chore/dev-env-setup",
       "descripcion": "Configurar el entorno de desarrollo local incluyendo control de versiones y el motor. Sin esto, el equipo no puede colaborar ni sincronizar assets binarios.",
       "tema_principal": "Tools / Automation",
       "prioridad": "Critical",
@@ -390,7 +390,7 @@
       "repository": null
     },
     {
-      "rama": "PRO",
+      "rama": "chore/upgrade-ue-5.7.4",
       "descripcion": "Actualizar el repositorio 'app' a la v5.7.4 de Unreal Engine y sincronizar con SVN. Necesario para mantener la compatibilidad con las últimas herramientas.",
       "tema_principal": "Tools / Automation",
       "prioridad": "ToDo",
@@ -719,7 +719,7 @@
       "repository": "hypenosys/hypenosys.github.io"
     },
     {
-      "rama": "ART",
+      "rama": "feature/repo-labels-ui",
       "descripcion": "Añadir etiquetas visuales a los repositorios en el panel para mejorar la organización. Facilita la identificación rápida del propósito de cada proyecto.",
       "tema_principal": "Arte / Assets",
       "prioridad": "Cosmetic",
@@ -961,7 +961,7 @@
     {
       "title": "Botón \"🤖 Enviar a Jules\" en tarjetas Kanban con estado de sesión Neural Operations",
       "descripcion": "Integrar un botón para enviar tareas directamente a Jules desde el Kanban. Automatiza la creación de prompts y mejora la eficiencia de la IA.",
-      "rama": "PRO",
+      "rama": "feature/kanban-jules-link",
       "task_type": "feature",
       "tema_principal": "Programación / Engine",
       "repository": "hypenosys/hypenosys.github.io",
@@ -1103,7 +1103,7 @@
     {
       "title": "Mobile first: Jules Panel - \"GitHub (Team) Ops\" — Hub completo de gestión de repositorios, conectado con Tasks Kanban y Claude",
       "descripcion": "Crear un hub de gestión de repositorios optimizado para móviles. Permite gestionar PRs e Issues desde cualquier lugar sin depender de la web de GitHub.",
-      "rama": "PRO",
+      "rama": "feature/mobile-github-ops",
       "task_type": "feature",
       "tema_principal": "Programación / Engine",
       "repository": "hypenosys/hypenosys.github.io",
@@ -1238,7 +1238,7 @@
     {
       "title": "BUG VISUAL: Jules Neural Operation en dashboard en móvil ",
       "descripcion": "Corregir el renderizado de Markdown en las operaciones de Jules en móviles. Mejora la legibilidad de los logs y planes en pantallas pequeñas.",
-      "rama": "ART",
+      "rama": "fix/jules-neural-mobile-markdown",
       "task_type": "bug",
       "tema_principal": "Tools / Automation",
       "repository": "hypenosys/hypenosys.github.io",
@@ -1403,7 +1403,7 @@
     {
       "title": "Filtrar tareas por tag en /dashboard",
       "descripcion": "Implementar un sistema de filtrado por etiquetas en el dashboard de tareas. Permite al equipo enfocarse en áreas específicas como 'bug' o 'frontend'.",
-      "rama": "PRO",
+      "rama": "feature/dashboard-tag-filter",
       "task_type": "feature",
       "tema_principal": "Programación / Engine",
       "repository": "hypenosys/hypenosys.github.io",
@@ -1494,7 +1494,7 @@
     {
       "title": "Crear README.md de hypenosys.github.io (Web)",
       "descripcion": "Redactar la documentación técnica principal del repositorio web. Esencial para que nuevos desarrolladores entiendan la arquitectura y el despliegue.",
-      "rama": "DIS",
+      "rama": "docs/readme-setup",
       "task_type": "chore",
       "tema_principal": "QA / Testing",
       "repository": "hypenosys/hypenosys.github.io",
@@ -1577,7 +1577,7 @@
     {
       "title": "Integración SVN en Claude Neural Chat y Jules Panel",
       "descripcion": "Permitir que las herramientas de IA realicen acciones directamente sobre el SVN. Automatiza tareas de gestión de assets y sincronización técnica.",
-      "rama": "PRO",
+      "rama": "feature/svn-ai-integration",
       "task_type": "feature",
       "tema_principal": "Tools / Automation",
       "repository": "hypenosys/app",
@@ -1701,7 +1701,7 @@
     {
       "title": "n8n: Añadir NIM y cognito-agent como providers en la configuración de Claude Neural Chat",
       "descripcion": "Configurar nuevos proveedores de IA en el ecosistema de n8n. Amplía las capacidades de procesamiento y automatización del Neural Chat.",
-      "rama": "PRO",
+      "rama": "feature/n8n-providers-nim-agent",
       "task_type": "research",
       "tema_principal": "Programación / Engine",
       "repository": "hypenosys/hypenosys.github.io",
@@ -1789,7 +1789,7 @@
     {
       "title": "EDITAR ALIAS / CONFIG Arreglar edit aliases Lightbox en panel de Jules ",
       "descripcion": "Corregir el Lightbox de edición de alias de repositorios que dejó de funcionar. Es necesario para personalizar la visualización de los proyectos.",
-      "rama": "ART",
+      "rama": "fix/edit-alias-config",
       "task_type": "feature",
       "tema_principal": "Programación / Engine",
       "repository": "hypenosys/hypenosys.github.io",
@@ -1846,7 +1846,7 @@
     {
       "title": "New page pages/image-gen to generate image or text context and flux dev or kontext up to 2 images and text ",
       "descripcion": "Crear una página dedicada a la generación de imágenes y contenido mediante IA. Centraliza las herramientas creativas Flux/ComfyUI en una interfaz.",
-      "rama": "PRO",
+      "rama": "feature/image-gen-page",
       "task_type": "feature",
       "tema_principal": "Programación / Engine",
       "repository": "hypenosys/hypenosys.github.io",
@@ -1966,7 +1966,7 @@
     {
       "title": "Añadir hypenosys/scripts a claude-chat y SVN",
       "descripcion": "Sincronizar el repositorio de scripts con el chat neural y la estructura del SVN. Facilita el acceso de la IA a la lógica para mantenimiento.",
-      "rama": "PRO",
+      "rama": "chore/scripts-svn-sync",
       "task_type": "chore",
       "tema_principal": "Programación / Engine",
       "repository": "hypenosys/hypenosys.github.io",
@@ -2041,7 +2041,7 @@
     {
       "title": "protección nsfw en las subidas a Tumblr y filtro is Cloudflare on por si peta la subida imágenes",
       "descripcion": "Implementar filtros de seguridad y validaciones para las subidas de imágenes. Evita fallos si Cloudflare está caído y asegura contenido permitido.",
-      "rama": "PRO",
+      "rama": "bug/tumblr-nsfw-cloudflare",
       "task_type": "bug",
       "tema_principal": "Tools / Automation",
       "repository": "hypenosys/hypenosys.github.io",
@@ -2222,7 +2222,7 @@
     {
       "title": "Añadir icono de claude-chat al lado del robot en el menú del dashboard",
       "descripcion": "Añadir el acceso directo al Neural Chat en la navegación principal. Mejora la accesibilidad a la asistencia IA desde cualquier sección.",
-      "rama": "ART",
+      "rama": "feature/dashboard-chat-icon",
       "task_type": "feature",
       "tema_principal": "Programación / Engine",
       "repository": "hypenosys/hypenosys.github.io",
@@ -2283,7 +2283,7 @@
     {
       "title": "Falta nombre del repo (o alias) en las cards en dashboard de Jules Neural Operations",
       "descripcion": "Mostrar claramente el nombre o alias del repositorio en las tarjetas del dashboard. Evita confusiones al trabajar en múltiples proyectos.",
-      "rama": "PRO",
+      "rama": "feature/kanban-repo-names",
       "task_type": "feature",
       "tema_principal": "Tools / Automation",
       "repository": "hypenosys/hypenosys.github.io",
@@ -2358,7 +2358,7 @@
     {
       "title": "Claude Neural: llamadas a apis js y python en n8n-runners",
       "descripcion": "Habilitar la ejecución de scripts Python y JavaScript desde el chat neural mediante n8n. Proporciona un entorno flexible para automatización.",
-      "rama": "PRO",
+      "rama": "feature/n8n-python-js-runners",
       "task_type": "feature",
       "tema_principal": "Programación / Engine",
       "repository": "hypenosys/hypenosys.github.io",
@@ -2409,7 +2409,7 @@
     {
       "title": "Controlar con Claude Neural API de n8n",
       "descripcion": "Integrar la API de n8n en el flujo de trabajo de la IA mediante Cloudflare Workers. Permite orquestar workflows de forma segura y escalable.",
-      "rama": "PRO",
+      "rama": "chore/n8n-api-worker",
       "task_type": "chore",
       "tema_principal": "Tools / Automation",
       "repository": "hypenosys/hypenosys.github.io",
@@ -2476,7 +2476,7 @@
       "comments": [
         "He notado que este es el principal bloqueador para nuevos usuarios de Ollama; el relay debería ser ligero, preferiblemente un worker o un pequeño servicio node."
       ],
-      "rama": "PRO",
+      "rama": "feature/ollama-proxy-relay",
       "task_type": "feature",
       "tema_principal": "Tools / Automation",
       "milestone": "M2",
@@ -2501,7 +2501,7 @@
       "comments": [
         "Hay mucha lógica repetida; deberíamos mover las funciones comunes a módulos independientes antes de borrar las versiones antiguas."
       ],
-      "rama": "PRO",
+      "rama": "chore/consolidate-scripts",
       "task_type": "chore",
       "tema_principal": "QA / Testing",
       "milestone": "M1",
@@ -2526,7 +2526,7 @@
       "comments": [
         "Debemos asegurar que no hay links internos apuntando a las versiones antiguas en la documentación o en el tech-stack."
       ],
-      "rama": "PRO",
+      "rama": "chore/decommission-old-panels",
       "task_type": "chore",
       "tema_principal": "QA / Testing",
       "milestone": "M1",
@@ -2552,7 +2552,7 @@
       "comments": [
         "Podemos usar un componente de orden superior para envolver las tarjetas del Kanban y los gráficos de éxito."
       ],
-      "rama": "PRO",
+      "rama": "feature/dashboard-error-boundaries",
       "task_type": "feature",
       "tema_principal": "QA / Testing",
       "milestone": "M2",
