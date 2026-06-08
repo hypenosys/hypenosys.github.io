@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-08T10:29:40.660Z",
+  "last_updated": "2026-06-08T10:30:44.665Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1903,8 +1903,8 @@
       "id": 39
     },
     {
-      "title": "Protección Cloudflare: Fallo tumblr subida imágenes",
-      "descripcion": "Arreglar subida de imagenes en las tasks mobil, si no hay disponibilidad de cloudflare no se puede, mostrar aviso",
+      "title": "Cloudflare: Protección en las subidas a Tumblr por si peta la subida imágenes",
+      "descripcion": "Arreglar subida de imagenes en las tasks mobil, si no hay disponibilidad de cloudflare no se puede, mostrar aviso. añadir webhook de n8n para identificar imágenes NO permitidas.",
       "rama": "PRO",
       "task_type": "bug",
       "tema_principal": "Tools / Automation",
@@ -2031,6 +2031,20 @@
           "field": "descripcion",
           "old_value": "Arreglar subida de imagenes en las tasks mobil",
           "new_value": "Arreglar subida de imagenes en las tasks mobil, si no hay disponibilidad de cloudflare no se puede, mostrar aviso"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:30:44.047Z",
+          "field": "title",
+          "old_value": "Protección Cloudflare: Fallo tumblr subida imágenes",
+          "new_value": "Cloudflare: Protección en las subidas a Tumblr por si peta la subida imágenes"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:30:44.047Z",
+          "field": "descripcion",
+          "old_value": "Arreglar subida de imagenes en las tasks mobil, si no hay disponibilidad de cloudflare no se puede, mostrar aviso",
+          "new_value": "Arreglar subida de imagenes en las tasks mobil, si no hay disponibilidad de cloudflare no se puede, mostrar aviso. añadir webhook de n8n para identificar imágenes NO permitidas."
         }
       ],
       "id": 40
@@ -2154,6 +2168,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #40",
+      "user": "Axlfc",
+      "timestamp": "2026-06-08T10:30:44.665Z"
+    },
     {
       "action": "chore: actualizar tarea #36",
       "user": "Axlfc",
