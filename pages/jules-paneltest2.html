@@ -1973,6 +1973,24 @@ body{
             renderKanban(tasks, sessions);
             updateStats();
 
+            // FEATURE 2: Emit latest output to localStorage
+            if (sessions.length > 0) {
+                const latest = sessions[0];
+                const lastOutputStr = localStorage.getItem('jules_last_output');
+                const lastOutput = lastOutputStr ? JSON.parse(lastOutputStr) : null;
+
+                // Only emit if it's a new session or status changed
+                if (!lastOutput || lastOutput.session_id !== latest.name.split('/').pop() || lastOutput.status !== latest.state) {
+                    localStorage.setItem('jules_last_output', JSON.stringify({
+                        session_id: latest.name.split('/').pop(),
+                        status: latest.state,
+                        title: latest.title || latest.prompt,
+                        repo: latest.sourceContext?.source?.split('/').pop() || '---',
+                        timestamp: new Date().toISOString()
+                    }));
+                }
+            }
+
             sessions.forEach(s => {
                 if (s.state === 'AWAITING_PLAN_APPROVAL' || s.state === 'AWAITING_USER_FEEDBACK') {
                     const idSafe = s.name.split('/').pop();
@@ -2112,19 +2130,25 @@ body{
             try {
                 const payload = JSON.parse(payloadStr);
                 let formattedPrompt = "";
+
                 if (payload.user_note) {
-                    formattedPrompt += `NOTA DEL USUARIO:\n${payload.user_note}\n\n`;
+                    formattedPrompt += `[NOTA DEL USUARIO]\n${payload.user_note}\n\n`;
                 }
-                formattedPrompt += `RESPUESTA DE CLAUDE:\n${payload.claude_response}`;
+
+                if (payload.session_context && typeof payload.session_context === 'string') {
+                    formattedPrompt += `[CONTEXTO NEURAL]\n${payload.session_context}\n\n`;
+                }
+
+                formattedPrompt += `[RESPUESTA DE CLAUDE]\n${payload.claude_response}`;
 
                 promptArea.value = formattedPrompt;
                 window.JulesPanelState.activePayload = payload;
 
-                showToast("Neural Link: Datos cargados", "green");
+                showToast("Neural Link: Payload cargado con éxito", "green");
                 switchView('neural');
-                localStorage.removeItem('jules_task_payload');
 
-                // Fallback cleanup
+                // Cleanup
+                localStorage.removeItem('jules_task_payload');
                 localStorage.removeItem('jules_clipboard');
                 localStorage.removeItem('jules_linked_task_id');
 
@@ -2168,6 +2192,7 @@ body{
         const payload = window.JulesPanelState.activePayload;
         if (!payload || !payload.source_task) {
             banner.classList.add('hidden');
+            banner.style.display = 'none';
             return;
         }
 
@@ -2178,7 +2203,8 @@ body{
         if (expectedBranch && currentBranch && expectedBranch !== currentBranch) {
             banner.classList.remove('hidden');
             banner.style.display = 'flex';
-            text.textContent = `La rama actual (${currentBranch}) no coincide con la rama esperada para esta tarea (${expectedBranch}).`;
+            text.innerHTML = `<strong>⚠️ ADVERTENCIA DE RAMA:</strong> La rama actual (<code>${currentBranch}</code>) no coincide con la rama esperada para la tarea <strong>#${task.id}</strong> (<code>${expectedBranch}</code>).`;
+            addTel("SECURITY", `Desviación de rama detectada: ${currentBranch} vs ${expectedBranch}`, "warn");
         } else {
             banner.classList.add('hidden');
             banner.style.display = 'none';

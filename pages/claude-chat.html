@@ -920,6 +920,59 @@ permalink: /claude-chat.html
                 if (window.authManager) window.authManager.showToast('Docs Actualizados', 'Se han detectado cambios en el repositorio de documentación.', 'info');
                 else showToast('Documentación actualizada');
             });
+
+            // FEATURE 2: Listen for Jules Output
+            window.addEventListener('storage', (e) => {
+                if (e.key === 'jules_last_output' && e.newValue) {
+                    analyzeJulesOutput(JSON.parse(e.newValue));
+                }
+            });
+
+            // Initial check
+            const lastOutput = localStorage.getItem('jules_last_output');
+            if (lastOutput) analyzeJulesOutput(JSON.parse(lastOutput), true);
+        }
+
+        async function analyzeJulesOutput(output, isInitial = false) {
+            // Ignore if already analyzed or if it's just 'QUEUED'/'PLANNING' unless it's initial load
+            const analyzedKey = `jules_analyzed_${output.session_id}_${output.status}`;
+            if (localStorage.getItem(analyzedKey)) return;
+
+            // Only analyze terminal states for automatic noise reduction
+            if (!['COMPLETED', 'FAILED', 'AWAITING_PLAN_APPROVAL'].includes(output.status)) return;
+
+            localStorage.setItem(analyzedKey, 'true');
+            if (isInitial) return; // Don't spam analysis on page refresh
+
+            if (!currentSessionId) createNewSession();
+
+            const session = sessions.find(s => s.id === currentSessionId);
+            const prompt = `Jules ha completado una operación (Estado: ${output.status}).\n\nDETALLES:\n- Sesión: #${output.session_id}\n- Tarea: ${output.title}\n- Repo: ${output.repo}\n\nAnaliza el resultado, detecta si hay errores o puntos de atención, y prepara un resumen accionable.`;
+
+            // Add a special system message to show it's analyzing
+            appendSystemMessage(`Analizando output de Jules (Sesión #${output.session_id})...`, 'info');
+
+            try {
+                const config = getActiveConfig();
+                const analysisMessages = [
+                    { role: 'system', content: 'Eres un analista de operaciones de agentes autónomos. Tu objetivo es interpretar el éxito o fracaso de Jules y dar feedback claro al desarrollador.' },
+                    { role: 'user', content: prompt }
+                ];
+
+                const analysis = await callCustomProvider(config, analysisMessages);
+
+                if (analysis) {
+                    session.messages.push({
+                        role: 'assistant',
+                        content: `[ANÁLISIS JULES: #${output.session_id}]\n\n${analysis}`,
+                        jules_analysis: true
+                    });
+                    saveSessions();
+                    renderMessages();
+                }
+            } catch (e) {
+                console.error("[Neural Link] Jules analysis failed:", e);
+            }
         }
 
         function setupApiModalEnhancements() {
@@ -1501,7 +1554,7 @@ permalink: /claude-chat.html
                 chatMessages.innerHTML = '';
                 return;
             }
-            chatMessages.innerHTML = session.messages.map(m => {
+            chatMessages.innerHTML = session.messages.map((m, idx) => {
                 let content = m.content;
                 let reasoningHtml = '';
 
@@ -1545,10 +1598,10 @@ permalink: /claude-chat.html
 
                         ${m.role !== 'user' ? `
                         <div class="message-actions opacity-0 group-hover:opacity-100 transition-opacity absolute -bottom-6 left-0 flex gap-2">
-                            <button onclick="copyToClipboard(\`${m.content.replace(/`/g, '\\`').replace(/\${/g, '\\${')}\`)" class="text-[9px] font-bold text-[#6272a4] hover:text-[#bd93f9] flex items-center gap-1 bg-[#1e1f29] px-2 py-0.5 rounded border border-[#44475a]">
+                            <button onclick="copyMessage(${idx})" class="text-[9px] font-bold text-[#6272a4] hover:text-[#bd93f9] flex items-center gap-1 bg-[#1e1f29] px-2 py-0.5 rounded border border-[#44475a]">
                                 <i class="fas fa-copy"></i> COPIAR
                             </button>
-                            <button onclick="sendToJules(\`${m.content.replace(/`/g, '\\`').replace(/\${/g, '\\${')}\`)" class="text-[9px] font-bold text-[#6272a4] hover:text-[#50fa7b] flex items-center gap-1 bg-[#1e1f29] px-2 py-0.5 rounded border border-[#44475a]">
+                            <button onclick="sendToJulesByIndex(${idx})" class="text-[9px] font-bold text-[#6272a4] hover:text-[#50fa7b] flex items-center gap-1 bg-[#1e1f29] px-2 py-0.5 rounded border border-[#44475a]">
                                 <i class="fas fa-bolt"></i> ENVIAR A JULES
                             </button>
                         </div>
@@ -1558,6 +1611,20 @@ permalink: /claude-chat.html
                 `;
             }).join('');
             chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function copyMessage(idx) {
+            const session = sessions.find(s => s.id === currentSessionId);
+            if (session && session.messages[idx]) {
+                copyToClipboard(session.messages[idx].content);
+            }
+        }
+
+        function sendToJulesByIndex(idx) {
+            const session = sessions.find(s => s.id === currentSessionId);
+            if (session && session.messages[idx]) {
+                sendToJules(session.messages[idx].content);
+            }
         }
 
         function copyToClipboard(text) {
@@ -1601,20 +1668,19 @@ permalink: /claude-chat.html
             const session = sessions.find(s => s.id === currentSessionId);
             const task = window._activeTaskContext;
 
-            // Build session context
-            const lastMessages = session ? session.messages.slice(-3).map(m => ({
-                role: m.role,
-                content: m.content.substring(0, 200) + (m.content.length > 200 ? '...' : '')
-            })) : [];
+            // Build session context summary string (last 3 messages)
+            let sessionContext = `Session: ${session?.title || currentSessionId || 'N/A'}\n`;
+            if (session && session.messages.length > 0) {
+                const recent = session.messages.slice(-3);
+                recent.forEach(m => {
+                    sessionContext += `- ${m.role.toUpperCase()}: ${m.content.substring(0, 150)}${m.content.length > 150 ? '...' : ''}\n`;
+                });
+            }
 
             const payload = {
                 claude_response: _pendingJulesText,
                 user_note: userNote,
-                session_context: {
-                    task_title: task ? (task.titulo || task.title) : 'Sin tarea',
-                    claude_session_id: currentSessionId,
-                    history_summary: lastMessages
-                },
+                session_context: sessionContext,
                 source_task: task || null,
                 timestamp: new Date().toISOString()
             };
@@ -1622,7 +1688,7 @@ permalink: /claude-chat.html
             // Save to localStorage
             localStorage.setItem('jules_task_payload', JSON.stringify(payload));
 
-            // Fallbacks
+            // Fallbacks for backward compatibility
             localStorage.setItem('jules_clipboard', _pendingJulesText);
             if (window._activeTaskContext) {
                 localStorage.setItem('jules_linked_task_id', window._activeTaskContext.id);
@@ -1965,6 +2031,56 @@ permalink: /claude-chat.html
 
             saveSessions();
             renderMessages();
+
+            // FEATURE 1: Check for session compaction
+            if (session.messages.length >= 20 && !session._compacting) {
+                compactSession(session);
+            }
+        }
+
+        async function compactSession(session) {
+            session._compacting = true;
+            console.log(`[Neural Link] Compacting session ${session.id}...`);
+
+            try {
+                const config = getActiveConfig();
+                const provider = config.provider;
+
+                const prompt = "Resume esta conversación manteniendo: decisiones tomadas, contexto técnico clave, y próximos pasos pendientes. Descarta saludos y mensajes redundantes. Responde solo con el resumen técnico.";
+
+                // Construct a temporary context for compaction
+                const messagesToCompact = session.messages.map(m => `${m.role.toUpperCase()}: ${m.content}`).join('\n\n');
+
+                const compactionMessages = [
+                    { role: 'system', content: 'Eres un experto en gestión de contexto para IAs.' },
+                    { role: 'user', content: `${prompt}\n\nCONVERSACIÓN A RESUMIR:\n${messagesToCompact}` }
+                ];
+
+                let summary = "";
+
+                // Use custom provider call logic (most robust)
+                summary = await callCustomProvider(config, compactionMessages);
+
+                if (summary) {
+                    // Replace all messages with the summary
+                    session.messages = [
+                        {
+                            role: 'assistant',
+                            content: `[SESIÓN COMPACTADA]\n\n${summary}\n\n*El historial anterior ha sido archivado para optimizar el contexto.*`,
+                            compacted: true
+                        }
+                    ];
+                    saveSessions();
+                    if (currentSessionId === session.id) {
+                        renderMessages();
+                        showToast("Sesión compactada automáticamente", "info");
+                    }
+                }
+            } catch (e) {
+                console.error("[Neural Link] Compaction failed:", e);
+            } finally {
+                delete session._compacting;
+            }
         }
 
         async function sendMessageImageGen(session, config) {

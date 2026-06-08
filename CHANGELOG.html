@@ -173,6 +173,14 @@ permalink: /CHANGELOG.html
                   <li>Mejora visual de tarjetas: Títulos en negrita, badges de estado por colores y descripción truncada a 80 caracteres.</li>
                 </ul>
               </li>
+              <li><strong>Neural Link & Branch Safety (Claude Chat <> Jules):</strong>
+                <ul>
+                  <li><strong>Integración Neural Completa:</strong> Nueva funcionalidad "ENVIAR A JULES" que permite transferir respuestas de Claude al Panel con contexto enriquecido.</li>
+                  <li><strong>Neural Link Drawer:</strong> Implementado drawer lateral en Claude Chat para que el usuario añada notas o instrucciones adicionales antes de la transferencia.</li>
+                  <li><strong>Branch Safety Warning:</strong> Nuevo banner de seguridad en el Jules Panel que detecta y advierte si la rama actual no coincide con la rama esperada para la tarea (basado en metadatos de la tarea).</li>
+                  <li><strong>Payload Enriquecido:</strong> Uso de <code>localStorage.jules_task_payload</code> para transferir de forma segura la respuesta de Claude, la nota del usuario y el contexto de la sesión.</li>
+                </ul>
+              </li>
               <li><strong>Tech Stack Evolution & Personal Dashboard:</strong>
                 <ul>
                   <li>Implementación de un <strong>Panel de Favoritos</strong> (estilo CasaOS) en la parte superior del Tech Stack.</li>
