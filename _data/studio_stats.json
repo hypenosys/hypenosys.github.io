@@ -1,15 +1,15 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-08T13:51:45.236Z",
+  "computed_at": "2026-06-08T18:44:39.872Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 22,
+    "total_tasks": 26,
     "total_ok": 1,
     "total_ko": 0,
-    "total_uncertain": 7,
+    "total_uncertain": 8,
     "total_obsolete": 5,
-    "fixed_found_ratio": 0.0385,
-    "verified_ratio": 0.037
+    "fixed_found_ratio": 0.0333,
+    "verified_ratio": 0.0323
   },
   "group": {
     "velocity_trend": {
@@ -22,29 +22,36 @@
       "2026-W23": 7,
       "2026-W24": 0
     },
-    "bug_rate": 0.0952,
+    "bug_rate": 0.08,
     "blocker_health": 3,
     "tag_heatmap": {
-      "feature": 7,
-      "PRO": 10,
+      "frontend": 9,
+      "devops": 7,
+      "feature": 10,
       "brainstorm": 1,
       "design": 1,
-      "research": 2,
-      "DIS": 2,
-      "chore": 4,
+      "docs": 3,
+      "chore": 9,
+      "testing": 1,
       "git": 1,
       "UX/UI": 2,
+      "ux": 9,
       "Infraestructura": 1,
+      "api": 10,
       "jules": 1,
-      "bug": 2,
+      "bug": 3,
       "infraestructura": 1,
       "jules-panel": 1,
       "neural-chat": 1,
       "svn": 1,
-      "ART": 2,
-      "n8n": 1
+      "research": 1,
+      "n8n": 1,
+      "security": 3,
+      "backend": 2,
+      "refactor": 2,
+      "stability": 1
     },
-    "milestone_tasks_remaining": 13,
+    "milestone_tasks_remaining": 15,
     "hall_of_fame_winners": {
       "mvp": {
         "handle": "axlfc",
@@ -179,7 +186,7 @@
         "reprioritizations": 15
       },
       "workload": {
-        "active_tasks": 12,
+        "active_tasks": 16,
         "story_points": 25
       }
     },
@@ -210,6 +217,7 @@
       },
       "tag_frequency": {
         "onboarding": 1,
+        "chore": 1,
         "jules": 1,
         "UX/UI": 1,
         "bug": 2,
@@ -226,7 +234,7 @@
         "reprioritizations": 21
       },
       "workload": {
-        "active_tasks": 18,
+        "active_tasks": 19,
         "story_points": 36
       }
     },
@@ -257,6 +265,7 @@
       },
       "tag_frequency": {
         "onboarding": 1,
+        "chore": 1,
         "bug": 1
       },
       "avg_completion_speed": {
@@ -299,7 +308,8 @@
         "PRO": 3
       },
       "tag_frequency": {
-        "onboarding": 1
+        "onboarding": 1,
+        "chore": 1
       },
       "avg_completion_speed": {
         "days": 0.5,
@@ -340,7 +350,8 @@
         "PRO": 1
       },
       "tag_frequency": {
-        "onboarding": 1
+        "onboarding": 1,
+        "chore": 1
       },
       "avg_completion_speed": {
         "days": 0.5,
@@ -456,7 +467,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-06-08T13:51:47.133Z"
+      "timestamp": "2026-06-08T18:44:41.868Z"
     }
   ]
 }
