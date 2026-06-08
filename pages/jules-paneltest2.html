@@ -2066,6 +2066,9 @@ body{
     function openTaskInClaude(taskId) {
         const task = window.JulesPanelState.tasks.find(t => String(t.id) === String(taskId));
         if (!task) return;
+
+        localStorage.setItem('claude_task_context', JSON.stringify(task));
+
         if (task.images && task.images.length > 0) {
             showToast("Jules no acepta imágenes, se excluirán del prompt.", "amber");
         }
