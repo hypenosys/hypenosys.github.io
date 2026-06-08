@@ -102,6 +102,10 @@ function buildTaskCard(task) {
     <i class="fa-solid fa-pencil"></i>
   </button>`;
 
+  const robotBtn = `<button onclick="event.stopPropagation(); window.location.href='/claude-chat.html?task_id=${task.id}&from=dashboard'" class="action-btn text-indigo-400 hover:text-white" title="Enviar a Claude Chat (Neural Ops)">
+    <i class="fa-solid fa-robot"></i>
+  </button>`;
+
   const archiveBtn = canArchive ? `<button onclick="event.stopPropagation(); handleArchiveTask('${task.id}')" class="action-btn action-btn--secondary text-slate-500 hover:text-emerald-400" title="Archivar Tarea">
     <i class="fa-solid fa-box-archive"></i>
   </button>` : '';
@@ -133,6 +137,7 @@ function buildTaskCard(task) {
         <div class="flex items-center gap-2 overflow-hidden">
           <span class="text-[9px] font-mono text-slate-500 flex-shrink-0">#${task.id}</span>
           ${editBtn}
+          ${robotBtn}
           <p class="text-xs text-slate-200 truncate font-semibold">${task.title || task.descripcion}</p>
         </div>
         <div class="flex items-center gap-1 flex-shrink-0">
@@ -161,6 +166,7 @@ function buildTaskCard(task) {
         <div class="flex gap-2 items-center">
           <span class="text-[9px] font-mono text-slate-500">#${task.id}</span>
           ${editBtn}
+          ${robotBtn}
           <span class="text-[9px] font-bold px-1.5 py-0.5 rounded ${priorityColors[task.prioridad] || 'bg-slate-700'}">${task.prioridad.toUpperCase()}</span>
         </div>
         <div class="flex gap-1 items-center">
@@ -196,14 +202,20 @@ function buildTaskCard(task) {
           </select>
       </div>
 
-      ${task.jules_session_id ? `
-      <div class="mb-3 p-2 bg-indigo-500/10 border border-indigo-500/20 rounded flex items-center justify-between">
-          <span class="text-[9px] font-bold text-indigo-400 flex items-center gap-1">
-              <i class="fa-solid fa-robot"></i> JULES
-          </span>
-          <span id="jules-status-${String(task.id)}" class="text-[8px] font-mono text-indigo-300 uppercase">Cargando...</span>
-      </div>
-      ` : ''}
+      ${(task.jules_session || task.jules_session_id) ? (() => {
+          const session = task.jules_session || { session_id: task.jules_session_id, status: 'UNKNOWN', initiated_by: '?' };
+          return `
+          <div class="mb-3 p-2 bg-indigo-500/10 border border-indigo-500/20 rounded flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                  <img src="https://github.com/${session.initiated_by}.png" class="w-4 h-4 rounded-full border border-indigo-500/30" onerror="this.src='https://github.com/identicons/${session.initiated_by}.png'">
+                  <span class="text-[9px] font-bold text-indigo-400 flex items-center gap-1">
+                      <i class="fa-solid fa-robot"></i> JULES
+                  </span>
+              </div>
+              <span class="text-[8px] font-mono text-indigo-300 uppercase">${session.status || 'ACTIVE'}</span>
+          </div>
+          `;
+      })() : ''}
 
       <!-- Row 4: Personas / Team & Branch -->
       <div class="flex justify-between items-end">
