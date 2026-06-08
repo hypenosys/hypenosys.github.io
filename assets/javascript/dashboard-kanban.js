@@ -417,7 +417,18 @@ window._openTaskInClaudeWithContext = function(taskId) {
   if (typeof currentTasks !== 'undefined') {
     const task = currentTasks.find(t => String(t.id) === String(taskId));
     if (task) {
-      localStorage.setItem('claude_task_context', JSON.stringify(task));
+      const payload = {
+        titulo: task.title || task.titulo || '',
+        descripcion: task.descripcion || task.description || '',
+        acceptance_criteria: task.acceptance_criteria || '',
+        tags: task.tags || [],
+        prioridad: task.prioridad || '',
+        asignados: task.asignados || task.asignado_a || [],
+        comments: task.comments || [],
+        estimated_hours: task.estimated_hours || '',
+        repositorio: task.repository || task.repo || ''
+      };
+      localStorage.setItem('claude_task_context', JSON.stringify(payload));
     }
   }
   window.location.href = `/claude-chat.html?task_id=${taskId}&from=dashboard`;

@@ -197,8 +197,9 @@ permalink: /CHANGELOG.html
             <ul class="tree-view mb-3">
               <li><strong>Robot Button Context in Claude Chat:</strong>
                 <ul>
-                  <li>Implementada la transferencia de contexto de tareas (ID, título, descripción, criterios) mediante <code>localStorage</code> al pulsar el botón robot en el Kanban.</li>
-                  <li>Actualizada la interfaz de Claude Chat para priorizar datos locales, autogenerar sesiones si es necesario y pre-rellenar el prompt con una instrucción directa.</li>
+                  <li>Implementada la transferencia de contexto enriquecido de tareas (título, descripción, criterios, tags, prioridad, asignados, comentarios, estimación y repositorio) mediante <code>localStorage</code> al pulsar el botón robot.</li>
+                  <li>Actualizada la interfaz de Claude Chat para renderizar dinámicamente solo los campos presentes con iconos y etiquetas descriptivas en español.</li>
+                  <li>Optimización del flujo de sesiones: creación automática de nuevas sesiones si la actual tiene mensajes previos al recibir contexto de tarea.</li>
                   <li>Corregido el fallo de carga de contexto que dependía de llamadas a la API de GitHub con ramas hardcodeadas.</li>
                 </ul>
               </li>
