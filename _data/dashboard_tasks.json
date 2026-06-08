@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-08T10:22:32.815Z",
+  "last_updated": "2026-06-08T10:27:54.978Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1705,8 +1705,8 @@
       "id": 37
     },
     {
-      "title": "generate image or text context and flux dev or kontext up to 2 images and text ",
-      "descripcion": "also there is music generation and animation and key to key with available comfyui workflows (as API) expose in n8n and update to tumblr",
+      "title": "New page pages/image-gen to generate image or text context and flux dev or kontext up to 2 images and text ",
+      "descripcion": "also there is music generation and animation and key to key with available comfyui workflows (as API) expose in n8n and update to tumblr\n\nWe have an n8n comfyui sort of for launching one the flux-dev single text.\nWe intent to create another for flux kontext (one image + text, and two images or two images + text)",
       "rama": "PRO",
       "task_type": "feature",
       "tema_principal": "Programación / Engine",
@@ -1794,6 +1794,20 @@
           "field": "title",
           "old_value": "comfyui generate image flux dev image or text context and flux kontext up to 2 images and text ",
           "new_value": "generate image or text context and flux dev or kontext up to 2 images and text "
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:27:54.393Z",
+          "field": "title",
+          "old_value": "generate image or text context and flux dev or kontext up to 2 images and text ",
+          "new_value": "New page pages/image-gen to generate image or text context and flux dev or kontext up to 2 images and text "
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:27:54.393Z",
+          "field": "descripcion",
+          "old_value": "also there is music generation and animation and key to key with available comfyui workflows (as API) expose in n8n and update to tumblr",
+          "new_value": "also there is music generation and animation and key to key with available comfyui workflows (as API) expose in n8n and update to tumblr\n\nWe have an n8n comfyui sort of for launching one the flux-dev single text.\nWe intent to create another for flux kontext (one image + text, and two images or two images + text)"
         }
       ],
       "id": 38
@@ -2119,6 +2133,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #38",
+      "user": "Axlfc",
+      "timestamp": "2026-06-08T10:27:54.978Z"
+    },
     {
       "action": "chore: actualizar tarea #40",
       "user": "Axlfc",
