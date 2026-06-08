@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-08T10:20:44.066Z",
+  "last_updated": "2026-06-08T10:22:32.815Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1868,8 +1868,8 @@
       "id": 39
     },
     {
-      "title": "Movil: Fallo tumblr subida imágenes",
-      "descripcion": "Arreglar subida de imagenes en las tasks mobil",
+      "title": "Protección Cloudflare: Fallo tumblr subida imágenes",
+      "descripcion": "Arreglar subida de imagenes en las tasks mobil, si no hay disponibilidad de cloudflare no se puede, mostrar aviso",
       "rama": "PRO",
       "task_type": "bug",
       "tema_principal": "Tools / Automation",
@@ -1982,6 +1982,20 @@
           "field": "estado",
           "old_value": "OK",
           "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:22:32.289Z",
+          "field": "title",
+          "old_value": "Movil: Fallo tumblr subida imágenes",
+          "new_value": "Protección Cloudflare: Fallo tumblr subida imágenes"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:22:32.289Z",
+          "field": "descripcion",
+          "old_value": "Arreglar subida de imagenes en las tasks mobil",
+          "new_value": "Arreglar subida de imagenes en las tasks mobil, si no hay disponibilidad de cloudflare no se puede, mostrar aviso"
         }
       ],
       "id": 40
@@ -2105,6 +2119,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #40",
+      "user": "Axlfc",
+      "timestamp": "2026-06-08T10:22:32.815Z"
+    },
     {
       "action": "chore: actualizar tarea #40",
       "user": "Axlfc",
