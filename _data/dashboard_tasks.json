@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-08T10:27:54.978Z",
+  "last_updated": "2026-06-08T10:28:16.173Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1711,7 +1711,7 @@
       "task_type": "feature",
       "tema_principal": "Programación / Engine",
       "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Major",
+      "prioridad": "Minor",
       "milestone": "M2",
       "estado": "ToDo",
       "completitud": 0,
@@ -1808,6 +1808,13 @@
           "field": "descripcion",
           "old_value": "also there is music generation and animation and key to key with available comfyui workflows (as API) expose in n8n and update to tumblr",
           "new_value": "also there is music generation and animation and key to key with available comfyui workflows (as API) expose in n8n and update to tumblr\n\nWe have an n8n comfyui sort of for launching one the flux-dev single text.\nWe intent to create another for flux kontext (one image + text, and two images or two images + text)"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:28:15.486Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Minor"
         }
       ],
       "id": 38
@@ -2133,6 +2140,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #38",
+      "user": "Axlfc",
+      "timestamp": "2026-06-08T10:28:16.173Z"
+    },
     {
       "action": "chore: actualizar tarea #38",
       "user": "Axlfc",
