@@ -46,15 +46,58 @@ permalink: /tech-stack/
   .search-bar input:focus { border-color: #10b981; }
   .search-icon { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--color-text-tertiary); font-size: 16px; }
   .ts-empty-msg { font-size: 13px; color: var(--color-text-secondary); padding: 2rem; text-align: center; display: none; }
+
+  /* Favorites Panel (CasaOS Style) */
+  .ts-favorites { background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: var(--border-radius-xl); padding: 1.25rem; margin-bottom: 2rem; display: none; }
+  .ts-favorites-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+  .ts-favorites-title { font-size: 14px; font-weight: 700; color: #10b981; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .ts-fav-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+  .ts-fav-card { background: var(--color-background-primary); border: 1px solid var(--color-border-tertiary); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; transition: all 0.2s; cursor: pointer; text-decoration: none; position: relative; group; }
+  .ts-fav-card:hover { border-color: #10b981; background: rgba(16, 185, 129, 0.05); transform: translateY(-2px); }
+  .ts-fav-icon { font-size: 32px; height: 48px; display: flex; align-items: center; justify-content: center; }
+  .ts-fav-name { font-size: 13px; font-weight: 600; color: var(--color-text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
+  .ts-fav-desc { font-size: 10px; color: var(--color-text-secondary); line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .ts-fav-controls { position: absolute; top: 6px; right: 6px; display: flex; gap: 4px; opacity: 0; transition: opacity 0.2s; pointer-events: none; }
+  .ts-fav-card:hover .ts-fav-controls { opacity: 1; pointer-events: auto; }
+  .ts-fav-btn { width: 22px; height: 22px; border-radius: 4px; background: var(--color-background-secondary); border: 1px solid var(--color-border-tertiary); color: var(--color-text-secondary); display: flex; align-items: center; justify-content: center; font-size: 10px; cursor: pointer; transition: all 0.1s; }
+  .ts-fav-btn:hover { color: #fff; border-color: #10b981; background: #10b981; }
+  .ts-fav-btn.delete:hover { background: #ef4444; border-color: #ef4444; }
+  .ts-fav-add { border: 1px dashed var(--color-border-secondary); background: transparent; }
+  .ts-fav-add:hover { border-style: solid; }
+
+  /* Modal Simplificado */
+  .ts-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; }
+  .ts-modal-content { background: #1e1e1e; border: 1px solid #333; border-radius: 16px; width: 100%; max-width: 400px; padding: 24px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5); }
+  .ts-modal-title { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+  .ts-form-group { margin-bottom: 16px; }
+  .ts-form-group label { display: block; font-size: 11px; font-weight: 600; color: #888; text-transform: uppercase; margin-bottom: 6px; }
+  .ts-form-group input, .ts-form-group textarea { width: 100%; background: #121212; border: 1px solid #333; border-radius: 8px; padding: 10px 12px; color: #fff; font-size: 13px; outline: none; }
+  .ts-form-group input:focus { border-color: #10b981; }
+  .ts-modal-actions { display: flex; gap: 12px; margin-top: 24px; }
+  .ts-btn { flex: 1; padding: 10px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; border: none; text-align: center; }
+  .ts-btn-cancel { background: #333; color: #fff; }
+  .ts-btn-cancel:hover { background: #444; }
+  .ts-btn-save { background: #10b981; color: #fff; }
+  .ts-btn-save:hover { background: #059669; }
 </style>
 
 <div class="ts-root">
+
+  <div id="favoritesPanel" class="ts-favorites">
+    <div class="ts-favorites-header">
+      <div class="ts-favorites-title"><i class="ti ti-star-filled"></i> Mis Accesos Rápidos</div>
+      <div style="font-size: 10px; color: var(--color-text-tertiary); font-weight: 500;">SOLO VISIBLE PARA TI (LOCAL)</div>
+    </div>
+    <div id="favGrid" class="ts-fav-grid">
+      <!-- Inyectado por JS -->
+    </div>
+  </div>
   <div class="ts-header">
     <div class="ts-header-left">
       <div class="ts-title"><span class="ts-title-accent">◈</span> Stack Tecnológico</div>
       <div class="ts-sub">Manual de referencia interna — Hypenosys Studio. Todo lo que usamos (o deberíamos).</div>
     </div>
-    <span class="ts-count" id="countBadge">67 herramientas</span>
+    <span class="ts-count" id="countBadge">62 herramientas</span>
   </div>
 
   <div class="search-bar">
@@ -202,6 +245,14 @@ permalink: /tech-stack/
         <div class="ts-purpose">Red privada del estudio</div>
         <div class="ts-desc">VPN sin drama. El equipo conectado en red privada sin necesidad de un sysadmin a jornada completa.</div>
         <div class="ts-formats"><span class="ts-fmt">WireGuard</span></div>
+      </div>
+
+      <div class="ts-card" data-tab="DEV" data-name="forgejo git self-hosted devops open source">
+        <div class="ts-card-top"><div class="ts-icon">🏗️</div><div class="ts-badges"><span class="ts-badge badge-avanzado">Avanzado</span><span class="ts-badge badge-oss">OSS</span></div></div>
+        <div><div class="ts-name">Forgejo</div><span class="ts-cat">Git / DevOps</span></div>
+        <div class="ts-purpose">Self-hosted Git service</div>
+        <div class="ts-desc">Alternativa ligera y comunitaria a Gitea. Para hostear nuestros propios repositorios sin depender de la nube.</div>
+        <div class="ts-formats"><span class="ts-fmt">Git</span><span class="ts-fmt">CI/CD</span><span class="ts-fmt">Actions</span></div>
       </div>
 
     </div>
@@ -551,6 +602,14 @@ permalink: /tech-stack/
         <div class="ts-formats"><span class="ts-fmt">REST</span><span class="ts-fmt">gRPC</span><span class="ts-fmt">Docker</span></div>
       </div>
 
+      <div class="ts-card" data-tab="AI" data-name="n8n automatizacion workflow low-code ia">
+        <div class="ts-card-top"><div class="ts-icon">🐙</div><div class="ts-badges"><span class="ts-badge badge-avanzado">Avanzado</span><span class="ts-badge badge-oss">OSS</span></div></div>
+        <div><div class="ts-name">n8n</div><span class="ts-cat">Automatización / IA</span></div>
+        <div class="ts-purpose">Control de Workflows</div>
+        <div class="ts-desc">Orquestación de flujos de trabajo con nodos. Conecta IAs, APIs y servicios sin escribir una sola línea de código (o casi).</div>
+        <div class="ts-formats"><span class="ts-fmt">JSON</span><span class="ts-fmt">Webhooks</span></div>
+      </div>
+
     </div>
   </div>
 
@@ -622,12 +681,228 @@ permalink: /tech-stack/
         <div class="ts-formats"><span class="ts-fmt">.gdoc</span><span class="ts-fmt">.pdf</span><span class="ts-fmt">cualquier cosa</span></div>
       </div>
 
+      <div class="ts-card" data-tab="OPS" data-name="it-tools utilidades herramientas web">
+        <div class="ts-card-top"><div class="ts-icon">🛠️</div><div class="ts-badges"><span class="ts-badge badge-intermedio">Intermedio</span><span class="ts-badge badge-oss">OSS</span></div></div>
+        <div><div class="ts-name">IT-Tools</div><span class="ts-cat">Utilidades</span></div>
+        <div class="ts-purpose">Conversores y utilidades</div>
+        <div class="ts-desc">La navaja suiza para devs. Generadores, conversores, formateadores y herramientas de red en una sola web.</div>
+        <div class="ts-formats"><span class="ts-fmt">Web</span></div>
+      </div>
+
+      <div class="ts-card" data-tab="OPS" data-name="matrix protocol comunicacion chat descentralizado">
+        <div class="ts-card-top"><div class="ts-icon">💬</div><div class="ts-badges"><span class="ts-badge badge-intermedio">Intermedio</span><span class="ts-badge badge-oss">OSS</span></div></div>
+        <div><div class="ts-name">Matrix</div><span class="ts-cat">Comunicación</span></div>
+        <div class="ts-purpose">Protocolo de chat seguro</div>
+        <div class="ts-desc">Comunicación descentralizada y segura. Para cuando Discord se queda corto en privacidad o necesitamos puentes entre servicios.</div>
+        <div class="ts-formats"><span class="ts-fmt">End-to-end</span></div>
+      </div>
+
+      <div class="ts-card" data-tab="OPS" data-name="copyparty file sharing servidor builds assets">
+        <div class="ts-card-top"><div class="ts-icon">📂</div><div class="ts-badges"><span class="ts-badge badge-intermedio">Intermedio</span><span class="ts-badge badge-oss">OSS</span></div></div>
+        <div><div class="ts-name">CopyParty</div><span class="ts-cat">File Sharing</span></div>
+        <div class="ts-purpose">Servidor de archivos para builds y assets</div>
+        <div class="ts-desc">Distribución rápida de builds y assets pesados. Simple, efectivo y corre en cualquier parte.</div>
+        <div class="ts-formats"><span class="ts-fmt">HTTP</span><span class="ts-fmt">WebDAV</span></div>
+      </div>
+
     </div>
   </div>
 
 </div>
 
+<!-- Modal Favoritos -->
+<div id="favModal" class="ts-modal">
+  <div class="ts-modal-content">
+    <div class="ts-modal-title" id="modalTitle">Nuevo Acceso Rápido</div>
+    <input type="hidden" id="favIndex" value="-1">
+    <div class="ts-form-group">
+      <label>Nombre</label>
+      <input type="text" id="favName" placeholder="Ej: Obsidian">
+    </div>
+    <div class="ts-form-group">
+      <label>URL</label>
+      <input type="text" id="favUrl" placeholder="http://100.64.x.x:3000">
+    </div>
+    <div class="ts-form-group">
+      <label>Icono / Emoji</label>
+      <input type="text" id="favIcon" placeholder="Ej: 💎">
+    </div>
+    <div class="ts-form-group">
+      <label>Descripción corta</label>
+      <input type="text" id="favDesc" placeholder="Documentación interna">
+    </div>
+    <div class="ts-modal-actions">
+      <button class="ts-btn ts-btn-cancel" onclick="closeFavModal()">Cancelar</button>
+      <button class="ts-btn ts-btn-save" onclick="saveFavorite()">Guardar</button>
+    </div>
+  </div>
+</div>
+
 <script>
+/** ════════════════ FAVORITOS LOGIC ════════════════ **/
+const DEFAULT_FAVORITES = [
+  { name: "Obsidian", url: "https://100.64.74.27:3002/", icon: "💎", desc: "Documentación" },
+  { name: "Excalidraw", url: "http://100.64.74.27:8000/", icon: "✍️", desc: "Edición y Capturas" },
+  { name: "CopyParty", url: "http://100.64.74.27:29708/test/", icon: "📂", desc: "Builds subidas" },
+  { name: "ComfyUI", url: "http://100.84.151.119:8188/", icon: "🎴", desc: "Generación de imagen" },
+  { name: "n8n", url: "https://n8nzimaafaces.share.zrok.io/", icon: "🐙", desc: "Control de Workflows" },
+  { name: "IT-Tools", url: "http://100.64.74.27:8680/", icon: "🛠️", desc: "Conversores y utilidades" },
+  { name: "SVN-admin", url: "http://100.64.74.27:8585/svnadmin/login.php", icon: "📦", desc: "Gestión SVN" }
+];
+
+let favorites = [];
+
+function initFavorites() {
+  const stored = localStorage.getItem('hy_tech_favorites');
+  if (stored) {
+    favorites = JSON.parse(stored);
+  } else {
+    favorites = [...DEFAULT_FAVORITES];
+    saveToLocal();
+  }
+  renderFavorites();
+}
+
+function saveToLocal() {
+  localStorage.setItem('hy_tech_favorites', JSON.stringify(favorites));
+}
+
+function renderFavorites() {
+  const grid = document.getElementById('favGrid');
+  if (!grid) return;
+
+  grid.innerHTML = '';
+
+  favorites.forEach((fav, index) => {
+    const card = document.createElement('a');
+    card.href = fav.url;
+    card.target = "_blank";
+    card.className = "ts-fav-card";
+    card.innerHTML = `
+      <div class="ts-fav-controls">
+        <div class="ts-fav-btn" onclick="moveFav(event, ${index}, -1)" title="Subir"><i class="ti ti-chevron-left"></i></div>
+        <div class="ts-fav-btn" onclick="moveFav(event, ${index}, 1)" title="Bajar"><i class="ti ti-chevron-right"></i></div>
+        <div class="ts-fav-btn" onclick="editFav(event, ${index})" title="Editar"><i class="ti ti-pencil"></i></div>
+        <div class="ts-fav-btn delete" onclick="deleteFav(event, ${index})" title="Eliminar"><i class="ti ti-trash"></i></div>
+      </div>
+      <div class="ts-fav-icon">${fav.icon || '🔗'}</div>
+      <div class="ts-fav-name">${fav.name}</div>
+      <div class="ts-fav-desc">${fav.desc || ''}</div>
+    `;
+    grid.appendChild(card);
+  });
+
+  // Add button
+  const addBtn = document.createElement('div');
+  addBtn.className = "ts-fav-card ts-fav-add";
+  addBtn.onclick = () => openFavModal();
+  addBtn.innerHTML = `
+    <div class="ts-fav-icon" style="color: #10b981"><i class="ti ti-plus"></i></div>
+    <div class="ts-fav-name" style="color: #10b981">Añadir</div>
+    <div class="ts-fav-desc">Nuevo lanzador</div>
+  `;
+  grid.appendChild(addBtn);
+}
+
+function openFavModal(index = -1) {
+  const modal = document.getElementById('favModal');
+  const title = document.getElementById('modalTitle');
+  const nameInp = document.getElementById('favName');
+  const urlInp = document.getElementById('favUrl');
+  const iconInp = document.getElementById('favIcon');
+  const descInp = document.getElementById('favDesc');
+  const indexInp = document.getElementById('favIndex');
+
+  if (index >= 0) {
+    const fav = favorites[index];
+    title.innerText = "Editar Acceso Rápido";
+    nameInp.value = fav.name;
+    urlInp.value = fav.url;
+    iconInp.value = fav.icon;
+    descInp.value = fav.desc;
+    indexInp.value = index;
+  } else {
+    title.innerText = "Nuevo Acceso Rápido";
+    nameInp.value = '';
+    urlInp.value = '';
+    iconInp.value = '';
+    descInp.value = '';
+    indexInp.value = -1;
+  }
+
+  modal.style.display = 'flex';
+}
+
+function closeFavModal() {
+  document.getElementById('favModal').style.display = 'none';
+}
+
+function saveFavorite() {
+  const name = document.getElementById('favName').value.trim();
+  const url = document.getElementById('favUrl').value.trim();
+  const icon = document.getElementById('favIcon').value.trim();
+  const desc = document.getElementById('favDesc').value.trim();
+  const index = parseInt(document.getElementById('favIndex').value);
+
+  if (!name || !url) {
+    alert('Nombre y URL son obligatorios');
+    return;
+  }
+
+  const favData = { name, url, icon, desc };
+
+  if (index >= 0) {
+    favorites[index] = favData;
+  } else {
+    favorites.push(favData);
+  }
+
+  saveToLocal();
+  renderFavorites();
+  closeFavModal();
+}
+
+function deleteFav(e, index) {
+  e.preventDefault();
+  e.stopPropagation();
+  if (confirm('¿Eliminar este acceso rápido?')) {
+    favorites.splice(index, 1);
+    saveToLocal();
+    renderFavorites();
+  }
+}
+
+function editFav(e, index) {
+  e.preventDefault();
+  e.stopPropagation();
+  openFavModal(index);
+}
+
+function moveFav(e, index, dir) {
+  e.preventDefault();
+  e.stopPropagation();
+  const newIndex = index + dir;
+  if (newIndex >= 0 && newIndex < favorites.length) {
+    const temp = favorites[index];
+    favorites[index] = favorites[newIndex];
+    favorites[newIndex] = temp;
+    saveToLocal();
+    renderFavorites();
+  }
+}
+
+// Escuchar cambios de Auth
+document.addEventListener('authReady', (e) => {
+  const panel = document.getElementById('favoritesPanel');
+  if (e.detail && e.detail.user) {
+    panel.style.display = 'block';
+    initFavorites();
+  } else {
+    panel.style.display = 'none';
+  }
+});
+
+/** ════════════════ STACK LOGIC ════════════════ **/
 let currentTab = 'all';
 let currentSearch = '';
 
