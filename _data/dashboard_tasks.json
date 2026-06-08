@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-08T10:35:24.901Z",
-  "last_updated_by": "Axlfc",
+  "last_updated": "2026-06-08T10:39:45.451Z",
+  "last_updated_by": "Axel",
   "tasks": [
     {
       "id": 1,
@@ -2193,9 +2193,59 @@
         }
       ],
       "id": 42
+    },
+    {
+      "title": "Claude Neural: llamadas a apis js y python en n8n-runners",
+      "descripcion": "Así tenemos entorno de desarrollo AI desde el n 8 n podemos ejecutar python beta. Y código JavaScript. Gracias a los runners. ",
+      "rama": "PRO",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Major",
+      "milestone": "M3",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Axel",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-08",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:39:44.850Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 43
     }
   ],
   "_audit_log": [
+    {
+      "action": "feat: nueva tarea #1780915184851 añadida",
+      "user": "Axlfc",
+      "timestamp": "2026-06-08T10:39:45.451Z"
+    },
     {
       "action": "chore: actualizar tarea #40",
       "user": "Axlfc",
