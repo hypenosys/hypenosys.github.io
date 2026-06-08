@@ -1218,6 +1218,13 @@ body{
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
               <span id="sess-ctx">Web: master</span>
             </div>
+            <div id="branch-warning-banner" class="hidden" style="width:100%; padding:10px 14px; background:var(--red-soft); border:1px solid var(--red); border-radius:var(--r-md); margin-bottom:12px; align-items:center; gap:10px">
+                <span style="font-size:18px">⚠️</span>
+                <div style="flex:1">
+                    <div style="font-size:11px; font-weight:800; color:var(--red); text-transform:uppercase; letter-spacing:0.05em">Rama no coincide</div>
+                    <div style="font-size:12px; color:var(--text)" id="branch-warning-text">La rama actual no es la esperada para esta tarea.</div>
+                </div>
+            </div>
             <button class="btn btn-primary" id="launch-btn">
               <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
               Iniciar Ejecución
@@ -1906,6 +1913,16 @@ body{
         if(sessCtx) sessCtx.textContent = `${displayLabel}: cargando...`;
         branchSelect.disabled = true;
         branchSelect.innerHTML = '<option value="">Cargando ramas...</option>';
+        branchSelect.onchange = (e) => {
+            window.JulesPanelState.activeBranch = e.target.value;
+            localStorage.setItem('jules_selected_branch', e.target.value);
+            const sessCtx = $('sess-ctx');
+            if(sessCtx) {
+                const repoLabel = $('repo-label').textContent;
+                sessCtx.textContent = `${repoLabel}: ${e.target.value}`;
+            }
+            checkBranchWarning();
+        };
         try {
             const branches = await window.githubContext.getBranches(repoName, repoOwner || undefined);
             const repoData = (await window.githubContext.getRepos()).find(r => r.name === repoName && (repoOwner ? r.owner === repoOwner : true));
@@ -1917,6 +1934,7 @@ body{
             const activeBranch = branchSelect.value;
             if(sessCtx) sessCtx.textContent = `${displayLabel}: ${activeBranch}`;
             window.JulesPanelState.activeBranch = activeBranch;
+            checkBranchWarning();
         } catch (e) { branchSelect.innerHTML = '<option value="main">main</option>'; }
         finally { branchSelect.disabled = false; }
     }
@@ -2087,9 +2105,40 @@ body{
     }
 
     function checkClipboard() {
+        const payloadStr = localStorage.getItem('jules_task_payload');
+        const promptArea = $('session-prompt');
+
+        if (payloadStr && promptArea) {
+            try {
+                const payload = JSON.parse(payloadStr);
+                let formattedPrompt = "";
+                if (payload.user_note) {
+                    formattedPrompt += `NOTA DEL USUARIO:\n${payload.user_note}\n\n`;
+                }
+                formattedPrompt += `RESPUESTA DE CLAUDE:\n${payload.claude_response}`;
+
+                promptArea.value = formattedPrompt;
+                window.JulesPanelState.activePayload = payload;
+
+                showToast("Neural Link: Datos cargados", "green");
+                switchView('neural');
+                localStorage.removeItem('jules_task_payload');
+
+                // Fallback cleanup
+                localStorage.removeItem('jules_clipboard');
+                localStorage.removeItem('jules_linked_task_id');
+
+                if (payload.source_task) {
+                    window.JulesPanelState.linkedTaskId = payload.source_task.id;
+                    checkBranchWarning();
+                }
+                return;
+            } catch (e) { console.error("Error parsing jules_task_payload", e); }
+        }
+
+        // Legacy Fallback
         const content = localStorage.getItem('jules_clipboard');
         if (content) {
-            const promptArea = $('session-prompt');
             if (promptArea) {
                 promptArea.value = content;
                 showToast("Prompt importado desde Claude Chat", "green");
@@ -2100,8 +2149,39 @@ body{
                 if (taskId) {
                     window.JulesPanelState.linkedTaskId = taskId;
                     localStorage.removeItem('jules_linked_task_id');
+                    // Try to find the task in cache to check branch
+                    const task = (window.JulesPanelState.tasks || []).find(t => String(t.id) === String(taskId));
+                    if (task) {
+                        window.JulesPanelState.activePayload = { source_task: task };
+                        checkBranchWarning();
+                    }
                 }
             }
+        }
+    }
+
+    function checkBranchWarning() {
+        const banner = $('branch-warning-banner');
+        const text = $('branch-warning-text');
+        if (!banner || !text) return;
+
+        const payload = window.JulesPanelState.activePayload;
+        if (!payload || !payload.source_task) {
+            banner.classList.add('hidden');
+            return;
+        }
+
+        const task = payload.source_task;
+        const expectedBranch = task.rama || task.branch;
+        const currentBranch = window.JulesPanelState.activeBranch;
+
+        if (expectedBranch && currentBranch && expectedBranch !== currentBranch) {
+            banner.classList.remove('hidden');
+            banner.style.display = 'flex';
+            text.textContent = `La rama actual (${currentBranch}) no coincide con la rama esperada para esta tarea (${expectedBranch}).`;
+        } else {
+            banner.classList.add('hidden');
+            banner.style.display = 'none';
         }
     }
 
