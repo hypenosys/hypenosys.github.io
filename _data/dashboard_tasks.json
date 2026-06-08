@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-08T10:19:21.963Z",
+  "last_updated": "2026-06-08T10:20:44.066Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1876,7 +1876,7 @@
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Major",
       "milestone": "M1",
-      "estado": "OK",
+      "estado": "In Review",
       "completitud": 1,
       "resuelto_por": null,
       "detectado_por": "Axel",
@@ -1893,7 +1893,7 @@
       "tags": [],
       "external_links": [],
       "subtasks": [],
-      "acceptance_criteria": "",
+      "acceptance_criteria": "estaria bien hacher un check de cloudflare si hay problemas para evitar fallos de subida de imágenes",
       "blocks": [],
       "blocked_by": [],
       "comments": [],
@@ -1975,6 +1975,13 @@
           "field": "completitud",
           "old_value": 0,
           "new_value": 1
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:20:43.388Z",
+          "field": "estado",
+          "old_value": "OK",
+          "new_value": "In Review"
         }
       ],
       "id": 40
@@ -2098,6 +2105,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #40",
+      "user": "Axlfc",
+      "timestamp": "2026-06-08T10:20:44.066Z"
+    },
     {
       "action": "chore: actualizar tarea #40",
       "user": "Axlfc",
