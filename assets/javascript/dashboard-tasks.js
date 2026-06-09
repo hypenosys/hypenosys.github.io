@@ -18,13 +18,13 @@ function openCreateTaskModal() {
   switchTaskModalTab('info');
   populateMemberSelects();
   populateRepoSelect();
+  updateBranchList(null);
   document.getElementById('task-modal-title').textContent = 'Crear Nueva Tarea';
   document.getElementById('task-id-input').value = '';
   document.getElementById('task-title-input').value = '';
   document.getElementById('task-desc-input').value = '';
   document.getElementById('task-rama-input').value = '';
-  document.getElementById('task-rama-manual').value = '';
-  toggleRamaManual(false);
+  document.getElementById('branch-validation-msg').classList.add('hidden');
   document.getElementById('task-type-input').value = 'feature';
   document.getElementById('task-priority-input').value = 'Major';
   document.getElementById('task-milestone-input').value = 'M1';
@@ -78,8 +78,8 @@ function openEditTaskModal(taskId) {
 
     // Handle branch initialization
     const branch = task.rama || '';
-    document.getElementById('task-rama-manual').value = branch;
-    updateBranchList(task.repository, branch);
+    document.getElementById('task-rama-input').value = branch;
+    updateBranchList(task.repository);
 
     document.getElementById('task-type-input').value = task.task_type || 'feature';
     document.getElementById('task-priority-input').value = task.prioridad || 'Major';
@@ -140,10 +140,7 @@ async function handleCreateTask() {
   const taskId = document.getElementById('task-id-input').value;
   const title = document.getElementById('task-title-input').value;
   const desc = document.getElementById('task-desc-input').value;
-
-  const ramaInput = document.getElementById('task-rama-input');
-  const ramaManual = document.getElementById('task-rama-manual');
-  const rama = ramaInput.classList.contains('hidden') ? ramaManual.value : ramaInput.value;
+  const rama = document.getElementById('task-rama-input').value.trim();
 
   const taskType = document.getElementById('task-type-input').value;
   const priority = document.getElementById('task-priority-input').value;
@@ -599,66 +596,161 @@ function openImagePreview(taskId, idx, event) {
 }
 
 /**
- * Bug 2: Dynamic branch selector and manual entry
+ * Fix 1 & 2: Dynamic branch selector and validation
  */
-function toggleRamaManual(forceManual = null) {
-    const select = document.getElementById('task-rama-input');
-    const manual = document.getElementById('task-rama-manual');
-    const btn = document.getElementById('btn-rama-toggle');
-    const isManual = forceManual !== null ? forceManual : select.classList.contains('hidden');
 
-    if (!isManual) {
-        select.classList.remove('hidden');
-        manual.classList.add('hidden');
-        btn.innerHTML = '<i class="fa-solid fa-pen-to-square"></i>';
-        btn.title = "Introducir manualmente";
+function resolveRepoPath(value) {
+    if (!value) return null;
+
+    // Si ya es owner/repo
+    if (value.includes('/')) {
+        const [owner, repo] = value.split('/');
+        return { owner, repo };
+    }
+
+    // Si es un alias, buscar el repo real en el cache
+    const repos = window.userReposCache || [];
+    const repoObj = repos.find(r => {
+        const shortName = r.name;
+        const fullName = r.full_name;
+        const displayName = window.getRepoDisplayName ? window.getRepoDisplayName(fullName, shortName) : shortName;
+        return displayName === value || shortName === value;
+    });
+
+    if (repoObj) {
+        return { owner: repoObj.owner.login || repoObj.owner, repo: repoObj.name };
+    }
+
+    return null;
+}
+
+async function updateBranchList(repoValue) {
+    const btn = document.getElementById('btn-list-branches');
+    if (!btn) return;
+
+    if (!repoValue) {
+        btn.disabled = true;
+        btn.title = "Selecciona primero un repositorio";
+        btn.classList.add('opacity-50', 'cursor-not-allowed');
     } else {
-        select.classList.add('hidden');
-        manual.classList.remove('hidden');
-        btn.innerHTML = '<i class="fa-solid fa-list"></i>';
-        btn.title = "Seleccionar de la lista";
-        manual.focus();
+        btn.disabled = false;
+        btn.title = "Seleccionar rama";
+        btn.classList.remove('opacity-50', 'cursor-not-allowed');
+    }
+
+    // Trigger validation if there is already a value
+    const input = document.getElementById('task-rama-input');
+    if (input && input.value) {
+        validateBranch();
     }
 }
 
-async function updateBranchList(repoFullName, currentBranch = null) {
-    const select = document.getElementById('task-rama-input');
-    const manual = document.getElementById('task-rama-manual');
-    if (!select) return;
+async function showBranchDropdown() {
+    const repoSelect = document.getElementById('task-repo-input');
+    const dropdown = document.getElementById('branch-dropdown');
+    const repoValue = repoSelect ? repoSelect.value : null;
 
-    if (!repoFullName) {
-        select.innerHTML = '<option value="">-- Seleccionar repo primero --</option>';
-        return;
-    }
+    const path = resolveRepoPath(repoValue);
+    if (!path) return;
 
-    select.innerHTML = '<option value="">Cargando ramas...</option>';
-    select.disabled = true;
+    dropdown.innerHTML = '<div class="p-3 text-xs text-slate-500 italic">Cargando ramas...</div>';
+    dropdown.classList.remove('hidden');
 
     try {
-        const [owner, repo] = repoFullName.split('/');
-        const branches = await window.githubContext.getBranches(repo, owner);
+        const branches = await window.githubContext.getBranches(path.repo, path.owner);
 
         if (branches && branches.length > 0) {
-            select.innerHTML = branches.map(b =>
-                `<option value="${b.name}" ${b.name === currentBranch ? 'selected' : ''}>${b.name}</option>`
-            ).join('');
-
-            // Si la rama actual no está en la lista, activar modo manual
-            if (currentBranch && !branches.some(b => b.name === currentBranch)) {
-                manual.value = currentBranch;
-                toggleRamaManual(true);
-            } else if (!currentBranch) {
-                toggleRamaManual(false);
-            }
+            dropdown.innerHTML = '';
+            branches.forEach(b => {
+                const item = document.createElement('div');
+                item.className = 'p-2 hover:bg-slate-800 cursor-pointer text-xs text-slate-300 border-b border-slate-800 last:border-0';
+                item.innerHTML = `<i class="fa-solid fa-code-branch mr-2 text-indigo-400 opacity-70"></i>${b.name}`;
+                item.addEventListener('click', () => selectBranch(b.name));
+                dropdown.appendChild(item);
+            });
         } else {
-            throw new Error("No branches found");
+            dropdown.innerHTML = '<div class="p-3 text-xs text-amber-500">No se encontraron ramas.</div>';
         }
     } catch (e) {
-        console.warn("[Branches] Error fetching branches, fallback to manual:", e);
-        select.innerHTML = '<option value="">Error al cargar ramas</option>';
-        if (currentBranch) manual.value = currentBranch;
-        toggleRamaManual(true);
-    } finally {
-        select.disabled = false;
+        console.warn("[Branches] Error fetching branches:", e);
+        dropdown.innerHTML = '<div class="p-3 text-xs text-red-500">No se pudieron cargar las ramas. Puedes introducirla manualmente.</div>';
     }
 }
+
+function selectBranch(name) {
+    const input = document.getElementById('task-rama-input');
+    if (input) {
+        input.value = name;
+        validateBranch();
+    }
+    hideBranchDropdown();
+}
+
+function hideBranchDropdown() {
+    const dropdown = document.getElementById('branch-dropdown');
+    if (dropdown) dropdown.classList.add('hidden');
+}
+
+// Click outside to close dropdown
+document.addEventListener('click', (e) => {
+    const dropdown = document.getElementById('branch-dropdown');
+    const btn = document.getElementById('btn-list-branches');
+    if (dropdown && !dropdown.classList.contains('hidden') && !dropdown.contains(e.target) && !btn.contains(e.target)) {
+        hideBranchDropdown();
+    }
+});
+
+let branchValidationTimeout = null;
+
+function validateBranch() {
+    if (branchValidationTimeout) clearTimeout(branchValidationTimeout);
+
+    branchValidationTimeout = setTimeout(async () => {
+        const input = document.getElementById('task-rama-input');
+        const repoSelect = document.getElementById('task-repo-input');
+        const msg = document.getElementById('branch-validation-msg');
+
+        if (!input || !repoSelect || !msg) return;
+
+        const branchName = input.value.trim();
+        const repoValue = repoSelect.value;
+
+        if (!branchName || !repoValue) {
+            msg.classList.add('hidden');
+            return;
+        }
+
+        const path = resolveRepoPath(repoValue);
+        if (!path) {
+            msg.classList.add('hidden');
+            return;
+        }
+
+        try {
+            // Usamos githubContext.getBranches que ya tiene cache
+            const branches = await window.githubContext.getBranches(path.repo, path.owner);
+            const exists = branches.some(b => b.name === branchName);
+
+            if (!exists) {
+                msg.innerHTML = `⚠️ La rama \`${branchName}\` no existe en el repositorio \`${path.repo}\`. Verifica el nombre o créala en GitHub.`;
+                msg.classList.remove('hidden');
+            } else {
+                msg.classList.add('hidden');
+            }
+        } catch (e) {
+            console.warn("[Validation] Error validating branch:", e);
+            // Mostrar error amigable si falla la API
+            msg.innerHTML = `⚠️ No se pudo validar la rama. GitHub API error o rate limit.`;
+            msg.classList.remove('hidden');
+        }
+    }, 500);
+}
+
+// Attach event listeners for validation
+document.addEventListener('DOMContentLoaded', () => {
+    const input = document.getElementById('task-rama-input');
+    if (input) {
+        input.addEventListener('input', validateBranch);
+        input.addEventListener('blur', validateBranch);
+    }
+});

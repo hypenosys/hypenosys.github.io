@@ -83,6 +83,14 @@ permalink: /CHANGELOG.html
             <ul>
               <li>Corregido bug de renderizado <code>undefined</code> en el prompt de Jules al importar payloads de Claude.</li>
               <li>Añadida dependencia faltante de <code>marked.js</code> en el panel de control para el renderizado de markdown en el chat.</li>
+              <li><strong>Selector de Ramas y Validación (Dashboard):</strong>
+                <ul>
+                  <li>Unificado el campo RAMA en un único input de texto con botón selector (<code>fa-code-branch</code>) funcional.</li>
+                  <li>Implementada la carga dinámica de ramas desde la API de GitHub soportando alias de repositorios (<code>resolveRepoPath</code>).</li>
+                  <li>Añadida validación asíncrona (debounce 500ms) que avisa inline si la rama no existe en el repositorio seleccionado.</li>
+                  <li>Optimizado el estado del botón selector basándose en la selección activa del repositorio.</li>
+                </ul>
+              </li>
             </ul>
             <li><strong>[JULES-PANEL-V2] Finalización de UI Mobile Premium:</strong>
               <ul>
