@@ -157,6 +157,7 @@ permalink: /claude-chat.html
             height: 100vh;
             width: 100vw;
             max-width: 100%;
+            overflow: visible !important;
         }
         main {
             width: 100% !important;
@@ -235,6 +236,49 @@ permalink: /claude-chat.html
             right: -100%;
         }
     }
+
+    /* Markdown Table Styles */
+    .prose table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1rem 0;
+        font-size: 0.85rem;
+        border: 1px solid #44475a;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    .prose th {
+        background-color: #282a36;
+        color: #bd93f9;
+        font-weight: 700;
+        text-align: left;
+        padding: 10px 12px;
+        border-bottom: 2px solid #44475a;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    .prose td {
+        padding: 10px 12px;
+        border-bottom: 1px solid #44475a;
+        color: #f8f8f2;
+    }
+    .prose tr:last-child td {
+        border-bottom: none;
+    }
+    .prose tr:hover td {
+        background-color: rgba(189, 147, 249, 0.05);
+    }
+    .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+        margin-bottom: 1rem;
+        border-radius: 8px;
+        border: 1px solid #44475a;
+    }
+    .table-wrapper table {
+        margin: 0;
+        border: none;
+    }
 </style>
 
 <!-- Auth Loading Skeleton -->
@@ -279,7 +323,31 @@ permalink: /claude-chat.html
         </div>
 
         <div class="px-3 pt-3">
-            <h2 class="text-[10px] font-bold text-[#6272a4] uppercase tracking-widest">Historial de sesiones</h2>
+            <h2 class="text-[10px] font-bold text-[#bd93f9] uppercase tracking-widest">Navegación Global</h2>
+        </div>
+        <nav class="p-2 space-y-1">
+            <a href="{{ '/' | relative_url }}" class="flex items-center gap-3 p-2 rounded-lg text-xs font-bold text-[#f8f8f2] hover:bg-[#44475a] transition-all">
+                <i class="fas fa-home w-4 text-[#bd93f9]"></i> Inicio
+            </a>
+            <a href="{{ '/dashboard.html' | relative_url }}" class="flex items-center gap-3 p-2 rounded-lg text-xs font-bold text-[#f8f8f2] hover:bg-[#44475a] transition-all">
+                <i class="fas fa-tachometer-alt w-4 text-[#bd93f9]"></i> Dashboard
+            </a>
+            <a href="{{ '/documentacion/' | relative_url }}" class="flex items-center gap-3 p-2 rounded-lg text-xs font-bold text-[#f8f8f2] hover:bg-[#44475a] transition-all">
+                <i class="fas fa-book w-4 text-[#bd93f9]"></i> Documentación
+            </a>
+            <a href="{{ '/guia-comandos/' | relative_url }}" class="flex items-center gap-3 p-2 rounded-lg text-xs font-bold text-[#f8f8f2] hover:bg-[#44475a] transition-all">
+                <i class="fas fa-terminal w-4 text-[#bd93f9]"></i> Comandos
+            </a>
+            <a href="{{ '/tech-stack/' | relative_url }}" class="flex items-center gap-3 p-2 rounded-lg text-xs font-bold text-[#f8f8f2] hover:bg-[#44475a] transition-all">
+                <i class="fas fa-layer-group w-4 text-[#bd93f9]"></i> Tech Stack
+            </a>
+            <a href="{{ '/jules-panel/' | relative_url }}" class="flex items-center gap-3 p-2 rounded-lg text-xs font-bold text-[#f8f8f2] hover:bg-[#44475a] transition-all">
+                <i class="fas fa-robot w-4 text-[#bd93f9]"></i> Jules
+            </a>
+        </nav>
+
+        <div class="px-3 pt-3 border-t border-[#44475a]">
+            <h2 class="text-[10px] font-bold text-[#bd93f9] uppercase tracking-widest">Historial de sesiones</h2>
         </div>
 
         <div id="session-list" class="flex-grow overflow-y-auto p-2 space-y-1">
@@ -300,10 +368,10 @@ permalink: /claude-chat.html
         </div>
 
         <div class="p-4 border-t border-[#44475a] space-y-2">
-            <button onclick="openSettings()" class="w-full text-left text-xs font-bold text-[#6272a4] hover:text-white transition-all flex items-center gap-2">
+            <button onclick="openSettings()" class="w-full text-left text-xs font-bold text-[#f8f8f2] hover:text-[#bd93f9] transition-all flex items-center gap-2">
                 <i class="fas fa-cog"></i> API CONFIG
             </button>
-            <a href="/jules-panel/" class="w-full text-left text-xs font-bold text-[#6272a4] hover:text-white transition-all flex items-center gap-2">
+            <a href="/jules-panel/" class="w-full text-left text-xs font-bold text-[#f8f8f2] hover:text-[#bd93f9] transition-all flex items-center gap-2">
                 <i class="fas fa-bolt"></i> JULES PANEL
             </a>
         </div>
@@ -500,6 +568,16 @@ permalink: /claude-chat.html
 
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+    // Custom Marked Renderer for Tables
+    const renderer = new marked.Renderer();
+    const originalTableRenderer = renderer.table.bind(renderer);
+    renderer.table = (header, body) => {
+        const tableHtml = originalTableRenderer(header, body);
+        return `<div class="table-wrapper">${tableHtml}</div>`;
+    };
+    marked.setOptions({ renderer });
+</script>
 <script src="{{ '/assets/javascript/jules-api.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/github-api-ops.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/github-context.js' | relative_url }}"></script>
