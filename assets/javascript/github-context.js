@@ -249,6 +249,27 @@
                 (r.description && r.description.toLowerCase().includes(q)) ||
                 r.topics.some(t => t.toLowerCase().includes(q))
             );
+        },
+
+        /**
+         * createBranch(repo, newBranch, baseBranch, owner)
+         */
+        createBranch: async (repoName, newBranch, baseBranch, owner = ORG_NAME) => {
+            // 1. Get SHA of base branch
+            const refUrl = `${GITHUB_API_BASE}/repos/${owner}/${repoName}/git/ref/heads/${baseBranch}`;
+            const refData = await enqueueRequest(refUrl);
+            const sha = refData.object.sha;
+
+            // 2. Create new ref
+            const createUrl = `${GITHUB_API_BASE}/repos/${owner}/${repoName}/git/refs`;
+            return await enqueueRequest(createUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    ref: `refs/heads/${newBranch}`,
+                    sha: sha
+                })
+            });
         }
     };
 
