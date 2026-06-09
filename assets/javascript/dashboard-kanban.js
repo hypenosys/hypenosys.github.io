@@ -52,9 +52,19 @@ function buildTaskCard(task) {
   const isExpanded = window.kanbanUI && window.kanbanUI.expandedCards.has(String(task.id));
   const cardHtml = window.kanbanUI ? window.kanbanUI.renderCard(task, isExpanded) : '';
 
+  if (!cardHtml) {
+    console.error(`[KANBAN] Failed to render card HTML for task #${task.id}. window.kanbanUI available: ${!!window.kanbanUI}`);
+    return document.createElement('div');
+  }
+
   const card = document.createElement('div');
   card.innerHTML = cardHtml;
   const cardEl = card.firstElementChild;
+
+  if (!cardEl) {
+    console.error(`[KANBAN] cardEl is null after setting innerHTML for task #${task.id}`);
+    return card;
+  }
 
   cardEl.id = `card-${task.id}`;
   cardEl.draggable = true;

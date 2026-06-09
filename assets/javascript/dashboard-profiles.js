@@ -52,7 +52,11 @@ function renderTeamProfiles() {
     const avatarUrl = resolveAvatarUrl(profile);
 
     const card = document.createElement('div');
-    card.id = `profile-card-${name.toLowerCase()}`;
+    if (!name) {
+        console.warn('[PROFILES] Found member without name, skipping card ID assignment.');
+    } else {
+        card.id = `profile-card-${name.toLowerCase()}`;
+    }
     card.className = `bg-slate-900 border ${isSelf ? 'border-emerald-500 ring-1 ring-emerald-500 pulse-emerald' : 'border-slate-800'} rounded-2xl overflow-hidden relative group transition-all`;
     card.dataset.member = name;
 

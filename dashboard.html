@@ -1042,17 +1042,16 @@ layout: null
         }
       })();
     </script>
+    <!-- Core Infrastructure -->
     <script src="{{ "/assets/javascript/github-api.js" | relative_url }}"></script>
     <script src="{{ "/assets/javascript/github-context.js" | relative_url }}"></script>
     <script src="{{ "/assets/javascript/jules-api.js" | relative_url }}"></script>
     <script src="{{ "/assets/javascript/ollama-discovery.js" | relative_url }}"></script>
     <script src="{{ "/assets/javascript/ai-config.js" | relative_url }}"></script>
-    <script src="{{ "/assets/javascript/auth.js" | relative_url }}"></script>
     <script src="{{ "/assets/javascript/repo-aliases.js" | relative_url }}"></script>
 
-    <!-- Dashboard Modular Architecture -->
+    <!-- Dashboard Modules (UI & Logic) -->
     <script src="{{ "/assets/javascript/dashboard-config.js" | relative_url }}"></script>
-    <script src="{{ "/assets/javascript/dashboard-data.js" | relative_url }}"></script>
     <script src="{{ "/assets/javascript/dashboard-kanban.js" | relative_url }}"></script>
     <script src="{{ "/assets/javascript/dashboard-charts.js" | relative_url }}"></script>
     <script src="{{ "/assets/javascript/dashboard-tasks.js" | relative_url }}"></script>
@@ -1060,5 +1059,11 @@ layout: null
     <script src="{{ "/assets/javascript/dashboard-profiles.js" | relative_url }}"></script>
     <script src="{{ "/assets/javascript/dashboard-ui.js" | relative_url }}"></script>
     <script src="{{ "/assets/javascript/profile-editor.js" | relative_url }}"></script>
+
+    <!-- Data & Orchestration -->
+    <script src="{{ "/assets/javascript/dashboard-data.js" | relative_url }}"></script>
+
+    <!-- Auth & Identity (Last to ensure all listeners are ready) -->
+    <script src="{{ "/assets/javascript/auth.js" | relative_url }}"></script>
 </body>
 </html>
