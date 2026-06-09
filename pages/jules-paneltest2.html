@@ -1794,11 +1794,14 @@ body{
   </div>
 </div>
 
+{% include neural_session_drawer.html %}
+
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="{{ '/assets/javascript/jules-api.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/github-api-ops.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/github-context.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/task-engine.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/neural-session.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/kanban-ui.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/gh-explorer.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/repo-aliases.js' | relative_url }}"></script>
@@ -2229,25 +2232,37 @@ body{
 
     function openTaskInClaude(taskId) {
         const task = window.JulesPanelState.tasks.find(t => String(t.id) === String(taskId));
-        if (!task) return;
-
-        const payload = {
-            titulo: task.titulo || task.title || '',
-            descripcion: task.descripcion || task.description || '',
-            acceptance_criteria: task.acceptance_criteria || '',
-            tags: task.tags || [],
-            prioridad: task.prioridad || '',
-            asignados: task.asignados || task.asignado_a || [],
-            comments: task.comments || [],
-            estimated_hours: task.estimated_hours || '',
-            repositorio: task.repository || task.repo || ''
-        };
-        localStorage.setItem('claude_task_context', JSON.stringify(payload));
-
-        if (task.images && task.images.length > 0) {
-            showToast("Jules no acepta imágenes, se excluirán del prompt.", "amber");
+        if (!task) {
+            console.warn('[KANBAN] Task not found:', taskId);
+            return;
         }
-        window.location.href = `/claude-chat.html?task_id=${taskId}&from=jules-panel`;
+
+        if (window.neuralSession?.open) {
+            window.neuralSession.open(task);
+        } else {
+            // Retry once after 800ms — covers late authReady initialization
+            setTimeout(() => {
+                if (window.neuralSession?.open) {
+                    window.neuralSession.open(task);
+                } else {
+                    console.error('[KANBAN] NeuralSessionPanel not available');
+                    // Fallback to old behavior
+                    const payload = {
+                        titulo: task.titulo || task.title || '',
+                        descripcion: task.descripcion || task.description || '',
+                        acceptance_criteria: task.acceptance_criteria || '',
+                        tags: task.tags || [],
+                        prioridad: task.prioridad || '',
+                        asignados: task.asignados || task.asignado_a || [],
+                        comments: task.comments || [],
+                        estimated_hours: task.estimated_hours || '',
+                        repositorio: task.repository || task.repo || ''
+                    };
+                    localStorage.setItem('claude_task_context', JSON.stringify(payload));
+                    window.location.href = `/claude-chat.html?task_id=${taskId}&from=jules-panel`;
+                }
+            }, 800);
+        }
     }
 
     function checkClipboard() {

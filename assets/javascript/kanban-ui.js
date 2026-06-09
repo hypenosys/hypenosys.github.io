@@ -167,40 +167,32 @@
 
             // Robot button action
             if (!window._openTaskInClaude) {
-                window._openTaskInClaude = async (taskId) => {
-                    const tasks = await window.taskOps.getAllTasks();
-                    const task = tasks.find(t => String(t.id) === String(taskId));
-                    if (task) {
-                        const payload = {
-                            id: task.id,
-                            titulo: task.titulo || task.title || '',
-                            descripcion: task.descripcion || task.description || '',
-                            acceptance_criteria: task.acceptance_criteria || '',
-                            tags: task.tags || [],
-                            prioridad: task.prioridad || task.priority || '',
-                            asignados: task.asignado_a || task.asignados || [],
-                            comments: task.comments || task.comentarios || [],
-                            estimated_hours: task.estimated_hours || '',
-                            story_points: task.story_points || '',
-                            completitud: task.completitud || '',
-                            start_date: task.start_date || '',
-                            due_date: task.due_date || '',
-                            milestone: task.milestone || '',
-                            task_type: task.task_type || '',
-                            tema_principal: task.tema_principal || '',
-                            repositorio: task.repo || task.repository || '',
-                            rama: task.rama || task.branch || '',
-                            subtasks: task.subtasks || task.subtareas || [],
-                            links: task.external_links || task.links || [],
-                            bloqueada_por: task.blocked_by || task.bloqueada_por || [],
-                            bloquea_a: task.blocks || task.bloquea_a || [],
-                            jules_loop_estado: task.jules_loop_estado || (task.jules_session ? task.jules_session.status : ''),
-                            jules_session_url: task.jules_session_url || (task.jules_session ? task.jules_session.session_url : '')
-                        };
-                        localStorage.setItem('claude_task_context', JSON.stringify(payload));
+                window._openTaskInClaude = function(taskId) {
+                    // Try different ways to find the task data
+                    const task = (window.taskOps?.getTaskSync ? window.taskOps.getTaskSync(taskId) : null)
+                                 || window._kanbanTasks?.find(t => String(t.id) === String(taskId))
+                                 || (window.JulesPanelState?.tasks?.find(t => String(t.id) === String(taskId)));
+
+                    if (!task) {
+                        console.warn('[KANBAN] Task not found:', taskId);
+                        return;
                     }
-                    const url = `https://hypenosys.github.io/claude-chat.html?task_id=${taskId}&from=jules-panel`;
-                    window.open(url, '_blank');
+
+                    if (window.neuralSession?.open) {
+                        window.neuralSession.open(task);
+                    } else {
+                        // Retry once after 800ms — covers late authReady initialization
+                        setTimeout(() => {
+                            if (window.neuralSession?.open) {
+                                window.neuralSession.open(task);
+                            } else {
+                                console.error('[KANBAN] NeuralSessionPanel not available');
+                                // Fallback to old behavior if everything fails
+                                const url = `/claude-chat.html?task_id=${taskId}&from=jules-panel`;
+                                window.open(url, '_blank');
+                            }
+                        }, 800);
+                    }
                 };
             }
 
