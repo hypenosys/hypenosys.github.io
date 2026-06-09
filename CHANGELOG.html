@@ -62,9 +62,18 @@ permalink: /CHANGELOG.html
         <h2 class="text-purple border-bottom border-purple pb-2 mb-4">[Unreleased]</h2>
         <div class="card mb-3">
           <div class="card-body">
+            <h5 class="text-success">Added</h5>
+            <ul>
+              <li><strong>Neural Session Drawer:</strong> Implementado nuevo panel lateral unificado para la gestión de tareas entre Claude y Jules.</li>
+              <li><strong>Integración Neural Link:</strong> Los botones robot (🤖) ahora abren un drawer contextual con metadatos de la tarea, sugerencia de prompts automáticos y controles de refinamiento con Claude.</li>
+              <li><strong>Modo Híbrido de Chat:</strong> El drawer incluye un input con toggle para alternar entre consultas a Claude y ejecución directa de órdenes en Jules.</li>
+              <li><strong>Monitoreo en Tiempo Real:</strong> Sistema de polling integrado en el drawer para visualizar logs de actividad de Jules sin salir del contexto de la tarea.</li>
+            </ul>
             <h5 class="text-success">Fixed</h5>
             <ul>
-              <li><strong>Restauración Jules Panel V2:</strong> Recuperado el archivo <code>pages/jules-paneltest2.html</code> perdido tras un merge conflict reciente, habilitando de nuevo el acceso en la URL <code>/jules-panel-v2/</code> con su última versión estable.</li>
+              <li><strong>Resolución de Race Conditions (Neural):</strong> Corregido el fallo silencioso en la inicialización de <code>window.neuralSession</code> mediante un sistema de bootstrapping basado en eventos <code>authReady</code> y fallbacks de <code>DOMContentLoaded</code>.</li>
+              <li><strong>Flujo de Tareas Robot:</strong> Actualizada la lógica de <code>kanban-ui.js</code> para usar el nuevo drawer neural con reintentos defensivos, reemplazando la redirección a nueva pestaña.</li>
+              <li><strong>Restauración Jules Panel V2:</strong> Recuperado el archivo <code>pages/jules-paneltest2.html</code> perdido tras un merge conflict reciente, habilitando de nuevo el acceso en la URL <code>/jules-panel-v2/</code> con su última version estable.</li>
               <li><strong>Renderizado de Comentarios:</strong> Corregido el bug donde los comentarios mostraban "undefined / Invalid Date" mediante la implementación de un sistema de fallbacks robusto para autor, fecha y cuerpo del mensaje en <code>dashboard-modals.js</code>.</li>
               <li><strong>Robustez del Dashboard:</strong> Eliminado el error "Cannot set properties of null (setting 'id')" mediante la adición de comprobaciones defensivas en <code>dashboard-kanban.js</code> y <code>dashboard-profiles.js</code>.</li>
               <li><strong>Resolución de Race Conditions:</strong> Reordenado el orden de carga de scripts en <code>dashboard.html</code> y optimizado el evento <code>authReady</code> para asegurar que los módulos de UI estén listos antes de la inicialización de datos.</li>
