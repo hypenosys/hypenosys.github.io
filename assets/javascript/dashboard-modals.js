@@ -49,20 +49,28 @@ function renderModalArrays() {
     // Comments
     const commentsList = document.getElementById('task-comments-list');
     if (commentsList) {
-        commentsList.innerHTML = modalComments.map((com, idx) => `
-            <div class="p-3 bg-slate-950 border border-slate-800 rounded-xl relative group">
-                <div class="flex justify-between items-start mb-1">
-                    <div class="flex items-center gap-2">
-                        <span class="text-[10px] font-bold text-indigo-400">${com.author_login}</span>
-                        <span class="text-[8px] text-slate-600 font-mono">${new Date(com.timestamp).toLocaleString()}</span>
+        commentsList.innerHTML = modalComments.map((com, idx) => {
+            const c = com;
+            const autor = c.author || c.author_login || c.autor || c.user || 'Equipo';
+            const fecha = c.date || c.timestamp || c.fecha || c.created_at;
+            const texto = c.text || c.body || c.contenido || c.comment || String(c);
+            const fechaStr = fecha ? new Date(fecha).toLocaleDateString('es-ES') : '';
+
+            return `
+                <div class="p-3 bg-slate-950 border border-slate-800 rounded-xl relative group">
+                    <div class="flex justify-between items-start mb-1">
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] font-bold text-indigo-400">${autor}</span>
+                            <span class="text-[8px] text-slate-600 font-mono">${fechaStr}</span>
+                        </div>
+                        <button type="button" onclick="removeComment(${idx})" class="action-btn action-btn--secondary text-slate-800 hover:text-red-400" title="Eliminar comentario">
+                            <i class="fa-solid fa-trash text-[10px]"></i>
+                        </button>
                     </div>
-                    <button type="button" onclick="removeComment(${idx})" class="action-btn action-btn--secondary text-slate-800 hover:text-red-400" title="Eliminar comentario">
-                        <i class="fa-solid fa-trash text-[10px]"></i>
-                    </button>
+                    <p class="text-xs text-slate-300 whitespace-pre-wrap">${texto}</p>
                 </div>
-                <p class="text-xs text-slate-300 whitespace-pre-wrap">${com.body}</p>
-            </div>
-        `).join('');
+            `;
+        }).join('');
     }
 }
 
