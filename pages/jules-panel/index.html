@@ -2372,10 +2372,13 @@ body{
 
     function updateStats() {
         const sessions = window.julesSessionsCache || [];
-        const running = sessions.filter(s => ['IN_PROGRESS', 'PLANNING', 'AWAITING_PLAN_APPROVAL'].includes(s.state)).length;
+        const running = sessions.filter(s => ['IN_PROGRESS', 'PLANNING', 'AWAITING_PLAN_APPROVAL', 'AWAITING_USER_FEEDBACK'].includes(s.state)).length;
+        const activeBranches = new Set(sessions.map(s => s.sourceContext?.githubRepoContext?.startingBranch).filter(Boolean));
+
         if($('s-active')) $('s-active').textContent = running;
         if($('s-repos'))  $('s-repos').textContent  = (window.julesSourcesCache || []).length;
         if($('s-total'))  $('s-total').textContent  = sessions.length;
+        if($('s-branches')) $('s-branches').textContent = activeBranches.size || (window.JulesPanelState.activeBranch ? 1 : 0);
         if($('kanban-badge')) $('kanban-badge').textContent = running;
     }
 
@@ -2405,8 +2408,10 @@ body{
             }
 
             const res = await window.julesApi.createSession(body);
+            const sid = res.name.split('/').pop();
             showToast("Sesión iniciada correctamente", "green");
-            addTel("JULES", `Sesión iniciada: ${res.name.split('/').pop()}`, "success");
+            addTel("JULES", `Sesión iniciada: ${sid}`, "success");
+            addNotif("Sesión Iniciada", `Se ha creado la sesión #${sid} en ${branch}`, "success");
 
             if (window.JulesPanelState.linkedTaskId) {
                 await window.taskOps.updateTask(window.JulesPanelState.linkedTaskId, {
@@ -2594,13 +2599,69 @@ body{
     function renderMetrics() {
         const sessions = window.julesSessionsCache || []; if (!sessions.length) return;
         const sample = sessions.slice(0, window.JulesPanelState.metricsWindow || 30);
-        const success = sample.filter(s => s.state === 'COMPLETED').length;
-        if($('m-success-rate')) $('m-success-rate').textContent = `${Math.round((success / sample.length) * 100)}%`;
-        if($('m-tokens')) $('m-tokens').textContent = `${Math.round(sample.reduce((acc, s) => acc + (s.usage?.totalTokens || 0), 0)/1000)}k`;
-        if($('leg-done')) $('leg-done').textContent = sample.filter(s => s.state === 'COMPLETED').length;
-        if($('leg-running')) $('leg-running').textContent = sample.filter(s => s.state === 'IN_PROGRESS').length;
-        if($('leg-error')) $('leg-error').textContent = sample.filter(s => s.state === 'FAILED').length;
-        if($('leg-pending')) $('leg-pending').textContent = sample.filter(s => s.state === 'QUEUED' || s.state === 'PLANNING').length;
+
+        const counts = {
+            done: sample.filter(s => s.state === 'COMPLETED').length,
+            running: sample.filter(s => ['IN_PROGRESS', 'PLANNING', 'AWAITING_PLAN_APPROVAL', 'AWAITING_USER_FEEDBACK'].includes(s.state)).length,
+            error: sample.filter(s => s.state === 'FAILED').length,
+            pending: sample.filter(s => s.state === 'QUEUED').length
+        };
+
+        const total = sample.length;
+        const successRate = total > 0 ? Math.round((counts.done / total) * 100) : 0;
+        const totalTokens = sample.reduce((acc, s) => acc + (s.usage?.totalTokens || 0), 0);
+
+        if($('m-success-rate')) $('m-success-rate').textContent = `${successRate}%`;
+        if($('m-tokens')) $('m-tokens').textContent = totalTokens > 1000 ? `${Math.round(totalTokens/1000)}k` : totalTokens;
+        if($('m-avg-time')) {
+            const completed = sample.filter(s => s.state === 'COMPLETED' && s.createTime && s.updateTime);
+            if (completed.length > 0) {
+                const avgMs = completed.reduce((acc, s) => acc + (new Date(s.updateTime) - new Date(s.createTime)), 0) / completed.length;
+                $('m-avg-time').textContent = `${Math.round(avgMs / 60000 * 10) / 10}m`;
+            } else {
+                $('m-avg-time').textContent = '---';
+            }
+        }
+
+        if($('leg-done')) $('leg-done').textContent = counts.done;
+        if($('leg-running')) $('leg-running').textContent = counts.running;
+        if($('leg-error')) $('leg-error').textContent = counts.error;
+        if($('leg-pending')) $('leg-pending').textContent = counts.pending;
+
+        // Update Donut
+        if ($('donut-done')) {
+            const pDone = (counts.done / total) * 100;
+            const pRunning = (counts.running / total) * 100;
+            const pError = (counts.error / total) * 100;
+            const pPending = (counts.pending / total) * 100;
+
+            $('donut-done').style.strokeDasharray = `${pDone} 100`;
+            $('donut-running').style.strokeDasharray = `${pRunning} 100`;
+            $('donut-running').style.strokeDashoffset = `-${pDone}`;
+            $('donut-error').style.strokeDasharray = `${pError} 100`;
+            $('donut-error').style.strokeDashoffset = `-${pDone + pRunning}`;
+            $('donut-pending').style.strokeDasharray = `${pPending} 100`;
+            $('donut-pending').style.strokeDashoffset = `-${pDone + pRunning + pError}`;
+        }
+
+        // Render Bar Chart (Sessions per day - simplified)
+        const barSessions = $('bar-sessions');
+        if (barSessions) {
+            const days = {};
+            sample.forEach(s => {
+                const d = new Date(s.createTime).toLocaleDateString();
+                days[d] = (days[d] || 0) + 1;
+            });
+            const dayEntries = Object.entries(days).slice(-7);
+            const max = Math.max(...Object.values(days), 1);
+
+            barSessions.innerHTML = dayEntries.map(([date, count]) => `
+                <div class="bar-wrap">
+                    <div class="bar success-bar" style="height: ${(count/max)*100}%" title="${date}: ${count}"></div>
+                    <div class="bar-label">${date.split('/')[0]}/${date.split('/')[1]}</div>
+                </div>
+            `).join('');
+        }
     }
 
     /* ─── POLLING ─── */
@@ -2653,7 +2714,249 @@ body{
     function closeApiModal(){ $('api-modal').classList.remove('open'); }
     function openDocs(){ alert("📚 Jules Agent V2 - Premium Neural Interface"); }
 
+    /* ─── NOTIFICATIONS ─── */
+    window.toggleNotifPanel = function() {
+        const panel = $('notif-panel');
+        const isOpen = panel.classList.contains('open');
+        if (isOpen) {
+            panel.classList.remove('open');
+            window.JulesPanelState.unreadCount = 0;
+            updateNotifUI();
+        } else {
+            panel.classList.add('open');
+        }
+    };
+
+    window.clearNotifs = function() {
+        window.JulesPanelState.notifications = [];
+        window.JulesPanelState.unreadCount = 0;
+        updateNotifUI();
+    };
+
+    window.addNotif = function(title, msg, type = 'info') {
+        const notif = {
+            id: Date.now(),
+            title,
+            msg,
+            type,
+            time: new Date(),
+            read: false
+        };
+        window.JulesPanelState.notifications.unshift(notif);
+        window.JulesPanelState.unreadCount++;
+        updateNotifUI();
+
+        // Optional: play sound or show toast
+        if (type === 'error') showToast(title, 'red');
+    };
+
+    function updateNotifUI() {
+        const list = $('notif-list');
+        const pip = $('notif-pip');
+        const mobPip = $('mob-notif-pip');
+
+        if (window.JulesPanelState.unreadCount > 0) {
+            pip.textContent = window.JulesPanelState.unreadCount;
+            pip.classList.remove('hidden');
+            if (mobPip) {
+                mobPip.textContent = window.JulesPanelState.unreadCount;
+                mobPip.classList.remove('hidden');
+            }
+        } else {
+            pip.classList.add('hidden');
+            if (mobPip) mobPip.classList.add('hidden');
+        }
+
+        if (window.JulesPanelState.notifications.length === 0) {
+            list.innerHTML = '<div class="notif-empty">Sin notificaciones nuevas</div>';
+            return;
+        }
+
+        list.innerHTML = window.JulesPanelState.notifications.map(n => `
+            <div class="notif-item ${n.read ? '' : 'unread'}">
+                <div class="notif-icon ${n.type}">
+                    ${n.type === 'success' ? '✅' : n.type === 'error' ? '❌' : n.type === 'warn' ? '⚠️' : 'ℹ️'}
+                </div>
+                <div class="notif-content">
+                    <div class="notif-title">${n.title}</div>
+                    <div class="notif-msg">${n.msg}</div>
+                    <div class="notif-time">${n.time.toLocaleTimeString()}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    /* ─── NEW TASK MODAL ─── */
+    window.openNewTaskModal = function(initialStatus = 'pending') {
+        $('new-task-modal').classList.add('open');
+        $('nt-desc').value = '';
+        const btns = document.querySelectorAll('#nt-status-btns .fpill');
+        btns.forEach(b => {
+            b.classList.toggle('active', b.dataset.st === initialStatus);
+        });
+        $('nt-desc').focus();
+    };
+
+    window.closeNewTaskModal = function() {
+        $('new-task-modal').classList.remove('open');
+    };
+
+    window.selectTaskStatus = function(btn) {
+        document.querySelectorAll('#nt-status-btns .fpill').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    };
+
+    window.confirmNewTask = async function() {
+        const desc = $('nt-desc').value.trim();
+        if (!desc) return showToast("La descripción es obligatoria", "red");
+
+        const statusBtn = document.querySelector('#nt-status-btns .fpill.active');
+        const statusMap = {
+            'pending': 'Pending',
+            'running': 'Working',
+            'done': 'Fixed',
+            'error': 'KO'
+        };
+        const status = statusMap[statusBtn?.dataset.st || 'pending'];
+
+        const btn = document.querySelector('#new-task-modal .btn-primary');
+        const originalText = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = 'Creando...';
+
+        try {
+            const repoVal = window.JulesPanelState.activeRepo;
+            const branch = window.JulesPanelState.activeBranch;
+            const repoName = repoVal ? repoVal.split('/').pop() : 'Web';
+
+            const newTask = {
+                titulo: desc,
+                descripcion: "",
+                estado: status,
+                prioridad: "Normal",
+                asignados: [window.githubApi?.user?.login || 'Invitado'],
+                repo: repoName,
+                branch: branch || 'master'
+            };
+
+            await window.taskOps.createTask(newTask);
+            showToast("Tarea creada correctamente", "green");
+            addTel("TASK", `Nueva tarea: ${desc.substring(0, 30)}...`, "success");
+            addNotif("Tarea Creada", `Nueva tarea añadida al Kanban: ${desc.substring(0, 30)}...`, "success");
+            closeNewTaskModal();
+            refreshDashboard();
+        } catch (e) {
+            console.error("[TASK] Creation failed:", e);
+            showToast(`Error al crear tarea: ${e.message}`, "red");
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        }
+    };
+
     /* ─── EVENT LISTENERS ─── */
+    window.filterByStatus = function(status) {
+        if (!window.julesSessionsCache) return;
+
+        // UI active state
+        document.querySelectorAll('#filter-pills .fpill').forEach(p => {
+            p.classList.toggle('active', p.dataset.filter === status);
+        });
+
+        if (status === 'all') {
+            renderHistoryTable(window.julesSessionsCache);
+            return;
+        }
+
+        const filtered = window.julesSessionsCache.filter(s => {
+            const state = s.state || 'QUEUED';
+            // Simple mapping for UI categories
+            if (status === 'running') return ['IN_PROGRESS', 'PLANNING', 'AWAITING_PLAN_APPROVAL', 'AWAITING_USER_FEEDBACK'].includes(state);
+            if (status === 'done') return state === 'COMPLETED';
+            if (status === 'error') return state === 'FAILED';
+            if (status === 'pending') return state === 'QUEUED';
+            return true;
+        });
+
+        renderHistoryTable(filtered);
+    };
+
+    window.clearFilters = function() {
+        $('tbl-search').value = '';
+        window.filterByStatus('all');
+    };
+
+    window.scrollToSession = function() {
+        const target = $('view-neural');
+        if (target) {
+            switchView('neural');
+            $('session-prompt').focus();
+        }
+    };
+
+    window.openRepoModal = function(repoName) {
+        // Implementation for repo config if needed, for now just show name
+        const parsed = window.parseSourceName(repoName);
+        $('repo-modal-title').textContent = parsed ? parsed.repo : repoName;
+        $('repo-modal-real-name').textContent = repoName;
+        $('repo-config-modal-overlay').classList.add('open');
+    };
+
+    window.closeRepoModal = function() {
+        $('repo-config-modal-overlay').classList.remove('open');
+    };
+
+    window.openEditTaskModal = function(taskId) {
+        // Redirigir al dashboard principal para edición detallada por ahora
+        // o implementar un modal rápido. Por simplicidad y consistencia:
+        if (confirm(`¿Deseas editar la tarea #${taskId} en el Dashboard principal?`)) {
+            window.location.href = `/dashboard.html?edit_task=${taskId}`;
+        }
+    };
+
+    window.sendClaudeMsg = function() {
+        const input = $('claude-in');
+        const msg = input.value.trim();
+        if (!msg) return;
+
+        // Add to modal chat area (legacy modal)
+        const area = $('claude-chat-area');
+        const userDiv = document.createElement('div');
+        userDiv.style.cssText = 'margin-top:10px; color:var(--text); opacity:0.8';
+        userDiv.innerHTML = `<strong>Tú:</strong> ${escapeHtml(msg)}`;
+        area.appendChild(userDiv);
+        input.value = '';
+
+        // Simulate response for the legacy modal
+        setTimeout(() => {
+            const botDiv = document.createElement('div');
+            botDiv.style.cssText = 'margin-top:5px; color:var(--claude-text)';
+            botDiv.innerHTML = `<strong>Claude:</strong> Para interactuar con todo el contexto, te recomiendo usar la pestaña <strong>Neural Chat</strong> integrada en el panel principal.`;
+            area.appendChild(botDiv);
+            area.scrollTop = area.scrollHeight;
+        }, 800);
+    };
+
+    if ($('tbl-search')) {
+        $('tbl-search').oninput = (e) => {
+            const query = e.target.value.toLowerCase();
+            if (!window.julesSessionsCache) return;
+
+            const filtered = window.julesSessionsCache.filter(s => {
+                const title = (s.title || s.prompt || '').toLowerCase();
+                const id = s.name.split('/').pop().toLowerCase();
+                const repo = (s.sourceContext?.source || '').toLowerCase();
+                return title.includes(query) || id.includes(query) || repo.includes(query);
+            });
+
+            renderHistoryTable(filtered);
+        };
+    }
+
+    document.querySelectorAll('#filter-pills .fpill').forEach(p => {
+        p.onclick = () => window.filterByStatus(p.dataset.filter);
+    });
+
     document.querySelectorAll('.opt-pill').forEach(pill => {
         pill.onclick = () => {
             pill.classList.toggle('active');
@@ -2667,6 +2970,45 @@ body{
         };
     });
 
+    async function createNewBranch() {
+        const repoVal = window.JulesPanelState.activeRepo;
+        if (!repoVal) return showToast("Selecciona un repositorio primero", "amber");
+
+        const parsed = window.parseSourceName(repoVal);
+        if (!parsed) return showToast("No se pudo identificar el repositorio", "red");
+
+        const branchName = prompt("Nombre de la nueva rama:");
+        if (!branchName || !branchName.trim()) return;
+
+        const baseBranch = window.JulesPanelState.activeBranch || "master";
+        const cleanName = branchName.trim().toLowerCase().replace(/\s+/g, '-');
+
+        addTel("GIT", `Creando rama '${cleanName}' desde '${baseBranch}'...`, "info");
+        showToast(`Creando rama ${cleanName}...`, "info");
+
+        try {
+            await window.githubContext.createBranch(parsed.repo, cleanName, baseBranch, parsed.owner);
+            showToast(`Rama '${cleanName}' creada con éxito`, "green");
+            addTel("GIT", `Rama creada: ${cleanName}`, "success");
+
+            // Refresh branch selector
+            const sourceObj = window.julesSourcesCache?.find(s => s.name === repoVal);
+            await onRepoSelected(repoVal, sourceObj);
+
+            // Select the new branch
+            const branchSel = $('branch-sel');
+            if (branchSel) {
+                branchSel.value = cleanName;
+                branchSel.dispatchEvent(new Event('change'));
+            }
+        } catch (e) {
+            console.error("[GIT] Branch creation failed:", e);
+            showToast(`Error al crear rama: ${e.message}`, "red");
+            addTel("ERROR", `Fallo al crear rama: ${e.message}`, "error");
+        }
+    }
+
+    if($('new-branch-btn')) $('new-branch-btn').onclick = createNewBranch;
     if($('launch-btn')) $('launch-btn').onclick = launchSession;
     if($('dr-overlay')) $('dr-overlay').onclick = closeDrawer;
     if($('dr-close')) $('dr-close').onclick = closeDrawer;
