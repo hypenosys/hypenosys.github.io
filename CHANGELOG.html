@@ -63,6 +63,15 @@ permalink: /CHANGELOG.html
         <div class="card mb-3">
           <div class="card-body">
             <h5 class="text-success">Added</h5>
+            <li><strong>Rediseño de Tarjetas Kanban (Dual-State):</strong>
+              <ul>
+                <li>Implementación de sistema colapsado (compacto, 80px) y expandido (detalle completo) para mejorar la jerarquía visual.</li>
+                <li>Soporte para renderizado de Markdown en descripciones y visualización de metadatos avanzados (Milestone, Stage, Tipo).</li>
+                <li>Integración de avatares de equipo, tags estilo pill y botones de acción contextuales.</li>
+                <li>Highlight de ramas con color accent morado y truncado inteligente de títulos.</li>
+                <li><strong>Sincronización Global:</strong> Migración de la lógica de renderizado inline en <code>pages/jules-paneltest2.html</code> al componente unificado <code>kanbanUI</code> y actualización del dashboard legado.</li>
+              </ul>
+            </li>
             <li><strong>Integración Neural Claude <> Jules & Auditoría UX:</strong>
               <ul>
                 <li><strong>Neural Chat Integrado:</strong> Nueva pestaña "Neural" en el Jules Panel que permite chatear con Claude sin perder el contexto del repositorio o la tarea activa.</li>
