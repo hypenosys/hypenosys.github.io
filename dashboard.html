@@ -531,15 +531,16 @@ layout: null
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Rama</label>
-                            <div class="flex gap-2">
-                                <select id="task-rama-input" class="flex-grow bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100">
-                                    <option value="">-- Seleccionar repo primero --</option>
-                                </select>
-                                <input type="text" id="task-rama-manual" class="hidden flex-grow bg-slate-950 border border-indigo-500 rounded-lg p-2 text-slate-100" placeholder="Nombre de rama">
-                                <button type="button" id="btn-rama-toggle" onclick="toggleRamaManual()" class="bg-slate-800 hover:bg-slate-700 text-slate-400 px-3 rounded-lg border border-slate-700" title="Alternar entrada manual">
-                                    <i class="fa-solid fa-pen-to-square"></i>
+                            <div class="flex gap-2 relative">
+                                <input type="text" id="task-rama-input" class="flex-grow bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100" placeholder="Nombre de rama">
+                                <button type="button" id="btn-list-branches" onclick="showBranchDropdown()" class="bg-slate-800 hover:bg-slate-700 text-slate-400 px-3 rounded-lg border border-slate-700" title="Seleccionar rama">
+                                    <i class="fa-solid fa-code-branch"></i>
                                 </button>
+                                <div id="branch-dropdown" class="hidden absolute top-full left-0 w-full z-50 bg-slate-900 border border-slate-700 rounded-lg mt-1 shadow-2xl max-h-60 overflow-y-auto custom-scrollbar">
+                                    <!-- Branches will be listed here -->
+                                </div>
                             </div>
+                            <div id="branch-validation-msg" class="text-[10px] text-red-500 mt-1 hidden"></div>
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Repositorio</label>
