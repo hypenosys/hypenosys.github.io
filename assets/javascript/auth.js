@@ -12,7 +12,7 @@ class AuthManager {
         this.bindEvents();
 
         const isDashboard = window.location.pathname.includes('dashboard');
-        const isJules = window.location.pathname.includes('jules-panel');
+        const isJules = window.location.pathname.includes('jules-panel') || window.location.pathname.includes('jules-panel-v2');
         const isClaude = window.location.pathname.includes('claude-chat') || window.location.pathname.includes('cloude-chat');
 
         if (isDashboard || isJules || isClaude) {
@@ -22,9 +22,7 @@ class AuthManager {
                 const result = await this.handleOAuthCallback();
                 if (result) {
                     console.log('[AUTH] OAuth exchange successful via AuthManager');
-                    document.dispatchEvent(new CustomEvent('authReady', {
-                        detail: { user: result.user }
-                    }));
+                    this.dispatchAuthReady(result.user);
                     return;
                 }
             } catch (e) {
@@ -34,22 +32,29 @@ class AuthManager {
 
             console.log('[AUTH] No OAuth code or exchange completed. Checking existing session...');
             await this.checkAuthState();
-
-            setTimeout(() => {
-                document.dispatchEvent(new CustomEvent('authReady', {
-                    detail: { user: window.githubApi.user || null }
-                }));
-            }, 50);
+            this.dispatchAuthReady(window.githubApi.user || null);
             return;
         }
 
         await this.handleOAuthCallback();
         await this.checkAuthState();
+        this.dispatchAuthReady(window.githubApi.user || null);
+    }
 
-        const currentUser = window.githubApi.user || null;
-        document.dispatchEvent(new CustomEvent('authReady', {
-            detail: { user: currentUser }
-        }));
+    dispatchAuthReady(user) {
+        // Ensure DOM is fully loaded and a tiny delay for other scripts to initialize
+        const trigger = () => {
+            console.log('[AUTH] Dispatching authReady event for user:', user?.login || 'guest');
+            document.dispatchEvent(new CustomEvent('authReady', {
+                detail: { user: user }
+            }));
+        };
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => setTimeout(trigger, 100));
+        } else {
+            setTimeout(trigger, 100);
+        }
     }
 
     bindEvents() {
@@ -164,8 +169,13 @@ class AuthManager {
         const chkDashboard = document.getElementById('chk-remember-me-dashboard');
         const chkHeader = document.getElementById('chk-remember-me');
         const chkJules = document.getElementById('chk-remember-me-jules');
-        const rememberMe = (chkDashboard?.checked || chkHeader?.checked || chkJules?.checked || false);
+        const chkPanelV2 = document.getElementById('chk-remember-me-v2');
+
+        const rememberMe = (chkDashboard?.checked || chkHeader?.checked || chkJules?.checked || chkPanelV2?.checked || false);
+
+        console.log('[AUTH] Initiating login with rememberMe:', rememberMe);
         sessionStorage.setItem('auth_remember_me', rememberMe);
+
         const scope = 'repo';
         window.location.href = `https://github.com/login/oauth/authorize?client_id=${this.clientId}&scope=${scope}`;
     }
