@@ -638,3 +638,34 @@ window.handleDashboardLogin = function() {
     }
 };
 
+
+/**
+ * Updates a visual indicator when a neural session is active
+ */
+window.updateNeuralSessionBadge = function(active) {
+    const header = document.querySelector('.navbar .container-fluid') || document.querySelector('header');
+    if (!header) return;
+
+    let badge = document.getElementById('neural-active-badge');
+    if (active) {
+        if (!badge) {
+            badge = document.createElement('div');
+            badge.id = 'neural-active-badge';
+            badge.className = 'badge badge-purple pulse ml-2';
+            badge.innerHTML = '<i class="fas fa-brain mr-1"></i> NEURAL SESSION ACTIVE';
+            badge.style.cursor = 'pointer';
+            badge.onclick = () => window.NeuralSession && window.NeuralSession.toggleDrawer(true);
+            header.appendChild(badge);
+        }
+    } else if (badge) {
+        badge.remove();
+    }
+};
+
+// Listen for jules output to notify user
+window.addEventListener('storage', (e) => {
+    if (e.key === 'jules_last_output') {
+        window.updateNeuralSessionBadge(false);
+        if (window.hypeToast) window.hypeToast('Jules ha terminado la tarea', 'success');
+    }
+});

@@ -182,82 +182,31 @@ async function refreshDashboardData() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get('code');
-
-    if (code) {
-        // Handle OAuth callback immediately — do not wait for authReady
-        console.log('[DASHBOARD] OAuth code detected on DOMContentLoaded. Handling immediately...');
-
-        // Evitar que AuthManager procese el mismo código simultáneamente
-        if (window._oauthExchanging) return;
-        window._oauthExchanging = true;
-
-        // Limpiar URL inmediatamente para evitar re-procesamientos
-        window.history.replaceState({}, document.title, window.location.pathname);
-
-        const loginOverlay = document.getElementById('login-overlay');
-        if (loginOverlay) {
-            loginOverlay.classList.remove('hidden');
-            const statusMsg = loginOverlay.querySelector('p');
-            if (statusMsg) statusMsg.textContent = 'Autenticando con GitHub...';
+    // Escuchar el evento unificado authReady
+    document.addEventListener('authReady', async (event) => {
+        console.log('[DASHBOARD] authReady received. Starting initialization...');
+        if (!window._dashboardInitialized) {
+            await initDashboard();
+            if (event.detail && event.detail.user) {
+                renderUserStatus(event.detail.user);
+            } else if (window.githubApi && window.githubApi.user) {
+                renderUserStatus(window.githubApi.user);
+            }
         }
+    });
+
+    // Restauración proactiva si ya tenemos token (sin esperar a authReady si es posible)
+    const token = window.githubApi ? window.githubApi.getAuthToken() : null;
+    if (token && !window._dashboardInitialized) {
+        console.log('[DASHBOARD] Existing token found. Validating proactively...');
         try {
-            const result = await window.githubApi.exchangeCodeForToken(code);
-            if (result.valid) {
+            const { valid, user } = await window.githubApi.validateToken();
+            if (valid) {
                 await initDashboard();
-                // BUG 1 Fix: Explicit call after initDashboard
-                renderUserStatus(result.user);
-            } else {
-                throw new Error(result.user ? 'No autorizado' : 'Token inválido');
+                renderUserStatus(user);
             }
         } catch (err) {
-            console.error('[DASHBOARD] OAuth Error:', err);
-
-            // Si hay un error, mostramos el toast y redirigimos tras un breve delay
-            if (window.hypeToast) {
-                window.hypeToast('Error de autenticación: ' + err.message, 'error');
-            } else {
-                alert('Error de autenticación: ' + err.message);
-            }
-
-            setTimeout(() => {
-                window.location.href = '/';
-            }, 3000);
-        }
-    } else {
-        // Proactive session restoration
-        const token = window.githubApi.getAuthToken();
-        if (token) {
-            console.log('[DASHBOARD] Existing token found. Validating...');
-            try {
-                const { valid, user } = await window.githubApi.validateToken();
-                if (valid) {
-                    await initDashboard();
-                    // BUG 1 Fix: Ensure renderUserStatus is called after initDashboard
-                    renderUserStatus(user);
-                } else {
-                    console.warn('[DASHBOARD] Session restoration failed validation.');
-                    document.getElementById('login-overlay').classList.remove('hidden');
-                }
-            } catch (err) {
-                console.error('[DASHBOARD] Session restoration error:', err);
-                document.getElementById('login-overlay').classList.remove('hidden');
-            }
-        } else {
-            // No code, no token — wait for authReady as fallback
-            document.addEventListener('authReady', async (event) => {
-                console.log('[DASHBOARD] authReady received. Starting initialization...');
-                if (!window._dashboardInitialized) {
-                    await initDashboard();
-                    // BUG 1 Fix: Explicit call after initDashboard
-                    if (event.detail && event.detail.user) {
-                        renderUserStatus(event.detail.user);
-                    } else if (window.githubApi.user) {
-                        renderUserStatus(window.githubApi.user);
-                    }
-                }
-            });
+            console.warn('[DASHBOARD] Proactive init failed:', err);
         }
     }
 });

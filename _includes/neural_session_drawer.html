@@ -1,0 +1,131 @@
+<!-- Neural Session Drawer -->
+<div id="neural-session-drawer" class="neural-drawer">
+    <div class="neural-drawer-header">
+        <div class="d-flex align-items-center">
+            <i class="fas fa-brain text-purple mr-2"></i>
+            <h5 class="mb-0 text-white">Neural Session</h5>
+        </div>
+        <button id="close-neural-drawer" class="btn btn-link text-white p-0">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <div class="neural-drawer-content p-3">
+        <!-- Task Context -->
+        <div id="neural-task-context" class="card bg-dark border-purple mb-3">
+            <div class="card-body p-2">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span id="neural-task-id" class="badge badge-purple">TASK-000</span>
+                    <span id="neural-task-repo" class="text-muted small">repo/name</span>
+                </div>
+                <h6 id="neural-task-title" class="text-white mb-0 truncate">Cargando tarea...</h6>
+                <div id="neural-task-branch" class="text-purple small mt-1">rama: master</div>
+            </div>
+        </div>
+
+        <!-- Hybrid Chat -->
+        <div id="neural-chat-container" class="neural-chat-area mb-3">
+            <div id="neural-messages" class="neural-messages">
+                <div class="neural-message system">
+                    <p>Bienvenido a la Sesión Neural. ¿En qué podemos ayudarte Jules y yo?</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity Feed -->
+        <div class="neural-activity-section mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h6 class="text-muted small mb-0 uppercase-tracking">Jules Activity Log</h6>
+                <span id="jules-status-badge" class="badge badge-secondary">IDLE</span>
+            </div>
+            <div id="neural-activity-log" class="neural-activity-log">
+                <div class="text-muted small italic">Esperando actividad...</div>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="neural-controls">
+            <div class="input-group mb-2">
+                <textarea id="neural-prompt-input" class="form-control bg-dark border-purple text-white"
+                          placeholder="Escribe tu instrucción..." rows="3"></textarea>
+            </div>
+            <div class="d-flex justify-content-between">
+                <button id="btn-refine-claude" class="btn btn-sm btn-outline-info flex-grow-1 mr-2">
+                    <i class="fas fa-magic mr-1"></i> Claude
+                </button>
+                <button id="btn-send-jules" class="btn btn-sm btn-purple flex-grow-1">
+                    <i class="fas fa-robot mr-1"></i> Jules
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.neural-drawer {
+    position: fixed;
+    top: 0;
+    right: -400px;
+    width: 400px;
+    height: 100vh;
+    background: #0f111a;
+    z-index: 1060;
+    box-shadow: -5px 0 25px rgba(0,0,0,0.5);
+    transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid #bd93f9;
+}
+.neural-drawer.open {
+    right: 0;
+}
+.neural-drawer-header {
+    background: #1a1c2c;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #2d2f4a;
+}
+.neural-drawer-content {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+.neural-chat-area {
+    flex: 2;
+    background: #161822;
+    border-radius: 8px;
+    padding: 10px;
+    overflow-y: auto;
+    border: 1px solid #2d2f4a;
+}
+.neural-activity-log {
+    height: 120px;
+    background: #000;
+    border-radius: 4px;
+    padding: 8px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 11px;
+    color: #50fa7b;
+    overflow-y: auto;
+    border: 1px solid #2d2f4a;
+}
+.neural-message {
+    margin-bottom: 10px;
+    padding: 8px;
+    border-radius: 6px;
+    font-size: 13px;
+}
+.neural-message.system { background: rgba(189, 147, 249, 0.1); color: #bd93f9; }
+.neural-message.user { background: rgba(255, 255, 255, 0.05); color: #fff; margin-left: 20px; }
+.neural-message.claude { background: rgba(0, 255, 255, 0.05); color: #8be9fd; margin-right: 20px; }
+
+@media (max-width: 576px) {
+    .neural-drawer {
+        width: 100%;
+        right: -100%;
+    }
+}
+</style>

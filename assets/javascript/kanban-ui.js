@@ -198,6 +198,12 @@
                             jules_session_url: task.jules_session_url || (task.jules_session ? task.jules_session.session_url : '')
                         };
                         localStorage.setItem('claude_task_context', JSON.stringify(payload));
+
+                        // Si existe el Drawer Neural, abrirlo en lugar de pestaña externa
+                        if (window.NeuralSession) {
+                            window.NeuralSession.toggleDrawer(true, task);
+                            return;
+                        }
                     }
                     const url = `https://hypenosys.github.io/claude-chat.html?task_id=${taskId}&from=jules-panel`;
                     window.open(url, '_blank');

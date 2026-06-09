@@ -2870,4 +2870,7 @@ body{
     document.querySelectorAll('.mtab').forEach(tab => {
       tab.onclick = () => switchView(tab.dataset.tab, tab);
     });
-</script></body></html>
+</script>
+{% include neural_session_drawer.html %}
+<script src="{{ "/assets/javascript/neural-session.js" | relative_url }}"></script>
+</body></html>

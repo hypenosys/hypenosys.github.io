@@ -108,7 +108,8 @@
          */
         updateTask: async (taskId, delta) => {
             return await window.githubApi.atomicWrite(window.taskOps.FILE_PATH, (db) => {
-                const idx = db.tasks.findIndex(t => t.id === taskId);
+                // Fix: robust comparison for different ID formats
+                const idx = db.tasks.findIndex(t => String(t.id) === String(taskId));
                 if (idx === -1) throw new Error(`Tarea ${taskId} no encontrada`);
 
                 db.tasks[idx] = {
@@ -127,6 +128,15 @@
         getAllTasks: async () => {
             const { content } = await window.githubApi.fetchFileWithSha(window.taskOps.FILE_PATH);
             return content.tasks || [];
+        },
+
+        /**
+         * getActivities() - Mocked for now, should connect to real activity log
+         */
+        getActivities: async () => {
+            return [
+                { timestamp: new Date().toISOString(), message: "Neural Session link established", status: "ready" }
+            ];
         }
     };
 
