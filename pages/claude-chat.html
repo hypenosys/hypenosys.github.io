@@ -181,6 +181,41 @@ permalink: /claude-chat.html
         }
     }
 
+    /* Tablet and Mobile Fixes for Horizontal Overflow */
+    @media (max-width: 1024px) {
+        #claude-main-interface,
+        main,
+        .chat-container,
+        #chat-messages {
+            max-width: 100%;
+            overflow-x: hidden !important;
+        }
+
+        .message-bubble,
+        .message-user,
+        .message-claude,
+        .prose {
+            max-width: 100%;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            word-break: break-word;
+            overflow-x: hidden;
+        }
+
+        /* Code blocks inside messages */
+        #claude-main-interface pre,
+        #claude-main-interface code,
+        .prose pre,
+        .prose code,
+        .table-wrapper {
+            white-space: pre-wrap !important;
+            word-break: normal !important;
+            overflow-wrap: normal !important; /* Prioritize scrolling over breaking tokens */
+            overflow-x: auto !important;
+            max-width: 100% !important;
+        }
+    }
+
     .mobile-toggle {
         display: none;
         align-items: center;
