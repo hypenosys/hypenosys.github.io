@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-08T18:44:36.934Z",
+  "last_updated": "2026-06-09T20:08:35.471Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1498,7 +1498,7 @@
       "task_type": "chore",
       "tema_principal": "QA / Testing",
       "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "ToDo",
+      "prioridad": "Cosmetic",
       "milestone": "M1",
       "estado": "ToDo",
       "completitud": 0,
@@ -1517,8 +1517,8 @@
       "estimated_hours": 4,
       "story_points": 4,
       "tags": [
-        "docs",
-        "chore"
+        "chore",
+        "docs"
       ],
       "external_links": [],
       "subtasks": [],
@@ -1570,6 +1570,13 @@
           "field": "prioridad",
           "old_value": "Major",
           "new_value": "ToDo"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-09T20:08:34.345Z",
+          "field": "prioridad",
+          "old_value": "ToDo",
+          "new_value": "Cosmetic"
         }
       ],
       "id": 33
@@ -2566,6 +2573,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #33",
+      "user": "Axlfc",
+      "timestamp": "2026-06-09T20:08:35.471Z"
+    },
     {
       "action": "chore: actualizar tarea #27",
       "user": "Axlfc",
