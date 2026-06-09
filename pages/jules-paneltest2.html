@@ -450,31 +450,12 @@ body{
 .kb-cards{padding:10px;display:flex;flex-direction:column;gap:8px;min-height:100px}
 .kb-card{
   background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--r-md);padding:13px 14px;cursor:grab;
+  border-radius:var(--r-md);padding:0;cursor:grab;
   transition:all var(--t-fast);position:relative;overflow:hidden;
 }
 .kb-card:active{cursor:grabbing}
-.kb-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
-.kb-card.running::before{background:var(--green)}
-.kb-card.pending::before{background:var(--amber)}
-.kb-card.done::before{background:var(--accent)}
-.kb-card.error::before{background:var(--red)}
 .kb-card:hover{border-color:var(--border-accent);transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,.4)}
 .kb-card.dragging{opacity:.4;transform:scale(.97)}
-.kb-card-id{font-family:var(--font-mono);font-size:10px;color:var(--text3);margin-bottom:5px}
-.kb-card-task{font-size:12.5px;font-weight:500;color:var(--text);line-height:1.4;margin-bottom:8px;
-  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.kb-card-meta{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.kb-card-repo{font-family:var(--font-mono);font-size:10px;color:var(--text2);background:rgba(255,255,255,.04);border:1px solid var(--border);padding:2px 7px;border-radius:var(--r-full)}
-.kb-card-time{font-family:var(--font-mono);font-size:10px;color:var(--text3)}
-.kb-card-actions{display:flex;gap:4px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
-.kb-action-btn{
-  flex:1;padding:4px 6px;border-radius:var(--r-sm);border:1px solid var(--border);
-  background:rgba(255,255,255,.02);color:var(--text3);font-size:10px;font-weight:600;
-  cursor:pointer;transition:var(--t-fast);font-family:var(--font-ui);text-align:center;
-}
-.kb-action-btn:hover{background:var(--surface-hover);color:var(--text);border-color:var(--border2)}
-.kb-action-btn.danger:hover{background:var(--red-soft);color:var(--red);border-color:rgba(239,68,68,.3)}
 .kb-add{
   margin:8px 10px 10px;padding:8px;border:1px dashed var(--border);border-radius:var(--r-sm);
   display:flex;align-items:center;justify-content:center;gap:7px;
@@ -2196,55 +2177,8 @@ body{
             if (mCountEl) mCountEl.textContent = items.length;
 
             colEl.innerHTML = items.map(t => {
-                const jSession = t.jules_session || (sessions.find(s => s.name.endsWith(t.id)) ? { session_id: sessions.find(s => s.name.endsWith(t.id)).name.split('/').pop(), status: 'ACTIVE', initiated_by: '?' } : null);
-                const isBlocked = (t.blocked_by && t.blocked_by.length > 0);
-                const blocksOthers = (t.blocks && t.blocks.length > 0);
-
-                let sessionHtml = '';
-                if (jSession) {
-                    sessionHtml = `
-                        <div style="margin-top:8px; padding-top:8px; border-top:1px solid var(--border); display:flex; align-items:center; justify-content:space-between">
-                            <div style="display:flex; align-items:center; gap:5px">
-                                <img src="https://github.com/${jSession.initiated_by}.png" style="width:16px; height:16px; border-radius:50%; border:1px solid var(--accent)">
-                                <span style="font-size:9px; color:var(--accent2); font-weight:600">${jSession.status}</span>
-                            </div>
-                            <span style="font-size:9px; color:var(--text3); font-family:var(--font-mono)">#${jSession.session_id}</span>
-                        </div>
-                    `;
-                }
-
-                const blockBadge = isBlocked ? `<span title="Bloqueada por otras tareas" style="color:var(--red); font-size:10px">🚫</span>` : '';
-                const blocksBadge = blocksOthers ? `<span title="Bloquea a otras tareas" style="color:var(--amber); font-size:10px">⚠️</span>` : '';
-
-                const onClick = jSession ? `onclick="openDrawer('${jSession.session_id}')"` : `onclick="showToast('Tarea #${t.id}: ${escapeHtml(t.prioridad)}','info')"`;
-
-                return `
-                    <div class="kb-card ${colId}" ${onClick}>
-                        <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:5px">
-                            <div class="kb-card-id">#${t.id} ${blockBadge} ${blocksBadge}</div>
-                            <button onclick="event.stopPropagation(); openTaskInClaude('${t.id}')"
-                                    style="background:none; border:1px solid var(--border-accent); color:var(--accent2); border-radius:4px; padding:2px 5px; font-size:10px; cursor:pointer"
-                                    title="Enviar a Claude Chat">🤖</button>
-                        </div>
-                        <div class="kb-card-task">${escapeHtml(t.title || t.descripcion)}</div>
-                        <div class="kb-card-meta" style="display:flex; justify-content:space-between; align-items:center">
-                            <div style="display:flex; flex-direction:column; gap:2px">
-                                <span class="kb-card-repo">${t.repository?.split('/').pop() || '---'}</span>
-                                <span class="kb-card-time">${t.prioridad}</span>
-                            </div>
-                            ${(t.rama || t.branch) ? `
-                                <div style="font-size:10px; color:var(--accent2); background:rgba(124,58,237,0.1); padding:2px 6px; border-radius:4px; font-family:var(--font-mono); display:flex; align-items:center; gap:4px">
-                                    <svg width="10" height="10" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.5 14a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm-9-11a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm3 2a2.502 2.502 0 0 1 1.987 1.027c.187.245.313.519.372.808l1.459-1.458a2.5 2.5 0 1 1 .707.707l-1.458 1.459c.289.06.563.185.808.372A2.5 2.5 0 1 1 11.5 11a2.502 2.502 0 0 1-1.027-1.987c-.187-.245-.313-.519-.372-.808L8.641 9.664a2.502 2.502 0 0 1-1.141 1.141l-1.459 1.459c.289.06.563.185.808.372A2.5 2.5 0 1 1 2.5 11a2.502 2.502 0 0 1 1.027-1.987c.187-.245.313-.519.372-.808l1.459-1.459A2.502 2.502 0 0 1 5.5 5z"/></svg>
-                                    ${t.rama || t.branch}
-                                </div>
-                            ` : ''}
-                        </div>
-                        <div style="display:flex; margin-top:8px; gap:4px">
-                            ${(t.asignados || []).map(a => `<img src="https://github.com/${a}.png" style="width:18px; height:18px; border-radius:50%; border:1px solid var(--border)" title="${a}">`).join('')}
-                        </div>
-                        ${sessionHtml}
-                    </div>
-                `;
+                const isExpanded = window.kanbanUI && window.kanbanUI.expandedCards.has(String(t.id));
+                return window.kanbanUI ? window.kanbanUI.renderCard(t, isExpanded) : '';
             }).join('');
         });
     }
