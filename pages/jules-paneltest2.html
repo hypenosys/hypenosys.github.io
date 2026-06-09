@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: null
 title: Jules Panel V2
 hide_title: true
 permalink: /jules-panel-v2/
@@ -18,6 +18,8 @@ permalink: /jules-panel-v2/
 /* ─── VARIABLES ─── */
 :root {
   --bg: #07070a;
+  --header-h: 48px;
+  --nav-h: 64px;
   --bg-gradient: radial-gradient(circle at 50% -20%, #150d35 0%, #07070a 60%);
   --surface: rgba(13,13,20,0.8);
   --surface-opaque: #0d0d14;
@@ -66,6 +68,7 @@ body{
   color:var(--text);
   height:100%;font-size:14px;line-height:1.5;
   overflow-x:hidden;display:flex;flex-direction:column;
+  -webkit-text-size-adjust: 100%;
 }
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:transparent}
@@ -249,11 +252,12 @@ body{
 
 /* ─── STATS ROW ─── */
 .stats-row{
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-  gap:14px;padding:22px 30px 12px;
+  display:grid;grid-template-columns:repeat(2,1fr);
+  gap:10px;padding:12px;
 }
 .stat-tile{
-  padding:16px 20px;border-radius:var(--r-lg);position:relative;overflow:hidden;cursor:pointer;
+  padding:14px;border-radius:var(--r-md);position:relative;overflow:hidden;
+  height:120px;display:flex;flex-direction:column;justify-content:center;
 }
 .stat-tile::before{
   content:'';position:absolute;top:0;left:0;width:100%;height:2px;
@@ -262,8 +266,8 @@ body{
 .stat-tile:hover::before{background:var(--accent-grad)}
 .stat-tile.accent::before{background:var(--accent-grad)}
 .stat-tile.accent{border-color:var(--border-accent);box-shadow:0 0 20px rgba(124,58,237,.08) inset}
-.stat-num{font-family:var(--font-mono);font-size:28px;font-weight:600;color:var(--text);line-height:1.2;margin-bottom:3px}
-.stat-lbl{font-size:11.5px;color:var(--text2);font-weight:500;text-transform:uppercase;letter-spacing:.04em}
+.stat-num{font-family:var(--font-mono);font-size:36px;font-weight:700;color:var(--text);line-height:1;margin-bottom:4px}
+.stat-lbl{font-size:10px;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:.1em}
 .stat-delta{
   font-family:var(--font-mono);font-size:10px;font-weight:600;margin-top:5px;
   padding:2px 6px;border-radius:var(--r-full);display:inline-flex;align-items:center;gap:3px;
@@ -742,34 +746,35 @@ body{
 
 /* ─── MOBILE HEADER ─── */
 .mobile-hdr{
-  display:none;height:54px;border-bottom:1px solid var(--border);
-  background:rgba(8,8,14,.95);
-  align-items:center;justify-content:space-between;padding:0 16px;
+  display:none;height:48px;border-bottom:1px solid var(--border);
+  background:var(--bg);
+  align-items:center;justify-content:space-between;padding:0 12px;
   position:sticky;top:0;z-index:90;
-  /* Fix: no backdrop-filter on mobile header to avoid animation stall */
 }
 .mob-menu-btn{
-  background:none;border:1px solid var(--border);color:var(--text);cursor:pointer;
-  display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:var(--r-sm);
+  background:none;border:none;color:var(--text);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;width:38px;height:38px;
   -webkit-tap-highlight-color:transparent;
 }
-.mobile-tabs-nav{
-  display:none;border-bottom:1px solid var(--border);
-  background:rgba(8,8,14,.95);
-  overflow-x:auto;white-space:nowrap;
-  /* Fix: solid bg instead of translucent, avoid backdrop-filter causing animation lag */
-  -webkit-overflow-scrolling:touch;
-  position:sticky;top:54px;z-index:89;
+.mobile-bottom-nav{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;height:64px;
+  background:var(--surface-opaque);border-top:1px solid var(--border);
+  z-index:100;
+  grid-template-columns:repeat(5,1fr);
+  padding-bottom:env(safe-area-inset-bottom);
 }
-.mobile-tabs-nav::-webkit-scrollbar{display:none}
 .mtab{
-  display:inline-flex;align-items:center;gap:6px;padding:12px 16px;
-  font-size:13px;font-weight:600;color:var(--text2);border:none;background:none;
-  cursor:pointer;border-bottom:2px solid transparent;transition:color var(--t-fast),border-color var(--t-fast);
-  /* Fix: only transition color/border, not background, to avoid animation stall */
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  font-size:10px;font-weight:700;color:var(--text3);border:none;background:none;
+  cursor:pointer;transition:all var(--t-fast);
   -webkit-tap-highlight-color:transparent;
+  text-transform:uppercase;letter-spacing:0.02em;
 }
-.mtab.active{color:var(--accent2);border-bottom-color:var(--accent)}
+.mtab svg{width:20px;height:20px;stroke-width:2;transition:transform 0.2s ease}
+.mtab:active{opacity:0.6;transform:scale(0.95)}
+.mtab.active{color:var(--accent2)}
+.mtab.active svg{color:var(--accent);transform:translateY(-2px)}
 .mob-panel{display:none;flex-direction:column;gap:16px;padding:16px}
 .mob-panel.active{display:flex}
 
@@ -779,6 +784,62 @@ body{
   background:rgba(0,0,0,.6);z-index:39;
 }
 .sidebar-backdrop.open{display:block}
+
+/* ─── CHAT V2 STYLES ─── */
+.message-user {
+    align-self: flex-end;
+    background: var(--surface2);
+    border-radius: 18px 18px 4px 18px;
+    border: 1px solid var(--border2);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    padding: 14px 18px;
+    max-width: 85%;
+    margin-left: 20%;
+}
+.message-claude {
+    align-self: flex-start;
+    background: linear-gradient(135deg, #150d35 0%, #0d0d14 100%);
+    border-radius: 18px 18px 18px 4px;
+    border: 1px solid var(--border-accent);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    padding: 14px 18px;
+    max-width: 85%;
+    margin-right: 20%;
+}
+.message-system {
+    align-self: center;
+    background: rgba(255,255,255,0.03);
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text3);
+    max-width: 90%;
+    text-align: center;
+}
+.thinking-block {
+    border-left: 2px solid #6272a4;
+    background: rgba(98, 114, 164, 0.1);
+    padding: 8px 12px;
+    margin-bottom: 12px;
+    font-size: 0.85rem;
+    color: #6272a4;
+    font-style: italic;
+}
+.prose-invert { color: #f8f8f2; }
+.prose-invert pre {
+    background: #1e1f29;
+    padding: 12px;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 8px 0;
+    border: 1px solid #44475a;
+}
+.prose-invert code {
+    font-family: var(--font-mono);
+    color: #50fa7b;
+}
 
 /* ─── ANIMATIONS ─── */
 /* Fix: use will-change only on elements that actually animate, and use transform3d for GPU compositing */
@@ -795,42 +856,123 @@ body{
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .kb-card{animation:fadeIn .2s ease forwards}
 
-/* ─── BREAKPOINTS ─── */
+.mobile-fab{
+  display:none;
+  position:fixed;bottom:80px;right:20px;
+  width:56px;height:56px;border-radius:28px;
+  background:var(--accent-grad);color:#fff;
+  border:none;box-shadow:0 4px 15px rgba(124,58,237,0.4);
+  align-items:center;justify-content:center;z-index:90;
+  cursor:pointer;transition:transform 0.2s ease;
+}
+.mobile-fab:active{transform:scale(0.9) rotate(90deg)}
+
+.mobile-only { display: none }
+.desktop-only { display: inline-flex }
+@media(max-width:767px) {
+  .desktop-only { display: none !important }
+  .mobile-only { display: block }
+  .mobile-fab { display: flex }
+}
+
+/* ─── BREAKPOINTS & RESPONSIVE ─── */
+
+/* Mobile Base (< 768px) */
+.main{padding-bottom:var(--nav-h)}
+#mob-menu-btn{display:none} /* Removed hamburger per requirements */
+
+/* Tablet & Desktop (>= 768px) */
+@media(min-width:768px){
+  .mobile-hdr, .mobile-bottom-nav { display:none !important }
+  .stats-row{
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    padding:22px 30px 12px; gap:14px;
+  }
+  .stat-tile{ height:auto; padding:16px 20px; border-radius:var(--r-lg) }
+  .stat-num{ font-size:28px }
+  .stat-lbl{ font-size:11.5px }
+  .main{ padding-bottom:0 }
+
+  /* Desktop constraints reset */
+  .view { height: auto !important; overflow: visible !important }
+  #view-kanban, #view-metrics, #view-hub { padding: 22px 30px }
+  .dash-grid .view { padding: 0 }
+
+  /* Desktop Dashboard Grid */
+  #view-dashboard.active .dash-grid { display: grid !important }
+  #view-dashboard.active .view { display: block !important }
+}
+
 @media(max-width:1140px){
   .dash-grid{grid-template-columns:1fr 1fr}
   .kanban-board{grid-template-columns:repeat(2,1fr)}
   .metrics-grid{grid-template-columns:1fr}
 }
-@media(max-width:900px){
-  .sidebar{
-    display:none;
-    /* Fix: use translate3d for GPU-accelerated open/close, avoids stall */
-  }
-  .sidebar.mob-open{
-    display:flex;position:fixed;top:0;left:0;height:100vh;width:260px;
-    box-shadow:12px 0 40px rgba(0,0,0,.8);z-index:100;
-    animation:slideInSidebar .22s cubic-bezier(.16,1,.3,1);
-  }
-  @keyframes slideInSidebar{
-    from{transform:translate3d(-100%,0,0)}
-    to{transform:translate3d(0,0,0)}
-  }
+
+@media(max-width:767px){
+  header.site-header { display: none !important }
+  footer.site-footer { display: none !important }
+  .py-5 { padding-top: 0 !important; padding-bottom: 0 !important }
+  .container.page-content { padding: 0 !important; max-width: 100% !important; margin: 0 !important }
+
+  .sidebar{ display:none }
   .dheader{display:none}
   .mobile-hdr{display:flex}
-  .mobile-tabs-nav{display:block}
-  .stats-row{padding:14px 16px 8px;grid-template-columns:repeat(2,1fr)}
-  .dash-grid{display:none}
-  #view-kanban{padding:14px 16px}
-  .kanban-board{grid-template-columns:1fr}
-  #view-metrics{padding:14px 16px}
-  .metrics-grid{grid-template-columns:1fr}
-  /* Fix: drawer full-width on mobile */
+  .mobile-bottom-nav{display:grid}
+
+  /* Force views to take full height minus bars */
+  .view{ padding: 12px; height: calc(100vh - var(--header-h) - var(--nav-h)); overflow-y: auto }
+  .view.active { display: flex !important; flex-direction: column; gap: 12px }
+
+  /* Make cards within views fill space if needed */
+  .view.active .card { flex: 1; min-height: 0; display: flex; flex-direction: column }
+  .view.active .card-body { flex: 1; overflow-y: auto }
+
+  /* On mobile, dash-grid is transparent, it's the views inside that handle layout */
+  .dash-grid { display: contents }
+  #view-dashboard .dash-grid { display:none } /* Hide the grid containers if any */
+
+  /* Kanban mobile layout */
+  #view-kanban{padding:12px; flex-direction:column; overflow:hidden}
+  .kanban-board{
+    display:flex; flex:1; overflow-x:auto; scroll-snap-type:x mandatory;
+    gap:0; padding-bottom:0; margin:0 -12px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .kb-col{
+    flex:0 0 100vw; scroll-snap-align:start;
+    height:calc(100vh - var(--header-h) - var(--nav-h) - 120px);
+    overflow-y:auto; border:none; border-radius:0; background:transparent;
+  }
+
+  /* Metrics mobile */
+  #view-metrics{padding:12px}
+
+  /* Cards density */
+  .card-body{padding:12px 14px}
+  .card-head{padding:12px 14px}
+
+  /* Active states for touch */
+  .btn:active, .stat-tile:active, .repo-item:active, .fpill:active, .mtab:active {
+    opacity: 0.7 !important;
+    transform: scale(0.97) !important;
+    transition: all 0.1s ease !important;
+  }
+
+  /* Typography for mobile metrics */
+  .stat-num { font-size: 36px !important; font-weight: 800 !important; }
+  .stat-lbl { font-size: 10px !important; letter-spacing: 0.1em !important; }
+
+  /* Collapsible history arrow */
+  details summary svg { transition: transform 0.2s ease; }
+  details[open] summary svg { transform: rotate(180deg); }
+
+  /* Drawer full width */
   .drawer{width:100vw;right:-100vw}
-  /* Fix: notif panel full-width on mobile */
-  .notif-panel{width:calc(100vw - 32px);right:16px}
+  .notif-panel{width:calc(100vw - 24px);right:12px; top:54px}
 }
+
 @media(max-width:480px){
-  .stats-row{grid-template-columns:1fr}
   .opts-grid{grid-template-columns:1fr}
   .session-foot{flex-direction:column;align-items:stretch}
   .session-foot .btn{width:100%;justify-content:center}
@@ -879,32 +1021,47 @@ body{
 
 <!-- ══ MOBILE HEADER ══ -->
 <header class="mobile-hdr" id="mob-hdr">
-  <button class="mob-menu-btn" id="mob-menu-btn" aria-label="Menú">
-    <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
-  </button>
-  <div style="display:flex;align-items:center;gap:8px">
+  <div style="display:flex;align-items:center;gap:10px">
     <div class="logo-gem">J</div>
-    <span class="logo-text">HYPENOSYS</span>
+    <div class="avatar" id="mob-avatar" style="width:28px; height:28px; font-size:10px; display:none">?</div>
   </div>
-  <div style="display:flex;align-items:center;gap:8px">
-    <div class="notif-bell" id="mob-notif-bell" onclick="toggleNotifPanel()">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-      <span class="notif-pip hidden" id="mob-notif-pip">0</span>
+  <div style="display:flex;align-items:center;gap:12px">
+    <div class="notif-bell" id="mob-notif-bell" onclick="toggleNotifPanel()" style="border:none; background:none; width:40px; height:40px">
+      <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+      <span class="notif-pip hidden" id="mob-notif-pip" style="top:4px; right:4px">0</span>
     </div>
-    <button class="btn-claude btn-sm" onclick="openClaudeChat()">
-      <span class="claude-icon">C</span>Chat
-    </button>
+    <div class="notif-bell" onclick="openClaudeChat()" style="border:none; background:none; width:40px; height:40px">
+      <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+    </div>
   </div>
 </header>
 
-<!-- ══ MOBILE TABS ══ -->
-<nav class="mobile-tabs-nav" id="mob-tabs">
-  <button class="mtab active" data-tab="dashboard">Dashboard</button>
-  <button class="mtab" data-tab="kanban">Kanban</button>
-  <button class="mtab" data-tab="metrics">Métricas</button>
-  <button class="mtab" data-tab="config">Config</button>
-  <button class="mtab" data-tab="session">Tarea</button>
-  <button class="mtab" data-tab="history">Historial</button>
+<!-- ══ MOBILE TABS (Bottom Bar) ══ -->
+<nav class="mobile-bottom-nav" id="mob-tabs">
+  <button class="mtab active" data-tab="dashboard">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+    <span>Dashboard</span>
+  </button>
+  <button class="mtab" data-tab="kanban">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+    <span>Kanban</span>
+  </button>
+  <button class="mtab" data-tab="metrics">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2"/></svg>
+    <span>Métricas</span>
+  </button>
+  <button class="mtab" data-tab="neural">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+    <span>Ops</span>
+  </button>
+  <button class="mtab" data-tab="chat">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+    <span>Neural</span>
+  </button>
+  <button class="mtab" data-tab="config">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+    <span>Config</span>
+  </button>
 </nav>
 
 <!-- ══ SIDEBAR BACKDROP (mobile) ══ -->
@@ -943,6 +1100,10 @@ body{
         GitHub Hub
         <span class="nav-badge" id="hub-notif-badge">0</span>
       </a>
+      <a class="nav-link" id="nav-chat" onclick="switchView('chat',this)">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></svg>
+        Neural Chat
+      </a>
       <a class="nav-link" id="nav-docs" onclick="openDocs()">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
         Documentación
@@ -961,9 +1122,9 @@ body{
 
     <div class="sb-footer">
       <div class="user-row" onclick="openApiModal()">
-        <div class="avatar">TH</div>
+        <div class="avatar" id="sb-avatar">?</div>
         <div>
-          <div class="user-name">Miembro Hypenosys</div>
+          <div class="user-name" id="sb-user-name">Miembro Hypenosys</div>
           <div class="user-online"><span class="u-dot"></span>API Activa</div>
         </div>
       </div>
@@ -986,13 +1147,20 @@ body{
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
           <span class="notif-pip hidden" id="notif-pip">0</span>
         </div>
-        <button class="btn-claude" onclick="openClaudeChat()">
-          <span class="claude-icon">C</span>Claude Chat
+        <button class="btn-claude" onclick="switchView('chat')">
+          <span class="claude-icon">C</span>Neural Chat
         </button>
         <button class="btn btn-ghost btn-sm" onclick="openDocs()">
           <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
           Docs
         </button>
+        <div id="hdr-user" style="display:none; align-items:center; gap:8px; margin-right:10px; padding-right:10px; border-right:1px solid var(--border)">
+            <div class="avatar" id="hdr-avatar" style="width:26px; height:26px; font-size:10px">?</div>
+            <div style="display:flex; flex-direction:column; line-height:1">
+                <span id="hdr-username" style="font-size:12px; font-weight:700; color:var(--text)">...</span>
+                <span id="hdr-role" style="font-size:9px; color:var(--text3); text-transform:uppercase">Miembro</span>
+            </div>
+        </div>
         <button class="btn btn-ghost btn-sm" onclick="openApiModal()">
           <span class="u-dot" style="margin-right:3px"></span>API Key
         </button>
@@ -1012,18 +1180,18 @@ body{
           <div class="stat-delta delta-up">▲ +1 hoy</div>
           <div class="stat-icon">⚡</div>
         </div>
-        <div class="stat-tile glass" onclick="focusRepos()">
+        <div class="stat-tile glass" onclick="switchView('config')">
           <div class="stat-num" id="s-repos">5</div>
           <div class="stat-lbl">Repos Conectados</div>
           <div class="stat-icon">📁</div>
         </div>
-        <div class="stat-tile glass" onclick="clearFilters()">
+        <div class="stat-tile glass" onclick="switchView('metrics')">
           <div class="stat-num" id="s-total">47</div>
           <div class="stat-lbl">Sesiones Totales</div>
           <div class="stat-delta delta-up">▲ +8 semana</div>
           <div class="stat-icon">📈</div>
         </div>
-        <div class="stat-tile glass" onclick="focusBranch()">
+        <div class="stat-tile glass" onclick="switchView('config')">
           <div class="stat-num" id="s-branches">4</div>
           <div class="stat-lbl">Ramas Activas</div>
           <div class="stat-icon">⌥</div>
@@ -1031,51 +1199,59 @@ body{
       </section>
 
       <section class="dash-grid">
-        <!-- COL 1 -->
-        <div class="card glass">
-          <div class="card-head">
-            <div class="card-title">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-              Configuración Repo
-            </div>
-          </div>
-          <div class="card-body">
-            <span class="cfg-label">Selector de Repositorio</span>
-            <div class="custom-dropdown" id="repo-context-dropdown">
-                <div class="custom-dropdown-trigger" id="repo-trigger">
-                    <span id="repo-label">Cargando fuentes...</span>
-                    <svg width="10" height="6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4"/></svg>
-                </div>
-                <div class="custom-dropdown-menu" id="repo-menu" style="display:none">
-                    <div style="padding:8px; border-bottom: 1px solid var(--border);">
-                        <input type="text" id="repo-search" class="cfg-input" style="font-size:12px; height:32px" placeholder="Buscar repo...">
-                    </div>
-                    <div id="repo-items-container"></div>
-                </div>
-            </div>
-            <div style="display:none"><select id="jules-repo-select"></select></div>
-            <span class="cfg-label">Ruta repositorio</span>
-            <div class="cfg-path" id="cfg-path">sources/github/hypenosys/web</div>
-            <label class="cfg-label" for="alias-in">Alias visual</label>
-            <input class="cfg-input" id="alias-in" value="Web" style="margin-bottom:14px">
-            <label class="cfg-label" for="branch-sel">Rama activa</label>
-            <div class="sel-wrap">
-              <select class="cfg-input" id="branch-sel" style="padding:8px 30px 8px 12px;appearance:none;cursor:pointer"></select>
-            </div>
-            <div class="branch-meta" id="branch-meta"><span class="u-dot"></span><span>4 ramas cargadas</span></div>
-            <button class="btn btn-ghost" style="width:100%;justify-content:center;font-size:12px;padding:7px" id="new-branch-btn">+ Nueva rama</button>
-            <div class="mini-chart-box">
-              <div class="mini-chart-title">Actividad commits / semana</div>
-              <svg class="svg-chart" viewBox="0 0 200 56" id="repo-chart">
-                <defs><linearGradient id="cg" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient></defs>
-                <path fill="none" stroke="url(#cg)" stroke-width="2.5" stroke-linecap="round"/>
-              </svg>
-            </div>
+        <!-- Dashboard grid content moved to independent views below -->
+      </section>
+    </div>
+
+    <!-- ─── CONFIG VIEW ─── -->
+    <div class="view" id="view-config">
+      <div class="card glass">
+        <div class="card-head">
+          <div class="card-title">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            Configuración Repo
           </div>
         </div>
+        <div class="card-body">
+          <span class="cfg-label">Selector de Repositorio</span>
+          <div class="custom-dropdown" id="repo-context-dropdown">
+              <div class="custom-dropdown-trigger" id="repo-trigger">
+                  <span id="repo-label">Cargando fuentes...</span>
+                  <svg width="10" height="6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4"/></svg>
+              </div>
+              <div class="custom-dropdown-menu" id="repo-menu" style="display:none">
+                  <div style="padding:8px; border-bottom: 1px solid var(--border);">
+                      <input type="text" id="repo-search" class="cfg-input" style="font-size:12px; height:32px" placeholder="Buscar repo...">
+                  </div>
+                  <div id="repo-items-container"></div>
+              </div>
+          </div>
+          <div style="display:none"><select id="jules-repo-select"></select></div>
+          <span class="cfg-label">Ruta repositorio</span>
+          <div class="cfg-path" id="cfg-path">sources/github/hypenosys/web</div>
+          <label class="cfg-label" for="alias-in">Alias visual</label>
+          <input class="cfg-input" id="alias-in" value="Web" style="margin-bottom:14px">
+          <label class="cfg-label" for="branch-sel">Rama activa</label>
+          <div class="sel-wrap">
+            <select class="cfg-input" id="branch-sel" style="padding:8px 30px 8px 12px;appearance:none;cursor:pointer"></select>
+          </div>
+          <div class="branch-meta" id="branch-meta"><span class="u-dot"></span><span>4 ramas cargadas</span></div>
+          <button class="btn btn-ghost" style="width:100%;justify-content:center;font-size:12px;padding:7px" id="new-branch-btn">+ Nueva rama</button>
+          <div class="mini-chart-box">
+            <div class="mini-chart-title">Actividad commits / semana</div>
+            <svg class="svg-chart" viewBox="0 0 200 56" id="repo-chart">
+              <defs><linearGradient id="cg" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient></defs>
+              <path fill="none" stroke="url(#cg)" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
 
-        <!-- COL 2 -->
-        <div class="session-card glass" id="session-anchor">
+    <!-- ─── NEURAL VIEW (Tarea + Telemetry) ─── -->
+    <div class="view" id="view-neural">
+      <!-- Session Card -->
+        <div class="session-card glass">
           <div class="card-head" style="padding:14px 18px">
             <div class="card-title">
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
@@ -1097,7 +1273,7 @@ body{
               Crear Tests
             </div>
             <div class="opt-pill" id="opt-branch">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7v8a2 2 0 002 2h6M8 7a2 2 0 114 0 2 2 0 01-4 0zm8 8a2 2 0 114 0 2 2 0 01-4 0z"/></svg>
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7v8a2 2 0 002 2h6M8 7a2 2 114 0 2 2 0 01-4 0zm8 8a2 2 114 0 2 2 0 01-4 0z"/></svg>
               Rama Dedicada
             </div>
           </div>
@@ -1106,6 +1282,13 @@ body{
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
               <span id="sess-ctx">Web: master</span>
             </div>
+            <div id="branch-warning-banner" class="hidden" style="width:100%; padding:10px 14px; background:var(--red-soft); border:1px solid var(--red); border-radius:var(--r-md); margin-bottom:12px; align-items:center; gap:10px">
+                <span style="font-size:18px">⚠️</span>
+                <div style="flex:1">
+                    <div style="font-size:11px; font-weight:800; color:var(--red); text-transform:uppercase; letter-spacing:0.05em">Rama no coincide</div>
+                    <div style="font-size:12px; color:var(--text)" id="branch-warning-text">La rama actual no es la esperada para esta tarea.</div>
+                </div>
+            </div>
             <button class="btn btn-primary" id="launch-btn">
               <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
               Iniciar Ejecución
@@ -1113,7 +1296,7 @@ body{
           </div>
         </div>
 
-        <!-- COL 3 -->
+      <!-- Telemetry Card -->
         <div class="card glass">
           <div class="card-head">
             <div class="card-title">
@@ -1123,46 +1306,51 @@ body{
             <div class="live-badge"><span class="live-dot"></span>LIVE</div>
           </div>
           <div class="card-body">
-            <div class="tel-box" id="tel-box"></div>
+            <div class="tel-box" id="tel-box">
+              <div class="notif-empty" style="padding: 40px; text-align: center; color: var(--text3);">Sin actividad en esta sesión</div>
+            </div>
           </div>
         </div>
+    </div>
 
-        <!-- TABLE -->
-        <div class="card glass table-card">
-          <div class="card-head">
-            <div class="card-title">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-              Historial de Sesiones
+    <!-- ─── HISTORY VIEW ─── -->
+    <div class="view" id="view-history">
+          <div class="card glass table-card">
+            <div class="card-head">
+              <div class="card-title">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                Historial de Sesiones
+              </div>
             </div>
-          </div>
-          <div class="filter-bar">
-            <div class="search-wrap">
-              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-              <input type="text" class="search-in" id="tbl-search" placeholder="Buscar sesión...">
+            <div class="filter-bar">
+              <div class="search-wrap">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <input type="text" class="search-in" id="tbl-search" placeholder="Buscar sesión...">
+              </div>
+              <div class="filter-pills" id="filter-pills">
+                <button class="fpill active" data-filter="all">Todos</button>
+                <button class="fpill" data-filter="running">Activos</button>
+                <button class="fpill" data-filter="done">Completados</button>
+                <button class="fpill" data-filter="error">Errores</button>
+                <button class="fpill" data-filter="pending">Cola</button>
+              </div>
             </div>
-            <div class="filter-pills" id="filter-pills">
-              <button class="fpill active" data-filter="all">Todos</button>
-              <button class="fpill" data-filter="running">Activos</button>
-              <button class="fpill" data-filter="done">Completados</button>
-              <button class="fpill" data-filter="error">Errores</button>
-              <button class="fpill" data-filter="pending">Cola</button>
+            <div class="tbl-wrap">
+              <table class="stbl">
+                <thead>
+                  <tr>
+                    <th style="width:90px">ID</th>
+                    <th>Tarea</th>
+                    <th>Repositorio</th>
+                    <th>Rama</th>
+                    <th style="width:120px">Estado</th>
+                    <th style="width:90px">Duración</th>
+                    <th style="width:110px">Fecha</th>
+                  </tr>
+                </thead>
+                <tbody id="tbl-body"></tbody>
+              </table>
             </div>
-          </div>
-          <div class="tbl-wrap">
-            <table class="stbl">
-              <thead>
-                <tr>
-                  <th style="width:90px">ID</th>
-                  <th>Tarea</th>
-                  <th>Repositorio</th>
-                  <th>Rama</th>
-                  <th style="width:120px">Estado</th>
-                  <th style="width:90px">Duración</th>
-                  <th style="width:110px">Fecha</th>
-                </tr>
-              </thead>
-              <tbody id="tbl-body"></tbody>
-            </table>
           </div>
         </div>
       </section>
@@ -1174,10 +1362,33 @@ body{
         <div class="kanban-title">Kanban — Tareas Jules</div>
         <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <div class="live-badge"><span class="live-dot"></span>TIEMPO REAL</div>
-          <button class="btn btn-ghost btn-sm" onclick="switchView('dashboard',document.getElementById('nav-dashboard'))">← Dashboard</button>
-          <button class="btn btn-primary btn-sm" onclick="openNewTaskModal()">+ Nueva Tarea</button>
+          <button class="btn btn-ghost btn-sm desktop-only" onclick="switchView('dashboard',document.getElementById('nav-dashboard'))">← Dashboard</button>
+          <button class="btn btn-primary btn-sm desktop-only" onclick="openNewTaskModal()">+ Nueva Tarea</button>
         </div>
       </div>
+
+      <!-- Kanban Mobile Tabs -->
+      <div class="mobile-only" style="margin-bottom:15px">
+        <div style="display:flex; background:rgba(0,0,0,0.2); border-radius:var(--r-md); padding:4px; gap:4px; overflow-x:auto">
+          <button class="fpill active" style="flex:1; font-size:10px; padding:6px 4px; white-space:nowrap" onclick="scrollToKanbanCol('pending', this)" id="m-tab-pending">
+            COLA <span class="nav-badge" style="margin-left:4px" id="m-count-pending">0</span>
+          </button>
+          <button class="fpill" style="flex:1; font-size:10px; padding:6px 4px; white-space:nowrap" onclick="scrollToKanbanCol('running', this)" id="m-tab-running">
+            PROGRESO <span class="nav-badge" style="margin-left:4px" id="m-count-running">0</span>
+          </button>
+          <button class="fpill" style="flex:1; font-size:10px; padding:6px 4px; white-space:nowrap" onclick="scrollToKanbanCol('done', this)" id="m-tab-done">
+            LISTO <span class="nav-badge" style="margin-left:4px" id="m-count-done">0</span>
+          </button>
+          <button class="fpill" style="flex:1; font-size:10px; padding:6px 4px; white-space:nowrap" onclick="scrollToKanbanCol('error', this)" id="m-tab-error">
+            ERROR <span class="nav-badge" style="margin-left:4px" id="m-count-error">0</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile FAB -->
+      <button class="mobile-fab" onclick="openNewTaskModal()" aria-label="Nueva Tarea">
+        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"/></svg>
+      </button>
       <div class="kanban-board" id="kanban-board">
         <div class="kb-col" id="col-pending" ondragover="onDragOver(event,'pending')" ondrop="onDrop(event,'pending')" ondragleave="onDragLeave(event)">
           <div class="kb-col-head">
@@ -1205,11 +1416,11 @@ body{
         </div>
         <div class="kb-col" id="col-error" ondragover="onDragOver(event,'error')" ondrop="onDrop(event,'error')" ondragleave="onDragLeave(event)">
           <div class="kb-col-head">
-            <div class="kb-col-name"><span class="col-dot" style="background:var(--red)"></span>Error</div>
+            <div class="kb-col-name"><span class="col-dot" style="background:var(--red)"></span>Bloqueado</div>
             <span class="kb-count" id="kb-count-error">0</span>
           </div>
           <div class="kb-cards" id="kb-error"></div>
-          <div class="kb-add" onclick="openNewTaskModal('error')">+ Revisar error</div>
+          <div class="kb-add" onclick="openNewTaskModal('error')">+ Revisar bloqueo</div>
         </div>
       </div>
     </div>
@@ -1219,7 +1430,7 @@ body{
       <div class="metrics-header">
         <div class="metrics-title">Métricas & Rendimiento</div>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="btn btn-ghost btn-sm" onclick="switchView('dashboard',document.getElementById('nav-dashboard'))">← Dashboard</button>
+          <button class="btn btn-ghost btn-sm desktop-only" onclick="switchView('dashboard',document.getElementById('nav-dashboard'))">← Dashboard</button>
           <div class="live-badge" style="margin-left:4px"><span class="live-dot"></span>LIVE</div>
         </div>
       </div>
@@ -1292,8 +1503,75 @@ body{
           <div class="timeline-wrap" id="token-timeline"></div>
         </div>
       </div>
+
+      <!-- Mobile History Container -->
+      <div class="mobile-only" style="margin-top:20px">
+          <details class="card glass">
+              <summary class="card-head" style="cursor:pointer; list-style:none; display:flex; justify-content:space-between; align-items:center">
+                  <div class="card-title">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    Historial de Sesiones
+                  </div>
+                  <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="transition:transform 0.3s ease"><path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </summary>
+              <div class="card-body" id="mobile-history-list" style="padding:0">
+                  <!-- JS will populate this with a compact version of the history -->
+              </div>
+          </details>
+      </div>
     </div>
 
+
+    <!-- ─── NEURAL CHAT VIEW ─── -->
+    <div class="view" id="view-chat" style="padding: 0; background: #07070a; flex-direction: column; height: calc(100vh - var(--header-h));">
+        <!-- Task Context Header (Integrated) -->
+        <div id="v2-task-context" class="hidden" style="background: rgba(124, 58, 237, 0.05); border-bottom: 1px solid var(--border); padding: 12px 24px;">
+            <details style="width: 100%;">
+                <summary style="list-style: none; cursor: pointer; display: flex; align-items:center; justify-content: space-between;">
+                    <div style="display:flex; align-items:center; gap:10px">
+                        <span style="font-size: 14px;">📋</span>
+                        <div>
+                            <div style="font-size: 9px; font-weight: 800; color: var(--accent2); text-transform: uppercase;">Contexto de Tarea</div>
+                            <div id="v2-task-title" style="font-size: 13px; font-weight: 700; color: var(--text);">Cargando tarea...</div>
+                        </div>
+                    </div>
+                    <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="opacity: 0.5;"><path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </summary>
+                <div id="v2-task-details" style="padding-top: 15px; font-size: 12px; color: var(--text2); display: flex; flex-direction: column; gap: 8px;">
+                    <!-- Details populated via JS -->
+                </div>
+            </details>
+        </div>
+
+        <div class="chat-container-v2" id="v2-chat-messages" style="flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 20px;">
+            <div id="v2-welcome-screen" style="height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0.4; text-align: center; gap: 15px;">
+                <div style="font-size: 48px;">🧠</div>
+                <h2 style="font-family: var(--font-head); font-weight: 700; font-size: 20px;">Neural Context Explorer</h2>
+                <p style="max-width: 300px; font-size: 13px;">Pregunta a Claude sobre el código, las tareas o solicita ayuda para redactar prompts para Jules.</p>
+            </div>
+        </div>
+
+        <!-- Live Monitoring Bar for Chat -->
+        <div id="chat-live-monitor" class="hidden" style="background: rgba(124, 58, 237, 0.1); border-top: 1px solid var(--border-accent); padding: 10px 24px; font-size: 11px; color: var(--accent2); display: flex; align-items:center; gap: 12px;">
+            <span class="live-dot" style="width:7px; height:7px"></span>
+            <span id="chat-live-status">Monitoreando actividad neural...</span>
+        </div>
+
+        <div class="chat-input-area" style="padding: 24px; background: rgba(0,0,0,0.3); border-top: 1px solid var(--border);">
+            <div style="max-width: 900px; margin: 0 auto; position: relative; display: flex; flex-direction: column; gap: 12px;">
+                <div id="v2-thinking-indicator" class="hidden" style="font-size: 10px; font-weight: 800; color: var(--cyan); letter-spacing: 0.05em;">
+                    CLAUDE ESTÁ PROCESANDO...
+                </div>
+                <div style="position: relative;">
+                    <textarea id="v2-chat-input" placeholder="Pregunta algo..."
+                        style="width: 100%; background: var(--surface-opaque); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 16px 60px 16px 16px; color: #fff; resize: none; font-size: 14px; min-height: 56px; max-height: 200px; font-family: var(--font-ui); transition: border-color 0.3s;"></textarea>
+                    <button id="v2-send-btn" style="position: absolute; right: 12px; top: 11px; width: 34px; height: 34px; border-radius: 12px; background: var(--accent-grad); color: #fff; border: none; cursor: pointer; display: flex; align-items:center; justify-content:center; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- ─── HUB VIEW ─── -->
     <div class="view" id="view-hub" style="padding: 22px 30px;">
@@ -1332,13 +1610,6 @@ body{
   </main>
 </div>
 
-<!-- ══ MOBILE PANELS ══ -->
-<div id="mob-panel-dashboard" class="mob-panel active"></div>
-<div id="mob-panel-kanban" class="mob-panel"></div>
-<div id="mob-panel-metrics" class="mob-panel"></div>
-<div id="mob-panel-config" class="mob-panel"></div>
-<div id="mob-panel-session" class="mob-panel"></div>
-<div id="mob-panel-history" class="mob-panel"></div>
 </div><!-- app-root -->
 
 <!-- ══ NOTIFICATION PANEL ══ -->
@@ -1523,24 +1794,1080 @@ body{
   </div>
 </div>
 
-
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="{{ '/assets/javascript/jules-api.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/github-api-ops.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/github-context.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/task-engine.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/kanban-ui.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/gh-explorer.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/repo-aliases.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/ollama-discovery.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/ai-config.js' | relative_url }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
-    // Fix for Bug 2 in V2 Panel
-    document.addEventListener("authReady", (e) => {
-        console.log("[V2 PANEL] authReady received, unlocking UI");
-        document.getElementById("app-root")?.classList.remove("locked");
-        document.getElementById("auth-overlay")?.classList.remove("show");
-    });
-
-    // Manual bypass support
-    window.forceOpenPanel = function() {
-        document.getElementById("app-root")?.classList.remove("locked");
-        document.getElementById("auth-overlay")?.classList.remove("show");
+    window.JulesPanelState = {
+        activeRepo:          localStorage.getItem('hypenosys_active_repo') || null,
+        activeBranch:        localStorage.getItem('hypenosys_active_branch') || null,
+        activeSession:       null,
+        pollingTimer:        null,
+        hubActiveTab:        localStorage.getItem('hypenosys_hub_active_tab') || 'pull-requests',
+        rateLimitRemaining:  999,
+        requestQueue:        [],
+        isDispatching:       false,
+        currentView:         'dashboard',
+        metricsWindow:       30,
+        notifications:       [],
+        unreadCount:         0,
+        tasks:               [],
+        linkedTaskId:        localStorage.getItem('jules_linked_task_id') || null
     };
 
-    // If already authenticated by the time this runs
-    if (localStorage.getItem('gh_access_token') || sessionStorage.getItem('gh_access_token')) {
-        document.getElementById("app-root")?.classList.remove("locked");
-        document.getElementById("auth-overlay")?.classList.remove("show");
+    class GHAPIQueue {
+        constructor() { this.queue = []; this.running = false; this.minInterval = 300; }
+        enqueue(fn, priority = 1) {
+            return new Promise((resolve, reject) => {
+                this.queue.push({ fn, priority, resolve, reject });
+                this.queue.sort((a, b) => a.priority - b.priority);
+                this.dispatch();
+            });
+        }
+        async dispatch() {
+            if (this.running || !this.queue.length) return;
+            if (window.JulesPanelState.rateLimitRemaining <= 5 && this.queue[0].priority > 0) return;
+            this.running = true;
+            const { fn, resolve, reject } = this.queue.shift();
+            try { const result = await fn(); resolve(result); } catch(e) { reject(e); }
+            this.running = false;
+            setTimeout(() => this.dispatch(), this.minInterval);
+        }
     }
-</script>
+    window.GHQueue = new GHAPIQueue();
+
+    function getGitHubToken() {
+        return sessionStorage.getItem('gh_access_token') || localStorage.getItem('gh_access_token') || localStorage.getItem('github_token') || null;
+    }
+
+    function updateRateLimit(remaining) {
+        if (remaining === null || remaining === undefined) return;
+        const count = parseInt(remaining, 10);
+        window.JulesPanelState.rateLimitRemaining = count;
+        if (count <= 10 && count > 0) showToast(`⚠️ GitHub API: ${count} peticiones restantes`, 'amber');
+        else if (count === 0) showToast(`🚫 GitHub API: Rate limit alcanzado`, 'red');
+        window.dispatchEvent(new CustomEvent('ghRateLimitUpdate', { detail: { remaining: count } }));
+    }
+
+    function escapeHtml(str) {
+      return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function getTimeAgo(dateStr) {
+        if (!dateStr) return '---';
+        const seconds = Math.floor((new Date() - new Date(dateStr)) / 1000);
+        let interval = seconds / 31536000;
+        if (interval > 1) return `hace ${Math.floor(interval)} años`;
+        interval = seconds / 2592000;
+        if (interval > 1) return `hace ${Math.floor(interval)} meses`;
+        interval = seconds / 86400;
+        if (interval > 1) return `hace ${Math.floor(interval)} días`;
+        interval = seconds / 3600;
+        if (interval > 1) return `hace ${Math.floor(interval)} horas`;
+        interval = seconds / 60;
+        if (interval > 1) return `hace ${Math.floor(interval)} min`;
+        return 'hace unos segundos';
+    }
+
+    function $(id){return document.getElementById(id)}
+
+    function showToast(msg, type='green'){
+      const container = $('toast-wrap');
+      if (!container) return;
+      const t=document.createElement('div');
+      t.className='toast'; t.style.borderColor=`var(--${type})`;
+      t.innerHTML=`<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span>${msg}</span>`;
+      container.appendChild(t);
+      requestAnimationFrame(()=>requestAnimationFrame(()=>t.classList.add('show')));
+      setTimeout(()=>{t.classList.remove('show'); setTimeout(()=>t.remove(), 300)}, 3500);
+    }
+
+    function addTel(tag, msg, type='info'){
+      const d=new Date();
+      const ts=`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;
+      const box=$('tel-box'); if(!box) return;
+
+      // Remove empty state message if it exists
+      const emptyMsg = box.querySelector('.notif-empty');
+      if (emptyMsg) emptyMsg.remove();
+
+      const line=document.createElement('div');
+      line.className=`tel-line ${type}`;
+      line.innerHTML=`<div class="tel-head"><span class="tel-time">${ts}</span><span class="tel-tag ${type}">${tag}</span></div><div class="tel-msg">${msg}</div>`;
+      box.appendChild(line);
+      box.scrollTop=box.scrollHeight;
+
+      // Broadcast activity to Neural Chat
+      localStorage.setItem('jules_live_telemetry', JSON.stringify({
+          tag, msg, type, timestamp: d.toISOString()
+      }));
+    }
+
+    /* ─── AUTH ─── */
+    function showAuthCard(id) {
+        document.querySelectorAll(".auth-card").forEach(c => c.classList.add("hidden"));
+        $(id).classList.remove("hidden");
+        $("auth-overlay").classList.add("show");
+    }
+
+    function forceOpenPanel() {
+        $("auth-overlay").classList.remove("show");
+        $("app-root").classList.remove("locked");
+        initRealPanel(null);
+    }
+
+    function handleGlobalAuthError() {
+        showAuthCard("auth-card-login");
+        $("app-root").classList.add("locked");
+    }
+
+    async function initRealPanel(user) {
+        if (!user && !getGitHubToken()) { showAuthCard("auth-card-login"); return; }
+        $("auth-overlay").classList.remove("show");
+        $("app-root").classList.remove("locked");
+
+        if (user) {
+            updateUserUI(user);
+            addTel("SYSTEM", `Iniciado como ${user.login}`, "success");
+        } else {
+            addTel("SYSTEM", `Iniciado como Invitado`, "success");
+        }
+
+        await initializeRepoSelector();
+        await refreshDashboard();
+        switchView(window.JulesPanelState.currentView || 'dashboard');
+        checkClipboard();
+        startPolling();
+    }
+
+    async function updateUserUI(user) {
+        const avatarUrl = user.avatar_url || `https://github.com/${user.login}.png`;
+
+        // Sidebar
+        if ($('sb-avatar')) {
+            $('sb-avatar').innerHTML = `<img src="${avatarUrl}" style="width:100%; height:100%; border-radius:50%">`;
+        }
+        if ($('sb-user-name')) {
+            $('sb-user-name').textContent = user.login;
+        }
+
+        // Mobile Header
+        if ($('mob-avatar')) {
+            $('mob-avatar').style.display = 'flex';
+            $('mob-avatar').innerHTML = `<img src="${avatarUrl}" style="width:100%; height:100%; border-radius:50%">`;
+        }
+
+        // Desktop Header
+        if ($('hdr-user')) {
+            $('hdr-user').style.display = 'flex';
+            $('hdr-avatar').innerHTML = `<img src="${avatarUrl}" style="width:100%; height:100%; border-radius:50%">`;
+            $('hdr-username').textContent = user.login;
+        }
+
+        // Try to fetch role from team.json
+        try {
+            const res = await fetch('/_data/team.json');
+            if (res.ok) {
+                const team = await res.json();
+                const member = team.find(m => m.github && m.github.toLowerCase().includes(user.login.toLowerCase()));
+                if (member && member.role) {
+                    if ($('hdr-role')) $('hdr-role').textContent = member.role;
+                }
+            }
+        } catch (e) { console.warn("Could not fetch user role", e); }
+    }
+
+    /* ─── REPO & BRANCH ─── */
+    async function initializeRepoSelector() {
+        try {
+            const githubRepos = await window.githubContext.getRepos();
+            const sources = githubRepos.map(r => ({
+                name: `sources/github/${r.full_name}`,
+                githubRepo: { owner: r.owner, repo: r.name },
+                displayName: r.name
+            }));
+            window.julesSourcesCache = sources;
+            renderRepos(sources);
+            populateContextSelector(sources);
+        } catch (e) { console.error('[Jules] Repo init failed:', e); }
+    }
+
+    function renderRepos(sources) {
+        const list = $('repo-list'); if (!list) return;
+        list.innerHTML = '';
+        const current = window.JulesPanelState.activeRepo;
+        sources.forEach(s => {
+            const el = document.createElement('div');
+            el.className = `repo-item ${s.name === current ? 'selected' : ''}`;
+            el.innerHTML = `<span class="repo-dot"></span><span style="flex:1; overflow:hidden; text-overflow:ellipsis;">${s.displayName || s.name.split('/').pop()}</span>`;
+            el.onclick = () => switchRepo(s.name, s);
+            list.appendChild(el);
+        });
+    }
+
+    function switchRepo(sourceName, sourceObj) {
+        const oldRepo = window.JulesPanelState.activeRepo;
+        window.JulesPanelState.activeRepo = sourceName;
+        localStorage.setItem('hypenosys_active_repo', sourceName);
+        renderRepos(window.julesSourcesCache || []);
+        onRepoSelected(sourceName, sourceObj);
+        if (oldRepo && oldRepo !== sourceName) addTel("REPO", `Contexto cambiado → ${sourceName.split('/').pop()}`, "info");
+        else addTel("SYSTEM", `Contexto: ${sourceName.split('/').pop()}`, "info");
+    }
+
+    async function onRepoSelected(sourceName, sourceObject) {
+        const branchSelect = $('branch-sel'), branchMeta = $('branch-meta'), cfgPath = $('cfg-path'), aliasIn = $('alias-in'), sessCtx = $('sess-ctx');
+        if (!sourceName) return;
+        const parsed = window.parseSourceName(sourceName);
+        const repoName = parsed ? parsed.repo : sourceName, repoOwner = parsed ? parsed.owner : null;
+        if(cfgPath) cfgPath.textContent = sourceName;
+        const displayLabel = sourceObject?.displayName || repoName;
+        if(aliasIn) aliasIn.value = window.getRepoAlias(sourceName) || displayLabel;
+        if(sessCtx) sessCtx.textContent = `${displayLabel}: cargando...`;
+        branchSelect.disabled = true;
+        branchSelect.innerHTML = '<option value="">Cargando ramas...</option>';
+        branchSelect.onchange = (e) => {
+            window.JulesPanelState.activeBranch = e.target.value;
+            localStorage.setItem('jules_selected_branch', e.target.value);
+            const sessCtx = $('sess-ctx');
+            if(sessCtx) {
+                const repoLabel = $('repo-label').textContent;
+                sessCtx.textContent = `${repoLabel}: ${e.target.value}`;
+            }
+            checkBranchWarning();
+        };
+        try {
+            const branches = await window.githubContext.getBranches(repoName, repoOwner || undefined);
+            const repoData = (await window.githubContext.getRepos()).find(r => r.name === repoName && (repoOwner ? r.owner === repoOwner : true));
+            const defaultBranch = repoData ? repoData.default_branch : 'main';
+            branchSelect.innerHTML = branches.map(b => `<option value="${b.name}" ${b.name === defaultBranch ? 'selected' : ''}>${b.name}${b.name === defaultBranch ? ' ★' : ''}</option>`).join('');
+            const lastSelected = localStorage.getItem('jules_selected_branch');
+            if (lastSelected && branches.some(b => b.name === lastSelected)) branchSelect.value = lastSelected;
+            if(branchMeta) branchMeta.innerHTML = `<span class="u-dot"></span><span>${branches.length} ramas</span>`;
+            const activeBranch = branchSelect.value;
+            if(sessCtx) sessCtx.textContent = `${displayLabel}: ${activeBranch}`;
+            window.JulesPanelState.activeBranch = activeBranch;
+            checkBranchWarning();
+        } catch (e) { branchSelect.innerHTML = '<option value="main">main</option>'; }
+        finally { branchSelect.disabled = false; }
+    }
+
+    async function populateContextSelector(sources) {
+        const menu = $('repo-menu'), container = $('repo-items-container'), trigger = $('repo-trigger'), label = $('repo-label'), searchInput = $('repo-search');
+        function renderItems(filter = '') {
+            container.innerHTML = '';
+            const filtered = sources.filter(s => (s.displayName || s.name).toLowerCase().includes(filter.toLowerCase()));
+            filtered.forEach(s => {
+                const item = document.createElement('div');
+                item.className = 'custom-dropdown-item';
+                item.innerHTML = `<span>${s.displayName || s.name.split('/').pop()}</span>`;
+                item.onclick = (e) => { e.stopPropagation(); label.textContent = s.displayName || s.name.split('/').pop(); switchRepo(s.name, s); menu.style.display = 'none'; };
+                container.appendChild(item);
+            });
+        }
+        if(trigger) trigger.onclick = (e) => { e.stopPropagation(); menu.style.display = menu.style.display === 'block' ? 'none' : 'block'; };
+        if(searchInput) searchInput.oninput = (e) => renderItems(e.target.value);
+        renderItems();
+    }
+
+    /* ─── DASHBOARD DATA ─── */
+    async function refreshDashboard() {
+        try {
+            const [sessionData, tasks] = await Promise.all([
+                window.julesApi.getSessions(window.JulesPanelState.metricsWindow || 30),
+                window.taskOps.getAllTasks()
+            ]);
+
+            const sessions = sessionData.sessions || [];
+            window.julesSessionsCache = sessions;
+            window.JulesPanelState.tasks = tasks;
+
+            renderHistoryTable(sessions);
+            renderKanban(tasks, sessions);
+            updateStats();
+
+            // FEATURE 2: Emit latest output to localStorage AND trigger analysis in Chat
+            if (sessions.length > 0) {
+                const latest = sessions[0];
+                const lastOutputStr = localStorage.getItem('jules_last_output');
+                const lastOutput = lastOutputStr ? JSON.parse(lastOutputStr) : null;
+                const sessionId = latest.name.split('/').pop();
+
+                // Only emit if it's a new session or status changed
+                if (!lastOutput || lastOutput.session_id !== sessionId || lastOutput.status !== latest.state) {
+                    const payload = {
+                        session_id: sessionId,
+                        status: latest.state,
+                        title: latest.title || latest.prompt,
+                        repo: latest.sourceContext?.source?.split('/').pop() || '---',
+                        timestamp: new Date().toISOString()
+                    };
+                    localStorage.setItem('jules_last_output', JSON.stringify(payload));
+
+                    // If integrated chat is active and session completed, trigger analysis
+                    if (['COMPLETED', 'FAILED'].includes(latest.state)) {
+                        triggerAutomatedAnalysis(payload);
+                    }
+                }
+            }
+
+            sessions.forEach(s => {
+                if (s.state === 'AWAITING_PLAN_APPROVAL' || s.state === 'AWAITING_USER_FEEDBACK') {
+                    const idSafe = s.name.split('/').pop();
+                    if (!localStorage.getItem(`jules_notif_approval_${idSafe}`)) {
+                        showToast(`Sesión ${idSafe} espera revisión. <button onclick="openDrawer('${s.name}')" style="background:none;border:none;color:#fff;text-decoration:underline;cursor:pointer;padding:0;margin-left:10px;">ABRIR</button>`, 'amber');
+                        localStorage.setItem(`jules_notif_approval_${idSafe}`, Date.now());
+                    }
+                }
+            });
+        } catch (e) { console.error('[Jules] refreshDashboard error:', e); }
+    }
+
+    async function refreshSessions() { await refreshDashboard(); }
+
+    function renderHistoryTable(sessions) {
+        const body = $('tbl-body'); if (!body) return;
+        if (!sessions.length) { body.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--text3);">Sin sesiones</td></tr>'; return; }
+
+        // Desktop Table
+        body.innerHTML = sessions.map(s => {
+            const statusLabel = { 'IN_PROGRESS': 'activo', 'COMPLETED': 'listo', 'FAILED': 'error', 'QUEUED': 'cola', 'PLANNING': 'planificando', 'AWAITING_PLAN_APPROVAL': 'esperando' }[s.state] || 'listo';
+            return `<tr onclick="openDrawer('${s.name}')"><td><span class="sid">${s.name.split('/').pop()}</span></td><td class="tdesc">${escapeHtml(s.title || s.prompt)}</td><td class="tmono">${s.sourceContext?.source?.split('/').pop() || '---'}</td><td class="tmono">${s.sourceContext?.githubRepoContext?.startingBranch || '---'}</td><td><span class="sbadge ${s.state.toLowerCase().replace(/_/g, '-')}"><span class="pulse-dot"></span>${statusLabel}</span></td><td class="tmono">${getTimeAgo(s.createTime)}</td><td class="tmono">${new Date(s.createTime).toLocaleDateString()}</td></tr>`;
+        }).join('');
+
+        // Mobile compact list
+        const mobList = $('mobile-history-list');
+        if (mobList) {
+          mobList.innerHTML = sessions.map(s => {
+            const statusLabel = { 'IN_PROGRESS': 'activo', 'COMPLETED': 'listo', 'FAILED': 'error', 'QUEUED': 'cola', 'PLANNING': 'planificando', 'AWAITING_PLAN_APPROVAL': 'esperando' }[s.state] || 'listo';
+            return `
+              <div onclick="openDrawer('${s.name}')" style="padding:14px; border-bottom:1px solid var(--border); display:flex; flex-direction:column; gap:6px">
+                <div style="display:flex; justify-content:space-between; align-items:center">
+                  <span class="sid">${s.name.split('/').pop()}</span>
+                  <span class="sbadge ${s.state.toLowerCase().replace(/_/g, '-')}">${statusLabel}</span>
+                </div>
+                <div style="font-weight:600; color:var(--text); font-size:13px" class="tdesc">${escapeHtml(s.title || s.prompt)}</div>
+                <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--text3)">
+                  <span>${s.sourceContext?.source?.split('/').pop() || '---'}</span>
+                  <span>${getTimeAgo(s.createTime)}</span>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+    }
+
+    function renderKanban(tasks, sessions) {
+        const columns = {
+            'pending': ['Pending', 'ToDo'],
+            'running': ['Working', 'In Review'],
+            'done': ['Fixed', 'OK', 'Closed'],
+            'error': ['KO']
+        };
+
+        Object.keys(columns).forEach(colId => {
+            const colEl = $(`kb-${colId}`), countEl = $(`kb-count-${colId}`), mCountEl = $(`m-count-${colId}`);
+            if (!colEl) return;
+
+            const items = tasks.filter(t => columns[colId].includes(t.estado));
+            if (countEl) countEl.textContent = items.length;
+            if (mCountEl) mCountEl.textContent = items.length;
+
+            colEl.innerHTML = items.map(t => {
+                const jSession = t.jules_session || (sessions.find(s => s.name.endsWith(t.id)) ? { session_id: sessions.find(s => s.name.endsWith(t.id)).name.split('/').pop(), status: 'ACTIVE', initiated_by: '?' } : null);
+                const isBlocked = (t.blocked_by && t.blocked_by.length > 0);
+                const blocksOthers = (t.blocks && t.blocks.length > 0);
+
+                let sessionHtml = '';
+                if (jSession) {
+                    sessionHtml = `
+                        <div style="margin-top:8px; padding-top:8px; border-top:1px solid var(--border); display:flex; align-items:center; justify-content:space-between">
+                            <div style="display:flex; align-items:center; gap:5px">
+                                <img src="https://github.com/${jSession.initiated_by}.png" style="width:16px; height:16px; border-radius:50%; border:1px solid var(--accent)">
+                                <span style="font-size:9px; color:var(--accent2); font-weight:600">${jSession.status}</span>
+                            </div>
+                            <span style="font-size:9px; color:var(--text3); font-family:var(--font-mono)">#${jSession.session_id}</span>
+                        </div>
+                    `;
+                }
+
+                const blockBadge = isBlocked ? `<span title="Bloqueada por otras tareas" style="color:var(--red); font-size:10px">🚫</span>` : '';
+                const blocksBadge = blocksOthers ? `<span title="Bloquea a otras tareas" style="color:var(--amber); font-size:10px">⚠️</span>` : '';
+
+                const onClick = jSession ? `onclick="openDrawer('${jSession.session_id}')"` : `onclick="showToast('Tarea #${t.id}: ${escapeHtml(t.prioridad)}','info')"`;
+
+                return `
+                    <div class="kb-card ${colId}" ${onClick}>
+                        <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:5px">
+                            <div class="kb-card-id">#${t.id} ${blockBadge} ${blocksBadge}</div>
+                            <button onclick="event.stopPropagation(); openTaskInClaude('${t.id}')"
+                                    style="background:none; border:1px solid var(--border-accent); color:var(--accent2); border-radius:4px; padding:2px 5px; font-size:10px; cursor:pointer"
+                                    title="Enviar a Claude Chat">🤖</button>
+                        </div>
+                        <div class="kb-card-task">${escapeHtml(t.title || t.descripcion)}</div>
+                        <div class="kb-card-meta">
+                            <span class="kb-card-repo">${t.repository?.split('/').pop() || '---'}</span>
+                            <span class="kb-card-time">${t.prioridad}</span>
+                        </div>
+                        <div style="display:flex; margin-top:8px; gap:4px">
+                            ${(t.asignados || []).map(a => `<img src="https://github.com/${a}.png" style="width:18px; height:18px; border-radius:50%; border:1px solid var(--border)" title="${a}">`).join('')}
+                        </div>
+                        ${sessionHtml}
+                    </div>
+                `;
+            }).join('');
+        });
+    }
+
+    function openTaskInClaude(taskId) {
+        const task = window.JulesPanelState.tasks.find(t => String(t.id) === String(taskId));
+        if (!task) return;
+
+        const payload = {
+            titulo: task.titulo || task.title || '',
+            descripcion: task.descripcion || task.description || '',
+            acceptance_criteria: task.acceptance_criteria || '',
+            tags: task.tags || [],
+            prioridad: task.prioridad || '',
+            asignados: task.asignados || task.asignado_a || [],
+            comments: task.comments || [],
+            estimated_hours: task.estimated_hours || '',
+            repositorio: task.repository || task.repo || ''
+        };
+        localStorage.setItem('claude_task_context', JSON.stringify(payload));
+
+        if (task.images && task.images.length > 0) {
+            showToast("Jules no acepta imágenes, se excluirán del prompt.", "amber");
+        }
+        window.location.href = `/claude-chat.html?task_id=${taskId}&from=jules-panel`;
+    }
+
+    function checkClipboard() {
+        const payloadStr = localStorage.getItem('jules_task_payload');
+        const promptArea = $('session-prompt');
+
+        if (payloadStr) {
+            try {
+                const payload = JSON.parse(payloadStr);
+                // Also update Task Context for integrated chat
+                if (payload.source_task) {
+                    showTaskContextInChat(payload.source_task);
+                }
+            } catch(e){}
+        }
+
+        if (payloadStr && promptArea) {
+            try {
+                const payload = JSON.parse(payloadStr);
+                let formattedPrompt = "";
+
+                if (payload.user_note) {
+                    formattedPrompt += `[NOTA DEL USUARIO]\n${payload.user_note}\n\n`;
+                }
+
+                if (payload.session_context && typeof payload.session_context === 'string') {
+                    formattedPrompt += `[CONTEXTO NEURAL]\n${payload.session_context}\n\n`;
+                }
+
+                if (payload.claude_response) {
+                    formattedPrompt += `[RESPUESTA DE CLAUDE]\n${payload.claude_response}`;
+                }
+
+                promptArea.value = formattedPrompt.trim();
+                window.JulesPanelState.activePayload = payload;
+
+                showToast("Neural Link: Payload cargado con éxito", "green");
+                switchView('neural');
+
+                // Cleanup
+                localStorage.removeItem('jules_task_payload');
+                localStorage.removeItem('jules_clipboard');
+                localStorage.removeItem('jules_linked_task_id');
+
+                if (payload.source_task) {
+                    window.JulesPanelState.linkedTaskId = payload.source_task.id;
+                    checkBranchWarning();
+                }
+                return;
+            } catch (e) { console.error("Error parsing jules_task_payload", e); }
+        }
+
+        // Legacy Fallback
+        const content = localStorage.getItem('jules_clipboard');
+        if (content) {
+            if (promptArea) {
+                promptArea.value = content;
+                showToast("Prompt importado desde Claude Chat", "green");
+                switchView('neural');
+                localStorage.removeItem('jules_clipboard');
+
+                const taskId = localStorage.getItem('jules_linked_task_id');
+                if (taskId) {
+                    window.JulesPanelState.linkedTaskId = taskId;
+                    localStorage.removeItem('jules_linked_task_id');
+                    // Try to find the task in cache to check branch
+                    const task = (window.JulesPanelState.tasks || []).find(t => String(t.id) === String(taskId));
+                    if (task) {
+                        window.JulesPanelState.activePayload = { source_task: task };
+                        checkBranchWarning();
+                    }
+                }
+            }
+        }
+    }
+
+    function showTaskContextInChat(task) {
+        const banner = $('v2-task-context');
+        const title = $('v2-task-title');
+        const details = $('v2-task-details');
+        if (!banner || !title || !details) return;
+
+        banner.classList.remove('hidden');
+        title.textContent = task.titulo || task.title || `#${task.id}`;
+
+        let html = '';
+        if (task.descripcion) html += `<div><strong>Descripción:</strong> ${task.descripcion}</div>`;
+        if (task.acceptance_criteria) html += `<div><strong>Criterios:</strong> ${task.acceptance_criteria}</div>`;
+        if (task.rama) html += `<div><strong>Rama:</strong> <code>${task.rama}</code></div>`;
+
+        details.innerHTML = html;
+        window.JulesPanelState.activePayload = { ...window.JulesPanelState.activePayload, source_task: task };
+    }
+
+    function checkBranchWarning() {
+        const banner = $('branch-warning-banner');
+        const text = $('branch-warning-text');
+        if (!banner || !text) return;
+
+        const payload = window.JulesPanelState.activePayload;
+        if (!payload || !payload.source_task) {
+            banner.classList.add('hidden');
+            banner.style.display = 'none';
+            return;
+        }
+
+        const task = payload.source_task;
+        const expectedBranch = task.rama || task.branch;
+        const currentBranch = window.JulesPanelState.activeBranch;
+
+        if (expectedBranch && currentBranch && expectedBranch !== currentBranch) {
+            banner.classList.remove('hidden');
+            banner.style.display = 'flex';
+            const taskTitle = task.titulo || task.title || `#${task.id}`;
+            text.innerHTML = `<strong>⚠️ ADVERTENCIA DE RAMA:</strong> La rama actual (<code>${currentBranch}</code>) no coincide con la rama esperada para la tarea <strong>${taskTitle}</strong> (<code>${expectedBranch}</code>).`;
+            addTel("SECURITY", `Desviación de rama detectada: ${currentBranch} vs ${expectedBranch}`, "warn");
+        } else {
+            banner.classList.add('hidden');
+            banner.style.display = 'none';
+        }
+    }
+
+    function scrollToKanbanCol(colId, btn) {
+        const col = $(`col-${colId}`);
+        if (col) {
+            col.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+            document.querySelectorAll('#view-kanban .fpill').forEach(p => p.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+        }
+    }
+
+    // Sync mobile tabs with swipe scroll
+    if ($('kanban-board')) {
+        $('kanban-board').addEventListener('scroll', () => {
+            if (window.innerWidth >= 768) return;
+            const board = $('kanban-board');
+            const scrollLeft = board.scrollLeft;
+            const width = board.offsetWidth;
+            const index = Math.round(scrollLeft / width);
+            const colIds = ['pending', 'running', 'done', 'error'];
+            const activeColId = colIds[index];
+
+            document.querySelectorAll('#view-kanban .fpill').forEach(p => p.classList.remove('active'));
+            const activeTab = $(`m-tab-${activeColId}`);
+            if (activeTab) activeTab.classList.add('active');
+        });
+    }
+
+    function updateStats() {
+        const sessions = window.julesSessionsCache || [];
+        const running = sessions.filter(s => ['IN_PROGRESS', 'PLANNING', 'AWAITING_PLAN_APPROVAL'].includes(s.state)).length;
+        if($('s-active')) $('s-active').textContent = running;
+        if($('s-repos'))  $('s-repos').textContent  = (window.julesSourcesCache || []).length;
+        if($('s-total'))  $('s-total').textContent  = sessions.length;
+        if($('kanban-badge')) $('kanban-badge').textContent = running;
+    }
+
+    async function launchSession() {
+        let prompt = $('session-prompt').value.trim();
+        if (!prompt) { $('session-prompt').focus(); showToast("Escribe una tarea para Jules", "red"); return; }
+        const source = window.JulesPanelState.activeRepo, branch = window.JulesPanelState.activeBranch || 'master';
+        if (!source) { showToast("Selecciona un repositorio", "red"); return; }
+
+        // Enhance prompt based on options
+        if ($('opt-tests').classList.contains('active')) {
+            prompt += "\n\nIMPORTANTE: Genera tests unitarios automáticos para cubrir estos cambios.";
+        }
+        if ($('opt-branch').classList.contains('active')) {
+            prompt += `\n\nIMPORTANTE: Crea y trabaja en una nueva rama dedicada para esta tarea (ej: jules/task-${Date.now()}).`;
+        }
+
+        const btn = $('launch-btn'); btn.disabled = true; const originalText = btn.innerHTML; btn.innerHTML = 'Iniciando...';
+        try {
+            const body = { prompt, sourceContext: { source, githubRepoContext: { startingBranch: branch } } };
+
+            // Si Modo Automático está activo, nos aseguramos de que requirePlanApproval sea false
+            if ($('opt-auto').classList.contains('active')) {
+                body.requirePlanApproval = false;
+            } else if ($('opt-review').classList.contains('active')) {
+                body.requirePlanApproval = true;
+            }
+
+            const res = await window.julesApi.createSession(body);
+            showToast("Sesión iniciada correctamente", "green");
+            addTel("JULES", `Sesión iniciada: ${res.name.split('/').pop()}`, "success");
+
+            if (window.JulesPanelState.linkedTaskId) {
+                await window.taskOps.updateTask(window.JulesPanelState.linkedTaskId, {
+                    jules_session: {
+                        session_id: res.name.split('/').pop(),
+                        initiated_by: window.githubApi.user?.login || 'Invitado',
+                        status: 'PLANNING',
+                        updated_at: new Date().toISOString()
+                    }
+                });
+                window.JulesPanelState.linkedTaskId = null;
+            }
+
+            $('session-prompt').value = ''; await refreshDashboard();
+        } catch (e) { showToast(e.message || "Error al lanzar sesión", "red"); }
+        finally { btn.disabled = false; btn.innerHTML = originalText; }
+    }
+
+    /* ─── NAVIGATION ─── */
+    async function switchView(view, navEl) {
+        const isMobile = window.innerWidth < 768;
+
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.querySelectorAll('.nav-link, .mtab').forEach(n => n.classList.remove('active'));
+
+        if (view === 'dashboard' && !isMobile) {
+          // Desktop Dashboard: show main views in layout
+          $('view-dashboard').classList.add('active');
+          $('view-config').classList.add('active');
+          $('view-neural').classList.add('active');
+          $('view-history').classList.add('active');
+
+          // Re-insert views into dash-grid for desktop if not already there
+          const grid = document.querySelector('#view-dashboard .dash-grid');
+          if (grid) {
+              grid.appendChild($('view-config'));
+              grid.appendChild($('view-neural'));
+              grid.appendChild($('view-history'));
+          }
+        } else {
+          const target = $(`view-${view}`);
+          if (target) {
+              target.classList.add('active');
+              // Move out of grid if it's mobile or specific view
+              document.querySelector('.main').appendChild(target);
+          }
+        }
+
+        if (navEl) {
+          navEl.classList.add('active');
+        } else {
+          const sidebarLink = $(`nav-${view}`);
+          if(sidebarLink) sidebarLink.classList.add('active');
+          const mobileTab = document.querySelector(`.mtab[data-tab="${view}"]`);
+          if(mobileTab) mobileTab.classList.add('active');
+        }
+
+        window.JulesPanelState.currentView = view;
+        if (view === 'kanban') refreshSessions();
+        if (view === 'metrics' || (view === 'dashboard' && !isMobile)) {
+          renderMetrics();
+          if (window.julesSessionsCache) renderHistoryTable(window.julesSessionsCache);
+        }
+        if (view === 'neural') { /* No specific logic for neural yet */ }
+        if (view === 'hub') {
+            const activeTab = localStorage.getItem('hypenosys_hub_active_tab') || 'pull-requests';
+            const tabEl = document.querySelector(`.dr-tab[data-tab="${activeTab}"]`);
+            switchHubTab(activeTab, tabEl);
+        }
+    }
+
+    /* ─── HUB ─── */
+    async function switchHubTab(tabId, el) {
+        localStorage.setItem('hypenosys_hub_active_tab', tabId);
+        document.querySelectorAll('#view-hub .dr-tab').forEach(t => t.classList.remove('active'));
+        if(el) el.classList.add('active');
+        document.querySelectorAll('.hub-panel').forEach(p => p.style.display = 'none');
+        const panel = $(`panel-${ { 'pull-requests': 'pr', 'issues': 'issues', 'branches': 'branches', 'actions': 'actions', 'notifications': 'notifs' }[tabId]}`);
+        if(panel) panel.style.display = 'block';
+        await loadHubContent(tabId);
+    }
+
+    async function loadHubContent(tabId, force = false) {
+        const repoVal = window.JulesPanelState.activeRepo; if (!repoVal) return;
+        const parsed = window.parseSourceName(repoVal); if (!parsed) return;
+        const panel = $(`panel-${ { 'pull-requests': 'pr', 'issues': 'issues', 'branches': 'branches', 'actions': 'actions', 'notifications': 'notifs' }[tabId]}`);
+        const now = Date.now(), lastFetch = parseInt(panel.dataset.fetchedAt || '0', 10);
+        if (!force && panel.dataset.loaded === 'true' && (now - lastFetch < 60000)) return;
+        panel.innerHTML = '<div style="padding:40px; text-align:center; color:var(--text3);">Cargando...</div>';
+        try {
+            if (tabId === 'pull-requests') await fetchHubPRs(parsed.owner, parsed.repo);
+            else if (tabId === 'issues') await fetchHubIssues(parsed.owner, parsed.repo);
+            else if (tabId === 'branches') await fetchHubBranches(parsed.owner, parsed.repo);
+            else if (tabId === 'actions') await fetchHubActions(parsed.owner, parsed.repo);
+            else if (tabId === 'notifications') await fetchHubNotifs();
+            panel.dataset.loaded = 'true'; panel.dataset.fetchedAt = Date.now();
+        } catch (e) { panel.innerHTML = `<div style="padding:20px; color:var(--red);">Error: ${e.message}</div>`; }
+    }
+
+    async function fetchHubPRs(owner, repo) {
+        const token = getGitHubToken();
+        const res = await window.GHQueue.enqueue(() => fetch(`https://api.github.com/repos/${owner}/${repo}/pulls?state=open&per_page=20`, { headers: { Authorization: `Bearer ${token}` } }));
+        const prs = await res.json();
+        $('panel-pr').innerHTML = prs.map(pr => `<div style="padding:12px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;"><div><div style="font-weight:600; color:var(--text);">${pr.title}</div><div style="font-size:11px; color:var(--text3);">#${pr.number} por ${pr.user.login} • ${getTimeAgo(pr.updated_at)}</div></div><a href="${pr.html_url}" target="_blank" class="btn btn-ghost btn-sm">Ver ↗</a></div>`).join('') || '<div style="padding:40px; text-align:center; color:var(--text3);">Sin PRs</div>';
+        $('pr-badge').textContent = prs.length;
+    }
+
+    async function fetchHubIssues(owner, repo) {
+        const token = getGitHubToken();
+        const res = await window.GHQueue.enqueue(() => fetch(`https://api.github.com/repos/${owner}/${repo}/issues?state=open&per_page=20`, { headers: { Authorization: `Bearer ${token}` } }));
+        const items = await res.json(); const issues = items.filter(i => !i.pull_request);
+        $('panel-issues').innerHTML = issues.map(issue => `<div style="padding:12px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;"><div><div style="font-weight:600; color:var(--text);">${issue.title}</div><div style="font-size:11px; color:var(--text3);">#${issue.number} • ${getTimeAgo(issue.created_at)}</div></div><a href="${issue.html_url}" target="_blank" class="btn btn-ghost btn-sm">Ver ↗</a></div>`).join('') || '<div style="padding:40px; text-align:center; color:var(--text3);">Sin issues</div>';
+        $('issues-badge').textContent = issues.length;
+    }
+
+    async function fetchHubBranches(owner, repo) {
+        const token = getGitHubToken();
+        const res = await window.GHQueue.enqueue(() => fetch(`https://api.github.com/repos/${owner}/${repo}/branches?per_page=20`, { headers: { Authorization: `Bearer ${token}` } }));
+        const branches = await res.json();
+        $('panel-branches').innerHTML = branches.map(b => `<div style="padding:12px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px;"><span style="font-family:var(--font-mono); font-size:13px; color:var(--text2);">${b.name}</span>${b.protected ? '<span class="nav-badge" style="background:var(--surface-active); color:var(--accent2); font-size:9px;">🔒</span>' : ''}</div>`).join('');
+    }
+
+    async function fetchHubActions(owner, repo) {
+        const token = getGitHubToken();
+        const res = await window.GHQueue.enqueue(() => fetch(`https://api.github.com/repos/${owner}/${repo}/actions/runs?per_page=20`, { headers: { Authorization: `Bearer ${token}` } }));
+        const data = await res.json();
+        $('panel-actions').innerHTML = (data.workflow_runs || []).map(run => {
+            const color = run.conclusion === 'success' ? 'var(--green)' : run.conclusion === 'failure' ? 'var(--red)' : 'var(--amber)';
+            return `<div style="padding:12px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;"><div><div style="font-weight:600; color:var(--text);"><span style="color:${color}">●</span> ${run.name} #${run.run_number}</div><div style="font-size:11px; color:var(--text3);">${run.head_branch} • ${getTimeAgo(run.updated_at)}</div></div><a href="${run.html_url}" target="_blank" class="btn btn-ghost btn-sm">Logs ↗</a></div>`;
+        }).join('') || '<div style="padding:40px; text-align:center; color:var(--text3);">Sin runs</div>';
+    }
+
+    async function fetchHubNotifs() {
+        const token = getGitHubToken();
+        const res = await window.GHQueue.enqueue(() => fetch(`https://api.github.com/notifications?per_page=20`, { headers: { Authorization: `Bearer ${token}` } }));
+        const notifs = await res.json();
+        $('panel-notifs').innerHTML = notifs.map(n => `<div style="padding:12px; border-bottom:1px solid var(--border);"><div style="font-size:10px; color:var(--text3);">${n.repository.name}</div><div style="font-weight:600; color:var(--text);">${n.subject.title}</div></div>`).join('') || '<div style="padding:40px; text-align:center; color:var(--text3);">Estás al día</div>';
+        $('notif-badge-hub').textContent = notifs.length;
+    }
+
+    /* ─── DRAWER ─── */
+    function openDrawer(sessionId) {
+        $('dr-sub').textContent = `Sesión: ${sessionId.split('/').pop()}`;
+        $('dr-overlay').classList.add('open'); $('drawer').classList.add('open');
+        refreshActivities(sessionId);
+    }
+    function closeDrawer() { $('dr-overlay').classList.remove('open'); $('drawer').classList.remove('open'); }
+    function switchDrawerTab(tab, el) {
+        document.querySelectorAll('.dr-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.dr-panel').forEach(p => p.classList.remove('active'));
+        el.classList.add('active'); $(`dr-panel-${tab}`).classList.add('active');
+    }
+
+    async function refreshActivities(sessionId) {
+        const container = $('dr-term'), diffContainer = $('diff-content'); if (!container) return;
+        try {
+            const data = await window.julesApi.getActivities(sessionId, 50);
+            const activities = data.activities || [];
+            container.innerHTML = activities.map(a => {
+                let cls = 'tline ', txt = a.description || '';
+                if (a.progressUpdated) { cls += 'agent'; txt = a.progressUpdated.title; }
+                else if (a.planGenerated) { cls += 'sys'; txt = '📋 Plan generado'; }
+                else if (a.planApproved) { cls += 'git'; txt = '✅ Plan aprobado'; }
+                else if (a.sessionCompleted) { cls += 'git'; txt = '🏁 Sesión completada'; }
+                else if (a.sessionFailed) { cls += 'err'; txt = `❌ ERROR: ${a.sessionFailed.reason}`; }
+                return `<div class="${cls}">${escapeHtml(txt)}</div>`;
+            }).join('') || '<div class="tline sys">Sin logs</div>';
+            container.scrollTop = container.scrollHeight;
+
+            let lastPatch = null;
+            activities.forEach(a => { (a.artifacts || []).forEach(art => { if (art.changeSet?.gitPatch?.unidiffPatch) lastPatch = art.changeSet.gitPatch.unidiffPatch; }); });
+            if (lastPatch && diffContainer) {
+                diffContainer.innerHTML = `<div class="diff-body" style="border-top:1px solid var(--border)">` + lastPatch.split('\n').map(l => {
+                    let cls = 'ctx', s = ' '; if (l.startsWith('+') && !l.startsWith('+++')) { cls = 'add'; s = '+'; } else if (l.startsWith('-') && !l.startsWith('---')) { cls = 'del'; s = '-'; } else if (l.startsWith('@@')) { cls = 'hunk'; }
+                    return `<div class="diff-line ${cls}"><div class="diff-sign">${s}</div><div class="diff-code">${escapeHtml(l)}</div></div>`;
+                }).join('') + `</div>`;
+            } else if (diffContainer) diffContainer.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text3);">Sin cambios.</div>';
+        } catch (e) { container.innerHTML = `<div class="tline err">Error: ${e.message}</div>`; }
+    }
+
+    /* ─── METRICS ─── */
+    function renderMetrics() {
+        const sessions = window.julesSessionsCache || []; if (!sessions.length) return;
+        const sample = sessions.slice(0, window.JulesPanelState.metricsWindow || 30);
+        const success = sample.filter(s => s.state === 'COMPLETED').length;
+        if($('m-success-rate')) $('m-success-rate').textContent = `${Math.round((success / sample.length) * 100)}%`;
+        if($('m-tokens')) $('m-tokens').textContent = `${Math.round(sample.reduce((acc, s) => acc + (s.usage?.totalTokens || 0), 0)/1000)}k`;
+        if($('leg-done')) $('leg-done').textContent = sample.filter(s => s.state === 'COMPLETED').length;
+        if($('leg-running')) $('leg-running').textContent = sample.filter(s => s.state === 'IN_PROGRESS').length;
+        if($('leg-error')) $('leg-error').textContent = sample.filter(s => s.state === 'FAILED').length;
+        if($('leg-pending')) $('leg-pending').textContent = sample.filter(s => s.state === 'QUEUED' || s.state === 'PLANNING').length;
+    }
+
+    /* ─── POLLING ─── */
+    let sessionPollInterval = null;
+    function startPolling() {
+        stopPolling();
+        sessionPollInterval = setInterval(() => {
+            if (!document.hidden) {
+                refreshDashboard();
+                checkClipboard();
+            }
+        }, 15000);
+    }
+    function stopPolling() { if (sessionPollInterval) clearInterval(sessionPollInterval); }
+    document.addEventListener('visibilitychange', () => document.hidden ? stopPolling() : startPolling());
+    window.addEventListener('beforeunload', stopPolling);
+
+    /* ─── INIT ─── */
+    function init() {
+        let arrancado = false;
+        function boot(user) { if (arrancado) return; arrancado = true; initRealPanel(user); }
+        document.addEventListener("authReady", (e) => boot(e.detail?.user));
+        setTimeout(() => { if (!arrancado) { if (getGitHubToken()) boot(window.githubApi?.user); else showAuthCard("auth-card-error"); } }, 5000);
+    }
+    window.onload = init;
+
+    function openMobileSidebar(){ $('app-sidebar').classList.add('mob-open'); $('sidebar-backdrop').classList.add('open'); }
+    function closeMobileSidebar(){ $('app-sidebar').classList.remove('mob-open'); $('sidebar-backdrop').classList.remove('open'); }
+    function openClaudeChat(){ $('claude-modal').classList.add('open'); }
+    function closeClaudeChat(){ $('claude-modal').classList.remove('open'); }
+    function openApiModal(){ $('api-modal').classList.add('open'); }
+    function closeApiModal(){ $('api-modal').classList.remove('open'); }
+    function openDocs(){ alert("📚 Jules Agent V2 - Premium Neural Interface"); }
+
+    /* ─── EVENT LISTENERS ─── */
+    document.querySelectorAll('.opt-pill').forEach(pill => {
+        pill.onclick = () => {
+            pill.classList.toggle('active');
+            // If Auto is enabled, Review might be redundant or contradictory?
+            // For now, let's allow free toggling unless logic dictates otherwise.
+            if (pill.id === 'opt-auto' && pill.classList.contains('active')) {
+                $('opt-review').classList.remove('active');
+            } else if (pill.id === 'opt-review' && pill.classList.contains('active')) {
+                $('opt-auto').classList.remove('active');
+            }
+        };
+    });
+
+    if($('launch-btn')) $('launch-btn').onclick = launchSession;
+    if($('dr-overlay')) $('dr-overlay').onclick = closeDrawer;
+    if($('dr-close')) $('dr-close').onclick = closeDrawer;
+
+    /* ─── NEURAL CHAT V2 LOGIC ─── */
+    let chatV2Messages = [];
+
+    async function triggerAutomatedAnalysis(output) {
+        const analyzedKey = `v2_jules_analyzed_${output.session_id}_${output.status}`;
+        if (localStorage.getItem(analyzedKey)) return;
+        localStorage.setItem(analyzedKey, 'true');
+
+        chatV2Messages.push({ role: 'system', content: `Analizando resultado de Jules (Sesión #${output.session_id})...` });
+        renderChatV2Messages();
+
+        try {
+            const config = window.aiConfig?.getActiveConfig() || JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
+            const prompt = `Jules ha completado una operación (Estado: ${output.status}).\n\nDETALLES:\n- Sesión: #${output.session_id}\n- Tarea: ${output.title}\n- Repo: ${output.repo}\n\nAnaliza el resultado y prepara un resumen accionable.`;
+
+            const messages = [
+                { role: 'system', content: 'Eres un analista de operaciones de agentes autónomos.' },
+                { role: 'user', content: prompt }
+            ];
+
+            const analysis = await callCustomProvider(config, messages);
+            chatV2Messages.push({ role: 'assistant', content: `[ANÁLISIS AUTOMÁTICO JULES]\n\n${analysis}` });
+            renderChatV2Messages();
+        } catch(e) {
+            console.error("Auto-analysis failed", e);
+        }
+    }
+
+    // Listener for real-time telemetry from Jules
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'jules_live_telemetry' && e.newValue) {
+            const tel = JSON.parse(e.newValue);
+            showChatLiveActivity(tel);
+        }
+    });
+
+    let activityTimeout = null;
+    function showChatLiveActivity(tel) {
+        const monitor = $('chat-live-monitor');
+        const status = $('chat-live-status');
+        if (!monitor || !status) return;
+
+        monitor.classList.remove('hidden');
+        status.textContent = `[${tel.tag}] ${tel.msg}`;
+
+        // Auto-hide after 10 seconds of inactivity unless it's a critical update
+        if (activityTimeout) clearTimeout(activityTimeout);
+        activityTimeout = setTimeout(() => {
+            monitor.classList.add('hidden');
+        }, 10000);
+    }
+
+    async function sendChatV2Msg() {
+        const input = $('v2-chat-input');
+        const content = input.value.trim();
+        if (!content) return;
+
+        // Add user message
+        const userMsg = { role: 'user', content };
+        chatV2Messages.push(userMsg);
+        renderChatV2Messages();
+        input.value = '';
+        input.style.height = 'auto';
+
+        const thinking = $('v2-thinking-indicator');
+        thinking.classList.remove('hidden');
+
+        try {
+            const config = window.aiConfig?.getActiveConfig() || JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
+            const systemPrompt = "Eres Claude, un asistente experto integrado en el panel de control de Hypenosys.";
+
+            // Build context from active task if exists
+            let fullPrompt = content;
+            if (window.JulesPanelState.activePayload?.source_task) {
+                const t = window.JulesPanelState.activePayload.source_task;
+                fullPrompt = `[CONTEXTO TAREA #${t.id}: ${t.titulo}]\n${content}`;
+            }
+
+            const messages = [
+                { role: 'system', content: systemPrompt },
+                ...chatV2Messages.map(m => ({ role: m.role, content: m.content }))
+            ];
+
+            // For now, use a simplified non-streaming call for the integrated tab
+            // In a real scenario, we'd port the full consumeStream logic
+            const response = await callCustomProvider(config, messages);
+
+            chatV2Messages.push({ role: 'assistant', content: response });
+            renderChatV2Messages();
+        } catch (e) {
+            console.error('[ChatV2] Error:', e);
+            showToast("Error en comunicación con Claude", "red");
+        } finally {
+            thinking.classList.add('hidden');
+        }
+    }
+
+    function renderChatV2Messages() {
+        const container = $('v2-chat-messages');
+        if (!container) return;
+
+        if (chatV2Messages.length === 0) {
+            // Restore welcome screen if no messages
+            container.innerHTML = `
+                <div id="v2-welcome-screen" style="height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0.4; text-align: center; gap: 15px;">
+                    <div style="font-size: 48px;">🧠</div>
+                    <h2 style="font-family: var(--font-head); font-weight: 700; font-size: 20px;">Neural Context Explorer</h2>
+                    <p style="max-width: 300px; font-size: 13px;">Pregunta a Claude sobre el código, las tareas o solicita ayuda para redactar prompts para Jules.</p>
+                </div>`;
+            return;
+        }
+
+        container.innerHTML = chatV2Messages.map((m, idx) => {
+            if (m.role === 'system') {
+                return `<div class="message-system">${m.content}</div>`;
+            }
+            return `
+            <div class="message-${m.role === 'user' ? 'user' : 'claude'}">
+                <div style="font-size: 10px; font-weight: 800; opacity: 0.5; margin-bottom: 8px; letter-spacing: 0.05em;">
+                    ${m.role === 'user' ? 'DESARROLLADOR' : 'CLAUDE NEURAL'}
+                </div>
+                <div class="prose-invert" style="font-size: 13.5px; line-height: 1.6;">
+                    ${marked.parse(m.content)}
+                </div>
+                ${m.role === 'assistant' ? `
+                    <button onclick="copyToJulesPrompt(${idx})" style="margin-top: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--accent2); font-size: 10px; padding: 4px 8px; border-radius: 4px; cursor: pointer;">
+                        📥 USAR COMO PROMPT
+                    </button>
+                ` : ''}
+            </div>`;
+        }).join('');
+        container.scrollTop = container.scrollHeight;
+    }
+
+    window.copyToJulesPrompt = (idx) => {
+        const msg = chatV2Messages[idx];
+        if (msg && msg.role === 'assistant') {
+            $('session-prompt').value = msg.content;
+            showToast("Prompt copiado a la sección Neural", "green");
+            switchView('neural');
+        }
+    };
+
+    async function callCustomProvider(config, messages) {
+        const baseUrl = (config.base_url || 'https://api.anthropic.com/v1').replace(/\/$/, '');
+        const isAnthropic = baseUrl.includes('anthropic.com');
+        const endpoint = isAnthropic ? `${baseUrl}/messages` : `${baseUrl}/chat/completions`;
+
+        const headers = { 'Content-Type': 'application/json' };
+        let body = {};
+
+        if (isAnthropic) {
+            headers['x-api-key'] = config.api_key;
+            headers['anthropic-version'] = '2023-06-01';
+            headers['anthropic-dangerous-direct-browser-access'] = 'true';
+            body = {
+                model: config.model || 'claude-3-5-sonnet-20241022',
+                max_tokens: 1024,
+                system: messages.find(m => m.role === 'system')?.content,
+                messages: messages.filter(m => m.role !== 'system')
+            };
+        } else {
+            headers['Authorization'] = `Bearer ${config.api_key}`;
+            body = {
+                model: config.model,
+                messages: messages,
+                temperature: 0.7
+            };
+        }
+
+        const res = await fetch(endpoint, { method: 'POST', headers, body: JSON.stringify(body) });
+        if (!res.ok) throw new Error(`API Error: ${res.status}`);
+        const data = await res.json();
+        return isAnthropic ? data.content[0].text : data.choices[0].message.content;
+    }
+
+    if($('v2-send-btn')) $('v2-send-btn').onclick = sendChatV2Msg;
+    if($('v2-chat-input')) {
+        $('v2-chat-input').onkeydown = (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendChatV2Msg();
+            }
+        };
+        $('v2-chat-input').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 200) + 'px';
+        });
+    }
+
+    // Mobile tabs listeners
+    document.querySelectorAll('.mtab').forEach(tab => {
+      tab.onclick = () => switchView(tab.dataset.tab, tab);
+    });
+</script></body></html>
