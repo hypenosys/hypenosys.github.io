@@ -1522,3 +1522,25 @@ body{
     </div>
   </div>
 </div>
+
+
+<script>
+    // Fix for Bug 2 in V2 Panel
+    document.addEventListener("authReady", (e) => {
+        console.log("[V2 PANEL] authReady received, unlocking UI");
+        document.getElementById("app-root")?.classList.remove("locked");
+        document.getElementById("auth-overlay")?.classList.remove("show");
+    });
+
+    // Manual bypass support
+    window.forceOpenPanel = function() {
+        document.getElementById("app-root")?.classList.remove("locked");
+        document.getElementById("auth-overlay")?.classList.remove("show");
+    };
+
+    // If already authenticated by the time this runs
+    if (localStorage.getItem('gh_access_token') || sessionStorage.getItem('gh_access_token')) {
+        document.getElementById("app-root")?.classList.remove("locked");
+        document.getElementById("auth-overlay")?.classList.remove("show");
+    }
+</script>
