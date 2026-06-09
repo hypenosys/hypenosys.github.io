@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-08T18:44:39.872Z",
+  "computed_at": "2026-06-09T20:08:39.369Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 26,
@@ -183,7 +183,7 @@
       "comment_activity": 1,
       "volatility": {
         "reopens": 1,
-        "reprioritizations": 15
+        "reprioritizations": 16
       },
       "workload": {
         "active_tasks": 16,
@@ -231,7 +231,7 @@
       "comment_activity": 0,
       "volatility": {
         "reopens": 1,
-        "reprioritizations": 21
+        "reprioritizations": 22
       },
       "workload": {
         "active_tasks": 19,
@@ -276,7 +276,7 @@
       "comment_activity": 0,
       "volatility": {
         "reopens": 0,
-        "reprioritizations": 11
+        "reprioritizations": 12
       },
       "workload": {
         "active_tasks": 7,
@@ -319,7 +319,7 @@
       "comment_activity": 0,
       "volatility": {
         "reopens": 0,
-        "reprioritizations": 4
+        "reprioritizations": 5
       },
       "workload": {
         "active_tasks": 5,
@@ -467,7 +467,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-06-08T18:44:41.868Z"
+      "timestamp": "2026-06-09T20:08:40.331Z"
     }
   ]
 }
