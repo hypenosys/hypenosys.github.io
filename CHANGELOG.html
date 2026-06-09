@@ -64,12 +64,15 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-success">Fixed</h5>
             <ul>
+              <li><strong>Renderizado de Comentarios:</strong> Corregido el bug donde los comentarios mostraban "undefined / Invalid Date" mediante la implementación de un sistema de fallbacks robusto para autor, fecha y cuerpo del mensaje en <code>dashboard-modals.js</code>.</li>
               <li><strong>Robustez del Dashboard:</strong> Eliminado el error "Cannot set properties of null (setting 'id')" mediante la adición de comprobaciones defensivas en <code>dashboard-kanban.js</code> y <code>dashboard-profiles.js</code>.</li>
               <li><strong>Resolución de Race Conditions:</strong> Reordenado el orden de carga de scripts en <code>dashboard.html</code> y optimizado el evento <code>authReady</code> para asegurar que los módulos de UI estén listos antes de la inicialización de datos.</li>
               <li><strong>Unificación de Sesión:</strong> Sincronizada la casilla "Remember me" y el almacenamiento de tokens (<code>gh_access_token</code>) para permitir una sesión única y portátil entre el Dashboard y el Jules Panel.</li>
             </ul>
             <h5 class="text-success">Added</h5>
             <ul>
+              <li><strong>Expansión de Contexto Claude:</strong> Ampliado el payload de tareas enviado a Claude Chat para incluir subtareas, enlaces, bloqueos, story points y metadatos de sesión de Jules.</li>
+              <li><strong>Prompt Dinámico Neuronal:</strong> Nueva lógica de renderizado en <code>claude-chat.html</code> que genera prompts enriquecidos con iconos, estados de subtareas y detección automática de campos vacíos.</li>
               <li><strong>Migración Jules Panel V2:</strong> El panel de control ha sido actualizado a la arquitectura V2 en la ruta principal <code>/jules-panel/</code>, integrando monitorización en tiempo real y gestión avanzada de repositorios.</li>
             </ul>
             <h5 class="text-success">Added</h5>

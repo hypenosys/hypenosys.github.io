@@ -172,16 +172,30 @@
                     const task = tasks.find(t => String(t.id) === String(taskId));
                     if (task) {
                         const payload = {
+                            id: task.id,
                             titulo: task.titulo || task.title || '',
                             descripcion: task.descripcion || task.description || '',
                             acceptance_criteria: task.acceptance_criteria || '',
                             tags: task.tags || [],
-                            prioridad: task.prioridad || '',
+                            prioridad: task.prioridad || task.priority || '',
                             asignados: task.asignado_a || task.asignados || [],
-                            comments: task.comments || [],
+                            comments: task.comments || task.comentarios || [],
                             estimated_hours: task.estimated_hours || '',
+                            story_points: task.story_points || '',
+                            completitud: task.completitud || '',
+                            start_date: task.start_date || '',
+                            due_date: task.due_date || '',
+                            milestone: task.milestone || '',
+                            task_type: task.task_type || '',
+                            tema_principal: task.tema_principal || '',
                             repositorio: task.repo || task.repository || '',
-                            rama: task.rama || task.branch || ''
+                            rama: task.rama || task.branch || '',
+                            subtasks: task.subtasks || task.subtareas || [],
+                            links: task.external_links || task.links || [],
+                            bloqueada_por: task.blocked_by || task.bloqueada_por || [],
+                            bloquea_a: task.blocks || task.bloquea_a || [],
+                            jules_loop_estado: task.jules_loop_estado || (task.jules_session ? task.jules_session.status : ''),
+                            jules_session_url: task.jules_session_url || (task.jules_session ? task.jules_session.session_url : '')
                         };
                         localStorage.setItem('claude_task_context', JSON.stringify(payload));
                     }
