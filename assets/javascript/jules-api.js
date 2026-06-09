@@ -150,6 +150,14 @@ function parseSourceName(sourceName) {
   if (parts.length >= 4 && parts[1] === 'github') {
     return { owner: parts[2], repo: parts.slice(3).join('/') };
   }
+  // Formato 3 (Directo): owner/repo
+  if (parts.length === 2) {
+    return { owner: parts[0], repo: parts[1] };
+  }
+  // Formato 4 (Solo repo): repo (asumirá owner por defecto en el consumidor)
+  if (parts.length === 1 && sourceName.trim() !== '') {
+    return { owner: undefined, repo: sourceName.trim() };
+  }
   return null;
 }
 
