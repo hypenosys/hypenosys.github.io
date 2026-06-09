@@ -279,6 +279,107 @@ permalink: /claude-chat.html
         margin: 0;
         border: none;
     }
+
+    /* Session List Enhancements */
+    .session-item {
+        position: relative;
+        overflow: hidden;
+        user-select: none;
+        touch-action: pan-y;
+    }
+    .session-item-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        transition: transform 0.2s ease, background-color 0.2s;
+        background-color: #1e1f29;
+        position: relative;
+        z-index: 2;
+    }
+    .session-item.active .session-item-content {
+        background-color: #44475a;
+        color: white;
+    }
+    .session-item:not(.active) .session-item-content:hover {
+        background-color: rgba(68, 71, 90, 0.5);
+    }
+
+    .session-actions {
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        padding-right: 0.5rem;
+        gap: 0.5rem;
+        z-index: 3;
+        opacity: 0;
+        transition: opacity 0.2s;
+    }
+    .session-item:hover .session-actions {
+        opacity: 1;
+    }
+
+    /* Swipe Actions for Mobile */
+    .swipe-actions {
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: 100%;
+        display: flex;
+        z-index: 1;
+    }
+    .swipe-action {
+        width: 60px;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 0.75rem;
+        font-weight: bold;
+    }
+    .swipe-action-archive { background-color: #6272a4; }
+    .swipe-action-delete { background-color: #ff5555; }
+
+    /* Archived Section */
+    .archived-sessions-container summary {
+        list-style: none;
+        cursor: pointer;
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        font-size: 10px;
+        font-weight: bold;
+        color: #6272a4;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        transition: all 0.2s;
+    }
+    .archived-sessions-container summary:hover {
+        background: rgba(98, 114, 164, 0.1);
+        color: #bd93f9;
+    }
+    .archived-sessions-container summary::-webkit-details-marker {
+        display: none;
+    }
+
+    /* Confirmation Toast */
+    .confirm-toast {
+        background: #282a36;
+        border: 1px solid #bd93f9;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        border-radius: 12px;
+        padding: 1rem;
+        min-width: 280px;
+    }
+    .confirm-toast-buttons {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+    }
 </style>
 
 <!-- Auth Loading Skeleton -->
@@ -347,10 +448,13 @@ permalink: /claude-chat.html
         </nav>
 
         <div class="px-3 pt-3 border-t border-[#44475a]">
-            <h2 class="text-[10px] font-bold text-[#bd93f9] uppercase tracking-widest">Historial de sesiones</h2>
+            <h2 class="text-[10px] font-bold text-[#bd93f9] uppercase tracking-widest mb-1">Historial de sesiones</h2>
+            <button onclick="clearAllActiveSessions()" class="text-[8px] font-bold text-[#6272a4] hover:text-[#ff5555] transition-all uppercase tracking-widest" title="Limpiar todas las sesiones activas">
+                <i class="fas fa-broom mr-1"></i> Limpiar todo
+            </button>
         </div>
 
-        <div id="session-list" class="flex-grow overflow-y-auto p-2 space-y-1">
+        <div id="session-list" class="flex-grow overflow-y-auto p-2 space-y-1 custom-scrollbar">
             <!-- Dynamic session items -->
         </div>
 
@@ -817,6 +921,11 @@ permalink: /claude-chat.html
 
         let currentSessionId = null;
         let sessions = JSON.parse(localStorage.getItem('claude_chat_sessions') || '[]');
+        let archivedSessions = JSON.parse(localStorage.getItem('claude_archived_sessions') || '[]');
+
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let longPressTimer = null;
         let isThinkingEnabled = false;
         let attachedImage = null;
         let mediaRecorder = null;
@@ -849,6 +958,61 @@ permalink: /claude-chat.html
             const overlay = document.getElementById('sidebar-overlay');
             sidebar.classList.remove('open');
             overlay.classList.remove('active');
+        }
+
+        function handleSessionTouchStart(e, id) {
+            const item = e.currentTarget;
+            const content = item.querySelector('.session-item-content');
+            const isTouch = e.type === 'touchstart';
+            const clientX = isTouch ? e.touches[0].clientX : e.clientX;
+            const clientY = isTouch ? e.touches[0].clientY : e.clientY;
+
+            touchStartX = clientX;
+            touchStartY = clientY;
+
+            // Reset others
+            document.querySelectorAll('.session-item-content').forEach(el => {
+                if (el !== content) el.style.transform = 'translateX(0)';
+            });
+
+            if (isTouch) {
+                longPressTimer = setTimeout(() => {
+                    revealSessionActions(content);
+                }, 600);
+
+                const handleEnd = (ev) => {
+                    clearTimeout(longPressTimer);
+                    const deltaX = ev.changedTouches[0].clientX - touchStartX;
+                    const deltaY = ev.changedTouches[0].clientY - touchStartY;
+
+                    if (deltaX < -50 && Math.abs(deltaY) < 30) {
+                        revealSessionActions(content);
+                    } else if (deltaX > 50) {
+                        hideSessionActions(content);
+                    }
+                    item.removeEventListener('touchend', handleEnd);
+                    item.removeEventListener('touchmove', handleMove);
+                };
+
+                const handleMove = (ev) => {
+                    const deltaX = ev.touches[0].clientX - touchStartX;
+                    const deltaY = ev.touches[0].clientY - touchStartY;
+                    if (Math.abs(deltaX) > 10 || Math.abs(deltaY) > 10) {
+                        clearTimeout(longPressTimer);
+                    }
+                };
+
+                item.addEventListener('touchend', handleEnd, { once: true });
+                item.addEventListener('touchmove', handleMove);
+            }
+        }
+
+        function revealSessionActions(content) {
+            content.style.transform = 'translateX(-120px)';
+        }
+
+        function hideSessionActions(content) {
+            content.style.transform = 'translateX(0)';
         }
 
         function escapeHtml(str) {
@@ -1624,9 +1788,9 @@ permalink: /claude-chat.html
             loadSession(id);
         }
 
-        async function loadSession(id) {
+        async function loadSession(id, isArchived = false) {
             currentSessionId = id;
-            const session = sessions.find(s => s.id === id);
+            const session = (isArchived ? archivedSessions : sessions).find(s => s.id === id);
             if (!session) return;
 
             // Close sidebar on mobile after selecting a session
@@ -1656,27 +1820,110 @@ permalink: /claude-chat.html
         function saveSessions() {
             try {
                 localStorage.setItem('claude_chat_sessions', JSON.stringify(sessions));
+                localStorage.setItem('claude_archived_sessions', JSON.stringify(archivedSessions));
             } catch (e) {
                 alert('Error: almacenamiento local lleno.');
             }
         }
 
+        function archiveSession(id) {
+            const index = sessions.findIndex(s => s.id === id);
+            if (index !== -1) {
+                const session = sessions.splice(index, 1)[0];
+                archivedSessions.unshift(session);
+                saveSessions();
+                renderSessionList();
+                if (currentSessionId === id) {
+                    currentSessionId = null;
+                    chatMessages.innerHTML = '';
+                    document.getElementById('welcome-screen')?.classList.remove('hidden');
+                    document.getElementById('session-title').textContent = 'Nueva Conversación';
+                }
+                showToast('Conversación archivada');
+            }
+        }
+
+        function unarchiveSession(id) {
+            const index = archivedSessions.findIndex(s => s.id === id);
+            if (index !== -1) {
+                const session = archivedSessions.splice(index, 1)[0];
+                sessions.unshift(session);
+                saveSessions();
+                renderSessionList();
+                showToast('Conversación restaurada');
+            }
+        }
+
+        function clearAllActiveSessions() {
+            if (sessions.length === 0) return;
+            showConfirmationToast(`¿Eliminar las ${sessions.length} conversaciones activas?`, () => {
+                sessions = [];
+                currentSessionId = null;
+                saveSessions();
+                renderSessionList();
+                chatMessages.innerHTML = '';
+                document.getElementById('welcome-screen')?.classList.remove('hidden');
+                showToast('Historial limpiado');
+            });
+        }
+
         function renderSessionList() {
             const list = document.getElementById('session-list');
-            const recentSessions = sessions.slice(0, 10);
-            list.innerHTML = recentSessions.map(s => `
-                <div onclick="loadSession('${s.id}')" class="p-2 rounded cursor-pointer text-xs transition-all ${currentSessionId === s.id ? 'bg-[#44475a] text-white' : 'text-[#6272a4] hover:bg-[#44475a]/50'} flex items-center justify-between group">
-                    <span class="truncate flex-grow">${s.title}</span>
-                    <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all">
-                        <button onclick="event.stopPropagation(); exportSession('${s.id}')" class="hover:text-[#50fa7b]" title="Exportar">
-                            <i class="fas fa-download text-[10px]"></i>
-                        </button>
-                        <button onclick="event.stopPropagation(); deleteSession('${s.id}')" class="hover:text-[#ff5555]" title="Eliminar">
-                            <i class="fas fa-trash-alt text-[10px]"></i>
-                        </button>
+
+            const renderItem = (s, isArchived = false) => `
+                <div class="session-item ${currentSessionId === s.id ? 'active' : ''}"
+                     data-id="${s.id}"
+                     data-archived="${isArchived}"
+                     onmousedown="handleSessionTouchStart(event, '${s.id}')"
+                     ontouchstart="handleSessionTouchStart(event, '${s.id}')">
+                    <div class="swipe-actions">
+                        <div class="swipe-action swipe-action-archive" onclick="event.stopPropagation(); ${isArchived ? 'unarchiveSession' : 'archiveSession'}('${s.id}')">
+                            <i class="fas fa-${isArchived ? 'box-open' : 'archive'}"></i>
+                        </div>
+                        <div class="swipe-action swipe-action-delete" onclick="event.stopPropagation(); deleteSession('${s.id}', ${isArchived})">
+                            <i class="fas fa-trash-alt"></i>
+                        </div>
+                    </div>
+                    <div onclick="loadSession('${s.id}', ${isArchived})" class="session-item-content">
+                        <span class="truncate flex-grow mr-2 text-xs">${s.title}</span>
+                        <div class="session-actions">
+                            <button onclick="event.stopPropagation(); exportSession('${s.id}')"
+                                    class="text-[#6272a4] hover:text-[#50fa7b] transition-all"
+                                    title="Exportar">
+                                <i class="fas fa-download text-[10px]"></i>
+                            </button>
+                            <button onclick="event.stopPropagation(); ${isArchived ? 'unarchiveSession' : 'archiveSession'}('${s.id}')"
+                                    class="text-[#6272a4] hover:text-[#bd93f9] transition-all"
+                                    title="${isArchived ? 'Desarchivar' : 'Archivar'}">
+                                <i class="fas fa-${isArchived ? 'box-open' : 'archive'} text-[10px]"></i>
+                            </button>
+                            <button onclick="event.stopPropagation(); deleteSession('${s.id}', ${isArchived})"
+                                    class="text-[#6272a4] hover:text-[#ff5555] transition-all"
+                                    title="Eliminar">
+                                <i class="fas fa-trash-alt text-[10px]"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
-            `).join('');
+            `;
+
+            let html = sessions.map(s => renderItem(s, false)).join('');
+
+            if (archivedSessions.length > 0) {
+                html += `
+                    <details class="archived-sessions-container mt-4">
+                        <summary class="flex items-center justify-between">
+                            <span>Archivadas (${archivedSessions.length})</span>
+                            <i class="fas fa-chevron-down text-[8px] opacity-50"></i>
+                        </summary>
+                        <div class="space-y-1 mt-2">
+                            ${archivedSessions.map(s => renderItem(s, true)).join('')}
+                        </div>
+                    </details>
+                `;
+            }
+
+            list.innerHTML = html;
         }
 
         function exportSession(id) {
@@ -1697,13 +1944,25 @@ permalink: /claude-chat.html
             URL.revokeObjectURL(url);
         }
 
-        function deleteSession(id) {
-            sessions = sessions.filter(s => s.id !== id);
-            if (currentSessionId === id) currentSessionId = null;
-            saveSessions();
-            renderSessionList();
-            if (!currentSessionId && sessions.length > 0) loadSession(sessions[0].id);
-            else if (sessions.length === 0) chatMessages.innerHTML = '';
+        function deleteSession(id, isArchived = false) {
+            showConfirmationToast('¿Eliminar esta conversación? Esta acción no se puede deshacer', () => {
+                if (isArchived) {
+                    archivedSessions = archivedSessions.filter(s => s.id !== id);
+                } else {
+                    sessions = sessions.filter(s => s.id !== id);
+                }
+
+                if (currentSessionId === id) {
+                    currentSessionId = null;
+                    chatMessages.innerHTML = '';
+                    document.getElementById('welcome-screen')?.classList.remove('hidden');
+                    document.getElementById('session-title').textContent = 'Nueva Conversación';
+                }
+
+                saveSessions();
+                renderSessionList();
+                showToast('Conversación eliminada');
+            });
         }
 
         function appendSystemMessage(msg, type = 'error') {
@@ -2512,12 +2771,42 @@ permalink: /claude-chat.html
         }
 
         function showToast(msg) {
+            if (window.hypeToast) {
+                window.hypeToast(msg, 'info');
+                return;
+            }
             console.log(msg);
             const toast = document.createElement('div');
             toast.className = 'fixed bottom-4 right-4 bg-[#44475a] text-white px-4 py-2 rounded-lg text-xs font-bold border border-[#bd93f9]/50 shadow-2xl z-[9999]';
             toast.textContent = msg;
             document.body.appendChild(toast);
             setTimeout(() => toast.remove(), 3000);
+        }
+
+        function showConfirmationToast(message, onConfirm) {
+            const container = document.getElementById('hype-toast-container');
+            if (!container) return;
+
+            const toast = document.createElement('div');
+            toast.className = 'confirm-toast hype-toast--visible pointer-events-auto mb-4 animate-slide-up';
+            toast.innerHTML = `
+                <div class="text-sm font-bold text-white mb-1">Confirmar acción</div>
+                <div class="text-xs text-[#6272a4]">${message}</div>
+                <div class="confirm-toast-buttons">
+                    <button id="confirm-btn" class="flex-grow py-2 bg-[#ff5555] text-white text-[10px] font-bold rounded-lg hover:bg-red-600 transition-all uppercase tracking-widest">Eliminar</button>
+                    <button id="cancel-btn" class="flex-grow py-2 bg-[#44475a] text-white text-[10px] font-bold rounded-lg hover:bg-[#6272a4] transition-all uppercase tracking-widest">Cancelar</button>
+                </div>
+            `;
+
+            container.appendChild(toast);
+
+            toast.querySelector('#confirm-btn').onclick = () => {
+                onConfirm();
+                toast.remove();
+            };
+            toast.querySelector('#cancel-btn').onclick = () => {
+                toast.remove();
+            };
         }
 
         async function scanOllama() {
