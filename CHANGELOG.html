@@ -90,6 +90,13 @@ permalink: /CHANGELOG.html
             </li>
             <h5 class="text-success">Fixed</h5>
             <ul>
+              <li><strong>Sincronización de Selector de Ramas (Dashboard):</strong>
+                <ul>
+                  <li>Corregido el error "No se pudieron cargar las ramas" mediante la inclusión de la dependencia <code>github-context.js</code>.</li>
+                  <li>Unificada la resolución de repositorios eliminando <code>resolveRepoPath</code> en favor de <code>parseSourceName</code>, garantizando consistencia absoluta con el Jules Panel.</li>
+                  <li>Ampliados los formatos soportados por <code>parseSourceName</code> para incluir <code>owner/repo</code> y nombres de repositorio simples.</li>
+                </ul>
+              </li>
               <li>Corregido bug de renderizado <code>undefined</code> en el prompt de Jules al importar payloads de Claude.</li>
               <li>Añadida dependencia faltante de <code>marked.js</code> en el panel de control para el renderizado de markdown en el chat.</li>
               <li><strong>Selector de Ramas y Validación (Dashboard):</strong>
