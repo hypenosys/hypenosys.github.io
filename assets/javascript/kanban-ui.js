@@ -6,9 +6,20 @@
     const STATUS_FLOW = ['BACKLOG', 'TODO', 'WORKING', 'REVIEW', 'DONE', 'BLOCKED'];
 
     const kanbanUI = {
+        expandedCards: new Set(),
+
         init: async () => {
             kanbanUI.bindEvents();
             await kanbanUI.refresh();
+        },
+
+        toggleCard: (taskId) => {
+            if (kanbanUI.expandedCards.has(taskId)) {
+                kanbanUI.expandedCards.delete(taskId);
+            } else {
+                kanbanUI.expandedCards.add(taskId);
+            }
+            kanbanUI.refresh();
         },
 
         bindEvents: () => {
@@ -100,11 +111,14 @@
                 const list = col.querySelector('.kanban-cards-list');
                 const filtered = tasks.filter(t => t.estado === status);
 
-                list.innerHTML = filtered.map(t => kanbanUI.renderCard(t)).join('');
+                list.innerHTML = filtered.map(t => {
+                    const isExpanded = kanbanUI.expandedCards.has(String(t.id));
+                    return kanbanUI.renderCard(t, isExpanded);
+                }).join('');
             });
         },
 
-        renderCard: (task) => {
+        renderCard: (task, isExpanded = false) => {
             const priorityColors = {
                 'CRITICAL': 'bg-red-500',
                 'HIGH': 'bg-orange-500',
@@ -129,109 +143,140 @@
                 <div class="text-[9px] font-bold text-red-400 mt-1 uppercase">⚠️ ${a.message}</div>
             `).join('');
 
-            const loopStates = {
-                'sin_loop': { color: 'bg-slate-700', icon: 'fa-circle' },
-                'esperando_plan': { color: 'bg-yellow-500 animate-pulse', icon: 'fa-brain' },
-                'plan_aprobado': { color: 'bg-blue-500', icon: 'fa-check-double' },
-                'ejecutando': { color: 'bg-green-500 animate-pulse', icon: 'fa-rocket' },
-                'esperando_validacion': { color: 'bg-orange-500 animate-pulse', icon: 'fa-eye' },
-                'completado': { color: 'bg-green-600', icon: 'fa-check-circle' }
-            };
-            const loop = loopStates[task.jules_loop_estado] || loopStates['sin_loop'];
-
             const currentIdx = STATUS_FLOW.indexOf(task.estado);
             const nextStatus = STATUS_FLOW[(currentIdx + 1) % STATUS_FLOW.length];
 
             const parsedTitle = typeof marked !== 'undefined' ? marked.parseInline(task.titulo) : task.titulo;
             const description = task.descripcion || task.description || '';
-            const truncatedDesc = description.length > 80 ? description.substring(0, 77) + '...' : description;
+            const parsedDesc = typeof marked !== 'undefined' ? marked.parse(description) : description;
 
             // Branch Link Logic
             const repoFullName = task.repo || task.repository || '';
             const branchName = task.rama || task.branch || '';
             const branchUrl = (repoFullName && branchName) ? `https://github.com/${repoFullName}/tree/${branchName}` : '#';
+            const displayRepo = (window.getRepoAlias ? window.getRepoAlias(repoFullName) : null) || repoFullName.split('/').pop() || '---';
 
             // Robot button action
-            const openInClaude = async (taskId) => {
-                const tasks = await window.taskOps.getAllTasks();
-                const task = tasks.find(t => String(t.id) === String(taskId));
-                if (task) {
-                    const payload = {
-                        titulo: task.titulo || task.title || '',
-                        descripcion: task.descripcion || task.description || '',
-                        acceptance_criteria: task.acceptance_criteria || '',
-                        tags: task.tags || [],
-                        prioridad: task.prioridad || '',
-                        asignados: task.asignado_a || task.asignados || [],
-                        comments: task.comments || [],
-                        estimated_hours: task.estimated_hours || '',
-                        repositorio: task.repo || task.repository || '',
-                        rama: task.rama || task.branch || ''
-                    };
-                    localStorage.setItem('claude_task_context', JSON.stringify(payload));
-                }
-                const url = `https://hypenosys.github.io/claude-chat.html?task_id=${taskId}&from=jules-panel`;
-                window.open(url, '_blank');
-            };
-            // Expose to window for inline onclick
-            window._openTaskInClaude = openInClaude;
+            if (!window._openTaskInClaude) {
+                window._openTaskInClaude = async (taskId) => {
+                    const tasks = await window.taskOps.getAllTasks();
+                    const task = tasks.find(t => String(t.id) === String(taskId));
+                    if (task) {
+                        const payload = {
+                            titulo: task.titulo || task.title || '',
+                            descripcion: task.descripcion || task.description || '',
+                            acceptance_criteria: task.acceptance_criteria || '',
+                            tags: task.tags || [],
+                            prioridad: task.prioridad || '',
+                            asignados: task.asignado_a || task.asignados || [],
+                            comments: task.comments || [],
+                            estimated_hours: task.estimated_hours || '',
+                            repositorio: task.repo || task.repository || '',
+                            rama: task.rama || task.branch || ''
+                        };
+                        localStorage.setItem('claude_task_context', JSON.stringify(payload));
+                    }
+                    const url = `https://hypenosys.github.io/claude-chat.html?task_id=${taskId}&from=jules-panel`;
+                    window.open(url, '_blank');
+                };
+            }
 
-            return `
-                <div class="session-card kanban-card mb-3 p-3" data-id="${task.id}">
-                    <div class="flex justify-between items-start mb-2">
-                        <div class="flex items-center gap-2">
-                            <span class="text-[10px] font-bold text-slate-500">${task.id}</span>
-                            <span class="badge ${statusColor} text-white text-[8px] px-1.5 py-0.5 rounded-full uppercase font-black tracking-tighter">${task.estado}</span>
-                        </div>
-                        <div class="flex items-center gap-1">
-                            <div class="w-3 h-3 rounded-full ${loop.color}" title="Loop Jules: ${task.jules_loop_estado}"></div>
-                            <span class="badge ${color} text-white text-[9px] px-2 py-0.5 rounded">${task.prioridad}</span>
-                        </div>
-                    </div>
-                    <h4 class="text-sm font-bold mb-1 line-clamp-2 prose prose-invert flex justify-between items-start gap-2">
-                        <strong>${parsedTitle}</strong>
-                        <button onclick="window._openTaskInClaude('${task.id}')"
-                                class="btn-robot-task flex-shrink-0"
-                                title="Abrir en Claude Chat"
-                                style="background: transparent; border: 1px solid #bd93f9; color: #bd93f9; border-radius: 4px; padding: 2px 6px; font-size: 12px; cursor: pointer;">
-                            🤖
-                        </button>
-                    </h4>
-                    ${truncatedDesc ? `<p class="text-[11px] text-slate-400 mb-2 italic line-clamp-2">${truncatedDesc}</p>` : ''}
-                    <div class="flex items-center gap-2 mb-2">
-                        ${(task.asignado_a || []).map(a => `
-                            <div class="w-6 h-6 rounded-full bg-purple-600 flex items-center justify-center text-[10px] font-bold" title="${a}">
-                                ${a.charAt(0)}
+            if (!isExpanded) {
+                // COLLAPSED CARD
+                return `
+                    <div class="session-card kanban-card mb-3 p-3 flex flex-col justify-between" style="height: 80px; overflow: hidden;" data-id="${task.id}">
+                        <div class="flex justify-between items-center text-[10px]">
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-slate-500">#${task.id}</span>
+                                <div class="flex gap-1">
+                                    <button onclick="event.stopPropagation(); openEditTaskModal('${task.id}')" class="text-slate-400 hover:text-white" title="Editar"><i class="fas fa-pencil-alt"></i></button>
+                                    <button onclick="event.stopPropagation(); window._openTaskInClaude('${task.id}')" class="text-slate-400 hover:text-[#bd93f9]" title="Robot"><i class="fas fa-robot"></i></button>
+                                </div>
+                                <span class="badge ${statusColor} text-white text-[8px] px-1.5 py-0.5 rounded-full uppercase font-black tracking-tighter">${task.estado}</span>
                             </div>
-                        `).join('')}
+                            <button onclick="kanbanUI.toggleCard('${task.id}')" class="text-slate-500 hover:text-white"><i class="fas fa-chevron-down"></i></button>
+                        </div>
+                        <h4 class="text-sm font-bold text-white truncate my-1 prose-invert">
+                            ${parsedTitle}
+                        </h4>
+                        <div class="flex justify-between items-center text-[10px] text-slate-500">
+                            <span class="truncate max-w-[60%] text-slate-400"><i class="fas fa-folder opacity-50 mr-1"></i>${displayRepo}</span>
+                            ${branchName ? `
+                                <span class="text-[#bd93f9] font-mono flex items-center gap-1">
+                                    <i class="fas fa-code-branch text-[8px]"></i> ${branchName}
+                                </span>
+                            ` : ''}
+                        </div>
                     </div>
-                    <div class="flex flex-wrap gap-1 mb-2">
-                        ${(task.tags || []).map(tag => `
-                            <span class="text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded border border-slate-700">${tag}</span>
-                        `).join('')}
-                    </div>
-                    <div class="flex flex-col gap-1.5 mt-3 pt-2 border-t border-slate-700/50">
-                        <div class="flex justify-between items-center">
-                            <div class="text-[10px] text-slate-400 flex items-center gap-1 truncate max-w-[150px]" title="Repositorio">
-                                <i class="fas fa-folder opacity-50"></i> ${task.repo || '---'}
+                `;
+            } else {
+                // EXPANDED CARD
+                return `
+                    <div class="session-card kanban-card mb-3 p-4" data-id="${task.id}" style="border-color: var(--accent);">
+                        <div class="flex justify-between items-start mb-3">
+                            <div class="flex items-center gap-2">
+                                <span class="text-[10px] font-bold text-slate-500">#${task.id}</span>
+                                <div class="flex gap-1">
+                                    <button onclick="event.stopPropagation(); openEditTaskModal('${task.id}')" class="text-slate-400 hover:text-white" title="Editar"><i class="fas fa-pencil-alt"></i></button>
+                                    <button onclick="event.stopPropagation(); window._openTaskInClaude('${task.id}')" class="text-slate-400 hover:text-[#bd93f9]" title="Robot"><i class="fas fa-robot"></i></button>
+                                </div>
+                                <span class="badge ${statusColor} text-white text-[8px] px-1.5 py-0.5 rounded-full uppercase font-black tracking-tighter">${task.estado}</span>
+                                <span class="badge ${color} text-white text-[8px] px-1.5 py-0.5 rounded uppercase font-bold">${task.prioridad}</span>
+                            </div>
+                            <button onclick="kanbanUI.toggleCard('${task.id}')" class="text-slate-500 hover:text-white"><i class="fas fa-chevron-up"></i></button>
+                        </div>
+
+                        <h4 class="text-base font-bold text-white mb-2 prose prose-invert">${parsedTitle}</h4>
+
+                        ${description ? `<div class="text-xs text-slate-400 mb-4 prose prose-invert max-w-full">${parsedDesc}</div>` : ''}
+
+                        <div class="flex flex-wrap gap-x-4 gap-y-2 mb-3 text-[10px] text-slate-500 border-t border-slate-800 pt-3">
+                            <span><strong class="text-slate-400 uppercase">Stage:</strong> ${task.tema_principal || '---'}</span>
+                            <span><strong class="text-slate-400 uppercase">Milestone:</strong> ${task.milestone || '---'}</span>
+                            <span><strong class="text-slate-400 uppercase">Type:</strong> ${task.task_type || '---'}</span>
+                        </div>
+
+                        <div class="flex justify-between items-center mb-4 text-[11px]">
+                            <div class="text-slate-400 flex items-center gap-1">
+                                <i class="fas fa-folder opacity-50"></i> ${displayRepo}
                             </div>
                             ${branchName ? `
-                                <a href="${branchUrl}" target="_blank" class="text-[10px] text-[#bd93f9] hover:text-[#ff79c6] flex items-center gap-1 font-mono bg-[#bd93f9]/10 px-1.5 py-0.5 rounded transition-colors" title="Ver rama en GitHub">
-                                    <svg width="10" height="10" fill="currentColor" viewBox="0 0 16 16" style="display:inline-block; vertical-align:text-bottom;"><path fill-rule="evenodd" d="M11.5 14a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm-9-11a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm3 2a2.502 2.502 0 0 1 1.987 1.027c.187.245.313.519.372.808l1.459-1.458a2.5 2.5 0 1 1 .707.707l-1.458 1.459c.289.06.563.185.808.372A2.5 2.5 0 1 1 11.5 11a2.502 2.502 0 0 1-1.027-1.987c-.187-.245-.313-.519-.372-.808L8.641 9.664a2.502 2.502 0 0 1-1.141 1.141l-1.459 1.459c.289.06.563.185.808.372A2.5 2.5 0 1 1 2.5 11a2.502 2.502 0 0 1 1.027-1.987c.187-.245.313-.519.372-.808l1.459-1.459A2.502 2.502 0 0 1 5.5 5z"/></svg>
-                                    ${branchName}
+                                <a href="${branchUrl}" target="_blank" class="text-[#bd93f9] hover:text-[#ff79c6] flex items-center gap-1 font-mono bg-[#bd93f9]/10 px-2 py-1 rounded transition-colors">
+                                    <i class="fas fa-code-branch"></i> ${branchName}
                                 </a>
                             ` : ''}
                         </div>
-                        <div class="flex justify-end gap-1">
-                            ${task.jules_session_url ? `
-                                <button onclick="window.open('${task.jules_session_url}', '_blank'); event.stopPropagation();" class="text-[9px] bg-purple-900/30 text-purple-400 border border-purple-500/30 px-2 py-0.5 rounded hover:bg-purple-900/50 transition-all">⚡ JULES</button>
-                            ` : ''}
-                            <button onclick="window.kanbanUI.moveTask('${task.id}', '${nextStatus}', this)" class="text-[9px] bg-slate-700 text-slate-300 border border-slate-600 px-2 py-0.5 rounded hover:bg-slate-600 transition-all">MOVER →</button>
+
+                        <div class="flex flex-wrap gap-1 mb-4">
+                            ${(task.tags || []).map(tag => `
+                                <span class="text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded border border-slate-700">${tag}</span>
+                            `).join('')}
                         </div>
+
+                        <div class="flex justify-between items-end border-t border-slate-800 pt-3">
+                            <div class="flex items-center gap-2">
+                                <div class="flex -space-x-2">
+                                    ${(task.asignado_a || []).map(a => `
+                                        <div class="w-7 h-7 rounded-full bg-purple-600 border-2 border-slate-900 flex items-center justify-center text-[10px] font-bold text-white" title="${a}">
+                                            ${a.charAt(0)}
+                                        </div>
+                                    `).join('')}
+                                </div>
+                                ${task.estimated_hours ? `<span class="text-[10px] text-slate-500 ml-2">Est: ${task.estimated_hours}h</span>` : ''}
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="window._openTaskInClaude('${task.id}')" class="text-[10px] bg-[#bd93f9]/20 text-[#bd93f9] border border-[#bd93f9]/30 px-3 py-1.5 rounded hover:bg-[#bd93f9]/30 transition-all font-bold">
+                                    🤖 ENVIAR A CLAUDE
+                                </button>
+                                <button onclick="window.kanbanUI.moveTask('${task.id}', '${nextStatus}', this)" class="w-8 h-8 flex items-center justify-center bg-slate-700 text-slate-300 border border-slate-600 rounded hover:bg-slate-600 transition-all">
+                                    <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                        ${alertHtml}
                     </div>
-                    ${alertHtml}
-                </div>
-            `;
+                `;
+            }
         },
 
         moveTask: async (taskId, newStatus, btn) => {
