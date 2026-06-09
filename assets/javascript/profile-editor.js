@@ -271,7 +271,7 @@
                 this.handleProviderChange(); // To show/hide base url
 
                 // Show modal AFTER populating
-                .modal('show');
+                $('#modalEditProfile').modal('show');
 
             } catch (err) {
                 console.error('[ProfileEditor] Error loading profile:', err);
@@ -413,7 +413,7 @@
                 }
 
                 window.hypeToast('Perfil actualizado correctamente ✓', 'success');
-                .modal('hide');
+                $('#modalEditProfile').modal('hide');
 
             } catch (err) {
                 console.error('[ProfileEditor] Save failed:', err);
