@@ -259,10 +259,20 @@ class AuthManager {
     }
 
     updateHeaderUI(user) {
-        const container = document.getElementById('auth-nav-container');
-        const leftContainer = document.getElementById('auth-nav-container-left');
+        // Compatibility with new Dashboard header
+        if (typeof window.renderUserStatus === 'function' && (document.getElementById('user-status') || document.getElementById('user-status-mobile'))) {
+            window.renderUserStatus(user);
+            return;
+        }
+
+        const container = document.getElementById('auth-nav-container') || document.getElementById('user-status');
+        const leftContainer = document.getElementById('auth-nav-container-left') || document.getElementById('user-status-mobile');
         const chkHeader = document.getElementById('chk-remember-me');
-        if (chkHeader) chkHeader.parentElement.remove(); // Remove legacy checkbox UI
+
+        if (chkHeader && chkHeader.parentElement) {
+            chkHeader.parentElement.remove(); // Remove legacy checkbox UI
+        }
+
         if (!container) return;
 
         if (user && !user.login) {
