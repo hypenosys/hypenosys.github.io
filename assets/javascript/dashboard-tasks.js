@@ -599,31 +599,6 @@ function openImagePreview(taskId, idx, event) {
  * Fix 1 & 2: Dynamic branch selector and validation
  */
 
-function resolveRepoPath(value) {
-    if (!value) return null;
-
-    // Si ya es owner/repo
-    if (value.includes('/')) {
-        const [owner, repo] = value.split('/');
-        return { owner, repo };
-    }
-
-    // Si es un alias, buscar el repo real en el cache
-    const repos = window.userReposCache || [];
-    const repoObj = repos.find(r => {
-        const shortName = r.name;
-        const fullName = r.full_name;
-        const displayName = window.getRepoDisplayName ? window.getRepoDisplayName(fullName, shortName) : shortName;
-        return displayName === value || shortName === value;
-    });
-
-    if (repoObj) {
-        return { owner: repoObj.owner.login || repoObj.owner, repo: repoObj.name };
-    }
-
-    return null;
-}
-
 async function updateBranchList(repoValue) {
     const btn = document.getElementById('btn-list-branches');
     if (!btn) return;
@@ -650,7 +625,7 @@ async function showBranchDropdown() {
     const dropdown = document.getElementById('branch-dropdown');
     const repoValue = repoSelect ? repoSelect.value : null;
 
-    const path = resolveRepoPath(repoValue);
+    const path = window.parseSourceName(repoValue);
     if (!path) return;
 
     dropdown.innerHTML = '<div class="p-3 text-xs text-slate-500 italic">Cargando ramas...</div>';
@@ -720,7 +695,7 @@ function validateBranch() {
             return;
         }
 
-        const path = resolveRepoPath(repoValue);
+        const path = window.parseSourceName(repoValue);
         if (!path) {
             msg.classList.add('hidden');
             return;
