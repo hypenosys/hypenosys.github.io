@@ -1923,7 +1923,12 @@ body{
     }
 
     async function initRealPanel(user) {
-        if (!user && !getGitHubToken()) { showAuthCard("auth-card-login"); return; }
+        if (!user && !getGitHubToken()) {
+            showAuthCard("auth-card-login");
+            return;
+        }
+
+        // Fix for Bug 2: Unlock when we have a session or bypass
         $("auth-overlay").classList.remove("show");
         $("app-root").classList.remove("locked");
 
