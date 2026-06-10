@@ -188,6 +188,7 @@
                             } else {
                                 console.error('[KANBAN] NeuralSessionPanel not available');
                                 // Fallback to old behavior if everything fails
+                                console.warn('[KANBAN] Retrying NeuralSession open failed, using fallback window.open');
                                 const url = `/claude-chat.html?task_id=${taskId}&from=jules-panel`;
                                 window.open(url, '_blank');
                             }

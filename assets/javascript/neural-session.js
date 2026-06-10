@@ -37,7 +37,7 @@ class NeuralSessionPanel {
      * Opens the drawer with the provided task context
      */
     open(task) {
-        if (!window.githubApi?.token) {
+        if (!window.githubApi?.getAuthToken()) {
             console.warn('[NEURAL] Auth not ready, cannot open session');
             this._showToast('Autenticación requerida para iniciar sesión neural', 'error');
             return;
@@ -375,7 +375,7 @@ document.addEventListener('authReady', () => {
 
 document.addEventListener('DOMContentLoaded', () => {
     // fallback: if auth already resolved before this script loaded
-    if (window.githubApi?.token && !window.neuralSession) {
+    if (window.githubApi?.getAuthToken && window.githubApi.getAuthToken() && !window.neuralSession) {
         window.neuralSession = new NeuralSessionPanel();
         window.neuralSession.init();
     }
