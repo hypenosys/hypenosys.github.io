@@ -79,6 +79,7 @@ permalink: /CHANGELOG.html
               <li><strong>Interactividad de Tareas (Dashboard):</strong> Restaurada la funcionalidad de los botones robot (🤖) y "ENVIAR A CLAUDE" en el Kanban, integrándolos con el nuevo flujo de sesiones neurales.</li>
               <li><strong>Neural Session Responsiveness:</strong> Corregido el fallo donde los botones robot (🤖) y "ENVIAR A CLAUDE" no respondían en el dashboard. Se ajustó el orden de carga de scripts y se actualizó la detección de sesión en <code>neural-session.js</code> para usar <code>getAuthToken()</code>.</li>
               <li><strong>Neural Link Override:</strong> Asegurada la prioridad del override de <code>_openTaskInClaude</code> en el dashboard mediante un listener de <code>DOMContentLoaded</code> con retardo de 100ms, garantizando que gane a la inicialización por defecto de <code>kanban-ui.js</code>.</li>
+              <li><strong>Limpieza de Telemetría:</strong> Eliminados los logs de diagnóstico de <code>dashboard.html</code>, <code>kanban-ui.js</code> y <code>claude-chat.html</code> tras la validación exitosa del flujo de navegación "Enviar a Claude".</li>
             </ul>
             <h5 class="text-success">Added</h5>
             <ul>

@@ -1183,14 +1183,22 @@ layout: null
     })();
 
     <!-- Hypenosys override: neural session entry point -->
+    <script>window.SITE_BASEURL = '{{ "" | relative_url }}';</script>
     <script>
-    window._openTaskInClaude = function(taskId) {
-      const task = (window.currentTasks || []).find(t => String(t.id) === String(taskId)) || { id: taskId };
-      console.log('[HYPENOSYS] Neural entry:', taskId, task);
-      const payload = encodeURIComponent(JSON.stringify(task));
-      // Use window.location.href instead of window.open to comply with "no new tab" requirement
-      window.location.href = '/claude-chat.html?task_data=' + payload;
-    };
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(function() {
+        window._openTaskInClaude = function(taskId) {
+          try {
+            const task = (window.currentTasks || []).find(t => String(t.id) === String(taskId)) || { id: taskId };
+            const payload = encodeURIComponent(JSON.stringify(task));
+            const baseUrl = window.SITE_BASEURL || '';
+            window.location.href = baseUrl + '/claude-chat.html?task_data=' + payload;
+          } catch (e) {
+            console.error('_openTaskInClaude error:', e, e.stack);
+          }
+        };
+      }, 100);
+    });
     </script>
 </body>
 </html>
