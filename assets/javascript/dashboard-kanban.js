@@ -69,13 +69,10 @@ function buildTaskCard(task) {
   cardEl.id = `card-${task.id}`;
   cardEl.draggable = true;
 
-  // Re-bind expansion logic to refresh the legacy board
-  const originalToggle = window.kanbanUI.toggleCard;
-  cardEl.onclick = (e) => {
-      if (e.target.closest('button, a, input, select, textarea')) return;
-      window.kanbanUI.toggleCard(String(task.id));
-      renderKanbanBoard(); // Force legacy refresh
-  };
+  // Re-bind actions using unified touch/click handler
+  if (window.kanbanUI && window.kanbanUI.attachEvents) {
+      window.kanbanUI.attachEvents(cardEl);
+  }
 
   cardEl.addEventListener('dragstart', e => {
     if (e.target.closest('[data-no-drag="true"]')) {
