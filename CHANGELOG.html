@@ -64,10 +64,16 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-success">Added</h5>
             <ul>
+              <li><strong>Rescate de Historial Jules (Panel V2):</strong> Portada la lógica de renderizado de actividad desde el panel antiguo. La pestaña NEURAL ahora muestra el historial de ejecución (markdown, diffs de código y logs) en la parte superior (55%) y el chat de Claude en la inferior, separados por un divisor "God Mode" con toggle de colapso.</li>
+              <li><strong>Registro de Sesiones Neurales:</strong> Al iniciar ejecución en el Jules Panel, se registra automáticamente la sesión en <code>localStorage</code> vinculándola a la tarea activa.</li>
+              <li><strong>Widget de Operaciones en Dashboard:</strong> El dashboard principal ahora cuenta con un widget dinámico sincronizado en tiempo real que lista las sesiones neurales activas y archivadas, permitiendo renombrar, archivar y eliminar sesiones, además de restaurar contextos de trabajo.</li>
+              <li><strong>Drawer de Gestión de Sesiones:</strong> Implementado panel lateral de "Sesiones" en la pestaña NEURAL para navegar y gestionar el historial de sesiones guardadas localmente.</li>
               <li><strong>Flujo Neural Bidireccional:</strong> Sincronización completa de contexto (subtareas, comentarios, historial) entre Dashboard, Claude Chat y Jules Panel V2. Incluye botones de análisis en telemetría y exportación de lógica desde Claude a Jules.</li>
             </ul>
             <h5 class="text-success">Fixed</h5>
             <ul>
+              <li><strong>Sincronización Cross-Tab:</strong> Implementados listeners del evento <code>storage</code> para asegurar que los cambios de sesiones en el Jules Panel se reflejen instantáneamente en el Dashboard y viceversa.</li>
+              <li><strong>Robustez de Renderizado:</strong> Corregido el fallo de renderizado de código diff mediante la implementación de <code>escapeHtml</code> y la desduplicación de IDs de actividad.</li>
               <li><strong>Interactividad de Tareas (Dashboard):</strong> Restaurada la funcionalidad de los botones robot (🤖) y "ENVIAR A CLAUDE" en el Kanban, integrándolos con el nuevo flujo de sesiones neurales.</li>
               <li><strong>Neural Session Responsiveness:</strong> Corregido el fallo donde los botones robot (🤖) y "ENVIAR A CLAUDE" no respondían en el dashboard. Se ajustó el orden de carga de scripts y se actualizó la detección de sesión en <code>neural-session.js</code> para usar <code>getAuthToken()</code>.</li>
             </ul>

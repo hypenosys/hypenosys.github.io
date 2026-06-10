@@ -1070,6 +1070,118 @@ layout: null
     <script src="{{ "/assets/javascript/dashboard-ui.js" | relative_url }}"></script>
     <script src="{{ "/assets/javascript/profile-editor.js" | relative_url }}"></script>
 
+    <!-- Jules Neural Operations Dashboard Logic (Area 2) -->
+    <script>
+    (function() {
+        const dashboardList = document.getElementById('jules-dashboard-sessions');
+        if (!dashboardList) return;
+
+        function renderSessions() {
+            const sessions = JSON.parse(localStorage.getItem('hy_neural_sessions') || '[]');
+            if (sessions.length === 0) {
+                dashboardList.innerHTML = `
+                    <div class="col-span-full text-center py-8 opacity-40 italic text-sm">
+                        Sin sesiones neurales activas o archivadas.
+                    </div>
+                `;
+                return;
+            }
+
+            dashboardList.innerHTML = sessions.map(s => {
+                const isActive = s.status === 'active';
+                const statusBadge = isActive
+                    ? `<span class="bg-emerald-900/30 text-emerald-400 text-[10px] px-2 py-0.5 rounded border border-emerald-500/30 font-bold">ACTIVA</span>`
+                    : `<span class="bg-slate-800 text-slate-500 text-[10px] px-2 py-0.5 rounded border border-slate-700 font-bold">ARCHIVADA</span>`;
+
+                return `
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 hover:border-indigo-500/50 transition-all group cursor-pointer" onclick="openNeuralSession('${s.id}')">
+                        <div class="flex justify-between items-start mb-3">
+                            <div class="min-w-0 flex-1">
+                                <h4 class="text-sm font-bold text-white truncate" id="sess-name-${s.id}">${s.name}</h4>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <span class="bg-indigo-900/30 text-indigo-400 text-[9px] px-1.5 py-0.5 rounded truncate max-w-[120px]">#${s.task_id || 'Task'} ${s.task_title}</span>
+                                    ${statusBadge}
+                                </div>
+                            </div>
+                            <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button onclick="event.stopPropagation(); renameSession('${s.id}')" class="p-1.5 hover:bg-slate-800 rounded text-slate-400 hover:text-white" title="Renombrar">✏️</button>
+                                <button onclick="event.stopPropagation(); archiveSession('${s.id}')" class="p-1.5 hover:bg-slate-800 rounded text-slate-400 hover:text-white" title="Archivar">🗄️</button>
+                                <button onclick="event.stopPropagation(); deleteSession('${s.id}')" class="p-1.5 hover:bg-slate-800 rounded text-slate-400 hover:text-red-400" title="Eliminar">🗑️</button>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center text-[10px] text-slate-500 font-mono">
+                            <div class="flex items-center gap-1">
+                                <i class="fa-solid fa-code-branch text-[8px]"></i> ${s.branch}
+                            </div>
+                            <span>${new Date(s.start).toLocaleDateString()}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        window.openNeuralSession = (sid) => {
+            const sessions = JSON.parse(localStorage.getItem('hy_neural_sessions') || '[]');
+            const s = sessions.find(sess => sess.id === sid);
+            if (!s) return;
+
+            // Set context for restore
+            localStorage.setItem('hy_neural_active', s.status === 'active' ? 'true' : 'false');
+            localStorage.setItem('hy_neural_session_id', s.id);
+            localStorage.setItem('hy_neural_session_name', s.name);
+            localStorage.setItem('hy_neural_session_start', s.start);
+
+            // Reconstruct task context if ID exists
+            if (s.task_id) {
+                const task = (window.taskOps?.getTaskSync ? window.taskOps.getTaskSync(s.task_id) : null)
+                         || (typeof currentTasks !== 'undefined' ? currentTasks.find(t => String(t.id) === String(s.task_id)) : null)
+                         || (window.JulesPanelState?.tasks?.find(t => String(t.id) === String(s.task_id)));
+
+                if (task) localStorage.setItem('hy_neural_task_context', JSON.stringify(task));
+            }
+
+            window.location.href = '/jules-panel-v2/';
+        };
+
+        window.renameSession = (sid) => {
+            const sessions = JSON.parse(localStorage.getItem('hy_neural_sessions') || '[]');
+            const s = sessions.find(sess => sess.id === sid);
+            if (!s) return;
+
+            const newName = prompt('Nuevo nombre de sesión:', s.name);
+            if (newName && newName.trim()) {
+                s.name = newName.trim();
+                localStorage.setItem('hy_neural_sessions', JSON.stringify(sessions));
+                renderSessions();
+            }
+        };
+
+        window.archiveSession = (sid) => {
+            const sessions = JSON.parse(localStorage.getItem('hy_neural_sessions') || '[]');
+            const s = sessions.find(sess => sess.id === sid);
+            if (!s) return;
+
+            s.status = 'archived';
+            localStorage.setItem('hy_neural_sessions', JSON.stringify(sessions));
+            renderSessions();
+        };
+
+        window.deleteSession = (sid) => {
+            if (!confirm('¿Eliminar esta sesión permanentemente?')) return;
+            let sessions = JSON.parse(localStorage.getItem('hy_neural_sessions') || '[]');
+            sessions = sessions.filter(s => s.id !== sid);
+            localStorage.setItem('hy_neural_sessions', JSON.stringify(sessions));
+            renderSessions();
+        };
+
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'hy_neural_sessions') renderSessions();
+        });
+
+        // Initial render
+        renderSessions();
+    })();
+
     <!-- Hypenosys override: redirect to claude-chat.html -->
     <script>
     (function() {
