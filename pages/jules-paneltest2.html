@@ -841,6 +841,90 @@ body{
     color: #50fa7b;
 }
 
+/* ─── JULES HISTORY STYLES ─── */
+.activity-log {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.activity-entry {
+    font-size: 13px;
+    line-height: 1.6;
+}
+.activity-entry--plan { color: var(--accent2); }
+.activity-entry--progress { color: var(--text2); }
+.activity-entry--user {
+    align-self: flex-end;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 12px 12px 4px 12px;
+    padding: 10px 14px;
+    color: var(--text);
+    max-width: 85%;
+}
+.activity-entry--agent {
+    align-self: flex-start;
+    background: linear-gradient(135deg, #150d35 0%, #0d0d14 100%);
+    border: 1px solid var(--border-accent);
+    border-radius: 12px 12px 12px 4px;
+    padding: 10px 14px;
+    color: var(--text2);
+    max-width: 85%;
+}
+.activity-code {
+    background: #020204;
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    padding: 10px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--cyan);
+    margin-top: 6px;
+    overflow-x: auto;
+}
+.dl {
+    padding: 0 8px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--text2);
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+.dl-add { color: #50fa7b; background: rgba(80, 250, 123, 0.05); }
+.dl-del { color: #ff5555; background: rgba(255, 85, 85, 0.05); }
+.dl-hunk { color: #8be9fd; background: rgba(139, 233, 253, 0.05); }
+
+#jules-history-container.collapsed {
+    flex: 0 0 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    overflow: hidden;
+    border: none !important;
+}
+#neural-divider.collapsed svg {
+    transform: rotate(-180deg);
+}
+
+/* ─── NEURAL DRAWER ─── */
+.neural-drawer-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+  z-index: 150; opacity: 0; pointer-events: none; transition: opacity var(--t-norm);
+}
+.neural-drawer-overlay.open { opacity: 1; pointer-events: auto; }
+.neural-drawer {
+  position: fixed; top: 0; right: -420px; width: 400px; height: 100vh;
+  background: var(--surface-opaque); border-left: 1px solid var(--border2);
+  box-shadow: -10px 0 40px rgba(0,0,0,0.7); z-index: 151; display: flex; flex-direction: column;
+  transition: right var(--t-norm);
+}
+.neural-drawer.open { right: 0; }
+.neural-drawer-header {
+  padding: 18px 24px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(0,0,0,0.2);
+}
+
 /* ─── ANIMATIONS ─── */
 /* Fix: use will-change only on elements that actually animate, and use transform3d for GPU compositing */
 @keyframes ringpulse{
@@ -1534,7 +1618,14 @@ body{
 
 
     <!-- ─── NEURAL CHAT VIEW ─── -->
-    <div class="view" id="view-chat" style="padding: 0; background: #07070a; flex-direction: column; height: calc(100vh - var(--header-h));">
+    <div class="view" id="view-chat" style="padding: 0; background: #07070a; flex-direction: column; height: calc(100vh - var(--header-h)); position: relative;">
+        <!-- Chat Utility Bar (Always Visible) -->
+        <div style="position: absolute; top: 12px; right: 24px; z-index: 20; display: flex; gap: 8px;">
+            <button onclick="toggleSessionDrawer()" class="btn btn-ghost btn-sm" style="padding: 6px 12px; font-size: 11px; background: rgba(13, 13, 20, 0.8); backdrop-filter: blur(8px); border: 1px solid var(--border-accent); box-shadow: 0 0 15px rgba(124, 58, 237, 0.2);">
+                <i class="fas fa-history mr-2" style="color: var(--accent2);"></i> Sesiones
+            </button>
+        </div>
+
         <!-- Task Context Header (Integrated) -->
         <div id="v2-task-context" class="hidden" style="background: rgba(124, 58, 237, 0.05); border-bottom: 1px solid var(--border); padding: 12px 24px;">
             <details style="width: 100%;">
@@ -1554,6 +1645,28 @@ body{
             </details>
         </div>
 
+        <!-- Jules Execution History (Top 55%) -->
+        <div id="jules-history-container" style="flex: 0 0 55%; overflow-y: auto; padding: 24px; border-bottom: 1px solid var(--border); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; gap: 20px; background: rgba(0,0,0,0.1);">
+            <div id="history-welcome-screen" style="height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0.3; text-align: center; gap: 15px;">
+                <div style="font-size: 40px;">⚡</div>
+                <h3 style="font-family: var(--font-head); font-weight: 700; font-size: 16px;">Jules Execution History</h3>
+                <p style="max-width: 260px; font-size: 12px;">Aquí se mostrará el progreso real de Jules, cambios de código y logs de ejecución.</p>
+            </div>
+            <div id="jules-history-log" class="activity-log"></div>
+        </div>
+
+        <!-- Styled Divider -->
+        <div id="neural-divider" style="height: 32px; background: rgba(13, 13, 20, 0.95); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; z-index: 10; backdrop-filter: blur(10px); cursor: pointer;" onclick="toggleHistoryCollapse()">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 11px; font-weight: 800; color: #bd93f9; letter-spacing: 0.1em; text-shadow: 0 0 10px rgba(189, 147, 249, 0.4);">⚡ NEURAL CONTEXT</span>
+            </div>
+            <div style="color: var(--text3); display: flex; align-items: center; gap: 8px; font-size: 10px; font-weight: 700; text-transform: uppercase;">
+                <span id="collapse-label">Colapsar Historia</span>
+                <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="transition: transform 0.3s ease;"><path d="M5 15l7-7 7 7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+        </div>
+
+        <!-- Claude Neural Chat (Bottom 45% or Full) -->
         <div class="chat-container-v2" id="v2-chat-messages" style="flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 20px;">
             <div id="v2-welcome-screen" style="height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0.4; text-align: center; gap: 15px;">
                 <div style="font-size: 48px;">🧠</div>
@@ -1805,7 +1918,20 @@ body{
   </div>
 </div>
 
-{% include neural_session_drawer.html %}
+<!-- Neural Sessions Drawer (Area 3) -->
+<div id="sessions-drawer-overlay" class="neural-drawer-overlay" onclick="toggleSessionDrawer()"></div>
+<aside id="sessions-drawer" class="neural-drawer">
+    <div class="neural-drawer-header">
+        <div style="display: flex; flex-direction: column;">
+            <span style="font-size: 10px; font-weight: 800; color: var(--accent2); text-transform: uppercase; letter-spacing: 0.15em;">Neural History</span>
+            <h3 style="font-family: var(--font-head); font-size: 18px; font-weight: 700; color: var(--text);">Sesiones Guardadas</h3>
+        </div>
+        <button onclick="toggleSessionDrawer()" class="icon-btn" style="font-size: 20px;">&times;</button>
+    </div>
+    <div id="sessions-drawer-list" style="flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 12px;">
+        <!-- List of hy_neural_sessions -->
+    </div>
+</aside>
 
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="{{ '/assets/javascript/jules-api.js' | relative_url }}"></script>
@@ -2132,6 +2258,15 @@ body{
             renderKanban(tasks, sessions);
             updateStats();
 
+            // Area 1: Polling for history if on chat view
+            if (window.JulesPanelState.currentView === 'chat') {
+                const activeSid = localStorage.getItem('hy_neural_session_id');
+                if (activeSid) {
+                    const jSession = (window.julesSessionsCache || []).find(s => s.name.endsWith(activeSid));
+                    if (jSession) refreshNeuralHistory(jSession.name);
+                }
+            }
+
             // FEATURE 2: Emit latest output to localStorage AND trigger analysis in Chat
             if (sessions.length > 0) {
                 const latest = sessions[0];
@@ -2281,6 +2416,16 @@ body{
     }
 
     function desvincularNeuralSession() {
+        const sid = localStorage.getItem('hy_neural_session_id');
+        if (sid) {
+            const sessions = JSON.parse(localStorage.getItem('hy_neural_sessions') || '[]');
+            const s = sessions.find(sess => sess.id === sid);
+            if (s) {
+                s.status = 'archived';
+                localStorage.setItem('hy_neural_sessions', JSON.stringify(sessions));
+            }
+        }
+
         localStorage.removeItem('hy_neural_active');
         localStorage.removeItem('hy_neural_task_context');
         localStorage.removeItem('hy_neural_pending_prompt');
@@ -2290,7 +2435,7 @@ body{
         if (window.JulesPanelState.activePayload) {
             delete window.JulesPanelState.activePayload.source_task;
         }
-        showToast("Sesión neural desvinculada", "info");
+        showToast("Sesión neural desvinculada (archivada)", "info");
     }
 
     function checkClipboard() {
@@ -2500,13 +2645,37 @@ body{
             }
 
             const res = await window.julesApi.createSession(body);
+            const sid = res.name.split('/').pop();
             showToast("Sesión iniciada correctamente", "green");
-            addTel("JULES", `Sesión iniciada: ${res.name.split('/').pop()}`, "success");
+            addTel("JULES", `Sesión iniciada: ${sid}`, "success");
+
+            // AREA 2: Register active Neural Session
+            const taskContext = JSON.parse(localStorage.getItem('hy_neural_task_context') || '{}');
+            const sessionName = taskContext.titulo || taskContext.title || `Sesión Neural ${new Date().toLocaleDateString()}`;
+            const now = new Date().toISOString();
+
+            localStorage.setItem('hy_neural_active', 'true');
+            localStorage.setItem('hy_neural_session_id', sid);
+            localStorage.setItem('hy_neural_session_name', sessionName);
+            localStorage.setItem('hy_neural_session_start', now);
+
+            const sessions = JSON.parse(localStorage.getItem('hy_neural_sessions') || '[]');
+            sessions.unshift({
+                id: sid,
+                name: sessionName,
+                task_id: taskContext.id || null,
+                task_title: taskContext.titulo || taskContext.title || '---',
+                branch: branch,
+                start: now,
+                status: 'active',
+                messages: []
+            });
+            localStorage.setItem('hy_neural_sessions', JSON.stringify(sessions));
 
             if (window.JulesPanelState.linkedTaskId) {
                 await window.taskOps.updateTask(window.JulesPanelState.linkedTaskId, {
                     jules_session: {
-                        session_id: res.name.split('/').pop(),
+                        session_id: sid,
                         initiated_by: window.githubApi.user?.login || 'Invitado',
                         status: 'PLANNING',
                         updated_at: new Date().toISOString()
@@ -2565,7 +2734,18 @@ body{
           renderMetrics();
           if (window.julesSessionsCache) renderHistoryTable(window.julesSessionsCache);
         }
-        if (view === 'neural') { /* No specific logic for neural yet */ }
+        if (view === 'neural') {
+            if($('v2-thinking-indicator')) $('v2-thinking-indicator').classList.add('hidden');
+            renderChatV2Messages();
+        }
+        if (view === 'chat') {
+            const activeSid = localStorage.getItem('hy_neural_session_id');
+            if (activeSid) {
+                const jSession = (window.julesSessionsCache || []).find(s => s.name.endsWith(activeSid));
+                if (jSession) refreshNeuralHistory(jSession.name);
+            }
+            renderChatV2Messages();
+        }
         if (view === 'hub') {
             const activeTab = localStorage.getItem('hypenosys_hub_active_tab') || 'pull-requests';
             const tabEl = document.querySelector(`.dr-tab[data-tab="${activeTab}"]`);
@@ -2779,6 +2959,9 @@ body{
             const tel = JSON.parse(e.newValue);
             showChatLiveActivity(tel);
         }
+        if (e.key === 'hy_neural_sessions' && $('sessions-drawer').classList.contains('open')) {
+            renderSessionDrawerList();
+        }
     });
 
     let activityTimeout = null;
@@ -2887,6 +3070,271 @@ body{
             switchView('neural');
         }
     };
+
+    /* ─── JULES HISTORY PORTED LOGIC ─── */
+    const STATE_CONFIG = {
+      'QUEUED':                  { label: 'En cola',           cls: 'queued',    icon: '⏸' },
+      'PLANNING':                { label: 'Planificando',       cls: 'running',   icon: '🧠' },
+      'AWAITING_PLAN_APPROVAL':  { label: 'Esperando aprobación', cls: 'waiting', icon: '⏳' },
+      'AWAITING_USER_FEEDBACK':  { label: 'Esperando input',    cls: 'waiting',   icon: '💬' },
+      'IN_PROGRESS':             { label: 'En progreso',        cls: 'running',   icon: '⚡' },
+      'PAUSED':                  { label: 'Pausada',            cls: 'queued',    icon: '⏸' },
+      'FAILED':                  { label: 'Fallida',            cls: 'failed',    icon: '❌' },
+      'COMPLETED':               { label: 'Completada',         cls: 'completed', icon: '✅' },
+    };
+
+    function getStateBadge(state) {
+      const cfg = STATE_CONFIG[state] || { label: state || '—', cls: 'queued', icon: '◌' };
+      return `<span class="sbadge ${cfg.cls}" style="background: rgba(255,255,255,0.05); padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 700; color: var(--text2);">
+        ${cfg.icon} ${cfg.label}
+      </span>`;
+    }
+
+    window.toggleHistoryCollapse = () => {
+        const container = $('jules-history-container');
+        const divider = $('neural-divider');
+        const label = $('collapse-label');
+        const isCollapsed = container.classList.toggle('collapsed');
+        divider.classList.toggle('collapsed', isCollapsed);
+        label.textContent = isCollapsed ? 'Expandir Historia' : 'Colapsar Historia';
+    };
+
+    /* ─── SESSION DRAWER (Area 3) ─── */
+    window.toggleSessionDrawer = () => {
+        const drawer = $('sessions-drawer');
+        const overlay = $('sessions-drawer-overlay');
+        const isOpen = drawer.classList.toggle('open');
+        overlay.classList.toggle('open', isOpen);
+        if (isOpen) renderSessionDrawerList();
+    };
+
+    function renderSessionDrawerList() {
+        const list = $('sessions-drawer-list');
+        const sessions = JSON.parse(localStorage.getItem('hy_neural_sessions') || '[]');
+        if (sessions.length === 0) {
+            list.innerHTML = '<div style="opacity: 0.3; font-style: italic; text-align: center; padding: 40px 0;">No hay sesiones registradas</div>';
+            return;
+        }
+
+        list.innerHTML = sessions.map(s => {
+            const isActive = s.status === 'active';
+            const statusColor = isActive ? 'var(--green)' : 'var(--text3)';
+            return `
+            <div style="background: var(--surface2); border: 1px solid var(--border); border-radius: var(--r-md); padding: 16px; transition: all var(--t-fast); position: relative; overflow: hidden;">
+                ${isActive ? `<div style="position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: var(--accent);"></div>` : ''}
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                    <div style="min-width: 0; flex: 1;">
+                        <div id="drawer-name-display-${s.id}" style="font-size: 14px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; display: flex; align-items: center; gap: 8px;" onclick="restoreSessionFromDrawer('${s.id}')">
+                            ${s.name}
+                        </div>
+                        <input id="drawer-name-edit-${s.id}" type="text" class="cfg-input hidden" value="${s.name}" onblur="saveRenameFromDrawer('${s.id}')" onkeydown="if(event.key==='Enter') this.blur()" style="height: 28px; font-size: 13px; padding: 4px 8px; margin-top: 4px;">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+                            <span style="font-size: 9px; color: ${statusColor}; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 4px;">
+                                ${isActive ? `<span class="u-dot" style="width:5px; height:5px;"></span>` : ''} ${isActive ? 'ACTIVA' : 'ARCHIVADA'}
+                            </span>
+                            <span style="font-size: 9px; color: var(--text3); font-family: var(--font-mono);">#${s.id}</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 6px;">
+                        <button onclick="renameFromDrawer('${s.id}')" class="icon-btn" title="Renombrar" style="width: 28px; height: 28px; background: rgba(255,255,255,0.03); border: 1px solid var(--border);">✏️</button>
+                        <button onclick="archiveFromDrawer('${s.id}')" class="icon-btn" title="Archivar" style="width: 28px; height: 28px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); ${!isActive ? 'opacity: 0.2; pointer-events: none;' : ''}">🗄️</button>
+                        <button onclick="deleteFromDrawer('${s.id}')" class="icon-btn" title="Eliminar" style="width: 28px; height: 28px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); color: var(--red);">🗑️</button>
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: var(--text2); font-family: var(--font-mono); margin-top: 4px; padding-top: 10px; border-top: 1px solid var(--border);">
+                    <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; display: flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-tasks" style="font-size: 8px; color: var(--accent2);"></i> ${s.task_title}
+                    </span>
+                    <span style="color: var(--text3);">${new Date(s.start).toLocaleDateString()}</span>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    window.renameFromDrawer = (sid) => {
+        $(`drawer-name-display-${sid}`).classList.add('hidden');
+        const edit = $(`drawer-name-edit-${sid}`);
+        edit.classList.remove('hidden');
+        edit.focus();
+    };
+
+    window.saveRenameFromDrawer = (sid) => {
+        const edit = $(`drawer-name-edit-${sid}`);
+        const newName = edit.value.trim();
+        if (newName) {
+            const sessions = JSON.parse(localStorage.getItem('hy_neural_sessions') || '[]');
+            const s = sessions.find(sess => sess.id === sid);
+            if (s) {
+                s.name = newName;
+                localStorage.setItem('hy_neural_sessions', JSON.stringify(sessions));
+                if (localStorage.getItem('hy_neural_session_id') === sid) {
+                    localStorage.setItem('hy_neural_session_name', newName);
+                }
+            }
+        }
+        renderSessionDrawerList();
+    };
+
+    window.archiveFromDrawer = (sid) => {
+        const sessions = JSON.parse(localStorage.getItem('hy_neural_sessions') || '[]');
+        const s = sessions.find(sess => sess.id === sid);
+        if (s) {
+            s.status = 'archived';
+            localStorage.setItem('hy_neural_sessions', JSON.stringify(sessions));
+            if (localStorage.getItem('hy_neural_session_id') === sid) {
+                desvincularNeuralSession();
+            }
+            renderSessionDrawerList();
+        }
+    };
+
+    window.deleteFromDrawer = (sid) => {
+        if (!confirm('¿Eliminar sesión permanentemente?')) return;
+        let sessions = JSON.parse(localStorage.getItem('hy_neural_sessions') || '[]');
+        sessions = sessions.filter(s => s.id !== sid);
+        localStorage.setItem('hy_neural_sessions', JSON.stringify(sessions));
+        if (localStorage.getItem('hy_neural_session_id') === sid) {
+            localStorage.removeItem('hy_neural_active');
+            localStorage.removeItem('hy_neural_session_id');
+            // ... other keys
+        }
+        renderSessionDrawerList();
+    };
+
+    window.restoreSessionFromDrawer = (sid) => {
+        const sessions = JSON.parse(localStorage.getItem('hy_neural_sessions') || '[]');
+        const s = sessions.find(sess => sess.id === sid);
+        if (!s) return;
+
+        localStorage.setItem('hy_neural_active', s.status === 'active' ? 'true' : 'false');
+        localStorage.setItem('hy_neural_session_id', s.id);
+        localStorage.setItem('hy_neural_session_name', s.name);
+        localStorage.setItem('hy_neural_session_start', s.start);
+
+        // Reconstruct task if possible
+        if (s.task_id) {
+            const task = (window.JulesPanelState?.tasks || []).find(t => String(t.id) === String(s.task_id));
+            if (task) localStorage.setItem('hy_neural_task_context', JSON.stringify(task));
+        }
+
+        window.location.reload(); // Quick way to restore full state
+    };
+
+    async function refreshNeuralHistory(sessionId) {
+        const log = $('jules-history-log');
+        const welcome = $('history-welcome-screen');
+        if (!log) return;
+
+        try {
+            const data = await window.julesApi.getActivities(sessionId, 50);
+            let activities = (data.activities || [])
+              .filter((a, i, arr) => arr.findIndex(x => x.id === a.id) === i);
+
+            if (activities.length > 0 && welcome) welcome.classList.add('hidden');
+
+            const existingIds = new Set([...log.querySelectorAll('[data-activity-id]')].map(el => el.dataset.activityId));
+
+            activities.forEach(activity => {
+                if (existingIds.has(activity.id)) return;
+                const html = renderActivity(activity);
+                if (!html) return;
+                const div = document.createElement('div');
+                div.dataset.activityId = activity.id;
+                div.innerHTML = html;
+                log.appendChild(div);
+            });
+
+            log.scrollTop = log.scrollHeight;
+        } catch (e) {
+            console.warn("refreshNeuralHistory error:", e);
+        }
+    }
+
+    function renderActivity(activity) {
+      let html = '';
+      let diffsHtml = '';
+
+      if (activity.artifacts && activity.artifacts.length > 0) {
+        activity.artifacts.forEach(artifact => {
+          if (artifact.changeSet?.gitPatch?.unidiffPatch) {
+            const patch = artifact.changeSet.gitPatch.unidiffPatch;
+            const msg   = artifact.changeSet.gitPatch.suggestedCommitMessage || '';
+            const lines = patch.split('\n');
+            const MAX_LINES = 100;
+            const visibleLines = lines.slice(0, MAX_LINES);
+            const hiddenCount = lines.length - visibleLines.length;
+
+            const diffLinesHtml = visibleLines.map(line => {
+              let cls = 'dl';
+              if (line.startsWith('+') && !line.startsWith('+++')) cls = 'dl dl-add';
+              else if (line.startsWith('-') && !line.startsWith('---')) cls = 'dl dl-del';
+              else if (line.startsWith('@@')) cls = 'dl dl-hunk';
+              return `<div class="${cls}">${escapeHtml(line)}</div>`;
+            }).join('');
+
+            diffsHtml += `
+              <details style="margin-top:8px;" class="diff-viewer">
+                <summary style="cursor:pointer;font-size:11px;color:var(--accent2);font-weight:600;padding:4px 0;list-style:none;display:flex;align-items:center;gap:6px;">
+                  <span>📄</span>
+                  <span>Ver cambios en código</span>
+                  ${msg ? `<span style="color:var(--text3);font-weight:400;font-size:10px;"> — ${escapeHtml(msg)}</span>` : ''}
+                </summary>
+                <div style="border:1px solid var(--border);border-radius:6px;overflow:hidden;max-height:250px;overflow-y:auto;background:rgba(0,0,0,0.2);">
+                  ${diffLinesHtml}
+                  ${hiddenCount > 0 ? `<div style="font-size:10px;color:var(--text3);padding:6px;text-align:center;border-top:1px solid var(--border);">+${hiddenCount} líneas más</div>` : ''}
+                </div>
+              </details>`;
+          }
+        });
+      }
+
+      if (activity.planGenerated) {
+        const steps = activity.planGenerated?.plan?.steps || [];
+        const stepsHtml = steps.sort((a, b) => (a.index || 0) - (b.index || 0)).map(s => `
+            <div style="padding:6px 0;border-bottom:1px solid var(--border);">
+              <div style="display:flex;gap:8px;">
+                <span style="color:var(--accent);font-weight:700;min-width:18px;">${(s.index || 0) + 1}.</span>
+                <div style="flex: 1;">
+                  <div style="color:var(--text);font-size:12px;font-weight:500;">${s.title || 'Sin título'}</div>
+                  ${s.description ? `<div style="color:var(--text2);font-size:11px;margin-top:2px;">${s.description}</div>` : ''}
+                </div>
+              </div>
+            </div>`).join('');
+
+        html = `<div class="activity-entry activity-entry--plan">
+            <div style="font-size:10px;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">📋 Plan generado (${steps.length} pasos)</div>
+            <div>${stepsHtml || '<span style="color:var(--text3)">Sin pasos</span>'}</div>
+          </div>`;
+      }
+      else if (activity.userMessaged) {
+        html = `<div class="activity-entry activity-entry--user prose-invert">${marked.parse(activity.userMessaged.userMessage || '')}</div>`;
+      }
+      else if (activity.agentMessaged) {
+        html = `<div class="activity-entry activity-entry--agent prose-invert">${marked.parse(activity.agentMessaged.agentMessage || '')}</div>`;
+      }
+      else if (activity.progressUpdated) {
+        const title = activity.progressUpdated.title || '';
+        const desc  = activity.progressUpdated.description || '';
+        html = `<div class="activity-entry activity-entry--progress">
+            <div class="prose-invert" style="font-size:12px;"><span style="color:var(--accent2);font-weight:700;">⚙️</span> ${marked.parse(title)}
+            ${desc ? `<div style="color:var(--text2);margin-top:4px;">${marked.parse(desc)}</div>` : ''}</div>
+          </div>`;
+      }
+      else if (activity.sessionCompleted) {
+        html = `<div class="activity-entry" style="color:var(--green);font-size:11px;font-weight:600;">🏁 Sesión completada
+            ${activity.sessionCompleted.message ? `<div class="prose-invert" style="font-size:11px;font-weight:400;color:var(--text2);margin-top:6px;border-top:1px solid var(--border);padding-top:6px;">${marked.parse(activity.sessionCompleted.message)}</div>` : ''}
+          </div>`;
+      }
+      else if (activity.sessionFailed) {
+        html = `<div class="activity-entry" style="color:var(--red);font-size:11px;">❌ Sesión fallida: ${escapeHtml(activity.sessionFailed.reason || 'Error desconocido')}</div>`;
+      }
+
+      if (!html && (activity.description || diffsHtml)) {
+        html = activity.description ? `<div class="activity-entry" style="color:var(--text3);font-size:10px;font-style:italic;">${escapeHtml(activity.description)}</div>` : '';
+      }
+
+      return html + diffsHtml;
+    }
 
     async function callCustomProvider(config, messages) {
         const baseUrl = (config.base_url || 'https://api.anthropic.com/v1').replace(/\/$/, '');
