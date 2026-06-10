@@ -1069,5 +1069,54 @@ layout: null
     <script src="{{ "/assets/javascript/dashboard-profiles.js" | relative_url }}"></script>
     <script src="{{ "/assets/javascript/dashboard-ui.js" | relative_url }}"></script>
     <script src="{{ "/assets/javascript/profile-editor.js" | relative_url }}"></script>
+
+    <!-- Hypenosys override: redirect to claude-chat.html -->
+    <script>
+    (function() {
+        window._openTaskInClaude = function(taskId) {
+            console.log('[HYPENOSYS] Intercepting Claude redirect for task:', taskId);
+
+            // Find task data from available global stores
+            const task = (window.taskOps?.getTaskSync ? window.taskOps.getTaskSync(taskId) : null)
+                         || (typeof currentTasks !== 'undefined' ? currentTasks.find(t => String(t.id) === String(taskId)) : null)
+                         || (window.JulesPanelState?.tasks?.find(t => String(t.id) === String(taskId)));
+
+            if (!task) {
+                console.error('[HYPENOSYS] Task not found for ID:', taskId);
+                if (window.showToast) window.showToast('Error: Tarea no encontrada', 'error');
+                return;
+            }
+
+            // Build enriched payload including history and comments
+            const payload = {
+                id: task.id,
+                titulo: task.titulo || task.title || '',
+                descripcion: task.descripcion || task.description || '',
+                rama: task.rama || task.branch || '',
+                estado: task.estado || task.status || '',
+                prioridad: task.prioridad || task.priority || '',
+                milestone: task.milestone || '',
+                tema_principal: task.tema_principal || '',
+                task_type: task.task_type || '',
+                asignados: task.asignados || task.asignado_a || [],
+                tags: task.tags || [],
+                comments: task.comments || task.comentarios || [],
+                subtasks: task.subtasks || task.subtareas || [],
+                history: task.history || task.changelog || [],
+                acceptance_criteria: task.acceptance_criteria || '',
+                repo: task.repo || task.repository || ''
+            };
+
+            const encodedData = encodeURIComponent(JSON.stringify(payload));
+            const url = `/claude-chat.html?task_data=${encodedData}`;
+
+            console.log('[HYPENOSYS] Redirecting to Claude with context:', payload);
+            console.log('[HYPENOSYS] Sample URL:', url);
+
+            window.open(url, '_blank');
+        };
+        console.log('[HYPENOSYS] Neural redirect override active');
+    })();
+    </script>
 </body>
 </html>
