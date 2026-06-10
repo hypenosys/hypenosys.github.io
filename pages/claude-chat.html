@@ -1059,57 +1059,49 @@ permalink: /claude-chat.html
                 .replace(/'/g, '&#039;');
         }
 
-        async function loadTaskContext(taskId) {
-            try {
-                const owner = 'hypenosys';
-                const repo = 'hypenosys.github.io';
-                const path = '_data/dashboard_tasks.json';
-                const branch = 'feature/team-profiles-dashboard';
-                const token = window.AuthManager?.getValidToken?.() || window.githubApi?.getAuthToken?.();
-
-                const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${branch}`;
-                const headers = { 'Accept': 'application/vnd.github.v3+json' };
-                if (token) headers['Authorization'] = `token ${token}`;
-
-                const r = await fetch(url, { headers });
-                if (!r.ok) return null;
-
-                const d = await r.json();
-                const content = JSON.parse(atob(d.content.replace(/\n/g, '')));
-                const tasks = content.tasks || [];
-
-                return tasks.find(t => String(t.id) === String(taskId));
-            } catch (e) {
-                console.error('[Claude] Error loading task context:', e);
-                return null;
-            }
+        function desvincularSesion() {
+            localStorage.removeItem('hy_neural_active');
+            localStorage.removeItem('hy_neural_task_context');
+            localStorage.removeItem('hy_neural_pending_prompt');
+            localStorage.removeItem('hy_neural_thread');
+            const banner = document.getElementById('task-context-banner');
+            if (banner) banner.remove();
+            window._activeTaskContext = null;
+            showToast('Sesión desvinculada');
         }
 
         function showTaskContextBanner(task) {
+            const isNeuralActive = localStorage.getItem('hy_neural_active') === 'true';
             const banner = document.createElement('div');
             banner.id = 'task-context-banner';
             banner.className = 'mx-6 mt-4 bg-[#bd93f9]/5 border border-[#bd93f9]/20 rounded-lg overflow-hidden animate-slide-down';
             banner.innerHTML = `
-                <details class="w-full">
+                <details class="w-full" ${isNeuralActive ? 'open' : ''}>
                     <summary class="p-3 cursor-pointer list-none flex items-center justify-between hover:bg-[#bd93f9]/10 transition-all">
                         <div class="flex items-center gap-3">
                             <div class="w-6 h-6 rounded-full bg-[#bd93f9]/20 flex items-center justify-center text-[#bd93f9]">
-                                <i class="fas fa-briefcase text-[10px]"></i>
+                                <i class="fas fa-${isNeuralActive ? 'brain' : 'briefcase'} text-[10px]"></i>
                             </div>
                             <div>
-                                <div class="text-[9px] font-bold text-[#bd93f9] uppercase tracking-widest opacity-70">Contexto de Tarea</div>
+                                <div class="text-[9px] font-bold text-[#bd93f9] uppercase tracking-widest opacity-70">
+                                    ${isNeuralActive ? 'Neural Session Activa' : 'Contexto de Tarea'}
+                                </div>
                                 <div class="text-xs font-bold text-white/90">${task.titulo || task.title}</div>
                             </div>
                         </div>
                         <i class="fas fa-chevron-down text-[10px] text-[#6272a4]"></i>
                     </summary>
                     <div class="p-4 border-t border-[#bd93f9]/10 text-xs text-[#6272a4] space-y-2">
+                        ${task.id ? `<div><strong>ID:</strong> #${task.id}</div>` : ''}
                         ${task.descripcion ? `<div><strong>Descripción:</strong> ${task.descripcion}</div>` : ''}
                         ${task.acceptance_criteria ? `<div><strong>Criterios:</strong> ${task.acceptance_criteria}</div>` : ''}
                         ${task.rama ? `<div><strong>Rama:</strong> <code class="text-[#50fa7b]">${task.rama}</code></div>` : ''}
-                        <button onclick="document.getElementById('task-context-banner').remove(); window._activeTaskContext = null;" class="mt-2 text-[9px] text-red-400 hover:text-red-300 uppercase font-bold tracking-tighter">
-                            <i class="fas fa-trash-alt mr-1"></i> Eliminar contexto
-                        </button>
+                        ${task.task_type ? `<div><strong>Tipo:</strong> ${task.task_type}</div>` : ''}
+                        <div class="flex gap-3 pt-2">
+                            <button onclick="desvincularSesion()" class="text-[9px] text-red-400 hover:text-red-300 uppercase font-bold tracking-tighter">
+                                <i class="fas fa-unlink mr-1"></i> Desvincular sesión
+                            </button>
+                        </div>
                     </div>
                 </details>
             `;
@@ -1119,7 +1111,7 @@ permalink: /claude-chat.html
 
         async function init() {
             const urlParams = new URLSearchParams(window.location.search);
-            const taskId = urlParams.get('task_id');
+            const taskDataRaw = urlParams.get('task_data');
 
             // 1. Initialize session UI first
             renderSessionList();
@@ -1127,148 +1119,91 @@ permalink: /claude-chat.html
                 loadSession(sessions[0].id);
             }
 
-            // 2. Load Task Context
+            // 2. Handle Task Data from URL
             let task = null;
-            const cachedTask = localStorage.getItem('claude_task_context');
-
-            if (cachedTask) {
-                localStorage.removeItem('claude_task_context');
+            if (taskDataRaw) {
                 try {
-                    task = JSON.parse(cachedTask);
+                    task = JSON.parse(decodeURIComponent(taskDataRaw));
+                    localStorage.setItem('hy_neural_active', 'true');
+                    localStorage.setItem('hy_neural_task_context', JSON.stringify(task));
+                    console.log('[NEURAL] Loaded task data from URL:', task);
                 } catch (e) {
-                    console.error('[Claude] Error parsing cached task:', e);
+                    console.error('[NEURAL] Error parsing task_data:', e);
                 }
-            }
-
-            if (taskId && !task) {
-                task = await loadTaskContext(taskId);
+            } else if (localStorage.getItem('hy_neural_active') === 'true') {
+                try {
+                    task = JSON.parse(localStorage.getItem('hy_neural_task_context'));
+                } catch(e){}
             }
 
             if (task) {
                 window._activeTaskContext = task;
                 showTaskContextBanner(task);
 
-                // Force a new session if coming from a task and the current one is not empty
-                const currentSession = sessions.find(s => s.id === currentSessionId);
-                if (currentSession && currentSession.messages.length > 0) {
-                    createNewSession();
-                } else if (!currentSessionId) {
-                    createNewSession();
+                // Sync with Neural Thread if active
+                if (localStorage.getItem('hy_neural_active') === 'true') {
+                    const thread = JSON.parse(localStorage.getItem('hy_neural_thread') || '[]');
+                    const session = sessions.find(s => s.id === currentSessionId);
+
+                    if (session && thread.length > 0) {
+                        thread.forEach(tm => {
+                            const exists = session.messages.some(sm => sm.content === tm.content && sm.role === tm.role);
+                            if (!exists) {
+                                session.messages.push({
+                                    role: tm.role,
+                                    content: tm.content,
+                                    source: tm.source
+                                });
+                            }
+                        });
+                        saveSessions();
+                        renderMessages();
+                    }
                 }
 
-                // Pre-fill the chat input with context
-                let prompt = `Aquí tienes el contexto de la tarea. Ayúdame a implementarla o dame los próximos pasos.`;
+                // If coming fresh from URL or with pending prompt, pre-fill prompt
+                const pendingPrompt = localStorage.getItem('hy_neural_pending_prompt');
+                if (taskDataRaw || pendingPrompt) {
+                    const currentSession = sessions.find(s => s.id === currentSessionId);
+                    if (currentSession && currentSession.messages.length > 0) {
+                        createNewSession();
+                    } else if (!currentSessionId) {
+                        createNewSession();
+                    }
 
-                const t = task;
-                const getVal = (val) => {
-                    if (val === null || val === undefined || val === '' || val === 0) return null;
-                    if (Array.isArray(val) && val.length === 0) return null;
-                    return val;
-                };
+                    let prompt = "";
+                    if (taskDataRaw) {
+                        // Format the pre-filled technical summary
+                        prompt = `Actúa como un Senior Software Engineer. He vinculado esta tarea al contexto neural:\n\n`;
+                        prompt += `📌 TAREA: #${task.id} - ${task.titulo}\n`;
+                        prompt += `🔀 RAMA: ${task.rama || 'N/A'}\n`;
+                        prompt += `📊 ESTADO: ${task.estado} | PRIORIDAD: ${task.prioridad}\n`;
+                        if (task.descripcion) prompt += `📝 DESCRIPCIÓN: ${task.descripcion}\n`;
 
-                const titulo = getVal(t.titulo || t.title);
-                const descripcion = getVal(t.descripcion || t.description);
-                const criteria = getVal(t.acceptance_criteria);
-                const tags = getVal(t.tags);
-                const prioridad = getVal(t.prioridad || t.priority);
-                const asignados = getVal(t.asignados);
-                const estimation = getVal(t.estimated_hours);
-                const points = getVal(t.story_points);
-                const startDate = getVal(t.start_date);
-                const dueDate = getVal(t.due_date);
-                const milestone = getVal(t.milestone);
-                const tema = getVal(t.tema_principal);
-                const type = getVal(t.task_type);
-                const repo = getVal(t.repositorio || t.repository || t.repo);
-                const rama = getVal(t.rama || t.branch);
-                const comments = getVal(t.comments || t.comentarios);
-                const links = getVal(t.links || t.external_links);
-                const subtareas = getVal(t.subtareas || t.subtasks);
-                const blockedBy = getVal(t.bloqueada_por || t.blocked_by);
-                const julesEstado = getVal(t.jules_loop_estado);
-                const julesUrl = getVal(t.jules_session_url);
+                        if (task.subtasks && task.subtasks.length > 0) {
+                            prompt += `📋 SUBTAREAS:\n` + task.subtasks.map(s => `  - [${s.done ? 'x' : ' '}] ${s.text || s.titulo}`).join('\n') + `\n`;
+                        }
 
-                let fields = [];
-                if (titulo) fields.push(`📌 Título: ${titulo}`);
-                if (descripcion) fields.push(`📝 Descripción: ${descripcion}`);
-                if (criteria) fields.push(`✅ Criterios de aceptación: ${criteria}`);
-                if (tags) fields.push(`🏷️ Tags: ${Array.isArray(tags) ? tags.join(', ') : tags}`);
-                if (prioridad) fields.push(`⚡ Prioridad: ${prioridad}`);
-                if (asignados) fields.push(`👥 Asignados: ${Array.isArray(asignados) ? asignados.join(', ') : asignados}`);
+                        if (task.comments && task.comments.length > 0) {
+                            prompt += `💬 COMENTARIOS RECIENTES:\n` + task.comments.map(c => `  - ${c.author || 'User'}: ${c.text || c.body}`).join('\n') + `\n`;
+                        }
 
-                if (estimation || points) {
-                    let line = '⏱️ Estimación: ';
-                    if (estimation) line += `${estimation}h`;
-                    if (estimation && points) line += '  •  ';
-                    if (points) line += `Story Points: ${points}`;
-                    fields.push(line);
+                        if (task.acceptance_criteria) prompt += `✅ CRITERIOS DE ACEPTACIÓN: ${task.acceptance_criteria}\n`;
+
+                        prompt += `\n¿Cómo podemos abordar esta implementación de forma eficiente?`;
+                    } else if (pendingPrompt) {
+                        prompt = pendingPrompt;
+                        localStorage.removeItem('hy_neural_pending_prompt');
+                    }
+
+                    chatInput.value = prompt;
+                    chatInput.dispatchEvent(new Event('input'));
+
+                    // Clean URL if needed
+                    if (taskDataRaw) {
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                    }
                 }
-
-                if (startDate || dueDate) {
-                    fields.push(`📅 Inicio: ${startDate || '...'}  •  Vencimiento: ${dueDate || '...'}`);
-                }
-
-                if (milestone || tema || type) {
-                    let parts = [];
-                    if (milestone) parts.push(`Milestone: ${milestone}`);
-                    if (tema) parts.push(`Stage: ${tema}`);
-                    if (type) parts.push(`Tipo: ${type}`);
-                    fields.push(`🎯 ${parts.join('  •  ')}`);
-                }
-
-                if (rama || repo) {
-                    fields.push(`🔀 Rama: ${rama || '...'}  •  🗂️ Repo: ${repo || '...'}`);
-                }
-
-                if (comments) {
-                    const commentText = Array.isArray(comments)
-                        ? comments.map(c => {
-                            if (typeof c === 'string') return c;
-                            const txt = c.text || c.body || c.contenido || c.comment || '';
-                            return txt;
-                        }).filter(Boolean).join(' | ')
-                        : comments;
-                    if (commentText) fields.push(`💬 Comentarios: ${commentText}`);
-                }
-
-                if (links) {
-                    const linksText = Array.isArray(links)
-                        ? links.map(l => typeof l === 'string' ? l : `${l.label}: ${l.url}`).join(', ')
-                        : links;
-                    fields.push(`🔗 Enlaces: ${linksText}`);
-                }
-
-                if (subtareas) {
-                    const total = subtareas.length;
-                    const completed = subtareas.filter(s => s.done).length;
-                    let line = `📋 Subtareas: ${completed}/${total} completadas`;
-                    subtareas.forEach(s => {
-                        line += `\n  ${s.done ? '• [x]' : '• [ ]'} ${s.text || s.titulo || s.title}`;
-                    });
-                    fields.push(line);
-                }
-
-                if (blockedBy) {
-                    const ids = Array.isArray(blockedBy) ? blockedBy.map(id => id.toString().startsWith('#') ? id : `#${id}`).join(', ') : blockedBy;
-                    fields.push(`🚧 Bloqueada por: ${ids}`);
-                }
-
-                if (julesEstado || julesUrl) {
-                    fields.push(`⚠️ Jules Loop: ${julesEstado || ''}${julesEstado && julesUrl ? ' - ' : ''}${julesUrl || ''}`);
-                }
-
-                if (fields.length > 0) {
-                    prompt += '\n\n' + fields.join('\n');
-                }
-
-                chatInput.value = prompt;
-
-                // Disparar redimensionado automático
-                chatInput.dispatchEvent(new Event('input'));
-
-                // Strip taskId from URL
-                const newUrl = window.location.pathname + (window.location.search.includes('from=dashboard') || window.location.search.includes('from=jules-panel') ? `?from=${urlParams.get('from')}` : '');
-                window.history.replaceState({}, document.title, newUrl);
             }
 
             // Load profiles and set active
@@ -2074,7 +2009,7 @@ permalink: /claude-chat.html
                                 <i class="fas fa-copy"></i> COPIAR
                             </button>
                             <button onclick="sendToJulesByIndex(${idx})" class="text-[9px] font-bold text-[#6272a4] hover:text-[#50fa7b] flex items-center gap-1 bg-[#1e1f29] px-2 py-0.5 rounded border border-[#44475a]">
-                                <i class="fas fa-bolt"></i> ENVIAR A JULES
+                                <i class="fas fa-arrow-right"></i> → ENVIAR A JULES
                             </button>
                         </div>
                         ` : ''}
@@ -2095,7 +2030,19 @@ permalink: /claude-chat.html
         function sendToJulesByIndex(idx) {
             const session = sessions.find(s => s.id === currentSessionId);
             if (session && session.messages[idx]) {
-                sendToJules(session.messages[idx].content);
+                const text = session.messages[idx].content;
+
+                // Add to thread state
+                let thread = JSON.parse(localStorage.getItem('hy_neural_thread') || '[]');
+                thread.push({ role: 'assistant', content: text, source: 'claude' });
+                localStorage.setItem('hy_neural_thread', JSON.stringify(thread));
+
+                // Set pending prompt for Jules
+                localStorage.setItem('hy_neural_pending_prompt', text);
+                localStorage.setItem('hy_neural_active', 'true');
+
+                showToast('Enviando a Jules Panel...');
+                setTimeout(() => window.location.href = '/jules-panel-v2/', 800);
             }
         }
 
@@ -2262,11 +2209,19 @@ permalink: /claude-chat.html
             }
 
             const session = sessions.find(s => s.id === currentSessionId);
-            session.messages.push({
+            const userMsg = {
                 role: 'user',
                 content: content,
                 image: attachedImage || undefined
-            });
+            };
+            session.messages.push(userMsg);
+
+            // Sync with Neural Thread
+            if (localStorage.getItem('hy_neural_active') === 'true') {
+                let thread = JSON.parse(localStorage.getItem('hy_neural_thread') || '[]');
+                thread.push({ ...userMsg, source: 'user' });
+                localStorage.setItem('hy_neural_thread', JSON.stringify(thread));
+            }
 
             // Clear attached image
             if (attachedImage) removeAttachedImage();
@@ -2492,10 +2447,18 @@ permalink: /claude-chat.html
 
             const aiContent = await callCustomProvider(config, messages);
 
-            session.messages.push({
+            const assistantMsg = {
                 role: 'assistant',
                 content: aiContent
-            });
+            };
+            session.messages.push(assistantMsg);
+
+            // Sync with Neural Thread
+            if (localStorage.getItem('hy_neural_active') === 'true') {
+                let thread = JSON.parse(localStorage.getItem('hy_neural_thread') || '[]');
+                thread.push({ ...assistantMsg, source: 'claude' });
+                localStorage.setItem('hy_neural_thread', JSON.stringify(thread));
+            }
 
             // If model type is TTS, play response
             if (modelType === 'audio' && config.ttsEnabled) {
@@ -2749,11 +2712,20 @@ permalink: /claude-chat.html
                 throw e;
             }
 
-            session.messages.push({
+            const assistantMsg = {
                 role: 'assistant',
                 content: aiContent,
                 thinking: thinkingContent || undefined
-            });
+            };
+            session.messages.push(assistantMsg);
+
+            // Sync with Neural Thread
+            if (localStorage.getItem('hy_neural_active') === 'true') {
+                let thread = JSON.parse(localStorage.getItem('hy_neural_thread') || '[]');
+                thread.push({ ...assistantMsg, source: 'claude' });
+                localStorage.setItem('hy_neural_thread', JSON.stringify(thread));
+            }
+
             saveSessions();
             renderMessages();
         }

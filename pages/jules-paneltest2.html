@@ -977,6 +977,7 @@ body{
   .session-foot{flex-direction:column;align-items:stretch}
   .session-foot .btn{width:100%;justify-content:center}
 }
+.hidden { display: none !important; }
 </style>
 </head>
 <body>
@@ -1250,6 +1251,16 @@ body{
 
     <!-- ─── NEURAL VIEW (Tarea + Telemetry) ─── -->
     <div class="view" id="view-neural">
+      <div id="neural-session-banner" class="hidden" style="margin-bottom: 12px; background: rgba(124,58,237,0.1); border: 1px solid var(--border-accent); border-radius: var(--r-md); padding: 12px 18px; display: flex; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+              <span style="font-size: 1.2em;">🧠</span>
+              <div>
+                  <div style="font-size: 10px; font-weight: 800; color: var(--accent2); text-transform: uppercase; letter-spacing: 0.05em;">Neural Session Activa</div>
+                  <div id="neural-banner-task" style="font-size: 13px; font-weight: 600; color: var(--text);">Tarea #...</div>
+              </div>
+          </div>
+          <button onclick="desvincularNeuralSession()" style="background: none; border: none; color: var(--red); font-size: 10px; font-weight: 700; text-transform: uppercase; cursor: pointer;">Desvincular</button>
+      </div>
       <!-- Session Card -->
         <div class="session-card glass">
           <div class="card-head" style="padding:14px 18px">
@@ -1807,7 +1818,6 @@ body{
 <script src="{{ '/assets/javascript/repo-aliases.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/ollama-discovery.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/ai-config.js' | relative_url }}"></script>
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
     window.JulesPanelState = {
         activeRepo:          localStorage.getItem('hypenosys_active_repo') || null,
@@ -1907,6 +1917,31 @@ body{
       line.innerHTML=`<div class="tel-head"><span class="tel-time">${ts}</span><span class="tel-tag ${type}">${tag}</span></div><div class="tel-msg">${msg}</div>`;
       box.appendChild(line);
       box.scrollTop=box.scrollHeight;
+
+      // Neural Loop: Add "Analizar con Claude" button to telemetry
+      if (localStorage.getItem('hy_neural_active') === 'true') {
+          const analyzer = document.createElement('button');
+          analyzer.className = 'btn-ghost btn-sm';
+          analyzer.style.marginTop = '4px';
+          analyzer.style.fontSize = '9px';
+          analyzer.style.padding = '2px 8px';
+          analyzer.innerHTML = '✨ Analizar con Claude';
+          analyzer.onclick = () => {
+              const task = JSON.parse(localStorage.getItem('hy_neural_task_context') || '{}');
+              let thread = JSON.parse(localStorage.getItem('hy_neural_thread') || '[]');
+              const newMsg = {
+                  role: 'user',
+                  content: `Jules ha reportado esto en la telemetría:\n[${tag}] ${msg}`,
+                  source: 'jules'
+              };
+              thread.push(newMsg);
+              localStorage.setItem('hy_neural_thread', JSON.stringify(thread));
+
+              localStorage.setItem('hy_neural_pending_prompt', newMsg.content + '\n\n¿Qué opinas? ¿Debo ajustar algo?');
+              window.location.href = '/claude-chat.html';
+          };
+          line.appendChild(analyzer);
+      }
 
       // Broadcast activity to Neural Chat
       localStorage.setItem('jules_live_telemetry', JSON.stringify({
@@ -2232,42 +2267,54 @@ body{
 
     function openTaskInClaude(taskId) {
         const task = window.JulesPanelState.tasks.find(t => String(t.id) === String(taskId));
-        if (!task) {
-            console.warn('[KANBAN] Task not found:', taskId);
-            return;
-        }
+        if (!task) return;
 
-        if (window.neuralSession?.open) {
-            window.neuralSession.open(task);
-        } else {
-            // Retry once after 800ms — covers late authReady initialization
-            setTimeout(() => {
-                if (window.neuralSession?.open) {
-                    window.neuralSession.open(task);
-                } else {
-                    console.error('[KANBAN] NeuralSessionPanel not available');
-                    // Fallback to old behavior
-                    const payload = {
-                        titulo: task.titulo || task.title || '',
-                        descripcion: task.descripcion || task.description || '',
-                        acceptance_criteria: task.acceptance_criteria || '',
-                        tags: task.tags || [],
-                        prioridad: task.prioridad || '',
-                        asignados: task.asignados || task.asignado_a || [],
-                        comments: task.comments || [],
-                        estimated_hours: task.estimated_hours || '',
-                        repositorio: task.repository || task.repo || ''
-                    };
-                    localStorage.setItem('claude_task_context', JSON.stringify(payload));
-                    window.location.href = `/claude-chat.html?task_id=${taskId}&from=jules-panel`;
-                }
-            }, 800);
+        // Neural Session Pivot: Bundle full task context
+        const fullTask = {
+            ...task,
+            neural_source: 'jules-panel-v2',
+            exported_at: new Date().toISOString()
+        };
+
+        const encodedData = encodeURIComponent(JSON.stringify(fullTask));
+        window.location.href = `/claude-chat.html?task_data=${encodedData}`;
+    }
+
+    function desvincularNeuralSession() {
+        localStorage.removeItem('hy_neural_active');
+        localStorage.removeItem('hy_neural_task_context');
+        localStorage.removeItem('hy_neural_pending_prompt');
+        localStorage.removeItem('hy_neural_thread');
+        $('neural-session-banner').classList.add('hidden');
+        $('v2-task-context').classList.add('hidden');
+        if (window.JulesPanelState.activePayload) {
+            delete window.JulesPanelState.activePayload.source_task;
         }
+        showToast("Sesión neural desvinculada", "info");
     }
 
     function checkClipboard() {
         const payloadStr = localStorage.getItem('jules_task_payload');
         const promptArea = $('session-prompt');
+
+        // Check if coming from Claude Chat via hy_neural_pending_prompt
+        const pendingPrompt = localStorage.getItem('hy_neural_pending_prompt');
+        if (pendingPrompt && promptArea && promptArea.value !== pendingPrompt) {
+            promptArea.value = pendingPrompt;
+            showToast("Prompt actualizado desde Claude", "green");
+            localStorage.removeItem('hy_neural_pending_prompt');
+            switchView('neural');
+        }
+
+        // Handle Neural Active state
+        if (localStorage.getItem('hy_neural_active') === 'true') {
+            const task = JSON.parse(localStorage.getItem('hy_neural_task_context') || '{}');
+            if (task.id) {
+                $('neural-session-banner').classList.remove('hidden');
+                $('neural-banner-task').textContent = `Tarea #${task.id}: ${task.titulo || task.title}`;
+                showTaskContextInChat(task);
+            }
+        }
 
         if (payloadStr) {
             try {
@@ -2353,6 +2400,13 @@ body{
         if (task.acceptance_criteria) html += `<div><strong>Criterios:</strong> ${task.acceptance_criteria}</div>`;
         if (task.rama) html += `<div><strong>Rama:</strong> <code>${task.rama}</code></div>`;
 
+        html += `
+            <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border);">
+                <button onclick="desvincularNeuralSession()" style="background: none; border: none; color: var(--red); font-size: 10px; font-weight: 700; text-transform: uppercase; cursor: pointer; display: flex; align-items: center; gap: 5px;">
+                    <i class="fas fa-unlink"></i> Desvincular sesión
+                </button>
+            </div>
+        `;
         details.innerHTML = html;
         window.JulesPanelState.activePayload = { ...window.JulesPanelState.activePayload, source_task: task };
     }
