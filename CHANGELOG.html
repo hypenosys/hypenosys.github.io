@@ -72,6 +72,8 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-success">Fixed</h5>
             <ul>
+              <li><strong>Responsividad Táctil Kanban (Dashboard):</strong> Corregido el fallo donde los botones de las tarjetas (Robot 🤖, Editar ✎, Mover →) no respondían en dispositivos móviles. Se eliminaron los atributos <code>onclick</code> inline y se implementó un sistema de delegación de eventos unificado que soporta <code>click</code> y <code>touchend</code>.</li>
+              <li><strong>Flujo de Tarea Claude Chat:</strong> Actualizada la transferencia de contexto de tarea para que ocurra en la misma pestaña (<code>window.location.href</code>) en lugar de abrir una nueva, evitando bloqueos de popups y manteniendo la continuidad de la sesión en móviles.</li>
               <li><strong>Sincronización Cross-Tab:</strong> Implementados listeners del evento <code>storage</code> para asegurar que los cambios de sesiones en el Jules Panel se reflejen instantáneamente en el Dashboard y viceversa.</li>
               <li><strong>Robustez de Renderizado:</strong> Corregido el fallo de renderizado de código diff mediante la implementación de <code>escapeHtml</code> y la desduplicación de IDs de actividad.</li>
               <li><strong>Interactividad de Tareas (Dashboard):</strong> Restaurada la funcionalidad de los botones robot (🤖) y "ENVIAR A CLAUDE" en el Kanban, integrándolos con el nuevo flujo de sesiones neurales.</li>

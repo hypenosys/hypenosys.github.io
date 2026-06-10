@@ -13,6 +13,53 @@
             await kanbanUI.refresh();
         },
 
+        attachEvents: (container) => {
+            if (!container) return;
+            // Include the container itself if it has a data-action
+            const elements = Array.from(container.querySelectorAll('[data-action]'));
+            if (container.dataset && container.dataset.action) {
+                elements.push(container);
+            }
+
+            elements.forEach(el => {
+                const action = el.dataset.action;
+                const id = el.dataset.id;
+
+                const handler = (e) => {
+                    // Prevent default and stop propagation to avoid multiple triggers
+                    // and to prevent the card toggle if we clicked a button inside it
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    console.log(`[KANBAN] Action: ${action}, ID: ${id}, Event: ${e.type}`);
+
+                    if (action === 'toggle') {
+                        window.kanbanUI.toggleCard(id);
+                    } else if (action === 'edit') {
+                        if (typeof window.openEditTaskModal === 'function') {
+                            window.openEditTaskModal(id);
+                        } else if (typeof openEditTaskModal === 'function') {
+                            openEditTaskModal(id);
+                        }
+                    } else if (action === 'claude') {
+                        if (typeof window._openTaskInClaude === 'function') {
+                            window._openTaskInClaude(id);
+                        }
+                    } else if (action === 'move') {
+                        const nextStatus = el.dataset.nextStatus;
+                        window.kanbanUI.moveTask(id, nextStatus, el);
+                    }
+                };
+
+                if (el.dataset.eventsAttached) return;
+                el.dataset.eventsAttached = 'true';
+
+                ['click', 'touchend'].forEach(eventType => {
+                    el.addEventListener(eventType, handler, { passive: false });
+                });
+            });
+        },
+
         toggleCard: (taskId) => {
             const idStr = String(taskId);
             if (kanbanUI.expandedCards.has(idStr)) {
@@ -22,10 +69,10 @@
             }
 
             // Universal refresh trigger
-            if (typeof refreshDashboard === 'function') {
-                refreshDashboard();
-            } else if (typeof renderKanbanBoard === 'function') {
+            if (typeof renderKanbanBoard === 'function') {
                 renderKanbanBoard();
+            } else if (typeof refreshDashboard === 'function') {
+                refreshDashboard();
             } else {
                 kanbanUI.refresh();
             }
@@ -118,12 +165,17 @@
             columns.forEach(col => {
                 const status = col.dataset.status;
                 const list = col.querySelector('.kanban-cards-list');
+                if (!list) return;
+
                 const filtered = tasks.filter(t => t.estado === status);
 
                 list.innerHTML = filtered.map(t => {
                     const isExpanded = kanbanUI.expandedCards.has(String(t.id));
                     return kanbanUI.renderCard(t, isExpanded);
                 }).join('');
+
+                // Attach events to newly created elements
+                kanbanUI.attachEvents(list);
             });
         },
 
@@ -188,9 +240,9 @@
                             } else {
                                 console.error('[KANBAN] NeuralSessionPanel not available');
                                 // Fallback to old behavior if everything fails
-                                console.warn('[KANBAN] Retrying NeuralSession open failed, using fallback window.open');
+                                 console.warn('[KANBAN] Retrying NeuralSession open failed, using fallback navigation');
                                 const url = `/claude-chat.html?task_id=${taskId}&from=jules-panel`;
-                                window.open(url, '_blank');
+                                 window.location.href = url;
                             }
                         }, 800);
                     }
@@ -201,18 +253,17 @@
                 // COLLAPSED CARD
                 return `
                     <div class="session-card kanban-card mb-3 p-3 flex flex-col justify-between cursor-pointer border border-slate-800 hover:border-slate-700 transition-all"
-                         style="height: 80px; overflow: hidden;" data-id="${task.id}"
-                         onclick="window.kanbanUI.toggleCard('${task.id}')">
+                         style="height: 80px; overflow: hidden;" data-id="${task.id}" data-action="toggle" role="button" tabindex="0">
 
                         <!-- Line 1: ID + Acciones + Status + Expand -->
                         <div class="flex justify-between items-center text-[10px]">
                             <div class="flex items-center gap-2">
                                 <span class="font-mono text-slate-500 font-bold">#${task.id}</span>
                                 <div class="flex gap-1.5">
-                                    <button onclick="event.stopPropagation(); openEditTaskModal('${task.id}')" class="text-slate-500 hover:text-white transition-colors" title="Editar">
+                                    <button data-action="edit" data-id="${task.id}" class="text-slate-500 hover:text-white transition-colors" title="Editar">
                                         <i class="fas fa-pencil-alt"></i>
                                     </button>
-                                    <button onclick="event.stopPropagation(); window._openTaskInClaude('${task.id}')" class="text-slate-500 hover:text-[#bd93f9] transition-colors" title="Robot">
+                                    <button data-action="claude" data-id="${task.id}" class="text-slate-500 hover:text-[#bd93f9] transition-colors" title="Robot">
                                         <i class="fas fa-robot"></i>
                                     </button>
                                 </div>
@@ -242,12 +293,12 @@
                 return `
                     <div class="session-card kanban-card mb-3 p-4 shadow-lg border border-[#bd93f9]/30" data-id="${task.id}">
                         <!-- Header -->
-                        <div class="flex justify-between items-start mb-3 cursor-pointer" onclick="window.kanbanUI.toggleCard('${task.id}')">
+                        <div class="flex justify-between items-start mb-3 cursor-pointer" data-action="toggle" data-id="${task.id}" role="button" tabindex="0">
                             <div class="flex items-center gap-2">
                                 <span class="text-[10px] font-bold text-slate-500 font-mono">#${task.id}</span>
                                 <div class="flex gap-1.5 mr-1">
-                                    <button onclick="event.stopPropagation(); openEditTaskModal('${task.id}')" class="text-slate-500 hover:text-white" title="Editar"><i class="fas fa-pencil-alt"></i></button>
-                                    <button onclick="event.stopPropagation(); window._openTaskInClaude('${task.id}')" class="text-slate-500 hover:text-[#bd93f9]" title="Robot"><i class="fas fa-robot"></i></button>
+                                    <button data-action="edit" data-id="${task.id}" class="text-slate-500 hover:text-white" title="Editar"><i class="fas fa-pencil-alt"></i></button>
+                                    <button data-action="claude" data-id="${task.id}" class="text-slate-500 hover:text-[#bd93f9]" title="Robot"><i class="fas fa-robot"></i></button>
                                 </div>
                                 <span class="badge ${statusColor} text-white text-[8px] px-1.5 py-0.5 rounded-full uppercase font-black tracking-tighter">${task.estado}</span>
                                 <span class="badge ${priorityColor} text-white text-[8px] px-1.5 py-0.5 rounded uppercase font-bold">${task.prioridad}</span>
@@ -301,10 +352,10 @@
                                 ${task.estimated_hours ? `<span class="text-[10px] text-slate-500 ml-2 font-mono">${task.estimated_hours}h est.</span>` : ''}
                             </div>
                             <div class="flex gap-2">
-                                <button onclick="window._openTaskInClaude('${task.id}')" class="text-[10px] bg-[#bd93f9]/20 text-[#bd93f9] border border-[#bd93f9]/30 px-3 py-1.5 rounded hover:bg-[#bd93f9]/30 transition-all font-bold">
+                                <button data-action="claude" data-id="${task.id}" class="text-[10px] bg-[#bd93f9]/20 text-[#bd93f9] border border-[#bd93f9]/30 px-3 py-1.5 rounded hover:bg-[#bd93f9]/30 transition-all font-bold">
                                     🤖 ENVIAR A CLAUDE
                                 </button>
-                                <button onclick="window.kanbanUI.moveTask('${task.id}', '${nextStatus}', this)" class="w-8 h-8 flex items-center justify-center bg-slate-800 text-slate-400 border border-slate-700 rounded hover:bg-slate-700 transition-all">
+                                <button data-action="move" data-id="${task.id}" data-next-status="${nextStatus}" class="w-8 h-8 flex items-center justify-center bg-slate-800 text-slate-400 border border-slate-700 rounded hover:bg-slate-700 transition-all">
                                     <i class="fas fa-arrow-right"></i>
                                 </button>
                             </div>

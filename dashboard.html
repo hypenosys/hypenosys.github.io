@@ -1188,7 +1188,8 @@ layout: null
       const task = (window.currentTasks || []).find(t => String(t.id) === String(taskId)) || { id: taskId };
       console.log('[HYPENOSYS] Neural entry:', taskId, task);
       const payload = encodeURIComponent(JSON.stringify(task));
-      window.open('/claude-chat.html?task_data=' + payload, '_blank');
+      // Use window.location.href instead of window.open to comply with "no new tab" requirement
+      window.location.href = '/claude-chat.html?task_data=' + payload;
     };
     </script>
 </body>
