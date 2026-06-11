@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-11T11:17:58.655Z",
+  "last_updated": "2026-06-11T11:28:08.669Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1916,7 +1916,7 @@
     {
       "title": "New page pages/image-gen to generate image or text context and flux dev or kontext up to 2 images and text ",
       "descripcion": "Crear una página dedicada a la generación de imágenes y contenido mediante IA. Centraliza las herramientas creativas Flux/ComfyUI en una interfaz.",
-      "rama": "feature/image-gen-page",
+      "rama": "master",
       "task_type": "feature",
       "tema_principal": "Programación / Engine",
       "repository": "hypenosys/hypenosys.github.io",
@@ -1937,9 +1937,9 @@
       "estimated_hours": 2,
       "story_points": 1,
       "tags": [
-        "n8n",
-        "feature",
         "api",
+        "feature",
+        "n8n",
         "ux"
       ],
       "external_links": [],
@@ -2695,6 +2695,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #38",
+      "user": "Axlfc",
+      "timestamp": "2026-06-11T11:28:08.669Z"
+    },
     {
       "action": "chore: actualizar tarea #33",
       "user": "Axlfc",
