@@ -1,13 +1,13 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-11T09:38:00.871Z",
+  "computed_at": "2026-06-11T09:38:20.306Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 27,
+    "total_tasks": 26,
     "total_ok": 1,
     "total_ko": 0,
     "total_uncertain": 8,
-    "total_obsolete": 5,
+    "total_obsolete": 6,
     "fixed_found_ratio": 0.0323,
     "verified_ratio": 0.0313
   },
@@ -22,10 +22,10 @@
       "2026-W23": 7,
       "2026-W24": 0
     },
-    "bug_rate": 0.0769,
+    "bug_rate": 0.08,
     "blocker_health": 3,
     "tag_heatmap": {
-      "frontend": 9,
+      "frontend": 8,
       "devops": 7,
       "feature": 10,
       "brainstorm": 1,
@@ -39,7 +39,7 @@
       "Infraestructura": 1,
       "api": 10,
       "jules": 1,
-      "bug": 3,
+      "bug": 2,
       "infraestructura": 1,
       "jules-panel": 1,
       "neural-chat": 1,
@@ -51,7 +51,7 @@
       "refactor": 2,
       "stability": 1
     },
-    "milestone_tasks_remaining": 16,
+    "milestone_tasks_remaining": 15,
     "hall_of_fame_winners": {
       "mvp": {
         "handle": "axlfc",
@@ -467,7 +467,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-06-11T09:38:01.785Z"
+      "timestamp": "2026-06-11T09:38:21.394Z"
     }
   ]
 }
