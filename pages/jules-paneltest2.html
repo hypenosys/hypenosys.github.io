@@ -1935,6 +1935,7 @@ body{
 
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="{{ '/assets/javascript/jules-api.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/jules-activities.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/github-api-ops.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/github-context.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/task-engine.js' | relative_url }}"></script>
@@ -2200,6 +2201,7 @@ body{
         branchSelect.innerHTML = '<option value="">Cargando ramas...</option>';
         branchSelect.onchange = (e) => {
             window.JulesPanelState.activeBranch = e.target.value;
+            window.JulesPanelState._branchManuallyChanged = true;
             localStorage.setItem('jules_selected_branch', e.target.value);
             const sessCtx = $('sess-ctx');
             if(sessCtx) {
@@ -2243,6 +2245,54 @@ body{
     }
 
     /* ─── DASHBOARD DATA ─── */
+    async function loadJulesKanban() {
+        try {
+            const data = await window.julesApi.getSessions(50);
+            const sessions = data.sessions || [];
+
+            const columns = {
+                'pending': ['QUEUED'],
+                'running': ['WORKING', 'IN_PROGRESS', 'AWAITING_USER', 'PLANNING', 'AWAITING_PLAN_APPROVAL'],
+                'done': ['COMPLETED'],
+                'error': ['FAILED', 'CANCELLED', 'ERROR']
+            };
+
+            Object.keys(columns).forEach(colId => {
+                const colEl = $(`kb-${colId}`), countEl = $(`kb-count-${colId}`), mCountEl = $(`m-count-${colId}`);
+                if (!colEl) return;
+
+                const items = sessions.filter(s => columns[colId].includes(s.state));
+                if (countEl) countEl.textContent = items.length;
+                if (mCountEl) mCountEl.textContent = items.length;
+
+                colEl.innerHTML = items.map(s => {
+                    const sid = s.name.split('/').pop();
+                    const repo = s.sourceContext?.source?.split('/').pop() || '---';
+                    const branch = s.sourceContext?.githubRepoContext?.startingBranch || '---';
+
+                    return `
+                        <div class="kb-card ${colId}" onclick="openDrawer('${s.name}')">
+                            <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:5px">
+                                <div class="kb-card-id">#${sid}</div>
+                                <span class="sbadge ${s.state.toLowerCase().replace(/_/g, '-')}">${s.state}</span>
+                            </div>
+                            <div class="kb-card-task">${escapeHtml(s.title || s.prompt)}</div>
+                            <div class="kb-card-meta">
+                                <span class="kb-card-repo">${repo}</span>
+                                <span class="kb-card-time">${getTimeAgo(s.createTime)}</span>
+                            </div>
+                            <div class="kb-card-actions">
+                                <button class="kb-action-btn" onclick="event.stopPropagation(); window.JulesActivitiesModule.startPolling('${sid}'); switchView('chat');">Ver Neural</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('') || '<div style="padding:20px; text-align:center; color:var(--text3); font-size:11px;">Vacio</div>';
+            });
+        } catch (e) {
+            console.warn('[Jules] loadJulesKanban error:', e);
+        }
+    }
+
     async function refreshDashboard() {
         try {
             const [sessionData, tasks] = await Promise.all([
@@ -2255,7 +2305,7 @@ body{
             window.JulesPanelState.tasks = tasks;
 
             renderHistoryTable(sessions);
-            renderKanban(tasks, sessions);
+            loadJulesKanban();
             updateStats();
 
             // Area 1: Polling for history if on chat view
@@ -2338,67 +2388,6 @@ body{
         }
     }
 
-    function renderKanban(tasks, sessions) {
-        const columns = {
-            'pending': ['Pending', 'ToDo'],
-            'running': ['Working', 'In Review'],
-            'done': ['Fixed', 'OK', 'Closed'],
-            'error': ['KO']
-        };
-
-        Object.keys(columns).forEach(colId => {
-            const colEl = $(`kb-${colId}`), countEl = $(`kb-count-${colId}`), mCountEl = $(`m-count-${colId}`);
-            if (!colEl) return;
-
-            const items = tasks.filter(t => columns[colId].includes(t.estado));
-            if (countEl) countEl.textContent = items.length;
-            if (mCountEl) mCountEl.textContent = items.length;
-
-            colEl.innerHTML = items.map(t => {
-                const jSession = t.jules_session || (sessions.find(s => s.name.endsWith(t.id)) ? { session_id: sessions.find(s => s.name.endsWith(t.id)).name.split('/').pop(), status: 'ACTIVE', initiated_by: '?' } : null);
-                const isBlocked = (t.blocked_by && t.blocked_by.length > 0);
-                const blocksOthers = (t.blocks && t.blocks.length > 0);
-
-                let sessionHtml = '';
-                if (jSession) {
-                    sessionHtml = `
-                        <div style="margin-top:8px; padding-top:8px; border-top:1px solid var(--border); display:flex; align-items:center; justify-content:space-between">
-                            <div style="display:flex; align-items:center; gap:5px">
-                                <img src="https://github.com/${jSession.initiated_by}.png" style="width:16px; height:16px; border-radius:50%; border:1px solid var(--accent)">
-                                <span style="font-size:9px; color:var(--accent2); font-weight:600">${jSession.status}</span>
-                            </div>
-                            <span style="font-size:9px; color:var(--text3); font-family:var(--font-mono)">#${jSession.session_id}</span>
-                        </div>
-                    `;
-                }
-
-                const blockBadge = isBlocked ? `<span title="Bloqueada por otras tareas" style="color:var(--red); font-size:10px">🚫</span>` : '';
-                const blocksBadge = blocksOthers ? `<span title="Bloquea a otras tareas" style="color:var(--amber); font-size:10px">⚠️</span>` : '';
-
-                const onClick = jSession ? `onclick="openDrawer('${jSession.session_id}')"` : `onclick="showToast('Tarea #${t.id}: ${escapeHtml(t.prioridad)}','info')"`;
-
-                return `
-                    <div class="kb-card ${colId}" ${onClick}>
-                        <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:5px">
-                            <div class="kb-card-id">#${t.id} ${blockBadge} ${blocksBadge}</div>
-                            <button onclick="event.stopPropagation(); openTaskInClaude('${t.id}')"
-                                    style="background:none; border:1px solid var(--border-accent); color:var(--accent2); border-radius:4px; padding:2px 5px; font-size:10px; cursor:pointer"
-                                    title="Enviar a Claude Chat">🤖</button>
-                        </div>
-                        <div class="kb-card-task">${escapeHtml(t.title || t.descripcion)}</div>
-                        <div class="kb-card-meta">
-                            <span class="kb-card-repo">${t.repository?.split('/').pop() || '---'}</span>
-                            <span class="kb-card-time">${t.prioridad}</span>
-                        </div>
-                        <div style="display:flex; margin-top:8px; gap:4px">
-                            ${(t.asignados || []).map(a => `<img src="https://github.com/${a}.png" style="width:18px; height:18px; border-radius:50%; border:1px solid var(--border)" title="${a}">`).join('')}
-                        </div>
-                        ${sessionHtml}
-                    </div>
-                `;
-            }).join('');
-        });
-    }
 
     function openTaskInClaude(taskId) {
         const task = window.JulesPanelState.tasks.find(t => String(t.id) === String(taskId));
@@ -2562,15 +2551,35 @@ body{
         if (!banner || !text) return;
 
         const payload = window.JulesPanelState.activePayload;
-        if (!payload || !payload.source_task) {
+        const task = payload?.source_task;
+
+        if (!task) {
             banner.classList.add('hidden');
             banner.style.display = 'none';
             return;
         }
 
-        const task = payload.source_task;
         const expectedBranch = task.rama || task.branch;
         const currentBranch = window.JulesPanelState.activeBranch;
+
+        // Bugfix: Auto-select branch if linked task specifies one and it hasn't been manually deviated
+        if (expectedBranch && !window.JulesPanelState._branchManuallyChanged) {
+            const branchSel = $('branch-sel');
+            if (branchSel && branchSel.value !== expectedBranch) {
+                // Check if the branch exists in the options
+                const option = Array.from(branchSel.options).find(o => o.value === expectedBranch);
+                if (option) {
+                    branchSel.value = expectedBranch;
+                    window.JulesPanelState.activeBranch = expectedBranch;
+                    const sessCtx = $('sess-ctx');
+                    if(sessCtx) {
+                        const repoLabel = $('repo-label').textContent;
+                        sessCtx.textContent = `${repoLabel}: ${expectedBranch}`;
+                    }
+                    addTel("SYSTEM", `Rama auto-ajustada a ${expectedBranch} (Tarea #${task.id})`, "info");
+                }
+            }
+        }
 
         if (expectedBranch && currentBranch && expectedBranch !== currentBranch) {
             banner.classList.remove('hidden');
@@ -2648,6 +2657,10 @@ body{
             const sid = res.name.split('/').pop();
             showToast("Sesión iniciada correctamente", "green");
             addTel("JULES", `Sesión iniciada: ${sid}`, "success");
+
+            if (window.JulesActivitiesModule) {
+              window.JulesActivitiesModule.startPolling(sid);
+            }
 
             // AREA 2: Register active Neural Session
             const taskContext = JSON.parse(localStorage.getItem('hy_neural_task_context') || '{}');
@@ -2863,16 +2876,49 @@ body{
     }
 
     /* ─── METRICS ─── */
+    async function loadJulesMetrics() {
+        try {
+            const data = await window.julesApi.getSessions(100);
+            const sessions = data.sessions || [];
+            if (!sessions.length) return;
+
+            const total = sessions.length;
+            const completed = sessions.filter(s => s.state === 'COMPLETED').length;
+            const failed = sessions.filter(s => s.state === 'FAILED' || s.state === 'ERROR').length;
+            const active = sessions.filter(s => ['WORKING', 'IN_PROGRESS', 'QUEUED', 'PLANNING', 'AWAITING_PLAN_APPROVAL'].includes(s.state)).length;
+
+            const successRate = total > 0 ? Math.round((completed / (completed + failed || 1)) * 100) : 0;
+            const totalTokens = sessions.reduce((acc, s) => acc + (s.usage?.totalTokens || 0), 0);
+
+            if($('m-success-rate')) $('m-success-rate').textContent = `${successRate}%`;
+            if($('m-tokens')) $('m-tokens').textContent = totalTokens > 1000 ? `${Math.round(totalTokens/1000)}k` : totalTokens;
+            if($('s-total')) $('s-total').textContent = total;
+            if($('s-active')) $('s-active').textContent = active;
+
+            // Donut chart updates
+            if($('leg-done')) $('leg-done').textContent = completed;
+            if($('leg-running')) $('leg-running').textContent = sessions.filter(s => ['WORKING', 'IN_PROGRESS'].includes(s.state)).length;
+            if($('leg-error')) $('leg-error').textContent = failed;
+            if($('leg-pending')) $('leg-pending').textContent = sessions.filter(s => s.state === 'QUEUED' || s.state === 'PLANNING').length;
+
+            // CSS Donut update
+            const doneP = (completed / total) * 100;
+            const errorP = (failed / total) * 100;
+            const activeP = (active / total) * 100;
+
+            if($('donut-done')) $('donut-done').setAttribute('stroke-dasharray', `${doneP} 100`);
+            if($('donut-error')) {
+                $('donut-error').setAttribute('stroke-dasharray', `${errorP} 100`);
+                $('donut-error').setAttribute('stroke-dashoffset', `-${doneP}`);
+            }
+
+        } catch (e) {
+            console.warn('[Jules] loadJulesMetrics error:', e);
+        }
+    }
+
     function renderMetrics() {
-        const sessions = window.julesSessionsCache || []; if (!sessions.length) return;
-        const sample = sessions.slice(0, window.JulesPanelState.metricsWindow || 30);
-        const success = sample.filter(s => s.state === 'COMPLETED').length;
-        if($('m-success-rate')) $('m-success-rate').textContent = `${Math.round((success / sample.length) * 100)}%`;
-        if($('m-tokens')) $('m-tokens').textContent = `${Math.round(sample.reduce((acc, s) => acc + (s.usage?.totalTokens || 0), 0)/1000)}k`;
-        if($('leg-done')) $('leg-done').textContent = sample.filter(s => s.state === 'COMPLETED').length;
-        if($('leg-running')) $('leg-running').textContent = sample.filter(s => s.state === 'IN_PROGRESS').length;
-        if($('leg-error')) $('leg-error').textContent = sample.filter(s => s.state === 'FAILED').length;
-        if($('leg-pending')) $('leg-pending').textContent = sample.filter(s => s.state === 'QUEUED' || s.state === 'PLANNING').length;
+        loadJulesMetrics();
     }
 
     /* ─── POLLING ─── */

@@ -1788,6 +1788,7 @@ body{
 <script src="{{ '/assets/javascript/github-api.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/github-context.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/jules-api.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/jules-activities.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/ollama-discovery.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/ai-config.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/auth.js' | relative_url }}"></script>
@@ -2034,6 +2035,7 @@ body{
         branchSelect.innerHTML = '<option value="">Cargando ramas...</option>';
         branchSelect.onchange = (e) => {
             window.JulesPanelState.activeBranch = e.target.value;
+            window.JulesPanelState._branchManuallyChanged = true;
             localStorage.setItem('jules_selected_branch', e.target.value);
             const sessCtx = $('sess-ctx');
             if(sessCtx) {
@@ -2091,6 +2093,89 @@ body{
     }
 
     /* ─── DASHBOARD DATA ─── */
+    async function loadJulesKanban() {
+        try {
+            const data = await window.julesApi.getSessions(50);
+            const sessions = data.sessions || [];
+
+            const columns = {
+                'pending': ['QUEUED'],
+                'running': ['WORKING', 'IN_PROGRESS', 'AWAITING_USER', 'PLANNING', 'AWAITING_PLAN_APPROVAL'],
+                'done': ['COMPLETED'],
+                'error': ['FAILED', 'CANCELLED', 'ERROR']
+            };
+
+            Object.keys(columns).forEach(colId => {
+                const colEl = $(`kb-${colId}`), countEl = $(`kb-count-${colId}`), mCountEl = $(`m-count-${colId}`);
+                if (!colEl) return;
+
+                const items = sessions.filter(s => columns[colId].includes(s.state));
+                if (countEl) countEl.textContent = items.length;
+                if (mCountEl) mCountEl.textContent = items.length;
+
+                colEl.innerHTML = items.map(s => {
+                    const sid = s.name.split('/').pop();
+                    const repo = s.sourceContext?.source?.split('/').pop() || '---';
+
+                    return `
+                        <div class="kb-card ${colId}" onclick="openDrawer('${s.name}')" style="padding:13px 14px">
+                            <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:5px">
+                                <div style="font-family:var(--font-mono); font-size:10px; color:var(--text3)">#${sid}</div>
+                                <span class="sbadge ${s.state.toLowerCase().replace(/_/g, '-')}">${s.state}</span>
+                            </div>
+                            <div style="font-size:12.5px; font-weight:500; color:var(--text); line-height:1.4; margin-bottom:8px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden">${escapeHtml(s.title || s.prompt)}</div>
+                            <div style="display:flex; align-items:center; justify-content:space-between; gap:8px">
+                                <span style="font-family:var(--font-mono); font-size:10px; color:var(--text2); background:rgba(255,255,255,0.04); border:1px solid var(--border); padding:2px 7px; border-radius:var(--r-full)">${repo}</span>
+                                <span style="font-family:var(--font-mono); font-size:10px; color:var(--text3)">${getTimeAgo(s.createTime)}</span>
+                            </div>
+                            <div style="display:flex; gap:4px; margin-top:8px; padding-top:8px; border-top:1px solid var(--border)">
+                                <button class="kb-action-btn" style="flex:1; padding:4px 6px; border-radius:var(--r-sm); border:1px solid var(--border); background:rgba(255,255,255,0.02); color:var(--text3); font-size:10px; font-weight:600; cursor:pointer" onclick="event.stopPropagation(); window.JulesActivitiesModule.startPolling('${sid}'); switchView('chat');">Ver Neural</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('') || '<div style="padding:20px; text-align:center; color:var(--text3); font-size:11px;">Vacio</div>';
+            });
+        } catch (e) {
+            console.warn('[Jules] loadJulesKanban error:', e);
+        }
+    }
+
+    async function loadJulesMetrics() {
+        try {
+            const data = await window.julesApi.getSessions(100);
+            const sessions = data.sessions || [];
+            if (!sessions.length) return;
+
+            const total = sessions.length;
+            const completed = sessions.filter(s => s.state === 'COMPLETED').length;
+            const failed = sessions.filter(s => s.state === 'FAILED' || s.state === 'ERROR').length;
+            const active = sessions.filter(s => ['WORKING', 'IN_PROGRESS', 'QUEUED', 'PLANNING', 'AWAITING_PLAN_APPROVAL'].includes(s.state)).length;
+
+            const successRate = total > 0 ? Math.round((completed / (completed + failed || 1)) * 100) : 0;
+            const totalTokens = sessions.reduce((acc, s) => acc + (s.usage?.totalTokens || 0), 0);
+
+            if($('m-success-rate')) $('m-success-rate').textContent = `${successRate}%`;
+            if($('m-tokens')) $('m-tokens').textContent = totalTokens > 1000 ? `${Math.round(totalTokens/1000)}k` : totalTokens;
+            if($('s-total')) $('s-total').textContent = total;
+            if($('s-active')) $('s-active').textContent = active;
+
+            // Donut chart updates
+            if($('leg-done')) $('leg-done').textContent = completed;
+            if($('leg-running')) $('leg-running').textContent = sessions.filter(s => ['WORKING', 'IN_PROGRESS'].includes(s.state)).length;
+            if($('leg-error')) $('leg-error').textContent = failed;
+            if($('leg-pending')) $('leg-pending').textContent = sessions.filter(s => s.state === 'QUEUED' || s.state === 'PLANNING').length;
+
+            const doneP = (completed / total) * 100;
+            const errorP = (failed / total) * 100;
+
+            if($('donut-done')) $('donut-done').setAttribute('stroke-dasharray', `${doneP} 100`);
+            if($('donut-error')) {
+                $('donut-error').setAttribute('stroke-dasharray', `${errorP} 100`);
+                $('donut-error').setAttribute('stroke-dashoffset', `-${doneP}`);
+            }
+        } catch (e) { console.warn('[Jules] loadJulesMetrics error:', e); }
+    }
+
     async function refreshDashboard() {
         try {
             const [sessionData, tasks] = await Promise.all([
@@ -2103,7 +2188,7 @@ body{
             window.JulesPanelState.tasks = tasks;
 
             renderHistoryTable(sessions);
-            renderKanban(tasks, sessions);
+            loadJulesKanban();
             updateStats();
 
             // FEATURE 2: Emit latest output to localStorage AND trigger analysis in Chat
@@ -2322,15 +2407,34 @@ body{
         if (!banner || !text) return;
 
         const payload = window.JulesPanelState.activePayload;
-        if (!payload || !payload.source_task) {
+        const task = payload?.source_task;
+
+        if (!task) {
             banner.classList.add('hidden');
             banner.style.display = 'none';
             return;
         }
 
-        const task = payload.source_task;
         const expectedBranch = task.rama || task.branch;
         const currentBranch = window.JulesPanelState.activeBranch;
+
+        // Auto-select branch if linked task specifies one and it hasn't been manually deviated
+        if (expectedBranch && !window.JulesPanelState._branchManuallyChanged) {
+            const branchSel = $('branch-sel');
+            if (branchSel && branchSel.value !== expectedBranch) {
+                const option = Array.from(branchSel.options).find(o => o.value === expectedBranch);
+                if (option) {
+                    branchSel.value = expectedBranch;
+                    window.JulesPanelState.activeBranch = expectedBranch;
+                    const sessCtx = $('sess-ctx');
+                    if(sessCtx) {
+                        const repoLabel = $('repo-label').textContent;
+                        sessCtx.textContent = `${repoLabel}: ${expectedBranch}`;
+                    }
+                    addTel("SYSTEM", `Rama auto-ajustada a ${expectedBranch} (Tarea #${task.id})`, "info");
+                }
+            }
+        }
 
         if (expectedBranch && currentBranch && expectedBranch !== currentBranch) {
             banner.classList.remove('hidden');
@@ -2597,71 +2701,7 @@ body{
 
     /* ─── METRICS ─── */
     function renderMetrics() {
-        const sessions = window.julesSessionsCache || []; if (!sessions.length) return;
-        const sample = sessions.slice(0, window.JulesPanelState.metricsWindow || 30);
-
-        const counts = {
-            done: sample.filter(s => s.state === 'COMPLETED').length,
-            running: sample.filter(s => ['IN_PROGRESS', 'PLANNING', 'AWAITING_PLAN_APPROVAL', 'AWAITING_USER_FEEDBACK'].includes(s.state)).length,
-            error: sample.filter(s => s.state === 'FAILED').length,
-            pending: sample.filter(s => s.state === 'QUEUED').length
-        };
-
-        const total = sample.length;
-        const successRate = total > 0 ? Math.round((counts.done / total) * 100) : 0;
-        const totalTokens = sample.reduce((acc, s) => acc + (s.usage?.totalTokens || 0), 0);
-
-        if($('m-success-rate')) $('m-success-rate').textContent = `${successRate}%`;
-        if($('m-tokens')) $('m-tokens').textContent = totalTokens > 1000 ? `${Math.round(totalTokens/1000)}k` : totalTokens;
-        if($('m-avg-time')) {
-            const completed = sample.filter(s => s.state === 'COMPLETED' && s.createTime && s.updateTime);
-            if (completed.length > 0) {
-                const avgMs = completed.reduce((acc, s) => acc + (new Date(s.updateTime) - new Date(s.createTime)), 0) / completed.length;
-                $('m-avg-time').textContent = `${Math.round(avgMs / 60000 * 10) / 10}m`;
-            } else {
-                $('m-avg-time').textContent = '---';
-            }
-        }
-
-        if($('leg-done')) $('leg-done').textContent = counts.done;
-        if($('leg-running')) $('leg-running').textContent = counts.running;
-        if($('leg-error')) $('leg-error').textContent = counts.error;
-        if($('leg-pending')) $('leg-pending').textContent = counts.pending;
-
-        // Update Donut
-        if ($('donut-done')) {
-            const pDone = (counts.done / total) * 100;
-            const pRunning = (counts.running / total) * 100;
-            const pError = (counts.error / total) * 100;
-            const pPending = (counts.pending / total) * 100;
-
-            $('donut-done').style.strokeDasharray = `${pDone} 100`;
-            $('donut-running').style.strokeDasharray = `${pRunning} 100`;
-            $('donut-running').style.strokeDashoffset = `-${pDone}`;
-            $('donut-error').style.strokeDasharray = `${pError} 100`;
-            $('donut-error').style.strokeDashoffset = `-${pDone + pRunning}`;
-            $('donut-pending').style.strokeDasharray = `${pPending} 100`;
-            $('donut-pending').style.strokeDashoffset = `-${pDone + pRunning + pError}`;
-        }
-
-        // Render Bar Chart (Sessions per day - simplified)
-        const barSessions = $('bar-sessions');
-        if (barSessions) {
-            const days = {};
-            sample.forEach(s => {
-                const d = new Date(s.createTime).toLocaleDateString();
-                days[d] = (days[d] || 0) + 1;
-            });
-            const dayEntries = Object.entries(days).slice(-7);
-            const max = Math.max(...Object.values(days), 1);
-
-            barSessions.innerHTML = dayEntries.map(([date, count]) => `
-                <div class="bar-wrap">
-                    <div class="bar success-bar" style="height: ${(count/max)*100}%" title="${date}: ${count}"></div>
-                    <div class="bar-label">${date.split('/')[0]}/${date.split('/')[1]}</div>
-                </div>
-            `).join('');
-        }
+        loadJulesMetrics();
     }
 
     /* ─── POLLING ─── */

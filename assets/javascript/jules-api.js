@@ -98,7 +98,12 @@ class JulesAPI {
     }
 
     async createSession(data) {
-        return await julesApiCall('POST', '/sessions', data);
+        const res = await julesApiCall('POST', '/sessions', data);
+        if (res && res.name && window.JulesActivitiesModule) {
+            const sid = res.name.split('/').pop();
+            window.JulesActivitiesModule.startPolling(sid);
+        }
+        return res;
     }
 
     async getSession(sessionId) {
