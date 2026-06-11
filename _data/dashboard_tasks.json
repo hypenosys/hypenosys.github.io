@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-10T19:44:04.826Z",
-  "last_updated_by": "Sistema",
+  "last_updated": "2026-06-11T09:35:32.658Z",
+  "last_updated_by": "Axel",
   "tasks": [
     {
       "id": 1,
@@ -2570,9 +2570,66 @@
       ],
       "acceptance_criteria": "Los errores se capturan y loguean sin romper la sesión del usuario.",
       "subtasks": []
+    },
+    {
+      "title": "Local AI Backend Docs: ComfyUI, Redis, PostgreSQL, Forgejo, Matrix, Qdrant, n8n, n8n-runner, ollama setup",
+      "descripcion": "Basic mirror actions in forgejoFrom git\nKubernetes ready file from cognito-Backend agent \nThis will be the backend if we finally accept databases.\nn8n-runner lets us process python (beta) and javascript in n8n workflows\n",
+      "rama": "master",
+      "task_type": "research",
+      "tema_principal": "Tools / Automation",
+      "repository": "hypenosys/docs",
+      "prioridad": "Medium",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0.5,
+      "resuelto_por": null,
+      "detectado_por": "Axel",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-06-11",
+      "due_date": "2026-06-14",
+      "estimated_hours": 2,
+      "story_points": 2,
+      "tags": [
+        "docs"
+      ],
+      "external_links": [
+        {
+          "url": "https://github.com/Axlfc/connect-core/tree/master",
+          "label": "Cognito-Agent"
+        }
+      ],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-11",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-11T09:35:32.059Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 49
     }
   ],
   "_audit_log": [
+    {
+      "action": "feat: nueva tarea #1781170532063 añadida",
+      "user": "Axlfc",
+      "timestamp": "2026-06-11T09:35:32.658Z"
+    },
     {
       "action": "chore: actualizar estado tarea #33 → Pending",
       "user": "Axlfc",
