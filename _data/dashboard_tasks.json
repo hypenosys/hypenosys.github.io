@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-11T09:45:18.217Z",
+  "last_updated": "2026-06-11T10:32:51.763Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1508,7 +1508,7 @@
     {
       "title": "Crear README.md de hypenosys.github.io (Web)",
       "descripcion": "Redactar la documentación técnica principal del repositorio web. Esencial para que nuevos desarrolladores entiendan la arquitectura y el despliegue.",
-      "rama": "docs/readme-setup",
+      "rama": "master",
       "task_type": "chore",
       "tema_principal": "QA / Testing",
       "repository": "hypenosys/hypenosys.github.io",
@@ -2681,6 +2681,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #33",
+      "user": "Axlfc",
+      "timestamp": "2026-06-11T10:32:51.763Z"
+    },
     {
       "action": "chore: actualizar tarea #33",
       "user": "Axlfc",
