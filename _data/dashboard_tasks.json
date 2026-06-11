@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-11T09:41:03.738Z",
+  "last_updated": "2026-06-11T09:45:18.217Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1535,8 +1535,29 @@
         "docs"
       ],
       "external_links": [],
-      "subtasks": [],
-      "acceptance_criteria": "El archivo README.md cubra setup, comandos y estructura.",
+      "subtasks": [
+        {
+          "id": 1781171020016,
+          "text": "- Investigar el repositorio a fondo",
+          "done": false
+        },
+        {
+          "id": 1781171049859,
+          "text": "- Recopilar información humana y técnica del proyecto",
+          "done": false
+        },
+        {
+          "id": 1781171067578,
+          "text": "Redactar README.md",
+          "done": false
+        },
+        {
+          "id": 1781171079374,
+          "text": "Criticar README.md",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "El archivo README.md cubra setup jekyll bundler, comandos y estructura.",
       "blocks": [],
       "blocked_by": [],
       "comments": [
@@ -2660,6 +2681,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #33",
+      "user": "Axlfc",
+      "timestamp": "2026-06-11T09:45:18.217Z"
+    },
     {
       "action": "chore: actualizar tarea #32",
       "user": "Axlfc",
