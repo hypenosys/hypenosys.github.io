@@ -1,0 +1,35 @@
+Configuration file: /app/_config.yml
+To use retry middleware with Faraday v2.0+, install `faraday-retry` gem
+            Source: /app
+       Destination: /app/_site
+ Incremental build: disabled. Enable with --incremental
+      Generating...
+       Jekyll Feed: Generating feed for posts
+                    done in 5.222 seconds.
+ Auto-regeneration: enabled for '/app'
+jekyll 3.10.0 | Error:  Address already in use - bind(2) for 0.0.0.0:4000
+/usr/lib/ruby/3.2.0/socket.rb:205:in `bind': Address already in use - bind(2) for 0.0.0.0:4000 (Errno::EADDRINUSE)
+	from /usr/lib/ruby/3.2.0/socket.rb:205:in `listen'
+	from /usr/lib/ruby/3.2.0/socket.rb:768:in `block in tcp_server_sockets'
+	from /usr/lib/ruby/3.2.0/socket.rb:231:in `each'
+	from /usr/lib/ruby/3.2.0/socket.rb:231:in `foreach'
+	from /usr/lib/ruby/3.2.0/socket.rb:766:in `tcp_server_sockets'
+	from /tmp/vendor/bundle/ruby/3.2.0/gems/webrick-1.9.2/lib/webrick/utils.rb:60:in `create_listeners'
+	from /tmp/vendor/bundle/ruby/3.2.0/gems/webrick-1.9.2/lib/webrick/server.rb:130:in `listen'
+	from /tmp/vendor/bundle/ruby/3.2.0/gems/webrick-1.9.2/lib/webrick/server.rb:111:in `initialize'
+	from /tmp/vendor/bundle/ruby/3.2.0/gems/webrick-1.9.2/lib/webrick/httpserver.rb:47:in `initialize'
+	from /tmp/vendor/bundle/ruby/3.2.0/gems/jekyll-3.10.0/lib/jekyll/commands/serve.rb:229:in `new'
+	from /tmp/vendor/bundle/ruby/3.2.0/gems/jekyll-3.10.0/lib/jekyll/commands/serve.rb:229:in `start_up_webrick'
+	from /tmp/vendor/bundle/ruby/3.2.0/gems/jekyll-3.10.0/lib/jekyll/commands/serve.rb:104:in `process'
+	from /tmp/vendor/bundle/ruby/3.2.0/gems/jekyll-3.10.0/lib/jekyll/commands/serve.rb:93:in `block in start'
+	from /tmp/vendor/bundle/ruby/3.2.0/gems/jekyll-3.10.0/lib/jekyll/commands/serve.rb:93:in `each'
+	from /tmp/vendor/bundle/ruby/3.2.0/gems/jekyll-3.10.0/lib/jekyll/commands/serve.rb:93:in `start'
+	from /tmp/vendor/bundle/ruby/3.2.0/gems/jekyll-3.10.0/lib/jekyll/commands/serve.rb:75:in `block (2 levels) in init_with_program'
+	from /tmp/vendor/bundle/ruby/3.2.0/gems/mercenary-0.3.6/lib/mercenary/command.rb:220:in `block in execute'
+	from /tmp/vendor/bundle/ruby/3.2.0/gems/mercenary-0.3.6/lib/mercenary/command.rb:220:in `each'
+	from /tmp/vendor/bundle/ruby/3.2.0/gems/mercenary-0.3.6/lib/mercenary/command.rb:220:in `execute'
+	from /tmp/vendor/bundle/ruby/3.2.0/gems/mercenary-0.3.6/lib/mercenary/program.rb:42:in `go'
+	from /tmp/vendor/bundle/ruby/3.2.0/gems/mercenary-0.3.6/lib/mercenary.rb:19:in `program'
+	from /tmp/vendor/bundle/ruby/3.2.0/gems/jekyll-3.10.0/exe/jekyll:15:in `<top (required)>'
+	from /tmp/vendor/bundle/ruby/3.2.0/bin/jekyll:25:in `load'
+	from /tmp/vendor/bundle/ruby/3.2.0/bin/jekyll:25:in `<main>'
