@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-11T11:31:29.382Z",
+  "last_updated": "2026-06-11T11:41:03.648Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2440,7 +2440,7 @@
       "tema_principal": "Programación / Engine",
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Major",
-      "milestone": "M3",
+      "milestone": "M2",
       "estado": "Pending",
       "completitud": 0,
       "resuelto_por": null,
@@ -2453,9 +2453,9 @@
       "estimated_hours": 8,
       "story_points": null,
       "tags": [
-        "feature",
         "api",
-        "backend"
+        "backend",
+        "feature"
       ],
       "external_links": [],
       "subtasks": [],
@@ -2479,6 +2479,13 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-11T11:41:02.898Z",
+          "field": "milestone",
+          "old_value": "M3",
+          "new_value": "M2"
         }
       ],
       "id": 43
@@ -2702,6 +2709,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #43",
+      "user": "Axlfc",
+      "timestamp": "2026-06-11T11:41:03.648Z"
+    },
     {
       "action": "chore: actualizar tarea #49",
       "user": "Axlfc",
