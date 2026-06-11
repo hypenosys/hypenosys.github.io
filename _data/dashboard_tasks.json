@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-11T09:37:58.065Z",
+  "last_updated": "2026-06-11T09:38:17.622Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1816,7 +1816,7 @@
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Cosmetic",
       "milestone": "M1",
-      "estado": "Pending",
+      "estado": "Obsolete",
       "completitud": 0,
       "resuelto_por": null,
       "detectado_por": "Axel",
@@ -1860,6 +1860,13 @@
           "field": "prioridad",
           "old_value": "Major",
           "new_value": "Cosmetic"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-11T09:38:16.968Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Obsolete"
         }
       ],
       "id": 37
@@ -2639,6 +2646,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #37",
+      "user": "Axlfc",
+      "timestamp": "2026-06-11T09:38:17.622Z"
+    },
     {
       "action": "chore: actualizar tarea #33",
       "user": "Axlfc",
