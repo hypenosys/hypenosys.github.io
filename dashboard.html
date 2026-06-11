@@ -1187,10 +1187,26 @@ layout: null
     <script>
     document.addEventListener('DOMContentLoaded', function() {
       setTimeout(function() {
-        window._openTaskInClaude = function(taskId) {
+        window._openTaskInClaude = function(taskDataOrId) {
           try {
-            const task = (window.currentTasks || []).find(t => String(t.id) === String(taskId)) || { id: taskId };
-            const payload = encodeURIComponent(JSON.stringify(task));
+            let taskData = null;
+            let id = null;
+
+            if (typeof taskDataOrId === 'object' && taskDataOrId !== null) {
+              taskData = taskDataOrId;
+              id = taskData.id;
+            } else {
+              id = taskDataOrId;
+            }
+
+            // Robust fallback if we only have ID or missing key fields
+            if (!taskData || (!taskData.title && !taskData.titulo)) {
+              taskData = (window.currentTasks || []).find(t => String(t.id) === String(id))
+                      || (typeof currentTasks !== 'undefined' ? currentTasks.find(t => String(t.id) === String(id)) : null)
+                      || { id: id };
+            }
+
+            const payload = encodeURIComponent(JSON.stringify(taskData));
             const baseUrl = window.SITE_BASEURL || '';
             window.location.href = baseUrl + '/claude-chat.html?task_data=' + payload;
           } catch (e) {
