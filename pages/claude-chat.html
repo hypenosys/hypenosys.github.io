@@ -1173,23 +1173,30 @@ permalink: /claude-chat.html
                     let prompt = "";
                     if (taskDataRaw) {
                         // Format the pre-filled technical summary
-                        prompt = `Actúa como un Senior Software Engineer. He vinculado esta tarea al contexto neural:\n\n`;
-                        prompt += `📌 TAREA: #${task.id} - ${task.titulo}\n`;
+                        prompt = `He vinculado esta tarea para su análisis técnico:\n\n`;
+                        prompt += `📌 TAREA: #${task.id} - ${task.title || task.titulo || 'Sin título'}\n`;
                         prompt += `🔀 RAMA: ${task.rama || 'N/A'}\n`;
                         prompt += `📊 ESTADO: ${task.estado} | PRIORIDAD: ${task.prioridad}\n`;
                         if (task.descripcion) prompt += `📝 DESCRIPCIÓN: ${task.descripcion}\n`;
 
                         if (task.subtasks && task.subtasks.length > 0) {
-                            prompt += `📋 SUBTAREAS:\n` + task.subtasks.map(s => `  - [${s.done ? 'x' : ' '}] ${s.text || s.titulo}`).join('\n') + `\n`;
+                            prompt += `📋 SUBTAREAS:\n` + task.subtasks.map(s => {
+                                const text = typeof s === 'string' ? s : (s.text || s.titulo || '');
+                                const done = typeof s === 'object' && s.done;
+                                return `  - [${done ? 'x' : ' '}] ${text}`;
+                            }).join('\n') + `\n`;
                         }
 
                         if (task.comments && task.comments.length > 0) {
-                            prompt += `💬 COMENTARIOS RECIENTES:\n` + task.comments.map(c => `  - ${c.author || 'User'}: ${c.text || c.body}`).join('\n') + `\n`;
+                            prompt += `💬 COMENTARIOS RECIENTES:\n` + task.comments.map(c => {
+                                if (typeof c === 'string') return `  - ${c}`;
+                                return `  - ${c.author || c.author_login || 'User'}: ${c.text || c.body || ''}`;
+                            }).join('\n') + `\n`;
                         }
 
                         if (task.acceptance_criteria) prompt += `✅ CRITERIOS DE ACEPTACIÓN: ${task.acceptance_criteria}\n`;
 
-                        prompt += `\n¿Cómo podemos abordar esta implementación de forma eficiente?`;
+                        prompt += `\n¿Cómo podemos abordar esta tarea?`;
                     } else if (pendingPrompt) {
                         prompt = pendingPrompt;
                         localStorage.removeItem('hy_neural_pending_prompt');
@@ -1747,7 +1754,7 @@ permalink: /claude-chat.html
                 id,
                 title: 'Nueva Conversación',
                 messages: [],
-                systemPrompt: 'Eres Claude, un asistente experto para el estudio de videojuegos Hypenosys.',
+                systemPrompt: 'Eres un asistente técnico del estudio de videojuegos Hypenosys. Ayudas al equipo a planificar e implementar tareas de desarrollo. Responde siempre en español, de forma directa y técnica.',
                 createdAt: new Date().toISOString(),
                 task_ref: null
             };
@@ -1779,7 +1786,7 @@ permalink: /claude-chat.html
             if (window.godModeTools) {
                 const activeRepo = localStorage.getItem('hypenosys_active_repo');
                 const godContext = await window.godModeTools.getGodModeSystemPrompt(activeRepo);
-                if (!session.baseSystemPrompt) session.baseSystemPrompt = session.systemPrompt || 'Eres Claude, un asistente experto para el estudio de videojuegos Hypenosys.';
+                if (!session.baseSystemPrompt) session.baseSystemPrompt = session.systemPrompt || 'Eres un asistente técnico del estudio de videojuegos Hypenosys. Ayudas al equipo a planificar e implementar tareas de desarrollo. Responde siempre en español, de forma directa y técnica.';
                 session.systemPrompt = session.baseSystemPrompt + '\n' + godContext;
             }
 
@@ -2143,7 +2150,7 @@ permalink: /claude-chat.html
             const docKeywords = ['documentación', 'docs', 'readme', 'manual', 'cómo funciona', 'qué es', 'explica', 'describe'];
             const needsDocs = docKeywords.some(k => userMessage.toLowerCase().includes(k));
 
-            let systemPrompt = basePrompt || "Eres Claude Neural, el asistente de Hypenosys. Tienes acceso a la documentación del proyecto.";
+            let systemPrompt = basePrompt || "Eres un asistente técnico del estudio de videojuegos Hypenosys. Ayudas al equipo a planificar e implementar tareas de desarrollo. Responde siempre en español, de forma directa y técnica.";
 
             if (window._activeTaskContext) {
                 const t = window._activeTaskContext;

@@ -40,8 +40,29 @@
                             openEditTaskModal(id);
                         }
                     } else if (action === 'claude') {
+                        let taskData = { id };
+
+                        // Primary: try window.currentTasks
+                        if (Array.isArray(window.currentTasks)) {
+                            const found = window.currentTasks.find(t => String(t.id) === String(id));
+                            if (found) taskData = found;
+                        }
+
+                        // Secondary: try window.kanbanData or window.allTasks as alternative global names
+                        if (taskData.id && !taskData.title) {
+                            const alt = (window.kanbanData || window.allTasks || []);
+                            const found = Array.isArray(alt) ? alt.find(t => String(t.id) === String(id)) : null;
+                            if (found) taskData = found;
+                        }
+
+                        // Tertiary: try the global currentTasks if available (common in dashboard-config.js)
+                        if (taskData.id && !taskData.title && typeof currentTasks !== 'undefined' && Array.isArray(currentTasks)) {
+                            const found = currentTasks.find(t => String(t.id) === String(id));
+                            if (found) taskData = found;
+                        }
+
                         if (typeof window._openTaskInClaude === 'function') {
-                            window._openTaskInClaude(id);
+                            window._openTaskInClaude(taskData);
                         }
                     } else if (action === 'move') {
                         const nextStatus = el.dataset.nextStatus;
