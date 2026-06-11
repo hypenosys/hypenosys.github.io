@@ -31,8 +31,6 @@
                     e.preventDefault();
                     e.stopPropagation();
 
-                    console.log(`[KANBAN] Action: ${action}, ID: ${id}, Event: ${e.type}`);
-
                     if (action === 'toggle') {
                         window.kanbanUI.toggleCard(id);
                     } else if (action === 'edit') {
@@ -240,9 +238,8 @@
                             } else {
                                 console.error('[KANBAN] NeuralSessionPanel not available');
                                 // Fallback to old behavior if everything fails
-                                 console.warn('[KANBAN] Retrying NeuralSession open failed, using fallback navigation');
                                 const url = `/claude-chat.html?task_id=${taskId}&from=jules-panel`;
-                                 window.location.href = url;
+                                window.location.href = url;
                             }
                         }, 800);
                     }

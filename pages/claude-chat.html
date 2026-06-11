@@ -1126,7 +1126,6 @@ permalink: /claude-chat.html
                     task = JSON.parse(decodeURIComponent(taskDataRaw));
                     localStorage.setItem('hy_neural_active', 'true');
                     localStorage.setItem('hy_neural_task_context', JSON.stringify(task));
-                    console.log('[NEURAL] Loaded task data from URL:', task);
                 } catch (e) {
                     console.error('[NEURAL] Error parsing task_data:', e);
                 }
@@ -2478,7 +2477,6 @@ permalink: /claude-chat.html
             // Preservation of window._activeTaskContext is implicit as it's a global variable
             // not touched by this function. We just ensure we don't clear it.
             session._compacting = true;
-            console.log(`[Neural Link] Compacting session ${session.id}...`);
 
             try {
                 const config = getActiveConfig();
