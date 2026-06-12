@@ -867,6 +867,64 @@ body{
 .activity-entry {
     font-size: 13px;
     line-height: 1.6;
+    position: relative;
+    transition: background 0.3s ease;
+    cursor: pointer;
+    padding-left: 30px !important;
+}
+
+.activity-entry.selected {
+    background: rgba(124, 58, 237, 0.15) !important;
+    box-shadow: inset 0 0 10px rgba(124, 58, 237, 0.1);
+}
+
+.activity-selection-checkbox {
+    position: absolute;
+    left: 10px;
+    top: 14px;
+    width: 14px;
+    height: 14px;
+    border: 1px solid var(--border2);
+    border-radius: 3px;
+    background: rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.activity-entry.selected .activity-selection-checkbox {
+    background: var(--accent);
+    border-color: var(--accent2);
+    box-shadow: 0 0 8px var(--accent);
+}
+
+.activity-entry.selected .activity-selection-checkbox::after {
+    content: "✓";
+    font-size: 10px;
+    color: white;
+}
+
+#neural-selection-toolbar {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: rgba(13, 13, 20, 0.95);
+    backdrop-filter: blur(15px);
+    border: 1px solid var(--border-accent);
+    border-radius: var(--r-full);
+    padding: 8px 16px 8px 24px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6), var(--shadow-glow);
+}
+
+#neural-selection-toolbar.active {
+    transform: translateX(-50%) translateY(0);
 }
 .activity-entry--plan { color: var(--accent2); }
 .activity-entry--progress { color: var(--text2); }
@@ -1670,6 +1728,22 @@ body{
                 <p style="max-width: 260px; font-size: 12px;">Aquí se mostrará el progreso real de Jules, cambios de código y logs de ejecución.</p>
             </div>
             <div id="neural-jules-history" class="activity-log"></div>
+
+            <!-- Floating Selection Toolbar -->
+            <div id="neural-selection-toolbar">
+                <div class="flex items-center gap-3 pr-4 border-r border-white/10">
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Seleccionados</span>
+                    <span id="selection-count" class="bg-indigo-500 text-white text-[11px] font-bold px-2 py-0.5 rounded-full">0</span>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="analyzeSelectedWithClaude()" class="btn btn-primary btn-sm" style="box-shadow: 0 0 15px rgba(124,58,237,0.4);">
+                        ✨ ANALIZAR CON CLAUDE
+                    </button>
+                    <button onclick="clearHistorySelection()" class="btn btn-ghost btn-sm">
+                        CANCELAR
+                    </button>
+                </div>
+            </div>
             <div id="jules-history-log" class="activity-log" style="display:none;"></div>
         </div>
 
@@ -2504,6 +2578,13 @@ body{
                 showToast("Neural Link: Payload cargado con éxito", "green");
                 switchView('neural');
 
+                // Scroll to prompt area
+                setTimeout(() => {
+                    promptArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    promptArea.classList.add('neural-active-glow');
+                    setTimeout(() => promptArea.classList.remove('neural-active-glow'), 3000);
+                }, 600);
+
                 // Cleanup
                 localStorage.removeItem('jules_task_payload');
                 localStorage.removeItem('jules_clipboard');
@@ -2524,6 +2605,13 @@ body{
                 promptArea.value = content;
                 showToast("Prompt importado desde Claude Chat", "green");
                 switchView('neural');
+
+                // Scroll to prompt area
+                setTimeout(() => {
+                    promptArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    promptArea.classList.add('neural-active-glow');
+                    setTimeout(() => promptArea.classList.remove('neural-active-glow'), 3000);
+                }, 600);
                 localStorage.removeItem('jules_clipboard');
 
                 const taskId = localStorage.getItem('jules_linked_task_id');
@@ -3239,8 +3327,10 @@ body{
               const html = renderActivity(activity);
               if (!html) return;
               const div = document.createElement('div');
+                div.className = 'activity-entry';
               div.dataset.activityId = activity.id;
               div.innerHTML = html;
+                div.onclick = (e) => toggleActivitySelection(div, activity);
               log.appendChild(div);
               added = true;
             });
@@ -3274,7 +3364,7 @@ body{
 
     function renderActivity(activity) {
       const currentSessions = window.julesSessionsCache || [];
-      let html = '';
+      let html = '<div class="activity-selection-checkbox"></div>';
 
       // Mejora 4: Visor de Diffs Inline (se puede añadir a cualquier tipo de actividad)
       let diffsHtml = '';
@@ -3576,6 +3666,80 @@ body{
             if (task) localStorage.setItem('hy_neural_task_context', JSON.stringify(task));
         }
         window.location.reload(); } // Quick way to restore full state
+    let _historySelection = new Map();
+
+    function toggleActivitySelection(el, activity) {
+        const id = activity.id;
+        if (_historySelection.has(id)) {
+            _historySelection.delete(id);
+            el.classList.remove('selected');
+        } else {
+            _historySelection.set(id, activity);
+            el.classList.add('selected');
+        }
+        updateSelectionToolbar();
+    }
+
+    function updateSelectionToolbar() {
+        const toolbar = document.getElementById('neural-selection-toolbar');
+        const countEl = document.getElementById('selection-count');
+        const count = _historySelection.size;
+
+        if (count > 0) {
+            toolbar.classList.add('active');
+            countEl.textContent = count;
+        } else {
+            toolbar.classList.remove('active');
+        }
+    }
+
+    function clearHistorySelection() {
+        _historySelection.clear();
+        document.querySelectorAll('.activity-entry.selected').forEach(el => el.classList.remove('selected'));
+        updateSelectionToolbar();
+    }
+
+    function analyzeSelectedWithClaude() {
+        if (_historySelection.size === 0) return;
+
+        // Sort selected activities by their order in the DOM to maintain temporal context
+        const container = document.getElementById('neural-jules-history');
+        const sortedEntries = Array.from(container.querySelectorAll('.activity-entry.selected'))
+            .map(el => _historySelection.get(el.dataset.activityId))
+            .filter(Boolean);
+
+        let prompt = "He seleccionado estos fragmentos del historial de Jules para analizar:\n\n";
+
+        sortedEntries.forEach((act, idx) => {
+            prompt += `--- [FRAGMENTO ${idx + 1}] ---\n`;
+            if (act.description) prompt += `DESCRIPCIÓN: ${act.description}\n`;
+            if (act.progressUpdated) prompt += `PROGRESO: ${act.progressUpdated.title}\n`;
+            if (act.artifacts) {
+                act.artifacts.forEach(art => {
+                    if (art.changeSet?.gitPatch?.unidiffPatch) {
+                        prompt += `CÓDIGO (DIFF):\n${art.changeSet.gitPatch.unidiffPatch}\n`;
+                    }
+                    if (art.bashOutput) {
+                        prompt += `COMANDO: ${art.bashOutput.command}\nOUTPUT:\n${art.bashOutput.output}\n`;
+                    }
+                });
+            }
+            if (act.planGenerated) {
+                const steps = act.planGenerated.plan?.steps || [];
+                prompt += `PLAN:\n${steps.map(s => `${s.index + 1}. ${s.title}: ${s.description || ''}`).join('\n')}\n`;
+            }
+            prompt += "\n";
+        });
+
+        prompt += "\n¿Qué opinas de estos cambios o estados? ¿Hay algo que deba ajustar o corregir?";
+
+        localStorage.setItem('hy_neural_pending_prompt', prompt);
+        localStorage.setItem('hy_neural_active', 'true');
+
+        showToast("Enviando selección a Claude...", "green");
+        setTimeout(() => switchView('chat'), 500);
+    }
+
     function commentOnStep(sessionId, stepIndex, stepTitle) {
         const idSafe = getIdSafe(sessionId);
         // En V2 el input de chat es #v2-chat-input
