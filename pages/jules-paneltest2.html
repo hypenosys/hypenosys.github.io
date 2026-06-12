@@ -827,19 +827,36 @@ body{
     color: #6272a4;
     font-style: italic;
 }
-.prose-invert { color: #f8f8f2; }
+.prose-invert { color: #e2e8f0; line-height: 1.6; font-size: 13px; }
+.prose-invert h1, .prose-invert h2, .prose-invert h3 { color: #f8fafc; margin-top: 1.5em; margin-bottom: 0.5em; font-weight: 700; }
+.prose-invert p { margin-bottom: 1em; }
+.prose-invert code {
+    background: rgba(52, 211, 153, 0.1);
+    color: #34d399;
+    padding: 0.2em 0.4em;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+}
 .prose-invert pre {
-    background: #1e1f29;
+    background: #050508;
     padding: 12px;
     border-radius: 8px;
     overflow-x: auto;
     margin: 8px 0;
-    border: 1px solid #44475a;
+    border: 1px solid var(--border);
+    position: relative;
 }
-.prose-invert code {
-    font-family: var(--font-mono);
-    color: #50fa7b;
+.prose-invert pre::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
+    background-size: 100% 4px;
+    pointer-events: none;
 }
+.prose-invert ul, .prose-invert ol { margin-bottom: 1em; padding-left: 1.5em; }
+.prose-invert li { margin-bottom: 0.5em; }
 
 /* ─── JULES HISTORY STYLES ─── */
 .activity-log {
@@ -1652,7 +1669,8 @@ body{
                 <h3 style="font-family: var(--font-head); font-weight: 700; font-size: 16px;">Jules Execution History</h3>
                 <p style="max-width: 260px; font-size: 12px;">Aquí se mostrará el progreso real de Jules, cambios de código y logs de ejecución.</p>
             </div>
-            <div id="jules-history-log" class="activity-log"></div>
+            <div id="neural-jules-history" class="activity-log"></div>
+            <div id="jules-history-log" class="activity-log" style="display:none;"></div>
         </div>
 
         <!-- Styled Divider -->
@@ -1998,11 +2016,14 @@ body{
     }
 
     function escapeHtml(str) {
-      return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+      return String(str ?? '')
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;');
     }
 
     function getTimeAgo(dateStr) {
-        if (!dateStr) return '---';
         const seconds = Math.floor((new Date() - new Date(dateStr)) / 1000);
         let interval = seconds / 31536000;
         if (interval > 1) return `hace ${Math.floor(interval)} años`;
@@ -2282,7 +2303,7 @@ body{
                                 <span class="kb-card-time">${getTimeAgo(s.createTime)}</span>
                             </div>
                             <div class="kb-card-actions">
-                                <button class="kb-action-btn" onclick="event.stopPropagation(); window.JulesActivitiesModule.startPolling('${sid}'); switchView('chat');">Ver Neural</button>
+                                <button class="kb-action-btn" onclick="event.stopPropagation(); localStorage.setItem('hy_neural_session_id', '${sid}'); localStorage.setItem('hy_neural_active', 'true'); switchView('chat');">Ver Neural</button>
                             </div>
                         </div>
                     `;
@@ -2311,9 +2332,7 @@ body{
             // Area 1: Polling for history if on chat view
             if (window.JulesPanelState.currentView === 'chat') {
                 const activeSid = localStorage.getItem('hy_neural_session_id');
-                if (activeSid) {
-                    const jSession = (window.julesSessionsCache || []).find(s => s.name.endsWith(activeSid));
-                    if (jSession) refreshNeuralHistory(jSession.name);
+                if (activeSid && !neuralPollInterval) {
                 }
             }
 
@@ -2416,9 +2435,11 @@ body{
         }
 
         localStorage.removeItem('hy_neural_active');
+        localStorage.removeItem('hy_neural_session_id');
         localStorage.removeItem('hy_neural_task_context');
         localStorage.removeItem('hy_neural_pending_prompt');
         localStorage.removeItem('hy_neural_thread');
+        stopNeuralPolling();
         $('neural-session-banner').classList.add('hidden');
         $('v2-task-context').classList.add('hidden');
         if (window.JulesPanelState.activePayload) {
@@ -2658,17 +2679,15 @@ body{
             showToast("Sesión iniciada correctamente", "green");
             addTel("JULES", `Sesión iniciada: ${sid}`, "success");
 
-            if (window.JulesActivitiesModule) {
-              window.JulesActivitiesModule.startPolling(sid);
-            }
+            localStorage.setItem('hy_neural_session_id', sid);
 
+            startNeuralPolling(sid, true);
             // AREA 2: Register active Neural Session
             const taskContext = JSON.parse(localStorage.getItem('hy_neural_task_context') || '{}');
             const sessionName = taskContext.titulo || taskContext.title || `Sesión Neural ${new Date().toLocaleDateString()}`;
             const now = new Date().toISOString();
 
             localStorage.setItem('hy_neural_active', 'true');
-            localStorage.setItem('hy_neural_session_id', sid);
             localStorage.setItem('hy_neural_session_name', sessionName);
             localStorage.setItem('hy_neural_session_start', now);
 
@@ -2752,12 +2771,18 @@ body{
             renderChatV2Messages();
         }
         if (view === 'chat') {
-            const activeSid = localStorage.getItem('hy_neural_session_id');
-            if (activeSid) {
-                const jSession = (window.julesSessionsCache || []).find(s => s.name.endsWith(activeSid));
-                if (jSession) refreshNeuralHistory(jSession.name);
+            const sid = localStorage.getItem("hy_neural_session_id");
+            if (sid && localStorage.getItem('hy_neural_active') === 'true') {
+                startNeuralPolling(sid);
             }
             renderChatV2Messages();
+        } else {
+            // No detenemos el polling si se cambia de vista, según las instrucciones
+            // se debe detener cuando el usuario desvincula o la sesión termina.
+            // Pero el requisito 1 dice: "On Neural tab load (view-chat becomes active) ... Start polling immediately"
+            // Y el requisito 5: "Stop polling when ... hy_neural_active is cleared"
+            // No dice explícitamente detener al cambiar de vista, pero suele ser buena práctica.
+            // Las instrucciones dicen "On Neural tab load ... start polling", implicando que es específico de esa vista.
         }
         if (view === 'hub') {
             const activeTab = localStorage.getItem('hypenosys_hub_active_tab') || 'pull-requests';
@@ -2848,72 +2873,34 @@ body{
         el.classList.add('active'); $(`dr-panel-${tab}`).classList.add('active');
     }
 
-    async function refreshActivities(sessionId) {
-        const container = $('dr-term'), diffContainer = $('diff-content'); if (!container) return;
-        try {
-            const data = await window.julesApi.getActivities(sessionId, 50);
-            const activities = data.activities || [];
-            container.innerHTML = activities.map(a => {
-                let cls = 'tline ', txt = a.description || '';
-                if (a.progressUpdated) { cls += 'agent'; txt = a.progressUpdated.title; }
-                else if (a.planGenerated) { cls += 'sys'; txt = '📋 Plan generado'; }
-                else if (a.planApproved) { cls += 'git'; txt = '✅ Plan aprobado'; }
-                else if (a.sessionCompleted) { cls += 'git'; txt = '🏁 Sesión completada'; }
-                else if (a.sessionFailed) { cls += 'err'; txt = `❌ ERROR: ${a.sessionFailed.reason}`; }
-                return `<div class="${cls}">${escapeHtml(txt)}</div>`;
-            }).join('') || '<div class="tline sys">Sin logs</div>';
-            container.scrollTop = container.scrollHeight;
-
-            let lastPatch = null;
-            activities.forEach(a => { (a.artifacts || []).forEach(art => { if (art.changeSet?.gitPatch?.unidiffPatch) lastPatch = art.changeSet.gitPatch.unidiffPatch; }); });
-            if (lastPatch && diffContainer) {
-                diffContainer.innerHTML = `<div class="diff-body" style="border-top:1px solid var(--border)">` + lastPatch.split('\n').map(l => {
-                    let cls = 'ctx', s = ' '; if (l.startsWith('+') && !l.startsWith('+++')) { cls = 'add'; s = '+'; } else if (l.startsWith('-') && !l.startsWith('---')) { cls = 'del'; s = '-'; } else if (l.startsWith('@@')) { cls = 'hunk'; }
-                    return `<div class="diff-line ${cls}"><div class="diff-sign">${s}</div><div class="diff-code">${escapeHtml(l)}</div></div>`;
-                }).join('') + `</div>`;
-            } else if (diffContainer) diffContainer.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text3);">Sin cambios.</div>';
-        } catch (e) { container.innerHTML = `<div class="tline err">Error: ${e.message}</div>`; }
-    }
-
-    /* ─── METRICS ─── */
     async function loadJulesMetrics() {
         try {
             const data = await window.julesApi.getSessions(100);
             const sessions = data.sessions || [];
             if (!sessions.length) return;
-
             const total = sessions.length;
-            const completed = sessions.filter(s => s.state === 'COMPLETED').length;
-            const failed = sessions.filter(s => s.state === 'FAILED' || s.state === 'ERROR').length;
-            const active = sessions.filter(s => ['WORKING', 'IN_PROGRESS', 'QUEUED', 'PLANNING', 'AWAITING_PLAN_APPROVAL'].includes(s.state)).length;
-
+            const completed = sessions.filter(s => s.state === "COMPLETED").length;
+            const failed = sessions.filter(s => s.state === "FAILED" || s.state === "ERROR").length;
+            const active = sessions.filter(s => ["WORKING", "IN_PROGRESS", "QUEUED", "PLANNING", "AWAITING_PLAN_APPROVAL"].includes(s.state)).length;
             const successRate = total > 0 ? Math.round((completed / (completed + failed || 1)) * 100) : 0;
             const totalTokens = sessions.reduce((acc, s) => acc + (s.usage?.totalTokens || 0), 0);
-
-            if($('m-success-rate')) $('m-success-rate').textContent = `${successRate}%`;
-            if($('m-tokens')) $('m-tokens').textContent = totalTokens > 1000 ? `${Math.round(totalTokens/1000)}k` : totalTokens;
-            if($('s-total')) $('s-total').textContent = total;
-            if($('s-active')) $('s-active').textContent = active;
-
-            // Donut chart updates
-            if($('leg-done')) $('leg-done').textContent = completed;
-            if($('leg-running')) $('leg-running').textContent = sessions.filter(s => ['WORKING', 'IN_PROGRESS'].includes(s.state)).length;
-            if($('leg-error')) $('leg-error').textContent = failed;
-            if($('leg-pending')) $('leg-pending').textContent = sessions.filter(s => s.state === 'QUEUED' || s.state === 'PLANNING').length;
-
-            // CSS Donut update
+            if($("m-success-rate")) $("m-success-rate").textContent = `${successRate}%`;
+            if($("m-tokens")) $("m-tokens").textContent = totalTokens > 1000 ? `${Math.round(totalTokens/1000)}k` : totalTokens;
+            if($("s-total")) $("s-total").textContent = total;
+            if($("s-active")) $("s-active").textContent = active;
+            if($("leg-done")) $("leg-done").textContent = completed;
+            if($("leg-running")) $("leg-running").textContent = sessions.filter(s => ["WORKING", "IN_PROGRESS"].includes(s.state)).length;
+            if($("leg-error")) $("leg-error").textContent = failed;
+            if($("leg-pending")) $("leg-pending").textContent = sessions.filter(s => s.state === "QUEUED" || s.state === "PLANNING").length;
             const doneP = (completed / total) * 100;
             const errorP = (failed / total) * 100;
-            const activeP = (active / total) * 100;
-
-            if($('donut-done')) $('donut-done').setAttribute('stroke-dasharray', `${doneP} 100`);
-            if($('donut-error')) {
-                $('donut-error').setAttribute('stroke-dasharray', `${errorP} 100`);
-                $('donut-error').setAttribute('stroke-dashoffset', `-${doneP}`);
+            if($("donut-done")) $("donut-done").setAttribute("stroke-dasharray", `${doneP} 100`);
+            if($("donut-error")) {
+                $("donut-error").setAttribute("stroke-dasharray", `${errorP} 100`);
+                $("donut-error").setAttribute("stroke-dashoffset", `-${doneP}`);
             }
-
         } catch (e) {
-            console.warn('[Jules] loadJulesMetrics error:', e);
+            console.warn("[Jules] loadJulesMetrics error:", e);
         }
     }
 
@@ -2923,6 +2910,8 @@ body{
 
     /* ─── POLLING ─── */
     let sessionPollInterval = null;
+    let neuralPollInterval = null;
+
     function startPolling() {
         stopPolling();
         sessionPollInterval = setInterval(() => {
@@ -2933,7 +2922,41 @@ body{
         }, 15000);
     }
     function stopPolling() { if (sessionPollInterval) clearInterval(sessionPollInterval); }
-    document.addEventListener('visibilitychange', () => document.hidden ? stopPolling() : startPolling());
+
+    function startNeuralPolling(sessionId = null) {
+        const sid = sessionId || localStorage.getItem('hy_neural_session_id');
+        if (!sid) return;
+
+        refreshActivities(sid);
+        stopNeuralPolling(); // Clear existing
+        neuralPollInterval = setInterval(() => {
+            if (!document.hidden) {
+                // Stop polling if hy_neural_active is cleared or not true
+                if (localStorage.getItem('hy_neural_active') !== 'true') {
+                    stopNeuralPolling();
+                    return;
+                }
+                refreshActivities(sid);
+            }
+        }, 15000);
+    }
+
+    function stopNeuralPolling() {
+        if (neuralPollInterval) {
+            clearInterval(neuralPollInterval);
+            neuralPollInterval = null;
+        }
+    }
+
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            stopPolling();
+        } else {
+            startPolling();
+            if (window.JulesPanelState.currentView === 'chat') {
+            }
+        }
+    });
     window.addEventListener('beforeunload', stopPolling);
 
     /* ─── INIT ─── */
@@ -3118,6 +3141,10 @@ body{
     };
 
     /* ─── JULES HISTORY PORTED LOGIC ─── */
+    function getIdSafe(name) {
+      return name ? name.split('/').pop() : '';
+    }
+
     const STATE_CONFIG = {
       'QUEUED':                  { label: 'En cola',           cls: 'queued',    icon: '⏸' },
       'PLANNING':                { label: 'Planificando',       cls: 'running',   icon: '🧠' },
@@ -3131,19 +3158,305 @@ body{
 
     function getStateBadge(state) {
       const cfg = STATE_CONFIG[state] || { label: state || '—', cls: 'queued', icon: '◌' };
-      return `<span class="sbadge ${cfg.cls}" style="background: rgba(255,255,255,0.05); padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 700; color: var(--text2);">
+      return `<span class="session-badge session-badge--${cfg.cls}">
         ${cfg.icon} ${cfg.label}
       </span>`;
     }
 
-    window.toggleHistoryCollapse = () => {
-        const container = $('jules-history-container');
-        const divider = $('neural-divider');
-        const label = $('collapse-label');
-        const isCollapsed = container.classList.toggle('collapsed');
-        divider.classList.toggle('collapsed', isCollapsed);
-        label.textContent = isCollapsed ? 'Expandir Historia' : 'Colapsar Historia';
-    };
+    function getTimeAgo(dateStr) {
+        const seconds = Math.floor((new Date() - new Date(dateStr)) / 1000);
+        let interval = seconds / 31536000;
+        if (interval > 1) return `hace ${Math.floor(interval)} años`;
+        interval = seconds / 2592000;
+        if (interval > 1) return `hace ${Math.floor(interval)} meses`;
+        interval = seconds / 86400;
+        if (interval > 1) return `hace ${Math.floor(interval)} días`;
+        interval = seconds / 3600;
+        if (interval > 1) return `hace ${Math.floor(interval)} horas`;
+        interval = seconds / 60;
+        if (interval > 1) return `hace ${Math.floor(interval)} min`;
+        return 'hace unos segundos';
+    }
+
+    function escapeHtml(str) {
+      return String(str ?? '')
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;');
+    }
+
+    async function refreshActivities(idSafe) {
+        const currentSessions = window.julesSessionsCache || [];
+        const sessionId = currentSessions.find(s => getIdSafe(s.name) === idSafe)?.name || 'sessions/' + idSafe;
+        const log = document.getElementById("neural-jules-history");
+        if (!log) return;
+
+        try {
+            const data = await window.julesApi.getActivities(sessionId, 50);
+            const session = currentSessions.find(s => s.name === sessionId);
+
+            // Update sticky badge
+            const stickyBadge = document.getElementById(`sticky-badge-${idSafe}`);
+            if (stickyBadge && session) {
+                stickyBadge.innerHTML = getStateBadge(session.state);
+                stickyBadge.classList.remove('hidden');
+            }
+
+            let activities = (data.activities || [])
+              .filter((a, i, arr) => arr.findIndex(x => x.id === a.id) === i);
+
+            // Mejora 1: Actualizar Working Indicator
+            if (session && session.state === 'IN_PROGRESS') {
+              const lastProgress = [...activities].reverse().find(a => a.progressUpdated);
+              if (lastProgress) {
+                let title = lastProgress.progressUpdated.title || '';
+                title = title.replace(/^Reading\b/i, 'Leyendo').replace(/^Writing\b/i, 'Escribiendo');
+                const card = document.getElementById('card-' + idSafe);
+                const workingText = card?.querySelector('[data-role="working-text"]');
+                if (workingText) {
+                  let text = title;
+                  if (text.length > 60) text = text.substring(0, 57) + '...';
+                  workingText.textContent = text.endsWith('...') ? text : text + '...';
+                }
+              }
+            }
+
+            // Guardar IDs ya renderizados
+            const existingIds = new Set(
+              [...log.querySelectorAll('[data-activity-id]')]
+                .map(el => el.dataset.activityId)
+            );
+
+            // Quitar el placeholder "No hay eventos" si existen actividades reales
+            const placeholder = log.querySelector('[data-placeholder]');
+            if (placeholder && activities.length > 0) placeholder.remove();
+
+            // Añadir SOLO las actividades nuevas
+            let added = false;
+            activities.forEach(activity => {
+              if (existingIds.has(activity.id)) return;
+              const html = renderActivity(activity);
+              if (!html) return;
+              const div = document.createElement('div');
+              div.dataset.activityId = activity.id;
+              div.innerHTML = html;
+              log.appendChild(div);
+              added = true;
+            });
+
+            // Mostrar placeholder solo si el log sigue vacío después de intentar añadir
+            if (log.querySelectorAll('[data-activity-id]').length === 0) {
+              if (!log.querySelector('[data-placeholder]')) {
+                const ph = document.createElement('div');
+                ph.dataset.placeholder = 'true';
+                ph.className = 'italic text-center opacity-40';
+                ph.style.cssText = 'font-size:11px;padding:12px;color:#4b5563;';
+                ph.textContent = 'No hay eventos todavía';
+                log.appendChild(ph);
+              }
+            }
+
+            // Scroll inteligente
+            if (added) {
+              const threshold = 40;
+              const isAtBottom = log.scrollHeight - log.scrollTop - log.clientHeight < threshold;
+              if (isAtBottom) log.scrollTo({ top: log.scrollHeight, behavior: 'smooth' });
+            }
+
+            if (session && (session.state === 'COMPLETED' || session.state === 'FAILED')) {
+              stopNeuralPolling();
+            }
+        } catch (e) {
+            console.warn("refreshActivities error:", e);
+        }
+    }
+
+    function renderActivity(activity) {
+      const currentSessions = window.julesSessionsCache || [];
+      let html = '';
+
+      // Mejora 4: Visor de Diffs Inline (se puede añadir a cualquier tipo de actividad)
+      let diffsHtml = '';
+      if (activity.artifacts && activity.artifacts.length > 0) {
+        activity.artifacts.forEach(artifact => {
+          if (artifact.changeSet?.gitPatch?.unidiffPatch) {
+            const patch = artifact.changeSet.gitPatch.unidiffPatch;
+            const msg   = artifact.changeSet.gitPatch.suggestedCommitMessage || '';
+            const lines = patch.split('\n');
+
+            // Máximo 300 líneas visibles — el resto se oculta con "Ver más"
+            const MAX_LINES = 300;
+            const visibleLines = lines.slice(0, MAX_LINES);
+            const hiddenCount = lines.length - visibleLines.length;
+
+            // Construir HTML con clases en lugar de estilos inline por línea
+            const diffLinesHtml = visibleLines.map(line => {
+              let cls = 'dl';
+              if (line.startsWith('+') && !line.startsWith('+++')) cls = 'dl dl-add';
+              else if (line.startsWith('-') && !line.startsWith('---')) cls = 'dl dl-del';
+              else if (line.startsWith('@@')) cls = 'dl dl-hunk';
+              return `<div class="${cls}">${escapeHtml(line)}</div>`;
+            }).join('');
+
+            const session = currentSessions.find(s => s.name === activity.name?.split('/activities/')[0]);
+            const moreHtml = hiddenCount > 0
+              ? `<div style="font-size:10px;color:#6b7280;padding:6px;text-align:center;
+                   border-top:1px solid #2a2a35;">
+                   +${hiddenCount} líneas más —
+                   <a href="${session?.url || '#'}" target="_blank"
+                      style="color:#8b5cf6;text-decoration:underline;">
+                     ver completo en Jules
+                   </a>
+                 </div>`
+              : '';
+
+            diffsHtml += `
+              <details style="margin-top:8px;" class="diff-viewer">
+                <summary style="cursor:pointer;font-size:11px;color:#8b5cf6;
+                  font-weight:600;padding:4px 0;list-style:none;
+                  display:flex;align-items:center;gap:6px;">
+                  <span>📄</span>
+                  <span>Ver cambios en código</span>
+                  ${msg ? `<span style="color:#6b7280;font-weight:400;font-size:10px;">
+                    — ${escapeHtml(msg)}</span>` : ''}
+                </summary>
+                <div style="border:1px solid #2a2a35;border-radius:6px;
+                  overflow:hidden;max-height:250px;overflow-y:auto;">
+                  ${diffLinesHtml}
+                  ${moreHtml}
+                </div>
+              </details>`;
+          }
+        });
+      }
+
+      // Detectar tipo de actividad
+      if (activity.planGenerated) {
+        const steps = activity.planGenerated?.plan?.steps || [];
+        const stepsHtml = steps
+          .sort((a, b) => (a.index || 0) - (b.index || 0))
+          .map(s => `
+            <div style="padding:8px 0;border-bottom:1px solid #1e1e2a;">
+              <div style="display:flex;gap:8px;">
+                <span style="color:#7c3aed;font-weight:700;min-width:18px;">
+                  ${(s.index || 0) + 1}.
+                </span>
+                <div style="flex: 1;">
+                  <div style="color:#e2e8f0;font-size:12px;font-weight:500;">
+                    ${s.title || 'Sin título'}
+                  </div>
+                  ${s.description ? `
+                    <div style="color:#6b7280;font-size:11px;margin-top:2px;">
+                      ${s.description}
+                    </div>` : ''}
+                </div>
+                <button class="btn-icon" title="Comentar en este paso" onclick="commentOnStep('${activity.name?.split('/activities/')[0]}', ${(s.index || 0) + 1}, '${escapeHtml(s.title)}')">
+                  <i class="fa-solid fa-comment-dots text-[10px]"></i>
+                </button>
+              </div>
+            </div>
+          `).join('');
+
+        html = `
+          <div class="activity-entry activity-entry--plan">
+            <div style="font-size:10px;font-weight:700;color:#8b5cf6;
+                        text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">
+              📋 Plan generado (${steps.length} pasos)
+            </div>
+            <div>${stepsHtml || '<span style="color:#6b7280">Sin pasos</span>'}</div>
+          </div>`;
+      }
+
+      else if (activity.planApproved) {
+        html = `<div class="activity-entry" style="color:#10b981;font-size:11px;">
+          ✅ Plan aprobado
+        </div>`;
+      }
+
+      else if (activity.userMessaged) {
+        const msg = activity.userMessaged.userMessage || '';
+        const parsed = typeof marked !== 'undefined' ? marked.parse(msg) : escapeHtml(msg);
+        html = `<div class="activity-entry activity-entry--user prose-invert" style="overflow-x: auto; max-width: 100%; word-break: break-word;">${parsed}</div>`;
+      }
+
+      else if (activity.agentMessaged) {
+        const msg = activity.agentMessaged.agentMessage || '';
+        const parsed = typeof marked !== 'undefined' ? marked.parse(msg) : escapeHtml(msg);
+        html = `<div class="activity-entry activity-entry--agent prose-invert" style="overflow-x: auto; max-width: 100%; word-break: break-word;">${parsed}</div>`;
+      }
+
+      else if (activity.progressUpdated) {
+        const title = activity.progressUpdated.title || '';
+        const desc  = activity.progressUpdated.description || '';
+
+        const parsedTitle = typeof marked !== 'undefined' ? marked.parse(title) : escapeHtml(title);
+        const parsedDesc  = typeof marked !== 'undefined' && desc ? marked.parse(desc) : escapeHtml(desc);
+
+        const bash = (activity.artifacts || [])
+          .map(a => a.bashOutput).filter(Boolean)[0];
+
+        html = `
+          <div class="activity-entry activity-entry--progress">
+            <div class="prose-invert" style="overflow-x:auto;max-width:100%;word-break:break-word;font-size:12px;">
+              <span style="color:#8b5cf6;font-weight:700;">⚙️</span>
+              ${parsedTitle}
+              ${parsedDesc ? `<div style="color:#9ca3af;margin-top:4px;">${parsedDesc}</div>` : ''}
+            </div>
+            ${bash ? `
+              <details style="margin-top:6px;">
+                <summary style="font-size:10px;color:#6b7280;cursor:pointer;">
+                  $ ${escapeHtml(bash.command || '')}
+                  <span style="color:${bash.exitCode === 0 ? '#10b981' : '#ef4444'}">
+                    [exit ${bash.exitCode ?? '?'}]
+                  </span>
+                </summary>
+                <pre class="activity-code">${escapeHtml(bash.output || "")}</pre>
+              </details>` : ''}
+          </div>`;
+      }
+
+      else if (activity.sessionCompleted) {
+        const commitMsg = activity.sessionCompleted?.commitMessage ||
+                          activity.sessionCompleted?.message || '';
+        const parsed = typeof marked !== 'undefined' && commitMsg
+          ? marked.parse(commitMsg)
+          : '';
+
+        html = `
+          <div class="activity-entry" style="color:#10b981;font-size:11px;font-weight:600;">
+            🏁 Sesión completada
+            ${parsed ? `
+              <div class="prose-invert" style="overflow-x:auto;max-width:100%;word-break:break-word;
+                   font-size:11px;font-weight:400;color:#d1d5db;margin-top:6px;
+                   border-top:1px solid #1e1e2a;padding-top:6px;">
+                ${parsed}
+              </div>` : ''}
+          </div>`;
+      }
+
+      else if (activity.sessionFailed) {
+        const reason = activity.sessionFailed.reason || 'Error desconocido';
+        html = `<div class="activity-entry"
+                     style="color:#ef4444;font-size:11px;">
+          ❌ Sesión fallida: ${escapeHtml(reason)}
+        </div>`;
+      }
+
+      if (!html) {
+        // Fallback — actividad de sistema (Mejora 3 - Bug B)
+        const desc = activity.description || '';
+        if (!desc && !diffsHtml) return ''; // si no hay nada útil, no renderizar NADA
+        if (desc) {
+          html = `<div class="activity-entry" style="color:#4b5563;font-size:10px;
+            font-style:italic;">
+            ${escapeHtml(desc)}
+          </div>`;
+        }
+      }
+
+      return html + diffsHtml;
+    }
 
     /* ─── SESSION DRAWER (Area 3) ─── */
     window.toggleSessionDrawer = () => {
@@ -3262,154 +3575,45 @@ body{
             const task = (window.JulesPanelState?.tasks || []).find(t => String(t.id) === String(s.task_id));
             if (task) localStorage.setItem('hy_neural_task_context', JSON.stringify(task));
         }
-
-        window.location.reload(); // Quick way to restore full state
-    };
-
-    async function refreshNeuralHistory(sessionId) {
-        const log = $('jules-history-log');
-        const welcome = $('history-welcome-screen');
-        if (!log) return;
-
-        try {
-            const data = await window.julesApi.getActivities(sessionId, 50);
-            let activities = (data.activities || [])
-              .filter((a, i, arr) => arr.findIndex(x => x.id === a.id) === i);
-
-            if (activities.length > 0 && welcome) welcome.classList.add('hidden');
-
-            const existingIds = new Set([...log.querySelectorAll('[data-activity-id]')].map(el => el.dataset.activityId));
-
-            activities.forEach(activity => {
-                if (existingIds.has(activity.id)) return;
-                const html = renderActivity(activity);
-                if (!html) return;
-                const div = document.createElement('div');
-                div.dataset.activityId = activity.id;
-                div.innerHTML = html;
-                log.appendChild(div);
-            });
-
-            log.scrollTop = log.scrollHeight;
-        } catch (e) {
-            console.warn("refreshNeuralHistory error:", e);
+        window.location.reload(); } // Quick way to restore full state
+    function commentOnStep(sessionId, stepIndex, stepTitle) {
+        const idSafe = getIdSafe(sessionId);
+        // En V2 el input de chat es #v2-chat-input
+        const input = document.getElementById(`v2-chat-input`);
+        if (input) {
+            input.value = `Respecto al paso ${stepIndex} (${stepTitle}): ` + input.value;
+            input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            input.focus();
         }
     }
 
-    function renderActivity(activity) {
-      let html = '';
-      let diffsHtml = '';
-
-      if (activity.artifacts && activity.artifacts.length > 0) {
-        activity.artifacts.forEach(artifact => {
-          if (artifact.changeSet?.gitPatch?.unidiffPatch) {
-            const patch = artifact.changeSet.gitPatch.unidiffPatch;
-            const msg   = artifact.changeSet.gitPatch.suggestedCommitMessage || '';
-            const lines = patch.split('\n');
-            const MAX_LINES = 100;
-            const visibleLines = lines.slice(0, MAX_LINES);
-            const hiddenCount = lines.length - visibleLines.length;
-
-            const diffLinesHtml = visibleLines.map(line => {
-              let cls = 'dl';
-              if (line.startsWith('+') && !line.startsWith('+++')) cls = 'dl dl-add';
-              else if (line.startsWith('-') && !line.startsWith('---')) cls = 'dl dl-del';
-              else if (line.startsWith('@@')) cls = 'dl dl-hunk';
-              return `<div class="${cls}">${escapeHtml(line)}</div>`;
-            }).join('');
-
-            diffsHtml += `
-              <details style="margin-top:8px;" class="diff-viewer">
-                <summary style="cursor:pointer;font-size:11px;color:var(--accent2);font-weight:600;padding:4px 0;list-style:none;display:flex;align-items:center;gap:6px;">
-                  <span>📄</span>
-                  <span>Ver cambios en código</span>
-                  ${msg ? `<span style="color:var(--text3);font-weight:400;font-size:10px;"> — ${escapeHtml(msg)}</span>` : ''}
-                </summary>
-                <div style="border:1px solid var(--border);border-radius:6px;overflow:hidden;max-height:250px;overflow-y:auto;background:rgba(0,0,0,0.2);">
-                  ${diffLinesHtml}
-                  ${hiddenCount > 0 ? `<div style="font-size:10px;color:var(--text3);padding:6px;text-align:center;border-top:1px solid var(--border);">+${hiddenCount} líneas más</div>` : ''}
-                </div>
-              </details>`;
-          }
-        });
-      }
-
-      if (activity.planGenerated) {
-        const steps = activity.planGenerated?.plan?.steps || [];
-        const stepsHtml = steps.sort((a, b) => (a.index || 0) - (b.index || 0)).map(s => `
-            <div style="padding:6px 0;border-bottom:1px solid var(--border);">
-              <div style="display:flex;gap:8px;">
-                <span style="color:var(--accent);font-weight:700;min-width:18px;">${(s.index || 0) + 1}.</span>
-                <div style="flex: 1;">
-                  <div style="color:var(--text);font-size:12px;font-weight:500;">${s.title || 'Sin título'}</div>
-                  ${s.description ? `<div style="color:var(--text2);font-size:11px;margin-top:2px;">${s.description}</div>` : ''}
-                </div>
-              </div>
-            </div>`).join('');
-
-        html = `<div class="activity-entry activity-entry--plan">
-            <div style="font-size:10px;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">📋 Plan generado (${steps.length} pasos)</div>
-            <div>${stepsHtml || '<span style="color:var(--text3)">Sin pasos</span>'}</div>
-          </div>`;
-      }
-      else if (activity.userMessaged) {
-        html = `<div class="activity-entry activity-entry--user prose-invert">${marked.parse(activity.userMessaged.userMessage || '')}</div>`;
-      }
-      else if (activity.agentMessaged) {
-        html = `<div class="activity-entry activity-entry--agent prose-invert">${marked.parse(activity.agentMessaged.agentMessage || '')}</div>`;
-      }
-      else if (activity.progressUpdated) {
-        const title = activity.progressUpdated.title || '';
-        const desc  = activity.progressUpdated.description || '';
-        html = `<div class="activity-entry activity-entry--progress">
-            <div class="prose-invert" style="font-size:12px;"><span style="color:var(--accent2);font-weight:700;">⚙️</span> ${marked.parse(title)}
-            ${desc ? `<div style="color:var(--text2);margin-top:4px;">${marked.parse(desc)}</div>` : ''}</div>
-          </div>`;
-      }
-      else if (activity.sessionCompleted) {
-        html = `<div class="activity-entry" style="color:var(--green);font-size:11px;font-weight:600;">🏁 Sesión completada
-            ${activity.sessionCompleted.message ? `<div class="prose-invert" style="font-size:11px;font-weight:400;color:var(--text2);margin-top:6px;border-top:1px solid var(--border);padding-top:6px;">${marked.parse(activity.sessionCompleted.message)}</div>` : ''}
-          </div>`;
-      }
-      else if (activity.sessionFailed) {
-        html = `<div class="activity-entry" style="color:var(--red);font-size:11px;">❌ Sesión fallida: ${escapeHtml(activity.sessionFailed.reason || 'Error desconocido')}</div>`;
-      }
-
-      if (!html && (activity.description || diffsHtml)) {
-        html = activity.description ? `<div class="activity-entry" style="color:var(--text3);font-size:10px;font-style:italic;">${escapeHtml(activity.description)}</div>` : '';
-      }
-
-      return html + diffsHtml;
-    }
-
     async function callCustomProvider(config, messages) {
-        const baseUrl = (config.base_url || 'https://api.anthropic.com/v1').replace(/\/$/, '');
-        const isAnthropic = baseUrl.includes('anthropic.com');
+        const baseUrl = (config.base_url || "https://api.anthropic.com/v1").replace(/\/$/, "");
+        const isAnthropic = baseUrl.includes("anthropic.com");
+        const isOllama = baseUrl.includes("localhost") || baseUrl.includes("127.0.0.1");
         const endpoint = isAnthropic ? `${baseUrl}/messages` : `${baseUrl}/chat/completions`;
-
-        const headers = { 'Content-Type': 'application/json' };
+        const apiKey = config.api_key || config.apiKey || "";
+        const headers = { "Content-Type": "application/json" };
         let body = {};
-
         if (isAnthropic) {
-            headers['x-api-key'] = config.api_key;
-            headers['anthropic-version'] = '2023-06-01';
-            headers['anthropic-dangerous-direct-browser-access'] = 'true';
+            headers["x-api-key"] = apiKey;
+            headers["anthropic-version"] = "2023-06-01";
+            headers["anthropic-dangerous-direct-browser-access"] = "true";
             body = {
-                model: config.model || 'claude-3-5-sonnet-20241022',
+                model: config.model || "claude-3-5-sonnet-20241022",
                 max_tokens: 1024,
-                system: messages.find(m => m.role === 'system')?.content,
-                messages: messages.filter(m => m.role !== 'system')
+                system: messages.find(m => m.role === "system")?.content,
+                messages: messages.filter(m => m.role !== "system")
             };
         } else {
-            headers['Authorization'] = `Bearer ${config.api_key}`;
+            if (!isOllama) headers["Authorization"] = `Bearer ${apiKey}`;
             body = {
-                model: config.model,
+                model: config.model || "llama3",
                 messages: messages,
                 temperature: 0.7
             };
         }
-
-        const res = await fetch(endpoint, { method: 'POST', headers, body: JSON.stringify(body) });
+        const res = await fetch(endpoint, { method: "POST", headers, body: JSON.stringify(body) });
         if (!res.ok) throw new Error(`API Error: ${res.status}`);
         const data = await res.json();
         return isAnthropic ? data.content[0].text : data.choices[0].message.content;
@@ -3433,4 +3637,5 @@ body{
     document.querySelectorAll('.mtab').forEach(tab => {
       tab.onclick = () => switchView(tab.dataset.tab, tab);
     });
+
 </script></body></html>

@@ -1090,7 +1090,9 @@ layout: null
             dashboardList.innerHTML = sessions.map(s => {
                 const isActive = s.status === 'active';
                 const statusBadge = isActive
-                    ? `<span class="bg-emerald-900/30 text-emerald-400 text-[10px] px-2 py-0.5 rounded border border-emerald-500/30 font-bold">ACTIVA</span>`
+                    ? `<span class="bg-emerald-900/30 text-emerald-400 text-[10px] px-2 py-0.5 rounded border border-emerald-500/30 font-bold flex items-center gap-1">
+                         <span class="w-1 h-1 rounded-full bg-emerald-400 animate-pulse"></span> SCANNING
+                       </span>`
                     : `<span class="bg-slate-800 text-slate-500 text-[10px] px-2 py-0.5 rounded border border-slate-700 font-bold">ARCHIVADA</span>`;
 
                 return `
@@ -1098,22 +1100,17 @@ layout: null
                         <div class="flex justify-between items-start mb-3">
                             <div class="min-w-0 flex-1">
                                 <h4 class="text-sm font-bold text-white truncate" id="sess-name-${s.id}">${s.name}</h4>
-                                <div class="flex items-center gap-2 mt-1">
-                                    <span class="bg-indigo-900/30 text-indigo-400 text-[9px] px-1.5 py-0.5 rounded truncate max-w-[120px]">#${s.task_id || 'Task'} ${s.task_title}</span>
-                                    ${statusBadge}
-                                </div>
+                                <div class="text-[11px] text-slate-400 truncate mt-1">${s.task_title}</div>
                             </div>
                             <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button onclick="event.stopPropagation(); renameSession('${s.id}')" class="p-1.5 hover:bg-slate-800 rounded text-slate-400 hover:text-white" title="Renombrar">✏️</button>
-                                <button onclick="event.stopPropagation(); archiveSession('${s.id}')" class="p-1.5 hover:bg-slate-800 rounded text-slate-400 hover:text-white" title="Archivar">🗄️</button>
-                                <button onclick="event.stopPropagation(); deleteSession('${s.id}')" class="p-1.5 hover:bg-slate-800 rounded text-slate-400 hover:text-red-400" title="Eliminar">🗑️</button>
+                                <button onclick="event.stopPropagation(); renameSession('${s.id}')" class="p-1 hover:bg-slate-800 rounded" title="Renombrar">✏️</button>
+                                <button onclick="event.stopPropagation(); archiveSession('${s.id}')" class="p-1 hover:bg-slate-800 rounded" title="Archivar">🗄️</button>
+                                <button onclick="event.stopPropagation(); deleteSession('${s.id}')" class="p-1 hover:bg-slate-800 rounded" title="Eliminar">🗑️</button>
                             </div>
                         </div>
-                        <div class="flex justify-between items-center text-[10px] text-slate-500 font-mono">
-                            <div class="flex items-center gap-1">
-                                <i class="fa-solid fa-code-branch text-[8px]"></i> ${s.branch}
-                            </div>
-                            <span>${new Date(s.start).toLocaleDateString()}</span>
+                        <div class="flex justify-between items-center mt-2">
+                            ${statusBadge}
+                            <span class="text-[10px] text-slate-500 font-mono">${new Date(s.start).toLocaleString()}</span>
                         </div>
                     </div>
                 `;
@@ -1140,7 +1137,8 @@ layout: null
                 if (task) localStorage.setItem('hy_neural_task_context', JSON.stringify(task));
             }
 
-            window.location.href = '/jules-panel-v2/';
+            const baseUrl = window.SITE_BASEURL || '';
+            window.location.href = baseUrl + '/jules-panel-v2/';
         };
 
         window.renameSession = (sid) => {
