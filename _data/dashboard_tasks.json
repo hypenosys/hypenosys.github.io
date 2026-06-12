@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-11T19:14:46.139Z",
-  "last_updated_by": "Axel",
+  "last_updated": "2026-06-12T15:28:43.978Z",
+  "last_updated_by": "Sistema",
   "tasks": [
     {
       "id": 1,
@@ -2754,6 +2754,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar estado tarea #4 → Pending",
+      "user": "TopperH4rley",
+      "timestamp": "2026-06-12T15:28:43.978Z"
+    },
     {
       "action": "feat: nueva tarea #1781205285685 añadida",
       "user": "Axlfc",
