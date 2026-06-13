@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-13T09:12:50.807Z",
+  "last_updated": "2026-06-13T09:13:16.600Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2042,7 +2042,7 @@
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Major",
       "milestone": "M2",
-      "estado": "Pending",
+      "estado": "Working",
       "completitud": 0,
       "resuelto_por": null,
       "detectado_por": "Axel",
@@ -2057,8 +2057,8 @@
       "estimated_hours": 4,
       "story_points": 2,
       "tags": [
-        "chore",
         "api",
+        "chore",
         "devops"
       ],
       "external_links": [],
@@ -2104,6 +2104,13 @@
           "field": "title",
           "old_value": "Añadir repo hypenosys/scripts a claude-chat",
           "new_value": "Añadir hypenosys/scripts a claude-chat y SVN"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:13:15.986Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
         }
       ],
       "id": 39
@@ -2883,6 +2890,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #39",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:13:16.600Z"
+    },
     {
       "action": "chore: actualizar tarea #50",
       "user": "Axlfc",
