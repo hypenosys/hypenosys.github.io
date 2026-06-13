@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-13T09:11:35.250Z",
+  "last_updated": "2026-06-13T09:12:11.229Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2585,8 +2585,8 @@
       "title": "Proxy Relay para Ollama (Bypass Mixed Content)",
       "descripcion": "Crear un proxy relay para solucionar el bloqueo de peticiones HTTP (Ollama local) desde HTTPS. Actualmente el navegador bloquea estas peticiones obligando a configuraciones manuales de flags. **Hecho cuando:** Las peticiones a Ollama funcionen de forma nativa desde el dashboard en HTTPS.",
       "tags": [
-        "backend",
         "api",
+        "backend",
         "security"
       ],
       "prioridad": "Medium",
@@ -2604,7 +2604,42 @@
         "axlfc"
       ],
       "acceptance_criteria": "El relay permite comunicación bidireccional sin errores de Mixed Content.",
-      "subtasks": []
+      "subtasks": [],
+      "repository": null,
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Unassigned",
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-06-13",
+      "due_date": "2026-06-21",
+      "story_points": null,
+      "external_links": [],
+      "blocks": [],
+      "blocked_by": [],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:12:10.528Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-06-21"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:12:10.528Z",
+          "field": "completitud",
+          "new_value": 0
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:12:10.528Z",
+          "field": "repository",
+          "old_value": "",
+          "new_value": null
+        }
+      ]
     },
     {
       "id": 46,
@@ -2848,6 +2883,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #45",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:12:11.229Z"
+    },
     {
       "action": "chore: actualizar tarea #44",
       "user": "Axlfc",
