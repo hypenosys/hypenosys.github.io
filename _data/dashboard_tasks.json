@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-13T09:14:52.988Z",
+  "last_updated": "2026-06-13T09:15:34.614Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2866,21 +2866,20 @@
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Cosmetic",
       "milestone": "M2",
-      "estado": "Pending",
+      "estado": "Working",
       "completitud": 0,
       "resuelto_por": null,
       "detectado_por": "Axel",
       "asignados": [
-        "topperh4rley",
         "javi26031994-a11y",
-        "dkdidac-design"
+        "topperh4rley"
       ],
       "email_responsable": null,
       "emails_asignados": [],
       "start_date": "2026-06-13",
       "due_date": "2026-06-28",
       "estimated_hours": 6,
-      "story_points": 12,
+      "story_points": 8,
       "tags": [
         "UX/UI"
       ],
@@ -2912,12 +2911,31 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:15:33.974Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:15:33.974Z",
+          "field": "asignados",
+          "old_value": "[\"dkdidac-design\",\"javi26031994-a11y\",\"topperh4rley\"]",
+          "new_value": "[\"javi26031994-a11y\",\"topperh4rley\"]"
         }
       ],
       "id": 51
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #51",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:15:34.614Z"
+    },
     {
       "action": "chore: actualizar tarea #38",
       "user": "Axlfc",
