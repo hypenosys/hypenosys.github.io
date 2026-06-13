@@ -2151,15 +2151,16 @@ body{
           analyzer.onclick = () => {
               const task = JSON.parse(localStorage.getItem('hy_neural_task_context') || '{}');
               let thread = JSON.parse(localStorage.getItem('hy_neural_thread') || '[]');
+              const promptText = `Jules ha reportado esto en la telemetría:\n[${tag}] ${msg}`;
               const newMsg = {
                   role: 'user',
-                  content: `Jules ha reportado esto en la telemetría:\n[${tag}] ${msg}`,
+                  content: promptText,
                   source: 'jules'
               };
               thread.push(newMsg);
               localStorage.setItem('hy_neural_thread', JSON.stringify(thread));
-
-              localStorage.setItem('hy_neural_pending_prompt', newMsg.content + '\n\n¿Qué opinas? ¿Debo ajustar algo?');
+              localStorage.setItem('hy_neural_active', 'true');
+              localStorage.setItem('hy_neural_pending_prompt', promptText + '\n\n¿Qué opinas? ¿Debo ajustar algo?');
               window.location.href = '/claude-chat.html';
           };
           line.appendChild(analyzer);
@@ -2743,6 +2744,12 @@ body{
         const source = window.JulesPanelState.activeRepo, branch = window.JulesPanelState.activeBranch || 'master';
         if (!source) { showToast("Selecciona un repositorio", "red"); return; }
 
+        // BUG 2 Fix: Check if Review mode is selected without an active session
+        if ($('opt-review').classList.contains('active') && !localStorage.getItem('hy_neural_session_id')) {
+            showToast("Selecciona primero Modo Automático para iniciar una nueva sesión", "red");
+            return;
+        }
+
         // Enhance prompt based on options
         if ($('opt-tests').classList.contains('active')) {
             prompt += "\n\nIMPORTANTE: Genera tests unitarios automáticos para cubrir estos cambios.";
@@ -2751,7 +2758,13 @@ body{
             prompt += `\n\nIMPORTANTE: Crea y trabaja en una nueva rama dedicada para esta tarea (ej: jules/task-${Date.now()}).`;
         }
 
-        const btn = $('launch-btn'); btn.disabled = true; const originalText = btn.innerHTML; btn.innerHTML = 'Iniciando...';
+        const btn = $('launch-btn');
+        const textarea = $('session-prompt');
+        btn.disabled = true;
+        textarea.disabled = true;
+        const originalText = btn.innerHTML;
+        btn.innerHTML = 'Iniciando...';
+
         try {
             const body = { prompt, sourceContext: { source, githubRepoContext: { startingBranch: branch } } };
 
@@ -2806,7 +2819,11 @@ body{
 
             $('session-prompt').value = ''; await refreshDashboard();
         } catch (e) { showToast(e.message || "Error al lanzar sesión", "red"); }
-        finally { btn.disabled = false; btn.innerHTML = originalText; }
+        finally {
+            btn.disabled = false;
+            textarea.disabled = false;
+            btn.innerHTML = originalText;
+        }
     }
 
     /* ─── NAVIGATION ─── */
@@ -3691,6 +3708,7 @@ body{
         } else {
             toolbar.classList.remove('active');
         }
+        updateSelectionToolbar();
     }
 
     function clearHistorySelection() {
@@ -3731,13 +3749,23 @@ body{
             prompt += "\n";
         });
 
-        prompt += "\n¿Qué opinas de estos cambios o estados? ¿Hay algo que deba ajustar o corregir?";
+        const finalPrompt = prompt + "\n¿Qué opinas de estos cambios o estados? ¿Hay algo que deba ajustar o corregir?";
 
-        localStorage.setItem('hy_neural_pending_prompt', prompt);
+        let thread = JSON.parse(localStorage.getItem('hy_neural_thread') || '[]');
+        thread.push({
+            role: 'user',
+            content: finalPrompt,
+            source: 'jules'
+        });
+
+        localStorage.setItem('hy_neural_thread', JSON.stringify(thread));
+        localStorage.setItem('hy_neural_pending_prompt', finalPrompt);
         localStorage.setItem('hy_neural_active', 'true');
 
         showToast("Enviando selección a Claude...", "green");
-        setTimeout(() => switchView('chat'), 500);
+        setTimeout(() => {
+            window.location.href = '/claude-chat.html';
+        }, 500);
     }
 
     function commentOnStep(sessionId, stepIndex, stepTitle) {
