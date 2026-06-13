@@ -1,0 +1,337 @@
+---
+layout: page
+title: AI Image Generator (Flux/ComfyUI)
+permalink: /image-gen/
+---
+
+<div id="image-gen-app" class="container-fluid py-4 dracula-bg min-vh-100 text-light">
+    <div class="row">
+        <!-- Input Panel -->
+        <div class="col-lg-5 col-xl-4">
+            <div class="card shadow-lg mb-4 border-purple">
+                <div class="card-header bg-dark border-purple py-3">
+                    <h5 class="m-0 font-weight-bold text-purple">
+                        <i class="fas fa-magic mr-2"></i> GENERACIÓN NEURAL
+                    </h5>
+                </div>
+                <div class="card-body bg-darker">
+                    <form id="gen-form">
+                        <!-- Text Context Inputs -->
+                        <div class="form-group mb-4">
+                            <label class="text-purple small font-weight-bold uppercase mb-2">Prompts de Contexto</label>
+                            <div id="prompts-container" class="space-y-3">
+                                <div class="prompt-entry mb-2">
+                                    <textarea name="prompts[]" class="form-control bg-dark text-white border-secondary" rows="2" placeholder="Describa el contenido principal..."></textarea>
+                                </div>
+                            </div>
+                            <button type="button" onclick="addPromptField()" class="btn btn-outline-purple btn-sm mt-2">
+                                <i class="fas fa-plus mr-1"></i> Añadir Prompt
+                            </button>
+                        </div>
+
+                        <!-- Image Context Inputs -->
+                        <div class="form-group mb-4">
+                            <label class="text-purple small font-weight-bold uppercase mb-2">Imágenes de Referencia (Image-to-Image)</label>
+                            <div class="custom-file mb-3">
+                                <input type="file" class="custom-file-input" id="image-input" accept="image/*" multiple onchange="handleImageSelection(this)">
+                                <label class="custom-file-label bg-dark text-muted border-secondary" for="image-input">Elegir archivos...</label>
+                            </div>
+                            <div id="image-preview-grid" class="row no-gutters gap-2 mt-2">
+                                <!-- Thumbnails will be injected here -->
+                            </div>
+                        </div>
+
+                        <hr class="border-purple opacity-20 my-4">
+
+                        <!-- Action Button -->
+                        <button type="button" id="btn-generate" onclick="handleGenerate()" class="btn btn-purple btn-block py-3 font-weight-bold pulse">
+                            <i class="fas fa-rocket mr-2"></i> GENERAR ITERACIÓN
+                        </button>
+                    </form>
+                </div>
+                <div class="card-footer bg-dark border-purple text-center py-2">
+                    <span class="text-muted small uppercase tracking-widest" style="font-size: 10px;">Middleware: n8n Flow v1.0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Output Panel -->
+        <div class="col-lg-7 col-xl-8">
+            <div class="card shadow-lg border-purple h-100">
+                <div class="card-header bg-dark border-purple d-flex justify-content-between align-items-center py-3">
+                    <h5 class="m-0 font-weight-bold text-purple">
+                        <i class="fas fa-image mr-2"></i> RESULTADOS Y COMPARATIVA
+                    </h5>
+                    <div id="status-indicator" class="badge badge-dark border-secondary px-3 py-2">
+                        <span id="status-dot" class="u-dot bg-secondary mr-2"></span> <span id="status-text">LISTO</span>
+                    </div>
+                </div>
+                <div class="card-body bg-darker d-flex align-items-center justify-content-center overflow-auto" id="output-area">
+                    <div id="empty-state" class="text-center opacity-40 py-5">
+                        <i class="fas fa-brain fa-5x text-purple mb-4"></i>
+                        <h3>Neural Canvas</h3>
+                        <p class="lead">Configure sus prompts y referencias para comenzar la generación.</p>
+                    </div>
+
+                    <!-- Loading state hidden by default -->
+                    <div id="loading-state" class="hidden text-center py-5">
+                        <div class="spinner-border text-purple mb-3" style="width: 3rem; height: 3rem;" role="status"></div>
+                        <h4 class="text-purple">Procesando en Clúster n8n...</h4>
+                        <p class="text-muted font-italic">Flux.1 + ComfyUI están orquestando su visión.</p>
+                        <p class="small text-muted mt-2">Tiempo estimado: 30-90 segundos</p>
+                    </div>
+
+                    <!-- Gallery / Results Area -->
+                    <div id="results-gallery" class="w-100 h-100 hidden p-3">
+                        <!-- Generated content will appear here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-darker { background-color: #1a1a1a !important; }
+    .card { border-radius: 16px !important; }
+    .u-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; }
+    .prompt-entry textarea:focus { border-color: #bd93f9 !important; box-shadow: 0 0 10px rgba(189, 147, 249, 0.2); }
+    .btn-purple { background-color: #bd93f9 !important; color: #000 !important; border: none; }
+    .btn-purple:hover { background-color: #a78bfa !important; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(189, 147, 249, 0.4); }
+    .border-purple { border-color: rgba(189, 147, 249, 0.3) !important; }
+    .text-purple { color: #bd93f9 !important; }
+    .btn-outline-purple { color: #bd93f9 !important; border-color: #bd93f9 !important; }
+    .btn-outline-purple:hover { background-color: rgba(189, 147, 249, 0.1) !important; }
+
+    .img-preview-container { position: relative; width: 80px; height: 80px; border-radius: 8px; overflow: hidden; border: 1px solid #444; }
+    .img-preview-container img { width: 100%; height: 100%; object-fit: cover; }
+    .img-preview-remove { position: absolute; top: 2px; right: 2px; background: rgba(255,0,0,0.7); color: white; border: none; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; cursor: pointer; }
+
+    .generated-image-card { background: #222; border: 1px solid #333; border-radius: 12px; overflow: hidden; margin-bottom: 2rem; }
+    .generated-image-card img { width: 100%; display: block; border-bottom: 1px solid #333; }
+    .generated-image-info { padding: 1rem; }
+
+    .hidden { display: none !important; }
+
+    @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(189, 147, 249, 0.4); }
+        70% { box-shadow: 0 0 0 10px rgba(189, 147, 249, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(189, 147, 249, 0); }
+    }
+    .pulse { animation: pulse 2s infinite; }
+</style>
+
+<script>
+    let selectedFiles = [];
+    const WEBHOOK_URL = "https://n8nzimaafaces.share.zrok.io/webhook/90f58193-889d-4e7b-8022-b619f49c5699";
+    const TIMEOUT_MS = 90000;
+
+    function addPromptField() {
+        const container = document.getElementById('prompts-container');
+        const div = document.createElement('div');
+        div.className = 'prompt-entry mb-2 animate-fadeIn';
+        div.innerHTML = `
+            <div class="d-flex gap-2">
+                <textarea name="prompts[]" class="form-control bg-dark text-white border-secondary" rows="2"></textarea>
+                <button type="button" onclick="this.parentElement.parentElement.remove()" class="btn btn-outline-danger btn-sm px-2"><i class="fas fa-times"></i></button>
+            </div>
+        `;
+        container.appendChild(div);
+    }
+
+    function handleImageSelection(input) {
+        if (!input.files) return;
+
+        const grid = document.getElementById('image-preview-grid');
+        const files = Array.from(input.files);
+
+        files.forEach(file => {
+            selectedFiles.push(file);
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const col = document.createElement('div');
+                col.className = 'col-auto mb-2';
+                col.innerHTML = `
+                    <div class="img-preview-container shadow-sm border-purple">
+                        <img src="${e.target.result}">
+                        <button type="button" class="img-preview-remove" onclick="removeImage(this, '${file.name}')">✕</button>
+                    </div>
+                `;
+                grid.appendChild(col);
+            };
+            reader.readAsDataURL(file);
+        });
+        input.value = ""; // Reset to allow same file selection
+    }
+
+    function removeImage(btn, fileName) {
+        btn.parentElement.parentElement.remove();
+        selectedFiles = selectedFiles.filter(f => f.name !== fileName);
+    }
+
+    function fileToBase64(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result.split(',')[1]);
+            reader.onerror = error => reject(error);
+        });
+    }
+
+    async function handleGenerate() {
+        const btn = document.getElementById('btn-generate');
+        const form = document.getElementById('gen-form');
+        const prompts = Array.from(form.querySelectorAll('textarea[name="prompts[]"]'))
+                            .map(t => t.value.trim())
+                            .filter(v => v !== "");
+
+        if (prompts.length === 0 && selectedFiles.length === 0) {
+            alert("Por favor, introduzca al menos un prompt o una imagen de referencia.");
+            return;
+        }
+
+        // Disable UI
+        btn.disabled = true;
+        btn.classList.remove('pulse');
+        document.getElementById('empty-state').classList.add('hidden');
+        document.getElementById('loading-state').classList.remove('hidden');
+        updateStatus('PROCESANDO', 'warning');
+
+        try {
+            const payload = await buildPayload(prompts, selectedFiles);
+            const imgUrl = await callImageGenApi(payload);
+            displayResult(imgUrl, prompts, selectedFiles);
+            updateStatus('ÉXITO', 'success');
+        } catch (error) {
+            console.error("[ImageGen] Error:", error);
+            alert("Error en la generación: " + error.message);
+            updateStatus('ERROR', 'danger');
+            if (document.querySelectorAll('.generated-image-card').length === 0) {
+                document.getElementById('empty-state').classList.remove('hidden');
+            }
+        } finally {
+            btn.disabled = false;
+            btn.classList.add('pulse');
+            document.getElementById('loading-state').classList.add('hidden');
+        }
+    }
+
+    async function buildPayload(prompts, files) {
+        const promptText = prompts.join(" | ");
+        let payload = { chatInput: "", mode: "text2img" };
+
+        if (files.length === 0) {
+            payload.chatInput = promptText;
+            payload.mode = "text2img";
+        } else if (files.length === 1) {
+            const b64 = await fileToBase64(files[0]);
+            if (promptText) {
+                payload.chatInput = `[IMG2IMG] ${promptText} [reference image attached as base64 in field: referenceImage]`;
+                payload.mode = "img2img";
+                payload.referenceImage = b64;
+            } else {
+                payload.chatInput = "[VARIATION] single reference image provided";
+                payload.mode = "variation";
+                payload.referenceImage = b64;
+            }
+        } else {
+            // Blend mode for 2 or more images
+            const b64_1 = await fileToBase64(files[0]);
+            const b64_2 = await fileToBase64(files[1]);
+            payload.chatInput = "[BLEND] two reference images provided";
+            payload.mode = "blend";
+            payload.referenceImage = b64_1;
+            payload.referenceImage2 = b64_2;
+        }
+
+        return payload;
+    }
+
+    async function callImageGenApi(payload) {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
+
+        try {
+            const response = await fetch(WEBHOOK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+                signal: controller.signal
+            });
+
+            clearTimeout(timeoutId);
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const blob = await response.blob();
+            if (blob.type !== 'image/png' && blob.size < 100) {
+                // n8n might return error JSON instead of binary if misconfigured
+                const text = await blob.text();
+                throw new Error("Respuesta no válida del servidor: " + text);
+            }
+
+            return URL.createObjectURL(blob);
+        } catch (error) {
+            if (error.name === 'AbortError') {
+                throw new Error("La generación ha excedido el tiempo límite (90s).");
+            }
+            throw error;
+        }
+    }
+
+    function displayResult(imgUrl, prompts, files) {
+        const gallery = document.getElementById('results-gallery');
+        gallery.classList.remove('hidden');
+
+        const iterId = new Date().toLocaleTimeString();
+        const modeLabel = files.length === 0 ? "Text-to-Image" : (files.length === 1 ? "Img2Img/Variation" : "Blend");
+
+        const card = document.createElement('div');
+        card.className = 'generated-image-card animate-fadeIn';
+        card.innerHTML = `
+            <img src="${imgUrl}" alt="Generated Image">
+            <div class="generated-image-info">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="badge badge-purple">${modeLabel}</span>
+                    <span class="small text-muted font-mono">${iterId}</span>
+                </div>
+                <p class="small text-light mb-3">${prompts.join(" | ") || "Sin descripción de texto"}</p>
+                <div class="d-flex gap-2">
+                    <a href="${imgUrl}" download="hypenosys-gen-${Date.now()}.png" class="btn btn-sm btn-purple">
+                        <i class="fas fa-download mr-1"></i> Descargar
+                    </a>
+                    <button onclick="this.closest('.generated-image-card').remove(); checkGalleryEmpty()" class="btn btn-sm btn-outline-danger">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+
+        gallery.prepend(card);
+    }
+
+    function updateStatus(text, type) {
+        const dot = document.getElementById('status-dot');
+        const label = document.getElementById('status-text');
+
+        label.innerText = text;
+        dot.className = `u-dot bg-${type}`;
+    }
+
+    function checkGalleryEmpty() {
+        const gallery = document.getElementById('results-gallery');
+        if (gallery.querySelectorAll('.generated-image-card').length === 0) {
+            gallery.classList.add('hidden');
+            document.getElementById('empty-state').classList.remove('hidden');
+            updateStatus('LISTO', 'secondary');
+        }
+    }
+</script>
+
+<style>
+    .badge-purple { background-color: rgba(189, 147, 249, 0.2); color: #bd93f9; border: 1px solid rgba(189, 147, 249, 0.3); }
+    .animate-fadeIn { animation: fadeIn 0.5s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>

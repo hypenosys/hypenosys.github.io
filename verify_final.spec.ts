@@ -19,7 +19,7 @@ test('Verify Dashboard and Neural Tab', async ({ page }) => {
   });
 
   // 1. Verify Dashboard
-  await page.goto('http://localhost:4000/');
+  await page.goto('http://localhost:4000/dashboard.html');
   // Wait for the specific session name to appear
   const sessionNameSelector = '#sess-name-12345';
   await page.waitForSelector(sessionNameSelector, { timeout: 10000 });

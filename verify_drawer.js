@@ -4,8 +4,8 @@ const { chromium } = require('playwright');
   const browser = await chromium.launch();
   const page = await browser.newPage();
 
-  // Go to claude-chat
-  await page.goto('http://localhost:4000/claude-chat.html');
+  // Go to neural-chat
+  await page.goto('http://localhost:4000/chat/neural/');
 
   // Inject script to bypass any auth or blur if present (like in Jules Panel)
   // and open the drawer manually for the screenshot
