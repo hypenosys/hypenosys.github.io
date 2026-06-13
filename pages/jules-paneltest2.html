@@ -2354,6 +2354,7 @@ body{
                 'done': [],
                 'error': []
             };
+
             const enrichedSessions = await Promise.all(sessions.map(async (s) => {
                 let targetCol = "pending";
                 if (["WORKING", "IN_PROGRESS", "PLANNING", "AWAITING_PLAN_APPROVAL"].includes(s.state)) {
@@ -2382,6 +2383,15 @@ body{
             for (const { session, targetCol } of enrichedSessions) {
                 colItems[targetCol].push(session);
             }
+
+            Object.keys(colItems).forEach(colId => {
+                const colEl = $(`kb-${colId}`), countEl = $(`kb-count-${colId}`), mCountEl = $(`m-count-${colId}`);
+                if (!colEl) return;
+
+                const items = colItems[colId];
+                if (countEl) countEl.textContent = items.length;
+                if (mCountEl) mCountEl.textContent = items.length;
+
                 colEl.innerHTML = items.map(s => {
                     const sid = s.name.split('/').pop();
                     const repo = s.sourceContext?.source?.split('/').pop() || '---';
@@ -2408,7 +2418,6 @@ body{
             console.warn('[Jules] loadJulesKanban error:', e);
         }
     }
-
     async function refreshDashboard() {
         try {
             const [sessionData, tasks] = await Promise.all([
@@ -3200,7 +3209,7 @@ body{
             }
 
             try {
-                const ok = await window.julesApi.sendMessage(sessionId, content);
+                const ok = await window.julesApi.sendMessage("sessions/" + getIdSafe(sessionId), content);
                 if (ok) {
                     showToast("Orden enviada a Jules", "green");
 
