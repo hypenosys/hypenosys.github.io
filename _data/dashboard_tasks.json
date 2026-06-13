@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-13T09:21:52.553Z",
+  "last_updated": "2026-06-13T09:22:39.860Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -19,12 +19,11 @@
       "limite": null,
       "comentario": "Implementación del núcleo del Operations Center usando Jekyll y Tailwind. Configuración de la API de GitHub para persistencia de tareas y visualización de métricas de QA.",
       "milestone": "M1",
-      "completitud": 0.6,
+      "completitud": 0.4,
       "asignados": [
         "dkdidac-design",
         "javi26031994-a11y",
-        "mitxel2022",
-        "topperh4rley"
+        "mitxel2022"
       ],
       "email_responsable": "alex@hypenosys.com",
       "emails_asignados": [
@@ -42,9 +41,9 @@
       "estimated_hours": 1,
       "story_points": 1,
       "tags": [
-        "frontend",
         "devops",
-        "feature"
+        "feature",
+        "frontend"
       ],
       "external_links": [],
       "subtasks": [],
@@ -75,6 +74,20 @@
           "field": "asignados",
           "old_value": "[\"axlfc\",\"dkdidac-design\",\"javi26031994-a11y\",\"mitxel2022\",\"topperh4rley\"]",
           "new_value": "[\"dkdidac-design\",\"javi26031994-a11y\",\"mitxel2022\",\"topperh4rley\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:22:39.120Z",
+          "field": "asignados",
+          "old_value": "[\"dkdidac-design\",\"javi26031994-a11y\",\"mitxel2022\",\"topperh4rley\"]",
+          "new_value": "[\"dkdidac-design\",\"javi26031994-a11y\",\"mitxel2022\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:22:39.120Z",
+          "field": "completitud",
+          "old_value": 0.6,
+          "new_value": 0.4
         }
       ]
     },
@@ -2988,6 +3001,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #1",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:22:39.860Z"
+    },
     {
       "action": "chore: actualizar tarea #44",
       "user": "Axlfc",
