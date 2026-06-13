@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-13T09:14:55.297Z",
+  "computed_at": "2026-06-13T09:15:36.906Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 28,
@@ -240,7 +240,7 @@
       },
       "workload": {
         "active_tasks": 18,
-        "story_points": 43
+        "story_points": 39
       }
     },
     "dkdidac-design": {
@@ -286,8 +286,8 @@
         "reprioritizations": 13
       },
       "workload": {
-        "active_tasks": 8,
-        "story_points": 25
+        "active_tasks": 7,
+        "story_points": 13
       }
     },
     "javi26031994-a11y": {
@@ -332,7 +332,7 @@
       },
       "workload": {
         "active_tasks": 5,
-        "story_points": 23
+        "story_points": 19
       }
     },
     "mitxel2022": {
@@ -476,7 +476,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-06-13T09:14:56.028Z"
+      "timestamp": "2026-06-13T09:15:37.852Z"
     }
   ]
 }
