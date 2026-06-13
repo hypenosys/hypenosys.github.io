@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-13T09:13:16.600Z",
+  "last_updated": "2026-06-13T09:13:45.926Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2532,8 +2532,7 @@
       "resuelto_por": "Axel",
       "detectado_por": "Axel",
       "asignados": [
-        "mitxel2022",
-        "topperh4rley"
+        "mitxel2022"
       ],
       "email_responsable": "axel@hypenosys.com",
       "emails_asignados": [],
@@ -2583,6 +2582,13 @@
           "field": "title",
           "old_value": "Cognito-Agent: Controlar con Claude Neural API de n8n",
           "new_value": "Controlar con Claude Neural API de n8n"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:13:44.937Z",
+          "field": "asignados",
+          "old_value": "[\"mitxel2022\",\"topperh4rley\"]",
+          "new_value": "[\"mitxel2022\"]"
         }
       ],
       "id": 44
@@ -2890,6 +2896,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #44",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:13:45.926Z"
+    },
     {
       "action": "chore: actualizar tarea #39",
       "user": "Axlfc",
