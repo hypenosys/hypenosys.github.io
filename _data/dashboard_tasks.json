@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-13T09:19:09.155Z",
+  "last_updated": "2026-06-13T09:19:45.472Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -203,8 +203,8 @@
       "prioridad": "ToDo",
       "milestone": "M1",
       "estado": "In Review",
-      "completitud": 0.8,
-      "resuelto_por": null,
+      "completitud": 0.2,
+      "resuelto_por": "Alex",
       "detectado_por": "Alex",
       "rama2": null,
       "ver": true,
@@ -215,7 +215,6 @@
       "id": 5,
       "asignados": [
         "dkdidac-design",
-        "javi26031994-a11y",
         "mitxel2022",
         "topperh4rley"
       ],
@@ -230,11 +229,11 @@
       "task_type": "research",
       "start_date": null,
       "due_date": null,
-      "estimated_hours": 10,
+      "estimated_hours": 100,
       "story_points": null,
       "tags": [
-        "docs",
         "chore",
+        "docs",
         "testing"
       ],
       "external_links": [],
@@ -266,6 +265,20 @@
           "field": "repository",
           "old_value": null,
           "new_value": "hypenosys/app"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:19:44.750Z",
+          "field": "asignados",
+          "old_value": "[\"dkdidac-design\",\"javi26031994-a11y\",\"mitxel2022\",\"topperh4rley\"]",
+          "new_value": "[\"dkdidac-design\",\"mitxel2022\",\"topperh4rley\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:19:44.750Z",
+          "field": "completitud",
+          "old_value": 0.8,
+          "new_value": 0.2
         }
       ],
       "repository": "hypenosys/app"
@@ -2968,6 +2981,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #5",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:19:45.472Z"
+    },
     {
       "action": "chore: actualizar tarea #51",
       "user": "Axlfc",
