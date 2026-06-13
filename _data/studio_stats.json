@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-13T09:34:48.958Z",
+  "computed_at": "2026-06-13T09:35:17.628Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 28,
@@ -49,6 +49,7 @@
       "backend": 2,
       "refactor": 2,
       "stability": 1,
+      "master": 1,
       "UX/UI": 1
     },
     "milestone_tasks_remaining": 14,
@@ -492,7 +493,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-06-13T09:34:49.779Z"
+      "timestamp": "2026-06-13T09:35:18.613Z"
     }
   ]
 }
