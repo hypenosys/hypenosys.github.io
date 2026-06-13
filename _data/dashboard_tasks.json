@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-13T09:23:36.196Z",
+  "last_updated": "2026-06-13T09:23:55.027Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1691,9 +1691,9 @@
       "task_type": "feature",
       "tema_principal": "Tools / Automation",
       "repository": "hypenosys/app",
-      "prioridad": "ToDo",
+      "prioridad": "Major",
       "milestone": "M1",
-      "estado": "In Review",
+      "estado": "Working",
       "completitud": 0,
       "resuelto_por": "Axel",
       "detectado_por": "Axel",
@@ -1708,13 +1708,13 @@
       "estimated_hours": 2,
       "story_points": 2,
       "tags": [
+        "api",
+        "devops",
+        "feature",
         "infraestructura",
         "jules-panel",
         "neural-chat",
-        "svn",
-        "feature",
-        "api",
-        "devops"
+        "svn"
       ],
       "external_links": [],
       "subtasks": [],
@@ -1804,6 +1804,20 @@
           "field": "estado",
           "old_value": "Pending",
           "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:23:53.858Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:23:53.858Z",
+          "field": "prioridad",
+          "old_value": "ToDo",
+          "new_value": "Major"
         }
       ],
       "id": 35
@@ -3022,6 +3036,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #35",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:23:55.027Z"
+    },
     {
       "action": "chore: actualizar tarea #32",
       "user": "Axlfc",
