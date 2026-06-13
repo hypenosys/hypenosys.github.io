@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-13T09:23:57.244Z",
+  "computed_at": "2026-06-13T09:24:15.674Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 28,
@@ -240,12 +240,12 @@
       "dependency_impact": 5,
       "comment_activity": 0,
       "volatility": {
-        "reopens": 1,
+        "reopens": 0,
         "reprioritizations": 24
       },
       "workload": {
-        "active_tasks": 15,
-        "story_points": 29
+        "active_tasks": 14,
+        "story_points": 28
       }
     },
     "dkdidac-design": {
@@ -385,12 +385,12 @@
       "dependency_impact": 0,
       "comment_activity": 0,
       "volatility": {
-        "reopens": 0,
+        "reopens": 1,
         "reprioritizations": 2
       },
       "workload": {
-        "active_tasks": 5,
-        "story_points": 7
+        "active_tasks": 6,
+        "story_points": 8
       }
     }
   },
@@ -492,7 +492,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-06-13T09:23:58.222Z"
+      "timestamp": "2026-06-13T09:24:16.656Z"
     }
   ]
 }
