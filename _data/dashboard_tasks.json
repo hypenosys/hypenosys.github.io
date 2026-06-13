@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-13T09:34:36.132Z",
+  "last_updated": "2026-06-13T09:34:46.813Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2769,10 +2769,10 @@
       "title": "Consolidación y limpieza de scripts técnicos",
       "descripcion": "Eliminar versiones duplicadas y obsoletas de los scripts principales (all_scripts.js, v2, v3). Esta deuda técnica induce a errores y dificulta el mantenimiento del código. **Hecho cuando:** Solo existan las versiones necesarias y el dashboard funcione sin errores de referencia.",
       "tags": [
-        "refactor",
-        "chore"
+        "chore",
+        "refactor"
       ],
-      "prioridad": "Low",
+      "prioridad": "",
       "estado": "Pending",
       "estimated_hours": 4,
       "comments": [
@@ -2787,7 +2787,42 @@
         "axlfc"
       ],
       "acceptance_criteria": "Reducción del tamaño total de scripts y eliminación de redundancias.",
-      "subtasks": []
+      "subtasks": [],
+      "repository": "hypenosys/hypenosys.github.io",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Unassigned",
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "story_points": null,
+      "external_links": [],
+      "blocks": [],
+      "blocked_by": [],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:34:46.002Z",
+          "field": "prioridad",
+          "old_value": "Low",
+          "new_value": ""
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:34:46.002Z",
+          "field": "completitud",
+          "new_value": 0
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:34:46.002Z",
+          "field": "repository",
+          "old_value": "",
+          "new_value": "hypenosys/hypenosys.github.io"
+        }
+      ]
     },
     {
       "id": 47,
@@ -3154,6 +3189,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #46",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:34:46.813Z"
+    },
     {
       "action": "chore: actualizar tarea #47",
       "user": "Axlfc",
