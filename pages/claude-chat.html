@@ -2096,22 +2096,43 @@ permalink: /claude-chat.html
             }
         }
 
-        function sendToJulesByIndex(idx) {
+        async function sendToJulesByIndex(idx) {
             const session = sessions.find(s => s.id === currentSessionId);
             if (session && session.messages[idx]) {
                 const text = session.messages[idx].content;
 
-                // Add to thread state
-                let thread = JSON.parse(localStorage.getItem('hy_neural_thread') || '[]');
-                thread.push({ role: 'assistant', content: text, source: 'claude' });
-                localStorage.setItem('hy_neural_thread', JSON.stringify(thread));
+                const neuralActive = localStorage.getItem('hy_neural_active') === 'true';
+                const neuralSessionId = localStorage.getItem('hy_neural_session_id');
 
-                // Set pending prompt for Jules
-                localStorage.setItem('hy_neural_pending_prompt', text);
-                localStorage.setItem('hy_neural_active', 'true');
+                if (neuralActive && neuralSessionId) {
+                    showToast('Enviando a sesión activa de Jules...');
+                    try {
+                        const ok = await window.julesApi.sendMessage(neuralSessionId, text);
+                        if (ok) {
+                            showToast('Orden enviada con éxito');
+                            // Sync with Neural Thread
+                            let thread = JSON.parse(localStorage.getItem('hy_neural_thread') || '[]');
+                            thread.push({ role: 'assistant', content: text, source: 'claude' });
+                            localStorage.setItem('hy_neural_thread', JSON.stringify(thread));
+                            setTimeout(() => window.location.href = '/jules-panel-v2/', 800);
+                        }
+                    } catch (e) {
+                        showToast('Error al enviar a Jules: ' + e.message);
+                    }
+                } else {
+                    // Add to thread state
+                    let thread = JSON.parse(localStorage.getItem('hy_neural_thread') || '[]');
+                    thread.push({ role: 'assistant', content: text, source: 'claude' });
+                    localStorage.setItem('hy_neural_thread', JSON.stringify(thread));
 
-                showToast('Enviando a Jules Panel...');
-                setTimeout(() => window.location.href = '/jules-panel-v2/', 800);
+                    // Set pending prompt for Jules
+                    localStorage.setItem('hy_neural_pending_prompt', text);
+                    localStorage.setItem('hy_neural_active', 'true');
+
+                    showToast('Abriendo Jules Panel...');
+                    const taskData = encodeURIComponent(JSON.stringify({ prompt: text }));
+                    setTimeout(() => window.location.href = `/jules-panel-v2/?task_data=${taskData}`, 800);
+                }
             }
         }
 
