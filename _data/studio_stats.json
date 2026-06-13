@@ -1,15 +1,15 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-12T15:28:45.901Z",
+  "computed_at": "2026-06-13T09:04:03.912Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 27,
+    "total_tasks": 28,
     "total_ok": 2,
     "total_ko": 0,
     "total_uncertain": 9,
     "total_obsolete": 6,
-    "fixed_found_ratio": 0.0625,
-    "verified_ratio": 0.0606
+    "fixed_found_ratio": 0.0606,
+    "verified_ratio": 0.0588
   },
   "group": {
     "velocity_trend": {
@@ -22,7 +22,7 @@
       "2026-W23": 8,
       "2026-W24": 0
     },
-    "bug_rate": 0.08,
+    "bug_rate": 0.0769,
     "blocker_health": 3,
     "tag_heatmap": {
       "frontend": 8,
@@ -34,7 +34,7 @@
       "chore": 8,
       "testing": 1,
       "git": 1,
-      "UX/UI": 2,
+      "UX/UI": 3,
       "ux": 9,
       "Infraestructura": 1,
       "api": 10,
@@ -239,8 +239,8 @@
         "reprioritizations": 22
       },
       "workload": {
-        "active_tasks": 18,
-        "story_points": 32
+        "active_tasks": 19,
+        "story_points": 44
       }
     },
     "dkdidac-design": {
@@ -286,8 +286,8 @@
         "reprioritizations": 12
       },
       "workload": {
-        "active_tasks": 6,
-        "story_points": 12
+        "active_tasks": 7,
+        "story_points": 24
       }
     },
     "javi26031994-a11y": {
@@ -331,8 +331,8 @@
         "reprioritizations": 5
       },
       "workload": {
-        "active_tasks": 4,
-        "story_points": 11
+        "active_tasks": 5,
+        "story_points": 23
       }
     },
     "mitxel2022": {
@@ -475,8 +475,8 @@
   "_audit_log": [
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
-      "user": "TopperH4rley",
-      "timestamp": "2026-06-12T15:28:46.545Z"
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:04:04.862Z"
     }
   ]
 }
