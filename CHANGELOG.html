@@ -64,6 +64,9 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-success">Added</h5>
             <ul>
+              <li><strong>Smart Routing para "Enviar a Jules":</strong> Lógica mejorada en Claude Chat para enrutar mensajes directamente a una sesión activa de Jules si está disponible, evitando redirecciones innecesarias.</li>
+              <li><strong>Chat Neural de Sesión Jules:</strong> Habilitada la comunicación bidireccional entre la interfaz de Chat Neural y las sesiones activas de Jules a través de la API <code>sendMessage</code> y el polling de actividades.</li>
+              <li><strong>Kanban de Sesiones Jules Mejorado:</strong> Refactorizado el tablero Kanban para mapear con precisión los estados de las sesiones a las columnas (EN COLA, EN PROGRESO, LISTO, ERROR) utilizando enriquecimiento de actividades paralelizado para un mejor rendimiento.</li>
               <li><strong>Sistema de Selección Múltiple (Historial Jules):</strong> Implementado sistema para marcar múltiples fragmentos del historial (diffs, logs, planes) y enviarlos en bloque a Claude para un análisis consolidado. Incluye barra de herramientas flotante con contador dinámico.</li>
               <li><strong>Modo de Envío Dual (Claude vs Jules):</strong> Nueva interfaz de toggle en el chat que permite alternar entre consultas a Claude y órdenes directas a la sesión activa de Jules sin cambiar de pantalla.</li>
               <li><strong>Neural UI/UX 1000x Overhaul:</strong> Refuerzo visual masivo del Jules Panel V2 con bordes animados brillantes, efectos de líneas de escaneo CRT en bloques de terminal y código, animaciones de entrada estilo "Matrix" y efectos glitch en el banner activo.</li>
@@ -76,6 +79,8 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-success">Fixed</h5>
             <ul>
+              <li><strong>Workflow de Aprobación de Plan de Jules:</strong> Restaurado el botón y la lógica de "Aprobar Plan", asegurando que aparezca correctamente basado en el historial de actividades (<code>planGenerated</code> sin <code>planApproved</code> posterior).</li>
+              <li><strong>Lógica del Cliente API de Jules:</strong> Estandarizado el manejo de nombres de recursos de sesión en el cliente API para prevenir errores de resolución durante el polling y la mensajería.</li>
               <li><strong>Transferencia de Tareas a Claude:</strong> Corregido el bug en <code>_openTaskInClaude</code> donde solo se pasaba el ID de la tarea. Implementado un sistema de búsqueda multinivel (global y window scope) para asegurar que el objeto completo (título, descripción, etc.) llegue a <code>claude-chat.html</code>.</li>
               <li><strong>Prompt y Persona de Claude Chat:</strong> Actualizada la construcción del prompt inicial para usar las claves correctas del esquema JSON (<code>title</code>, <code>descripcion</code>, <code>subtasks</code>) y adoptada la persona de "Asistente Técnico de Hypenosys", eliminando referencias a Senior Software Engineer.</li>
               <li><strong>Responsividad Táctil Kanban (Dashboard):</strong> Corregido el fallo donde los botones de las tarjetas (Robot 🤖, Editar ✎, Mover →) no respondían en dispositivos móviles. Se eliminaron los atributos <code>onclick</code> inline y se implementó un sistema de delegación de eventos unificado que soporta <code>click</code> y <code>touchend</code>.</li>

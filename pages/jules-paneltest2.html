@@ -1476,6 +1476,7 @@ body{
             <div class="live-badge"><span class="live-dot"></span>LIVE</div>
           </div>
           <div class="card-body">
+            <div id="neural-actions-ops" class="hidden" style="margin-bottom: 12px; padding: 12px; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 12px;"></div>
             <div class="tel-box" id="tel-box">
               <div class="notif-empty" style="padding: 40px; text-align: center; color: var(--text3);">Sin actividad en esta sesión</div>
             </div>
@@ -1773,6 +1774,7 @@ body{
             <span id="chat-live-status">Monitoreando actividad neural...</span>
         </div>
 
+        <div id="neural-actions-v2" class="hidden" style="padding: 10px 24px; background: rgba(245, 158, 11, 0.1); border-top: 1px solid rgba(245, 158, 11, 0.3); display: flex; align-items: center; justify-content: center; gap: 12px;"></div>
         <div class="chat-input-area" style="padding: 24px; background: rgba(0,0,0,0.3); border-top: 1px solid var(--border);">
             <div style="max-width: 900px; margin: 0 auto; position: relative; display: flex; flex-direction: column; gap: 12px;">
                 <div id="v2-thinking-indicator" class="hidden" style="font-size: 10px; font-weight: 800; color: var(--cyan); letter-spacing: 0.05em;">
@@ -2343,28 +2345,56 @@ body{
     /* ─── DASHBOARD DATA ─── */
     async function loadJulesKanban() {
         try {
-            const data = await window.julesApi.getSessions(50);
+            const data = await window.julesApi.getSessions(20);
             const sessions = data.sessions || [];
 
-            const columns = {
-                'pending': ['QUEUED'],
-                'running': ['WORKING', 'IN_PROGRESS', 'AWAITING_USER', 'PLANNING', 'AWAITING_PLAN_APPROVAL'],
-                'done': ['COMPLETED'],
-                'error': ['FAILED', 'CANCELLED', 'ERROR']
+            const colItems = {
+                'pending': [],
+                'running': [],
+                'done': [],
+                'error': []
             };
 
-            Object.keys(columns).forEach(colId => {
+            const enrichedSessions = await Promise.all(sessions.map(async (s) => {
+                let targetCol = "pending";
+                if (["WORKING", "IN_PROGRESS", "PLANNING", "AWAITING_PLAN_APPROVAL"].includes(s.state)) {
+                    targetCol = "running";
+                } else if (s.state === "COMPLETED") {
+                    targetCol = "done";
+                } else if (["FAILED", "CANCELLED", "ERROR"].includes(s.state)) {
+                    targetCol = "error";
+                }
+
+                try {
+                    const activityData = await window.julesApi.getActivities(s.name, 10);
+                    const activities = activityData.activities || [];
+                    const hasPlanApproved = activities.some(a => a.planApproved);
+                    const hasSessionCompleted = activities.some(a => a.sessionCompleted);
+                    const hasFailed = activities.some(a => a.sessionFailed || (a.progressUpdated?.exitCode !== undefined && a.progressUpdated.exitCode !== 0));
+
+                    if (hasFailed) targetCol = "error";
+                    else if (hasSessionCompleted) targetCol = "done";
+                    else if (hasPlanApproved) targetCol = "running";
+                    else targetCol = "pending";
+                } catch(e) {}
+                return { session: s, targetCol };
+            }));
+
+            for (const { session, targetCol } of enrichedSessions) {
+                colItems[targetCol].push(session);
+            }
+
+            Object.keys(colItems).forEach(colId => {
                 const colEl = $(`kb-${colId}`), countEl = $(`kb-count-${colId}`), mCountEl = $(`m-count-${colId}`);
                 if (!colEl) return;
 
-                const items = sessions.filter(s => columns[colId].includes(s.state));
+                const items = colItems[colId];
                 if (countEl) countEl.textContent = items.length;
                 if (mCountEl) mCountEl.textContent = items.length;
 
                 colEl.innerHTML = items.map(s => {
                     const sid = s.name.split('/').pop();
                     const repo = s.sourceContext?.source?.split('/').pop() || '---';
-                    const branch = s.sourceContext?.githubRepoContext?.startingBranch || '---';
 
                     return `
                         <div class="kb-card ${colId}" onclick="openDrawer('${s.name}')">
@@ -2388,7 +2418,6 @@ body{
             console.warn('[Jules] loadJulesKanban error:', e);
         }
     }
-
     async function refreshDashboard() {
         try {
             const [sessionData, tasks] = await Promise.all([
@@ -3023,8 +3052,11 @@ body{
             if (!document.hidden) {
                 refreshDashboard();
                 checkClipboard();
+                if (window.JulesPanelState.currentView === 'kanban') {
+                    loadJulesKanban();
+                }
             }
-        }, 15000);
+        }, 10000); // Poll every 10s as requested
     }
     function stopPolling() { if (sessionPollInterval) clearInterval(sessionPollInterval); }
 
@@ -3159,19 +3191,69 @@ body{
         const content = input.value.trim();
         if (!content) return;
 
-        // Add user message
-        const userMsg = { role: 'user', content };
-        chatV2Messages.push(userMsg);
-        renderChatV2Messages();
-        input.value = '';
-        input.style.height = 'auto';
+        const isNeuralActive = localStorage.getItem('hy_neural_active') === 'true';
+        const sessionId = localStorage.getItem('hy_neural_session_id');
 
-        const thinking = $('v2-thinking-indicator');
-        thinking.classList.remove('hidden');
+        if (isNeuralActive && sessionId) {
+            // Fix 3: Route Neural Chat messages to Jules session directly
+            const userMsg = { role: 'user', content };
+            chatV2Messages.push(userMsg);
+            renderChatV2Messages();
+            input.value = '';
+            input.style.height = 'auto';
 
-        try {
-            const config = window.aiConfig?.getActiveConfig() || JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
-            const systemPrompt = "Eres Claude, un asistente experto integrado en el panel de control de Hypenosys.";
+            const thinking = $('v2-thinking-indicator');
+            if (thinking) {
+                thinking.textContent = "ENVIANDO ORDEN A JULES...";
+                thinking.classList.remove('hidden');
+            }
+
+            try {
+                const ok = await window.julesApi.sendMessage("sessions/" + getIdSafe(sessionId), content);
+                if (ok) {
+                    showToast("Orden enviada a Jules", "green");
+
+                    // Poll for activity response
+                    let attempts = 0;
+                    const maxAttempts = 15; // 30 seconds (2s interval)
+                    const pollInterval = setInterval(async () => {
+                        attempts++;
+                        await refreshActivities(getIdSafe(sessionId));
+
+                        if (attempts >= maxAttempts) {
+                            clearInterval(pollInterval);
+                            if (thinking) thinking.classList.add('hidden');
+                        }
+
+                        // Check if we got a new activity from agent
+                        const activities = document.querySelectorAll('#neural-jules-history .activity-entry--agent');
+                        if (activities.length > 0) {
+                             // Assuming the poll found something, but we keep polling for 30s to be safe
+                             // or we could stop if we detect a specific response.
+                        }
+                    }, 2000);
+                }
+            } catch (e) {
+                showToast("Error al enviar a Jules: " + e.message, "red");
+                if (thinking) thinking.classList.add('hidden');
+            }
+        } else {
+            // Add user message
+            const userMsg = { role: 'user', content };
+            chatV2Messages.push(userMsg);
+            renderChatV2Messages();
+            input.value = '';
+            input.style.height = 'auto';
+
+            const thinking = $('v2-thinking-indicator');
+            if (thinking) {
+                thinking.textContent = "CLAUDE ESTÁ PROCESANDO...";
+                thinking.classList.remove('hidden');
+            }
+
+            try {
+                const config = window.aiConfig?.getActiveConfig() || JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
+                const systemPrompt = "Eres Claude, un asistente experto integrado en el panel de control de Hypenosys.";
 
             // Build context from active task if exists
             let fullPrompt = content;
@@ -3371,6 +3453,8 @@ body{
               if (isAtBottom) log.scrollTo({ top: log.scrollHeight, behavior: 'smooth' });
             }
 
+            updateApprovalStatus(activities, sessionId);
+
             if (session && (session.state === 'COMPLETED' || session.state === 'FAILED')) {
               stopNeuralPolling();
             }
@@ -3378,6 +3462,59 @@ body{
             console.warn("refreshActivities error:", e);
         }
     }
+
+    function updateApprovalStatus(activities, sessionId) {
+        const idSafe = sessionId.split('/').pop();
+        const opsContainer = document.getElementById('neural-actions-ops');
+        const v2Container = document.getElementById('neural-actions-v2');
+        if (!opsContainer || !v2Container) return;
+
+        // Logic: latest activity has planGenerated and no subsequent planApproved
+        const sorted = [...activities].sort((a, b) => new Date(a.createTime) - new Date(b.createTime));
+
+        let needsApproval = false;
+        for (let i = sorted.length - 1; i >= 0; i--) {
+            const act = sorted[i];
+            if (act.planApproved) {
+                needsApproval = false;
+                break;
+            }
+            if (act.planGenerated) {
+                needsApproval = true;
+                break;
+            }
+        }
+
+        if (needsApproval) {
+            const btnHtml = `
+                <span style="font-size: 11px; color: var(--amber); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Plan pendiente de aprobación</span>
+                <button onclick="approveJulesPlan('${sessionId}')" class="btn btn-primary btn-sm" style="background: var(--amber); color: #000; box-shadow: 0 0 15px rgba(245, 158, 11, 0.4); min-height: 32px; padding: 4px 12px; border-radius: 6px; font-weight: 800;">
+                    <i class="fas fa-check mr-2"></i> APROBAR PLAN
+                </button>
+            `;
+            opsContainer.innerHTML = btnHtml;
+            v2Container.innerHTML = btnHtml;
+            opsContainer.classList.remove('hidden');
+            v2Container.classList.remove('hidden');
+        } else {
+            opsContainer.classList.add('hidden');
+            v2Container.classList.add('hidden');
+            opsContainer.innerHTML = '';
+            v2Container.innerHTML = '';
+        }
+    }
+
+    window.approveJulesPlan = async (sessionId) => {
+        try {
+            showToast("Aprobando plan...", "amber");
+            await window.julesApi.approvePlan(sessionId);
+            showToast("Plan aprobado con éxito", "green");
+            const idSafe = sessionId.split('/').pop();
+            refreshActivities(idSafe);
+        } catch (e) {
+            showToast("Error al aprobar plan: " + e.message, "red");
+        }
+    };
 
     function renderActivity(activity) {
       const currentSessions = window.julesSessionsCache || [];
