@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-13T09:29:04.362Z",
+  "last_updated": "2026-06-13T09:29:56.714Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1462,7 +1462,6 @@
       "detectado_por": "Axel",
       "asignados": [
         "axlfc",
-        "dkdidac-design",
         "topperh4rley"
       ],
       "email_responsable": null,
@@ -1548,6 +1547,13 @@
           "field": "estado",
           "old_value": "In Review",
           "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:29:56.246Z",
+          "field": "asignados",
+          "old_value": "[\"axlfc\",\"dkdidac-design\",\"topperh4rley\"]",
+          "new_value": "[\"axlfc\",\"topperh4rley\"]"
         }
       ],
       "id": 32
@@ -3075,6 +3081,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #32",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:29:56.714Z"
+    },
     {
       "action": "chore: actualizar tarea #51",
       "user": "Axlfc",
