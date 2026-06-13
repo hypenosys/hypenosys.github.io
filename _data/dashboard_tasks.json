@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-11T19:14:46.139Z",
-  "last_updated_by": "Axel",
+  "last_updated": "2026-06-13T09:35:36.165Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -19,12 +19,11 @@
       "limite": null,
       "comentario": "Implementación del núcleo del Operations Center usando Jekyll y Tailwind. Configuración de la API de GitHub para persistencia de tareas y visualización de métricas de QA.",
       "milestone": "M1",
-      "completitud": 0.6,
+      "completitud": 0.4,
       "asignados": [
         "dkdidac-design",
         "javi26031994-a11y",
-        "mitxel2022",
-        "topperh4rley"
+        "mitxel2022"
       ],
       "email_responsable": "alex@hypenosys.com",
       "emails_asignados": [
@@ -42,9 +41,9 @@
       "estimated_hours": 1,
       "story_points": 1,
       "tags": [
-        "frontend",
         "devops",
-        "feature"
+        "feature",
+        "frontend"
       ],
       "external_links": [],
       "subtasks": [],
@@ -75,6 +74,20 @@
           "field": "asignados",
           "old_value": "[\"axlfc\",\"dkdidac-design\",\"javi26031994-a11y\",\"mitxel2022\",\"topperh4rley\"]",
           "new_value": "[\"dkdidac-design\",\"javi26031994-a11y\",\"mitxel2022\",\"topperh4rley\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:22:39.120Z",
+          "field": "asignados",
+          "old_value": "[\"dkdidac-design\",\"javi26031994-a11y\",\"mitxel2022\",\"topperh4rley\"]",
+          "new_value": "[\"dkdidac-design\",\"javi26031994-a11y\",\"mitxel2022\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:22:39.120Z",
+          "field": "completitud",
+          "old_value": 0.6,
+          "new_value": 0.4
         }
       ]
     },
@@ -203,8 +216,8 @@
       "prioridad": "ToDo",
       "milestone": "M1",
       "estado": "In Review",
-      "completitud": 0.8,
-      "resuelto_por": null,
+      "completitud": 0.2,
+      "resuelto_por": "Alex",
       "detectado_por": "Alex",
       "rama2": null,
       "ver": true,
@@ -215,7 +228,6 @@
       "id": 5,
       "asignados": [
         "dkdidac-design",
-        "javi26031994-a11y",
         "mitxel2022",
         "topperh4rley"
       ],
@@ -230,11 +242,11 @@
       "task_type": "research",
       "start_date": null,
       "due_date": null,
-      "estimated_hours": 10,
+      "estimated_hours": 100,
       "story_points": null,
       "tags": [
-        "docs",
         "chore",
+        "docs",
         "testing"
       ],
       "external_links": [],
@@ -266,6 +278,20 @@
           "field": "repository",
           "old_value": null,
           "new_value": "hypenosys/app"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:19:44.750Z",
+          "field": "asignados",
+          "old_value": "[\"dkdidac-design\",\"javi26031994-a11y\",\"mitxel2022\",\"topperh4rley\"]",
+          "new_value": "[\"dkdidac-design\",\"mitxel2022\",\"topperh4rley\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:19:44.750Z",
+          "field": "completitud",
+          "old_value": 0.8,
+          "new_value": 0.2
         }
       ],
       "repository": "hypenosys/app"
@@ -731,7 +757,7 @@
       "tema_principal": "Arte / Assets",
       "prioridad": "Cosmetic",
       "milestone": "M1",
-      "estado": "In Review",
+      "estado": "OK",
       "completitud": 0.5,
       "resuelto_por": "Dídac",
       "detectado_por": "Alex",
@@ -776,9 +802,9 @@
       "story_points": 5,
       "tags": [
         "UX/UI",
-        "ux",
+        "feature",
         "frontend",
-        "feature"
+        "ux"
       ],
       "external_links": [],
       "subtasks": [
@@ -878,6 +904,13 @@
           "field": "completitud",
           "old_value": 0,
           "new_value": 0.5
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:23:01.599Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "OK"
         }
       ],
       "repository": "hypenosys/hypenosys.github.io"
@@ -1251,7 +1284,7 @@
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Cosmetic",
       "milestone": "M1",
-      "estado": "In Review",
+      "estado": "OK",
       "completitud": 0,
       "resuelto_por": "Alex",
       "detectado_por": "Dídac",
@@ -1268,8 +1301,8 @@
       "tags": [
         "UX/UI",
         "bug",
-        "ux",
-        "frontend"
+        "frontend",
+        "ux"
       ],
       "external_links": [],
       "subtasks": [],
@@ -1403,6 +1436,13 @@
           "field": "estado",
           "old_value": "Working",
           "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:23:21.422Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "OK"
         }
       ],
       "id": 31
@@ -1416,13 +1456,12 @@
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Cosmetic",
       "milestone": "M1",
-      "estado": "In Review",
+      "estado": "Working",
       "completitud": 0,
       "resuelto_por": "Alex",
       "detectado_por": "Axel",
       "asignados": [
         "axlfc",
-        "dkdidac-design",
         "topperh4rley"
       ],
       "email_responsable": null,
@@ -1501,6 +1540,20 @@
           "field": "estado",
           "old_value": "Pending",
           "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:23:35.332Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:29:56.246Z",
+          "field": "asignados",
+          "old_value": "[\"axlfc\",\"dkdidac-design\",\"topperh4rley\"]",
+          "new_value": "[\"axlfc\",\"topperh4rley\"]"
         }
       ],
       "id": 32
@@ -1644,9 +1697,9 @@
       "task_type": "feature",
       "tema_principal": "Tools / Automation",
       "repository": "hypenosys/app",
-      "prioridad": "ToDo",
+      "prioridad": "Major",
       "milestone": "M1",
-      "estado": "In Review",
+      "estado": "Working",
       "completitud": 0,
       "resuelto_por": "Axel",
       "detectado_por": "Axel",
@@ -1661,13 +1714,13 @@
       "estimated_hours": 2,
       "story_points": 2,
       "tags": [
+        "api",
+        "devops",
+        "feature",
         "infraestructura",
         "jules-panel",
         "neural-chat",
-        "svn",
-        "feature",
-        "api",
-        "devops"
+        "svn"
       ],
       "external_links": [],
       "subtasks": [],
@@ -1757,6 +1810,20 @@
           "field": "estado",
           "old_value": "Pending",
           "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:23:53.858Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:23:53.858Z",
+          "field": "prioridad",
+          "old_value": "ToDo",
+          "new_value": "Major"
         }
       ],
       "id": 35
@@ -1922,18 +1989,19 @@
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Minor",
       "milestone": "M2",
-      "estado": "ToDo",
+      "estado": "Working",
       "completitud": 0,
-      "resuelto_por": "Axel",
+      "resuelto_por": "Alex",
       "detectado_por": "Axel",
       "asignados": [
         "axlfc",
+        "dkdidac-design",
         "topperh4rley"
       ],
-      "email_responsable": null,
+      "email_responsable": "axel@hypenosys.com",
       "emails_asignados": [],
-      "start_date": null,
-      "due_date": null,
+      "start_date": "2026-06-13",
+      "due_date": "2026-06-28",
       "estimated_hours": 2,
       "story_points": 1,
       "tags": [
@@ -2029,6 +2097,27 @@
           "field": "prioridad",
           "old_value": "Major",
           "new_value": "Minor"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:14:52.234Z",
+          "field": "estado",
+          "old_value": "ToDo",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:14:52.234Z",
+          "field": "asignados",
+          "old_value": "[\"axlfc\",\"topperh4rley\"]",
+          "new_value": "[\"axlfc\",\"dkdidac-design\",\"topperh4rley\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:14:52.234Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-06-28"
         }
       ],
       "id": 38
@@ -2042,7 +2131,7 @@
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Major",
       "milestone": "M2",
-      "estado": "Pending",
+      "estado": "Working",
       "completitud": 0,
       "resuelto_por": null,
       "detectado_por": "Axel",
@@ -2057,8 +2146,8 @@
       "estimated_hours": 4,
       "story_points": 2,
       "tags": [
-        "chore",
         "api",
+        "chore",
         "devops"
       ],
       "external_links": [],
@@ -2119,11 +2208,11 @@
       "milestone": "M1",
       "estado": "Working",
       "completitud": 1,
-      "resuelto_por": null,
+      "resuelto_por": "Mitxel",
       "detectado_por": "Axel",
       "asignados": [
         "axlfc",
-        "topperh4rley"
+        "mitxel2022"
       ],
       "email_responsable": null,
       "emails_asignados": [],
@@ -2132,9 +2221,9 @@
       "estimated_hours": 4,
       "story_points": 1,
       "tags": [
-        "security",
+        "api",
         "bug",
-        "api"
+        "security"
       ],
       "external_links": [],
       "subtasks": [],
@@ -2285,6 +2374,27 @@
           "field": "descripcion",
           "old_value": "Implementar filtro de subida de imagenes en las tasks mobil, si no hay disponibilidad de cloudflare no se puede, mostrar aviso para ambos casos añadir webhook de n8n para identificar imágenes NO permitidas. workflow de n8n de reconocimiento de nsfw",
           "new_value": "Implementar filtro de subida de imagenes en las tasks, si no hay disponibilidad de cloudflare no se puede, mostrar aviso para ambos casos añadir webhook de n8n para identificar imágenes NO permitidas. workflow de n8n de reconocimiento de nsfw"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:05:59.882Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:24:12.864Z",
+          "field": "asignados",
+          "old_value": "[\"axlfc\",\"topperh4rley\"]",
+          "new_value": "[\"axlfc\",\"mitxel2022\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:25:45.854Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "Working"
         }
       ],
       "id": 40
@@ -2298,7 +2408,7 @@
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Cosmetic",
       "milestone": "M1",
-      "estado": "Working",
+      "estado": "ToDo",
       "completitud": 0,
       "resuelto_por": null,
       "detectado_por": "Unassigned",
@@ -2313,9 +2423,9 @@
       "estimated_hours": 3,
       "story_points": null,
       "tags": [
-        "ux",
+        "feature",
         "frontend",
-        "feature"
+        "ux"
       ],
       "external_links": [],
       "subtasks": [],
@@ -2346,6 +2456,13 @@
           "field": "estado",
           "old_value": "Pending",
           "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:05:47.017Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "ToDo"
         }
       ],
       "id": 41
@@ -2359,7 +2476,7 @@
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Minor",
       "milestone": "M2",
-      "estado": "Working",
+      "estado": "In Review",
       "completitud": 0,
       "resuelto_por": null,
       "detectado_por": "Axel",
@@ -2428,6 +2545,13 @@
           "field": "estado",
           "old_value": "Pending",
           "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:05:25.384Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
         }
       ],
       "id": 42
@@ -2499,12 +2623,11 @@
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Major",
       "milestone": "M3",
-      "estado": "Pending",
+      "estado": "Working",
       "completitud": 0,
-      "resuelto_por": null,
+      "resuelto_por": "Axel",
       "detectado_por": "Axel",
       "asignados": [
-        "topperh4rley",
         "mitxel2022"
       ],
       "email_responsable": "axel@hypenosys.com",
@@ -2515,9 +2638,9 @@
       "story_points": 1,
       "tags": [
         "api",
+        "chore",
         "devops",
-        "security",
-        "chore"
+        "security"
       ],
       "external_links": [],
       "subtasks": [],
@@ -2541,6 +2664,34 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:11:22.389Z",
+          "field": "title",
+          "old_value": "Controlar con Claude Neural API de n8n",
+          "new_value": "Cognito-Agent: Controlar con Claude Neural API de n8n"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:11:34.629Z",
+          "field": "title",
+          "old_value": "Cognito-Agent: Controlar con Claude Neural API de n8n",
+          "new_value": "Controlar con Claude Neural API de n8n"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:13:44.937Z",
+          "field": "asignados",
+          "old_value": "[\"mitxel2022\",\"topperh4rley\"]",
+          "new_value": "[\"mitxel2022\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:21:52.007Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
         }
       ],
       "id": 44
@@ -2550,8 +2701,8 @@
       "title": "Proxy Relay para Ollama (Bypass Mixed Content)",
       "descripcion": "Crear un proxy relay para solucionar el bloqueo de peticiones HTTP (Ollama local) desde HTTPS. Actualmente el navegador bloquea estas peticiones obligando a configuraciones manuales de flags. **Hecho cuando:** Las peticiones a Ollama funcionen de forma nativa desde el dashboard en HTTPS.",
       "tags": [
-        "backend",
         "api",
+        "backend",
         "security"
       ],
       "prioridad": "Medium",
@@ -2562,24 +2713,66 @@
       ],
       "rama": "feature/ollama-proxy-relay",
       "task_type": "feature",
-      "tema_principal": "Tools / Automation",
+      "tema_principal": "Concepto / GDD",
       "milestone": "M2",
       "fecha": "2026-06-08",
       "asignados": [
         "axlfc"
       ],
       "acceptance_criteria": "El relay permite comunicación bidireccional sin errores de Mixed Content.",
-      "subtasks": []
+      "subtasks": [],
+      "repository": "hypenosys/docs",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Unassigned",
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-06-13",
+      "due_date": "2026-06-21",
+      "story_points": null,
+      "external_links": [],
+      "blocks": [],
+      "blocked_by": [],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:12:10.528Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-06-21"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:12:10.528Z",
+          "field": "completitud",
+          "new_value": 0
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:12:10.528Z",
+          "field": "repository",
+          "old_value": "",
+          "new_value": null
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:35:35.301Z",
+          "field": "repository",
+          "old_value": null,
+          "new_value": "hypenosys/docs"
+        }
+      ]
     },
     {
       "id": 46,
       "title": "Consolidación y limpieza de scripts técnicos",
       "descripcion": "Eliminar versiones duplicadas y obsoletas de los scripts principales (all_scripts.js, v2, v3). Esta deuda técnica induce a errores y dificulta el mantenimiento del código. **Hecho cuando:** Solo existan las versiones necesarias y el dashboard funcione sin errores de referencia.",
       "tags": [
-        "refactor",
-        "chore"
+        "chore",
+        "refactor"
       ],
-      "prioridad": "Low",
+      "prioridad": "",
       "estado": "Pending",
       "estimated_hours": 4,
       "comments": [
@@ -2594,15 +2787,50 @@
         "axlfc"
       ],
       "acceptance_criteria": "Reducción del tamaño total de scripts y eliminación de redundancias.",
-      "subtasks": []
+      "subtasks": [],
+      "repository": "hypenosys/hypenosys.github.io",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Unassigned",
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "story_points": null,
+      "external_links": [],
+      "blocks": [],
+      "blocked_by": [],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:34:46.002Z",
+          "field": "prioridad",
+          "old_value": "Low",
+          "new_value": ""
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:34:46.002Z",
+          "field": "completitud",
+          "new_value": 0
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:34:46.002Z",
+          "field": "repository",
+          "old_value": "",
+          "new_value": "hypenosys/hypenosys.github.io"
+        }
+      ]
     },
     {
       "id": 47,
       "title": "Decomisionado de Paneles Jules obsoletos",
       "descripcion": "Archivar o eliminar las versiones de prueba de los paneles Jules (jules-panel.html, jules-paneltest.html). jules-paneltest2.html es ahora el estándar y mantener los anteriores genera confusión. **Hecho cuando:** Solo el panel v2 esté activo y las rutas antiguas redirijan o estén borradas.",
       "tags": [
-        "refactor",
-        "chore"
+        "chore",
+        "refactor"
       ],
       "prioridad": "Medium",
       "estado": "Pending",
@@ -2619,7 +2847,35 @@
         "axlfc"
       ],
       "acceptance_criteria": "Limpieza del directorio de páginas y actualización de enlaces.",
-      "subtasks": []
+      "subtasks": [],
+      "repository": "hypenosys/hypenosys.github.io",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Unassigned",
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "story_points": null,
+      "external_links": [],
+      "blocks": [],
+      "blocked_by": [],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:34:34.675Z",
+          "field": "completitud",
+          "new_value": 0
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:34:34.675Z",
+          "field": "repository",
+          "old_value": "",
+          "new_value": "hypenosys/hypenosys.github.io"
+        }
+      ]
     },
     {
       "id": 48,
@@ -2627,10 +2883,10 @@
       "descripcion": "Implementar un sistema de Error Boundaries para aislar fallos en componentes críticos del dashboard. Evita que un error en la API de GitHub o en las métricas tumbe toda la interfaz. **Hecho cuando:** Al fallar un componente, se muestre un estado de fallback elegante sin afectar al resto.",
       "tags": [
         "frontend",
-        "ux",
-        "stability"
+        "stability",
+        "ux"
       ],
-      "prioridad": "High",
+      "prioridad": "",
       "estado": "Pending",
       "estimated_hours": 4,
       "comments": [
@@ -2646,7 +2902,42 @@
         "topperh4rley"
       ],
       "acceptance_criteria": "Los errores se capturan y loguean sin romper la sesión del usuario.",
-      "subtasks": []
+      "subtasks": [],
+      "repository": "hypenosys/hypenosys.github.io",
+      "completitud": 0,
+      "resuelto_por": "Alex",
+      "detectado_por": "Unassigned",
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "story_points": null,
+      "external_links": [],
+      "blocks": [],
+      "blocked_by": [],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:34:20.957Z",
+          "field": "prioridad",
+          "old_value": "High",
+          "new_value": ""
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:34:20.957Z",
+          "field": "completitud",
+          "new_value": 0
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:34:20.957Z",
+          "field": "repository",
+          "old_value": "",
+          "new_value": "hypenosys/hypenosys.github.io"
+        }
+      ]
     },
     {
       "title": "Local AI Backend Docs: ComfyUI, Redis, PostgreSQL, Forgejo, Matrix, Qdrant, n8n, n8n-runner, ollama setup",
@@ -2659,9 +2950,12 @@
       "milestone": "M1",
       "estado": "Working",
       "completitud": 0.5,
-      "resuelto_por": null,
+      "resuelto_por": "Axel",
       "detectado_por": "Axel",
-      "asignados": [],
+      "asignados": [
+        "javi26031994-a11y",
+        "topperh4rley"
+      ],
       "email_responsable": null,
       "emails_asignados": [],
       "start_date": "2026-06-11",
@@ -2703,6 +2997,13 @@
           "field": "estado",
           "old_value": "Pending",
           "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:32:34.420Z",
+          "field": "asignados",
+          "old_value": "[]",
+          "new_value": "[\"javi26031994-a11y\",\"topperh4rley\"]"
         }
       ],
       "id": 49
@@ -2710,15 +3011,15 @@
     {
       "title": "Install Penpot and Hermes Agent in ZimaBoard",
       "descripcion": "",
-      "rama": "",
+      "rama": "master",
       "task_type": "feature",
-      "tema_principal": "Tools / Automation",
-      "repository": null,
+      "tema_principal": "Concepto / GDD",
+      "repository": "hypenosys/docs",
       "prioridad": "Major",
       "milestone": "M1",
       "estado": "Pending",
       "completitud": 0,
-      "resuelto_por": null,
+      "resuelto_por": "Axel",
       "detectado_por": "Axel",
       "asignados": [],
       "email_responsable": null,
@@ -2748,12 +3049,308 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:35:14.968Z",
+          "field": "repository",
+          "old_value": null,
+          "new_value": "hypenosys/docs"
         }
       ],
       "id": 50
+    },
+    {
+      "title": "Análisis de representación conceptual y visual: Dashboard",
+      "descripcion": "Observar y listar todas las features presentes o deficientes y si se visualizan y monitorizan correctamente en el harness y si hace falta o no escribir los test (consultar team programación) \n\nusad el excalidraw con las capturas y flechitas para enriquecer la imagen con el stiches o que se yo xD\n\nTodas estas historias van en informes al obsidian (repositorio hypenosys/docs)",
+      "rama": "master",
+      "task_type": "chore",
+      "tema_principal": "Concepto / GDD",
+      "repository": "hypenosys/docs",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Working",
+      "completitud": 0.3,
+      "resuelto_por": "Javi",
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc",
+        "dkdidac-design",
+        "javi26031994-a11y",
+        "topperh4rley"
+      ],
+      "email_responsable": "javi@hypenosys.com",
+      "emails_asignados": [
+        "alex@hypenosys.com",
+        "didac@hypenosys.com",
+        "mitxel@hypenosys.com"
+      ],
+      "start_date": "2026-06-13",
+      "due_date": "2026-06-28",
+      "estimated_hours": 6,
+      "story_points": 8,
+      "tags": [
+        "UX/UI"
+      ],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "Shortcut mini favoritos (actualmente en https://hypenosys.github.io/tech-stack/ ) ",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [
+        {
+          "url": "https://64.media.tumblr.com/7568dc327e51e3a5715c975cb9de5090/7572980993b0ec54-76/s1280x1920/398a5f43976457ee34ce9e6c0b95508e2851fb8d.png",
+          "type": "url",
+          "tumblr_post_id": "819295507763560448",
+          "filename": "7826.png",
+          "uploaded_at": "2026-06-13T08:58:03.818Z"
+        }
+      ],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-13",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:04:00.586Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:15:33.974Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:15:33.974Z",
+          "field": "asignados",
+          "old_value": "[\"dkdidac-design\",\"javi26031994-a11y\",\"topperh4rley\"]",
+          "new_value": "[\"javi26031994-a11y\",\"topperh4rley\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:19:08.736Z",
+          "field": "descripcion",
+          "old_value": "Listar todas las features y si se visualiza correctamente el harness si hace falta escribir los test",
+          "new_value": "Observar y listar todas las features presentes o deficientes y si se visualizan y monitorizan correctamente en el harness y si hace falta o no escribir los test (consultar team programación)\n\nusad el excalidraw con las capturas y flechitas para enriquecer la imagen con el stiches o que se yo xD\n\nTodas estas historias van al obsidian"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:19:08.736Z",
+          "field": "prioridad",
+          "old_value": "Cosmetic",
+          "new_value": "Major"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:19:08.736Z",
+          "field": "asignados",
+          "old_value": "[\"javi26031994-a11y\",\"topperh4rley\"]",
+          "new_value": "[\"axlfc\",\"dkdidac-design\",\"javi26031994-a11y\",\"topperh4rley\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:19:08.736Z",
+          "field": "completitud",
+          "old_value": 0,
+          "new_value": 0.3
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:19:08.736Z",
+          "field": "repository",
+          "old_value": "hypenosys/hypenosys.github.io",
+          "new_value": "hypenosys/docs"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:29:03.812Z",
+          "field": "title",
+          "old_value": "Refactor visual: Dashboard",
+          "new_value": "Análisis de representación conceptual y visual: Dashboard"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:29:03.812Z",
+          "field": "descripcion",
+          "old_value": "Observar y listar todas las features presentes o deficientes y si se visualizan y monitorizan correctamente en el harness y si hace falta o no escribir los test (consultar team programación)\n\nusad el excalidraw con las capturas y flechitas para enriquecer la imagen con el stiches o que se yo xD\n\nTodas estas historias van al obsidian",
+          "new_value": "Observar y listar todas las features presentes o deficientes y si se visualizan y monitorizan correctamente en el harness y si hace falta o no escribir los test (consultar team programación) \n\nusad el excalidraw con las capturas y flechitas para enriquecer la imagen con el stiches o que se yo xD\n\nTodas estas historias van en informes al obsidian (repositorio hypenosys/docs)"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:29:03.812Z",
+          "field": "milestone",
+          "old_value": "M2",
+          "new_value": "M1"
+        }
+      ],
+      "id": 51
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #45",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:35:36.165Z"
+    },
+    {
+      "action": "chore: actualizar tarea #50",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:35:15.529Z"
+    },
+    {
+      "action": "chore: actualizar tarea #46",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:34:46.813Z"
+    },
+    {
+      "action": "chore: actualizar tarea #47",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:34:36.132Z"
+    },
+    {
+      "action": "chore: actualizar tarea #48",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:34:21.464Z"
+    },
+    {
+      "action": "chore: actualizar tarea #49",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:32:35.109Z"
+    },
+    {
+      "action": "chore: actualizar tarea #32",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:29:56.714Z"
+    },
+    {
+      "action": "chore: actualizar tarea #51",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:29:04.363Z"
+    },
+    {
+      "action": "chore: actualizar tarea #40",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:25:46.662Z"
+    },
+    {
+      "action": "chore: actualizar tarea #40",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:24:13.430Z"
+    },
+    {
+      "action": "chore: actualizar tarea #35",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:23:55.027Z"
+    },
+    {
+      "action": "chore: actualizar tarea #32",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:23:36.196Z"
+    },
+    {
+      "action": "chore: actualizar tarea #31",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:23:21.888Z"
+    },
+    {
+      "action": "chore: actualizar tarea #16",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:23:02.277Z"
+    },
+    {
+      "action": "chore: actualizar tarea #1",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:22:39.860Z"
+    },
+    {
+      "action": "chore: actualizar tarea #44",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:21:52.553Z"
+    },
+    {
+      "action": "chore: actualizar tarea #5",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:19:45.472Z"
+    },
+    {
+      "action": "chore: actualizar tarea #51",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:19:09.155Z"
+    },
+    {
+      "action": "chore: actualizar tarea #51",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:15:34.614Z"
+    },
+    {
+      "action": "chore: actualizar tarea #38",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:14:52.988Z"
+    },
+    {
+      "action": "chore: actualizar tarea #44",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:13:45.926Z"
+    },
+    {
+      "action": "chore: actualizar tarea #39",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:13:16.600Z"
+    },
+    {
+      "action": "chore: actualizar tarea #50",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:12:50.807Z"
+    },
+    {
+      "action": "chore: actualizar tarea #45",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:12:11.229Z"
+    },
+    {
+      "action": "chore: actualizar tarea #44",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:11:35.250Z"
+    },
+    {
+      "action": "chore: actualizar tarea #44",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:11:22.987Z"
+    },
+    {
+      "action": "chore: actualizar tarea #40",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:06:00.623Z"
+    },
+    {
+      "action": "chore: actualizar tarea #41",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:05:47.838Z"
+    },
+    {
+      "action": "chore: actualizar tarea #42",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:05:26.333Z"
+    },
+    {
+      "action": "feat: nueva tarea #1781341440586 añadida",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:04:01.397Z"
+    },
+    {
+      "action": "chore: actualizar estado tarea #4 → Pending",
+      "user": "TopperH4rley",
+      "timestamp": "2026-06-12T15:28:43.978Z"
+    },
     {
       "action": "feat: nueva tarea #1781205285685 añadida",
       "user": "Axlfc",

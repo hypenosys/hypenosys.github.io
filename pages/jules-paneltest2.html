@@ -867,6 +867,64 @@ body{
 .activity-entry {
     font-size: 13px;
     line-height: 1.6;
+    position: relative;
+    transition: background 0.3s ease;
+    cursor: pointer;
+    padding-left: 30px !important;
+}
+
+.activity-entry.selected {
+    background: rgba(124, 58, 237, 0.15) !important;
+    box-shadow: inset 0 0 10px rgba(124, 58, 237, 0.1);
+}
+
+.activity-selection-checkbox {
+    position: absolute;
+    left: 10px;
+    top: 14px;
+    width: 14px;
+    height: 14px;
+    border: 1px solid var(--border2);
+    border-radius: 3px;
+    background: rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.activity-entry.selected .activity-selection-checkbox {
+    background: var(--accent);
+    border-color: var(--accent2);
+    box-shadow: 0 0 8px var(--accent);
+}
+
+.activity-entry.selected .activity-selection-checkbox::after {
+    content: "✓";
+    font-size: 10px;
+    color: white;
+}
+
+#neural-selection-toolbar {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: rgba(13, 13, 20, 0.95);
+    backdrop-filter: blur(15px);
+    border: 1px solid var(--border-accent);
+    border-radius: var(--r-full);
+    padding: 8px 16px 8px 24px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6), var(--shadow-glow);
+}
+
+#neural-selection-toolbar.active {
+    transform: translateX(-50%) translateY(0);
 }
 .activity-entry--plan { color: var(--accent2); }
 .activity-entry--progress { color: var(--text2); }
@@ -1418,6 +1476,7 @@ body{
             <div class="live-badge"><span class="live-dot"></span>LIVE</div>
           </div>
           <div class="card-body">
+            <div id="neural-actions-ops" class="hidden" style="margin-bottom: 12px; padding: 12px; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 12px;"></div>
             <div class="tel-box" id="tel-box">
               <div class="notif-empty" style="padding: 40px; text-align: center; color: var(--text3);">Sin actividad en esta sesión</div>
             </div>
@@ -1670,6 +1729,22 @@ body{
                 <p style="max-width: 260px; font-size: 12px;">Aquí se mostrará el progreso real de Jules, cambios de código y logs de ejecución.</p>
             </div>
             <div id="neural-jules-history" class="activity-log"></div>
+
+            <!-- Floating Selection Toolbar -->
+            <div id="neural-selection-toolbar">
+                <div class="flex items-center gap-3 pr-4 border-r border-white/10">
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Seleccionados</span>
+                    <span id="selection-count" class="bg-indigo-500 text-white text-[11px] font-bold px-2 py-0.5 rounded-full">0</span>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="analyzeSelectedWithClaude()" class="btn btn-primary btn-sm" style="box-shadow: 0 0 15px rgba(124,58,237,0.4);">
+                        ✨ ANALIZAR CON CLAUDE
+                    </button>
+                    <button onclick="clearHistorySelection()" class="btn btn-ghost btn-sm">
+                        CANCELAR
+                    </button>
+                </div>
+            </div>
             <div id="jules-history-log" class="activity-log" style="display:none;"></div>
         </div>
 
@@ -1699,6 +1774,7 @@ body{
             <span id="chat-live-status">Monitoreando actividad neural...</span>
         </div>
 
+        <div id="neural-actions-v2" class="hidden" style="padding: 10px 24px; background: rgba(245, 158, 11, 0.1); border-top: 1px solid rgba(245, 158, 11, 0.3); display: flex; align-items: center; justify-content: center; gap: 12px;"></div>
         <div class="chat-input-area" style="padding: 24px; background: rgba(0,0,0,0.3); border-top: 1px solid var(--border);">
             <div style="max-width: 900px; margin: 0 auto; position: relative; display: flex; flex-direction: column; gap: 12px;">
                 <div id="v2-thinking-indicator" class="hidden" style="font-size: 10px; font-weight: 800; color: var(--cyan); letter-spacing: 0.05em;">
@@ -2077,9 +2153,10 @@ body{
           analyzer.onclick = () => {
               const task = JSON.parse(localStorage.getItem('hy_neural_task_context') || '{}');
               let thread = JSON.parse(localStorage.getItem('hy_neural_thread') || '[]');
+              const promptText = `Jules ha reportado esto en la telemetría:\n[${tag}] ${msg}`;
               const newMsg = {
                   role: 'user',
-                  content: `Jules ha reportado esto en la telemetría:\n[${tag}] ${msg}`,
+                  content: promptText,
                   source: 'jules'
               };
               thread.push(newMsg);
@@ -2268,28 +2345,56 @@ body{
     /* ─── DASHBOARD DATA ─── */
     async function loadJulesKanban() {
         try {
-            const data = await window.julesApi.getSessions(50);
+            const data = await window.julesApi.getSessions(20);
             const sessions = data.sessions || [];
 
-            const columns = {
-                'pending': ['QUEUED'],
-                'running': ['WORKING', 'IN_PROGRESS', 'AWAITING_USER', 'PLANNING', 'AWAITING_PLAN_APPROVAL'],
-                'done': ['COMPLETED'],
-                'error': ['FAILED', 'CANCELLED', 'ERROR']
+            const colItems = {
+                'pending': [],
+                'running': [],
+                'done': [],
+                'error': []
             };
 
-            Object.keys(columns).forEach(colId => {
+            const enrichedSessions = await Promise.all(sessions.map(async (s) => {
+                let targetCol = "pending";
+                if (["WORKING", "IN_PROGRESS", "PLANNING", "AWAITING_PLAN_APPROVAL"].includes(s.state)) {
+                    targetCol = "running";
+                } else if (s.state === "COMPLETED") {
+                    targetCol = "done";
+                } else if (["FAILED", "CANCELLED", "ERROR"].includes(s.state)) {
+                    targetCol = "error";
+                }
+
+                try {
+                    const activityData = await window.julesApi.getActivities(s.name, 10);
+                    const activities = activityData.activities || [];
+                    const hasPlanApproved = activities.some(a => a.planApproved);
+                    const hasSessionCompleted = activities.some(a => a.sessionCompleted);
+                    const hasFailed = activities.some(a => a.sessionFailed || (a.progressUpdated?.exitCode !== undefined && a.progressUpdated.exitCode !== 0));
+
+                    if (hasFailed) targetCol = "error";
+                    else if (hasSessionCompleted) targetCol = "done";
+                    else if (hasPlanApproved) targetCol = "running";
+                    else targetCol = "pending";
+                } catch(e) {}
+                return { session: s, targetCol };
+            }));
+
+            for (const { session, targetCol } of enrichedSessions) {
+                colItems[targetCol].push(session);
+            }
+
+            Object.keys(colItems).forEach(colId => {
                 const colEl = $(`kb-${colId}`), countEl = $(`kb-count-${colId}`), mCountEl = $(`m-count-${colId}`);
                 if (!colEl) return;
 
-                const items = sessions.filter(s => columns[colId].includes(s.state));
+                const items = colItems[colId];
                 if (countEl) countEl.textContent = items.length;
                 if (mCountEl) mCountEl.textContent = items.length;
 
                 colEl.innerHTML = items.map(s => {
                     const sid = s.name.split('/').pop();
                     const repo = s.sourceContext?.source?.split('/').pop() || '---';
-                    const branch = s.sourceContext?.githubRepoContext?.startingBranch || '---';
 
                     return `
                         <div class="kb-card ${colId}" onclick="openDrawer('${s.name}')">
@@ -2303,7 +2408,7 @@ body{
                                 <span class="kb-card-time">${getTimeAgo(s.createTime)}</span>
                             </div>
                             <div class="kb-card-actions">
-                                <button class="kb-action-btn" onclick="event.stopPropagation(); localStorage.setItem('hy_neural_session_id', '${sid}'); localStorage.setItem('hy_neural_active', 'true'); switchView('chat');">Ver Neural</button>
+                                <button class="kb-action-btn" onclick="event.stopPropagation(); const cid = localStorage.getItem('hy_active_claude_session_id'); if (cid) localStorage.setItem('hy_neural_session_id_' + cid, '${sid}'); localStorage.setItem('hy_neural_session_id', '${sid}'); localStorage.setItem('hy_neural_active', 'true'); switchView('chat');">Ver Neural</button>
                             </div>
                         </div>
                     `;
@@ -2313,7 +2418,6 @@ body{
             console.warn('[Jules] loadJulesKanban error:', e);
         }
     }
-
     async function refreshDashboard() {
         try {
             const [sessionData, tasks] = await Promise.all([
@@ -2331,8 +2435,9 @@ body{
 
             // Area 1: Polling for history if on chat view
             if (window.JulesPanelState.currentView === 'chat') {
-                const activeSid = localStorage.getItem('hy_neural_session_id');
+                const activeSid = getLinkedJulesSessionId();
                 if (activeSid && !neuralPollInterval) {
+                    startNeuralPolling(activeSid);
                 }
             }
 
@@ -2424,7 +2529,7 @@ body{
     }
 
     function desvincularNeuralSession() {
-        const sid = localStorage.getItem('hy_neural_session_id');
+        const sid = getLinkedJulesSessionId();
         if (sid) {
             const sessions = JSON.parse(localStorage.getItem('hy_neural_sessions') || '[]');
             const s = sessions.find(sess => sess.id === sid);
@@ -2435,6 +2540,10 @@ body{
         }
 
         localStorage.removeItem('hy_neural_active');
+        const claudeId = localStorage.getItem('hy_active_claude_session_id');
+        if (claudeId) {
+            localStorage.removeItem(`hy_neural_session_id_${claudeId}`);
+        }
         localStorage.removeItem('hy_neural_session_id');
         localStorage.removeItem('hy_neural_task_context');
         localStorage.removeItem('hy_neural_pending_prompt');
@@ -2504,6 +2613,13 @@ body{
                 showToast("Neural Link: Payload cargado con éxito", "green");
                 switchView('neural');
 
+                // Scroll to prompt area
+                setTimeout(() => {
+                    promptArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    promptArea.classList.add('neural-active-glow');
+                    setTimeout(() => promptArea.classList.remove('neural-active-glow'), 3000);
+                }, 600);
+
                 // Cleanup
                 localStorage.removeItem('jules_task_payload');
                 localStorage.removeItem('jules_clipboard');
@@ -2524,6 +2640,13 @@ body{
                 promptArea.value = content;
                 showToast("Prompt importado desde Neural Chat", "green");
                 switchView('neural');
+
+                // Scroll to prompt area
+                setTimeout(() => {
+                    promptArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    promptArea.classList.add('neural-active-glow');
+                    setTimeout(() => promptArea.classList.remove('neural-active-glow'), 3000);
+                }, 600);
                 localStorage.removeItem('jules_clipboard');
 
                 const taskId = localStorage.getItem('jules_linked_task_id');
@@ -2655,6 +2778,12 @@ body{
         const source = window.JulesPanelState.activeRepo, branch = window.JulesPanelState.activeBranch || 'master';
         if (!source) { showToast("Selecciona un repositorio", "red"); return; }
 
+        // BUG 2 Fix: Check if Review mode is selected without an active session
+        if ($('opt-review').classList.contains('active') && !getLinkedJulesSessionId()) {
+            showToast("Selecciona primero Modo Automático para iniciar una nueva sesión", "red");
+            return;
+        }
+
         // Enhance prompt based on options
         if ($('opt-tests').classList.contains('active')) {
             prompt += "\n\nIMPORTANTE: Genera tests unitarios automáticos para cubrir estos cambios.";
@@ -2663,7 +2792,13 @@ body{
             prompt += `\n\nIMPORTANTE: Crea y trabaja en una nueva rama dedicada para esta tarea (ej: jules/task-${Date.now()}).`;
         }
 
-        const btn = $('launch-btn'); btn.disabled = true; const originalText = btn.innerHTML; btn.innerHTML = 'Iniciando...';
+        const btn = $('launch-btn');
+        const textarea = $('session-prompt');
+        btn.disabled = true;
+        textarea.disabled = true;
+        const originalText = btn.innerHTML;
+        btn.innerHTML = 'Iniciando...';
+
         try {
             const body = { prompt, sourceContext: { source, githubRepoContext: { startingBranch: branch } } };
 
@@ -2679,6 +2814,10 @@ body{
             showToast("Sesión iniciada correctamente", "green");
             addTel("JULES", `Sesión iniciada: ${sid}`, "success");
 
+            const claudeId = localStorage.getItem('hy_active_claude_session_id');
+            if (claudeId) {
+                localStorage.setItem(`hy_neural_session_id_${claudeId}`, sid);
+            }
             localStorage.setItem('hy_neural_session_id', sid);
 
             startNeuralPolling(sid, true);
@@ -2718,7 +2857,11 @@ body{
 
             $('session-prompt').value = ''; await refreshDashboard();
         } catch (e) { showToast(e.message || "Error al lanzar sesión", "red"); }
-        finally { btn.disabled = false; btn.innerHTML = originalText; }
+        finally {
+            btn.disabled = false;
+            textarea.disabled = false;
+            btn.innerHTML = originalText;
+        }
     }
 
     /* ─── NAVIGATION ─── */
@@ -2771,9 +2914,11 @@ body{
             renderChatV2Messages();
         }
         if (view === 'chat') {
-            const sid = localStorage.getItem("hy_neural_session_id");
+            const sid = getLinkedJulesSessionId();
             if (sid && localStorage.getItem('hy_neural_active') === 'true') {
                 startNeuralPolling(sid);
+                const task = JSON.parse(localStorage.getItem('hy_neural_task_context') || '{}');
+                if (task.id) showTaskContextInChat(task);
             }
             renderChatV2Messages();
         } else {
@@ -2918,13 +3063,16 @@ body{
             if (!document.hidden) {
                 refreshDashboard();
                 checkClipboard();
+                if (window.JulesPanelState.currentView === 'kanban') {
+                    loadJulesKanban();
+                }
             }
-        }, 15000);
+        }, 10000); // Poll every 10s as requested
     }
     function stopPolling() { if (sessionPollInterval) clearInterval(sessionPollInterval); }
 
     function startNeuralPolling(sessionId = null) {
-        const sid = sessionId || localStorage.getItem('hy_neural_session_id');
+        const sid = sessionId || getLinkedJulesSessionId();
         if (!sid) return;
 
         refreshActivities(sid);
@@ -3054,19 +3202,69 @@ body{
         const content = input.value.trim();
         if (!content) return;
 
-        // Add user message
-        const userMsg = { role: 'user', content };
-        chatV2Messages.push(userMsg);
-        renderChatV2Messages();
-        input.value = '';
-        input.style.height = 'auto';
+        const isNeuralActive = localStorage.getItem('hy_neural_active') === 'true';
+        const sessionId = getLinkedJulesSessionId();
 
-        const thinking = $('v2-thinking-indicator');
-        thinking.classList.remove('hidden');
+        if (isNeuralActive && sessionId) {
+            // Fix 3: Route Neural Chat messages to Jules session directly
+            const userMsg = { role: 'user', content };
+            chatV2Messages.push(userMsg);
+            renderChatV2Messages();
+            input.value = '';
+            input.style.height = 'auto';
 
-        try {
-            const config = window.aiConfig?.getActiveConfig() || JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
-            const systemPrompt = "Eres Claude, un asistente experto integrado en el panel de control de Hypenosys.";
+            const thinking = $('v2-thinking-indicator');
+            if (thinking) {
+                thinking.textContent = "ENVIANDO ORDEN A JULES...";
+                thinking.classList.remove('hidden');
+            }
+
+            try {
+                const ok = await window.julesApi.sendMessage("sessions/" + getIdSafe(sessionId), content);
+                if (ok) {
+                    showToast("Orden enviada a Jules", "green");
+
+                    // Poll for activity response
+                    let attempts = 0;
+                    const maxAttempts = 15; // 30 seconds (2s interval)
+                    const pollInterval = setInterval(async () => {
+                        attempts++;
+                        await refreshActivities(getIdSafe(sessionId));
+
+                        if (attempts >= maxAttempts) {
+                            clearInterval(pollInterval);
+                            if (thinking) thinking.classList.add('hidden');
+                        }
+
+                        // Check if we got a new activity from agent
+                        const activities = document.querySelectorAll('#neural-jules-history .activity-entry--agent');
+                        if (activities.length > 0) {
+                             // Assuming the poll found something, but we keep polling for 30s to be safe
+                             // or we could stop if we detect a specific response.
+                        }
+                    }, 2000);
+                }
+            } catch (e) {
+                showToast("Error al enviar a Jules: " + e.message, "red");
+                if (thinking) thinking.classList.add('hidden');
+            }
+        } else {
+            // Add user message
+            const userMsg = { role: 'user', content };
+            chatV2Messages.push(userMsg);
+            renderChatV2Messages();
+            input.value = '';
+            input.style.height = 'auto';
+
+            const thinking = $('v2-thinking-indicator');
+            if (thinking) {
+                thinking.textContent = "CLAUDE ESTÁ PROCESANDO...";
+                thinking.classList.remove('hidden');
+            }
+
+            try {
+                const config = window.aiConfig?.getActiveConfig() || JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
+                const systemPrompt = "Eres Claude, un asistente experto integrado en el panel de control de Hypenosys.";
 
             // Build context from active task if exists
             let fullPrompt = content;
@@ -3239,8 +3437,10 @@ body{
               const html = renderActivity(activity);
               if (!html) return;
               const div = document.createElement('div');
+                div.className = 'activity-entry';
               div.dataset.activityId = activity.id;
               div.innerHTML = html;
+                div.onclick = (e) => toggleActivitySelection(div, activity);
               log.appendChild(div);
               added = true;
             });
@@ -3264,6 +3464,8 @@ body{
               if (isAtBottom) log.scrollTo({ top: log.scrollHeight, behavior: 'smooth' });
             }
 
+            updateApprovalStatus(activities, sessionId);
+
             if (session && (session.state === 'COMPLETED' || session.state === 'FAILED')) {
               stopNeuralPolling();
             }
@@ -3272,9 +3474,62 @@ body{
         }
     }
 
+    function updateApprovalStatus(activities, sessionId) {
+        const idSafe = sessionId.split('/').pop();
+        const opsContainer = document.getElementById('neural-actions-ops');
+        const v2Container = document.getElementById('neural-actions-v2');
+        if (!opsContainer || !v2Container) return;
+
+        // Logic: latest activity has planGenerated and no subsequent planApproved
+        const sorted = [...activities].sort((a, b) => new Date(a.createTime) - new Date(b.createTime));
+
+        let needsApproval = false;
+        for (let i = sorted.length - 1; i >= 0; i--) {
+            const act = sorted[i];
+            if (act.planApproved) {
+                needsApproval = false;
+                break;
+            }
+            if (act.planGenerated) {
+                needsApproval = true;
+                break;
+            }
+        }
+
+        if (needsApproval) {
+            const btnHtml = `
+                <span style="font-size: 11px; color: var(--amber); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Plan pendiente de aprobación</span>
+                <button onclick="approveJulesPlan('${sessionId}')" class="btn btn-primary btn-sm" style="background: var(--amber); color: #000; box-shadow: 0 0 15px rgba(245, 158, 11, 0.4); min-height: 32px; padding: 4px 12px; border-radius: 6px; font-weight: 800;">
+                    <i class="fas fa-check mr-2"></i> APROBAR PLAN
+                </button>
+            `;
+            opsContainer.innerHTML = btnHtml;
+            v2Container.innerHTML = btnHtml;
+            opsContainer.classList.remove('hidden');
+            v2Container.classList.remove('hidden');
+        } else {
+            opsContainer.classList.add('hidden');
+            v2Container.classList.add('hidden');
+            opsContainer.innerHTML = '';
+            v2Container.innerHTML = '';
+        }
+    }
+
+    window.approveJulesPlan = async (sessionId) => {
+        try {
+            showToast("Aprobando plan...", "amber");
+            await window.julesApi.approvePlan(sessionId);
+            showToast("Plan aprobado con éxito", "green");
+            const idSafe = sessionId.split('/').pop();
+            refreshActivities(idSafe);
+        } catch (e) {
+            showToast("Error al aprobar plan: " + e.message, "red");
+        }
+    };
+
     function renderActivity(activity) {
       const currentSessions = window.julesSessionsCache || [];
-      let html = '';
+      let html = '<div class="activity-selection-checkbox"></div>';
 
       // Mejora 4: Visor de Diffs Inline (se puede añadir a cualquier tipo de actividad)
       let diffsHtml = '';
@@ -3526,7 +3781,7 @@ body{
             if (s) {
                 s.name = newName;
                 localStorage.setItem('hy_neural_sessions', JSON.stringify(sessions));
-                if (localStorage.getItem('hy_neural_session_id') === sid) {
+                if (getLinkedJulesSessionId() === sid) {
                     localStorage.setItem('hy_neural_session_name', newName);
                 }
             }
@@ -3540,7 +3795,7 @@ body{
         if (s) {
             s.status = 'archived';
             localStorage.setItem('hy_neural_sessions', JSON.stringify(sessions));
-            if (localStorage.getItem('hy_neural_session_id') === sid) {
+            if (getLinkedJulesSessionId() === sid) {
                 desvincularNeuralSession();
             }
             renderSessionDrawerList();
@@ -3552,10 +3807,8 @@ body{
         let sessions = JSON.parse(localStorage.getItem('hy_neural_sessions') || '[]');
         sessions = sessions.filter(s => s.id !== sid);
         localStorage.setItem('hy_neural_sessions', JSON.stringify(sessions));
-        if (localStorage.getItem('hy_neural_session_id') === sid) {
-            localStorage.removeItem('hy_neural_active');
-            localStorage.removeItem('hy_neural_session_id');
-            // ... other keys
+        if (getLinkedJulesSessionId() === sid) {
+            desvincularNeuralSession();
         }
         renderSessionDrawerList();
     };
@@ -3566,6 +3819,10 @@ body{
         if (!s) return;
 
         localStorage.setItem('hy_neural_active', s.status === 'active' ? 'true' : 'false');
+        const claudeId = localStorage.getItem('hy_active_claude_session_id');
+        if (claudeId) {
+            localStorage.setItem(`hy_neural_session_id_${claudeId}`, s.id);
+        }
         localStorage.setItem('hy_neural_session_id', s.id);
         localStorage.setItem('hy_neural_session_name', s.name);
         localStorage.setItem('hy_neural_session_start', s.start);
@@ -3576,6 +3833,91 @@ body{
             if (task) localStorage.setItem('hy_neural_task_context', JSON.stringify(task));
         }
         window.location.reload(); } // Quick way to restore full state
+    let _historySelection = new Map();
+
+    function toggleActivitySelection(el, activity) {
+        const id = activity.id;
+        if (_historySelection.has(id)) {
+            _historySelection.delete(id);
+            el.classList.remove('selected');
+        } else {
+            _historySelection.set(id, activity);
+            el.classList.add('selected');
+        }
+        updateSelectionToolbar();
+    }
+
+    function updateSelectionToolbar() {
+        const toolbar = document.getElementById('neural-selection-toolbar');
+        const countEl = document.getElementById('selection-count');
+        const count = _historySelection.size;
+
+        if (count > 0) {
+            toolbar.classList.add('active');
+            countEl.textContent = count;
+        } else {
+            toolbar.classList.remove('active');
+        }
+        updateSelectionToolbar();
+    }
+
+    function clearHistorySelection() {
+        _historySelection.clear();
+        document.querySelectorAll('.activity-entry.selected').forEach(el => el.classList.remove('selected'));
+        updateSelectionToolbar();
+    }
+
+    function analyzeSelectedWithClaude() {
+        if (_historySelection.size === 0) return;
+
+        // Sort selected activities by their order in the DOM to maintain temporal context
+        const container = document.getElementById('neural-jules-history');
+        const sortedEntries = Array.from(container.querySelectorAll('.activity-entry.selected'))
+            .map(el => _historySelection.get(el.dataset.activityId))
+            .filter(Boolean);
+
+        let prompt = "He seleccionado estos fragmentos del historial de Jules para analizar:\n\n";
+
+        sortedEntries.forEach((act, idx) => {
+            prompt += `--- [FRAGMENTO ${idx + 1}] ---\n`;
+            if (act.description) prompt += `DESCRIPCIÓN: ${act.description}\n`;
+            if (act.progressUpdated) prompt += `PROGRESO: ${act.progressUpdated.title}\n`;
+            if (act.artifacts) {
+                act.artifacts.forEach(art => {
+                    if (art.changeSet?.gitPatch?.unidiffPatch) {
+                        prompt += `CÓDIGO (DIFF):\n${art.changeSet.gitPatch.unidiffPatch}\n`;
+                    }
+                    if (art.bashOutput) {
+                        prompt += `COMANDO: ${art.bashOutput.command}\nOUTPUT:\n${art.bashOutput.output}\n`;
+                    }
+                });
+            }
+            if (act.planGenerated) {
+                const steps = act.planGenerated.plan?.steps || [];
+                prompt += `PLAN:\n${steps.map(s => `${s.index + 1}. ${s.title}: ${s.description || ''}`).join('\n')}\n`;
+            }
+            prompt += "\n";
+        });
+
+        const finalPrompt = prompt + "\n¿Qué opinas de estos cambios o estados? ¿Hay algo que deba ajustar o corregir?";
+
+        let thread = JSON.parse(localStorage.getItem('hy_neural_thread') || '[]');
+        thread.push({
+            role: 'user',
+            content: finalPrompt,
+            source: 'jules'
+        });
+
+        localStorage.setItem('hy_neural_thread', JSON.stringify(thread));
+        localStorage.setItem('hy_neural_pending_prompt', finalPrompt);
+        localStorage.setItem('hy_neural_active', 'true');
+
+        showToast("Enviando selección a Claude...", "green");
+        setTimeout(() => {
+            window.location.href = '/claude-chat.html';
+        }, 500);
+    }
+
     function commentOnStep(sessionId, stepIndex, stepTitle) {
         const idSafe = getIdSafe(sessionId);
         // En V2 el input de chat es #v2-chat-input
