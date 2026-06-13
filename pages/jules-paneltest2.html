@@ -2408,7 +2408,7 @@ body{
                                 <span class="kb-card-time">${getTimeAgo(s.createTime)}</span>
                             </div>
                             <div class="kb-card-actions">
-                                <button class="kb-action-btn" onclick="event.stopPropagation(); localStorage.setItem('hy_neural_session_id', '${sid}'); localStorage.setItem('hy_neural_active', 'true'); switchView('chat');">Ver Neural</button>
+                                <button class="kb-action-btn" onclick="event.stopPropagation(); const cid = localStorage.getItem('hy_active_claude_session_id'); if (cid) localStorage.setItem('hy_neural_session_id_' + cid, '${sid}'); localStorage.setItem('hy_neural_session_id', '${sid}'); localStorage.setItem('hy_neural_active', 'true'); switchView('chat');">Ver Neural</button>
                             </div>
                         </div>
                     `;
@@ -2435,8 +2435,9 @@ body{
 
             // Area 1: Polling for history if on chat view
             if (window.JulesPanelState.currentView === 'chat') {
-                const activeSid = localStorage.getItem('hy_neural_session_id');
+                const activeSid = getLinkedJulesSessionId();
                 if (activeSid && !neuralPollInterval) {
+                    startNeuralPolling(activeSid);
                 }
             }
 
@@ -2528,7 +2529,7 @@ body{
     }
 
     function desvincularNeuralSession() {
-        const sid = localStorage.getItem('hy_neural_session_id');
+        const sid = getLinkedJulesSessionId();
         if (sid) {
             const sessions = JSON.parse(localStorage.getItem('hy_neural_sessions') || '[]');
             const s = sessions.find(sess => sess.id === sid);
@@ -2539,6 +2540,10 @@ body{
         }
 
         localStorage.removeItem('hy_neural_active');
+        const claudeId = localStorage.getItem('hy_active_claude_session_id');
+        if (claudeId) {
+            localStorage.removeItem(`hy_neural_session_id_${claudeId}`);
+        }
         localStorage.removeItem('hy_neural_session_id');
         localStorage.removeItem('hy_neural_task_context');
         localStorage.removeItem('hy_neural_pending_prompt');
@@ -2774,7 +2779,7 @@ body{
         if (!source) { showToast("Selecciona un repositorio", "red"); return; }
 
         // BUG 2 Fix: Check if Review mode is selected without an active session
-        if ($('opt-review').classList.contains('active') && !localStorage.getItem('hy_neural_session_id')) {
+        if ($('opt-review').classList.contains('active') && !getLinkedJulesSessionId()) {
             showToast("Selecciona primero Modo Automático para iniciar una nueva sesión", "red");
             return;
         }
@@ -2809,6 +2814,10 @@ body{
             showToast("Sesión iniciada correctamente", "green");
             addTel("JULES", `Sesión iniciada: ${sid}`, "success");
 
+            const claudeId = localStorage.getItem('hy_active_claude_session_id');
+            if (claudeId) {
+                localStorage.setItem(`hy_neural_session_id_${claudeId}`, sid);
+            }
             localStorage.setItem('hy_neural_session_id', sid);
 
             startNeuralPolling(sid, true);
@@ -2905,9 +2914,11 @@ body{
             renderChatV2Messages();
         }
         if (view === 'chat') {
-            const sid = localStorage.getItem("hy_neural_session_id");
+            const sid = getLinkedJulesSessionId();
             if (sid && localStorage.getItem('hy_neural_active') === 'true') {
                 startNeuralPolling(sid);
+                const task = JSON.parse(localStorage.getItem('hy_neural_task_context') || '{}');
+                if (task.id) showTaskContextInChat(task);
             }
             renderChatV2Messages();
         } else {
@@ -3061,7 +3072,7 @@ body{
     function stopPolling() { if (sessionPollInterval) clearInterval(sessionPollInterval); }
 
     function startNeuralPolling(sessionId = null) {
-        const sid = sessionId || localStorage.getItem('hy_neural_session_id');
+        const sid = sessionId || getLinkedJulesSessionId();
         if (!sid) return;
 
         refreshActivities(sid);
@@ -3192,7 +3203,7 @@ body{
         if (!content) return;
 
         const isNeuralActive = localStorage.getItem('hy_neural_active') === 'true';
-        const sessionId = localStorage.getItem('hy_neural_session_id');
+        const sessionId = getLinkedJulesSessionId();
 
         if (isNeuralActive && sessionId) {
             // Fix 3: Route Neural Chat messages to Jules session directly
@@ -3770,7 +3781,7 @@ body{
             if (s) {
                 s.name = newName;
                 localStorage.setItem('hy_neural_sessions', JSON.stringify(sessions));
-                if (localStorage.getItem('hy_neural_session_id') === sid) {
+                if (getLinkedJulesSessionId() === sid) {
                     localStorage.setItem('hy_neural_session_name', newName);
                 }
             }
@@ -3784,7 +3795,7 @@ body{
         if (s) {
             s.status = 'archived';
             localStorage.setItem('hy_neural_sessions', JSON.stringify(sessions));
-            if (localStorage.getItem('hy_neural_session_id') === sid) {
+            if (getLinkedJulesSessionId() === sid) {
                 desvincularNeuralSession();
             }
             renderSessionDrawerList();
@@ -3796,10 +3807,8 @@ body{
         let sessions = JSON.parse(localStorage.getItem('hy_neural_sessions') || '[]');
         sessions = sessions.filter(s => s.id !== sid);
         localStorage.setItem('hy_neural_sessions', JSON.stringify(sessions));
-        if (localStorage.getItem('hy_neural_session_id') === sid) {
-            localStorage.removeItem('hy_neural_active');
-            localStorage.removeItem('hy_neural_session_id');
-            // ... other keys
+        if (getLinkedJulesSessionId() === sid) {
+            desvincularNeuralSession();
         }
         renderSessionDrawerList();
     };
@@ -3810,6 +3819,10 @@ body{
         if (!s) return;
 
         localStorage.setItem('hy_neural_active', s.status === 'active' ? 'true' : 'false');
+        const claudeId = localStorage.getItem('hy_active_claude_session_id');
+        if (claudeId) {
+            localStorage.setItem(`hy_neural_session_id_${claudeId}`, s.id);
+        }
         localStorage.setItem('hy_neural_session_id', s.id);
         localStorage.setItem('hy_neural_session_name', s.name);
         localStorage.setItem('hy_neural_session_start', s.start);
