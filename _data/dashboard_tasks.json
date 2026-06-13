@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-13T09:34:46.813Z",
+  "last_updated": "2026-06-13T09:35:15.529Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3011,10 +3011,10 @@
     {
       "title": "Install Penpot and Hermes Agent in ZimaBoard",
       "descripcion": "",
-      "rama": "",
+      "rama": "master",
       "task_type": "feature",
-      "tema_principal": "Tools / Automation",
-      "repository": null,
+      "tema_principal": "Concepto / GDD",
+      "repository": "hypenosys/docs",
       "prioridad": "Major",
       "milestone": "M1",
       "estado": "Pending",
@@ -3049,6 +3049,13 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:35:14.968Z",
+          "field": "repository",
+          "old_value": null,
+          "new_value": "hypenosys/docs"
         }
       ],
       "id": 50
@@ -3189,6 +3196,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #50",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:35:15.529Z"
+    },
     {
       "action": "chore: actualizar tarea #46",
       "user": "Axlfc",
