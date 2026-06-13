@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-13T09:06:00.623Z",
+  "last_updated": "2026-06-13T09:11:22.987Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2512,7 +2512,7 @@
       "id": 43
     },
     {
-      "title": "Controlar con Claude Neural API de n8n",
+      "title": "Cognito-Agent: Controlar con Claude Neural API de n8n",
       "descripcion": "Integrar la API de n8n en el flujo de trabajo de la IA mediante Cloudflare Workers. Permite orquestar workflows de forma segura y escalable.",
       "rama": "chore/n8n-api-worker",
       "task_type": "chore",
@@ -2525,8 +2525,8 @@
       "resuelto_por": null,
       "detectado_por": "Axel",
       "asignados": [
-        "topperh4rley",
-        "mitxel2022"
+        "mitxel2022",
+        "topperh4rley"
       ],
       "email_responsable": "axel@hypenosys.com",
       "emails_asignados": [],
@@ -2536,9 +2536,9 @@
       "story_points": 1,
       "tags": [
         "api",
+        "chore",
         "devops",
-        "security",
-        "chore"
+        "security"
       ],
       "external_links": [],
       "subtasks": [],
@@ -2562,6 +2562,13 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:11:22.389Z",
+          "field": "title",
+          "old_value": "Controlar con Claude Neural API de n8n",
+          "new_value": "Cognito-Agent: Controlar con Claude Neural API de n8n"
         }
       ],
       "id": 44
@@ -2834,6 +2841,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #44",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:11:22.987Z"
+    },
     {
       "action": "chore: actualizar tarea #40",
       "user": "Axlfc",
