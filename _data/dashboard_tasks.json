@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-13T09:15:34.614Z",
+  "last_updated": "2026-06-13T09:19:09.155Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2859,22 +2859,24 @@
     },
     {
       "title": "Refactor visual: Dashboard",
-      "descripcion": "Listar todas las features y si se visualiza correctamente el harness si hace falta escribir los test",
+      "descripcion": "Observar y listar todas las features presentes o deficientes y si se visualizan y monitorizan correctamente en el harness y si hace falta o no escribir los test (consultar team programación)\n\nusad el excalidraw con las capturas y flechitas para enriquecer la imagen con el stiches o que se yo xD\n\nTodas estas historias van al obsidian",
       "rama": "master",
       "task_type": "chore",
-      "tema_principal": "Programación / Engine",
-      "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Cosmetic",
+      "tema_principal": "Concepto / GDD",
+      "repository": "hypenosys/docs",
+      "prioridad": "Major",
       "milestone": "M2",
       "estado": "Working",
-      "completitud": 0,
-      "resuelto_por": null,
+      "completitud": 0.3,
+      "resuelto_por": "Javi",
       "detectado_por": "Axel",
       "asignados": [
+        "axlfc",
+        "dkdidac-design",
         "javi26031994-a11y",
         "topperh4rley"
       ],
-      "email_responsable": null,
+      "email_responsable": "javi@hypenosys.com",
       "emails_asignados": [],
       "start_date": "2026-06-13",
       "due_date": "2026-06-28",
@@ -2925,12 +2927,52 @@
           "field": "asignados",
           "old_value": "[\"dkdidac-design\",\"javi26031994-a11y\",\"topperh4rley\"]",
           "new_value": "[\"javi26031994-a11y\",\"topperh4rley\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:19:08.736Z",
+          "field": "descripcion",
+          "old_value": "Listar todas las features y si se visualiza correctamente el harness si hace falta escribir los test",
+          "new_value": "Observar y listar todas las features presentes o deficientes y si se visualizan y monitorizan correctamente en el harness y si hace falta o no escribir los test (consultar team programación)\n\nusad el excalidraw con las capturas y flechitas para enriquecer la imagen con el stiches o que se yo xD\n\nTodas estas historias van al obsidian"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:19:08.736Z",
+          "field": "prioridad",
+          "old_value": "Cosmetic",
+          "new_value": "Major"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:19:08.736Z",
+          "field": "asignados",
+          "old_value": "[\"javi26031994-a11y\",\"topperh4rley\"]",
+          "new_value": "[\"axlfc\",\"dkdidac-design\",\"javi26031994-a11y\",\"topperh4rley\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:19:08.736Z",
+          "field": "completitud",
+          "old_value": 0,
+          "new_value": 0.3
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:19:08.736Z",
+          "field": "repository",
+          "old_value": "hypenosys/hypenosys.github.io",
+          "new_value": "hypenosys/docs"
         }
       ],
       "id": 51
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #51",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:19:09.155Z"
+    },
     {
       "action": "chore: actualizar tarea #51",
       "user": "Axlfc",
