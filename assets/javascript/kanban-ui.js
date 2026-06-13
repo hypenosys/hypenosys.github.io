@@ -259,7 +259,7 @@
                             } else {
                                 console.error('[KANBAN] NeuralSessionPanel not available');
                                 // Fallback to old behavior if everything fails
-                                const url = `/claude-chat.html?task_id=${taskId}&from=jules-panel`;
+                                const url = `/chat/neural/?task_id=${taskId}&from=jules-panel`;
                                 window.location.href = url;
                             }
                         }, 800);

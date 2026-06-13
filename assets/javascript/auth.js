@@ -13,9 +13,9 @@ class AuthManager {
 
         const isDashboard = window.location.pathname.includes('dashboard');
         const isJules = window.location.pathname.includes('jules-panel') || window.location.pathname.includes('jules-panel-v2');
-        const isClaude = window.location.pathname.includes('claude-chat') || window.location.pathname.includes('cloude-chat');
+        const isNeural = window.location.pathname.includes('/chat/neural/') || window.location.pathname.includes('claude-chat');
 
-        if (isDashboard || isJules || isClaude) {
+        if (isDashboard || isJules || isNeural) {
             console.log('[AUTH] Protected page detected. Handling OAuth callback if present...');
 
             try {

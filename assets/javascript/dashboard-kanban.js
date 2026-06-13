@@ -219,5 +219,5 @@ window._openTaskInClaudeWithContext = function(taskId) {
       localStorage.setItem('claude_task_context', JSON.stringify(payload));
     }
   }
-  window.location.href = `/claude-chat.html?task_id=${taskId}&from=dashboard`;
+  window.location.href = `/chat/neural/?task_id=${taskId}&from=dashboard`;
 };

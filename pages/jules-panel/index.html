@@ -703,7 +703,7 @@ body{
 
 /* CLAUDE CHAT MODAL */
 #claude-modal .modal-card{max-width:500px}
-.claude-chat-area{
+.neural-chat-area{
   background:#020204;border:1px solid var(--border);border-radius:var(--r-md);
   padding:16px;min-height:180px;margin-bottom:14px;
   font-family:var(--font-mono);font-size:12px;color:#a78bfa;line-height:1.6;
@@ -1723,12 +1723,12 @@ body{
     <div class="modal-head">
       <h3 class="modal-title" style="display:flex;align-items:center;gap:9px">
         <span class="claude-icon" style="width:22px;height:22px;font-size:12px;border-radius:6px">C</span>
-        Claude Chat
+        Neural Chat
       </h3>
       <button class="icon-btn" onclick="closeClaudeChat()">✕</button>
     </div>
     <div class="modal-body" style="padding:18px 22px">
-      <div class="claude-chat-area" id="claude-chat-area">
+      <div class="neural-chat-area" id="neural-chat-area">
         <div style="color:var(--text2);font-family:var(--font-ui);font-size:13px;line-height:1.6">
           👋 <strong style="color:var(--claude-text)">Hola, soy Claude.</strong> Puedo ayudarte a escribir prompts para Jules, revisar código, o responder preguntas sobre tu proyecto.
         </div>
@@ -2306,7 +2306,7 @@ body{
         if (task.images && task.images.length > 0) {
             showToast("Jules no acepta imágenes, se excluirán del prompt.", "amber");
         }
-        window.location.href = `/claude-chat.html?task_id=${taskId}&from=jules-panel`;
+        window.location.href = `/chat/neural/?task_id=${taskId}&from=jules-panel`;
     }
 
     function checkClipboard() {
@@ -2364,7 +2364,7 @@ body{
         if (content) {
             if (promptArea) {
                 promptArea.value = content;
-                showToast("Prompt importado desde Claude Chat", "green");
+                showToast("Prompt importado desde Neural Chat", "green");
                 switchView('neural');
                 localStorage.removeItem('jules_clipboard');
 
@@ -2960,7 +2960,7 @@ body{
         if (!msg) return;
 
         // Add to modal chat area (legacy modal)
-        const area = $('claude-chat-area');
+        const area = $('neural-chat-area');
         const userDiv = document.createElement('div');
         userDiv.style.cssText = 'margin-top:10px; color:var(--text); opacity:0.8';
         userDiv.innerHTML = `<strong>Tú:</strong> ${escapeHtml(msg)}`;

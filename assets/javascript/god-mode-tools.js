@@ -1,5 +1,5 @@
 /**
- * God Mode Tool Definitions for Claude Chat
+ * God Mode Tool Definitions for Neural Chat
  */
 
 (function() {
