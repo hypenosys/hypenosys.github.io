@@ -4,209 +4,1198 @@ title: AI Image Generator (Flux/ComfyUI)
 permalink: /image-gen/
 ---
 
-<div id="image-gen-app" class="container-fluid py-4 dracula-bg min-vh-100 text-light">
-    <div class="row">
-        <!-- Input Panel -->
-        <div class="col-lg-5 col-xl-4">
-            <div class="card shadow-lg mb-4 border-purple">
-                <div class="card-header bg-dark border-purple py-3">
-                    <h5 class="m-0 font-weight-bold text-purple">
-                        <i class="fas fa-magic mr-2"></i> GENERACIÓN NEURAL
-                    </h5>
-                </div>
-                <div class="card-body bg-darker">
-                    <form id="gen-form">
-                        <!-- Text Context Inputs -->
-                        <div class="form-group mb-4">
-                            <label class="text-purple small font-weight-bold uppercase mb-2">Prompts de Contexto</label>
-                            <div id="prompts-container" class="space-y-3">
-                                <div class="prompt-entry mb-2">
-                                    <textarea name="prompts[]" class="form-control bg-dark text-white border-secondary" rows="2" placeholder="Describa el contenido principal..."></textarea>
-                                </div>
-                            </div>
-                            <button type="button" onclick="addPromptField()" class="btn btn-outline-purple btn-sm mt-2">
-                                <i class="fas fa-plus mr-1"></i> Añadir Prompt
-                            </button>
-                        </div>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-                        <!-- Image Context Inputs -->
-                        <div class="form-group mb-4">
-                            <label class="text-purple small font-weight-bold uppercase mb-2">Imágenes de Referencia (Image-to-Image)</label>
-                            <div class="custom-file mb-3">
-                                <input type="file" class="custom-file-input" id="image-input" accept="image/*" multiple onchange="handleImageSelection(this)">
-                                <label class="custom-file-label bg-dark text-muted border-secondary" for="image-input">Elegir archivos...</label>
-                            </div>
-                            <div id="image-preview-grid" class="row no-gutters gap-2 mt-2">
-                                <!-- Thumbnails will be injected here -->
-                            </div>
-                        </div>
+<div id="ig-root">
 
-                        <hr class="border-purple opacity-20 my-4">
-
-                        <!-- Action Button -->
-                        <button type="button" id="btn-generate" onclick="handleGenerate()" class="btn btn-purple btn-block py-3 font-weight-bold pulse">
-                            <i class="fas fa-rocket mr-2"></i> GENERAR ITERACIÓN
-                        </button>
-                    </form>
-                </div>
-                <div class="card-footer bg-dark border-purple text-center py-2">
-                    <span class="text-muted small uppercase tracking-widest" style="font-size: 10px;">Middleware: n8n Flow v1.0</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Output Panel -->
-        <div class="col-lg-7 col-xl-8">
-            <div class="card shadow-lg border-purple h-100">
-                <div class="card-header bg-dark border-purple d-flex justify-content-between align-items-center py-3">
-                    <h5 class="m-0 font-weight-bold text-purple">
-                        <i class="fas fa-image mr-2"></i> RESULTADOS Y COMPARATIVA
-                    </h5>
-                    <div id="status-indicator" class="badge badge-dark border-secondary px-3 py-2">
-                        <span class="u-dot bg-secondary mr-2"></span> LISTO
-                    </div>
-                </div>
-                <div class="card-body bg-darker d-flex align-items-center justify-content-center overflow-auto" id="output-area">
-                    <div id="empty-state" class="text-center opacity-40 py-5">
-                        <i class="fas fa-brain fa-5x text-purple mb-4"></i>
-                        <h3>Neural Canvas</h3>
-                        <p class="lead">Configure sus prompts y referencias para comenzar la generación.</p>
-                    </div>
-
-                    <!-- Loading state hidden by default -->
-                    <div id="loading-state" class="hidden text-center py-5">
-                        <div class="spinner-border text-purple mb-3" style="width: 3rem; height: 3rem;" role="status"></div>
-                        <h4 class="text-purple">Procesando en Clúster n8n...</h4>
-                        <p class="text-muted font-italic">Flux.1 + ComfyUI están orquestando su visión.</p>
-                    </div>
-
-                    <!-- Gallery / Results Area -->
-                    <div id="results-gallery" class="w-100 h-100 hidden">
-                        <!-- Generated content will appear here -->
-                    </div>
-                </div>
-            </div>
-        </div>
+  <!-- TOP BAR -->
+  <header class="ig-topbar">
+    <div class="ig-topbar-left">
+      <span class="ig-logo">HYPENOSYS</span>
+      <span class="ig-separator">／</span>
+      <span class="ig-section">Image Synthesis</span>
     </div>
-</div>
+    <div class="ig-topbar-center">
+      <div class="ig-mode-pills" id="modePills">
+        <button class="ig-pill active" data-mode="txt2img" onclick="setMode('txt2img')">Text → Image</button>
+        <button class="ig-pill" data-mode="img2img" onclick="setMode('img2img')">Image + Text</button>
+        <button class="ig-pill" data-mode="kontext" onclick="setMode('kontext')">Kontext Edit</button>
+        <button class="ig-pill" data-mode="blend" onclick="setMode('blend')">Blend 2 Images</button>
+        <button class="ig-pill" data-mode="variation" onclick="setMode('variation')">Variation</button>
+      </div>
+    </div>
+    <div class="ig-topbar-right">
+      <div class="ig-status-chip" id="statusChip">
+        <span class="ig-status-dot" id="statusDot"></span>
+        <span id="statusLabel">Idle</span>
+      </div>
+      <button class="ig-icon-btn" title="History" onclick="togglePanel('history')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      </button>
+      <button class="ig-icon-btn" title="Settings" onclick="togglePanel('settings')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN LAYOUT -->
+  <div class="ig-workspace">
+
+    <!-- LEFT PANEL: PROMPT ENGINE -->
+    <aside class="ig-panel ig-panel-left" id="panelLeft">
+      <div class="ig-panel-handle" onclick="togglePanel('left')" title="Collapse">
+        <span>◀</span>
+      </div>
+      <div class="ig-panel-inner">
+
+        <div class="ig-section-label">Prompt Engine</div>
+
+        <!-- Dynamic prompt stack -->
+        <div id="promptStack" class="ig-prompt-stack"></div>
+        <button class="ig-add-btn" onclick="addPrompt()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add layer
+        </button>
+
+        <div class="ig-divider"></div>
+
+        <!-- Model selector -->
+        <div class="ig-section-label">Model</div>
+        <div class="ig-model-chips">
+          <button class="ig-model-chip active" data-model="flux-dev" onclick="selectModel(this,'flux-dev')">
+            <span class="ig-model-dot flux-dev"></span>Flux Dev
+          </button>
+          <button class="ig-model-chip" data-model="flux-kontext" onclick="selectModel(this,'flux-kontext')">
+            <span class="ig-model-dot flux-kontext"></span>Flux Kontext
+          </button>
+        </div>
+
+        <div class="ig-divider"></div>
+
+        <!-- Parameters -->
+        <div class="ig-section-label">Parameters</div>
+        <div class="ig-param-grid">
+          <div class="ig-param">
+            <label>Steps <span id="stepsVal">20</span></label>
+            <input type="range" min="1" max="50" value="20" oninput="document.getElementById('stepsVal').textContent=this.value" id="paramSteps">
+          </div>
+          <div class="ig-param">
+            <label>Guidance <span id="guidanceVal">2.5</span></label>
+            <input type="range" min="1" max="10" step="0.5" value="2.5" oninput="document.getElementById('guidanceVal').textContent=parseFloat(this.value).toFixed(1)" id="paramGuidance">
+          </div>
+          <div class="ig-param">
+            <label>Seed</label>
+            <div class="ig-seed-row">
+              <input type="number" id="paramSeed" placeholder="Random" class="ig-seed-input">
+              <button class="ig-icon-btn" onclick="randomSeed()" title="Randomize">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="ig-param">
+            <label>Resolution</label>
+            <select id="paramRes" class="ig-select">
+              <option value="1024x1024">1024 × 1024</option>
+              <option value="1344x768">1344 × 768 (16:9)</option>
+              <option value="768x1344">768 × 1344 (9:16)</option>
+              <option value="1152x896">1152 × 896</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="ig-divider"></div>
+
+        <!-- Generate -->
+        <button class="ig-generate-btn" id="generateBtn" onclick="handleGenerate()">
+          <span class="ig-generate-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </span>
+          <span id="generateLabel">Generate</span>
+        </button>
+
+        <div class="ig-footer-tag">n8n · Ollama gemma4 · ComfyUI</div>
+      </div>
+    </aside>
+
+    <!-- CENTER: CANVAS -->
+    <main class="ig-canvas-area" id="canvasArea">
+
+      <!-- Empty state -->
+      <div class="ig-empty" id="emptyState">
+        <div class="ig-empty-grid" id="emptyGrid"></div>
+        <div class="ig-empty-content">
+          <div class="ig-empty-icon">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.75" opacity="0.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          </div>
+          <p class="ig-empty-label">Neural Canvas</p>
+          <p class="ig-empty-sub">Configure prompt and hit Generate</p>
+        </div>
+      </div>
+
+      <!-- Loading state -->
+      <div class="ig-loading hidden" id="loadingState">
+        <canvas id="noiseCanvas" class="ig-noise-canvas"></canvas>
+        <div class="ig-loading-content">
+          <div class="ig-progress-ring">
+            <svg viewBox="0 0 80 80">
+              <circle class="ig-ring-track" cx="40" cy="40" r="34"/>
+              <circle class="ig-ring-fill" id="progressRing" cx="40" cy="40" r="34"/>
+            </svg>
+            <span class="ig-progress-pct" id="progressPct">0%</span>
+          </div>
+          <div class="ig-loading-steps" id="loadingSteps">
+            <div class="ig-step" id="step1">
+              <span class="ig-step-dot"></span>
+              <span>Expanding prompt with Ollama</span>
+            </div>
+            <div class="ig-step" id="step2">
+              <span class="ig-step-dot"></span>
+              <span>Queuing ComfyUI job</span>
+            </div>
+            <div class="ig-step" id="step3">
+              <span class="ig-step-dot"></span>
+              <span>Diffusing with Flux</span>
+            </div>
+            <div class="ig-step" id="step4">
+              <span class="ig-step-dot"></span>
+              <span>Decoding latents</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Result -->
+      <div class="ig-result hidden" id="resultState">
+        <div class="ig-result-img-wrap" id="resultImgWrap">
+          <img id="resultImg" src="" alt="Generated image" class="ig-result-img">
+          <div class="ig-result-overlay" id="resultOverlay">
+            <button class="ig-result-action" onclick="downloadResult()" title="Download">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            </button>
+            <button class="ig-result-action" onclick="sendToInput()" title="Use as reference">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+            </button>
+            <button class="ig-result-action" onclick="copyToClipboard()" title="Copy image">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="ig-result-meta" id="resultMeta"></div>
+      </div>
+
+      <!-- Canvas toolbar -->
+      <div class="ig-canvas-toolbar" id="canvasToolbar">
+        <button class="ig-canvas-tool" onclick="zoomFit()" title="Fit">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+        </button>
+        <button class="ig-canvas-tool" onclick="zoom(1.2)" title="Zoom in">+</button>
+        <button class="ig-canvas-tool" onclick="zoom(0.8)" title="Zoom out">−</button>
+        <span class="ig-canvas-zoom-label" id="zoomLabel">100%</span>
+      </div>
+    </main>
+
+    <!-- RIGHT PANEL: REFERENCES + HISTORY -->
+    <aside class="ig-panel ig-panel-right" id="panelRight">
+      <div class="ig-panel-handle ig-panel-handle-right" onclick="togglePanel('right')" title="Collapse">
+        <span>▶</span>
+      </div>
+      <div class="ig-panel-inner">
+
+        <!-- Reference images -->
+        <div class="ig-section-label">Reference Images</div>
+        <div class="ig-drop-zone" id="dropZone"
+          ondragover="event.preventDefault(); this.classList.add('drag-over')"
+          ondragleave="this.classList.remove('drag-over')"
+          ondrop="handleDrop(event)">
+          <input type="file" id="fileInput" accept="image/*" multiple class="ig-file-hidden" onchange="handleFileInput(this)">
+          <div class="ig-drop-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" opacity="0.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          </div>
+          <p class="ig-drop-text">Drop images here<br><span onclick="document.getElementById('fileInput').click()" class="ig-drop-link">or browse</span></p>
+        </div>
+
+        <div class="ig-ref-grid" id="refGrid"></div>
+
+        <div class="ig-mode-hint" id="modeHint">
+          Mode: <strong id="modeHintLabel">Text → Image</strong><br>
+          <span id="modeHintDesc" class="ig-mode-desc">No reference images needed.</span>
+        </div>
+
+        <div class="ig-divider"></div>
+
+        <!-- History -->
+        <div class="ig-section-label" style="display:flex;justify-content:space-between;align-items:center;">
+          History
+          <button class="ig-text-btn" onclick="clearHistory()">Clear</button>
+        </div>
+        <div class="ig-history-list" id="historyList">
+          <p class="ig-history-empty">No generations yet.</p>
+        </div>
+
+      </div>
+    </aside>
+
+  </div><!-- end workspace -->
+
+  <!-- SETTINGS DRAWER -->
+  <div class="ig-drawer hidden" id="settingsDrawer">
+    <div class="ig-drawer-header">
+      <span>Settings</span>
+      <button class="ig-icon-btn" onclick="togglePanel('settings')">✕</button>
+    </div>
+    <div class="ig-drawer-body">
+      <div class="ig-section-label">Endpoints</div>
+      <label class="ig-label">Flux Dev webhook URL</label>
+      <input type="url" id="cfgFluxDev" class="ig-input" placeholder="https://n8n.../webhook/...">
+      <label class="ig-label" style="margin-top:12px">Flux Kontext webhook URL</label>
+      <input type="url" id="cfgFluxKontext" class="ig-input" placeholder="https://n8n.../webhook/flux-kontext">
+      <button class="ig-generate-btn" style="margin-top:20px;padding:10px" onclick="saveSettings()">Save</button>
+    </div>
+  </div>
+
+</div><!-- end root -->
 
 <style>
-    .bg-darker { background-color: #1a1a1a !important; }
-    .card { border-radius: 16px !important; }
-    .u-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; }
-    .prompt-entry textarea:focus { border-color: #bd93f9 !important; box-shadow: 0 0 10px rgba(189, 147, 249, 0.2); }
-    .btn-purple { background-color: #bd93f9 !important; color: #000 !important; border: none; }
-    .btn-purple:hover { background-color: #a78bfa !important; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(189, 147, 249, 0.4); }
-    .border-purple { border-color: rgba(189, 147, 249, 0.3) !important; }
-    .text-purple { color: #bd93f9 !important; }
-    .btn-outline-purple { color: #bd93f9 !important; border-color: #bd93f9 !important; }
-    .btn-outline-purple:hover { background-color: rgba(189, 147, 249, 0.1) !important; }
+/* ── RESET & TOKENS ── */
+#ig-root *, #ig-root *::before, #ig-root *::after { box-sizing: border-box; margin: 0; padding: 0; }
+#ig-root {
+  --c-bg: #0d0d0f;
+  --c-surface: #141416;
+  --c-surface2: #1c1c1f;
+  --c-surface3: #252528;
+  --c-border: rgba(255,255,255,0.07);
+  --c-border2: rgba(255,255,255,0.13);
+  --c-accent: #bd93f9;
+  --c-accent2: #ff79c6;
+  --c-accent-dim: rgba(189,147,249,0.15);
+  --c-accent-glow: rgba(189,147,249,0.25);
+  --c-text: #e8e8ec;
+  --c-text2: #888892;
+  --c-text3: #555560;
+  --c-success: #50fa7b;
+  --c-warn: #f1fa8c;
+  --c-error: #ff5555;
+  --f-sans: 'Space Grotesk', system-ui, sans-serif;
+  --f-mono: 'Space Mono', monospace;
+  --panel-w: 280px;
+  --topbar-h: 48px;
+  --radius: 8px;
+  font-family: var(--f-sans);
+  background: var(--c-bg);
+  color: var(--c-text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  /* Override any Jekyll body styles */
+  margin-left: -15px;
+  margin-right: -15px;
+  width: calc(100% + 30px);
+}
 
-    .img-preview-container { position: relative; width: 80px; height: 80px; border-radius: 8px; overflow: hidden; border: 1px solid #444; }
-    .img-preview-container img { width: 100%; height: 100%; object-fit: cover; }
-    .img-preview-remove { position: absolute; top: 2px; right: 2px; background: rgba(255,0,0,0.7); color: white; border: none; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; cursor: pointer; }
+/* ── TOPBAR ── */
+.ig-topbar {
+  height: var(--topbar-h);
+  background: var(--c-surface);
+  border-bottom: 1px solid var(--c-border);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  flex-shrink: 0;
+}
+.ig-topbar-left { display: flex; align-items: center; gap: 8px; min-width: 180px; }
+.ig-logo { font-family: var(--f-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.15em; color: var(--c-accent); }
+.ig-separator { color: var(--c-text3); font-size: 14px; }
+.ig-section { font-size: 12px; color: var(--c-text2); }
+.ig-topbar-center { flex: 1; display: flex; justify-content: center; }
+.ig-topbar-right { display: flex; align-items: center; gap: 8px; min-width: 180px; justify-content: flex-end; }
 
-    .hidden { display: none !important; }
+/* Mode pills */
+.ig-mode-pills { display: flex; gap: 2px; background: var(--c-surface2); border: 1px solid var(--c-border); border-radius: 20px; padding: 3px; }
+.ig-pill {
+  background: transparent;
+  border: none;
+  color: var(--c-text2);
+  font-family: var(--f-sans);
+  font-size: 11px;
+  padding: 4px 12px;
+  border-radius: 16px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.18s;
+}
+.ig-pill:hover { color: var(--c-text); background: var(--c-surface3); }
+.ig-pill.active { background: var(--c-accent); color: #0d0d0f; font-weight: 600; }
 
-    @keyframes pulse {
-        0% { box-shadow: 0 0 0 0 rgba(189, 147, 249, 0.4); }
-        70% { box-shadow: 0 0 0 10px rgba(189, 147, 249, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(189, 147, 249, 0); }
-    }
-    .pulse { animation: pulse 2s infinite; }
+/* Status chip */
+.ig-status-chip {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; font-family: var(--f-mono);
+  color: var(--c-text2);
+  background: var(--c-surface2);
+  border: 1px solid var(--c-border);
+  padding: 4px 10px; border-radius: 20px;
+}
+.ig-status-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--c-text3);
+  transition: background 0.3s;
+}
+.ig-status-dot.idle { background: var(--c-text3); }
+.ig-status-dot.running { background: var(--c-warn); box-shadow: 0 0 6px var(--c-warn); animation: blink 1s infinite; }
+.ig-status-dot.done { background: var(--c-success); box-shadow: 0 0 6px var(--c-success); }
+.ig-status-dot.error { background: var(--c-error); }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+.ig-icon-btn {
+  background: transparent; border: 1px solid var(--c-border);
+  color: var(--c-text2); border-radius: 6px;
+  width: 30px; height: 30px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.15s;
+}
+.ig-icon-btn:hover { border-color: var(--c-border2); color: var(--c-text); background: var(--c-surface2); }
+
+/* ── WORKSPACE ── */
+.ig-workspace {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  height: calc(100vh - var(--topbar-h));
+}
+
+/* ── PANELS ── */
+.ig-panel {
+  width: var(--panel-w);
+  flex-shrink: 0;
+  background: var(--c-surface);
+  display: flex;
+  overflow: hidden;
+  position: relative;
+  transition: width 0.25s cubic-bezier(0.4,0,0.2,1);
+}
+.ig-panel.collapsed { width: 20px; }
+.ig-panel-left { border-right: 1px solid var(--c-border); flex-direction: row; }
+.ig-panel-right { border-left: 1px solid var(--c-border); flex-direction: row-reverse; }
+.ig-panel-handle {
+  width: 20px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--c-text3); font-size: 9px;
+  transition: color 0.15s;
+}
+.ig-panel-handle:hover { color: var(--c-accent); }
+.ig-panel-handle-right { order: -1; }
+.ig-panel-inner {
+  flex: 1; overflow-y: auto; overflow-x: hidden;
+  padding: 16px 14px 24px;
+  display: flex; flex-direction: column; gap: 10px;
+  scrollbar-width: thin; scrollbar-color: var(--c-surface3) transparent;
+}
+.ig-panel.collapsed .ig-panel-inner { display: none; }
+
+.ig-section-label {
+  font-size: 10px; font-family: var(--f-mono);
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--c-text3); padding-bottom: 6px;
+}
+.ig-divider { height: 1px; background: var(--c-border); flex-shrink: 0; }
+
+/* Prompt stack */
+.ig-prompt-stack { display: flex; flex-direction: column; gap: 6px; }
+.ig-prompt-row { display: flex; gap: 4px; align-items: flex-start; }
+.ig-prompt-num {
+  font-family: var(--f-mono); font-size: 10px; color: var(--c-text3);
+  padding-top: 8px; min-width: 16px;
+}
+.ig-prompt-ta {
+  flex: 1;
+  background: var(--c-surface2);
+  border: 1px solid var(--c-border);
+  color: var(--c-text);
+  font-family: var(--f-sans);
+  font-size: 12px;
+  border-radius: var(--radius);
+  padding: 8px 10px;
+  resize: vertical;
+  min-height: 60px;
+  line-height: 1.5;
+  transition: border-color 0.15s;
+}
+.ig-prompt-ta:focus { outline: none; border-color: var(--c-accent); }
+.ig-prompt-remove {
+  background: transparent; border: none;
+  color: var(--c-text3); cursor: pointer;
+  padding: 6px 4px; font-size: 12px;
+  transition: color 0.15s;
+}
+.ig-prompt-remove:hover { color: var(--c-error); }
+
+.ig-add-btn {
+  background: transparent; border: 1px dashed var(--c-border2);
+  color: var(--c-text3); border-radius: var(--radius);
+  padding: 6px 10px; font-size: 11px;
+  font-family: var(--f-sans);
+  display: flex; align-items: center; gap: 6px;
+  cursor: pointer; transition: all 0.15s;
+}
+.ig-add-btn:hover { border-color: var(--c-accent); color: var(--c-accent); }
+
+/* Model chips */
+.ig-model-chips { display: flex; flex-direction: column; gap: 5px; }
+.ig-model-chip {
+  background: var(--c-surface2); border: 1px solid var(--c-border);
+  color: var(--c-text2); font-family: var(--f-sans); font-size: 12px;
+  padding: 7px 10px; border-radius: var(--radius);
+  display: flex; align-items: center; gap: 8px;
+  cursor: pointer; transition: all 0.15s; text-align: left;
+}
+.ig-model-chip:hover { border-color: var(--c-border2); color: var(--c-text); }
+.ig-model-chip.active { border-color: var(--c-accent); color: var(--c-accent); background: var(--c-accent-dim); }
+.ig-model-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.ig-model-dot.flux-dev { background: var(--c-accent); }
+.ig-model-dot.flux-kontext { background: var(--c-accent2); }
+
+/* Params */
+.ig-param-grid { display: flex; flex-direction: column; gap: 12px; }
+.ig-param label {
+  display: flex; justify-content: space-between;
+  font-size: 11px; color: var(--c-text2); margin-bottom: 5px;
+  font-family: var(--f-mono);
+}
+.ig-param input[type="range"] {
+  width: 100%; accent-color: var(--c-accent);
+  background: transparent; -webkit-appearance: none;
+  height: 3px; border-radius: 2px;
+  background: linear-gradient(to right, var(--c-accent) 0%, var(--c-surface3) 0%);
+  cursor: pointer;
+}
+.ig-seed-row { display: flex; gap: 6px; }
+.ig-seed-input {
+  flex: 1; background: var(--c-surface2); border: 1px solid var(--c-border);
+  color: var(--c-text); font-family: var(--f-mono); font-size: 11px;
+  padding: 5px 8px; border-radius: var(--radius);
+}
+.ig-seed-input:focus { outline: none; border-color: var(--c-accent); }
+.ig-select {
+  width: 100%; background: var(--c-surface2); border: 1px solid var(--c-border);
+  color: var(--c-text); font-family: var(--f-sans); font-size: 12px;
+  padding: 6px 8px; border-radius: var(--radius); cursor: pointer;
+}
+.ig-select:focus { outline: none; border-color: var(--c-accent); }
+
+/* Generate button */
+.ig-generate-btn {
+  background: var(--c-accent);
+  border: none;
+  color: #0d0d0f;
+  font-family: var(--f-mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  transition: all 0.2s;
+  position: relative; overflow: hidden;
+}
+.ig-generate-btn::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.ig-generate-btn:hover { background: #cba6ff; box-shadow: 0 0 20px var(--c-accent-glow); }
+.ig-generate-btn:hover::after { opacity: 1; }
+.ig-generate-btn:active { transform: scale(0.98); }
+.ig-generate-btn:disabled { background: var(--c-surface3); color: var(--c-text3); cursor: not-allowed; box-shadow: none; }
+.ig-generate-icon { display: flex; align-items: center; }
+
+.ig-footer-tag {
+  font-family: var(--f-mono); font-size: 9px;
+  color: var(--c-text3); text-align: center;
+  letter-spacing: 0.05em; padding-top: 4px;
+}
+
+/* ── CANVAS ── */
+.ig-canvas-area {
+  flex: 1;
+  background: var(--c-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Empty state */
+.ig-empty { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+.ig-empty-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(var(--c-border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--c-border) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(ellipse at center, transparent 20%, black 80%);
+  -webkit-mask-image: radial-gradient(ellipse at center, transparent 20%, black 80%);
+}
+.ig-empty-content { position: relative; text-align: center; }
+.ig-empty-icon { margin-bottom: 16px; }
+.ig-empty-label { font-family: var(--f-mono); font-size: 14px; color: var(--c-text3); margin-bottom: 6px; }
+.ig-empty-sub { font-size: 12px; color: var(--c-text3); opacity: 0.6; }
+
+/* Loading */
+.ig-loading { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+.ig-noise-canvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.04; }
+.ig-loading-content { position: relative; display: flex; flex-direction: column; align-items: center; gap: 32px; }
+.ig-progress-ring { position: relative; width: 80px; height: 80px; }
+.ig-progress-ring svg { width: 80px; height: 80px; transform: rotate(-90deg); }
+.ig-ring-track { fill: none; stroke: var(--c-surface3); stroke-width: 3; }
+.ig-ring-fill {
+  fill: none; stroke: var(--c-accent); stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 213.6;
+  stroke-dashoffset: 213.6;
+  transition: stroke-dashoffset 0.4s ease;
+}
+.ig-progress-pct {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--f-mono); font-size: 12px; color: var(--c-accent);
+}
+.ig-loading-steps { display: flex; flex-direction: column; gap: 10px; }
+.ig-step { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--c-text3); transition: color 0.3s; }
+.ig-step.active { color: var(--c-text); }
+.ig-step.done { color: var(--c-success); }
+.ig-step-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--c-surface3); flex-shrink: 0;
+  transition: background 0.3s;
+}
+.ig-step.active .ig-step-dot { background: var(--c-warn); box-shadow: 0 0 6px var(--c-warn); animation: blink 1s infinite; }
+.ig-step.done .ig-step-dot { background: var(--c-success); box-shadow: none; animation: none; }
+
+/* Result */
+.ig-result { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; gap: 12px; }
+.ig-result-img-wrap { position: relative; max-height: calc(100% - 60px); }
+.ig-result-img-wrap:hover .ig-result-overlay { opacity: 1; }
+.ig-result-img {
+  max-width: 100%; max-height: 100%;
+  border-radius: 6px;
+  display: block;
+  box-shadow: 0 0 60px rgba(0,0,0,0.8), 0 0 0 1px var(--c-border);
+  transform-origin: center;
+  transition: transform 0.2s;
+}
+.ig-result-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 50%);
+  border-radius: 6px;
+  display: flex; align-items: flex-end; justify-content: center;
+  gap: 8px; padding-bottom: 16px;
+  opacity: 0; transition: opacity 0.2s;
+}
+.ig-result-action {
+  background: rgba(20,20,22,0.85);
+  border: 1px solid var(--c-border2);
+  color: var(--c-text); border-radius: 6px;
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; backdrop-filter: blur(8px);
+  transition: all 0.15s;
+}
+.ig-result-action:hover { border-color: var(--c-accent); color: var(--c-accent); }
+.ig-result-meta { font-family: var(--f-mono); font-size: 10px; color: var(--c-text3); text-align: center; line-height: 1.7; }
+
+/* Canvas toolbar */
+.ig-canvas-toolbar {
+  position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
+  background: var(--c-surface); border: 1px solid var(--c-border);
+  border-radius: 20px; padding: 4px 8px;
+  display: flex; align-items: center; gap: 4px;
+  opacity: 0.6; transition: opacity 0.2s;
+}
+.ig-canvas-toolbar:hover { opacity: 1; }
+.ig-canvas-tool {
+  background: transparent; border: none;
+  color: var(--c-text2); cursor: pointer;
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 4px; font-size: 16px;
+  transition: all 0.15s;
+}
+.ig-canvas-tool:hover { color: var(--c-text); background: var(--c-surface2); }
+.ig-canvas-zoom-label { font-family: var(--f-mono); font-size: 10px; color: var(--c-text3); padding: 0 4px; }
+
+/* ── RIGHT PANEL specifics ── */
+.ig-drop-zone {
+  border: 1px dashed var(--c-border2);
+  border-radius: var(--radius);
+  padding: 20px 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+.ig-drop-zone:hover, .ig-drop-zone.drag-over {
+  border-color: var(--c-accent);
+  background: var(--c-accent-dim);
+}
+.ig-drop-icon { margin-bottom: 8px; display: flex; justify-content: center; }
+.ig-drop-text { font-size: 11px; color: var(--c-text3); line-height: 1.7; }
+.ig-drop-link { color: var(--c-accent); cursor: pointer; text-decoration: underline; }
+.ig-file-hidden { display: none; }
+
+.ig-ref-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.ig-ref-item {
+  position: relative; aspect-ratio: 1;
+  border-radius: 6px; overflow: hidden;
+  border: 1px solid var(--c-border);
+  cursor: pointer; transition: border-color 0.15s;
+}
+.ig-ref-item:hover { border-color: var(--c-accent); }
+.ig-ref-item img { width: 100%; height: 100%; object-fit: cover; }
+.ig-ref-remove {
+  position: absolute; top: 4px; right: 4px;
+  background: rgba(13,13,15,0.8); border: none;
+  color: var(--c-text2); border-radius: 4px;
+  width: 18px; height: 18px; font-size: 9px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; opacity: 0; transition: opacity 0.15s;
+}
+.ig-ref-item:hover .ig-ref-remove { opacity: 1; }
+
+.ig-mode-hint {
+  font-size: 11px; color: var(--c-text3); line-height: 1.6;
+  background: var(--c-surface2); border: 1px solid var(--c-border);
+  border-radius: var(--radius); padding: 10px 12px;
+}
+.ig-mode-hint strong { color: var(--c-accent); }
+.ig-mode-desc { font-size: 10px; }
+
+/* History */
+.ig-history-list { display: flex; flex-direction: column; gap: 6px; max-height: 300px; overflow-y: auto; }
+.ig-history-empty { font-size: 11px; color: var(--c-text3); text-align: center; padding: 16px 0; }
+.ig-history-item {
+  display: flex; gap: 8px; align-items: center;
+  background: var(--c-surface2); border: 1px solid var(--c-border);
+  border-radius: 6px; padding: 6px 8px; cursor: pointer;
+  transition: all 0.15s;
+}
+.ig-history-item:hover { border-color: var(--c-border2); }
+.ig-history-thumb { width: 40px; height: 40px; object-fit: cover; border-radius: 4px; flex-shrink: 0; }
+.ig-history-info { flex: 1; overflow: hidden; }
+.ig-history-prompt { font-size: 10px; color: var(--c-text2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ig-history-time { font-family: var(--f-mono); font-size: 9px; color: var(--c-text3); margin-top: 2px; }
+
+.ig-text-btn { background: transparent; border: none; color: var(--c-text3); font-size: 10px; cursor: pointer; transition: color 0.15s; }
+.ig-text-btn:hover { color: var(--c-accent); }
+
+/* ── SETTINGS DRAWER ── */
+.ig-drawer {
+  position: fixed; top: 0; right: 0; bottom: 0;
+  width: 320px; background: var(--c-surface);
+  border-left: 1px solid var(--c-border);
+  z-index: 200; display: flex; flex-direction: column;
+  transform: translateX(0);
+  box-shadow: -20px 0 60px rgba(0,0,0,0.5);
+}
+.ig-drawer.hidden { display: none; }
+.ig-drawer-header {
+  padding: 16px; border-bottom: 1px solid var(--c-border);
+  display: flex; justify-content: space-between; align-items: center;
+  font-family: var(--f-mono); font-size: 12px; color: var(--c-text2);
+}
+.ig-drawer-body { padding: 20px 16px; display: flex; flex-direction: column; gap: 6px; }
+.ig-label { font-size: 11px; color: var(--c-text3); font-family: var(--f-mono); }
+.ig-input {
+  width: 100%; background: var(--c-surface2); border: 1px solid var(--c-border);
+  color: var(--c-text); font-family: var(--f-mono); font-size: 11px;
+  padding: 8px 10px; border-radius: var(--radius);
+}
+.ig-input:focus { outline: none; border-color: var(--c-accent); }
+
+.hidden { display: none !important; }
+
+/* Range track gradient update via JS */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--c-accent);
+  cursor: pointer;
+}
+input[type="range"]::-moz-range-thumb {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--c-accent);
+  border: none; cursor: pointer;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--c-surface3); border-radius: 2px; }
+
+/* Toast */
+.ig-toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  background: var(--c-surface); border: 1px solid var(--c-border2);
+  color: var(--c-text); font-family: var(--f-mono); font-size: 11px;
+  padding: 10px 20px; border-radius: 20px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+  z-index: 300; animation: toastIn 0.2s ease;
+}
+@keyframes toastIn { from { opacity:0; transform: translateX(-50%) translateY(10px); } to { opacity:1; transform: translateX(-50%) translateY(0); } }
 </style>
 
 <script>
-    let selectedFiles = [];
+/* ─── STATE ─── */
+const STATE = {
+  mode: 'txt2img',
+  model: 'flux-dev',
+  refs: [],
+  history: [],
+  currentBlob: null,
+  currentMeta: null,
+  zoom: 1,
+  generating: false,
+  endpoints: {
+    'flux-dev': '',
+    'flux-kontext': ''
+  }
+};
 
-    function addPromptField() {
-        const container = document.getElementById('prompts-container');
-        const div = document.createElement('div');
-        div.className = 'prompt-entry mb-2 animate-fadeIn';
-        div.innerHTML = `
-            <div class="d-flex gap-2">
-                <textarea name="prompts[]" class="form-control bg-dark text-white border-secondary" rows="2"></textarea>
-                <button type="button" onclick="this.parentElement.parentElement.remove()" class="btn btn-outline-danger btn-sm px-2"><i class="fas fa-times"></i></button>
-            </div>
-        `;
-        container.appendChild(div);
+const MODE_INFO = {
+  txt2img:   { label: 'Text → Image',       desc: 'No reference images needed.' },
+  img2img:   { label: 'Image + Text',        desc: 'Upload 1 reference image + write a prompt.' },
+  kontext:   { label: 'Kontext Edit',        desc: 'Upload 1 image. Flux Kontext will edit it.' },
+  blend:     { label: 'Blend 2 Images',      desc: 'Upload exactly 2 images to blend.' },
+  variation: { label: 'Variation',           desc: 'Upload 1 image. No text needed.' }
+};
+
+/* ─── INIT ─── */
+document.addEventListener('DOMContentLoaded', () => {
+  loadSettings();
+  addPrompt();
+  initRangeGradients();
+  initNoise();
+  updateModeHint();
+});
+
+function loadSettings() {
+  try {
+    const s = JSON.parse(localStorage.getItem('hypenosys_igSettings') || '{}');
+    STATE.endpoints['flux-dev'] = s.fluxDev || '';
+    STATE.endpoints['flux-kontext'] = s.fluxKontext || '';
+    if (document.getElementById('cfgFluxDev')) document.getElementById('cfgFluxDev').value = s.fluxDev || '';
+    if (document.getElementById('cfgFluxKontext')) document.getElementById('cfgFluxKontext').value = s.fluxKontext || '';
+  } catch(e) {}
+}
+
+function saveSettings() {
+  const s = {
+    fluxDev: document.getElementById('cfgFluxDev').value.trim(),
+    fluxKontext: document.getElementById('cfgFluxKontext').value.trim()
+  };
+  localStorage.setItem('hypenosys_igSettings', JSON.stringify(s));
+  STATE.endpoints['flux-dev'] = s.fluxDev;
+  STATE.endpoints['flux-kontext'] = s.fluxKontext;
+  togglePanel('settings');
+  toast('Settings saved');
+}
+
+/* ─── RANGE GRADIENTS ─── */
+function initRangeGradients() {
+  document.querySelectorAll('input[type="range"]').forEach(r => {
+    updateRange(r);
+    r.addEventListener('input', () => updateRange(r));
+  });
+}
+function updateRange(r) {
+  const pct = ((r.value - r.min) / (r.max - r.min)) * 100;
+  r.style.background = `linear-gradient(to right, #bd93f9 ${pct}%, #252528 ${pct}%)`;
+}
+
+/* ─── PROMPT MANAGEMENT ─── */
+let promptCount = 0;
+function addPrompt() {
+  promptCount++;
+  const stack = document.getElementById('promptStack');
+  const row = document.createElement('div');
+  row.className = 'ig-prompt-row';
+  row.id = `pr-${promptCount}`;
+  row.innerHTML = `
+    <span class="ig-prompt-num">${promptCount}</span>
+    <textarea class="ig-prompt-ta" placeholder="${promptCount === 1 ? 'Describe the image...' : 'Add style, mood, details...'}" rows="3"></textarea>
+    ${promptCount > 1 ? `<button class="ig-prompt-remove" onclick="removePrompt('pr-${promptCount}')">✕</button>` : ''}
+  `;
+  stack.appendChild(row);
+  row.querySelector('textarea').focus();
+}
+function removePrompt(id) {
+  document.getElementById(id)?.remove();
+  renumberPrompts();
+}
+function renumberPrompts() {
+  document.querySelectorAll('.ig-prompt-row').forEach((r, i) => {
+    r.querySelector('.ig-prompt-num').textContent = i + 1;
+  });
+}
+function getPrompts() {
+  return Array.from(document.querySelectorAll('.ig-prompt-ta'))
+    .map(t => t.value.trim()).filter(Boolean);
+}
+
+/* ─── MODE ─── */
+function setMode(m) {
+  STATE.mode = m;
+  document.querySelectorAll('.ig-pill').forEach(p => p.classList.toggle('active', p.dataset.mode === m));
+  // Auto-select model
+  if (m === 'kontext' || m === 'blend') selectModelByKey('flux-kontext');
+  else selectModelByKey('flux-dev');
+  updateModeHint();
+}
+function updateModeHint() {
+  const info = MODE_INFO[STATE.mode];
+  document.getElementById('modeHintLabel').textContent = info.label;
+  document.getElementById('modeHintDesc').textContent = info.desc;
+}
+
+/* ─── MODEL ─── */
+function selectModel(el, key) {
+  STATE.model = key;
+  document.querySelectorAll('.ig-model-chip').forEach(c => c.classList.toggle('active', c.dataset.model === key));
+}
+function selectModelByKey(key) {
+  STATE.model = key;
+  document.querySelectorAll('.ig-model-chip').forEach(c => c.classList.toggle('active', c.dataset.model === key));
+}
+
+/* ─── PANELS ─── */
+function togglePanel(which) {
+  if (which === 'left') {
+    document.getElementById('panelLeft').classList.toggle('collapsed');
+  } else if (which === 'right') {
+    document.getElementById('panelRight').classList.toggle('collapsed');
+  } else if (which === 'settings') {
+    document.getElementById('settingsDrawer').classList.toggle('hidden');
+  } else if (which === 'history') {
+    document.getElementById('panelRight').classList.remove('collapsed');
+    document.getElementById('panelRight').scrollTop = 999;
+  }
+}
+
+/* ─── FILE HANDLING ─── */
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('dropZone').classList.remove('drag-over');
+  const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+  files.forEach(addRef);
+}
+function handleFileInput(input) {
+  Array.from(input.files).forEach(addRef);
+  input.value = '';
+}
+function addRef(file) {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const id = Date.now() + Math.random();
+    STATE.refs.push({ id, file, dataUrl: e.target.result });
+    renderRefGrid();
+  };
+  reader.readAsDataURL(file);
+}
+function removeRef(id) {
+  STATE.refs = STATE.refs.filter(r => r.id !== id);
+  renderRefGrid();
+}
+function renderRefGrid() {
+  const grid = document.getElementById('refGrid');
+  grid.innerHTML = '';
+  STATE.refs.forEach(ref => {
+    const item = document.createElement('div');
+    item.className = 'ig-ref-item';
+    item.innerHTML = `
+      <img src="${ref.dataUrl}" alt="ref">
+      <button class="ig-ref-remove" onclick="removeRef(${ref.id})">✕</button>
+    `;
+    grid.appendChild(item);
+  });
+}
+
+/* ─── SEED ─── */
+function randomSeed() {
+  document.getElementById('paramSeed').value = Math.floor(Math.random() * 9999999999);
+}
+
+/* ─── GENERATE ─── */
+async function handleGenerate() {
+  if (STATE.generating) return;
+
+  const prompts = getPrompts();
+  const mode = STATE.mode;
+
+  // Validation
+  if (mode === 'txt2img' && prompts.length === 0) { toast('Add a prompt first'); return; }
+  if (['img2img','kontext','variation'].includes(mode) && STATE.refs.length === 0) { toast('Upload a reference image'); return; }
+  if (mode === 'blend' && STATE.refs.length < 2) { toast('Upload 2 images to blend'); return; }
+
+  const endpoint = STATE.endpoints[STATE.model];
+  if (!endpoint) {
+    togglePanel('settings');
+    toast('Set the endpoint URL in Settings ↗');
+    return;
+  }
+
+  STATE.generating = true;
+  setStatus('running', 'Generating');
+  showState('loading');
+  startProgress();
+
+  try {
+    const seed = parseInt(document.getElementById('paramSeed').value) || Math.floor(Math.random() * 9999999999);
+    const chatInput = prompts.join('. ') || 'variation of the reference image';
+
+    let body = { chatInput, mode, seed };
+
+    if (STATE.refs.length > 0) {
+      body.referenceImage = STATE.refs[0].dataUrl;
+    }
+    if (STATE.refs.length > 1) {
+      body.referenceImage2 = STATE.refs[1].dataUrl;
     }
 
-    function handleImageSelection(input) {
-        if (!input.files) return;
+    stepDone(1);
 
-        const grid = document.getElementById('image-preview-grid');
-        const files = Array.from(input.files);
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+      signal: AbortSignal.timeout(180000)
+    });
 
-        files.forEach(file => {
-            selectedFiles.push(file);
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const col = document.createElement('div');
-                col.className = 'col-auto mb-2';
-                col.innerHTML = `
-                    <div class="img-preview-container shadow-sm border-purple">
-                        <img src="${e.target.result}">
-                        <button type="button" class="img-preview-remove" onclick="removeImage(this, '${file.name}')">✕</button>
-                    </div>
-                `;
-                grid.appendChild(col);
-            };
-            reader.readAsDataURL(file);
-        });
+    stepDone(2);
+    advanceProgress(60);
+
+    if (!res.ok) throw new Error(`n8n responded ${res.status}`);
+
+    stepDone(3);
+    advanceProgress(90);
+
+    const blob = await res.blob();
+    STATE.currentBlob = blob;
+
+    stepDone(4);
+    advanceProgress(100);
+
+    const url = URL.createObjectURL(blob);
+    showResult(url, { prompt: chatInput, mode, seed, model: STATE.model });
+
+    addHistory(url, chatInput);
+    setStatus('done', 'Done');
+
+  } catch (err) {
+    setStatus('error', 'Error');
+    showState('empty');
+    toast(err.message || 'Generation failed');
+  } finally {
+    STATE.generating = false;
+    stopProgress();
+    document.getElementById('generateBtn').disabled = false;
+    document.getElementById('generateLabel').textContent = 'Generate';
+  }
+}
+
+/* ─── PROGRESS ANIMATION ─── */
+let progressInterval, progressValue = 0, targetProgress = 0;
+
+function startProgress() {
+  progressValue = 0; targetProgress = 40;
+  document.getElementById('generateBtn').disabled = true;
+  document.getElementById('generateLabel').textContent = 'Working...';
+  ['step1','step2','step3','step4'].forEach(s => {
+    const el = document.getElementById(s);
+    el.classList.remove('active','done');
+  });
+  document.getElementById('step1').classList.add('active');
+  setProgressRing(0);
+
+  progressInterval = setInterval(() => {
+    if (progressValue < targetProgress) {
+      progressValue = Math.min(progressValue + 0.5, targetProgress);
+      setProgressRing(progressValue);
     }
+  }, 80);
+}
 
-    function removeImage(btn, fileName) {
-        btn.parentElement.parentElement.remove();
-        selectedFiles = selectedFiles.filter(f => f.name !== fileName);
+function advanceProgress(target) {
+  targetProgress = target;
+}
+
+function stepDone(n) {
+  const el = document.getElementById(`step${n}`);
+  el.classList.remove('active');
+  el.classList.add('done');
+  if (n < 4) document.getElementById(`step${n+1}`).classList.add('active');
+}
+
+function stopProgress() {
+  clearInterval(progressInterval);
+}
+
+function setProgressRing(pct) {
+  const circumference = 213.6;
+  const offset = circumference * (1 - pct / 100);
+  document.getElementById('progressRing').style.strokeDashoffset = offset;
+  document.getElementById('progressPct').textContent = Math.round(pct) + '%';
+}
+
+/* ─── UI STATES ─── */
+function showState(state) {
+  document.getElementById('emptyState').classList.toggle('hidden', state !== 'empty');
+  document.getElementById('loadingState').classList.toggle('hidden', state !== 'loading');
+  document.getElementById('resultState').classList.toggle('hidden', state !== 'result');
+}
+
+function showResult(url, meta) {
+  document.getElementById('resultImg').src = url;
+  document.getElementById('resultMeta').innerHTML =
+    `${meta.model} · ${meta.mode} · seed ${meta.seed}<br>${meta.prompt.slice(0, 80)}${meta.prompt.length > 80 ? '…' : ''}`;
+  STATE.currentMeta = meta;
+  STATE.zoom = 1;
+  document.getElementById('zoomLabel').textContent = '100%';
+  showState('result');
+}
+
+function setStatus(state, label) {
+  const dot = document.getElementById('statusDot');
+  dot.className = 'ig-status-dot ' + state;
+  document.getElementById('statusLabel').textContent = label;
+}
+
+/* ─── CANVAS ZOOM ─── */
+function zoom(factor) {
+  STATE.zoom = Math.max(0.2, Math.min(4, STATE.zoom * factor));
+  document.getElementById('resultImg').style.transform = `scale(${STATE.zoom})`;
+  document.getElementById('zoomLabel').textContent = Math.round(STATE.zoom * 100) + '%';
+}
+function zoomFit() {
+  STATE.zoom = 1;
+  document.getElementById('resultImg').style.transform = 'scale(1)';
+  document.getElementById('zoomLabel').textContent = '100%';
+}
+
+/* ─── RESULT ACTIONS ─── */
+function downloadResult() {
+  if (!STATE.currentBlob) return;
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(STATE.currentBlob);
+  a.download = `hypenosys-${STATE.currentMeta?.mode || 'gen'}-${Date.now()}.png`;
+  a.click();
+}
+
+function sendToInput() {
+  if (!STATE.currentBlob) return;
+  const url = URL.createObjectURL(STATE.currentBlob);
+  STATE.refs.push({ id: Date.now(), file: null, dataUrl: url });
+  renderRefGrid();
+  document.getElementById('panelRight').classList.remove('collapsed');
+  toast('Added to references');
+}
+
+async function copyToClipboard() {
+  if (!STATE.currentBlob) return;
+  try {
+    await navigator.clipboard.write([new ClipboardItem({ 'image/png': STATE.currentBlob })]);
+    toast('Image copied to clipboard');
+  } catch(e) {
+    toast('Copy not supported in this browser');
+  }
+}
+
+/* ─── HISTORY ─── */
+function addHistory(url, prompt) {
+  const entry = { url, prompt, time: new Date().toLocaleTimeString() };
+  STATE.history.unshift(entry);
+  renderHistory();
+}
+function renderHistory() {
+  const list = document.getElementById('historyList');
+  if (STATE.history.length === 0) {
+    list.innerHTML = '<p class="ig-history-empty">No generations yet.</p>';
+    return;
+  }
+  list.innerHTML = STATE.history.slice(0, 20).map((h, i) => `
+    <div class="ig-history-item" onclick="restoreHistory(${i})">
+      <img class="ig-history-thumb" src="${h.url}" alt="">
+      <div class="ig-history-info">
+        <div class="ig-history-prompt">${h.prompt}</div>
+        <div class="ig-history-time">${h.time}</div>
+      </div>
+    </div>
+  `).join('');
+}
+function restoreHistory(i) {
+  const h = STATE.history[i];
+  if (!h) return;
+  showResult(h.url, { prompt: h.prompt, mode: '—', seed: '—', model: '—' });
+}
+function clearHistory() {
+  STATE.history = [];
+  renderHistory();
+  toast('History cleared');
+}
+
+/* ─── NOISE CANVAS (loading bg) ─── */
+function initNoise() {
+  const canvas = document.getElementById('noiseCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  function resize() { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; }
+  resize();
+  let frame;
+  function drawNoise() {
+    if (!document.getElementById('loadingState') || document.getElementById('loadingState').classList.contains('hidden')) {
+      frame = requestAnimationFrame(drawNoise); return;
     }
-
-    async function handleGenerate() {
-        const form = document.getElementById('gen-form');
-        const prompts = Array.from(form.querySelectorAll('textarea[name="prompts[]"]'))
-                            .map(t => t.value.trim())
-                            .filter(v => v !== "");
-
-        if (prompts.length === 0 && selectedFiles.length === 0) {
-            alert("Por favor, introduzca al menos un prompt o una imagen de referencia.");
-            return;
-        }
-
-        // UI State Transition
-        document.getElementById('empty-state').classList.add('hidden');
-        document.getElementById('loading-state').classList.remove('hidden');
-        document.getElementById('status-indicator').innerHTML = '<span class="u-dot bg-warning mr-2"></span> PROCESANDO';
-
-        // Build Payload
-        const formData = new FormData();
-        formData.append('prompts', JSON.stringify(prompts));
-        selectedFiles.forEach((file, index) => {
-            formData.append(`file_${index}`, file);
-        });
-
-        console.log("[ImageGen] Payload built:", { prompts, files: selectedFiles.length });
-
-        // Phase 1: Mocked Response (Endpoint n8n still pending)
-        setTimeout(() => {
-            document.getElementById('loading-state').classList.add('hidden');
-            document.getElementById('results-gallery').classList.remove('hidden');
-            document.getElementById('status-indicator').innerHTML = '<span class="u-dot bg-success mr-2"></span> ÉXITO';
-
-            const gallery = document.getElementById('results-gallery');
-            const iterId = Date.now();
-            const mockHtml = `
-                <div class="card bg-dark border-purple mb-4">
-                    <div class="card-body">
-                        <h6 class="text-purple">Iteración #${iterId} (Mock)</h6>
-                        <p class="small text-muted">Payload enviado correctamente a la consola. n8n integration pending.</p>
-                        <div class="bg-secondary p-5 text-center rounded">
-                            <i class="fas fa-image fa-3x"></i>
-                            <p class="mt-2">Simulación de Resultado</p>
-                        </div>
-                    </div>
-                </div>
-            `;
-            gallery.innerHTML = mockHtml + gallery.innerHTML;
-        }, 2000);
+    const w = canvas.width, h = canvas.height;
+    const img = ctx.createImageData(w, h);
+    for (let i = 0; i < img.data.length; i += 4) {
+      const v = Math.random() * 255 | 0;
+      img.data[i] = v; img.data[i+1] = v; img.data[i+2] = v; img.data[i+3] = 255;
     }
+    ctx.putImageData(img, 0, 0);
+    frame = requestAnimationFrame(drawNoise);
+  }
+  drawNoise();
+  window.addEventListener('resize', resize);
+}
+
+/* ─── TOAST ─── */
+let toastTimer;
+function toast(msg) {
+  let t = document.querySelector('.ig-toast');
+  if (t) t.remove();
+  t = document.createElement('div');
+  t.className = 'ig-toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t?.remove(), 3000);
+}
+
+/* ─── KEYBOARD SHORTCUTS ─── */
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) handleGenerate();
+  if (e.key === 'Escape') {
+    document.getElementById('settingsDrawer').classList.add('hidden');
+  }
+});
 </script>
