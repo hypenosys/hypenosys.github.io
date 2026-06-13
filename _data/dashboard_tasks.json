@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-13T09:32:35.109Z",
+  "last_updated": "2026-06-13T09:34:21.464Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2820,10 +2820,10 @@
       "descripcion": "Implementar un sistema de Error Boundaries para aislar fallos en componentes críticos del dashboard. Evita que un error en la API de GitHub o en las métricas tumbe toda la interfaz. **Hecho cuando:** Al fallar un componente, se muestre un estado de fallback elegante sin afectar al resto.",
       "tags": [
         "frontend",
-        "ux",
-        "stability"
+        "stability",
+        "ux"
       ],
-      "prioridad": "High",
+      "prioridad": "",
       "estado": "Pending",
       "estimated_hours": 4,
       "comments": [
@@ -2839,7 +2839,42 @@
         "topperh4rley"
       ],
       "acceptance_criteria": "Los errores se capturan y loguean sin romper la sesión del usuario.",
-      "subtasks": []
+      "subtasks": [],
+      "repository": "hypenosys/hypenosys.github.io",
+      "completitud": 0,
+      "resuelto_por": "Alex",
+      "detectado_por": "Unassigned",
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "story_points": null,
+      "external_links": [],
+      "blocks": [],
+      "blocked_by": [],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:34:20.957Z",
+          "field": "prioridad",
+          "old_value": "High",
+          "new_value": ""
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:34:20.957Z",
+          "field": "completitud",
+          "new_value": 0
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:34:20.957Z",
+          "field": "repository",
+          "old_value": "",
+          "new_value": "hypenosys/hypenosys.github.io"
+        }
+      ]
     },
     {
       "title": "Local AI Backend Docs: ComfyUI, Redis, PostgreSQL, Forgejo, Matrix, Qdrant, n8n, n8n-runner, ollama setup",
@@ -3091,6 +3126,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #48",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:34:21.464Z"
+    },
     {
       "action": "chore: actualizar tarea #49",
       "user": "Axlfc",
