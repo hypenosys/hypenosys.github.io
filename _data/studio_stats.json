@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-13T09:21:54.634Z",
+  "computed_at": "2026-06-13T09:22:41.945Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 28,
@@ -25,9 +25,9 @@
     "bug_rate": 0.0769,
     "blocker_health": 3,
     "tag_heatmap": {
-      "frontend": 8,
       "devops": 7,
       "feature": 11,
+      "frontend": 8,
       "brainstorm": 1,
       "design": 1,
       "docs": 3,
@@ -239,8 +239,8 @@
         "reprioritizations": 23
       },
       "workload": {
-        "active_tasks": 18,
-        "story_points": 39
+        "active_tasks": 17,
+        "story_points": 38
       }
     },
     "dkdidac-design": {
@@ -476,7 +476,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-06-13T09:21:55.453Z"
+      "timestamp": "2026-06-13T09:22:42.789Z"
     }
   ]
 }
