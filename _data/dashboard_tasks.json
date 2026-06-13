@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-13T09:13:45.926Z",
+  "last_updated": "2026-06-13T09:14:52.988Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1922,18 +1922,19 @@
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Minor",
       "milestone": "M2",
-      "estado": "ToDo",
+      "estado": "Working",
       "completitud": 0,
-      "resuelto_por": "Axel",
+      "resuelto_por": "Alex",
       "detectado_por": "Axel",
       "asignados": [
         "axlfc",
+        "dkdidac-design",
         "topperh4rley"
       ],
-      "email_responsable": null,
+      "email_responsable": "axel@hypenosys.com",
       "emails_asignados": [],
-      "start_date": null,
-      "due_date": null,
+      "start_date": "2026-06-13",
+      "due_date": "2026-06-28",
       "estimated_hours": 2,
       "story_points": 1,
       "tags": [
@@ -2029,6 +2030,27 @@
           "field": "prioridad",
           "old_value": "Major",
           "new_value": "Minor"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:14:52.234Z",
+          "field": "estado",
+          "old_value": "ToDo",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:14:52.234Z",
+          "field": "asignados",
+          "old_value": "[\"axlfc\",\"topperh4rley\"]",
+          "new_value": "[\"axlfc\",\"dkdidac-design\",\"topperh4rley\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:14:52.234Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-06-28"
         }
       ],
       "id": 38
@@ -2896,6 +2918,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #38",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:14:52.988Z"
+    },
     {
       "action": "chore: actualizar tarea #44",
       "user": "Axlfc",
