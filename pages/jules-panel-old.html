@@ -58,8 +58,8 @@ permalink: /jules-panel/
             </div>
         </div>
         <div class="flex items-center gap-3">
-            <a href="/claude-chat.html" class="btn btn--secondary" style="background: rgba(189, 147, 249, 0.1); border-color: #bd93f9; color: #bd93f9; font-weight: 700;">
-                <i class="fa-solid fa-comments mr-2"></i> Claude Chat
+            <a href="/chat/neural/" class="btn btn--secondary" style="background: rgba(189, 147, 249, 0.1); border-color: #bd93f9; color: #bd93f9; font-weight: 700;">
+                <i class="fa-solid fa-comments mr-2"></i> Neural Chat
             </a>
             <div id="jules-api-indicator-container">
                 <!-- Dinámico: api-key-indicator -->
@@ -1622,7 +1622,7 @@ permalink: /jules-panel/
                 promptInput.value = clipboard;
                 promptInput.classList.add('animate-pulse');
                 setTimeout(() => promptInput.classList.remove('animate-pulse'), 2000);
-                showToast('Contenido importado de Claude Chat');
+                showToast('Contenido importado de Neural Chat');
                 localStorage.removeItem('jules_clipboard');
             }
         }
@@ -1748,7 +1748,7 @@ permalink: /jules-panel/
                 initMobileFAB();
             }
 
-            // FEATURE #3: Check for incoming clipboard from Claude Chat (GOD MODE INTEGRATION)
+            // FEATURE #3: Check for incoming clipboard from Neural Chat (GOD MODE INTEGRATION)
             checkClaudeClipboard();
 
             // Restore checkbox states

@@ -1,11 +1,11 @@
 ---
 layout: page
-title: Claude Chat
+title: Neural Chat
 hide_title: true
-permalink: /claude-chat.html
+permalink: /chat/neural/
 ---
 
-<!-- Custom CSS for Claude Chat Interface -->
+<!-- Custom CSS for Neural Chat Interface -->
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
 
@@ -2390,7 +2390,7 @@ permalink: /claude-chat.html
                 } else if (provider === 'custom' || provider === 'openai' || provider === 'openrouter' || provider === 'nvidia_nim') {
                     await sendMessageCustom(session, config);
                 } else {
-                    throw new Error(`Proveedor ${provider} no implementado aún en Claude Chat.`);
+                    throw new Error(`Proveedor ${provider} no implementado aún en Neural Chat.`);
                 }
             } catch (e) {
                 console.error('[ClaudeChat] Send error:', e);
@@ -3093,7 +3093,7 @@ permalink: /claude-chat.html
             chatInput.style.height = Math.min(chatInput.scrollHeight, 200) + 'px';
         });
 
-        // ─── Arranque del Claude Chat ──────────────────────────────────────
+        // ─── Arranque del Neural Chat ──────────────────────────────────────
         (function arrancarClaude() {
             let arrancado = false;
 

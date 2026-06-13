@@ -721,7 +721,7 @@ body{
 
 /* CLAUDE CHAT MODAL */
 #claude-modal .modal-card{max-width:500px}
-.claude-chat-area{
+.neural-chat-area{
   background:#020204;border:1px solid var(--border);border-radius:var(--r-md);
   padding:16px;min-height:180px;margin-bottom:14px;
   font-family:var(--font-mono);font-size:12px;color:#a78bfa;line-height:1.6;
@@ -1951,12 +1951,12 @@ body{
     <div class="modal-head">
       <h3 class="modal-title" style="display:flex;align-items:center;gap:9px">
         <span class="claude-icon" style="width:22px;height:22px;font-size:12px;border-radius:6px">C</span>
-        Claude Chat
+        Neural Chat
       </h3>
       <button class="icon-btn" onclick="closeClaudeChat()">✕</button>
     </div>
     <div class="modal-body" style="padding:18px 22px">
-      <div class="claude-chat-area" id="claude-chat-area">
+      <div class="neural-chat-area" id="neural-chat-area">
         <div style="color:var(--text2);font-family:var(--font-ui);font-size:13px;line-height:1.6">
           👋 <strong style="color:var(--claude-text)">Hola, soy Claude.</strong> Puedo ayudarte a escribir prompts para Jules, revisar código, o responder preguntas sobre tu proyecto.
         </div>
@@ -2161,9 +2161,9 @@ body{
               };
               thread.push(newMsg);
               localStorage.setItem('hy_neural_thread', JSON.stringify(thread));
-              localStorage.setItem('hy_neural_active', 'true');
-              localStorage.setItem('hy_neural_pending_prompt', promptText + '\n\n¿Qué opinas? ¿Debo ajustar algo?');
-              window.location.href = '/claude-chat.html';
+
+              localStorage.setItem('hy_neural_pending_prompt', newMsg.content + '\n\n¿Qué opinas? ¿Debo ajustar algo?');
+              window.location.href = '/chat/neural/';
           };
           line.appendChild(analyzer);
       }
@@ -2525,7 +2525,7 @@ body{
         };
 
         const encodedData = encodeURIComponent(JSON.stringify(fullTask));
-        window.location.href = `/claude-chat.html?task_data=${encodedData}`;
+        window.location.href = `/chat/neural/?task_data=${encodedData}`;
     }
 
     function desvincularNeuralSession() {
@@ -2561,7 +2561,7 @@ body{
         const payloadStr = localStorage.getItem('jules_task_payload');
         const promptArea = $('session-prompt');
 
-        // Check if coming from Claude Chat via hy_neural_pending_prompt
+        // Check if coming from Neural Chat via hy_neural_pending_prompt
         const pendingPrompt = localStorage.getItem('hy_neural_pending_prompt');
         if (pendingPrompt && promptArea && promptArea.value !== pendingPrompt) {
             promptArea.value = pendingPrompt;
@@ -2638,7 +2638,7 @@ body{
         if (content) {
             if (promptArea) {
                 promptArea.value = content;
-                showToast("Prompt importado desde Claude Chat", "green");
+                showToast("Prompt importado desde Neural Chat", "green");
                 switchView('neural');
 
                 // Scroll to prompt area

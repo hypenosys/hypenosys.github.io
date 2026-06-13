@@ -541,7 +541,7 @@ body{
 
 /* CLAUDE CHAT MODAL */
 #claude-modal .modal-card{max-width:500px}
-.claude-chat-area{
+.neural-chat-area{
   background:#020204;border:1px solid var(--border);border-radius:var(--r-md);
   padding:16px;min-height:180px;margin-bottom:14px;
   font-family:var(--font-mono);font-size:12px;color:#a78bfa;line-height:1.6;
@@ -701,7 +701,7 @@ body{
       <div class="hactions">
         <button class="btn-claude" onclick="openClaudeChat()">
           <span class="claude-icon">C</span>
-          Claude Chat
+          Neural Chat
         </button>
         <button class="btn btn-ghost btn-sm" onclick="openDocs()">
           <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
@@ -997,12 +997,12 @@ body{
     <div class="modal-head">
       <h3 class="modal-title" style="display:flex;align-items:center;gap:9px">
         <span class="claude-icon" style="width:22px;height:22px;font-size:12px;border-radius:6px">C</span>
-        Claude Chat
+        Neural Chat
       </h3>
       <button class="icon-btn" onclick="closeClaudeChat()">✕</button>
     </div>
     <div class="modal-body" style="padding:18px 22px">
-      <div class="claude-chat-area" id="claude-chat-area">
+      <div class="neural-chat-area" id="neural-chat-area">
         <div style="color:var(--text2);font-family:var(--font-ui);font-size:13px;line-height:1.6">
           👋 <strong style="color:var(--claude-text)">Hola, soy Claude.</strong> Puedo ayudarte a escribir prompts para Jules, revisar código, o responder preguntas sobre tu proyecto.
         </div>
@@ -1314,7 +1314,7 @@ function sendClaudeMsg(){
   const input=$('claude-in');
   const txt=input.value.trim();
   if(!txt) return;
-  const area=$('claude-chat-area');
+  const area=$('neural-chat-area');
   // User message
   const uEl=document.createElement('div');
   uEl.style.cssText='margin-top:12px;background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.2);border-radius:8px;padding:10px 12px;font-size:13px;line-height:1.5;font-family:var(--font-ui)';
@@ -1429,7 +1429,7 @@ function renderMobilePanel(name){
       <div class="card glass"><div class="card-head"><div class="card-title">Acciones</div></div><div class="card-body" style="display:flex;flex-direction:column;gap:9px">
         <button class="btn btn-primary" onclick="document.querySelector('[data-tab=session]').click()">▶ Nueva Tarea</button>
         <button class="btn btn-ghost" onclick="document.querySelector('[data-tab=history]').click()">📋 Historial</button>
-        <button class="btn-claude" onclick="openClaudeChat()" style="justify-content:center"><span class="claude-icon">C</span>Claude Chat</button>
+        <button class="btn-claude" onclick="openClaudeChat()" style="justify-content:center"><span class="claude-icon">C</span>Neural Chat</button>
       </div></div>`;
   } else if(name==='kanban'){
     el.innerHTML=`<div style="font-size:15px;font-weight:700;margin-bottom:12px">Kanban Tareas</div>`;

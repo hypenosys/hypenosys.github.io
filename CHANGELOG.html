@@ -75,22 +75,20 @@ permalink: /CHANGELOG.html
               <li><strong>Registro de Sesiones Neurales:</strong> Al iniciar ejecución en el Jules Panel, se registra automáticamente la sesión en <code>localStorage</code> vinculándola a la tarea activa.</li>
               <li><strong>Widget de Operaciones en Dashboard:</strong> El dashboard principal ahora cuenta con un widget dinámico sincronizado en tiempo real que lista las sesiones neurales activas y archivadas, permitiendo renombrar, archivar y eliminar sesiones, además de restaurar contextos de trabajo.</li>
               <li><strong>Drawer de Gestión de Sesiones:</strong> Implementado panel lateral de "Sesiones" en la pestaña NEURAL para navegar y gestionar el historial de sesiones guardadas localmente.</li>
-              <li><strong>Flujo Neural Bidireccional:</strong> Sincronización completa de contexto (subtareas, comentarios, historial) entre Dashboard, Claude Chat y Jules Panel V2. Incluye botones de análisis en telemetría y exportación de lógica desde Claude a Jules.</li>
+              <li><strong>Flujo Neural Bidireccional:</strong> Sincronización completa de contexto (subtareas, comentarios, historial) entre Dashboard, Neural Chat y Jules Panel V2. Incluye botones de análisis en telemetría y exportación de lógica desde Claude a Jules.</li>
             </ul>
             <h5 class="text-success">Fixed</h5>
             <ul>
-              <li><strong>Workflow de Aprobación de Plan de Jules:</strong> Restaurado el botón y la lógica de "Aprobar Plan", asegurando que aparezca correctamente basado en el historial de actividades (<code>planGenerated</code> sin <code>planApproved</code> posterior).</li>
-              <li><strong>Lógica del Cliente API de Jules:</strong> Estandarizado el manejo de nombres de recursos de sesión en el cliente API para prevenir errores de resolución durante el polling y la mensajería.</li>
-              <li><strong>Transferencia de Tareas a Claude:</strong> Corregido el bug en <code>_openTaskInClaude</code> donde solo se pasaba el ID de la tarea. Implementado un sistema de búsqueda multinivel (global y window scope) para asegurar que el objeto completo (título, descripción, etc.) llegue a <code>claude-chat.html</code>.</li>
-              <li><strong>Prompt y Persona de Claude Chat:</strong> Actualizada la construcción del prompt inicial para usar las claves correctas del esquema JSON (<code>title</code>, <code>descripcion</code>, <code>subtasks</code>) y adoptada la persona de "Asistente Técnico de Hypenosys", eliminando referencias a Senior Software Engineer.</li>
+              <li><strong>Transferencia de Tareas a Claude:</strong> Corregido el bug en <code>_openTaskInClaude</code> donde solo se pasaba el ID de la tarea. Implementado un sistema de búsqueda multinivel (global y window scope) para asegurar que el objeto completo (título, descripción, etc.) llegue a <code>/chat/neural/</code>.</li>
+              <li><strong>Prompt y Persona de Neural Chat:</strong> Actualizada la construcción del prompt inicial para usar las claves correctas del esquema JSON (<code>title</code>, <code>descripcion</code>, <code>subtasks</code>) y adoptada la persona de "Asistente Técnico de Hypenosys", eliminando referencias a Senior Software Engineer.</li>
               <li><strong>Responsividad Táctil Kanban (Dashboard):</strong> Corregido el fallo donde los botones de las tarjetas (Robot 🤖, Editar ✎, Mover →) no respondían en dispositivos móviles. Se eliminaron los atributos <code>onclick</code> inline y se implementó un sistema de delegación de eventos unificado que soporta <code>click</code> y <code>touchend</code>.</li>
-              <li><strong>Flujo de Tarea Claude Chat:</strong> Actualizada la transferencia de contexto de tarea para que ocurra en la misma pestaña (<code>window.location.href</code>) en lugar de abrir una nueva, evitando bloqueos de popups y manteniendo la continuidad de la sesión en móviles.</li>
+              <li><strong>Flujo de Tarea Neural Chat:</strong> Actualizada la transferencia de contexto de tarea para que ocurra en la misma pestaña (<code>window.location.href</code>) en lugar de abrir una nueva, evitando bloqueos de popups y manteniendo la continuidad de la sesión en móviles.</li>
               <li><strong>Sincronización Cross-Tab:</strong> Implementados listeners del evento <code>storage</code> para asegurar que los cambios de sesiones en el Jules Panel se reflejen instantáneamente en el Dashboard y viceversa.</li>
               <li><strong>Robustez de Renderizado:</strong> Corregido el fallo de renderizado de código diff mediante la implementación de <code>escapeHtml</code> y la desduplicación de IDs de actividad.</li>
               <li><strong>Interactividad de Tareas (Dashboard):</strong> Restaurada la funcionalidad de los botones robot (🤖) y "ENVIAR A CLAUDE" en el Kanban, integrándolos con el nuevo flujo de sesiones neurales.</li>
               <li><strong>Neural Session Responsiveness:</strong> Corregido el fallo donde los botones robot (🤖) y "ENVIAR A CLAUDE" no respondían en el dashboard. Se ajustó el orden de carga de scripts y se actualizó la detección de sesión en <code>neural-session.js</code> para usar <code>getAuthToken()</code>.</li>
               <li><strong>Neural Link Override:</strong> Asegurada la prioridad del override de <code>_openTaskInClaude</code> en el dashboard mediante un listener de <code>DOMContentLoaded</code> con retardo de 100ms, garantizando que gane a la inicialización por defecto de <code>kanban-ui.js</code>.</li>
-              <li><strong>Limpieza de Telemetría:</strong> Eliminados los logs de diagnóstico de <code>dashboard.html</code>, <code>kanban-ui.js</code> y <code>claude-chat.html</code> tras la validación exitosa del flujo de navegación "Enviar a Claude".</li>
+              <li><strong>Limpieza de Telemetría:</strong> Eliminados los logs de diagnóstico de <code>dashboard.html</code>, <code>kanban-ui.js</code> y <code>/chat/neural/</code> tras la validación exitosa del flujo de navegación "Enviar a Claude".</li>
             </ul>
             <h5 class="text-success">Added</h5>
             <ul>
@@ -111,8 +109,8 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-success">Added</h5>
             <ul>
-              <li><strong>Expansión de Contexto Claude:</strong> Ampliado el payload de tareas enviado a Claude Chat para incluir subtareas, enlaces, bloqueos, story points y metadatos de sesión de Jules.</li>
-              <li><strong>Prompt Dinámico Neuronal:</strong> Nueva lógica de renderizado en <code>claude-chat.html</code> que genera prompts enriquecidos con iconos, estados de subtareas y detección automática de campos vacíos.</li>
+              <li><strong>Expansión de Contexto Claude:</strong> Ampliado el payload de tareas enviado a Neural Chat para incluir subtareas, enlaces, bloqueos, story points y metadatos de sesión de Jules.</li>
+              <li><strong>Prompt Dinámico Neuronal:</strong> Nueva lógica de renderizado en <code>/chat/neural/</code> que genera prompts enriquecidos con iconos, estados de subtareas y detección automática de campos vacíos.</li>
               <li><strong>Migración Jules Panel V2:</strong> El panel de control ha sido actualizado a la arquitectura V2 en la ruta principal <code>/jules-panel/</code>, integrando monitorización en tiempo real y gestión avanzada de repositorios.</li>
             </ul>
             <h5 class="text-success">Added</h5>
@@ -143,7 +141,7 @@ permalink: /CHANGELOG.html
             </li>
             <h5 class="text-success">Fixed</h5>
             <ul>
-              <li><strong>Claude Chat UI Improvements:</strong>
+              <li><strong>Neural Chat UI Improvements:</strong>
                 <ul>
                   <li>Corregida la visibilidad del menú lateral en móviles mediante el uso de colores de alto contraste (Dracula Theme) y la inclusión de navegación global.</li>
                   <li>Implementado el renderizado correcto de tablas Markdown con estilos temáticos, padding adecuado y scroll horizontal automático.</li>
@@ -173,7 +171,7 @@ permalink: /CHANGELOG.html
                 <li><strong>Header de Usuario Real:</strong> Integración dinámica con <code>auth.js</code> y <code>team.json</code> para mostrar avatar, nombre y rol real del miembro autenticado.</li>
                 <li><strong>Población de Secciones Neural y Config:</strong> Migración de contenido desktop a vistas móviles independientes, eliminando las pantallas negras.</li>
                 <li><strong>Kanban Mobile Pro:</strong> Implementación de columnas al 100% de ancho con scroll-snap (swipe) y navegación por pestañas secundarias sincronizadas.</li>
-                <li><strong>Flujo de Tareas Robot:</strong> Integración del botón 🤖 para vincular tareas del Kanban con Claude Chat y Jules Sessions.</li>
+                <li><strong>Flujo de Tareas Robot:</strong> Integración del botón 🤖 para vincular tareas del Kanban con Neural Chat y Jules Sessions.</li>
               </ul>
             </li>
               <li><strong>Rediseño Mobile-First Premium (Jules Panel V2):</strong>
@@ -209,7 +207,7 @@ permalink: /CHANGELOG.html
                   <li><strong>Gaps de Producción:</strong> Implementado log de auditoría (<code>_audit_log</code>) en transacciones atómicas, banners de estado offline y avisos de rate limit crítico.</li>
                 </ul>
               </li>
-              <li><strong>Claude Chat God Mode UI:</strong>
+              <li><strong>Neural Chat God Mode UI:</strong>
                 <ul>
                   <li>Rediseño total de la interfaz con estética Dracula/Obsidian premium (gradientes, efectos de cristal, animaciones sutiles).</li>
                   <li>Implementación de <strong>Streaming</strong> progresivo (token-by-token) para una experiencia fluida.</li>
@@ -219,13 +217,13 @@ permalink: /CHANGELOG.html
                   <li>Auto-expand de textarea y atajos de teclado (Ctrl+Enter) mejorados.</li>
                 </ul>
               </li>
-              <li><strong>Claude Chat & Local Ollama Integration:</strong>
+              <li><strong>Neural Chat & Local Ollama Integration:</strong>
                 <ul>
-                  <li>Nueva interfaz de chat neuronal en <code>/claude-chat.html</code> integrada con el sistema de autenticación global.</li>
+                  <li>Nueva interfaz de chat neuronal en <code>/chat/neural/</code> integrada con el sistema de autenticación global.</li>
                   <li>Soporte para <strong>Ollama</strong> como backend privado y local, con descubrimiento automático en red local (escaneo de rangos /24).</li>
                   <li>Herramientas de descubrimiento local con concurrencia limitada (8) y gestión de timeouts para seguridad y rendimiento.</li>
                   <li>Listado dinámico y selección de modelos de Ollama mediante el endpoint <code>/api/tags</code>.</li>
-                  <li>Acceso rápido a Claude Chat desde el header autenticado de Jules Panel.</li>
+                  <li>Acceso rápido a Neural Chat desde el header autenticado de Jules Panel.</li>
                   <li>Configuración de IA persistida localmente en <code>localStorage</code>, sincronizando solo información no sensible (proveedor y modelo) con GitHub.</li>
                   <li>Mensajes de error detallados para fallos de red, contenido mixto (HTTP/HTTPS) y CORS.</li>
                 </ul>
@@ -233,7 +231,7 @@ permalink: /CHANGELOG.html
               <li><strong>GitHub API & Auth improvements:</strong>
                 <ul>
                   <li>Implementado wrapper seguro <code>updateMemberAiConfig</code> en <code>github-api.js</code> para proteger datos sensibles.</li>
-                  <li>Refactorizada la autenticación en Jules Panel y Claude Chat para eliminar redirecciones destructivas y bucles infinitos.</li>
+                  <li>Refactorizada la autenticación en Jules Panel y Neural Chat para eliminar redirecciones destructivas y bucles infinitos.</li>
                   <li>Centralizada la lógica de intercambio de tokens en <code>AuthManager</code>.</li>
                 </ul>
               </li>
@@ -260,7 +258,7 @@ permalink: /CHANGELOG.html
                   <li>Detección automática de expiración de token con redirección al flujo de login sin recarga forzada.</li>
                 </ul>
               </li>
-              <li><strong>Claude Chat Evolution:</strong>
+              <li><strong>Neural Chat Evolution:</strong>
                 <ul>
                   <li>Fix crítico para <strong>NVIDIA NIM</strong>: Optimización de headers y payload (1024 max tokens) para compatibilidad total.</li>
                   <li>Inyección dinámica de NIM como proveedor predefinido en el modal de configuración con autorrelleno de URL.</li>
@@ -274,14 +272,14 @@ permalink: /CHANGELOG.html
               </li>
               <li><strong>Jules Panel - Robot Task Integration:</strong>
                 <ul>
-                  <li>Añadido botón 🤖 en cada tarjeta del Kanban para abrir la tarea directamente en Claude Chat con todo su contexto.</li>
+                  <li>Añadido botón 🤖 en cada tarjeta del Kanban para abrir la tarea directamente en Neural Chat con todo su contexto.</li>
                   <li>Mejora visual de tarjetas: Títulos en negrita, badges de estado por colores y descripción truncada a 80 caracteres.</li>
                 </ul>
               </li>
-              <li><strong>Neural Link & Branch Safety (Claude Chat <> Jules):</strong>
+              <li><strong>Neural Link & Branch Safety (Neural Chat <> Jules):</strong>
                 <ul>
                   <li><strong>Integración Neural Completa:</strong> Nueva funcionalidad "ENVIAR A JULES" que permite transferir respuestas de Claude al Panel con contexto enriquecido.</li>
-                  <li><strong>Neural Link Drawer:</strong> Implementado drawer lateral en Claude Chat para que el usuario añada notas o instrucciones adicionales antes de la transferencia.</li>
+                  <li><strong>Neural Link Drawer:</strong> Implementado drawer lateral en Neural Chat para que el usuario añada notas o instrucciones adicionales antes de la transferencia.</li>
                   <li><strong>Branch Safety Warning:</strong> Nuevo banner de seguridad en el Jules Panel que detecta y advierte si la rama actual no coincide con la rama esperada para la tarea (basado en metadatos de la tarea).</li>
                   <li><strong>Payload Enriquecido:</strong> Uso de <code>localStorage.jules_task_payload</code> para transferir de forma segura la respuesta de Claude, la nota del usuario y el contexto de la sesión.</li>
                 </ul>
@@ -296,7 +294,7 @@ permalink: /CHANGELOG.html
                   <li>Ampliación del stack tecnológico oficial con 5 nuevas herramientas: <strong>Forgejo</strong>, <strong>n8n</strong>, <strong>IT-Tools</strong>, <strong>Matrix</strong> y <strong>CopyParty</strong>.</li>
                 </ul>
               </li>
-              <li><strong>Claude Chat Adaptive UI & AI Profiles:</strong>
+              <li><strong>Neural Chat Adaptive UI & AI Profiles:</strong>
                 <ul>
                   <li>Implementado proveedor <strong>Custom</strong> (OpenAI-compatible) con autodescubrimiento y clasificación de modelos por tipo (Vision, Audio, Reasoning, etc.).</li>
                   <li>Nueva interfaz adaptativa que activa controles específicos según el modelo: adjuntar imágenes para <strong>Multimodal</strong>, grabación/transcripción para <strong>Audio ASR</strong>, síntesis de voz para <strong>Audio TTS</strong>, y selector de resolución para <strong>Generación de Imágenes</strong>.</li>
@@ -308,10 +306,10 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-success">Fixed</h5>
             <ul class="tree-view mb-3">
-              <li><strong>Robot Button Context in Claude Chat:</strong>
+              <li><strong>Robot Button Context in Neural Chat:</strong>
                 <ul>
                   <li>Implementada la transferencia de contexto enriquecido de tareas (título, descripción, criterios, tags, prioridad, asignados, comentarios, estimación y repositorio) mediante <code>localStorage</code> al pulsar el botón robot.</li>
-                  <li>Actualizada la interfaz de Claude Chat para renderizar dinámicamente solo los campos presentes con iconos y etiquetas descriptivas en español.</li>
+                  <li>Actualizada la interfaz de Neural Chat para renderizar dinámicamente solo los campos presentes con iconos y etiquetas descriptivas en español.</li>
                   <li>Optimización del flujo de sesiones: creación automática de nuevas sesiones si la actual tiene mensajes previos al recibir contexto de tarea.</li>
                   <li>Corregido el fallo de carga de contexto que dependía de llamadas a la API de GitHub con ramas hardcodeadas.</li>
                 </ul>

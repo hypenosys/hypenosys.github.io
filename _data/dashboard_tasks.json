@@ -1059,7 +1059,7 @@
         },
         {
           "id": 1780936990388,
-          "text": "BUG: Botón robot no pre-rellena contexto en Claude Chat (tags: frontend, ux, bug)",
+          "text": "BUG: Botón robot no pre-rellena contexto en Neural Chat (tags: frontend, ux, bug)",
           "done": false
         }
       ],
@@ -2123,7 +2123,7 @@
       "id": 38
     },
     {
-      "title": "Añadir hypenosys/scripts a claude-chat y SVN",
+      "title": "Añadir hypenosys/scripts a neural-chat y SVN",
       "descripcion": "Sincronizar el repositorio de scripts con el chat neural y la estructura del SVN. Facilita el acceso de la IA a la lógica para mantenimiento.",
       "rama": "chore/scripts-svn-sync",
       "task_type": "chore",
@@ -2191,15 +2191,8 @@
           "author_login": "axlfc",
           "timestamp": "2026-06-07T20:10:38.541Z",
           "field": "title",
-          "old_value": "Añadir repo hypenosys/scripts a claude-chat",
-          "new_value": "Añadir hypenosys/scripts a claude-chat y SVN"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-13T09:13:15.986Z",
-          "field": "estado",
-          "old_value": "Pending",
-          "new_value": "Working"
+          "old_value": "Añadir repo hypenosys/scripts a neural-chat",
+          "new_value": "Añadir hypenosys/scripts a neural-chat y SVN"
         }
       ],
       "id": 39
@@ -2407,7 +2400,7 @@
       "id": 40
     },
     {
-      "title": "Añadir icono de claude-chat al lado del robot en el menú del dashboard",
+      "title": "Añadir icono de neural-chat al lado del robot en el menú del dashboard",
       "descripcion": "Añadir el acceso directo al Neural Chat en la navegación principal. Mejora la accesibilidad a la asistencia IA desde cualquier sección.",
       "rama": "feature/dashboard-chat-icon",
       "task_type": "feature",
