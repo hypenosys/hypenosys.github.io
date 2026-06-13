@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-13T09:12:11.229Z",
+  "last_updated": "2026-06-13T09:12:50.807Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2788,7 +2788,7 @@
       "milestone": "M1",
       "estado": "Pending",
       "completitud": 0,
-      "resuelto_por": null,
+      "resuelto_por": "Axel",
       "detectado_por": "Axel",
       "asignados": [],
       "email_responsable": null,
@@ -2883,6 +2883,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #50",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:12:50.807Z"
+    },
     {
       "action": "chore: actualizar tarea #45",
       "user": "Axlfc",
