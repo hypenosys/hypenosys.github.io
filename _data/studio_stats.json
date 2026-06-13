@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-13T09:25:49.099Z",
+  "computed_at": "2026-06-13T09:29:06.470Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 28,
@@ -51,7 +51,7 @@
       "stability": 1,
       "UX/UI": 1
     },
-    "milestone_tasks_remaining": 13,
+    "milestone_tasks_remaining": 14,
     "hall_of_fame_winners": {
       "mvp": {
         "handle": "axlfc",
@@ -492,7 +492,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-06-13T09:25:49.879Z"
+      "timestamp": "2026-06-13T09:29:07.414Z"
     }
   ]
 }
