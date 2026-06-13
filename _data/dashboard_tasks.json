@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-13T09:35:15.529Z",
+  "last_updated": "2026-06-13T09:35:36.165Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2720,7 +2720,7 @@
       ],
       "rama": "feature/ollama-proxy-relay",
       "task_type": "feature",
-      "tema_principal": "Tools / Automation",
+      "tema_principal": "Concepto / GDD",
       "milestone": "M2",
       "fecha": "2026-06-08",
       "asignados": [
@@ -2728,7 +2728,7 @@
       ],
       "acceptance_criteria": "El relay permite comunicación bidireccional sin errores de Mixed Content.",
       "subtasks": [],
-      "repository": null,
+      "repository": "hypenosys/docs",
       "completitud": 0,
       "resuelto_por": "Axel",
       "detectado_por": "Unassigned",
@@ -2761,6 +2761,13 @@
           "field": "repository",
           "old_value": "",
           "new_value": null
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:35:35.301Z",
+          "field": "repository",
+          "old_value": null,
+          "new_value": "hypenosys/docs"
         }
       ]
     },
@@ -3196,6 +3203,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #45",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:35:36.165Z"
+    },
     {
       "action": "chore: actualizar tarea #50",
       "user": "Axlfc",
