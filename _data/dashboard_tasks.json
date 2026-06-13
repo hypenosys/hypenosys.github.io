@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-13T09:05:47.838Z",
+  "last_updated": "2026-06-13T09:06:00.623Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2117,7 +2117,7 @@
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Major",
       "milestone": "M1",
-      "estado": "Working",
+      "estado": "In Review",
       "completitud": 1,
       "resuelto_por": null,
       "detectado_por": "Axel",
@@ -2132,9 +2132,9 @@
       "estimated_hours": 4,
       "story_points": 1,
       "tags": [
-        "security",
+        "api",
         "bug",
-        "api"
+        "security"
       ],
       "external_links": [],
       "subtasks": [],
@@ -2285,6 +2285,13 @@
           "field": "descripcion",
           "old_value": "Implementar filtro de subida de imagenes en las tasks mobil, si no hay disponibilidad de cloudflare no se puede, mostrar aviso para ambos casos añadir webhook de n8n para identificar imágenes NO permitidas. workflow de n8n de reconocimiento de nsfw",
           "new_value": "Implementar filtro de subida de imagenes en las tasks, si no hay disponibilidad de cloudflare no se puede, mostrar aviso para ambos casos añadir webhook de n8n para identificar imágenes NO permitidas. workflow de n8n de reconocimiento de nsfw"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:05:59.882Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
         }
       ],
       "id": 40
@@ -2827,6 +2834,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #40",
+      "user": "Axlfc",
+      "timestamp": "2026-06-13T09:06:00.623Z"
+    },
     {
       "action": "chore: actualizar tarea #41",
       "user": "Axlfc",
