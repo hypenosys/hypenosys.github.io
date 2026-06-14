@@ -19,13 +19,18 @@ const KANBAN_COLUMNS = [
 ];
 
 const STATE_CONFIG = {
+    'PENDING':  { color: 'bg-slate-700 text-slate-300', label: 'PENDING' },
+    'TODO':     { color: 'bg-slate-500 text-white', label: 'TODO' },
+    'WORKING':  { color: 'bg-amber-500 text-slate-950', label: 'WORKING' },
+    'IN REVIEW':{ color: 'bg-purple-500 text-white', label: 'IN REVIEW' },
+    'OK':       { color: 'bg-emerald-500 text-slate-950', label: 'OK' },
+    'CRITICAL': { color: 'bg-red-500 text-white', label: 'CRITICAL' },
     'Pending':  { color: 'bg-slate-700 text-slate-300', label: 'Pending' },
     'ToDo':     { color: 'bg-indigo-500 text-white', label: 'ToDo' },
     'Working':  { color: 'bg-amber-500 text-slate-950', label: 'Working' },
     'KO':       { color: 'bg-red-500 text-slate-950', label: 'KO' },
     'Fixed':    { color: 'bg-blue-500 text-slate-950', label: 'Fixed' },
     'In Review':{ color: 'bg-purple-500 text-white', label: 'In Review' },
-    'OK':       { color: 'bg-emerald-500 text-slate-950', label: 'OK' },
     'Closed':   { color: 'bg-slate-800 text-slate-400', label: 'Closed' },
     'Obsolete': { color: 'bg-slate-950 text-slate-600 line-through', label: 'Obsolete' }
 };
@@ -49,6 +54,12 @@ const UI_STRINGS = {
 // Global mutable state
 let activeFilter = null;
 let activeStageFilter = null;
+let kanbanFilters = {
+    tags: [],
+    members: [],
+    repos: [],
+    states: []
+};
 let currentTasks = [];
 let archivedTasks = [];
 let currentStats = null;
@@ -97,6 +108,7 @@ function isTaskMinimized(taskId) {
 function getFilteredTasks(tasks) {
   let filtered = tasks;
 
+  // Legacy Filter (Header toggles)
   if (activeFilter) {
     const activeHandle = Object.keys(MEMBER_MAPPING).find(key => MEMBER_MAPPING[key] === activeFilter);
     filtered = filtered.filter(t =>
@@ -112,6 +124,49 @@ function getFilteredTasks(tasks) {
       activeStageFilter.topics.includes(t.tema_principal) &&
       (!activeStageFilter.milestoneFilter || t.milestone === activeStageFilter.milestoneFilter)
     );
+  }
+
+  // New Kanban Filters (AND between categories, OR within each category)
+
+  // 1. Tags (OR)
+  if (kanbanFilters.tags.length > 0) {
+    filtered = filtered.filter(t => {
+      const taskTags = t.tags || [];
+      return kanbanFilters.tags.some(tag => taskTags.includes(tag));
+    });
+  }
+
+  // 2. Members (OR)
+  if (kanbanFilters.members.length > 0) {
+    filtered = filtered.filter(t => {
+      const handles = kanbanFilters.members.map(name =>
+        Object.keys(MEMBER_MAPPING).find(key => MEMBER_MAPPING[key] === name)
+      ).filter(Boolean);
+
+      return kanbanFilters.members.includes(t.resuelto_por) ||
+             kanbanFilters.members.includes(t.detectado_por) ||
+             kanbanFilters.members.includes(t.apoyo) ||
+             (t.asignados && t.asignados.some(h => handles.includes(h)));
+    });
+  }
+
+  // 3. Repos (OR)
+  if (kanbanFilters.repos.length > 0) {
+    filtered = filtered.filter(t => {
+      const repo = t.repository || t.repo || 'Sin asignar';
+      return kanbanFilters.repos.includes(repo);
+    });
+  }
+
+  // 4. States (OR)
+  if (kanbanFilters.states.length > 0) {
+    filtered = filtered.filter(t => {
+      let state = (t.estado || 'Pending').toUpperCase();
+      // Normalize common states to the 6 required ones if possible
+      if (state === 'FIXED') state = 'IN REVIEW';
+      if (state === 'CLOSED') state = 'OK';
+      return kanbanFilters.states.includes(state);
+    });
   }
 
   return filtered;

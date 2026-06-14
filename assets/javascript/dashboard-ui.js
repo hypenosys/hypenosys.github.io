@@ -2,6 +2,7 @@
 
 function renderDashboard() {
   renderMemberToggles();
+  renderKanbanFilters();
   updateJulesBadges();
   renderJulesSessions();
   renderStatsSummary();
@@ -576,6 +577,20 @@ function togglePipelineCollapse() {
   chevron.classList.toggle('fa-chevron-up');
 }
 
+function toggleKanbanFilters() {
+    const bar = document.getElementById('kanban-filter-bar');
+    const chevron = document.getElementById('kanban-filters-chevron');
+    const isHidden = bar.classList.toggle('hidden');
+
+    if (isHidden) {
+        chevron.classList.replace('fa-chevron-up', 'fa-chevron-down');
+        localStorage.setItem('kanban_filters_collapsed', 'true');
+    } else {
+        chevron.classList.replace('fa-chevron-down', 'fa-chevron-up');
+        localStorage.setItem('kanban_filters_collapsed', 'false');
+    }
+}
+
 function toggleJulesCollapse() {
   const content = document.getElementById('jules-ops-content');
   const chevron = document.getElementById('jules-ops-chevron');
@@ -638,3 +653,138 @@ window.handleDashboardLogin = function() {
     }
 };
 
+
+function renderKanbanFilters() {
+    const container = document.getElementById('kanban-filter-bar');
+    if (!container) return;
+
+    // Aplicar estado colapsado inicial
+    const isCollapsed = localStorage.getItem('kanban_filters_collapsed') === 'true';
+    const chevron = document.getElementById('kanban-filters-chevron');
+    if (isCollapsed) {
+        container.classList.add('hidden');
+        if (chevron) chevron.classList.replace('fa-chevron-up', 'fa-chevron-down');
+    } else {
+        container.classList.remove('hidden');
+        if (chevron) chevron.classList.replace('fa-chevron-down', 'fa-chevron-up');
+    }
+
+    // Actualizar contador de filtros activos
+    const totalActive = kanbanFilters.tags.length + kanbanFilters.members.length + kanbanFilters.repos.length + kanbanFilters.states.length;
+    const countBadge = document.getElementById('active-filters-count');
+    if (countBadge) {
+        countBadge.textContent = totalActive;
+        countBadge.classList.toggle('hidden', totalActive === 0);
+    }
+
+    // 1. Extraer datos dinámicamente de todas las tareas
+    const allTags = new Set();
+    const allRepos = new Set();
+    currentTasks.forEach(t => {
+        if (t.tags) t.tags.forEach(tag => allTags.add(tag));
+        const repo = t.repository || t.repo || 'Sin asignar';
+        allRepos.add(repo);
+    });
+
+    const sortedTags = Array.from(allTags).sort();
+    const sortedRepos = Array.from(allRepos).sort();
+    const allStates = ['PENDING', 'WORKING', 'IN REVIEW', 'OK', 'CRITICAL', 'TODO'];
+
+    container.innerHTML = '';
+
+    // Función helper para crear botones/pills
+    const createPill = (label, active, onClick, customActiveClass = '') => {
+        const btn = document.createElement('button');
+        btn.textContent = label;
+        let classes = 'filter-pill px-3 py-1 text-xs font-bold rounded-full border transition-all ';
+        if (active) {
+            classes += customActiveClass ? `${customActiveClass} border-transparent` : 'bg-emerald-500 text-slate-950 border-emerald-500';
+        } else {
+            classes += 'text-slate-400 border-slate-800 hover:border-slate-600';
+        }
+        btn.className = classes;
+        btn.onclick = onClick;
+        return btn;
+    };
+
+    // Estructura de la barra
+    const createRow = (title, icon) => {
+        const row = document.createElement('div');
+        row.className = 'flex flex-wrap items-center gap-3';
+        const label = document.createElement('div');
+        label.className = 'text-[10px] font-black text-slate-500 uppercase tracking-widest min-w-[70px] flex items-center gap-2';
+        label.innerHTML = `<i class="${icon} text-slate-600"></i> ${title}`;
+        row.appendChild(label);
+        const content = document.createElement('div');
+        content.className = 'flex flex-wrap gap-2 flex-1';
+        row.appendChild(content);
+        return { row, content };
+    };
+
+    // Fila 1: Tags
+    const tagsRow = createRow('Tags', 'fa-solid fa-tags');
+    sortedTags.forEach(tag => {
+        const active = kanbanFilters.tags.includes(tag);
+        const pill = createPill(tag, active, () => {
+            if (active) kanbanFilters.tags = kanbanFilters.tags.filter(t => t !== tag);
+            else kanbanFilters.tags.push(tag);
+            renderDashboard();
+        });
+        tagsRow.content.appendChild(pill);
+    });
+    container.appendChild(tagsRow.row);
+
+    // Fila 2: Personas
+    const membersRow = createRow('Equipo', 'fa-solid fa-users');
+    MEMBERS.forEach(member => {
+        const active = kanbanFilters.members.includes(member);
+        const pill = createPill(member, active, () => {
+            if (active) kanbanFilters.members = kanbanFilters.members.filter(m => m !== member);
+            else kanbanFilters.members.push(member);
+            renderDashboard();
+        });
+        membersRow.content.appendChild(pill);
+    });
+    container.appendChild(membersRow.row);
+
+    // Fila 3: Repos
+    const reposRow = createRow('Repos', 'fa-solid fa-code-fork');
+    sortedRepos.forEach(repo => {
+        const active = kanbanFilters.repos.includes(repo);
+        const pill = createPill(repo, active, () => {
+            if (active) kanbanFilters.repos = kanbanFilters.repos.filter(r => r !== repo);
+            else kanbanFilters.repos.push(repo);
+            renderDashboard();
+        });
+        reposRow.content.appendChild(pill);
+    });
+    container.appendChild(reposRow.row);
+
+    // Fila 4: Estados y Botón Limpiar
+    const lastRowWrapper = document.createElement('div');
+    lastRowWrapper.className = 'flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pt-2 border-t border-slate-800/50';
+
+    const statesRow = createRow('Estados', 'fa-solid fa-list-check');
+    allStates.forEach(state => {
+        const active = kanbanFilters.states.includes(state);
+        const config = STATE_CONFIG[state];
+        const pill = createPill(state, active, () => {
+            if (active) kanbanFilters.states = kanbanFilters.states.filter(s => s !== state);
+            else kanbanFilters.states.push(state);
+            renderDashboard();
+        }, config.color);
+        statesRow.content.appendChild(pill);
+    });
+    lastRowWrapper.appendChild(statesRow.row);
+
+    const clearBtn = document.createElement('button');
+    clearBtn.className = 'text-[10px] font-black text-slate-500 hover:text-red-400 uppercase tracking-widest transition-all flex items-center gap-2 px-3 py-2 bg-slate-950 rounded-lg border border-slate-800 hover:border-red-900/50';
+    clearBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i> Limpiar todo';
+    clearBtn.onclick = () => {
+        kanbanFilters = { tags: [], members: [], repos: [], states: [] };
+        renderDashboard();
+    };
+    lastRowWrapper.appendChild(clearBtn);
+
+    container.appendChild(lastRowWrapper);
+}
