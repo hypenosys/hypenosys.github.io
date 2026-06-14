@@ -200,23 +200,36 @@
 
         renderCard: (task, isExpanded = false) => {
             const priorityColors = {
-                'CRITICAL': 'bg-red-500',
+                'CRITICAL': 'badge-critical',
                 'HIGH': 'bg-orange-500',
                 'MEDIUM': 'bg-yellow-500',
                 'LOW': 'bg-slate-500'
             };
 
             const statusBadgeColors = {
-                'BACKLOG': 'bg-slate-600',
-                'TODO': 'bg-yellow-600',
-                'WORKING': 'bg-blue-600',
-                'REVIEW': 'bg-purple-600',
-                'DONE': 'bg-green-600',
-                'BLOCKED': 'bg-red-600'
+                'BACKLOG': 'badge-pending',
+                'TODO': 'badge-todo',
+                'WORKING': 'badge-working',
+                'REVIEW': 'badge-review',
+                'DONE': 'badge-ok',
+                'BLOCKED': 'badge-critical'
+            };
+
+            const statusBorderClasses = {
+                'BACKLOG': 'border-status-pending',
+                'TODO': 'border-status-pending',
+                'WORKING': 'border-status-working',
+                'KO': 'border-status-working',
+                'REVIEW': 'border-status-review',
+                'Fixed': 'border-status-review',
+                'DONE': 'border-status-ok',
+                'OK': 'border-status-ok',
+                'BLOCKED': 'border-status-blocked'
             };
 
             const priorityColor = priorityColors[task.prioridad] || 'bg-slate-500';
             const statusColor = statusBadgeColors[task.estado] || 'bg-slate-500';
+            const borderClass = statusBorderClasses[task.estado] || 'border-slate-800';
 
             const alerts = window.taskEngine.computeAlerts(task);
             const alertHtml = alerts.map(a => `
@@ -267,11 +280,17 @@
                 };
             }
 
+            const displayStatus = {
+                'BACKLOG': 'PENDING',
+                'REVIEW': 'IN REVIEW',
+                'DONE': 'OK'
+            }[task.estado] || task.estado;
+
             if (!isExpanded) {
                 // COLLAPSED CARD
                 return `
-                    <div class="session-card kanban-card mb-3 p-3 flex flex-col justify-between cursor-pointer border border-slate-800 hover:border-slate-700 transition-all"
-                         style="height: 80px; overflow: hidden;" data-id="${task.id}" data-action="toggle" role="button" tabindex="0">
+                    <div class="session-card kanban-card mb-3 flex flex-col justify-between cursor-pointer border ${borderClass} hover:border-slate-700 transition-all"
+                         style="height: 100px; overflow: hidden;" data-id="${task.id}" data-action="toggle" role="button" tabindex="0">
 
                         <!-- Line 1: ID + Acciones + Status + Expand -->
                         <div class="flex justify-between items-center text-[10px]">
@@ -285,15 +304,18 @@
                                         <i class="fas fa-robot"></i>
                                     </button>
                                 </div>
-                                <span class="badge ${statusColor} text-white text-[8px] px-1.5 py-0.5 rounded-full uppercase font-black tracking-tighter">${task.estado}</span>
+                                <span class="badge ${statusColor} text-[8px] px-1.5 py-0.5 rounded-full uppercase font-black tracking-tighter">${displayStatus}</span>
                             </div>
                             <i class="fas fa-chevron-down text-slate-600 text-[10px]"></i>
                         </div>
 
                         <!-- Line 2: Título (truncado) -->
-                        <h4 class="text-sm font-bold text-white truncate py-1 prose-invert">
+                        <h4 class="truncate py-1 prose-invert">
                             ${parsedTitle}
                         </h4>
+
+                        <!-- Optional: Descripcion truncada en collapsed si existe -->
+                        ${description ? `<div class="task-description truncate text-xs">${description}</div>` : ''}
 
                         <!-- Line 3: Repo + Branch -->
                         <div class="flex justify-between items-center text-[10px] text-slate-500">
@@ -309,7 +331,7 @@
             } else {
                 // EXPANDED CARD
                 return `
-                    <div class="session-card kanban-card mb-3 p-4 shadow-lg border border-[#bd93f9]/30" data-id="${task.id}">
+                    <div class="session-card kanban-card mb-3 border ${borderClass}" data-id="${task.id}">
                         <!-- Header -->
                         <div class="flex justify-between items-start mb-3 cursor-pointer" data-action="toggle" data-id="${task.id}" role="button" tabindex="0">
                             <div class="flex items-center gap-2">
@@ -318,17 +340,17 @@
                                     <button data-action="edit" data-id="${task.id}" class="text-slate-500 hover:text-white" title="Editar"><i class="fas fa-pencil-alt"></i></button>
                                     <button data-action="claude" data-id="${task.id}" class="text-slate-500 hover:text-[#bd93f9]" title="Robot"><i class="fas fa-robot"></i></button>
                                 </div>
-                                <span class="badge ${statusColor} text-white text-[8px] px-1.5 py-0.5 rounded-full uppercase font-black tracking-tighter">${task.estado}</span>
-                                <span class="badge ${priorityColor} text-white text-[8px] px-1.5 py-0.5 rounded uppercase font-bold">${task.prioridad}</span>
+                                <span class="badge ${statusColor} text-[8px] px-1.5 py-0.5 rounded-full uppercase font-black tracking-tighter">${displayStatus}</span>
+                                <span class="badge ${priorityColor} text-[8px] px-1.5 py-0.5 rounded uppercase font-bold">${task.prioridad}</span>
                             </div>
                             <i class="fas fa-chevron-up text-slate-600 text-[10px]"></i>
                         </div>
 
                         <!-- Título completo -->
-                        <h4 class="text-base font-bold text-white mb-2 prose prose-invert">${parsedTitle}</h4>
+                        <h4 class="mb-2 prose prose-invert">${parsedTitle}</h4>
 
                         <!-- Descripción -->
-                        ${description ? `<div class="text-xs text-slate-400 mb-4 prose prose-invert max-w-full">${parsedDesc}</div>` : ''}
+                        ${description ? `<div class="task-description prose prose-invert max-w-full">${parsedDesc}</div>` : ''}
 
                         <!-- Fila: Metadata -->
                         <div class="flex flex-wrap gap-x-4 gap-y-2 mb-3 text-[10px] text-slate-500 border-t border-slate-800 pt-3 uppercase font-bold">
