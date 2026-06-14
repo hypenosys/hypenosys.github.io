@@ -77,18 +77,11 @@ $dashboard-danger: #ff5555;  // Dracula Red
     margin-bottom: 0.75rem;
     box-shadow: 0 2px 8px rgba(0,0,0,0.25);
     transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
-    height: auto; // Ensure it can grow
-    min-height: 100px;
-
-    // Status Borders (Specificity without !important)
-    &.border-status-pending { border-color: #64748b; }
-    &.border-status-working { border-color: #fbbf24; }
-    &.border-status-review  { border-color: #818cf8; }
-    &.border-status-ok      { border-color: #34d399; }
-    &.border-status-blocked { border-color: #f87171; }
+    height: auto;
+    min-height: 80px;
 
     &:hover {
-        border-color: $purple !important; // Use !important only here to ensure hover always wins
+        border-color: $purple !important;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     }
 
@@ -101,16 +94,15 @@ $dashboard-danger: #ff5555;  // Dracula Red
 
     .task-description {
         font-size: 13px;
-        margin-bottom: 1rem;
-        color: rgba($white, 0.7); // Apply opacity via color instead of opacity: 0.7 to avoid stacking
+        margin-bottom: 0.5rem;
+        color: rgba($white, 0.7);
 
         p, span, div, li, ul, ol, blockquote, pre, code {
             font-size: 13px;
             color: inherit;
-            line-height: 1.5;
+            line-height: 1.4;
         }
 
-        // Ensure nested elements also follow the rule
         & > * {
             font-size: 13px;
             color: inherit;
@@ -242,19 +234,31 @@ $dashboard-danger: #ff5555;  // Dracula Red
 
 // Badge Semantic Colors
 .badge {
-    padding: 2px 8px;
+    padding: 4px 10px;
     border-radius: 9999px;
     text-transform: uppercase;
-    font-weight: 900;
-    letter-spacing: -0.02em;
-    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    font-size: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 
-    &.badge-pending { background-color: #FFF3CD; color: #856404; }
-    &.badge-working { background-color: #CCE5FF; color: #004085; }
-    &.badge-review  { background-color: #D1ECF1; color: #0C5460; }
-    &.badge-ok      { background-color: #D4EDDA; color: #155724; }
-    &.badge-critical{ background-color: #F8D7DA; color: #721C24; }
-    &.badge-todo    { background-color: #E2E3E5; color: #383d41; }
+    &.badge-pending  { background-color: #FFF3CD; color: #856404; }
+    &.badge-working  { background-color: #CCE5FF; color: #004085; }
+    &.badge-review   { background-color: #D1ECF1; color: #0C5460; }
+    &.badge-ok       { background-color: #D4EDDA; color: #155724; }
+    &.badge-critical { background-color: #F8D7DA; color: #721C24; }
+    &.badge-todo     { background-color: #E2E3E5; color: #383d41; }
+}
+
+// Dynamic Status Borders
+.kanban-card {
+    &.border-status-pending { border-color: #64748b; }
+    &.border-status-working { border-color: #fbbf24; }
+    &.border-status-review  { border-color: #818cf8; }
+    &.border-status-ok      { border-color: #34d399; }
+    &.border-status-blocked { border-color: #f87171; }
 }
 
 

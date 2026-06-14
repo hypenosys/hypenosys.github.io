@@ -207,29 +207,44 @@
             };
 
             const statusBadgeColors = {
+                'Pending': 'badge-pending',
                 'BACKLOG': 'badge-pending',
                 'TODO': 'badge-todo',
+                'ToDo': 'badge-todo',
+                'Working': 'badge-working',
                 'WORKING': 'badge-working',
+                'KO': 'badge-critical',
+                'In Review': 'badge-review',
                 'REVIEW': 'badge-review',
+                'Fixed': 'badge-review',
+                'OK': 'badge-ok',
                 'DONE': 'badge-ok',
+                'Closed': 'badge-ok',
+                'Critical': 'badge-critical',
                 'BLOCKED': 'badge-critical'
             };
 
+            const priorityColor = priorityColors[task.prioridad] || 'bg-slate-500';
+            const statusColor = statusBadgeColors[task.estado] || statusBadgeColors[task.status] || 'badge-todo';
+
             const statusBorderClasses = {
+                'Pending': 'border-status-pending',
                 'BACKLOG': 'border-status-pending',
-                'TODO': 'border-status-pending',
+                'Working': 'border-status-working',
                 'WORKING': 'border-status-working',
                 'KO': 'border-status-working',
+                'In Review': 'border-status-review',
                 'REVIEW': 'border-status-review',
                 'Fixed': 'border-status-review',
-                'DONE': 'border-status-ok',
                 'OK': 'border-status-ok',
-                'BLOCKED': 'border-status-blocked'
+                'DONE': 'border-status-ok',
+                'Closed': 'border-status-ok',
+                'Critical': 'border-status-blocked',
+                'BLOCKED': 'border-status-blocked',
+                'ToDo': 'border-status-pending',
+                'TODO': 'border-status-pending'
             };
-
-            const priorityColor = priorityColors[task.prioridad] || 'bg-slate-500';
-            const statusColor = statusBadgeColors[task.estado] || 'bg-slate-500';
-            const borderClass = statusBorderClasses[task.estado] || 'border-slate-800';
+            const borderClass = statusBorderClasses[task.estado] || statusBorderClasses[task.status] || 'border-slate-800';
 
             const alerts = window.taskEngine.computeAlerts(task);
             const alertHtml = alerts.map(a => `
@@ -282,18 +297,29 @@
 
             const displayStatus = {
                 'BACKLOG': 'PENDING',
+                'Pending': 'PENDING',
+                'Working': 'WORKING',
+                'WORKING': 'WORKING',
                 'REVIEW': 'IN REVIEW',
-                'DONE': 'OK'
-            }[task.estado] || task.estado;
+                'In Review': 'IN REVIEW',
+                'Fixed': 'IN REVIEW',
+                'DONE': 'OK',
+                'OK': 'OK',
+                'Closed': 'OK',
+                'ToDo': 'TODO',
+                'TODO': 'TODO',
+                'Critical': 'CRITICAL',
+                'BLOCKED': 'CRITICAL'
+            }[task.estado || task.status] || (task.estado || task.status || 'TODO').toUpperCase();
 
             if (!isExpanded) {
                 // COLLAPSED CARD
                 return `
                     <div class="session-card kanban-card mb-3 flex flex-col justify-between cursor-pointer border ${borderClass}"
-                         style="height: 100px; overflow: hidden;" data-id="${task.id}" data-action="toggle" role="button" tabindex="0">
+                         data-id="${task.id}" data-action="toggle" role="button" tabindex="0">
 
                         <!-- Line 1: ID + Acciones + Status + Expand -->
-                        <div class="flex justify-between items-center text-[10px]">
+                        <div class="flex justify-between items-center text-[10px] mb-2">
                             <div class="flex items-center gap-2">
                                 <span class="font-mono text-slate-500 font-bold">#${task.id}</span>
                                 <div class="flex gap-1.5">
@@ -309,16 +335,16 @@
                             <i class="fas fa-chevron-down text-slate-600 text-[10px]"></i>
                         </div>
 
-                        <!-- Line 2: Título (truncado) -->
-                        <h4 class="truncate py-1">
+                        <!-- Line 2: Título -->
+                        <h4 class="py-1">
                             ${parsedTitle}
                         </h4>
 
-                        <!-- Optional: Descripcion truncada en collapsed si existe -->
-                        ${description ? `<div class="task-description truncate">${description}</div>` : ''}
+                        <!-- Description (Always visible as requested) -->
+                        ${description ? `<div class="task-description">${parsedDesc}</div>` : ''}
 
                         <!-- Line 3: Repo + Branch -->
-                        <div class="flex justify-between items-center text-[10px] text-slate-500">
+                        <div class="flex justify-between items-center text-[10px] text-slate-500 mt-2 pt-2 border-t border-slate-800/50">
                             <span class="truncate max-w-[60%] text-slate-400"><i class="fas fa-folder opacity-50 mr-1"></i>${displayRepo}</span>
                             ${branchName ? `
                                 <span class="text-[#bd93f9] font-mono flex items-center gap-1">
