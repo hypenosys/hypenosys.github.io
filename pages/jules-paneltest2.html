@@ -3336,7 +3336,7 @@ window.JulesPanelState = {
         renderChatV2Messages();
 
         try {
-            const config = window.aiConfig?.getActiveConfig() || JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
+            const config = getActiveConfig();
             const prompt = `Jules ha completado una operación (Estado: ${output.status}).\n\nDETALLES:\n- Sesión: #${output.session_id}\n- Tarea: ${output.title}\n- Repo: ${output.repo}\n\nAnaliza el resultado y prepara un resumen accionable.`;
 
             const messages = [
@@ -3412,6 +3412,15 @@ window.JulesPanelState = {
             }
         }
         return systemPrompt;
+    }
+
+    function getActiveConfig() {
+        const activeProfileId = localStorage.getItem('activeProfile');
+        const profiles = JSON.parse(localStorage.getItem('ai_profiles') || '{}');
+        if (activeProfileId && profiles[activeProfileId]) {
+            return profiles[activeProfileId];
+        }
+        return JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
     }
 
     async function sendMessageAnthropic(sessionMessages, config) {
@@ -3553,8 +3562,13 @@ window.JulesPanelState = {
             }
 
             try {
-                const config = window.aiConfig?.getActiveConfig() || JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
-                if (config.provider === 'anthropic' || (config.base_url && config.base_url.includes('anthropic.com'))) {
+                const config = getActiveConfig();
+                const provider = config.provider || 'none';
+                if (provider === 'none') {
+                    showToast('Configura un proveedor de IA en Credenciales API', 'red');
+                    return;
+                }
+                if (provider === 'anthropic') {
                     await sendMessageAnthropic(chatV2Messages, config);
                 } else {
                     const systemPrompt = await buildSystemPrompt(content, "Eres Claude, un asistente experto integrado en el panel de control de Hypenosys.");
