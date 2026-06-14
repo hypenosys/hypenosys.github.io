@@ -88,6 +88,7 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-success">Fixed</h5>
             <ul>
+              <li><strong>Comunicación con Claude (Jules Panel V2):</strong> Corregido el error "Error en comunicación con Claude" mediante la implementación de streaming (SSE) y el uso de headers de acceso directo (<code>anthropic-dangerous-direct-browser-access</code>), eliminando los bloqueos de CORS en producción y unificando la lógica con la versión funcional de Claude Chat.</li>
               <li><strong>Error 414 "URI Too Long" en Enlace a Jules:</strong> Corregido el fallo al enviar tareas con descripciones extensas mediante la migración del traspaso de datos desde parámetros de URL a un sistema de handoff basado en <code>localStorage</code> (clave <code>hy_jules_handoff</code>).</li>
               <li><strong>Duplicación de "Neural Session Activa":</strong> Corregido el bug donde se renderizaban dos tarjetas de sesión activa en el chat. Se centralizó el renderizado en <code>loadSession</code> y se eliminaron las llamadas redundantes en <code>init</code>.</li>
               <li><strong>Limpieza Global de Sesión (Desvincular):</strong> Actualizada la lógica de "Desvincular sesión" para limpiar globalmente todas las claves de <code>localStorage</code> que comienzan con <code>hy_neural_</code>, asegurando que no quede rastro de sesiones previas o de otras pestañas.</li>

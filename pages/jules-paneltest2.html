@@ -3336,7 +3336,7 @@ window.JulesPanelState = {
         renderChatV2Messages();
 
         try {
-            const config = window.aiConfig?.getActiveConfig() || JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
+            const config = getActiveConfig();
             const prompt = `Jules ha completado una operación (Estado: ${output.status}).\n\nDETALLES:\n- Sesión: #${output.session_id}\n- Tarea: ${output.title}\n- Repo: ${output.repo}\n\nAnaliza el resultado y prepara un resumen accionable.`;
 
             const messages = [
@@ -3379,6 +3379,127 @@ window.JulesPanelState = {
         }, 10000);
     }
 
+    async function buildSystemPrompt(userMessage, basePrompt) {
+        let systemPrompt = basePrompt || "Eres un asistente técnico del estudio de videojuegos Hypenosys. Ayudas al equipo a planificar e implementar tareas de desarrollo. Responde siempre en español, de forma directa y técnica.";
+
+        const t = window.JulesPanelState.activePayload?.source_task;
+        if (t) {
+            const blockingInfo = (t.blocks && t.blocks.length > 0) ? `Bloquea a: ${t.blocks.join(', ')}` : 'No bloquea a nadie';
+            const blockedByInfo = (t.blocked_by && t.blocked_by.length > 0) ? `Bloqueada por: ${t.blocked_by.join(', ')}` : 'No tiene bloqueos';
+
+            systemPrompt += `\n\n## Tarea activa en contexto\n` +
+                `ID: #${t.id}\n` +
+                `Título: ${t.titulo || t.title}\n` +
+                `Descripción: ${t.descripcion || t.description}\n` +
+                `Criterios de Aceptación: ${t.acceptance_criteria || 'N/A'}\n` +
+                `Subtareas: ${JSON.stringify(t.subtasks || [])}\n` +
+                `Estado: ${t.estado || t.status}\n` +
+                `Prioridad: ${t.prioridad || t.priority}\n` +
+                `Rama: ${t.rama || 'N/A'}\n` +
+                `Milestone: ${t.milestone || 'N/A'}\n` +
+                `Repositorio: ${t.repository || t.repo || 'N/A'}\n` +
+                `Dependencias: ${blockingInfo} | ${blockedByInfo}\n`;
+
+            const linkedSid = getLinkedJulesSessionId();
+            if (linkedSid) {
+                try {
+                    const activities = await window.julesApi.getActivities(linkedSid, 10);
+                    const logs = (activities.activities || []).map(a => a.description || a.progressUpdated?.title).filter(Boolean).join('\n');
+                    if (logs) {
+                        systemPrompt += `\n### Historial reciente de Jules (Sesión #${linkedSid}):\n${logs}\n`;
+                    }
+                } catch (e) { console.warn("Could not fetch Jules activity for context", e); }
+            }
+        }
+        return systemPrompt;
+    }
+
+    function getActiveConfig() {
+        const activeProfileId = localStorage.getItem('activeProfile');
+        const profiles = JSON.parse(localStorage.getItem('ai_profiles') || '{}');
+        if (activeProfileId && profiles[activeProfileId]) {
+            return profiles[activeProfileId];
+        }
+        return JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
+    }
+
+    async function sendMessageAnthropic(sessionMessages, config) {
+        const apiKey = config.api_key || config.apiKey;
+        if (!apiKey) throw new Error('Anthropic API Key no configurada.');
+
+        const lastUserMessage = sessionMessages[sessionMessages.length - 1].content;
+        const dynamicSystemPrompt = await buildSystemPrompt(lastUserMessage, "Eres Claude, un asistente experto integrado en el panel de control de Hypenosys.");
+
+        const requestBody = {
+            model: config.model || 'claude-3-5-sonnet-20241022',
+            max_tokens: 4096,
+            messages: sessionMessages.map(m => ({ role: m.role, content: m.content })),
+            system: dynamicSystemPrompt,
+            stream: true
+        };
+
+        const response = await fetch('https://api.anthropic.com/v1/messages', {
+            method: 'POST',
+            headers: {
+                'x-api-key': apiKey,
+                'anthropic-version': '2023-06-01',
+                'content-type': 'application/json',
+                'anthropic-dangerous-direct-browser-access': 'true'
+            },
+            body: JSON.stringify(requestBody)
+        });
+
+        if (!response.ok) {
+            const errData = await response.json().catch(() => ({}));
+            throw new Error(errData.error?.message || `API Error: ${response.status}`);
+        }
+
+        await consumeStream(response);
+    }
+
+    async function consumeStream(response) {
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let aiContent = '';
+        let buffer = '';
+
+        const container = $('v2-chat-messages');
+        const msgDiv = document.createElement('div');
+        msgDiv.className = 'message-claude';
+        msgDiv.innerHTML = `
+            <div style="font-size: 10px; font-weight: 800; opacity: 0.5; margin-bottom: 8px; letter-spacing: 0.05em;">CLAUDE NEURAL</div>
+            <div class="prose-invert" id="streaming-content" style="font-size: 13.5px; line-height: 1.6;"></div>
+        `;
+        container.appendChild(msgDiv);
+        const streamEl = msgDiv.querySelector('#streaming-content');
+
+        try {
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                const chunk = decoder.decode(value, { stream: true });
+                buffer += chunk;
+                const lines = buffer.split('\n');
+                buffer = lines.pop();
+                for (const line of lines) {
+                    const trimmedLine = line.trim();
+                    if (!trimmedLine || !trimmedLine.startsWith('data: ')) continue;
+                    try {
+                        const data = JSON.parse(trimmedLine.substring(6));
+                        if (data.type === 'content_block_delta' && data.delta.type === 'text_delta') {
+                            aiContent += data.delta.text;
+                            streamEl.innerHTML = marked.parse(aiContent);
+                            container.scrollTop = container.scrollHeight;
+                        }
+                    } catch (e) {}
+                }
+            }
+        } catch (e) { console.error('Stream error:', e); throw e; }
+
+        chatV2Messages.push({ role: 'assistant', content: aiContent });
+        renderChatV2Messages();
+    }
+
     async function sendChatV2Msg() {
         const input = $('v2-chat-input');
         const content = input.value.trim();
@@ -3395,7 +3516,6 @@ window.JulesPanelState = {
                 return;
             }
             const targetId = sessionId.startsWith('sessions/') ? sessionId : 'sessions/' + sessionId;
-            // Fix 3: Route Neural Chat messages to Jules session directly
             const userMsg = { role: 'user', content };
             chatV2Messages.push(userMsg);
             renderChatV2Messages();
@@ -3413,14 +3533,11 @@ window.JulesPanelState = {
                 if (ok) {
                     showToast("Orden enviada a Jules", "green");
                     addTel("USER", content, "info");
-
-                    // Poll for activity response
                     let attempts = 0;
-                    const maxAttempts = 15; // 30 seconds (2s interval)
+                    const maxAttempts = 15;
                     const pollInterval = setInterval(async () => {
                         attempts++;
                         await refreshActivities(getIdSafe(sessionId));
-
                         if (attempts >= maxAttempts) {
                             clearInterval(pollInterval);
                             if (thinking) thinking.classList.add('hidden');
@@ -3432,7 +3549,6 @@ window.JulesPanelState = {
                 if (thinking) thinking.classList.add('hidden');
             }
         } else {
-            // Add user message
             const userMsg = { role: 'user', content };
             chatV2Messages.push(userMsg);
             renderChatV2Messages();
@@ -3446,26 +3562,24 @@ window.JulesPanelState = {
             }
 
             try {
-                const config = window.aiConfig?.getActiveConfig() || JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
-                const systemPrompt = "Eres Claude, un asistente experto integrado en el panel de control de Hypenosys.";
-
-                // Build context from active task if exists
-                let fullPrompt = content;
-                if (window.JulesPanelState.activePayload?.source_task) {
-                    const t = window.JulesPanelState.activePayload.source_task;
-                    fullPrompt = `[CONTEXTO TAREA #${t.id}: ${t.titulo}]\n${content}`;
+                const config = getActiveConfig();
+                const provider = config.provider || 'none';
+                if (provider === 'none') {
+                    showToast('Configura un proveedor de IA en Credenciales API', 'red');
+                    return;
                 }
-
-                const messages = [
-                    { role: 'system', content: systemPrompt },
-                    ...chatV2Messages.map(m => ({ role: m.role, content: m.content }))
-                ];
-
-                // For now, use a simplified non-streaming call for the integrated tab
-                const response = await callCustomProvider(config, messages);
-
-                chatV2Messages.push({ role: 'assistant', content: response });
-                renderChatV2Messages();
+                if (provider === 'anthropic') {
+                    await sendMessageAnthropic(chatV2Messages, config);
+                } else {
+                    const systemPrompt = await buildSystemPrompt(content, "Eres Claude, un asistente experto integrado en el panel de control de Hypenosys.");
+                    const messages = [
+                        { role: 'system', content: systemPrompt },
+                        ...chatV2Messages.map(m => ({ role: m.role, content: m.content }))
+                    ];
+                    const response = await callCustomProvider(config, messages);
+                    chatV2Messages.push({ role: 'assistant', content: response });
+                    renderChatV2Messages();
+                }
             } catch (e) {
                 console.error('[ChatV2] Error:', e);
                 showToast("Error en comunicación con Claude", "red");
