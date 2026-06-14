@@ -40,7 +40,7 @@ function renderMemberToggles() {
   if (!container) return;
   container.innerHTML = '';
 
-  const baseClasses = "font-bold rounded-md transition-all flex-shrink-0";
+  const baseClasses = "font-bold rounded-md transition-all";
   const mobileClasses = "px-2 py-0.5 text-xs";
   const desktopClasses = "lg:px-3 lg:py-1 lg:text-sm";
 
@@ -61,8 +61,8 @@ function renderMemberToggles() {
     const btn = document.createElement('button');
     btn.textContent = member;
     btn.className = activeFilter === member
-      ? `${baseClasses} ${mobileClasses} ${desktopClasses} bg-emerald-500 text-slate-950`
-      : `${baseClasses} ${mobileClasses} ${desktopClasses} text-slate-400 hover:text-white`;
+      ? `${baseClasses} ${mobileClasses} ${desktopClasses} bg-emerald-500 text-slate-950 shadow-[0_0_10px_rgba(16,185,129,0.3)]`
+      : `${baseClasses} ${mobileClasses} ${desktopClasses} text-slate-400 hover:text-white bg-slate-900 border border-slate-800 hover:border-slate-700`;
 
     btn.addEventListener('click', () => {
       activeFilter = (activeFilter === member) ? null : member;
@@ -578,16 +578,32 @@ function togglePipelineCollapse() {
 }
 
 function toggleKanbanFilters() {
-    const bar = document.getElementById('kanban-filter-bar');
-    const chevron = document.getElementById('kanban-filters-chevron');
-    const isHidden = bar.classList.toggle('hidden');
+    const container = document.getElementById('kanban-filter-container');
+    const arrow = document.getElementById('kanban-filters-arrow');
+    const toggleBtn = document.getElementById('kanban-filters-toggle');
 
-    if (isHidden) {
-        chevron.classList.replace('fa-chevron-up', 'fa-chevron-down');
-        localStorage.setItem('kanban_filters_collapsed', 'true');
+    // Always use max-height for animation
+    const isCollapsed = container.style.maxHeight === '0px' || container.style.maxHeight === '' || container.classList.contains('max-h-0');
+
+    if (isCollapsed) {
+        container.classList.remove('max-h-0', 'opacity-0');
+        container.style.maxHeight = '1000px'; // Set to a large enough value
+        container.style.opacity = '1';
+        container.style.marginBottom = '1.5rem';
+        if (arrow) arrow.textContent = '▲';
+        if (toggleBtn) toggleBtn.classList.add('bg-slate-700');
     } else {
-        chevron.classList.replace('fa-chevron-down', 'fa-chevron-up');
-        localStorage.setItem('kanban_filters_collapsed', 'false');
+        container.style.maxHeight = '0px';
+        container.style.opacity = '0';
+        container.style.marginBottom = '0px';
+        if (arrow) arrow.textContent = '▼';
+        if (toggleBtn) toggleBtn.classList.remove('bg-slate-700');
+        // Add class back after transition to ensure it stays hidden
+        setTimeout(() => {
+            if (container.style.maxHeight === '0px') {
+                container.classList.add('max-h-0', 'opacity-0');
+            }
+        }, 300);
     }
 }
 
@@ -658,22 +674,19 @@ function renderKanbanFilters() {
     const container = document.getElementById('kanban-filter-bar');
     if (!container) return;
 
-    // Aplicar estado colapsado inicial
-    const isCollapsed = localStorage.getItem('kanban_filters_collapsed') === 'true';
-    const chevron = document.getElementById('kanban-filters-chevron');
-    if (isCollapsed) {
-        container.classList.add('hidden');
-        if (chevron) chevron.classList.replace('fa-chevron-up', 'fa-chevron-down');
-    } else {
-        container.classList.remove('hidden');
-        if (chevron) chevron.classList.replace('fa-chevron-down', 'fa-chevron-up');
+    // Force collapsed state on load (handled by CSS max-h-0 in dashboard.html)
+    // but ensure the arrow is correct
+    const arrow = document.getElementById('kanban-filters-arrow');
+    const filterContainer = document.getElementById('kanban-filter-container');
+    if (filterContainer && (filterContainer.style.maxHeight === '0px' || filterContainer.classList.contains('max-h-0'))) {
+        if (arrow) arrow.textContent = '▼';
     }
 
     // Actualizar contador de filtros activos
     const totalActive = kanbanFilters.tags.length + kanbanFilters.members.length + kanbanFilters.repos.length + kanbanFilters.states.length;
     const countBadge = document.getElementById('active-filters-count');
     if (countBadge) {
-        countBadge.textContent = totalActive;
+        countBadge.textContent = totalActive === 0 ? '0' : `· ${totalActive}`;
         countBadge.classList.toggle('hidden', totalActive === 0);
     }
 

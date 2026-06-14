@@ -64,6 +64,9 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-success">Changed</h5>
             <ul>
+              <li><strong>Reubicación del Selector de Miembros (Dashboard):</strong> Movido el bloque de filtros por persona desde el navbar a una fila independiente justo debajo del header principal. El nuevo layout utiliza <code>flex-wrap</code> para garantizar visibilidad total sin desbordamientos y mejora la ergonomía en dispositivos táctiles. Los elementos de navegación del navbar ahora se alinean correctamente a la derecha.</li>
+              <li><strong>Sistema de Filtros Colapsable:</strong> La barra de filtros de tareas (Tags, Equipo, Repos, Estados) ahora se carga contraída por defecto para maximizar el área de trabajo del Kanban. Se ha añadido un nuevo botón interactivo "Filtros ▼" junto a "Nueva Tarea" que gestiona la expansión mediante una animación suave de 300ms.</li>
+              <li><strong>Notificador de Filtros Activos:</strong> Implementado un contador dinámico con estilo de punto verde (badge esmeralda) en el botón de filtros que indica el número de parámetros de búsqueda activos cuando la barra está colapsada.</li>
               <li><strong>Mejora Visual de Kanban Cards:</strong> Implementado nuevo diseño con <code>border-radius: 10px</code>, <code>box-shadow</code> optimizado y padding de 16px-18px. Añadidos badges semánticos con colores específicos para cada estado y bordes de tarjeta sincronizados cromáticamente con el estado de la tarea. Tipografía ajustada a 15px para títulos y 13px para descripciones.</li>
             </ul>
             <h5 class="text-success">Added</h5>
