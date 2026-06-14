@@ -82,15 +82,15 @@ body{
 
 /* ─── LAYOUT ─── */
 .app{display:flex;flex-direction:column;height:100vh;overflow:hidden}
-.app.locked { filter: blur(8px) saturate(50%); pointer-events: none; user-select: none; }
+.app.locked { filter: none; pointer-events: auto; user-select: auto; }
 
 /* ─── AUTH GATE ─── */
 .auth-overlay {
   position: fixed; inset: 0; z-index: 5000;
   display: flex; align-items: center; justify-content: center;
   background: rgba(7, 7, 10, 0.6);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(4px) saturate(180%);
+  -webkit-backdrop-filter: blur(4px) saturate(180%);
   opacity: 0; pointer-events: none; transition: opacity 0.5s ease;
 }
 .auth-overlay.show { opacity: 1; pointer-events: auto; }
@@ -3093,7 +3093,8 @@ window.JulesPanelState = {
         document.querySelectorAll('#view-hub .dr-tab').forEach(t => t.classList.remove('active'));
         if(el) el.classList.add('active');
         document.querySelectorAll('.hub-panel').forEach(p => p.style.display = 'none');
-        const panel = $(`panel-${ { 'pull-requests': 'pr', 'issues': 'issues', 'branches': 'branches', 'actions': 'actions', 'notifications': 'notifs' }[tabId]}`);
+        const tabMap = { 'pull-requests': 'pr', 'issues': 'issues', 'branches': 'branches', 'actions': 'actions', 'notifications': 'notifs' };
+        const panel = $(`panel-${tabMap[tabId]}`);
         if(panel) panel.style.display = 'block';
         await loadHubContent(tabId);
     }
@@ -3101,7 +3102,8 @@ window.JulesPanelState = {
     async function loadHubContent(tabId, force = false) {
         const repoVal = window.JulesPanelState.activeRepo; if (!repoVal) return;
         const parsed = window.parseSourceName(repoVal); if (!parsed) return;
-        const panel = $(`panel-${ { 'pull-requests': 'pr', 'issues': 'issues', 'branches': 'branches', 'actions': 'actions', 'notifications': 'notifs' }[tabId]}`);
+        const tabMap = { 'pull-requests': 'pr', 'issues': 'issues', 'branches': 'branches', 'actions': 'actions', 'notifications': 'notifs' };
+        const panel = $(`panel-${tabMap[tabId]}`);
         const now = Date.now(), lastFetch = parseInt(panel.dataset.fetchedAt || '0', 10);
         if (!force && panel.dataset.loaded === 'true' && (now - lastFetch < 60000)) return;
         panel.innerHTML = '<div style="padding:40px; text-align:center; color:var(--text3);">Cargando...</div>';
@@ -3354,13 +3356,16 @@ window.JulesPanelState = {
         if (!content) return;
 
         const isNeuralActive = localStorage.getItem('hy_neural_active') === 'true';
-        const sessionId = getLinkedJulesSessionId();
+        const claudeId = localStorage.getItem('hy_active_claude_session_id');
+        let sessionId = localStorage.getItem('hy_neural_session_id_' + claudeId);
+        if (!sessionId) sessionId = getLinkedJulesSessionId();
 
         if (currentSendMode === 'jules' || (isNeuralActive && sessionId)) {
             if (!sessionId) {
                 showToast("No hay sesión Jules activa vinculada", "red");
                 return;
             }
+            const targetId = sessionId.startsWith('sessions/') ? sessionId : 'sessions/' + sessionId;
             // Fix 3: Route Neural Chat messages to Jules session directly
             const userMsg = { role: 'user', content };
             chatV2Messages.push(userMsg);
@@ -3375,7 +3380,7 @@ window.JulesPanelState = {
             }
 
             try {
-                const ok = await window.julesApi.sendMessage("sessions/" + getIdSafe(sessionId), content);
+                const ok = await window.julesApi.sendMessage(targetId, content);
                 if (ok) {
                     showToast("Orden enviada a Jules", "green");
                     addTel("USER", content, "info");

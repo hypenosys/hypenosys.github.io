@@ -14,6 +14,11 @@ permalink: /jules-panel/
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ '/assets/main.css' | relative_url }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="{{ '/assets/javascript/bootstrap/jquery.min.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/bootstrap/bootstrap.bundle.min.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/ui-components.js' | relative_url }}"></script>
 <style>
 /* ─── VARIABLES ─── */
 :root {
@@ -78,15 +83,15 @@ body{
 
 /* ─── LAYOUT ─── */
 .app{display:flex;flex-direction:column;height:100vh;overflow:hidden}
-.app.locked { filter: blur(8px) saturate(50%); pointer-events: none; user-select: none; }
+.app.locked { filter: none; pointer-events: auto; user-select: auto; }
 
 /* ─── AUTH GATE ─── */
 .auth-overlay {
   position: fixed; inset: 0; z-index: 5000;
   display: flex; align-items: center; justify-content: center;
   background: rgba(7, 7, 10, 0.6);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(4px) saturate(180%);
+  -webkit-backdrop-filter: blur(4px) saturate(180%);
   opacity: 0; pointer-events: none; transition: opacity 0.5s ease;
 }
 .auth-overlay.show { opacity: 1; pointer-events: auto; }
@@ -767,6 +772,54 @@ body{
 }
 .sidebar-backdrop.open{display:block}
 
+/* Dual-Send Toggle Switch */
+.dual-send-switch {
+    position: relative;
+    display: inline-flex;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2px;
+    user-select: none;
+    align-self: flex-start;
+}
+.dual-send-option {
+    padding: 4px 10px;
+    border-radius: 9px;
+    font-size: 9px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.dual-send-option.active[data-mode="claude"] {
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 0 10px rgba(124, 58, 237, 0.4);
+}
+.dual-send-option.active[data-mode="jules"] {
+    background: var(--green);
+    color: #000;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.6);
+    animation: neural-pulse-green 2s infinite;
+}
+@keyframes neural-pulse-green {
+    0% { box-shadow: 0 0 5px rgba(16, 185, 129, 0.4); }
+    50% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.8); }
+    100% { box-shadow: 0 0 5px rgba(16, 185, 129, 0.4); }
+}
+.dual-send-option i { font-size: 10px; }
+
+#chat-input-wrapper.mode-jules {
+    border-color: var(--green) !important;
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.1) !important;
+}
+
 /* ─── CHAT V2 STYLES ─── */
 .message-user {
     align-self: flex-end;
@@ -811,16 +864,120 @@ body{
 }
 .prose-invert { color: #f8f8f2; }
 .prose-invert pre {
-    background: #1e1f29;
+    background: #050508;
     padding: 12px;
     border-radius: 8px;
     overflow-x: auto;
     margin: 8px 0;
-    border: 1px solid #44475a;
+    border: 1px solid var(--border);
+    position: relative;
+}
+.prose-invert pre::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
+    background-size: 100% 4px;
+    pointer-events: none;
 }
 .prose-invert code {
+    background: rgba(52, 211, 153, 0.1);
+    color: #34d399;
+    padding: 0.2em 0.4em;
+    border-radius: 4px;
     font-family: var(--font-mono);
-    color: #50fa7b;
+    font-size: 0.9em;
+}
+
+/* ─── JULES HISTORY STYLES ─── */
+.activity-log {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.activity-entry {
+    font-size: 13px;
+    line-height: 1.6;
+    position: relative;
+    transition: background 0.3s ease;
+    cursor: pointer;
+    padding-left: 30px !important;
+}
+.activity-entry.selected {
+    background: rgba(124, 58, 237, 0.15) !important;
+    box-shadow: inset 0 0 10px rgba(124, 58, 237, 0.1);
+}
+.activity-selection-checkbox {
+    position: absolute;
+    left: 10px;
+    top: 14px;
+    width: 14px;
+    height: 14px;
+    border: 1px solid var(--border2);
+    border-radius: 3px;
+    background: rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center; justify-content: center;
+    transition: all 0.2s ease;
+}
+.activity-entry.selected .activity-selection-checkbox {
+    background: var(--accent); border-color: var(--accent2); box-shadow: 0 0 8px var(--accent);
+}
+.activity-entry.selected .activity-selection-checkbox::after {
+    content: "✓"; font-size: 10px; color: white;
+}
+#neural-selection-toolbar {
+    position: fixed; bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: rgba(13, 13, 20, 0.95); backdrop-filter: blur(15px);
+    border: 1px solid var(--border-accent); border-radius: var(--r-full);
+    padding: 8px 16px 8px 24px; z-index: 1000;
+    display: flex; align-items: center; gap: 20px;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6), var(--shadow-glow);
+}
+#neural-selection-toolbar.active { transform: translateX(-50%) translateY(0); }
+.activity-entry--plan { color: var(--accent2); }
+.activity-entry--progress { color: var(--text2); }
+.activity-entry--user {
+    align-self: flex-end; background: var(--surface2); border: 1px solid var(--border2);
+    border-radius: 12px 12px 4px 12px; padding: 10px 14px; color: var(--text); max-width: 85%;
+}
+.activity-entry--agent {
+    align-self: flex-start; background: linear-gradient(135deg, #150d35 0%, #0d0d14 100%);
+    border: 1px solid var(--border-accent); border-radius: 12px 12px 12px 4px;
+    padding: 10px 14px; color: var(--text2); max-width: 85%;
+}
+.activity-code {
+    background: #020204; border: 1px solid var(--border2); border-radius: 6px;
+    padding: 10px; font-family: var(--font-mono); font-size: 11px; color: var(--cyan);
+    margin-top: 6px; overflow-x: auto;
+}
+.dl { padding: 0 8px; font-family: var(--font-mono); font-size: 11px; line-height: 1.5; color: var(--text2); white-space: pre-wrap; word-break: break-all; }
+.dl-add { color: #50fa7b; background: rgba(80, 250, 123, 0.05); }
+.dl-del { color: #ff5555; background: rgba(255, 85, 85, 0.05); }
+.dl-hunk { color: #8be9fd; background: rgba(139, 233, 253, 0.05); }
+
+#jules-history-container.collapsed { flex: 0 0 0 !important; padding-top: 0 !important; padding-bottom: 0 !important; overflow: hidden; border: none !important; }
+#neural-divider.collapsed svg { transform: rotate(-180deg); }
+
+/* ─── NEURAL DRAWER ─── */
+.neural-drawer-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+  z-index: 150; opacity: 0; pointer-events: none; transition: opacity var(--t-norm);
+}
+.neural-drawer-overlay.open { opacity: 1; pointer-events: auto; }
+.neural-drawer {
+  position: fixed; top: 0; right: -420px; width: 400px; height: 100vh;
+  background: var(--surface-opaque); border-left: 1px solid var(--border2);
+  box-shadow: -10px 0 40px rgba(0,0,0,0.7); z-index: 151; display: flex; flex-direction: column;
+  transition: right var(--t-norm);
+}
+.neural-drawer.open { right: 0; }
+.neural-drawer-header {
+  padding: 18px 24px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(0,0,0,0.2);
 }
 
 /* ─── ANIMATIONS ─── */
@@ -954,6 +1111,33 @@ body{
   .notif-panel{width:calc(100vw - 24px);right:12px; top:54px}
 }
 
+@keyframes neural-active-glow {
+  0% { box-shadow: 0 0 5px rgba(124, 58, 237, 0.2); border-color: var(--border); }
+  50% { box-shadow: 0 0 25px rgba(124, 58, 237, 0.6); border-color: var(--accent); }
+  100% { box-shadow: 0 0 5px rgba(124, 58, 237, 0.2); border-color: var(--border); }
+}
+.neural-active-glow { animation: neural-active-glow 1.5s ease-in-out infinite; }
+
+.session-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 4px 12px;
+    border-radius: var(--r-full);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.session-badge--queued    { background: rgba(144, 144, 176, 0.1); color: var(--text2); }
+.session-badge--waiting   { background: rgba(245, 158, 11, 0.15); color: var(--amber); border-color: rgba(245, 158, 11, 0.3); }
+.session-badge--running   { background: rgba(6, 182, 212, 0.15); color: var(--cyan); border-color: rgba(6, 182, 212, 0.3); }
+.session-badge--completed { background: rgba(16, 185, 129, 0.15); color: var(--green); border-color: rgba(16, 185, 129, 0.3); }
+.session-badge--failed    { background: rgba(239, 68, 68, 0.15); color: var(--red); border-color: rgba(239, 68, 68, 0.3); }
+
 @media(max-width:480px){
   .opts-grid{grid-template-columns:1fr}
   .session-foot{flex-direction:column;align-items:stretch}
@@ -1007,7 +1191,7 @@ body{
   </div>
 </div>
 
-<div class="app locked" id="app-root">
+<div class="app" id="app-root">
 
 <!-- ══ MOBILE HEADER ══ -->
 <header class="mobile-hdr" id="mob-hdr">
@@ -1240,6 +1424,16 @@ body{
 
     <!-- ─── NEURAL VIEW (Tarea + Telemetry) ─── -->
     <div class="view" id="view-neural">
+      <div id="neural-session-banner" class="hidden" style="margin-bottom: 12px; background: rgba(124,58,237,0.1); border: 1px solid var(--border-accent); border-radius: var(--r-md); padding: 12px 18px; display: flex; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+              <span style="font-size: 1.2em;">🧠</span>
+              <div>
+                  <div style="font-size: 10px; font-weight: 800; color: var(--accent2); text-transform: uppercase; letter-spacing: 0.05em;">Neural Session Activa</div>
+                  <div id="neural-banner-task" style="font-size: 13px; font-weight: 600; color: var(--text);">Tarea #...</div>
+              </div>
+          </div>
+          <button onclick="desvincularNeuralSession()" style="background: none; border: none; color: var(--red); font-size: 10px; font-weight: 700; text-transform: uppercase; cursor: pointer;">Desvincular</button>
+      </div>
       <!-- Session Card -->
         <div class="session-card glass">
           <div class="card-head" style="padding:14px 18px">
@@ -1296,6 +1490,7 @@ body{
             <div class="live-badge"><span class="live-dot"></span>LIVE</div>
           </div>
           <div class="card-body">
+            <div id="neural-actions-ops" class="hidden" style="margin-bottom: 12px; padding: 12px; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 12px;"></div>
             <div class="tel-box" id="tel-box">
               <div class="notif-empty" style="padding: 40px; text-align: center; color: var(--text3);">Sin actividad en esta sesión</div>
             </div>
@@ -1513,7 +1708,14 @@ body{
 
 
     <!-- ─── NEURAL CHAT VIEW ─── -->
-    <div class="view" id="view-chat" style="padding: 0; background: #07070a; flex-direction: column; height: calc(100vh - var(--header-h));">
+    <div class="view" id="view-chat" style="padding: 0; background: #07070a; flex-direction: column; height: calc(100vh - var(--header-h)); position: relative;">
+        <!-- Chat Utility Bar (Always Visible) -->
+        <div style="position: absolute; top: 12px; right: 24px; z-index: 20; display: flex; gap: 8px;">
+            <button onclick="toggleSessionDrawer()" class="btn btn-ghost btn-sm" style="padding: 6px 12px; font-size: 11px; background: rgba(13, 13, 20, 0.8); backdrop-filter: blur(8px); border: 1px solid var(--border-accent); box-shadow: 0 0 15px rgba(124, 58, 237, 0.2);">
+                <i class="fas fa-history mr-2" style="color: var(--accent2);"></i> Sesiones
+            </button>
+        </div>
+
         <!-- Task Context Header (Integrated) -->
         <div id="v2-task-context" class="hidden" style="background: rgba(124, 58, 237, 0.05); border-bottom: 1px solid var(--border); padding: 12px 24px;">
             <details style="width: 100%;">
@@ -1533,6 +1735,50 @@ body{
             </details>
         </div>
 
+        <!-- Jules Execution History (Top 55%) -->
+        <div id="jules-history-container" style="flex: 0 0 55%; overflow-y: auto; padding: 24px; border-bottom: 1px solid var(--border); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; gap: 20px; background: rgba(0,0,0,0.1);">
+            <div id="history-welcome-screen" style="height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0.3; text-align: center; gap: 15px;">
+                <div style="font-size: 40px;">⚡</div>
+                <h3 style="font-family: var(--font-head); font-weight: 700; font-size: 16px;">Jules Execution History</h3>
+                <p style="max-width: 260px; font-size: 12px;">Aquí se mostrará el progreso real de Jules, cambios de código y logs de ejecución.</p>
+            </div>
+            <div style="position: sticky; top: 0; right: 0; z-index: 50; display: flex; justify-content: flex-end; pointer-events: none;">
+                <div id="sticky-badge-container" style="pointer-events: auto;">
+                    <!-- JS will inject sticky-badge-SID here -->
+                </div>
+            </div>
+            <div id="neural-jules-history" class="activity-log"></div>
+
+            <!-- Floating Selection Toolbar -->
+            <div id="neural-selection-toolbar">
+                <div class="flex items-center gap-3 pr-4 border-r border-white/10">
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Seleccionados</span>
+                    <span id="selection-count" class="bg-indigo-500 text-white text-[11px] font-bold px-2 py-0.5 rounded-full">0</span>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="analyzeSelectedWithClaude()" class="btn btn-primary btn-sm" style="box-shadow: 0 0 15px rgba(124,58,237,0.4);">
+                        ✨ ANALIZAR CON CLAUDE
+                    </button>
+                    <button onclick="clearHistorySelection()" class="btn btn-ghost btn-sm">
+                        CANCELAR
+                    </button>
+                </div>
+            </div>
+            <div id="jules-history-log" class="activity-log" style="display:none;"></div>
+        </div>
+
+        <!-- Styled Divider -->
+        <div id="neural-divider" style="height: 32px; background: rgba(13, 13, 20, 0.95); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; z-index: 10; backdrop-filter: blur(10px); cursor: pointer;" onclick="toggleHistoryCollapse()">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 11px; font-weight: 800; color: #bd93f9; letter-spacing: 0.1em; text-shadow: 0 0 10px rgba(189, 147, 249, 0.4);">⚡ NEURAL CONTEXT</span>
+            </div>
+            <div style="color: var(--text3); display: flex; align-items: center; gap: 8px; font-size: 10px; font-weight: 700; text-transform: uppercase;">
+                <span id="collapse-label">Colapsar Historia</span>
+                <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="transition: transform 0.3s ease;"><path d="M5 15l7-7 7 7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+        </div>
+
+        <!-- Claude Neural Chat (Bottom 45% or Full) -->
         <div class="chat-container-v2" id="v2-chat-messages" style="flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 20px;">
             <div id="v2-welcome-screen" style="height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0.4; text-align: center; gap: 15px;">
                 <div style="font-size: 48px;">🧠</div>
@@ -1547,17 +1793,30 @@ body{
             <span id="chat-live-status">Monitoreando actividad neural...</span>
         </div>
 
+        <div id="neural-actions-v2" class="hidden" style="padding: 10px 24px; background: rgba(245, 158, 11, 0.1); border-top: 1px solid rgba(245, 158, 11, 0.3); display: flex; align-items: center; justify-content: center; gap: 12px;"></div>
         <div class="chat-input-area" style="padding: 24px; background: rgba(0,0,0,0.3); border-top: 1px solid var(--border);">
             <div style="max-width: 900px; margin: 0 auto; position: relative; display: flex; flex-direction: column; gap: 12px;">
                 <div id="v2-thinking-indicator" class="hidden" style="font-size: 10px; font-weight: 800; color: var(--cyan); letter-spacing: 0.05em;">
                     CLAUDE ESTÁ PROCESANDO...
                 </div>
-                <div style="position: relative;">
-                    <textarea id="v2-chat-input" placeholder="Pregunta algo..."
-                        style="width: 100%; background: var(--surface-opaque); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 16px 60px 16px 16px; color: #fff; resize: none; font-size: 14px; min-height: 56px; max-height: 200px; font-family: var(--font-ui); transition: border-color 0.3s;"></textarea>
-                    <button id="v2-send-btn" style="position: absolute; right: 12px; top: 11px; width: 34px; height: 34px; border-radius: 12px; background: var(--accent-grad); color: #fff; border: none; cursor: pointer; display: flex; align-items:center; justify-content:center; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);">
-                        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
-                    </button>
+
+                <div id="chat-input-wrapper" class="transition-all duration-500" style="position: relative; display: flex; flex-direction: column; gap: 10px; background: var(--surface-opaque); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 12px;">
+                    <div class="flex items-center gap-3">
+                        <div class="dual-send-switch">
+                            <div class="dual-send-option active" data-mode="claude" onclick="setSendMode('claude')">
+                                <i class="fas fa-brain"></i> CLAUDE
+                            </div>
+                            <div class="dual-send-option" data-mode="jules" onclick="setSendMode('jules')">
+                                <i class="fas fa-bolt"></i> JULES
+                            </div>
+                        </div>
+                        <textarea id="v2-chat-input" placeholder="Pregunta algo..."
+                            style="width: 100%; background: transparent; border: none; color: #fff; resize: none; font-size: 14px; min-height: 40px; max-height: 200px; font-family: var(--font-ui); outline: none;"></textarea>
+
+                        <button id="v2-send-btn" style="width: 38px; height: 38px; border-radius: 12px; background: var(--accent-grad); color: #fff; border: none; cursor: pointer; display: flex; align-items:center; justify-content:center; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3); flex-shrink: 0;">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1747,6 +2006,22 @@ body{
 
 <!-- ══ TOAST ══ -->
 <div class="toast-wrap" id="toast-wrap"></div>
+
+<!-- Neural Sessions Drawer (Area 3) -->
+<div id="sessions-drawer-overlay" class="neural-drawer-overlay" onclick="toggleSessionDrawer()"></div>
+<aside id="sessions-drawer" class="neural-drawer">
+    <div class="neural-drawer-header">
+        <div style="display: flex; flex-direction: column;">
+            <span style="font-size: 10px; font-weight: 800; color: var(--accent2); text-transform: uppercase; letter-spacing: 0.15em;">Neural History</span>
+            <h3 style="font-family: var(--font-head); font-size: 18px; font-weight: 700; color: var(--text);">Sesiones Guardadas</h3>
+        </div>
+        <button onclick="toggleSessionDrawer()" class="icon-btn" style="font-size: 20px;">&times;</button>
+    </div>
+    <div id="sessions-drawer-list" style="flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 12px;">
+        <!-- List of hy_neural_sessions -->
+    </div>
+</aside>
+
 <!-- ══ REPO CONFIG MODAL ══ -->
 <div class="modal-overlay" id="repo-config-modal-overlay">
   <div class="modal-card glass" style="background:var(--surface-opaque); max-width: 550px;">
@@ -1838,6 +2113,34 @@ body{
     }
     window.GHQueue = new GHAPIQueue();
 
+    function getLinkedJulesSessionId() {
+        return localStorage.getItem('hy_neural_session_id');
+    }
+
+    let currentSendMode = 'claude';
+    window.setSendMode = (mode) => {
+        currentSendMode = mode;
+        document.querySelectorAll('.dual-send-option').forEach(opt => {
+            opt.classList.toggle('active', opt.dataset.mode === mode);
+        });
+        const wrapper = document.getElementById('chat-input-wrapper');
+        if (wrapper) {
+            wrapper.className = `transition-all duration-500 ${mode === 'jules' ? 'mode-jules' : ''}`;
+            wrapper.style.position = 'relative';
+            wrapper.style.display = 'flex';
+            wrapper.style.flexDirection = 'column';
+            wrapper.style.gap = '10px';
+            wrapper.style.background = 'var(--surface-opaque)';
+            wrapper.style.border = '1px solid var(--border)';
+            wrapper.style.borderRadius = 'var(--r-lg)';
+            wrapper.style.padding = '12px';
+        }
+        const input = document.getElementById('v2-chat-input');
+        if (input) {
+            input.placeholder = mode === 'claude' ? "Pregunta algo..." : "Enviar orden directa a Jules...";
+        }
+    };
+
     function getGitHubToken() {
         return window.githubApi.getAuthToken();
     }
@@ -1903,6 +2206,32 @@ body{
       localStorage.setItem('jules_live_telemetry', JSON.stringify({
           tag, msg, type, timestamp: d.toISOString()
       }));
+
+      // Neural Loop: Add "Analizar con Claude" button to telemetry
+      if (localStorage.getItem('hy_neural_active') === 'true') {
+          const analyzer = document.createElement('button');
+          analyzer.className = 'btn-ghost btn-sm';
+          analyzer.style.marginTop = '4px';
+          analyzer.style.fontSize = '9px';
+          analyzer.style.padding = '2px 8px';
+          analyzer.innerHTML = '✨ Analizar con Claude';
+          analyzer.onclick = () => {
+              const task = JSON.parse(localStorage.getItem('hy_neural_task_context') || '{}');
+              let thread = JSON.parse(localStorage.getItem('hy_neural_thread') || '[]');
+              const promptText = `Jules ha reportado esto en la telemetría:\n[${tag}] ${msg}`;
+              const newMsg = {
+                  role: 'user',
+                  content: promptText,
+                  source: 'jules'
+              };
+              thread.push(newMsg);
+              localStorage.setItem('hy_neural_thread', JSON.stringify(thread));
+
+              localStorage.setItem('hy_neural_pending_prompt', newMsg.content + '\n\n¿Qué opinas? ¿Debo ajustar algo?');
+              window.location.href = '/chat/neural/';
+          };
+          line.appendChild(analyzer);
+      }
     }
 
     /* ─── AUTH ─── */
@@ -1944,7 +2273,76 @@ body{
         await refreshDashboard();
         switchView(window.JulesPanelState.currentView || 'dashboard');
         checkClipboard();
+        handleUrlParams();
         startPolling();
+    }
+
+    let neuralPollInterval = null;
+
+    function startNeuralPolling(sessionId = null) {
+        const sid = sessionId || getLinkedJulesSessionId();
+        if (!sid) return;
+
+        refreshActivities(sid);
+        stopNeuralPolling();
+        neuralPollInterval = setInterval(() => {
+            if (!document.hidden) {
+                if (localStorage.getItem('hy_neural_active') !== 'true') {
+                    stopNeuralPolling();
+                    return;
+                }
+                refreshActivities(sid);
+            }
+        }, 15000);
+    }
+
+    function stopNeuralPolling() {
+        if (neuralPollInterval) {
+            clearInterval(neuralPollInterval);
+            neuralPollInterval = null;
+        }
+    }
+
+    function handleUrlParams() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const taskDataRaw = urlParams.get('task_data');
+        const taskId = urlParams.get('task_id');
+        const promptParam = urlParams.get('prompt');
+
+        if (promptParam && $('session-prompt')) {
+            $('session-prompt').value = decodeURIComponent(promptParam);
+            showToast("Prompt cargado", "green");
+            switchView('neural');
+        }
+
+        if (taskDataRaw || taskId) {
+            let task = null;
+            if (taskDataRaw) {
+                try {
+                    task = JSON.parse(decodeURIComponent(taskDataRaw));
+                } catch(e) { console.error("Error parsing task_data param", e); }
+            } else if (taskId && window.JulesPanelState.tasks) {
+                task = window.JulesPanelState.tasks.find(t => String(t.id) === String(taskId));
+            }
+
+            if (task) {
+                localStorage.setItem('hy_neural_active', 'true');
+                localStorage.setItem('hy_neural_task_context', JSON.stringify(task));
+                showToast("Contexto de tarea vinculado", "green");
+
+                // Add initial prompt to chat if empty
+                const input = $('v2-chat-input');
+                if (input && !input.value.trim()) {
+                    input.value = `Hola Claude, analicemos esta tarea:\n\n📌 #${task.id}: ${task.titulo || task.title}\n${task.descripcion ? '📝 ' + task.descripcion : ''}\n\n¿Qué pasos me recomiendas para Jules?`;
+                    input.dispatchEvent(new Event('input'));
+                }
+
+                switchView('chat');
+
+                // Cleanup URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        }
     }
 
     async function updateUserUI(user) {
@@ -2118,18 +2516,19 @@ body{
                     const repo = s.sourceContext?.source?.split('/').pop() || '---';
 
                     return `
-                        <div class="kb-card ${colId}" onclick="openDrawer('${s.name}')" style="padding:13px 14px">
+                        <div class="kb-card ${colId}" id="card-${sid}" onclick="openDrawer('${s.name}')" style="padding:13px 14px">
                             <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:5px">
                                 <div style="font-family:var(--font-mono); font-size:10px; color:var(--text3)">#${sid}</div>
                                 <span class="sbadge ${s.state.toLowerCase().replace(/_/g, '-')}">${s.state}</span>
                             </div>
                             <div style="font-size:12.5px; font-weight:500; color:var(--text); line-height:1.4; margin-bottom:8px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden">${escapeHtml(s.title || s.prompt)}</div>
+                            <div style="font-size:10px; color:var(--green); font-family:var(--font-mono); margin-bottom:8px; height:15px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap" data-role="working-text"></div>
                             <div style="display:flex; align-items:center; justify-content:space-between; gap:8px">
                                 <span style="font-family:var(--font-mono); font-size:10px; color:var(--text2); background:rgba(255,255,255,0.04); border:1px solid var(--border); padding:2px 7px; border-radius:var(--r-full)">${repo}</span>
                                 <span style="font-family:var(--font-mono); font-size:10px; color:var(--text3)">${getTimeAgo(s.createTime)}</span>
                             </div>
                             <div style="display:flex; gap:4px; margin-top:8px; padding-top:8px; border-top:1px solid var(--border)">
-                                <button class="kb-action-btn" style="flex:1; padding:4px 6px; border-radius:var(--r-sm); border:1px solid var(--border); background:rgba(255,255,255,0.02); color:var(--text3); font-size:10px; font-weight:600; cursor:pointer" onclick="event.stopPropagation(); window.JulesActivitiesModule.startPolling('${sid}'); switchView('chat');">Ver Neural</button>
+                                <button class="kb-action-btn" style="flex:1; padding:4px 6px; border-radius:var(--r-sm); border:1px solid var(--border); background:rgba(255,255,255,0.02); color:var(--text3); font-size:10px; font-weight:600; cursor:pointer" onclick="event.stopPropagation(); const cid = localStorage.getItem('hy_active_claude_session_id'); if (cid) localStorage.setItem('hy_neural_session_id_' + cid, '${sid}'); localStorage.setItem('hy_neural_session_id', '${sid}'); localStorage.setItem('hy_neural_active', 'true'); switchView('chat');">Ver Neural</button>
                             </div>
                         </div>
                     `;
@@ -2289,29 +2688,39 @@ body{
         const task = window.JulesPanelState.tasks.find(t => String(t.id) === String(taskId));
         if (!task) return;
 
-        const payload = {
-            titulo: task.titulo || task.title || '',
-            descripcion: task.descripcion || task.description || '',
-            acceptance_criteria: task.acceptance_criteria || '',
-            tags: task.tags || [],
-            prioridad: task.prioridad || '',
-            asignados: task.asignados || task.asignado_a || [],
-            comments: task.comments || [],
-            estimated_hours: task.estimated_hours || '',
-            repositorio: task.repository || task.repo || '',
-            rama: task.rama || task.branch || ''
+        // Neural Session Pivot: Bundle full task context
+        const fullTask = {
+            ...task,
+            neural_source: 'jules-panel-v2',
+            exported_at: new Date().toISOString()
         };
-        localStorage.setItem('claude_task_context', JSON.stringify(payload));
 
-        if (task.images && task.images.length > 0) {
-            showToast("Jules no acepta imágenes, se excluirán del prompt.", "amber");
-        }
-        window.location.href = `/chat/neural/?task_id=${taskId}&from=jules-panel`;
+        const encodedData = encodeURIComponent(JSON.stringify(fullTask));
+        window.location.href = `/chat/neural/?task_data=${encodedData}`;
     }
 
     function checkClipboard() {
         const payloadStr = localStorage.getItem('jules_task_payload');
         const promptArea = $('session-prompt');
+
+        // Check if coming from Neural Chat via hy_neural_pending_prompt
+        const pendingPrompt = localStorage.getItem('hy_neural_pending_prompt');
+        if (pendingPrompt && promptArea && promptArea.value !== pendingPrompt) {
+            promptArea.value = pendingPrompt;
+            showToast("Prompt actualizado desde Claude", "green");
+            localStorage.removeItem('hy_neural_pending_prompt');
+            switchView('neural');
+        }
+
+        // AREA 2: Register active Neural Session
+        if (localStorage.getItem('hy_neural_active') === 'true') {
+            const task = JSON.parse(localStorage.getItem('hy_neural_task_context') || '{}');
+            if (task.id) {
+                $('neural-session-banner')?.classList.remove('hidden');
+                if($('neural-banner-task')) $('neural-banner-task').textContent = `Tarea #${task.id}: ${task.titulo || task.title}`;
+                showTaskContextInChat(task);
+            }
+        }
 
         if (payloadStr) {
             try {
@@ -2346,6 +2755,13 @@ body{
                 showToast("Neural Link: Payload cargado con éxito", "green");
                 switchView('neural');
 
+                // Scroll to prompt area
+                setTimeout(() => {
+                    promptArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    promptArea.classList.add('neural-active-glow');
+                    setTimeout(() => promptArea.classList.remove('neural-active-glow'), 3000);
+                }, 600);
+
                 // Cleanup
                 localStorage.removeItem('jules_task_payload');
                 localStorage.removeItem('jules_clipboard');
@@ -2366,6 +2782,13 @@ body{
                 promptArea.value = content;
                 showToast("Prompt importado desde Neural Chat", "green");
                 switchView('neural');
+
+                // Scroll to prompt area
+                setTimeout(() => {
+                    promptArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    promptArea.classList.add('neural-active-glow');
+                    setTimeout(() => promptArea.classList.remove('neural-active-glow'), 3000);
+                }, 600);
                 localStorage.removeItem('jules_clipboard');
 
                 const taskId = localStorage.getItem('jules_linked_task_id');
@@ -2492,6 +2915,12 @@ body{
         const source = window.JulesPanelState.activeRepo, branch = window.JulesPanelState.activeBranch || 'master';
         if (!source) { showToast("Selecciona un repositorio", "red"); return; }
 
+        // BUG 2 Fix: Check if Review mode is selected without an active session
+        if ($('opt-review').classList.contains('active') && !getLinkedJulesSessionId()) {
+            showToast("Selecciona primero Modo Automático para iniciar una nueva sesión", "red");
+            return;
+        }
+
         // Enhance prompt based on options
         if ($('opt-tests').classList.contains('active')) {
             prompt += "\n\nIMPORTANTE: Genera tests unitarios automáticos para cubrir estos cambios.";
@@ -2500,7 +2929,12 @@ body{
             prompt += `\n\nIMPORTANTE: Crea y trabaja en una nueva rama dedicada para esta tarea (ej: jules/task-${Date.now()}).`;
         }
 
-        const btn = $('launch-btn'); btn.disabled = true; const originalText = btn.innerHTML; btn.innerHTML = 'Iniciando...';
+        const btn = $('launch-btn');
+        const textarea = $('session-prompt');
+        btn.disabled = true;
+        textarea.disabled = true;
+        const originalText = btn.innerHTML;
+        btn.innerHTML = 'Iniciando...';
         try {
             const body = { prompt, sourceContext: { source, githubRepoContext: { startingBranch: branch } } };
 
@@ -2516,6 +2950,35 @@ body{
             showToast("Sesión iniciada correctamente", "green");
             addTel("JULES", `Sesión iniciada: ${sid}`, "success");
             addNotif("Sesión Iniciada", `Se ha creado la sesión #${sid} en ${branch}`, "success");
+
+            const claudeId = localStorage.getItem('hy_active_claude_session_id');
+            if (claudeId) {
+                localStorage.setItem(`hy_neural_session_id_${claudeId}`, sid);
+            }
+            localStorage.setItem('hy_neural_session_id', sid);
+
+            startNeuralPolling(sid, true);
+            // AREA 2: Register active Neural Session
+            const taskContext = JSON.parse(localStorage.getItem('hy_neural_task_context') || '{}');
+            const sessionName = taskContext.titulo || taskContext.title || `Sesión Neural ${new Date().toLocaleDateString()}`;
+            const now = new Date().toISOString();
+
+            localStorage.setItem('hy_neural_active', 'true');
+            localStorage.setItem('hy_neural_session_name', sessionName);
+            localStorage.setItem('hy_neural_session_start', now);
+
+            const sessions = JSON.parse(localStorage.getItem('hy_neural_sessions') || '[]');
+            sessions.unshift({
+                id: sid,
+                name: sessionName,
+                task_id: taskContext.id || null,
+                task_title: taskContext.titulo || taskContext.title || '---',
+                branch: branch,
+                start: now,
+                status: 'active',
+                messages: []
+            });
+            localStorage.setItem('hy_neural_sessions', JSON.stringify(sessions));
 
             if (window.JulesPanelState.linkedTaskId) {
                 await window.taskOps.updateTask(window.JulesPanelState.linkedTaskId, {
@@ -2583,6 +3046,15 @@ body{
             if($('v2-thinking-indicator')) $('v2-thinking-indicator').classList.add('hidden');
             renderChatV2Messages();
         }
+        if (view === 'chat') {
+            const sid = getLinkedJulesSessionId();
+            if (sid && localStorage.getItem('hy_neural_active') === 'true') {
+                startNeuralPolling(sid);
+                const task = JSON.parse(localStorage.getItem('hy_neural_task_context') || '{}');
+                if (task.id) showTaskContextInChat(task);
+            }
+            renderChatV2Messages();
+        }
         if (view === 'hub') {
             const activeTab = localStorage.getItem('hypenosys_hub_active_tab') || 'pull-requests';
             const tabEl = document.querySelector(`.dr-tab[data-tab="${activeTab}"]`);
@@ -2596,7 +3068,8 @@ body{
         document.querySelectorAll('#view-hub .dr-tab').forEach(t => t.classList.remove('active'));
         if(el) el.classList.add('active');
         document.querySelectorAll('.hub-panel').forEach(p => p.style.display = 'none');
-        const panel = $(`panel-${ { 'pull-requests': 'pr', 'issues': 'issues', 'branches': 'branches', 'actions': 'actions', 'notifications': 'notifs' }[tabId]}`);
+        const tabMap = { 'pull-requests': 'pr', 'issues': 'issues', 'branches': 'branches', 'actions': 'actions', 'notifications': 'notifs' };
+        const panel = $(`panel-${tabMap[tabId]}`);
         if(panel) panel.style.display = 'block';
         await loadHubContent(tabId);
     }
@@ -2604,7 +3077,8 @@ body{
     async function loadHubContent(tabId, force = false) {
         const repoVal = window.JulesPanelState.activeRepo; if (!repoVal) return;
         const parsed = window.parseSourceName(repoVal); if (!parsed) return;
-        const panel = $(`panel-${ { 'pull-requests': 'pr', 'issues': 'issues', 'branches': 'branches', 'actions': 'actions', 'notifications': 'notifs' }[tabId]}`);
+        const tabMap = { 'pull-requests': 'pr', 'issues': 'issues', 'branches': 'branches', 'actions': 'actions', 'notifications': 'notifs' };
+        const panel = $(`panel-${tabMap[tabId]}`);
         const now = Date.now(), lastFetch = parseInt(panel.dataset.fetchedAt || '0', 10);
         if (!force && panel.dataset.loaded === 'true' && (now - lastFetch < 60000)) return;
         panel.innerHTML = '<div style="padding:40px; text-align:center; color:var(--text3);">Cargando...</div>';
@@ -3087,6 +3561,9 @@ body{
             const tel = JSON.parse(e.newValue);
             showChatLiveActivity(tel);
         }
+        if (e.key === 'hy_neural_sessions' && $('sessions-drawer').classList.contains('open')) {
+            renderSessionDrawerList();
+        }
     });
 
     let activityTimeout = null;
@@ -3110,43 +3587,94 @@ body{
         const content = input.value.trim();
         if (!content) return;
 
-        // Add user message
-        const userMsg = { role: 'user', content };
-        chatV2Messages.push(userMsg);
-        renderChatV2Messages();
-        input.value = '';
-        input.style.height = 'auto';
+        const isNeuralActive = localStorage.getItem('hy_neural_active') === 'true';
+        const claudeId = localStorage.getItem('hy_active_claude_session_id');
+        let sessionId = localStorage.getItem('hy_neural_session_id_' + claudeId);
+        if (!sessionId) sessionId = getLinkedJulesSessionId();
 
-        const thinking = $('v2-thinking-indicator');
-        thinking.classList.remove('hidden');
+        if (currentSendMode === 'jules' || (isNeuralActive && sessionId)) {
+            if (!sessionId) {
+                showToast("No hay sesión Jules activa vinculada", "red");
+                return;
+            }
+            const targetId = sessionId.startsWith('sessions/') ? sessionId : 'sessions/' + sessionId;
+            // Route Neural Chat messages to Jules session directly
+            const userMsg = { role: 'user', content };
+            chatV2Messages.push(userMsg);
+            renderChatV2Messages();
+            input.value = '';
+            input.style.height = 'auto';
 
-        try {
-            const config = window.aiConfig?.getActiveConfig() || JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
-            const systemPrompt = "Eres Claude, un asistente experto integrado en el panel de control de Hypenosys.";
-
-            // Build context from active task if exists
-            let fullPrompt = content;
-            if (window.JulesPanelState.activePayload?.source_task) {
-                const t = window.JulesPanelState.activePayload.source_task;
-                fullPrompt = `[CONTEXTO TAREA #${t.id}: ${t.titulo}]\n${content}`;
+            const thinking = $('v2-thinking-indicator');
+            if (thinking) {
+                thinking.textContent = "ENVIANDO ORDEN A JULES...";
+                thinking.classList.remove('hidden');
             }
 
-            const messages = [
-                { role: 'system', content: systemPrompt },
-                ...chatV2Messages.map(m => ({ role: m.role, content: m.content }))
-            ];
+            try {
+                const ok = await window.julesApi.sendMessage(targetId, content);
+                if (ok) {
+                    showToast("Orden enviada a Jules", "green");
+                    addTel("USER", content, "info");
 
-            // For now, use a simplified non-streaming call for the integrated tab
-            // In a real scenario, we'd port the full consumeStream logic
-            const response = await callCustomProvider(config, messages);
+                    // Poll for activity response
+                    let attempts = 0;
+                    const maxAttempts = 15; // 30 seconds (2s interval)
+                    const pollInterval = setInterval(async () => {
+                        attempts++;
+                        await refreshActivities(getIdSafe(sessionId));
 
-            chatV2Messages.push({ role: 'assistant', content: response });
+                        if (attempts >= maxAttempts) {
+                            clearInterval(pollInterval);
+                            if (thinking) thinking.classList.add('hidden');
+                        }
+                    }, 2000);
+                }
+            } catch (e) {
+                showToast("Error al enviar a Jules: " + e.message, "red");
+                if (thinking) thinking.classList.add('hidden');
+            }
+        } else {
+            // Add user message
+            const userMsg = { role: 'user', content };
+            chatV2Messages.push(userMsg);
             renderChatV2Messages();
-        } catch (e) {
-            console.error('[ChatV2] Error:', e);
-            showToast("Error en comunicación con Claude", "red");
-        } finally {
-            thinking.classList.add('hidden');
+            input.value = '';
+            input.style.height = 'auto';
+
+            const thinking = $('v2-thinking-indicator');
+            if (thinking) {
+                thinking.textContent = "CLAUDE ESTÁ PROCESANDO...";
+                thinking.classList.remove('hidden');
+            }
+
+            try {
+                const config = window.aiConfig?.getActiveConfig() || JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
+                const systemPrompt = "Eres Claude, un asistente experto integrado en el panel de control de Hypenosys.";
+
+                // Build context from active task if exists
+                let fullPrompt = content;
+                if (window.JulesPanelState.activePayload?.source_task) {
+                    const t = window.JulesPanelState.activePayload.source_task;
+                    fullPrompt = `[CONTEXTO TAREA #${t.id}: ${t.titulo}]\n${content}`;
+                }
+
+                const messages = [
+                    { role: 'system', content: systemPrompt },
+                    ...chatV2Messages.map(m => ({ role: m.role, content: m.content }))
+                ];
+
+                // For now, use a simplified non-streaming call for the integrated tab
+                const response = await callCustomProvider(config, messages);
+
+                chatV2Messages.push({ role: 'assistant', content: response });
+                renderChatV2Messages();
+            } catch (e) {
+                console.error('[ChatV2] Error:', e);
+                showToast("Error en comunicación con Claude", "red");
+            } finally {
+                thinking.classList.add('hidden');
+            }
         }
     }
 
@@ -3195,6 +3723,602 @@ body{
             switchView('neural');
         }
     };
+
+    /* ─── JULES HISTORY PORTED LOGIC ─── */
+    function getIdSafe(name) {
+      return name ? name.split('/').pop() : '';
+    }
+
+    const STATE_CONFIG = {
+      'QUEUED':                  { label: 'En cola',           cls: 'queued',    icon: '⏸' },
+      'PLANNING':                { label: 'Planificando',       cls: 'running',   icon: '🧠' },
+      'AWAITING_PLAN_APPROVAL':  { label: 'Esperando aprobación', cls: 'waiting', icon: '⏳' },
+      'AWAITING_USER_FEEDBACK':  { label: 'Esperando input',    cls: 'waiting',   icon: '💬' },
+      'IN_PROGRESS':             { label: 'En progreso',        cls: 'running',   icon: '⚡' },
+      'PAUSED':                  { label: 'Pausada',            cls: 'queued',    icon: '⏸' },
+      'FAILED':                  { label: 'Fallida',            cls: 'failed',    icon: '❌' },
+      'COMPLETED':               { label: 'Completada',         cls: 'completed', icon: '✅' },
+    };
+
+    function getStateBadge(state) {
+      const cfg = STATE_CONFIG[state] || { label: state || '—', cls: 'queued', icon: '◌' };
+      return `<span class="session-badge session-badge--${cfg.cls}">
+        ${cfg.icon} ${cfg.label}
+      </span>`;
+    }
+
+    async function refreshActivities(idSafe) {
+        const currentSessions = window.julesSessionsCache || [];
+        const sessionId = currentSessions.find(s => getIdSafe(s.name) === idSafe)?.name || 'sessions/' + idSafe;
+        const log = document.getElementById("neural-jules-history");
+        if (!log) return;
+
+        try {
+            const data = await window.julesApi.getActivities(sessionId, 50);
+            const session = currentSessions.find(s => s.name === sessionId);
+
+            // Update sticky badge
+            let stickyBadge = document.getElementById(`sticky-badge-${idSafe}`);
+            if (!stickyBadge && session) {
+                const container = document.getElementById('sticky-badge-container');
+                if (container) {
+                    container.innerHTML = `<div id="sticky-badge-${idSafe}" class="hidden"></div>`;
+                    stickyBadge = document.getElementById(`sticky-badge-${idSafe}`);
+                }
+            }
+            if (stickyBadge && session) {
+                stickyBadge.innerHTML = getStateBadge(session.state);
+                stickyBadge.classList.remove('hidden');
+            }
+
+            let activities = (data.activities || [])
+              .filter((a, i, arr) => arr.findIndex(x => x.id === a.id) === i);
+
+            // Actualizar Working Indicator
+            if (session && session.state === 'IN_PROGRESS') {
+              const lastProgress = [...activities].reverse().find(a => a.progressUpdated);
+              if (lastProgress) {
+                let title = lastProgress.progressUpdated.title || '';
+                title = title.replace(/^Reading\b/i, 'Leyendo').replace(/^Writing\b/i, 'Escribiendo');
+                const card = document.getElementById('card-' + idSafe);
+                const workingText = card?.querySelector('[data-role="working-text"]');
+                if (workingText) {
+                  let text = title;
+                  if (text.length > 60) text = text.substring(0, 57) + '...';
+                  workingText.textContent = text.endsWith('...') ? text : text + '...';
+                }
+              }
+            }
+
+            // Guardar IDs ya renderizados
+            const existingIds = new Set(
+              [...log.querySelectorAll('[data-activity-id]')]
+                .map(el => el.dataset.activityId)
+            );
+
+            // Quitar el placeholder "No hay eventos" si existen actividades reales
+            const placeholder = log.querySelector('[data-placeholder]');
+            if (placeholder && activities.length > 0) placeholder.remove();
+
+            // Añadir SOLO las actividades nuevas
+            let added = false;
+            activities.forEach(activity => {
+              if (existingIds.has(activity.id)) return;
+              const html = renderActivity(activity);
+              if (!html) return;
+              const div = document.createElement('div');
+                div.className = 'activity-entry';
+              div.dataset.activityId = activity.id;
+              div.innerHTML = html;
+                div.onclick = (e) => toggleActivitySelection(div, activity);
+              log.appendChild(div);
+              added = true;
+            });
+
+            // Mostrar placeholder solo si el log sigue vacío después de intentar añadir
+            if (log.querySelectorAll('[data-activity-id]').length === 0) {
+              if (!log.querySelector('[data-placeholder]')) {
+                const ph = document.createElement('div');
+                ph.dataset.placeholder = 'true';
+                ph.className = 'italic text-center opacity-40';
+                ph.style.cssText = 'font-size:11px;padding:12px;color:#4b5563;';
+                ph.textContent = 'No hay eventos todavía';
+                log.appendChild(ph);
+              }
+            }
+
+            // Scroll inteligente
+            if (added) {
+              const threshold = 40;
+              const isAtBottom = log.scrollHeight - log.scrollTop - log.clientHeight < threshold;
+              if (isAtBottom) log.scrollTo({ top: log.scrollHeight, behavior: 'smooth' });
+            }
+
+            updateApprovalStatus(activities, sessionId);
+
+            if (session && (session.state === 'COMPLETED' || session.state === 'FAILED')) {
+              stopNeuralPolling();
+            }
+        } catch (e) {
+            console.warn("refreshActivities error:", e);
+        }
+    }
+
+    function updateApprovalStatus(activities, sessionId) {
+        const idSafe = sessionId.split('/').pop();
+        const opsContainer = document.getElementById('neural-actions-ops');
+        const v2Container = document.getElementById('neural-actions-v2');
+        if (!opsContainer || !v2Container) return;
+
+        const sorted = [...activities].sort((a, b) => new Date(a.createTime) - new Date(b.createTime));
+
+        let needsApproval = false;
+        for (let i = sorted.length - 1; i >= 0; i--) {
+            const act = sorted[i];
+            if (act.planApproved) {
+                needsApproval = false;
+                break;
+            }
+            if (act.planGenerated) {
+                needsApproval = true;
+                break;
+            }
+        }
+
+        if (needsApproval) {
+            const btnHtml = `
+                <span style="font-size: 11px; color: var(--amber); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Plan pendiente de aprobación</span>
+                <button onclick="approveJulesPlan('${sessionId}')" class="btn btn-primary btn-sm" style="background: var(--amber); color: #000; box-shadow: 0 0 15px rgba(245, 158, 11, 0.4); min-height: 32px; padding: 4px 12px; border-radius: 6px; font-weight: 800;">
+                    <i class="fas fa-check mr-2"></i> APROBAR PLAN
+                </button>
+            `;
+            opsContainer.innerHTML = btnHtml;
+            v2Container.innerHTML = btnHtml;
+            opsContainer.classList.remove('hidden');
+            v2Container.classList.remove('hidden');
+        } else {
+            opsContainer.classList.add('hidden');
+            v2Container.classList.add('hidden');
+            opsContainer.innerHTML = '';
+            v2Container.innerHTML = '';
+        }
+    }
+
+    window.approveJulesPlan = async (sessionId) => {
+        try {
+            showToast("Aprobando plan...", "amber");
+            await window.julesApi.approvePlan(sessionId);
+            showToast("Plan aprobado con éxito", "green");
+            const idSafe = sessionId.split('/').pop();
+            refreshActivities(idSafe);
+        } catch (e) {
+            showToast("Error al aprobar plan: " + e.message, "red");
+        }
+    };
+
+    function renderActivity(activity) {
+      const currentSessions = window.julesSessionsCache || [];
+      let html = '<div class="activity-selection-checkbox"></div>';
+
+      let diffsHtml = '';
+      if (activity.artifacts && activity.artifacts.length > 0) {
+        activity.artifacts.forEach(artifact => {
+          if (artifact.changeSet?.gitPatch?.unidiffPatch) {
+            const patch = artifact.changeSet.gitPatch.unidiffPatch;
+            const msg   = artifact.changeSet.gitPatch.suggestedCommitMessage || '';
+            const lines = patch.split('\n');
+
+            const MAX_LINES = 300;
+            const visibleLines = lines.slice(0, MAX_LINES);
+            const hiddenCount = lines.length - visibleLines.length;
+
+            const diffLinesHtml = visibleLines.map(line => {
+              let cls = 'dl';
+              if (line.startsWith('+') && !line.startsWith('+++')) cls = 'dl dl-add';
+              else if (line.startsWith('-') && !line.startsWith('---')) cls = 'dl dl-del';
+              else if (line.startsWith('@@')) cls = 'dl dl-hunk';
+              return `<div class="${cls}">${escapeHtml(line)}</div>`;
+            }).join('');
+
+            const session = currentSessions.find(s => s.name === activity.name?.split('/activities/')[0]);
+            const moreHtml = hiddenCount > 0
+              ? `<div style="font-size:10px;color:#6b7280;padding:6px;text-align:center;
+                   border-top:1px solid #2a2a35;">
+                   +${hiddenCount} líneas más —
+                   <a href="${session?.url || '#'}" target="_blank"
+                      style="color:#8b5cf6;text-decoration:underline;">
+                     ver completo en Jules
+                   </a>
+                 </div>`
+              : '';
+
+            diffsHtml += `
+              <details style="margin-top:8px;" class="diff-viewer">
+                <summary style="cursor:pointer;font-size:11px;color:#8b5cf6;
+                  font-weight:600;padding:4px 0;list-style:none;
+                  display:flex;align-items:center;gap:6px;">
+                  <span>📄</span>
+                  <span>Ver cambios en código</span>
+                  ${msg ? `<span style="color:#6b7280;font-weight:400;font-size:10px;">
+                    — ${escapeHtml(msg)}</span>` : ''}
+                </summary>
+                <div style="border:1px solid #2a2a35;border-radius:6px;
+                  overflow:hidden;max-height:250px;overflow-y:auto;">
+                  ${diffLinesHtml}
+                  ${moreHtml}
+                </div>
+              </details>`;
+          }
+        });
+      }
+
+      if (activity.planGenerated) {
+        const steps = activity.planGenerated?.plan?.steps || [];
+        const stepsHtml = steps
+          .sort((a, b) => (a.index || 0) - (b.index || 0))
+          .map(s => `
+            <div style="padding:8px 0;border-bottom:1px solid #1e1e2a;">
+              <div style="display:flex;gap:8px;">
+                <span style="color:#7c3aed;font-weight:700;min-width:18px;">
+                  ${(s.index || 0) + 1}.
+                </span>
+                <div style="flex: 1;">
+                  <div style="color:#e2e8f0;font-size:12px;font-weight:500;">
+                    ${s.title || 'Sin título'}
+                  </div>
+                  ${s.description ? `
+                    <div style="color:#6b7280;font-size:11px;margin-top:2px;">
+                      ${s.description}
+                    </div>` : ''}
+                </div>
+                <button class="btn-icon" title="Comentar en este paso" onclick="commentOnStep('${activity.name?.split('/activities/')[0]}', ${(s.index || 0) + 1}, '${escapeHtml(s.title)}')">
+                  <i class="fa-solid fa-comment-dots text-[10px]"></i>
+                </button>
+              </div>
+            </div>
+          `).join('');
+
+        html = `
+          <div class="activity-entry activity-entry--plan">
+            <div style="font-size:10px;font-weight:700;color:#8b5cf6;
+                        text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">
+              📋 Plan generado (${steps.length} pasos)
+            </div>
+            <div>${stepsHtml || '<span style="color:#6b7280">Sin pasos</span>'}</div>
+          </div>`;
+      }
+      else if (activity.planApproved) {
+        html = `<div class="activity-entry" style="color:#10b981;font-size:11px;">
+          ✅ Plan aprobado
+        </div>`;
+      }
+      else if (activity.userMessaged) {
+        const msg = activity.userMessaged.userMessage || '';
+        const parsed = typeof marked !== 'undefined' ? marked.parse(msg) : escapeHtml(msg);
+        html = `<div class="activity-entry activity-entry--user prose-invert" style="overflow-x: auto; max-width: 100%; word-break: break-word;">${parsed}</div>`;
+      }
+      else if (activity.agentMessaged) {
+        const msg = activity.agentMessaged.agentMessage || '';
+        const parsed = typeof marked !== 'undefined' ? marked.parse(msg) : escapeHtml(msg);
+        html = `<div class="activity-entry activity-entry--agent prose-invert" style="overflow-x: auto; max-width: 100%; word-break: break-word;">${parsed}</div>`;
+      }
+      else if (activity.progressUpdated) {
+        const title = activity.progressUpdated.title || '';
+        const desc  = activity.progressUpdated.description || '';
+        const parsedTitle = typeof marked !== 'undefined' ? marked.parse(title) : escapeHtml(title);
+        const parsedDesc  = typeof marked !== 'undefined' && desc ? marked.parse(desc) : escapeHtml(desc);
+        const bash = (activity.artifacts || [])
+          .map(a => a.bashOutput).filter(Boolean)[0];
+
+        html = `
+          <div class="activity-entry activity-entry--progress">
+            <div class="prose-invert" style="overflow-x:auto;max-width:100%;word-break:break-word;font-size:12px;">
+              <span style="color:#8b5cf6;font-weight:700;">⚙️</span>
+              ${parsedTitle}
+              ${parsedDesc ? `<div style="color:#9ca3af;margin-top:4px;">${parsedDesc}</div>` : ''}
+            </div>
+            ${bash ? `
+              <details style="margin-top:6px;">
+                <summary style="font-size:10px;color:#6b7280;cursor:pointer;">
+                  $ ${escapeHtml(bash.command || '')}
+                  <span style="color:${bash.exitCode === 0 ? '#10b981' : '#ef4444'}">
+                    [exit ${bash.exitCode ?? '?'}]
+                  </span>
+                </summary>
+                <pre class="activity-code">${escapeHtml(bash.output || "")}</pre>
+              </details>` : ''}
+          </div>`;
+      }
+      else if (activity.sessionCompleted) {
+        const commitMsg = activity.sessionCompleted?.commitMessage ||
+                          activity.sessionCompleted?.message || '';
+        const parsed = typeof marked !== 'undefined' && commitMsg
+          ? marked.parse(commitMsg)
+          : '';
+
+        html = `
+          <div class="activity-entry" style="color:#10b981;font-size:11px;font-weight:600;">
+            🏁 Sesión completada
+            ${parsed ? `
+              <div class="prose-invert" style="overflow-x:auto;max-width:100%;word-break:break-word;
+                   font-size:11px;font-weight:400;color:#d1d5db;margin-top:6px;
+                   border-top:1px solid #1e1e2a;padding-top:6px;">
+                ${parsed}
+              </div>` : ''}
+          </div>`;
+      }
+      else if (activity.sessionFailed) {
+        const reason = activity.sessionFailed.reason || 'Error desconocido';
+        html = `<div class="activity-entry"
+                     style="color:#ef4444;font-size:11px;">
+          ❌ Sesión fallida: ${escapeHtml(reason)}
+        </div>`;
+      }
+
+      if (!html) {
+        const desc = activity.description || '';
+        if (!desc && !diffsHtml) return '';
+        if (desc) {
+          html = `<div class="activity-entry" style="color:#4b5563;font-size:10px;
+            font-style:italic;">
+            ${escapeHtml(desc)}
+          </div>`;
+        }
+      }
+      return html + diffsHtml;
+    }
+
+    window.toggleSessionDrawer = () => {
+        const drawer = $('sessions-drawer');
+        const overlay = $('sessions-drawer-overlay');
+        const isOpen = drawer.classList.toggle('open');
+        overlay.classList.toggle('open', isOpen);
+        if (isOpen) renderSessionDrawerList();
+    };
+
+    function renderSessionDrawerList() {
+        const list = $('sessions-drawer-list');
+        const sessions = JSON.parse(localStorage.getItem('hy_neural_sessions') || '[]');
+        if (sessions.length === 0) {
+            list.innerHTML = '<div style="opacity: 0.3; font-style: italic; text-align: center; padding: 40px 0;">No hay sesiones registradas</div>';
+            return;
+        }
+
+        list.innerHTML = sessions.map(s => {
+            const isActive = s.status === 'active';
+            const statusColor = isActive ? 'var(--green)' : 'var(--text3)';
+            return `
+            <div style="background: var(--surface2); border: 1px solid var(--border); border-radius: var(--r-md); padding: 16px; transition: all var(--t-fast); position: relative; overflow: hidden;">
+                ${isActive ? `<div style="position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: var(--accent);"></div>` : ''}
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                    <div style="min-width: 0; flex: 1;">
+                        <div id="drawer-name-display-${s.id}" style="font-size: 14px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; display: flex; align-items: center; gap: 8px;" onclick="restoreSessionFromDrawer('${s.id}')">
+                            ${s.name}
+                        </div>
+                        <input id="drawer-name-edit-${s.id}" type="text" class="cfg-input hidden" value="${s.name}" onblur="saveRenameFromDrawer('${s.id}')" onkeydown="if(event.key==='Enter') this.blur()" style="height: 28px; font-size: 13px; padding: 4px 8px; margin-top: 4px;">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+                            <span style="font-size: 9px; color: ${statusColor}; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 4px;">
+                                ${isActive ? `<span class="u-dot" style="width:5px; height:5px;"></span>` : ''} ${isActive ? 'ACTIVA' : 'ARCHIVADA'}
+                            </span>
+                            <span style="font-size: 9px; color: var(--text3); font-family: var(--font-mono);">#${s.id}</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 6px;">
+                        <button onclick="renameFromDrawer('${s.id}')" class="icon-btn" title="Renombrar" style="width: 28px; height: 28px; background: rgba(255,255,255,0.03); border: 1px solid var(--border);">✏️</button>
+                        <button onclick="archiveFromDrawer('${s.id}')" class="icon-btn" title="Archivar" style="width: 28px; height: 28px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); ${!isActive ? 'opacity: 0.2; pointer-events: none;' : ''}">🗄️</button>
+                        <button onclick="deleteFromDrawer('${s.id}')" class="icon-btn" title="Eliminar" style="width: 28px; height: 28px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); color: var(--red);">🗑️</button>
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: var(--text2); font-family: var(--font-mono); margin-top: 4px; padding-top: 10px; border-top: 1px solid var(--border);">
+                    <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; display: flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-tasks" style="font-size: 8px; color: var(--accent2);"></i> ${s.task_title}
+                    </span>
+                    <span style="color: var(--text3);">${new Date(s.start).toLocaleDateString()}</span>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    window.renameFromDrawer = (sid) => {
+        $(`drawer-name-display-${sid}`).classList.add('hidden');
+        const edit = $(`drawer-name-edit-${sid}`);
+        edit.classList.remove('hidden');
+        edit.focus();
+    };
+
+    window.saveRenameFromDrawer = (sid) => {
+        const edit = $(`drawer-name-edit-${sid}`);
+        const newName = edit.value.trim();
+        if (newName) {
+            const sessions = JSON.parse(localStorage.getItem('hy_neural_sessions') || '[]');
+            const s = sessions.find(sess => sess.id === sid);
+            if (s) {
+                s.name = newName;
+                localStorage.setItem('hy_neural_sessions', JSON.stringify(sessions));
+                if (getLinkedJulesSessionId() === sid) {
+                    localStorage.setItem('hy_neural_session_name', newName);
+                }
+            }
+        }
+        renderSessionDrawerList();
+    };
+
+    window.archiveFromDrawer = (sid) => {
+        const sessions = JSON.parse(localStorage.getItem('hy_neural_sessions') || '[]');
+        const s = sessions.find(sess => sess.id === sid);
+        if (s) {
+            s.status = 'archived';
+            localStorage.setItem('hy_neural_sessions', JSON.stringify(sessions));
+            if (getLinkedJulesSessionId() === sid) {
+                desvincularNeuralSession();
+            }
+            renderSessionDrawerList();
+        }
+    };
+
+    window.deleteFromDrawer = (sid) => {
+        if (!confirm('¿Eliminar sesión permanentemente?')) return;
+        let sessions = JSON.parse(localStorage.getItem('hy_neural_sessions') || '[]');
+        sessions = sessions.filter(s => s.id !== sid);
+        localStorage.setItem('hy_neural_sessions', JSON.stringify(sessions));
+        if (getLinkedJulesSessionId() === sid) {
+            desvincularNeuralSession();
+        }
+        renderSessionDrawerList();
+    };
+
+    window.restoreSessionFromDrawer = (sid) => {
+        const sessions = JSON.parse(localStorage.getItem('hy_neural_sessions') || '[]');
+        const s = sessions.find(sess => sess.id === sid);
+        if (!s) return;
+
+        localStorage.setItem('hy_neural_active', s.status === 'active' ? 'true' : 'false');
+        const claudeId = localStorage.getItem('hy_active_claude_session_id');
+        if (claudeId) {
+            localStorage.setItem(`hy_neural_session_id_${claudeId}`, s.id);
+        }
+        localStorage.setItem('hy_neural_session_id', s.id);
+        localStorage.setItem('hy_neural_session_name', s.name);
+        localStorage.setItem('hy_neural_session_start', s.start);
+
+        // Reconstruct task if possible
+        if (s.task_id) {
+            const task = (window.JulesPanelState?.tasks || []).find(t => String(t.id) === String(s.task_id));
+            if (task) localStorage.setItem('hy_neural_task_context', JSON.stringify(task));
+        }
+        window.location.reload();
+    }
+
+    function toggleHistoryCollapse() {
+        const container = $('jules-history-container');
+        const divider = $('neural-divider');
+        const label = $('collapse-label');
+        const isCollapsed = container.classList.toggle('collapsed');
+        divider.classList.toggle('collapsed', isCollapsed);
+        label.textContent = isCollapsed ? 'Expandir Historia' : 'Colapsar Historia';
+    }
+
+    let _historySelection = new Map();
+
+    function toggleActivitySelection(el, activity) {
+        const id = activity.id;
+        if (_historySelection.has(id)) {
+            _historySelection.delete(id);
+            el.classList.remove('selected');
+        } else {
+            _historySelection.set(id, activity);
+            el.classList.add('selected');
+        }
+        updateSelectionToolbar();
+    }
+
+    function updateSelectionToolbar() {
+        const toolbar = document.getElementById('neural-selection-toolbar');
+        const countEl = document.getElementById('selection-count');
+        const count = _historySelection.size;
+
+        if (count > 0) {
+            toolbar.classList.add('active');
+            countEl.textContent = count;
+        } else {
+            toolbar.classList.remove('active');
+        }
+    }
+
+    function clearHistorySelection() {
+        _historySelection.clear();
+        document.querySelectorAll('.activity-entry.selected').forEach(el => el.classList.remove('selected'));
+        updateSelectionToolbar();
+    }
+
+    function analyzeSelectedWithClaude() {
+        if (_historySelection.size === 0) return;
+
+        const container = document.getElementById('neural-jules-history');
+        const sortedEntries = Array.from(container.querySelectorAll('.activity-entry.selected'))
+            .map(el => _historySelection.get(el.dataset.activityId))
+            .filter(Boolean);
+
+        let prompt = "He seleccionado estos fragmentos del historial de Jules para analizar:\n\n";
+
+        sortedEntries.forEach((act, idx) => {
+            prompt += `--- [FRAGMENTO ${idx + 1}] ---\n`;
+            if (act.description) prompt += `DESCRIPCIÓN: ${act.description}\n`;
+            if (act.progressUpdated) prompt += `PROGRESO: ${act.progressUpdated.title}\n`;
+            if (act.artifacts) {
+                act.artifacts.forEach(art => {
+                    if (art.changeSet?.gitPatch?.unidiffPatch) {
+                        prompt += `CÓDIGO (DIFF):\n${art.changeSet.gitPatch.unidiffPatch}\n`;
+                    }
+                    if (art.bashOutput) {
+                        prompt += `COMANDO: ${art.bashOutput.command}\nOUTPUT:\n${art.bashOutput.output}\n`;
+                    }
+                });
+            }
+            if (act.planGenerated) {
+                const steps = act.planGenerated.plan?.steps || [];
+                prompt += `PLAN:\n${steps.map(s => `${s.index + 1}. ${s.title}: ${s.description || ''}`).join('\n')}\n`;
+            }
+            prompt += "\n";
+        });
+
+        const finalPrompt = prompt + "\n¿Qué opinas de estos cambios o estados? ¿Hay algo que deba ajustar o corregir?";
+
+        let thread = JSON.parse(localStorage.getItem('hy_neural_thread') || '[]');
+        thread.push({
+            role: 'user',
+            content: finalPrompt,
+            source: 'jules'
+        });
+
+        localStorage.setItem('hy_neural_thread', JSON.stringify(thread));
+        localStorage.setItem('hy_neural_pending_prompt', finalPrompt);
+        localStorage.setItem('hy_neural_active', 'true');
+
+        showToast("Enviando selección a Claude...", "green");
+        setTimeout(() => {
+            window.location.href = '/claude-chat.html';
+        }, 500);
+    }
+
+    function commentOnStep(sessionId, stepIndex, stepTitle) {
+        const idSafe = getIdSafe(sessionId);
+        const input = document.getElementById(`v2-chat-input`);
+        if (input) {
+            input.value = `Respecto al paso ${stepIndex} (${stepTitle}): ` + input.value;
+            input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            input.focus();
+        }
+    }
+
+    function desvincularNeuralSession() {
+        const sid = getLinkedJulesSessionId();
+        if (sid) {
+            const sessions = JSON.parse(localStorage.getItem('hy_neural_sessions') || '[]');
+            const s = sessions.find(sess => sess.id === sid);
+            if (s) {
+                s.status = 'archived';
+                localStorage.setItem('hy_neural_sessions', JSON.stringify(sessions));
+            }
+        }
+
+        localStorage.removeItem('hy_neural_active');
+        const claudeId = localStorage.getItem('hy_active_claude_session_id');
+        if (claudeId) {
+            localStorage.removeItem(`hy_neural_session_id_${claudeId}`);
+        }
+        localStorage.removeItem('hy_neural_session_id');
+        localStorage.removeItem('hy_neural_task_context');
+        localStorage.removeItem('hy_neural_pending_prompt');
+        localStorage.removeItem('hy_neural_thread');
+        stopNeuralPolling();
+        $('neural-session-banner').classList.add('hidden');
+        $('v2-task-context').classList.add('hidden');
+        if (window.JulesPanelState.activePayload) {
+            delete window.JulesPanelState.activePayload.source_task;
+        }
+        showToast("Sesión neural desvinculada (archivada)", "info");
+    }
 
     async function callCustomProvider(config, messages) {
         const baseUrl = (config.base_url || 'https://api.anthropic.com/v1').replace(/\/$/, '');

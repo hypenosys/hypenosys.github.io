@@ -527,7 +527,7 @@ permalink: /chat/neural/
             <a href="{{ '/tech-stack/' | relative_url }}" class="flex items-center gap-3 p-2 rounded-lg text-xs font-bold text-[#f8f8f2] hover:bg-[#44475a] transition-all">
                 <i class="fas fa-layer-group w-4 text-[#bd93f9]"></i> Tech Stack
             </a>
-            <a href="{{ '/jules-paneltest2.html' | relative_url }}" class="flex items-center gap-3 p-2 rounded-lg text-xs font-bold text-[#f8f8f2] hover:bg-[#44475a] transition-all">
+            <a href="{{ '/jules-panel/' | relative_url }}" class="flex items-center gap-3 p-2 rounded-lg text-xs font-bold text-[#f8f8f2] hover:bg-[#44475a] transition-all">
                 <i class="fas fa-robot w-4 text-[#bd93f9]"></i> Jules
             </a>
         </nav>
@@ -560,7 +560,7 @@ permalink: /chat/neural/
             <button onclick="openSettings()" class="w-full text-left text-xs font-bold text-[#f8f8f2] hover:text-[#bd93f9] transition-all flex items-center gap-2">
                 <i class="fas fa-cog"></i> API CONFIG
             </button>
-            <a href="/jules-paneltest2.html" class="w-full text-left text-xs font-bold text-[#f8f8f2] hover:text-[#bd93f9] transition-all flex items-center gap-2">
+            <a href="/jules-panel/" class="w-full text-left text-xs font-bold text-[#f8f8f2] hover:text-[#bd93f9] transition-all flex items-center gap-2">
                 <i class="fas fa-bolt"></i> JULES PANEL
             </a>
         </div>
@@ -1122,6 +1122,10 @@ permalink: /chat/neural/
             localStorage.removeItem('hy_neural_task_context');
             localStorage.removeItem('hy_neural_pending_prompt');
             localStorage.removeItem('hy_neural_thread');
+            localStorage.removeItem('hy_neural_session_id');
+            if (currentSessionId) {
+                localStorage.removeItem('hy_neural_session_id_' + currentSessionId);
+            }
             const banner = document.getElementById('task-context-banner');
             if (banner) banner.remove();
             window._activeTaskContext = null;
@@ -1129,6 +1133,7 @@ permalink: /chat/neural/
         }
 
         function showTaskContextBanner(task) {
+            const currentNeuralId = localStorage.getItem('hy_neural_session_id');
             const isNeuralActive = localStorage.getItem('hy_neural_active') === 'true';
             const banner = document.createElement('div');
             banner.id = 'task-context-banner';
@@ -1142,7 +1147,7 @@ permalink: /chat/neural/
                             </div>
                             <div>
                                 <div class="text-[9px] font-bold text-[#bd93f9] uppercase tracking-widest opacity-70">
-                                    ${isNeuralActive ? 'Neural Session Activa' : 'Contexto de Tarea'}
+                                    ${isNeuralActive ? (currentNeuralId ? `Neural Session: #${currentNeuralId}` : 'Neural Session Activa') : 'Contexto de Tarea'}
                                 </div>
                                 <div class="text-xs font-bold text-white/90">${task.titulo || task.title}</div>
                             </div>
@@ -1824,13 +1829,36 @@ permalink: /chat/neural/
             sessions.unshift(newSession);
             saveSessions();
             renderSessionList();
+
+            // Clean global neural link when creating a new session
+            localStorage.removeItem('hy_neural_session_id');
+
             loadSession(id);
         }
 
         async function loadSession(id, isArchived = false) {
             currentSessionId = id;
+            localStorage.setItem('hy_active_claude_session_id', id);
             const session = (isArchived ? archivedSessions : sessions).find(s => s.id === id);
             if (!session) return;
+
+            // Sync Neural Session ID for the banner
+            const neuralId = localStorage.getItem('hy_neural_session_id_' + id);
+            if (neuralId) {
+                localStorage.setItem('hy_neural_session_id', neuralId);
+            } else {
+                localStorage.removeItem('hy_neural_session_id');
+            }
+
+            // Refresh Banner if exists
+            const banner = document.getElementById('task-context-banner');
+            if (banner) banner.remove();
+            const taskContext = localStorage.getItem('hy_neural_task_context');
+            if (taskContext) {
+                try {
+                    showTaskContextBanner(JSON.parse(taskContext));
+                } catch(e){}
+            }
 
             // Close sidebar on mobile after selecting a session
             if (window.innerWidth <= 768) {
@@ -1896,12 +1924,20 @@ permalink: /chat/neural/
         function clearAllActiveSessions() {
             if (sessions.length === 0) return;
             showConfirmationToast(`¿Eliminar las ${sessions.length} conversaciones activas?`, () => {
+                // Cleanup all neural session mappings for active sessions
+                sessions.forEach(s => {
+                    localStorage.removeItem('hy_neural_session_id_' + s.id);
+                });
+
                 sessions = [];
                 currentSessionId = null;
+                localStorage.removeItem('hy_neural_session_id');
                 saveSessions();
                 renderSessionList();
                 chatMessages.innerHTML = '';
                 document.getElementById('welcome-screen')?.classList.remove('hidden');
+                const banner = document.getElementById('task-context-banner');
+                if (banner) banner.remove();
                 showToast('Historial limpiado');
             });
         }
@@ -1991,11 +2027,17 @@ permalink: /chat/neural/
                     sessions = sessions.filter(s => s.id !== id);
                 }
 
+                // Cleanup neural session mapping
+                localStorage.removeItem('hy_neural_session_id_' + id);
+
                 if (currentSessionId === id) {
                     currentSessionId = null;
+                    localStorage.removeItem('hy_neural_session_id');
                     chatMessages.innerHTML = '';
                     document.getElementById('welcome-screen')?.classList.remove('hidden');
                     document.getElementById('session-title').textContent = 'Nueva Conversación';
+                    const banner = document.getElementById('task-context-banner');
+                    if (banner) banner.remove();
                 }
 
                 saveSessions();
@@ -2102,19 +2144,20 @@ permalink: /chat/neural/
                 const text = session.messages[idx].content;
 
                 const neuralActive = localStorage.getItem('hy_neural_active') === 'true';
-                const neuralSessionId = localStorage.getItem('hy_neural_session_id');
+                const neuralSessionId = localStorage.getItem('hy_neural_session_id_' + currentSessionId);
 
                 if (neuralActive && neuralSessionId) {
                     showToast('Enviando a sesión activa de Jules...');
                     try {
-                        const ok = await window.julesApi.sendMessage(neuralSessionId, text);
+                        const targetId = neuralSessionId.startsWith('sessions/') ? neuralSessionId : 'sessions/' + neuralSessionId;
+                        const ok = await window.julesApi.sendMessage(targetId, text);
                         if (ok) {
                             showToast('Orden enviada con éxito');
                             // Sync with Neural Thread
                             let thread = JSON.parse(localStorage.getItem('hy_neural_thread') || '[]');
                             thread.push({ role: 'assistant', content: text, source: 'claude' });
                             localStorage.setItem('hy_neural_thread', JSON.stringify(thread));
-                            setTimeout(() => window.location.href = '/jules-paneltest2.html', 800);
+                            setTimeout(() => window.location.href = '/jules-panel/', 800);
                         }
                     } catch (e) {
                         showToast('Error al enviar a Jules: ' + e.message);
@@ -2130,8 +2173,12 @@ permalink: /chat/neural/
                     localStorage.setItem('hy_neural_active', 'true');
 
                     showToast('Abriendo Jules Panel...');
-                    const taskData = encodeURIComponent(JSON.stringify({ prompt: text }));
-                    setTimeout(() => window.location.href = `/jules-paneltest2.html?task_data=${taskData}`, 800);
+                    const taskContext = localStorage.getItem('hy_neural_task_context');
+                    let url = `/jules-panel/?prompt=${encodeURIComponent(text)}`;
+                    if (taskContext) {
+                        url += `&task_data=${encodeURIComponent(taskContext)}`;
+                    }
+                    setTimeout(() => window.location.href = url, 800);
                 }
             }
         }
@@ -2205,7 +2252,7 @@ permalink: /chat/neural/
             }
 
             showToast('Neural Link establecido. Redirigiendo...');
-            setTimeout(() => window.location.href = '/jules-paneltest2.html', 1000);
+            setTimeout(() => window.location.href = '/jules-panel/', 1000);
         }
 
         function handleSlashCommand(command) {
@@ -2223,7 +2270,7 @@ permalink: /chat/neural/
                     appendSystemMessage('Comando detectado: /move. Indica ID y estado.', 'info');
                     break;
                 case '/jules':
-                    window.location.href = '/jules-paneltest2.html';
+                    window.location.href = '/jules-panel/';
                     break;
                 default:
                     appendSystemMessage('Comando desconocido: ' + cmd, 'error');
@@ -2291,15 +2338,25 @@ permalink: /chat/neural/
 
             // Handle Jules Direct Mode
             if (currentSendMode === 'jules') {
-                const sessionId = localStorage.getItem('hy_neural_session_id');
+                const sessionId = localStorage.getItem('hy_neural_session_id_' + currentSessionId);
+
                 if (!sessionId) {
-                    alert('No hay una sesión de Jules activa vinculada.');
+                    showToast('No hay sesión Jules vinculada a esta charla. Redirigiendo...');
+                    const taskContext = localStorage.getItem('hy_neural_task_context');
+                    let url = `/jules-panel/?prompt=${encodeURIComponent(content)}`;
+                    if (taskContext) {
+                        url += `&task_data=${encodeURIComponent(taskContext)}`;
+                    }
+                    setTimeout(() => {
+                        window.location.href = url;
+                    }, 1000);
                     return;
                 }
 
                 sendBtn.disabled = true;
                 try {
-                    const ok = await window.julesApi.sendMessage('sessions/' + sessionId, content);
+                    const targetId = sessionId.startsWith('sessions/') ? sessionId : 'sessions/' + sessionId;
+                    const ok = await window.julesApi.sendMessage(targetId, content);
                     if (ok) {
                         appendSystemMessage(`Orden enviada a Jules (Sesión #${sessionId}): ${content}`, 'info');
                         chatInput.value = '';
