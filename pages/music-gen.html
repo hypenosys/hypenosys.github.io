@@ -1,0 +1,1266 @@
+---
+layout: page
+title: AI Music Generator (ACE Step)
+permalink: /music-gen/
+---
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+
+<div id="mg-root">
+
+  <!-- SCANLINE OVERLAY -->
+  <div class="mg-scanlines" aria-hidden="true"></div>
+  <div class="mg-crt-vignette" aria-hidden="true"></div>
+
+  <!-- PLAYER SHELL -->
+  <div class="mg-shell">
+
+    <!-- ══ HEADER BAR ══ -->
+    <div class="mg-titlebar">
+      <div class="mg-titlebar-dots">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="mg-titlebar-title">HYPENOSYS :: NEURAL AUDIO ENGINE v2.1</div>
+      <div class="mg-titlebar-tag">ACE STEP 1.5 XL TURBO</div>
+    </div>
+
+    <!-- ══ MAIN BODY ══ -->
+    <div class="mg-body">
+
+      <!-- LEFT: VIZ + TRANSPORT -->
+      <div class="mg-left">
+
+        <!-- SPECTRUM VISUALIZER -->
+        <div class="mg-viz-frame">
+          <div class="mg-viz-label">SPECTRUM ANALYZER</div>
+          <canvas id="spectrumCanvas" class="mg-spectrum" width="320" height="80"></canvas>
+          <div class="mg-viz-overlay-text" id="vizOverlay">[ IDLE ]</div>
+        </div>
+
+        <!-- WAVEFORM -->
+        <div class="mg-waveform-frame">
+          <canvas id="waveformCanvas" class="mg-waveform" width="320" height="48"></canvas>
+        </div>
+
+        <!-- NOW PLAYING -->
+        <div class="mg-nowplaying">
+          <div class="mg-np-track" id="npTrack">--- NO TRACK LOADED ---</div>
+          <div class="mg-np-meta" id="npMeta">BPM: — | KEY: — | LANG: —</div>
+        </div>
+
+        <!-- TRANSPORT -->
+        <div class="mg-transport">
+          <button class="mg-transport-btn" id="btnRewind" onclick="transportRewind()" title="Rewind">⏮</button>
+          <button class="mg-transport-btn mg-transport-play" id="btnPlay" onclick="transportPlay()" title="Play/Pause">▶</button>
+          <button class="mg-transport-btn" id="btnStop" onclick="transportStop()" title="Stop">⏹</button>
+          <button class="mg-transport-btn" id="btnDownload" onclick="downloadTrack()" title="Save" disabled>💾</button>
+        </div>
+
+        <!-- PROGRESS BAR -->
+        <div class="mg-progress-wrap">
+          <div class="mg-progress-bar" id="progressBar">
+            <div class="mg-progress-fill" id="progressFill" style="width:0%"></div>
+            <div class="mg-progress-cursor" id="progressCursor" style="left:0%"></div>
+          </div>
+          <div class="mg-progress-times">
+            <span id="timeElapsed">0:00</span>
+            <span id="timeDuration">0:00</span>
+          </div>
+        </div>
+
+        <!-- VOLUME -->
+        <div class="mg-volume-row">
+          <span class="mg-knob-label">VOL</span>
+          <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.8" class="mg-slider" oninput="setVolume(this.value)">
+          <span class="mg-knob-label" id="volPct">80%</span>
+        </div>
+
+        <!-- AUDIO ELEMENT -->
+        <audio id="audioPlayer" preload="auto"></audio>
+
+        <!-- STATUS LED -->
+        <div class="mg-led-row">
+          <div class="mg-led-group">
+            <span class="mg-led" id="ledPower"></span>
+            <span class="mg-led-label">PWR</span>
+          </div>
+          <div class="mg-led-group">
+            <span class="mg-led" id="ledGen"></span>
+            <span class="mg-led-label">GEN</span>
+          </div>
+          <div class="mg-led-group">
+            <span class="mg-led" id="ledAudio"></span>
+            <span class="mg-led-label">AUDIO</span>
+          </div>
+          <div class="mg-led-group">
+            <span class="mg-led" id="ledErr"></span>
+            <span class="mg-led-label">ERR</span>
+          </div>
+        </div>
+
+        <!-- HISTORY -->
+        <div class="mg-history-frame">
+          <div class="mg-section-label">// GENERATED TRACKS</div>
+          <div class="mg-history-list" id="historyList">
+            <div class="mg-history-empty">[ NO TRACKS YET ]</div>
+          </div>
+        </div>
+
+      </div><!-- end left -->
+
+      <!-- DIVIDER -->
+      <div class="mg-divider"></div>
+
+      <!-- RIGHT: CONTROLS -->
+      <div class="mg-right">
+
+        <!-- TABS -->
+        <div class="mg-tabs">
+          <button class="mg-tab active" data-tab="compose" onclick="switchTab('compose')">COMPOSE</button>
+          <button class="mg-tab" data-tab="lyrics" onclick="switchTab('lyrics')">LYRICS</button>
+          <button class="mg-tab" data-tab="advanced" onclick="switchTab('advanced')">ADVANCED</button>
+          <button class="mg-tab" data-tab="config" onclick="switchTab('config')">CONFIG</button>
+        </div>
+
+        <!-- ── TAB: COMPOSE ── -->
+        <div class="mg-tab-panel active" id="tab-compose">
+
+          <div class="mg-field-group">
+            <label class="mg-label">MAIN GENRE / STYLE</label>
+            <textarea id="mainGenre" class="mg-textarea" rows="3" placeholder="Punky electronica, broken beat, grime, dubby drum & bass, new wave..."></textarea>
+          </div>
+
+          <div class="mg-field-group">
+            <label class="mg-label">SUB-GENRE / MOOD</label>
+            <textarea id="subGenre" class="mg-textarea" rows="3" placeholder="Dark atmospheric cold wave, heavy sub bass, industrial darkness..."></textarea>
+          </div>
+
+          <div class="mg-inline-grid">
+            <div class="mg-field-group">
+              <label class="mg-label">BPM</label>
+              <input type="number" id="paramBpm" class="mg-input-num" value="95" min="40" max="240">
+            </div>
+            <div class="mg-field-group">
+              <label class="mg-label">DURATION (s)</label>
+              <input type="number" id="paramDuration" class="mg-input-num" value="120" min="10" max="300">
+            </div>
+            <div class="mg-field-group">
+              <label class="mg-label">TIME SIG</label>
+              <select id="paramTimeSig" class="mg-select">
+                <option value="4">4/4</option>
+                <option value="3">3/4</option>
+                <option value="6">6/8</option>
+                <option value="5">5/4</option>
+                <option value="7">7/8</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mg-inline-grid">
+            <div class="mg-field-group">
+              <label class="mg-label">KEY / SCALE</label>
+              <select id="paramKey" class="mg-select">
+                <option value="D minor">D minor</option>
+                <option value="A minor">A minor</option>
+                <option value="E minor">E minor</option>
+                <option value="C major">C major</option>
+                <option value="G major">G major</option>
+                <option value="F# minor">F# minor</option>
+                <option value="B minor">B minor</option>
+                <option value="C minor">C minor</option>
+                <option value="G minor">G minor</option>
+              </select>
+            </div>
+            <div class="mg-field-group">
+              <label class="mg-label">LANGUAGE</label>
+              <select id="paramLang" class="mg-select">
+                <option value="es">ES</option>
+                <option value="en">EN</option>
+                <option value="ca">CA</option>
+                <option value="fr">FR</option>
+                <option value="de">DE</option>
+                <option value="it">IT</option>
+                <option value="pt">PT</option>
+              </select>
+            </div>
+            <div class="mg-field-group">
+              <label class="mg-label">SEED</label>
+              <div class="mg-seed-row">
+                <input type="number" id="paramSeed" class="mg-input-num" value="0" min="0">
+                <button class="mg-btn-sm" onclick="randomSeed()">RND</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ── TAB: LYRICS ── -->
+        <div class="mg-tab-panel hidden" id="tab-lyrics">
+          <div class="mg-field-group" style="flex:1">
+            <label class="mg-label">LYRICS / STRUCTURE</label>
+            <textarea id="paramLyrics" class="mg-textarea mg-lyrics-ta" rows="18" placeholder="[Intro]&#10;your lyrics here...&#10;&#10;[Verse 1]&#10;...&#10;&#10;[Chorus]&#10;..."></textarea>
+          </div>
+          <div class="mg-lyrics-tools">
+            <button class="mg-btn-sm" onclick="clearLyrics()">CLEAR</button>
+            <button class="mg-btn-sm" onclick="insertTemplate()">TEMPLATE</button>
+            <span class="mg-char-count" id="charCount">0 chars</span>
+          </div>
+        </div>
+
+        <!-- ── TAB: ADVANCED ── -->
+        <div class="mg-tab-panel hidden" id="tab-advanced">
+
+          <div class="mg-field-group">
+            <label class="mg-label">CFG SCALE <span id="cfgVal">2.0</span></label>
+            <input type="range" id="paramCfg" class="mg-slider" min="1" max="10" step="0.5" value="2" oninput="document.getElementById('cfgVal').textContent=parseFloat(this.value).toFixed(1)">
+          </div>
+
+          <div class="mg-field-group">
+            <label class="mg-label">TEMPERATURE <span id="tempVal">0.85</span></label>
+            <input type="range" id="paramTemp" class="mg-slider" min="0.1" max="2" step="0.05" value="0.85" oninput="document.getElementById('tempVal').textContent=parseFloat(this.value).toFixed(2)">
+          </div>
+
+          <div class="mg-field-group">
+            <label class="mg-label">TOP-P <span id="topPVal">1.0</span></label>
+            <input type="range" id="paramTopP" class="mg-slider" min="0" max="1" step="0.05" value="1" oninput="document.getElementById('topPVal').textContent=parseFloat(this.value).toFixed(2)">
+          </div>
+
+          <div class="mg-field-group">
+            <label class="mg-label">TOP-K <span id="topKVal">0</span></label>
+            <input type="range" id="paramTopK" class="mg-slider" min="0" max="200" step="1" value="0" oninput="document.getElementById('topKVal').textContent=this.value">
+          </div>
+
+          <div class="mg-field-group">
+            <label class="mg-label">STEPS <span id="stepsVal">8</span></label>
+            <input type="range" id="paramSteps" class="mg-slider" min="1" max="50" step="1" value="8" oninput="document.getElementById('stepsVal').textContent=this.value">
+          </div>
+
+          <div class="mg-field-group">
+            <label class="mg-label">FLOW SHIFT <span id="shiftVal">3</span></label>
+            <input type="range" id="paramShift" class="mg-slider" min="1" max="10" step="0.5" value="3" oninput="document.getElementById('shiftVal').textContent=parseFloat(this.value).toFixed(1)">
+          </div>
+
+        </div>
+
+        <!-- ── TAB: CONFIG ── -->
+        <div class="mg-tab-panel hidden" id="tab-config">
+          <div class="mg-field-group">
+            <label class="mg-label">N8N WEBHOOK URL</label>
+            <input type="url" id="cfgEndpoint" class="mg-input-text" placeholder="https://n8n.../webhook/music-gen">
+          </div>
+          <div class="mg-status-block" id="cfgStatus">
+            <span id="cfgStatusText">[ ENDPOINT NOT SET ]</span>
+          </div>
+          <button class="mg-btn-sm" onclick="saveConfig()" style="margin-top:10px">SAVE CONFIG</button>
+          <button class="mg-btn-sm" onclick="testEndpoint()" style="margin-top:6px">TEST PING</button>
+
+          <div class="mg-divider-h" style="margin-top:16px"></div>
+          <div class="mg-section-label" style="margin-top:12px">// N8N WORKFLOW JSON</div>
+          <p class="mg-hint">Copy and import into n8n:</p>
+          <button class="mg-btn-sm" onclick="copyWorkflow()">COPY WORKFLOW JSON</button>
+        </div>
+
+        <!-- ══ GENERATE BUTTON ══ -->
+        <div class="mg-generate-wrap">
+          <button class="mg-generate-btn" id="generateBtn" onclick="handleGenerate()">
+            <span class="mg-generate-icon">◈</span>
+            <span id="generateLabel">SYNTHESIZE TRACK</span>
+            <span class="mg-generate-kbd">⌘↵</span>
+          </button>
+          <div class="mg-gen-status" id="genStatus">READY</div>
+        </div>
+
+      </div><!-- end right -->
+
+    </div><!-- end body -->
+
+    <!-- ══ STATUS BAR ══ -->
+    <div class="mg-statusbar">
+      <span id="sbLeft">HYPENOSYS NEURAL AUDIO · ACE STEP 1.5 XL TURBO · COMFYUI</span>
+      <span id="sbRight" class="mg-sb-right">IDLE</span>
+    </div>
+
+  </div><!-- end shell -->
+
+</div><!-- end root -->
+
+<style>
+/* ── ROOT ── */
+#mg-root {
+  --c-bg: #0a0a0a;
+  --c-shell: #111113;
+  --c-panel: #0e0e10;
+  --c-border: #2a2a30;
+  --c-border2: #3a3a45;
+  --c-accent: #00ff41;
+  --c-accent2: #ff0080;
+  --c-accent3: #00d4ff;
+  --c-warn: #ffaa00;
+  --c-text: #c8c8d0;
+  --c-text2: #666677;
+  --c-text3: #333340;
+  --c-led-on: var(--c-accent);
+  --c-led-off: #1a1a20;
+  --f-mono: 'Share Tech Mono', 'Courier New', monospace;
+  --f-vt: 'VT323', monospace;
+  --f-orb: 'Orbitron', sans-serif;
+
+  font-family: var(--f-mono);
+  background: var(--c-bg);
+  color: var(--c-text);
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 24px 16px;
+  position: relative;
+  margin-left: -15px;
+  margin-right: -15px;
+  width: calc(100% + 30px);
+  box-sizing: border-box;
+}
+
+/* SCANLINES */
+.mg-scanlines {
+  position: fixed; inset: 0; pointer-events: none; z-index: 9999;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.08) 2px,
+    rgba(0,0,0,0.08) 4px
+  );
+}
+.mg-crt-vignette {
+  position: fixed; inset: 0; pointer-events: none; z-index: 9998;
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.7) 100%);
+}
+
+/* ── SHELL ── */
+.mg-shell {
+  width: 100%;
+  max-width: 900px;
+  background: var(--c-shell);
+  border: 1px solid var(--c-border2);
+  border-radius: 4px;
+  box-shadow:
+    0 0 0 1px #000,
+    0 0 40px rgba(0,255,65,0.04),
+    inset 0 1px 0 rgba(255,255,255,0.03);
+  overflow: hidden;
+}
+
+/* ── TITLE BAR ── */
+.mg-titlebar {
+  background: #0c0c0e;
+  border-bottom: 1px solid var(--c-border);
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.mg-titlebar-dots { display: flex; gap: 5px; }
+.mg-titlebar-dots span {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--c-border2);
+}
+.mg-titlebar-dots span:nth-child(1) { background: #ff5555; }
+.mg-titlebar-dots span:nth-child(2) { background: var(--c-warn); }
+.mg-titlebar-dots span:nth-child(3) { background: var(--c-accent); }
+.mg-titlebar-title {
+  flex: 1;
+  font-family: var(--f-orb);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--c-accent);
+  text-shadow: 0 0 10px rgba(0,255,65,0.5);
+}
+.mg-titlebar-tag {
+  font-size: 10px;
+  color: var(--c-text2);
+  letter-spacing: 0.05em;
+}
+
+/* ── BODY ── */
+.mg-body {
+  display: flex;
+  min-height: 580px;
+}
+.mg-divider {
+  width: 1px;
+  background: var(--c-border);
+  flex-shrink: 0;
+}
+
+/* ── LEFT PANEL ── */
+.mg-left {
+  width: 340px;
+  flex-shrink: 0;
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--c-panel);
+}
+
+/* Visualizer */
+.mg-viz-frame {
+  background: #000;
+  border: 1px solid var(--c-border);
+  border-radius: 2px;
+  padding: 6px;
+  position: relative;
+}
+.mg-viz-label {
+  font-size: 9px;
+  color: var(--c-text3);
+  letter-spacing: 0.1em;
+  margin-bottom: 4px;
+}
+.mg-spectrum {
+  display: block;
+  width: 100%;
+  height: 80px;
+  image-rendering: pixelated;
+}
+.mg-viz-overlay-text {
+  position: absolute;
+  bottom: 10px; left: 50%; transform: translateX(-50%);
+  font-family: var(--f-vt); font-size: 18px;
+  color: rgba(0,255,65,0.25);
+  pointer-events: none;
+  letter-spacing: 0.2em;
+  white-space: nowrap;
+}
+
+.mg-waveform-frame {
+  background: #000;
+  border: 1px solid var(--c-border);
+  border-radius: 2px;
+  padding: 4px;
+}
+.mg-waveform { display: block; width: 100%; height: 48px; }
+
+/* Now playing */
+.mg-nowplaying {
+  background: #000;
+  border: 1px solid var(--c-border);
+  padding: 8px 10px;
+  border-radius: 2px;
+}
+.mg-np-track {
+  font-family: var(--f-vt);
+  font-size: 16px;
+  color: var(--c-accent);
+  text-shadow: 0 0 8px rgba(0,255,65,0.4);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mg-np-meta {
+  font-size: 10px;
+  color: var(--c-text2);
+  margin-top: 3px;
+  letter-spacing: 0.05em;
+}
+
+/* Transport */
+.mg-transport {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+.mg-transport-btn {
+  flex: 1;
+  background: #0c0c0e;
+  border: 1px solid var(--c-border2);
+  color: var(--c-text2);
+  font-size: 14px;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.1s;
+  font-family: var(--f-mono);
+}
+.mg-transport-btn:hover { border-color: var(--c-accent); color: var(--c-accent); background: rgba(0,255,65,0.05); }
+.mg-transport-btn:active { transform: scale(0.96); }
+.mg-transport-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.mg-transport-play { font-size: 16px; flex: 2; }
+
+/* Progress */
+.mg-progress-wrap { display: flex; flex-direction: column; gap: 3px; }
+.mg-progress-bar {
+  height: 6px; background: #000;
+  border: 1px solid var(--c-border);
+  border-radius: 1px; position: relative;
+  cursor: pointer;
+  overflow: visible;
+}
+.mg-progress-fill {
+  height: 100%; background: var(--c-accent);
+  box-shadow: 0 0 6px var(--c-accent);
+  transition: width 0.1s linear;
+  border-radius: 1px;
+}
+.mg-progress-cursor {
+  position: absolute; top: -3px;
+  width: 2px; height: 12px;
+  background: #fff;
+  transform: translateX(-1px);
+  pointer-events: none;
+}
+.mg-progress-times {
+  display: flex; justify-content: space-between;
+  font-size: 10px; color: var(--c-text2);
+}
+
+/* Volume */
+.mg-volume-row {
+  display: flex; align-items: center; gap: 8px;
+}
+.mg-knob-label { font-size: 10px; color: var(--c-text2); letter-spacing: 0.05em; white-space: nowrap; }
+
+/* Sliders */
+.mg-slider {
+  flex: 1; -webkit-appearance: none; appearance: none;
+  height: 4px; background: var(--c-border2);
+  border-radius: 2px; cursor: pointer; outline: none;
+  accent-color: var(--c-accent);
+}
+.mg-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 10px; height: 10px;
+  background: var(--c-accent);
+  border-radius: 1px;
+  box-shadow: 0 0 4px var(--c-accent);
+  cursor: pointer;
+}
+
+/* LEDs */
+.mg-led-row { display: flex; gap: 12px; align-items: center; }
+.mg-led-group { display: flex; align-items: center; gap: 4px; }
+.mg-led {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--c-led-off);
+  border: 1px solid var(--c-border2);
+  transition: all 0.2s;
+}
+.mg-led.on { background: var(--c-led-on); box-shadow: 0 0 6px var(--c-led-on); border-color: var(--c-led-on); }
+.mg-led.on-warn { background: var(--c-warn); box-shadow: 0 0 6px var(--c-warn); border-color: var(--c-warn); animation: blink 0.8s infinite; }
+.mg-led.on-err { background: #ff5555; box-shadow: 0 0 6px #ff5555; border-color: #ff5555; }
+.mg-led-label { font-size: 9px; color: var(--c-text3); letter-spacing: 0.1em; }
+@keyframes blink { 0%,100%{opacity:1}50%{opacity:0.2} }
+
+/* History */
+.mg-history-frame {
+  flex: 1;
+  border: 1px solid var(--c-border);
+  background: #000;
+  border-radius: 2px;
+  padding: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 80px;
+}
+.mg-history-list {
+  flex: 1; overflow-y: auto;
+  display: flex; flex-direction: column; gap: 4px;
+  scrollbar-width: thin; scrollbar-color: var(--c-border2) transparent;
+}
+.mg-history-empty { font-family: var(--f-vt); font-size: 14px; color: var(--c-text3); text-align: center; padding: 12px 0; }
+.mg-history-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 6px;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.1s;
+}
+.mg-history-item:hover { border-color: var(--c-accent); background: rgba(0,255,65,0.04); }
+.mg-history-icon { font-size: 12px; color: var(--c-accent); flex-shrink: 0; }
+.mg-history-info { flex: 1; overflow: hidden; }
+.mg-history-name { font-size: 11px; color: var(--c-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mg-history-sub { font-size: 9px; color: var(--c-text2); margin-top: 1px; }
+
+/* ── RIGHT PANEL ── */
+.mg-right {
+  flex: 1;
+  padding: 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow: hidden;
+}
+
+/* Tabs */
+.mg-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--c-border);
+}
+.mg-tab {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--c-text2);
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  padding: 6px 14px 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.mg-tab:hover { color: var(--c-text); }
+.mg-tab.active { color: var(--c-accent); border-bottom-color: var(--c-accent); }
+
+.mg-tab-panel { display: flex; flex-direction: column; gap: 10px; flex: 1; }
+.mg-tab-panel.hidden { display: none; }
+
+/* Fields */
+.mg-section-label {
+  font-size: 10px; color: var(--c-text3);
+  letter-spacing: 0.08em; margin-bottom: 2px;
+}
+.mg-label {
+  display: block;
+  font-size: 10px; color: var(--c-text2);
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+.mg-field-group { display: flex; flex-direction: column; }
+.mg-textarea {
+  background: #000;
+  border: 1px solid var(--c-border);
+  color: var(--c-accent);
+  font-family: var(--f-mono);
+  font-size: 12px;
+  padding: 8px 10px;
+  border-radius: 2px;
+  resize: vertical;
+  line-height: 1.5;
+  transition: border-color 0.15s;
+}
+.mg-textarea:focus { outline: none; border-color: var(--c-accent); box-shadow: 0 0 8px rgba(0,255,65,0.1); }
+.mg-lyrics-ta { flex: 1; min-height: 260px; color: var(--c-text); }
+.mg-lyrics-tools { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+.mg-char-count { font-size: 10px; color: var(--c-text3); margin-left: auto; }
+
+.mg-inline-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.mg-input-num {
+  width: 100%; background: #000; border: 1px solid var(--c-border);
+  color: var(--c-accent); font-family: var(--f-mono); font-size: 13px;
+  padding: 6px 8px; border-radius: 2px; text-align: center;
+}
+.mg-input-num:focus { outline: none; border-color: var(--c-accent); }
+.mg-input-text {
+  width: 100%; background: #000; border: 1px solid var(--c-border);
+  color: var(--c-accent); font-family: var(--f-mono); font-size: 11px;
+  padding: 7px 10px; border-radius: 2px;
+}
+.mg-input-text:focus { outline: none; border-color: var(--c-accent); }
+.mg-select {
+  width: 100%; background: #000; border: 1px solid var(--c-border);
+  color: var(--c-accent); font-family: var(--f-mono); font-size: 12px;
+  padding: 6px 8px; border-radius: 2px; cursor: pointer;
+}
+.mg-select:focus { outline: none; border-color: var(--c-accent); }
+.mg-seed-row { display: flex; gap: 4px; }
+.mg-btn-sm {
+  background: #0c0c0e; border: 1px solid var(--c-border2);
+  color: var(--c-text2); font-family: var(--f-mono); font-size: 10px;
+  padding: 5px 10px; cursor: pointer; border-radius: 2px;
+  letter-spacing: 0.05em; white-space: nowrap;
+  transition: all 0.1s; display: block; width: 100%;
+}
+.mg-btn-sm:hover { border-color: var(--c-accent); color: var(--c-accent); }
+
+.mg-status-block {
+  background: #000; border: 1px solid var(--c-border);
+  padding: 8px 10px; border-radius: 2px;
+  font-size: 11px; color: var(--c-text2);
+  min-height: 36px; display: flex; align-items: center;
+}
+.mg-hint { font-size: 10px; color: var(--c-text3); margin: 4px 0; }
+.mg-divider-h { height: 1px; background: var(--c-border); }
+
+/* Generate */
+.mg-generate-wrap {
+  margin-top: auto;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.mg-generate-btn {
+  background: linear-gradient(135deg, #001a00 0%, #002a00 100%);
+  border: 1px solid var(--c-accent);
+  color: var(--c-accent);
+  font-family: var(--f-orb);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  padding: 14px 20px;
+  cursor: pointer;
+  border-radius: 2px;
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  position: relative; overflow: hidden;
+  text-shadow: 0 0 10px rgba(0,255,65,0.6);
+  box-shadow: 0 0 20px rgba(0,255,65,0.08), inset 0 0 20px rgba(0,255,65,0.02);
+  transition: all 0.2s;
+}
+.mg-generate-btn::before {
+  content: '';
+  position: absolute; top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0,255,65,0.06), transparent);
+  animation: shimmer 3s infinite;
+}
+@keyframes shimmer { to { left: 100%; } }
+.mg-generate-btn:hover {
+  box-shadow: 0 0 30px rgba(0,255,65,0.2), inset 0 0 20px rgba(0,255,65,0.05);
+  background: linear-gradient(135deg, #002200 0%, #003300 100%);
+}
+.mg-generate-btn:disabled {
+  border-color: var(--c-border2);
+  color: var(--c-text3);
+  background: #0c0c0e;
+  text-shadow: none;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+.mg-generate-icon { font-size: 18px; }
+.mg-generate-kbd { font-size: 9px; color: var(--c-text3); font-family: var(--f-mono); }
+.mg-gen-status {
+  text-align: center;
+  font-family: var(--f-vt);
+  font-size: 15px;
+  color: var(--c-text3);
+  letter-spacing: 0.1em;
+}
+
+/* Status bar */
+.mg-statusbar {
+  background: #070709;
+  border-top: 1px solid var(--c-border);
+  padding: 5px 14px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--c-text3);
+  letter-spacing: 0.05em;
+}
+.mg-sb-right { color: var(--c-accent); }
+
+.hidden { display: none !important; }
+</style>
+
+<script>
+/* ─── N8N WORKFLOW JSON ─── */
+const N8N_WORKFLOW = {
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": ["POST"],
+        "path": "music-gen",
+        "responseMode": "responseNode",
+        "options": { "allowedOrigins": "https://hypenosys.github.io" }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [560, -208],
+      "id": "webhook-music",
+      "name": "Webhook Music"
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "code": `import json
+body = items[0]['json']['body']
+return [{
+  'json': {
+    'mainGenre': body.get('mainGenre',''),
+    'subGenre': body.get('subGenre',''),
+    'lyrics': body.get('lyrics',''),
+    'bpm': int(body.get('bpm', 95)),
+    'duration': int(body.get('duration', 120)),
+    'timesignature': str(body.get('timesignature','4')),
+    'keyscale': body.get('keyscale','D minor'),
+    'language': body.get('language','es'),
+    'seed': int(body.get('seed', 0)),
+    'cfg_scale': float(body.get('cfg_scale', 2)),
+    'temperature': float(body.get('temperature', 0.85)),
+    'top_p': float(body.get('top_p', 1)),
+    'top_k': int(body.get('top_k', 0)),
+    'steps': int(body.get('steps', 8)),
+    'shift': float(body.get('shift', 3)),
+  }
+}]`
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [752, -208],
+      "id": "code-parse-music",
+      "name": "Parse Music Params"
+    },
+    {
+      "parameters": {
+        "workflow": "{% raw %}={{ JSON.stringify({\n  '3': { inputs: { seed: [['109',0]], steps: $json.steps, cfg: 1, sampler_name: 'euler', scheduler: 'simple', denoise: 1, model: [['78',0]], positive: [['94',0]], negative: [['47',0]], latent_image: [['98',0]] }, class_type: 'KSampler' },\n  '18': { inputs: { samples: [['3',0]], vae: [['106',0]] }, class_type: 'VAEDecodeAudio' },\n  '47': { inputs: { conditioning: [['94',0]] }, class_type: 'ConditioningZeroOut' },\n  '78': { inputs: { shift: $json.shift, model: [['104',0]] }, class_type: 'ModelSamplingAuraFlow' },\n  '94': { inputs: { tags: 'Main Genre: ' + $json.mainGenre + '\\n|\\nSub-Genre: ' + $json.subGenre, lyrics: $json.lyrics, seed: [['109',0]], bpm: $json.bpm, duration: $json.duration, timesignature: $json.timesignature, language: $json.language, keyscale: $json.keyscale, generate_audio_codes: true, cfg_scale: $json.cfg_scale, temperature: $json.temperature, top_p: $json.top_p, top_k: $json.top_k, min_p: 0, clip: [['105',0]] }, class_type: 'TextEncodeAceStepAudio1.5' },\n  '98': { inputs: { seconds: $json.duration, batch_size: 1 }, class_type: 'EmptyAceStep1.5LatentAudio' },\n  '104': { inputs: { unet_name: 'acestep_v1.5_xl_turbo_bf16.safetensors', weight_dtype: 'default' }, class_type: 'UNETLoader' },\n  '105': { inputs: { clip_name1: 'qwen_0.6b_ace15.safetensors', clip_name2: 'qwen_4b_ace15.safetensors', type: 'ace', device: 'default' }, class_type: 'DualCLIPLoader' },\n  '106': { inputs: { vae_name: 'ace_1.5_vae.safetensors' }, class_type: 'VAELoader' },\n  '107': { inputs: { filename_prefix: 'audio/ACE_Step1.5_xl_turbo', quality: 'V0', audioUI: '', audio: [['18',0]] }, class_type: 'SaveAudioMP3' },\n  '109': { inputs: { value: $json.seed }, class_type: 'PrimitiveInt' }\n}) }}{% endraw %}"
+      },
+      "type": "n8n-nodes-comfyui.comfyui",
+      "typeVersion": 1,
+      "position": [976, -208],
+      "id": "comfyui-music",
+      "name": "ComfyUI ACE Step",
+      "alwaysOutputData": true,
+      "credentials": {
+        "comfyUIApi": { "id": "osHW1aRoEHWt30Fz", "name": "ComfyUI account" }
+      }
+    },
+    {
+      "parameters": { "respondWith": "binary", "options": {} },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [1200, -208],
+      "id": "respond-music",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "connections": {
+    "Webhook Music": { "main": [[{ "node": "Parse Music Params", "type": "main", "index": 0 }]] },
+    "Parse Music Params": { "main": [[{ "node": "ComfyUI ACE Step", "type": "main", "index": 0 }]] },
+    "ComfyUI ACE Step": { "main": [[{ "node": "Respond to Webhook", "type": "main", "index": 0 }]] }
+  },
+  "meta": { "templateCredsSetupCompleted": true }
+};
+
+/* ─── STATE ─── */
+const ST = {
+  endpoint: '',
+  history: [],
+  currentBlob: null,
+  currentName: null,
+  audioCtx: null,
+  analyser: null,
+  source: null,
+  generating: false,
+  vizFrame: null,
+  waveFrame: null
+};
+
+/* ─── INIT ─── */
+document.addEventListener('DOMContentLoaded', () => {
+  loadConfig();
+  setLed('ledPower', 'on');
+  initIdleSpectrum();
+  document.getElementById('paramLyrics').addEventListener('input', updateCharCount);
+
+  // Progress bar click
+  document.getElementById('progressBar').addEventListener('click', (e) => {
+    const audio = document.getElementById('audioPlayer');
+    if (!audio.duration) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const pct = (e.clientX - rect.left) / rect.width;
+    audio.currentTime = pct * audio.duration;
+  });
+
+  const audio = document.getElementById('audioPlayer');
+  audio.addEventListener('timeupdate', updateProgress);
+  audio.addEventListener('ended', () => {
+    document.getElementById('btnPlay').textContent = '▶';
+    setLed('ledAudio', '');
+  });
+  audio.addEventListener('loadedmetadata', () => {
+    document.getElementById('timeDuration').textContent = formatTime(audio.duration);
+  });
+
+  document.getElementById('volumeSlider').value = 0.8;
+  audio.volume = 0.8;
+});
+
+function loadConfig() {
+  try {
+    const c = JSON.parse(localStorage.getItem('hypenosys_musicConfig') || '{}');
+    ST.endpoint = c.endpoint || '';
+    if (document.getElementById('cfgEndpoint')) {
+      document.getElementById('cfgEndpoint').value = ST.endpoint;
+    }
+    updateCfgStatus();
+  } catch(e) {}
+}
+
+function saveConfig() {
+  ST.endpoint = document.getElementById('cfgEndpoint').value.trim();
+  localStorage.setItem('hypenosys_musicConfig', JSON.stringify({ endpoint: ST.endpoint }));
+  updateCfgStatus();
+  showStatusBar('CONFIG SAVED');
+}
+
+function updateCfgStatus() {
+  const el = document.getElementById('cfgStatusText');
+  if (ST.endpoint) {
+    el.textContent = '[ OK ] ' + ST.endpoint.slice(0, 45) + '...';
+    el.style.color = 'var(--c-accent)';
+  } else {
+    el.textContent = '[ ENDPOINT NOT SET ]';
+    el.style.color = 'var(--c-text2)';
+  }
+}
+
+async function testEndpoint() {
+  if (!ST.endpoint) { showStatusBar('SET ENDPOINT FIRST'); return; }
+  try {
+    const r = await fetch(ST.endpoint, { method: 'OPTIONS' });
+    document.getElementById('cfgStatusText').textContent = `[ PING OK ] ${r.status}`;
+    document.getElementById('cfgStatusText').style.color = 'var(--c-accent)';
+  } catch(e) {
+    document.getElementById('cfgStatusText').textContent = `[ PING FAIL ] ${e.message}`;
+    document.getElementById('cfgStatusText').style.color = '#ff5555';
+  }
+}
+
+/* ─── TABS ─── */
+function switchTab(t) {
+  document.querySelectorAll('.mg-tab').forEach(el => el.classList.toggle('active', el.dataset.tab === t));
+  document.querySelectorAll('.mg-tab-panel').forEach(el => el.classList.toggle('hidden', el.id !== 'tab-' + t));
+}
+
+/* ─── LYRICS ─── */
+function updateCharCount() {
+  const v = document.getElementById('paramLyrics').value.length;
+  document.getElementById('charCount').textContent = v + ' chars';
+}
+function clearLyrics() { document.getElementById('paramLyrics').value = ''; updateCharCount(); }
+function insertTemplate() {
+  document.getElementById('paramLyrics').value = `[Intro]\n(instrumental)\n\n[Verse 1]\nyour verse here\n\n[Pre-Chorus]\nbuild up...\n\n[Chorus]\nyour chorus\n\n[Verse 2]\n...\n\n[Bridge]\n...\n\n[Final Chorus]\n...\n\n[Outro]\n(instrumental)`;
+  updateCharCount();
+  switchTab('lyrics');
+}
+
+/* ─── SEED ─── */
+function randomSeed() {
+  document.getElementById('paramSeed').value = Math.floor(Math.random() * 9999999999);
+}
+
+/* ─── GENERATE ─── */
+async function handleGenerate() {
+  if (ST.generating) return;
+
+  if (!ST.endpoint) {
+    switchTab('config');
+    showStatusBar('[ ERR ] SET N8N ENDPOINT IN CONFIG TAB');
+    return;
+  }
+
+  const mainGenre = document.getElementById('mainGenre').value.trim();
+  const subGenre = document.getElementById('subGenre').value.trim();
+  if (!mainGenre && !subGenre) {
+    showStatusBar('[ ERR ] ENTER GENRE OR STYLE DESCRIPTION');
+    return;
+  }
+
+  ST.generating = true;
+  setGenerating(true);
+  setLed('ledGen', 'on-warn');
+  setLed('ledErr', '');
+  showStatusBar('SYNTHESIZING...');
+
+  const payload = {
+    mainGenre,
+    subGenre,
+    lyrics: document.getElementById('paramLyrics').value,
+    bpm: parseInt(document.getElementById('paramBpm').value) || 95,
+    duration: parseInt(document.getElementById('paramDuration').value) || 120,
+    timesignature: document.getElementById('paramTimeSig').value,
+    keyscale: document.getElementById('paramKey').value,
+    language: document.getElementById('paramLang').value,
+    seed: parseInt(document.getElementById('paramSeed').value) || 0,
+    cfg_scale: parseFloat(document.getElementById('paramCfg').value) || 2,
+    temperature: parseFloat(document.getElementById('paramTemp').value) || 0.85,
+    top_p: parseFloat(document.getElementById('paramTopP').value) || 1,
+    top_k: parseInt(document.getElementById('paramTopK').value) || 0,
+    steps: parseInt(document.getElementById('paramSteps').value) || 8,
+    shift: parseFloat(document.getElementById('paramShift').value) || 3,
+  };
+
+  try {
+    const res = await fetch(ST.endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      signal: AbortSignal.timeout(300000)
+    });
+
+    if (!res.ok) throw new Error(`n8n: ${res.status}`);
+
+    const blob = await res.blob();
+    ST.currentBlob = blob;
+
+    const name = `ACE_${payload.keyscale.replace(' ','')}_${payload.bpm}bpm_${Date.now()}`;
+    ST.currentName = name;
+
+    const url = URL.createObjectURL(blob);
+    loadAudio(url, name, payload);
+
+    addHistory(url, name, payload);
+    setLed('ledGen', 'on');
+    setLed('ledAudio', 'on');
+    showStatusBar('[ OK ] TRACK LOADED · ' + name);
+
+  } catch(err) {
+    setLed('ledGen', '');
+    setLed('ledErr', 'on-err');
+    showStatusBar('[ ERR ] ' + (err.message || 'GENERATION FAILED'));
+    setGenStatus('ERROR: ' + err.message);
+  } finally {
+    ST.generating = false;
+    setGenerating(false);
+  }
+}
+
+function setGenerating(on) {
+  const btn = document.getElementById('generateBtn');
+  btn.disabled = on;
+  document.getElementById('generateLabel').textContent = on ? 'SYNTHESIZING...' : 'SYNTHESIZE TRACK';
+  setGenStatus(on ? 'RUNNING ACE STEP 1.5 XL TURBO...' : 'READY');
+  document.getElementById('vizOverlay').textContent = on ? '[ GENERATING ]' : '[ IDLE ]';
+}
+function setGenStatus(t) { document.getElementById('genStatus').textContent = t; }
+
+/* ─── AUDIO PLAYER ─── */
+function loadAudio(url, name, meta) {
+  const audio = document.getElementById('audioPlayer');
+  audio.src = url;
+  audio.load();
+
+  document.getElementById('npTrack').textContent = name.toUpperCase();
+  document.getElementById('npMeta').textContent =
+    `BPM: ${meta.bpm} | KEY: ${meta.keyscale} | LANG: ${meta.language.toUpperCase()} | ${meta.duration}s`;
+  document.getElementById('btnDownload').disabled = false;
+
+  initWebAudio(audio);
+  audio.play();
+  document.getElementById('btnPlay').textContent = '⏸';
+}
+
+function transportPlay() {
+  const audio = document.getElementById('audioPlayer');
+  if (!audio.src) return;
+  if (audio.paused) {
+    audio.play();
+    document.getElementById('btnPlay').textContent = '⏸';
+    setLed('ledAudio', 'on');
+  } else {
+    audio.pause();
+    document.getElementById('btnPlay').textContent = '▶';
+    setLed('ledAudio', '');
+  }
+}
+function transportStop() {
+  const audio = document.getElementById('audioPlayer');
+  audio.pause(); audio.currentTime = 0;
+  document.getElementById('btnPlay').textContent = '▶';
+  setLed('ledAudio', '');
+  updateProgress();
+}
+function transportRewind() {
+  const audio = document.getElementById('audioPlayer');
+  audio.currentTime = Math.max(0, audio.currentTime - 10);
+}
+function setVolume(v) {
+  document.getElementById('audioPlayer').volume = parseFloat(v);
+  document.getElementById('volPct').textContent = Math.round(v * 100) + '%';
+}
+
+function updateProgress() {
+  const audio = document.getElementById('audioPlayer');
+  if (!audio.duration) return;
+  const pct = (audio.currentTime / audio.duration) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressCursor').style.left = pct + '%';
+  document.getElementById('timeElapsed').textContent = formatTime(audio.currentTime);
+}
+
+function formatTime(s) {
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return `${m}:${sec.toString().padStart(2,'0')}`;
+}
+
+function downloadTrack() {
+  if (!ST.currentBlob) return;
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(ST.currentBlob);
+  a.download = (ST.currentName || 'hypenosys-track') + '.mp3';
+  a.click();
+}
+
+/* ─── WEB AUDIO + VISUALIZER ─── */
+function initWebAudio(audio) {
+  if (!ST.audioCtx) {
+    ST.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    ST.analyser = ST.audioCtx.createAnalyser();
+    ST.analyser.fftSize = 256;
+    ST.source = ST.audioCtx.createMediaElementSource(audio);
+    ST.source.connect(ST.analyser);
+    ST.analyser.connect(ST.audioCtx.destination);
+  }
+  if (ST.vizFrame) cancelAnimationFrame(ST.vizFrame);
+  if (ST.waveFrame) cancelAnimationFrame(ST.waveFrame);
+  drawSpectrum();
+  drawWaveform();
+  document.getElementById('vizOverlay').textContent = '';
+}
+
+function drawSpectrum() {
+  const canvas = document.getElementById('spectrumCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const bufLen = ST.analyser.frequencyBinCount;
+  const data = new Uint8Array(bufLen);
+
+  function frame() {
+    ST.vizFrame = requestAnimationFrame(frame);
+    ST.analyser.getByteFrequencyData(data);
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, W, H);
+
+    const barW = (W / bufLen) * 2.5;
+    let x = 0;
+    for (let i = 0; i < bufLen; i++) {
+      const h = (data[i] / 255) * H;
+      const hue = (i / bufLen) * 120;
+      ctx.fillStyle = `hsl(${hue}, 100%, 50%)`;
+      ctx.fillRect(x, H - h, barW, h);
+      x += barW + 1;
+    }
+
+    // Grid overlay
+    ctx.strokeStyle = 'rgba(0,255,65,0.05)';
+    ctx.lineWidth = 1;
+    for (let y = 0; y < H; y += 20) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+    }
+  }
+  frame();
+}
+
+function drawWaveform() {
+  const canvas = document.getElementById('waveformCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const bufLen = ST.analyser.fftSize;
+  const data = new Uint8Array(bufLen);
+
+  function frame() {
+    ST.waveFrame = requestAnimationFrame(frame);
+    ST.analyser.getByteTimeDomainData(data);
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, W, H);
+
+    ctx.strokeStyle = '#00ff41';
+    ctx.lineWidth = 1.5;
+    ctx.shadowColor = '#00ff41';
+    ctx.shadowBlur = 4;
+    ctx.beginPath();
+    const sliceW = W / bufLen;
+    let x = 0;
+    for (let i = 0; i < bufLen; i++) {
+      const v = data[i] / 128;
+      const y = (v * H) / 2;
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      x += sliceW;
+    }
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+  }
+  frame();
+}
+
+function initIdleSpectrum() {
+  const canvas = document.getElementById('spectrumCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+
+  const waveCanvas = document.getElementById('waveformCanvas');
+  const wCtx = waveCanvas.getContext('2d');
+
+  let t = 0;
+  function idleFrame() {
+    if (ST.analyser) return;
+    requestAnimationFrame(idleFrame);
+    t += 0.02;
+
+    // Spectrum idle
+    ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
+    for (let i = 0; i < 60; i++) {
+      const h = (Math.sin(i * 0.3 + t) * 0.5 + 0.5) * 20 + 2;
+      ctx.fillStyle = `rgba(0,255,65,${0.1 + Math.random() * 0.05})`;
+      ctx.fillRect(i * 5.5, H - h, 4, h);
+    }
+
+    // Waveform idle
+    wCtx.fillStyle = '#000'; wCtx.fillRect(0, 0, waveCanvas.width, H);
+    wCtx.strokeStyle = 'rgba(0,255,65,0.2)'; wCtx.lineWidth = 1;
+    wCtx.beginPath();
+    for (let x = 0; x < waveCanvas.width; x++) {
+      const y = H / 2 + Math.sin(x * 0.05 + t) * 4;
+      x === 0 ? wCtx.moveTo(x, y) : wCtx.lineTo(x, y);
+    }
+    wCtx.stroke();
+  }
+  idleFrame();
+}
+
+/* ─── LEDS ─── */
+function setLed(id, cls) {
+  const el = document.getElementById(id);
+  el.className = 'mg-led' + (cls ? ' ' + cls : '');
+}
+
+/* ─── HISTORY ─── */
+function addHistory(url, name, meta) {
+  ST.history.unshift({ url, name, meta, time: new Date().toLocaleTimeString() });
+  renderHistory();
+}
+function renderHistory() {
+  const list = document.getElementById('historyList');
+  if (!ST.history.length) {
+    list.innerHTML = '<div class="mg-history-empty">[ NO TRACKS YET ]</div>';
+    return;
+  }
+  list.innerHTML = ST.history.slice(0, 10).map((h, i) => `
+    <div class="mg-history-item" onclick="playHistoryItem(${i})">
+      <span class="mg-history-icon">♫</span>
+      <div class="mg-history-info">
+        <div class="mg-history-name">${h.name}</div>
+        <div class="mg-history-sub">${h.meta.bpm}bpm · ${h.meta.keyscale} · ${h.time}</div>
+      </div>
+    </div>
+  `).join('');
+}
+function playHistoryItem(i) {
+  const h = ST.history[i];
+  if (!h) return;
+  loadAudio(h.url, h.name, h.meta);
+}
+
+/* ─── STATUS BAR ─── */
+function showStatusBar(msg) {
+  document.getElementById('sbRight').textContent = msg;
+}
+
+/* ─── CONFIG COPY ─── */
+function copyWorkflow() {
+  navigator.clipboard.writeText(JSON.stringify(N8N_WORKFLOW, null, 2))
+    .then(() => showStatusBar('[ OK ] WORKFLOW JSON COPIED'))
+    .catch(() => showStatusBar('[ ERR ] CLIPBOARD BLOCKED'));
+}
+
+/* ─── KEYBOARD ─── */
+document.addEventListener('keydown', (e) => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') { e.preventDefault(); handleGenerate(); }
+  if (e.key === ' ' && e.target.tagName !== 'TEXTAREA' && e.target.tagName !== 'INPUT') {
+    e.preventDefault(); transportPlay();
+  }
+});
+</script>

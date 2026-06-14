@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-13T14:24:48.074Z",
-  "last_updated_by": "Axlfc",
+  "last_updated": "2026-06-14T10:06:13.365Z",
+  "last_updated_by": "Axel",
   "tasks": [
     {
       "id": 1,
@@ -3200,9 +3200,114 @@
         }
       ],
       "id": 51
+    },
+    {
+      "title": "Connect and Sync Obsidian with Vector Database",
+      "descripcion": "",
+      "rama": "master",
+      "task_type": "chore",
+      "tema_principal": "Tools / Automation",
+      "repository": "hypenosys/docs",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Axel",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-06-14",
+      "due_date": "2026-06-21",
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-14",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-14T09:02:17.899Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 52
+    },
+    {
+      "title": "Arreglar subida a Tumblr de audios para music-gen",
+      "descripcion": "",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Axel",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-14",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-14T10:06:12.817Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 53
     }
   ],
   "_audit_log": [
+    {
+      "action": "feat: nueva tarea #1781431572817 añadida",
+      "user": "Axlfc",
+      "timestamp": "2026-06-14T10:06:13.365Z"
+    },
+    {
+      "action": "feat: nueva tarea #1781427737900 añadida",
+      "user": "Axlfc",
+      "timestamp": "2026-06-14T09:02:18.407Z"
+    },
+    {
+      "action": "chore: actualizar estado tarea #48 → Pending",
+      "user": "TopperH4rley",
+      "timestamp": "2026-06-14T08:51:45.256Z"
+    },
     {
       "action": "chore: actualizar tarea #38",
       "user": "Axlfc",
