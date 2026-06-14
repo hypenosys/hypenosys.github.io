@@ -1118,14 +1118,7 @@ permalink: /chat/neural/
         }
 
         function desvincularSesion() {
-            localStorage.removeItem('hy_neural_active');
-            localStorage.removeItem('hy_neural_task_context');
-            localStorage.removeItem('hy_neural_pending_prompt');
-            localStorage.removeItem('hy_neural_thread');
-            localStorage.removeItem('hy_neural_session_id');
-            if (currentSessionId) {
-                localStorage.removeItem('hy_neural_session_id_' + currentSessionId);
-            }
+            Object.keys(localStorage).filter(k => k.startsWith('hy_neural_')).forEach(k => localStorage.removeItem(k));
             const banner = document.getElementById('task-context-banner');
             if (banner) banner.remove();
             window._activeTaskContext = null;
@@ -1178,9 +1171,6 @@ permalink: /chat/neural/
 
             // 1. Initialize session UI first
             renderSessionList();
-            if (sessions.length > 0) {
-                loadSession(sessions[0].id);
-            }
 
             // 2. Handle Task Data from URL
             let task = null;
@@ -1198,9 +1188,13 @@ permalink: /chat/neural/
                 } catch(e){}
             }
 
-                if (task && localStorage.getItem('hy_neural_active') === 'true') {
+            // 3. Load initial session (this will also render the banner if task exists)
+            if (sessions.length > 0) {
+                loadSession(sessions[0].id);
+            }
+
+            if (task && localStorage.getItem('hy_neural_active') === 'true') {
                 window._activeTaskContext = task;
-                showTaskContextBanner(task);
 
                 // Sync with Neural Thread if active
                 if (localStorage.getItem('hy_neural_active') === 'true') {
