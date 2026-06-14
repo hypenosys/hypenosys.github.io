@@ -40,15 +40,15 @@ function renderMemberToggles() {
   if (!container) return;
   container.innerHTML = '';
 
-  const baseClasses = "font-bold rounded-md transition-all";
-  const mobileClasses = "px-2 py-0.5 text-xs";
+  const baseClasses = "font-bold rounded-md transition-all whitespace-nowrap";
+  const mobileClasses = "px-2 py-1 text-xs";
   const desktopClasses = "lg:px-3 lg:py-1 lg:text-sm";
 
   const allBtn = document.createElement('button');
   allBtn.textContent = '👥 Todos';
   allBtn.className = (activeFilter === null && activeStageFilter === null)
     ? `${baseClasses} ${mobileClasses} ${desktopClasses} bg-emerald-500 text-slate-950`
-    : `${baseClasses} ${mobileClasses} ${desktopClasses} text-slate-400 hover:text-white`;
+    : `${baseClasses} ${mobileClasses} ${desktopClasses} text-slate-400 hover:text-white hover:bg-slate-800`;
 
   allBtn.addEventListener('click', () => {
     activeFilter = null;
@@ -61,8 +61,8 @@ function renderMemberToggles() {
     const btn = document.createElement('button');
     btn.textContent = member;
     btn.className = activeFilter === member
-      ? `${baseClasses} ${mobileClasses} ${desktopClasses} bg-emerald-500 text-slate-950 shadow-[0_0_10px_rgba(16,185,129,0.3)]`
-      : `${baseClasses} ${mobileClasses} ${desktopClasses} text-slate-400 hover:text-white bg-slate-900 border border-slate-800 hover:border-slate-700`;
+      ? `${baseClasses} ${mobileClasses} ${desktopClasses} bg-emerald-500 text-slate-950`
+      : `${baseClasses} ${mobileClasses} ${desktopClasses} text-slate-400 hover:text-white hover:bg-slate-800`;
 
     btn.addEventListener('click', () => {
       activeFilter = (activeFilter === member) ? null : member;
@@ -581,24 +581,39 @@ function toggleKanbanFilters() {
     const container = document.getElementById('kanban-filter-container');
     const arrow = document.getElementById('kanban-filters-arrow');
     const toggleBtn = document.getElementById('kanban-filters-toggle');
+    const label = document.getElementById('kanban-filters-label');
+    const badge = document.getElementById('active-filters-count');
 
-    // Always use max-height for animation
     const isCollapsed = container.style.maxHeight === '0px' || container.style.maxHeight === '' || container.classList.contains('max-h-0');
+    const totalActive = kanbanFilters.tags.length + kanbanFilters.members.length + kanbanFilters.repos.length + kanbanFilters.states.length;
 
     if (isCollapsed) {
         container.classList.remove('max-h-0', 'opacity-0');
-        container.style.maxHeight = '1000px'; // Set to a large enough value
+        container.style.maxHeight = '1000px';
         container.style.opacity = '1';
         container.style.marginBottom = '1.5rem';
         if (arrow) arrow.textContent = '▲';
         if (toggleBtn) toggleBtn.classList.add('bg-slate-700');
+        if (label) label.textContent = 'Filtros';
+        if (badge) badge.classList.add('hidden');
     } else {
         container.style.maxHeight = '0px';
         container.style.opacity = '0';
         container.style.marginBottom = '0px';
         if (arrow) arrow.textContent = '▼';
         if (toggleBtn) toggleBtn.classList.remove('bg-slate-700');
-        // Add class back after transition to ensure it stays hidden
+
+        if (totalActive > 0) {
+            if (label) label.textContent = `Filtros · ${totalActive}`;
+            if (badge) {
+                badge.innerHTML = ''; // Just the green dot, no text
+                badge.classList.remove('hidden');
+            }
+        } else {
+            if (label) label.textContent = 'Filtros';
+            if (badge) badge.classList.add('hidden');
+        }
+
         setTimeout(() => {
             if (container.style.maxHeight === '0px') {
                 container.classList.add('max-h-0', 'opacity-0');
@@ -674,20 +689,33 @@ function renderKanbanFilters() {
     const container = document.getElementById('kanban-filter-bar');
     if (!container) return;
 
-    // Force collapsed state on load (handled by CSS max-h-0 in dashboard.html)
-    // but ensure the arrow is correct
     const arrow = document.getElementById('kanban-filters-arrow');
     const filterContainer = document.getElementById('kanban-filter-container');
-    if (filterContainer && (filterContainer.style.maxHeight === '0px' || filterContainer.classList.contains('max-h-0'))) {
+    const label = document.getElementById('kanban-filters-label');
+    const badge = document.getElementById('active-filters-count');
+
+    const totalActive = kanbanFilters.tags.length + kanbanFilters.members.length + kanbanFilters.repos.length + kanbanFilters.states.length;
+    const isCollapsed = filterContainer.style.maxHeight === '0px' || filterContainer.classList.contains('max-h-0');
+
+    // Initial state setup
+    if (!filterContainer.dataset.initialized) {
+        filterContainer.style.maxHeight = '0px';
+        filterContainer.style.opacity = '0';
+        filterContainer.style.marginBottom = '0px';
         if (arrow) arrow.textContent = '▼';
+        filterContainer.dataset.initialized = "true";
     }
 
-    // Actualizar contador de filtros activos
-    const totalActive = kanbanFilters.tags.length + kanbanFilters.members.length + kanbanFilters.repos.length + kanbanFilters.states.length;
-    const countBadge = document.getElementById('active-filters-count');
-    if (countBadge) {
-        countBadge.textContent = totalActive === 0 ? '0' : `· ${totalActive}`;
-        countBadge.classList.toggle('hidden', totalActive === 0);
+    // Update Toggle UI
+    if (isCollapsed && totalActive > 0) {
+        if (label) label.textContent = `Filtros · ${totalActive}`;
+        if (badge) {
+            badge.innerHTML = ''; // Emerald dot only
+            badge.classList.remove('hidden');
+        }
+    } else {
+        if (label) label.textContent = 'Filtros';
+        if (badge) badge.classList.add('hidden');
     }
 
     // 1. Extraer datos dinámicamente de todas las tareas
