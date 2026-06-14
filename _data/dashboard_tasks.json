@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-14T13:35:02.500Z",
-  "last_updated_by": "Alex",
+  "last_updated": "2026-06-14T14:12:35.500Z",
+  "last_updated_by": "TopperH4rley",
   "tasks": [
     {
       "id": 1,
@@ -130,9 +130,10 @@
       "story_points": 5,
       "tags": [
         "brainstorm",
+        "chore",
         "design",
         "docs",
-        "chore"
+        "topper"
       ],
       "external_links": [],
       "subtasks": [],
@@ -205,6 +206,13 @@
           "field": "descripcion",
           "old_value": "Lluvia de ideas locas sobre mecánicas, historia, modos de juego, todo vale. Va al repositorio de /docs",
           "new_value": "Lluvia de ideas locas sobre mecánicas, historia, modos de juego, todo vale."
+        },
+        {
+          "author_login": "topperh4rley",
+          "timestamp": "2026-06-14T14:12:34.897Z",
+          "field": "tags",
+          "old_value": "[\"brainstorm\",\"chore\",\"design\",\"docs\"]",
+          "new_value": "[\"brainstorm\",\"chore\",\"design\",\"docs\",\"topper\"]"
         }
       ],
       "repository": "hypenosys/docs"
@@ -3293,6 +3301,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #4",
+      "user": "TopperH4rley",
+      "timestamp": "2026-06-14T14:12:35.500Z"
+    },
     {
       "action": "chore: actualizar estado tarea #32 → Fixed",
       "user": "TopperH4rley",

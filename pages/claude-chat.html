@@ -527,7 +527,7 @@ permalink: /chat/neural/
             <a href="{{ '/tech-stack/' | relative_url }}" class="flex items-center gap-3 p-2 rounded-lg text-xs font-bold text-[#f8f8f2] hover:bg-[#44475a] transition-all">
                 <i class="fas fa-layer-group w-4 text-[#bd93f9]"></i> Tech Stack
             </a>
-            <a href="{{ '/jules-panel/' | relative_url }}" class="flex items-center gap-3 p-2 rounded-lg text-xs font-bold text-[#f8f8f2] hover:bg-[#44475a] transition-all">
+            <a href="{{ '/jules-panel-v2/' | relative_url }}" class="flex items-center gap-3 p-2 rounded-lg text-xs font-bold text-[#f8f8f2] hover:bg-[#44475a] transition-all">
                 <i class="fas fa-robot w-4 text-[#bd93f9]"></i> Jules
             </a>
         </nav>
@@ -560,7 +560,7 @@ permalink: /chat/neural/
             <button onclick="openSettings()" class="w-full text-left text-xs font-bold text-[#f8f8f2] hover:text-[#bd93f9] transition-all flex items-center gap-2">
                 <i class="fas fa-cog"></i> API CONFIG
             </button>
-            <a href="/jules-panel/" class="w-full text-left text-xs font-bold text-[#f8f8f2] hover:text-[#bd93f9] transition-all flex items-center gap-2">
+            <a href="/jules-panel-v2/" class="w-full text-left text-xs font-bold text-[#f8f8f2] hover:text-[#bd93f9] transition-all flex items-center gap-2">
                 <i class="fas fa-bolt"></i> JULES PANEL
             </a>
         </div>
@@ -1118,14 +1118,7 @@ permalink: /chat/neural/
         }
 
         function desvincularSesion() {
-            localStorage.removeItem('hy_neural_active');
-            localStorage.removeItem('hy_neural_task_context');
-            localStorage.removeItem('hy_neural_pending_prompt');
-            localStorage.removeItem('hy_neural_thread');
-            localStorage.removeItem('hy_neural_session_id');
-            if (currentSessionId) {
-                localStorage.removeItem('hy_neural_session_id_' + currentSessionId);
-            }
+            Object.keys(localStorage).filter(k => k.startsWith('hy_neural_')).forEach(k => localStorage.removeItem(k));
             const banner = document.getElementById('task-context-banner');
             if (banner) banner.remove();
             window._activeTaskContext = null;
@@ -1178,9 +1171,6 @@ permalink: /chat/neural/
 
             // 1. Initialize session UI first
             renderSessionList();
-            if (sessions.length > 0) {
-                loadSession(sessions[0].id);
-            }
 
             // 2. Handle Task Data from URL
             let task = null;
@@ -1198,9 +1188,13 @@ permalink: /chat/neural/
                 } catch(e){}
             }
 
-                if (task && localStorage.getItem('hy_neural_active') === 'true') {
+            // 3. Load initial session (this will also render the banner if task exists)
+            if (sessions.length > 0) {
+                loadSession(sessions[0].id);
+            }
+
+            if (task && localStorage.getItem('hy_neural_active') === 'true') {
                 window._activeTaskContext = task;
-                showTaskContextBanner(task);
 
                 // Sync with Neural Thread if active
                 if (localStorage.getItem('hy_neural_active') === 'true') {
@@ -2157,7 +2151,7 @@ permalink: /chat/neural/
                             let thread = JSON.parse(localStorage.getItem('hy_neural_thread') || '[]');
                             thread.push({ role: 'assistant', content: text, source: 'claude' });
                             localStorage.setItem('hy_neural_thread', JSON.stringify(thread));
-                            setTimeout(() => window.location.href = '/jules-panel/', 800);
+                            setTimeout(() => window.location.href = '/jules-panel-v2/', 800);
                         }
                     } catch (e) {
                         showToast('Error al enviar a Jules: ' + e.message);
@@ -2168,17 +2162,23 @@ permalink: /chat/neural/
                     thread.push({ role: 'assistant', content: text, source: 'claude' });
                     localStorage.setItem('hy_neural_thread', JSON.stringify(thread));
 
-                    // Set pending prompt for Jules
-                    localStorage.setItem('hy_neural_pending_prompt', text);
                     localStorage.setItem('hy_neural_active', 'true');
 
                     showToast('Abriendo Jules Panel...');
                     const taskContext = localStorage.getItem('hy_neural_task_context');
-                    let url = `/jules-panel/?prompt=${encodeURIComponent(text)}`;
                     if (taskContext) {
-                        url += `&task_data=${encodeURIComponent(taskContext)}`;
+                        try {
+                            const task = JSON.parse(taskContext);
+                            localStorage.setItem('hy_jules_handoff', JSON.stringify({
+                                task: task,
+                                timestamp: Date.now(),
+                                source: 'claude-chat'
+                            }));
+                        } catch(e) {
+                            console.error('Error stringifying handoff task:', e);
+                        }
                     }
-                    setTimeout(() => window.location.href = url, 800);
+                    setTimeout(() => window.location.href = '/jules-panel-v2/', 800);
                 }
             }
         }
@@ -2252,7 +2252,16 @@ permalink: /chat/neural/
             }
 
             showToast('Neural Link establecido. Redirigiendo...');
-            setTimeout(() => window.location.href = '/jules-panel/', 1000);
+
+            if (task) {
+                localStorage.setItem('hy_jules_handoff', JSON.stringify({
+                    task: task,
+                    timestamp: Date.now(),
+                    source: 'claude-chat'
+                }));
+            }
+
+            setTimeout(() => window.location.href = '/jules-panel-v2/', 1000);
         }
 
         function handleSlashCommand(command) {
@@ -2270,7 +2279,7 @@ permalink: /chat/neural/
                     appendSystemMessage('Comando detectado: /move. Indica ID y estado.', 'info');
                     break;
                 case '/jules':
-                    window.location.href = '/jules-panel/';
+                    window.location.href = '/jules-panel-v2/';
                     break;
                 default:
                     appendSystemMessage('Comando desconocido: ' + cmd, 'error');
@@ -2343,12 +2352,20 @@ permalink: /chat/neural/
                 if (!sessionId) {
                     showToast('No hay sesión Jules vinculada a esta charla. Redirigiendo...');
                     const taskContext = localStorage.getItem('hy_neural_task_context');
-                    let url = `/jules-panel/?prompt=${encodeURIComponent(content)}`;
                     if (taskContext) {
-                        url += `&task_data=${encodeURIComponent(taskContext)}`;
+                        try {
+                            const task = JSON.parse(taskContext);
+                            localStorage.setItem('hy_jules_handoff', JSON.stringify({
+                                task: task,
+                                timestamp: Date.now(),
+                                source: 'claude-chat'
+                            }));
+                        } catch(e) {
+                            console.error('Error stringifying handoff task:', e);
+                        }
                     }
                     setTimeout(() => {
-                        window.location.href = url;
+                        window.location.href = '/jules-panel-v2/';
                     }, 1000);
                     return;
                 }
