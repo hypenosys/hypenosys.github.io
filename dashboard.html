@@ -117,10 +117,10 @@ layout: null
 
     <!-- Top Navigation / Filter Bar -->
     <header class="bg-slate-900 border-b border-slate-800 px-4 md:px-6 py-3 lg:py-4 sticky top-0 z-40">
-        <div class="max-w-[1600px] mx-auto w-full flex flex-col lg:flex-row items-center gap-4 lg:gap-6">
+        <div class="max-w-[1600px] mx-auto w-full flex flex-col gap-4">
 
-            <!-- Row 1 (Mobile) / Left Side (Desktop) -->
-            <div class="flex items-center justify-between w-full lg:w-auto gap-4 flex-nowrap">
+            <!-- Row 1: Logo & Actions -->
+            <div class="flex items-center justify-between w-full gap-4">
                 <div class="flex items-center gap-2 sm:gap-4 overflow-hidden">
                     <a href="/" class="text-emerald-400 text-lg md:text-2xl font-bold tracking-tighter flex items-center gap-2 flex-shrink-0">
                         <i class="fa-solid fa-microchip"></i> <span class="flex-shrink-0">HYPENOSYS</span> <span class="text-slate-500 font-light text-sm tracking-normal hidden sm:inline">OPS</span>
@@ -133,7 +133,29 @@ layout: null
                     </nav>
                 </div>
 
-                <!-- Mobile Quick Actions (Row 1 Right) -->
+                <!-- Desktop Right Side -->
+                <div class="hidden lg:flex items-center gap-4 ml-auto flex-shrink-0">
+                    <button onclick="window.location.href='/jules-panel/'" class="bg-slate-800 hover:bg-slate-700 text-emerald-400 px-3 py-2 rounded-lg transition-all border border-slate-700 flex items-center gap-2 text-xs font-bold" title="Quick Jules">
+                        <i class="fa-solid fa-robot"></i> <span>Quick Jules</span>
+                    </button>
+                    <button onclick="window.location.href='/chat/neural/'" class="bg-slate-800 hover:bg-slate-700 text-purple-400 px-3 py-2 rounded-lg transition-all border border-slate-700 flex items-center gap-2 text-xs font-bold" title="Neural Chat">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .52 5.886 3 3 0 1 0 5.174 2.688A4.497 4.497 0 0 1 12 18.5V5Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.52 5.886 3 3 0 1 1-5.174 2.688A4.497 4.497 0 0 0 12 18.5V5Z"/></svg> <span>Neural Chat</span>
+                    </button>
+                    <button onclick="window.location.href='/image-gen/'" class="bg-slate-800 hover:bg-slate-700 text-cyan-400 px-3 py-2 rounded-lg transition-all border border-slate-700 flex items-center gap-2 text-xs font-bold" title="ImageGen">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> <span>ImageGen</span>
+                    </button>
+                    <button onclick="window.location.href='/music-gen/'" class="bg-slate-800 hover:bg-slate-700 text-pink-400 px-3 py-2 rounded-lg transition-all border border-slate-700 flex items-center gap-2 text-xs font-bold" title="MusicGen">
+                        <i class="fa-solid fa-music"></i> <span>MusicGen</span>
+                    </button>
+                    <div id="last-sync-timestamp" class="hidden xl:block text-[10px] font-mono text-slate-500 uppercase tracking-widest">
+                        Sincronizando...
+                    </div>
+                    <div id="user-status" class="flex items-center gap-3">
+                        <!-- User avatar desktop -->
+                    </div>
+                </div>
+
+                <!-- Mobile Quick Actions -->
                 <div class="flex lg:hidden items-center gap-2 sm:gap-3 flex-shrink-0">
                     <button onclick="window.location.href='/jules-panel/'" class="bg-slate-800 hover:bg-slate-700 text-emerald-400 p-2 rounded-lg transition-all border border-slate-700 flex items-center justify-center" title="Quick Jules">
                         <i class="fa-solid fa-robot"></i>
@@ -153,34 +175,9 @@ layout: null
                 </div>
             </div>
 
-            <!-- Row 2 (Mobile) / Middle (Desktop) - Member Chips -->
-            <div class="relative w-full lg:flex-1 min-w-0">
-                <div id="member-filters" class="flex items-center gap-2 bg-slate-950 p-1 rounded-lg border border-slate-800 overflow-x-auto no-scrollbar whitespace-nowrap scroll-smooth pr-10">
-                    <!-- Member filters injected here -->
-                </div>
-                <div class="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-r from-transparent via-slate-950/50 to-slate-950 pointer-events-none rounded-r-lg z-10"></div>
-            </div>
-
-            <!-- Desktop Right Side (Hidden on Mobile) -->
-            <div class="hidden lg:flex items-center gap-6 flex-shrink-0 lg-only">
-                <button onclick="window.location.href='/jules-panel/'" class="bg-slate-800 hover:bg-slate-700 text-emerald-400 px-3 py-2 rounded-lg transition-all border border-slate-700 flex items-center gap-2 text-xs font-bold" title="Quick Jules">
-                    <i class="fa-solid fa-robot"></i> <span>Quick Jules</span>
-                </button>
-                <button onclick="window.location.href='/chat/neural/'" class="bg-slate-800 hover:bg-slate-700 text-purple-400 px-3 py-2 rounded-lg transition-all border border-slate-700 flex items-center gap-2 text-xs font-bold" title="Neural Chat">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .52 5.886 3 3 0 1 0 5.174 2.688A4.497 4.497 0 0 1 12 18.5V5Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.52 5.886 3 3 0 1 1-5.174 2.688A4.497 4.497 0 0 0 12 18.5V5Z"/></svg> <span>Neural Chat</span>
-                </button>
-                <button onclick="window.location.href='/image-gen/'" class="bg-slate-800 hover:bg-slate-700 text-cyan-400 px-3 py-2 rounded-lg transition-all border border-slate-700 flex items-center gap-2 text-xs font-bold" title="ImageGen">
-                    <i class="fa-solid fa-wand-magic-sparkles"></i> <span>ImageGen</span>
-                </button>
-                <button onclick="window.location.href='/music-gen/'" class="bg-slate-800 hover:bg-slate-700 text-pink-400 px-3 py-2 rounded-lg transition-all border border-slate-700 flex items-center gap-2 text-xs font-bold" title="MusicGen">
-                    <i class="fa-solid fa-music"></i> <span>MusicGen</span>
-                </button>
-                <div id="last-sync-timestamp" class="hidden xl:block text-[10px] font-mono text-slate-500 uppercase tracking-widest">
-                    Sincronizando...
-                </div>
-                <div id="user-status" class="flex items-center gap-3">
-                    <!-- User avatar desktop -->
-                </div>
+            <!-- Row 2: Member Filters -->
+            <div id="member-filters" class="flex flex-wrap items-center gap-2 bg-slate-950/50 p-1 rounded-lg border border-slate-800/50">
+                <!-- Member filters injected here -->
             </div>
         </div>
     </header>
@@ -249,16 +246,8 @@ layout: null
         <!-- Kanban Board -->
         <section>
             <!-- Kanban Filter Bar -->
-            <div id="kanban-filter-container" class="mb-6 bg-slate-900 border border-slate-800 rounded-2xl shadow-sm overflow-hidden transition-all">
-                <button onclick="toggleKanbanFilters()" class="w-full flex items-center justify-between p-4 hover:bg-slate-800/50 transition-all">
-                    <div class="flex items-center gap-3">
-                        <i class="fa-solid fa-filter text-emerald-400"></i>
-                        <h2 class="text-sm font-bold text-white uppercase tracking-wider">Filtros de tareas</h2>
-                        <div id="active-filters-count" class="hidden bg-emerald-500 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full">0</div>
-                    </div>
-                    <i id="kanban-filters-chevron" class="fa-solid fa-chevron-down text-slate-500 transition-transform"></i>
-                </button>
-                <div id="kanban-filter-bar" class="hidden p-4 pt-0 space-y-4">
+            <div id="kanban-filter-container" class="mb-6 bg-slate-900 border border-slate-800 rounded-2xl shadow-sm overflow-hidden transition-all duration-300 max-h-0 opacity-0" style="margin-bottom: 0;">
+                <div id="kanban-filter-bar" class="p-4 space-y-4">
                     <!-- Filters will be injected here -->
                 </div>
             </div>
@@ -268,6 +257,12 @@ layout: null
                     <i class="fa-solid fa-table-columns text-emerald-400"></i> Kanban de Operaciones
                 </h2>
                 <div class="flex items-center gap-2">
+                    <button id="kanban-filters-toggle" onclick="toggleKanbanFilters()" class="relative bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-2 px-4 rounded-lg text-sm transition-all flex items-center gap-2" title="Mostrar/Ocultar filtros">
+                        <i class="fa-solid fa-filter text-emerald-400"></i>
+                        <span id="kanban-filters-label">Filtros</span>
+                        <span id="kanban-filters-arrow">▼</span>
+                        <div id="active-filters-count" class="hidden bg-emerald-500 w-2.5 h-2.5 rounded-full border border-slate-900 ml-1"></div>
+                    </button>
                     <button id="global-kanban-toggle" onclick="toggleAllTasks()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-2 px-3 rounded-lg text-sm transition-all flex items-center gap-2" title="Contraer/Expandir todas las tareas">
                         <i class="fa-solid fa-chevron-up"></i>
                     </button>
