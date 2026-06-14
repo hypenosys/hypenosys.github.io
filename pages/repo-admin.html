@@ -288,6 +288,14 @@ permalink: /repo-admin/
         <label class="ra-label">Git Log webhook</label>
         <input type="url" id="cfgGitLog" class="ra-input" placeholder="https://n8n.../webhook/git-log">
       </div>
+      <div class="ra-field-group">
+        <label class="ra-label">SVN Username</label>
+        <input type="text" id="cfgSvnUser" class="ra-input" placeholder="your_svn_user" autocomplete="username">
+      </div>
+      <div class="ra-field-group">
+        <label class="ra-label">SVN Password</label>
+        <input type="password" id="cfgSvnPass" class="ra-input" placeholder="••••••••" autocomplete="current-password">
+      </div>
       <button class="ra-action-btn" style="width:100%;margin-top:16px" onclick="saveSettings()">Save</button>
       <div class="ra-field-group" style="margin-top:20px">
         <label class="ra-label" style="color:var(--c-accent)">Copy n8n Workflows JSON</label>
@@ -670,6 +678,46 @@ permalink: /repo-admin/
 .ra-input:focus { outline: none; border-color: var(--c-accent); }
 
 .hidden { display: none !important; }
+
+/* ── MOBILE ── */
+@media (max-width: 768px) {
+  #ra-root {
+    --console-h: 120px;
+  }
+  .ra-topbar {
+    padding: 0 10px;
+    gap: 8px;
+  }
+  .ra-repo-chips { display: none; }
+  .ra-logo-group .ra-section { display: none; }
+  .ra-workspace {
+    flex-direction: column;
+    height: auto;
+    overflow: visible;
+  }
+  .ra-panel-svn {
+    width: 100%;
+    max-height: 220px;
+    border-right: none;
+    border-bottom: 1px solid var(--c-border);
+  }
+  .ra-file-tree { max-height: 150px; }
+  .ra-main { min-height: 400px; }
+  .ra-tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .ra-tab { padding: 10px 12px; font-size: 10px; }
+  .ra-detail {
+    width: 100%;
+    border-left: none;
+    border-top: 1px solid var(--c-border);
+    max-height: 200px;
+  }
+  .ra-cmd-grid { grid-template-columns: 1fr 1fr; }
+  .ra-stats-grid { grid-template-columns: 1fr 1fr; }
+  .ra-log-toolbar { flex-wrap: wrap; }
+  .ra-console { height: var(--console-h); }
+  .ra-drawer { width: 100%; }
+  .ra-action-btn, .ra-connect-btn { padding: 10px 16px; font-size: 12px; }
+}
 </style>
 
 <script>
@@ -979,6 +1027,10 @@ function loadSettings() {
     ST.endpoints = s.endpoints || {};
     ST.svnUser = s.svnUser || '';
     ST.svnPass = s.svnPass || '';
+    const userEl = document.getElementById('cfgSvnUser');
+    const passEl = document.getElementById('cfgSvnPass');
+    if (userEl) userEl.value = ST.svnUser;
+    if (passEl) passEl.value = ST.svnPass;
     if (s.endpoints) {
       Object.keys(s.endpoints).forEach(k => {
         const el = document.getElementById('cfg' + k.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(''));
@@ -996,7 +1048,13 @@ function saveSettings() {
     'svn-diff': document.getElementById('cfgSvnDiff').value.trim(),
     'git-log': document.getElementById('cfgGitLog').value.trim(),
   };
-  localStorage.setItem('hypenosys_repoAdmin', JSON.stringify({ endpoints: ST.endpoints, svnUser: ST.svnUser, svnPass: ST.svnPass }));
+  ST.svnUser = document.getElementById('cfgSvnUser').value.trim();
+  ST.svnPass = document.getElementById('cfgSvnPass').value.trim();
+  localStorage.setItem('hypenosys_repoAdmin', JSON.stringify({
+    endpoints: ST.endpoints,
+    svnUser: ST.svnUser,
+    svnPass: ST.svnPass
+  }));
   toggleSettings();
   log('success', 'Settings saved');
 }
@@ -1106,6 +1164,7 @@ async function svnLog(limitOverride) {
   list.innerHTML = '<div class="ra-placeholder">Loading SVN log...</div>';
   try {
     const data = await apiCall('svn-log', { path: currentPath, limit });
+    if (data.error) throw new Error(data.error);
     let entries = data.log || [];
     if (filterAuthor) entries = entries.filter(e => e.author.includes(filterAuthor));
     renderSvnLog(entries);
