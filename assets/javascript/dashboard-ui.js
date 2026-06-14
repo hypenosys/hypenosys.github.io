@@ -577,6 +577,20 @@ function togglePipelineCollapse() {
   chevron.classList.toggle('fa-chevron-up');
 }
 
+function toggleKanbanFilters() {
+    const bar = document.getElementById('kanban-filter-bar');
+    const chevron = document.getElementById('kanban-filters-chevron');
+    const isHidden = bar.classList.toggle('hidden');
+
+    if (isHidden) {
+        chevron.classList.replace('fa-chevron-up', 'fa-chevron-down');
+        localStorage.setItem('kanban_filters_collapsed', 'true');
+    } else {
+        chevron.classList.replace('fa-chevron-down', 'fa-chevron-up');
+        localStorage.setItem('kanban_filters_collapsed', 'false');
+    }
+}
+
 function toggleJulesCollapse() {
   const content = document.getElementById('jules-ops-content');
   const chevron = document.getElementById('jules-ops-chevron');
@@ -643,6 +657,25 @@ window.handleDashboardLogin = function() {
 function renderKanbanFilters() {
     const container = document.getElementById('kanban-filter-bar');
     if (!container) return;
+
+    // Aplicar estado colapsado inicial
+    const isCollapsed = localStorage.getItem('kanban_filters_collapsed') === 'true';
+    const chevron = document.getElementById('kanban-filters-chevron');
+    if (isCollapsed) {
+        container.classList.add('hidden');
+        if (chevron) chevron.classList.replace('fa-chevron-up', 'fa-chevron-down');
+    } else {
+        container.classList.remove('hidden');
+        if (chevron) chevron.classList.replace('fa-chevron-down', 'fa-chevron-up');
+    }
+
+    // Actualizar contador de filtros activos
+    const totalActive = kanbanFilters.tags.length + kanbanFilters.members.length + kanbanFilters.repos.length + kanbanFilters.states.length;
+    const countBadge = document.getElementById('active-filters-count');
+    if (countBadge) {
+        countBadge.textContent = totalActive;
+        countBadge.classList.toggle('hidden', totalActive === 0);
+    }
 
     // 1. Extraer datos dinámicamente de todas las tareas
     const allTags = new Set();
