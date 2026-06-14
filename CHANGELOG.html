@@ -85,6 +85,8 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-success">Fixed</h5>
             <ul>
+              <li><strong>Duplicación de "Neural Session Activa":</strong> Corregido el bug donde se renderizaban dos tarjetas de sesión activa en el chat. Se centralizó el renderizado en <code>loadSession</code> y se eliminaron las llamadas redundantes en <code>init</code>.</li>
+              <li><strong>Limpieza Global de Sesión (Desvincular):</strong> Actualizada la lógica de "Desvincular sesión" para limpiar globalmente todas las claves de <code>localStorage</code> que comienzan con <code>hy_neural_</code>, asegurando que no quede rastro de sesiones previas o de otras pestañas.</li>
               <li><strong>Jules Panel V2 - Visibilidad y Flujo Neural:</strong> Eliminado el bloqueo visual forzado (blurry effect) al inicio, inyectadas dependencias críticas (jQuery/Bootstrap), implementado el toggle Claude/Jules en el chat integrado y habilitada la vinculación automática de contexto de tareas vía URL.</li>
               <li><strong>Transferencia de Tareas a Claude:</strong> Corregido el bug en <code>_openTaskInClaude</code> donde solo se pasaba el ID de la tarea. Implementado un sistema de búsqueda multinivel (global y window scope) para asegurar que el objeto completo (título, descripción, etc.) llegue a <code>/chat/neural/</code>.</li>
               <li><strong>Prompt y Persona de Neural Chat:</strong> Actualizada la construcción del prompt inicial para usar las claves correctas del esquema JSON (<code>title</code>, <code>descripcion</code>, <code>subtasks</code>) y adoptada la persona de "Asistente Técnico de Hypenosys", eliminando referencias a Senior Software Engineer.</li>
