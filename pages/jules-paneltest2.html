@@ -14,6 +14,11 @@ permalink: /jules-panel-v2/
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ '/assets/main.css' | relative_url }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="{{ '/assets/javascript/bootstrap/jquery.min.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/bootstrap/bootstrap.bundle.min.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/ui-components.js' | relative_url }}"></script>
 <style>
 /* ─── VARIABLES ─── */
 :root {
@@ -77,15 +82,15 @@ body{
 
 /* ─── LAYOUT ─── */
 .app{display:flex;flex-direction:column;height:100vh;overflow:hidden}
-.app.locked { filter: blur(8px) saturate(50%); pointer-events: none; user-select: none; }
+.app.locked { filter: none; pointer-events: auto; user-select: auto; }
 
 /* ─── AUTH GATE ─── */
 .auth-overlay {
   position: fixed; inset: 0; z-index: 5000;
   display: flex; align-items: center; justify-content: center;
   background: rgba(7, 7, 10, 0.6);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(4px) saturate(180%);
+  -webkit-backdrop-filter: blur(4px) saturate(180%);
   opacity: 0; pointer-events: none; transition: opacity 0.5s ease;
 }
 .auth-overlay.show { opacity: 1; pointer-events: auto; }
@@ -785,6 +790,54 @@ body{
 }
 .sidebar-backdrop.open{display:block}
 
+/* Dual-Send Toggle Switch */
+.dual-send-switch {
+    position: relative;
+    display: inline-flex;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2px;
+    user-select: none;
+    align-self: flex-start;
+}
+.dual-send-option {
+    padding: 4px 10px;
+    border-radius: 9px;
+    font-size: 9px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.dual-send-option.active[data-mode="claude"] {
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 0 10px rgba(124, 58, 237, 0.4);
+}
+.dual-send-option.active[data-mode="jules"] {
+    background: var(--green);
+    color: #000;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.6);
+    animation: neural-pulse-green 2s infinite;
+}
+@keyframes neural-pulse-green {
+    0% { box-shadow: 0 0 5px rgba(16, 185, 129, 0.4); }
+    50% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.8); }
+    100% { box-shadow: 0 0 5px rgba(16, 185, 129, 0.4); }
+}
+.dual-send-option i { font-size: 10px; }
+
+#chat-input-wrapper.mode-jules {
+    border-color: var(--green) !important;
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.1) !important;
+}
+
 /* ─── CHAT V2 STYLES ─── */
 .message-user {
     align-self: flex-end;
@@ -1177,7 +1230,7 @@ body{
   </div>
 </div>
 
-<div class="app locked" id="app-root">
+<div class="app" id="app-root">
 
 <!-- ══ MOBILE HEADER ══ -->
 <header class="mobile-hdr" id="mob-hdr">
@@ -1780,12 +1833,24 @@ body{
                 <div id="v2-thinking-indicator" class="hidden" style="font-size: 10px; font-weight: 800; color: var(--cyan); letter-spacing: 0.05em;">
                     CLAUDE ESTÁ PROCESANDO...
                 </div>
-                <div style="position: relative;">
-                    <textarea id="v2-chat-input" placeholder="Pregunta algo..."
-                        style="width: 100%; background: var(--surface-opaque); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 16px 60px 16px 16px; color: #fff; resize: none; font-size: 14px; min-height: 56px; max-height: 200px; font-family: var(--font-ui); transition: border-color 0.3s;"></textarea>
-                    <button id="v2-send-btn" style="position: absolute; right: 12px; top: 11px; width: 34px; height: 34px; border-radius: 12px; background: var(--accent-grad); color: #fff; border: none; cursor: pointer; display: flex; align-items:center; justify-content:center; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);">
-                        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
-                    </button>
+
+                <div id="chat-input-wrapper" class="transition-all duration-500" style="position: relative; display: flex; flex-direction: column; gap: 10px; background: var(--surface-opaque); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 12px;">
+                    <div class="flex items-center gap-3">
+                        <div class="dual-send-switch">
+                            <div class="dual-send-option active" data-mode="claude" onclick="setSendMode('claude')">
+                                <i class="fas fa-brain"></i> CLAUDE
+                            </div>
+                            <div class="dual-send-option" data-mode="jules" onclick="setSendMode('jules')">
+                                <i class="fas fa-bolt"></i> JULES
+                            </div>
+                        </div>
+                        <textarea id="v2-chat-input" placeholder="Pregunta algo..."
+                            style="width: 100%; background: transparent; border: none; color: #fff; resize: none; font-size: 14px; min-height: 40px; max-height: 200px; font-family: var(--font-ui); outline: none;"></textarea>
+
+                        <button id="v2-send-btn" style="width: 38px; height: 38px; border-radius: 12px; background: var(--accent-grad); color: #fff; border: none; cursor: pointer; display: flex; align-items:center; justify-content:center; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3); flex-shrink: 0;">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -2040,7 +2105,58 @@ body{
 <script src="{{ '/assets/javascript/ollama-discovery.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/ai-config.js' | relative_url }}"></script>
 <script>
-    window.JulesPanelState = {
+    function getLinkedJulesSessionId() {
+        return localStorage.getItem('hy_neural_session_id');
+    }
+
+    let currentSendMode = 'claude';
+    window.setSendMode = (mode) => {
+        currentSendMode = mode;
+        document.querySelectorAll('.dual-send-option').forEach(opt => {
+            opt.classList.toggle('active', opt.dataset.mode === mode);
+        });
+        const wrapper = document.getElementById('chat-input-wrapper');
+        if (wrapper) {
+            wrapper.className = `transition-all duration-500 ${mode === 'jules' ? 'mode-jules' : ''}`;
+            wrapper.style.position = 'relative';
+            wrapper.style.display = 'flex';
+            wrapper.style.flexDirection = 'column';
+            wrapper.style.gap = '10px';
+            wrapper.style.background = 'var(--surface-opaque)';
+            wrapper.style.border = '1px solid var(--border)';
+            wrapper.style.borderRadius = 'var(--r-lg)';
+            wrapper.style.padding = '12px';
+        }
+        const input = document.getElementById('v2-chat-input');
+        if (input) {
+            input.placeholder = mode === 'claude' ? "Pregunta algo..." : "Enviar orden directa a Jules...";
+        }
+    };
+
+
+    function escapeHtml(str) {
+      return String(str ?? '')
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;');
+    }
+
+    function getTimeAgo(dateStr) {
+        const seconds = Math.floor((new Date() - new Date(dateStr)) / 1000);
+        let interval = seconds / 31536000;
+        if (interval > 1) return `hace ${Math.floor(interval)} años`;
+        interval = seconds / 2592000;
+        if (interval > 1) return `hace ${Math.floor(interval)} meses`;
+        interval = seconds / 86400;
+        if (interval > 1) return `hace ${Math.floor(interval)} días`;
+        interval = seconds / 3600;
+        if (interval > 1) return `hace ${Math.floor(interval)} horas`;
+        interval = seconds / 60;
+        if (interval > 1) return `hace ${Math.floor(interval)} min`;
+        return 'hace unos segundos';
+    }
+window.JulesPanelState = {
         activeRepo:          localStorage.getItem('hypenosys_active_repo') || null,
         activeBranch:        localStorage.getItem('hypenosys_active_branch') || null,
         activeSession:       null,
@@ -2208,7 +2324,43 @@ body{
         await refreshDashboard();
         switchView(window.JulesPanelState.currentView || 'dashboard');
         checkClipboard();
+        handleUrlParams();
         startPolling();
+    }
+
+    function handleUrlParams() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const taskDataRaw = urlParams.get('task_data');
+        const taskId = urlParams.get('task_id');
+
+        if (taskDataRaw || taskId) {
+            let task = null;
+            if (taskDataRaw) {
+                try {
+                    task = JSON.parse(decodeURIComponent(taskDataRaw));
+                } catch(e) { console.error("Error parsing task_data param", e); }
+            } else if (taskId && window.JulesPanelState.tasks) {
+                task = window.JulesPanelState.tasks.find(t => String(t.id) === String(taskId));
+            }
+
+            if (task) {
+                localStorage.setItem('hy_neural_active', 'true');
+                localStorage.setItem('hy_neural_task_context', JSON.stringify(task));
+                showToast("Contexto de tarea vinculado", "green");
+
+                // Add initial prompt to chat if empty
+                const input = $('v2-chat-input');
+                if (input && !input.value.trim()) {
+                    input.value = `Hola Claude, analicemos esta tarea:\n\n📌 #${task.id}: ${task.titulo || task.title}\n${task.descripcion ? '📝 ' + task.descripcion : ''}\n\n¿Qué pasos me recomiendas para Jules?`;
+                    input.dispatchEvent(new Event('input'));
+                }
+
+                switchView('chat');
+
+                // Cleanup URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        }
     }
 
     async function updateUserUI(user) {
@@ -2942,7 +3094,8 @@ body{
         document.querySelectorAll('#view-hub .dr-tab').forEach(t => t.classList.remove('active'));
         if(el) el.classList.add('active');
         document.querySelectorAll('.hub-panel').forEach(p => p.style.display = 'none');
-        const panel = $(`panel-${ { 'pull-requests': 'pr', 'issues': 'issues', 'branches': 'branches', 'actions': 'actions', 'notifications': 'notifs' }[tabId]}`);
+        const tabMap = { 'pull-requests': 'pr', 'issues': 'issues', 'branches': 'branches', 'actions': 'actions', 'notifications': 'notifs' };
+        const panel = $(`panel-${tabMap[tabId]}`);
         if(panel) panel.style.display = 'block';
         await loadHubContent(tabId);
     }
@@ -2950,7 +3103,8 @@ body{
     async function loadHubContent(tabId, force = false) {
         const repoVal = window.JulesPanelState.activeRepo; if (!repoVal) return;
         const parsed = window.parseSourceName(repoVal); if (!parsed) return;
-        const panel = $(`panel-${ { 'pull-requests': 'pr', 'issues': 'issues', 'branches': 'branches', 'actions': 'actions', 'notifications': 'notifs' }[tabId]}`);
+        const tabMap = { 'pull-requests': 'pr', 'issues': 'issues', 'branches': 'branches', 'actions': 'actions', 'notifications': 'notifs' };
+        const panel = $(`panel-${tabMap[tabId]}`);
         const now = Date.now(), lastFetch = parseInt(panel.dataset.fetchedAt || '0', 10);
         if (!force && panel.dataset.loaded === 'true' && (now - lastFetch < 60000)) return;
         panel.innerHTML = '<div style="padding:40px; text-align:center; color:var(--text3);">Cargando...</div>';
@@ -3203,9 +3357,16 @@ body{
         if (!content) return;
 
         const isNeuralActive = localStorage.getItem('hy_neural_active') === 'true';
-        const sessionId = getLinkedJulesSessionId();
+        const claudeId = localStorage.getItem('hy_active_claude_session_id');
+        let sessionId = localStorage.getItem('hy_neural_session_id_' + claudeId);
+        if (!sessionId) sessionId = getLinkedJulesSessionId();
 
-        if (isNeuralActive && sessionId) {
+        if (currentSendMode === 'jules' || (isNeuralActive && sessionId)) {
+            if (!sessionId) {
+                showToast("No hay sesión Jules activa vinculada", "red");
+                return;
+            }
+            const targetId = sessionId.startsWith('sessions/') ? sessionId : 'sessions/' + sessionId;
             // Fix 3: Route Neural Chat messages to Jules session directly
             const userMsg = { role: 'user', content };
             chatV2Messages.push(userMsg);
@@ -3220,9 +3381,10 @@ body{
             }
 
             try {
-                const ok = await window.julesApi.sendMessage("sessions/" + getIdSafe(sessionId), content);
+                const ok = await window.julesApi.sendMessage(targetId, content);
                 if (ok) {
                     showToast("Orden enviada a Jules", "green");
+                    addTel("USER", content, "info");
 
                     // Poll for activity response
                     let attempts = 0;
@@ -3234,13 +3396,6 @@ body{
                         if (attempts >= maxAttempts) {
                             clearInterval(pollInterval);
                             if (thinking) thinking.classList.add('hidden');
-                        }
-
-                        // Check if we got a new activity from agent
-                        const activities = document.querySelectorAll('#neural-jules-history .activity-entry--agent');
-                        if (activities.length > 0) {
-                             // Assuming the poll found something, but we keep polling for 30s to be safe
-                             // or we could stop if we detect a specific response.
                         }
                     }, 2000);
                 }
@@ -3266,29 +3421,29 @@ body{
                 const config = window.aiConfig?.getActiveConfig() || JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
                 const systemPrompt = "Eres Claude, un asistente experto integrado en el panel de control de Hypenosys.";
 
-            // Build context from active task if exists
-            let fullPrompt = content;
-            if (window.JulesPanelState.activePayload?.source_task) {
-                const t = window.JulesPanelState.activePayload.source_task;
-                fullPrompt = `[CONTEXTO TAREA #${t.id}: ${t.titulo}]\n${content}`;
+                // Build context from active task if exists
+                let fullPrompt = content;
+                if (window.JulesPanelState.activePayload?.source_task) {
+                    const t = window.JulesPanelState.activePayload.source_task;
+                    fullPrompt = `[CONTEXTO TAREA #${t.id}: ${t.titulo}]\n${content}`;
+                }
+
+                const messages = [
+                    { role: 'system', content: systemPrompt },
+                    ...chatV2Messages.map(m => ({ role: m.role, content: m.content }))
+                ];
+
+                // For now, use a simplified non-streaming call for the integrated tab
+                const response = await callCustomProvider(config, messages);
+
+                chatV2Messages.push({ role: 'assistant', content: response });
+                renderChatV2Messages();
+            } catch (e) {
+                console.error('[ChatV2] Error:', e);
+                showToast("Error en comunicación con Claude", "red");
+            } finally {
+                thinking.classList.add('hidden');
             }
-
-            const messages = [
-                { role: 'system', content: systemPrompt },
-                ...chatV2Messages.map(m => ({ role: m.role, content: m.content }))
-            ];
-
-            // For now, use a simplified non-streaming call for the integrated tab
-            // In a real scenario, we'd port the full consumeStream logic
-            const response = await callCustomProvider(config, messages);
-
-            chatV2Messages.push({ role: 'assistant', content: response });
-            renderChatV2Messages();
-        } catch (e) {
-            console.error('[ChatV2] Error:', e);
-            showToast("Error en comunicación con Claude", "red");
-        } finally {
-            thinking.classList.add('hidden');
         }
     }
 
@@ -3361,29 +3516,6 @@ body{
       </span>`;
     }
 
-    function getTimeAgo(dateStr) {
-        const seconds = Math.floor((new Date() - new Date(dateStr)) / 1000);
-        let interval = seconds / 31536000;
-        if (interval > 1) return `hace ${Math.floor(interval)} años`;
-        interval = seconds / 2592000;
-        if (interval > 1) return `hace ${Math.floor(interval)} meses`;
-        interval = seconds / 86400;
-        if (interval > 1) return `hace ${Math.floor(interval)} días`;
-        interval = seconds / 3600;
-        if (interval > 1) return `hace ${Math.floor(interval)} horas`;
-        interval = seconds / 60;
-        if (interval > 1) return `hace ${Math.floor(interval)} min`;
-        return 'hace unos segundos';
-    }
-
-    function escapeHtml(str) {
-      return String(str ?? '')
-        .replace(/&/g,'&amp;')
-        .replace(/</g,'&lt;')
-        .replace(/>/g,'&gt;')
-        .replace(/"/g,'&quot;');
-    }
-
     async function refreshActivities(idSafe) {
         const currentSessions = window.julesSessionsCache || [];
         const sessionId = currentSessions.find(s => getIdSafe(s.name) === idSafe)?.name || 'sessions/' + idSafe;
@@ -3404,7 +3536,7 @@ body{
             let activities = (data.activities || [])
               .filter((a, i, arr) => arr.findIndex(x => x.id === a.id) === i);
 
-            // Mejora 1: Actualizar Working Indicator
+            // Actualizar Working Indicator
             if (session && session.state === 'IN_PROGRESS') {
               const lastProgress = [...activities].reverse().find(a => a.progressUpdated);
               if (lastProgress) {
@@ -3480,7 +3612,6 @@ body{
         const v2Container = document.getElementById('neural-actions-v2');
         if (!opsContainer || !v2Container) return;
 
-        // Logic: latest activity has planGenerated and no subsequent planApproved
         const sorted = [...activities].sort((a, b) => new Date(a.createTime) - new Date(b.createTime));
 
         let needsApproval = false;
@@ -3531,7 +3662,6 @@ body{
       const currentSessions = window.julesSessionsCache || [];
       let html = '<div class="activity-selection-checkbox"></div>';
 
-      // Mejora 4: Visor de Diffs Inline (se puede añadir a cualquier tipo de actividad)
       let diffsHtml = '';
       if (activity.artifacts && activity.artifacts.length > 0) {
         activity.artifacts.forEach(artifact => {
@@ -3540,12 +3670,10 @@ body{
             const msg   = artifact.changeSet.gitPatch.suggestedCommitMessage || '';
             const lines = patch.split('\n');
 
-            // Máximo 300 líneas visibles — el resto se oculta con "Ver más"
             const MAX_LINES = 300;
             const visibleLines = lines.slice(0, MAX_LINES);
             const hiddenCount = lines.length - visibleLines.length;
 
-            // Construir HTML con clases en lugar de estilos inline por línea
             const diffLinesHtml = visibleLines.map(line => {
               let cls = 'dl';
               if (line.startsWith('+') && !line.startsWith('+++')) cls = 'dl dl-add';
@@ -3586,7 +3714,6 @@ body{
         });
       }
 
-      // Detectar tipo de actividad
       if (activity.planGenerated) {
         const steps = activity.planGenerated?.plan?.steps || [];
         const stepsHtml = steps
@@ -3622,32 +3749,26 @@ body{
             <div>${stepsHtml || '<span style="color:#6b7280">Sin pasos</span>'}</div>
           </div>`;
       }
-
       else if (activity.planApproved) {
         html = `<div class="activity-entry" style="color:#10b981;font-size:11px;">
           ✅ Plan aprobado
         </div>`;
       }
-
       else if (activity.userMessaged) {
         const msg = activity.userMessaged.userMessage || '';
         const parsed = typeof marked !== 'undefined' ? marked.parse(msg) : escapeHtml(msg);
         html = `<div class="activity-entry activity-entry--user prose-invert" style="overflow-x: auto; max-width: 100%; word-break: break-word;">${parsed}</div>`;
       }
-
       else if (activity.agentMessaged) {
         const msg = activity.agentMessaged.agentMessage || '';
         const parsed = typeof marked !== 'undefined' ? marked.parse(msg) : escapeHtml(msg);
         html = `<div class="activity-entry activity-entry--agent prose-invert" style="overflow-x: auto; max-width: 100%; word-break: break-word;">${parsed}</div>`;
       }
-
       else if (activity.progressUpdated) {
         const title = activity.progressUpdated.title || '';
         const desc  = activity.progressUpdated.description || '';
-
         const parsedTitle = typeof marked !== 'undefined' ? marked.parse(title) : escapeHtml(title);
         const parsedDesc  = typeof marked !== 'undefined' && desc ? marked.parse(desc) : escapeHtml(desc);
-
         const bash = (activity.artifacts || [])
           .map(a => a.bashOutput).filter(Boolean)[0];
 
@@ -3670,7 +3791,6 @@ body{
               </details>` : ''}
           </div>`;
       }
-
       else if (activity.sessionCompleted) {
         const commitMsg = activity.sessionCompleted?.commitMessage ||
                           activity.sessionCompleted?.message || '';
@@ -3689,7 +3809,6 @@ body{
               </div>` : ''}
           </div>`;
       }
-
       else if (activity.sessionFailed) {
         const reason = activity.sessionFailed.reason || 'Error desconocido';
         html = `<div class="activity-entry"
@@ -3699,9 +3818,8 @@ body{
       }
 
       if (!html) {
-        // Fallback — actividad de sistema (Mejora 3 - Bug B)
         const desc = activity.description || '';
-        if (!desc && !diffsHtml) return ''; // si no hay nada útil, no renderizar NADA
+        if (!desc && !diffsHtml) return '';
         if (desc) {
           html = `<div class="activity-entry" style="color:#4b5563;font-size:10px;
             font-style:italic;">
@@ -3709,11 +3827,9 @@ body{
           </div>`;
         }
       }
-
       return html + diffsHtml;
     }
 
-    /* ─── SESSION DRAWER (Area 3) ─── */
     window.toggleSessionDrawer = () => {
         const drawer = $('sessions-drawer');
         const overlay = $('sessions-drawer-overlay');
@@ -3832,7 +3948,8 @@ body{
             const task = (window.JulesPanelState?.tasks || []).find(t => String(t.id) === String(s.task_id));
             if (task) localStorage.setItem('hy_neural_task_context', JSON.stringify(task));
         }
-        window.location.reload(); } // Quick way to restore full state
+        window.location.reload(); }
+
     let _historySelection = new Map();
 
     function toggleActivitySelection(el, activity) {
@@ -3858,7 +3975,6 @@ body{
         } else {
             toolbar.classList.remove('active');
         }
-        updateSelectionToolbar();
     }
 
     function clearHistorySelection() {
@@ -3870,7 +3986,6 @@ body{
     function analyzeSelectedWithClaude() {
         if (_historySelection.size === 0) return;
 
-        // Sort selected activities by their order in the DOM to maintain temporal context
         const container = document.getElementById('neural-jules-history');
         const sortedEntries = Array.from(container.querySelectorAll('.activity-entry.selected'))
             .map(el => _historySelection.get(el.dataset.activityId))
@@ -3920,7 +4035,6 @@ body{
 
     function commentOnStep(sessionId, stepIndex, stepTitle) {
         const idSafe = getIdSafe(sessionId);
-        // En V2 el input de chat es #v2-chat-input
         const input = document.getElementById(`v2-chat-input`);
         if (input) {
             input.value = `Respecto al paso ${stepIndex} (${stepTitle}): ` + input.value;
@@ -3960,8 +4074,7 @@ body{
         const data = await res.json();
         return isAnthropic ? data.content[0].text : data.choices[0].message.content;
     }
-
-    if($('v2-send-btn')) $('v2-send-btn').onclick = sendChatV2Msg;
+if($('v2-send-btn')) $('v2-send-btn').onclick = sendChatV2Msg;
     if($('v2-chat-input')) {
         $('v2-chat-input').onkeydown = (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {

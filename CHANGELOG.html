@@ -79,6 +79,7 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-success">Fixed</h5>
             <ul>
+              <li><strong>Jules Panel V2 - Visibilidad y Flujo Neural:</strong> Eliminado el bloqueo visual forzado (blurry effect) al inicio, inyectadas dependencias críticas (jQuery/Bootstrap), implementado el toggle Claude/Jules en el chat integrado y habilitada la vinculación automática de contexto de tareas vía URL.</li>
               <li><strong>Transferencia de Tareas a Claude:</strong> Corregido el bug en <code>_openTaskInClaude</code> donde solo se pasaba el ID de la tarea. Implementado un sistema de búsqueda multinivel (global y window scope) para asegurar que el objeto completo (título, descripción, etc.) llegue a <code>/chat/neural/</code>.</li>
               <li><strong>Prompt y Persona de Neural Chat:</strong> Actualizada la construcción del prompt inicial para usar las claves correctas del esquema JSON (<code>title</code>, <code>descripcion</code>, <code>subtasks</code>) y adoptada la persona de "Asistente Técnico de Hypenosys", eliminando referencias a Senior Software Engineer.</li>
               <li><strong>Responsividad Táctil Kanban (Dashboard):</strong> Corregido el fallo donde los botones de las tarjetas (Robot 🤖, Editar ✎, Mover →) no respondían en dispositivos móviles. Se eliminaron los atributos <code>onclick</code> inline y se implementó un sistema de delegación de eventos unificado que soporta <code>click</code> y <code>touchend</code>.</li>
