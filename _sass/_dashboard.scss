@@ -77,6 +77,8 @@ $dashboard-danger: #ff5555;  // Dracula Red
     margin-bottom: 0.75rem;
     box-shadow: 0 2px 8px rgba(0,0,0,0.25);
     transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    height: auto; // Ensure it can grow
+    min-height: 100px;
 
     // Status Borders (Specificity without !important)
     &.border-status-pending { border-color: #64748b; }
@@ -102,7 +104,14 @@ $dashboard-danger: #ff5555;  // Dracula Red
         margin-bottom: 1rem;
         color: rgba($white, 0.7); // Apply opacity via color instead of opacity: 0.7 to avoid stacking
 
-        p, span, div, li {
+        p, span, div, li, ul, ol, blockquote, pre, code {
+            font-size: 13px;
+            color: inherit;
+            line-height: 1.5;
+        }
+
+        // Ensure nested elements also follow the rule
+        & > * {
             font-size: 13px;
             color: inherit;
         }
@@ -233,6 +242,13 @@ $dashboard-danger: #ff5555;  // Dracula Red
 
 // Badge Semantic Colors
 .badge {
+    padding: 2px 8px;
+    border-radius: 9999px;
+    text-transform: uppercase;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    font-size: 8px;
+
     &.badge-pending { background-color: #FFF3CD; color: #856404; }
     &.badge-working { background-color: #CCE5FF; color: #004085; }
     &.badge-review  { background-color: #D1ECF1; color: #0C5460; }

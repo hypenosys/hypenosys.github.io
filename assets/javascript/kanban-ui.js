@@ -289,7 +289,7 @@
             if (!isExpanded) {
                 // COLLAPSED CARD
                 return `
-                    <div class="session-card kanban-card mb-3 flex flex-col justify-between cursor-pointer border ${borderClass} hover:border-slate-700 transition-all"
+                    <div class="session-card kanban-card mb-3 flex flex-col justify-between cursor-pointer border ${borderClass}"
                          style="height: 100px; overflow: hidden;" data-id="${task.id}" data-action="toggle" role="button" tabindex="0">
 
                         <!-- Line 1: ID + Acciones + Status + Expand -->
@@ -304,18 +304,18 @@
                                         <i class="fas fa-robot"></i>
                                     </button>
                                 </div>
-                                <span class="badge ${statusColor} text-[8px] px-1.5 py-0.5 rounded-full uppercase font-black tracking-tighter">${displayStatus}</span>
+                                <span class="badge ${statusColor}">${displayStatus}</span>
                             </div>
                             <i class="fas fa-chevron-down text-slate-600 text-[10px]"></i>
                         </div>
 
                         <!-- Line 2: Título (truncado) -->
-                        <h4 class="truncate py-1 prose-invert">
+                        <h4 class="truncate py-1">
                             ${parsedTitle}
                         </h4>
 
                         <!-- Optional: Descripcion truncada en collapsed si existe -->
-                        ${description ? `<div class="task-description truncate text-xs">${description}</div>` : ''}
+                        ${description ? `<div class="task-description truncate">${description}</div>` : ''}
 
                         <!-- Line 3: Repo + Branch -->
                         <div class="flex justify-between items-center text-[10px] text-slate-500">
@@ -340,17 +340,17 @@
                                     <button data-action="edit" data-id="${task.id}" class="text-slate-500 hover:text-white" title="Editar"><i class="fas fa-pencil-alt"></i></button>
                                     <button data-action="claude" data-id="${task.id}" class="text-slate-500 hover:text-[#bd93f9]" title="Robot"><i class="fas fa-robot"></i></button>
                                 </div>
-                                <span class="badge ${statusColor} text-[8px] px-1.5 py-0.5 rounded-full uppercase font-black tracking-tighter">${displayStatus}</span>
+                                <span class="badge ${statusColor}">${displayStatus}</span>
                                 <span class="badge ${priorityColor} text-[8px] px-1.5 py-0.5 rounded uppercase font-bold">${task.prioridad}</span>
                             </div>
                             <i class="fas fa-chevron-up text-slate-600 text-[10px]"></i>
                         </div>
 
                         <!-- Título completo -->
-                        <h4 class="mb-2 prose prose-invert">${parsedTitle}</h4>
+                        <h4>${parsedTitle}</h4>
 
                         <!-- Descripción -->
-                        ${description ? `<div class="task-description prose prose-invert max-w-full">${parsedDesc}</div>` : ''}
+                        ${description ? `<div class="task-description">${parsedDesc}</div>` : ''}
 
                         <!-- Fila: Metadata -->
                         <div class="flex flex-wrap gap-x-4 gap-y-2 mb-3 text-[10px] text-slate-500 border-t border-slate-800 pt-3 uppercase font-bold">
