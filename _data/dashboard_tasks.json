@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-15T19:08:23.356Z",
+  "last_updated": "2026-06-15T19:08:54.666Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1866,14 +1866,14 @@
     },
     {
       "title": "n8n: Añadir NIM y cognito-agent como providers en la configuración de Claude Neural Chat",
-      "descripcion": "Configurar nuevos proveedores de IA en el ecosistema de n8n. Amplía las capacidades de procesamiento y automatización del Neural Chat.",
+      "descripcion": "Configurar nuevos proveedores de IA en el ecosistema de n8n. Amplía las capacidades de procesamiento y automatización del Neural Chat. (already solved in tc)",
       "rama": "feature/n8n-providers-nim-agent",
       "task_type": "research",
       "tema_principal": "Programación / Engine",
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Medium",
       "milestone": "M2",
-      "estado": "Working",
+      "estado": "ToDo",
       "completitud": 0,
       "resuelto_por": null,
       "detectado_por": "Axel",
@@ -1948,6 +1948,20 @@
           "field": "descripcion",
           "old_value": "",
           "new_value": "webhooks"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-15T19:08:26.803Z",
+          "field": "descripcion",
+          "old_value": "Configurar nuevos proveedores de IA en el ecosistema de n8n. Amplía las capacidades de procesamiento y automatización del Neural Chat.",
+          "new_value": "Configurar nuevos proveedores de IA en el ecosistema de n8n. Amplía las capacidades de procesamiento y automatización del Neural Chat. (already solved in tc)"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-15T19:08:26.803Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "ToDo"
         }
       ],
       "id": 36
@@ -3460,6 +3474,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #36",
+      "user": "Axlfc",
+      "timestamp": "2026-06-15T19:08:54.666Z"
+    },
     {
       "action": "chore: actualizar tarea #11",
       "user": "Axlfc",
