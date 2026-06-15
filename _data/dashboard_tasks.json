@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-15T17:11:33.245Z",
+  "last_updated": "2026-06-15T17:12:51.455Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3266,14 +3266,14 @@
       "id": 51
     },
     {
-      "title": "Connect and Sync Obsidian with Vector Database",
-      "descripcion": "",
+      "title": "Map local Obsidian Markdown Files Knowledge mocking a Vector Database so AI just can recover the needed text",
+      "descripcion": "Use Three Folders and a File.",
       "rama": "master",
       "task_type": "chore",
       "tema_principal": "Tools / Automation",
       "repository": "hypenosys/docs",
-      "prioridad": "Major",
-      "milestone": "M1",
+      "prioridad": "Medium",
+      "milestone": "M2",
       "estado": "Pending",
       "completitud": 0,
       "resuelto_por": null,
@@ -3306,6 +3306,34 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-15T17:12:50.714Z",
+          "field": "title",
+          "old_value": "Connect and Sync Obsidian with Vector Database",
+          "new_value": "Map local Obsidian Markdown Files Knowledge mocking a Vector Database so AI just can recover the needed text"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-15T17:12:50.714Z",
+          "field": "descripcion",
+          "old_value": "",
+          "new_value": "Use Three Folders and a File."
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-15T17:12:50.714Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Medium"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-15T17:12:50.714Z",
+          "field": "milestone",
+          "old_value": "M1",
+          "new_value": "M2"
         }
       ],
       "id": 52
@@ -3411,6 +3439,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #52",
+      "user": "Axlfc",
+      "timestamp": "2026-06-15T17:12:51.456Z"
+    },
     {
       "action": "chore: actualizar tarea #48",
       "user": "Axlfc",
