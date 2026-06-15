@@ -165,6 +165,9 @@ permalink: /documentacion/
                     <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
                     <input type="text" id="doc-search" placeholder="Buscar documento..."
                            class="w-full bg-slate-950 border border-slate-800 rounded-lg py-2 pl-9 pr-3 text-xs text-slate-300 focus:outline-none focus:border-indigo-500">
+                    <div id="search-results" class="absolute top-full left-0 w-full mt-2 bg-slate-900 border border-slate-800 rounded-lg shadow-2xl z-50 hidden max-h-64 overflow-y-auto custom-scrollbar">
+                        <!-- Results go here -->
+                    </div>
                 </div>
             </div>
             <div id="sidebar-content" class="flex-grow overflow-y-auto custom-scrollbar p-2 space-y-1">
@@ -218,12 +221,7 @@ permalink: /documentacion/
                 <div id="markdown-section" class="hidden">
                     <div class="flex flex-wrap items-center justify-between gap-4 mb-8 pb-4 border-b border-slate-800">
                         <div id="breadcrumb" class="flex items-center gap-2 text-xs font-mono text-slate-500">
-                            <button onclick="resetToWelcome()" class="hover:text-white transition-colors flex items-center gap-1">
-                                <i class="fa-solid fa-folder-open"></i>
-                                <span>docs</span>
-                            </button>
-                            <i class="fa-solid fa-chevron-right text-[8px]"></i>
-                            <span id="current-filename" class="text-indigo-400">archivo.md</span>
+                            <!-- Breadcrumb content generated dynamically -->
                         </div>
                         <div class="flex items-center gap-2">
                             <a id="btn-edit-github" target="_blank" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg text-[10px] font-bold border border-slate-700 flex items-center gap-2 transition-all">
@@ -323,22 +321,45 @@ permalink: /documentacion/
         };
 
         function resolveWikilinkPath(target) {
+            // Normalize target: remove .md if present to avoid double extension later
+            const cleanTarget = target.replace(/\.md$/, '');
+            const targetWithMd = cleanTarget + '.md';
+
             // 1. Try relative to currentPath
-            const relative = resolveRelativePath(currentPath, target);
+            const relative = resolveRelativePath(currentPath, targetWithMd);
             if (allFilesFlattened.some(f => f.path === relative)) {
                 return relative;
             }
 
             // 2. Try global search in flattened tree (Obsidian style)
-            const globalMatch = allFilesFlattened.find(f => {
+)            // Prioritize files closer to currentPath to avoid name collisions
+            const matches = allFilesFlattened.filter(f => {
                 const filename = f.path.split('/').pop();
-                return filename === target || filename.toLowerCase() === target.toLowerCase();
+                return filename === targetWithMd || filename.toLowerCase() === targetWithMd.toLowerCase() ||
+                       filename === cleanTarget || filename.toLowerCase() === cleanTarget.toLowerCase();
             });
 
-            if (globalMatch) return globalMatch.path;
+            if (matches.length > 0) {
+                if (matches.length === 1) return matches[0].path;
 
-            // 3. Fallback to calculated relative path even if not found in tree
+                // If multiple matches, find the one with the longest common prefix with currentPath
+                const currentDir = currentPath.substring(0, currentPath.lastIndexOf('/'));
+                matches.sort((a, b) => {
+                    const scoreA = getCommonPrefixLength(a.path, currentDir);
+                    const scoreB = getCommonPrefixLength(b.path, currentDir);
+                    return scoreB - scoreA;
+                });
+                return matches[0].path;
+            }
+
+            // 3. Fallback to calculated relative path
             return relative;
+        }
+
+        function getCommonPrefixLength(s1, s2) {
+            let i = 0;
+            while (i < s1.length && i < s2.length && s1[i] === s2[i]) i++;
+            return i;
         }
 
         marked.use({
@@ -360,8 +381,14 @@ permalink: /documentacion/
                             return `<a href="#${currentPath}${href}" ${title ? `title="${title}"` : ''}>${text}</a>`;
                         }
                         if (!href.startsWith('http')) {
-                            // Relative path: resolve against currentPath
-                            const resolved = resolveRelativePath(currentPath, href);
+                            // Obsidian style: if no extension, assume .md
+                            let resolvedHref = href;
+                            if (!href.includes('.') && !href.startsWith('#')) {
+                                resolvedHref += '.md';
+                            }
+
+                            // Try to resolve relative then global (like wikilinks)
+                            const resolved = resolveWikilinkPath(resolvedHref);
                             return `<a href="#${resolved}" ${title ? `title="${title}"` : ''}>${text}</a>`;
                         }
                     }
@@ -473,6 +500,7 @@ permalink: /documentacion/
                 link.className = `sidebar-link w-full text-left px-3 py-2 rounded-lg text-xs transition-all flex items-center gap-2 hover:bg-slate-800 text-slate-400 hover:text-white`;
                 link.style.paddingLeft = `${padding}px`;
                 link.dataset.path = file.path;
+                link.dataset.sha = file.sha;
 
                 const icon = isDir ? 'fa-folder text-amber-500/70' : 'fa-file-lines text-slate-500';
                 link.innerHTML = `<i class="fa-solid ${icon} w-4"></i> <span class="truncate">${file.name.replace('.md', '')}</span>`;
@@ -511,11 +539,32 @@ permalink: /documentacion/
             });
         }
 
-        function setActiveLink(path) {
+        async function setActiveLink(path) {
             const [cleanPath] = path.split('#');
+
+            // Expand parent folders
+            const parts = cleanPath.split('/');
+            let currentPathPart = '';
+            for (let i = 0; i < parts.length - 1; i++) {
+                currentPathPart += (currentPathPart ? '/' : '') + parts[i];
+                const folderLink = Array.from(document.querySelectorAll('.sidebar-link'))
+                    .find(el => el.dataset.path === currentPathPart);
+
+                if (folderLink) {
+                    const subContainerId = `dir-${folderLink.dataset.sha || folderLink.getAttribute('onclick')?.match(/'dir-(.*?)'/)?.[1]}`;
+                    const subContainer = document.getElementById(subContainerId);
+
+                    if (!subContainer || subContainer.classList.contains('hidden')) {
+                        // Trigger click to expand
+                        await folderLink.click();
+                    }
+                }
+            }
+
             document.querySelectorAll('.sidebar-link').forEach(el => {
                 if (el.dataset.path === cleanPath) {
                     el.classList.add('active');
+                    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 } else {
                     el.classList.remove('active');
                 }
@@ -523,13 +572,37 @@ permalink: /documentacion/
         }
 
         async function loadDocument(path) {
-            const decodedPath = decodeURIComponent(path);
+            const decodedPath = decodeURIComponent(path).replace(/^\//, ''); // Clean leading slash
             const [cleanPath, anchor] = decodedPath.split('#');
+
+            // If only anchor changed, just scroll
+            if (currentPath === cleanPath && anchor) {
+                const element = document.getElementById(anchor);
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth' });
+                    return;
+                }
+            }
+
             showLoading(true);
             try {
-                const response = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${cleanPath}`);
+                // Correctly encode each part of the path for the GitHub API
+                const encodedPath = cleanPath.split('/').map(p => encodeURIComponent(p)).join('/');
+                const response = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${encodedPath}`);
+
                 if (!response.ok) throw new Error('File not found');
                 const data = await response.json();
+
+                // Handle both single file and directory results
+                if (Array.isArray(data)) {
+                    // It's a directory, try to find README.md
+                    const readme = data.find(f => f.name.toLowerCase() === 'readme.md');
+                    if (readme) {
+                        return loadDocument(readme.path);
+                    } else {
+                        throw new Error('No se encontró README.md en esta carpeta.');
+                    }
+                }
 
                 const content = atob(data.content.replace(/\n/g, ''));
                 const decodedContent = decodeURIComponent(escape(content));
@@ -538,6 +611,7 @@ permalink: /documentacion/
                 currentPath = cleanPath;
                 renderMarkdown(decodedContent, cleanPath);
                 updateMetadata(data);
+                setActiveLink(cleanPath);
 
                 if (anchor) {
                     setTimeout(() => {
@@ -547,7 +621,7 @@ permalink: /documentacion/
                 }
             } catch (error) {
                 console.error('Error loading document:', error);
-                showError('No se pudo cargar el contenido del archivo.');
+                showError(`No se pudo cargar "${cleanPath}": ${error.message}`);
             } finally {
                 showLoading(false);
             }
@@ -559,7 +633,29 @@ permalink: /documentacion/
 
             document.getElementById('welcome-section').classList.add('hidden');
             document.getElementById('markdown-section').classList.remove('hidden');
-            document.getElementById('current-filename').textContent = path.split('/').pop().replace('.md', '');
+
+            // Render hierarchical breadcrumb
+            const breadcrumb = document.getElementById('breadcrumb');
+            let breadcrumbHTML = `
+                <button onclick="resetToWelcome()" class="hover:text-white transition-colors flex items-center gap-1">
+                    <i class="fa-solid fa-folder-open"></i>
+                    <span>docs</span>
+                </button>
+            `;
+
+            const parts = path.split('/');
+            let currentLink = '';
+            parts.forEach((part, index) => {
+                breadcrumbHTML += `<i class="fa-solid fa-chevron-right text-[8px] text-slate-600"></i>`;
+                if (index === parts.length - 1) {
+                    breadcrumbHTML += `<span class="text-indigo-400 font-bold">${part.replace('.md', '')}</span>`;
+                } else {
+                    currentLink += (currentLink ? '/' : '') + part;
+                    // We link folders to their README.md as a convention
+                    breadcrumbHTML += `<button onclick="window.location.hash='${currentLink}/README.md'" class="hover:text-white transition-colors">${part}</button>`;
+                }
+            });
+            breadcrumb.innerHTML = breadcrumbHTML;
 
             // Buttons
             document.getElementById('btn-edit-github').href = `https://github.com/${REPO_OWNER}/${REPO_NAME}/edit/main/${path}`;
@@ -640,19 +736,44 @@ permalink: /documentacion/
         // Search functionality
         document.getElementById('doc-search').oninput = (e) => {
             const term = e.target.value.toLowerCase();
-            const links = document.querySelectorAll('.sidebar-link');
-            links.forEach(link => {
-                const text = link.textContent.toLowerCase();
-                const isMatch = text.includes(term);
-                link.parentElement.classList.toggle('hidden', !isMatch);
-            });
+            const resultsContainer = document.getElementById('search-results');
+
+            if (!term) {
+                resultsContainer.classList.add('hidden');
+                return;
+            }
+
+            const matches = allFilesFlattened.filter(f =>
+                f.path.toLowerCase().includes(term) ||
+                f.path.split('/').pop().toLowerCase().includes(term)
+            ).slice(0, 10);
+
+            if (matches.length > 0) {
+                resultsContainer.innerHTML = matches.map(f => `
+                    <button onclick="window.location.hash='${f.path}'; document.getElementById('search-results').classList.add('hidden'); document.getElementById('doc-search').value='';"
+                            class="w-full text-left px-4 py-2 hover:bg-slate-800 text-xs border-b border-slate-800 last:border-0 flex flex-col">
+                        <span class="text-indigo-400 font-bold">${f.path.split('/').pop().replace('.md', '')}</span>
+                        <span class="text-[10px] text-slate-500 truncate">${f.path}</span>
+                    </button>
+                `).join('');
+                resultsContainer.classList.remove('hidden');
+            } else {
+                resultsContainer.innerHTML = '<div class="p-4 text-xs text-slate-500">No se encontraron resultados</div>';
+                resultsContainer.classList.remove('hidden');
+            }
         };
+
+        // Close search results when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('#doc-search') && !e.target.closest('#search-results')) {
+                document.getElementById('search-results').classList.add('hidden');
+            }
+        });
 
         window.addEventListener('hashchange', () => {
             const path = window.location.hash.substring(1);
             if (path) {
                 loadDocument(path);
-                setActiveLink(path);
             } else {
                 resetToWelcome();
             }
