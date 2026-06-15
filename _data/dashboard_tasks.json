@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-15T17:08:54.515Z",
+  "last_updated": "2026-06-15T17:09:23.693Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2226,7 +2226,7 @@
       "task_type": "bug",
       "tema_principal": "Tools / Automation",
       "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Major",
+      "prioridad": "Minor",
       "milestone": "M1",
       "estado": "Working",
       "completitud": 1,
@@ -2417,6 +2417,13 @@
           "field": "estado",
           "old_value": "In Review",
           "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-15T17:09:23.130Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Minor"
         }
       ],
       "id": 40
@@ -3362,6 +3369,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #40",
+      "user": "Axlfc",
+      "timestamp": "2026-06-15T17:09:23.693Z"
+    },
     {
       "action": "chore: actualizar tarea #27",
       "user": "Axlfc",
