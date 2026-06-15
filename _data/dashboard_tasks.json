@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-15T19:09:39.124Z",
+  "last_updated": "2026-06-15T19:19:47.384Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1728,7 +1728,7 @@
       "repository": "hypenosys/app",
       "prioridad": "Major",
       "milestone": "M1",
-      "estado": "Working",
+      "estado": "In Review",
       "completitud": 0,
       "resuelto_por": "Axel",
       "detectado_por": "Axel",
@@ -1860,6 +1860,13 @@
           "field": "title",
           "old_value": "Integración SVN en Claude Neural Chat y Jules Panel",
           "new_value": "Integración SVN en Claude Neural Chat y Jules Panel (orquestación repositorios app, scripts y docs)"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-15T19:19:43.651Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
         }
       ],
       "id": 35
@@ -3481,6 +3488,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #35",
+      "user": "Axlfc",
+      "timestamp": "2026-06-15T19:19:47.384Z"
+    },
     {
       "action": "chore: actualizar tarea #39",
       "user": "Axlfc",
