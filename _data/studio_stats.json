@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-15T10:03:01.434Z",
+  "computed_at": "2026-06-15T10:03:30.009Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 31,
@@ -26,7 +26,7 @@
     "blocker_health": 3,
     "tag_heatmap": {
       "devops": 7,
-      "feature": 11,
+      "feature": 10,
       "frontend": 5,
       "brainstorm": 1,
       "chore": 9,
@@ -51,7 +51,8 @@
       "refactor": 2,
       "stability": 1,
       "master": 3,
-      "UX/UI": 1
+      "UX/UI": 1,
+      "test": 1
     },
     "milestone_tasks_remaining": 16,
     "hall_of_fame_winners": {
@@ -499,7 +500,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "TopperH4rley",
-      "timestamp": "2026-06-15T10:03:02.228Z"
+      "timestamp": "2026-06-15T10:03:30.886Z"
     }
   ]
 }
