@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-14T15:04:08.149Z",
-  "last_updated_by": "Sistema",
+  "last_updated": "2026-06-15T10:02:58.988Z",
+  "last_updated_by": "Alex",
   "tasks": [
     {
       "id": 1,
@@ -3298,9 +3298,59 @@
         }
       ],
       "id": 53
+    },
+    {
+      "title": "tarea de prueba",
+      "descripcion": "dile al jules que es una prueba",
+      "rama": "",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "repository": null,
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Alex",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-15",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "topperh4rley",
+          "timestamp": "2026-06-15T10:02:56.848Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 54
     }
   ],
   "_audit_log": [
+    {
+      "action": "feat: nueva tarea #1781517776848 añadida",
+      "user": "TopperH4rley",
+      "timestamp": "2026-06-15T10:02:58.988Z"
+    },
     {
       "action": "chore: actualizar estado tarea #32 → OK",
       "user": "TopperH4rley",
