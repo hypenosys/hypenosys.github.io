@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-15T19:08:54.666Z",
+  "last_updated": "2026-06-15T19:09:00.155Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1866,7 +1866,7 @@
     },
     {
       "title": "n8n: Añadir NIM y cognito-agent como providers en la configuración de Claude Neural Chat",
-      "descripcion": "Configurar nuevos proveedores de IA en el ecosistema de n8n. Amplía las capacidades de procesamiento y automatización del Neural Chat. (already solved in tc)",
+      "descripcion": "Configurar nuevos proveedores de IA en el ecosistema de n8n. Amplía las capacidades de procesamiento y automatización del Neural Chat.",
       "rama": "feature/n8n-providers-nim-agent",
       "task_type": "research",
       "tema_principal": "Programación / Engine",
@@ -1951,14 +1951,7 @@
         },
         {
           "author_login": "axlfc",
-          "timestamp": "2026-06-15T19:08:26.803Z",
-          "field": "descripcion",
-          "old_value": "Configurar nuevos proveedores de IA en el ecosistema de n8n. Amplía las capacidades de procesamiento y automatización del Neural Chat.",
-          "new_value": "Configurar nuevos proveedores de IA en el ecosistema de n8n. Amplía las capacidades de procesamiento y automatización del Neural Chat. (already solved in tc)"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-15T19:08:26.803Z",
+          "timestamp": "2026-06-15T19:08:51.475Z",
           "field": "estado",
           "old_value": "Working",
           "new_value": "ToDo"
@@ -3474,6 +3467,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #36",
+      "user": "Axlfc",
+      "timestamp": "2026-06-15T19:09:00.155Z"
+    },
     {
       "action": "chore: actualizar tarea #36",
       "user": "Axlfc",
