@@ -1,32 +1,32 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-14T15:04:10.200Z",
+  "computed_at": "2026-06-15T10:03:01.434Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 30,
+    "total_tasks": 31,
     "total_ok": 5,
     "total_ko": 0,
     "total_uncertain": 7,
     "total_obsolete": 6,
-    "fixed_found_ratio": 0.1613,
-    "verified_ratio": 0.1389
+    "fixed_found_ratio": 0.1563,
+    "verified_ratio": 0.1351
   },
   "group": {
     "velocity_trend": {
-      "2026-W17": 0,
       "2026-W18": 0,
       "2026-W19": 0,
       "2026-W20": 0,
       "2026-W21": 4,
       "2026-W22": 7,
       "2026-W23": 10,
-      "2026-W24": 0
+      "2026-W24": 0,
+      "2026-W25": 0
     },
-    "bug_rate": 0.04,
+    "bug_rate": 0.0385,
     "blocker_health": 3,
     "tag_heatmap": {
       "devops": 7,
-      "feature": 10,
+      "feature": 11,
       "frontend": 5,
       "brainstorm": 1,
       "chore": 9,
@@ -53,7 +53,7 @@
       "master": 3,
       "UX/UI": 1
     },
-    "milestone_tasks_remaining": 15,
+    "milestone_tasks_remaining": 16,
     "hall_of_fame_winners": {
       "mvp": {
         "handle": "axlfc",
@@ -153,14 +153,14 @@
         "week": 0
       },
       "weekly_velocity": {
-        "2026-W17": 0,
         "2026-W18": 0,
         "2026-W19": 0,
         "2026-W20": 0,
         "2026-W21": 3,
         "2026-W22": 4,
         "2026-W23": 22,
-        "2026-W24": 0
+        "2026-W24": 0,
+        "2026-W25": 0
       },
       "type_breakdown": {
         "feature": 13,
@@ -207,14 +207,14 @@
         "week": 0
       },
       "weekly_velocity": {
-        "2026-W17": 0,
         "2026-W18": 0,
         "2026-W19": 0,
         "2026-W20": 0,
         "2026-W21": 3,
         "2026-W22": 10,
         "2026-W23": 26,
-        "2026-W24": 0
+        "2026-W24": 0,
+        "2026-W25": 0
       },
       "type_breakdown": {
         "chore": 2,
@@ -263,14 +263,14 @@
         "week": 0
       },
       "weekly_velocity": {
-        "2026-W17": 0,
         "2026-W18": 0,
         "2026-W19": 0,
         "2026-W20": 0,
         "2026-W21": 1,
         "2026-W22": 6,
         "2026-W23": 15,
-        "2026-W24": 0
+        "2026-W24": 0,
+        "2026-W25": 0
       },
       "type_breakdown": {
         "chore": 2,
@@ -316,14 +316,14 @@
         "week": 0
       },
       "weekly_velocity": {
-        "2026-W17": 0,
         "2026-W18": 0,
         "2026-W19": 0,
         "2026-W20": 0,
         "2026-W21": 2,
         "2026-W22": 6,
         "2026-W23": 4,
-        "2026-W24": 0
+        "2026-W24": 0,
+        "2026-W25": 0
       },
       "type_breakdown": {
         "chore": 2,
@@ -366,14 +366,14 @@
         "week": 0
       },
       "weekly_velocity": {
-        "2026-W17": 0,
         "2026-W18": 0,
         "2026-W19": 0,
         "2026-W20": 0,
         "2026-W21": 0,
         "2026-W22": 1,
         "2026-W23": 0,
-        "2026-W24": 0
+        "2026-W24": 0,
+        "2026-W25": 0
       },
       "type_breakdown": {
         "chore": 1
@@ -499,7 +499,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "TopperH4rley",
-      "timestamp": "2026-06-14T15:04:10.922Z"
+      "timestamp": "2026-06-15T10:03:02.228Z"
     }
   ]
 }
