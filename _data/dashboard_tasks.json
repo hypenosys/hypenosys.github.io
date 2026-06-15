@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-15T17:09:23.693Z",
+  "last_updated": "2026-06-15T17:09:45.063Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2145,7 +2145,7 @@
       "id": 38
     },
     {
-      "title": "Añadir hypenosys/scripts a neural-chat y SVN",
+      "title": "Añadir hypenosys/scripts a SVN",
       "descripcion": "Sincronizar el repositorio de scripts con el chat neural y la estructura del SVN. Facilita el acceso de la IA a la lógica para mantenimiento.",
       "rama": "chore/scripts-svn-sync",
       "task_type": "chore",
@@ -2215,6 +2215,13 @@
           "field": "title",
           "old_value": "Añadir repo hypenosys/scripts a neural-chat",
           "new_value": "Añadir hypenosys/scripts a neural-chat y SVN"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-15T17:09:44.480Z",
+          "field": "title",
+          "old_value": "Añadir hypenosys/scripts a neural-chat y SVN",
+          "new_value": "Añadir hypenosys/scripts a SVN"
         }
       ],
       "id": 39
@@ -3369,6 +3376,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #39",
+      "user": "Axlfc",
+      "timestamp": "2026-06-15T17:09:45.063Z"
+    },
     {
       "action": "chore: actualizar tarea #40",
       "user": "Axlfc",
