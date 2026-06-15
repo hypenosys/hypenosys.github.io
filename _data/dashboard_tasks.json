@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-15T17:09:45.063Z",
+  "last_updated": "2026-06-15T17:10:41.104Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1706,7 +1706,7 @@
       "id": 33
     },
     {
-      "title": "Integración SVN en Claude Neural Chat y Jules Panel",
+      "title": "Integración SVN en Claude Neural Chat y Jules Panel (orquestación repositorios app, scripts y docs)",
       "descripcion": "Permitir que las herramientas de IA realicen acciones directamente sobre el SVN. Automatiza tareas de gestión de assets y sincronización técnica.",
       "rama": "feature/svn-ai-integration",
       "task_type": "feature",
@@ -1839,6 +1839,13 @@
           "field": "prioridad",
           "old_value": "ToDo",
           "new_value": "Major"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-15T17:10:40.409Z",
+          "field": "title",
+          "old_value": "Integración SVN en Claude Neural Chat y Jules Panel",
+          "new_value": "Integración SVN en Claude Neural Chat y Jules Panel (orquestación repositorios app, scripts y docs)"
         }
       ],
       "id": 35
@@ -3376,6 +3383,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #35",
+      "user": "Axlfc",
+      "timestamp": "2026-06-15T17:10:41.104Z"
+    },
     {
       "action": "chore: actualizar tarea #39",
       "user": "Axlfc",
