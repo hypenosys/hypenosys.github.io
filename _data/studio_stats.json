@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-15T17:11:13.025Z",
+  "computed_at": "2026-06-15T17:11:35.759Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 31,
@@ -8,7 +8,7 @@
     "total_ko": 0,
     "total_uncertain": 7,
     "total_obsolete": 6,
-    "fixed_found_ratio": 0.25,
+    "fixed_found_ratio": 0.2424,
     "verified_ratio": 0.2162
   },
   "group": {
@@ -194,7 +194,7 @@
       "comment_activity": 1,
       "volatility": {
         "reopens": 1,
-        "reprioritizations": 21
+        "reprioritizations": 22
       },
       "workload": {
         "active_tasks": 16,
@@ -254,7 +254,7 @@
       "comment_activity": 0,
       "volatility": {
         "reopens": 0,
-        "reprioritizations": 25
+        "reprioritizations": 26
       },
       "workload": {
         "active_tasks": 12,
@@ -505,7 +505,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-06-15T17:11:14.049Z"
+      "timestamp": "2026-06-15T17:11:36.714Z"
     }
   ]
 }
