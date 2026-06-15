@@ -277,6 +277,77 @@ permalink: /documentacion/
         let currentPath = '';
         let allFilesFlattened = [];
 
+        // Configure marked with custom renderer for relative links and images
+        const renderer = new marked.Renderer();
+
+        const originalLink = renderer.link.bind(renderer);
+        renderer.link = function(payload) {
+            // Handle both old (href, title, text) and new ({href, title, text}) marked versions
+            let href, title, text;
+            if (typeof payload === 'object' && payload !== null) {
+                ({ href, title, text } = payload);
+            } else {
+                href = arguments[0];
+                title = arguments[1];
+                text = arguments[2];
+            }
+
+            if (href && typeof href === 'string' && !href.startsWith('http') && !href.startsWith('#')) {
+                // If it's a relative path, transform it to a hash-based link
+                const resolved = resolveRelativePath(currentPath, href);
+                return `<a href="#${resolved}" ${title ? `title="${title}"` : ''}>${text}</a>`;
+            }
+            return originalLink(payload);
+        };
+
+        const originalImage = renderer.image.bind(renderer);
+        renderer.image = function(payload) {
+            let href, title, text;
+            if (typeof payload === 'object' && payload !== null) {
+                ({ href, title, text } = payload);
+            } else {
+                href = arguments[0];
+                title = arguments[1];
+                text = arguments[2];
+            }
+
+            if (href && typeof href === 'string' && !href.startsWith('http')) {
+                // Transform relative image paths to raw GitHub URLs
+                const resolved = resolveRelativePath(currentPath, href);
+                const rawUrl = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${resolved}`;
+                return `<img src="${rawUrl}" alt="${text}" ${title ? `title="${title}"` : ''}>`;
+            }
+            return originalImage(payload);
+        };
+
+        marked.setOptions({ renderer });
+
+        function resolveRelativePath(basePath, relativePath) {
+            if (!relativePath || relativePath.startsWith('http') || relativePath.startsWith('#') || relativePath.startsWith('/')) {
+                return relativePath;
+            }
+
+            // Remove anchor if present for resolution
+            const [pathWithoutAnchor, anchor] = relativePath.split('#');
+
+            const baseParts = basePath.split('/');
+            baseParts.pop(); // Remove the current filename
+
+            const relParts = pathWithoutAnchor.split('/');
+            for (const part of relParts) {
+                if (part === '..') {
+                    baseParts.pop();
+                } else if (part === '.') {
+                    continue;
+                } else if (part) {
+                    baseParts.push(part);
+                }
+            }
+
+            const resolvedPath = baseParts.join('/');
+            return anchor ? `${resolvedPath}#${anchor}` : resolvedPath;
+        }
+
         async function init() {
             try {
                 // Fetch root contents
@@ -364,8 +435,7 @@ permalink: /documentacion/
                     };
                 } else {
                     link.onclick = () => {
-                        setActiveLink(file.path);
-                        loadDocument(file.path);
+                        window.location.hash = file.path;
                         if (window.innerWidth < 768) toggleSidebar();
                     };
                 }
@@ -386,20 +456,27 @@ permalink: /documentacion/
         }
 
         async function loadDocument(path) {
+            const [cleanPath, anchor] = path.split('#');
             showLoading(true);
             try {
-                const response = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`);
+                const response = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${cleanPath}`);
                 if (!response.ok) throw new Error('File not found');
                 const data = await response.json();
 
                 const content = atob(data.content.replace(/\n/g, ''));
                 const decodedContent = decodeURIComponent(escape(content));
 
-                renderMarkdown(decodedContent, path);
+                // Update currentPath before rendering so relative links resolve correctly
+                currentPath = cleanPath;
+                renderMarkdown(decodedContent, cleanPath);
                 updateMetadata(data);
 
-                window.location.hash = path;
-                currentPath = path;
+                if (anchor) {
+                    setTimeout(() => {
+                        const element = document.getElementById(anchor);
+                        if (element) element.scrollIntoView({ behavior: 'smooth' });
+                    }, 500);
+                }
             } catch (error) {
                 console.error('Error loading document:', error);
                 showError('No se pudo cargar el contenido del archivo.');
@@ -481,13 +558,14 @@ permalink: /documentacion/
         function findAndLoad(keyword) {
             const found = allFilesFlattened.find(f => f.path.toLowerCase().includes(keyword.toLowerCase()));
             if (found) {
-                loadDocument(found.path);
-                setActiveLink(found.path);
+                window.location.hash = found.path;
             } else {
                 console.log('No direct match found in loaded files');
                 // Try searching in sidebar items currently rendered
                 const link = Array.from(document.querySelectorAll('.sidebar-link')).find(el => el.textContent.toLowerCase().includes(keyword.toLowerCase()));
-                if (link) link.click();
+                if (link) {
+                    window.location.hash = link.dataset.path;
+                }
             }
         }
 
@@ -501,6 +579,16 @@ permalink: /documentacion/
                 link.parentElement.classList.toggle('hidden', !isMatch);
             });
         };
+
+        window.addEventListener('hashchange', () => {
+            const path = window.location.hash.substring(1);
+            if (path) {
+                loadDocument(path);
+                setActiveLink(path);
+            } else {
+                resetToWelcome();
+            }
+        });
 
         init();
     </script>
