@@ -332,7 +332,7 @@ permalink: /documentacion/
             }
 
             // 2. Try global search in flattened tree (Obsidian style)
-            // Prioritize files closer to currentPath to avoid name collisions
+)            // Prioritize files closer to currentPath to avoid name collisions
             const matches = allFilesFlattened.filter(f => {
                 const filename = f.path.split('/').pop();
                 return filename === targetWithMd || filename.toLowerCase() === targetWithMd.toLowerCase() ||
