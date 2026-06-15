@@ -277,69 +277,135 @@ permalink: /documentacion/
         let currentPath = '';
         let allFilesFlattened = [];
 
-        // Configure marked with custom renderer for relative links and images
-        const renderer = new marked.Renderer();
+        // --- Custom Marked.js Extension for Obsidian-style [[Wikilinks]] ---
+        const wikilinkExtension = {
+            name: 'wikilink',
+            level: 'inline',
+            start(src) {
+                const imgIdx = src.indexOf('![[');
+                const linkIdx = src.indexOf('[[');
+                if (imgIdx !== -1 && (linkIdx === -1 || imgIdx < linkIdx)) return imgIdx;
+                return linkIdx;
+            },
+            tokenizer(src, tokens) {
+                const rule = /^(!)?\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/;
+                const match = rule.exec(src);
+                if (match) {
+                    const isImage = !!match[1];
+                    const rawPath = match[2].trim();
+                    const text = match[3] ? match[3].trim() : rawPath;
 
-        const originalLink = renderer.link.bind(renderer);
-        renderer.link = function(payload) {
-            // Handle both old (href, title, text) and new ({href, title, text}) marked versions
-            let href, title, text;
-            if (typeof payload === 'object' && payload !== null) {
-                ({ href, title, text } = payload);
-            } else {
-                href = arguments[0];
-                title = arguments[1];
-                text = arguments[2];
-            }
+                    let href = rawPath;
+                    // For document links, add .md if missing
+                    if (!isImage && !href.includes('.') && !href.startsWith('#')) {
+                        href += '.md';
+                    }
 
-            if (href && typeof href === 'string' && !href.startsWith('http') && !href.startsWith('#')) {
-                // If it's a relative path, transform it to a hash-based link
-                const resolved = resolveRelativePath(currentPath, href);
-                return `<a href="#${resolved}" ${title ? `title="${title}"` : ''}>${text}</a>`;
+                    return {
+                        type: 'wikilink',
+                        raw: match[0],
+                        isImage: isImage,
+                        href: href,
+                        text: text
+                    };
+                }
+            },
+            renderer(token) {
+                const resolved = resolveWikilinkPath(token.href);
+
+                if (token.isImage) {
+                    const rawUrl = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${resolved}`;
+                    return `<img src="${rawUrl}" alt="${token.text}" class="wikilink-image">`;
+                }
+
+                return `<a href="#${resolved}" class="wikilink-active">${token.text}</a>`;
             }
-            return originalLink(payload);
         };
 
-        const originalImage = renderer.image.bind(renderer);
-        renderer.image = function(payload) {
-            let href, title, text;
-            if (typeof payload === 'object' && payload !== null) {
-                ({ href, title, text } = payload);
-            } else {
-                href = arguments[0];
-                title = arguments[1];
-                text = arguments[2];
+        function resolveWikilinkPath(target) {
+            // 1. Try relative to currentPath
+            const relative = resolveRelativePath(currentPath, target);
+            if (allFilesFlattened.some(f => f.path === relative)) {
+                return relative;
             }
 
-            if (href && typeof href === 'string' && !href.startsWith('http')) {
-                // Transform relative image paths to raw GitHub URLs
-                const resolved = resolveRelativePath(currentPath, href);
-                const rawUrl = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${resolved}`;
-                return `<img src="${rawUrl}" alt="${text}" ${title ? `title="${title}"` : ''}>`;
-            }
-            return originalImage(payload);
-        };
+            // 2. Try global search in flattened tree (Obsidian style)
+            const globalMatch = allFilesFlattened.find(f => {
+                const filename = f.path.split('/').pop();
+                return filename === target || filename.toLowerCase() === target.toLowerCase();
+            });
 
-        marked.setOptions({ renderer });
+            if (globalMatch) return globalMatch.path;
+
+            // 3. Fallback to calculated relative path even if not found in tree
+            return relative;
+        }
+
+        marked.use({
+            extensions: [wikilinkExtension],
+            renderer: {
+                link(payload) {
+                    let href, title, text;
+                    if (typeof payload === 'object' && payload !== null) {
+                        ({ href, title, text } = payload);
+                    } else {
+                        href = arguments[0];
+                        title = arguments[1];
+                        text = arguments[2];
+                    }
+
+                    if (href && typeof href === 'string') {
+                        if (href.startsWith('#')) {
+                            // Internal anchor: prefix with current path to maintain SPA routing
+                            return `<a href="#${currentPath}${href}" ${title ? `title="${title}"` : ''}>${text}</a>`;
+                        }
+                        if (!href.startsWith('http')) {
+                            // Relative path: resolve against currentPath
+                            const resolved = resolveRelativePath(currentPath, href);
+                            return `<a href="#${resolved}" ${title ? `title="${title}"` : ''}>${text}</a>`;
+                        }
+                    }
+                    return false; // Let marked handle standard absolute links
+                },
+                image(payload) {
+                    let href, title, text;
+                    if (typeof payload === 'object' && payload !== null) {
+                        ({ href, title, text } = payload);
+                    } else {
+                        href = arguments[0];
+                        title = arguments[1];
+                        text = arguments[2];
+                    }
+
+                    if (href && typeof href === 'string' && !href.startsWith('http')) {
+                        const resolved = resolveRelativePath(currentPath, href);
+                        const rawUrl = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${resolved}`;
+                        return `<img src="${rawUrl}" alt="${text}" ${title ? `title="${title}"` : ''}>`;
+                    }
+                    return false; // Let marked handle standard images
+                }
+            }
+        });
 
         function resolveRelativePath(basePath, relativePath) {
             if (!relativePath || relativePath.startsWith('http') || relativePath.startsWith('#') || relativePath.startsWith('/')) {
                 return relativePath;
             }
 
-            // Remove anchor if present for resolution
-            const [pathWithoutAnchor, anchor] = relativePath.split('#');
+            // Normalize path separators and remove anchor for resolution
+            const normalizedPath = relativePath.replace(/\\/g, '/');
+            const [pathWithoutAnchor, anchor] = normalizedPath.split('#');
 
-            const baseParts = basePath.split('/');
-            baseParts.pop(); // Remove the current filename
+            const baseParts = basePath ? basePath.split('/') : [];
+            if (baseParts.length > 0) baseParts.pop(); // Remove current filename
 
             const relParts = pathWithoutAnchor.split('/');
             for (const part of relParts) {
                 if (part === '..') {
-                    baseParts.pop();
-                } else if (part === '.') {
+                    if (baseParts.length > 0) baseParts.pop();
+                } else if (part === '.' || part === '') {
                     continue;
-                } else if (part) {
+                } else {
                     baseParts.push(part);
                 }
             }
@@ -446,8 +512,9 @@ permalink: /documentacion/
         }
 
         function setActiveLink(path) {
+            const [cleanPath] = path.split('#');
             document.querySelectorAll('.sidebar-link').forEach(el => {
-                if (el.dataset.path === path) {
+                if (el.dataset.path === cleanPath) {
                     el.classList.add('active');
                 } else {
                     el.classList.remove('active');
@@ -456,7 +523,8 @@ permalink: /documentacion/
         }
 
         async function loadDocument(path) {
-            const [cleanPath, anchor] = path.split('#');
+            const decodedPath = decodeURIComponent(path);
+            const [cleanPath, anchor] = decodedPath.split('#');
             showLoading(true);
             try {
                 const response = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${cleanPath}`);
