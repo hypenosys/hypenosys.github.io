@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-15T19:04:06.617Z",
+  "last_updated": "2026-06-15T19:08:23.356Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -429,8 +429,8 @@
       "tema_principal": "Tools / Automation",
       "prioridad": "ToDo",
       "milestone": "M1",
-      "estado": "Working",
-      "completitud": 0.75,
+      "estado": "In Review",
+      "completitud": 0.9,
       "resuelto_por": "Alex",
       "detectado_por": "Axel",
       "asignados": [
@@ -585,6 +585,20 @@
           "field": "estado",
           "old_value": "Pending",
           "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-15T19:07:52.551Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-15T19:07:52.551Z",
+          "field": "completitud",
+          "old_value": 0.75,
+          "new_value": 0.9
         }
       ],
       "repository": "hypenosys/app"
@@ -3446,6 +3460,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #11",
+      "user": "Axlfc",
+      "timestamp": "2026-06-15T19:08:23.356Z"
+    },
     {
       "action": "chore: actualizar tarea #53",
       "user": "Axlfc",
