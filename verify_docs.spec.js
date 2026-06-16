@@ -47,7 +47,7 @@ test('Verify documentation navigation and relative links', async ({ page }) => {
   });
 
   // Navigate to documentation
-  await page.goto('http://localhost:4000/documentacion/');
+  await page.goto('http://localhost:4000/documentacion.html');
 
   // Wait for sidebar to be rendered
   await page.waitForSelector('.sidebar-link:has-text("GDD")');
