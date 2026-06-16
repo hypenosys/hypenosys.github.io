@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-15T22:19:14.169Z",
-  "last_updated_by": "Axlfc",
+  "last_updated": "2026-06-16T11:52:46.337Z",
+  "last_updated_by": "Axel",
   "tasks": [
     {
       "id": 1,
@@ -3551,9 +3551,64 @@
         }
       ],
       "id": 55
+    },
+    {
+      "title": "sync python scripts with docs",
+      "descripcion": "we need to manually port app, scripts Git repositories in the folders in the SVN and sync it. we are able to scrape successfully from scripts folders to read from /docs and construct the algorythmic logic",
+      "rama": "master",
+      "task_type": "chore",
+      "tema_principal": "Programación / Engine",
+      "repository": "hypenosys/scripts",
+      "prioridad": "Major",
+      "milestone": "M2",
+      "estado": "Working",
+      "completitud": 0.3,
+      "resuelto_por": "Alex",
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc",
+        "topperh4rley"
+      ],
+      "email_responsable": "axel@hypenosys.com",
+      "emails_asignados": [
+        "alex@hypenosys.com"
+      ],
+      "start_date": "2026-06-16",
+      "due_date": "2026-06-28",
+      "estimated_hours": 6,
+      "story_points": 6,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-16",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-16T11:52:44.802Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 56
     }
   ],
   "_audit_log": [
+    {
+      "action": "feat: nueva tarea #1781610764802 añadida",
+      "user": "Axlfc",
+      "timestamp": "2026-06-16T11:52:46.337Z"
+    },
     {
       "action": "chore: actualizar tarea #52",
       "user": "Axlfc",
