@@ -1,15 +1,15 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-15T20:03:24.029Z",
+  "computed_at": "2026-06-16T11:52:49.866Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 32,
+    "total_tasks": 33,
     "total_ok": 8,
     "total_ko": 0,
     "total_uncertain": 10,
     "total_obsolete": 6,
-    "fixed_found_ratio": 0.2353,
-    "verified_ratio": 0.2105
+    "fixed_found_ratio": 0.2286,
+    "verified_ratio": 0.2051
   },
   "group": {
     "velocity_trend": {
@@ -22,14 +22,14 @@
       "2026-W24": 0,
       "2026-W25": 1
     },
-    "bug_rate": 0.0417,
+    "bug_rate": 0.04,
     "blocker_health": 2,
     "tag_heatmap": {
       "devops": 7,
       "feature": 9,
       "frontend": 4,
       "brainstorm": 1,
-      "chore": 9,
+      "chore": 10,
       "design": 1,
       "docs": 3,
       "topper": 1,
@@ -48,7 +48,7 @@
       "backend": 2,
       "refactor": 2,
       "stability": 1,
-      "master": 3,
+      "master": 4,
       "UX/UI": 1
     },
     "milestone_tasks_remaining": 13,
@@ -197,8 +197,8 @@
         "reprioritizations": 22
       },
       "workload": {
-        "active_tasks": 16,
-        "story_points": 26
+        "active_tasks": 17,
+        "story_points": 32
       }
     },
     "topperh4rley": {
@@ -257,8 +257,8 @@
         "reprioritizations": 26
       },
       "workload": {
-        "active_tasks": 12,
-        "story_points": 24
+        "active_tasks": 13,
+        "story_points": 30
       }
     },
     "dkdidac-design": {
@@ -505,7 +505,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-06-15T20:03:24.856Z"
+      "timestamp": "2026-06-16T11:52:50.926Z"
     }
   ]
 }
