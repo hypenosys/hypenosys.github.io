@@ -28,7 +28,6 @@ class NeuralSessionPanel {
     }
 
     init() {
-        console.log('[NEURAL] Initializing NeuralSessionPanel');
         this._setupAutoResize();
         this._setupKeyboardShortcuts();
     }
@@ -49,7 +48,6 @@ class NeuralSessionPanel {
         }
 
         this.activeTask = task;
-        console.log('[NEURAL] Opening task:', task.id);
 
         // Update UI
         if (this.elements.title) this.elements.title.textContent = task.titulo || task.title || `#${task.id}`;
@@ -143,8 +141,16 @@ class NeuralSessionPanel {
             return;
         }
 
-        const repo = this.activeTask.repositorio || this.activeTask.repo || 'hypenosys/web';
-        const branch = this.activeTask.rama || this.activeTask.branch || 'master';
+        const repo = this.activeTask.repositorio || this.activeTask.repo || this.activeTask.repository || 'hypenosys/web';
+        const branch = this.activeTask.rama || this.activeTask.branch || '';
+
+        // FIX 2 — Validación de branch antes de enviar a Jules
+        if (!branch || branch === 'N/A' || branch === '---') {
+            this._showToast('Selecciona una rama válida antes de enviar a Jules', 'warn');
+            // Intentar abrir el modal de edición de la tarea para corregir
+            if (window.openEditTaskModal) window.openEditTaskModal(this.activeTask.id);
+            return;
+        }
 
         this._setLoading(this.elements.btnSendJules, true);
 
@@ -283,11 +289,37 @@ class NeuralSessionPanel {
     _generateSuggestedPrompt(task) {
         if (!this.elements.promptArea) return;
 
+        // FIX 3 — Enriquecer primer mensaje a Jules
         let prompt = `Implementa la tarea: ${task.titulo || task.title}\n\n`;
-        if (task.descripcion) prompt += `DESCRIPCIÓN:\n${task.descripcion}\n\n`;
-        if (task.acceptance_criteria) prompt += `CRITERIOS DE ACEPTACIÓN:\n${task.acceptance_criteria}\n\n`;
-        if (task.task_type) prompt += `TIPO: ${task.task_type}\n`;
-        if (task.prioridad) prompt += `PRIORIDAD: ${task.prioridad}\n`;
+
+        if (task.descripcion || task.description) {
+            prompt += `DESCRIPCIÓN:\n${task.descripcion || task.description}\n\n`;
+        }
+
+        if (task.task_type) {
+            prompt += `TIPO DE TAREA: ${task.task_type.toUpperCase()}\n`;
+        }
+
+        if (task.prioridad || task.priority) {
+            prompt += `PRIORIDAD: ${task.prioridad || task.priority}\n`;
+        }
+
+        if (task.milestone) {
+            prompt += `MILESTONE: ${task.milestone}\n`;
+        }
+
+        if (task.acceptance_criteria) {
+            prompt += `\nCRITERIOS DE ACEPTACIÓN:\n${task.acceptance_criteria}\n\n`;
+        }
+
+        if (task.rama || task.branch) {
+            prompt += `RAMA OBJETIVO: ${task.rama || task.branch}\n`;
+        }
+
+        // Sugerencia de archivos clave si existen en el contexto
+        if (task.tags && task.tags.length > 0) {
+            prompt += `TAGS RELACIONADOS: ${task.tags.join(', ')}\n`;
+        }
 
         this.elements.promptArea.value = prompt.trim();
     }
@@ -329,7 +361,6 @@ class NeuralSessionPanel {
         if (window.showToast) {
             window.showToast(msg, type);
         } else {
-            console.log(`[TOAST ${type}] ${msg}`);
             alert(msg);
         }
     }

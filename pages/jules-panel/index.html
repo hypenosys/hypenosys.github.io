@@ -1109,6 +1109,7 @@ body{
   /* Drawer full width */
   .drawer{width:100vw;right:-100vw}
   .notif-panel{width:calc(100vw - 24px);right:12px; top:54px}
+  #mobile-menu-drawer.open { transform: translateY(0); }
 }
 
 @keyframes neural-active-glow {
@@ -1232,11 +1233,41 @@ body{
     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
     <span>Neural</span>
   </button>
-  <button class="mtab" data-tab="config">
-    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-    <span>Config</span>
+  <button class="mtab" onclick="toggleMobileMenu()">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+    <span>Más</span>
   </button>
 </nav>
+
+<!-- ══ MOBILE MENU DRAWER ══ -->
+<div id="mobile-menu-overlay" class="neural-drawer-overlay" onclick="toggleMobileMenu()"></div>
+<aside id="mobile-menu-drawer" class="neural-drawer" style="height: auto; max-height: 80vh; bottom: 0; top: auto; border-radius: 20px 20px 0 0; border-top: 1px solid var(--border-accent); right: 0; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);">
+    <div class="neural-drawer-header" style="padding: 20px 24px; border-bottom: 1px solid var(--border);">
+        <div style="display: flex; flex-direction: column;">
+            <span style="font-size: 10px; font-weight: 800; color: var(--accent2); text-transform: uppercase; letter-spacing: 0.15em;">Navegación</span>
+            <h3 style="font-family: var(--font-head); font-size: 18px; font-weight: 700; color: #fff;">Explorar Secciones</h3>
+        </div>
+        <button onclick="toggleMobileMenu()" class="icon-btn" style="font-size: 20px;">&times;</button>
+    </div>
+    <div style="padding: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding-bottom: 40px;">
+        <button onclick="switchView('config'); toggleMobileMenu();" class="glass" style="padding: 20px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center;">
+            <i class="fas fa-cog text-xl text-[#bd93f9]"></i>
+            <span class="text-xs font-bold">API Config</span>
+        </button>
+        <button onclick="window.location.href='/documentacion/'" class="glass" style="padding: 20px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center;">
+            <i class="fas fa-book text-xl text-[#50fa7b]"></i>
+            <span class="text-xs font-bold">Documentación</span>
+        </button>
+        <button onclick="window.location.href='/guia-comandos/'" class="glass" style="padding: 20px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center;">
+            <i class="fas fa-terminal text-xl text-[#8be9fd]"></i>
+            <span class="text-xs font-bold">Comandos</span>
+        </button>
+        <button onclick="window.location.href='/tech-stack/'" class="glass" style="padding: 20px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center;">
+            <i class="fas fa-layer-group text-xl text-[#ff79c6]"></i>
+            <span class="text-xs font-bold">Tech Stack</span>
+        </button>
+    </div>
+</aside>
 
 <!-- ══ SIDEBAR BACKDROP (mobile) ══ -->
 <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
@@ -1424,6 +1455,16 @@ body{
 
     <!-- ─── NEURAL VIEW (Tarea + Telemetry) ─── -->
     <div class="view" id="view-neural">
+      <div id="jules-loop-banner" class="hidden" style="margin-bottom: 12px; background: #1e1f29; border: 1px solid var(--border-accent); border-radius: var(--r-md); padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 0 20px rgba(124, 58, 237, 0.1);">
+          <div style="display: flex; align-items: center; gap: 15px;">
+              <div id="loop-status-icon" style="font-size: 1.5em;">⏳</div>
+              <div>
+                  <div id="loop-status-label" style="font-size: 10px; font-weight: 800; color: var(--accent2); text-transform: uppercase; letter-spacing: 0.15em;">Jules Status</div>
+                  <div id="loop-status-desc" style="font-size: 14px; font-weight: 700; color: #fff;">Sincronizando estado...</div>
+              </div>
+          </div>
+          <div id="loop-actions"></div>
+      </div>
       <div id="neural-session-banner" class="hidden" style="margin-bottom: 12px; background: rgba(124,58,237,0.1); border: 1px solid var(--border-accent); border-radius: var(--r-md); padding: 12px 18px; display: flex; align-items: center; justify-content: space-between;">
           <div style="display: flex; align-items: center; gap: 12px;">
               <span style="font-size: 1.2em;">🧠</span>
@@ -2269,12 +2310,48 @@ body{
             addTel("SYSTEM", `Iniciado como Invitado`, "success");
         }
 
+        // PRIORITY 5 — Initialize hy_jules_config (Centralized)
+        initJulesConfig();
+
         await initializeRepoSelector();
         await refreshDashboard();
         switchView(window.JulesPanelState.currentView || 'dashboard');
         checkClipboard();
         handleUrlParams();
         startPolling();
+    }
+
+    function initJulesConfig() {
+        const aiConfig = JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
+        let julesConfig = JSON.parse(localStorage.getItem('hy_jules_config') || 'null');
+        let isNew = false;
+
+        if (!julesConfig) {
+            isNew = true;
+            julesConfig = {
+                repo: localStorage.getItem('hypenosys_active_repo') || '',
+                branch: localStorage.getItem('hypenosys_active_branch') || '',
+                mode: aiConfig.provider === 'ollama' ? 'ollama' : 'claude',
+                env: 'prod',
+                apiKey: aiConfig.api_key || '',
+                defaultModel: aiConfig.model || '',
+                autoApprove: false,
+                lastUpdated: new Date().toISOString()
+            };
+        } else {
+            // Merge intelligently
+            julesConfig.apiKey = aiConfig.api_key || julesConfig.apiKey;
+            julesConfig.defaultModel = aiConfig.model || julesConfig.defaultModel;
+            julesConfig.repo = localStorage.getItem('hypenosys_active_repo') || julesConfig.repo;
+            julesConfig.branch = localStorage.getItem('hypenosys_active_branch') || julesConfig.branch;
+        }
+
+        localStorage.setItem('hy_jules_config', JSON.stringify(julesConfig));
+
+        // Redirigir al modal de configuración si falta info crítica (API Key en modo claude)
+        if (isNew || (!julesConfig.apiKey && julesConfig.mode !== 'ollama')) {
+             setTimeout(() => openApiModal(), 1000);
+        }
     }
 
     let neuralPollInterval = null;
@@ -2308,6 +2385,29 @@ body{
         const taskDataRaw = urlParams.get('task_data');
         const taskId = urlParams.get('task_id');
         const promptParam = urlParams.get('prompt');
+
+        // PRIORITY 5 — Export/Import Session
+        const importData = urlParams.get('import_session');
+        if (importData) {
+            try {
+                const decoded = JSON.parse(atob(importData));
+                if (decoded.repo) localStorage.setItem('hypenosys_active_repo', decoded.repo);
+                if (decoded.branch) localStorage.setItem('hypenosys_active_branch', decoded.branch);
+                if (decoded.task) localStorage.setItem('hy_neural_task_context', JSON.stringify(decoded.task));
+                if (decoded.active) localStorage.setItem('hy_neural_active', 'true');
+
+                showToast("Sesión importada correctamente", "green");
+                addTel("SYSTEM", "Sesión restaurada vía URL", "success");
+
+                // Cleanup URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+                window.location.reload(); // Reload to apply all restored states
+                return;
+            } catch(e) {
+                console.error("Error al importar sesión:", e);
+                showToast("Fallo al importar sesión", "red");
+            }
+        }
 
         if (promptParam && $('session-prompt')) {
             $('session-prompt').value = decodeURIComponent(promptParam);
@@ -2719,6 +2819,19 @@ body{
                 $('neural-session-banner')?.classList.remove('hidden');
                 if($('neural-banner-task')) $('neural-banner-task').textContent = `Tarea #${task.id}: ${task.titulo || task.title}`;
                 showTaskContextInChat(task);
+
+                // Load messages from localStorage if session is active
+                const sid = getLinkedJulesSessionId();
+                if (sid) {
+                    const sessions = JSON.parse(localStorage.getItem('hy_neural_sessions') || '[]');
+                    const s = sessions.find(sess => sess.id === sid);
+                    if (s && s.messages) {
+                        chatV2Messages = s.messages;
+                        if (window.JulesPanelState.currentView === 'chat' || window.JulesPanelState.currentView === 'neural') {
+                            renderChatV2Messages();
+                        }
+                    }
+                }
             }
         }
 
@@ -2910,6 +3023,10 @@ body{
     }
 
     async function launchSession() {
+        // PRIORITY 5 — Sync config before launch
+        initJulesConfig();
+        const jConfig = JSON.parse(localStorage.getItem('hy_jules_config'));
+
         let prompt = $('session-prompt').value.trim();
         if (!prompt) { $('session-prompt').focus(); showToast("Escribe una tarea para Jules", "red"); return; }
         const source = window.JulesPanelState.activeRepo, branch = window.JulesPanelState.activeBranch || 'master';
@@ -3052,6 +3169,13 @@ body{
                 startNeuralPolling(sid);
                 const task = JSON.parse(localStorage.getItem('hy_neural_task_context') || '{}');
                 if (task.id) showTaskContextInChat(task);
+
+                // Load messages from localStorage if switching to chat
+                const sessions = JSON.parse(localStorage.getItem('hy_neural_sessions') || '[]');
+                const s = sessions.find(sess => sess.id === sid);
+                if (s && s.messages) {
+                    chatV2Messages = s.messages;
+                }
             }
             renderChatV2Messages();
         }
@@ -3200,7 +3324,6 @@ body{
 
         // Use global AuthManager event
         document.addEventListener("authReady", (e) => {
-            console.log('[PANEL] authReady event received:', e.detail?.user?.login);
             boot(e.detail?.user);
         });
 
@@ -3211,7 +3334,6 @@ body{
                 if (token && window.githubApi?.user) {
                     boot(window.githubApi.user);
                 } else if (token) {
-                   console.log('[PANEL] Token found but user not validated, waiting for AuthManager...');
                 } else {
                    showAuthCard("auth-card-login");
                 }
@@ -3226,7 +3348,21 @@ body{
     function closeClaudeChat(){ $('claude-modal').classList.remove('open'); }
     function openApiModal(){ $('api-modal').classList.add('open'); }
     function closeApiModal(){ $('api-modal').classList.remove('open'); }
-    function openDocs(){ alert("📚 Jules Agent V2 - Premium Neural Interface"); }
+    function openDocs(){ window.location.href = '/documentacion/'; }
+
+    window.toggleMobileMenu = () => {
+        const drawer = $('mobile-menu-drawer');
+        const overlay = $('mobile-menu-overlay');
+        const isOpen = drawer.classList.contains('open');
+
+        if (isOpen) {
+            drawer.classList.remove('open');
+            overlay.classList.remove('open');
+        } else {
+            drawer.classList.add('open');
+            overlay.classList.add('open');
+        }
+    };
 
     /* ─── NOTIFICATIONS ─── */
     window.toggleNotifPanel = function() {
@@ -3582,10 +3718,21 @@ body{
         }, 10000);
     }
 
-    async function sendChatV2Msg() {
+    async function sendChatV2Msg(retryCount = 0) {
         const input = $('v2-chat-input');
         const content = input.value.trim();
-        if (!content) return;
+        if (!content && retryCount === 0) return;
+
+        const config = window.aiConfig?.getActiveConfig() || JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
+        if (!config.api_key && currentSendMode !== 'jules') {
+            showToast("Configuración de API requerida", "amber");
+            if (window.authManager && window.authManager.showApiConfigModal) {
+                window.authManager.showApiConfigModal();
+            } else {
+                openApiModal();
+            }
+            return;
+        }
 
         const isNeuralActive = localStorage.getItem('hy_neural_active') === 'true';
         const claudeId = localStorage.getItem('hy_active_claude_session_id');
@@ -3601,6 +3748,7 @@ body{
             // Route Neural Chat messages to Jules session directly
             const userMsg = { role: 'user', content };
             chatV2Messages.push(userMsg);
+            saveSessionsV2();
             renderChatV2Messages();
             input.value = '';
             input.style.height = 'auto';
@@ -3638,6 +3786,7 @@ body{
             // Add user message
             const userMsg = { role: 'user', content };
             chatV2Messages.push(userMsg);
+            saveSessionsV2();
             renderChatV2Messages();
             input.value = '';
             input.style.height = 'auto';
@@ -3649,7 +3798,6 @@ body{
             }
 
             try {
-                const config = window.aiConfig?.getActiveConfig() || JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
                 const systemPrompt = "Eres Claude, un asistente experto integrado en el panel de control de Hypenosys.";
 
                 // Build context from active task if exists
@@ -3664,18 +3812,128 @@ body{
                     ...chatV2Messages.map(m => ({ role: m.role, content: m.content }))
                 ];
 
-                // For now, use a simplified non-streaming call for the integrated tab
-                const response = await callCustomProvider(config, messages);
+                // Migración a Streaming (SSE)
+                const baseUrl = (config.base_url || 'https://api.anthropic.com/v1').replace(/\/$/, '');
+                const isAnthropic = baseUrl.includes('anthropic.com');
+                const endpoint = isAnthropic ? `${baseUrl}/messages` : `${baseUrl}/chat/completions`;
 
-                chatV2Messages.push({ role: 'assistant', content: response });
-                renderChatV2Messages();
+                const headers = {
+                    'Content-Type': 'application/json',
+                    ...(isAnthropic ? {
+                        'x-api-key': config.api_key,
+                        'anthropic-version': '2023-06-01',
+                        'anthropic-dangerous-direct-browser-access': 'true'
+                    } : {
+                        'Authorization': `Bearer ${config.api_key}`
+                    })
+                };
+
+                const body = isAnthropic ? {
+                    model: config.model || 'claude-3-5-sonnet-20241022',
+                    max_tokens: 1024,
+                    system: systemPrompt,
+                    messages: chatV2Messages.filter(m => m.role !== 'system').map(m => ({ role: m.role, content: m.content })),
+                    stream: true
+                } : {
+                    model: config.model,
+                    messages: messages,
+                    temperature: 0.7,
+                    stream: true
+                };
+
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
+
+                const res = await fetch(endpoint, {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify(body),
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
+
+                if (!res.ok) {
+                    const errData = await res.json().catch(() => ({}));
+                    throw new Error(errData.error?.message || `HTTP ${res.status}`);
+                }
+
+                await consumeStreamV2(res, config.provider || (isAnthropic ? 'anthropic' : 'custom'));
+
             } catch (e) {
                 console.error('[ChatV2] Error:', e);
+                if ((e.name === 'AbortError' || e.message.includes('timeout')) && retryCount < 2) {
+                    addTel("SYSTEM", `Reintentando comunicación (${retryCount + 1}/2)...`, "warn");
+                    return sendChatV2Msg(retryCount + 1);
+                }
                 showToast("Error en comunicación con Claude", "red");
+                chatV2Messages.push({ role: 'system', content: `❌ Error: ${e.message}` });
+                renderChatV2Messages();
             } finally {
                 thinking.classList.add('hidden');
+                input.disabled = false;
+                input.focus();
             }
         }
+    }
+
+    async function consumeStreamV2(response, provider) {
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let aiContent = '';
+        let buffer = '';
+
+        // Create initial message placeholder
+        const msgIdx = chatV2Messages.length;
+        chatV2Messages.push({ role: 'assistant', content: '...' });
+        renderChatV2Messages();
+
+        const container = $('v2-chat-messages');
+
+        try {
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                buffer += decoder.decode(value, { stream: true });
+                const lines = buffer.split('\n');
+                buffer = lines.pop();
+
+                for (const line of lines) {
+                    const trimmed = line.trim();
+                    if (!trimmed || trimmed === 'data: [DONE]') continue;
+
+                    try {
+                        const data = JSON.parse(trimmed.startsWith('data: ') ? trimmed.substring(6) : trimmed);
+
+                        if (provider === 'anthropic') {
+                            if (data.type === 'content_block_delta' && data.delta.text) aiContent += data.delta.text;
+                        } else {
+                            // OpenAI compatible
+                            const delta = data.choices?.[0]?.delta?.content || data.choices?.[0]?.text || '';
+                            aiContent += delta;
+                        }
+
+                        if (aiContent) {
+                            chatV2Messages[msgIdx].content = aiContent;
+                            // Optimización: Solo re-renderizar si es necesario o actualizar el DOM directamente
+                            const msgEls = container.querySelectorAll('.message-claude');
+                            if (msgEls.length > 0) {
+                                const lastMsg = msgEls[msgEls.length - 1].querySelector('.prose-invert');
+                                if (lastMsg) lastMsg.innerHTML = marked.parse(aiContent);
+                            }
+                            container.scrollTop = container.scrollHeight;
+                        }
+                    } catch (e) {}
+                }
+            }
+        } catch (e) {
+            console.error('[StreamV2] Read error:', e);
+            throw e;
+        }
+
+        // Final save and render
+        saveSessions();
+        renderChatV2Messages();
     }
 
     function renderChatV2Messages() {
@@ -3723,6 +3981,17 @@ body{
             switchView('neural');
         }
     };
+
+    function saveSessionsV2() {
+        const sid = getLinkedJulesSessionId();
+        if (!sid) return;
+        const sessions = JSON.parse(localStorage.getItem('hy_neural_sessions') || '[]');
+        const s = sessions.find(sess => sess.id === sid);
+        if (s) {
+            s.messages = chatV2Messages;
+            localStorage.setItem('hy_neural_sessions', JSON.stringify(sessions));
+        }
+    }
 
     /* ─── JULES HISTORY PORTED LOGIC ─── */
     function getIdSafe(name) {
@@ -3848,39 +4117,78 @@ body{
         const idSafe = sessionId.split('/').pop();
         const opsContainer = document.getElementById('neural-actions-ops');
         const v2Container = document.getElementById('neural-actions-v2');
-        if (!opsContainer || !v2Container) return;
+        const loopBanner = document.getElementById('jules-loop-banner');
+        const statusIcon = document.getElementById('loop-status-icon');
+        const statusDesc = document.getElementById('loop-status-desc');
+        const loopActions = document.getElementById('loop-actions');
+
+        const currentSessions = window.julesSessionsCache || [];
+        const session = currentSessions.find(s => getIdSafe(s.name) === idSafe);
+        const state = session ? session.state : 'QUEUED';
+
+        if (loopBanner) {
+            loopBanner.classList.remove('hidden');
+            loopBanner.style.display = 'flex';
+        }
 
         const sorted = [...activities].sort((a, b) => new Date(a.createTime) - new Date(b.createTime));
-
         let needsApproval = false;
         for (let i = sorted.length - 1; i >= 0; i--) {
-            const act = sorted[i];
-            if (act.planApproved) {
-                needsApproval = false;
-                break;
-            }
-            if (act.planGenerated) {
-                needsApproval = true;
-                break;
-            }
+            if (sorted[i].planApproved) { needsApproval = false; break; }
+            if (sorted[i].planGenerated) { needsApproval = true; break; }
+        }
+
+        // FIX 1 — Banner de 4 estados
+        const loopStates = {
+            'PLANNING': { icon: '⏳', text: 'GENERANDO PLAN — Jules está procesando', cls: 'running' },
+            'AWAITING_PLAN_APPROVAL': { icon: '🟡', text: 'ESPERANDO APROBACIÓN — Acción requerida', cls: 'waiting' },
+            'IN_PROGRESS': { icon: '⚡', text: 'EJECUTANDO — Jules implementando cambios', cls: 'running' },
+            'COMPLETED': { icon: '✅', text: 'COMPLETADO — Operación exitosa', cls: 'completed' },
+            'FAILED': { icon: '❌', text: 'FALLIDO — Revisa los logs', cls: 'failed' },
+            'QUEUED': { icon: '⏸', text: 'EN COLA — Esperando sandbox', cls: 'queued' }
+        };
+
+        const currentLoop = loopStates[state] || { icon: '⏳', text: state, cls: 'queued' };
+        if (statusIcon) statusIcon.textContent = currentLoop.icon;
+        if (statusDesc) statusDesc.textContent = currentLoop.text;
+
+        // FIX 3 — Badge en document.title
+        if (state === 'AWAITING_PLAN_APPROVAL') {
+            document.title = `(⚠️) Jules espera aprobación — Hypenosys Hub`;
+        } else if (state === 'IN_PROGRESS' || state === 'PLANNING') {
+            document.title = `(⚡) Jules trabajando... — Hypenosys Hub`;
+        } else {
+            document.title = `Jules Agent Control Panel — HYPENOSYS`;
         }
 
         if (needsApproval) {
             const btnHtml = `
-                <span style="font-size: 11px; color: var(--amber); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Plan pendiente de aprobación</span>
-                <button onclick="approveJulesPlan('${sessionId}')" class="btn btn-primary btn-sm" style="background: var(--amber); color: #000; box-shadow: 0 0 15px rgba(245, 158, 11, 0.4); min-height: 32px; padding: 4px 12px; border-radius: 6px; font-weight: 800;">
+                <button onclick="approveJulesPlan('${sessionId}')" class="btn btn-primary btn-sm" style="background: var(--amber); color: #000; box-shadow: 0 0 15px rgba(245, 158, 11, 0.4); font-weight: 800;">
                     <i class="fas fa-check mr-2"></i> APROBAR PLAN
                 </button>
             `;
-            opsContainer.innerHTML = btnHtml;
-            v2Container.innerHTML = btnHtml;
-            opsContainer.classList.remove('hidden');
-            v2Container.classList.remove('hidden');
+            if (opsContainer) { opsContainer.innerHTML = btnHtml; opsContainer.classList.remove('hidden'); }
+            if (v2Container) { v2Container.innerHTML = btnHtml; v2Container.classList.remove('hidden'); }
+            if (loopActions) loopActions.innerHTML = btnHtml;
+
+            // FIX 2 — Approve desde Claude Chat (inline)
+            const lastMsg = chatV2Messages[chatV2Messages.length - 1];
+            if (lastMsg && !lastMsg.approval_prompt && state === 'AWAITING_PLAN_APPROVAL') {
+                chatV2Messages.push({
+                    role: 'system',
+                    content: `### 📋 PLAN DE JULES LISTO\n\nJules ha generado una propuesta de cambios. Por favor, revísala en el historial arriba.\n\n<div style="display:flex; gap:10px; margin-top:10px;">
+                        <button onclick="approveJulesPlan('${sessionId}')" style="background:#f59e0b; color:#000; border:none; padding:8px 15px; border-radius:6px; font-weight:800; cursor:pointer;">APROBAR PLAN</button>
+                        <button onclick="desvincularNeuralSession()" style="background:#44475a; color:#fff; border:none; padding:8px 15px; border-radius:6px; font-weight:800; cursor:pointer;">RECHAZAR Y CERRAR</button>
+                    </div>`,
+                    approval_prompt: true
+                });
+                saveSessionsV2();
+                renderChatV2Messages();
+            }
         } else {
-            opsContainer.classList.add('hidden');
-            v2Container.classList.add('hidden');
-            opsContainer.innerHTML = '';
-            v2Container.innerHTML = '';
+            if (opsContainer) { opsContainer.classList.add('hidden'); opsContainer.innerHTML = ''; }
+            if (v2Container) { v2Container.classList.add('hidden'); v2Container.innerHTML = ''; }
+            if (loopActions) loopActions.innerHTML = '';
         }
     }
 
@@ -4104,9 +4412,17 @@ body{
                         </div>
                     </div>
                     <div style="display: flex; gap: 6px;">
+                        <button onclick="exportSessionToUrl('${s.id}')" class="icon-btn" title="Exportar URL" style="width: 28px; height: 28px; background: rgba(124,58,237,0.1); border: 1px solid var(--border-accent);">🔗</button>
                         <button onclick="renameFromDrawer('${s.id}')" class="icon-btn" title="Renombrar" style="width: 28px; height: 28px; background: rgba(255,255,255,0.03); border: 1px solid var(--border);">✏️</button>
                         <button onclick="archiveFromDrawer('${s.id}')" class="icon-btn" title="Archivar" style="width: 28px; height: 28px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); ${!isActive ? 'opacity: 0.2; pointer-events: none;' : ''}">🗄️</button>
                         <button onclick="deleteFromDrawer('${s.id}')" class="icon-btn" title="Eliminar" style="width: 28px; height: 28px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); color: var(--red);">🗑️</button>
+                    </div>
+                </div>
+                <!-- Export Container (Hidden by default) -->
+                <div id="export-container-${s.id}" class="hidden" style="margin-top: 10px; padding: 10px; background: #000; border: 1px solid var(--border); border-radius: 8px;">
+                    <div class="flex gap-2">
+                        <input type="text" id="export-url-${s.id}" readonly class="cfg-input" style="font-size: 9px; height: 24px; padding: 2px 8px; flex: 1;">
+                        <button onclick="copyExportUrl('${s.id}')" class="btn btn-primary btn-sm" style="font-size: 8px; padding: 4px 8px; height: 24px;">COPIAR</button>
                     </div>
                 </div>
                 <div style="display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: var(--text2); font-family: var(--font-mono); margin-top: 4px; padding-top: 10px; border-top: 1px solid var(--border);">
@@ -4118,6 +4434,43 @@ body{
             </div>`;
         }).join('');
     }
+
+    window.exportSessionToUrl = (sid) => {
+        const sessions = JSON.parse(localStorage.getItem('hy_neural_sessions') || '[]');
+        const s = sessions.find(sess => sess.id === sid);
+        if (!s) return;
+
+        const task = JSON.parse(localStorage.getItem('hy_neural_task_context') || 'null');
+
+        const state = {
+            repo: s.repo || localStorage.getItem('hypenosys_active_repo'),
+            branch: s.branch || localStorage.getItem('hypenosys_active_branch'),
+            task: s.task_id === task?.id ? task : { id: s.task_id, titulo: s.task_title },
+            active: s.status === 'active',
+            ts: Date.now()
+        };
+
+        const encoded = btoa(JSON.stringify(state));
+        const url = window.location.origin + window.location.pathname + '?import_session=' + encoded;
+
+        const container = $(`export-container-${sid}`);
+        const input = $(`export-url-${sid}`);
+        if (container && input) {
+            input.value = url;
+            container.classList.toggle('hidden');
+            if (!container.classList.contains('hidden')) input.select();
+        }
+    };
+
+    window.copyExportUrl = (sid) => {
+        const input = $(`export-url-${sid}`);
+        if (input) {
+            input.select();
+            document.execCommand('copy');
+            showToast("URL de sesión copiada", "green");
+            $(`export-container-${sid}`).classList.add('hidden');
+        }
+    };
 
     window.renameFromDrawer = (sid) => {
         $(`drawer-name-display-${sid}`).classList.add('hidden');
@@ -4313,6 +4666,7 @@ body{
         localStorage.removeItem('hy_neural_thread');
         stopNeuralPolling();
         $('neural-session-banner').classList.add('hidden');
+        $('jules-loop-banner').classList.add('hidden');
         $('v2-task-context').classList.add('hidden');
         if (window.JulesPanelState.activePayload) {
             delete window.JulesPanelState.activePayload.source_task;
@@ -4355,7 +4709,7 @@ body{
         return isAnthropic ? data.content[0].text : data.choices[0].message.content;
     }
 
-    if($('v2-send-btn')) $('v2-send-btn').onclick = sendChatV2Msg;
+    if($('v2-send-btn')) $('v2-send-btn').onclick = () => sendChatV2Msg();
     if($('v2-chat-input')) {
         $('v2-chat-input').onkeydown = (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
