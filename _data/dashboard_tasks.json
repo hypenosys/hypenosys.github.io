@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-16T11:52:46.337Z",
-  "last_updated_by": "Axel",
+  "last_updated": "2026-06-16T13:06:35.050Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -2721,13 +2721,13 @@
       "id": 43
     },
     {
-      "title": "Controlar con Claude Neural API de n8n",
-      "descripcion": "Integrar la API de n8n en el flujo de trabajo de la IA mediante Cloudflare Workers. Permite orquestar workflows de forma segura y escalable.",
+      "title": "Cognito-Agent en Claude Neural API desde n8n con ingestión en Qdrant + Kavita (UOC) + PSQL",
+      "descripcion": "orquestar workflows de forma segura y escalable. Incluye citation",
       "rama": "chore/n8n-api-worker",
       "task_type": "chore",
       "tema_principal": "Tools / Automation",
       "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Major",
+      "prioridad": "Medium",
       "milestone": "M3",
       "estado": "Working",
       "completitud": 0,
@@ -2798,6 +2798,27 @@
           "field": "estado",
           "old_value": "Pending",
           "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-16T13:06:34.162Z",
+          "field": "title",
+          "old_value": "Controlar con Claude Neural API de n8n",
+          "new_value": "Cognito-Agent en Claude Neural API desde n8n con ingestión en Qdrant + Kavita (UOC) + PSQL"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-16T13:06:34.162Z",
+          "field": "descripcion",
+          "old_value": "Integrar la API de n8n en el flujo de trabajo de la IA mediante Cloudflare Workers. Permite orquestar workflows de forma segura y escalable.",
+          "new_value": "orquestar workflows de forma segura y escalable. Incluye citation"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-16T13:06:34.162Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Medium"
         }
       ],
       "id": 44
@@ -3604,6 +3625,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #44",
+      "user": "Axlfc",
+      "timestamp": "2026-06-16T13:06:35.050Z"
+    },
     {
       "action": "feat: nueva tarea #1781610764802 añadida",
       "user": "Axlfc",
