@@ -270,10 +270,24 @@ permalink: /documentacion/
     <script>
         const REPO_OWNER = 'hypenosys';
         const REPO_NAME = 'docs';
+        const DEFAULT_BRANCH = 'master'; // Fixed: hypenosys/docs uses 'master'
         const GITHUB_API = 'https://api.github.com';
 
         let currentPath = '';
         let allFilesFlattened = [];
+
+        // --- Auth Helper ---
+        function getAuthHeaders() {
+            const token = sessionStorage.getItem('gh_access_token') ||
+                         localStorage.getItem('gh_access_token') ||
+                         localStorage.getItem('github_token');
+
+            const headers = { 'Accept': 'application/vnd.github.v3+json' };
+            if (token && token.length > 10) {
+                headers['Authorization'] = `Bearer ${token.trim()}`;
+            }
+            return headers;
+        }
 
         // --- Custom Marked.js Extension for Obsidian-style [[Wikilinks]] ---
         const wikilinkExtension = {
@@ -312,13 +326,56 @@ permalink: /documentacion/
                 const resolved = resolveWikilinkPath(token.href);
 
                 if (token.isImage) {
-                    const rawUrl = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${resolved}`;
+                    const rawUrl = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${DEFAULT_BRANCH}/${resolved}`;
                     return `<img src="${rawUrl}" alt="${token.text}" class="wikilink-image">`;
                 }
 
                 return `<a href="#${resolved}" class="wikilink-active">${token.text}</a>`;
             }
         };
+
+        /**
+         * Finds a "healthy" resource for a given path.
+         * If the path is a directory, it looks for README.md, index.md, etc.
+         */
+        function findHealthyResource(path) {
+            if (!path || path === '/' || path === '.') return 'README.md';
+
+            // Clean path: NFC normalization, forward slashes, no leading slash
+            const normalized = path.normalize('NFC').replace(/\\/g, '/').replace(/^\//, '').replace(/\/$/, '');
+
+            // 1. Direct hit (as-is)
+            if (allFilesFlattened.some(f => f.path.normalize('NFC') === normalized)) {
+                return normalized;
+            }
+
+            // 2. Folder index check
+            const folderPrefix = normalized + '/';
+            const indexCandidates = ['README.md', 'readme.md', 'index.md', 'INDEX.md'];
+
+            for (const cand of indexCandidates) {
+                const fullPath = folderPrefix + cand;
+                if (allFilesFlattened.some(f => f.path.normalize('NFC') === fullPath)) {
+                    return fullPath;
+                }
+            }
+
+            // 3. Fallback: Any .md in the folder
+            const firstMd = allFilesFlattened.find(f =>
+                f.path.normalize('NFC').startsWith(folderPrefix) && f.path.endsWith('.md')
+            );
+            if (firstMd) return firstMd.path;
+
+            // 4. Missing .md extension check
+            if (!normalized.includes('.')) {
+                const withMd = normalized + '.md';
+                if (allFilesFlattened.some(f => f.path.normalize('NFC') === withMd)) {
+                    return withMd;
+                }
+            }
+
+            return normalized;
+        }
 
         function resolveWikilinkPath(target) {
             if (!target || target === '/') return 'README.md';
@@ -332,42 +389,33 @@ permalink: /documentacion/
                 return `${currentPath.split('#')[0]}#${anchor}`;
             }
 
-            let targetWithExt = pathPart;
-            const isNonMd = /\.(png|jpg|jpeg|gif|webp|svg|pdf|zip|rar)$/i.test(targetWithExt);
-
-            if (targetWithExt.endsWith('/')) {
-                targetWithExt += 'README.md';
-            } else if (!isNonMd && !targetWithExt.toLowerCase().endsWith('.md')) {
-                // If it looks like a folder that exists, append README.md
-                const folderPath = targetWithExt.replace(/^\//, '') + '/README.md';
-                if (allFilesFlattened.some(f => f.path.normalize('NFC') === folderPath)) {
-                    targetWithExt = folderPath;
-                } else {
-                    targetWithExt += '.md';
-                }
-            }
-
-            const normalizedTarget = targetWithExt.replace(/^\//, '');
+            const normalizedPart = pathPart.replace(/^\//, '');
+            const isNonMd = /\.(png|jpg|jpeg|gif|webp|svg|pdf|zip|rar)$/i.test(normalizedPart);
 
             // Step 1: Relative match (highest priority)
-            const relative = resolveRelativePath(currentPath, normalizedTarget).normalize('NFC');
-            if (allFilesFlattened.some(f => f.path.normalize('NFC') === relative)) {
-                return anchor ? `${relative}#${anchor}` : relative;
+            const relativeBase = resolveRelativePath(currentPath, normalizedPart);
+            const healthyRelative = findHealthyResource(relativeBase);
+            if (allFilesFlattened.some(f => f.path.normalize('NFC') === healthyRelative)) {
+                return anchor ? `${healthyRelative}#${anchor}` : healthyRelative;
             }
 
             // Step 2: Root-relative match
-            const rootRel = normalizedTarget.normalize('NFC');
-            if (allFilesFlattened.some(f => f.path.normalize('NFC') === rootRel)) {
-                return anchor ? `${rootRel}#${anchor}` : rootRel;
+            const healthyRoot = findHealthyResource(normalizedPart);
+            if (allFilesFlattened.some(f => f.path.normalize('NFC') === healthyRoot)) {
+                return anchor ? `${healthyRoot}#${anchor}` : healthyRoot;
             }
 
             // Step 3: Global/Fuzzy match (Obsidian style)
-            const targetLower = normalizedTarget.toLowerCase();
-            const targetFilename = normalizedTarget.split('/').pop().toLowerCase();
+            const targetLower = normalizedPart.toLowerCase();
+            const targetFilename = normalizedPart.split('/').pop().toLowerCase();
 
             const matches = allFilesFlattened.filter(f => {
                 const fPath = f.path.normalize('NFC').toLowerCase();
-                return fPath === targetLower || fPath.endsWith('/' + targetLower) || fPath.split('/').pop() === targetFilename;
+                const fName = fPath.split('/').pop();
+                return fPath === targetLower ||
+                       fPath.endsWith('/' + targetLower) ||
+                       fName === targetFilename ||
+                       fName === targetFilename + '.md';
             });
 
             if (matches.length > 0) {
@@ -377,11 +425,14 @@ permalink: /documentacion/
                     const aPath = a.path.normalize('NFC');
                     const bPath = b.path.normalize('NFC');
 
-                    // Exact filename match at closer level
-                    const aSuffixMatch = aPath.toLowerCase().endsWith('/' + targetLower);
-                    const bSuffixMatch = bPath.toLowerCase().endsWith('/' + targetLower);
-                    if (aSuffixMatch && !bSuffixMatch) return -1;
-                    if (!aSuffixMatch && bSuffixMatch) return 1;
+                    // Prioritize exact filename match
+                    const aName = aPath.split('/').pop().toLowerCase();
+                    const bName = bPath.split('/').pop().toLowerCase();
+                    const aExact = aName === targetFilename + '.md' || aName === targetFilename;
+                    const bExact = bName === targetFilename + '.md' || bName === targetFilename;
+
+                    if (aExact && !bExact) return -1;
+                    if (!aExact && bExact) return 1;
 
                     return getCommonPrefixLength(bPath, currentDir) - getCommonPrefixLength(aPath, currentDir);
                 });
@@ -389,8 +440,12 @@ permalink: /documentacion/
                 return anchor ? `${best}#${anchor}` : best;
             }
 
-            // Fallback
-            return anchor ? `${relative}#${anchor}` : relative;
+            // Fallback: If nothing found, return original normalized with .md if missing extension
+            let finalFallback = normalizedPart;
+            if (!isNonMd && !finalFallback.includes('.') && !finalFallback.endsWith('/')) {
+                finalFallback += '.md';
+            }
+            return anchor ? `${finalFallback}#${anchor}` : finalFallback;
         }
 
         function getCommonPrefixLength(s1, s2) {
@@ -434,7 +489,7 @@ permalink: /documentacion/
 
                     if (href && typeof href === 'string' && !href.startsWith('http')) {
                         const resolved = resolveWikilinkPath(href);
-                        return `<img src="https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${resolved}" alt="${text}" ${title ? `title="${title}"` : ''}>`;
+                        return `<img src="https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${DEFAULT_BRANCH}/${resolved}" alt="${text}" ${title ? `title="${title}"` : ''}>`;
                     }
                     return false;
                 }
@@ -481,24 +536,31 @@ permalink: /documentacion/
                 // Handle direct links to files via hash
                 if (window.location.hash) {
                     const path = window.location.hash.substring(1);
-                    loadDocument(path);
+                    await loadDocument(path);
                 }
             } catch (error) {
                 console.error('Error initializing docs:', error);
-                showError('Error al cargar la estructura del repositorio. Verifica tu conexión.');
+                showError(`Error de Sincronización: ${error.message}. Verifica tu conexión o permisos.`);
                 updateConnectionStatus(false);
             }
         }
 
         async function fetchRepoContents(path) {
-            const response = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`);
-            if (!response.ok) throw new Error('Failed to fetch contents');
+            const response = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}?ref=${DEFAULT_BRANCH}`, {
+                headers: getAuthHeaders()
+            });
+            if (!response.ok) {
+                const err = await response.json().catch(() => ({}));
+                throw new Error(err.message || `HTTP ${response.status}`);
+            }
             return await response.json();
         }
 
         async function fetchAllFiles() {
             try {
-                const response = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/git/trees/main?recursive=1`);
+                const response = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/git/trees/${DEFAULT_BRANCH}?recursive=1`, {
+                    headers: getAuthHeaders()
+                });
                 if (!response.ok) {
                     console.error('Failed to fetch tree:', response.status);
                     return;
@@ -541,9 +603,17 @@ permalink: /documentacion/
                 link.innerHTML = `<i class="fa-solid ${icon} w-4"></i> <span class="truncate">${file.name.replace('.md', '')}</span>`;
 
                 if (isDir) {
-                    link.onclick = async () => {
+                    link.onclick = async (e) => {
                         const subContainerId = `dir-${file.sha}`;
                         let subContainer = document.getElementById(subContainerId);
+
+                        // If it's a real user click (e is defined), navigate to the healthy resource
+                        if (e && (!subContainer || subContainer.classList.contains('hidden'))) {
+                            const healthy = findHealthyResource(file.path);
+                            if (healthy !== file.path) {
+                                window.location.hash = healthy;
+                            }
+                        }
 
                         if (subContainer) {
                             subContainer.classList.toggle('hidden');
@@ -579,12 +649,15 @@ permalink: /documentacion/
 
         async function setActiveLink(path) {
             if (!path) return;
-            // Clean path and ensure it matches what's in dataset (which might include .md or not)
-            const [cleanPath] = decodeURIComponent(path).split('#');
+            const normalized = normalizeDocPath(path);
+            const [cleanPath] = normalized.split('#');
 
-            // Expand parent folders
+            // Find parent folders of the current file
             const parts = cleanPath.split('/');
             let currentPathPart = '';
+
+            // For every segment in the path except the last one (the file itself),
+            // ensure the sidebar folder is expanded.
             for (let i = 0; i < parts.length - 1; i++) {
                 currentPathPart += (currentPathPart ? '/' : '') + parts[i];
                 const folderLink = Array.from(document.querySelectorAll('.sidebar-link'))
@@ -593,13 +666,12 @@ permalink: /documentacion/
                 if (folderLink) {
                     const sha = folderLink.dataset.sha;
                     const subContainerId = `dir-${sha}`;
-                    const subContainer = document.getElementById(subContainerId);
+                    let subContainer = document.getElementById(subContainerId);
 
                     if (!subContainer || subContainer.classList.contains('hidden')) {
                         try {
-                            if (typeof folderLink.onclick === 'function') {
-                                await folderLink.onclick.call(folderLink);
-                            }
+                            // Call the onclick handler to expand (pass null for e to prevent navigation)
+                            await folderLink.onclick(null);
                         } catch (e) {
                             console.warn('Could not expand folder:', currentPathPart, e);
                         }
@@ -607,10 +679,15 @@ permalink: /documentacion/
                 }
             }
 
+            // After expansion, highlight the correct file
             let found = false;
-            document.querySelectorAll('.sidebar-link').forEach(el => {
+            const links = document.querySelectorAll('.sidebar-link');
+
+            links.forEach(el => {
                 const elPath = el.dataset.path;
-                // Match exactly, with .md suffix, or without .md suffix
+                if (!elPath) return;
+
+                // Match exactly, or with .md suffix logic
                 const matches = elPath === cleanPath ||
                                elPath === cleanPath + '.md' ||
                                (elPath.endsWith('.md') && elPath.slice(0, -3) === cleanPath) ||
@@ -624,11 +701,29 @@ permalink: /documentacion/
                     el.classList.remove('active');
                 }
             });
+
+            // Special case: If we didn't find the file link but we are in a folder, highlight the folder
+            if (!found && parts.length > 1) {
+                const parentPath = parts.slice(0, -1).join('/');
+                const parentLink = Array.from(document.querySelectorAll('.sidebar-link'))
+                    .find(el => el.dataset.path === parentPath);
+                if (parentLink) {
+                    parentLink.classList.add('active');
+                }
+            }
+        }
+
+        function normalizeDocPath(path) {
+            if (!path) return '';
+            return decodeURIComponent(path)
+                .normalize('NFC')
+                .replace(/\\/g, '/')
+                .replace(/^\//, '');
         }
 
         async function loadDocument(path) {
-            const decodedPath = decodeURIComponent(path).replace(/^\//, ''); // Clean leading slash
-            const [cleanPath, anchor] = decodedPath.split('#');
+            const normalized = normalizeDocPath(path);
+            const [cleanPath, anchor] = normalized.split('#');
 
             // If only anchor changed, just scroll
             if (currentPath === cleanPath && anchor) {
@@ -643,19 +738,29 @@ permalink: /documentacion/
             try {
                 // Correctly encode each part of the path for the GitHub API
                 const encodedPath = cleanPath.split('/').map(p => encodeURIComponent(p)).join('/');
-                const response = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${encodedPath}`);
+                const response = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${encodedPath}?ref=${DEFAULT_BRANCH}`, {
+                    headers: getAuthHeaders()
+                });
 
-                if (!response.ok) throw new Error('File not found');
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        showResourceNotFound(cleanPath);
+                        return;
+                    }
+                    throw new Error(`GitHub API Error: ${response.status}`);
+                }
+
                 const data = await response.json();
 
                 // Handle both single file and directory results
                 if (Array.isArray(data)) {
-                    // It's a directory, try to find README.md
-                    const readme = data.find(f => f.name.toLowerCase() === 'readme.md');
-                    if (readme) {
-                        return loadDocument(readme.path);
+                    const healthy = findHealthyResource(cleanPath);
+                    if (healthy && healthy !== cleanPath) {
+                        return loadDocument(healthy);
                     } else {
-                        throw new Error('No se encontró README.md en esta carpeta.');
+                        const anyMd = data.find(f => f.name.toLowerCase().endsWith('.md'));
+                        if (anyMd) return loadDocument(anyMd.path);
+                        throw new Error('No se encontró contenido legible (README.md o similar) en esta carpeta.');
                     }
                 }
 
@@ -668,7 +773,7 @@ permalink: /documentacion/
                 currentPath = cleanPath;
                 renderMarkdown(decodedContent, cleanPath);
                 updateMetadata(data);
-                setActiveLink(cleanPath);
+                await setActiveLink(cleanPath);
 
                 if (anchor) {
                     setTimeout(() => {
@@ -708,14 +813,15 @@ permalink: /documentacion/
                     breadcrumbHTML += `<span class="text-indigo-400 font-bold">${part.replace('.md', '')}</span>`;
                 } else {
                     currentLink += (currentLink ? '/' : '') + part;
-                    // We link folders to their README.md as a convention
-                    breadcrumbHTML += `<button onclick="window.location.hash='${currentLink}/README.md'" class="hover:text-white transition-colors">${part}</button>`;
+                    // Use healthy resource for folder navigation
+                    const healthy = findHealthyResource(currentLink);
+                    breadcrumbHTML += `<button onclick="window.location.hash='${healthy}'" class="hover:text-white transition-colors">${part}</button>`;
                 }
             });
             breadcrumb.innerHTML = breadcrumbHTML;
 
             // Buttons
-            document.getElementById('btn-edit-github').href = `https://github.com/${REPO_OWNER}/${REPO_NAME}/edit/main/${path}`;
+            document.getElementById('btn-edit-github').href = `https://github.com/${REPO_OWNER}/${REPO_NAME}/edit/${DEFAULT_BRANCH}/${path}`;
             // Obsidian URI: obsidian://open?vault=docs&file=path%2Fto%2Ffile
             const obsidianPath = encodeURIComponent(path.replace('.md', ''));
             document.getElementById('btn-open-obsidian').href = `obsidian://open?vault=${REPO_NAME}&file=${obsidianPath}`;
@@ -742,6 +848,36 @@ permalink: /documentacion/
             document.getElementById('welcome-section').classList.add('hidden');
             document.getElementById('markdown-section').classList.add('hidden');
             document.getElementById('loading-state').classList.add('hidden');
+        }
+
+        function showResourceNotFound(path) {
+            const container = document.getElementById('markdown-body');
+            container.innerHTML = `
+                <div class="py-12 text-center">
+                    <div class="w-20 h-20 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-6 border border-slate-700">
+                        <i class="fa-solid fa-file-circle-exclamation text-3xl text-slate-500"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white mb-2">Documento no encontrado</h2>
+                    <p class="text-slate-400 mb-8">No pudimos encontrar el recurso: <code class="text-indigo-400">${path}</code></p>
+                    <button onclick="resetToWelcome()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2 rounded-lg text-sm font-bold transition-all">
+                        VOLVER AL INICIO
+                    </button>
+                </div>
+            `;
+            document.getElementById('welcome-section').classList.add('hidden');
+            document.getElementById('markdown-section').classList.remove('hidden');
+            document.getElementById('loading-state').classList.add('hidden');
+            document.getElementById('error-state').classList.add('hidden');
+
+            const breadcrumb = document.getElementById('breadcrumb');
+            breadcrumb.innerHTML = `
+                <button onclick="resetToWelcome()" class="hover:text-white transition-colors flex items-center gap-1">
+                    <i class="fa-solid fa-folder-open"></i>
+                    <span>docs</span>
+                </button>
+                <i class="fa-solid fa-chevron-right text-[8px] text-slate-600"></i>
+                <span class="text-red-400 font-bold">404 - Not Found</span>
+            `;
         }
 
         function resetToWelcome() {
@@ -828,11 +964,25 @@ permalink: /documentacion/
         });
 
         window.addEventListener('hashchange', () => {
-            const path = window.location.hash.substring(1);
-            if (path) {
-                loadDocument(path);
-            } else {
+            const hash = window.location.hash.substring(1);
+            if (!hash) {
                 resetToWelcome();
+                return;
+            }
+
+            const normalized = normalizeDocPath(hash);
+            const [newPath, newAnchor] = normalized.split('#');
+            const [oldPath, oldAnchor] = currentPath.split('#');
+
+            if (newPath === oldPath && newAnchor) {
+                // Just an anchor change in the same document
+                const element = document.getElementById(newAnchor);
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth' });
+                }
+            } else {
+                // Actual document change or same document reload
+                loadDocument(hash);
             }
         });
 
