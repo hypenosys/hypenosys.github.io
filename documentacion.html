@@ -270,10 +270,24 @@ permalink: /documentacion/
     <script>
         const REPO_OWNER = 'hypenosys';
         const REPO_NAME = 'docs';
+        const DEFAULT_BRANCH = 'master'; // Fixed: hypenosys/docs uses 'master'
         const GITHUB_API = 'https://api.github.com';
 
         let currentPath = '';
         let allFilesFlattened = [];
+
+        // --- Auth Helper ---
+        function getAuthHeaders() {
+            const token = sessionStorage.getItem('gh_access_token') ||
+                         localStorage.getItem('gh_access_token') ||
+                         localStorage.getItem('github_token');
+
+            const headers = { 'Accept': 'application/vnd.github.v3+json' };
+            if (token && token.length > 10) {
+                headers['Authorization'] = `Bearer ${token.trim()}`;
+            }
+            return headers;
+        }
 
         // --- Custom Marked.js Extension for Obsidian-style [[Wikilinks]] ---
         const wikilinkExtension = {
@@ -312,7 +326,7 @@ permalink: /documentacion/
                 const resolved = resolveWikilinkPath(token.href);
 
                 if (token.isImage) {
-                    const rawUrl = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${resolved}`;
+                    const rawUrl = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${DEFAULT_BRANCH}/${resolved}`;
                     return `<img src="${rawUrl}" alt="${token.text}" class="wikilink-image">`;
                 }
 
@@ -475,7 +489,7 @@ permalink: /documentacion/
 
                     if (href && typeof href === 'string' && !href.startsWith('http')) {
                         const resolved = resolveWikilinkPath(href);
-                        return `<img src="https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${resolved}" alt="${text}" ${title ? `title="${title}"` : ''}>`;
+                        return `<img src="https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${DEFAULT_BRANCH}/${resolved}" alt="${text}" ${title ? `title="${title}"` : ''}>`;
                     }
                     return false;
                 }
@@ -522,24 +536,31 @@ permalink: /documentacion/
                 // Handle direct links to files via hash
                 if (window.location.hash) {
                     const path = window.location.hash.substring(1);
-                    loadDocument(path);
+                    await loadDocument(path);
                 }
             } catch (error) {
                 console.error('Error initializing docs:', error);
-                showError('Error al cargar la estructura del repositorio. Verifica tu conexión.');
+                showError(`Error de Sincronización: ${error.message}. Verifica tu conexión o permisos.`);
                 updateConnectionStatus(false);
             }
         }
 
         async function fetchRepoContents(path) {
-            const response = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`);
-            if (!response.ok) throw new Error('Failed to fetch contents');
+            const response = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}?ref=${DEFAULT_BRANCH}`, {
+                headers: getAuthHeaders()
+            });
+            if (!response.ok) {
+                const err = await response.json().catch(() => ({}));
+                throw new Error(err.message || `HTTP ${response.status}`);
+            }
             return await response.json();
         }
 
         async function fetchAllFiles() {
             try {
-                const response = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/git/trees/main?recursive=1`);
+                const response = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/git/trees/${DEFAULT_BRANCH}?recursive=1`, {
+                    headers: getAuthHeaders()
+                });
                 if (!response.ok) {
                     console.error('Failed to fetch tree:', response.status);
                     return;
@@ -717,7 +738,9 @@ permalink: /documentacion/
             try {
                 // Correctly encode each part of the path for the GitHub API
                 const encodedPath = cleanPath.split('/').map(p => encodeURIComponent(p)).join('/');
-                const response = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${encodedPath}`);
+                const response = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${encodedPath}?ref=${DEFAULT_BRANCH}`, {
+                    headers: getAuthHeaders()
+                });
 
                 if (!response.ok) {
                     if (response.status === 404) {
@@ -798,7 +821,7 @@ permalink: /documentacion/
             breadcrumb.innerHTML = breadcrumbHTML;
 
             // Buttons
-            document.getElementById('btn-edit-github').href = `https://github.com/${REPO_OWNER}/${REPO_NAME}/edit/main/${path}`;
+            document.getElementById('btn-edit-github').href = `https://github.com/${REPO_OWNER}/${REPO_NAME}/edit/${DEFAULT_BRANCH}/${path}`;
             // Obsidian URI: obsidian://open?vault=docs&file=path%2Fto%2Ffile
             const obsidianPath = encodeURIComponent(path.replace('.md', ''));
             document.getElementById('btn-open-obsidian').href = `obsidian://open?vault=${REPO_NAME}&file=${obsidianPath}`;
