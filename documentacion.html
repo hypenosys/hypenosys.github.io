@@ -321,48 +321,76 @@ permalink: /documentacion/
         };
 
         function resolveWikilinkPath(target) {
-            // Split path and anchor
-            const [pathPart, anchor] = target.split('#');
+            if (!target || target === '/') return 'README.md';
 
-            // Normalize target: remove .md if present to avoid double extension later
-            const cleanTarget = pathPart.replace(/\.md$/, '');
-            const targetWithMd = cleanTarget + '.md';
+            // Normalize target
+            const decoded = decodeURIComponent(target).normalize('NFC').replace(/\\/g, '/');
+            const [pathPart, anchor] = decoded.split('#');
 
-            let resolvedPath = '';
+            // Just an anchor? Relative to current path
+            if (!pathPart && anchor) {
+                return `${currentPath.split('#')[0]}#${anchor}`;
+            }
 
-            // 1. Try relative to currentPath
-            const relative = resolveRelativePath(currentPath, targetWithMd);
-            if (allFilesFlattened.some(f => f.path === relative)) {
-                resolvedPath = relative;
-            } else {
-                // 2. Try global search in flattened tree (Obsidian style)
-                // Prioritize files closer to currentPath to avoid name collisions
-                const matches = allFilesFlattened.filter(f => {
-                    const filename = f.path.split('/').pop();
-                    return filename === targetWithMd || filename.toLowerCase() === targetWithMd.toLowerCase() ||
-                           filename === cleanTarget || filename.toLowerCase() === cleanTarget.toLowerCase();
-                });
+            let targetWithExt = pathPart;
+            const isNonMd = /\.(png|jpg|jpeg|gif|webp|svg|pdf|zip|rar)$/i.test(targetWithExt);
 
-                if (matches.length > 0) {
-                    if (matches.length === 1) {
-                        resolvedPath = matches[0].path;
-                    } else {
-                        // If multiple matches, find the one with the longest common prefix with currentPath
-                        const currentDir = currentPath.substring(0, currentPath.lastIndexOf('/'));
-                        matches.sort((a, b) => {
-                            const scoreA = getCommonPrefixLength(a.path, currentDir);
-                            const scoreB = getCommonPrefixLength(b.path, currentDir);
-                            return scoreB - scoreA;
-                        });
-                        resolvedPath = matches[0].path;
-                    }
+            if (targetWithExt.endsWith('/')) {
+                targetWithExt += 'README.md';
+            } else if (!isNonMd && !targetWithExt.toLowerCase().endsWith('.md')) {
+                // If it looks like a folder that exists, append README.md
+                const folderPath = targetWithExt.replace(/^\//, '') + '/README.md';
+                if (allFilesFlattened.some(f => f.path.normalize('NFC') === folderPath)) {
+                    targetWithExt = folderPath;
                 } else {
-                    // 3. Fallback to calculated relative path
-                    resolvedPath = relative;
+                    targetWithExt += '.md';
                 }
             }
 
-            return anchor ? `${resolvedPath}#${anchor}` : resolvedPath;
+            const normalizedTarget = targetWithExt.replace(/^\//, '');
+
+            // Step 1: Relative match (highest priority)
+            const relative = resolveRelativePath(currentPath, normalizedTarget).normalize('NFC');
+            if (allFilesFlattened.some(f => f.path.normalize('NFC') === relative)) {
+                return anchor ? `${relative}#${anchor}` : relative;
+            }
+
+            // Step 2: Root-relative match
+            const rootRel = normalizedTarget.normalize('NFC');
+            if (allFilesFlattened.some(f => f.path.normalize('NFC') === rootRel)) {
+                return anchor ? `${rootRel}#${anchor}` : rootRel;
+            }
+
+            // Step 3: Global/Fuzzy match (Obsidian style)
+            const targetLower = normalizedTarget.toLowerCase();
+            const targetFilename = normalizedTarget.split('/').pop().toLowerCase();
+
+            const matches = allFilesFlattened.filter(f => {
+                const fPath = f.path.normalize('NFC').toLowerCase();
+                return fPath === targetLower || fPath.endsWith('/' + targetLower) || fPath.split('/').pop() === targetFilename;
+            });
+
+            if (matches.length > 0) {
+                // Sort by proximity to current directory
+                const currentDir = currentPath.split('/').slice(0, -1).join('/').normalize('NFC');
+                matches.sort((a, b) => {
+                    const aPath = a.path.normalize('NFC');
+                    const bPath = b.path.normalize('NFC');
+
+                    // Exact filename match at closer level
+                    const aSuffixMatch = aPath.toLowerCase().endsWith('/' + targetLower);
+                    const bSuffixMatch = bPath.toLowerCase().endsWith('/' + targetLower);
+                    if (aSuffixMatch && !bSuffixMatch) return -1;
+                    if (!aSuffixMatch && bSuffixMatch) return 1;
+
+                    return getCommonPrefixLength(bPath, currentDir) - getCommonPrefixLength(aPath, currentDir);
+                });
+                const best = matches[0].path;
+                return anchor ? `${best}#${anchor}` : best;
+            }
+
+            // Fallback
+            return anchor ? `${relative}#${anchor}` : relative;
         }
 
         function getCommonPrefixLength(s1, s2) {
@@ -386,22 +414,13 @@ permalink: /documentacion/
 
                     if (href && typeof href === 'string') {
                         if (href.startsWith('#')) {
-                            // Internal anchor: prefix with current path to maintain SPA routing
-                            return `<a href="#${currentPath}${href}" ${title ? `title="${title}"` : ''}>${text}</a>`;
+                            return `<a href="#${currentPath.split('#')[0]}${href}" ${title ? `title="${title}"` : ''}>${text}</a>`;
                         }
-                        if (!href.startsWith('http')) {
-                            // Obsidian style: if no extension, assume .md
-                            let resolvedHref = href;
-                            if (!href.includes('.') && !href.startsWith('#')) {
-                                resolvedHref += '.md';
-                            }
-
-                            // Try to resolve relative then global (like wikilinks)
-                            const resolved = resolveWikilinkPath(resolvedHref);
-                            return `<a href="#${resolved}" ${title ? `title="${title}"` : ''}>${text}</a>`;
+                        if (!href.startsWith('http') && !href.startsWith('mailto:')) {
+                            return `<a href="#${resolveWikilinkPath(href)}" ${title ? `title="${title}"` : ''}>${text}</a>`;
                         }
                     }
-                    return false; // Let marked handle standard absolute links
+                    return false;
                 },
                 image(payload) {
                     let href, title, text;
@@ -414,40 +433,39 @@ permalink: /documentacion/
                     }
 
                     if (href && typeof href === 'string' && !href.startsWith('http')) {
-                        const resolved = resolveRelativePath(currentPath, href);
-                        const rawUrl = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${resolved}`;
-                        return `<img src="${rawUrl}" alt="${text}" ${title ? `title="${title}"` : ''}>`;
+                        const resolved = resolveWikilinkPath(href);
+                        return `<img src="https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${resolved}" alt="${text}" ${title ? `title="${title}"` : ''}>`;
                     }
-                    return false; // Let marked handle standard images
+                    return false;
                 }
             }
         });
 
         function resolveRelativePath(basePath, relativePath) {
-            if (!relativePath || relativePath.startsWith('http') || relativePath.startsWith('#') || relativePath.startsWith('/')) {
-                return relativePath;
+            if (!relativePath || relativePath.startsWith('http') || relativePath.startsWith('#')) return relativePath;
+            if (relativePath.startsWith('/')) return relativePath.substring(1);
+
+            const base = (basePath || '').normalize('NFC').replace(/\\/g, '/');
+            const rel = relativePath.normalize('NFC').replace(/\\/g, '/');
+            const [pathOnly, anchor] = rel.split('#');
+
+            let parts = base.split('/').filter(p => !!p);
+            // If base looks like a file, remove it
+            if (parts.length > 0 && parts[parts.length - 1].includes('.')) {
+                parts.pop();
             }
 
-            // Normalize path separators and remove anchor for resolution
-            const normalizedPath = relativePath.replace(/\\/g, '/');
-            const [pathWithoutAnchor, anchor] = normalizedPath.split('#');
-
-            const baseParts = basePath ? basePath.split('/') : [];
-            if (baseParts.length > 0) baseParts.pop(); // Remove current filename
-
-            const relParts = pathWithoutAnchor.split('/');
-            for (const part of relParts) {
-                if (part === '..') {
-                    if (baseParts.length > 0) baseParts.pop();
-                } else if (part === '.' || part === '') {
-                    continue;
-                } else {
-                    baseParts.push(part);
+            const relParts = pathOnly.split('/').filter(p => !!p);
+            for (const p of relParts) {
+                if (p === '..') {
+                    if (parts.length > 0) parts.pop();
+                } else if (p !== '.') {
+                    parts.push(p);
                 }
             }
 
-            const resolvedPath = baseParts.join('/');
-            return anchor ? `${resolvedPath}#${anchor}` : resolvedPath;
+            const resolved = parts.join('/');
+            return anchor ? `${resolved}#${anchor}` : resolved;
         }
 
         async function init() {
@@ -457,8 +475,8 @@ permalink: /documentacion/
                 renderSidebar(files);
                 updateConnectionStatus(true);
 
-                // Fetch all files recursively for search and quick links (background)
-                fetchAllFiles().catch(e => console.warn('Global search index failed:', e));
+                // Fetch all files recursively for search and quick links (IMPORTANT: wait for this for link resolution)
+                await fetchAllFiles().catch(e => console.warn('Global search index failed:', e));
 
                 // Handle direct links to files via hash
                 if (window.location.hash) {
@@ -481,9 +499,17 @@ permalink: /documentacion/
         async function fetchAllFiles() {
             try {
                 const response = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/git/trees/main?recursive=1`);
-                if (!response.ok) return;
+                if (!response.ok) {
+                    console.error('Failed to fetch tree:', response.status);
+                    return;
+                }
                 const data = await response.json();
-                allFilesFlattened = data.tree.filter(item => item.path.endsWith('.md'));
+                // Include markdown and common assets
+                allFilesFlattened = data.tree.filter(item =>
+                    item.type === 'blob' &&
+                    /\.(md|png|jpg|jpeg|gif|webp|svg|pdf|zip|rar)$/i.test(item.path)
+                );
+                console.log('Index populated:', allFilesFlattened.length, 'files');
             } catch (e) {
                 console.warn('Could not fetch recursive tree for search:', e);
             }
@@ -492,10 +518,10 @@ permalink: /documentacion/
         function renderSidebar(files, container = document.getElementById('sidebar-content'), level = 0) {
             if (level === 0) container.innerHTML = '';
 
-            // Sort: folders first, then files
+            // Sort: folders first, then files, ignoring case and considering numbers
             const sorted = [...files].sort((a, b) => {
-                if (a.type === b.type) return a.name.localeCompare(b.name);
-                return a.type === 'dir' ? -1 : 1;
+                if (a.type !== b.type) return a.type === 'dir' ? -1 : 1;
+                return a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' });
             });
 
             sorted.forEach(file => {
@@ -553,7 +579,8 @@ permalink: /documentacion/
 
         async function setActiveLink(path) {
             if (!path) return;
-            const [cleanPath] = path.split('#');
+            // Clean path and ensure it matches what's in dataset (which might include .md or not)
+            const [cleanPath] = decodeURIComponent(path).split('#');
 
             // Expand parent folders
             const parts = cleanPath.split('/');
@@ -569,9 +596,7 @@ permalink: /documentacion/
                     const subContainer = document.getElementById(subContainerId);
 
                     if (!subContainer || subContainer.classList.contains('hidden')) {
-                        // Trigger click to expand and wait for it to finish
                         try {
-                            // If the onclick is async, we can await its execution if we call it directly
                             if (typeof folderLink.onclick === 'function') {
                                 await folderLink.onclick.call(folderLink);
                             }
@@ -582,11 +607,19 @@ permalink: /documentacion/
                 }
             }
 
+            let found = false;
             document.querySelectorAll('.sidebar-link').forEach(el => {
                 const elPath = el.dataset.path;
-                if (elPath === cleanPath || elPath === cleanPath + '.md' || (elPath + '.md') === cleanPath) {
+                // Match exactly, with .md suffix, or without .md suffix
+                const matches = elPath === cleanPath ||
+                               elPath === cleanPath + '.md' ||
+                               (elPath.endsWith('.md') && elPath.slice(0, -3) === cleanPath) ||
+                               (!elPath.endsWith('.md') && cleanPath.endsWith('.md') && elPath === cleanPath.slice(0, -3));
+
+                if (matches && !found) {
                     el.classList.add('active');
                     el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    found = true;
                 } else {
                     el.classList.remove('active');
                 }
