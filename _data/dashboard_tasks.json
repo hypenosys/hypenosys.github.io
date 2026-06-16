@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-16T13:06:51.867Z",
+  "last_updated": "2026-06-16T13:07:24.271Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3581,7 +3581,7 @@
       "id": 55
     },
     {
-      "title": "sync python scripts with docs",
+      "title": "sync python scripts with docs in /app",
       "descripcion": "we need to manually port app, scripts Git repositories in the folders in the SVN and sync it. we are able to scrape successfully from scripts folders to read from /docs and construct the algorythmic logic",
       "rama": "master",
       "task_type": "chore",
@@ -3626,12 +3626,24 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-16T13:07:23.322Z",
+          "field": "title",
+          "old_value": "sync python scripts with docs",
+          "new_value": "sync python scripts with docs in /app"
         }
       ],
       "id": 56
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #56",
+      "user": "Axlfc",
+      "timestamp": "2026-06-16T13:07:24.271Z"
+    },
     {
       "action": "chore: actualizar tarea #51",
       "user": "Axlfc",
