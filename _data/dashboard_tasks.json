@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-16T13:07:39.695Z",
+  "last_updated": "2026-06-16T13:09:26.257Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1492,7 +1492,7 @@
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Cosmetic",
       "milestone": "M1",
-      "estado": "OK",
+      "estado": "In Review",
       "completitud": 0,
       "resuelto_por": "Alex",
       "detectado_por": "Axel",
@@ -1512,7 +1512,13 @@
         "ux"
       ],
       "external_links": [],
-      "subtasks": [],
+      "subtasks": [
+        {
+          "id": 1781615359933,
+          "text": "añadir milestones, y más valores para filtrar",
+          "done": false
+        }
+      ],
       "acceptance_criteria": "Al seleccionar un tag, solo se muestren las tareas correspondientes.",
       "blocks": [],
       "blocked_by": [],
@@ -1590,6 +1596,13 @@
           "field": "asignados",
           "old_value": "[\"axlfc\",\"dkdidac-design\",\"topperh4rley\"]",
           "new_value": "[\"axlfc\",\"topperh4rley\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-16T13:09:21.302Z",
+          "field": "estado",
+          "old_value": "OK",
+          "new_value": "In Review"
         }
       ],
       "id": 32
@@ -3646,6 +3659,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #32",
+      "user": "Axlfc",
+      "timestamp": "2026-06-16T13:09:26.257Z"
+    },
     {
       "action": "chore: actualizar tarea #27",
       "user": "Axlfc",
