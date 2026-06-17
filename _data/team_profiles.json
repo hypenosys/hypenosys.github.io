@@ -1,10 +1,10 @@
 {
   "schema_version": "2.0.0",
-  "last_updated": "2026-06-15T16:33:05.407Z",
+  "last_updated": "2026-06-17T14:18:05.505Z",
   "members": {
     "Axel": {
       "github_username": "Axlfc",
-      "display_name": "Axel (El Afaces)",
+      "display_name": "¡El Afaces!",
       "role": "3D Animator & Network Systems Admin",
       "lead_role": "Lead de Tools & Automation",
       "bio": "Especialista en animación 3D y entornos interactivos. El motor que mantiene la infraestructura en pie y los personajes en movimiento.",
@@ -52,7 +52,8 @@
       "ai_config": {
         "provider": "ollama",
         "model": "qwen3:8b"
-      }
+      },
+      "portfolio": "https://axlfc.github.io"
     },
     "Alex": {
       "github_username": "TopperH4rley",
@@ -184,6 +185,11 @@
     }
   },
   "_audit_log": [
+    {
+      "action": "chore: actualizar perfil de Axel (profiles)",
+      "user": "Axlfc",
+      "timestamp": "2026-06-17T14:18:05.505Z"
+    },
     {
       "action": "chore: actualizar config AI de Axel",
       "user": "Axlfc",
