@@ -18,18 +18,40 @@ function openCreateTaskModal() {
   switchTaskModalTab('info');
   populateMemberSelects();
   populateRepoSelect();
-  updateBranchList(null);
+
+  // FIX 1 — Auto-detección de repo/branch activo
+  let defaultRepo = localStorage.getItem('hypenosys_active_repo') || '';
+  let defaultBranch = localStorage.getItem('hypenosys_active_branch') || localStorage.getItem('jules_selected_branch') || '';
+
+  // Si no hay datos en hypenosys_*, intentamos extraer de la sesión neural más reciente
+  if (!defaultRepo || !defaultBranch) {
+      const sessions = JSON.parse(localStorage.getItem('hy_neural_sessions') || '[]');
+      if (sessions.length > 0) {
+          const s = sessions[0];
+          if (!defaultRepo && s.repo) defaultRepo = s.repo; // Asumiendo que guardamos repo en sesión
+          if (!defaultBranch && s.branch) defaultBranch = s.branch;
+      }
+  }
+
+  // Fallback a config global si sigue vacío
+  if (!defaultRepo) {
+      const ghConfig = localStorage.getItem('github_repo');
+      if (ghConfig) defaultRepo = ghConfig.startsWith('sources/github/') ? ghConfig : `sources/github/${ghConfig}`;
+  }
+
+  updateBranchList(defaultRepo);
+
   document.getElementById('task-modal-title').textContent = 'Crear Nueva Tarea';
   document.getElementById('task-id-input').value = '';
   document.getElementById('task-title-input').value = '';
   document.getElementById('task-desc-input').value = '';
-  document.getElementById('task-rama-input').value = '';
+  document.getElementById('task-rama-input').value = defaultBranch;
   document.getElementById('branch-validation-msg').classList.add('hidden');
   document.getElementById('task-type-input').value = 'feature';
   document.getElementById('task-priority-input').value = 'Major';
   document.getElementById('task-milestone-input').value = 'M1';
   document.getElementById('task-topic-input').value = 'Programación / Engine';
-  document.getElementById('task-repo-input').value = '';
+  document.getElementById('task-repo-input').value = defaultRepo;
   document.getElementById('task-status-input').value = 'Pending';
   document.getElementById('task-completion-input').value = '0';
   document.getElementById('task-resolver-input').value = '';
@@ -443,7 +465,6 @@ function openLightbox(srcOrTaskId, imageIndex) {
     // Force visible immediately
     modal.style.display = 'flex';
     modal.classList.remove('hidden');
-    console.log('[LIGHTBOX] Lightbox modal visible');
 }
 
 function updateLightboxUI() {
