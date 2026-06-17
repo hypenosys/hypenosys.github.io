@@ -165,6 +165,9 @@ permalink: /documentacion/
                     <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
                     <input type="text" id="doc-search" placeholder="Buscar documento..."
                            class="w-full bg-slate-950 border border-slate-800 rounded-lg py-2 pl-9 pr-3 text-xs text-slate-300 focus:outline-none focus:border-indigo-500">
+                    <div id="search-results" class="absolute top-full left-0 w-full mt-2 bg-slate-900 border border-slate-800 rounded-lg shadow-2xl z-50 hidden max-h-64 overflow-y-auto custom-scrollbar">
+                        <!-- Results go here -->
+                    </div>
                 </div>
             </div>
             <div id="sidebar-content" class="flex-grow overflow-y-auto custom-scrollbar p-2 space-y-1">
@@ -218,12 +221,7 @@ permalink: /documentacion/
                 <div id="markdown-section" class="hidden">
                     <div class="flex flex-wrap items-center justify-between gap-4 mb-8 pb-4 border-b border-slate-800">
                         <div id="breadcrumb" class="flex items-center gap-2 text-xs font-mono text-slate-500">
-                            <button onclick="resetToWelcome()" class="hover:text-white transition-colors flex items-center gap-1">
-                                <i class="fa-solid fa-folder-open"></i>
-                                <span>docs</span>
-                            </button>
-                            <i class="fa-solid fa-chevron-right text-[8px]"></i>
-                            <span id="current-filename" class="text-indigo-400">archivo.md</span>
+                            <!-- Breadcrumb content generated dynamically -->
                         </div>
                         <div class="flex items-center gap-2">
                             <a id="btn-edit-github" target="_blank" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg text-[10px] font-bold border border-slate-700 flex items-center gap-2 transition-all">
@@ -272,10 +270,258 @@ permalink: /documentacion/
     <script>
         const REPO_OWNER = 'hypenosys';
         const REPO_NAME = 'docs';
+        const DEFAULT_BRANCH = 'master'; // Fixed: hypenosys/docs uses 'master'
         const GITHUB_API = 'https://api.github.com';
 
         let currentPath = '';
         let allFilesFlattened = [];
+
+        // --- Auth Helper ---
+        function getAuthHeaders() {
+            const token = sessionStorage.getItem('gh_access_token') ||
+                         localStorage.getItem('gh_access_token') ||
+                         localStorage.getItem('github_token');
+
+            const headers = { 'Accept': 'application/vnd.github.v3+json' };
+            if (token && token.length > 10) {
+                headers['Authorization'] = `Bearer ${token.trim()}`;
+            }
+            return headers;
+        }
+
+        // --- Custom Marked.js Extension for Obsidian-style [[Wikilinks]] ---
+        const wikilinkExtension = {
+            name: 'wikilink',
+            level: 'inline',
+            start(src) {
+                const imgIdx = src.indexOf('![[');
+                const linkIdx = src.indexOf('[[');
+                if (imgIdx !== -1 && (linkIdx === -1 || imgIdx < linkIdx)) return imgIdx;
+                return linkIdx;
+            },
+            tokenizer(src, tokens) {
+                const rule = /^(!)?\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/;
+                const match = rule.exec(src);
+                if (match) {
+                    const isImage = !!match[1];
+                    const rawPath = match[2].trim();
+                    const text = match[3] ? match[3].trim() : rawPath;
+
+                    let href = rawPath;
+                    // For document links, add .md if missing
+                    if (!isImage && !href.includes('.') && !href.startsWith('#')) {
+                        href += '.md';
+                    }
+
+                    return {
+                        type: 'wikilink',
+                        raw: match[0],
+                        isImage: isImage,
+                        href: href,
+                        text: text
+                    };
+                }
+            },
+            renderer(token) {
+                const resolved = resolveWikilinkPath(token.href);
+
+                if (token.isImage) {
+                    const rawUrl = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${DEFAULT_BRANCH}/${resolved}`;
+                    return `<img src="${rawUrl}" alt="${token.text}" class="wikilink-image">`;
+                }
+
+                return `<a href="#${resolved}" class="wikilink-active">${token.text}</a>`;
+            }
+        };
+
+        /**
+         * Finds a "healthy" resource for a given path.
+         * If the path is a directory, it looks for README.md, index.md, etc.
+         */
+        function findHealthyResource(path) {
+            if (!path || path === '/' || path === '.') return 'README.md';
+
+            // Clean path: NFC normalization, forward slashes, no leading slash
+            const normalized = path.normalize('NFC').replace(/\\/g, '/').replace(/^\//, '').replace(/\/$/, '');
+
+            // 1. Direct hit (as-is)
+            if (allFilesFlattened.some(f => f.path.normalize('NFC') === normalized)) {
+                return normalized;
+            }
+
+            // 2. Folder index check
+            const folderPrefix = normalized + '/';
+            const indexCandidates = ['README.md', 'readme.md', 'index.md', 'INDEX.md'];
+
+            for (const cand of indexCandidates) {
+                const fullPath = folderPrefix + cand;
+                if (allFilesFlattened.some(f => f.path.normalize('NFC') === fullPath)) {
+                    return fullPath;
+                }
+            }
+
+            // 3. Fallback: Any .md in the folder
+            const firstMd = allFilesFlattened.find(f =>
+                f.path.normalize('NFC').startsWith(folderPrefix) && f.path.endsWith('.md')
+            );
+            if (firstMd) return firstMd.path;
+
+            // 4. Missing .md extension check
+            if (!normalized.includes('.')) {
+                const withMd = normalized + '.md';
+                if (allFilesFlattened.some(f => f.path.normalize('NFC') === withMd)) {
+                    return withMd;
+                }
+            }
+
+            return normalized;
+        }
+
+        function resolveWikilinkPath(target) {
+            if (!target || target === '/') return 'README.md';
+
+            // Normalize target
+            const decoded = decodeURIComponent(target).normalize('NFC').replace(/\\/g, '/');
+            const [pathPart, anchor] = decoded.split('#');
+
+            // Just an anchor? Relative to current path
+            if (!pathPart && anchor) {
+                return `${currentPath.split('#')[0]}#${anchor}`;
+            }
+
+            const normalizedPart = pathPart.replace(/^\//, '');
+            const isNonMd = /\.(png|jpg|jpeg|gif|webp|svg|pdf|zip|rar)$/i.test(normalizedPart);
+
+            // Step 1: Relative match (highest priority)
+            const relativeBase = resolveRelativePath(currentPath, normalizedPart);
+            const healthyRelative = findHealthyResource(relativeBase);
+            if (allFilesFlattened.some(f => f.path.normalize('NFC') === healthyRelative)) {
+                return anchor ? `${healthyRelative}#${anchor}` : healthyRelative;
+            }
+
+            // Step 2: Root-relative match
+            const healthyRoot = findHealthyResource(normalizedPart);
+            if (allFilesFlattened.some(f => f.path.normalize('NFC') === healthyRoot)) {
+                return anchor ? `${healthyRoot}#${anchor}` : healthyRoot;
+            }
+
+            // Step 3: Global/Fuzzy match (Obsidian style)
+            const targetLower = normalizedPart.toLowerCase();
+            const targetFilename = normalizedPart.split('/').pop().toLowerCase();
+
+            const matches = allFilesFlattened.filter(f => {
+                const fPath = f.path.normalize('NFC').toLowerCase();
+                const fName = fPath.split('/').pop();
+                return fPath === targetLower ||
+                       fPath.endsWith('/' + targetLower) ||
+                       fName === targetFilename ||
+                       fName === targetFilename + '.md';
+            });
+
+            if (matches.length > 0) {
+                // Sort by proximity to current directory
+                const currentDir = currentPath.split('/').slice(0, -1).join('/').normalize('NFC');
+                matches.sort((a, b) => {
+                    const aPath = a.path.normalize('NFC');
+                    const bPath = b.path.normalize('NFC');
+
+                    // Prioritize exact filename match
+                    const aName = aPath.split('/').pop().toLowerCase();
+                    const bName = bPath.split('/').pop().toLowerCase();
+                    const aExact = aName === targetFilename + '.md' || aName === targetFilename;
+                    const bExact = bName === targetFilename + '.md' || bName === targetFilename;
+
+                    if (aExact && !bExact) return -1;
+                    if (!aExact && bExact) return 1;
+
+                    return getCommonPrefixLength(bPath, currentDir) - getCommonPrefixLength(aPath, currentDir);
+                });
+                const best = matches[0].path;
+                return anchor ? `${best}#${anchor}` : best;
+            }
+
+            // Fallback: If nothing found, return original normalized with .md if missing extension
+            let finalFallback = normalizedPart;
+            if (!isNonMd && !finalFallback.includes('.') && !finalFallback.endsWith('/')) {
+                finalFallback += '.md';
+            }
+            return anchor ? `${finalFallback}#${anchor}` : finalFallback;
+        }
+
+        function getCommonPrefixLength(s1, s2) {
+            let i = 0;
+            while (i < s1.length && i < s2.length && s1[i] === s2[i]) i++;
+            return i;
+        }
+
+        marked.use({
+            extensions: [wikilinkExtension],
+            renderer: {
+                link(payload) {
+                    let href, title, text;
+                    if (typeof payload === 'object' && payload !== null) {
+                        ({ href, title, text } = payload);
+                    } else {
+                        href = arguments[0];
+                        title = arguments[1];
+                        text = arguments[2];
+                    }
+
+                    if (href && typeof href === 'string') {
+                        if (href.startsWith('#')) {
+                            return `<a href="#${currentPath.split('#')[0]}${href}" ${title ? `title="${title}"` : ''}>${text}</a>`;
+                        }
+                        if (!href.startsWith('http') && !href.startsWith('mailto:')) {
+                            return `<a href="#${resolveWikilinkPath(href)}" ${title ? `title="${title}"` : ''}>${text}</a>`;
+                        }
+                    }
+                    return false;
+                },
+                image(payload) {
+                    let href, title, text;
+                    if (typeof payload === 'object' && payload !== null) {
+                        ({ href, title, text } = payload);
+                    } else {
+                        href = arguments[0];
+                        title = arguments[1];
+                        text = arguments[2];
+                    }
+
+                    if (href && typeof href === 'string' && !href.startsWith('http')) {
+                        const resolved = resolveWikilinkPath(href);
+                        return `<img src="https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${DEFAULT_BRANCH}/${resolved}" alt="${text}" ${title ? `title="${title}"` : ''}>`;
+                    }
+                    return false;
+                }
+            }
+        });
+
+        function resolveRelativePath(basePath, relativePath) {
+            if (!relativePath || relativePath.startsWith('http') || relativePath.startsWith('#')) return relativePath;
+            if (relativePath.startsWith('/')) return relativePath.substring(1);
+
+            const base = (basePath || '').normalize('NFC').replace(/\\/g, '/');
+            const rel = relativePath.normalize('NFC').replace(/\\/g, '/');
+            const [pathOnly, anchor] = rel.split('#');
+
+            let parts = base.split('/').filter(p => !!p);
+            // If base looks like a file, remove it
+            if (parts.length > 0 && parts[parts.length - 1].includes('.')) {
+                parts.pop();
+            }
+
+            const relParts = pathOnly.split('/').filter(p => !!p);
+            for (const p of relParts) {
+                if (p === '..') {
+                    if (parts.length > 0) parts.pop();
+                } else if (p !== '.') {
+                    parts.push(p);
+                }
+            }
+
+            const resolved = parts.join('/');
+            return anchor ? `${resolved}#${anchor}` : resolved;
+        }
 
         async function init() {
             try {
@@ -284,33 +530,48 @@ permalink: /documentacion/
                 renderSidebar(files);
                 updateConnectionStatus(true);
 
-                // Fetch all files recursively for search and quick links
-                fetchAllFiles();
+                // Fetch all files recursively for search and quick links (IMPORTANT: wait for this for link resolution)
+                await fetchAllFiles().catch(e => console.warn('Global search index failed:', e));
 
                 // Handle direct links to files via hash
                 if (window.location.hash) {
                     const path = window.location.hash.substring(1);
-                    loadDocument(path);
+                    await loadDocument(path);
                 }
             } catch (error) {
                 console.error('Error initializing docs:', error);
-                showError('Error al cargar la estructura del repositorio. Verifica tu conexión.');
+                showError(`Error de Sincronización: ${error.message}. Verifica tu conexión o permisos.`);
                 updateConnectionStatus(false);
             }
         }
 
         async function fetchRepoContents(path) {
-            const response = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`);
-            if (!response.ok) throw new Error('Failed to fetch contents');
+            const response = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}?ref=${DEFAULT_BRANCH}`, {
+                headers: getAuthHeaders()
+            });
+            if (!response.ok) {
+                const err = await response.json().catch(() => ({}));
+                throw new Error(err.message || `HTTP ${response.status}`);
+            }
             return await response.json();
         }
 
         async function fetchAllFiles() {
             try {
-                const response = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/git/trees/main?recursive=1`);
-                if (!response.ok) return;
+                const response = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/git/trees/${DEFAULT_BRANCH}?recursive=1`, {
+                    headers: getAuthHeaders()
+                });
+                if (!response.ok) {
+                    console.error('Failed to fetch tree:', response.status);
+                    return;
+                }
                 const data = await response.json();
-                allFilesFlattened = data.tree.filter(item => item.path.endsWith('.md'));
+                // Include markdown and common assets
+                allFilesFlattened = data.tree.filter(item =>
+                    item.type === 'blob' &&
+                    /\.(md|png|jpg|jpeg|gif|webp|svg|pdf|zip|rar)$/i.test(item.path)
+                );
+                console.log('Index populated:', allFilesFlattened.length, 'files');
             } catch (e) {
                 console.warn('Could not fetch recursive tree for search:', e);
             }
@@ -319,10 +580,10 @@ permalink: /documentacion/
         function renderSidebar(files, container = document.getElementById('sidebar-content'), level = 0) {
             if (level === 0) container.innerHTML = '';
 
-            // Sort: folders first, then files
+            // Sort: folders first, then files, ignoring case and considering numbers
             const sorted = [...files].sort((a, b) => {
-                if (a.type === b.type) return a.name.localeCompare(b.name);
-                return a.type === 'dir' ? -1 : 1;
+                if (a.type !== b.type) return a.type === 'dir' ? -1 : 1;
+                return a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' });
             });
 
             sorted.forEach(file => {
@@ -336,18 +597,28 @@ permalink: /documentacion/
                 link.className = `sidebar-link w-full text-left px-3 py-2 rounded-lg text-xs transition-all flex items-center gap-2 hover:bg-slate-800 text-slate-400 hover:text-white`;
                 link.style.paddingLeft = `${padding}px`;
                 link.dataset.path = file.path;
+                link.dataset.sha = file.sha;
 
                 const icon = isDir ? 'fa-folder text-amber-500/70' : 'fa-file-lines text-slate-500';
                 link.innerHTML = `<i class="fa-solid ${icon} w-4"></i> <span class="truncate">${file.name.replace('.md', '')}</span>`;
 
                 if (isDir) {
-                    link.onclick = async () => {
+                    link.onclick = async (e) => {
                         const subContainerId = `dir-${file.sha}`;
                         let subContainer = document.getElementById(subContainerId);
+
+                        // If it's a real user click (e is defined), navigate to the healthy resource
+                        if (e && (!subContainer || subContainer.classList.contains('hidden'))) {
+                            const healthy = findHealthyResource(file.path);
+                            if (healthy !== file.path) {
+                                window.location.hash = healthy;
+                            }
+                        }
 
                         if (subContainer) {
                             subContainer.classList.toggle('hidden');
                             link.querySelector('i').classList.toggle('fa-folder-open');
+                            return Promise.resolve();
                         } else {
                             link.innerHTML = `<i class="fa-solid fa-spinner fa-spin w-4"></i> <span class="truncate">${file.name}</span>`;
                             try {
@@ -357,15 +628,16 @@ permalink: /documentacion/
                                 subContainer.id = subContainerId;
                                 item.appendChild(subContainer);
                                 renderSidebar(subFiles, subContainer, level + 1);
+                                return Promise.resolve();
                             } catch (e) {
                                 link.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-red-500 w-4"></i> <span class="truncate">${file.name}</span>`;
+                                throw e;
                             }
                         }
                     };
                 } else {
                     link.onclick = () => {
-                        setActiveLink(file.path);
-                        loadDocument(file.path);
+                        window.location.hash = file.path;
                         if (window.innerWidth < 768) toggleSidebar();
                     };
                 }
@@ -375,34 +647,143 @@ permalink: /documentacion/
             });
         }
 
-        function setActiveLink(path) {
-            document.querySelectorAll('.sidebar-link').forEach(el => {
-                if (el.dataset.path === path) {
+        async function setActiveLink(path) {
+            if (!path) return;
+            const normalized = normalizeDocPath(path);
+            const [cleanPath] = normalized.split('#');
+
+            // Find parent folders of the current file
+            const parts = cleanPath.split('/');
+            let currentPathPart = '';
+
+            // For every segment in the path except the last one (the file itself),
+            // ensure the sidebar folder is expanded.
+            for (let i = 0; i < parts.length - 1; i++) {
+                currentPathPart += (currentPathPart ? '/' : '') + parts[i];
+                const folderLink = Array.from(document.querySelectorAll('.sidebar-link'))
+                    .find(el => el.dataset.path === currentPathPart);
+
+                if (folderLink) {
+                    const sha = folderLink.dataset.sha;
+                    const subContainerId = `dir-${sha}`;
+                    let subContainer = document.getElementById(subContainerId);
+
+                    if (!subContainer || subContainer.classList.contains('hidden')) {
+                        try {
+                            // Call the onclick handler to expand (pass null for e to prevent navigation)
+                            await folderLink.onclick(null);
+                        } catch (e) {
+                            console.warn('Could not expand folder:', currentPathPart, e);
+                        }
+                    }
+                }
+            }
+
+            // After expansion, highlight the correct file
+            let found = false;
+            const links = document.querySelectorAll('.sidebar-link');
+
+            links.forEach(el => {
+                const elPath = el.dataset.path;
+                if (!elPath) return;
+
+                // Match exactly, or with .md suffix logic
+                const matches = elPath === cleanPath ||
+                               elPath === cleanPath + '.md' ||
+                               (elPath.endsWith('.md') && elPath.slice(0, -3) === cleanPath) ||
+                               (!elPath.endsWith('.md') && cleanPath.endsWith('.md') && elPath === cleanPath.slice(0, -3));
+
+                if (matches && !found) {
                     el.classList.add('active');
+                    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    found = true;
                 } else {
                     el.classList.remove('active');
                 }
             });
+
+            // Special case: If we didn't find the file link but we are in a folder, highlight the folder
+            if (!found && parts.length > 1) {
+                const parentPath = parts.slice(0, -1).join('/');
+                const parentLink = Array.from(document.querySelectorAll('.sidebar-link'))
+                    .find(el => el.dataset.path === parentPath);
+                if (parentLink) {
+                    parentLink.classList.add('active');
+                }
+            }
+        }
+
+        function normalizeDocPath(path) {
+            if (!path) return '';
+            return decodeURIComponent(path)
+                .normalize('NFC')
+                .replace(/\\/g, '/')
+                .replace(/^\//, '');
         }
 
         async function loadDocument(path) {
+            const normalized = normalizeDocPath(path);
+            const [cleanPath, anchor] = normalized.split('#');
+
+            // If only anchor changed, just scroll
+            if (currentPath === cleanPath && anchor) {
+                const element = document.getElementById(anchor);
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth' });
+                    return;
+                }
+            }
+
             showLoading(true);
             try {
-                const response = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`);
-                if (!response.ok) throw new Error('File not found');
+                // Correctly encode each part of the path for the GitHub API
+                const encodedPath = cleanPath.split('/').map(p => encodeURIComponent(p)).join('/');
+                const response = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${encodedPath}?ref=${DEFAULT_BRANCH}`, {
+                    headers: getAuthHeaders()
+                });
+
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        showResourceNotFound(cleanPath);
+                        return;
+                    }
+                    throw new Error(`GitHub API Error: ${response.status}`);
+                }
+
                 const data = await response.json();
 
-                const content = atob(data.content.replace(/\n/g, ''));
-                const decodedContent = decodeURIComponent(escape(content));
+                // Handle both single file and directory results
+                if (Array.isArray(data)) {
+                    const healthy = findHealthyResource(cleanPath);
+                    if (healthy && healthy !== cleanPath) {
+                        return loadDocument(healthy);
+                    } else {
+                        const anyMd = data.find(f => f.name.toLowerCase().endsWith('.md'));
+                        if (anyMd) return loadDocument(anyMd.path);
+                        throw new Error('No se encontró contenido legible (README.md o similar) en esta carpeta.');
+                    }
+                }
 
-                renderMarkdown(decodedContent, path);
+                const binary = atob(data.content.replace(/\n/g, ''));
+                const bytes = new Uint8Array(binary.length);
+                for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+                const decodedContent = new TextDecoder().decode(bytes);
+
+                // Update currentPath before rendering so relative links resolve correctly
+                currentPath = cleanPath;
+                renderMarkdown(decodedContent, cleanPath);
                 updateMetadata(data);
+                await setActiveLink(cleanPath);
 
-                window.location.hash = path;
-                currentPath = path;
+                if (anchor) {
+                    setTimeout(() => {
+                        const element = document.getElementById(anchor);
+                        if (element) element.scrollIntoView({ behavior: 'smooth' });
+                    }, 500);
+                }
             } catch (error) {
                 console.error('Error loading document:', error);
-                showError('No se pudo cargar el contenido del archivo.');
+                showError(`No se pudo cargar "${cleanPath}": ${error.message}`);
             } finally {
                 showLoading(false);
             }
@@ -414,10 +795,33 @@ permalink: /documentacion/
 
             document.getElementById('welcome-section').classList.add('hidden');
             document.getElementById('markdown-section').classList.remove('hidden');
-            document.getElementById('current-filename').textContent = path.split('/').pop().replace('.md', '');
+
+            // Render hierarchical breadcrumb
+            const breadcrumb = document.getElementById('breadcrumb');
+            let breadcrumbHTML = `
+                <button onclick="resetToWelcome()" class="hover:text-white transition-colors flex items-center gap-1">
+                    <i class="fa-solid fa-folder-open"></i>
+                    <span>docs</span>
+                </button>
+            `;
+
+            const parts = path.split('/');
+            let currentLink = '';
+            parts.forEach((part, index) => {
+                breadcrumbHTML += `<i class="fa-solid fa-chevron-right text-[8px] text-slate-600"></i>`;
+                if (index === parts.length - 1) {
+                    breadcrumbHTML += `<span class="text-indigo-400 font-bold">${part.replace('.md', '')}</span>`;
+                } else {
+                    currentLink += (currentLink ? '/' : '') + part;
+                    // Use healthy resource for folder navigation
+                    const healthy = findHealthyResource(currentLink);
+                    breadcrumbHTML += `<button onclick="window.location.hash='${healthy}'" class="hover:text-white transition-colors">${part}</button>`;
+                }
+            });
+            breadcrumb.innerHTML = breadcrumbHTML;
 
             // Buttons
-            document.getElementById('btn-edit-github').href = `https://github.com/${REPO_OWNER}/${REPO_NAME}/edit/main/${path}`;
+            document.getElementById('btn-edit-github').href = `https://github.com/${REPO_OWNER}/${REPO_NAME}/edit/${DEFAULT_BRANCH}/${path}`;
             // Obsidian URI: obsidian://open?vault=docs&file=path%2Fto%2Ffile
             const obsidianPath = encodeURIComponent(path.replace('.md', ''));
             document.getElementById('btn-open-obsidian').href = `obsidian://open?vault=${REPO_NAME}&file=${obsidianPath}`;
@@ -444,6 +848,36 @@ permalink: /documentacion/
             document.getElementById('welcome-section').classList.add('hidden');
             document.getElementById('markdown-section').classList.add('hidden');
             document.getElementById('loading-state').classList.add('hidden');
+        }
+
+        function showResourceNotFound(path) {
+            const container = document.getElementById('markdown-body');
+            container.innerHTML = `
+                <div class="py-12 text-center">
+                    <div class="w-20 h-20 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-6 border border-slate-700">
+                        <i class="fa-solid fa-file-circle-exclamation text-3xl text-slate-500"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white mb-2">Documento no encontrado</h2>
+                    <p class="text-slate-400 mb-8">No pudimos encontrar el recurso: <code class="text-indigo-400">${path}</code></p>
+                    <button onclick="resetToWelcome()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2 rounded-lg text-sm font-bold transition-all">
+                        VOLVER AL INICIO
+                    </button>
+                </div>
+            `;
+            document.getElementById('welcome-section').classList.add('hidden');
+            document.getElementById('markdown-section').classList.remove('hidden');
+            document.getElementById('loading-state').classList.add('hidden');
+            document.getElementById('error-state').classList.add('hidden');
+
+            const breadcrumb = document.getElementById('breadcrumb');
+            breadcrumb.innerHTML = `
+                <button onclick="resetToWelcome()" class="hover:text-white transition-colors flex items-center gap-1">
+                    <i class="fa-solid fa-folder-open"></i>
+                    <span>docs</span>
+                </button>
+                <i class="fa-solid fa-chevron-right text-[8px] text-slate-600"></i>
+                <span class="text-red-400 font-bold">404 - Not Found</span>
+            `;
         }
 
         function resetToWelcome() {
@@ -481,26 +915,76 @@ permalink: /documentacion/
         function findAndLoad(keyword) {
             const found = allFilesFlattened.find(f => f.path.toLowerCase().includes(keyword.toLowerCase()));
             if (found) {
-                loadDocument(found.path);
-                setActiveLink(found.path);
+                window.location.hash = found.path;
             } else {
                 console.log('No direct match found in loaded files');
                 // Try searching in sidebar items currently rendered
                 const link = Array.from(document.querySelectorAll('.sidebar-link')).find(el => el.textContent.toLowerCase().includes(keyword.toLowerCase()));
-                if (link) link.click();
+                if (link) {
+                    window.location.hash = link.dataset.path;
+                }
             }
         }
 
         // Search functionality
         document.getElementById('doc-search').oninput = (e) => {
             const term = e.target.value.toLowerCase();
-            const links = document.querySelectorAll('.sidebar-link');
-            links.forEach(link => {
-                const text = link.textContent.toLowerCase();
-                const isMatch = text.includes(term);
-                link.parentElement.classList.toggle('hidden', !isMatch);
-            });
+            const resultsContainer = document.getElementById('search-results');
+
+            if (!term) {
+                resultsContainer.classList.add('hidden');
+                return;
+            }
+
+            const matches = allFilesFlattened.filter(f =>
+                f.path.toLowerCase().includes(term) ||
+                f.path.split('/').pop().toLowerCase().includes(term)
+            ).slice(0, 10);
+
+            if (matches.length > 0) {
+                resultsContainer.innerHTML = matches.map(f => `
+                    <button onclick="window.location.hash='${f.path}'; document.getElementById('search-results').classList.add('hidden'); document.getElementById('doc-search').value='';"
+                            class="w-full text-left px-4 py-2 hover:bg-slate-800 text-xs border-b border-slate-800 last:border-0 flex flex-col">
+                        <span class="text-indigo-400 font-bold">${f.path.split('/').pop().replace('.md', '')}</span>
+                        <span class="text-[10px] text-slate-500 truncate">${f.path}</span>
+                    </button>
+                `).join('');
+                resultsContainer.classList.remove('hidden');
+            } else {
+                resultsContainer.innerHTML = '<div class="p-4 text-xs text-slate-500">No se encontraron resultados</div>';
+                resultsContainer.classList.remove('hidden');
+            }
         };
+
+        // Close search results when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('#doc-search') && !e.target.closest('#search-results')) {
+                document.getElementById('search-results').classList.add('hidden');
+            }
+        });
+
+        window.addEventListener('hashchange', () => {
+            const hash = window.location.hash.substring(1);
+            if (!hash) {
+                resetToWelcome();
+                return;
+            }
+
+            const normalized = normalizeDocPath(hash);
+            const [newPath, newAnchor] = normalized.split('#');
+            const [oldPath, oldAnchor] = currentPath.split('#');
+
+            if (newPath === oldPath && newAnchor) {
+                // Just an anchor change in the same document
+                const element = document.getElementById(newAnchor);
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth' });
+                }
+            } else {
+                // Actual document change or same document reload
+                loadDocument(hash);
+            }
+        });
 
         init();
     </script>

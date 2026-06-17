@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-15T19:21:15.424Z",
-  "last_updated_by": "Axel",
+  "last_updated": "2026-06-16T13:09:42.549Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -1029,7 +1029,7 @@
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Major",
       "milestone": "M2",
-      "estado": "OK",
+      "estado": "In Review",
       "completitud": 0.5,
       "resuelto_por": "Axel",
       "detectado_por": "Axel",
@@ -1165,6 +1165,13 @@
           "field": "estado",
           "old_value": "In Review",
           "new_value": "OK"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-16T13:07:39.015Z",
+          "field": "estado",
+          "old_value": "OK",
+          "new_value": "In Review"
         }
       ],
       "id": 27
@@ -1485,7 +1492,7 @@
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Cosmetic",
       "milestone": "M1",
-      "estado": "OK",
+      "estado": "Working",
       "completitud": 0,
       "resuelto_por": "Alex",
       "detectado_por": "Axel",
@@ -1583,6 +1590,20 @@
           "field": "asignados",
           "old_value": "[\"axlfc\",\"dkdidac-design\",\"topperh4rley\"]",
           "new_value": "[\"axlfc\",\"topperh4rley\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-16T13:09:21.302Z",
+          "field": "estado",
+          "old_value": "OK",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-16T13:09:39.822Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "Working"
         }
       ],
       "id": 32
@@ -2284,7 +2305,7 @@
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Minor",
       "milestone": "M1",
-      "estado": "Working",
+      "estado": "ToDo",
       "completitud": 1,
       "resuelto_por": "Mitxel",
       "detectado_por": "Axel",
@@ -2480,6 +2501,13 @@
           "field": "prioridad",
           "old_value": "Major",
           "new_value": "Minor"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-15T20:03:17.870Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "ToDo"
         }
       ],
       "id": 40
@@ -2714,13 +2742,13 @@
       "id": 43
     },
     {
-      "title": "Controlar con Claude Neural API de n8n",
-      "descripcion": "Integrar la API de n8n en el flujo de trabajo de la IA mediante Cloudflare Workers. Permite orquestar workflows de forma segura y escalable.",
+      "title": "Cognito-Agent en Claude Neural API desde n8n con ingestión en Qdrant + Kavita (UOC) + PSQL",
+      "descripcion": "orquestar workflows de forma segura y escalable. Incluye citation",
       "rama": "chore/n8n-api-worker",
       "task_type": "chore",
       "tema_principal": "Tools / Automation",
       "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Major",
+      "prioridad": "Medium",
       "milestone": "M3",
       "estado": "Working",
       "completitud": 0,
@@ -2791,6 +2819,27 @@
           "field": "estado",
           "old_value": "Pending",
           "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-16T13:06:34.162Z",
+          "field": "title",
+          "old_value": "Controlar con Claude Neural API de n8n",
+          "new_value": "Cognito-Agent en Claude Neural API desde n8n con ingestión en Qdrant + Kavita (UOC) + PSQL"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-16T13:06:34.162Z",
+          "field": "descripcion",
+          "old_value": "Integrar la API de n8n en el flujo de trabajo de la IA mediante Cloudflare Workers. Permite orquestar workflows de forma segura y escalable.",
+          "new_value": "orquestar workflows de forma segura y escalable. Incluye citation"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-16T13:06:34.162Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Medium"
         }
       ],
       "id": 44
@@ -3182,7 +3231,7 @@
       "repository": "hypenosys/docs",
       "prioridad": "Major",
       "milestone": "M1",
-      "estado": "Working",
+      "estado": "In Review",
       "completitud": 0.3,
       "resuelto_por": "Javi",
       "detectado_por": "Axel",
@@ -3303,6 +3352,13 @@
           "field": "milestone",
           "old_value": "M2",
           "new_value": "M1"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-16T13:06:51.345Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
         }
       ],
       "id": 51
@@ -3316,7 +3372,7 @@
       "repository": "hypenosys/docs",
       "prioridad": "Medium",
       "milestone": "M2",
-      "estado": "Pending",
+      "estado": "Working",
       "completitud": 0,
       "resuelto_por": null,
       "detectado_por": "Axel",
@@ -3376,6 +3432,13 @@
           "field": "milestone",
           "old_value": "M1",
           "new_value": "M2"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-15T22:19:12.900Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
         }
       ],
       "id": 52
@@ -3495,7 +3558,7 @@
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Major",
       "milestone": "M2",
-      "estado": "Pending",
+      "estado": "Working",
       "completitud": 0,
       "resuelto_por": null,
       "detectado_por": "Axel",
@@ -3527,12 +3590,126 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-15T22:19:01.472Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
         }
       ],
       "id": 55
+    },
+    {
+      "title": "sync python scripts with docs in /app",
+      "descripcion": "we need to manually port app, scripts Git repositories in the folders in the SVN and sync it. we are able to scrape successfully from scripts folders to read from /docs and construct the algorythmic logic",
+      "rama": "master",
+      "task_type": "chore",
+      "tema_principal": "Programación / Engine",
+      "repository": "hypenosys/scripts",
+      "prioridad": "Major",
+      "milestone": "M2",
+      "estado": "Working",
+      "completitud": 0.3,
+      "resuelto_por": "Alex",
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc",
+        "topperh4rley"
+      ],
+      "email_responsable": "axel@hypenosys.com",
+      "emails_asignados": [
+        "alex@hypenosys.com"
+      ],
+      "start_date": "2026-06-16",
+      "due_date": "2026-06-28",
+      "estimated_hours": 6,
+      "story_points": 6,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-16",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-16T11:52:44.802Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-16T13:07:23.322Z",
+          "field": "title",
+          "old_value": "sync python scripts with docs",
+          "new_value": "sync python scripts with docs in /app"
+        }
+      ],
+      "id": 56
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #32",
+      "user": "Axlfc",
+      "timestamp": "2026-06-16T13:09:42.549Z"
+    },
+    {
+      "action": "chore: actualizar tarea #32",
+      "user": "Axlfc",
+      "timestamp": "2026-06-16T13:09:26.257Z"
+    },
+    {
+      "action": "chore: actualizar tarea #27",
+      "user": "Axlfc",
+      "timestamp": "2026-06-16T13:07:39.695Z"
+    },
+    {
+      "action": "chore: actualizar tarea #56",
+      "user": "Axlfc",
+      "timestamp": "2026-06-16T13:07:24.271Z"
+    },
+    {
+      "action": "chore: actualizar tarea #51",
+      "user": "Axlfc",
+      "timestamp": "2026-06-16T13:06:51.867Z"
+    },
+    {
+      "action": "chore: actualizar tarea #44",
+      "user": "Axlfc",
+      "timestamp": "2026-06-16T13:06:35.050Z"
+    },
+    {
+      "action": "feat: nueva tarea #1781610764802 añadida",
+      "user": "Axlfc",
+      "timestamp": "2026-06-16T11:52:46.337Z"
+    },
+    {
+      "action": "chore: actualizar tarea #52",
+      "user": "Axlfc",
+      "timestamp": "2026-06-15T22:19:14.169Z"
+    },
+    {
+      "action": "chore: actualizar tarea #55",
+      "user": "Axlfc",
+      "timestamp": "2026-06-15T22:19:02.389Z"
+    },
+    {
+      "action": "chore: actualizar tarea #40",
+      "user": "Axlfc",
+      "timestamp": "2026-06-15T20:03:20.596Z"
+    },
     {
       "action": "feat: nueva tarea #1781551272201 añadida",
       "user": "Axlfc",
