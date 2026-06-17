@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-16T13:09:42.549Z",
+  "last_updated": "2026-06-17T14:01:31.517Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1485,7 +1485,7 @@
     },
     {
       "title": "Filtrar tareas por tag en /dashboard",
-      "descripcion": "Implementar un sistema de filtrado por etiquetas en el dashboard de tareas. Permite al equipo enfocarse en áreas específicas como 'bug' o 'frontend'.",
+      "descripcion": "Implementar un sistema de filtrado por etiquetas en el dashboard de tareas. Permite al equipo enfocarse en áreas específicas como 'bug' o 'frontend'. Añadir Milestone, filtrar pkr tema principal",
       "rama": "feature/dashboard-tag-filter",
       "task_type": "feature",
       "tema_principal": "Programación / Engine",
@@ -1604,6 +1604,13 @@
           "field": "estado",
           "old_value": "In Review",
           "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-17T14:01:30.772Z",
+          "field": "descripcion",
+          "old_value": "Implementar un sistema de filtrado por etiquetas en el dashboard de tareas. Permite al equipo enfocarse en áreas específicas como 'bug' o 'frontend'.",
+          "new_value": "Implementar un sistema de filtrado por etiquetas en el dashboard de tareas. Permite al equipo enfocarse en áreas específicas como 'bug' o 'frontend'. Añadir Milestone, filtrar pkr tema principal"
         }
       ],
       "id": 32
@@ -3660,6 +3667,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #32",
+      "user": "Axlfc",
+      "timestamp": "2026-06-17T14:01:31.517Z"
+    },
     {
       "action": "chore: actualizar tarea #32",
       "user": "Axlfc",
