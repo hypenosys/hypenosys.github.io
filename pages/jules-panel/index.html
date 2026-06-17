@@ -3261,7 +3261,7 @@ body{
     function openDrawer(sessionId) {
         $('dr-sub').textContent = `Sesión: ${sessionId.split('/').pop()}`;
         $('dr-overlay').classList.add('open'); $('drawer').classList.add('open');
-        refreshActivities(sessionId);
+        refreshTerminalActivities(sessionId);
     }
     function closeDrawer() { $('dr-overlay').classList.remove('open'); $('drawer').classList.remove('open'); }
     function switchDrawerTab(tab, el) {
@@ -3270,7 +3270,7 @@ body{
         el.classList.add('active'); $(`dr-panel-${tab}`).classList.add('active');
     }
 
-    async function refreshActivities(sessionId) {
+    async function refreshTerminalActivities(sessionId) {
         const container = $('dr-term'), diffContainer = $('diff-content'); if (!container) return;
         try {
             const data = await window.julesApi.getActivities(sessionId, 50);
@@ -3932,7 +3932,7 @@ body{
         }
 
         // Final save and render
-        saveSessions();
+        saveSessionsV2();
         renderChatV2Messages();
     }
 
@@ -4016,6 +4016,29 @@ body{
       </span>`;
     }
 
+    /**
+     * Updates the status of a specific task in the local/remote database based on Jules session state
+     */
+    async function updateSessionStatus(idSafe, session) {
+        if (!session || !idSafe) return;
+        const taskContext = JSON.parse(localStorage.getItem('hy_neural_task_context') || '{}');
+        if (taskContext.id && String(taskContext.id) === String(idSafe)) {
+             const statusMap = {
+                'QUEUED': 'Pending',
+                'PLANNING': 'Pending',
+                'AWAITING_PLAN_APPROVAL': 'Working',
+                'IN_PROGRESS': 'Working',
+                'COMPLETED': 'Fixed',
+                'FAILED': 'KO'
+            };
+            const newStatus = statusMap[session.state];
+            if (newStatus && taskContext.estado !== newStatus) {
+                console.log(`[Neural] Syncing task #${idSafe} status to ${newStatus}`);
+                await window.taskOps.updateTask(idSafe, { estado: newStatus });
+            }
+        }
+    }
+
     async function refreshActivities(idSafe) {
         const currentSessions = window.julesSessionsCache || [];
         const sessionId = currentSessions.find(s => getIdSafe(s.name) === idSafe)?.name || 'sessions/' + idSafe;
@@ -4025,6 +4048,9 @@ body{
         try {
             const data = await window.julesApi.getActivities(sessionId, 50);
             const session = currentSessions.find(s => s.name === sessionId);
+
+            // Sync task status if linked
+            if (session) updateSessionStatus(idSafe, session);
 
             // Update sticky badge
             let stickyBadge = document.getElementById(`sticky-badge-${idSafe}`);
