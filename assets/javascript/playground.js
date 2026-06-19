@@ -1,199 +1,254 @@
 /**
- * HYPENOSYS PLAYGROUND — Core Logic
- * Entorno de pruebas aislado.
+ * HYPENOSYS PLAYGROUND — Integrated Sandbox Logic
+ * Aislado, seguro y persistente en localStorage.
  */
 
 (function() {
-    console.log('🧪 [SANDBOX] Inicializando Hypenosys Playground...');
+    console.log("🧪 [SANDBOX] Inicializando entorno de pruebas...");
 
-    // --- 1. AISLAMIENTO DE DATOS (CRÍTICO) ---
+    // --- 1. CONFIGURACIÓN Y MOCKS ---
+
     const sandboxDb = {
-        tasks: JSON.parse(localStorage.getItem('sandbox_tasks') || '[]'),
-        save(key, data) {
-            localStorage.setItem(`sandbox_${key}`, JSON.stringify(data));
-            console.log('[SANDBOX] Guardado local:', key, data);
-            updateDebugPanel();
+        getTasks() {
+            return JSON.parse(localStorage.getItem('sandbox_tasks') || '[]');
         },
-        reset() {
-            Object.keys(localStorage).forEach(key => {
-                if (key.startsWith('sandbox_')) {
-                    localStorage.removeItem(key);
-                }
-            });
-            console.warn('[SANDBOX] Reset completo.');
-            window.location.reload();
+        saveTasks(tasks) {
+            localStorage.setItem('sandbox_tasks', JSON.stringify(tasks));
+            this.log(`Tareas sincronizadas (${tasks.length} total)`);
+            if (window.renderSandboxKanban) window.renderSandboxKanban();
+            updateCharts();
+            updateDebugInfo();
+        },
+        log(msg, type = 'info') {
+            const container = document.getElementById('sandboxLogs');
+            if (!container) return;
+            const entry = document.createElement('div');
+            const time = new Date().toLocaleTimeString();
+            entry.innerHTML = `<span class="text-comment">[${time}]</span> ${msg}`;
+            container.appendChild(entry);
+            container.scrollTop = container.scrollHeight;
         }
     };
     window.sandboxDb = sandboxDb;
 
-    // --- 2. SEGURIDAD: INTERCEPTOR DE FETCH ---
+    // Interceptor de Fetch para bloquear escrituras reales a GitHub
     const originalFetch = window.fetch;
-    window.fetch = function(url, ...args) {
-        const urlStr = typeof url === 'string' ? url : url.url;
-        if (urlStr && urlStr.includes('api.github.com') && urlStr.includes('/contents/')) {
-            console.warn('[SANDBOX BLOQUEADO] Intento de escritura real interceptado:', urlStr);
-            logToDebug('⛔ BLOQUEADO: Escritura real a GitHub interceptada');
+    window.fetch = function(url, options) {
+        const urlStr = url.toString();
+        if (urlStr.includes('api.github.com') && options && (options.method === 'PUT' || options.method === 'POST' || options.method === 'PATCH' || options.method === 'DELETE')) {
+            console.warn('⛔ [SANDBOX] Bloqueada petición de escritura real:', urlStr);
+            sandboxDb.log(`⚠️ INTENTO DE ESCRITURA REAL BLOQUEADO: ${options.method} ${urlStr}`, 'warning');
 
-            const indicator = document.getElementById('sandbox-indicator');
-            if (indicator) {
-                indicator.innerHTML = '<span class="status-dot status-blocked"></span> <span class="small">🔴 Detectado intento de escritura real (bloqueado)</span>';
-            }
-
-            return Promise.resolve(new Response(JSON.stringify({ sandbox: true, message: "Blocked by sandbox interceptor" }), { status: 200 }));
+            // Simular respuesta exitosa de GitHub para que la lógica siga funcionando si es necesario
+            return Promise.resolve(new Response(JSON.stringify({
+                content: { name: 'sandbox-mock', sha: '00000000000000' },
+                commit: { message: 'Mocked by sandbox' }
+            }), { status: 200 }));
         }
-        return originalFetch(url, ...args);
+        return originalFetch(url, options);
     };
 
-    // --- 3. PANEL DE DEBUG GLOBAL ---
-    const debugContainer = document.getElementById('debug-logs');
-    function logToDebug(message) {
-        if (!debugContainer) return;
-        const entry = document.createElement('div');
-        entry.className = 'mb-1';
-        entry.innerHTML = `<span class="text-muted">[${new Date().toLocaleTimeString()}]</span> ${message}`;
-        debugContainer.appendChild(entry);
-        debugContainer.scrollTop = debugContainer.scrollHeight;
-    }
-    window.sandboxLog = logToDebug;
+    // --- 2. GENERAL OPS ---
 
-    function updateDebugPanel() {
-        const keysSpan = document.getElementById('sandbox-keys');
-        if (keysSpan) {
-            const sandboxKeys = Object.keys(localStorage).filter(k => k.startsWith('sandbox_'));
-            keysSpan.textContent = JSON.stringify(sandboxKeys);
+    window.resetSandbox = function() {
+        if (confirm('¿Estás seguro de que quieres borrar todos los datos del sandbox?')) {
+            Object.keys(localStorage).forEach(key => {
+                if (key.startsWith('sandbox_')) localStorage.removeItem(key);
+            });
+            sandboxDb.log("Sandbox reseteado.");
+            window.location.reload();
         }
-    }
+    };
 
-    // --- 4. MÓDULO: CHART.JS SANDBOX ---
-    let sandboxChartInstance = null;
-    function initChartSandbox() {
-        const ctx = document.getElementById('sandboxChart');
-        if (!ctx) return;
+    // --- 3. LÓGICA DE CHARTS ---
 
-        sandboxChartInstance = new Chart(ctx, {
+    let barChart, pieChart;
+
+    function initCharts() {
+        const barCtx = document.getElementById('sandboxTasksChart');
+        const pieCtx = document.getElementById('sandboxPieChart');
+
+        if (!barCtx || !pieCtx) return;
+
+        barChart = new Chart(barCtx, {
             type: 'bar',
             data: {
-                labels: ['Sprint 1', 'Sprint 2', 'Sprint 3', 'Sprint 4'],
+                labels: ['Todo', 'In Progress', 'Done'],
                 datasets: [{
-                    label: 'Velocidad de Prueba',
-                    data: [12, 19, 3, 5],
-                    backgroundColor: 'rgba(189, 147, 249, 0.5)',
-                    borderColor: '#bd93f9',
-                    borderWidth: 1
+                    label: 'Tareas por estado',
+                    data: [0, 0, 0],
+                    backgroundColor: ['#6272a4', '#f1fa8c', '#50fa7b'],
+                    borderColor: '#282a36',
+                    borderWidth: 2
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 scales: {
-                    y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.1)' } },
-                    x: { grid: { display: false } }
+                    y: { beginAtZero: true, grid: { color: '#343746' }, ticks: { color: '#6272a4' } },
+                    x: { ticks: { color: '#f8f8f2' } }
                 }
             }
         });
 
-        const slider = document.getElementById('chart-slider');
-        slider.addEventListener('input', (e) => {
-            const val = parseInt(e.target.value);
-            sandboxChartInstance.data.datasets[0].data[0] = val / 2;
-            sandboxChartInstance.data.datasets[0].data[1] = val / 3;
-            sandboxChartInstance.data.datasets[0].data[2] = val / 5;
-            sandboxChartInstance.data.datasets[0].data[3] = val / 4;
-            sandboxChartInstance.update();
-            logToDebug(`📊 Gráfico actualizado: ${val}`);
+        pieChart = new Chart(pieCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Todo', 'In Progress', 'Done'],
+                datasets: [{
+                    data: [0, 0, 0],
+                    backgroundColor: ['#6272a4', '#f1fa8c', '#50fa7b'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } }
+            }
         });
+
+        updateCharts();
     }
 
-    // --- 5. MÓDULO: MOCK JULES PANEL ---
-    function initMockJules() {
-        const input = document.getElementById('mock-jules-input');
-        const sendBtn = document.getElementById('mock-jules-send');
-        const chat = document.getElementById('mock-jules-chat');
-        const diff = document.getElementById('mock-diff-viewer');
+    function updateCharts() {
+        if (!barChart || !pieChart) return;
 
-        if (!sendBtn) return;
+        const tasks = sandboxDb.getTasks();
+        const counts = { 'Todo': 0, 'In Progress': 0, 'Done': 0 };
+        tasks.forEach(t => { if(counts[t.status] !== undefined) counts[t.status]++; });
 
-        const addMsg = (text, type = 'user') => {
-            const div = document.createElement('div');
-            div.className = type === 'user' ? 'text-white mb-2' : 'text-info mb-2';
-            div.innerHTML = `<strong>${type === 'user' ? 'Tú' : 'Jules'}:</strong> ${text}`;
-            chat.appendChild(div);
-            chat.scrollTop = chat.scrollHeight;
-        };
+        const data = [counts['Todo'], counts['In Progress'], counts['Done']];
 
-        sendBtn.onclick = () => {
-            const prompt = input.value.trim();
-            if (!prompt) return;
+        barChart.data.datasets[0].data = data;
+        barChart.update();
 
-            addMsg(prompt, 'user');
-            input.value = '';
-            logToDebug(`🤖 Prompt enviado a Jules Mock: "${prompt}"`);
-
-            setTimeout(() => {
-                addMsg('Analizando el repositorio...', 'bot');
-                setTimeout(() => {
-                    addMsg('He detectado una mejora posible en playground.js. Mostrando diff...', 'bot');
-                    diff.style.display = 'block';
-                    logToDebug('🤖 Jules Mock generó un diff ficticio.');
-                }, 1000);
-            }, 800);
-        };
+        pieChart.data.datasets[0].data = data;
+        pieChart.update();
     }
 
-    // --- 6. MÓDULO: UI COMPONENT VIEWER ---
+    // --- 4. SIMULADOR DE JULES ---
+
+    window.simulateJules = function() {
+        const input = document.getElementById('jules-mock-input');
+        const prompt = input.value.trim();
+        if (!prompt) return;
+
+        const consoleEl = document.getElementById('jules-mock-console');
+        const logContainer = document.getElementById('jules-log-container');
+
+        consoleEl.style.display = 'block';
+        logContainer.innerHTML = '';
+        input.value = '';
+
+        const steps = [
+            `> INITIATING JULES CORE...`,
+            `> ANALYZING PROMPT: "${prompt}"`,
+            `> SCANNING REPOSITORY...`,
+            `> LOCATING SOURCE FILES...`,
+            `> EXECUTING PLAN STEP 1: Researching logic.`,
+            `> EXECUTING PLAN STEP 2: Applying patches.`,
+            `> VERIFYING CHANGES...`,
+            `> DONE. Tarea completada con éxito (SIMULADO).`
+        ];
+
+        let i = 0;
+        function logNext() {
+            if (i < steps.length) {
+                const line = document.createElement('div');
+                line.className = 'mb-1';
+                line.textContent = steps[i];
+                logContainer.appendChild(line);
+                consoleEl.scrollTop = consoleEl.scrollHeight;
+                i++;
+                setTimeout(logNext, 500 + Math.random() * 500);
+            } else {
+                // Show diff viewer at the end
+                const diffEl = document.getElementById('jules-mock-diff');
+                if (diffEl) diffEl.style.display = 'block';
+            }
+        }
+        logNext();
+        sandboxDb.log(`🤖 Jules: Lanzada simulación para "${prompt.substring(0,20)}..."`);
+    };
+
+    // --- 5. AUTH TESTER ---
+
+    window.simulateAuth = function(type) {
+        const statusText = document.getElementById('auth-status-text');
+        const statusDetail = document.getElementById('auth-status-detail');
+        const indicator = document.getElementById('auth-status-indicator');
+
+        const states = {
+            'success': { text: 'AUTHENTICATED', detail: 'Token válido: ghp_sandbox_... (Simulation)', color: 'text-success', icon: 'fa-check-circle' },
+            'fail': { text: 'AUTH_FAILED', detail: 'Error 401: Invalid Credentials (Simulation)', color: 'text-danger', icon: 'fa-times-circle' },
+            'expire': { text: 'TOKEN_EXPIRED', detail: 'Session expired (Simulation)', color: 'text-warning', icon: 'fa-hourglass-end' }
+        };
+
+        const state = states[type];
+        statusText.textContent = state.text;
+        statusText.className = `font-weight-bold ${state.color}`;
+        statusDetail.textContent = state.detail;
+        indicator.innerHTML = `<i class="fas ${state.icon} ${state.color}"></i>`;
+
+        sandboxDb.log(`🔐 Auth Tester: Simulado estado ${state.text}`);
+    };
+
+    // --- 6. UI VIEWER ---
+
     function initUIViewer() {
-        const container = document.getElementById('avatar-preview-container');
-        if (!container || !window.HypenosysUI) return;
+        if (window.HypenosysUI) {
+            const av1 = document.getElementById('avatar-preview-1');
+            const av2 = document.getElementById('avatar-preview-2');
+            if (av1) av1.innerHTML = window.HypenosysUI.renderAvatar({
+                login: 'Jules',
+                avatar_url: 'https://github.com/github.png'
+            });
+            if (av2) av2.innerHTML = window.HypenosysUI.renderAvatar({
+                login: 'Anonymous'
+            });
+        }
 
-        const mockUser = { login: 'SandboxUser', avatar_url: 'https://github.com/github.png' };
-        container.innerHTML = `
-            <div class="d-flex align-items-center gap-3">
-                ${window.HypenosysUI.renderAvatar(mockUser)}
-                <span class="small font-weight-bold">Componente Avatar Renderizado</span>
-            </div>
-        `;
+        if (window.timeAgo) {
+            const nowEl = document.getElementById('time-now');
+            const pastEl = document.getElementById('time-past');
+            const futureEl = document.getElementById('time-future');
+
+            if (nowEl) nowEl.innerText = window.timeAgo(new Date().toISOString());
+
+            const fiveMinAgo = new Date();
+            fiveMinAgo.setMinutes(fiveMinAgo.getMinutes() - 5);
+            if (pastEl) pastEl.innerText = window.timeAgo(fiveMinAgo.toISOString());
+
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            if (futureEl) futureEl.innerText = window.timeAgo(tomorrow.toISOString());
+        }
     }
 
-    // --- 7. MÓDULO: AUTH FLOW TESTER ---
-    function initAuthTester() {
-        const statusVal = document.getElementById('auth-status-val');
-        const log = document.getElementById('auth-debug-log');
+    // --- 7. DEBUG Y UTILIDADES ---
 
-        const updateAuthLog = (msg) => {
-            log.innerHTML += `<div>> ${msg}</div>`;
-            logToDebug(`🔐 Auth Sim: ${msg}`);
-        };
-
-        document.getElementById('sim-login-success')?.addEventListener('click', () => {
-            statusVal.textContent = 'AUTHENTICATED (MOCK)';
-            statusVal.className = 'text-success font-weight-bold font-mono';
-            updateAuthLog('Login exitoso simulado para: SandboxDev');
-        });
-
-        document.getElementById('sim-login-fail')?.addEventListener('click', () => {
-            statusVal.textContent = 'ERROR: ACL_DENIED (MOCK)';
-            statusVal.className = 'text-danger font-weight-bold font-mono';
-            updateAuthLog('Error 403: Usuario no en lista blanca.');
-        });
-
-        document.getElementById('sim-token-expire')?.addEventListener('click', () => {
-            statusVal.textContent = 'EXPIRED (MOCK)';
-            statusVal.className = 'text-warning font-weight-bold font-mono';
-            updateAuthLog('Sesión invalidada por expiración de token.');
-        });
+    function updateDebugInfo() {
+        const countEl = document.getElementById('ls-keys-count');
+        if (countEl) {
+            const count = Object.keys(localStorage).filter(k => k.startsWith('sandbox_')).length;
+            countEl.textContent = count;
+        }
     }
 
     // --- INICIALIZACIÓN ---
-    document.addEventListener('DOMContentLoaded', () => {
-        initChartSandbox();
-        initMockJules();
-        initUIViewer();
-        initAuthTester();
-        updateDebugPanel();
 
-        document.getElementById('reset-sandbox')?.addEventListener('click', () => {
-            if (confirm('¿Estás seguro de resetear el sandbox? Se borrarán todas las tareas de prueba.')) {
-                sandboxDb.reset();
+    document.addEventListener('DOMContentLoaded', () => {
+        if (window.renderSandboxKanban) window.renderSandboxKanban();
+        initCharts();
+        initUIViewer();
+        updateDebugInfo();
+
+        // Manejar Tabs para refrescar charts si es necesario
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            if (e.target.id === 'charts-tab') {
+                updateCharts();
             }
         });
     });
