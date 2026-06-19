@@ -1,0 +1,237 @@
+---
+layout: default
+title: "⚗️ Playground — Hypenosys Sandbox"
+permalink: /playground/
+description: "Entorno de pruebas aislado. Nada aquí afecta a producción."
+---
+
+<style>
+    .sandbox-banner {
+        background: linear-gradient(90deg, #6272a4, #bd93f9);
+        color: #fff;
+        padding: 1rem;
+        border-radius: 8px;
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .playground-section {
+        background: #1a1a1a;
+        border: 1px solid #44475a;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    .playground-section h2 {
+        color: #bd93f9;
+        margin-top: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .debug-panel {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: #282a36;
+        border-top: 2px solid #bd93f9;
+        padding: 0.5rem 1rem;
+        z-index: 1000;
+        max-height: 200px;
+        overflow-y: auto;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 12px;
+    }
+    .status-dot {
+        height: 10px;
+        width: 10px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 5px;
+    }
+    .status-active { background-color: #50fa7b; }
+    .status-blocked { background-color: #ff5555; }
+
+    /* Kanban Styles Sandbox */
+    .kanban-board {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+    }
+    .kanban-col {
+        background: #111114;
+        border-radius: 4px;
+        padding: 1rem;
+        min-height: 300px;
+        border: 1px solid #2a2a35;
+    }
+    .kanban-card {
+        background: #282a36;
+        padding: 0.75rem;
+        border-radius: 4px;
+        margin-bottom: 0.5rem;
+        cursor: move;
+        border: 1px solid #44475a;
+    }
+
+    /* Chart Styles */
+    .chart-container {
+        height: 250px;
+    }
+
+    .btn-purple {
+        background-color: #bd93f9;
+        color: #000;
+        font-weight: bold;
+    }
+    .btn-purple:hover {
+        background-color: #a371f7;
+    }
+</style>
+
+<div class="sandbox-banner">
+    ⚗️ SANDBOX — Nada aquí se guarda en producción
+</div>
+
+<div class="container">
+    <div class="row">
+        <!-- Module 1: Mini Kanban -->
+        <div class="col-12">
+            <section class="playground-section">
+                <h2><i class="fas fa-tasks"></i> 🗂️ Mini Kanban Sandbox</h2>
+                <p class="text-muted small">Prueba el drag & drop y la persistencia local aislada.</p>
+                <div class="mb-3">
+                    <button id="add-test-task" class="btn btn-purple btn-sm">
+                        <i class="fas fa-plus"></i> Añadir tarea de prueba
+                    </button>
+                    <button id="reset-sandbox" class="btn btn-outline-danger btn-sm ml-2">
+                        <i class="fas fa-sync-alt"></i> Reset Sandbox
+                    </button>
+                </div>
+                <div class="kanban-board">
+                    <div class="kanban-col" id="col-todo" data-status="Todo">
+                        <h6 class="text-uppercase font-weight-bold small text-muted mb-3">Todo</h6>
+                        <div class="kanban-cards"></div>
+                    </div>
+                    <div class="kanban-col" id="col-progress" data-status="In Progress">
+                        <h6 class="text-uppercase font-weight-bold small text-muted mb-3">In Progress</h6>
+                        <div class="kanban-cards"></div>
+                    </div>
+                    <div class="kanban-col" id="col-done" data-status="Done">
+                        <h6 class="text-uppercase font-weight-bold small text-muted mb-3">Done</h6>
+                        <div class="kanban-cards"></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Module 2: Chart.js -->
+        <div class="col-md-6">
+            <section class="playground-section">
+                <h2><i class="fas fa-chart-line"></i> 📊 Chart.js Sandbox</h2>
+                <div class="chart-container">
+                    <canvas id="sandboxChart"></canvas>
+                </div>
+                <div class="mt-3">
+                    <label class="small text-muted">Modificar datos en tiempo real:</label>
+                    <input type="range" class="custom-range" id="chart-slider" min="0" max="100" value="50">
+                </div>
+            </section>
+        </div>
+
+        <!-- Module 3: Mock Jules -->
+        <div class="col-md-6">
+            <section class="playground-section">
+                <h2><i class="fas fa-robot"></i> 🤖 Mock Jules Panel</h2>
+                <div class="badge badge-pill badge-secondary mb-3 small">SIMULADO — No conectado a Jules API</div>
+                <div id="mock-jules-chat" class="bg-dark p-3 rounded mb-2 border border-secondary" style="height: 150px; overflow-y: auto; font-size: 13px;">
+                    <div class="text-muted italic">Escribe un prompt para simular una respuesta...</div>
+                </div>
+                <div class="input-group input-group-sm">
+                    <input type="text" id="mock-jules-input" class="form-control bg-dark text-white border-secondary" placeholder="Escribe un prompt...">
+                    <div class="input-group-append">
+                        <button id="mock-jules-send" class="btn btn-purple">Enviar</button>
+                    </div>
+                </div>
+                <div id="mock-diff-viewer" class="mt-3 p-2 bg-black rounded font-weight-mono small border border-success" style="display:none; background: #000;">
+                    <div class="text-success">+ function sandboxTest() {</div>
+                    <div class="text-success">+   console.log("Intercepción confirmada");</div>
+                    <div class="text-success">+ }</div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Module 4: UI Component Viewer -->
+        <div class="col-12">
+            <section class="playground-section">
+                <h2><i class="fas fa-paint-brush"></i> 🎨 UI Component Viewer</h2>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <h6 class="small text-muted uppercase">Badges de Prioridad</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                             <span class="badge badge-critical mr-1">CRITICAL</span>
+                             <span class="badge badge-todo">TODO</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <h6 class="small text-muted uppercase">Toast Tester</h6>
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-outline-success" onclick="hypeToast('Tarea guardada!', 'success')">Success</button>
+                            <button class="btn btn-outline-danger" onclick="hypeToast('Error crítico', 'error')">Error</button>
+                            <button class="btn btn-outline-info" onclick="hypeToast('Info log', 'info')">Info</button>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <h6 class="small text-muted uppercase">Modales</h6>
+                        <button class="btn btn-outline-primary btn-sm" onclick="$('#settingsModal').modal('show')">Abrir Settings (Real)</button>
+                    </div>
+                </div>
+                <div class="mt-3 p-3 bg-dark rounded border border-secondary" id="component-gallery">
+                    <h6 class="small text-muted mb-3">Preview de Componentes Dinámicos (ui-components.js)</h6>
+                    <div id="avatar-preview-container"></div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Module 5: Auth Flow Tester -->
+        <div class="col-12 mb-5">
+            <section class="playground-section">
+                <h2><i class="fas fa-lock"></i> 🔐 Auth Flow Tester</h2>
+                <p class="text-muted small">Simula el comportamiento de AuthManager sin afectar tu sesión real.</p>
+                <div class="btn-group">
+                    <button id="sim-login-success" class="btn btn-sm btn-outline-success">Simular Login Exitoso</button>
+                    <button id="sim-login-fail" class="btn btn-sm btn-outline-danger">Simular Login Fallido</button>
+                    <button id="sim-token-expire" class="btn btn-sm btn-outline-warning">Simular Token Expirado</button>
+                </div>
+                <div id="auth-debug-status" class="mt-3 p-3 bg-dark rounded border border-secondary">
+                    <div class="small"><strong>ESTADO AUTH_MANAGER:</strong> <span id="auth-status-val" class="text-info font-weight-bold font-mono">IDLE</span></div>
+                    <div id="auth-debug-log" class="small mt-2 text-muted font-mono" style="font-size: 10px;"></div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+
+<!-- Global Debug Panel -->
+<div class="debug-panel" id="sandbox-debug-panel">
+    <div class="d-flex justify-content-between align-items-center mb-2 border-bottom border-secondary pb-1">
+        <span><strong>DEBUG CONSOLE</strong></span>
+        <div>
+            <span id="sandbox-indicator"><span class="status-dot status-active"></span> <span class="small">🟢 Sandbox activo</span></span>
+        </div>
+    </div>
+    <div id="debug-logs" style="height: 80px; overflow-y: auto; font-size: 11px;"></div>
+    <div class="mt-2 border-top border-secondary pt-1 d-flex justify-content-between">
+        <span class="small"><strong>LocalStorage:</strong> <span id="sandbox-keys" class="text-info">[]</span></span>
+        <span class="small text-muted">v1.0.0-sandbox</span>
+    </div>
+</div>
+
+<div style="height: 180px;"></div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ '/assets/javascript/playground.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/playground-kanban.js' | relative_url }}"></script>
