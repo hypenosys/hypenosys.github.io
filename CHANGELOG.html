@@ -93,9 +93,13 @@ permalink: /CHANGELOG.html
               <li><strong>Widget de Operaciones en Dashboard:</strong> El dashboard principal ahora cuenta con un widget dinámico sincronizado en tiempo real que lista las sesiones neurales activas y archivadas, permitiendo renombrar, archivar y eliminar sesiones, además de restaurar contextos de trabajo.</li>
               <li><strong>Drawer de Gestión de Sesiones:</strong> Implementado panel lateral de "Sesiones" en la pestaña NEURAL para navegar y gestionar el historial de sesiones guardadas localmente.</li>
               <li><strong>Flujo Neural Bidireccional:</strong> Sincronización completa de contexto (subtareas, comentarios, historial) entre Dashboard, Neural Chat y Jules Panel V2. Incluye botones de análisis en telemetría y exportación de lógica desde Claude a Jules.</li>
+               <li><strong>Análisis Manual de Historial:</strong> Implementado sistema para cargar fragmentos seleccionados del historial de Jules directamente en el chat integrado para análisis bajo demanda, eliminando redirecciones externas.</li>
             </ul>
             <h5 class="text-success">Fixed</h5>
             <ul>
+               <li><strong>Conexión Flawless Neural Chat (Panel V2):</strong> Corregido el motor de enrutamiento de mensajes para respetar el modo seleccionado (Claude/Jules) y asegurar la recuperación de API Keys en todos los contextos de la versión V2.</li>
+               <li><strong>Persistencia de Configuración V2:</strong> Habilitados los botones de guardado en los modales de API y Repositorio del Panel V2, garantizando la sincronización inmediata con <code>localStorage</code> y <code>hy_ai_config</code>.</li>
+               <li><strong>Robustez de Streaming SSE:</strong> Incrementado el tiempo de espera de Claude a 60s y añadido un mecanismo de reintento automático (2 intentos) para gestionar respuestas de razonamiento extenso sin cortes.</li>
               <li><strong>Seguridad de Rama Neural:</strong> Jules ahora bloquea preventivamente cualquier ejecución si no se detecta una rama válida o el contexto del repositorio está corrupto, evitando estados inconsistentes en git.</li>
               <li><strong>Robustez de API Claude:</strong> Añadida validación proactiva de API Keys antes del envío y sistema de reintentos automáticos (backoff) para mitigar fallos intermitentes de red.</li>
               <li><strong>Comunicación con Claude (Jules Panel V2):</strong> Corregido el error "Error en comunicación con Claude" mediante la implementación de streaming (SSE) y el uso de headers de acceso directo (<code>anthropic-dangerous-direct-browser-access</code>), eliminando los bloqueos de CORS en producción y unificando la lógica con la versión funcional de Claude Chat.</li>
@@ -116,6 +120,8 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-success">Added</h5>
             <ul>
+              <li><strong>Visualización de Razonamiento (Claude 3.7+):</strong> Implementado el soporte para bloques <code>thinking-block</code> en el chat integrado del Panel V2, permitiendo observar el razonamiento interno de los modelos más avanzados.</li>
+              <li><strong>Análisis de Historial Integrado (V2):</strong> Refactorizado el sistema de análisis manual para que los fragmentos seleccionados del historial de Jules se inyecten directamente en el chat de V2, eliminando la dependencia de redirecciones externas.</li>
               <li><strong>Neural Session Drawer:</strong> Implementado nuevo panel lateral unificado para la gestión de tareas entre Claude y Jules.</li>
               <li><strong>Integración Neural Link:</strong> Los botones robot (🤖) ahora abren un drawer contextual con metadatos de la tarea, sugerencia de prompts automáticos y controles de refinamiento con Claude.</li>
               <li><strong>Modo Híbrido de Chat:</strong> El drawer incluye un input con toggle para alternar entre consultas a Claude y ejecución directa de órdenes en Jules.</li>
