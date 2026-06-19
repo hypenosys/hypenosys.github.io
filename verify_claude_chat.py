@@ -62,7 +62,7 @@ async def run():
         await page.evaluate("confirmSendToJules()")
 
         # Step 2: Wait for Jules Panel to load and pre-fill
-        await page.wait_for_url('**/jules-panel-v2/', timeout=10000)
+        await page.wait_for_url('**/jules-panel/', timeout=10000)
         print("Redirected to Jules Panel V2.")
 
         # Re-mock for Jules Panel

@@ -71,12 +71,12 @@ async def run():
                     timestamp: Date.now(),
                     source: 'claude-chat'
                 }));
-                window.location.href = '/jules-panel-v2/';
+                window.location.href = '/jules-panel/';
             }
         }""")
 
         # Step 2: Jules Panel
-        await page.wait_for_url('**/jules-panel-v2/', timeout=10000)
+        await page.wait_for_url('**/jules-panel/', timeout=10000)
         print("Navigated to Jules Panel V2.")
 
         # Ensure we are logged in in the panel too

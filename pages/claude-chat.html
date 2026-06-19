@@ -551,7 +551,7 @@ permalink: /chat/neural/
             <a href="{{ '/tech-stack/' | relative_url }}" class="flex items-center gap-3 p-2 rounded-lg text-xs font-bold text-[#f8f8f2] hover:bg-[#44475a] transition-all">
                 <i class="fas fa-layer-group w-4 text-[#bd93f9]"></i> Tech Stack
             </a>
-            <a href="{{ '/jules-panel-v2/' | relative_url }}" class="flex items-center gap-3 p-2 rounded-lg text-xs font-bold text-[#f8f8f2] hover:bg-[#44475a] transition-all">
+            <a href="{{ '/jules-panel/' | relative_url }}" class="flex items-center gap-3 p-2 rounded-lg text-xs font-bold text-[#f8f8f2] hover:bg-[#44475a] transition-all">
                 <i class="fas fa-robot w-4 text-[#bd93f9]"></i> Jules
             </a>
         </nav>
@@ -584,7 +584,7 @@ permalink: /chat/neural/
             <button onclick="openSettings()" class="w-full text-left text-xs font-bold text-[#f8f8f2] hover:text-[#bd93f9] transition-all flex items-center gap-2">
                 <i class="fas fa-cog"></i> API CONFIG
             </button>
-            <a href="/jules-panel-v2/" class="w-full text-left text-xs font-bold text-[#f8f8f2] hover:text-[#bd93f9] transition-all flex items-center gap-2">
+            <a href="/jules-panel/" class="w-full text-left text-xs font-bold text-[#f8f8f2] hover:text-[#bd93f9] transition-all flex items-center gap-2">
                 <i class="fas fa-bolt"></i> JULES PANEL
             </a>
         </div>
@@ -2185,7 +2185,7 @@ permalink: /chat/neural/
                             let thread = JSON.parse(localStorage.getItem('hy_neural_thread') || '[]');
                             thread.push({ role: 'assistant', content: text, source: 'claude' });
                             localStorage.setItem('hy_neural_thread', JSON.stringify(thread));
-                            setTimeout(() => window.location.href = '/jules-panel-v2/', 800);
+                            setTimeout(() => window.location.href = '/jules-panel/', 800);
                         }
                     } catch (e) {
                         showToast('Error al enviar a Jules: ' + e.message);
@@ -2212,7 +2212,7 @@ permalink: /chat/neural/
                             console.error('Error stringifying handoff task:', e);
                         }
                     }
-                    setTimeout(() => window.location.href = '/jules-panel-v2/', 800);
+                    setTimeout(() => window.location.href = '/jules-panel/', 800);
                 }
             }
         }
@@ -2295,7 +2295,7 @@ permalink: /chat/neural/
                 }));
             }
 
-            setTimeout(() => window.location.href = '/jules-panel-v2/', 1000);
+            setTimeout(() => window.location.href = '/jules-panel/', 1000);
         }
 
         function handleSlashCommand(command) {
@@ -2313,7 +2313,7 @@ permalink: /chat/neural/
                     appendSystemMessage('Comando detectado: /move. Indica ID y estado.', 'info');
                     break;
                 case '/jules':
-                    window.location.href = '/jules-panel-v2/';
+                    window.location.href = '/jules-panel/';
                     break;
                 default:
                     appendSystemMessage('Comando desconocido: ' + cmd, 'error');
@@ -2399,7 +2399,7 @@ permalink: /chat/neural/
                         }
                     }
                     setTimeout(() => {
-                        window.location.href = '/jules-panel-v2/';
+                        window.location.href = '/jules-panel/';
                     }, 1000);
                     return;
                 }
@@ -2554,6 +2554,9 @@ permalink: /chat/neural/
 
         async function sendMessageOllama(session, config) {
             let baseUrl = config.base_url || '';
+            if (baseUrl && !baseUrl.startsWith('http')) {
+                baseUrl = 'http://' + baseUrl;
+            }
             baseUrl = baseUrl.trim().replace(/\/+$/, '').replace(/\/v1$/, '');
             const model = config.model || 'llama3';
 
@@ -2804,7 +2807,10 @@ permalink: /chat/neural/
 
             try {
                 if (provider === 'ollama') {
-                    let baseUrl = config.base_url || 'http://localhost:11434';
+                    let baseUrl = config.base_url || '';
+                    if (baseUrl && !baseUrl.startsWith('http')) {
+                        baseUrl = 'http://' + baseUrl;
+                    }
                     baseUrl = baseUrl.trim().replace(/\/+$/, '').replace(/\/v1$/, '');
                     const response = await fetch(`${baseUrl}/api/tags`, {
                         mode: 'cors',

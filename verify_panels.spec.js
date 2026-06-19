@@ -2,7 +2,7 @@ const { test, expect } = require('@playwright/test');
 
 const panels = [
   { name: 'Production Panel', url: 'http://localhost:4000/jules-panel/' },
-  { name: 'Test Panel V2', url: 'http://localhost:4000/jules-panel-v2/' },
+  { name: 'Test Panel V2', url: 'http://localhost:4000/jules-panel/' },
   { name: 'Claude Chat', url: 'http://localhost:4000/chat/neural/' }
 ];
 

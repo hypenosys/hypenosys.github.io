@@ -3,7 +3,7 @@ const { test, expect } = require('@playwright/test');
 test('Verify Jules Panel V2 is accessible and has Neural Chat', async ({ page }) => {
   // We need to bypass the auth overlay.
   // The page has a forceOpenPanel() function and a "Bypass (Read Only)" button.
-  await page.goto('http://localhost:4000/jules-panel-v2/');
+  await page.goto('http://localhost:4000/jules-panel/');
 
   // Wait for the auth overlay to appear
   await page.waitForSelector('#auth-overlay.show');

@@ -10,7 +10,7 @@ async def run():
         page = await context.new_page()
 
         # Mock GitHub Token
-        await page.goto('http://localhost:4000/jules-panel-v2/')
+        await page.goto('http://localhost:4000/jules-panel/')
         await page.evaluate("sessionStorage.setItem('gh_access_token', 'mock-token')")
 
         task = {
@@ -66,7 +66,7 @@ async def run():
         # Note: Large tasks in URL might still fail here due to WEBrick limit if I'm not careful,
         # but for verification of fallback logic I'll use a slightly smaller one if needed,
         # or just test that it works at all.
-        await page.goto(f'http://localhost:4000/jules-panel-v2/?task_data={json.dumps({"id":"999","title":"URL Task"})}')
+        await page.goto(f'http://localhost:4000/jules-panel/?task_data={json.dumps({"id":"999","title":"URL Task"})}')
 
         try:
             await page.wait_for_selector('#v2-task-title', timeout=10000)

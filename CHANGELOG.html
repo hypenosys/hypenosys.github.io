@@ -131,7 +131,7 @@ permalink: /CHANGELOG.html
             <ul>
               <li><strong>Resolución de Race Conditions (Neural):</strong> Corregido el fallo silencioso en la inicialización de <code>window.neuralSession</code> mediante un sistema de bootstrapping basado en eventos <code>authReady</code> y fallbacks de <code>DOMContentLoaded</code>.</li>
               <li><strong>Flujo de Tareas Robot:</strong> Actualizada la lógica de <code>kanban-ui.js</code> para usar el nuevo drawer neural con reintentos defensivos, reemplazando la redirección a nueva pestaña.</li>
-              <li><strong>Restauración Jules Panel V2:</strong> Recuperado el archivo <code>pages/jules-paneltest2.html</code> perdido tras un merge conflict reciente, habilitando de nuevo el acceso en la URL <code>/jules-panel-v2/</code> con su última version estable.</li>
+              <li><strong>Restauración Jules Panel V2:</strong> Recuperado el archivo <code>pages/jules-panel.html</code> perdido tras un merge conflict reciente, habilitando de nuevo el acceso en la URL <code>/jules-panel/</code> con su última version estable.</li>
               <li><strong>Renderizado de Comentarios:</strong> Corregido el bug donde los comentarios mostraban "undefined / Invalid Date" mediante la implementación de un sistema de fallbacks robusto para autor, fecha y cuerpo del mensaje en <code>dashboard-modals.js</code>.</li>
               <li><strong>Robustez del Dashboard:</strong> Eliminado el error "Cannot set properties of null (setting 'id')" mediante la adición de comprobaciones defensivas en <code>dashboard-kanban.js</code> y <code>dashboard-profiles.js</code>.</li>
               <li><strong>Resolución de Race Conditions:</strong> Reordenado el orden de carga de scripts en <code>dashboard.html</code> y optimizado el evento <code>authReady</code> para asegurar que los módulos de UI estén listos antes de la inicialización de datos.</li>
@@ -150,7 +150,7 @@ permalink: /CHANGELOG.html
                 <li>Soporte para renderizado de Markdown en descripciones y visualización de metadatos avanzados (Milestone, Stage, Tipo).</li>
                 <li>Integración de avatares de equipo, tags estilo pill y botones de acción contextuales.</li>
                 <li>Highlight de ramas con color accent morado y truncado inteligente de títulos.</li>
-                <li><strong>Sincronización Global:</strong> Migración de la lógica de renderizado inline en <code>pages/jules-paneltest2.html</code> al componente unificado <code>kanbanUI</code> y actualización del dashboard legado.</li>
+                <li><strong>Sincronización Global:</strong> Migración de la lógica de renderizado inline en <code>pages/jules-panel.html</code> al componente unificado <code>kanbanUI</code> y actualización del dashboard legado.</li>
               </ul>
             </li>
             <li><strong>Integración Neural Claude <> Jules & Auditoría UX:</strong>
@@ -217,7 +217,7 @@ permalink: /CHANGELOG.html
               </li>
               <li><strong>Jules Panel Premium Migration:</strong>
                 <ul>
-                  <li>Migración exitosa de <code>jules-panel.html</code> a una nueva interfaz premium en <code>pages/jules-paneltest2.html</code>.</li>
+                  <li>Migración exitosa de <code>jules-panel.html</code> a una nueva interfaz premium en <code>pages/jules-panel.html</code>.</li>
                   <li>Implementación de capa de API real conectada a <code>window.julesApi</code> y <code>window.githubContext</code>.</li>
                   <li>Nueva vista de <strong>GitHub Hub</strong> con pestañas para Pull Requests, Issues, Branches, Actions y Notificaciones.</li>
                   <li>Sistema de <strong>Terminal Drawer</strong> integrado para visualizar logs de actividad y diffs de código en tiempo real.</li>
