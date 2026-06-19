@@ -97,6 +97,7 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-success">Fixed</h5>
             <ul>
+               <li><strong>Botón de Envío Neural Chat:</strong> Corregido el fallo que bloqueaba el envío de mensajes debido a una función de persistencia no definida (`saveSessionsV2`). Implementada la unificación de sesiones con el chat principal y garantizado el desbloqueo de la interfaz tras cualquier operación.</li>
                <li><strong>Conexión Flawless Neural Chat (Panel V2):</strong> Corregido el motor de enrutamiento de mensajes para respetar el modo seleccionado (Claude/Jules) y asegurar la recuperación de API Keys en todos los contextos de la versión V2.</li>
                <li><strong>Persistencia de Configuración V2:</strong> Habilitados los botones de guardado en los modales de API y Repositorio del Panel V2, garantizando la sincronización inmediata con <code>localStorage</code> y <code>hy_ai_config</code>.</li>
                <li><strong>Robustez de Streaming SSE:</strong> Incrementado el tiempo de espera de Claude a 60s y añadido un mecanismo de reintento automático (2 intentos) para gestionar respuestas de razonamiento extenso sin cortes.</li>
