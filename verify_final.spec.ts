@@ -31,7 +31,7 @@ test('Verify Dashboard and Neural Tab', async ({ page }) => {
   await page.screenshot({ path: '/home/jules/verification/dashboard_final.png', fullPage: true });
 
   // 2. Verify Neural Tab Activity Rendering
-  await page.goto('http://localhost:4000/jules-panel-v2/');
+  await page.goto('http://localhost:4000/jules-panel/');
 
   // Switch to Neural view (chat)
   await page.click('[data-view="chat"]');

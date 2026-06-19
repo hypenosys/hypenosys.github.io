@@ -2982,7 +2982,7 @@
     {
       "id": 47,
       "title": "Decomisionado de Paneles Jules obsoletos",
-      "descripcion": "Archivar o eliminar las versiones de prueba de los paneles Jules (jules-panel.html, jules-paneltest.html). jules-paneltest2.html es ahora el estándar y mantener los anteriores genera confusión. **Hecho cuando:** Solo el panel v2 esté activo y las rutas antiguas redirijan o estén borradas.",
+      "descripcion": "Archivar o eliminar las versiones de prueba de los paneles Jules (jules-panel.html, jules-paneltest.html). jules-panel.html es ahora el estándar y mantener los anteriores genera confusión. **Hecho cuando:** Solo el panel principal esté activo y las rutas antiguas redirijan o estén borradas.",
       "tags": [
         "chore",
         "refactor"

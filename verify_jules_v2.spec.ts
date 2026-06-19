@@ -22,7 +22,7 @@ test('verify jules v2 neural tab and dashboard', async ({ page }) => {
     localStorage.setItem('hy_neural_active', 'true');
   }, mockSession);
 
-  await page.goto('http://localhost:4000/jules-panel-v2/');
+  await page.goto('http://localhost:4000/jules-panel/');
 
   await page.evaluate(() => {
     if (window.forceOpenPanel) window.forceOpenPanel();

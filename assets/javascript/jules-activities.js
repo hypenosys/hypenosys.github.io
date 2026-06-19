@@ -13,7 +13,7 @@ const JulesActivitiesModule = (() => {
   }
 
   function _getHistoryContainer() {
-    // Selector para pages/jules-panel/index.html (tab Neural Chat)
+    // Selector para pages/jules-panel.html (tab Neural Chat)
     return document.querySelector('#v2-chat-messages');
   }
 

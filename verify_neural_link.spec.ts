@@ -4,7 +4,7 @@ test('verify multiple selection and dual-send toggle', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 1024 });
 
   // 1. Verify Multiple Selection in Jules Panel V2
-  await page.goto('http://localhost:4000/jules-panel-v2/');
+  await page.goto('http://localhost:4000/jules-panel/');
 
   await page.evaluate(() => {
     localStorage.setItem('github_token', 'fake-token');

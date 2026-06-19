@@ -12,7 +12,7 @@ class AuthManager {
         this.bindEvents();
 
         const isDashboard = window.location.pathname.includes('dashboard');
-        const isJules = window.location.pathname.includes('jules-panel') || window.location.pathname.includes('jules-panel-v2');
+        const isJules = window.location.pathname.includes('jules-panel') || window.location.pathname.includes('jules-panel');
         const isNeural = window.location.pathname.includes('/chat/neural/') || window.location.pathname.includes('claude-chat');
 
         if (isDashboard || isJules || isNeural) {
