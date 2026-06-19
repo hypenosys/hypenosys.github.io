@@ -3095,6 +3095,7 @@ window.JulesPanelState = {
             renderChatV2Messages();
         }
         if (view === 'chat') {
+            loadV2Messages();
             const sid = getLinkedJulesSessionId();
             if (sid && localStorage.getItem('hy_neural_active') === 'true') {
                 startNeuralPolling(sid);
@@ -3328,6 +3329,42 @@ window.JulesPanelState = {
     /* ─── NEURAL CHAT V2 LOGIC ─── */
     let chatV2Messages = [];
 
+    function saveSessionsV2() {
+        try {
+            const claudeId = localStorage.getItem('hy_active_claude_session_id');
+            if (!claudeId) return;
+
+            const allSessions = JSON.parse(localStorage.getItem('hy_chat_v2_sessions') || '{}');
+            allSessions[claudeId] = {
+                messages: chatV2Messages,
+                updatedAt: new Date().toISOString()
+            };
+            localStorage.setItem('hy_chat_v2_sessions', JSON.stringify(allSessions));
+        } catch (e) {
+            console.warn('[ChatV2] Failed to save session:', e);
+        }
+    }
+
+    function loadV2Messages() {
+        try {
+            const claudeId = localStorage.getItem('hy_active_claude_session_id');
+            if (!claudeId) {
+                chatV2Messages = [];
+                renderChatV2Messages();
+                return;
+            }
+
+            const allSessions = JSON.parse(localStorage.getItem('hy_chat_v2_sessions') || '{}');
+            const session = allSessions[claudeId];
+            chatV2Messages = session ? (session.messages || []) : [];
+            renderChatV2Messages();
+        } catch (e) {
+            console.warn('[ChatV2] Failed to load messages:', e);
+            chatV2Messages = [];
+            renderChatV2Messages();
+        }
+    }
+
     async function triggerAutomatedAnalysis(output) {
         const analyzedKey = `v2_jules_analyzed_${output.session_id}_${output.status}`;
         if (localStorage.getItem(analyzedKey)) return;
@@ -3507,6 +3544,13 @@ window.JulesPanelState = {
         const content = input.value.trim();
         if (!content && retryCount === 0) return;
 
+        // Ensure we have a session context
+        let claudeId = localStorage.getItem('hy_active_claude_session_id');
+        if (!claudeId) {
+            claudeId = 'session_' + (window.crypto?.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 15));
+            localStorage.setItem('hy_active_claude_session_id', claudeId);
+        }
+
         const config = JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
         const apiKey = config.api_key || config.apiKey || localStorage.getItem('jules_api_key');
 
@@ -3516,9 +3560,10 @@ window.JulesPanelState = {
             return;
         }
 
-        const claudeId = localStorage.getItem('hy_active_claude_session_id');
         let sessionId = localStorage.getItem('hy_neural_session_id_' + claudeId);
         if (!sessionId) sessionId = getLinkedJulesSessionId();
+
+        const thinking = $('v2-thinking-indicator');
 
         if (currentSendMode === 'jules') {
             if (!sessionId) {
@@ -3530,7 +3575,6 @@ window.JulesPanelState = {
             // UI state
             input.disabled = true;
             sendBtn.disabled = true;
-            const thinking = $('v2-thinking-indicator');
             if (thinking) {
                 thinking.textContent = "ENVIANDO ORDEN A JULES...";
                 thinking.classList.remove('hidden');
@@ -3573,22 +3617,20 @@ window.JulesPanelState = {
             input.disabled = true;
             sendBtn.disabled = true;
 
-            // Add user message if first try
-            if (retryCount === 0) {
-                chatV2Messages.push({ role: 'user', content });
-                saveSessionsV2();
-                renderChatV2Messages();
-                input.value = '';
-                input.style.height = 'auto';
-            }
-
-            const thinking = $('v2-thinking-indicator');
             if (thinking) {
                 thinking.textContent = retryCount > 0 ? `REINTENTANDO (${retryCount})...` : "CLAUDE ESTÁ PROCESANDO...";
                 thinking.classList.remove('hidden');
             }
 
             try {
+                // Add user message if first try
+                if (retryCount === 0) {
+                    chatV2Messages.push({ role: 'user', content });
+                    saveSessionsV2();
+                    renderChatV2Messages();
+                    input.value = '';
+                    input.style.height = 'auto';
+                }
                 const systemPrompt = "Eres Claude, un asistente experto integrado en el panel de control de Hypenosys. Responde siempre en español y de forma técnica.";
 
                 // Ensure alternation and no system messages in body
@@ -3658,6 +3700,7 @@ window.JulesPanelState = {
                 }
                 showToast("Error en comunicación con Claude", "red");
                 chatV2Messages.push({ role: 'system', content: `❌ Error: ${e.message}` });
+                saveSessionsV2();
                 renderChatV2Messages();
             } finally {
                 if (thinking) thinking.classList.add('hidden');
