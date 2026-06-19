@@ -10,7 +10,17 @@
 
     const sandboxDb = {
         getTasks() {
-            return JSON.parse(localStorage.getItem('sandbox_tasks') || '[]');
+            const data = localStorage.getItem('sandbox_tasks');
+            if (data) return JSON.parse(data);
+
+            // Seed data para primera carga
+            const seed = [
+                { id: '1001', title: '🚀 Explorar componentes UI', status: 'Done', priority: 'Low', timestamp: new Date().toISOString() },
+                { id: '1002', title: '⚗️ Probar simulador de Jules', status: 'In Progress', priority: 'Medium', timestamp: new Date().toISOString() },
+                { id: '1003', title: '📊 Testear visualización de métricas', status: 'Todo', priority: 'High', timestamp: new Date().toISOString() }
+            ];
+            localStorage.setItem('sandbox_tasks', JSON.stringify(seed));
+            return seed;
         },
         saveTasks(tasks) {
             localStorage.setItem('sandbox_tasks', JSON.stringify(tasks));
