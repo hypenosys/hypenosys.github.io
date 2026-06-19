@@ -1,6 +1,6 @@
 {
   "schema_version": "2.0.0",
-  "last_updated": "2026-06-17T14:18:05.505Z",
+  "last_updated": "2026-06-19T21:31:20.516Z",
   "members": {
     "Axel": {
       "github_username": "Axlfc",
@@ -150,6 +150,10 @@
         "velocity": "0.5d",
         "impacto": 0,
         "volatilidad": 0
+      },
+      "ai_config": {
+        "provider": "ollama",
+        "model": "qwen3.5:9b"
       }
     },
     "Mitxel": {
@@ -185,6 +189,11 @@
     }
   },
   "_audit_log": [
+    {
+      "action": "chore: actualizar config AI de Dídac",
+      "user": "dkdidac-design",
+      "timestamp": "2026-06-19T21:31:20.516Z"
+    },
     {
       "action": "chore: actualizar perfil de Axel (profiles)",
       "user": "Axlfc",
