@@ -3346,8 +3346,49 @@ body{
     function closeMobileSidebar(){ $('app-sidebar').classList.remove('mob-open'); $('sidebar-backdrop').classList.remove('open'); }
     function openClaudeChat(){ $('claude-modal').classList.add('open'); }
     function closeClaudeChat(){ $('claude-modal').classList.remove('open'); }
-    function openApiModal(){ $('api-modal').classList.add('open'); }
+    function openApiModal(){
+        $('api-modal').classList.add('open');
+        const config = JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
+        const apiKey = localStorage.getItem('jules_api_key') || config.api_key || '';
+        if ($('api-key-in')) $('api-key-in').value = apiKey;
+
+        const provider = config.provider || 'gemini';
+        document.querySelectorAll('.pcard').forEach(p => {
+            p.classList.toggle('selected', p.dataset.prov === provider);
+        });
+    }
     function closeApiModal(){ $('api-modal').classList.remove('open'); }
+
+    // API Modal Save logic
+    if ($('modal-save')) {
+        $('modal-save').onclick = async () => {
+            const key = $('api-key-in').value.trim();
+            const selectedProv = document.querySelector('.pcard.selected')?.dataset.prov || 'gemini';
+
+            if (key) {
+                localStorage.setItem('jules_api_key', key);
+                // Also update hy_ai_config for Claude compatibility
+                const config = JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
+                config.api_key = key;
+                config.provider = selectedProv === 'anthropic' ? 'anthropic' : (selectedProv === 'local' ? 'ollama' : selectedProv);
+                localStorage.setItem('hy_ai_config', JSON.stringify(config));
+
+                showToast("Configuración guardada correctamente", "green");
+                addTel("SYSTEM", "API Config actualizada", "success");
+                closeApiModal();
+            } else {
+                showToast("La clave de API es obligatoria", "red");
+            }
+        };
+    }
+
+    // Provider selection logic
+    document.querySelectorAll('.pcard').forEach(p => {
+        p.onclick = () => {
+            document.querySelectorAll('.pcard').forEach(pc => pc.classList.remove('selected'));
+            p.classList.add('selected');
+        };
+    });
     function openDocs(){ window.location.href = '/documentacion/'; }
 
     window.toggleMobileMenu = () => {
@@ -3549,12 +3590,29 @@ body{
         const parsed = window.parseSourceName(repoName);
         $('repo-modal-title').textContent = parsed ? parsed.repo : repoName;
         $('repo-modal-real-name').textContent = repoName;
+
+        const alias = localStorage.getItem('jules_repo_alias_' + repoName) || (parsed ? parsed.repo : repoName);
+        $('repo-alias-input').value = alias;
+
         $('repo-config-modal-overlay').classList.add('open');
     };
 
     window.closeRepoModal = function() {
         $('repo-config-modal-overlay').classList.remove('open');
     };
+
+    if ($('repo-modal-save')) {
+        $('repo-modal-save').onclick = () => {
+            const repoName = $('repo-modal-real-name').textContent;
+            const alias = $('repo-alias-input').value.trim();
+            if (alias) {
+                localStorage.setItem('jules_repo_alias_' + repoName, alias);
+                showToast("Alias de repositorio guardado", "green");
+                refreshDashboard();
+                closeRepoModal();
+            }
+        };
+    }
 
     window.openEditTaskModal = function(taskId) {
         // Redirigir al dashboard principal para edición detallada por ahora
@@ -3675,7 +3733,14 @@ body{
         renderChatV2Messages();
 
         try {
-            const config = window.aiConfig?.getActiveConfig() || JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
+            const config = JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
+            const apiKey = config.api_key || config.apiKey || localStorage.getItem('jules_api_key');
+
+            if (!apiKey) {
+                console.warn("[Auto-Analysis] Skipping: API Key missing");
+                return;
+            }
+
             const prompt = `Jules ha completado una operación (Estado: ${output.status}).\n\nDETALLES:\n- Sesión: #${output.session_id}\n- Tarea: ${output.title}\n- Repo: ${output.repo}\n\nAnaliza el resultado y prepara un resumen accionable.`;
 
             const messages = [
@@ -3683,11 +3748,14 @@ body{
                 { role: 'user', content: prompt }
             ];
 
-            const analysis = await callCustomProvider(config, messages);
+            const analysis = await callCustomProvider({ ...config, api_key: apiKey }, messages);
             chatV2Messages.push({ role: 'assistant', content: `[ANÁLISIS AUTOMÁTICO JULES]\n\n${analysis}` });
+            saveSessionsV2();
             renderChatV2Messages();
         } catch(e) {
             console.error("Auto-analysis failed", e);
+            chatV2Messages.push({ role: 'system', content: `❌ Error en análisis: ${e.message}` });
+            renderChatV2Messages();
         }
     }
 
@@ -3720,39 +3788,33 @@ body{
 
     async function sendChatV2Msg(retryCount = 0) {
         const input = $('v2-chat-input');
+        const sendBtn = $('v2-send-btn');
         const content = input.value.trim();
         if (!content && retryCount === 0) return;
 
         const config = window.aiConfig?.getActiveConfig() || JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
-        if (!config.api_key && currentSendMode !== 'jules') {
+        const apiKey = config.api_key || config.apiKey || localStorage.getItem('jules_api_key');
+
+        if (!apiKey && currentSendMode !== 'jules') {
             showToast("Configuración de API requerida", "amber");
-            if (window.authManager && window.authManager.showApiConfigModal) {
-                window.authManager.showApiConfigModal();
-            } else {
-                openApiModal();
-            }
+            openApiModal();
             return;
         }
 
-        const isNeuralActive = localStorage.getItem('hy_neural_active') === 'true';
         const claudeId = localStorage.getItem('hy_active_claude_session_id');
         let sessionId = localStorage.getItem('hy_neural_session_id_' + claudeId);
         if (!sessionId) sessionId = getLinkedJulesSessionId();
 
-        if (currentSendMode === 'jules' || (isNeuralActive && sessionId)) {
+        if (currentSendMode === 'jules') {
             if (!sessionId) {
                 showToast("No hay sesión Jules activa vinculada", "red");
                 return;
             }
             const targetId = sessionId.startsWith('sessions/') ? sessionId : 'sessions/' + sessionId;
-            // Route Neural Chat messages to Jules session directly
-            const userMsg = { role: 'user', content };
-            chatV2Messages.push(userMsg);
-            saveSessionsV2();
-            renderChatV2Messages();
-            input.value = '';
-            input.style.height = 'auto';
 
+            // UI state
+            input.disabled = true;
+            sendBtn.disabled = true;
             const thinking = $('v2-thinking-indicator');
             if (thinking) {
                 thinking.textContent = "ENVIANDO ORDEN A JULES...";
@@ -3762,16 +3824,21 @@ body{
             try {
                 const ok = await window.julesApi.sendMessage(targetId, content);
                 if (ok) {
+                    chatV2Messages.push({ role: 'user', content });
+                    saveSessionsV2();
+                    renderChatV2Messages();
+                    input.value = '';
+                    input.style.height = 'auto';
+
                     showToast("Orden enviada a Jules", "green");
                     addTel("USER", content, "info");
 
                     // Poll for activity response
                     let attempts = 0;
-                    const maxAttempts = 15; // 30 seconds (2s interval)
+                    const maxAttempts = 15;
                     const pollInterval = setInterval(async () => {
                         attempts++;
                         await refreshActivities(getIdSafe(sessionId));
-
                         if (attempts >= maxAttempts) {
                             clearInterval(pollInterval);
                             if (thinking) thinking.classList.add('hidden');
@@ -3780,39 +3847,48 @@ body{
                 }
             } catch (e) {
                 showToast("Error al enviar a Jules: " + e.message, "red");
+            } finally {
                 if (thinking) thinking.classList.add('hidden');
+                input.disabled = false;
+                sendBtn.disabled = false;
+                input.focus();
             }
         } else {
-            // Add user message
-            const userMsg = { role: 'user', content };
-            chatV2Messages.push(userMsg);
-            saveSessionsV2();
-            renderChatV2Messages();
-            input.value = '';
-            input.style.height = 'auto';
+            // Claude mode logic
+            input.disabled = true;
+            sendBtn.disabled = true;
+
+            // Add user message if first try
+            if (retryCount === 0) {
+                chatV2Messages.push({ role: 'user', content });
+                saveSessionsV2();
+                renderChatV2Messages();
+                input.value = '';
+                input.style.height = 'auto';
+            }
 
             const thinking = $('v2-thinking-indicator');
             if (thinking) {
-                thinking.textContent = "CLAUDE ESTÁ PROCESANDO...";
+                thinking.textContent = retryCount > 0 ? `REINTENTANDO (${retryCount})...` : "CLAUDE ESTÁ PROCESANDO...";
                 thinking.classList.remove('hidden');
             }
 
             try {
-                const systemPrompt = "Eres Claude, un asistente experto integrado en el panel de control de Hypenosys.";
+                const systemPrompt = "Eres Claude, un asistente experto integrado en el panel de control de Hypenosys. Responde siempre en español y de forma técnica.";
 
-                // Build context from active task if exists
-                let fullPrompt = content;
+                // Ensure alternation and no system messages in body
+                let finalMessages = chatV2Messages.filter(m => m.role === 'user' || m.role === 'assistant')
+                    .map(m => ({ role: m.role, content: m.content }));
+
+                // Technical context injection
                 if (window.JulesPanelState.activePayload?.source_task) {
                     const t = window.JulesPanelState.activePayload.source_task;
-                    fullPrompt = `[CONTEXTO TAREA #${t.id}: ${t.titulo}]\n${content}`;
+                    const contextPrefix = `[CONTEXTO TAREA #${t.id}: ${t.titulo}]\n`;
+                    if (finalMessages.length > 0 && finalMessages[finalMessages.length - 1].role === 'user') {
+                        finalMessages[finalMessages.length - 1].content = contextPrefix + finalMessages[finalMessages.length - 1].content;
+                    }
                 }
 
-                const messages = [
-                    { role: 'system', content: systemPrompt },
-                    ...chatV2Messages.map(m => ({ role: m.role, content: m.content }))
-                ];
-
-                // Migración a Streaming (SSE)
                 const baseUrl = (config.base_url || 'https://api.anthropic.com/v1').replace(/\/$/, '');
                 const isAnthropic = baseUrl.includes('anthropic.com');
                 const endpoint = isAnthropic ? `${baseUrl}/messages` : `${baseUrl}/chat/completions`;
@@ -3820,11 +3896,11 @@ body{
                 const headers = {
                     'Content-Type': 'application/json',
                     ...(isAnthropic ? {
-                        'x-api-key': config.api_key,
+                        'x-api-key': apiKey,
                         'anthropic-version': '2023-06-01',
                         'anthropic-dangerous-direct-browser-access': 'true'
                     } : {
-                        'Authorization': `Bearer ${config.api_key}`
+                        'Authorization': `Bearer ${apiKey}`
                     })
                 };
 
@@ -3832,17 +3908,17 @@ body{
                     model: config.model || 'claude-3-5-sonnet-20241022',
                     max_tokens: 1024,
                     system: systemPrompt,
-                    messages: chatV2Messages.filter(m => m.role !== 'system').map(m => ({ role: m.role, content: m.content })),
+                    messages: finalMessages,
                     stream: true
                 } : {
                     model: config.model,
-                    messages: messages,
+                    messages: [{ role: 'system', content: systemPrompt }, ...finalMessages],
                     temperature: 0.7,
                     stream: true
                 };
 
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
+                const timeoutId = setTimeout(() => controller.abort(), 60000); // Increased to 60s
 
                 const res = await fetch(endpoint, {
                     method: 'POST',
@@ -3861,7 +3937,7 @@ body{
 
             } catch (e) {
                 console.error('[ChatV2] Error:', e);
-                if ((e.name === 'AbortError' || e.message.includes('timeout')) && retryCount < 2) {
+                if ((e.name === 'AbortError' || e.message.toLowerCase().includes('timeout')) && retryCount < 2) {
                     addTel("SYSTEM", `Reintentando comunicación (${retryCount + 1}/2)...`, "warn");
                     return sendChatV2Msg(retryCount + 1);
                 }
@@ -3869,8 +3945,9 @@ body{
                 chatV2Messages.push({ role: 'system', content: `❌ Error: ${e.message}` });
                 renderChatV2Messages();
             } finally {
-                thinking.classList.add('hidden');
+                if (thinking) thinking.classList.add('hidden');
                 input.disabled = false;
+                sendBtn.disabled = false;
                 input.focus();
             }
         }
@@ -3880,6 +3957,7 @@ body{
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
         let aiContent = '';
+        let thinkingContent = '';
         let buffer = '';
 
         // Create initial message placeholder
@@ -3906,20 +3984,36 @@ body{
                         const data = JSON.parse(trimmed.startsWith('data: ') ? trimmed.substring(6) : trimmed);
 
                         if (provider === 'anthropic') {
-                            if (data.type === 'content_block_delta' && data.delta.text) aiContent += data.delta.text;
+                            if (data.type === 'content_block_delta') {
+                                if (data.delta.type === 'text_delta') {
+                                    aiContent += data.delta.text;
+                                } else if (data.delta.type === 'thinking_delta') {
+                                    thinkingContent += data.delta.thinking;
+                                }
+                            }
                         } else {
                             // OpenAI compatible
                             const delta = data.choices?.[0]?.delta?.content || data.choices?.[0]?.text || '';
                             aiContent += delta;
                         }
 
-                        if (aiContent) {
+                        if (aiContent || thinkingContent) {
+                            let finalHtml = '';
+                            if (thinkingContent) {
+                                finalHtml += `<div class="thinking-block">${escapeHtml(thinkingContent)}</div>`;
+                            }
+                            if (aiContent) {
+                                finalHtml += marked.parse(aiContent);
+                            }
+
                             chatV2Messages[msgIdx].content = aiContent;
-                            // Optimización: Solo re-renderizar si es necesario o actualizar el DOM directamente
+                            if (thinkingContent) chatV2Messages[msgIdx].thinking = thinkingContent;
+
+                            // Optimización: Actualizar el DOM directamente
                             const msgEls = container.querySelectorAll('.message-claude');
                             if (msgEls.length > 0) {
                                 const lastMsg = msgEls[msgEls.length - 1].querySelector('.prose-invert');
-                                if (lastMsg) lastMsg.innerHTML = marked.parse(aiContent);
+                                if (lastMsg) lastMsg.innerHTML = finalHtml;
                             }
                             container.scrollTop = container.scrollHeight;
                         }
@@ -3961,6 +4055,7 @@ body{
                     ${m.role === 'user' ? 'DESARROLLADOR' : 'CLAUDE NEURAL'}
                 </div>
                 <div class="prose-invert" style="font-size: 13.5px; line-height: 1.6;">
+                    ${m.thinking ? `<div class="thinking-block">${escapeHtml(m.thinking)}</div>` : ''}
                     ${marked.parse(m.content)}
                 </div>
                 ${m.role === 'assistant' ? `
@@ -4654,10 +4749,18 @@ body{
         localStorage.setItem('hy_neural_pending_prompt', finalPrompt);
         localStorage.setItem('hy_neural_active', 'true');
 
-        showToast("Enviando selección a Claude...", "green");
-        setTimeout(() => {
-            window.location.href = '/claude-chat.html';
-        }, 500);
+        showToast("Selección cargada en el chat neural", "green");
+
+        // Append to local chat instead of redirecting
+        chatV2Messages.push({
+            role: 'user',
+            content: finalPrompt
+        });
+
+        saveSessionsV2();
+        renderChatV2Messages();
+        switchView('chat');
+        clearHistorySelection();
     }
 
     function commentOnStep(sessionId, stepIndex, stepTitle) {
