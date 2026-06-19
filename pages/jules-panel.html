@@ -1272,7 +1272,7 @@ body{
     <span>Neural</span>
   </button>
   <button class="mtab" data-tab="config">
-    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
     <span>Config</span>
   </button>
 </nav>
@@ -1377,7 +1377,7 @@ body{
         <button class="btn btn-ghost btn-sm" onclick="openApiModal()">
           <span class="u-dot" style="margin-right:3px"></span>API Key
         </button>
-        <button class="btn btn-primary btn-sm" id="hdr-new-btn" onclick="scrollToSession()">
+        <button class="btn btn-primary btn-sm" id="hdr-new-btn" onclick="startNewNeuralSession()">
           <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
           Nueva sesión
         </button>
@@ -1496,7 +1496,7 @@ body{
               Crear Tests
             </div>
             <div class="opt-pill" id="opt-branch">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7v8a2 2 0 002 2h6M8 7a2 2 114 0 2 2 0 01-4 0zm8 8a2 2 114 0 2 2 0 01-4 0z"/></svg>
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7v8a2 2 0 002 2h6M8 7a2 2 0 114 0 2 2 0 01-4 0zm8 8a2 2 0 114 0 2 2 0 01-4 0z"/></svg>
               Rama Dedicada
             </div>
           </div>
@@ -2685,6 +2685,19 @@ window.JulesPanelState = {
 
         const encodedData = encodeURIComponent(JSON.stringify(fullTask));
         window.location.href = `/chat/neural/?task_data=${encodedData}`;
+    }
+
+    function startNewNeuralSession() {
+        desvincularNeuralSession();
+
+        const newClaudeId = 'session_' + (window.crypto?.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 15));
+        localStorage.setItem('hy_active_claude_session_id', newClaudeId);
+
+        chatV2Messages = [];
+
+        switchView('chat');
+
+        showToast("Nueva sesión de chat iniciada", "green");
     }
 
     function desvincularNeuralSession() {
