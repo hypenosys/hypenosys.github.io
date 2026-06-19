@@ -74,6 +74,7 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-success">Added</h5>
             <ul>
+              <li><strong>Funcionalidad de Nueva Sesión:</strong> El botón "Nueva sesión" en el Jules Panel ahora inicia correctamente una conversación limpia en el Neural Chat, archivando la sesión anterior y regenerando el identificador de contexto.</li>
               <li><strong>Unificación de Configuración IA:</strong> El Panel V2 ahora utiliza el mismo modal de configuración que el chat principal, garantizando paridad de funcionalidades y sincronización automática de credenciales entre <code>hy_ai_config</code> y <code>jules_api_key</code>.</li>
               <li><strong>Validación Estricta de Ollama:</strong> Implementada validación en tiempo de envío para prevenir errores 404. El sistema ahora detecta si falta la Base URL o el Modelo y guía al usuario para completar la configuración.</li>
               <li><strong>Soporte Nativo Ollama en Panel V2:</strong> Añadida compatibilidad con el endpoint nativo <code>/api/chat</code> y el formato NDJSON para sesiones locales de Ollama desde el panel de control.</li>
@@ -100,6 +101,8 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-success">Fixed</h5>
             <ul>
+               <li><strong>Iconografía SVG en Panel V2:</strong> Corregidos errores de sintaxis en las rutas de los iconos de Configuración y Ramas (paths malformados) que generaban alertas en la consola del navegador.</li>
+               <li><strong>Acción del Botón "Nueva Sesión":</strong> Reemplazada la llamada a una función inexistente (<code>scrollToSession</code>) por la implementación real de inicio de sesión neural.</li>
                <li><strong>Botón de Envío Neural Chat:</strong> Corregido el fallo que bloqueaba el envío de mensajes debido a una función de persistencia no definida (`saveSessionsV2`). Implementada la unificación de sesiones con el chat principal y garantizado el desbloqueo de la interfaz tras cualquier operación.</li>
                <li><strong>Conexión Flawless Neural Chat (Panel V2):</strong> Corregido el motor de enrutamiento de mensajes para respetar el modo seleccionado (Claude/Jules) y asegurar la recuperación de API Keys en todos los contextos de la versión V2.</li>
                <li><strong>Persistencia de Configuración V2:</strong> Habilitados los botones de guardado en los modales de API y Repositorio del Panel V2, garantizando la sincronización inmediata con <code>localStorage</code> y <code>hy_ai_config</code>.</li>
