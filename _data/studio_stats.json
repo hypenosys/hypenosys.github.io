@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-19T21:18:20.554Z",
+  "computed_at": "2026-06-19T21:18:25.009Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 34,
@@ -499,7 +499,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "dkdidac-design",
-      "timestamp": "2026-06-19T21:18:21.451Z"
+      "timestamp": "2026-06-19T21:18:25.662Z"
     }
   ]
 }
