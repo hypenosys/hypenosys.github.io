@@ -1947,38 +1947,7 @@ body{
   </div>
 </aside>
 
-<!-- ══ API MODAL ══ -->
-<div class="modal-overlay" id="api-modal">
-  <div class="modal-card glass" style="background:var(--surface-opaque)">
-    <div class="modal-head">
-      <h3 class="modal-title">Credenciales API Neural</h3>
-      <button class="icon-btn" onclick="closeApiModal()">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="mrow">
-        <label class="cfg-label" for="api-key-in">Clave de API Hypenosys</label>
-        <div style="position:relative">
-          <input type="password" class="cfg-input" id="api-key-in" value="••••••••••••••••••••••••••••••••" style="padding-right:38px">
-          <button id="toggle-key" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text2);cursor:pointer">👁️</button>
-        </div>
-        <p style="font-size:11px;color:var(--text3);margin-top:6px">Esta llave autoriza a los agentes Jules a clonar y escribir en repositorios.</p>
-      </div>
-      <div class="mrow">
-        <span class="cfg-label">Proveedor de modelo</span>
-        <div class="provider-grid">
-          <div class="pcard selected" data-prov="gemini"><span class="pdot"></span>Gemini Pro</div>
-          <div class="pcard" data-prov="anthropic"><span class="pdot"></span>Claude Sonnet</div>
-          <div class="pcard" data-prov="openai"><span class="pdot"></span>GPT-4o Agentic</div>
-          <div class="pcard" data-prov="local"><span class="pdot"></span>Llama 3 Local</div>
-        </div>
-      </div>
-    </div>
-    <div class="modal-foot">
-      <button class="btn btn-ghost btn-sm" onclick="closeApiModal()">Cancelar</button>
-      <button class="btn btn-primary btn-sm" id="modal-save">Guardar</button>
-    </div>
-  </div>
-</div>
+{% include api_config_modal.html %}
 
 <!-- ══ NEW TASK MODAL ══ -->
 <div class="modal-overlay" id="new-task-modal">
@@ -2039,6 +2008,13 @@ body{
 
 <!-- ══ TOAST ══ -->
 <div class="toast-wrap" id="toast-wrap"></div>
+
+<!-- Toast Notifications Container -->
+<div id="toast-container" class="toast-container"></div>
+
+<!-- Global Hype Toast Container -->
+<div id="hype-toast-container" class="fixed bottom-4 right-4 z-[9999] flex flex-col gap-2 pointer-events-none"></div>
+
 <!-- ══ REPO CONFIG MODAL ══ -->
 <div class="modal-overlay" id="repo-config-modal-overlay">
   <div class="modal-card glass" style="background:var(--surface-opaque); max-width: 550px;">
@@ -2101,6 +2077,8 @@ body{
 <script src="{{ '/assets/javascript/kanban-ui.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/gh-explorer.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/repo-aliases.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/github-api.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/auth.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/ollama-discovery.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/ai-config.js' | relative_url }}"></script>
 <script>
@@ -3304,8 +3282,8 @@ window.JulesPanelState = {
     function closeMobileSidebar(){ $('app-sidebar').classList.remove('mob-open'); $('sidebar-backdrop').classList.remove('open'); }
     function openClaudeChat(){ $('claude-modal').classList.add('open'); }
     function closeClaudeChat(){ $('claude-modal').classList.remove('open'); }
-    function openApiModal(){ $('api-modal').classList.add('open'); }
-    function closeApiModal(){ $('api-modal').classList.remove('open'); }
+    function openApiModal(){ window.authManager.showApiConfigModal(); }
+    function closeApiModal(){ $('#modalApiConfig').modal('hide'); }
     function openDocs(){ alert("📚 Jules Agent V2 - Premium Neural Interface"); }
 
     /* ─── EVENT LISTENERS ─── */
@@ -3554,10 +3532,20 @@ window.JulesPanelState = {
         const config = JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
         const apiKey = config.api_key || config.apiKey || localStorage.getItem('jules_api_key');
 
-        if (!apiKey && currentSendMode !== 'jules') {
-            showToast("Configuración de API requerida", "amber");
-            openApiModal();
-            return;
+        if (currentSendMode === 'claude') {
+            const provider = config.provider || 'none';
+            if (provider === 'ollama' || provider === 'custom') {
+                if (!config.base_url || !config.model) {
+                    showToast("Configura Ollama en el chat principal primero", "red");
+                    input.disabled = false;
+                    sendBtn.disabled = false;
+                    return;
+                }
+            } else if (!apiKey) {
+                showToast("Configuración de API requerida", "amber");
+                openApiModal();
+                return;
+            }
         }
 
         let sessionId = localStorage.getItem('hy_neural_session_id_' + claudeId);
@@ -3646,9 +3634,21 @@ window.JulesPanelState = {
                     }
                 }
 
-                const baseUrl = (config.base_url || 'https://api.anthropic.com/v1').replace(/\/$/, '');
-                const isAnthropic = baseUrl.includes('anthropic.com');
-                const endpoint = isAnthropic ? `${baseUrl}/messages` : `${baseUrl}/chat/completions`;
+                let baseUrl = (config.base_url || '').trim();
+                const isAnthropic = !baseUrl || baseUrl.includes('anthropic.com');
+                const isOllama = config.provider === 'ollama';
+
+                if (isAnthropic && !baseUrl) baseUrl = 'https://api.anthropic.com/v1';
+                baseUrl = baseUrl.replace(/\/$/, '');
+
+                let endpoint;
+                if (isAnthropic) {
+                    endpoint = `${baseUrl}/messages`;
+                } else if (isOllama && !baseUrl.includes('/v1')) {
+                    endpoint = `${baseUrl}/api/chat`;
+                } else {
+                    endpoint = `${baseUrl}/chat/completions`;
+                }
 
                 const headers = {
                     'Content-Type': 'application/json',
@@ -3656,9 +3656,9 @@ window.JulesPanelState = {
                         'x-api-key': apiKey,
                         'anthropic-version': '2023-06-01',
                         'anthropic-dangerous-direct-browser-access': 'true'
-                    } : {
+                    } : (!isOllama ? {
                         'Authorization': `Bearer ${apiKey}`
-                    })
+                    } : {}))
                 };
 
                 const body = isAnthropic ? {
@@ -3667,12 +3667,19 @@ window.JulesPanelState = {
                     system: systemPrompt,
                     messages: finalMessages,
                     stream: true
+                } : (isOllama && endpoint.endsWith('/api/chat') ? {
+                    model: config.model || 'llama3',
+                    messages: [
+                        { role: 'system', content: systemPrompt },
+                        ...finalMessages
+                    ],
+                    stream: true
                 } : {
                     model: config.model,
                     messages: [{ role: 'system', content: systemPrompt }, ...finalMessages],
                     temperature: 0.7,
                     stream: true
-                };
+                });
 
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 60000); // Increased to 60s
@@ -3748,6 +3755,13 @@ window.JulesPanelState = {
                                 } else if (data.delta.type === 'thinking_delta') {
                                     thinkingContent += data.delta.thinking;
                                 }
+                            }
+                        } else if (provider === 'ollama' || (data.message && data.message.content)) {
+                            // Ollama native
+                            if (data.message && data.message.content) {
+                                aiContent += data.message.content;
+                            } else if (data.response) {
+                                aiContent += data.response;
                             }
                         } else {
                             // OpenAI compatible
@@ -4438,28 +4452,6 @@ window.JulesPanelState = {
         });
     }
 
-    // Modal save logic parity
-    if ($('modal-save')) {
-        $('modal-save').onclick = async () => {
-            const key = $('api-key-in').value.trim();
-            const selectedProv = document.querySelector('.pcard.selected')?.dataset.prov || 'gemini';
-
-            if (key) {
-                localStorage.setItem('jules_api_key', key);
-                // Also update hy_ai_config for Claude compatibility
-                const config = JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
-                config.api_key = key;
-                config.provider = selectedProv === 'anthropic' ? 'anthropic' : (selectedProv === 'local' ? 'ollama' : selectedProv);
-                localStorage.setItem('hy_ai_config', JSON.stringify(config));
-
-                showToast("Configuración guardada correctamente", "green");
-                addTel("SYSTEM", "API Config actualizada", "success");
-                closeApiModal();
-            } else {
-                showToast("La clave de API es obligatoria", "red");
-            }
-        };
-    }
 
     // Provider selection logic
     document.querySelectorAll('.pcard').forEach(p => {

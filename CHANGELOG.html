@@ -74,6 +74,9 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-success">Added</h5>
             <ul>
+              <li><strong>Unificación de Configuración IA:</strong> El Panel V2 ahora utiliza el mismo modal de configuración que el chat principal, garantizando paridad de funcionalidades y sincronización automática de credenciales entre <code>hy_ai_config</code> y <code>jules_api_key</code>.</li>
+              <li><strong>Validación Estricta de Ollama:</strong> Implementada validación en tiempo de envío para prevenir errores 404. El sistema ahora detecta si falta la Base URL o el Modelo y guía al usuario para completar la configuración.</li>
+              <li><strong>Soporte Nativo Ollama en Panel V2:</strong> Añadida compatibilidad con el endpoint nativo <code>/api/chat</code> y el formato NDJSON para sesiones locales de Ollama desde el panel de control.</li>
               <li><strong>Streaming (SSE) en Claude Chat:</strong> Implementada la respuesta progresiva token-a-token para una experiencia de chat instantánea y fluida, eliminando tiempos de espera en bloques.</li>
               <li><strong>Banner de Estado de Ejecución Neural:</strong> Nuevo sistema de telemetría persistente con 4 estados (Generando, Esperando, Ejecutando, Completado) que incluye notificaciones dinámicas en el título de la pestaña del navegador.</li>
               <li><strong>Aprobación Inline de Planes:</strong> Implementado sistema de checkpoint con botones de "Aprobar" y "Rechazar" integrados directamente en el flujo del chat para un control total sobre las acciones de Jules.</li>

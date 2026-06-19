@@ -507,6 +507,11 @@ class AuthManager {
             const localConfig = { provider, model, api_key: apiKey, base_url: baseUrl, local_network: localNetwork };
             localStorage.setItem('hy_ai_config', JSON.stringify(localConfig));
 
+            // Unify with jules_api_key for cross-module compatibility
+            if (apiKey) {
+                localStorage.setItem('jules_api_key', apiKey);
+            }
+
             // Sync non-sensitive to team_profiles.json via safe public wrapper
             const profilesRes = await window.githubApi.fetchFileWithSha('_data/team_profiles.json');
             const memberEntry = Object.entries(profilesRes.content.members).find(([k, v]) => v.github_username.toLowerCase() === login.toLowerCase());
