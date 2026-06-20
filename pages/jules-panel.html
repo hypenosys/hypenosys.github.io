@@ -2159,12 +2159,14 @@ window.JulesPanelState = {
         requestQueue:        [],
         isDispatching:       false,
         isRefreshing:        false,
+        isSyncingArchive:    false,
         currentView:         'dashboard',
         metricsWindow:       30,
         notifications:       [],
         unreadCount:         0,
         tasks:               [],
-        linkedTaskId:        localStorage.getItem('jules_linked_task_id') || null
+        linkedTaskId:        localStorage.getItem('jules_linked_task_id') || null,
+        globalArchive:       {}
     };
 
     class GHAPIQueue {
@@ -2536,7 +2538,7 @@ window.JulesPanelState = {
         if (col) col.classList.remove('drag-over');
     };
 
-    window.onDrop = (e, targetColId) => {
+    window.onDrop = async (e, targetColId) => {
         e.preventDefault();
         const col = $(`col-${targetColId}`);
         if (col) col.classList.remove('drag-over');
@@ -2565,15 +2567,48 @@ window.JulesPanelState = {
             const taskId = taskIdMatch ? taskIdMatch[1] : null;
             const archiveId = taskId || sid;
 
-            const archive = JSON.parse(localStorage.getItem('jules_internal_archive') || '{}');
-            archive[archiveId] = {
+            const archiveData = {
                 target: targetColId,
                 realCol: realCol,
-                isTask: !!taskId
+                isTask: !!taskId,
+                updatedAt: new Date().toISOString()
             };
-            localStorage.setItem('jules_internal_archive', JSON.stringify(archive));
-            showToast("Tarea archivada localmente", "info");
-            loadJulesKanban();
+
+            // Optimistic update
+            window.JulesPanelState.globalArchive[archiveId] = archiveData;
+            showToast("Sincronizando archivo global...", "amber");
+            loadJulesKanban(sessions);
+
+            try {
+                window.JulesPanelState.isSyncingArchive = true;
+                await window.githubApi.updateJulesGlobalArchive(archiveId, archiveData);
+                showToast("Cambio persistido globalmente", "green");
+            } catch (err) {
+                console.error("Global archive update failed", err);
+                showToast("Error al persistir globalmente", "red");
+            } finally {
+                window.JulesPanelState.isSyncingArchive = false;
+            }
+        }
+    };
+
+    window.restoreArchivedCard = async (archiveId) => {
+        if (!window.JulesPanelState.globalArchive[archiveId]) return;
+
+        // Optimistic
+        delete window.JulesPanelState.globalArchive[archiveId];
+        showToast("Restaurando tarea...", "amber");
+        loadJulesKanban(window.julesSessionsCache);
+
+        try {
+            window.JulesPanelState.isSyncingArchive = true;
+            await window.githubApi.updateJulesGlobalArchive(archiveId, null);
+            showToast("Tarea restaurada globalmente", "green");
+        } catch (err) {
+            console.error("Restore failed", err);
+            showToast("Error al restaurar globalmente", "red");
+        } finally {
+            window.JulesPanelState.isSyncingArchive = false;
         }
     };
 
@@ -2648,7 +2683,8 @@ window.JulesPanelState = {
                 colItems[targetCol].push(s);
             });
 
-            const archive = JSON.parse(localStorage.getItem('jules_internal_archive') || '{}');
+            const archive = window.JulesPanelState.globalArchive || {};
+            let archiveChanged = false;
 
             // 1. Terminal State Cleanup: If real state is already terminal, clear archive entry
             ['done', 'error'].forEach(colId => {
@@ -2657,7 +2693,10 @@ window.JulesPanelState = {
                     const taskIdMatch = (s.title || s.prompt || '').match(/#(\d+)/);
                     const taskId = taskIdMatch ? taskIdMatch[1] : null;
                     const archiveId = taskId || sid;
-                    if (archive[archiveId]) delete archive[archiveId];
+                    if (archive[archiveId]) {
+                        delete archive[archiveId];
+                        archiveChanged = true;
+                    }
                 });
             });
 
@@ -2684,16 +2723,28 @@ window.JulesPanelState = {
 
                         if (currentRealCol !== (entry.realCol || entry.realState)) {
                             delete archive[archiveId];
+                            archiveChanged = true;
                             return true;
                         }
                         // Move to internal target
-                        colItems[entry.target].push(s);
-                        return false;
+                        if (colItems[entry.target]) {
+                            colItems[entry.target].push(s);
+                            return false;
+                        }
                     }
                     return true;
                 });
             });
-            localStorage.setItem('jules_internal_archive', JSON.stringify(archive));
+
+            if (archiveChanged) {
+                // Trigger a background cleanup commit to keep the global state clean
+                // We don't await this to keep the UI snappy
+                window.githubApi.atomicWrite('_data/jules_panel_state.json', (db) => {
+                    db.archive = window.JulesPanelState.globalArchive;
+                    db.last_updated = new Date().toISOString();
+                    return db;
+                }, "chore: limpieza automática de archivo global (estados terminales o cambiados)");
+            }
 
             Object.keys(colItems).forEach(colId => {
                 const colEl = $(`kb-${colId}`), countEl = $(`kb-count-${colId}`), mCountEl = $(`m-count-${colId}`);
@@ -2732,6 +2783,7 @@ window.JulesPanelState = {
                                 <span class="kb-card-time">${getTimeAgo(s.createTime)}</span>
                             </div>
                             <div class="kb-card-actions">
+                                ${isArchived ? `<button class="kb-action-btn" style="color:var(--amber)" onclick="event.stopPropagation(); restoreArchivedCard('${archiveId}')">Restaurar</button>` : ''}
                                 <button class="kb-action-btn btn-relaunch" onclick="event.stopPropagation(); relaunchJules('${encodeURIComponent(JSON.stringify(s))}')">Relanzar Jules</button>
                                 <button class="kb-action-btn" onclick="event.stopPropagation(); const cid = localStorage.getItem('hy_active_claude_session_id'); if (cid) localStorage.setItem('hy_neural_session_id_' + cid, '${sid}'); localStorage.setItem('hy_neural_session_id', '${sid}'); localStorage.setItem('hy_neural_active', 'true'); switchView('chat');">Ver Neural</button>
                             </div>
@@ -2747,10 +2799,15 @@ window.JulesPanelState = {
         if (window.JulesPanelState.isRefreshing) return;
         window.JulesPanelState.isRefreshing = true;
         try {
-            const [sessionData, tasks] = await Promise.all([
+            const [sessionData, tasks, archiveRes] = await Promise.all([
                 window.julesApi.getSessions(window.JulesPanelState.metricsWindow || 30),
-                window.taskOps.getAllTasks()
+                window.taskOps.getAllTasks(),
+                window.githubApi.fetchFileWithSha('_data/jules_panel_state.json')
             ]);
+
+            if (archiveRes && archiveRes.content && !window.JulesPanelState.isSyncingArchive) {
+                window.JulesPanelState.globalArchive = archiveRes.content.archive || {};
+            }
 
             const sessions = sessionData.sessions || [];
             window.julesSessionsCache = sessions;
