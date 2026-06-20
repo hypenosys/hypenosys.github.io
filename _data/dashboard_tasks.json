@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-19T21:20:00.077Z",
-  "last_updated_by": "Sistema",
+  "last_updated": "2026-06-20T10:40:50.714Z",
+  "last_updated_by": "Alex",
   "tasks": [
     {
       "id": 1,
@@ -3709,9 +3709,59 @@
         }
       ],
       "id": 57
+    },
+    {
+      "title": "arreglar jules panel kanban",
+      "descripcion": "Vincular kanban dashboard, para que salgan las tareas bien,",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "repository": null,
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Alex",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-20",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "topperh4rley",
+          "timestamp": "2026-06-20T10:40:50.119Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 58
     }
   ],
   "_audit_log": [
+    {
+      "action": "feat: nueva tarea #1781952050119 añadida",
+      "user": "TopperH4rley",
+      "timestamp": "2026-06-20T10:40:50.714Z"
+    },
     {
       "action": "chore: actualizar estado tarea #4 → Pending",
       "user": "dkdidac-design",
