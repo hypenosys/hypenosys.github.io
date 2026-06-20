@@ -463,8 +463,24 @@ body{
 .kb-card.pending::before{background:var(--amber)}
 .kb-card.done::before{background:var(--accent)}
 .kb-card.error::before{background:var(--red)}
+.kb-card.archived{opacity:0.6;filter:grayscale(0.3)}
 .kb-card:hover{border-color:var(--border-accent);transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,.4)}
 .kb-card.dragging{opacity:.4;transform:scale(.97)}
+.archived-badge{
+  font-size:8px;font-weight:800;color:var(--green);background:var(--green-soft);
+  padding:1px 5px;border-radius:4px;text-transform:uppercase;letter-spacing:0.05em;
+  border:1px solid rgba(16,185,129,0.2);margin-left:6px;
+}
+.btn-relaunch{
+  background:rgba(124,58,237,0.1) !important;
+  color:var(--accent2) !important;
+  border-color:rgba(124,58,237,0.2) !important;
+}
+.btn-relaunch:hover{
+  background:rgba(124,58,237,0.2) !important;
+  border-color:var(--accent) !important;
+  color:#fff !important;
+}
 .kb-card-id{font-family:var(--font-mono);font-size:10px;color:var(--text3);margin-bottom:5px}
 .kb-card-task{font-size:12.5px;font-weight:500;color:var(--text);line-height:1.4;margin-bottom:8px;
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
@@ -1613,7 +1629,7 @@ body{
         <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"/></svg>
       </button>
       <div class="kanban-board" id="kanban-board">
-        <div class="kb-col" id="col-pending" ondragover="onDragOver(event,'pending')" ondrop="onDrop(event,'pending')" ondragleave="onDragLeave(event)">
+        <div class="kb-col" id="col-pending">
           <div class="kb-col-head">
             <div class="kb-col-name"><span class="col-dot" style="background:var(--amber)"></span>En Cola</div>
             <span class="kb-count" id="kb-count-pending">0</span>
@@ -1621,7 +1637,7 @@ body{
           <div class="kb-cards" id="kb-pending"></div>
           <div class="kb-add" onclick="openNewTaskModal('pending')">+ Nueva tarea en cola</div>
         </div>
-        <div class="kb-col" id="col-running" ondragover="onDragOver(event,'running')" ondrop="onDrop(event,'running')" ondragleave="onDragLeave(event)">
+        <div class="kb-col" id="col-running">
           <div class="kb-col-head">
             <div class="kb-col-name"><span class="col-dot" style="background:var(--green)"></span>En Progreso</div>
             <span class="kb-count" id="kb-count-running">0</span>
@@ -1629,7 +1645,7 @@ body{
           <div class="kb-cards" id="kb-running"></div>
           <div class="kb-add" onclick="openNewTaskModal('running')">+ Nueva tarea activa</div>
         </div>
-        <div class="kb-col" id="col-done" ondragover="onDragOver(event,'done')" ondrop="onDrop(event,'done')" ondragleave="onDragLeave(event)">
+        <div class="kb-col" id="col-done">
           <div class="kb-col-head">
             <div class="kb-col-name"><span class="col-dot" style="background:var(--accent)"></span>Completado</div>
             <span class="kb-count" id="kb-count-done">0</span>
@@ -1637,7 +1653,7 @@ body{
           <div class="kb-cards" id="kb-done"></div>
           <div class="kb-add" onclick="openNewTaskModal('done')">+ Marcar completada</div>
         </div>
-        <div class="kb-col" id="col-error" ondragover="onDragOver(event,'error')" ondrop="onDrop(event,'error')" ondragleave="onDragLeave(event)">
+        <div class="kb-col" id="col-error">
           <div class="kb-col-head">
             <div class="kb-col-name"><span class="col-dot" style="background:var(--red)"></span>Bloqueado</div>
             <span class="kb-count" id="kb-count-error">0</span>
@@ -2142,6 +2158,7 @@ window.JulesPanelState = {
         rateLimitRemaining:  999,
         requestQueue:        [],
         isDispatching:       false,
+        isRefreshing:        false,
         currentView:         'dashboard',
         metricsWindow:       30,
         notifications:       [],
@@ -2502,10 +2519,115 @@ window.JulesPanelState = {
     }
 
     /* ─── DASHBOARD DATA ─── */
-    async function loadJulesKanban() {
+    window.onDragStart = (e, sessionId) => {
+        e.dataTransfer.setData('text/plain', sessionId);
+        const card = e.target.closest('.kb-card');
+        if (card) card.classList.add('dragging');
+    };
+
+    window.onDragOver = (e, colId) => {
+        e.preventDefault();
+        const col = $(`col-${colId}`);
+        if (col) col.classList.add('drag-over');
+    };
+
+    window.onDragLeave = (colId) => {
+        const col = $(`col-${colId}`);
+        if (col) col.classList.remove('drag-over');
+    };
+
+    window.onDrop = (e, targetColId) => {
+        e.preventDefault();
+        const col = $(`col-${targetColId}`);
+        if (col) col.classList.remove('drag-over');
+
+        const sid = e.dataTransfer.getData('text/plain');
+        if (!sid) return;
+
+        // Internal archiving only to COMPLETED or BLOQUEADO
+        if (targetColId === 'done' || targetColId === 'error') {
+            const sessions = window.julesSessionsCache || [];
+            const session = sessions.find(s => s.name.split('/').pop() === sid);
+            if (!session) return;
+
+            // Helper to get real col from session state
+            let realCol = "pending";
+            if (["WORKING", "IN_PROGRESS", "PLANNING", "AWAITING_PLAN_APPROVAL", "AWAITING_USER_FEEDBACK"].includes(session.state)) {
+                realCol = "running";
+            } else if (session.state === "COMPLETED") {
+                realCol = "done";
+            } else if (["FAILED", "CANCELLED", "ERROR"].includes(session.state)) {
+                realCol = "error";
+            }
+
+            const title = session.title || session.prompt || '';
+            const taskIdMatch = title.match(/#(\d+)/);
+            const taskId = taskIdMatch ? taskIdMatch[1] : null;
+            const archiveId = taskId || sid;
+
+            const archive = JSON.parse(localStorage.getItem('jules_internal_archive') || '{}');
+            archive[archiveId] = {
+                target: targetColId,
+                realCol: realCol,
+                isTask: !!taskId
+            };
+            localStorage.setItem('jules_internal_archive', JSON.stringify(archive));
+            showToast("Tarea archivada localmente", "info");
+            loadJulesKanban();
+        }
+    };
+
+    window.relaunchJules = (sessionJson) => {
         try {
-            const data = await window.julesApi.getSessions(20);
-            const sessions = data.sessions || [];
+            const s = JSON.parse(decodeURIComponent(sessionJson));
+            const prompt = s.prompt || s.title || '';
+            const repo = s.sourceContext?.source;
+            const branch = s.sourceContext?.githubRepoContext?.startingBranch;
+
+            if ($('session-prompt')) $('session-prompt').value = prompt;
+
+            if (repo) {
+                const source = (window.julesSourcesCache || []).find(src => src.name === repo);
+                if (source) {
+                    switchRepo(repo, source);
+                } else {
+                    window.JulesPanelState.activeRepo = repo;
+                    localStorage.setItem('hypenosys_active_repo', repo);
+                }
+            }
+
+            if (branch) {
+                const setBranch = () => {
+                    const sel = $('branch-sel');
+                    if (sel && sel.options.length > 0 && sel.options[0].value !== "") {
+                        sel.value = branch;
+                        window.JulesPanelState.activeBranch = branch;
+                        const sessCtx = $('sess-ctx');
+                        if(sessCtx) {
+                            const repoLabel = $('repo-label').textContent;
+                            sessCtx.textContent = `${repoLabel}: ${branch}`;
+                        }
+                    } else {
+                        setTimeout(setBranch, 100);
+                    }
+                };
+                setBranch();
+            }
+
+            switchView('neural');
+            showToast("Contexto re-cargado para nueva sesión", "green");
+        } catch (e) {
+            console.error("Relaunch failed", e);
+            showToast("Error al relanzar sesión", "red");
+        }
+    };
+
+    async function loadJulesKanban(sessions = null) {
+        try {
+            if (!sessions) {
+                const data = await window.julesApi.getSessions(20);
+                sessions = data.sessions || [];
+            }
 
             const colItems = {
                 'pending': [],
@@ -2514,34 +2636,64 @@ window.JulesPanelState = {
                 'error': []
             };
 
-            const enrichedSessions = await Promise.all(sessions.map(async (s) => {
+            sessions.forEach(s => {
                 let targetCol = "pending";
-                if (["WORKING", "IN_PROGRESS", "PLANNING", "AWAITING_PLAN_APPROVAL"].includes(s.state)) {
+                if (["WORKING", "IN_PROGRESS", "PLANNING", "AWAITING_PLAN_APPROVAL", "AWAITING_USER_FEEDBACK"].includes(s.state)) {
                     targetCol = "running";
                 } else if (s.state === "COMPLETED") {
                     targetCol = "done";
                 } else if (["FAILED", "CANCELLED", "ERROR"].includes(s.state)) {
                     targetCol = "error";
                 }
+                colItems[targetCol].push(s);
+            });
 
-                try {
-                    const activityData = await window.julesApi.getActivities(s.name, 10);
-                    const activities = activityData.activities || [];
-                    const hasPlanApproved = activities.some(a => a.planApproved);
-                    const hasSessionCompleted = activities.some(a => a.sessionCompleted);
-                    const hasFailed = activities.some(a => a.sessionFailed || (a.progressUpdated?.exitCode !== undefined && a.progressUpdated.exitCode !== 0));
+            const archive = JSON.parse(localStorage.getItem('jules_internal_archive') || '{}');
 
-                    if (hasFailed) targetCol = "error";
-                    else if (hasSessionCompleted) targetCol = "done";
-                    else if (hasPlanApproved) targetCol = "running";
-                    else targetCol = "pending";
-                } catch(e) {}
-                return { session: s, targetCol };
-            }));
+            // 1. Terminal State Cleanup: If real state is already terminal, clear archive entry
+            ['done', 'error'].forEach(colId => {
+                colItems[colId].forEach(s => {
+                    const sid = s.name.split('/').pop();
+                    const taskIdMatch = (s.title || s.prompt || '').match(/#(\d+)/);
+                    const taskId = taskIdMatch ? taskIdMatch[1] : null;
+                    const archiveId = taskId || sid;
+                    if (archive[archiveId]) delete archive[archiveId];
+                });
+            });
 
-            for (const { session, targetCol } of enrichedSessions) {
-                colItems[targetCol].push(session);
-            }
+            // 2. Internal Archiving & State Change Detection
+            ['pending', 'running'].forEach(colId => {
+                colItems[colId] = colItems[colId].filter(s => {
+                    const sid = s.name.split('/').pop();
+                    const taskIdMatch = (s.title || s.prompt || '').match(/#(\d+)/);
+                    const taskId = taskIdMatch ? taskIdMatch[1] : null;
+                    const archiveId = taskId || sid;
+
+                    const entry = archive[archiveId];
+                    if (entry) {
+                        // Conflict check: if real status changed (e.g. Pending -> Working), invalidate local archive
+                        // We compare derived realCol instead of exact session state to be more resilient
+                        let currentRealCol = "pending";
+                        if (["WORKING", "IN_PROGRESS", "PLANNING", "AWAITING_PLAN_APPROVAL", "AWAITING_USER_FEEDBACK"].includes(s.state)) {
+                            currentRealCol = "running";
+                        } else if (s.state === "COMPLETED") {
+                            currentRealCol = "done";
+                        } else if (["FAILED", "CANCELLED", "ERROR"].includes(s.state)) {
+                            currentRealCol = "error";
+                        }
+
+                        if (currentRealCol !== (entry.realCol || entry.realState)) {
+                            delete archive[archiveId];
+                            return true;
+                        }
+                        // Move to internal target
+                        colItems[entry.target].push(s);
+                        return false;
+                    }
+                    return true;
+                });
+            });
+            localStorage.setItem('jules_internal_archive', JSON.stringify(archive));
 
             Object.keys(colItems).forEach(colId => {
                 const colEl = $(`kb-${colId}`), countEl = $(`kb-count-${colId}`), mCountEl = $(`m-count-${colId}`);
@@ -2551,14 +2703,27 @@ window.JulesPanelState = {
                 if (countEl) countEl.textContent = items.length;
                 if (mCountEl) mCountEl.textContent = items.length;
 
+                // Bind column events
+                colEl.ondragover  = (e) => window.onDragOver(e, colId);
+                colEl.ondragleave = () => window.onDragLeave(colId);
+                colEl.ondrop      = (e) => window.onDrop(e, colId);
+
                 colEl.innerHTML = items.map(s => {
                     const sid = s.name.split('/').pop();
+                    const taskIdMatch = (s.title || s.prompt || '').match(/#(\d+)/);
+                    const taskId = taskIdMatch ? taskIdMatch[1] : null;
+                    const archiveId = taskId || sid;
+
+                    const isArchived = archive[archiveId] !== undefined;
                     const repo = s.sourceContext?.source?.split('/').pop() || '---';
+                    const canDrag = (colId === 'pending' || colId === 'running') && !isArchived;
 
                     return `
-                        <div class="kb-card ${colId}" onclick="openDrawer('${s.name}')">
+                        <div class="kb-card ${colId} ${isArchived ? 'archived' : ''}"
+                             ${canDrag ? `draggable="true" ondragstart="onDragStart(event, '${sid}')" ondragend="this.classList.remove('dragging')"` : ''}
+                             onclick="openDrawer('${s.name}')">
                             <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:5px">
-                                <div class="kb-card-id">#${sid}</div>
+                                <div class="kb-card-id">#${sid}${isArchived ? '<span class="archived-badge">Archived</span>' : ''}</div>
                                 <span class="sbadge ${s.state.toLowerCase().replace(/_/g, '-')}">${s.state}</span>
                             </div>
                             <div class="kb-card-task">${escapeHtml(s.title || s.prompt)}</div>
@@ -2567,6 +2732,7 @@ window.JulesPanelState = {
                                 <span class="kb-card-time">${getTimeAgo(s.createTime)}</span>
                             </div>
                             <div class="kb-card-actions">
+                                <button class="kb-action-btn btn-relaunch" onclick="event.stopPropagation(); relaunchJules('${encodeURIComponent(JSON.stringify(s))}')">Relanzar Jules</button>
                                 <button class="kb-action-btn" onclick="event.stopPropagation(); const cid = localStorage.getItem('hy_active_claude_session_id'); if (cid) localStorage.setItem('hy_neural_session_id_' + cid, '${sid}'); localStorage.setItem('hy_neural_session_id', '${sid}'); localStorage.setItem('hy_neural_active', 'true'); switchView('chat');">Ver Neural</button>
                             </div>
                         </div>
@@ -2578,6 +2744,8 @@ window.JulesPanelState = {
         }
     }
     async function refreshDashboard() {
+        if (window.JulesPanelState.isRefreshing) return;
+        window.JulesPanelState.isRefreshing = true;
         try {
             const [sessionData, tasks] = await Promise.all([
                 window.julesApi.getSessions(window.JulesPanelState.metricsWindow || 30),
@@ -2589,7 +2757,9 @@ window.JulesPanelState = {
             window.JulesPanelState.tasks = tasks;
 
             renderHistoryTable(sessions);
-            loadJulesKanban();
+            if (window.JulesPanelState.currentView === 'kanban') {
+                loadJulesKanban(sessions);
+            }
             updateStats();
 
             // Area 1: Polling for history if on chat view
@@ -2635,6 +2805,7 @@ window.JulesPanelState = {
                 }
             });
         } catch (e) { console.error('[Jules] refreshDashboard error:', e); }
+        finally { window.JulesPanelState.isRefreshing = false; }
     }
 
     async function refreshSessions() { await refreshDashboard(); }
@@ -3238,9 +3409,6 @@ window.JulesPanelState = {
             if (!document.hidden) {
                 refreshDashboard();
                 checkClipboard();
-                if (window.JulesPanelState.currentView === 'kanban') {
-                    loadJulesKanban();
-                }
             }
         }, 10000); // Poll every 10s as requested
     }
