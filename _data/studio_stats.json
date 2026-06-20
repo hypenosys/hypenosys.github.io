@@ -1,15 +1,15 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-19T21:20:02.094Z",
+  "computed_at": "2026-06-20T10:40:52.795Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 34,
+    "total_tasks": 35,
     "total_ok": 6,
     "total_ko": 0,
     "total_uncertain": 12,
     "total_obsolete": 6,
-    "fixed_found_ratio": 0.1667,
-    "verified_ratio": 0.15
+    "fixed_found_ratio": 0.1622,
+    "verified_ratio": 0.1463
   },
   "group": {
     "velocity_trend": {
@@ -22,11 +22,11 @@
       "2026-W24": 0,
       "2026-W25": 1
     },
-    "bug_rate": 0.0357,
+    "bug_rate": 0.0345,
     "blocker_health": 3,
     "tag_heatmap": {
       "devops": 7,
-      "feature": 12,
+      "feature": 13,
       "frontend": 5,
       "brainstorm": 1,
       "chore": 10,
@@ -50,10 +50,10 @@
       "backend": 2,
       "refactor": 2,
       "stability": 1,
-      "master": 5,
+      "master": 6,
       "UX/UI": 1
     },
-    "milestone_tasks_remaining": 15,
+    "milestone_tasks_remaining": 16,
     "hall_of_fame_winners": {
       "mvp": {
         "handle": "axlfc",
@@ -498,8 +498,8 @@
   "_audit_log": [
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
-      "user": "dkdidac-design",
-      "timestamp": "2026-06-19T21:20:02.717Z"
+      "user": "TopperH4rley",
+      "timestamp": "2026-06-20T10:40:53.389Z"
     }
   ]
 }
