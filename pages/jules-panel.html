@@ -2746,6 +2746,43 @@ window.JulesPanelState = {
                 }, "chore: limpieza automática de archivo global (estados terminales o cambiados)");
             }
 
+            const archive = JSON.parse(localStorage.getItem('jules_internal_archive') || '{}');
+
+            // 1. Terminal State Cleanup: If real state is already terminal, clear archive entry
+            ['done', 'error'].forEach(colId => {
+                colItems[colId].forEach(s => {
+                    const sid = s.name.split('/').pop();
+                    const taskIdMatch = (s.title || s.prompt || '').match(/#(\d+)/);
+                    const taskId = taskIdMatch ? taskIdMatch[1] : null;
+                    const archiveId = taskId || sid;
+                    if (archive[archiveId]) delete archive[archiveId];
+                });
+            });
+
+            // 2. Internal Archiving & State Change Detection
+            ['pending', 'running'].forEach(colId => {
+                colItems[colId] = colItems[colId].filter(s => {
+                    const sid = s.name.split('/').pop();
+                    const taskIdMatch = (s.title || s.prompt || '').match(/#(\d+)/);
+                    const taskId = taskIdMatch ? taskIdMatch[1] : null;
+                    const archiveId = taskId || sid;
+
+                    const entry = archive[archiveId];
+                    if (entry) {
+                        // Conflict check: if real status changed (e.g. Pending -> Working), invalidate local archive
+                        if (s.state !== entry.realState) {
+                            delete archive[archiveId];
+                            return true;
+                        }
+                        // Move to internal target
+                        colItems[entry.target].push(s);
+                        return false;
+                    }
+                    return true;
+                });
+            });
+            localStorage.setItem('jules_internal_archive', JSON.stringify(archive));
+
             Object.keys(colItems).forEach(colId => {
                 const colEl = $(`kb-${colId}`), countEl = $(`kb-count-${colId}`), mCountEl = $(`m-count-${colId}`);
                 if (!colEl) return;
