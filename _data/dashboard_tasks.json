@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T11:21:15.038Z",
+  "last_updated": "2026-06-21T11:28:49.230Z",
   "last_updated_by": "Axel",
   "tasks": [
     {
@@ -4045,9 +4045,67 @@
         }
       ],
       "id": 62
+    },
+    {
+      "title": "/chat/neural/:  Arreglar desbordamiento en modelo ON",
+      "descripcion": "En la vista de Tablet (al menos) hay un desbordamiento en el {MODELO SELECCIONADO} ON, hacer que se posicione bien visualmente en la interfaz",
+      "rama": "master",
+      "task_type": "bug",
+      "tema_principal": "Programación / Engine",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Cosmetic",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Axel",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-06-21",
+      "due_date": "2026-06-28",
+      "estimated_hours": 1,
+      "story_points": 1,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [
+        {
+          "url": "https://64.media.tumblr.com/3093f0f416de05692eef13b25ab0edcb/b8a3e0f47de6ca46-4f/s1280x1920/b8239e2fc01b1ff1e23f227c3cd93970b10fdc51.png",
+          "type": "url",
+          "tumblr_post_id": "820029760486981632",
+          "filename": "8673.png",
+          "uploaded_at": "2026-06-21T11:28:41.255Z"
+        }
+      ],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-21",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T11:28:48.494Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 63
     }
   ],
   "_audit_log": [
+    {
+      "action": "feat: nueva tarea #1782041328494 añadida",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T11:28:49.230Z"
+    },
     {
       "action": "feat: nueva tarea #1782040874577 añadida",
       "user": "Axlfc",
