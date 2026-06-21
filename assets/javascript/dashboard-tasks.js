@@ -79,6 +79,8 @@ function openCreateTaskModal() {
   renderModalArrays();
 
   currentTaskImages = [];
+  pendingImages.forEach(img => { if (img.localUrl) URL.revokeObjectURL(img.localUrl); });
+  pendingImages = [];
   renderImagePreviews();
 
   const checkboxes = document.querySelectorAll('#task-asignados-container input[name="asignados"]');
@@ -150,6 +152,8 @@ function openEditTaskModal(taskId) {
     renderModalArrays();
 
     currentTaskImages = JSON.parse(JSON.stringify(task.images || []));
+    pendingImages.forEach(img => { if (img.localUrl) URL.revokeObjectURL(img.localUrl); });
+    pendingImages = [];
     renderImagePreviews();
 
     const checkboxes = document.querySelectorAll('#task-asignados-container input[name="asignados"]');
@@ -222,9 +226,12 @@ async function handleCreateTask() {
   };
 
   showToast(UI_STRINGS.saving, 'info');
-  document.getElementById('create-task-modal').classList.add('hidden');
 
   try {
+    // Phase 1: Upload pending images to Tumblr
+    await uploadPendingImages();
+
+    document.getElementById('create-task-modal').classList.add('hidden');
     if (taskId) {
         const oldTask = currentTasks.find(t => String(t.id) === String(taskId));
         const changes = diffTasks(oldTask, taskData);
@@ -329,13 +336,28 @@ async function handleImageFiles(files) {
             continue;
         }
 
-        showToast(`Subiendo ${file.name} a Tumblr...`, 'info');
+        const localUrl = URL.createObjectURL(file);
+        pendingImages.push({
+            localUrl: localUrl,
+            file: file,
+            uploaded: false
+        });
+    }
+    renderImagePreviews();
+}
 
+async function uploadPendingImages() {
+    if (pendingImages.length === 0) return;
+
+    for (const item of pendingImages) {
+        if (item.uploaded) continue;
+
+        showToast(`Subiendo ${item.file.name} a Tumblr...`, 'info');
         try {
             const workerUrl = 'https://hypenosys-gatekeeper-v2.axlffcc.workers.dev/tumblr/upload';
             const fd = new FormData();
-            fd.append('image', file);
-            fd.append('filename', file.name);
+            fd.append('image', item.file);
+            fd.append('filename', item.file.name);
 
             const res = await fetch(workerUrl, { method: 'POST', body: fd });
             const data = await res.json();
@@ -345,20 +367,23 @@ async function handleImageFiles(files) {
                     url: data.url,
                     type: "url",
                     tumblr_post_id: data.tumblr_post_id,
-                    filename: file.name,
+                    filename: item.file.name,
                     uploaded_at: new Date().toISOString()
                 };
                 currentTaskImages.push(imgObj);
-                renderImagePreviews();
-                showToast(`Imagen subida: ${file.name}`, 'success');
+                item.uploaded = true;
+                if (item.localUrl) URL.revokeObjectURL(item.localUrl);
+                showToast(`Imagen subida: ${item.file.name}`, 'success');
             } else {
                 throw new Error(data.error || 'Error desconocido en el Worker');
             }
         } catch (err) {
             console.error('[TUMBLR] Upload failed:', err);
-            showToast(`Error al subir imagen: ${err.message}. Intenta pegar la URL manualmente.`, 'error');
+            showToast(`Error al subir ${item.file.name}: ${err.message}`, 'error');
+            throw err; // Stop the save process if upload fails
         }
     }
+    pendingImages = pendingImages.filter(img => !img.uploaded);
 }
 
 
@@ -367,10 +392,10 @@ function renderImagePreviews() {
     if (!container) return;
     container.innerHTML = '';
 
-    // Render existing images
+    // 1. Render existing images (Tumblr)
     currentTaskImages.forEach((img, idx) => {
         const thumb = document.createElement('div');
-        thumb.className = 'image-thumb group';
+        thumb.className = 'image-thumb group relative';
 
         const isLegacy = img.type === 'binary_legacy';
 
@@ -387,26 +412,53 @@ function renderImagePreviews() {
             ${isLegacy ? '<span class="absolute top-1 left-1 bg-amber-500 text-slate-950 text-[7px] font-black px-1 rounded">⚠️</span>' : ''}
         `;
 
-        const viewBtn = thumb.querySelector('[data-action="preview"]');
-        const removeBtn = thumb.querySelector('[data-action="remove"]');
-
-        viewBtn.onclick = (e) => {
-            e.preventDefault();
-            e.stopPropagation();
+        thumb.querySelector('[data-action="preview"]').onclick = (e) => {
+            e.preventDefault(); e.stopPropagation();
             document.activeElement?.blur();
-            openLightbox('current', idx);
+            window.openLightbox('current', idx);
         };
 
-        removeBtn.onclick = (e) => {
-            e.preventDefault();
-            e.stopPropagation();
+        thumb.querySelector('[data-action="remove"]').onclick = (e) => {
+            e.preventDefault(); e.stopPropagation();
             removeTaskImage(idx);
         };
 
         container.appendChild(thumb);
     });
 
-    // Add button
+    // 2. Render pending images (Local)
+    pendingImages.forEach((img, idx) => {
+        const thumb = document.createElement('div');
+        thumb.className = 'image-thumb group relative';
+
+        thumb.innerHTML = `
+            <img src="${img.localUrl}" class="w-full h-full object-cover opacity-60" alt="">
+            <div class="image-thumb-actions">
+                <button type="button" data-action="preview" class="text-emerald-400 hover:scale-125 transition-transform p-1">
+                    <i class="fa-solid fa-eye"></i>
+                </button>
+                <button type="button" data-action="remove" class="text-red-400 hover:scale-125 transition-transform p-1">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </div>
+            <span class="absolute bottom-1 left-1 bg-[#f59e0b] text-white text-[10px] px-1.5 rounded font-bold shadow-sm">Pending</span>
+        `;
+
+        thumb.querySelector('[data-action="preview"]').onclick = (e) => {
+            e.preventDefault(); e.stopPropagation();
+            document.activeElement?.blur();
+            window.openLightbox('current', currentTaskImages.length + idx);
+        };
+
+        thumb.querySelector('[data-action="remove"]').onclick = (e) => {
+            e.preventDefault(); e.stopPropagation();
+            removePendingImage(idx);
+        };
+
+        container.appendChild(thumb);
+    });
+
+    // 3. Add button
     const addBtn = document.createElement('div');
     addBtn.className = 'image-add-btn';
     addBtn.onclick = () => document.getElementById('task-image-input').click();
@@ -428,7 +480,14 @@ function removeTaskImage(index) {
     renderImagePreviews();
 }
 
-function openLightbox(srcOrTaskId, imageIndex) {
+function removePendingImage(index) {
+    const img = pendingImages[index];
+    if (img && img.localUrl) URL.revokeObjectURL(img.localUrl);
+    pendingImages.splice(index, 1);
+    renderImagePreviews();
+}
+
+window.openLightbox = function(srcOrTaskId, imageIndex) {
     const modal = document.getElementById('lightbox-modal');
     const img = document.getElementById('lightbox-img');
     if (!modal || !img) {
@@ -449,7 +508,9 @@ function openLightbox(srcOrTaskId, imageIndex) {
         img.src = srcOrTaskId;
     } else {
         if (srcOrTaskId === 'current') {
-            lightboxImages = currentTaskImages;
+            // Combine current and pending images for the lightbox
+            const pendingAsImg = pendingImages.map(p => ({ url: p.localUrl, filename: p.file.name }));
+            lightboxImages = currentTaskImages.concat(pendingAsImg);
             lightboxIndex = imageIndex;
         } else {
             const task = currentTasks.find(t => sameTaskId(t.id, srcOrTaskId));
@@ -471,7 +532,7 @@ function openLightbox(srcOrTaskId, imageIndex) {
     modal.classList.remove('hidden');
 }
 
-function updateLightboxUI() {
+window.updateLightboxUI = function() {
     const prevBtn = document.getElementById('lightbox-prev');
     const nextBtn = document.getElementById('lightbox-next');
     const counter = document.getElementById('lightbox-counter');
@@ -490,7 +551,7 @@ function updateLightboxUI() {
     }
 }
 
-function navigateLightbox(direction) {
+window.navigateLightbox = function(direction) {
     if (lightboxImages.length <= 1) return;
 
     lightboxIndex += direction;
@@ -504,7 +565,7 @@ function navigateLightbox(direction) {
     }
 }
 
-function closeLightbox() {
+window.closeLightbox = function() {
     document.activeElement?.blur();
     const modal = document.getElementById('lightbox-modal');
     if (modal) {
@@ -617,7 +678,7 @@ function openImagePreview(taskId, idx, event) {
     }
     // Phase 3 Fix: ensure we don't have pending click states
     document.activeElement?.blur();
-    openLightbox(taskId, idx);
+    window.openLightbox(taskId, idx);
 }
 
 /**
