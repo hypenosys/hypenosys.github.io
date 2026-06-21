@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T15:02:47.498Z",
+  "last_updated": "2026-06-21T15:03:22.036Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1517,9 +1517,177 @@
       ],
       "id": 33,
       "seccion": "Web"
+    },
+    {
+      "title": "New page pages/image-gen to generate image or text context and flux dev or kontext up to 2 images and text ",
+      "descripcion": "Crear una página dedicada a la generación de imágenes y contenido mediante IA. Centraliza las herramientas creativas Flux/ComfyUI en una interfaz.",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Minor",
+      "milestone": "M2",
+      "estado": "OK",
+      "completitud": 0,
+      "resuelto_por": "Alex",
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc",
+        "dkdidac-design",
+        "topperh4rley"
+      ],
+      "email_responsable": "axel@hypenosys.com",
+      "emails_asignados": [],
+      "start_date": "2026-06-13",
+      "due_date": "2026-06-28",
+      "estimated_hours": 2,
+      "story_points": 1,
+      "tags": [
+        "api",
+        "feature",
+        "n8n",
+        "ux"
+      ],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "La página envíe prompts a n8n y muestre los resultados generados.",
+      "blocks": [],
+      "blocked_by": [
+        "35"
+      ],
+      "comments": [
+        "Sería interesante añadir una galería temporal para que el usuario pueda comparar distintas iteraciones de Flux antes de guardar."
+      ],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-07",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T16:13:27.661Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T16:14:50.972Z",
+          "field": "descripcion",
+          "old_value": "also there is music generation and animation and key to key with available comfyui workflows (as API)",
+          "new_value": "also there is music generation and animation and key to key with available comfyui workflows (as API) expose in n8n "
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T16:14:50.972Z",
+          "field": "tags",
+          "old_value": "[]",
+          "new_value": "[\"n8n\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:06:33.507Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "ToDo"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:14:30.425Z",
+          "field": "blocked_by",
+          "old_value": "[]",
+          "new_value": "[\"35\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:15:31.614Z",
+          "field": "descripcion",
+          "old_value": "also there is music generation and animation and key to key with available comfyui workflows (as API) expose in n8n ",
+          "new_value": "also there is music generation and animation and key to key with available comfyui workflows (as API) expose in n8n and update to tumblr"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T20:10:16.600Z",
+          "field": "title",
+          "old_value": "comfyui generate image flux dev image or text context and flux kontext up to 2 images and text ",
+          "new_value": "generate image or text context and flux dev or kontext up to 2 images and text "
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:27:54.393Z",
+          "field": "title",
+          "old_value": "generate image or text context and flux dev or kontext up to 2 images and text ",
+          "new_value": "New page pages/image-gen to generate image or text context and flux dev or kontext up to 2 images and text "
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:27:54.393Z",
+          "field": "descripcion",
+          "old_value": "also there is music generation and animation and key to key with available comfyui workflows (as API) expose in n8n and update to tumblr",
+          "new_value": "also there is music generation and animation and key to key with available comfyui workflows (as API) expose in n8n and update to tumblr\n\nWe have an n8n comfyui sort of for launching one the flux-dev single text.\nWe intent to create another for flux kontext (one image + text, and two images or two images + text)"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:28:15.486Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Minor"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:14:52.234Z",
+          "field": "estado",
+          "old_value": "ToDo",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:14:52.234Z",
+          "field": "asignados",
+          "old_value": "[\"axlfc\",\"topperh4rley\"]",
+          "new_value": "[\"axlfc\",\"dkdidac-design\",\"topperh4rley\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:14:52.234Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-06-28"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T14:24:47.321Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T10:49:18.458Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "OK"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:52:07.477Z",
+          "field": "seccion",
+          "new_value": "Image Gen"
+        }
+      ],
+      "id": 38,
+      "seccion": "Image Gen"
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: tarea #38 movida al archivo",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T15:03:22.036Z"
+    },
     {
       "action": "chore: tarea #33 movida al archivo",
       "user": "Axlfc",
