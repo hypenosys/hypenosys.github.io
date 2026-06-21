@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T12:49:46.806Z",
+  "last_updated": "2026-06-21T12:50:20.062Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1806,9 +1806,16 @@
           "field": "estado",
           "old_value": "In Review",
           "new_value": "OK"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:50:19.308Z",
+          "field": "seccion",
+          "new_value": "Web"
         }
       ],
-      "id": 33
+      "id": 33,
+      "seccion": "Web"
     },
     {
       "title": "Integración SVN en Claude Neural Chat y Jules Panel (orquestación repositorios app, scripts y docs)",
@@ -4448,6 +4455,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #33",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:50:20.062Z"
+    },
     {
       "action": "chore: actualizar tarea #49",
       "user": "Axlfc",
