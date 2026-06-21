@@ -11,6 +11,11 @@ class AuthManager {
     async init() {
         this.bindEvents();
 
+        // Cargar equipo en la home si el contenedor existe
+        if (document.getElementById('dream-team-container')) {
+            this.renderDreamTeamComponent();
+        }
+
         const isDashboard = window.location.pathname.includes('dashboard');
         const isJules = window.location.pathname.includes('jules-panel') || window.location.pathname.includes('jules-panel');
         const isNeural = window.location.pathname.includes('/chat/neural/') || window.location.pathname.includes('claude-chat');
@@ -353,7 +358,11 @@ class AuthManager {
         const container = document.getElementById('dream-team-container');
         if (!container) return;
         try {
-            const response = await fetch('/_data/team.json');
+            const response = await fetch('/assets/data/team.json');
+            if (!response.ok) {
+                console.warn('[AuthManager] team.json not found in assets/data/');
+                return;
+            }
             const team = await response.json();
             container.innerHTML = team.map(member => `
                 <div class="col-lg-4 col-md-6 mb-4">
@@ -387,8 +396,9 @@ class AuthManager {
         const login = window.githubApi.user.login;
         this.showToast('Cargando...', 'Obteniendo datos del equipo...', 'info');
         try {
-            const fileData = await window.githubApi.getFile('_data/team.json');
-            const team = JSON.parse(decodeURIComponent(escape(atob(fileData.content))));
+            const response = await fetch('/assets/data/team.json');
+            if (!response.ok) throw new Error('No se pudo cargar team.json');
+            const team = await response.json();
             const member = team.find(m => m.github && m.github.toLowerCase().includes(login.toLowerCase()));
             if (!member) {
                 this.showToast('Aviso', 'No se encontró tu perfil en el archivo team.json.', 'warning');
@@ -446,8 +456,10 @@ class AuthManager {
 
         try {
             const login = window.githubApi.user.login;
-            const profilesRes = await window.githubApi.fetchFileWithSha('_data/team_profiles.json');
-            const profiles = profilesRes.content.members;
+            const response = await fetch('/assets/data/team_profiles.json');
+            if (!response.ok) throw new Error('No se pudo cargar team_profiles.json');
+            const profilesRes = await response.json();
+            const profiles = profilesRes.members;
             const memberEntry = Object.entries(profiles).find(([k, v]) => v.github_username.toLowerCase() === login.toLowerCase());
             if (!memberEntry) throw new Error("No se encontró perfil de equipo vinculado a este GitHub.");
 
@@ -494,8 +506,10 @@ class AuthManager {
         // Fallback to team_profiles.json if localStorage is empty for provider/model
         if (!config.provider || !config.model) {
             try {
-                const profilesRes = await window.githubApi.fetchFileWithSha('_data/team_profiles.json');
-                const profiles = profilesRes.content.members;
+                const response = await fetch('/assets/data/team_profiles.json');
+                if (!response.ok) throw new Error('No se pudo cargar team_profiles.json');
+                const profilesRes = await response.json();
+                const profiles = profilesRes.members;
                 const memberEntry = Object.values(profiles).find(v => v.github_username.toLowerCase() === login.toLowerCase());
                 if (memberEntry && memberEntry.ai_config) {
                     config.provider = config.provider || memberEntry.ai_config.provider;
@@ -553,8 +567,10 @@ class AuthManager {
             }
 
             // Sync non-sensitive to team_profiles.json via safe public wrapper
-            const profilesRes = await window.githubApi.fetchFileWithSha('_data/team_profiles.json');
-            const memberEntry = Object.entries(profilesRes.content.members).find(([k, v]) => v.github_username.toLowerCase() === login.toLowerCase());
+            const response = await fetch('/assets/data/team_profiles.json');
+            if (!response.ok) throw new Error('No se pudo cargar team_profiles.json');
+            const profilesRes = await response.json();
+            const memberEntry = Object.entries(profilesRes.members).find(([k, v]) => v.github_username.toLowerCase() === login.toLowerCase());
 
             if (memberEntry) {
                 const memberName = memberEntry[0];
