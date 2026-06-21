@@ -373,13 +373,51 @@ permalink: /chat/neural/
         display: flex;
         align-items: center;
         padding-right: 0.5rem;
-        gap: 0.5rem;
+        gap: 0.25rem;
         z-index: 3;
         opacity: 0;
         transition: opacity 0.2s;
     }
     .session-item:hover .session-actions {
         opacity: 1;
+    }
+
+    @media (max-width: 768px) {
+        .session-actions {
+            opacity: 1 !important;
+        }
+    }
+
+    .action-btn {
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        transition: all 0.2s;
+        cursor: pointer;
+        background: transparent;
+        border: none;
+        font-size: 14px;
+        opacity: 0.6;
+    }
+    .action-btn:hover {
+        opacity: 1;
+        background: rgba(189, 147, 249, 0.1);
+    }
+    .action-btn:active {
+        transform: scale(0.9);
+    }
+
+    .neural-indicator {
+        width: 8px;
+        height: 8px;
+        background-color: #9B59D0;
+        border-radius: 50%;
+        margin-right: 8px;
+        flex-shrink: 0;
+        box-shadow: 0 0 8px rgba(155, 89, 208, 0.6);
     }
 
     /* Swipe Actions for Mobile */
@@ -1356,51 +1394,11 @@ permalink: /chat/neural/
 
         function desvincularSesion() {
             Object.keys(localStorage).filter(k => k.startsWith('hy_neural_')).forEach(k => localStorage.removeItem(k));
-            const banner = document.getElementById('task-context-banner');
-            if (banner) banner.remove();
             window._activeTaskContext = null;
             showToast('Sesión desvinculada');
+            renderSessionList();
         }
 
-        function showTaskContextBanner(task) {
-            const currentNeuralId = localStorage.getItem('hy_neural_session_id');
-            const isNeuralActive = localStorage.getItem('hy_neural_active') === 'true';
-            const banner = document.createElement('div');
-            banner.id = 'task-context-banner';
-            banner.className = 'mx-6 mt-4 bg-[#bd93f9]/5 border border-[#bd93f9]/20 rounded-lg overflow-hidden animate-slide-down';
-            banner.innerHTML = `
-                <details class="w-full" ${isNeuralActive ? 'open' : ''}>
-                    <summary class="p-3 cursor-pointer list-none flex items-center justify-between hover:bg-[#bd93f9]/10 transition-all">
-                        <div class="flex items-center gap-3">
-                            <div class="w-6 h-6 rounded-full bg-[#bd93f9]/20 flex items-center justify-center text-[#bd93f9]">
-                                <i class="fas fa-${isNeuralActive ? 'brain' : 'briefcase'} text-[10px]"></i>
-                            </div>
-                            <div>
-                                <div class="text-[9px] font-bold text-[#bd93f9] uppercase tracking-widest opacity-70">
-                                    ${isNeuralActive ? (currentNeuralId ? `Neural Session: #${currentNeuralId}` : 'Neural Session Activa') : 'Contexto de Tarea'}
-                                </div>
-                                <div class="text-xs font-bold text-white/90">${task.titulo || task.title}</div>
-                            </div>
-                        </div>
-                        <i class="fas fa-chevron-down text-[10px] text-[#6272a4]"></i>
-                    </summary>
-                    <div class="p-4 border-t border-[#bd93f9]/10 text-xs text-[#6272a4] space-y-2">
-                        ${task.id ? `<div><strong>ID:</strong> #${task.id}</div>` : ''}
-                        ${task.descripcion ? `<div><strong>Descripción:</strong> ${task.descripcion}</div>` : ''}
-                        ${task.acceptance_criteria ? `<div><strong>Criterios:</strong> ${task.acceptance_criteria}</div>` : ''}
-                        ${task.rama ? `<div><strong>Rama:</strong> <code class="text-[#50fa7b]">${task.rama}</code></div>` : ''}
-                        ${task.task_type ? `<div><strong>Tipo:</strong> ${task.task_type}</div>` : ''}
-                        <div class="flex gap-3 pt-2">
-                            <button onclick="desvincularSesion()" class="text-[9px] text-red-400 hover:text-red-300 uppercase font-bold tracking-tighter">
-                                <i class="fas fa-unlink mr-1"></i> Desvincular sesión
-                            </button>
-                        </div>
-                    </div>
-                </details>
-            `;
-            const header = document.querySelector('header');
-            header.after(banner);
-        }
 
         async function init() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -2094,15 +2092,6 @@ permalink: /chat/neural/
                 stopJulesPolling();
             }
 
-            // Refresh Banner if exists
-            const banner = document.getElementById('task-context-banner');
-            if (banner) banner.remove();
-            const taskContext = localStorage.getItem('hy_neural_task_context');
-            if (taskContext) {
-                try {
-                    showTaskContextBanner(JSON.parse(taskContext));
-                } catch(e){}
-            }
 
             // Close sidebar on mobile after selecting a session
             if (window.innerWidth <= 768) {
@@ -2206,16 +2195,39 @@ permalink: /chat/neural/
                 renderSessionList();
                 chatMessages.innerHTML = '';
                 document.getElementById('welcome-screen')?.classList.remove('hidden');
-                const banner = document.getElementById('task-context-banner');
-                if (banner) banner.remove();
                 showToast('Historial limpiado');
             });
+        }
+
+        const deleteConfirmTimeouts = {};
+
+        function handleDeleteClick(event, id, isArchived) {
+            event.stopPropagation();
+            const btn = event.currentTarget;
+
+            if (btn.textContent.trim() === '❓') {
+                // Second click - perform delete
+                clearTimeout(deleteConfirmTimeouts[id]);
+                delete deleteConfirmTimeouts[id];
+                deleteSession(id, isArchived, true); // Added true for skipConfirm
+            } else {
+                // First click - show confirmation
+                const originalText = btn.textContent;
+                btn.textContent = '❓';
+
+                deleteConfirmTimeouts[id] = setTimeout(() => {
+                    btn.textContent = originalText;
+                    delete deleteConfirmTimeouts[id];
+                }, 2000);
+            }
         }
 
         function renderSessionList() {
             const list = document.getElementById('session-list');
 
-            const renderItem = (s, isArchived = false) => `
+            const renderItem = (s, isArchived = false) => {
+                const hasNeural = !!localStorage.getItem('hy_neural_session_id_' + s.id);
+                return `
                 <div class="session-item ${currentSessionId === s.id ? 'active' : ''}"
                      data-id="${s.id}"
                      data-archived="${isArchived}"
@@ -2230,27 +2242,29 @@ permalink: /chat/neural/
                         </div>
                     </div>
                     <div onclick="loadSession('${s.id}', ${isArchived})" class="session-item-content">
+                        ${hasNeural ? '<div class="neural-indicator" title="Sesión Neural vinculada"></div>' : ''}
                         <span class="truncate flex-grow mr-2 text-xs">${s.title}</span>
                         <div class="session-actions">
                             <button onclick="event.stopPropagation(); exportSession('${s.id}')"
-                                    class="text-[#6272a4] hover:text-[#50fa7b] transition-all"
+                                    class="action-btn text-[#6272a4] hover:text-[#50fa7b]"
                                     title="Exportar">
-                                <i class="fas fa-download text-[10px]"></i>
+                                <i class="fas fa-download"></i>
                             </button>
                             <button onclick="event.stopPropagation(); ${isArchived ? 'unarchiveSession' : 'archiveSession'}('${s.id}')"
-                                    class="text-[#6272a4] hover:text-[#bd93f9] transition-all"
+                                    class="action-btn"
                                     title="${isArchived ? 'Desarchivar' : 'Archivar'}">
-                                <i class="fas fa-${isArchived ? 'box-open' : 'archive'} text-[10px]"></i>
+                                📦
                             </button>
-                            <button onclick="event.stopPropagation(); deleteSession('${s.id}', ${isArchived})"
-                                    class="text-[#6272a4] hover:text-[#ff5555] transition-all"
+                            <button onclick="handleDeleteClick(event, '${s.id}', ${isArchived})"
+                                    class="action-btn"
                                     title="Eliminar">
-                                <i class="fas fa-trash-alt text-[10px]"></i>
+                                🗑️
                             </button>
                         </div>
                     </div>
                 </div>
-            `;
+                `;
+            };
 
             let html = sessions.map(s => renderItem(s, false)).join('');
 
@@ -2289,8 +2303,8 @@ permalink: /chat/neural/
             URL.revokeObjectURL(url);
         }
 
-        function deleteSession(id, isArchived = false) {
-            showConfirmationToast('¿Eliminar esta conversación? Esta acción no se puede deshacer', () => {
+        function deleteSession(id, isArchived = false, skipConfirm = false) {
+            const performDelete = () => {
                 if (isArchived) {
                     archivedSessions = archivedSessions.filter(s => s.id !== id);
                 } else {
@@ -2306,14 +2320,18 @@ permalink: /chat/neural/
                     chatMessages.innerHTML = '';
                     document.getElementById('welcome-screen')?.classList.remove('hidden');
                     document.getElementById('session-title').textContent = 'Nueva Conversación';
-                    const banner = document.getElementById('task-context-banner');
-                    if (banner) banner.remove();
                 }
 
                 saveSessions();
                 renderSessionList();
                 showToast('Conversación eliminada');
-            });
+            };
+
+            if (skipConfirm) {
+                performDelete();
+            } else {
+                showConfirmationToast('¿Eliminar esta conversación? Esta acción no se puede deshacer', performDelete);
+            }
         }
 
         function appendSystemMessage(msg, type = 'error') {
