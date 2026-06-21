@@ -1,0 +1,363 @@
+---
+layout: default
+title: "⚗️ Playground — Hypenosys Sandbox"
+permalink: /playground/
+description: "Entorno de pruebas aislado. Nada aquí afecta a producción."
+---
+
+<style>
+    :root {
+        --dracula-bg: #282a36;
+        --dracula-fg: #f8f8f2;
+        --dracula-purple: #bd93f9;
+        --dracula-green: #50fa7b;
+        --dracula-red: #ff5555;
+        --dracula-cyan: #8be9fd;
+        --dracula-yellow: #f1fa8c;
+        --dracula-comment: #6272a4;
+    }
+
+    .sandbox-warning {
+        position: fixed;
+        top: 56px; /* Below navbar */
+        left: 0;
+        right: 0;
+        background: var(--dracula-red);
+        color: #000;
+        z-index: 1050;
+        font-weight: 800;
+        text-transform: uppercase;
+        padding: 4px;
+        text-align: center;
+        font-size: 11px;
+        letter-spacing: 2px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }
+
+    .hero-ascii {
+        background: #1a1a1a;
+        padding: 2rem;
+        border-radius: 12px;
+        border: 1px solid var(--dracula-purple);
+        margin-bottom: 2rem;
+        font-family: 'JetBrains Mono', monospace;
+        color: var(--dracula-purple);
+        white-space: pre;
+        font-size: 10px;
+        line-height: 1.2;
+        overflow-x: auto;
+    }
+
+    .playground-tabs .nav-link {
+        color: var(--dracula-comment);
+        border: none;
+        border-bottom: 2px solid transparent;
+        font-weight: bold;
+        text-transform: uppercase;
+        font-size: 13px;
+        padding: 1rem 1.5rem;
+        display: block;
+        position: relative;
+    }
+
+    .playground-tabs .nav-link.active {
+        background: transparent !important;
+        color: var(--dracula-purple) !important;
+        border-bottom: 2px solid var(--dracula-purple) !important;
+    }
+
+    .playground-tabs .nav-link:hover {
+        color: var(--dracula-fg);
+    }
+
+    .tab-content {
+        background: #1e1f29;
+        border-radius: 0 0 12px 12px;
+        padding: 2rem;
+        border: 1px solid #343746;
+        border-top: none;
+        min-height: 500px;
+    }
+
+    .debug-panel {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: #111114;
+        border-top: 2px solid var(--dracula-purple);
+        padding: 8px 16px;
+        z-index: 1060;
+        height: 140px;
+        display: flex;
+        flex-direction: column;
+        font-family: 'JetBrains Mono', monospace;
+    }
+
+    .debug-log {
+        flex-grow: 1;
+        overflow-y: auto;
+        font-size: 11px;
+        color: var(--dracula-green);
+    }
+
+    .debug-footer {
+        border-top: 1px solid #2a2a35;
+        padding-top: 4px;
+        margin-top: 4px;
+        display: flex;
+        justify-content: space-between;
+        font-size: 10px;
+        color: var(--dracula-comment);
+    }
+
+    /* Kanban Sandbox Styles */
+    .sandbox-kanban-col {
+        background: #111114;
+        border-radius: 8px;
+        padding: 1rem;
+        min-height: 400px;
+    }
+    .sandbox-card {
+        background: var(--dracula-bg);
+        border: 1px solid var(--dracula-comment);
+        border-radius: 6px;
+        padding: 12px;
+        margin-bottom: 12px;
+        cursor: grab;
+    }
+    .sandbox-card:active { cursor: grabbing; }
+
+    .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 6px;
+    }
+
+    .bg-todo { background-color: var(--dracula-comment); }
+    .bg-progress { background-color: var(--dracula-yellow); }
+    .bg-done { background-color: var(--dracula-green); }
+
+</style>
+
+<div class="sandbox-warning">
+    ⚗️ MODO SANDBOX ACTIVO — Los datos se guardan solo en tu navegador (localStorage) — No afecta a GitHub
+</div>
+
+<div class="container mt-5 pt-4">
+
+    <div class="hero-ascii">
+   __  __
+  / / / /_  ______  ___  ____  ____  _______  _______
+ / /_/ / / / / __ \/ _ \/ __ \/ __ \/ ___/ / / / ___/
+/ __  / /_/ / /_/ /  __/ / / / / / (__  ) /_/ (__  )
+/_/ /_/\__, / .___/\___/_/ /_/_/ /_/____/\__, /____/
+      /____/_/                          /____/
+                                 [ SANDBOX ENVIRONMENT ]
+    </div>
+
+    <ul class="nav nav-tabs playground-tabs" id="playgroundTabs" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="kanban-tab" data-toggle="tab" href="#kanban" role="tab"><i class="fas fa-tasks mr-2"></i> Kanban</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="charts-tab" data-toggle="tab" href="#charts" role="tab"><i class="fas fa-chart-bar mr-2"></i> Charts</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="jules-tab" data-toggle="tab" href="#jules" role="tab"><i class="fas fa-robot mr-2"></i> Jules Mock</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="auth-tab" data-toggle="tab" href="#auth" role="tab"><i class="fas fa-lock mr-2"></i> Auth Tester</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="ui-tab" data-toggle="tab" href="#ui-components" role="tab"><i class="fas fa-layer-group mr-2"></i> UI Components</a>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="playgroundTabContent">
+        <!-- Tab: Kanban -->
+        <div class="tab-pane fade show active" id="kanban" role="tabpanel">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="text-purple mb-0">Tablero de Pruebas</h4>
+                <div>
+                    <button class="btn btn-sm btn-purple" onclick="addSandboxTask()"><i class="fas fa-plus"></i> Nueva Tarea</button>
+                    <button class="btn btn-sm btn-outline-danger ml-2" onclick="resetSandbox()"><i class="fas fa-sync"></i> Reset Sandbox</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="sandbox-kanban-col" id="col-todo" ondrop="drop(event, 'Todo')" ondragover="allowDrop(event)">
+                        <h6 class="text-muted text-uppercase small font-weight-bold mb-3"><span class="status-dot bg-todo"></span> TODO</h6>
+                        <div class="cards-container"></div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="sandbox-kanban-col" id="col-progress" ondrop="drop(event, 'In Progress')" ondragover="allowDrop(event)">
+                        <h6 class="text-muted text-uppercase small font-weight-bold mb-3"><span class="status-dot bg-progress"></span> IN PROGRESS</h6>
+                        <div class="cards-container"></div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="sandbox-kanban-col" id="col-done" ondrop="drop(event, 'Done')" ondragover="allowDrop(event)">
+                        <h6 class="text-muted text-uppercase small font-weight-bold mb-3"><span class="status-dot bg-done"></span> DONE</h6>
+                        <div class="cards-container"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Charts -->
+        <div class="tab-pane fade" id="charts" role="tabpanel">
+            <h4 class="text-purple mb-4">Métricas del Sandbox</h4>
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card bg-dark border-secondary p-4 h-100">
+                        <canvas id="sandboxTasksChart"></canvas>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-dark border-secondary p-4 h-100">
+                        <h6 class="small font-weight-bold text-muted uppercase mb-4">Distribución de Estados</h6>
+                        <canvas id="sandboxPieChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Jules Mock -->
+        <div class="tab-pane fade" id="jules" role="tabpanel">
+            <h4 class="text-purple mb-4">Simulador de Jules</h4>
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card bg-dark border-secondary p-4">
+                        <div class="form-group">
+                            <label class="small text-muted font-weight-bold uppercase">Prompt de Prueba</label>
+                            <textarea id="jules-mock-input" class="form-control bg-black text-white border-purple" rows="3" placeholder="ej: Arregla el bug de colisiones en el player controller"></textarea>
+                        </div>
+                        <button class="btn btn-purple btn-block font-weight-bold" onclick="simulateJules()">Lanzar Sesión Simulada</button>
+                    </div>
+
+                    <div id="jules-mock-console" class="mt-4 p-3 bg-black rounded border border-success" style="height: 250px; overflow-y: auto; display: none;">
+                        <div class="text-success small font-mono" id="jules-log-container"></div>
+                    </div>
+
+                    <div id="jules-mock-diff" class="mt-3 p-3 bg-dark rounded border border-info" style="display: none;">
+                        <h6 class="text-info small font-weight-bold mb-2">DIFF VIEWER SIMULADO</h6>
+                        <pre class="small text-white mb-0" style="background: #111; padding: 10px; border-radius: 4px;">
+<span class="text-danger">- old_value = "buggy_logic"</span>
+<span class="text-success">+ new_value = "optimized_logic"</span>
+<span class="text-success">+ // Fix applied by Jules Sandbox</span></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Auth Tester -->
+        <div class="tab-pane fade" id="auth" role="tabpanel">
+            <h4 class="text-purple mb-4">Depuración de Autenticación</h4>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card bg-dark border-secondary p-4 h-100">
+                        <h6 class="small font-weight-bold text-muted uppercase mb-4">Simular Eventos</h6>
+                        <div class="btn-group-vertical">
+                            <button class="btn btn-outline-success mb-2" onclick="simulateAuth('success')">Simular Login Exitoso</button>
+                            <button class="btn btn-outline-danger mb-2" onclick="simulateAuth('fail')">Simular Login Fallido</button>
+                            <button class="btn btn-outline-warning mb-2" onclick="simulateAuth('expire')">Simular Token Expirado</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card bg-dark border-secondary p-4 h-100 text-center">
+                        <h6 class="small font-weight-bold text-muted uppercase mb-4">Estado del AuthManager</h6>
+                        <div id="auth-status-indicator" class="display-4 mb-2"><i class="fas fa-id-card-alt text-muted"></i></div>
+                        <h3 id="auth-status-text" class="font-weight-bold text-muted">IDLE</h3>
+                        <p id="auth-status-detail" class="text-muted small mt-2">Esperando simulación...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: UI Components -->
+        <div class="tab-pane fade" id="ui-components" role="tabpanel">
+            <h4 class="text-purple mb-4">Visor de Componentes</h4>
+
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card bg-dark border-secondary p-3 h-100">
+                        <h6 class="text-muted small font-weight-bold uppercase mb-3">Avatares (UI.renderAvatar)</h6>
+                        <div class="d-flex align-items-center gap-2">
+                            <div id="avatar-preview-1"></div>
+                            <div id="avatar-preview-2"></div>
+                            <span class="small text-muted ml-2">← Basado en GitHub API</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card bg-dark border-secondary p-3 h-100">
+                        <h6 class="text-muted small font-weight-bold uppercase mb-3">Notificaciones (hypeToast)</h6>
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-sm btn-outline-info mb-1" onclick="hypeToast('Información general', 'info')">Toast Info</button>
+                            <button class="btn btn-sm btn-outline-success mb-1" onclick="hypeToast('Operación exitosa', 'success')">Toast Success</button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="hypeToast('Error crítico', 'error')">Toast Error</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card bg-dark border-secondary p-3 h-100">
+                        <h6 class="text-muted small font-weight-bold uppercase mb-3">Fechas Relativas (timeAgo)</h6>
+                        <div class="small">
+                            <div class="mb-1">Ahora: <code id="time-now" class="text-green"></code></div>
+                            <div class="mb-1">Hace 5 min: <code id="time-past" class="text-green"></code></div>
+                            <div>Mañana: <code id="time-future" class="text-green"></code></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card bg-dark border-secondary p-4 mt-2">
+                <h6 class="text-muted small font-weight-bold uppercase mb-4">Paleta de Colores Dracula</h6>
+                <div class="row">
+                    <div class="col-6 col-md-3 mb-3">
+                        <div class="p-3 rounded mb-1" style="background: var(--dracula-purple)"></div>
+                        <code class="small">--dracula-purple</code>
+                    </div>
+                    <div class="col-6 col-md-3 mb-3">
+                        <div class="p-3 rounded mb-1" style="background: var(--dracula-green)"></div>
+                        <code class="small">--dracula-green</code>
+                    </div>
+                    <div class="col-6 col-md-3 mb-3">
+                        <div class="p-3 rounded mb-1" style="background: var(--dracula-cyan)"></div>
+                        <code class="small">--dracula-cyan</code>
+                    </div>
+                    <div class="col-6 col-md-3 mb-3">
+                        <div class="p-3 rounded mb-1" style="background: var(--dracula-red)"></div>
+                        <code class="small">--dracula-red</code>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="debug-panel" id="sandboxDebug">
+    <div class="d-flex justify-content-between align-items-center">
+        <span class="text-purple small font-weight-bold">⚗️ SANDBOX CONSOLE</span>
+        <span id="sandbox-status-badge" class="badge badge-success">🟢 ACTIVE</span>
+    </div>
+    <div class="debug-log mt-1" id="sandboxLogs">
+        <div>[SYSTEM] Interceptor de red cargado.</div>
+        <div>[SYSTEM] Persistencia: localStorage (sandbox_*).</div>
+    </div>
+    <div class="debug-footer">
+        <span>LocalStorage Keys: <span id="ls-keys-count">0</span></span>
+        <span>Hypenosys Ops v1.5.0-sandbox</span>
+    </div>
+</div>
+
+<div style="height: 160px;"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ '/assets/javascript/playground-kanban.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/playground.js' | relative_url }}"></script>
