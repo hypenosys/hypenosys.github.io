@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T12:46:46.085Z",
-  "last_updated_by": "Axlfc",
+  "last_updated": "2026-06-21T12:48:14.871Z",
+  "last_updated_by": "Axel",
   "tasks": [
     {
       "id": 1,
@@ -4385,9 +4385,60 @@
       ],
       "id": 65,
       "seccion": "Chat Neural"
+    },
+    {
+      "title": "Añadir botón de archivar en cards de columna COMPLETADO para mandar al archivo (cementerio de tareas)",
+      "descripcion": "Ha desaparecido el botón de archivar (mandar al cementerio) las tasks en COMPLETADO",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Dashboard",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Medium",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Axel",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-06-21",
+      "due_date": "2026-06-28",
+      "estimated_hours": 1,
+      "story_points": 1,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-21",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:48:14.131Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 66
     }
   ],
   "_audit_log": [
+    {
+      "action": "feat: nueva tarea #1782046094132 añadida",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:48:14.871Z"
+    },
     {
       "action": "chore: actualizar tarea #32",
       "user": "Axlfc",
