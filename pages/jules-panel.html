@@ -2599,6 +2599,11 @@ window.JulesPanelState = {
 
     /* ─── REPO & BRANCH ─── */
     async function initializeRepoSelector() {
+        const launchBtn = $('launch-btn');
+        if (launchBtn) {
+            launchBtn.disabled = true;
+            launchBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Cargando fuentes...';
+        }
         try {
             const [githubRepos, julesSourcesRes] = await Promise.allSettled([
                 window.githubContext.getRepos(),
@@ -2635,7 +2640,18 @@ window.JulesPanelState = {
             window.julesSourcesCache = combinedSources;
             renderRepos(combinedSources);
             populateContextSelector(combinedSources, julesSourcesRes.status === 'rejected');
-        } catch (e) { console.error('[Jules] Repo init failed:', e); }
+
+            if (launchBtn) {
+                launchBtn.disabled = false;
+                launchBtn.innerHTML = '<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Iniciar Ejecución';
+            }
+        } catch (e) {
+            console.error('[Jules] Repo init failed:', e);
+            if (launchBtn) {
+                launchBtn.disabled = false;
+                launchBtn.innerHTML = '<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Iniciar Ejecución';
+            }
+        }
     }
 
     function renderRepos(sources) {
@@ -2755,6 +2771,13 @@ window.JulesPanelState = {
         }
         if(trigger) trigger.onclick = (e) => { e.stopPropagation(); menu.style.display = menu.style.display === 'block' ? 'none' : 'block'; };
         if(searchInput) searchInput.oninput = (e) => renderItems(e.target.value);
+
+        // Initialize label if we have an active repo
+        if (window.JulesPanelState.activeRepo && label) {
+            const active = sources.find(s => s.name === window.JulesPanelState.activeRepo);
+            if (active) label.textContent = active.displayName || active.name.split('/').pop();
+        }
+
         renderItems();
     }
 
@@ -3457,7 +3480,14 @@ window.JulesPanelState = {
         let prompt = $('session-prompt').value.trim();
         if (!prompt) { $('session-prompt').focus(); showToast("Escribe una tarea para Jules", "red"); return; }
         const source = window.JulesPanelState.activeRepo, branch = window.JulesPanelState.activeBranch || 'master';
-        if (!source) { showToast("Selecciona un repositorio", "red"); return; }
+
+        addTel("SYSTEM", `Iniciando sesión - Source: "${source}", Branch: "${branch}"`, "info");
+        console.log("[Jules Debug] Source:", source, "Branch:", branch);
+
+        if (!source || source.includes("Cargando")) {
+            showToast("Selecciona un repositorio válido", "red");
+            return;
+        }
 
         // BUG 2 Fix: Check if Review mode is selected without an active session
         if ($('opt-review').classList.contains('active') && !getLinkedJulesSessionId()) {
@@ -3539,7 +3569,16 @@ window.JulesPanelState = {
             }
 
             $('session-prompt').value = ''; await refreshDashboard();
-        } catch (e) { showToast(e.message || "Error al lanzar sesión", "red"); }
+        } catch (e) {
+            console.error("[Jules Debug] Error en createSession:", e);
+            const errorInfo = {
+                message: e.message,
+                status: e.httpStatus,
+                details: e.fullDetails
+            };
+            addTel("SYSTEM", JSON.stringify(errorInfo), "error");
+            showToast(e.message || "Error al lanzar sesión", "red");
+        }
         finally {
             btn.disabled = false;
             textarea.disabled = false;
