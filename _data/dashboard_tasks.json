@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T12:55:19.128Z",
+  "last_updated": "2026-06-21T13:27:23.761Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -4300,9 +4300,9 @@
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Cosmetic",
       "milestone": "M1",
-      "estado": "Pending",
+      "estado": "In Review",
       "completitud": 0,
-      "resuelto_por": null,
+      "resuelto_por": "Alex",
       "detectado_por": "Axel",
       "asignados": [],
       "email_responsable": null,
@@ -4346,6 +4346,13 @@
           "timestamp": "2026-06-21T12:41:29.026Z",
           "field": "seccion",
           "new_value": "Chat Neural"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T13:27:23.099Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "In Review"
         }
       ],
       "id": 63,
@@ -4504,6 +4511,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #63",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T13:27:23.761Z"
+    },
     {
       "action": "chore: actualizar tarea #57",
       "user": "Axlfc",
