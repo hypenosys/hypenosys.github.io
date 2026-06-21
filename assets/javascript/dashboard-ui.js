@@ -586,7 +586,7 @@ function toggleKanbanFilters() {
 
     const isCollapsed = container.style.maxHeight === '0px' || container.style.maxHeight === '' || container.classList.contains('max-h-0');
     const totalActive = kanbanFilters.tags.length + kanbanFilters.members.length + kanbanFilters.repos.length + kanbanFilters.states.length +
-                        kanbanFilters.milestones.length + kanbanFilters.themes.length + kanbanFilters.priorities.length;
+                        kanbanFilters.milestones.length + kanbanFilters.themes.length + kanbanFilters.priorities.length + kanbanFilters.sections.length;
 
     if (isCollapsed) {
         container.classList.remove('max-h-0', 'opacity-0');
@@ -726,6 +726,7 @@ function renderKanbanFilters() {
     const allMilestones = new Set();
     const allThemes = new Set();
     const allPriorities = new Set();
+    const allSections = new Set();
 
     currentTasks.forEach(t => {
         if (t.tags) t.tags.forEach(tag => allTags.add(tag));
@@ -734,6 +735,9 @@ function renderKanbanFilters() {
         allMilestones.add(t.milestone || 'Sin Milestone');
         allThemes.add(t.tema_principal || 'Sin Tema');
         allPriorities.add(t.prioridad || 'Sin Prioridad');
+
+        const sections = (t.seccion || 'Sin Sección').split(',').map(s => s.trim()).filter(s => s);
+        sections.forEach(s => allSections.add(s));
     });
 
     const sortedTags = Array.from(allTags).sort();
@@ -741,6 +745,7 @@ function renderKanbanFilters() {
     const sortedMilestones = Array.from(allMilestones).sort();
     const sortedThemes = Array.from(allThemes).sort();
     const sortedPriorities = Array.from(allPriorities).sort();
+    const sortedSections = Array.from(allSections).sort();
     const allStates = ['PENDING', 'WORKING', 'IN REVIEW', 'OK', 'CRITICAL', 'TODO'];
 
     container.innerHTML = '';
@@ -852,7 +857,20 @@ function renderKanbanFilters() {
     });
     container.appendChild(prioritiesRow.row);
 
-    // Fila 7: Estados y Botón Limpiar
+    // Fila 7: Secciones
+    const sectionsRow = createRow('Sección', 'fa-solid fa-puzzle-piece');
+    sortedSections.forEach(section => {
+        const active = kanbanFilters.sections.includes(section);
+        const pill = createPill(section, active, () => {
+            if (active) kanbanFilters.sections = kanbanFilters.sections.filter(s => s !== section);
+            else kanbanFilters.sections.push(section);
+            renderDashboard();
+        });
+        sectionsRow.content.appendChild(pill);
+    });
+    container.appendChild(sectionsRow.row);
+
+    // Fila 8: Estados y Botón Limpiar
     const lastRowWrapper = document.createElement('div');
     lastRowWrapper.className = 'flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pt-2 border-t border-slate-800/50';
 
@@ -873,7 +891,7 @@ function renderKanbanFilters() {
     clearBtn.className = 'text-[10px] font-black text-slate-500 hover:text-red-400 uppercase tracking-widest transition-all flex items-center gap-2 px-3 py-2 bg-slate-950 rounded-lg border border-slate-800 hover:border-red-900/50';
     clearBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i> Limpiar todo';
     clearBtn.onclick = () => {
-        kanbanFilters = { tags: [], members: [], repos: [], states: [], milestones: [], themes: [], priorities: [] };
+        kanbanFilters = { tags: [], members: [], repos: [], states: [], milestones: [], themes: [], priorities: [], sections: [] };
         renderDashboard();
     };
     lastRowWrapper.appendChild(clearBtn);

@@ -61,7 +61,8 @@ let kanbanFilters = {
     states: [],
     milestones: [],
     themes: [],
-    priorities: []
+    priorities: [],
+    sections: []
 };
 let currentTasks = [];
 let archivedTasks = [];
@@ -185,6 +186,14 @@ function getFilteredTasks(tasks) {
   // 7. Priorities (OR)
   if (kanbanFilters.priorities && kanbanFilters.priorities.length > 0) {
     filtered = filtered.filter(t => kanbanFilters.priorities.includes(t.prioridad || 'Sin Prioridad'));
+  }
+
+  // 8. Sections (OR)
+  if (kanbanFilters.sections && kanbanFilters.sections.length > 0) {
+    filtered = filtered.filter(t => {
+      const taskSections = (t.seccion || 'Sin Sección').split(',').map(s => s.trim()).filter(s => s);
+      return kanbanFilters.sections.some(s => taskSections.includes(s));
+    });
   }
 
   return filtered;
