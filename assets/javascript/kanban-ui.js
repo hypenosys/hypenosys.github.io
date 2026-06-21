@@ -39,6 +39,12 @@
                         } else if (typeof openEditTaskModal === 'function') {
                             openEditTaskModal(id);
                         }
+                    } else if (action === 'archive') {
+                        if (typeof window.handleArchiveTask === 'function') {
+                            window.handleArchiveTask(id);
+                        } else if (typeof handleArchiveTask === 'function') {
+                            handleArchiveTask(id);
+                        }
                     } else if (action === 'claude') {
                         let taskData = { id };
 
@@ -226,6 +232,7 @@
 
             const priorityColor = priorityColors[task.prioridad] || 'bg-slate-500';
             const statusColor = statusBadgeColors[task.estado] || statusBadgeColors[task.status] || 'badge-todo';
+            const isDone = ['OK', 'Closed', 'DONE'].includes(task.estado) || ['OK', 'Closed', 'DONE'].includes(task.status);
 
             const statusBorderClasses = {
                 'Pending': 'border-status-pending',
@@ -323,12 +330,17 @@
                             <div class="flex items-center gap-2">
                                 <span class="font-mono text-slate-500 font-bold">#${task.id}</span>
                                 <div class="flex gap-1.5">
-                                    <button data-action="edit" data-id="${task.id}" class="text-slate-500 hover:text-white transition-colors" title="Editar">
+                                    <button data-action="edit" data-id="${task.id}" class="w-[28px] h-[28px] flex items-center justify-center text-slate-500 hover:text-white transition-colors" title="Editar">
                                         <i class="fas fa-pencil-alt"></i>
                                     </button>
-                                    <button data-action="claude" data-id="${task.id}" class="text-slate-500 hover:text-[#bd93f9] transition-colors" title="Robot">
+                                    <button data-action="claude" data-id="${task.id}" class="w-[28px] h-[28px] flex items-center justify-center text-slate-500 hover:text-[#bd93f9] transition-colors" title="Robot">
                                         <i class="fas fa-robot"></i>
                                     </button>
+                                    ${isDone ? `
+                                    <button data-action="archive" data-id="${task.id}" class="w-[28px] h-[28px] flex items-center justify-center text-slate-500 hover:text-emerald-400 transition-colors" title="Archivar">
+                                        <i class="fa-solid fa-box-archive"></i>
+                                    </button>
+                                    ` : ''}
                                 </div>
                                 <span class="badge ${statusColor}">${displayStatus}</span>
                             </div>
@@ -366,8 +378,11 @@
                             <div class="flex items-center gap-2">
                                 <span class="text-[10px] font-bold text-slate-500 font-mono">#${task.id}</span>
                                 <div class="flex gap-1.5 mr-1">
-                                    <button data-action="edit" data-id="${task.id}" class="text-slate-500 hover:text-white" title="Editar"><i class="fas fa-pencil-alt"></i></button>
-                                    <button data-action="claude" data-id="${task.id}" class="text-slate-500 hover:text-[#bd93f9]" title="Robot"><i class="fas fa-robot"></i></button>
+                                    <button data-action="edit" data-id="${task.id}" class="w-[28px] h-[28px] flex items-center justify-center text-slate-500 hover:text-white" title="Editar"><i class="fas fa-pencil-alt"></i></button>
+                                    <button data-action="claude" data-id="${task.id}" class="w-[28px] h-[28px] flex items-center justify-center text-slate-500 hover:text-[#bd93f9]" title="Robot"><i class="fas fa-robot"></i></button>
+                                    ${isDone ? `
+                                    <button data-action="archive" data-id="${task.id}" class="w-[28px] h-[28px] flex items-center justify-center text-slate-500 hover:text-emerald-400" title="Archivar"><i class="fa-solid fa-box-archive"></i></button>
+                                    ` : ''}
                                 </div>
                                 <span class="badge ${statusColor}">${displayStatus}</span>
                                 <span class="badge ${priorityColor} text-[8px] px-1.5 py-0.5 rounded uppercase font-bold">${task.prioridad}</span>
