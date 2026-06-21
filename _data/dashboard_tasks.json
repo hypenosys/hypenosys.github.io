@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T22:53:16.653Z",
+  "last_updated": "2026-06-21T22:54:12.321Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1723,15 +1723,13 @@
       "milestone": "M2",
       "estado": "Working",
       "completitud": 0,
-      "resuelto_por": null,
+      "resuelto_por": "Axel",
       "detectado_por": "Axel",
-      "asignados": [
-        "topperh4rley"
-      ],
+      "asignados": [],
       "email_responsable": null,
       "emails_asignados": [],
-      "start_date": null,
-      "due_date": null,
+      "start_date": "2026-06-22",
+      "due_date": "2026-06-28",
       "estimated_hours": 6,
       "story_points": null,
       "tags": [
@@ -1816,6 +1814,20 @@
           "timestamp": "2026-06-21T12:44:14.567Z",
           "field": "seccion",
           "new_value": "Chat Neural"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T22:54:11.586Z",
+          "field": "asignados",
+          "old_value": "[\"topperh4rley\"]",
+          "new_value": "[]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T22:54:11.586Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-06-28"
         }
       ],
       "id": 36,
@@ -4302,6 +4314,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #36",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T22:54:12.321Z"
+    },
     {
       "action": "chore: actualizar tarea #27",
       "user": "Axlfc",
