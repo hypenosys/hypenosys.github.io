@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T14:50:37.124Z",
+  "last_updated": "2026-06-21T14:56:44.001Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2437,7 +2437,7 @@
       "tema_principal": "Tools / Automation",
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Minor",
-      "milestone": "M1",
+      "milestone": "M3",
       "estado": "ToDo",
       "completitud": 1,
       "resuelto_por": "Mitxel",
@@ -2647,6 +2647,13 @@
           "timestamp": "2026-06-21T12:43:50.322Z",
           "field": "seccion",
           "new_value": "Dashboard"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T14:56:43.397Z",
+          "field": "milestone",
+          "old_value": "M1",
+          "new_value": "M3"
         }
       ],
       "id": 40,
@@ -4539,6 +4546,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #40",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T14:56:44.001Z"
+    },
     {
       "action": "chore: actualizar tarea #66",
       "user": "Axlfc",
