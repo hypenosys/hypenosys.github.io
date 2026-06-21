@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T11:11:07.440Z",
-  "last_updated_by": "Axlfc",
+  "last_updated": "2026-06-21T11:12:54.183Z",
+  "last_updated_by": "Axel",
   "tasks": [
     {
       "id": 1,
@@ -3944,9 +3944,59 @@
         }
       ],
       "id": 60
+    },
+    {
+      "title": "DASHBOARD: Al expandir la card del kanban, si hay imagenes, debería mostrarlas ahi y poder previsualizarlas flawlessly",
+      "descripcion": "",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Medium",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Axel",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-06-21",
+      "due_date": "2026-06-28",
+      "estimated_hours": 2,
+      "story_points": 2,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-21",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T11:12:53.650Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 61
     }
   ],
   "_audit_log": [
+    {
+      "action": "feat: nueva tarea #1782040373650 añadida",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T11:12:54.183Z"
+    },
     {
       "action": "chore: actualizar tarea #60",
       "user": "Axlfc",
