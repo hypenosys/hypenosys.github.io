@@ -1465,30 +1465,64 @@ permalink: /chat/neural/
                     let prompt = "";
                     if (taskDataRaw) {
                         // Format the pre-filled technical summary
-                        prompt = `He vinculado esta tarea para su análisis técnico:\n\n`;
-                        prompt += `📌 TAREA: #${task.id} - ${task.title || task.titulo || 'Sin título'}\n`;
-                        prompt += `🔀 RAMA: ${task.rama || 'N/A'}\n`;
-                        prompt += `📊 ESTADO: ${task.estado} | PRIORIDAD: ${task.prioridad}\n`;
-                        if (task.descripcion) prompt += `📝 DESCRIPCIÓN: ${task.descripcion}\n`;
+                        const blocks = ["He vinculado esta tarea para su análisis técnico:"];
 
-                        if (task.subtasks && task.subtasks.length > 0) {
-                            prompt += `📋 SUBTAREAS:\n` + task.subtasks.map(s => {
+                        // Metadata Block
+                        const meta = [];
+                        const id = task.id;
+                        const titulo = task.title || task.titulo || 'Sin título';
+                        meta.push(`📌 TAREA: #${id} - ${titulo}`);
+
+                        const repo = task.repository || task.repo;
+                        if (repo && repo.trim() !== "" && repo !== "N/A") {
+                            meta.push(`🗄️ REPOSITORIO: ${repo}`);
+                        }
+
+                        const rama = task.rama || task.branch;
+                        if (rama && rama.trim() !== "" && rama !== "N/A") {
+                            meta.push(`🔀 RAMA: ${rama}`);
+                        }
+
+                        const seccion = task.seccion;
+                        if (seccion && seccion.trim() !== "" && seccion !== "N/A") {
+                            meta.push(`📂 SECCIÓN: ${seccion}`);
+                        }
+
+                        const estado = task.estado;
+                        const prioridad = task.prioridad;
+                        if (estado && prioridad) {
+                            meta.push(`📊 ESTADO: ${estado} | PRIORIDAD: ${prioridad}`);
+                        } else if (estado) {
+                            meta.push(`📊 ESTADO: ${estado}`);
+                        } else if (prioridad) {
+                            meta.push(`📊 PRIORIDAD: ${prioridad}`);
+                        }
+
+                        blocks.push(meta.join('\n'));
+
+                        // Description Block
+                        if (task.descripcion && task.descripcion.trim() !== "") {
+                            blocks.push(`📝 DESCRIPCIÓN:\n${task.descripcion.trim()}`);
+                        }
+
+                        // Acceptance Criteria Block
+                        if (task.acceptance_criteria && task.acceptance_criteria.trim() !== "") {
+                            blocks.push(`✅ CRITERIOS DE ACEPTACIÓN:\n${task.acceptance_criteria.trim()}`);
+                        }
+
+                        // Subtasks Block
+                        if (task.subtasks && Array.isArray(task.subtasks) && task.subtasks.length > 0) {
+                            const subList = task.subtasks.map(s => {
                                 const text = typeof s === 'string' ? s : (s.text || s.titulo || '');
                                 const done = typeof s === 'object' && s.done;
-                                return `  - [${done ? 'x' : ' '}] ${text}`;
-                            }).join('\n') + `\n`;
+                                return `- [${done ? 'x' : ' '}] ${text}`;
+                            }).join('\n');
+                            if (subList.trim() !== "") {
+                                blocks.push(`📋 SUBTAREAS:\n${subList}`);
+                            }
                         }
 
-                        if (task.comments && task.comments.length > 0) {
-                            prompt += `💬 COMENTARIOS RECIENTES:\n` + task.comments.map(c => {
-                                if (typeof c === 'string') return `  - ${c}`;
-                                return `  - ${c.author || c.author_login || 'User'}: ${c.text || c.body || ''}`;
-                            }).join('\n') + `\n`;
-                        }
-
-                        if (task.acceptance_criteria) prompt += `✅ CRITERIOS DE ACEPTACIÓN: ${task.acceptance_criteria}\n`;
-
-                        prompt += `\n¿Cómo podemos abordar esta tarea?`;
+                        prompt = blocks.join('\n\n') + `\n\n¿Cómo podemos abordar esta tarea?`;
                     } else if (pendingPrompt) {
                         prompt = pendingPrompt;
                         localStorage.removeItem('hy_neural_pending_prompt');
