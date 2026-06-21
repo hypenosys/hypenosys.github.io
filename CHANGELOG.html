@@ -87,6 +87,9 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-success">Fixed</h5>
             <ul>
+              <li><strong>Automatización de "Analizar con Claude":</strong> El flujo de análisis ahora es completamente automático, fusionando fragmentos y preguntas en un solo bloque y disparando la respuesta de Claude instantáneamente sin intervención manual.</li>
+              <li><strong>Sincronización Bidireccional Neural Final:</strong> Corregida la latencia y omisión de mensajes de usuario en la sincronización. Los mensajes enviados desde el standalone aparecen ahora instantáneamente en el panel de control gracias al formato de payload <code>NEW_MESSAGE</code> estandarizado.</li>
+              <li><strong>Persistencia de la Pestaña ACTIVIDAD:</strong> El feed de actividad de Jules en el standalone ahora se guarda localmente, permitiendo que el historial, planes y logs de terminal sigan siendo visibles tras refrescar la página o cambiar de sesión sin depender del polling.</li>
               <li><strong>Extracción de Texto en "Analizar con Claude":</strong> Corregido el bug que enviaba placeholders <code>[FRAGMENTO 1]</code> en lugar del contenido real. Ahora el botón extrae correctamente mensajes de usuario, respuestas de Jules, pasos del plan, diffs de código y salidas de terminal.</li>
               <li><strong>Flujo "Enviar a Jules" (Neural Link):</strong> Refactorizado el receptor de handoff para diferenciar entre "Modo Iniciador" (nueva tarea en vista Neural) y "Modo Aditivo" (envío directo de mensaje a sesión activa). Resuelto el bug que enviaba el texto al campo de chat equivocado.</li>
               <li><strong>Sincronización de Acciones de Mensaje:</strong> Unificado el flujo de envío de fragmentos de Claude para usar el sistema de payload enriquecido, garantizando que el contexto de la tarea se mantenga.</li>

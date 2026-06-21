@@ -3847,7 +3847,11 @@ window.JulesPanelState = {
                         type: 'NEW_MESSAGE',
                         julesSessionId: sessionId,
                         claudeConversationId: claudeId,
-                        message: lastMsg
+                        message: {
+                            role: lastMsg.role,
+                            content: lastMsg.content,
+                            timestamp: lastMsg.timestamp || Date.now()
+                        }
                     });
                 }
             }
@@ -4899,8 +4903,7 @@ window.JulesPanelState = {
             .map(el => _historySelection.get(el.dataset.activityId))
             .filter(Boolean);
 
-        let prompt = "He seleccionado estos fragmentos del historial de Jules para analizar:\n\n";
-        let contextForClaude = "";
+        let combinedMessage = "He seleccionado estos fragmentos del historial de Jules para analizar:\n\n";
 
         sortedEntries.forEach((act, idx) => {
             let activityType = "Actividad";
@@ -4942,32 +4945,28 @@ window.JulesPanelState = {
             }
 
             if (content) {
-                contextForClaude += separator + content;
+                combinedMessage += separator + content;
             }
         });
 
-        showToast("Selección cargada en el chat neural", "green");
+        combinedMessage += "\n\n¿Qué opinas de estos cambios o estados de Jules seleccionados arriba? ¿Hay algo que deba ajustar o corregir?";
 
-        // Add "JULES" messages to history for visualization
-        chatV2Messages.push({
-            role: 'jules',
-            content: contextForClaude
-        });
-        saveSessionsV2(); // Emit the context
-
-        // Append the actual question to Claude
-        chatV2Messages.push({
-            role: 'user',
-            content: prompt + "\n¿Qué opinas de estos cambios o estados de Jules seleccionados arriba? ¿Hay algo que deba ajustar o corregir?"
-        });
-
-        saveSessionsV2(); // Emit the actual user question
-        renderChatV2Messages();
+        // Cambiar a vista chat y pre-poblar input
         switchView('chat');
-        clearHistorySelection();
+        const input = $('v2-chat-input');
+        if (input) {
+            input.value = combinedMessage;
+            input.style.height = 'auto';
+            input.dispatchEvent(new Event('input'));
+        }
 
-        // Trigger automatic response from Claude if a session is active
-        setTimeout(() => sendChatV2Msg(), 500);
+        clearHistorySelection();
+        showToast("Iniciando análisis con Claude...", "green");
+
+        // Disparar envío automático
+        setTimeout(() => {
+            sendChatV2Msg();
+        }, 300);
     }
 
     function commentOnStep(sessionId, stepIndex, stepTitle) {
