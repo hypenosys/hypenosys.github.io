@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T20:17:24.780Z",
+  "last_updated": "2026-06-21T22:47:14.619Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -4241,7 +4241,7 @@
       "tema_principal": "Programación / Engine",
       "seccion": "Jules Panel, Chat Neural",
       "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Major",
+      "prioridad": "Critical",
       "milestone": "M1",
       "estado": "Working",
       "completitud": 0,
@@ -4282,12 +4282,24 @@
           "field": "estado",
           "old_value": "Pending",
           "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T22:47:14.017Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Critical"
         }
       ],
       "id": 68
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #68",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T22:47:14.619Z"
+    },
     {
       "action": "chore: actualizar tarea #60",
       "user": "Axlfc",
