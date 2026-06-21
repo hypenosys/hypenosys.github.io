@@ -585,6 +585,30 @@ async function updateMemberAiConfig(memberName, aiConfig) {
   });
 }
 
+/**
+ * Updates the global Jules Panel archive state
+ */
+async function updateJulesGlobalArchive(id, archiveData) {
+    return atomicWrite('_data/jules_panel_state.json', (db) => {
+        if (!db.archive) db.archive = {};
+        if (archiveData === null) {
+            delete db.archive[id];
+        } else {
+            db.archive[id] = archiveData;
+        }
+        db.last_updated = new Date().toISOString();
+        db.last_updated_by = _currentUser?.login || 'Sistema';
+        return db;
+    }, `chore: actualizar archivo Jules global (#${id})`, (local, remote) => {
+        // Simple merge: remote wins but keep local's specific ID change if still relevant
+        const merged = { ...remote };
+        if (!merged.archive) merged.archive = {};
+        if (archiveData === null) delete merged.archive[id];
+        else merged.archive[id] = archiveData;
+        return merged;
+    });
+}
+
 // ─── STATE ────────────────────────────────────────────────────
 let _currentUser = null;
 
@@ -721,6 +745,8 @@ window.githubApi = {
   getOrgRepos,
   updateMemberProfile,
   updateMemberAiConfig,
+  updateJulesGlobalArchive,
+  atomicWrite,
   recomputeAndSaveStats,
   deleteFile,
 

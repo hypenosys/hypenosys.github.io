@@ -62,6 +62,25 @@ permalink: /CHANGELOG.html
         <h2 class="text-purple border-bottom border-purple pb-2 mb-4">[Unreleased]</h2>
         <div class="card mb-3">
           <div class="card-body">
+            <h5 class="text-white">Added</h5>
+            <ul>
+                <li><strong>Global Card Archiving (Jules Panel):</strong> Upgraded the internal organization system to be global for all users. Archived states are now persisted in <code>_data/jules_panel_state.json</code> via GitHub commits, ensuring team-wide synchronization of the Kanban board view.</li>
+                <li><strong>Internal Card Archiving (Jules Panel):</strong> Users can now drag session cards from EN COLA/EN PROGRESO to COMPLETADO or BLOQUEADO columns for internal organization. Archived cards are visually dimmed and display an "Archived" badge.</li>
+                <li><strong>Relaunch Jules Session:</strong> Added a "Relanzar Jules" button to every Kanban card in Jules Panel. This button pre-fills the prompt, repository, and branch context for a new session based on the selected card.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="card mb-3">
+          <div class="card-body">
+            <h5 class="text-success">Fixed</h5>
+            <ul>
+              <li><strong>Estabilidad del Jules Panel (v2):</strong> Implementado manejo de errores no bloqueante en la carga de datos globales. El fallo en la recuperación del archivo de estado o de la API de GitHub ya no detiene la inicialización del panel, garantizando que los menús y métricas básicas sigan siendo accesibles.</li>
+              <li><strong>Sincronización de Archivo Global:</strong> Corregidos problemas de inconsistencia y parpadeo mediante la implementación de un flag <code>isSyncingArchive</code> que bloquea actualizaciones de UI durante la escritura atómica en GitHub.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="card mb-3">
+          <div class="card-body">
             <h5 class="text-success">Changed</h5>
             <ul>
               <li><strong>Auto-detección de Contexto en Tareas:</strong> El Kanban ahora detecta automáticamente el repositorio y rama activa al crear tareas, eliminando la entrada manual de metadatos críticos.</li>
@@ -101,6 +120,7 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-success">Fixed</h5>
             <ul>
+               <li><strong>Estabilidad del Jules Panel:</strong> Implementado manejo de errores no bloqueante en la carga de datos globales. El fallo en la recuperación del archivo de estado o de la API de GitHub ya no detiene la inicialización del panel, garantizando que los menús y métricas básicas sigan siendo accesibles.</li>
                <li><strong>Iconografía SVG en Panel V2:</strong> Corregidos errores de sintaxis en las rutas de los iconos de Configuración y Ramas (paths malformados) que generaban alertas en la consola del navegador.</li>
                <li><strong>Acción del Botón "Nueva Sesión":</strong> Reemplazada la llamada a una función inexistente (<code>scrollToSession</code>) por la implementación real de inicio de sesión neural.</li>
                <li><strong>Botón de Envío Neural Chat:</strong> Corregido el fallo que bloqueaba el envío de mensajes debido a una función de persistencia no definida (`saveSessionsV2`). Implementada la unificación de sesiones con el chat principal y garantizado el desbloqueo de la interfaz tras cualquier operación.</li>
