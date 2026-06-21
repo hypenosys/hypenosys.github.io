@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-21T22:54:14.913Z",
+  "computed_at": "2026-06-21T22:55:49.738Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 41,
@@ -271,10 +271,10 @@
       "comment_activity": 0,
       "volatility": {
         "reopens": 2,
-        "reprioritizations": 25
+        "reprioritizations": 26
       },
       "workload": {
-        "active_tasks": 8,
+        "active_tasks": 9,
         "story_points": 20
       }
     },
@@ -534,7 +534,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-06-21T22:54:15.936Z"
+      "timestamp": "2026-06-21T22:55:50.592Z"
     }
   ]
 }
