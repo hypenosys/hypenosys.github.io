@@ -1076,6 +1076,9 @@ layout: null
       })();
     </script>
     <!-- Core Infrastructure -->
+    <!-- Error Boundary (Loaded early to catch errors) -->
+    <script src="{{ "/assets/javascript/error-boundary.js" | relative_url }}"></script>
+
     <!-- Auth & Identity (First to handle session and events) -->
     <script src="{{ "/assets/javascript/auth.js" | relative_url }}"></script>
 

@@ -1,26 +1,28 @@
 /* HYPENOSYS — UI MODULE */
 
 function renderDashboard() {
-  renderMemberToggles();
-  renderKanbanFilters();
-  updateJulesBadges();
-  renderJulesSessions();
-  renderStatsSummary();
-  renderKanbanBoard();
-  renderGroupStats();
-  renderBurnoutGauge();
-  renderBudgetChart();
-  renderHallOfFame();
-  renderMilestoneProgress();
-  renderTeamProfiles();
-  renderTaskArchive();
+  const eb = window.ErrorBoundary;
+
+  eb.safeInvoke('member-filters', 'Member Toggles', renderMemberToggles);
+  eb.safeInvoke('kanban-filter-bar', 'Kanban Filters', renderKanbanFilters);
+  eb.safeInvoke('jules-dashboard-sessions', 'Jules Badges', updateJulesBadges);
+  eb.safeInvoke('jules-dashboard-sessions', 'Jules Sessions', renderJulesSessions);
+  eb.safeInvoke('stat-total-tasks', 'Stats Summary', renderStatsSummary);
+  eb.safeInvoke('kanban-board', 'Kanban Board', renderKanbanBoard);
+  eb.safeInvoke('group-stats-section', 'Group Stats', renderGroupStats);
+  eb.safeInvoke('group-burnout-index', 'Burnout Gauge', renderBurnoutGauge);
+  eb.safeInvoke('group-velocity-chart', 'Budget Chart', renderBudgetChart);
+  eb.safeInvoke('hof-current-winners', 'Hall of Fame', renderHallOfFame);
+  eb.safeInvoke('current-milestone-label', 'Milestone Progress', renderMilestoneProgress);
+  eb.safeInvoke('team-profiles-grid', 'Team Profiles', renderTeamProfiles);
+  eb.safeInvoke('archived-tasks-grid', 'Task Archive', renderTaskArchive);
 
   // Part 2 — Production Pipeline
-  renderCriticalPathAlerts();
-  renderPipelineSwimlanes();
-  renderMilestoneBurndownChart();
-  renderDependencyGraph();
-  renderVelocityTrackerChart();
+  eb.safeInvoke('critical-path-panel', 'Critical Path Alerts', renderCriticalPathAlerts);
+  eb.safeInvoke('pipeline-swimlanes', 'Pipeline Swimlanes', renderPipelineSwimlanes);
+  eb.safeInvoke('milestone-burndown-chart', 'Milestone Burndown Chart', renderMilestoneBurndownChart);
+  eb.safeInvoke('dependency-graph-container', 'Dependency Graph', renderDependencyGraph);
+  eb.safeInvoke('velocity-tracker-chart', 'Velocity Tracker Chart', renderVelocityTrackerChart);
 }
 
 function renderStatsSummary() {
