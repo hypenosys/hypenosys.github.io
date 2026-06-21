@@ -46,7 +46,10 @@ async function julesApiCall(method, endpoint, body = null, customKey = null) {
             throw new Error('RATE_LIMIT');
         }
         if (!res.ok) {
-            throw new Error(data?.error?.message || `HTTP ${res.status}`);
+            const error = new Error(data?.error?.message || `HTTP ${res.status}`);
+            error.fullDetails = data?.error || data;
+            error.httpStatus = res.status;
+            throw error;
         }
 
         return data;
