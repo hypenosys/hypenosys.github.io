@@ -2317,8 +2317,15 @@ window.JulesPanelState = {
             addTel("SYSTEM", `Iniciado como Invitado`, "success");
         }
 
-        await initializeRepoSelector();
-        await refreshDashboard();
+        // Initialize components with independent error handling
+        try {
+            await initializeRepoSelector();
+        } catch(e) { console.error("Repo selector failed", e); }
+
+        try {
+            await refreshDashboard();
+        } catch(e) { console.error("Initial dashboard refresh failed", e); }
+
         switchView(window.JulesPanelState.currentView || 'dashboard');
         checkClipboard();
         handleUrlParams();
@@ -2684,6 +2691,11 @@ window.JulesPanelState = {
             });
 
             const archive = window.JulesPanelState.globalArchive || {};
+            if (typeof archive !== 'object') {
+                console.warn("Invalid global archive format, resetting to empty");
+                window.JulesPanelState.globalArchive = {};
+            }
+
             let archiveChanged = false;
 
             // 1. Terminal State Cleanup: If real state is already terminal, clear archive entry
@@ -2836,10 +2848,11 @@ window.JulesPanelState = {
         if (window.JulesPanelState.isRefreshing) return;
         window.JulesPanelState.isRefreshing = true;
         try {
+            // We fetch the global archive separately or with a catch to prevent blocking the whole dashboard if the file is missing or invalid
             const [sessionData, tasks, archiveRes] = await Promise.all([
-                window.julesApi.getSessions(window.JulesPanelState.metricsWindow || 30),
-                window.taskOps.getAllTasks(),
-                window.githubApi.fetchFileWithSha('_data/jules_panel_state.json')
+                window.julesApi.getSessions(window.JulesPanelState.metricsWindow || 30).catch(e => { console.warn("Failed to fetch sessions", e); return { sessions: [] }; }),
+                window.taskOps.getAllTasks().catch(e => { console.warn("Failed to fetch tasks", e); return []; }),
+                window.githubApi.fetchFileWithSha('_data/jules_panel_state.json').catch(e => { console.warn("Global archive file not found or inaccessible", e); return null; })
             ]);
 
             if (archiveRes && archiveRes.content && !window.JulesPanelState.isSyncingArchive) {

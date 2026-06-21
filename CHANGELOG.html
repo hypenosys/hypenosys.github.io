@@ -111,6 +111,7 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-success">Fixed</h5>
             <ul>
+               <li><strong>Estabilidad del Jules Panel:</strong> Implementado manejo de errores no bloqueante en la carga de datos globales. El fallo en la recuperación del archivo de estado o de la API de GitHub ya no detiene la inicialización del panel, garantizando que los menús y métricas básicas sigan siendo accesibles.</li>
                <li><strong>Iconografía SVG en Panel V2:</strong> Corregidos errores de sintaxis en las rutas de los iconos de Configuración y Ramas (paths malformados) que generaban alertas en la consola del navegador.</li>
                <li><strong>Acción del Botón "Nueva Sesión":</strong> Reemplazada la llamada a una función inexistente (<code>scrollToSession</code>) por la implementación real de inicio de sesión neural.</li>
                <li><strong>Botón de Envío Neural Chat:</strong> Corregido el fallo que bloqueaba el envío de mensajes debido a una función de persistencia no definida (`saveSessionsV2`). Implementada la unificación de sesiones con el chat principal y garantizado el desbloqueo de la interfaz tras cualquier operación.</li>
