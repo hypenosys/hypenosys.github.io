@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T17:06:13.596Z",
-  "last_updated_by": "Axel",
+  "last_updated": "2026-06-21T17:07:23.283Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -2886,7 +2886,7 @@
       "repository": "hypenosys/docs",
       "prioridad": "Medium",
       "milestone": "M1",
-      "estado": "Working",
+      "estado": "OK",
       "completitud": 0.5,
       "resuelto_por": "Axel",
       "detectado_por": "Axel",
@@ -2948,6 +2948,13 @@
           "timestamp": "2026-06-21T12:49:46.080Z",
           "field": "seccion",
           "new_value": "Documentación"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T17:07:22.849Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "OK"
         }
       ],
       "id": 49,
@@ -4200,6 +4207,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #49",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T17:07:23.283Z"
+    },
     {
       "action": "feat: nueva tarea #1782061572883 añadida",
       "user": "Axlfc",
