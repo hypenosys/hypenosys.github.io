@@ -65,6 +65,9 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-white">Added</h5>
             <ul>
+                <li><strong>Sincronización Bidireccional Neural:</strong> Implementada comunicación en tiempo real entre el Jules Panel y el standalone de Claude Chat mediante <code>BroadcastChannel</code>, permitiendo que las respuestas de Claude y los mensajes del usuario aparezcan instantáneamente en ambos interfaces sin recargar.</li>
+                <li><strong>Renderizado de Actividad Jules Mejorado:</strong> El análisis de actividad de Jules ahora utiliza títulos descriptivos reales (ej: "Mensaje de Jules", "Sesión Fallida") en lugar de placeholders numerados opacos.</li>
+                <li><strong>Identidad Visual Neural Unificada:</strong> Actualizada la interfaz de chat en el Panel y Standalone para usar etiquetas visuales estándar (<code>USER</code>, <code>JULES</code>, <code>CLAUDE</code>) con esquemas de color coherentes (Dracula/Neural Purple).</li>
                 <li><strong>Persistencia de Contexto Neural por Sesión:</strong> El historial de conversación con Claude dentro del Jules Panel ahora se guarda de forma independiente para cada sesión de Jules mediante la clave <code>hy_neural_context_${sessionId}</code>, permitiendo mantener hilos de razonamiento distintos por tarea.</li>
                 <li><strong>Sincronización Neural en Tiempo Real:</strong> Implementado <code>BroadcastChannel</code> para sincronizar instantáneamente el contexto neural entre múltiples pestañas abiertas del Jules Panel.</li>
                 <li><strong>Visualización de Actividad Jules en Chat:</strong> Los fragmentos del historial de Jules enviados a Claude se renderizan ahora con un estilo visual propio y la etiqueta "JULES ACTIVITY" para mejorar la legibilidad del hilo.</li>
