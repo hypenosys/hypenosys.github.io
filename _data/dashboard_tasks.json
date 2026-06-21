@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T12:41:02.166Z",
+  "last_updated": "2026-06-21T12:41:11.720Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3993,9 +3993,16 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:41:11.005Z",
+          "field": "seccion",
+          "new_value": "Dashboard"
         }
       ],
-      "id": 61
+      "id": 61,
+      "seccion": "Dashboard"
     },
     {
       "title": "JULES PANEL - /chat/neural/: Unificar menús en todas las páginas de la plataforma",
@@ -4220,6 +4227,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #61",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:41:11.720Z"
+    },
     {
       "action": "chore: actualizar tarea #59",
       "user": "Axlfc",
