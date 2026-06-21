@@ -657,7 +657,10 @@ permalink: /chat/neural/
                 </div>
             </div>
             <div class="flex items-center gap-6">
-                <div id="docs-status-badge" class="hidden"></div>
+                <div class="flex items-center gap-2 bg-[#44475a]/30 px-2 py-1 rounded-full border border-[#44475a]">
+                    <input type="checkbox" id="docs-live-toggle" class="w-3 h-3 cursor-pointer accent-[#bd93f9]" title="Toggle Docs Context">
+                    <div id="docs-status-badge" class="hidden"></div>
+                </div>
                 <div id="connection-status" class="flex items-center gap-2 text-[10px] font-black tracking-widest text-[#50fa7b] bg-[#50fa7b]/5 px-3 py-1 rounded-full border border-[#50fa7b]/20">
                     <span class="w-1.5 h-1.5 rounded-full bg-[#50fa7b] shadow-[0_0_8px_#50fa7b] animate-pulse"></span> ONLINE
                 </div>
@@ -976,6 +979,7 @@ permalink: /chat/neural/
                 this.lastCommitSha = null;
                 this.POLL_INTERVAL = 60000; // 60s
                 this._poller = null;
+                this.enabled = false;
             }
 
             getHeaders() {
@@ -1039,6 +1043,7 @@ permalink: /chat/neural/
             }
 
             async buildContextSnapshot(maxFiles = 10) {
+                if (!this.enabled) return "";
                 this.updateStatus('syncing');
                 try {
                     // Leer el árbol de archivos y los primeros N documentos
@@ -1080,6 +1085,12 @@ permalink: /chat/neural/
                 if (!badge) return;
 
                 badge.className = 'flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[9px] font-bold border transition-all';
+
+                if (!this.enabled) {
+                    badge.classList.add('bg-gray-500/10', 'text-gray-500', 'border-gray-500/20');
+                    badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-gray-500"></span> docs: off';
+                    return;
+                }
 
                 if (status === 'live') {
                     badge.classList.add('bg-[#50fa7b]/10', 'text-[#50fa7b]', 'border-[#50fa7b]/20');
@@ -1425,6 +1436,29 @@ permalink: /chat/neural/
         async function init() {
             const urlParams = new URLSearchParams(window.location.search);
             const taskDataRaw = urlParams.get('task_data');
+            const docsLiveParam = urlParams.get('docs');
+
+            // Initialize Docs Context Toggle
+            const docsToggle = document.getElementById('docs-live-toggle');
+            if (docsToggle) {
+                if (docsLiveParam === 'live') {
+                    docsToggle.checked = true;
+                    window.docsContext.enabled = true;
+                }
+
+                docsToggle.onchange = (e) => {
+                    window.docsContext.enabled = e.target.checked;
+                    window.docsContext.updateStatus(e.target.checked ? 'live' : 'disabled');
+                    if (e.target.checked) {
+                        window.docsContext.startPolling(() => {
+                            if (window.authManager) window.authManager.showToast('Docs Actualizados', 'Se han detectado cambios en el repositorio de documentación.', 'info');
+                            else showToast('Documentación actualizada');
+                        });
+                    } else {
+                        window.docsContext.stopPolling();
+                    }
+                };
+            }
 
             // 1. Initialize session UI first
             renderSessionList();
@@ -1584,13 +1618,19 @@ permalink: /chat/neural/
             setupProfileSelector();
             setupApiModalEnhancements();
 
-            // Start docs polling
+            // Start docs polling if enabled
             const docsBadge = document.getElementById('docs-status-badge');
-            if (docsBadge) docsBadge.classList.remove('hidden');
-            window.docsContext.startPolling(() => {
-                if (window.authManager) window.authManager.showToast('Docs Actualizados', 'Se han detectado cambios en el repositorio de documentación.', 'info');
-                else showToast('Documentación actualizada');
-            });
+            if (docsBadge) {
+                docsBadge.classList.remove('hidden');
+                if (window.docsContext.enabled) {
+                    window.docsContext.startPolling(() => {
+                        if (window.authManager) window.authManager.showToast('Docs Actualizados', 'Se han detectado cambios en el repositorio de documentación.', 'info');
+                        else showToast('Documentación actualizada');
+                    });
+                } else {
+                    window.docsContext.updateStatus('disabled');
+                }
+            }
 
             // FEATURE 2: Listen for Jules Output
             window.addEventListener('storage', (e) => {
@@ -2654,7 +2694,16 @@ permalink: /chat/neural/
 
         async function buildSystemPrompt(userMessage, basePrompt) {
             const docKeywords = ['documentación', 'docs', 'readme', 'manual', 'cómo funciona', 'qué es', 'explica', 'describe'];
-            const needsDocs = docKeywords.some(k => userMessage.toLowerCase().includes(k));
+            // Respect docs: live toggle as master switch
+            const needsDocs = window.docsContext.enabled && docKeywords.some(k => userMessage.toLowerCase().includes(k));
+
+            // If master switch is on, we can also force docs if user explicitly asks even without keywords?
+            // User requirement: "Al activar docs: live, verificar que Claude acceda... Al desactivar, confirmar que no se carguen"
+            // Let's make it so if enabled, it follows keywords. If disabled, it never loads.
+            // Actually, usually "Live" means always on.
+            const forceDocsIfLive = window.docsContext.enabled;
+
+            const docsToInclude = forceDocsIfLive;
 
             let systemPrompt = basePrompt || "Eres un asistente técnico del estudio de videojuegos Hypenosys. Ayudas al equipo a planificar e implementar tareas de desarrollo. Responde siempre en español, de forma directa y técnica.";
 
@@ -2688,7 +2737,7 @@ permalink: /chat/neural/
                 }
             }
 
-            if (needsDocs) {
+            if (docsToInclude) {
                 const docsSnap = await window.docsContext.buildContextSnapshot(8);
                 systemPrompt += `\n\n${docsSnap}`;
             }
