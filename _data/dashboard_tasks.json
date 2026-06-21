@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T14:56:53.812Z",
+  "last_updated": "2026-06-21T14:57:43.397Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -4124,7 +4124,7 @@
       "seccion": "Dashboard"
     },
     {
-      "title": "DASHBOARD: Subida de imágenes al GUARDAR TAREA, no al subir la imagen",
+      "title": "Subida de imágenes al GUARDAR TAREA, no al subir la imagen",
       "descripcion": "En cuanto se sube una imagen a imágenes en la task, no debería subirla de primeras al tumblr hasta haber guardado la task, si ya se ha subido no hace falta resubirla, pero si aun no se ha subido al tumblr sin guardar la task, no debería haberla subido al Tumblr. Así si subimos algo accidentalmente, no tiene por qué subirse de primeras.",
       "rama": "master",
       "task_type": "bug",
@@ -4178,6 +4178,13 @@
           "timestamp": "2026-06-21T12:42:52.018Z",
           "field": "seccion",
           "new_value": "Dashboard"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T14:57:42.586Z",
+          "field": "title",
+          "old_value": "DASHBOARD: Subida de imágenes al GUARDAR TAREA, no al subir la imagen",
+          "new_value": "Subida de imágenes al GUARDAR TAREA, no al subir la imagen"
         }
       ],
       "id": 60,
@@ -4553,6 +4560,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #60",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T14:57:43.397Z"
+    },
     {
       "action": "chore: actualizar tarea #57",
       "user": "Axlfc",
