@@ -1,15 +1,15 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-21T10:48:52.973Z",
+  "computed_at": "2026-06-21T10:49:14.117Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 34,
-    "total_ok": 9,
+    "total_ok": 10,
     "total_ko": 0,
-    "total_uncertain": 11,
+    "total_uncertain": 10,
     "total_obsolete": 7,
-    "fixed_found_ratio": 0.2432,
-    "verified_ratio": 0.2195
+    "fixed_found_ratio": 0.2703,
+    "verified_ratio": 0.2439
   },
   "group": {
     "velocity_trend": {
@@ -18,12 +18,12 @@
       "2026-W20": 0,
       "2026-W21": 4,
       "2026-W22": 7,
-      "2026-W23": 10,
+      "2026-W23": 11,
       "2026-W24": 2,
       "2026-W25": 1
     },
-    "bug_rate": 0.04,
-    "blocker_health": 3,
+    "bug_rate": 0.0417,
+    "blocker_health": 2,
     "tag_heatmap": {
       "brainstorm": 1,
       "chore": 8,
@@ -31,18 +31,14 @@
       "docs": 3,
       "topper": 1,
       "testing": 1,
-      "devops": 6,
+      "devops": 5,
       "git": 1,
       "Infraestructura": 1,
-      "api": 10,
-      "feature": 11,
+      "api": 9,
+      "feature": 10,
       "jules": 1,
       "ux": 6,
       "frontend": 4,
-      "infraestructura": 1,
-      "jules-panel": 1,
-      "neural-chat": 1,
-      "svn": 1,
       "research": 1,
       "n8n": 1,
       "bug": 1,
@@ -52,7 +48,7 @@
       "UX/UI": 1,
       "master": 5
     },
-    "milestone_tasks_remaining": 12,
+    "milestone_tasks_remaining": 11,
     "hall_of_fame_winners": {
       "mvp": {
         "handle": "axlfc",
@@ -67,7 +63,7 @@
       "unblocker": {
         "handle": "topperh4rley",
         "name": "Alex",
-        "value": 4
+        "value": 5
       },
       "velocity_king": {
         "handle": "dkdidac-design",
@@ -95,8 +91,8 @@
         "member_name": "Axel",
         "mvp_points": 4.5,
         "bugs_solved": 2,
-        "unblocked_count": 3,
-        "velocity": 2.7777777777777777,
+        "unblocked_count": 4,
+        "velocity": 2.8421052631578947,
         "research_solved": 0,
         "art_tasks": 0,
         "comments_left": 1
@@ -105,8 +101,8 @@
         "member_name": "Alex",
         "mvp_points": 4.2,
         "bugs_solved": 3,
-        "unblocked_count": 4,
-        "velocity": 3.473684210526316,
+        "unblocked_count": 5,
+        "velocity": 3.5,
         "research_solved": 0,
         "art_tasks": 0,
         "comments_left": 0
@@ -147,63 +143,6 @@
     "axlfc": {
       "member_name": "Axel",
       "completed": {
-        "all_time": 19,
-        "milestone": 18,
-        "week": 0
-      },
-      "weekly_velocity": {
-        "2026-W18": 0,
-        "2026-W19": 0,
-        "2026-W20": 0,
-        "2026-W21": 3,
-        "2026-W22": 4,
-        "2026-W23": 21,
-        "2026-W24": 2,
-        "2026-W25": 0
-      },
-      "type_breakdown": {
-        "chore": 4,
-        "feature": 13,
-        "bug": 2
-      },
-      "rama_breakdown": {
-        "master": 1,
-        "feature/dashboard-chat-icon": 1,
-        "chore/consolidate-scripts": 1,
-        "chore/decommission-old-panels": 1,
-        "PRO": 15
-      },
-      "tag_frequency": {
-        "chore": 3,
-        "docs": 1,
-        "feature": 1,
-        "frontend": 1,
-        "ux": 1,
-        "refactor": 2,
-        "infraestructura": 1,
-        "jules": 1,
-        "UX/UI": 1,
-        "bug": 2,
-        "hard": 1
-      },
-      "avg_completion_speed": {
-        "days": 0.5,
-        "estimated_start": true
-      },
-      "dependency_impact": 4,
-      "comment_activity": 1,
-      "volatility": {
-        "reopens": 3,
-        "reprioritizations": 24
-      },
-      "workload": {
-        "active_tasks": 16,
-        "story_points": 38
-      }
-    },
-    "topperh4rley": {
-      "member_name": "Alex",
-      "completed": {
         "all_time": 20,
         "milestone": 19,
         "week": 0
@@ -213,33 +152,40 @@
         "2026-W19": 0,
         "2026-W20": 0,
         "2026-W21": 3,
-        "2026-W22": 10,
-        "2026-W23": 25,
-        "2026-W24": 0,
+        "2026-W22": 4,
+        "2026-W23": 23,
+        "2026-W24": 2,
         "2026-W25": 0
       },
       "type_breakdown": {
-        "chore": 2,
-        "feature": 15,
-        "bug": 3
+        "chore": 4,
+        "feature": 14,
+        "bug": 2
       },
       "rama_breakdown": {
-        "PRO": 16,
-        "feature/repo-labels-ui": 1,
-        "fix/jules-neural-mobile-markdown": 1,
         "master": 1,
-        "feature/dashboard-chat-icon": 1
+        "feature/svn-ai-integration": 1,
+        "feature/dashboard-chat-icon": 1,
+        "chore/consolidate-scripts": 1,
+        "chore/decommission-old-panels": 1,
+        "PRO": 15
       },
       "tag_frequency": {
-        "onboarding": 1,
-        "chore": 2,
-        "UX/UI": 3,
-        "feature": 2,
-        "frontend": 3,
-        "ux": 3,
-        "bug": 3,
+        "chore": 3,
         "docs": 1,
+        "api": 1,
+        "devops": 1,
+        "feature": 2,
+        "infraestructura": 2,
+        "jules-panel": 1,
+        "neural-chat": 1,
+        "svn": 1,
+        "frontend": 1,
+        "ux": 1,
+        "refactor": 2,
         "jules": 1,
+        "UX/UI": 1,
+        "bug": 2,
         "hard": 1
       },
       "avg_completion_speed": {
@@ -247,14 +193,77 @@
         "estimated_start": true
       },
       "dependency_impact": 5,
+      "comment_activity": 1,
+      "volatility": {
+        "reopens": 3,
+        "reprioritizations": 24
+      },
+      "workload": {
+        "active_tasks": 15,
+        "story_points": 36
+      }
+    },
+    "topperh4rley": {
+      "member_name": "Alex",
+      "completed": {
+        "all_time": 21,
+        "milestone": 20,
+        "week": 0
+      },
+      "weekly_velocity": {
+        "2026-W18": 0,
+        "2026-W19": 0,
+        "2026-W20": 0,
+        "2026-W21": 3,
+        "2026-W22": 10,
+        "2026-W23": 27,
+        "2026-W24": 0,
+        "2026-W25": 0
+      },
+      "type_breakdown": {
+        "chore": 2,
+        "feature": 16,
+        "bug": 3
+      },
+      "rama_breakdown": {
+        "PRO": 16,
+        "feature/repo-labels-ui": 1,
+        "fix/jules-neural-mobile-markdown": 1,
+        "master": 1,
+        "feature/svn-ai-integration": 1,
+        "feature/dashboard-chat-icon": 1
+      },
+      "tag_frequency": {
+        "onboarding": 1,
+        "chore": 2,
+        "UX/UI": 3,
+        "feature": 3,
+        "frontend": 3,
+        "ux": 3,
+        "bug": 3,
+        "docs": 1,
+        "api": 1,
+        "devops": 1,
+        "infraestructura": 1,
+        "jules-panel": 1,
+        "neural-chat": 1,
+        "svn": 1,
+        "jules": 1,
+        "hard": 1
+      },
+      "avg_completion_speed": {
+        "days": 0.5,
+        "estimated_start": true
+      },
+      "dependency_impact": 6,
       "comment_activity": 0,
       "volatility": {
         "reopens": 2,
         "reprioritizations": 26
       },
       "workload": {
-        "active_tasks": 15,
-        "story_points": 36
+        "active_tasks": 14,
+        "story_points": 34
       }
     },
     "dkdidac-design": {
@@ -428,7 +437,7 @@
         "unblocker": {
           "handle": "topperh4rley",
           "name": "Alex",
-          "value": 4
+          "value": 5
         },
         "velocity_king": {
           "handle": "dkdidac-design",
@@ -456,8 +465,8 @@
           "member_name": "Axel",
           "mvp_points": 4.5,
           "bugs_solved": 2,
-          "unblocked_count": 3,
-          "velocity": 2.7777777777777777,
+          "unblocked_count": 4,
+          "velocity": 2.8421052631578947,
           "research_solved": 0,
           "art_tasks": 0,
           "comments_left": 1
@@ -466,8 +475,8 @@
           "member_name": "Alex",
           "mvp_points": 4.2,
           "bugs_solved": 3,
-          "unblocked_count": 4,
-          "velocity": 3.473684210526316,
+          "unblocked_count": 5,
+          "velocity": 3.5,
           "research_solved": 0,
           "art_tasks": 0,
           "comments_left": 0
@@ -510,7 +519,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-06-21T10:48:53.863Z"
+      "timestamp": "2026-06-21T10:49:14.852Z"
     }
   ]
 }
