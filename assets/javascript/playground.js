@@ -109,13 +109,20 @@
                 datasets: [{
                     data: [0, 0, 0],
                     backgroundColor: ['#6272a4', '#f1fa8c', '#50fa7b'],
-                    borderWidth: 0
+                    borderWidth: 2,
+                    borderColor: '#282a36'
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { display: false } }
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+                        labels: { color: '#6272a4', font: { size: 10 } }
+                    }
+                }
             }
         });
 

@@ -594,7 +594,7 @@ permalink: /chat/neural/
     <main class="flex-grow flex flex-col relative bg-[#282a36]">
 
         <!-- Header -->
-        <header class="h-16 border-b border-[#44475a]/50 flex items-center justify-between px-6 bg-[#1e1f29]/50 backdrop-blur-md sticky top-0 z-10">
+        <header class="h-16 border-b border-[#44475a]/50 flex items-center justify-between px-6 bg-[#1e1f29]/50 backdrop-blur-md sticky top-0 z-20">
             <div class="flex items-center gap-3">
                 <button onclick="toggleSidebar()" class="mobile-toggle" title="Abrir menú">
                     <i class="fas fa-bars"></i>
@@ -629,6 +629,16 @@ permalink: /chat/neural/
             </div>
         </header>
 
+        <!-- View Selector Tabs -->
+        <div id="view-selector" class="h-10 border-b border-[#44475a]/30 bg-[#1e1f29]/30 flex items-center px-6 gap-6 sticky top-16 z-10">
+            <button onclick="switchChatView('chat')" id="tab-chat" class="h-full text-[10px] font-black tracking-widest uppercase flex items-center gap-2 border-b-2 border-[#bd93f9] text-[#bd93f9] transition-all">
+                <i class="fas fa-comments"></i> CHAT
+            </button>
+            <button onclick="switchChatView('activity')" id="tab-activity" class="h-full text-[10px] font-black tracking-widest uppercase flex items-center gap-2 border-b-2 border-transparent text-[#6272a4] hover:text-[#f8f8f2] transition-all">
+                <i class="fas fa-pulse"></i> ACTIVIDAD
+            </button>
+        </div>
+
         <!-- Chat History -->
         <div id="chat-messages" class="chat-container flex-grow p-6 space-y-6 scroll-smooth">
             <!-- Initial state -->
@@ -643,6 +653,18 @@ permalink: /chat/neural/
                     <button onclick="quickPrompt('Explícame el flujo SVN del estudio')" class="p-3 dracula-surface border border-[#6272a4] rounded-lg text-xs hover:border-[#bd93f9] transition-all">Flujo SVN</button>
                 </div>
             </div>
+        </div>
+
+        <!-- Activity Feed (Problem 3) -->
+        <div id="activity-feed" class="chat-container flex-grow p-6 space-y-4 hidden scroll-smooth">
+            <div id="activity-empty-state" class="h-full flex flex-col items-center justify-center text-center space-y-4 opacity-30">
+                <i class="fas fa-terminal text-6xl"></i>
+                <div>
+                    <h2 class="text-xl font-bold uppercase tracking-tighter">Activity Feed</h2>
+                    <p class="text-sm max-w-xs mx-auto">Selecciona una sesión de Jules para ver el log de ejecución en tiempo real.</p>
+                </div>
+            </div>
+            <div id="activity-log-container" class="space-y-4"></div>
         </div>
 
         <!-- Debug Panel (Collapsible) -->
@@ -1047,6 +1069,197 @@ permalink: /chat/neural/
         let attachedImage = null;
         let mediaRecorder = null;
         let audioChunks = [];
+        let julesPollInterval = null;
+
+        function startJulesPolling(sessionId) {
+            stopJulesPolling();
+            if (!sessionId) return;
+
+            const poll = async () => {
+                const path = sessionId.startsWith('sessions/') ? sessionId : 'sessions/' + sessionId;
+
+                try {
+                    const data = await window.julesApi.getActivities(path, 50);
+                    const activities = data.activities || [];
+
+                    const agentMessages = activities.filter(a => a.agentMessaged);
+                    if (agentMessages.length > 0) {
+                        const session = sessions.find(s => s.id === currentSessionId);
+                        if (!session) return;
+
+                        let changed = false;
+                        agentMessages.forEach(act => {
+                            const content = act.agentMessaged.agentMessage;
+                            const timestamp = act.createTime;
+
+                            // Check if this message is already in our session messages
+                            const exists = session.messages.some(m =>
+                                m.role === 'assistant' &&
+                                m.content === content &&
+                                m.createTime === timestamp
+                            );
+
+                            if (!exists) {
+                                session.messages.push({
+                                    role: 'assistant',
+                                    content: content,
+                                    createTime: timestamp,
+                                    source: 'jules'
+                                });
+                                changed = true;
+                            }
+                        });
+
+                        if (changed) {
+                            saveSessions();
+                            renderMessages();
+                        }
+                    }
+
+                    // Problem 3 - Update Activity Feed (Placeholder for now)
+                    if (window._updateActivityFeed) {
+                        window._updateActivityFeed(activities);
+                    }
+
+                    // If session is completed or failed, stop polling
+                    const isDone = activities.some(a => a.sessionCompleted || a.sessionFailed);
+                    if (isDone) {
+                        stopJulesPolling();
+                    }
+                } catch (e) {
+                    console.warn('[Jules Polling] Error:', e);
+                }
+            };
+
+            poll(); // Initial poll
+            julesPollInterval = setInterval(poll, 5000);
+        }
+
+        function stopJulesPolling() {
+            if (julesPollInterval) {
+                clearInterval(julesPollInterval);
+                julesPollInterval = null;
+            }
+        }
+
+        window.switchChatView = (view) => {
+            const chatView = document.getElementById('chat-messages');
+            const activityView = document.getElementById('activity-feed');
+            const chatTab = document.getElementById('tab-chat');
+            const activityTab = document.getElementById('tab-activity');
+
+            if (view === 'chat') {
+                chatView.classList.remove('hidden');
+                activityView.classList.add('hidden');
+                chatTab.classList.add('border-[#bd93f9]', 'text-[#bd93f9]');
+                chatTab.classList.remove('border-transparent', 'text-[#6272a4]');
+                activityTab.classList.remove('border-[#bd93f9]', 'text-[#bd93f9]');
+                activityTab.classList.add('border-transparent', 'text-[#6272a4]');
+            } else {
+                chatView.classList.add('hidden');
+                activityView.classList.remove('hidden');
+                activityTab.classList.add('border-[#bd93f9]', 'text-[#bd93f9]');
+                activityTab.classList.remove('border-transparent', 'text-[#6272a4]');
+                chatTab.classList.remove('border-[#bd93f9]', 'text-[#bd93f9]');
+                chatTab.classList.add('border-transparent', 'text-[#6272a4]');
+            }
+        };
+
+        window._updateActivityFeed = (activities) => {
+            const container = document.getElementById('activity-log-container');
+            const emptyState = document.getElementById('activity-empty-state');
+
+            if (!activities || activities.length === 0) {
+                emptyState.classList.remove('hidden');
+                container.innerHTML = '';
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+
+            // Deduplicate and sort activities
+            const uniqueActivities = activities.filter((a, i, arr) => arr.findIndex(x => x.id === a.id) === i);
+
+            container.innerHTML = uniqueActivities.map(act => {
+                const time = new Date(act.createTime).toLocaleTimeString();
+                let type = 'INFO';
+                let color = 'text-[#bd93f9]';
+                let icon = 'fa-info-circle';
+                let content = act.description || '';
+                let extra = '';
+
+                if (act.planGenerated) {
+                    type = 'PLAN';
+                    icon = 'fa-clipboard-list';
+                    color = 'text-orange-400';
+                    const steps = act.planGenerated.plan?.steps || [];
+                    extra = `<div class="mt-2 pl-4 border-l border-orange-400/30 space-y-1">
+                        ${steps.map(s => `<div class="text-[10px] text-orange-200/70"><span class="font-bold">${s.index + 1}.</span> ${s.title}</div>`).join('')}
+                    </div>`;
+                } else if (act.planApproved) {
+                    type = 'AUTH';
+                    icon = 'fa-check-double';
+                    color = 'text-[#50fa7b]';
+                    content = 'Plan aprobado por el usuario';
+                } else if (act.progressUpdated) {
+                    type = 'STEP';
+                    icon = 'fa-cog fa-spin';
+                    color = 'text-[#8be9fd]';
+                    content = act.progressUpdated.title;
+                } else if (act.agentMessaged) {
+                    type = 'JULES';
+                    icon = 'fa-robot';
+                    color = 'text-[#50fa7b]';
+                    content = act.agentMessaged.agentMessage;
+                } else if (act.userMessaged) {
+                    type = 'USER';
+                    icon = 'fa-user';
+                    color = 'text-[#f8f8f2]';
+                    content = act.userMessaged.userMessage;
+                } else if (act.sessionCompleted) {
+                    type = 'DONE';
+                    icon = 'fa-flag-checkered';
+                    color = 'text-[#50fa7b]';
+                    content = 'Sesión completada exitosamente';
+                } else if (act.sessionFailed) {
+                    type = 'FAIL';
+                    icon = 'fa-exclamation-triangle';
+                    color = 'text-[#ff5555]';
+                    content = 'Error: ' + (act.sessionFailed.reason || 'Desconocido');
+                }
+
+                // Check for bash artifacts
+                if (act.artifacts) {
+                    act.artifacts.forEach(art => {
+                        if (art.bashOutput) {
+                            extra += `
+                            <div class="mt-2 bg-black/40 rounded border border-[#44475a] overflow-hidden">
+                                <div class="bg-[#1e1f29] px-2 py-1 text-[8px] font-mono text-[#6272a4] border-b border-[#44475a] flex justify-between">
+                                    <span>BASH COMMAND</span>
+                                    <span>EXIT: ${art.bashOutput.exitCode}</span>
+                                </div>
+                                <div class="p-2 text-[9px] font-mono text-[#50fa7b] whitespace-pre-wrap">${escapeHtml(art.bashOutput.command)}</div>
+                                ${art.bashOutput.output ? `<div class="p-2 text-[9px] font-mono text-white/50 border-t border-[#44475a]/30 whitespace-pre-wrap">${escapeHtml(art.bashOutput.output)}</div>` : ''}
+                            </div>`;
+                        }
+                    });
+                }
+
+                return `
+                <div class="activity-item bg-[#1e1f29]/50 border border-[#44475a]/30 rounded-lg p-3 hover:border-[#bd93f9]/30 transition-all">
+                    <div class="flex items-center justify-between mb-1">
+                        <div class="flex items-center gap-2">
+                            <i class="fas ${icon} ${color} text-[10px]"></i>
+                            <span class="text-[9px] font-black tracking-widest ${color}">${type}</span>
+                        </div>
+                        <span class="text-[9px] font-mono text-[#6272a4]">${time}</span>
+                    </div>
+                    <div class="text-xs text-white/80 leading-relaxed">${marked.parse(content)}</div>
+                    ${extra}
+                </div>
+                `;
+            }).join('');
+        };
 
         // Migrate sessions if needed
         sessions = sessions.map(s => ({
@@ -1875,8 +2088,10 @@ permalink: /chat/neural/
             const neuralId = localStorage.getItem('hy_neural_session_id_' + id);
             if (neuralId) {
                 localStorage.setItem('hy_neural_session_id', neuralId);
+                startJulesPolling(neuralId);
             } else {
                 localStorage.removeItem('hy_neural_session_id');
+                stopJulesPolling();
             }
 
             // Refresh Banner if exists
@@ -1911,14 +2126,40 @@ permalink: /chat/neural/
             }
 
             document.getElementById('system-prompt-input').value = session.systemPrompt || '';
+
+            // Refresh session list to update active state
+            renderSessionList();
         }
 
         function saveSessions() {
             try {
-                localStorage.setItem('claude_chat_sessions', JSON.stringify(sessions));
+                // Deduplicate sessions by ID before saving to prevent double-entries
+                const uniqueSessions = [];
+                const seenIds = new Set();
+
+                sessions.forEach(s => {
+                    if (!seenIds.has(s.id)) {
+                        seenIds.add(s.id);
+                        uniqueSessions.push(s);
+                    }
+                });
+
+                localStorage.setItem('claude_chat_sessions', JSON.stringify(uniqueSessions));
                 localStorage.setItem('claude_archived_sessions', JSON.stringify(archivedSessions));
+
+                // Problem 1: Ensure hy_neural_sessions (used by Jules Panel) doesn't conflict
+                // We sync the list to hy_neural_sessions for compatibility if needed
+                const neuralSessions = uniqueSessions.map(s => ({
+                    id: localStorage.getItem('hy_neural_session_id_' + s.id) || s.id,
+                    name: s.title,
+                    task_id: s.task_ref?.id || null,
+                    task_title: s.task_ref?.title || '---',
+                    start: s.createdAt,
+                    status: 'active'
+                }));
+                localStorage.setItem('hy_neural_sessions', JSON.stringify(neuralSessions));
             } catch (e) {
-                alert('Error: almacenamiento local lleno.');
+                console.error('Error saving sessions:', e);
             }
         }
 
@@ -2096,17 +2337,32 @@ permalink: /chat/neural/
         }
 
         function renderMessages() {
-            const session = sessions.find(s => s.id === currentSessionId);
+            const session = sessions.find(s => s.id === currentSessionId) || archivedSessions.find(s => s.id === currentSessionId);
             if (!session) {
                 chatMessages.innerHTML = '';
                 return;
             }
+
+            if (session.messages.length === 0) {
+                document.getElementById('welcome-screen')?.classList.remove('hidden');
+                chatMessages.innerHTML = '';
+                return;
+            } else {
+                document.getElementById('welcome-screen')?.classList.add('hidden');
+            }
+
             chatMessages.innerHTML = session.messages.map((m, idx) => {
                 let content = m.content;
                 let reasoningHtml = '';
 
+                const isUser = m.role === 'user';
+                const isJules = m.source === 'jules' || m.role === 'agent';
+                const label = isUser ? 'NEURAL LINK: USER' : (isJules ? 'NEURAL LINK: JULES' : 'NEURAL LINK: CLAUDE');
+                const labelColor = isUser ? 'text-[#8be9fd]' : (isJules ? 'text-[#50fa7b]' : 'text-[#bd93f9]');
+                const bubbleClass = isUser ? 'message-user' : (isJules ? 'message-claude border-[#50fa7b] border-2 shadow-[0_0_15px_rgba(80,250,123,0.2)]' : 'message-claude shadow-xl');
+
                 // Handle <think> blocks for Reasoning
-                if (content.includes('<think>')) {
+                if (content && typeof content === 'string' && content.includes('<think>')) {
                     const parts = content.split(/<\/?think>/);
                     if (parts.length >= 3) {
                         const reasoning = parts[1];
@@ -2131,19 +2387,19 @@ permalink: /chat/neural/
                 }
 
                 return `
-                <div class="flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} group mb-4">
-                    <div class="max-w-[85%] p-4 ${m.role === 'user' ? 'message-user' : 'message-claude shadow-xl'} relative message-bubble">
-                        <div class="text-[10px] font-black tracking-widest uppercase mb-2 ${m.role === 'user' ? 'text-[#8be9fd]' : 'text-[#bd93f9]'} opacity-70">
-                            ${m.role === 'user' ? 'NEURAL LINK: USER' : 'NEURAL LINK: CLAUDE'}
+                <div class="flex ${isUser ? 'justify-end' : 'justify-start'} group mb-4">
+                    <div class="max-w-[85%] p-4 ${bubbleClass} relative message-bubble">
+                        <div class="text-[10px] font-black tracking-widest uppercase mb-2 ${labelColor} opacity-70">
+                            ${label}
                         </div>
                         ${safetyBadge}
                         ${m.thinking ? `<div class="thinking-block">${escapeHtml(m.thinking)}</div>` : ''}
                         ${reasoningHtml}
                         <div class="prose prose-invert text-sm prose-pre:bg-[#1e1f29] prose-pre:border prose-pre:border-[#44475a] selection:bg-[#bd93f9]/30">
-                            ${marked.parse(content)}
+                            ${content ? marked.parse(content) : ''}
                         </div>
 
-                        ${m.role !== 'user' ? `
+                        ${!isUser ? `
                         <div class="message-actions opacity-0 group-hover:opacity-100 transition-opacity absolute -bottom-6 left-0 flex gap-2">
                             <button onclick="copyMessage(${idx})" class="text-[9px] font-bold text-[#6272a4] hover:text-[#bd93f9] flex items-center gap-1 bg-[#1e1f29] px-2 py-0.5 rounded border border-[#44475a]">
                                 <i class="fas fa-copy"></i> COPIAR
@@ -2380,6 +2636,14 @@ permalink: /chat/neural/
             const content = chatInput.value.trim();
             if ((!content && !attachedImage) || sendBtn.disabled) return;
 
+            // Auto-create session if none exists
+            if (!currentSessionId) {
+                createNewSession();
+            }
+
+            // Look in active or archived sessions
+            const session = sessions.find(s => s.id === currentSessionId) || archivedSessions.find(s => s.id === currentSessionId);
+
             // Handle Jules Direct Mode
             if (currentSendMode === 'jules') {
                 const sessionId = localStorage.getItem('hy_neural_session_id_' + currentSessionId);
@@ -2405,24 +2669,36 @@ permalink: /chat/neural/
                     return;
                 }
 
+                const userMsg = { role: 'user', content: content };
+                session.messages.push(userMsg);
+                renderMessages();
+                saveSessions();
+
                 sendBtn.disabled = true;
+                chatInput.disabled = true;
                 try {
                     const targetId = sessionId.startsWith('sessions/') ? sessionId : 'sessions/' + sessionId;
                     const ok = await window.julesApi.sendMessage(targetId, content);
                     if (ok) {
-                        appendSystemMessage(`Orden enviada a Jules (Sesión #${sessionId}): ${content}`, 'info');
                         chatInput.value = '';
                         chatInput.style.height = 'auto';
+
                         // Sync with Neural Thread
                         let thread = JSON.parse(localStorage.getItem('hy_neural_thread') || '[]');
                         thread.push({ role: 'user', content: content, source: 'user' });
                         localStorage.setItem('hy_neural_thread', JSON.stringify(thread));
+
                         showToast('Orden enviada a Jules');
+
+                        // Ensure polling is active
+                        startJulesPolling(sessionId);
                     }
                 } catch (e) {
                     appendSystemMessage(`Error al enviar a Jules: ${e.message}`, 'error');
                 } finally {
                     sendBtn.disabled = false;
+                    chatInput.disabled = false;
+                    chatInput.focus();
                 }
                 return;
             }
