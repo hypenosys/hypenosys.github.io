@@ -1,15 +1,15 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-21T17:07:25.464Z",
+  "computed_at": "2026-06-21T17:53:44.660Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 40,
-    "total_ok": 13,
+    "total_ok": 14,
     "total_ko": 0,
     "total_uncertain": 10,
     "total_obsolete": 7,
-    "fixed_found_ratio": 0.3023,
-    "verified_ratio": 0.2766
+    "fixed_found_ratio": 0.3256,
+    "verified_ratio": 0.2979
   },
   "group": {
     "velocity_trend": {
@@ -22,7 +22,7 @@
       "2026-W24": 3,
       "2026-W25": 3
     },
-    "bug_rate": 0.1111,
+    "bug_rate": 0.1154,
     "blocker_health": 1,
     "tag_heatmap": {
       "brainstorm": 1,
@@ -37,13 +37,12 @@
       "api": 8,
       "feature": 12,
       "jules": 1,
-      "ux": 4,
-      "frontend": 3,
+      "ux": 3,
+      "frontend": 2,
       "research": 1,
       "bug": 3,
       "security": 3,
       "backend": 2,
-      "stability": 1,
       "UX/UI": 1,
       "master": 10,
       "menú": 1,
@@ -144,7 +143,7 @@
     "axlfc": {
       "member_name": "Axel",
       "completed": {
-        "all_time": 24,
+        "all_time": 25,
         "milestone": 21,
         "week": 0
       },
@@ -155,11 +154,11 @@
         "2026-W21": 3,
         "2026-W22": 4,
         "2026-W23": 26,
-        "2026-W24": 4,
+        "2026-W24": 5,
         "2026-W25": 6
       },
       "type_breakdown": {
-        "feature": 16,
+        "feature": 17,
         "chore": 5,
         "research": 1,
         "bug": 2
@@ -169,6 +168,7 @@
         "feature/dashboard-chat-icon": 1,
         "chore/consolidate-scripts": 1,
         "chore/decommission-old-panels": 1,
+        "feature/dashboard-error-boundaries": 1,
         "master": 4,
         "PRO": 15,
         "feature/dashboard-tag-filter": 1
@@ -181,10 +181,11 @@
         "jules-panel": 1,
         "neural-chat": 1,
         "svn": 1,
-        "frontend": 2,
-        "ux": 3,
+        "frontend": 3,
+        "ux": 4,
         "chore": 3,
         "refactor": 2,
+        "stability": 1,
         "docs": 2,
         "jules": 1,
         "UX/UI": 1,
@@ -203,14 +204,14 @@
         "reprioritizations": 24
       },
       "workload": {
-        "active_tasks": 12,
+        "active_tasks": 11,
         "story_points": 25
       }
     },
     "topperh4rley": {
       "member_name": "Alex",
       "completed": {
-        "all_time": 25,
+        "all_time": 26,
         "milestone": 22,
         "week": 0
       },
@@ -221,12 +222,12 @@
         "2026-W21": 3,
         "2026-W22": 10,
         "2026-W23": 30,
-        "2026-W24": 2,
+        "2026-W24": 3,
         "2026-W25": 6
       },
       "type_breakdown": {
         "chore": 3,
-        "feature": 18,
+        "feature": 19,
         "bug": 3,
         "research": 1
       },
@@ -236,6 +237,7 @@
         "fix/jules-neural-mobile-markdown": 1,
         "feature/svn-ai-integration": 1,
         "feature/dashboard-chat-icon": 1,
+        "feature/dashboard-error-boundaries": 1,
         "master": 4,
         "feature/dashboard-tag-filter": 1
       },
@@ -244,8 +246,8 @@
         "onboarding": 1,
         "UX/UI": 3,
         "feature": 5,
-        "frontend": 4,
-        "ux": 5,
+        "frontend": 5,
+        "ux": 6,
         "bug": 3,
         "api": 2,
         "devops": 1,
@@ -253,6 +255,7 @@
         "jules-panel": 1,
         "neural-chat": 1,
         "svn": 1,
+        "stability": 1,
         "docs": 2,
         "jules": 1,
         "hard": 1,
@@ -269,7 +272,7 @@
         "reprioritizations": 26
       },
       "workload": {
-        "active_tasks": 11,
+        "active_tasks": 10,
         "story_points": 24
       }
     },
@@ -529,7 +532,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-06-21T17:07:26.274Z"
+      "timestamp": "2026-06-21T17:53:45.408Z"
     }
   ]
 }
