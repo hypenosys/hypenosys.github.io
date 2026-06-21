@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T18:31:03.422Z",
+  "last_updated": "2026-06-21T18:34:27.924Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -4168,7 +4168,7 @@
     },
     {
       "title": "Reducir latencia y tiempos de carga",
-      "descripcion": "Tarda demasiado, no debería tardar tanto en cargar datos que son prácticamente estáticos. El dashboard y en el panel de Jules el propio dashboard del panel de Jules deben cargar en muy poco.",
+      "descripcion": "Tarda demasiado, no debería tardar tanto en cargar datos que son prácticamente estáticos. El dashboard y en el panel de Jules (el propio dashboard del panel de Jules) deben cargar en muy poco.",
       "rama": "master",
       "task_type": "feature",
       "tema_principal": "Programación / Engine",
@@ -4208,6 +4208,13 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T18:34:27.422Z",
+          "field": "descripcion",
+          "old_value": "Tarda demasiado, no debería tardar tanto en cargar datos que son prácticamente estáticos. El dashboard y en el panel de Jules el propio dashboard del panel de Jules deben cargar en muy poco.",
+          "new_value": "Tarda demasiado, no debería tardar tanto en cargar datos que son prácticamente estáticos. El dashboard y en el panel de Jules (el propio dashboard del panel de Jules) deben cargar en muy poco."
         }
       ],
       "id": 67
@@ -4267,6 +4274,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #67",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T18:34:27.924Z"
+    },
     {
       "action": "chore: actualizar tarea #68",
       "user": "Axlfc",
