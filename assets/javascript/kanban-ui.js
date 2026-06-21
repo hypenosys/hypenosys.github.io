@@ -21,6 +21,19 @@
                 elements.push(container);
             }
 
+            const images = Array.from(container.querySelectorAll('[data-image-index]'));
+            images.forEach(img => {
+                img.onclick = (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const taskId = img.dataset.taskId;
+                    const index = parseInt(img.dataset.imageIndex);
+                    if (window.openLightbox) {
+                        window.openLightbox(taskId, index);
+                    }
+                };
+            });
+
             elements.forEach(el => {
                 const action = el.dataset.action;
                 const id = el.dataset.id;
@@ -415,6 +428,19 @@
                                 </a>
                             ` : ''}
                         </div>
+
+                        <!-- Images -->
+                        ${(task.images && task.images.length > 0) ? `
+                        <div class="flex gap-2 overflow-x-auto pb-2 mb-4 no-scrollbar custom-scrollbar">
+                            ${task.images.map((img, idx) => `
+                                <img src="${img.url}"
+                                     class="w-20 h-20 object-cover rounded-md cursor-zoom-in flex-shrink-0 border border-slate-800 hover:border-indigo-500 transition-all"
+                                     data-task-id="${task.id}"
+                                     data-image-index="${idx}"
+                                     alt="Task image">
+                            `).join('')}
+                        </div>
+                        ` : ''}
 
                         <!-- Tags -->
                         <div class="flex flex-wrap gap-1 mb-4">

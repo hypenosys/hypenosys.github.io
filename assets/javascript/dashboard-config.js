@@ -74,6 +74,7 @@ let modalComments = [];
 let currentBudget = null;
 let currentProfiles = null;
 let currentTaskImages = [];
+let pendingImages = [];
 
 // Lightbox state
 let lightboxTask = null;

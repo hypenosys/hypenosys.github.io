@@ -501,7 +501,14 @@ function setupEventListeners() {
   const qaCancel = document.getElementById('qa-cancel-btn');
   const assignCancel = document.getElementById('assignment-cancel-btn');
 
-  if (taskCancel) taskCancel.onclick = () => document.getElementById('create-task-modal').classList.add('hidden');
+  if (taskCancel) {
+      taskCancel.onclick = () => {
+          document.getElementById('create-task-modal').classList.add('hidden');
+          // Revoke local blob URLs to free memory
+          pendingImages.forEach(img => { if (img.localUrl) URL.revokeObjectURL(img.localUrl); });
+          pendingImages = [];
+      };
+  }
   if (taskSave) taskSave.onclick = handleCreateTask;
 
   const tagInput = document.getElementById('task-tags-input');
