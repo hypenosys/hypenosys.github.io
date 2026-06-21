@@ -74,6 +74,7 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-success">Fixed</h5>
             <ul>
+              <li><strong>SyntaxError en Jules Panel (V2):</strong> Corregido el error <code>SyntaxError: Identifier 'archive' has already been declared</code> que impedía la carga del Kanban de tareas. Se renombró la variable local duplicada a <code>localArchive</code> y se actualizaron todas sus referencias en la función <code>loadJulesKanban</code>.</li>
               <li><strong>Estabilidad del Jules Panel (v2):</strong> Implementado manejo de errores no bloqueante en la carga de datos globales. El fallo en la recuperación del archivo de estado o de la API de GitHub ya no detiene la inicialización del panel, garantizando que los menús y métricas básicas sigan siendo accesibles.</li>
               <li><strong>Sincronización de Archivo Global:</strong> Corregidos problemas de inconsistencia y parpadeo mediante la implementación de un flag <code>isSyncingArchive</code> que bloquea actualizaciones de UI durante la escritura atómica en GitHub.</li>
             </ul>
