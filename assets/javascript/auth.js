@@ -65,16 +65,27 @@ class AuthManager {
         document.addEventListener('click', (e) => {
             if (e.target.closest('#btn-sign-in')) this.handleLogin();
             if (e.target.closest('#btn-logout')) this.handleLogout();
-            if (e.target.closest('#btn-open-settings')) $('#settingsModal').modal('show');
+            if (e.target.closest('#btn-open-settings')) {
+                if (window.jQuery) window.jQuery('#settingsModal').modal('show');
+            }
             if (e.target.closest('#btn-open-profile')) this.showProfileModal();
             if (e.target.closest('#btn-open-api-config')) this.showApiConfigModal();
         });
 
-        $('#settingsModal').on('shown.bs.modal', () => {
-            document.getElementById('input-pat').value = localStorage.getItem('github_token') || '';
-            document.getElementById('input-repo').value = localStorage.getItem('github_repo') || 'hypenosys/hypenosys.github.io';
-            document.getElementById('input-jules-key-modal').value = localStorage.getItem('jules_api_key') || '';
-        });
+        if (window.jQuery) {
+            const $settingsModal = window.jQuery('#settingsModal');
+            if ($settingsModal.length) {
+                $settingsModal.on('shown.bs.modal', () => {
+                    const inputPat = document.getElementById('input-pat');
+                    const inputRepo = document.getElementById('input-repo');
+                    const inputJulesKey = document.getElementById('input-jules-key-modal');
+
+                    if (inputPat) inputPat.value = localStorage.getItem('github_token') || '';
+                    if (inputRepo) inputRepo.value = localStorage.getItem('github_repo') || 'hypenosys/hypenosys.github.io';
+                    if (inputJulesKey) inputJulesKey.value = localStorage.getItem('jules_api_key') || '';
+                });
+            }
+        }
 
         document.getElementById('btn-save-profile')?.addEventListener('click', () => this.handleSaveProfile());
     }
@@ -182,17 +193,19 @@ class AuthManager {
 
     async handleSaveSettings() {
         const btn = document.getElementById('btn-save-settings');
+        if (!btn) return;
+
         const originalHtml = btn.innerHTML;
-        const token = document.getElementById('input-pat').value.trim();
-        const repo = document.getElementById('input-repo').value.trim();
-        const julesKey = document.getElementById('input-jules-key-modal').value.trim();
+        const token = document.getElementById('input-pat')?.value.trim() || '';
+        const repo = document.getElementById('input-repo')?.value.trim() || '';
+        const julesKey = document.getElementById('input-jules-key-modal')?.value.trim() || '';
 
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Conectando...';
 
         try {
             if (token) window.githubApi.setToken(token);
-            window.githubApi.setRepo(repo);
+            if (repo) window.githubApi.setRepo(repo);
             const user = await window.githubApi.validateToken();
             this.updateHeaderUI(user);
 
@@ -206,7 +219,7 @@ class AuthManager {
                 throw new Error("Jules API Key inválida o error de conexión: " + julesErr.message);
             }
 
-            $('#settingsModal').modal('hide');
+            if (window.jQuery) window.jQuery('#settingsModal').modal('hide');
             this.showToast('Éxito', 'Conexión establecida con GitHub y Jules.', 'success');
 
             // Dispatch events
@@ -223,13 +236,15 @@ class AuthManager {
             console.error("Save settings failed:", e);
             this.showToast('Error de Conexión', e.message, 'error');
         } finally {
-            btn.disabled = false;
-            btn.innerHTML = originalHtml;
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+            }
         }
     }
 
     showSettingsModal() {
-        $('#settingsModal').modal('show');
+        if (window.jQuery) window.jQuery('#settingsModal').modal('show');
     }
 
     handleAuthError(e) {
@@ -243,8 +258,8 @@ class AuthManager {
             if (msgEl) msgEl.innerText = "Autenticado con éxito en GitHub, pero no tienes autorización explícita de la facción Hypenosys. Acceso revocado.";
 
             if (window.jQuery && window.jQuery.fn.modal) {
-                $('#settingsModal').modal('hide');
-                $('#accessDeniedModal').modal('show');
+                window.jQuery('#settingsModal').modal('hide');
+                window.jQuery('#accessDeniedModal').modal('show');
             }
 
             const dashUnauthorized = document.getElementById('unauthorized-overlay');
@@ -379,15 +394,24 @@ class AuthManager {
                 this.showToast('Aviso', 'No se encontró tu perfil en el archivo team.json.', 'warning');
                 return;
             }
-            document.getElementById('edit-profile-name').value = member.name || '';
-            document.getElementById('edit-profile-role').value = member.role || '';
-            document.getElementById('edit-profile-desc').value = member.description || '';
-            document.getElementById('edit-profile-portfolio').value = member.portfolio || '';
-            document.getElementById('input-jules-key').value = localStorage.getItem('jules_api_key') || '';
+
+            const editProfileName = document.getElementById('edit-profile-name');
+            const editProfileRole = document.getElementById('edit-profile-role');
+            const editProfileDesc = document.getElementById('edit-profile-desc');
+            const editProfilePortfolio = document.getElementById('edit-profile-portfolio');
+            const inputJulesKey = document.getElementById('input-jules-key');
+
+            if (editProfileName) editProfileName.value = member.name || '';
+            if (editProfileRole) editProfileRole.value = member.role || '';
+            if (editProfileDesc) editProfileDesc.value = member.description || '';
+            if (editProfilePortfolio) editProfilePortfolio.value = member.portfolio || '';
+            if (inputJulesKey) inputJulesKey.value = localStorage.getItem('jules_api_key') || '';
+
             this.currentTeamData = team;
             this.currentFileSha = fileData.sha;
             this.currentMemberIndex = team.indexOf(member);
-            $('#profileModal').modal('show');
+
+            if (window.jQuery) window.jQuery('#profileModal').modal('show');
         } catch (e) {
             this.showToast('Error', 'No se pudo cargar el perfil para editar.', 'error');
         }
@@ -395,11 +419,11 @@ class AuthManager {
 
 
     async handleSaveProfile() {
-        const name = document.getElementById('edit-profile-name').value.trim();
-        const role = document.getElementById('edit-profile-role').value.trim();
-        const desc = document.getElementById('edit-profile-desc').value.trim();
-        const portfolio = document.getElementById('edit-profile-portfolio').value.trim();
-        const julesKey = document.getElementById('input-jules-key').value.trim();
+        const name = document.getElementById('edit-profile-name')?.value.trim() || '';
+        const role = document.getElementById('edit-profile-role')?.value.trim() || '';
+        const desc = document.getElementById('edit-profile-desc')?.value.trim() || '';
+        const portfolio = document.getElementById('edit-profile-portfolio')?.value.trim() || '';
+        const julesKey = document.getElementById('input-jules-key')?.value.trim() || '';
 
         if (julesKey) {
             localStorage.setItem('jules_api_key', julesKey);
@@ -413,8 +437,12 @@ class AuthManager {
         }
 
         const btn = document.getElementById('btn-save-profile');
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Guardando...';
+        const originalHtml = btn ? btn.innerHTML : 'Guardar Cambios';
+
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Guardando...';
+        }
 
         try {
             const login = window.githubApi.user.login;
@@ -441,14 +469,16 @@ class AuthManager {
             }
 
             this.showToast('Éxito', 'Cambios guardados. La homepage se actualizará en ~1-2 min tras el build de GitHub Pages.', 'success');
-            $('#profileModal').modal('hide');
+            if (window.jQuery) window.jQuery('#profileModal').modal('hide');
             await this.renderDreamTeamComponent();
         } catch (e) {
             console.error(e);
             this.showToast('Error', 'Fallo al guardar los cambios: ' + e.message, 'error');
         } finally {
-            btn.disabled = false;
-            btn.innerHTML = 'Guardar Cambios';
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+            }
         }
     }
 
@@ -476,31 +506,41 @@ class AuthManager {
             }
         }
 
-        document.getElementById('ai_provider').value = config.provider || 'none';
-        document.getElementById('ai_model').value = config.model || '';
-        document.getElementById('ai_api_key').value = config.api_key || '';
-        document.getElementById('ai_base_url').value = config.base_url || '';
-        document.getElementById('ai_local_network').checked = !!config.local_network;
+        const aiProvider = document.getElementById('ai_provider');
+        const aiModel = document.getElementById('ai_model');
+        const aiApiKey = document.getElementById('ai_api_key');
+        const aiBaseUrl = document.getElementById('ai_base_url');
+        const aiLocalNetwork = document.getElementById('ai_local_network');
+
+        if (aiProvider) aiProvider.value = config.provider || 'none';
+        if (aiModel) aiModel.value = config.model || '';
+        if (aiApiKey) aiApiKey.value = config.api_key || '';
+        if (aiBaseUrl) aiBaseUrl.value = config.base_url || '';
+        if (aiLocalNetwork) aiLocalNetwork.checked = !!config.local_network;
 
         if (window.ollamaUI) {
             window.ollamaUI.handleProviderChange();
         }
-        $('#modalApiConfig').modal('show');
+        if (window.jQuery) window.jQuery('#modalApiConfig').modal('show');
     }
 
     async handleSaveApiConfig() {
         if (!window.githubApi.user) return;
         const login = window.githubApi.user.login;
 
-        const provider = document.getElementById('ai_provider').value;
-        const model = document.getElementById('ai_model').value.trim();
-        const apiKey = document.getElementById('ai_api_key').value.trim();
-        const baseUrl = document.getElementById('ai_base_url').value.trim();
-        const localNetwork = document.getElementById('ai_local_network').checked;
+        const provider = document.getElementById('ai_provider')?.value || 'none';
+        const model = document.getElementById('ai_model')?.value.trim() || '';
+        const apiKey = document.getElementById('ai_api_key')?.value.trim() || '';
+        const baseUrl = document.getElementById('ai_base_url')?.value.trim() || '';
+        const localNetwork = document.getElementById('ai_local_network')?.checked || false;
 
         const btn = document.getElementById('btn-save-api-config');
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Guardando...';
+        const originalHtml = btn ? btn.innerHTML : 'Guardar Configuración';
+
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Guardando...';
+        }
 
         try {
             // Save sensitive + all to localStorage
@@ -526,7 +566,7 @@ class AuthManager {
             } else {
                 this.showToast('Éxito', 'Configuración API guardada correctamente.', 'success');
             }
-            $('#modalApiConfig').modal('hide');
+            if (window.jQuery) window.jQuery('#modalApiConfig').modal('hide');
         } catch (e) {
             console.error(e);
             if (window.hypeToast) {
@@ -535,8 +575,10 @@ class AuthManager {
                 this.showToast('Error', 'Fallo al guardar la configuración: ' + e.message, 'error');
             }
         } finally {
-            btn.disabled = false;
-            btn.innerHTML = 'Guardar Configuración';
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+            }
         }
     }
 
@@ -553,8 +595,26 @@ class AuthManager {
             <div class="toast-body">${message}</div>
         `;
         container.appendChild(toast);
-        setTimeout(() => { $(toast).fadeOut(500, () => toast.remove()); }, 5000);
-        $(toast).find('.close').on('click', () => toast.remove());
+
+        const removeToast = () => {
+            if (toast.parentNode) {
+                if (window.jQuery) {
+                    window.jQuery(toast).fadeOut(500, () => {
+                        if (toast.parentNode) toast.remove();
+                    });
+                } else {
+                    toast.remove();
+                }
+            }
+        };
+
+        setTimeout(removeToast, 5000);
+        const closeBtn = toast.querySelector('.close');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                if (toast.parentNode) toast.remove();
+            });
+        }
     }
 }
 
