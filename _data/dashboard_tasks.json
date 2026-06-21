@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T11:30:15.823Z",
-  "last_updated_by": "Alex",
+  "last_updated": "2026-06-21T11:32:57.522Z",
+  "last_updated_by": "Axel",
   "tasks": [
     {
       "id": 1,
@@ -4143,9 +4143,67 @@
         }
       ],
       "id": 64
+    },
+    {
+      "title": "/chat/neural/:  Arreglar display de borrar/archivar sesiones",
+      "descripcion": "Actualmente es poco intuitivo, poner iconos emoji directamente con click. ",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Cosmetic",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Axel",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-06-21",
+      "due_date": "2026-06-28",
+      "estimated_hours": 2,
+      "story_points": 2,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [
+        {
+          "url": "https://64.media.tumblr.com/c9b495cd9bae8183b8f503348a89c8fb/307dec7b5bcf13cc-5a/s1280x1920/9389d8f5c887f30553f4bf6884c0b0564ef7279d.png",
+          "type": "url",
+          "tumblr_post_id": "820029962349330432",
+          "filename": "8677.png",
+          "uploaded_at": "2026-06-21T11:31:53.720Z"
+        }
+      ],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-21",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T11:32:56.778Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 65
     }
   ],
   "_audit_log": [
+    {
+      "action": "feat: nueva tarea #1782041576778 añadida",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T11:32:57.522Z"
+    },
     {
       "action": "feat: nueva tarea #1782041415418 añadida",
       "user": "TopperH4rley",
