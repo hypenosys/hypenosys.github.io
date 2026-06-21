@@ -2094,7 +2094,6 @@ body{
 
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="{{ '/assets/javascript/jules-api.js' | relative_url }}"></script>
-<script src="{{ '/assets/javascript/jules-activities.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/github-api-ops.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/github-context.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/task-engine.js' | relative_url }}"></script>
@@ -2110,25 +2109,23 @@ body{
     // Initialize BroadcastChannel for Neural Context Sync
     window.neuralSyncChannel = new BroadcastChannel('neural-context-sync');
     window.neuralSyncChannel.onmessage = (event) => {
-        const { type, sessionId, data, message } = event.data;
-        const currentSid = getLinkedJulesSessionId();
+        const { type, julesSessionId, claudeConversationId, message } = event.data;
+        const currentJulesSid = getLinkedJulesSessionId();
+        const currentClaudeSid = localStorage.getItem('hy_active_claude_session_id');
 
-        if (type === 'SYNC_CONTEXT' && sessionId === currentSid) {
+        // Solo procesar mensajes si coinciden con la sesión activa (Jules o Claude)
+        if (type === 'NEW_MESSAGE' && (julesSessionId === currentJulesSid || claudeConversationId === currentClaudeSid)) {
             if (message) {
-                // Single message sync
+                // Sincronización de mensaje individual: añadir al historial
                 const exists = chatV2Messages.some(m =>
-                    m.content === message.content && m.role === message.role
+                    m.content === message.content && m.role === message.role &&
+                    (m.timestamp === message.timestamp || m.createTime === message.createTime)
                 );
                 if (!exists) {
                     chatV2Messages.push(message);
-                    saveSessionsV2(true); // Save without re-emitting
+                    saveSessionsV2(true); // Guardar sin re-emitir
                     renderChatV2Messages();
                 }
-            } else if (data && data.messages) {
-                // Full history sync (fallback)
-                chatV2Messages = data.messages;
-                saveSessionsV2(true);
-                renderChatV2Messages();
             }
         }
     };
@@ -3834,6 +3831,8 @@ window.JulesPanelState = {
     function saveSessionsV2(skipSync = false) {
         try {
             const sessionId = getLinkedJulesSessionId();
+            const claudeId = localStorage.getItem('hy_active_claude_session_id');
+
             if (sessionId) {
                 const sessionData = {
                     messages: chatV2Messages,
@@ -3841,18 +3840,18 @@ window.JulesPanelState = {
                 };
                 localStorage.setItem(`hy_neural_context_${sessionId}`, JSON.stringify(sessionData));
 
-                // Sync via BroadcastChannel (only last message)
+                // Sync via BroadcastChannel (nuevo formato NEW_MESSAGE)
                 if (window.neuralSyncChannel && !skipSync && chatV2Messages.length > 0) {
                     const lastMsg = chatV2Messages[chatV2Messages.length - 1];
                     window.neuralSyncChannel.postMessage({
-                        type: 'SYNC_CONTEXT',
-                        sessionId: sessionId,
+                        type: 'NEW_MESSAGE',
+                        julesSessionId: sessionId,
+                        claudeConversationId: claudeId,
                         message: lastMsg
                     });
                 }
             }
 
-            const claudeId = localStorage.getItem('hy_active_claude_session_id');
             if (claudeId) {
                 const allSessions = JSON.parse(localStorage.getItem('hy_chat_v2_sessions') || '{}');
                 allSessions[claudeId] = {
