@@ -1201,10 +1201,20 @@ permalink: /chat/neural/
                 activityTab.classList.remove('border-transparent', 'text-[#6272a4]');
                 chatTab.classList.remove('border-[#bd93f9]', 'text-[#bd93f9]');
                 chatTab.classList.add('border-transparent', 'text-[#6272a4]');
+
+                // [FIX 2C] Restaurar actividades desde localStorage al activar pestaña
+                const linkedSid = localStorage.getItem('hy_neural_session_id_' + currentSessionId) || localStorage.getItem('hy_neural_session_id');
+                if (linkedSid) {
+                    const idSafe = linkedSid.split('/').pop();
+                    const saved = localStorage.getItem(`hy_activity_feed_${idSafe}`);
+                    if (saved && window._updateActivityFeed) {
+                        window._updateActivityFeed(JSON.parse(saved), true); // true para evitar re-guardado
+                    }
+                }
             }
         };
 
-        window._updateActivityFeed = (activities) => {
+        window._updateActivityFeed = (activities, skipSave = false) => {
             const container = document.getElementById('activity-log-container');
             const emptyState = document.getElementById('activity-empty-state');
 
@@ -1212,6 +1222,15 @@ permalink: /chat/neural/
                 emptyState.classList.remove('hidden');
                 container.innerHTML = '';
                 return;
+            }
+
+            // [FIX 2C] Persistir actividades bajo clave de sesión Jules
+            if (!skipSave) {
+                const linkedSid = localStorage.getItem('hy_neural_session_id_' + currentSessionId) || localStorage.getItem('hy_neural_session_id');
+                if (linkedSid) {
+                    const idSafe = linkedSid.split('/').pop();
+                    localStorage.setItem(`hy_activity_feed_${idSafe}`, JSON.stringify(activities));
+                }
             }
 
             emptyState.classList.add('hidden');
@@ -2197,9 +2216,17 @@ permalink: /chat/neural/
             if (neuralId) {
                 localStorage.setItem('hy_neural_session_id', neuralId);
                 startJulesPolling(neuralId);
+
+                // [FIX 2C] Intentar precargar feed de actividad guardado
+                const idSafe = neuralId.split('/').pop();
+                const saved = localStorage.getItem(`hy_activity_feed_${idSafe}`);
+                if (saved && window._updateActivityFeed) {
+                    window._updateActivityFeed(JSON.parse(saved), true);
+                }
             } else {
                 localStorage.removeItem('hy_neural_session_id');
                 stopJulesPolling();
+                if (window._updateActivityFeed) window._updateActivityFeed([]);
             }
 
             // Close sidebar on mobile after selecting a session
@@ -2271,9 +2298,13 @@ permalink: /chat/neural/
                         const lastMsg = currentSession.messages[currentSession.messages.length - 1];
                         window.neuralSyncChannel.postMessage({
                             type: 'NEW_MESSAGE',
-                            julesSessionId: linkedSid || null,
+                            julesSessionId: linkedSid || localStorage.getItem('hy_active_jules_session'),
                             claudeConversationId: currentSessionId,
-                            message: lastMsg
+                            message: {
+                                role: lastMsg.role,
+                                content: lastMsg.content,
+                                timestamp: lastMsg.timestamp || Date.now()
+                            }
                         });
                     }
                 }
@@ -2802,11 +2833,11 @@ permalink: /chat/neural/
                     return;
                 }
 
-                const userMsg = { role: 'user', content: content };
+                const userMsg = { role: 'user', content: content, timestamp: Date.now() };
                 if (currentSession) {
                     currentSession.messages.push(userMsg);
+                    saveSessions(); // [FIX 2B] Emitir inmediatamente
                     renderMessages();
-                    saveSessions();
                 }
 
                 sendBtn.disabled = true;
@@ -2857,6 +2888,7 @@ permalink: /chat/neural/
             const userMsg = {
                 role: 'user',
                 content: content,
+                timestamp: Date.now(),
                 image: attachedImage || undefined
             };
             if (currentSession) currentSession.messages.push(userMsg);
@@ -2874,9 +2906,10 @@ permalink: /chat/neural/
             // Set title from first message (Tarea 2.5 - 40 chars)
             if (currentSession && currentSession.title === 'Nueva Conversación' && content) {
                 currentSession.title = content.substring(0, 40) + (content.length > 40 ? '...' : '');
-                saveSessions();
-                renderSessionList();
             }
+
+            // [FIX 2B] Emitir mensaje del usuario inmediatamente via saveSessions
+            saveSessions();
 
             chatInput.value = '';
             chatInput.style.height = 'auto';
