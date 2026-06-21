@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T12:49:35.552Z",
+  "last_updated": "2026-06-21T12:49:46.806Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3334,9 +3334,16 @@
           "field": "asignados",
           "old_value": "[]",
           "new_value": "[\"javi26031994-a11y\",\"topperh4rley\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:49:46.080Z",
+          "field": "seccion",
+          "new_value": "Documentación"
         }
       ],
-      "id": 49
+      "id": 49,
+      "seccion": "Documentación"
     },
     {
       "title": "Install Penpot and Hermes Agent in ZimaBoard",
@@ -4441,6 +4448,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #49",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:49:46.806Z"
+    },
     {
       "action": "chore: actualizar tarea #12",
       "user": "Axlfc",
