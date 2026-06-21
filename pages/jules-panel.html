@@ -875,6 +875,15 @@ body{
     max-width: 85%;
     margin-right: 20%;
 }
+.message-jules {
+    align-self: flex-start;
+    background: rgba(124, 58, 237, 0.08);
+    border-radius: 18px 18px 18px 4px;
+    border: 1px dashed var(--border-accent);
+    padding: 14px 18px;
+    max-width: 85%;
+    margin-right: 20%;
+}
 .message-system {
     align-self: center;
     background: rgba(255,255,255,0.03);
@@ -2098,6 +2107,16 @@ body{
 <script src="{{ '/assets/javascript/ollama-discovery.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/ai-config.js' | relative_url }}"></script>
 <script>
+    // Initialize BroadcastChannel for Neural Context Sync
+    window.neuralSyncChannel = new BroadcastChannel('neural-context-sync');
+    window.neuralSyncChannel.onmessage = (event) => {
+        const { type, sessionId, data } = event.data;
+        if (type === 'SYNC_CONTEXT' && sessionId === getLinkedJulesSessionId()) {
+            chatV2Messages = data.messages || [];
+            renderChatV2Messages();
+        }
+    };
+
     function getLinkedJulesSessionId() {
         return localStorage.getItem('hy_neural_session_id');
     }
@@ -3798,15 +3817,33 @@ window.JulesPanelState = {
 
     function saveSessionsV2() {
         try {
-            const claudeId = localStorage.getItem('hy_active_claude_session_id');
-            if (!claudeId) return;
+            const sessionId = getLinkedJulesSessionId();
+            if (sessionId) {
+                const sessionData = {
+                    messages: chatV2Messages,
+                    updatedAt: new Date().toISOString()
+                };
+                localStorage.setItem(`hy_neural_context_${sessionId}`, JSON.stringify(sessionData));
 
-            const allSessions = JSON.parse(localStorage.getItem('hy_chat_v2_sessions') || '{}');
-            allSessions[claudeId] = {
-                messages: chatV2Messages,
-                updatedAt: new Date().toISOString()
-            };
-            localStorage.setItem('hy_chat_v2_sessions', JSON.stringify(allSessions));
+                // Sync via BroadcastChannel
+                if (window.neuralSyncChannel) {
+                    window.neuralSyncChannel.postMessage({
+                        type: 'SYNC_CONTEXT',
+                        sessionId: sessionId,
+                        data: sessionData
+                    });
+                }
+            }
+
+            const claudeId = localStorage.getItem('hy_active_claude_session_id');
+            if (claudeId) {
+                const allSessions = JSON.parse(localStorage.getItem('hy_chat_v2_sessions') || '{}');
+                allSessions[claudeId] = {
+                    messages: chatV2Messages,
+                    updatedAt: new Date().toISOString()
+                };
+                localStorage.setItem('hy_chat_v2_sessions', JSON.stringify(allSessions));
+            }
         } catch (e) {
             console.warn('[ChatV2] Failed to save session:', e);
         }
@@ -3814,6 +3851,17 @@ window.JulesPanelState = {
 
     function loadV2Messages() {
         try {
+            const sessionId = getLinkedJulesSessionId();
+            if (sessionId) {
+                const saved = localStorage.getItem(`hy_neural_context_${sessionId}`);
+                if (saved) {
+                    const sessionData = JSON.parse(saved);
+                    chatV2Messages = sessionData.messages || [];
+                    renderChatV2Messages();
+                    return;
+                }
+            }
+
             const claudeId = localStorage.getItem('hy_active_claude_session_id');
             if (!claudeId) {
                 chatV2Messages = [];
@@ -4110,9 +4158,12 @@ window.JulesPanelState = {
                 }
                 const systemPrompt = "Eres Claude, un asistente experto integrado en el panel de control de Hypenosys. Responde siempre en español y de forma técnica.";
 
-                // Ensure alternation and no system messages in body
-                let finalMessages = chatV2Messages.filter(m => m.role === 'user' || m.role === 'assistant')
-                    .map(m => ({ role: m.role, content: m.content }));
+                // Ensure alternation and include JULES context as user role
+                let finalMessages = chatV2Messages.filter(m => ['user', 'assistant', 'jules'].includes(m.role))
+                    .map(m => ({
+                        role: m.role === 'jules' ? 'user' : (m.role === 'assistant' ? 'assistant' : 'user'),
+                        content: m.role === 'jules' ? `[JULES ACTIVITY CONTEXT]\n${m.content}` : m.content
+                    }));
 
                 // Technical context injection
                 if (window.JulesPanelState.activePayload?.source_task) {
@@ -4300,10 +4351,14 @@ window.JulesPanelState = {
             if (m.role === 'system') {
                 return `<div class="message-system">${m.content}</div>`;
             }
+            let label = 'CLAUDE NEURAL';
+            if (m.role === 'user') label = 'DESARROLLADOR';
+            if (m.role === 'jules') label = 'JULES ACTIVITY';
+
             return `
-            <div class="message-${m.role === 'user' ? 'user' : 'claude'}">
-                <div style="font-size: 10px; font-weight: 800; opacity: 0.5; margin-bottom: 8px; letter-spacing: 0.05em;">
-                    ${m.role === 'user' ? 'DESARROLLADOR' : 'CLAUDE NEURAL'}
+            <div class="message-${m.role}">
+                <div style="font-size: 10px; font-weight: 800; opacity: 0.5; margin-bottom: 8px; letter-spacing: 0.05em; color: ${m.role === 'jules' ? 'var(--accent2)' : 'inherit'}">
+                    ${label}
                 </div>
                 <div class="prose-invert" style="font-size: 13.5px; line-height: 1.6;">
                     ${m.thinking ? `<div class="thinking-block">${escapeHtml(m.thinking)}</div>` : ''}
@@ -4814,53 +4869,68 @@ window.JulesPanelState = {
             .filter(Boolean);
 
         let prompt = "He seleccionado estos fragmentos del historial de Jules para analizar:\n\n";
+        let contextForClaude = "";
 
         sortedEntries.forEach((act, idx) => {
-            prompt += `--- [FRAGMENTO ${idx + 1}] ---\n`;
-            if (act.description) prompt += `DESCRIPCIÓN: ${act.description}\n`;
-            if (act.progressUpdated) prompt += `PROGRESO: ${act.progressUpdated.title}\n`;
+            const separator = `\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+            const header = `[MENSAJE DE JULES #${idx + 1}]\n`;
+            let content = "";
+
+            if (act.userMessaged) {
+                content += `USUARIO: ${act.userMessaged.userMessage}\n`;
+            } else if (act.agentMessaged) {
+                content += `JULES: ${act.agentMessaged.agentMessage}\n`;
+            } else if (act.progressUpdated) {
+                content += `PROGRESO: ${act.progressUpdated.title}\n`;
+                if (act.progressUpdated.description) content += `DETALLE: ${act.progressUpdated.description}\n`;
+            } else if (act.planGenerated) {
+                const steps = act.planGenerated.plan?.steps || [];
+                content += `PLAN GENERADO:\n${steps.map(s => `${(s.index || 0) + 1}. ${s.title}: ${s.description || ''}`).join('\n')}\n`;
+            } else if (act.sessionCompleted) {
+                content += `SESIÓN COMPLETADA. Commit: ${act.sessionCompleted.commitMessage || '---'}\n`;
+            } else if (act.sessionFailed) {
+                content += `SESIÓN FALLIDA. Razón: ${act.sessionFailed.reason || 'Desconocida'}\n`;
+            } else if (act.description) {
+                content += `ACTIVIDAD: ${act.description}\n`;
+            }
+
             if (act.artifacts) {
                 act.artifacts.forEach(art => {
                     if (art.changeSet?.gitPatch?.unidiffPatch) {
-                        prompt += `CÓDIGO (DIFF):\n${art.changeSet.gitPatch.unidiffPatch}\n`;
+                        content += `\nCÓDIGO (DIFF):\n\`\`\`diff\n${art.changeSet.gitPatch.unidiffPatch}\n\`\`\`\n`;
                     }
                     if (art.bashOutput) {
-                        prompt += `COMANDO: ${art.bashOutput.command}\nOUTPUT:\n${art.bashOutput.output}\n`;
+                        content += `\nCOMANDO: ${art.bashOutput.command}\nOUTPUT:\n\`\`\`\n${art.bashOutput.output}\n\`\`\`\n`;
                     }
                 });
             }
-            if (act.planGenerated) {
-                const steps = act.planGenerated.plan?.steps || [];
-                prompt += `PLAN:\n${steps.map(s => `${s.index + 1}. ${s.title}: ${s.description || ''}`).join('\n')}\n`;
+
+            if (content) {
+                contextForClaude += separator + header + content;
             }
-            prompt += "\n";
         });
-
-        const finalPrompt = prompt + "\n¿Qué opinas de estos cambios o estados? ¿Hay algo que deba ajustar o corregir?";
-
-        let thread = JSON.parse(localStorage.getItem('hy_neural_thread') || '[]');
-        thread.push({
-            role: 'user',
-            content: finalPrompt,
-            source: 'jules'
-        });
-
-        localStorage.setItem('hy_neural_thread', JSON.stringify(thread));
-        localStorage.setItem('hy_neural_pending_prompt', finalPrompt);
-        localStorage.setItem('hy_neural_active', 'true');
 
         showToast("Selección cargada en el chat neural", "green");
 
-        // Append to local chat instead of redirecting
+        // Add "JULES" messages to history for visualization
+        chatV2Messages.push({
+            role: 'jules',
+            content: contextForClaude
+        });
+
+        // Append the actual question to Claude
         chatV2Messages.push({
             role: 'user',
-            content: finalPrompt
+            content: prompt + "\n¿Qué opinas de estos cambios o estados de Jules seleccionados arriba? ¿Hay algo que deba ajustar o corregir?"
         });
 
         saveSessionsV2();
         renderChatV2Messages();
         switchView('chat');
         clearHistorySelection();
+
+        // Trigger automatic response from Claude if a session is active
+        setTimeout(() => sendChatV2Msg(), 500);
     }
 
     function commentOnStep(sessionId, stepIndex, stepTitle) {

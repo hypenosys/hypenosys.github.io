@@ -65,6 +65,9 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-white">Added</h5>
             <ul>
+                <li><strong>Persistencia de Contexto Neural por Sesión:</strong> El historial de conversación con Claude dentro del Jules Panel ahora se guarda de forma independiente para cada sesión de Jules mediante la clave <code>hy_neural_context_${sessionId}</code>, permitiendo mantener hilos de razonamiento distintos por tarea.</li>
+                <li><strong>Sincronización Neural en Tiempo Real:</strong> Implementado <code>BroadcastChannel</code> para sincronizar instantáneamente el contexto neural entre múltiples pestañas abiertas del Jules Panel.</li>
+                <li><strong>Visualización de Actividad Jules en Chat:</strong> Los fragmentos del historial de Jules enviados a Claude se renderizan ahora con un estilo visual propio y la etiqueta "JULES ACTIVITY" para mejorar la legibilidad del hilo.</li>
                 <li><strong>Cross-Reference de Repositorios (Jules Panel):</strong> Implementada validación en paralelo entre GitHub API y Jules API. Los repositorios sin la App de Jules instalada se muestran deshabilitados con un icono de candado y tooltip informativo. Se añadió entrada manual para rutas personalizadas.</li>
                 <li><strong>Modo de Automatización "AUTO_CREATE_PR":</strong> El Modo Automático ahora envía explícitamente <code>automationMode: "AUTO_CREATE_PR"</code> a la API de Jules para habilitar flujos de trabajo autónomos completos.</li>
                 <li><strong>Asociación Forzada de Contexto:</strong> El Panel Jules ahora respeta y fuerza el Repositorio y la Rama indicados en el handoff de Claude, incluyendo una instrucción automática para crear la rama si no existe.</li>
@@ -81,6 +84,7 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-success">Fixed</h5>
             <ul>
+              <li><strong>Extracción de Texto en "Analizar con Claude":</strong> Corregido el bug que enviaba placeholders <code>[FRAGMENTO 1]</code> en lugar del contenido real. Ahora el botón extrae correctamente mensajes de usuario, respuestas de Jules, pasos del plan, diffs de código y salidas de terminal.</li>
               <li><strong>Flujo "Enviar a Jules" (Neural Link):</strong> Refactorizado el receptor de handoff para diferenciar entre "Modo Iniciador" (nueva tarea en vista Neural) y "Modo Aditivo" (envío directo de mensaje a sesión activa). Resuelto el bug que enviaba el texto al campo de chat equivocado.</li>
               <li><strong>Sincronización de Acciones de Mensaje:</strong> Unificado el flujo de envío de fragmentos de Claude para usar el sistema de payload enriquecido, garantizando que el contexto de la tarea se mantenga.</li>
               <li><strong>Persistencia de Sesiones (Neural Chat):</strong> Corregida la lógica de guardado y carga de sesiones para evitar la pérdida de mensajes y asegurar la sincronización con el Jules Panel, incluyendo deduplicación de IDs.</li>
