@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T12:48:14.871Z",
-  "last_updated_by": "Axel",
+  "last_updated": "2026-06-21T12:49:35.552Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -664,8 +664,8 @@
       "estimated_hours": 1,
       "story_points": 1,
       "tags": [
-        "onboarding",
-        "chore"
+        "chore",
+        "onboarding"
       ],
       "external_links": [],
       "subtasks": [],
@@ -724,9 +724,16 @@
           "field": "prioridad",
           "old_value": "Medium",
           "new_value": "Minor"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:49:34.826Z",
+          "field": "seccion",
+          "new_value": "Dashboard"
         }
       ],
-      "repository": "hypenosys/hypenosys.github.io"
+      "repository": "hypenosys/hypenosys.github.io",
+      "seccion": "Dashboard"
     },
     {
       "rama": "PRO",
@@ -4434,6 +4441,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #12",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:49:35.552Z"
+    },
     {
       "action": "feat: nueva tarea #1782046094132 añadida",
       "user": "Axlfc",
