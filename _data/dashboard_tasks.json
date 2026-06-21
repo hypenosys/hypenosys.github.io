@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T12:44:58.938Z",
+  "last_updated": "2026-06-21T12:45:05.914Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3801,9 +3801,16 @@
           "field": "title",
           "old_value": "sync python scripts with docs",
           "new_value": "sync python scripts with docs in /app"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:45:05.529Z",
+          "field": "seccion",
+          "new_value": "App"
         }
       ],
-      "id": 56
+      "id": 56,
+      "seccion": "App"
     },
     {
       "title": "Añadir terminal física en 'comandos' cuando están logueados en github y SVN en repo-admin",
@@ -4332,6 +4339,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #56",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:45:05.914Z"
+    },
     {
       "action": "chore: actualizar tarea #55",
       "user": "Axlfc",
