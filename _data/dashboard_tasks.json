@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T14:56:44.001Z",
+  "last_updated": "2026-06-21T14:56:53.812Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3946,7 +3946,7 @@
       "tema_principal": "Programación / Engine",
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Major",
-      "milestone": "M1",
+      "milestone": "M2",
       "estado": "Pending",
       "completitud": 0,
       "resuelto_por": null,
@@ -3992,6 +3992,13 @@
           "field": "seccion",
           "old_value": "SVN Admin Panel",
           "new_value": "SVN Admin Panel, Comandos"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T14:56:53.250Z",
+          "field": "milestone",
+          "old_value": "M1",
+          "new_value": "M2"
         }
       ],
       "id": 57,
@@ -4546,6 +4553,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #57",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T14:56:53.812Z"
+    },
     {
       "action": "chore: actualizar tarea #40",
       "user": "Axlfc",
