@@ -36,7 +36,7 @@ class OllamaUI {
         if (provider === 'ollama' || provider === 'custom') {
             baseUrlGroup.style.display = 'block';
             if (!baseUrlInput.value && provider === 'ollama') {
-                baseUrlInput.value = 'http://localhost:11434';
+                baseUrlInput.value = 'http://localhost:11434/v1';
             }
         } else {
             baseUrlGroup.style.display = 'none';

@@ -58,7 +58,10 @@ let kanbanFilters = {
     tags: [],
     members: [],
     repos: [],
-    states: []
+    states: [],
+    milestones: [],
+    themes: [],
+    priorities: []
 };
 let currentTasks = [];
 let archivedTasks = [];
@@ -167,6 +170,21 @@ function getFilteredTasks(tasks) {
       if (state === 'CLOSED') state = 'OK';
       return kanbanFilters.states.includes(state);
     });
+  }
+
+  // 5. Milestones (OR)
+  if (kanbanFilters.milestones && kanbanFilters.milestones.length > 0) {
+    filtered = filtered.filter(t => kanbanFilters.milestones.includes(t.milestone || 'Sin Milestone'));
+  }
+
+  // 6. Themes (OR)
+  if (kanbanFilters.themes && kanbanFilters.themes.length > 0) {
+    filtered = filtered.filter(t => kanbanFilters.themes.includes(t.tema_principal || 'Sin Tema'));
+  }
+
+  // 7. Priorities (OR)
+  if (kanbanFilters.priorities && kanbanFilters.priorities.length > 0) {
+    filtered = filtered.filter(t => kanbanFilters.priorities.includes(t.prioridad || 'Sin Prioridad'));
   }
 
   return filtered;
