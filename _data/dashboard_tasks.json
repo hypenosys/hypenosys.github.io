@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T12:46:22.286Z",
+  "last_updated": "2026-06-21T12:46:31.531Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1230,10 +1230,10 @@
       "estimated_hours": 4,
       "story_points": 1,
       "tags": [
-        "ux",
         "api",
+        "feature",
         "frontend",
-        "feature"
+        "ux"
       ],
       "external_links": [],
       "subtasks": [
@@ -1335,9 +1335,16 @@
           "field": "title",
           "old_value": "Mobile first: Upgrade Jules Panel with \"GitHub (Team) Ops\" — Hub completo de gestión de repositorios, conectado con Jules y Claude",
           "new_value": "Mobile first: Jules Panel - \"GitHub (Team) Ops\" — Hub completo de gestión de repositorios, conectado con Tasks Kanban y Claude"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:46:30.813Z",
+          "field": "seccion",
+          "new_value": "Jules Panel"
         }
       ],
-      "id": 28
+      "id": 28,
+      "seccion": "Jules Panel"
     },
     {
       "title": "BUG VISUAL: Jules Neural Operation en dashboard en móvil ",
@@ -4367,6 +4374,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #28",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:46:31.531Z"
+    },
     {
       "action": "chore: actualizar tarea #39",
       "user": "Axlfc",
