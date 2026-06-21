@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T11:33:28.863Z",
+  "last_updated": "2026-06-21T12:40:46.780Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3888,9 +3888,16 @@
           "field": "prioridad",
           "old_value": "Major",
           "new_value": "Cosmetic"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:40:46.215Z",
+          "field": "seccion",
+          "new_value": "Dashboard"
         }
       ],
-      "id": 59
+      "id": 59,
+      "seccion": "Dashboard"
     },
     {
       "title": "DASHBOARD: Subida de imágenes al GUARDAR TAREA, no al subir la imagen",
@@ -4213,6 +4220,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #59",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:40:46.780Z"
+    },
     {
       "action": "chore: actualizar tarea #62",
       "user": "Axlfc",
