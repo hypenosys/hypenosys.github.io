@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T10:34:45.090Z",
+  "last_updated": "2026-06-21T10:45:23.922Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3193,7 +3193,7 @@
       "repository": "hypenosys/docs",
       "prioridad": "Major",
       "milestone": "M1",
-      "estado": "Pending",
+      "estado": "Obsolete",
       "completitud": 0,
       "resuelto_por": "Axel",
       "detectado_por": "Axel",
@@ -3232,6 +3232,13 @@
           "field": "repository",
           "old_value": null,
           "new_value": "hypenosys/docs"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T10:45:23.375Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Obsolete"
         }
       ],
       "id": 50
@@ -3764,6 +3771,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #50",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T10:45:23.922Z"
+    },
     {
       "action": "chore: actualizar tarea #11",
       "user": "Axlfc",
