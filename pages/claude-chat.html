@@ -1505,6 +1505,7 @@ permalink: /chat/neural/
                     const controller = new AbortController();
                     const id = setTimeout(() => controller.abort(), 3000);
 
+                    // Use OpenAI-compatible /models endpoint if baseUrl is /v1
                     const res = await fetch(`${baseUrl}/models`, {
                         headers: { 'Authorization': 'Bearer ollama' },
                         signal: controller.signal
@@ -2557,7 +2558,10 @@ permalink: /chat/neural/
             if (baseUrl && !baseUrl.startsWith('http')) {
                 baseUrl = 'http://' + baseUrl;
             }
-            baseUrl = baseUrl.trim().replace(/\/+$/, '').replace(/\/v1$/, '');
+            baseUrl = baseUrl.trim().replace(/\/+$/, '');
+            if (!baseUrl.endsWith('/v1')) {
+                baseUrl += '/v1';
+            }
             const model = config.model || 'llama3';
 
             if (!baseUrl) {
@@ -2567,7 +2571,8 @@ permalink: /chat/neural/
             const lastUserMessage = session.messages[session.messages.length - 1].content;
             const dynamicSystemPrompt = await buildSystemPrompt(lastUserMessage, session.systemPrompt);
 
-            const response = await fetch(`${baseUrl}/api/chat`, {
+            // Use OpenAI-compatible endpoint for Ollama
+            const response = await fetch(`${baseUrl}/chat/completions`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 mode: 'cors',
@@ -2811,8 +2816,11 @@ permalink: /chat/neural/
                     if (baseUrl && !baseUrl.startsWith('http')) {
                         baseUrl = 'http://' + baseUrl;
                     }
-                    baseUrl = baseUrl.trim().replace(/\/+$/, '').replace(/\/v1$/, '');
-                    const response = await fetch(`${baseUrl}/api/tags`, {
+                    // Remove trailing slash but keep /v1 if present in config
+                    baseUrl = baseUrl.trim().replace(/\/+$/, '');
+                    // Use native health check endpoint
+                    const healthEndpoint = baseUrl.replace(/\/v1$/, '');
+                    const response = await fetch(`${healthEndpoint}/api/tags`, {
                         mode: 'cors',
                         credentials: 'omit'
                     }).catch(() => null);
@@ -2930,12 +2938,9 @@ permalink: /chat/neural/
                                     }
                                 }
                             } else if (provider === 'ollama') {
-                                // NDJSON nativo de Ollama: .message.content
-                                if (data.message && data.message.content) {
-                                    aiContent += data.message.content;
-                                } else if (data.response) { // Fallback for /api/generate
-                                    aiContent += data.response;
-                                }
+                                // OpenAI compatible stream format
+                                const delta = data.choices?.[0]?.delta?.content || data.choices?.[0]?.text || '';
+                                aiContent += delta;
 
                                 if (data.error) {
                                     logDebug(`Ollama stream error: ${data.error}`, 'error');

@@ -329,8 +329,15 @@ class NeuralSessionPanel {
     }
 
     async _callAIProvider(config, messages) {
-        const baseUrl = (config.base_url || 'https://api.anthropic.com/v1').replace(/\/$/, '');
+        let baseUrl = (config.base_url || 'https://api.anthropic.com/v1').replace(/\/$/, '');
         const isAnthropic = baseUrl.includes('anthropic.com');
+        const isOllama = config.provider === 'ollama';
+
+        // Force /v1 for Ollama if not present
+        if (isOllama && !baseUrl.endsWith('/v1')) {
+            baseUrl += '/v1';
+        }
+
         const endpoint = isAnthropic ? `${baseUrl}/messages` : `${baseUrl}/chat/completions`;
 
         const headers = { 'Content-Type': 'application/json' };

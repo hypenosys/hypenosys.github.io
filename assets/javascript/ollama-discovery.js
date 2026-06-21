@@ -126,8 +126,8 @@ class OllamaDiscovery {
         if (!endpoint.includes(':', 6)) { // check if port is missing (skipping http:// part)
             endpoint = `${endpoint}:11434`;
         }
-        // Remove trailing slash or /v1 if present
-        endpoint = endpoint.replace(/\/+$/, '').replace(/\/v1$/, '');
+        // Remove trailing slash but keep /v1 if present
+        endpoint = endpoint.replace(/\/+$/, '');
         return endpoint;
     }
 
@@ -135,8 +135,11 @@ class OllamaDiscovery {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), this.timeout);
 
+        // Remove /v1 if present for the internal health check since /api/tags is an Ollama native API
+        const healthEndpoint = endpoint.replace(/\/v1$/, '');
+
         try {
-            const response = await fetch(`${endpoint}/api/tags`, {
+            const response = await fetch(`${healthEndpoint}/api/tags`, {
                 signal: controller.signal,
                 mode: 'cors',
                 credentials: 'omit'
@@ -158,7 +161,7 @@ class OllamaDiscovery {
     }
 
     async fetchModels(endpoint) {
-        // Sanitize endpoint just in case it wasn't already
+        // Sanitize endpoint but keep /v1 if present, though /api/tags is outside /v1
         const cleanEndpoint = endpoint.replace(/\/+$/, '').replace(/\/v1$/, '');
         try {
             const response = await fetch(`${cleanEndpoint}/api/tags`, {

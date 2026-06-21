@@ -221,8 +221,10 @@
 
             // Populate fields FIRST to avoid flashing empty modal
             try {
-                const profilesRes = await window.githubApi.fetchFileWithSha('_data/team_profiles.json');
-                const profiles = profilesRes.content.members || {};
+                const response = await fetch('/assets/data/team_profiles.json');
+                if (!response.ok) throw new Error('No se pudo cargar team_profiles.json');
+                const profilesRes = await response.json();
+                const profiles = profilesRes.members || {};
                 console.log('[ProfileEditor] Fetched profiles:', profiles);
 
                 // Find entry by github_login (case insensitive)
@@ -343,7 +345,7 @@
 
             try {
                 // 1. Update team_profiles.json
-                await window.githubApi.atomicWrite('_data/team_profiles.json', (db) => {
+                await window.githubApi.atomicWrite('assets/data/team_profiles.json', (db) => {
                     db.members = db.members || {};
                     let memberKey = Object.keys(db.members).find(k => {
                         const m = db.members[k];
@@ -377,7 +379,7 @@
                 }, `chore: actualizar perfil de ${login}`);
 
                 // 2. Update team.json (if exists)
-                await window.githubApi.atomicWrite('_data/team.json', (team) => {
+                await window.githubApi.atomicWrite('assets/data/team.json', (team) => {
                     if (!Array.isArray(team)) return team;
 
                     const searchLogin = login.toLowerCase();

@@ -145,7 +145,7 @@ async function refreshDashboardData() {
       window.githubApi.fetchFileWithSha('_data/dashboard_tasks_archive.json'),
       window.githubApi.fetchFileWithSha('_data/studio_stats.json'),
       window.githubApi.fetchFileWithSha('_data/studio_budget.json'),
-      window.githubApi.fetchFileWithSha('_data/team_profiles.json')
+      fetch('/assets/data/team_profiles.json').then(res => res.json().then(data => ({ content: data })))
     ]);
 
     const migratedTasksData = await migrateTasks(tasksRes.content);
