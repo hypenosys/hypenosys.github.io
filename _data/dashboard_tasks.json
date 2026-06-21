@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T11:07:55.877Z",
-  "last_updated_by": "Axel",
+  "last_updated": "2026-06-21T11:08:53.471Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -3819,7 +3819,7 @@
       "id": 58
     },
     {
-      "title": "DASHBOARD: Quitar sección vacía entre FILTRAR MIEMBROS y ",
+      "title": "DASHBOARD: Quitar sección vacía entre FILTRAR MIEMBROS y ALERTAS DE RUTA CRÍTICAS ACTIVAS",
       "descripcion": "",
       "rama": "master",
       "task_type": "bug",
@@ -3845,7 +3845,15 @@
       "blocks": [],
       "blocked_by": [],
       "comments": [],
-      "images": [],
+      "images": [
+        {
+          "url": "https://64.media.tumblr.com/761c84dee801b9a6946b34e65273dce9/8d9be6a9fd2cbc80-27/s1280x1920/af86ecace2d4167cccd35db85194e73ace3e0cd2.png",
+          "type": "url",
+          "tumblr_post_id": "820028510419795968",
+          "filename": "8662.png",
+          "uploaded_at": "2026-06-21T11:08:49.433Z"
+        }
+      ],
       "rama2": null,
       "ver": true,
       "fecha": "2026-06-21",
@@ -3859,6 +3867,13 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T11:08:53.000Z",
+          "field": "title",
+          "old_value": "DASHBOARD: Quitar sección vacía entre FILTRAR MIEMBROS y ",
+          "new_value": "DASHBOARD: Quitar sección vacía entre FILTRAR MIEMBROS y ALERTAS DE RUTA CRÍTICAS ACTIVAS"
         }
       ],
       "id": 59
@@ -3910,6 +3925,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #59",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T11:08:53.471Z"
+    },
     {
       "action": "feat: nueva tarea #1782040075438 añadida",
       "user": "Axlfc",
