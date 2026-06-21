@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T10:45:30.053Z",
+  "last_updated": "2026-06-21T10:45:42.666Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2934,8 +2934,8 @@
         "chore",
         "refactor"
       ],
-      "prioridad": "",
-      "estado": "Pending",
+      "prioridad": "Major",
+      "estado": "OK",
       "estimated_hours": 4,
       "comments": [
         "Hay mucha lógica repetida; deberíamos mover las funciones comunes a módulos independientes antes de borrar las versiones antiguas."
@@ -2983,6 +2983,20 @@
           "field": "repository",
           "old_value": "",
           "new_value": "hypenosys/hypenosys.github.io"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T10:45:42.192Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "OK"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T10:45:42.192Z",
+          "field": "prioridad",
+          "old_value": "",
+          "new_value": "Major"
         }
       ]
     },
@@ -3778,6 +3792,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #46",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T10:45:42.666Z"
+    },
     {
       "action": "chore: actualizar tarea #47",
       "user": "Axlfc",
