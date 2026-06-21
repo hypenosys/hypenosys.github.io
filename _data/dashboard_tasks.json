@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T10:45:23.922Z",
+  "last_updated": "2026-06-21T10:45:30.053Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2995,7 +2995,7 @@
         "refactor"
       ],
       "prioridad": "Medium",
-      "estado": "Pending",
+      "estado": "OK",
       "estimated_hours": 2,
       "comments": [
         "Debemos asegurar que no hay links internos apuntando a las versiones antiguas en la documentación o en el tech-stack."
@@ -3036,6 +3036,13 @@
           "field": "repository",
           "old_value": "",
           "new_value": "hypenosys/hypenosys.github.io"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T10:45:29.685Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "OK"
         }
       ]
     },
@@ -3771,6 +3778,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #47",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T10:45:30.053Z"
+    },
     {
       "action": "chore: actualizar tarea #50",
       "user": "Axlfc",
