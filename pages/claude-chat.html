@@ -2359,7 +2359,7 @@ permalink: /chat/neural/
                 const isJules = m.source === 'jules' || m.role === 'agent';
                 const label = isUser ? 'NEURAL LINK: USER' : (isJules ? 'NEURAL LINK: JULES' : 'NEURAL LINK: CLAUDE');
                 const labelColor = isUser ? 'text-[#8be9fd]' : (isJules ? 'text-[#50fa7b]' : 'text-[#bd93f9]');
-                const bubbleClass = isUser ? 'message-user' : (isJules ? 'message-claude border-[#50fa7b]/30' : 'message-claude shadow-xl');
+                const bubbleClass = isUser ? 'message-user' : (isJules ? 'message-claude border-[#50fa7b] border-2 shadow-[0_0_15px_rgba(80,250,123,0.2)]' : 'message-claude shadow-xl');
 
                 // Handle <think> blocks for Reasoning
                 if (content && typeof content === 'string' && content.includes('<think>')) {
