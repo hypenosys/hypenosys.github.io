@@ -65,6 +65,7 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-white">Added</h5>
             <ul>
+                <li><strong>Jules Activity Feed:</strong> Implementada una nueva pestaña de Actividad en el Neural Chat que muestra logs de ejecución, planes y comandos de Jules en tiempo real con estética Dracula.</li>
                 <li><strong>Renderizado Dinámico del Equipo:</strong> La sección "The Dream Team" en la landing page ahora se genera dinámicamente mediante JavaScript, permitiendo el uso de archivos JSON fuera de la carpeta <code>_data</code> de Jekyll.</li>
                 <li><strong>Global Card Archiving (Jules Panel):</strong> Upgraded the internal organization system to be global for all users. Archived states are now persisted in <code>_data/jules_panel_state.json</code> via GitHub commits, ensuring team-wide synchronization of the Kanban board view.</li>
                 <li><strong>Internal Card Archiving (Jules Panel):</strong> Users can now drag session cards from EN COLA/EN PROGRESO to COMPLETADO or BLOQUEADO columns for internal organization. Archived cards are visually dimmed and display an "Archived" badge.</li>
@@ -76,6 +77,7 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-success">Fixed</h5>
             <ul>
+              <li><strong>Persistencia de Sesiones (Neural Chat):</strong> Corregida la lógica de guardado y carga de sesiones para evitar la pérdida de mensajes y asegurar la sincronización con el Jules Panel, incluyendo deduplicación de IDs.</li>
               <li><strong>Endpoints de Ollama (Error 404):</strong> Estandarizado el uso de <code>/v1/chat/completions</code> para todas las interacciones con Ollama, forzando compatibilidad con el estándar de OpenAI y eliminando fallos por rutas incorrectas.</li>
               <li><strong>Acceso a Datos de Equipo (Error 404):</strong> Reubicados <code>team.json</code> y <code>team_profiles.json</code> a <code>assets/data/</code> para permitir su carga mediante <code>fetch()</code> en el entorno de producción (GitHub Pages).</li>
               <li><strong>SyntaxError en Jules Panel (V2):</strong> Corregido el error <code>SyntaxError: Identifier 'archive' has already been declared</code> que impedía la carga del Kanban de tareas. Se renombró la variable local duplicada a <code>localArchive</code> y se actualizaron todas sus referencias en la función <code>loadJulesKanban</code>.</li>
@@ -89,6 +91,7 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-success">Changed</h5>
             <ul>
+              <li><strong>Respuestas de Jules en Chat:</strong> Jules ahora responde directamente con burbujas en el flujo de conversación del Neural Chat mediante un sistema de polling de actividades que detecta eventos <code>agentMessaged</code>.</li>
               <li><strong>Unificación de Lectura de Datos:</strong> Migrada toda la lógica de lectura de perfiles y equipo para usar <code>fetch()</code> nativo, simplificando el código y eliminando peticiones innecesarias a la API de GitHub para datos públicos.</li>
               <li><strong>Auto-detección de Contexto en Tareas:</strong> El Kanban ahora detecta automáticamente el repositorio y rama activa al crear tareas, eliminando la entrada manual de metadatos críticos.</li>
               <li><strong>Paridad de UI en Modelos:</strong> El selector de modelos en móviles ha sido migrado a un sistema de "Bottom Sheet" nativo para una experiencia táctil premium, igualando la funcionalidad de escritorio.</li>

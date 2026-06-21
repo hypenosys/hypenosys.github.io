@@ -594,7 +594,7 @@ permalink: /chat/neural/
     <main class="flex-grow flex flex-col relative bg-[#282a36]">
 
         <!-- Header -->
-        <header class="h-16 border-b border-[#44475a]/50 flex items-center justify-between px-6 bg-[#1e1f29]/50 backdrop-blur-md sticky top-0 z-10">
+        <header class="h-16 border-b border-[#44475a]/50 flex items-center justify-between px-6 bg-[#1e1f29]/50 backdrop-blur-md sticky top-0 z-20">
             <div class="flex items-center gap-3">
                 <button onclick="toggleSidebar()" class="mobile-toggle" title="Abrir menú">
                     <i class="fas fa-bars"></i>
@@ -629,6 +629,16 @@ permalink: /chat/neural/
             </div>
         </header>
 
+        <!-- View Selector Tabs -->
+        <div id="view-selector" class="h-10 border-b border-[#44475a]/30 bg-[#1e1f29]/30 flex items-center px-6 gap-6 sticky top-16 z-10">
+            <button onclick="switchChatView('chat')" id="tab-chat" class="h-full text-[10px] font-black tracking-widest uppercase flex items-center gap-2 border-b-2 border-[#bd93f9] text-[#bd93f9] transition-all">
+                <i class="fas fa-comments"></i> CHAT
+            </button>
+            <button onclick="switchChatView('activity')" id="tab-activity" class="h-full text-[10px] font-black tracking-widest uppercase flex items-center gap-2 border-b-2 border-transparent text-[#6272a4] hover:text-[#f8f8f2] transition-all">
+                <i class="fas fa-pulse"></i> ACTIVIDAD
+            </button>
+        </div>
+
         <!-- Chat History -->
         <div id="chat-messages" class="chat-container flex-grow p-6 space-y-6 scroll-smooth">
             <!-- Initial state -->
@@ -643,6 +653,18 @@ permalink: /chat/neural/
                     <button onclick="quickPrompt('Explícame el flujo SVN del estudio')" class="p-3 dracula-surface border border-[#6272a4] rounded-lg text-xs hover:border-[#bd93f9] transition-all">Flujo SVN</button>
                 </div>
             </div>
+        </div>
+
+        <!-- Activity Feed (Problem 3) -->
+        <div id="activity-feed" class="chat-container flex-grow p-6 space-y-4 hidden scroll-smooth">
+            <div id="activity-empty-state" class="h-full flex flex-col items-center justify-center text-center space-y-4 opacity-30">
+                <i class="fas fa-terminal text-6xl"></i>
+                <div>
+                    <h2 class="text-xl font-bold uppercase tracking-tighter">Activity Feed</h2>
+                    <p class="text-sm max-w-xs mx-auto">Selecciona una sesión de Jules para ver el log de ejecución en tiempo real.</p>
+                </div>
+            </div>
+            <div id="activity-log-container" class="space-y-4"></div>
         </div>
 
         <!-- Debug Panel (Collapsible) -->
@@ -1047,6 +1069,197 @@ permalink: /chat/neural/
         let attachedImage = null;
         let mediaRecorder = null;
         let audioChunks = [];
+        let julesPollInterval = null;
+
+        function startJulesPolling(sessionId) {
+            stopJulesPolling();
+            if (!sessionId) return;
+
+            const poll = async () => {
+                const path = sessionId.startsWith('sessions/') ? sessionId : 'sessions/' + sessionId;
+
+                try {
+                    const data = await window.julesApi.getActivities(path, 50);
+                    const activities = data.activities || [];
+
+                    const agentMessages = activities.filter(a => a.agentMessaged);
+                    if (agentMessages.length > 0) {
+                        const currentSession = sessions.find(s => s.id === currentSessionId);
+                        if (!currentSession) return;
+
+                        let changed = false;
+                        agentMessages.forEach(act => {
+                            const content = act.agentMessaged.agentMessage;
+                            const timestamp = act.createTime;
+
+                            // Check if this message is already in our session messages
+                            const exists = currentSession.messages.some(m =>
+                                m.role === 'assistant' &&
+                                m.content === content &&
+                                m.createTime === timestamp
+                            );
+
+                            if (!exists) {
+                                currentSession.messages.push({
+                                    role: 'assistant',
+                                    content: content,
+                                    createTime: timestamp,
+                                    source: 'jules'
+                                });
+                                changed = true;
+                            }
+                        });
+
+                        if (changed) {
+                            saveSessions();
+                            renderMessages();
+                        }
+                    }
+
+                    // Problem 3 - Update Activity Feed (Placeholder for now)
+                    if (window._updateActivityFeed) {
+                        window._updateActivityFeed(activities);
+                    }
+
+                    // If session is completed or failed, stop polling
+                    const isDone = activities.some(a => a.sessionCompleted || a.sessionFailed);
+                    if (isDone) {
+                        stopJulesPolling();
+                    }
+                } catch (e) {
+                    console.warn('[Jules Polling] Error:', e);
+                }
+            };
+
+            poll(); // Initial poll
+            julesPollInterval = setInterval(poll, 5000);
+        }
+
+        function stopJulesPolling() {
+            if (julesPollInterval) {
+                clearInterval(julesPollInterval);
+                julesPollInterval = null;
+            }
+        }
+
+        window.switchChatView = (view) => {
+            const chatView = document.getElementById('chat-messages');
+            const activityView = document.getElementById('activity-feed');
+            const chatTab = document.getElementById('tab-chat');
+            const activityTab = document.getElementById('tab-activity');
+
+            if (view === 'chat') {
+                chatView.classList.remove('hidden');
+                activityView.classList.add('hidden');
+                chatTab.classList.add('border-[#bd93f9]', 'text-[#bd93f9]');
+                chatTab.classList.remove('border-transparent', 'text-[#6272a4]');
+                activityTab.classList.remove('border-[#bd93f9]', 'text-[#bd93f9]');
+                activityTab.classList.add('border-transparent', 'text-[#6272a4]');
+            } else {
+                chatView.classList.add('hidden');
+                activityView.classList.remove('hidden');
+                activityTab.classList.add('border-[#bd93f9]', 'text-[#bd93f9]');
+                activityTab.classList.remove('border-transparent', 'text-[#6272a4]');
+                chatTab.classList.remove('border-[#bd93f9]', 'text-[#bd93f9]');
+                chatTab.classList.add('border-transparent', 'text-[#6272a4]');
+            }
+        };
+
+        window._updateActivityFeed = (activities) => {
+            const container = document.getElementById('activity-log-container');
+            const emptyState = document.getElementById('activity-empty-state');
+
+            if (!activities || activities.length === 0) {
+                emptyState.classList.remove('hidden');
+                container.innerHTML = '';
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+
+            // Deduplicate and sort activities
+            const uniqueActivities = activities.filter((a, i, arr) => arr.findIndex(x => x.id === a.id) === i);
+
+            container.innerHTML = uniqueActivities.map(act => {
+                const time = new Date(act.createTime).toLocaleTimeString();
+                let type = 'INFO';
+                let color = 'text-[#bd93f9]';
+                let icon = 'fa-info-circle';
+                let content = act.description || '';
+                let extra = '';
+
+                if (act.planGenerated) {
+                    type = 'PLAN';
+                    icon = 'fa-clipboard-list';
+                    color = 'text-orange-400';
+                    const steps = act.planGenerated.plan?.steps || [];
+                    extra = `<div class="mt-2 pl-4 border-l border-orange-400/30 space-y-1">
+                        ${steps.map(s => `<div class="text-[10px] text-orange-200/70"><span class="font-bold">${s.index + 1}.</span> ${s.title}</div>`).join('')}
+                    </div>`;
+                } else if (act.planApproved) {
+                    type = 'AUTH';
+                    icon = 'fa-check-double';
+                    color = 'text-[#50fa7b]';
+                    content = 'Plan aprobado por el usuario';
+                } else if (act.progressUpdated) {
+                    type = 'STEP';
+                    icon = 'fa-cog fa-spin';
+                    color = 'text-[#8be9fd]';
+                    content = act.progressUpdated.title;
+                } else if (act.agentMessaged) {
+                    type = 'JULES';
+                    icon = 'fa-robot';
+                    color = 'text-[#50fa7b]';
+                    content = act.agentMessaged.agentMessage;
+                } else if (act.userMessaged) {
+                    type = 'USER';
+                    icon = 'fa-user';
+                    color = 'text-[#f8f8f2]';
+                    content = act.userMessaged.userMessage;
+                } else if (act.sessionCompleted) {
+                    type = 'DONE';
+                    icon = 'fa-flag-checkered';
+                    color = 'text-[#50fa7b]';
+                    content = 'Sesión completada exitosamente';
+                } else if (act.sessionFailed) {
+                    type = 'FAIL';
+                    icon = 'fa-exclamation-triangle';
+                    color = 'text-[#ff5555]';
+                    content = 'Error: ' + (act.sessionFailed.reason || 'Desconocido');
+                }
+
+                // Check for bash artifacts
+                if (act.artifacts) {
+                    act.artifacts.forEach(art => {
+                        if (art.bashOutput) {
+                            extra += `
+                            <div class="mt-2 bg-black/40 rounded border border-[#44475a] overflow-hidden">
+                                <div class="bg-[#1e1f29] px-2 py-1 text-[8px] font-mono text-[#6272a4] border-b border-[#44475a] flex justify-between">
+                                    <span>BASH COMMAND</span>
+                                    <span>EXIT: ${art.bashOutput.exitCode}</span>
+                                </div>
+                                <div class="p-2 text-[9px] font-mono text-[#50fa7b] whitespace-pre-wrap">${escapeHtml(art.bashOutput.command)}</div>
+                                ${art.bashOutput.output ? `<div class="p-2 text-[9px] font-mono text-white/50 border-t border-[#44475a]/30 whitespace-pre-wrap">${escapeHtml(art.bashOutput.output)}</div>` : ''}
+                            </div>`;
+                        }
+                    });
+                }
+
+                return `
+                <div class="activity-item bg-[#1e1f29]/50 border border-[#44475a]/30 rounded-lg p-3 hover:border-[#bd93f9]/30 transition-all">
+                    <div class="flex items-center justify-between mb-1">
+                        <div class="flex items-center gap-2">
+                            <i class="fas ${icon} ${color} text-[10px]"></i>
+                            <span class="text-[9px] font-black tracking-widest ${color}">${type}</span>
+                        </div>
+                        <span class="text-[9px] font-mono text-[#6272a4]">${time}</span>
+                    </div>
+                    <div class="text-xs text-white/80 leading-relaxed">${marked.parse(content)}</div>
+                    ${extra}
+                </div>
+                `;
+            }).join('');
+        };
 
         // Migrate sessions if needed
         sessions = sessions.map(s => ({
@@ -1223,13 +1436,13 @@ permalink: /chat/neural/
                 // Sync with Neural Thread if active
                 if (localStorage.getItem('hy_neural_active') === 'true') {
                     const thread = JSON.parse(localStorage.getItem('hy_neural_thread') || '[]');
-                    const session = sessions.find(s => s.id === currentSessionId);
+                    const currentSession = sessions.find(s => s.id === currentSessionId);
 
-                    if (session && thread.length > 0) {
+                    if (currentSession && thread.length > 0) {
                         thread.forEach(tm => {
-                            const exists = session.messages.some(sm => sm.content === tm.content && sm.role === tm.role);
+                            const exists = currentSession.messages.some(sm => sm.content === tm.content && sm.role === tm.role);
                             if (!exists) {
-                                session.messages.push({
+                                currentSession.messages.push({
                                     role: tm.role,
                                     content: tm.content,
                                     source: tm.source
@@ -1350,7 +1563,7 @@ permalink: /chat/neural/
 
             if (!currentSessionId) createNewSession();
 
-            const session = sessions.find(s => s.id === currentSessionId);
+            const currentSession = sessions.find(s => s.id === currentSessionId);
             const prompt = `Jules ha completado una operación (Estado: ${output.status}).\n\nDETALLES:\n- Sesión: #${output.session_id}\n- Tarea: ${output.title}\n- Repo: ${output.repo}\n\nAnaliza el resultado, detecta si hay errores o puntos de atención, y prepara un resumen accionable.`;
 
             // Add a special system message to show it's analyzing
@@ -1366,7 +1579,7 @@ permalink: /chat/neural/
                 const analysis = await callCustomProvider(config, analysisMessages);
 
                 if (analysis) {
-                    session.messages.push({
+                    currentSession.messages.push({
                         role: 'assistant',
                         content: `[ANÁLISIS JULES: #${output.session_id}]\n\n${analysis}`,
                         jules_analysis: true
@@ -1868,15 +2081,17 @@ permalink: /chat/neural/
         async function loadSession(id, isArchived = false) {
             currentSessionId = id;
             localStorage.setItem('hy_active_claude_session_id', id);
-            const session = (isArchived ? archivedSessions : sessions).find(s => s.id === id);
-            if (!session) return;
+            const currentSession = (isArchived ? archivedSessions : sessions).find(s => s.id === id);
+            if (!currentSession) return;
 
             // Sync Neural Session ID for the banner
             const neuralId = localStorage.getItem('hy_neural_session_id_' + id);
             if (neuralId) {
                 localStorage.setItem('hy_neural_session_id', neuralId);
+                startJulesPolling(neuralId);
             } else {
                 localStorage.removeItem('hy_neural_session_id');
+                stopJulesPolling();
             }
 
             // Refresh Banner if exists
@@ -1894,39 +2109,65 @@ permalink: /chat/neural/
                 closeSidebar();
             }
 
-            document.getElementById('session-title').textContent = session.title;
+            document.getElementById('session-title').textContent = currentSession.title;
             renderMessages();
             document.getElementById('welcome-screen')?.classList.add('hidden');
 
             // Sync UI with session settings
-            isThinkingEnabled = !!session.thinking;
+            isThinkingEnabled = !!currentSession.thinking;
             toggleThinkingBtn.classList.toggle('dracula-cyan', isThinkingEnabled);
 
             // Enrich System Prompt with God Mode context
             if (window.godModeTools) {
                 const activeRepo = localStorage.getItem('hypenosys_active_repo');
                 const godContext = await window.godModeTools.getGodModeSystemPrompt(activeRepo);
-                if (!session.baseSystemPrompt) session.baseSystemPrompt = session.systemPrompt || 'Eres un asistente técnico del estudio de videojuegos Hypenosys. Ayudas al equipo a planificar e implementar tareas de desarrollo. Responde siempre en español, de forma directa y técnica.';
-                session.systemPrompt = session.baseSystemPrompt + '\n' + godContext;
+                if (!currentSession.baseSystemPrompt) currentSession.baseSystemPrompt = currentSession.systemPrompt || 'Eres un asistente técnico del estudio de videojuegos Hypenosys. Ayudas al equipo a planificar e implementar tareas de desarrollo. Responde siempre en español, de forma directa y técnica.';
+                currentSession.systemPrompt = currentSession.baseSystemPrompt + '\n' + godContext;
             }
 
-            document.getElementById('system-prompt-input').value = session.systemPrompt || '';
+            document.getElementById('system-prompt-input').value = currentSession.systemPrompt || '';
+
+            // Refresh session list to update active state
+            renderSessionList();
         }
 
         function saveSessions() {
             try {
-                localStorage.setItem('claude_chat_sessions', JSON.stringify(sessions));
+                // Deduplicate sessions by ID before saving to prevent double-entries
+                const uniqueSessions = [];
+                const seenIds = new Set();
+
+                sessions.forEach(s => {
+                    if (!seenIds.has(s.id)) {
+                        seenIds.add(s.id);
+                        uniqueSessions.push(s);
+                    }
+                });
+
+                localStorage.setItem('claude_chat_sessions', JSON.stringify(uniqueSessions));
                 localStorage.setItem('claude_archived_sessions', JSON.stringify(archivedSessions));
+
+                // Problem 1: Ensure hy_neural_sessions (used by Jules Panel) doesn't conflict
+                // We sync the list to hy_neural_sessions for compatibility if needed
+                const neuralSessions = uniqueSessions.map(s => ({
+                    id: localStorage.getItem('hy_neural_session_id_' + s.id) || s.id,
+                    name: s.title,
+                    task_id: s.task_ref?.id || null,
+                    task_title: s.task_ref?.title || '---',
+                    start: s.createdAt,
+                    status: 'active'
+                }));
+                localStorage.setItem('hy_neural_sessions', JSON.stringify(neuralSessions));
             } catch (e) {
-                alert('Error: almacenamiento local lleno.');
+                console.error('Error saving sessions:', e);
             }
         }
 
         function archiveSession(id) {
             const index = sessions.findIndex(s => s.id === id);
             if (index !== -1) {
-                const session = sessions.splice(index, 1)[0];
-                archivedSessions.unshift(session);
+                const currentSession = sessions.splice(index, 1)[0];
+                archivedSessions.unshift(currentSession);
                 saveSessions();
                 renderSessionList();
                 if (currentSessionId === id) {
@@ -1942,8 +2183,8 @@ permalink: /chat/neural/
         function unarchiveSession(id) {
             const index = archivedSessions.findIndex(s => s.id === id);
             if (index !== -1) {
-                const session = archivedSessions.splice(index, 1)[0];
-                sessions.unshift(session);
+                const currentSession = archivedSessions.splice(index, 1)[0];
+                sessions.unshift(currentSession);
                 saveSessions();
                 renderSessionList();
                 showToast('Conversación restaurada');
@@ -2031,12 +2272,12 @@ permalink: /chat/neural/
         }
 
         function exportSession(id) {
-            const session = sessions.find(s => s.id === id);
-            if (!session) return;
+            const currentSession = sessions.find(s => s.id === id);
+            if (!currentSession) return;
 
             const date = new Date().toISOString().split('T')[0];
             const filename = `hypenosys-chat-${id}-${date}.json`;
-            const blob = new Blob([JSON.stringify(session, null, 2)], { type: 'application/json' });
+            const blob = new Blob([JSON.stringify(currentSession, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
 
             const a = document.createElement('a');
@@ -2096,17 +2337,32 @@ permalink: /chat/neural/
         }
 
         function renderMessages() {
-            const session = sessions.find(s => s.id === currentSessionId);
-            if (!session) {
+            const currentSession = sessions.find(s => s.id === currentSessionId) || archivedSessions.find(s => s.id === currentSessionId);
+            if (!currentSession) {
                 chatMessages.innerHTML = '';
                 return;
             }
-            chatMessages.innerHTML = session.messages.map((m, idx) => {
+
+            if (currentSession.messages.length === 0) {
+                document.getElementById('welcome-screen')?.classList.remove('hidden');
+                chatMessages.innerHTML = '';
+                return;
+            } else {
+                document.getElementById('welcome-screen')?.classList.add('hidden');
+            }
+
+            chatMessages.innerHTML = currentSession.messages.map((m, idx) => {
                 let content = m.content;
                 let reasoningHtml = '';
 
+                const isUser = m.role === 'user';
+                const isJules = m.source === 'jules' || m.role === 'agent';
+                const label = isUser ? 'NEURAL LINK: USER' : (isJules ? 'NEURAL LINK: JULES' : 'NEURAL LINK: CLAUDE');
+                const labelColor = isUser ? 'text-[#8be9fd]' : (isJules ? 'text-[#50fa7b]' : 'text-[#bd93f9]');
+                const bubbleClass = isUser ? 'message-user' : (isJules ? 'message-claude border-[#50fa7b] border-2 shadow-[0_0_15px_rgba(80,250,123,0.2)]' : 'message-claude shadow-xl');
+
                 // Handle <think> blocks for Reasoning
-                if (content.includes('<think>')) {
+                if (content && typeof content === 'string' && content.includes('<think>')) {
                     const parts = content.split(/<\/?think>/);
                     if (parts.length >= 3) {
                         const reasoning = parts[1];
@@ -2131,19 +2387,19 @@ permalink: /chat/neural/
                 }
 
                 return `
-                <div class="flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} group mb-4">
-                    <div class="max-w-[85%] p-4 ${m.role === 'user' ? 'message-user' : 'message-claude shadow-xl'} relative message-bubble">
-                        <div class="text-[10px] font-black tracking-widest uppercase mb-2 ${m.role === 'user' ? 'text-[#8be9fd]' : 'text-[#bd93f9]'} opacity-70">
-                            ${m.role === 'user' ? 'NEURAL LINK: USER' : 'NEURAL LINK: CLAUDE'}
+                <div class="flex ${isUser ? 'justify-end' : 'justify-start'} group mb-4">
+                    <div class="max-w-[85%] p-4 ${bubbleClass} relative message-bubble">
+                        <div class="text-[10px] font-black tracking-widest uppercase mb-2 ${labelColor} opacity-70">
+                            ${label}
                         </div>
                         ${safetyBadge}
                         ${m.thinking ? `<div class="thinking-block">${escapeHtml(m.thinking)}</div>` : ''}
                         ${reasoningHtml}
                         <div class="prose prose-invert text-sm prose-pre:bg-[#1e1f29] prose-pre:border prose-pre:border-[#44475a] selection:bg-[#bd93f9]/30">
-                            ${marked.parse(content)}
+                            ${content ? marked.parse(content) : ''}
                         </div>
 
-                        ${m.role !== 'user' ? `
+                        ${!isUser ? `
                         <div class="message-actions opacity-0 group-hover:opacity-100 transition-opacity absolute -bottom-6 left-0 flex gap-2">
                             <button onclick="copyMessage(${idx})" class="text-[9px] font-bold text-[#6272a4] hover:text-[#bd93f9] flex items-center gap-1 bg-[#1e1f29] px-2 py-0.5 rounded border border-[#44475a]">
                                 <i class="fas fa-copy"></i> COPIAR
@@ -2161,16 +2417,16 @@ permalink: /chat/neural/
         }
 
         function copyMessage(idx) {
-            const session = sessions.find(s => s.id === currentSessionId);
-            if (session && session.messages[idx]) {
-                copyToClipboard(session.messages[idx].content);
+            const currentSession = sessions.find(s => s.id === currentSessionId);
+            if (currentSession && currentSession.messages[idx]) {
+                copyToClipboard(currentSession.messages[idx].content);
             }
         }
 
         async function sendToJulesByIndex(idx) {
-            const session = sessions.find(s => s.id === currentSessionId);
-            if (session && session.messages[idx]) {
-                const text = session.messages[idx].content;
+            const currentSession = sessions.find(s => s.id === currentSessionId);
+            if (currentSession && currentSession.messages[idx]) {
+                const text = currentSession.messages[idx].content;
 
                 const neuralActive = localStorage.getItem('hy_neural_active') === 'true';
                 const neuralSessionId = localStorage.getItem('hy_neural_session_id_' + currentSessionId);
@@ -2256,13 +2512,13 @@ permalink: /chat/neural/
 
         function confirmSendToJules() {
             const userNote = document.getElementById('jules-user-note').value.trim();
-            const session = sessions.find(s => s.id === currentSessionId);
+            const currentSession = sessions.find(s => s.id === currentSessionId);
             const task = window._activeTaskContext;
 
             // Build session context summary string (last 3 messages)
-            let sessionContext = `Session: ${session?.title || currentSessionId || 'N/A'}\n`;
-            if (session && session.messages.length > 0) {
-                const recent = session.messages.slice(-3);
+            let sessionContext = `Session: ${currentSession?.title || currentSessionId || 'N/A'}\n`;
+            if (currentSession && currentSession.messages.length > 0) {
+                const recent = currentSession.messages.slice(-3);
                 recent.forEach(m => {
                     sessionContext += `- ${m.role.toUpperCase()}: ${m.content.substring(0, 150)}${m.content.length > 150 ? '...' : ''}\n`;
                 });
@@ -2380,6 +2636,14 @@ permalink: /chat/neural/
             const content = chatInput.value.trim();
             if ((!content && !attachedImage) || sendBtn.disabled) return;
 
+            // Auto-create session if none exists
+            if (!currentSessionId) {
+                createNewSession();
+            }
+
+            // Look in active or archived sessions
+            const currentSession = sessions.find(s => s.id === currentSessionId) || archivedSessions.find(s => s.id === currentSessionId);
+
             // Handle Jules Direct Mode
             if (currentSendMode === 'jules') {
                 const sessionId = localStorage.getItem('hy_neural_session_id_' + currentSessionId);
@@ -2405,24 +2669,38 @@ permalink: /chat/neural/
                     return;
                 }
 
+                const userMsg = { role: 'user', content: content };
+                if (currentSession) {
+                    currentSession.messages.push(userMsg);
+                    renderMessages();
+                    saveSessions();
+                }
+
                 sendBtn.disabled = true;
+                chatInput.disabled = true;
                 try {
                     const targetId = sessionId.startsWith('sessions/') ? sessionId : 'sessions/' + sessionId;
                     const ok = await window.julesApi.sendMessage(targetId, content);
                     if (ok) {
-                        appendSystemMessage(`Orden enviada a Jules (Sesión #${sessionId}): ${content}`, 'info');
                         chatInput.value = '';
                         chatInput.style.height = 'auto';
+
                         // Sync with Neural Thread
                         let thread = JSON.parse(localStorage.getItem('hy_neural_thread') || '[]');
                         thread.push({ role: 'user', content: content, source: 'user' });
                         localStorage.setItem('hy_neural_thread', JSON.stringify(thread));
+
                         showToast('Orden enviada a Jules');
+
+                        // Ensure polling is active
+                        startJulesPolling(sessionId);
                     }
                 } catch (e) {
                     appendSystemMessage(`Error al enviar a Jules: ${e.message}`, 'error');
                 } finally {
                     sendBtn.disabled = false;
+                    chatInput.disabled = false;
+                    chatInput.focus();
                 }
                 return;
             }
@@ -2434,11 +2712,6 @@ permalink: /chat/neural/
                 return;
             }
 
-            // Auto-create session if none exists
-            if (!currentSessionId) {
-                createNewSession();
-            }
-
             const config = JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
             const provider = config.provider || 'none';
 
@@ -2448,13 +2721,12 @@ permalink: /chat/neural/
                 return;
             }
 
-            const session = sessions.find(s => s.id === currentSessionId);
             const userMsg = {
                 role: 'user',
                 content: content,
                 image: attachedImage || undefined
             };
-            session.messages.push(userMsg);
+            if (currentSession) currentSession.messages.push(userMsg);
 
             // Sync with Neural Thread
             if (localStorage.getItem('hy_neural_active') === 'true') {
@@ -2467,8 +2739,8 @@ permalink: /chat/neural/
             if (attachedImage) removeAttachedImage();
 
             // Set title from first message (Tarea 2.5 - 40 chars)
-            if (session.title === 'Nueva Conversación' && content) {
-                session.title = content.substring(0, 40) + (content.length > 40 ? '...' : '');
+            if (currentSession && currentSession.title === 'Nueva Conversación' && content) {
+                currentSession.title = content.substring(0, 40) + (content.length > 40 ? '...' : '');
                 saveSessions();
                 renderSessionList();
             }
@@ -2488,16 +2760,16 @@ permalink: /chat/neural/
                 const modelType = config.modelType || 'chat';
 
                 if (modelType === 'image-gen') {
-                    await sendMessageImageGen(session, config);
+                    await sendMessageImageGen(currentSession, config);
                 } else if (modelType === 'audio' && !config.useTextInAudioMode) {
                     // ASR handled by recording, but if they click send...
-                    if (content) await sendMessageCustom(session, config);
+                    if (content) await sendMessageCustom(currentSession, config);
                 } else if (provider === 'ollama') {
-                    await sendMessageOllama(session, config);
+                    await sendMessageOllama(currentSession, config);
                 } else if (provider === 'anthropic') {
-                    await sendMessageAnthropic(session, config);
+                    await sendMessageAnthropic(currentSession, config);
                 } else if (provider === 'custom' || provider === 'openai' || provider === 'openrouter' || provider === 'nvidia_nim') {
-                    await sendMessageCustom(session, config);
+                    await sendMessageCustom(currentSession, config);
                 } else {
                     throw new Error(`Proveedor ${provider} no implementado aún en Neural Chat.`);
                 }
@@ -3003,9 +3275,9 @@ permalink: /chat/neural/
         toggleThinkingBtn.onclick = () => {
             isThinkingEnabled = !isThinkingEnabled;
             toggleThinkingBtn.classList.toggle('dracula-cyan', isThinkingEnabled);
-            const session = sessions.find(s => s.id === currentSessionId);
-            if (session) {
-                session.thinking = isThinkingEnabled;
+            const currentSession = sessions.find(s => s.id === currentSessionId);
+            if (currentSession) {
+                currentSession.thinking = isThinkingEnabled;
                 saveSessions();
             }
         };
@@ -3018,9 +3290,9 @@ permalink: /chat/neural/
         }
         function saveSystemPrompt() {
             const val = document.getElementById('system-prompt-input').value;
-            const session = sessions.find(s => s.id === currentSessionId);
-            if (session) {
-                session.systemPrompt = val;
+            const currentSession = sessions.find(s => s.id === currentSessionId);
+            if (currentSession) {
+                currentSession.systemPrompt = val;
                 saveSessions();
             }
             closeSystemPrompt();
