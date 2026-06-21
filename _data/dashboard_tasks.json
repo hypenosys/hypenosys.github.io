@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T11:01:50.889Z",
+  "last_updated": "2026-06-21T11:07:55.877Z",
   "last_updated_by": "Axel",
   "tasks": [
     {
@@ -3862,9 +3862,59 @@
         }
       ],
       "id": 59
+    },
+    {
+      "title": "DASHBOARD: Subida de imágenes al GUARDAR TAREA, no al subir la imagen",
+      "descripcion": "En cuanto se sube una imagen a imágenes en la task, no debería subirla de primeras al tumblr hasta haber guardado la task, si ya se ha subido no hace falta resubirla, pero si aun no se ha subido al tumblr sin guardar la task, no debería haberla subido al Tumblr. Así si subimos algo accidentalmente, no tiene por qué subirse de primeras.",
+      "rama": "master",
+      "task_type": "bug",
+      "tema_principal": "Tools / Automation",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Medium",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Axel",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-21",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T11:07:55.438Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 60
     }
   ],
   "_audit_log": [
+    {
+      "action": "feat: nueva tarea #1782040075438 añadida",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T11:07:55.877Z"
+    },
     {
       "action": "feat: nueva tarea #1782039709877 añadida",
       "user": "Axlfc",
