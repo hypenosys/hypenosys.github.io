@@ -65,6 +65,9 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-white">Added</h5>
             <ul>
+                <li><strong>Cross-Reference de Repositorios (Jules Panel):</strong> Implementada validación en paralelo entre GitHub API y Jules API. Los repositorios sin la App de Jules instalada se muestran deshabilitados con un icono de candado y tooltip informativo. Se añadió entrada manual para rutas personalizadas.</li>
+                <li><strong>Modo de Automatización "AUTO_CREATE_PR":</strong> El Modo Automático ahora envía explícitamente <code>automationMode: "AUTO_CREATE_PR"</code> a la API de Jules para habilitar flujos de trabajo autónomos completos.</li>
+                <li><strong>Asociación Forzada de Contexto:</strong> El Panel Jules ahora respeta y fuerza el Repositorio y la Rama indicados en el handoff de Claude, incluyendo una instrucción automática para crear la rama si no existe.</li>
                 <li><strong>Kanban Card Archiving (COMPLETADO):</strong> Restaurado el botón de archivar (<code>fa-box-archive</code>) en las tarjetas de la columna COMPLETADO (estados OK/Closed) para permitir mover tareas al Cementerio directamente desde el Kanban.</li>
                 <li><strong>Jules Activity Feed:</strong> Implementada una nueva pestaña de Actividad en el Neural Chat que muestra logs de ejecución, planes y comandos de Jules en tiempo real con estética Dracula.</li>
                 <li><strong>Renderizado Dinámico del Equipo:</strong> La sección "The Dream Team" en la landing page ahora se genera dinámicamente mediante JavaScript, permitiendo el uso de archivos JSON fuera de la carpeta <code>_data</code> de Jekyll.</li>
@@ -78,6 +81,8 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-success">Fixed</h5>
             <ul>
+              <li><strong>Flujo "Enviar a Jules" (Neural Link):</strong> Refactorizado el receptor de handoff para diferenciar entre "Modo Iniciador" (nueva tarea en vista Neural) y "Modo Aditivo" (envío directo de mensaje a sesión activa). Resuelto el bug que enviaba el texto al campo de chat equivocado.</li>
+              <li><strong>Sincronización de Acciones de Mensaje:</strong> Unificado el flujo de envío de fragmentos de Claude para usar el sistema de payload enriquecido, garantizando que el contexto de la tarea se mantenga.</li>
               <li><strong>Persistencia de Sesiones (Neural Chat):</strong> Corregida la lógica de guardado y carga de sesiones para evitar la pérdida de mensajes y asegurar la sincronización con el Jules Panel, incluyendo deduplicación de IDs.</li>
               <li><strong>Endpoints de Ollama (Error 404):</strong> Estandarizado el uso de <code>/v1/chat/completions</code> para todas las interacciones con Ollama, forzando compatibilidad con el estándar de OpenAI y eliminando fallos por rutas incorrectas.</li>
               <li><strong>Acceso a Datos de Equipo (Error 404):</strong> Reubicados <code>team.json</code> y <code>team_profiles.json</code> a <code>assets/data/</code> para permitir su carga mediante <code>fetch()</code> en el entorno de producción (GitHub Pages).</li>
@@ -92,6 +97,7 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-success">Changed</h5>
             <ul>
+              <li><strong>Limpieza de UI Redundante:</strong> Eliminado el botón "USAR COMO PROMPT" del chat integrado en el Panel Jules, ya que el nuevo flujo de handoff automatizado lo hace innecesario.</li>
               <li><strong>Respuestas de Jules en Chat:</strong> Jules ahora responde directamente con burbujas en el flujo de conversación del Neural Chat mediante un sistema de polling de actividades que detecta eventos <code>agentMessaged</code>.</li>
               <li><strong>Unificación de Lectura de Datos:</strong> Migrada toda la lógica de lectura de perfiles y equipo para usar <code>fetch()</code> nativo, simplificando el código y eliminando peticiones innecesarias a la API de GitHub para datos públicos.</li>
               <li><strong>Auto-detección de Contexto en Tareas:</strong> El Kanban ahora detecta automáticamente el repositorio y rama activa al crear tareas, eliminando la entrada manual de metadatos críticos.</li>
