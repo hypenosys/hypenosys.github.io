@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-20T10:40:50.714Z",
-  "last_updated_by": "Alex",
+  "last_updated": "2026-06-21T10:34:45.090Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -450,7 +450,7 @@
         "alex@hypenosys.com"
       ],
       "images": [],
-      "title": "upgrade 'app' to Unreal 5.7.4",
+      "title": "upgrade 'app' to Unreal 5.8",
       "task_type": "chore",
       "start_date": "2026-06-01",
       "due_date": "2026-06-30",
@@ -599,6 +599,13 @@
           "field": "completitud",
           "old_value": 0.75,
           "new_value": 0.9
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T10:34:44.435Z",
+          "field": "title",
+          "old_value": "upgrade 'app' to Unreal 5.7.4",
+          "new_value": "upgrade 'app' to Unreal 5.8"
         }
       ],
       "repository": "hypenosys/app"
@@ -3757,6 +3764,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #11",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T10:34:45.090Z"
+    },
     {
       "action": "feat: nueva tarea #1781952050119 añadida",
       "user": "TopperH4rley",
