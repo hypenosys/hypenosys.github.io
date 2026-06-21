@@ -1097,6 +1097,7 @@ permalink: /chat/neural/
         window.docsContext = new HypenosysDocsContext();
 
         let currentSessionId = null;
+        let isLoadingSession = false;
         let sessions = JSON.parse(localStorage.getItem('claude_chat_sessions') || '[]');
         let archivedSessions = JSON.parse(localStorage.getItem('claude_archived_sessions') || '[]');
 
@@ -1216,7 +1217,9 @@ permalink: /chat/neural/
             emptyState.classList.add('hidden');
 
             // Deduplicate and sort activities
-            const uniqueActivities = activities.filter((a, i, arr) => arr.findIndex(x => x.id === a.id) === i);
+            const uniqueActivities = activities
+                .filter((a, i, arr) => arr.findIndex(x => x.id === a.id) === i)
+                .sort((a, b) => new Date(a.createTime) - new Date(b.createTime));
 
             container.innerHTML = uniqueActivities.map(act => {
                 const time = new Date(act.createTime).toLocaleTimeString();
@@ -1232,7 +1235,11 @@ permalink: /chat/neural/
                     color = 'text-orange-400';
                     const steps = act.planGenerated.plan?.steps || [];
                     extra = `<div class="mt-2 pl-4 border-l border-orange-400/30 space-y-1">
-                        ${steps.map(s => `<div class="text-[10px] text-orange-200/70"><span class="font-bold">${s.index + 1}.</span> ${s.title}</div>`).join('')}
+                        ${steps.map(s => `
+                            <div class="text-[10px] text-orange-200/70">
+                                <span class="font-bold">${(s.index || 0) + 1}.</span> ${s.title}
+                                ${s.description ? `<div class="text-[9px] opacity-60 ml-4">${s.description}</div>` : ''}
+                            </div>`).join('')}
                     </div>`;
                 } else if (act.planApproved) {
                     type = 'AUTH';
@@ -1244,6 +1251,9 @@ permalink: /chat/neural/
                     icon = 'fa-cog fa-spin';
                     color = 'text-[#8be9fd]';
                     content = act.progressUpdated.title;
+                    if (act.progressUpdated.description) {
+                        extra += `<div class="mt-1 text-[10px] text-[#6272a4] italic">${act.progressUpdated.description}</div>`;
+                    }
                 } else if (act.agentMessaged) {
                     type = 'JULES';
                     icon = 'fa-robot';
@@ -1259,6 +1269,12 @@ permalink: /chat/neural/
                     icon = 'fa-flag-checkered';
                     color = 'text-[#50fa7b]';
                     content = 'Sesión completada exitosamente';
+                    if (act.sessionCompleted.commitMessage) {
+                        extra += `<div class="mt-2 p-2 bg-green-500/5 border border-green-500/20 rounded text-[10px] text-green-200/70 font-mono">
+                            <div class="uppercase text-[8px] font-black opacity-50 mb-1">Commit Message</div>
+                            ${act.sessionCompleted.commitMessage}
+                        </div>`;
+                    }
                 } else if (act.sessionFailed) {
                     type = 'FAIL';
                     icon = 'fa-exclamation-triangle';
@@ -1266,7 +1282,7 @@ permalink: /chat/neural/
                     content = 'Error: ' + (act.sessionFailed.reason || 'Desconocido');
                 }
 
-                // Check for bash artifacts
+                // Check for artifacts (Bash & Diff)
                 if (act.artifacts) {
                     act.artifacts.forEach(art => {
                         if (art.bashOutput) {
@@ -1276,9 +1292,31 @@ permalink: /chat/neural/
                                     <span>BASH COMMAND</span>
                                     <span>EXIT: ${art.bashOutput.exitCode}</span>
                                 </div>
-                                <div class="p-2 text-[9px] font-mono text-[#50fa7b] whitespace-pre-wrap">${escapeHtml(art.bashOutput.command)}</div>
-                                ${art.bashOutput.output ? `<div class="p-2 text-[9px] font-mono text-white/50 border-t border-[#44475a]/30 whitespace-pre-wrap">${escapeHtml(art.bashOutput.output)}</div>` : ''}
+                                <div class="p-2 text-[9px] font-mono text-[#50fa7b] whitespace-pre-wrap">$ ${escapeHtml(art.bashOutput.command)}</div>
+                                ${art.bashOutput.output ? `<div class="p-2 text-[9px] font-mono text-white/50 border-t border-[#44475a]/30 whitespace-pre-wrap max-h-40 overflow-y-auto">${escapeHtml(art.bashOutput.output)}</div>` : ''}
                             </div>`;
+                        }
+                        if (art.changeSet?.gitPatch?.unidiffPatch) {
+                            const patch = art.changeSet.gitPatch.unidiffPatch;
+                            const lines = patch.split('\n');
+                            const diffHtml = lines.map(line => {
+                                let cls = 'text-[#f8f8f2]';
+                                if (line.startsWith('+') && !line.startsWith('+++')) cls = 'text-[#50fa7b] bg-[#50fa7b]/10';
+                                else if (line.startsWith('-') && !line.startsWith('---')) cls = 'text-[#ff5555] bg-[#ff5555]/10';
+                                else if (line.startsWith('@@')) cls = 'text-[#8be9fd] bg-[#8be9fd]/10';
+                                return `<div class="px-2 ${cls}">${escapeHtml(line)}</div>`;
+                            }).join('');
+
+                            extra += `
+                            <details class="mt-2 bg-black/40 rounded border border-[#44475a] overflow-hidden group">
+                                <summary class="bg-[#1e1f29] px-2 py-1 text-[8px] font-bold text-[#bd93f9] border-b border-[#44475a] cursor-pointer hover:bg-[#44475a]/20 transition-all uppercase tracking-widest flex justify-between items-center">
+                                    <span><i class="fas fa-file-code mr-1"></i> Ver cambios en código</span>
+                                    <i class="fas fa-chevron-down text-[7px] group-open:rotate-180 transition-transform"></i>
+                                </summary>
+                                <div class="p-0 text-[9px] font-mono whitespace-pre overflow-x-auto max-h-60 overflow-y-auto">
+                                    ${diffHtml}
+                                </div>
+                            </details>`;
                         }
                     });
                 }
@@ -1297,6 +1335,13 @@ permalink: /chat/neural/
                 </div>
                 `;
             }).join('');
+
+            // Auto-scroll to bottom if near bottom
+            const threshold = 100;
+            const isAtBottom = container.scrollHeight - container.scrollTop - container.clientHeight < threshold;
+            if (isAtBottom) {
+                container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+            }
         };
 
         // Migrate sessions if needed
@@ -1309,14 +1354,19 @@ permalink: /chat/neural/
         // Initialize BroadcastChannel for Neural Context Sync
         window.neuralSyncChannel = new BroadcastChannel('neural-context-sync');
         window.neuralSyncChannel.onmessage = (event) => {
-            const { type, sessionId, message } = event.data;
-            if (type === 'SYNC_CONTEXT' && message) {
+            if (isLoadingSession) return;
+
+            const { type, julesSessionId, claudeConversationId, message } = event.data;
+            if (type === 'NEW_MESSAGE' && message) {
                 const linkedSid = localStorage.getItem('hy_neural_session_id_' + currentSessionId);
-                if (sessionId === linkedSid) {
+
+                // Only process if it matches either the current Claude session or its linked Jules session
+                if (claudeConversationId === currentSessionId || julesSessionId === linkedSid) {
                     const currentSession = sessions.find(s => s.id === currentSessionId);
                     if (currentSession) {
                         const exists = currentSession.messages.some(m =>
-                            m.content === message.content && m.role === message.role
+                            m.content === message.content && m.role === message.role &&
+                            (m.timestamp === message.timestamp || m.createTime === message.createTime)
                         );
                         if (!exists) {
                             currentSession.messages.push(message);
@@ -2133,10 +2183,14 @@ permalink: /chat/neural/
         }
 
         async function loadSession(id, isArchived = false) {
+            isLoadingSession = true;
             currentSessionId = id;
             localStorage.setItem('hy_active_claude_session_id', id);
             const currentSession = (isArchived ? archivedSessions : sessions).find(s => s.id === id);
-            if (!currentSession) return;
+            if (!currentSession) {
+                isLoadingSession = false;
+                return;
+            }
 
             // Sync Neural Session ID for the banner
             const neuralId = localStorage.getItem('hy_neural_session_id_' + id);
@@ -2147,7 +2201,6 @@ permalink: /chat/neural/
                 localStorage.removeItem('hy_neural_session_id');
                 stopJulesPolling();
             }
-
 
             // Close sidebar on mobile after selecting a session
             if (window.innerWidth <= 768) {
@@ -2161,19 +2214,25 @@ permalink: /chat/neural/
             // Sync UI with session settings
             isThinkingEnabled = !!currentSession.thinking;
             toggleThinkingBtn.classList.toggle('dracula-cyan', isThinkingEnabled);
-
-            // Enrich System Prompt with God Mode context
-            if (window.godModeTools) {
-                const activeRepo = localStorage.getItem('hypenosys_active_repo');
-                const godContext = await window.godModeTools.getGodModeSystemPrompt(activeRepo);
-                if (!currentSession.baseSystemPrompt) currentSession.baseSystemPrompt = currentSession.systemPrompt || 'Eres un asistente técnico del estudio de videojuegos Hypenosys. Ayudas al equipo a planificar e implementar tareas de desarrollo. Responde siempre en español, de forma directa y técnica.';
-                currentSession.systemPrompt = currentSession.baseSystemPrompt + '\n' + godContext;
-            }
-
             document.getElementById('system-prompt-input').value = currentSession.systemPrompt || '';
 
             // Refresh session list to update active state
             renderSessionList();
+
+            // Background processing for God Mode context
+            if (window.godModeTools) {
+                (async () => {
+                    const activeRepo = localStorage.getItem('hypenosys_active_repo');
+                    const godContext = await window.godModeTools.getGodModeSystemPrompt(activeRepo);
+                    if (!currentSession.baseSystemPrompt) currentSession.baseSystemPrompt = currentSession.systemPrompt || 'Eres un asistente técnico del estudio de videojuegos Hypenosys. Ayudas al equipo a planificar e implementar tareas de desarrollo. Responde siempre en español, de forma directa y técnica.';
+                    currentSession.systemPrompt = currentSession.baseSystemPrompt + '\n' + godContext;
+                    if (currentSessionId === id) {
+                        document.getElementById('system-prompt-input').value = currentSession.systemPrompt;
+                    }
+                })();
+            }
+
+            isLoadingSession = false;
         }
 
         function saveSessions(skipSync = false) {
@@ -2204,19 +2263,18 @@ permalink: /chat/neural/
                 }));
                 localStorage.setItem('hy_neural_sessions', JSON.stringify(neuralSessions));
 
-                // Sync via BroadcastChannel (only last message)
+                // Sync via BroadcastChannel (nuevo formato NEW_MESSAGE)
                 if (window.neuralSyncChannel && !skipSync && currentSessionId) {
                     const linkedSid = localStorage.getItem('hy_neural_session_id_' + currentSessionId);
-                    if (linkedSid) {
-                        const currentSession = sessions.find(s => s.id === currentSessionId);
-                        if (currentSession && currentSession.messages.length > 0) {
-                            const lastMsg = currentSession.messages[currentSession.messages.length - 1];
-                            window.neuralSyncChannel.postMessage({
-                                type: 'SYNC_CONTEXT',
-                                sessionId: linkedSid,
-                                message: lastMsg
-                            });
-                        }
+                    const currentSession = sessions.find(s => s.id === currentSessionId);
+                    if (currentSession && currentSession.messages.length > 0) {
+                        const lastMsg = currentSession.messages[currentSession.messages.length - 1];
+                        window.neuralSyncChannel.postMessage({
+                            type: 'NEW_MESSAGE',
+                            julesSessionId: linkedSid || null,
+                            claudeConversationId: currentSessionId,
+                            message: lastMsg
+                        });
                     }
                 }
             } catch (e) {
