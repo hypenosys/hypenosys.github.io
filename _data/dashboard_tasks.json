@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T12:52:08.208Z",
+  "last_updated": "2026-06-21T12:52:18.011Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2716,9 +2716,16 @@
           "field": "estado",
           "old_value": "ToDo",
           "new_value": "OK"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:52:17.234Z",
+          "field": "seccion",
+          "new_value": "Dashboard"
         }
       ],
-      "id": 41
+      "id": 41,
+      "seccion": "Dashboard"
     },
     {
       "title": "Falta nombre del repo (o alias) en las cards en dashboard de Jules Neural Operations",
@@ -4469,6 +4476,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #41",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:52:18.011Z"
+    },
     {
       "action": "chore: actualizar tarea #38",
       "user": "Axlfc",
