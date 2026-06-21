@@ -585,7 +585,8 @@ function toggleKanbanFilters() {
     const badge = document.getElementById('active-filters-count');
 
     const isCollapsed = container.style.maxHeight === '0px' || container.style.maxHeight === '' || container.classList.contains('max-h-0');
-    const totalActive = kanbanFilters.tags.length + kanbanFilters.members.length + kanbanFilters.repos.length + kanbanFilters.states.length;
+    const totalActive = kanbanFilters.tags.length + kanbanFilters.members.length + kanbanFilters.repos.length + kanbanFilters.states.length +
+                        kanbanFilters.milestones.length + kanbanFilters.themes.length + kanbanFilters.priorities.length;
 
     if (isCollapsed) {
         container.classList.remove('max-h-0', 'opacity-0');
@@ -694,7 +695,8 @@ function renderKanbanFilters() {
     const label = document.getElementById('kanban-filters-label');
     const badge = document.getElementById('active-filters-count');
 
-    const totalActive = kanbanFilters.tags.length + kanbanFilters.members.length + kanbanFilters.repos.length + kanbanFilters.states.length;
+    const totalActive = kanbanFilters.tags.length + kanbanFilters.members.length + kanbanFilters.repos.length + kanbanFilters.states.length +
+                        kanbanFilters.milestones.length + kanbanFilters.themes.length + kanbanFilters.priorities.length;
     const isCollapsed = filterContainer.style.maxHeight === '0px' || filterContainer.classList.contains('max-h-0');
 
     // Initial state setup
@@ -721,14 +723,24 @@ function renderKanbanFilters() {
     // 1. Extraer datos dinámicamente de todas las tareas
     const allTags = new Set();
     const allRepos = new Set();
+    const allMilestones = new Set();
+    const allThemes = new Set();
+    const allPriorities = new Set();
+
     currentTasks.forEach(t => {
         if (t.tags) t.tags.forEach(tag => allTags.add(tag));
         const repo = t.repository || t.repo || 'Sin asignar';
         allRepos.add(repo);
+        allMilestones.add(t.milestone || 'Sin Milestone');
+        allThemes.add(t.tema_principal || 'Sin Tema');
+        allPriorities.add(t.prioridad || 'Sin Prioridad');
     });
 
     const sortedTags = Array.from(allTags).sort();
     const sortedRepos = Array.from(allRepos).sort();
+    const sortedMilestones = Array.from(allMilestones).sort();
+    const sortedThemes = Array.from(allThemes).sort();
+    const sortedPriorities = Array.from(allPriorities).sort();
     const allStates = ['PENDING', 'WORKING', 'IN REVIEW', 'OK', 'CRITICAL', 'TODO'];
 
     container.innerHTML = '';
@@ -801,7 +813,46 @@ function renderKanbanFilters() {
     });
     container.appendChild(reposRow.row);
 
-    // Fila 4: Estados y Botón Limpiar
+    // Fila 4: Milestones
+    const milestonesRow = createRow('Milestone', 'fa-solid fa-flag-checkered');
+    sortedMilestones.forEach(milestone => {
+        const active = kanbanFilters.milestones.includes(milestone);
+        const pill = createPill(milestone, active, () => {
+            if (active) kanbanFilters.milestones = kanbanFilters.milestones.filter(m => m !== milestone);
+            else kanbanFilters.milestones.push(milestone);
+            renderDashboard();
+        });
+        milestonesRow.content.appendChild(pill);
+    });
+    container.appendChild(milestonesRow.row);
+
+    // Fila 5: Tema Principal
+    const themesRow = createRow('Tema', 'fa-solid fa-layer-group');
+    sortedThemes.forEach(theme => {
+        const active = kanbanFilters.themes.includes(theme);
+        const pill = createPill(theme, active, () => {
+            if (active) kanbanFilters.themes = kanbanFilters.themes.filter(t => t !== theme);
+            else kanbanFilters.themes.push(theme);
+            renderDashboard();
+        });
+        themesRow.content.appendChild(pill);
+    });
+    container.appendChild(themesRow.row);
+
+    // Fila 6: Prioridad
+    const prioritiesRow = createRow('Prioridad', 'fa-solid fa-bolt');
+    sortedPriorities.forEach(priority => {
+        const active = kanbanFilters.priorities.includes(priority);
+        const pill = createPill(priority, active, () => {
+            if (active) kanbanFilters.priorities = kanbanFilters.priorities.filter(p => p !== priority);
+            else kanbanFilters.priorities.push(priority);
+            renderDashboard();
+        });
+        prioritiesRow.content.appendChild(pill);
+    });
+    container.appendChild(prioritiesRow.row);
+
+    // Fila 7: Estados y Botón Limpiar
     const lastRowWrapper = document.createElement('div');
     lastRowWrapper.className = 'flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pt-2 border-t border-slate-800/50';
 
@@ -822,7 +873,7 @@ function renderKanbanFilters() {
     clearBtn.className = 'text-[10px] font-black text-slate-500 hover:text-red-400 uppercase tracking-widest transition-all flex items-center gap-2 px-3 py-2 bg-slate-950 rounded-lg border border-slate-800 hover:border-red-900/50';
     clearBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i> Limpiar todo';
     clearBtn.onclick = () => {
-        kanbanFilters = { tags: [], members: [], repos: [], states: [] };
+        kanbanFilters = { tags: [], members: [], repos: [], states: [], milestones: [], themes: [], priorities: [] };
         renderDashboard();
     };
     lastRowWrapper.appendChild(clearBtn);
