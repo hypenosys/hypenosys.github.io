@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T12:43:50.959Z",
+  "last_updated": "2026-06-21T12:43:57.137Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -613,9 +613,16 @@
           "field": "title",
           "old_value": "upgrade 'app' to Unreal 5.7.4",
           "new_value": "upgrade 'app' to Unreal 5.8"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:43:56.450Z",
+          "field": "seccion",
+          "new_value": "App"
         }
       ],
-      "repository": "hypenosys/app"
+      "repository": "hypenosys/app",
+      "seccion": "App"
     },
     {
       "rama": "PRO",
@@ -4283,6 +4290,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #11",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:43:57.137Z"
+    },
     {
       "action": "chore: actualizar tarea #40",
       "user": "Axlfc",
