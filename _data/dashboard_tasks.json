@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T19:26:50.548Z",
+  "last_updated": "2026-06-21T20:17:24.780Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3719,9 +3719,9 @@
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Medium",
       "milestone": "M1",
-      "estado": "Pending",
+      "estado": "OK",
       "completitud": 0,
-      "resuelto_por": null,
+      "resuelto_por": "Axel",
       "detectado_por": "Axel",
       "asignados": [],
       "email_responsable": null,
@@ -3772,6 +3772,13 @@
           "field": "title",
           "old_value": "DASHBOARD: Subida de imágenes al GUARDAR TAREA, no al subir la imagen",
           "new_value": "Subida de imágenes al GUARDAR TAREA, no al subir la imagen"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T20:17:24.231Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "OK"
         }
       ],
       "id": 60,
@@ -4281,6 +4288,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #60",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T20:17:24.780Z"
+    },
     {
       "action": "chore: actualizar tarea #61",
       "user": "Axlfc",
