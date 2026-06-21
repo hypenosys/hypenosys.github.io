@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T12:46:31.531Z",
+  "last_updated": "2026-06-21T12:46:39.705Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1200,9 +1200,16 @@
           "field": "estado",
           "old_value": "OK",
           "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:46:38.981Z",
+          "field": "seccion",
+          "new_value": "Dashboard"
         }
       ],
-      "id": 27
+      "id": 27,
+      "seccion": "Dashboard"
     },
     {
       "title": "Mobile first: Jules Panel - \"GitHub (Team) Ops\" — Hub completo de gestión de repositorios, conectado con Tasks Kanban y Claude",
@@ -4374,6 +4381,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #27",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:46:39.705Z"
+    },
     {
       "action": "chore: actualizar tarea #28",
       "user": "Axlfc",
