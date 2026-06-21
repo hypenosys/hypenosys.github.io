@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T17:54:18.725Z",
-  "last_updated_by": "Axlfc",
+  "last_updated": "2026-06-21T18:29:51.583Z",
+  "last_updated_by": "Axel",
   "tasks": [
     {
       "id": 1,
@@ -4211,9 +4211,60 @@
         }
       ],
       "id": 67
+    },
+    {
+      "title": "Partir /jules-panel y /chat/neural en ficheros más pequeños específicos",
+      "descripcion": "Los ficheros tienen demasiadas líneas (˜3000 y ˜5000 líneas) queremos partir los ficheros en otros ficheros más pequeños y que siga funcionando flawlessly. Primero montar las estrategias pasándole los ficheros completos a Claude para que cree las estructuras de ficheros especializados por cada sección (claude chat y jules panel) y luego sacar dos prompts para Jules, uno para particularizar el Jules Panel y otro para particularizar el Claude Chat /chat/neural en ficheros más pequeños.",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Jules Panel, Chat Neural",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-06-21",
+      "due_date": "2026-06-28",
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-21",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T18:29:51.054Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 68
     }
   ],
   "_audit_log": [
+    {
+      "action": "feat: nueva tarea #1782066591054 añadida",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T18:29:51.583Z"
+    },
     {
       "action": "chore: actualizar tarea #55",
       "user": "Axlfc",
