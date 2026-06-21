@@ -51,6 +51,7 @@ function openCreateTaskModal() {
   document.getElementById('task-priority-input').value = 'Major';
   document.getElementById('task-milestone-input').value = 'M1';
   document.getElementById('task-topic-input').value = 'Programación / Engine';
+  document.getElementById('task-section-input').value = '';
   document.getElementById('task-repo-input').value = defaultRepo;
   document.getElementById('task-status-input').value = 'Pending';
   document.getElementById('task-completion-input').value = '0';
@@ -107,6 +108,7 @@ function openEditTaskModal(taskId) {
     document.getElementById('task-priority-input').value = task.prioridad || 'Major';
     document.getElementById('task-milestone-input').value = task.milestone || 'M1';
     document.getElementById('task-topic-input').value = task.tema_principal || 'Programación / Engine';
+    document.getElementById('task-section-input').value = task.seccion || '';
     document.getElementById('task-repo-input').value = task.repository || '';
     let status = task.estado || 'Pending';
     if (status === '?') status = 'In Review';
@@ -168,6 +170,7 @@ async function handleCreateTask() {
   const priority = document.getElementById('task-priority-input').value;
   const milestone = document.getElementById('task-milestone-input').value;
   const topic = document.getElementById('task-topic-input').value;
+  const seccion = document.getElementById('task-section-input').value.trim();
   const repository = document.getElementById('task-repo-input').value || null;
   const status = document.getElementById('task-status-input').value;
   const completion = parseFloat(document.getElementById('task-completion-input').value) || 0;
@@ -193,6 +196,7 @@ async function handleCreateTask() {
     rama,
     task_type: taskType,
     tema_principal: topic,
+    seccion: seccion,
     repository: repository,
     prioridad: priority,
     milestone,
@@ -516,7 +520,7 @@ function closeLightbox() {
 
 
 function diffTasks(oldTask, newTask) {
-    const fields = ['title', 'descripcion', 'estado', 'prioridad', 'milestone', 'asignados', 'blocks', 'blocked_by', 'due_date', 'task_type', 'tags', 'completitud', 'repository'];
+    const fields = ['title', 'descripcion', 'estado', 'prioridad', 'milestone', 'asignados', 'blocks', 'blocked_by', 'due_date', 'task_type', 'tags', 'completitud', 'repository', 'seccion'];
     const changes = [];
     const timestamp = new Date().toISOString();
     const author = window.currentUser || 'Unknown';

@@ -1,15 +1,15 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-21T11:33:31.116Z",
+  "computed_at": "2026-06-21T12:55:21.271Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 41,
+    "total_tasks": 42,
     "total_ok": 12,
     "total_ko": 0,
     "total_uncertain": 8,
     "total_obsolete": 7,
-    "fixed_found_ratio": 0.2727,
-    "verified_ratio": 0.25
+    "fixed_found_ratio": 0.2667,
+    "verified_ratio": 0.2449
   },
   "group": {
     "velocity_trend": {
@@ -22,7 +22,7 @@
       "2026-W24": 2,
       "2026-W25": 1
     },
-    "bug_rate": 0.1379,
+    "bug_rate": 0.1333,
     "blocker_health": 1,
     "tag_heatmap": {
       "brainstorm": 1,
@@ -35,7 +35,7 @@
       "git": 1,
       "Infraestructura": 1,
       "api": 8,
-      "feature": 11,
+      "feature": 12,
       "jules": 1,
       "ux": 4,
       "frontend": 3,
@@ -45,11 +45,11 @@
       "backend": 2,
       "stability": 1,
       "UX/UI": 1,
-      "master": 11,
+      "master": 12,
       "menú": 1,
       "ux/ui": 1
     },
-    "milestone_tasks_remaining": 17,
+    "milestone_tasks_remaining": 18,
     "hall_of_fame_winners": {
       "mvp": {
         "handle": "axlfc",
@@ -238,8 +238,8 @@
         "feature/dashboard-chat-icon": 1
       },
       "tag_frequency": {
-        "onboarding": 1,
         "chore": 2,
+        "onboarding": 1,
         "UX/UI": 3,
         "feature": 5,
         "frontend": 4,
@@ -304,8 +304,8 @@
         "devops": 1,
         "feature": 3,
         "frontend": 3,
-        "onboarding": 1,
         "chore": 2,
+        "onboarding": 1,
         "UX/UI": 2,
         "ux": 3,
         "bug": 2,
@@ -359,8 +359,8 @@
         "devops": 1,
         "feature": 2,
         "frontend": 2,
-        "onboarding": 1,
         "chore": 2,
+        "onboarding": 1,
         "UX/UI": 1,
         "ux": 1,
         "docs": 1
@@ -409,8 +409,8 @@
         "devops": 1,
         "feature": 1,
         "frontend": 1,
-        "onboarding": 1,
-        "chore": 1
+        "chore": 1,
+        "onboarding": 1
       },
       "avg_completion_speed": {
         "days": 0.5,
@@ -526,7 +526,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-06-21T11:33:31.890Z"
+      "timestamp": "2026-06-21T12:55:22.086Z"
     }
   ]
 }

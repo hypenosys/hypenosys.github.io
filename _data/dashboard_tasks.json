@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T11:33:28.863Z",
+  "last_updated": "2026-06-21T12:55:19.128Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -220,9 +220,16 @@
           "field": "tags",
           "old_value": "[\"brainstorm\",\"chore\",\"design\",\"docs\"]",
           "new_value": "[\"brainstorm\",\"chore\",\"design\",\"docs\",\"topper\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:44:05.264Z",
+          "field": "seccion",
+          "new_value": "Videojuego"
         }
       ],
-      "repository": "hypenosys/docs"
+      "repository": "hypenosys/docs",
+      "seccion": "Videojuego"
     },
     {
       "rama": "research/ue5-fundamentals",
@@ -613,9 +620,16 @@
           "field": "title",
           "old_value": "upgrade 'app' to Unreal 5.7.4",
           "new_value": "upgrade 'app' to Unreal 5.8"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:43:56.450Z",
+          "field": "seccion",
+          "new_value": "App"
         }
       ],
-      "repository": "hypenosys/app"
+      "repository": "hypenosys/app",
+      "seccion": "App"
     },
     {
       "rama": "PRO",
@@ -650,8 +664,8 @@
       "estimated_hours": 1,
       "story_points": 1,
       "tags": [
-        "onboarding",
-        "chore"
+        "chore",
+        "onboarding"
       ],
       "external_links": [],
       "subtasks": [],
@@ -710,9 +724,16 @@
           "field": "prioridad",
           "old_value": "Medium",
           "new_value": "Minor"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:49:34.826Z",
+          "field": "seccion",
+          "new_value": "Dashboard"
         }
       ],
-      "repository": "hypenosys/hypenosys.github.io"
+      "repository": "hypenosys/hypenosys.github.io",
+      "seccion": "Dashboard"
     },
     {
       "rama": "PRO",
@@ -1186,9 +1207,16 @@
           "field": "estado",
           "old_value": "OK",
           "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:46:38.981Z",
+          "field": "seccion",
+          "new_value": "Dashboard"
         }
       ],
-      "id": 27
+      "id": 27,
+      "seccion": "Dashboard"
     },
     {
       "title": "Mobile first: Jules Panel - \"GitHub (Team) Ops\" — Hub completo de gestión de repositorios, conectado con Tasks Kanban y Claude",
@@ -1216,10 +1244,10 @@
       "estimated_hours": 4,
       "story_points": 1,
       "tags": [
-        "ux",
         "api",
+        "feature",
         "frontend",
-        "feature"
+        "ux"
       ],
       "external_links": [],
       "subtasks": [
@@ -1321,9 +1349,16 @@
           "field": "title",
           "old_value": "Mobile first: Upgrade Jules Panel with \"GitHub (Team) Ops\" — Hub completo de gestión de repositorios, conectado con Jules y Claude",
           "new_value": "Mobile first: Jules Panel - \"GitHub (Team) Ops\" — Hub completo de gestión de repositorios, conectado con Tasks Kanban y Claude"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:46:30.813Z",
+          "field": "seccion",
+          "new_value": "Jules Panel"
         }
       ],
-      "id": 28
+      "id": 28,
+      "seccion": "Jules Panel"
     },
     {
       "title": "BUG VISUAL: Jules Neural Operation en dashboard en móvil ",
@@ -1632,9 +1667,16 @@
           "field": "estado",
           "old_value": "Working",
           "new_value": "OK"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:46:45.729Z",
+          "field": "seccion",
+          "new_value": "Dashboard"
         }
       ],
-      "id": 32
+      "id": 32,
+      "seccion": "Dashboard"
     },
     {
       "title": "Crear README.md de hypenosys.github.io (Web)",
@@ -1764,9 +1806,16 @@
           "field": "estado",
           "old_value": "In Review",
           "new_value": "OK"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:50:19.308Z",
+          "field": "seccion",
+          "new_value": "Web"
         }
       ],
-      "id": 33
+      "id": 33,
+      "seccion": "Web"
     },
     {
       "title": "Integración SVN en Claude Neural Chat y Jules Panel (orquestación repositorios app, scripts y docs)",
@@ -1923,9 +1972,16 @@
           "field": "estado",
           "old_value": "In Review",
           "new_value": "OK"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:50:30.208Z",
+          "field": "seccion",
+          "new_value": "SVN Admin Panel"
         }
       ],
-      "id": 35
+      "id": 35,
+      "seccion": "SVN Admin Panel"
     },
     {
       "title": "n8n: Añadir NIM y cognito-agent como providers en la configuración de Claude Neural Chat",
@@ -2025,9 +2081,16 @@
           "field": "estado",
           "old_value": "ToDo",
           "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:44:14.567Z",
+          "field": "seccion",
+          "new_value": "Chat Neural"
         }
       ],
-      "id": 36
+      "id": 36,
+      "seccion": "Chat Neural"
     },
     {
       "title": "EDITAR ALIAS / CONFIG Arreglar edit aliases Lightbox en panel de Jules ",
@@ -2245,9 +2308,16 @@
           "field": "estado",
           "old_value": "In Review",
           "new_value": "OK"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:52:07.477Z",
+          "field": "seccion",
+          "new_value": "Image Gen"
         }
       ],
-      "id": 38
+      "id": 38,
+      "seccion": "Image Gen"
     },
     {
       "title": "Añadir hypenosys/scripts a SVN",
@@ -2341,9 +2411,16 @@
           "field": "completitud",
           "old_value": 0,
           "new_value": 0.5
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:46:21.831Z",
+          "field": "seccion",
+          "new_value": "SVN Admin Panel, App"
         }
       ],
-      "id": 39
+      "id": 39,
+      "seccion": "SVN Admin Panel, App"
     },
     {
       "title": "protección nsfw en las subidas a Tumblr y filtro is Cloudflare on por si peta la subida imágenes",
@@ -2557,9 +2634,16 @@
           "field": "estado",
           "old_value": "Working",
           "new_value": "ToDo"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:43:50.322Z",
+          "field": "seccion",
+          "new_value": "Dashboard"
         }
       ],
-      "id": 40
+      "id": 40,
+      "seccion": "Dashboard"
     },
     {
       "title": "Añadir icono de neural-chat al lado del robot en el menú del dashboard",
@@ -2632,9 +2716,16 @@
           "field": "estado",
           "old_value": "ToDo",
           "new_value": "OK"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:52:17.234Z",
+          "field": "seccion",
+          "new_value": "Dashboard"
         }
       ],
-      "id": 41
+      "id": 41,
+      "seccion": "Dashboard"
     },
     {
       "title": "Falta nombre del repo (o alias) en las cards en dashboard de Jules Neural Operations",
@@ -2721,9 +2812,16 @@
           "field": "estado",
           "old_value": "Working",
           "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:45:33.169Z",
+          "field": "seccion",
+          "new_value": "Dashboard, Jules Panel"
         }
       ],
-      "id": 42
+      "id": 42,
+      "seccion": "Dashboard, Jules Panel"
     },
     {
       "title": "Claude Neural: llamadas a apis js y python en n8n-runners",
@@ -2786,9 +2884,16 @@
           "field": "estado",
           "old_value": "Pending",
           "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:45:19.387Z",
+          "field": "seccion",
+          "new_value": "Chat Neural, Backend n8n"
         }
       ],
-      "id": 43
+      "id": 43,
+      "seccion": "Chat Neural, Backend n8n"
     },
     {
       "title": "Cognito-Agent en Claude Neural API desde n8n con ingestión en Qdrant + Kavita (UOC) + PSQL",
@@ -2889,9 +2994,16 @@
           "field": "prioridad",
           "old_value": "Major",
           "new_value": "Medium"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:44:24.899Z",
+          "field": "seccion",
+          "new_value": "Backend n8n"
         }
       ],
-      "id": 44
+      "id": 44,
+      "seccion": "Backend n8n"
     },
     {
       "id": 45,
@@ -2958,8 +3070,15 @@
           "field": "repository",
           "old_value": null,
           "new_value": "hypenosys/docs"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:43:42.289Z",
+          "field": "seccion",
+          "new_value": "Backend n8n"
         }
-      ]
+      ],
+      "seccion": "Backend n8n"
     },
     {
       "id": 46,
@@ -3032,8 +3151,15 @@
           "field": "prioridad",
           "old_value": "",
           "new_value": "Major"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:52:26.841Z",
+          "field": "seccion",
+          "new_value": "Web"
         }
-      ]
+      ],
+      "seccion": "Web"
     },
     {
       "id": 47,
@@ -3092,8 +3218,15 @@
           "field": "estado",
           "old_value": "Pending",
           "new_value": "OK"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:52:35.638Z",
+          "field": "seccion",
+          "new_value": "Jules Panel, Web"
         }
-      ]
+      ],
+      "seccion": "Jules Panel, Web"
     },
     {
       "id": 48,
@@ -3168,8 +3301,15 @@
           "field": "prioridad",
           "old_value": "",
           "new_value": "Major"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:44:32.295Z",
+          "field": "seccion",
+          "new_value": "Dashboard"
         }
-      ]
+      ],
+      "seccion": "Dashboard"
     },
     {
       "title": "Local AI Backend Docs: ComfyUI, Redis, PostgreSQL, Forgejo, Matrix, Qdrant, n8n, n8n-runner, ollama setup",
@@ -3236,9 +3376,16 @@
           "field": "asignados",
           "old_value": "[]",
           "new_value": "[\"javi26031994-a11y\",\"topperh4rley\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:49:46.080Z",
+          "field": "seccion",
+          "new_value": "Documentación"
         }
       ],
-      "id": 49
+      "id": 49,
+      "seccion": "Documentación"
     },
     {
       "title": "Install Penpot and Hermes Agent in ZimaBoard",
@@ -3436,9 +3583,16 @@
           "field": "estado",
           "old_value": "Working",
           "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:45:42.822Z",
+          "field": "seccion",
+          "new_value": "Dashboard"
         }
       ],
-      "id": 51
+      "id": 51,
+      "seccion": "Dashboard"
     },
     {
       "title": "Map local Obsidian Markdown Files Knowledge mocking a Vector Database so AI just can recover the needed text",
@@ -3516,9 +3670,16 @@
           "field": "estado",
           "old_value": "Pending",
           "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:44:48.668Z",
+          "field": "seccion",
+          "new_value": "Documentación Web"
         }
       ],
-      "id": 52
+      "id": 52,
+      "seccion": "Documentación Web"
     },
     {
       "title": "Arreglar subida a Tumblr de audios, video, image para music-gen y image y anim studio",
@@ -3568,9 +3729,23 @@
           "field": "title",
           "old_value": "Arreglar subida a Tumblr de audios para music-gen",
           "new_value": "Arreglar subida a Tumblr de audios, video, image para music-gen y image y anim studio"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:43:23.618Z",
+          "field": "seccion",
+          "new_value": "Music Gen, Image Gen"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:54:50.257Z",
+          "field": "seccion",
+          "old_value": "Music Gen, Image Gen",
+          "new_value": "Music Gen, Image Gen, Backend n8n"
         }
       ],
-      "id": 53
+      "id": 53,
+      "seccion": "Music Gen, Image Gen, Backend n8n"
     },
     {
       "title": "tarea de prueba",
@@ -3674,9 +3849,16 @@
           "field": "estado",
           "old_value": "Pending",
           "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:44:58.553Z",
+          "field": "seccion",
+          "new_value": "Chat Neural"
         }
       ],
-      "id": 55
+      "id": 55,
+      "seccion": "Chat Neural"
     },
     {
       "title": "sync python scripts with docs in /app",
@@ -3731,9 +3913,16 @@
           "field": "title",
           "old_value": "sync python scripts with docs",
           "new_value": "sync python scripts with docs in /app"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:45:05.529Z",
+          "field": "seccion",
+          "new_value": "App"
         }
       ],
-      "id": 56
+      "id": 56,
+      "seccion": "App"
     },
     {
       "title": "Añadir terminal física en 'comandos' cuando están logueados en github y SVN en repo-admin",
@@ -3776,9 +3965,23 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:43:04.693Z",
+          "field": "seccion",
+          "new_value": "SVN Admin Panel"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:55:18.397Z",
+          "field": "seccion",
+          "old_value": "SVN Admin Panel",
+          "new_value": "SVN Admin Panel, Comandos"
         }
       ],
-      "id": 57
+      "id": 57,
+      "seccion": "SVN Admin Panel, Comandos"
     },
     {
       "title": "arreglar jules panel kanban",
@@ -3888,9 +4091,16 @@
           "field": "prioridad",
           "old_value": "Major",
           "new_value": "Cosmetic"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:41:01.489Z",
+          "field": "seccion",
+          "new_value": "Dashboard"
         }
       ],
-      "id": 59
+      "id": 59,
+      "seccion": "Dashboard"
     },
     {
       "title": "DASHBOARD: Subida de imágenes al GUARDAR TAREA, no al subir la imagen",
@@ -3941,9 +4151,16 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:42:52.018Z",
+          "field": "seccion",
+          "new_value": "Dashboard"
         }
       ],
-      "id": 60
+      "id": 60,
+      "seccion": "Dashboard"
     },
     {
       "title": "DASHBOARD: Al expandir la card del kanban, si hay imagenes, debería mostrarlas ahi y poder previsualizarlas flawlessly",
@@ -3986,9 +4203,16 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:41:11.005Z",
+          "field": "seccion",
+          "new_value": "Dashboard"
         }
       ],
-      "id": 61
+      "id": 61,
+      "seccion": "Dashboard"
     },
     {
       "title": "JULES PANEL - /chat/neural/: Unificar menús en todas las páginas de la plataforma",
@@ -4056,9 +4280,16 @@
           "field": "prioridad",
           "old_value": "Major",
           "new_value": "Cosmetic"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:41:20.991Z",
+          "field": "seccion",
+          "new_value": "Jules Panel, Chat Neural"
         }
       ],
-      "id": 62
+      "id": 62,
+      "seccion": "Jules Panel, Chat Neural"
     },
     {
       "title": "/chat/neural/:  Arreglar desbordamiento en modelo ON",
@@ -4109,9 +4340,16 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:41:29.026Z",
+          "field": "seccion",
+          "new_value": "Chat Neural"
         }
       ],
-      "id": 63
+      "id": 63,
+      "seccion": "Chat Neural"
     },
     {
       "title": "Arreglar sesiones jules panel",
@@ -4207,12 +4445,250 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:41:37.108Z",
+          "field": "seccion",
+          "new_value": "Chat Neural"
         }
       ],
-      "id": 65
+      "id": 65,
+      "seccion": "Chat Neural"
+    },
+    {
+      "title": "Añadir botón de archivar en cards de columna COMPLETADO para mandar al archivo (cementerio de tareas)",
+      "descripcion": "Ha desaparecido el botón de archivar (mandar al cementerio) las tasks en COMPLETADO",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Dashboard",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Medium",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Axel",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-06-21",
+      "due_date": "2026-06-28",
+      "estimated_hours": 1,
+      "story_points": 1,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-21",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:48:14.131Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 66
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #57",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:55:19.128Z"
+    },
+    {
+      "action": "chore: actualizar tarea #53",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:54:50.971Z"
+    },
+    {
+      "action": "chore: actualizar tarea #47",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:52:36.019Z"
+    },
+    {
+      "action": "chore: actualizar tarea #46",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:52:27.347Z"
+    },
+    {
+      "action": "chore: actualizar tarea #41",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:52:18.011Z"
+    },
+    {
+      "action": "chore: actualizar tarea #38",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:52:08.209Z"
+    },
+    {
+      "action": "chore: actualizar tarea #35",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:50:30.744Z"
+    },
+    {
+      "action": "chore: actualizar tarea #33",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:50:20.062Z"
+    },
+    {
+      "action": "chore: actualizar tarea #49",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:49:46.806Z"
+    },
+    {
+      "action": "chore: actualizar tarea #12",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:49:35.552Z"
+    },
+    {
+      "action": "feat: nueva tarea #1782046094132 añadida",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:48:14.871Z"
+    },
+    {
+      "action": "chore: actualizar tarea #32",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:46:46.085Z"
+    },
+    {
+      "action": "chore: actualizar tarea #27",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:46:39.705Z"
+    },
+    {
+      "action": "chore: actualizar tarea #28",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:46:31.531Z"
+    },
+    {
+      "action": "chore: actualizar tarea #39",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:46:22.286Z"
+    },
+    {
+      "action": "chore: actualizar tarea #51",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:45:43.193Z"
+    },
+    {
+      "action": "chore: actualizar tarea #42",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:45:33.614Z"
+    },
+    {
+      "action": "chore: actualizar tarea #43",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:45:19.865Z"
+    },
+    {
+      "action": "chore: actualizar tarea #56",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:45:05.914Z"
+    },
+    {
+      "action": "chore: actualizar tarea #55",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:44:58.938Z"
+    },
+    {
+      "action": "chore: actualizar tarea #52",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:44:49.315Z"
+    },
+    {
+      "action": "chore: actualizar tarea #48",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:44:33.016Z"
+    },
+    {
+      "action": "chore: actualizar tarea #44",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:44:25.675Z"
+    },
+    {
+      "action": "chore: actualizar tarea #36",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:44:15.285Z"
+    },
+    {
+      "action": "chore: actualizar tarea #4",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:44:05.650Z"
+    },
+    {
+      "action": "chore: actualizar tarea #11",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:43:57.137Z"
+    },
+    {
+      "action": "chore: actualizar tarea #40",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:43:50.959Z"
+    },
+    {
+      "action": "chore: actualizar tarea #45",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:43:42.829Z"
+    },
+    {
+      "action": "chore: actualizar tarea #53",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:43:24.258Z"
+    },
+    {
+      "action": "chore: actualizar tarea #57",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:43:05.322Z"
+    },
+    {
+      "action": "chore: actualizar tarea #60",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:42:52.476Z"
+    },
+    {
+      "action": "chore: actualizar tarea #65",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:41:37.560Z"
+    },
+    {
+      "action": "chore: actualizar tarea #63",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:41:29.572Z"
+    },
+    {
+      "action": "chore: actualizar tarea #62",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:41:21.714Z"
+    },
+    {
+      "action": "chore: actualizar tarea #61",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:41:11.720Z"
+    },
+    {
+      "action": "chore: actualizar tarea #59",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:41:02.166Z"
+    },
+    {
+      "action": "chore: actualizar tarea #59",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:40:46.780Z"
+    },
     {
       "action": "chore: actualizar tarea #62",
       "user": "Axlfc",
