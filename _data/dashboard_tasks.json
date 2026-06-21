@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T12:44:33.016Z",
+  "last_updated": "2026-06-21T12:44:49.315Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3565,9 +3565,16 @@
           "field": "estado",
           "old_value": "Pending",
           "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:44:48.668Z",
+          "field": "seccion",
+          "new_value": "Documentación Web"
         }
       ],
-      "id": 52
+      "id": 52,
+      "seccion": "Documentación Web"
     },
     {
       "title": "Arreglar subida a Tumblr de audios, video, image para music-gen y image y anim studio",
@@ -4318,6 +4325,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #52",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:44:49.315Z"
+    },
     {
       "action": "chore: actualizar tarea #48",
       "user": "Axlfc",
