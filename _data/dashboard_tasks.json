@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T22:54:12.321Z",
+  "last_updated": "2026-06-21T22:55:47.249Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1717,7 +1717,7 @@
       "descripcion": "Configurar nuevos proveedores de IA en el ecosistema de n8n. Amplía las capacidades de procesamiento y automatización del Neural Chat.",
       "rama": "feature/n8n-providers-nim-agent",
       "task_type": "research",
-      "tema_principal": "Programación / Engine",
+      "tema_principal": "Tools / Automation",
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Medium",
       "milestone": "M2",
@@ -1725,11 +1725,17 @@
       "completitud": 0,
       "resuelto_por": "Axel",
       "detectado_por": "Axel",
-      "asignados": [],
-      "email_responsable": null,
-      "emails_asignados": [],
+      "asignados": [
+        "axlfc",
+        "topperh4rley"
+      ],
+      "email_responsable": "axel@hypenosys.com",
+      "emails_asignados": [
+        "alex@hypenosys.com",
+        "axel@hypenosys.com"
+      ],
       "start_date": "2026-06-22",
-      "due_date": "2026-06-28",
+      "due_date": "2026-07-05",
       "estimated_hours": 6,
       "story_points": null,
       "tags": [
@@ -1828,6 +1834,20 @@
           "field": "due_date",
           "old_value": null,
           "new_value": "2026-06-28"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T22:55:46.568Z",
+          "field": "asignados",
+          "old_value": "[]",
+          "new_value": "[\"axlfc\",\"topperh4rley\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T22:55:46.568Z",
+          "field": "due_date",
+          "old_value": "2026-06-28",
+          "new_value": "2026-07-05"
         }
       ],
       "id": 36,
@@ -4314,6 +4334,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #36",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T22:55:47.249Z"
+    },
     {
       "action": "chore: actualizar tarea #36",
       "user": "Axlfc",
