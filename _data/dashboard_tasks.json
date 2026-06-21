@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T12:45:19.865Z",
+  "last_updated": "2026-06-21T12:45:33.614Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2749,9 +2749,16 @@
           "field": "estado",
           "old_value": "Working",
           "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:45:33.169Z",
+          "field": "seccion",
+          "new_value": "Dashboard, Jules Panel"
         }
       ],
-      "id": 42
+      "id": 42,
+      "seccion": "Dashboard, Jules Panel"
     },
     {
       "title": "Claude Neural: llamadas a apis js y python en n8n-runners",
@@ -4346,6 +4353,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #42",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:45:33.614Z"
+    },
     {
       "action": "chore: actualizar tarea #43",
       "user": "Axlfc",
