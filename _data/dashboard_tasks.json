@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T12:45:43.193Z",
+  "last_updated": "2026-06-21T12:46:22.286Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2362,9 +2362,16 @@
           "field": "completitud",
           "old_value": 0,
           "new_value": 0.5
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:46:21.831Z",
+          "field": "seccion",
+          "new_value": "SVN Admin Panel, App"
         }
       ],
-      "id": 39
+      "id": 39,
+      "seccion": "SVN Admin Panel, App"
     },
     {
       "title": "protección nsfw en las subidas a Tumblr y filtro is Cloudflare on por si peta la subida imágenes",
@@ -4360,6 +4367,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #39",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:46:22.286Z"
+    },
     {
       "action": "chore: actualizar tarea #51",
       "user": "Axlfc",
