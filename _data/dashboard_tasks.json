@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T12:50:30.744Z",
+  "last_updated": "2026-06-21T12:52:08.208Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2308,9 +2308,16 @@
           "field": "estado",
           "old_value": "In Review",
           "new_value": "OK"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:52:07.477Z",
+          "field": "seccion",
+          "new_value": "Image Gen"
         }
       ],
-      "id": 38
+      "id": 38,
+      "seccion": "Image Gen"
     },
     {
       "title": "Añadir hypenosys/scripts a SVN",
@@ -4462,6 +4469,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #38",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:52:08.209Z"
+    },
     {
       "action": "chore: actualizar tarea #35",
       "user": "Axlfc",
