@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T12:43:42.829Z",
+  "last_updated": "2026-06-21T12:43:50.959Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2557,9 +2557,16 @@
           "field": "estado",
           "old_value": "Working",
           "new_value": "ToDo"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:43:50.322Z",
+          "field": "seccion",
+          "new_value": "Dashboard"
         }
       ],
-      "id": 40
+      "id": 40,
+      "seccion": "Dashboard"
     },
     {
       "title": "Añadir icono de neural-chat al lado del robot en el menú del dashboard",
@@ -4276,6 +4283,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #40",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:43:50.959Z"
+    },
     {
       "action": "chore: actualizar tarea #45",
       "user": "Axlfc",
