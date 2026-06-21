@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T11:08:53.471Z",
+  "last_updated": "2026-06-21T11:09:20.975Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3825,7 +3825,7 @@
       "task_type": "bug",
       "tema_principal": "Programación / Engine",
       "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Major",
+      "prioridad": "Cosmetic",
       "milestone": "M1",
       "estado": "Pending",
       "completitud": 0,
@@ -3874,6 +3874,13 @@
           "field": "title",
           "old_value": "DASHBOARD: Quitar sección vacía entre FILTRAR MIEMBROS y ",
           "new_value": "DASHBOARD: Quitar sección vacía entre FILTRAR MIEMBROS y ALERTAS DE RUTA CRÍTICAS ACTIVAS"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T11:09:20.562Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Cosmetic"
         }
       ],
       "id": 59
@@ -3925,6 +3932,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #59",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T11:09:20.975Z"
+    },
     {
       "action": "chore: actualizar tarea #59",
       "user": "Axlfc",
