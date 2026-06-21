@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T12:43:57.137Z",
+  "last_updated": "2026-06-21T12:44:05.650Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -220,9 +220,16 @@
           "field": "tags",
           "old_value": "[\"brainstorm\",\"chore\",\"design\",\"docs\"]",
           "new_value": "[\"brainstorm\",\"chore\",\"design\",\"docs\",\"topper\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:44:05.264Z",
+          "field": "seccion",
+          "new_value": "Videojuego"
         }
       ],
-      "repository": "hypenosys/docs"
+      "repository": "hypenosys/docs",
+      "seccion": "Videojuego"
     },
     {
       "rama": "research/ue5-fundamentals",
@@ -4290,6 +4297,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #4",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:44:05.650Z"
+    },
     {
       "action": "chore: actualizar tarea #11",
       "user": "Axlfc",
