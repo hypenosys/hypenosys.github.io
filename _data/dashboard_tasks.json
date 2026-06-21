@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T12:52:18.011Z",
+  "last_updated": "2026-06-21T12:52:27.347Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3151,8 +3151,15 @@
           "field": "prioridad",
           "old_value": "",
           "new_value": "Major"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:52:26.841Z",
+          "field": "seccion",
+          "new_value": "Web"
         }
-      ]
+      ],
+      "seccion": "Web"
     },
     {
       "id": 47,
@@ -4476,6 +4483,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #46",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:52:27.347Z"
+    },
     {
       "action": "chore: actualizar tarea #41",
       "user": "Axlfc",
