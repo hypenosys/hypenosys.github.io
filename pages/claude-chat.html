@@ -2446,49 +2446,34 @@ permalink: /chat/neural/
             if (currentSession && currentSession.messages[idx]) {
                 const text = currentSession.messages[idx].content;
 
-                const neuralActive = localStorage.getItem('hy_neural_active') === 'true';
-                const neuralSessionId = localStorage.getItem('hy_neural_session_id_' + currentSessionId);
-
-                if (neuralActive && neuralSessionId) {
-                    showToast('Enviando a sesión activa de Jules...');
-                    try {
-                        const targetId = neuralSessionId.startsWith('sessions/') ? neuralSessionId : 'sessions/' + neuralSessionId;
-                        const ok = await window.julesApi.sendMessage(targetId, text);
-                        if (ok) {
-                            showToast('Orden enviada con éxito');
-                            // Sync with Neural Thread
-                            let thread = JSON.parse(localStorage.getItem('hy_neural_thread') || '[]');
-                            thread.push({ role: 'assistant', content: text, source: 'claude' });
-                            localStorage.setItem('hy_neural_thread', JSON.stringify(thread));
-                            setTimeout(() => window.location.href = '/jules-panel/', 800);
-                        }
-                    } catch (e) {
-                        showToast('Error al enviar a Jules: ' + e.message);
-                    }
-                } else {
-                    // Add to thread state
-                    let thread = JSON.parse(localStorage.getItem('hy_neural_thread') || '[]');
-                    thread.push({ role: 'assistant', content: text, source: 'claude' });
-                    localStorage.setItem('hy_neural_thread', JSON.stringify(thread));
-
-                    localStorage.setItem('hy_neural_active', 'true');
-
-                    showToast('Abriendo Jules Panel...');
-                    const taskContext = localStorage.getItem('hy_neural_task_context');
-                    if (taskContext) {
-                        try {
-                            const task = JSON.parse(taskContext);
-                            localStorage.setItem('hy_jules_handoff', JSON.stringify({
-                                task: task,
-                                timestamp: Date.now(),
-                                source: 'claude-chat'
-                            }));
-                        } catch(e) {
-                            console.error('Error stringifying handoff task:', e);
-                        }
-                    }
-                    setTimeout(() => window.location.href = '/jules-panel/', 800);
+                // Build handoff data
+                const taskContext = localStorage.getItem('hy_neural_task_context');
+                let task = null;
+                if (taskContext) {
+                    try { task = JSON.parse(taskContext); } catch(e){}
                 }
+
+                const payload = {
+                    claude_response: text,
+                    user_note: "",
+                    session_context: `Claude Index Message #${idx}`,
+                    source_task: task || null,
+                    rama: task ? (task.rama || task.branch) : null,
+                    timestamp: new Date().toISOString()
+                };
+
+                localStorage.setItem('jules_task_payload', JSON.stringify(payload));
+
+                if (task) {
+                    localStorage.setItem('hy_jules_handoff', JSON.stringify({
+                        task: task,
+                        timestamp: Date.now(),
+                        source: 'claude-chat'
+                    }));
+                }
+
+                showToast('Redirigiendo a Jules Panel...');
+                setTimeout(() => window.location.href = '/jules-panel/', 800);
             }
         }
 

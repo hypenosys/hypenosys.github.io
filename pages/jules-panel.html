@@ -2327,35 +2327,167 @@ window.JulesPanelState = {
         } catch(e) { console.error("Initial dashboard refresh failed", e); }
 
         switchView(window.JulesPanelState.currentView || 'dashboard');
+        await handleUrlParams();
         checkClipboard();
-        handleUrlParams();
         startPolling();
     }
 
-    function prefillTaskFromHandoff(task) {
+    async function prefillTaskFromHandoff(task) {
         if (!task) return;
-        localStorage.setItem('hy_neural_active', 'true');
-        localStorage.setItem('hy_neural_task_context', JSON.stringify(task));
-        showToast("Contexto de tarea vinculado", "green");
 
-        // Immediate UI update
-        if ($('neural-session-banner')) {
-            $('neural-session-banner').classList.remove('hidden');
-            $('neural-banner-task').textContent = `Tarea #${task.id}: ${task.titulo || task.title}`;
+        // Determinar si hay una sesión activa vinculada
+        const claudeId = localStorage.getItem('hy_active_claude_session_id');
+        let linkedSid = null;
+        if (claudeId) {
+            linkedSid = localStorage.getItem('hy_neural_session_id_' + claudeId);
         }
-        showTaskContextInChat(task);
+        if (!linkedSid) linkedSid = localStorage.getItem('hy_neural_session_id');
 
-        // Add initial prompt to chat if empty
-        const input = $('v2-chat-input');
-        if (input && !input.value.trim()) {
-            input.value = `Hola Claude, analicemos esta tarea:\n\n📌 #${task.id}: ${task.titulo || task.title}\n${task.descripcion ? '📝 ' + task.descripcion : ''}\n\n¿Qué pasos me recomiendas para Jules?`;
-            input.dispatchEvent(new Event('input'));
+        let isSessionActive = false;
+        if (linkedSid) {
+            try {
+                const sessionData = await window.julesApi.getSession(linkedSid);
+                const terminalStates = ['COMPLETED', 'FAILED', 'CANCELLED', 'ERROR'];
+                if (sessionData && !terminalStates.includes(sessionData.state)) {
+                    isSessionActive = true;
+                }
+            } catch (e) {
+                console.warn("Error checking linked session status", e);
+            }
         }
 
-        switchView('chat');
+        const payloadStr = localStorage.getItem('jules_task_payload');
+        let formattedPrompt = "";
+        let payload = null;
+
+        if (payloadStr) {
+            try {
+                payload = JSON.parse(payloadStr);
+                if (payload.user_note) formattedPrompt += `[NOTA DEL USUARIO]\n${payload.user_note}\n\n`;
+                if (payload.session_context && typeof payload.session_context === 'string') {
+                    formattedPrompt += `[CONTEXTO NEURAL]\n${payload.session_context}\n\n`;
+                }
+                if (payload.claude_response) {
+                    formattedPrompt += `[RESPUESTA DE CLAUDE]\n${payload.claude_response}`;
+                }
+            } catch(e) { console.error("Error parsing payload", e); }
+        }
+
+        if (!formattedPrompt) {
+            formattedPrompt = `He vinculado esta tarea para su análisis técnico:\n\n📌 TAREA: #${task.id} - ${task.titulo || task.title}\n`;
+            if (task.descripcion) formattedPrompt += `📝 DESCRIPCIÓN: ${task.descripcion}\n`;
+            formattedPrompt += `\n¿Cómo podemos abordar esta tarea?`;
+        }
+
+        // Forzar Repo y Branch si vienen en el task o payload (Requirement 2C)
+        const targetRepo = task.repository || task.repo || (payload?.source_task?.repository || payload?.source_task?.repo);
+        const targetBranch = task.rama || task.branch || payload?.rama;
+
+        if (targetRepo) {
+            const source = (window.julesSourcesCache || []).find(src =>
+                src.name === targetRepo || src.name === `sources/github/${targetRepo}` || src.displayName === targetRepo
+            );
+            if (source) {
+                switchRepo(source.name, source);
+            } else if (targetRepo.includes('/')) {
+                const sourceName = targetRepo.startsWith('sources/') ? targetRepo : `sources/github/${targetRepo}`;
+                switchRepo(sourceName, { name: sourceName });
+            }
+        }
+
+        if (targetBranch) {
+            // Esperar a que las ramas terminen de cargar para decidir si inyectar la instrucción
+            const waitForBranches = () => {
+                return new Promise((resolve) => {
+                    let attempts = 0;
+                    const check = () => {
+                        const sel = $('branch-sel');
+                        if (sel && !sel.disabled && sel.options.length > 0) {
+                            const option = Array.from(sel.options).find(o => o.value === targetBranch);
+                            if (option) {
+                                sel.value = targetBranch;
+                                window.JulesPanelState.activeBranch = targetBranch;
+                                const sessCtx = $('sess-ctx');
+                                if(sessCtx) {
+                                    const repoLabel = $('repo-label').textContent;
+                                    sessCtx.textContent = `${repoLabel}: ${targetBranch}`;
+                                }
+                                addTel("SYSTEM", `Rama auto-ajustada a ${targetBranch} (Tarea #${task.id})`, "info");
+                                resolve(true);
+                            } else {
+                                resolve(false);
+                            }
+                        } else if (attempts < 20) {
+                            attempts++;
+                            setTimeout(check, 250);
+                        } else {
+                            resolve(false);
+                        }
+                    };
+                    check();
+                });
+            };
+
+            const exists = await waitForBranches();
+            if (!exists) {
+                 formattedPrompt = `Crea la branch ${targetBranch} a partir de main antes de empezar.\n\n` + formattedPrompt;
+                 addTel("SYSTEM", `Instrucción de creación de branch añadida al prompt`, "warn");
+            }
+        }
+
+        if (isSessionActive) {
+            // MODO ADITIVO
+            showToast("Enviando orden a sesión activa...", "amber");
+            try {
+                const targetId = linkedSid.startsWith('sessions/') ? linkedSid : 'sessions/' + linkedSid;
+                const ok = await window.julesApi.sendMessage(targetId, formattedPrompt);
+                if (ok) {
+                    showToast("Orden enviada con éxito", "green");
+                    addTel("USER", "Orden enviada vía Neural Link", "info");
+
+                    if (typeof chatV2Messages !== 'undefined') {
+                        chatV2Messages.push({ role: 'user', content: formattedPrompt });
+                        saveSessionsV2();
+                        renderChatV2Messages();
+                    }
+
+                    localStorage.setItem('hy_neural_active', 'true');
+                    localStorage.setItem('hy_neural_task_context', JSON.stringify(task));
+                    switchView('chat');
+                }
+            } catch (err) {
+                showToast("Error al enviar: " + err.message, "red");
+                isSessionActive = false;
+            }
+        }
+
+        if (!isSessionActive) {
+            // MODO INICIADOR
+            localStorage.setItem('hy_neural_active', 'true');
+            localStorage.setItem('hy_neural_task_context', JSON.stringify(task));
+
+            if ($('session-prompt')) {
+                $('session-prompt').value = formattedPrompt.trim();
+            }
+
+            if ($('neural-session-banner')) {
+                $('neural-session-banner').classList.remove('hidden');
+                $('neural-banner-task').textContent = `Tarea #${task.id}: ${task.titulo || task.title}`;
+            }
+            showTaskContextInChat(task);
+
+            showToast("Contexto cargado en Nueva Tarea", "green");
+            switchView('neural');
+        }
+
+        // Limpieza
+        localStorage.removeItem('jules_task_payload');
+        localStorage.removeItem('hy_jules_handoff');
+        localStorage.removeItem('jules_clipboard');
+        localStorage.removeItem('jules_linked_task_id');
     }
 
-    function handleUrlParams() {
+    async function handleUrlParams() {
         // 1. Check for localStorage handoff first (Precedence)
         const handoffRaw = localStorage.getItem('hy_jules_handoff');
         if (handoffRaw) {
@@ -2363,7 +2495,7 @@ window.JulesPanelState = {
                 const { task, timestamp } = JSON.parse(handoffRaw);
                 // Freshness check: 30 seconds
                 if (Date.now() - timestamp < 30000) {
-                    prefillTaskFromHandoff(task);
+                    await prefillTaskFromHandoff(task);
                     localStorage.removeItem('hy_jules_handoff');
                     return; // Handoff consumed, skip URL params
                 }
@@ -2389,7 +2521,7 @@ window.JulesPanelState = {
             }
 
             if (task) {
-                prefillTaskFromHandoff(task);
+                await prefillTaskFromHandoff(task);
                 // Cleanup URL
                 window.history.replaceState({}, document.title, window.location.pathname);
             }
@@ -2436,15 +2568,41 @@ window.JulesPanelState = {
     /* ─── REPO & BRANCH ─── */
     async function initializeRepoSelector() {
         try {
-            const githubRepos = await window.githubContext.getRepos();
-            const sources = githubRepos.map(r => ({
-                name: `sources/github/${r.full_name}`,
-                githubRepo: { owner: r.owner, repo: r.name },
-                displayName: r.name
-            }));
-            window.julesSourcesCache = sources;
-            renderRepos(sources);
-            populateContextSelector(sources);
+            const [githubRepos, julesSourcesRes] = await Promise.allSettled([
+                window.githubContext.getRepos(),
+                window.julesApi.getSources()
+            ]);
+
+            const repos = githubRepos.status === 'fulfilled' ? githubRepos.value : [];
+            const julesSources = julesSourcesRes.status === 'fulfilled' ? julesSourcesRes.value : [];
+
+            const combinedSources = repos.map(r => {
+                const sourceName = `sources/github/${r.full_name}`;
+                const julesSource = julesSources.find(s => s.name === sourceName || s.name === `sources/github-${r.owner}-${r.name}`);
+                return {
+                    name: julesSource ? julesSource.name : sourceName,
+                    githubRepo: { owner: r.owner, repo: r.name },
+                    displayName: r.name,
+                    isJulesInstalled: !!julesSource,
+                    isGitHub: true
+                };
+            });
+
+            // Añadir fuentes de Jules que no estén en la lista de GitHub (si las hay)
+            julesSources.forEach(js => {
+                if (!combinedSources.some(cs => cs.name === js.name)) {
+                    combinedSources.push({
+                        name: js.name,
+                        displayName: js.name.split('/').pop(),
+                        isJulesInstalled: true,
+                        isGitHub: false
+                    });
+                }
+            });
+
+            window.julesSourcesCache = combinedSources;
+            renderRepos(combinedSources);
+            populateContextSelector(combinedSources, julesSourcesRes.status === 'rejected');
         } catch (e) { console.error('[Jules] Repo init failed:', e); }
     }
 
@@ -2454,9 +2612,17 @@ window.JulesPanelState = {
         const current = window.JulesPanelState.activeRepo;
         sources.forEach(s => {
             const el = document.createElement('div');
-            el.className = `repo-item ${s.name === current ? 'selected' : ''}`;
-            el.innerHTML = `<span class="repo-dot"></span><span style="flex:1; overflow:hidden; text-overflow:ellipsis;">${s.displayName || s.name.split('/').pop()}</span>`;
-            el.onclick = () => switchRepo(s.name, s);
+            const isInstalled = s.isJulesInstalled;
+            el.className = `repo-item ${s.name === current ? 'selected' : ''} ${!isInstalled ? 'repo-disabled' : ''}`;
+            if (!isInstalled) {
+                el.title = "Jules App no instalada en este repositorio";
+                el.style.opacity = '0.5';
+                el.style.cursor = 'not-allowed';
+            }
+            el.innerHTML = `<span class="repo-dot"></span><span style="flex:1; overflow:hidden; text-overflow:ellipsis;">${s.displayName || s.name.split('/').pop()}</span>${!isInstalled ? '<i class="fas fa-lock" style="font-size:10px; opacity:0.5"></i>' : ''}`;
+            if (isInstalled) {
+                el.onclick = () => switchRepo(s.name, s);
+            }
             list.appendChild(el);
         });
     }
@@ -2509,18 +2675,51 @@ window.JulesPanelState = {
         finally { branchSelect.disabled = false; }
     }
 
-    async function populateContextSelector(sources) {
+    async function populateContextSelector(sources, apiFailed = false) {
         const menu = $('repo-menu'), container = $('repo-items-container'), trigger = $('repo-trigger'), label = $('repo-label'), searchInput = $('repo-search');
         function renderItems(filter = '') {
             container.innerHTML = '';
             const filtered = sources.filter(s => (s.displayName || s.name).toLowerCase().includes(filter.toLowerCase()));
             filtered.forEach(s => {
                 const item = document.createElement('div');
-                item.className = 'custom-dropdown-item';
-                item.innerHTML = `<span>${s.displayName || s.name.split('/').pop()}</span>`;
-                item.onclick = (e) => { e.stopPropagation(); label.textContent = s.displayName || s.name.split('/').pop(); switchRepo(s.name, s); menu.style.display = 'none'; };
+                const isInstalled = s.isJulesInstalled || apiFailed;
+                item.className = `custom-dropdown-item ${!isInstalled ? 'disabled' : ''}`;
+                if (!isInstalled) {
+                    item.style.opacity = '0.5';
+                    item.style.cursor = 'not-allowed';
+                    item.title = "Jules App no instalada";
+                }
+                item.innerHTML = `<span>${s.displayName || s.name.split('/').pop()}</span> ${!isInstalled ? '<i class="fas fa-lock" style="font-size:10px; float:right; margin-top:3px"></i>' : ''}`;
+                if (isInstalled) {
+                    item.onclick = (e) => { e.stopPropagation(); label.textContent = s.displayName || s.name.split('/').pop(); switchRepo(s.name, s); menu.style.display = 'none'; };
+                }
                 container.appendChild(item);
             });
+
+            // Input manual como fallback (Requirement 2B)
+            const manualDiv = document.createElement('div');
+            manualDiv.style.padding = '8px';
+            manualDiv.style.borderTop = '1px solid var(--border)';
+            manualDiv.innerHTML = `
+                <div style="font-size:9px; color:var(--text3); text-transform:uppercase; margin-bottom:5px">Entrada Manual</div>
+                <div style="display:flex; gap:5px">
+                    <input type="text" id="manual-repo-in" class="cfg-input" style="font-size:11px; height:28px" placeholder="sources/github/owner/repo">
+                    <button id="manual-repo-btn" class="btn btn-primary btn-sm" style="height:28px; padding:0 8px"><i class="fas fa-plus"></i></button>
+                </div>
+            `;
+            container.appendChild(manualDiv);
+            const mIn = manualDiv.querySelector('#manual-repo-in');
+            const mBtn = manualDiv.querySelector('#manual-repo-btn');
+            mBtn.onclick = (e) => {
+                e.stopPropagation();
+                const val = mIn.value.trim();
+                if (val) {
+                    switchRepo(val, { name: val, isJulesInstalled: true });
+                    label.textContent = val.split('/').pop();
+                    menu.style.display = 'none';
+                }
+            };
+            mIn.onclick = (e) => e.stopPropagation();
         }
         if(trigger) trigger.onclick = (e) => { e.stopPropagation(); menu.style.display = menu.style.display === 'block' ? 'none' : 'block'; };
         if(searchInput) searchInput.oninput = (e) => renderItems(e.target.value);
@@ -3252,11 +3451,13 @@ window.JulesPanelState = {
         try {
             const body = { prompt, sourceContext: { source, githubRepoContext: { startingBranch: branch } } };
 
-            // Si Modo Automático está activo, nos aseguramos de que requirePlanApproval sea false
+            // Si Modo Automático está activo, usamos automationMode: "AUTO_CREATE_PR"
             if ($('opt-auto').classList.contains('active')) {
                 body.requirePlanApproval = false;
+                body.automationMode = "AUTO_CREATE_PR";
             } else if ($('opt-review').classList.contains('active')) {
                 body.requirePlanApproval = true;
+                // No enviamos automationMode para que requiera aprobación manual de plan
             }
 
             const res = await window.julesApi.createSession(body);
@@ -4108,24 +4309,11 @@ window.JulesPanelState = {
                     ${m.thinking ? `<div class="thinking-block">${escapeHtml(m.thinking)}</div>` : ''}
                     ${marked.parse(m.content)}
                 </div>
-                ${m.role === 'assistant' ? `
-                    <button onclick="copyToJulesPrompt(${idx})" style="margin-top: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--accent2); font-size: 10px; padding: 4px 8px; border-radius: 4px; cursor: pointer;">
-                        📥 USAR COMO PROMPT
-                    </button>
-                ` : ''}
             </div>`;
         }).join('');
         container.scrollTop = container.scrollHeight;
     }
 
-    window.copyToJulesPrompt = (idx) => {
-        const msg = chatV2Messages[idx];
-        if (msg && msg.role === 'assistant') {
-            $('session-prompt').value = msg.content;
-            showToast("Prompt copiado a la sección Neural", "green");
-            switchView('neural');
-        }
-    };
 
     /* ─── JULES HISTORY PORTED LOGIC ─── */
     function getIdSafe(name) {
