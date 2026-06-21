@@ -2758,7 +2758,7 @@ window.JulesPanelState = {
                 }, "chore: limpieza automática de archivo global (estados terminales o cambiados)");
             }
 
-            const archive = JSON.parse(localStorage.getItem('jules_internal_archive') || '{}');
+            const localArchive = JSON.parse(localStorage.getItem('jules_internal_archive') || '{}');
 
             // 1. Terminal State Cleanup: If real state is already terminal, clear archive entry
             ['done', 'error'].forEach(colId => {
@@ -2767,7 +2767,7 @@ window.JulesPanelState = {
                     const taskIdMatch = (s.title || s.prompt || '').match(/#(\d+)/);
                     const taskId = taskIdMatch ? taskIdMatch[1] : null;
                     const archiveId = taskId || sid;
-                    if (archive[archiveId]) delete archive[archiveId];
+                    if (localArchive[archiveId]) delete localArchive[archiveId];
                 });
             });
 
@@ -2779,11 +2779,11 @@ window.JulesPanelState = {
                     const taskId = taskIdMatch ? taskIdMatch[1] : null;
                     const archiveId = taskId || sid;
 
-                    const entry = archive[archiveId];
+                    const entry = localArchive[archiveId];
                     if (entry) {
                         // Conflict check: if real status changed (e.g. Pending -> Working), invalidate local archive
                         if (s.state !== entry.realState) {
-                            delete archive[archiveId];
+                            delete localArchive[archiveId];
                             return true;
                         }
                         // Move to internal target
@@ -2793,7 +2793,7 @@ window.JulesPanelState = {
                     return true;
                 });
             });
-            localStorage.setItem('jules_internal_archive', JSON.stringify(archive));
+            localStorage.setItem('jules_internal_archive', JSON.stringify(localArchive));
 
             Object.keys(colItems).forEach(colId => {
                 const colEl = $(`kb-${colId}`), countEl = $(`kb-count-${colId}`), mCountEl = $(`m-count-${colId}`);
@@ -2814,7 +2814,7 @@ window.JulesPanelState = {
                     const taskId = taskIdMatch ? taskIdMatch[1] : null;
                     const archiveId = taskId || sid;
 
-                    const isArchived = archive[archiveId] !== undefined;
+                    const isArchived = localArchive[archiveId] !== undefined;
                     const repo = s.sourceContext?.source?.split('/').pop() || '---';
                     const canDrag = (colId === 'pending' || colId === 'running') && !isArchived;
 
