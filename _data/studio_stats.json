@@ -1,13 +1,13 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-21T10:34:47.284Z",
+  "computed_at": "2026-06-21T10:45:25.844Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 35,
+    "total_tasks": 34,
     "total_ok": 6,
     "total_ko": 0,
     "total_uncertain": 12,
-    "total_obsolete": 6,
+    "total_obsolete": 7,
     "fixed_found_ratio": 0.1622,
     "verified_ratio": 0.1463
   },
@@ -22,11 +22,11 @@
       "2026-W24": 0,
       "2026-W25": 1
     },
-    "bug_rate": 0.0345,
+    "bug_rate": 0.0357,
     "blocker_health": 3,
     "tag_heatmap": {
       "devops": 7,
-      "feature": 13,
+      "feature": 12,
       "frontend": 5,
       "brainstorm": 1,
       "chore": 10,
@@ -50,10 +50,10 @@
       "backend": 2,
       "refactor": 2,
       "stability": 1,
-      "master": 6,
-      "UX/UI": 1
+      "UX/UI": 1,
+      "master": 5
     },
-    "milestone_tasks_remaining": 16,
+    "milestone_tasks_remaining": 15,
     "hall_of_fame_winners": {
       "mvp": {
         "handle": "axlfc",
@@ -195,7 +195,7 @@
         "reprioritizations": 23
       },
       "workload": {
-        "active_tasks": 19,
+        "active_tasks": 18,
         "story_points": 38
       }
     },
@@ -499,7 +499,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-06-21T10:34:48.093Z"
+      "timestamp": "2026-06-21T10:45:26.567Z"
     }
   ]
 }
