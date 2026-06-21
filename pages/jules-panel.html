@@ -3539,7 +3539,16 @@ window.JulesPanelState = {
             }
 
             $('session-prompt').value = ''; await refreshDashboard();
-        } catch (e) { showToast(e.message || "Error al lanzar sesión", "red"); }
+        } catch (e) {
+            console.error("[Jules Debug] Error en createSession:", e);
+            const errorInfo = {
+                message: e.message,
+                status: e.httpStatus,
+                details: e.fullDetails
+            };
+            addTel("SYSTEM", JSON.stringify(errorInfo), "error");
+            showToast(e.message || "Error al lanzar sesión", "red");
+        }
         finally {
             btn.disabled = false;
             textarea.disabled = false;
