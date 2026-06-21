@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T12:44:25.675Z",
+  "last_updated": "2026-06-21T12:44:33.016Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3210,8 +3210,15 @@
           "field": "prioridad",
           "old_value": "",
           "new_value": "Major"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:44:32.295Z",
+          "field": "seccion",
+          "new_value": "Dashboard"
         }
-      ]
+      ],
+      "seccion": "Dashboard"
     },
     {
       "title": "Local AI Backend Docs: ComfyUI, Redis, PostgreSQL, Forgejo, Matrix, Qdrant, n8n, n8n-runner, ollama setup",
@@ -4311,6 +4318,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #48",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:44:33.016Z"
+    },
     {
       "action": "chore: actualizar tarea #44",
       "user": "Axlfc",
