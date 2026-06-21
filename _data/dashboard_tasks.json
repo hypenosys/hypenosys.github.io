@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T15:33:44.628Z",
-  "last_updated_by": "Axlfc",
+  "last_updated": "2026-06-21T17:06:13.596Z",
+  "last_updated_by": "Axel",
   "tasks": [
     {
       "id": 1,
@@ -4151,9 +4151,60 @@
         }
       ],
       "id": 66
+    },
+    {
+      "title": "Reducir latencia y tiempos de carga",
+      "descripcion": "Tarda demasiado, no debería tardar tanto en cargar datos que son prácticamente estáticos. El dashboard y en el panel de Jules el propio dashboard del panel de Jules deben cargar en muy poco.",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Dashboard, Jules Panel",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-21",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T17:06:12.883Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 67
     }
   ],
   "_audit_log": [
+    {
+      "action": "feat: nueva tarea #1782061572883 añadida",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T17:06:13.596Z"
+    },
     {
       "action": "chore: actualizar tarea #59",
       "user": "Axlfc",
