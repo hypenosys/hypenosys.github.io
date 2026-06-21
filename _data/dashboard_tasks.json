@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T12:45:33.614Z",
+  "last_updated": "2026-06-21T12:45:43.193Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3499,9 +3499,16 @@
           "field": "estado",
           "old_value": "Working",
           "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:45:42.822Z",
+          "field": "seccion",
+          "new_value": "Dashboard"
         }
       ],
-      "id": 51
+      "id": 51,
+      "seccion": "Dashboard"
     },
     {
       "title": "Map local Obsidian Markdown Files Knowledge mocking a Vector Database so AI just can recover the needed text",
@@ -4353,6 +4360,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #51",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:45:43.193Z"
+    },
     {
       "action": "chore: actualizar tarea #42",
       "user": "Axlfc",
