@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T12:44:05.650Z",
+  "last_updated": "2026-06-21T12:44:15.285Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2039,9 +2039,16 @@
           "field": "estado",
           "old_value": "ToDo",
           "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:44:14.567Z",
+          "field": "seccion",
+          "new_value": "Chat Neural"
         }
       ],
-      "id": 36
+      "id": 36,
+      "seccion": "Chat Neural"
     },
     {
       "title": "EDITAR ALIAS / CONFIG Arreglar edit aliases Lightbox en panel de Jules ",
@@ -4297,6 +4304,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #36",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:44:15.285Z"
+    },
     {
       "action": "chore: actualizar tarea #4",
       "user": "Axlfc",
