@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T11:20:34.271Z",
-  "last_updated_by": "Sistema",
+  "last_updated": "2026-06-21T11:21:15.038Z",
+  "last_updated_by": "Axel",
   "tasks": [
     {
       "id": 1,
@@ -3989,9 +3989,70 @@
         }
       ],
       "id": 61
+    },
+    {
+      "title": "JULES PANEL: Unificar menús en todas las páginas de la plataforma",
+      "descripcion": "Actualmente en cada página cada menú es hijo de su padre.\nAñadir botón en el icono de usuario del jules panel para abrirse lo de 'Mi Perfil', 'Configuración API', 'Ajustes Avanzados', 'Cerrar sesión' en Jules Panel etc.",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Axel",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "ux/ui",
+        "menú"
+      ],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [
+        {
+          "url": "https://64.media.tumblr.com/f9925a42fc2adb24137550bc0d84dbc9/741b536a55b97ace-65/s1280x1920/75c352dc16cb1bbb6876ceefd5574d00b548652c.jpg",
+          "type": "url",
+          "tumblr_post_id": "820029148159475712",
+          "filename": "8669.jpg",
+          "uploaded_at": "2026-06-21T11:18:57.781Z"
+        }
+      ],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-21",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T11:21:14.577Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 62
     }
   ],
   "_audit_log": [
+    {
+      "action": "feat: nueva tarea #1782040874577 añadida",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T11:21:15.038Z"
+    },
     {
       "action": "chore: actualizar estado tarea #11 → Pending",
       "user": "TopperH4rley",
