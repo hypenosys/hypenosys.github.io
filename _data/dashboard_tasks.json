@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T15:03:54.642Z",
+  "last_updated": "2026-06-21T15:04:05.003Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3743,7 +3743,7 @@
       "seccion": "Dashboard"
     },
     {
-      "title": "DASHBOARD: Al expandir la card del kanban, si hay imagenes, debería mostrarlas ahi y poder previsualizarlas flawlessly",
+      "title": "Al expandir la card del kanban, si hay imagenes, debería mostrarlas ahi y poder previsualizarlas flawlessly",
       "descripcion": "",
       "rama": "master",
       "task_type": "feature",
@@ -3789,6 +3789,13 @@
           "timestamp": "2026-06-21T12:41:11.005Z",
           "field": "seccion",
           "new_value": "Dashboard"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T15:04:04.222Z",
+          "field": "title",
+          "old_value": "DASHBOARD: Al expandir la card del kanban, si hay imagenes, debería mostrarlas ahi y poder previsualizarlas flawlessly",
+          "new_value": "Al expandir la card del kanban, si hay imagenes, debería mostrarlas ahi y poder previsualizarlas flawlessly"
         }
       ],
       "id": 61,
@@ -4119,6 +4126,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #61",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T15:04:05.003Z"
+    },
     {
       "action": "chore: actualizar tarea #66",
       "user": "Axlfc",
