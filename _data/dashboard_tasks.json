@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T11:32:57.522Z",
-  "last_updated_by": "Axel",
+  "last_updated": "2026-06-21T11:33:28.863Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -3991,13 +3991,13 @@
       "id": 61
     },
     {
-      "title": "JULES PANEL: Unificar menús en todas las páginas de la plataforma",
+      "title": "JULES PANEL - /chat/neural/: Unificar menús en todas las páginas de la plataforma",
       "descripcion": "Actualmente en cada página cada menú es hijo de su padre.\nAñadir botón en el icono de usuario del jules panel para abrirse lo de 'Mi Perfil', 'Configuración API', 'Ajustes Avanzados', 'Cerrar sesión' en Jules Panel etc.",
       "rama": "master",
       "task_type": "feature",
       "tema_principal": "Programación / Engine",
       "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Major",
+      "prioridad": "Cosmetic",
       "milestone": "M1",
       "estado": "Pending",
       "completitud": 0,
@@ -4011,8 +4011,8 @@
       "estimated_hours": null,
       "story_points": null,
       "tags": [
-        "ux/ui",
-        "menú"
+        "menú",
+        "ux/ui"
       ],
       "external_links": [],
       "subtasks": [],
@@ -4042,6 +4042,20 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T11:33:28.272Z",
+          "field": "title",
+          "old_value": "JULES PANEL: Unificar menús en todas las páginas de la plataforma",
+          "new_value": "JULES PANEL - /chat/neural/: Unificar menús en todas las páginas de la plataforma"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T11:33:28.272Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Cosmetic"
         }
       ],
       "id": 62
@@ -4199,6 +4213,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #62",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T11:33:28.863Z"
+    },
     {
       "action": "feat: nueva tarea #1782041576778 añadida",
       "user": "Axlfc",
