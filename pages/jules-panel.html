@@ -877,9 +877,9 @@ body{
 }
 .message-jules {
     align-self: flex-start;
-    background: rgba(124, 58, 237, 0.08);
+    background: #1a1b26;
     border-radius: 18px 18px 18px 4px;
-    border: 1px dashed var(--border-accent);
+    border: 1px solid #44475a;
     padding: 14px 18px;
     max-width: 85%;
     margin-right: 20%;
@@ -2110,10 +2110,26 @@ body{
     // Initialize BroadcastChannel for Neural Context Sync
     window.neuralSyncChannel = new BroadcastChannel('neural-context-sync');
     window.neuralSyncChannel.onmessage = (event) => {
-        const { type, sessionId, data } = event.data;
-        if (type === 'SYNC_CONTEXT' && sessionId === getLinkedJulesSessionId()) {
-            chatV2Messages = data.messages || [];
-            renderChatV2Messages();
+        const { type, sessionId, data, message } = event.data;
+        const currentSid = getLinkedJulesSessionId();
+
+        if (type === 'SYNC_CONTEXT' && sessionId === currentSid) {
+            if (message) {
+                // Single message sync
+                const exists = chatV2Messages.some(m =>
+                    m.content === message.content && m.role === message.role
+                );
+                if (!exists) {
+                    chatV2Messages.push(message);
+                    saveSessionsV2(true); // Save without re-emitting
+                    renderChatV2Messages();
+                }
+            } else if (data && data.messages) {
+                // Full history sync (fallback)
+                chatV2Messages = data.messages;
+                saveSessionsV2(true);
+                renderChatV2Messages();
+            }
         }
     };
 
@@ -3815,7 +3831,7 @@ window.JulesPanelState = {
     /* ─── NEURAL CHAT V2 LOGIC ─── */
     let chatV2Messages = [];
 
-    function saveSessionsV2() {
+    function saveSessionsV2(skipSync = false) {
         try {
             const sessionId = getLinkedJulesSessionId();
             if (sessionId) {
@@ -3825,12 +3841,13 @@ window.JulesPanelState = {
                 };
                 localStorage.setItem(`hy_neural_context_${sessionId}`, JSON.stringify(sessionData));
 
-                // Sync via BroadcastChannel
-                if (window.neuralSyncChannel) {
+                // Sync via BroadcastChannel (only last message)
+                if (window.neuralSyncChannel && !skipSync && chatV2Messages.length > 0) {
+                    const lastMsg = chatV2Messages[chatV2Messages.length - 1];
                     window.neuralSyncChannel.postMessage({
                         type: 'SYNC_CONTEXT',
                         sessionId: sessionId,
-                        data: sessionData
+                        message: lastMsg
                     });
                 }
             }
@@ -4351,13 +4368,28 @@ window.JulesPanelState = {
             if (m.role === 'system') {
                 return `<div class="message-system">${m.content}</div>`;
             }
-            let label = 'CLAUDE NEURAL';
-            if (m.role === 'user') label = 'DESARROLLADOR';
-            if (m.role === 'jules') label = 'JULES ACTIVITY';
+
+            let label = 'CLAUDE';
+            let roleClass = 'message-claude';
+            let labelColor = '#bd93f9';
+
+            if (m.role === 'user') {
+                label = 'USER';
+                roleClass = 'message-user';
+                labelColor = '#f8f8f2';
+            } else if (m.role === 'jules') {
+                label = 'JULES';
+                roleClass = 'message-jules';
+                labelColor = '#6272a4';
+            } else if (m.role === 'assistant') {
+                label = 'CLAUDE';
+                roleClass = 'message-claude';
+                labelColor = '#bd93f9';
+            }
 
             return `
-            <div class="message-${m.role}">
-                <div style="font-size: 10px; font-weight: 800; opacity: 0.5; margin-bottom: 8px; letter-spacing: 0.05em; color: ${m.role === 'jules' ? 'var(--accent2)' : 'inherit'}">
+            <div class="${roleClass}">
+                <div style="font-size: 10px; font-weight: 800; opacity: 0.7; margin-bottom: 8px; letter-spacing: 0.05em; color: ${labelColor}">
                     ${label}
                 </div>
                 <div class="prose-invert" style="font-size: 13.5px; line-height: 1.6;">
@@ -4872,26 +4904,31 @@ window.JulesPanelState = {
         let contextForClaude = "";
 
         sortedEntries.forEach((act, idx) => {
-            const separator = `\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-            const header = `[MENSAJE DE JULES #${idx + 1}]\n`;
+            let activityType = "Actividad";
+            if (act.userMessaged) activityType = "Mensaje del Usuario";
+            else if (act.agentMessaged) activityType = "Mensaje de Jules";
+            else if (act.progressUpdated) activityType = `Progreso: ${act.progressUpdated.title}`;
+            else if (act.planGenerated) activityType = "Plan Generado";
+            else if (act.sessionCompleted) activityType = "Sesión Completada";
+            else if (act.sessionFailed) activityType = "Sesión Fallida";
+            else if (act.description) activityType = act.description;
+
+            const separator = `\n--- Actividad: ${activityType} ---\n`;
             let content = "";
 
             if (act.userMessaged) {
-                content += `USUARIO: ${act.userMessaged.userMessage}\n`;
+                content += `${act.userMessaged.userMessage}\n`;
             } else if (act.agentMessaged) {
-                content += `JULES: ${act.agentMessaged.agentMessage}\n`;
+                content += `${act.agentMessaged.agentMessage}\n`;
             } else if (act.progressUpdated) {
-                content += `PROGRESO: ${act.progressUpdated.title}\n`;
-                if (act.progressUpdated.description) content += `DETALLE: ${act.progressUpdated.description}\n`;
+                if (act.progressUpdated.description) content += `${act.progressUpdated.description}\n`;
             } else if (act.planGenerated) {
                 const steps = act.planGenerated.plan?.steps || [];
-                content += `PLAN GENERADO:\n${steps.map(s => `${(s.index || 0) + 1}. ${s.title}: ${s.description || ''}`).join('\n')}\n`;
+                content += `PASOS:\n${steps.map(s => `${(s.index || 0) + 1}. ${s.title}: ${s.description || ''}`).join('\n')}\n`;
             } else if (act.sessionCompleted) {
-                content += `SESIÓN COMPLETADA. Commit: ${act.sessionCompleted.commitMessage || '---'}\n`;
+                content += `Commit: ${act.sessionCompleted.commitMessage || '---'}\n`;
             } else if (act.sessionFailed) {
-                content += `SESIÓN FALLIDA. Razón: ${act.sessionFailed.reason || 'Desconocida'}\n`;
-            } else if (act.description) {
-                content += `ACTIVIDAD: ${act.description}\n`;
+                content += `Razón: ${act.sessionFailed.reason || 'Desconocida'}\n`;
             }
 
             if (act.artifacts) {
@@ -4906,7 +4943,7 @@ window.JulesPanelState = {
             }
 
             if (content) {
-                contextForClaude += separator + header + content;
+                contextForClaude += separator + content;
             }
         });
 
@@ -4917,6 +4954,7 @@ window.JulesPanelState = {
             role: 'jules',
             content: contextForClaude
         });
+        saveSessionsV2(); // Emit the context
 
         // Append the actual question to Claude
         chatV2Messages.push({
@@ -4924,7 +4962,7 @@ window.JulesPanelState = {
             content: prompt + "\n¿Qué opinas de estos cambios o estados de Jules seleccionados arriba? ¿Hay algo que deba ajustar o corregir?"
         });
 
-        saveSessionsV2();
+        saveSessionsV2(); // Emit the actual user question
         renderChatV2Messages();
         switchView('chat');
         clearHistorySelection();

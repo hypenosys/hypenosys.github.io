@@ -1306,6 +1306,28 @@ permalink: /chat/neural/
         }));
         localStorage.setItem('claude_chat_sessions', JSON.stringify(sessions));
 
+        // Initialize BroadcastChannel for Neural Context Sync
+        window.neuralSyncChannel = new BroadcastChannel('neural-context-sync');
+        window.neuralSyncChannel.onmessage = (event) => {
+            const { type, sessionId, message } = event.data;
+            if (type === 'SYNC_CONTEXT' && message) {
+                const linkedSid = localStorage.getItem('hy_neural_session_id_' + currentSessionId);
+                if (sessionId === linkedSid) {
+                    const currentSession = sessions.find(s => s.id === currentSessionId);
+                    if (currentSession) {
+                        const exists = currentSession.messages.some(m =>
+                            m.content === message.content && m.role === message.role
+                        );
+                        if (!exists) {
+                            currentSession.messages.push(message);
+                            saveSessions(true); // Don't re-emit
+                            renderMessages();
+                        }
+                    }
+                }
+            }
+        };
+
         // UI Elements
         const chatMessages = document.getElementById('chat-messages');
         const chatInput = document.getElementById('chat-input');
@@ -2154,7 +2176,7 @@ permalink: /chat/neural/
             renderSessionList();
         }
 
-        function saveSessions() {
+        function saveSessions(skipSync = false) {
             try {
                 // Deduplicate sessions by ID before saving to prevent double-entries
                 const uniqueSessions = [];
@@ -2181,6 +2203,22 @@ permalink: /chat/neural/
                     status: 'active'
                 }));
                 localStorage.setItem('hy_neural_sessions', JSON.stringify(neuralSessions));
+
+                // Sync via BroadcastChannel (only last message)
+                if (window.neuralSyncChannel && !skipSync && currentSessionId) {
+                    const linkedSid = localStorage.getItem('hy_neural_session_id_' + currentSessionId);
+                    if (linkedSid) {
+                        const currentSession = sessions.find(s => s.id === currentSessionId);
+                        if (currentSession && currentSession.messages.length > 0) {
+                            const lastMsg = currentSession.messages[currentSession.messages.length - 1];
+                            window.neuralSyncChannel.postMessage({
+                                type: 'SYNC_CONTEXT',
+                                sessionId: linkedSid,
+                                message: lastMsg
+                            });
+                        }
+                    }
+                }
             } catch (e) {
                 console.error('Error saving sessions:', e);
             }
@@ -2408,10 +2446,10 @@ permalink: /chat/neural/
                 let reasoningHtml = '';
 
                 const isUser = m.role === 'user';
-                const isJules = m.source === 'jules' || m.role === 'agent';
-                const label = isUser ? 'NEURAL LINK: USER' : (isJules ? 'NEURAL LINK: JULES' : 'NEURAL LINK: CLAUDE');
-                const labelColor = isUser ? 'text-[#8be9fd]' : (isJules ? 'text-[#50fa7b]' : 'text-[#bd93f9]');
-                const bubbleClass = isUser ? 'message-user' : (isJules ? 'message-claude border-[#50fa7b] border-2 shadow-[0_0_15px_rgba(80,250,123,0.2)]' : 'message-claude shadow-xl');
+                const isJules = m.source === 'jules' || m.role === 'agent' || m.role === 'jules';
+                const label = isUser ? 'USER' : (isJules ? 'JULES' : 'CLAUDE');
+                const labelColor = isUser ? 'text-[#f8f8f2]' : (isJules ? 'text-[#6272a4]' : 'text-[#bd93f9]');
+                const bubbleClass = isUser ? 'message-user' : (isJules ? 'message-claude border-[#44475a] border shadow-none bg-[#1a1b26]' : 'message-claude shadow-xl');
 
                 // Handle <think> blocks for Reasoning
                 if (content && typeof content === 'string' && content.includes('<think>')) {
@@ -3203,7 +3241,7 @@ permalink: /chat/neural/
             msgDiv.className = 'flex justify-start group mb-4';
             msgDiv.innerHTML = `
                 <div class="max-w-[85%] p-4 message-claude shadow-xl relative message-bubble">
-                    <div class="text-[10px] font-black tracking-widest uppercase mb-2 text-[#bd93f9] opacity-70">NEURAL LINK: CLAUDE</div>
+                    <div class="text-[10px] font-black tracking-widest uppercase mb-2 text-[#bd93f9] opacity-70">CLAUDE</div>
                     <div id="thinking-block" class="thinking-block hidden"></div>
                     <div class="prose prose-invert text-sm" id="streaming-content"></div>
                 </div>
