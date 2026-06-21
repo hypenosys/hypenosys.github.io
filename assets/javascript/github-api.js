@@ -527,7 +527,7 @@ async function getOrgRepos() {
 
 async function updateMemberProfile(memberName, profileDelta) {
   // 1. Update team_profiles.json
-  await atomicWrite('_data/team_profiles.json', (db) => {
+  await atomicWrite('assets/data/team_profiles.json', (db) => {
     if (!db.members[memberName]) throw new Error(`Miembro ${memberName} no encontrado en team_profiles.json.`);
     db.members[memberName] = { ...db.members[memberName], ...profileDelta };
     db.last_updated = new Date().toISOString();
@@ -540,10 +540,12 @@ async function updateMemberProfile(memberName, profileDelta) {
 
   // 2. Sync with team.json
   try {
-    const profilesRes = await fetchFileWithSha('_data/team_profiles.json');
+    const response = await fetch('/assets/data/team_profiles.json');
+    if (!response.ok) throw new Error('No se pudo cargar team_profiles.json');
+    const profilesRes = { content: await response.json() };
     const profile = profilesRes.content.members[memberName];
 
-    await atomicWrite('_data/team.json', (team) => {
+    await atomicWrite('assets/data/team.json', (team) => {
       const memberIndex = team.findIndex(m =>
         (m.github && m.github.toLowerCase().includes(profile.github_username.toLowerCase())) ||
         (m.name.toLowerCase().includes(memberName.toLowerCase()))
@@ -571,7 +573,7 @@ async function updateMemberProfile(memberName, profileDelta) {
  */
 async function updateMemberAiConfig(memberName, aiConfig) {
   const { provider, model } = aiConfig;
-  return atomicWrite('_data/team_profiles.json', (db) => {
+  return atomicWrite('assets/data/team_profiles.json', (db) => {
     if (!db.members[memberName]) throw new Error(`Miembro ${memberName} no encontrado en team_profiles.json.`);
     db.members[memberName].ai_config = { provider, model };
     db.last_updated = new Date().toISOString();

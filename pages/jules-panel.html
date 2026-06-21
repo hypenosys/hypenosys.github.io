@@ -2422,7 +2422,7 @@ window.JulesPanelState = {
 
         // Try to fetch role from team.json
         try {
-            const res = await fetch('/_data/team.json');
+            const res = await fetch('{{ "/assets/data/team.json" | relative_url }}');
             if (res.ok) {
                 const team = await res.json();
                 const member = team.find(m => m.github && m.github.toLowerCase().includes(user.login.toLowerCase()));
@@ -3929,12 +3929,16 @@ window.JulesPanelState = {
                 if (isAnthropic && !baseUrl) baseUrl = 'https://api.anthropic.com/v1';
                 baseUrl = baseUrl.replace(/\/$/, '');
 
+                // Force /v1 for Ollama if not present
+                if (isOllama && !baseUrl.endsWith('/v1')) {
+                    baseUrl += '/v1';
+                }
+
                 let endpoint;
                 if (isAnthropic) {
                     endpoint = `${baseUrl}/messages`;
-                } else if (isOllama && !baseUrl.includes('/v1')) {
-                    endpoint = `${baseUrl}/api/chat`;
                 } else {
+                    // Force OpenAI compatible endpoint for everyone else including Ollama
                     endpoint = `${baseUrl}/chat/completions`;
                 }
 
@@ -3955,19 +3959,12 @@ window.JulesPanelState = {
                     system: systemPrompt,
                     messages: finalMessages,
                     stream: true
-                } : (isOllama && endpoint.endsWith('/api/chat') ? {
-                    model: config.model || 'llama3',
-                    messages: [
-                        { role: 'system', content: systemPrompt },
-                        ...finalMessages
-                    ],
-                    stream: true
                 } : {
-                    model: config.model,
+                    model: config.model || (isOllama ? 'llama3' : ''),
                     messages: [{ role: 'system', content: systemPrompt }, ...finalMessages],
                     temperature: 0.7,
                     stream: true
-                });
+                };
 
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 60000); // Increased to 60s
@@ -4044,15 +4041,8 @@ window.JulesPanelState = {
                                     thinkingContent += data.delta.thinking;
                                 }
                             }
-                        } else if (provider === 'ollama' || (data.message && data.message.content)) {
-                            // Ollama native
-                            if (data.message && data.message.content) {
-                                aiContent += data.message.content;
-                            } else if (data.response) {
-                                aiContent += data.response;
-                            }
                         } else {
-                            // OpenAI compatible
+                            // OpenAI compatible (including Ollama now)
                             const delta = data.choices?.[0]?.delta?.content || data.choices?.[0]?.text || '';
                             aiContent += delta;
                         }

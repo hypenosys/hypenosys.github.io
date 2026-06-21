@@ -59,12 +59,13 @@ permalink: /CHANGELOG.html
     <div id="changelog-entries">
       <!-- Unreleased -->
       <div class="changelog-section mb-5">
+## [Unreleased]
         <h2 class="text-purple border-bottom border-purple pb-2 mb-4">[Unreleased]</h2>
         <div class="card mb-3">
           <div class="card-body">
             <h5 class="text-white">Added</h5>
             <ul>
-                <li><strong>Extended Kanban Filters:</strong> Added "Milestone", "Tema Principal" (Stage), and "Prioridad" (Priority) to the Kanban board filter system, with dynamic data extraction and semantic color coding.</li>
+                <li><strong>Renderizado Dinámico del Equipo:</strong> La sección "The Dream Team" en la landing page ahora se genera dinámicamente mediante JavaScript, permitiendo el uso de archivos JSON fuera de la carpeta <code>_data</code> de Jekyll.</li>
                 <li><strong>Global Card Archiving (Jules Panel):</strong> Upgraded the internal organization system to be global for all users. Archived states are now persisted in <code>_data/jules_panel_state.json</code> via GitHub commits, ensuring team-wide synchronization of the Kanban board view.</li>
                 <li><strong>Internal Card Archiving (Jules Panel):</strong> Users can now drag session cards from EN COLA/EN PROGRESO to COMPLETADO or BLOQUEADO columns for internal organization. Archived cards are visually dimmed and display an "Archived" badge.</li>
                 <li><strong>Relaunch Jules Session:</strong> Added a "Relanzar Jules" button to every Kanban card in Jules Panel. This button pre-fills the prompt, repository, and branch context for a new session based on the selected card.</li>
@@ -75,6 +76,8 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-success">Fixed</h5>
             <ul>
+              <li><strong>Endpoints de Ollama (Error 404):</strong> Estandarizado el uso de <code>/v1/chat/completions</code> para todas las interacciones con Ollama, forzando compatibilidad con el estándar de OpenAI y eliminando fallos por rutas incorrectas.</li>
+              <li><strong>Acceso a Datos de Equipo (Error 404):</strong> Reubicados <code>team.json</code> y <code>team_profiles.json</code> a <code>assets/data/</code> para permitir su carga mediante <code>fetch()</code> en el entorno de producción (GitHub Pages).</li>
               <li><strong>SyntaxError en Jules Panel (V2):</strong> Corregido el error <code>SyntaxError: Identifier 'archive' has already been declared</code> que impedía la carga del Kanban de tareas. Se renombró la variable local duplicada a <code>localArchive</code> y se actualizaron todas sus referencias en la función <code>loadJulesKanban</code>.</li>
               <li><strong>Estabilidad del Jules Panel (v2):</strong> Implementado manejo de errores no bloqueante en la carga de datos globales. El fallo en la recuperación del archivo de estado o de la API de GitHub ya no detiene la inicialización del panel, garantizando que los menús y métricas básicas sigan siendo accesibles.</li>
               <li><strong>Sincronización de Archivo Global:</strong> Corregidos problemas de inconsistencia y parpadeo mediante la implementación de un flag <code>isSyncingArchive</code> que bloquea actualizaciones de UI durante la escritura atómica en GitHub.</li>
@@ -86,6 +89,7 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-success">Changed</h5>
             <ul>
+              <li><strong>Unificación de Lectura de Datos:</strong> Migrada toda la lógica de lectura de perfiles y equipo para usar <code>fetch()</code> nativo, simplificando el código y eliminando peticiones innecesarias a la API de GitHub para datos públicos.</li>
               <li><strong>Auto-detección de Contexto en Tareas:</strong> El Kanban ahora detecta automáticamente el repositorio y rama activa al crear tareas, eliminando la entrada manual de metadatos críticos.</li>
               <li><strong>Paridad de UI en Modelos:</strong> El selector de modelos en móviles ha sido migrado a un sistema de "Bottom Sheet" nativo para una experiencia táctil premium, igualando la funcionalidad de escritorio.</li>
               <li><strong>Configuración Centralizada:</strong> Implementado el motor <code>hy_jules_config</code> que unifica el estado de la IA, la sesión activa y las preferencias del entorno en un solo punto de verdad.</li>
@@ -706,6 +710,7 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-danger">Removed</h5>
             <ul class="tree-view mb-0">
+              <li>Eliminados los archivos <code>_data/team.json</code> y <code>_data/team_profiles.json</code> para centralizar la gestión en <code>assets/data/</code>.</li>
               <li>"JULES" navigation item from the dashboard menu to eliminate duplication with "Quick Jules" button.</li>
             </ul>
           </div>
@@ -714,6 +719,7 @@ permalink: /CHANGELOG.html
 
       <!-- v0.1.0 -->
       <div class="changelog-section mb-5">
+## [v0.1.0] - 2023-10-27
         <h2 class="text-purple border-bottom border-purple pb-2 mb-4">[v0.1.0] - 2023-10-27</h2>
         <div class="card mb-3">
           <div class="card-body">
@@ -784,6 +790,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Prepare the new entry
             const newEntry = `
       <div class="changelog-section mb-5">
+## [${version}] - ${date}
         <h2 class="text-purple border-bottom border-purple pb-2 mb-4">[${version}] - ${date}</h2>
         <div class="card mb-3">
           <div class="card-body">
