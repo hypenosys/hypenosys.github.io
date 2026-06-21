@@ -72,6 +72,15 @@ permalink: /CHANGELOG.html
         </div>
         <div class="card mb-3">
           <div class="card-body">
+            <h5 class="text-success">Fixed</h5>
+            <ul>
+              <li><strong>Estabilidad del Jules Panel (v2):</strong> Implementado manejo de errores no bloqueante en la carga de datos globales. El fallo en la recuperación del archivo de estado o de la API de GitHub ya no detiene la inicialización del panel, garantizando que los menús y métricas básicas sigan siendo accesibles.</li>
+              <li><strong>Sincronización de Archivo Global:</strong> Corregidos problemas de inconsistencia y parpadeo mediante la implementación de un flag <code>isSyncingArchive</code> que bloquea actualizaciones de UI durante la escritura atómica en GitHub.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="card mb-3">
+          <div class="card-body">
             <h5 class="text-success">Changed</h5>
             <ul>
               <li><strong>Auto-detección de Contexto en Tareas:</strong> El Kanban ahora detecta automáticamente el repositorio y rama activa al crear tareas, eliminando la entrada manual de metadatos críticos.</li>
