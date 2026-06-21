@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-21T12:48:17.037Z",
+  "computed_at": "2026-06-21T12:49:37.759Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 42,
@@ -238,8 +238,8 @@
         "feature/dashboard-chat-icon": 1
       },
       "tag_frequency": {
-        "onboarding": 1,
         "chore": 2,
+        "onboarding": 1,
         "UX/UI": 3,
         "feature": 5,
         "frontend": 4,
@@ -304,8 +304,8 @@
         "devops": 1,
         "feature": 3,
         "frontend": 3,
-        "onboarding": 1,
         "chore": 2,
+        "onboarding": 1,
         "UX/UI": 2,
         "ux": 3,
         "bug": 2,
@@ -359,8 +359,8 @@
         "devops": 1,
         "feature": 2,
         "frontend": 2,
-        "onboarding": 1,
         "chore": 2,
+        "onboarding": 1,
         "UX/UI": 1,
         "ux": 1,
         "docs": 1
@@ -409,8 +409,8 @@
         "devops": 1,
         "feature": 1,
         "frontend": 1,
-        "onboarding": 1,
-        "chore": 1
+        "chore": 1,
+        "onboarding": 1
       },
       "avg_completion_speed": {
         "days": 0.5,
@@ -526,7 +526,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-06-21T12:48:17.769Z"
+      "timestamp": "2026-06-21T12:49:38.568Z"
     }
   ]
 }
