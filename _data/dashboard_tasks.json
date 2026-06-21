@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T12:44:15.285Z",
+  "last_updated": "2026-06-21T12:44:25.675Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2917,9 +2917,16 @@
           "field": "prioridad",
           "old_value": "Major",
           "new_value": "Medium"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:44:24.899Z",
+          "field": "seccion",
+          "new_value": "Backend n8n"
         }
       ],
-      "id": 44
+      "id": 44,
+      "seccion": "Backend n8n"
     },
     {
       "id": 45,
@@ -4304,6 +4311,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #44",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:44:25.675Z"
+    },
     {
       "action": "chore: actualizar tarea #36",
       "user": "Axlfc",
