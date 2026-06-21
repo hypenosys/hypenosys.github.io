@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T12:43:05.322Z",
+  "last_updated": "2026-06-21T12:43:24.258Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3568,9 +3568,16 @@
           "field": "title",
           "old_value": "Arreglar subida a Tumblr de audios para music-gen",
           "new_value": "Arreglar subida a Tumblr de audios, video, image para music-gen y image y anim studio"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:43:23.618Z",
+          "field": "seccion",
+          "new_value": "Music Gen, Image Gen"
         }
       ],
-      "id": 53
+      "id": 53,
+      "seccion": "Music Gen, Image Gen"
     },
     {
       "title": "tarea de prueba",
@@ -4262,6 +4269,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #53",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T12:43:24.258Z"
+    },
     {
       "action": "chore: actualizar tarea #57",
       "user": "Axlfc",
