@@ -64,7 +64,8 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-white">Added</h5>
             <ul>
-                <li><strong>Internal Card Archiving (Jules Panel):</strong> Users can now drag session cards from EN COLA/EN PROGRESO to COMPLETADO or BLOQUEADO columns for internal organization. This state is local (localStorage) and does not affect the real GitHub task status. Archived cards are visually dimmed and display an "Archived" badge.</li>
+                <li><strong>Global Card Archiving (Jules Panel):</strong> Upgraded the internal organization system to be global for all users. Archived states are now persisted in <code>_data/jules_panel_state.json</code> via GitHub commits, ensuring team-wide synchronization of the Kanban board view.</li>
+                <li><strong>Internal Card Archiving (Jules Panel):</strong> Users can now drag session cards from EN COLA/EN PROGRESO to COMPLETADO or BLOQUEADO columns for internal organization. Archived cards are visually dimmed and display an "Archived" badge.</li>
                 <li><strong>Relaunch Jules Session:</strong> Added a "Relanzar Jules" button to every Kanban card in Jules Panel. This button pre-fills the prompt, repository, and branch context for a new session based on the selected card.</li>
             </ul>
           </div>

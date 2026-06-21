@@ -2158,12 +2158,15 @@ window.JulesPanelState = {
         rateLimitRemaining:  999,
         requestQueue:        [],
         isDispatching:       false,
+        isRefreshing:        false,
+        isSyncingArchive:    false,
         currentView:         'dashboard',
         metricsWindow:       30,
         notifications:       [],
         unreadCount:         0,
         tasks:               [],
-        linkedTaskId:        localStorage.getItem('jules_linked_task_id') || null
+        linkedTaskId:        localStorage.getItem('jules_linked_task_id') || null,
+        globalArchive:       {}
     };
 
     class GHAPIQueue {
@@ -2535,7 +2538,7 @@ window.JulesPanelState = {
         if (col) col.classList.remove('drag-over');
     };
 
-    window.onDrop = (e, targetColId) => {
+    window.onDrop = async (e, targetColId) => {
         e.preventDefault();
         const col = $(`col-${targetColId}`);
         if (col) col.classList.remove('drag-over');
@@ -2549,20 +2552,63 @@ window.JulesPanelState = {
             const session = sessions.find(s => s.name.split('/').pop() === sid);
             if (!session) return;
 
+            // Helper to get real col from session state
+            let realCol = "pending";
+            if (["WORKING", "IN_PROGRESS", "PLANNING", "AWAITING_PLAN_APPROVAL", "AWAITING_USER_FEEDBACK"].includes(session.state)) {
+                realCol = "running";
+            } else if (session.state === "COMPLETED") {
+                realCol = "done";
+            } else if (["FAILED", "CANCELLED", "ERROR"].includes(session.state)) {
+                realCol = "error";
+            }
+
             const title = session.title || session.prompt || '';
             const taskIdMatch = title.match(/#(\d+)/);
             const taskId = taskIdMatch ? taskIdMatch[1] : null;
             const archiveId = taskId || sid;
 
-            const archive = JSON.parse(localStorage.getItem('jules_internal_archive') || '{}');
-            archive[archiveId] = {
+            const archiveData = {
                 target: targetColId,
-                realState: session.state,
-                isTask: !!taskId
+                realCol: realCol,
+                isTask: !!taskId,
+                updatedAt: new Date().toISOString()
             };
-            localStorage.setItem('jules_internal_archive', JSON.stringify(archive));
-            showToast("Tarea archivada localmente", "info");
-            loadJulesKanban();
+
+            // Optimistic update
+            window.JulesPanelState.globalArchive[archiveId] = archiveData;
+            showToast("Sincronizando archivo global...", "amber");
+            loadJulesKanban(sessions);
+
+            try {
+                window.JulesPanelState.isSyncingArchive = true;
+                await window.githubApi.updateJulesGlobalArchive(archiveId, archiveData);
+                showToast("Cambio persistido globalmente", "green");
+            } catch (err) {
+                console.error("Global archive update failed", err);
+                showToast("Error al persistir globalmente", "red");
+            } finally {
+                window.JulesPanelState.isSyncingArchive = false;
+            }
+        }
+    };
+
+    window.restoreArchivedCard = async (archiveId) => {
+        if (!window.JulesPanelState.globalArchive[archiveId]) return;
+
+        // Optimistic
+        delete window.JulesPanelState.globalArchive[archiveId];
+        showToast("Restaurando tarea...", "amber");
+        loadJulesKanban(window.julesSessionsCache);
+
+        try {
+            window.JulesPanelState.isSyncingArchive = true;
+            await window.githubApi.updateJulesGlobalArchive(archiveId, null);
+            showToast("Tarea restaurada globalmente", "green");
+        } catch (err) {
+            console.error("Restore failed", err);
+            showToast("Error al restaurar globalmente", "red");
+        } finally {
+            window.JulesPanelState.isSyncingArchive = false;
         }
     };
 
@@ -2611,10 +2657,12 @@ window.JulesPanelState = {
         }
     };
 
-    async function loadJulesKanban() {
+    async function loadJulesKanban(sessions = null) {
         try {
-            const data = await window.julesApi.getSessions(20);
-            const sessions = data.sessions || [];
+            if (!sessions) {
+                const data = await window.julesApi.getSessions(20);
+                sessions = data.sessions || [];
+            }
 
             const colItems = {
                 'pending': [],
@@ -2623,33 +2671,79 @@ window.JulesPanelState = {
                 'error': []
             };
 
-            const enrichedSessions = await Promise.all(sessions.map(async (s) => {
+            sessions.forEach(s => {
                 let targetCol = "pending";
-                if (["WORKING", "IN_PROGRESS", "PLANNING", "AWAITING_PLAN_APPROVAL"].includes(s.state)) {
+                if (["WORKING", "IN_PROGRESS", "PLANNING", "AWAITING_PLAN_APPROVAL", "AWAITING_USER_FEEDBACK"].includes(s.state)) {
                     targetCol = "running";
                 } else if (s.state === "COMPLETED") {
                     targetCol = "done";
                 } else if (["FAILED", "CANCELLED", "ERROR"].includes(s.state)) {
                     targetCol = "error";
                 }
+                colItems[targetCol].push(s);
+            });
 
-                try {
-                    const activityData = await window.julesApi.getActivities(s.name, 10);
-                    const activities = activityData.activities || [];
-                    const hasPlanApproved = activities.some(a => a.planApproved);
-                    const hasSessionCompleted = activities.some(a => a.sessionCompleted);
-                    const hasFailed = activities.some(a => a.sessionFailed || (a.progressUpdated?.exitCode !== undefined && a.progressUpdated.exitCode !== 0));
+            const archive = window.JulesPanelState.globalArchive || {};
+            let archiveChanged = false;
 
-                    if (hasFailed) targetCol = "error";
-                    else if (hasSessionCompleted) targetCol = "done";
-                    else if (hasPlanApproved) targetCol = "running";
-                    else targetCol = "pending";
-                } catch(e) {}
-                return { session: s, targetCol };
-            }));
+            // 1. Terminal State Cleanup: If real state is already terminal, clear archive entry
+            ['done', 'error'].forEach(colId => {
+                colItems[colId].forEach(s => {
+                    const sid = s.name.split('/').pop();
+                    const taskIdMatch = (s.title || s.prompt || '').match(/#(\d+)/);
+                    const taskId = taskIdMatch ? taskIdMatch[1] : null;
+                    const archiveId = taskId || sid;
+                    if (archive[archiveId]) {
+                        delete archive[archiveId];
+                        archiveChanged = true;
+                    }
+                });
+            });
 
-            for (const { session, targetCol } of enrichedSessions) {
-                colItems[targetCol].push(session);
+            // 2. Internal Archiving & State Change Detection
+            ['pending', 'running'].forEach(colId => {
+                colItems[colId] = colItems[colId].filter(s => {
+                    const sid = s.name.split('/').pop();
+                    const taskIdMatch = (s.title || s.prompt || '').match(/#(\d+)/);
+                    const taskId = taskIdMatch ? taskIdMatch[1] : null;
+                    const archiveId = taskId || sid;
+
+                    const entry = archive[archiveId];
+                    if (entry) {
+                        // Conflict check: if real status changed (e.g. Pending -> Working), invalidate local archive
+                        // We compare derived realCol instead of exact session state to be more resilient
+                        let currentRealCol = "pending";
+                        if (["WORKING", "IN_PROGRESS", "PLANNING", "AWAITING_PLAN_APPROVAL", "AWAITING_USER_FEEDBACK"].includes(s.state)) {
+                            currentRealCol = "running";
+                        } else if (s.state === "COMPLETED") {
+                            currentRealCol = "done";
+                        } else if (["FAILED", "CANCELLED", "ERROR"].includes(s.state)) {
+                            currentRealCol = "error";
+                        }
+
+                        if (currentRealCol !== (entry.realCol || entry.realState)) {
+                            delete archive[archiveId];
+                            archiveChanged = true;
+                            return true;
+                        }
+                        // Move to internal target
+                        if (colItems[entry.target]) {
+                            colItems[entry.target].push(s);
+                            return false;
+                        }
+                    }
+                    return true;
+                });
+            });
+
+            if (archiveChanged) {
+                // Trigger a background cleanup commit to keep the global state clean
+                // We don't await this to keep the UI snappy
+                window.githubApi.atomicWrite('_data/jules_panel_state.json', (db) => {
+                    db.archive = window.JulesPanelState.globalArchive;
+                    db.last_updated = new Date().toISOString();
+                    return db;
+                }, "chore: limpieza automática de archivo global (estados terminales o cambiados)");
             }
 
             const archive = JSON.parse(localStorage.getItem('jules_internal_archive') || '{}');
@@ -2726,6 +2820,7 @@ window.JulesPanelState = {
                                 <span class="kb-card-time">${getTimeAgo(s.createTime)}</span>
                             </div>
                             <div class="kb-card-actions">
+                                ${isArchived ? `<button class="kb-action-btn" style="color:var(--amber)" onclick="event.stopPropagation(); restoreArchivedCard('${archiveId}')">Restaurar</button>` : ''}
                                 <button class="kb-action-btn btn-relaunch" onclick="event.stopPropagation(); relaunchJules('${encodeURIComponent(JSON.stringify(s))}')">Relanzar Jules</button>
                                 <button class="kb-action-btn" onclick="event.stopPropagation(); const cid = localStorage.getItem('hy_active_claude_session_id'); if (cid) localStorage.setItem('hy_neural_session_id_' + cid, '${sid}'); localStorage.setItem('hy_neural_session_id', '${sid}'); localStorage.setItem('hy_neural_active', 'true'); switchView('chat');">Ver Neural</button>
                             </div>
@@ -2738,18 +2833,27 @@ window.JulesPanelState = {
         }
     }
     async function refreshDashboard() {
+        if (window.JulesPanelState.isRefreshing) return;
+        window.JulesPanelState.isRefreshing = true;
         try {
-            const [sessionData, tasks] = await Promise.all([
+            const [sessionData, tasks, archiveRes] = await Promise.all([
                 window.julesApi.getSessions(window.JulesPanelState.metricsWindow || 30),
-                window.taskOps.getAllTasks()
+                window.taskOps.getAllTasks(),
+                window.githubApi.fetchFileWithSha('_data/jules_panel_state.json')
             ]);
+
+            if (archiveRes && archiveRes.content && !window.JulesPanelState.isSyncingArchive) {
+                window.JulesPanelState.globalArchive = archiveRes.content.archive || {};
+            }
 
             const sessions = sessionData.sessions || [];
             window.julesSessionsCache = sessions;
             window.JulesPanelState.tasks = tasks;
 
             renderHistoryTable(sessions);
-            loadJulesKanban();
+            if (window.JulesPanelState.currentView === 'kanban') {
+                loadJulesKanban(sessions);
+            }
             updateStats();
 
             // Area 1: Polling for history if on chat view
@@ -2795,6 +2899,7 @@ window.JulesPanelState = {
                 }
             });
         } catch (e) { console.error('[Jules] refreshDashboard error:', e); }
+        finally { window.JulesPanelState.isRefreshing = false; }
     }
 
     async function refreshSessions() { await refreshDashboard(); }
@@ -3398,9 +3503,6 @@ window.JulesPanelState = {
             if (!document.hidden) {
                 refreshDashboard();
                 checkClipboard();
-                if (window.JulesPanelState.currentView === 'kanban') {
-                    loadJulesKanban();
-                }
             }
         }, 10000); // Poll every 10s as requested
     }
