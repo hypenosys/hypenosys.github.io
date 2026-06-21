@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T14:42:36.172Z",
+  "last_updated": "2026-06-21T14:43:16.971Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -4216,7 +4216,7 @@
     },
     {
       "title": "JULES PANEL - /chat/neural/: Unificar menús en todas las páginas de la plataforma",
-      "descripcion": "Actualmente en cada página cada menú es hijo de su padre.\nAñadir botón en el icono de usuario del jules panel para abrirse lo de 'Mi Perfil', 'Configuración API', 'Ajustes Avanzados', 'Cerrar sesión' en Jules Panel etc.",
+      "descripcion": "Actualmente en cada página cada menú es hijo de su padre.\nAñadir botón en el icono de usuario del jules panel para abrirse lo de 'Mi Perfil', 'Configuración API', 'Ajustes Avanzados', 'Cerrar sesión' en Jules Panel etc. hacer un análisis profundo y exhaustivo de qué hay en cada menú en cada página. Y diseñar un menú unificado con todas las características necesarias imprescindibles y específicas que haya.",
       "rama": "master",
       "task_type": "feature",
       "tema_principal": "Programación / Engine",
@@ -4286,6 +4286,13 @@
           "timestamp": "2026-06-21T12:41:20.991Z",
           "field": "seccion",
           "new_value": "Jules Panel, Chat Neural"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T14:43:16.433Z",
+          "field": "descripcion",
+          "old_value": "Actualmente en cada página cada menú es hijo de su padre.\nAñadir botón en el icono de usuario del jules panel para abrirse lo de 'Mi Perfil', 'Configuración API', 'Ajustes Avanzados', 'Cerrar sesión' en Jules Panel etc.",
+          "new_value": "Actualmente en cada página cada menú es hijo de su padre.\nAñadir botón en el icono de usuario del jules panel para abrirse lo de 'Mi Perfil', 'Configuración API', 'Ajustes Avanzados', 'Cerrar sesión' en Jules Panel etc. hacer un análisis profundo y exhaustivo de qué hay en cada menú en cada página. Y diseñar un menú unificado con todas las características necesarias imprescindibles y específicas que haya."
         }
       ],
       "id": 62,
@@ -4518,6 +4525,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #62",
+      "user": "Axlfc",
+      "timestamp": "2026-06-21T14:43:16.971Z"
+    },
     {
       "action": "chore: actualizar tarea #65",
       "user": "Axlfc",
