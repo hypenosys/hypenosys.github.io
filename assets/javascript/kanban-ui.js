@@ -343,6 +343,9 @@
                         <!-- Description (Always visible as requested) -->
                         ${description ? `<div class="task-description">${parsedDesc}</div>` : ''}
 
+                        <!-- Sección -->
+                        ${task.seccion ? `<div class="text-[9px] text-indigo-400/80 font-bold uppercase truncate mt-2">${task.seccion}</div>` : ''}
+
                         <!-- Line 3: Repo + Branch -->
                         <div class="flex justify-between items-center text-[10px] text-slate-500 mt-2 pt-2 border-t border-slate-800/50">
                             <span class="truncate max-w-[60%] text-slate-400"><i class="fas fa-folder opacity-50 mr-1"></i>${displayRepo}</span>
@@ -383,6 +386,7 @@
                             <span><span class="text-slate-600 mr-1">STAGE:</span> ${task.tema_principal || '---'}</span>
                             <span><span class="text-slate-600 mr-1">MIL.:</span> ${task.milestone || '---'}</span>
                             <span><span class="text-slate-600 mr-1">TYPE:</span> ${task.task_type || '---'}</span>
+                            <span><span class="text-slate-600 mr-1">SECCIÓN:</span> ${task.seccion || '---'}</span>
                         </div>
 
                         <!-- Fila: Repo + Branch -->
