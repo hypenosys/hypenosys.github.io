@@ -1,6 +1,20 @@
 {
-  "archive": {},
-  "last_updated": null,
-  "last_updated_by": null,
-  "_version": 1
+  "archive": {
+    "7903752974301033490": {
+      "target": "done",
+      "realCol": "pending",
+      "isTask": false,
+      "updatedAt": "2026-06-21T09:12:28.346Z"
+    }
+  },
+  "last_updated": "2026-06-21T09:12:28.681Z",
+  "last_updated_by": "Sistema",
+  "_version": 1,
+  "_audit_log": [
+    {
+      "action": "chore: actualizar archivo Jules global (#7903752974301033490)",
+      "user": "Sistema",
+      "timestamp": "2026-06-21T09:12:28.681Z"
+    }
+  ]
 }
