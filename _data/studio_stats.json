@@ -1,15 +1,15 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-22T00:06:09.294Z",
+  "computed_at": "2026-06-22T00:06:20.358Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 33,
-    "total_ok": 8,
+    "total_tasks": 32,
+    "total_ok": 7,
     "total_ko": 0,
     "total_uncertain": 10,
     "total_obsolete": 8,
-    "fixed_found_ratio": 0.2051,
-    "verified_ratio": 0.1951
+    "fixed_found_ratio": 0.1795,
+    "verified_ratio": 0.175
   },
   "group": {
     "velocity_trend": {
@@ -17,7 +17,7 @@
       "2026-W20": 0,
       "2026-W21": 4,
       "2026-W22": 6,
-      "2026-W23": 12,
+      "2026-W23": 11,
       "2026-W24": 3,
       "2026-W25": 5,
       "2026-W26": 0
@@ -92,7 +92,7 @@
         "mvp_points": 5,
         "bugs_solved": 3,
         "unblocked_count": 4,
-        "velocity": 2.909090909090909,
+        "velocity": 2.9523809523809526,
         "research_solved": 1,
         "art_tasks": 0,
         "comments_left": 1
@@ -102,7 +102,7 @@
         "mvp_points": 4.2,
         "bugs_solved": 3,
         "unblocked_count": 4,
-        "velocity": 3.1818181818181817,
+        "velocity": 3.238095238095238,
         "research_solved": 1,
         "art_tasks": 0,
         "comments_left": 0
@@ -143,8 +143,8 @@
     "axlfc": {
       "member_name": "Axel",
       "completed": {
-        "all_time": 26,
-        "milestone": 22,
+        "all_time": 25,
+        "milestone": 21,
         "week": 1
       },
       "weekly_velocity": {
@@ -152,20 +152,19 @@
         "2026-W20": 0,
         "2026-W21": 3,
         "2026-W22": 4,
-        "2026-W23": 26,
+        "2026-W23": 25,
         "2026-W24": 5,
         "2026-W25": 7,
         "2026-W26": 0
       },
       "type_breakdown": {
-        "feature": 17,
+        "feature": 16,
         "chore": 5,
         "bug": 3,
         "research": 1
       },
       "rama_breakdown": {
         "feature/svn-ai-integration": 1,
-        "feature/dashboard-chat-icon": 1,
         "master": 5,
         "PRO": 15,
         "feature/dashboard-tag-filter": 1,
@@ -176,17 +175,17 @@
       "tag_frequency": {
         "api": 2,
         "devops": 1,
-        "feature": 4,
+        "feature": 3,
         "infraestructura": 2,
         "jules-panel": 1,
         "neural-chat": 1,
         "svn": 1,
-        "frontend": 3,
-        "ux": 4,
         "jules": 1,
         "UX/UI": 1,
         "bug": 2,
         "hard": 1,
+        "frontend": 2,
+        "ux": 3,
         "chore": 3,
         "docs": 2,
         "n8n": 1,
@@ -211,8 +210,8 @@
     "topperh4rley": {
       "member_name": "Alex",
       "completed": {
-        "all_time": 26,
-        "milestone": 22,
+        "all_time": 25,
+        "milestone": 21,
         "week": 0
       },
       "weekly_velocity": {
@@ -220,7 +219,7 @@
         "2026-W20": 0,
         "2026-W21": 3,
         "2026-W22": 5,
-        "2026-W23": 30,
+        "2026-W23": 29,
         "2026-W24": 3,
         "2026-W25": 7,
         "2026-W26": 0
@@ -228,14 +227,13 @@
       "type_breakdown": {
         "chore": 3,
         "bug": 3,
-        "feature": 19,
+        "feature": 18,
         "research": 1
       },
       "rama_breakdown": {
         "PRO": 16,
         "fix/jules-neural-mobile-markdown": 1,
         "feature/svn-ai-integration": 1,
-        "feature/dashboard-chat-icon": 1,
         "master": 5,
         "feature/dashboard-tag-filter": 1,
         "feature/dashboard-error-boundaries": 1
@@ -245,11 +243,11 @@
         "onboarding": 1,
         "UX/UI": 2,
         "bug": 3,
-        "frontend": 4,
-        "ux": 5,
+        "frontend": 3,
+        "ux": 4,
         "api": 2,
         "devops": 1,
-        "feature": 4,
+        "feature": 3,
         "infraestructura": 1,
         "jules-panel": 1,
         "neural-chat": 1,
@@ -474,7 +472,7 @@
           "mvp_points": 5,
           "bugs_solved": 3,
           "unblocked_count": 4,
-          "velocity": 2.909090909090909,
+          "velocity": 2.9523809523809526,
           "research_solved": 1,
           "art_tasks": 0,
           "comments_left": 1
@@ -484,7 +482,7 @@
           "mvp_points": 4.2,
           "bugs_solved": 3,
           "unblocked_count": 4,
-          "velocity": 3.1818181818181817,
+          "velocity": 3.238095238095238,
           "research_solved": 1,
           "art_tasks": 0,
           "comments_left": 0
@@ -527,7 +525,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-06-22T00:06:10.388Z"
+      "timestamp": "2026-06-22T00:06:21.178Z"
     }
   ]
 }
