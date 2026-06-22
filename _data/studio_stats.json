@@ -1,15 +1,15 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-22T00:06:33.589Z",
+  "computed_at": "2026-06-22T00:07:03.684Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 32,
-    "total_ok": 6,
+    "total_ok": 7,
     "total_ko": 0,
     "total_uncertain": 10,
     "total_obsolete": 8,
-    "fixed_found_ratio": 0.1538,
-    "verified_ratio": 0.15
+    "fixed_found_ratio": 0.1795,
+    "verified_ratio": 0.175
   },
   "group": {
     "velocity_trend": {
@@ -22,8 +22,8 @@
       "2026-W25": 5,
       "2026-W26": 0
     },
-    "bug_rate": 0.0769,
-    "blocker_health": 2,
+    "bug_rate": 0.08,
+    "blocker_health": 1,
     "tag_heatmap": {
       "brainstorm": 1,
       "chore": 7,
@@ -34,12 +34,10 @@
       "devops": 6,
       "git": 1,
       "UX/UI": 2,
-      "feature": 13,
+      "feature": 12,
       "frontend": 3,
-      "ux": 4,
-      "Infraestructura": 1,
-      "api": 9,
-      "jules": 1,
+      "ux": 3,
+      "api": 8,
       "infraestructura": 1,
       "jules-panel": 1,
       "neural-chat": 1,
@@ -147,7 +145,7 @@
     "axlfc": {
       "member_name": "Axel",
       "completed": {
-        "all_time": 25,
+        "all_time": 26,
         "milestone": 21,
         "week": 1
       },
@@ -156,18 +154,19 @@
         "2026-W20": 0,
         "2026-W21": 3,
         "2026-W22": 4,
-        "2026-W23": 24,
+        "2026-W23": 28,
         "2026-W24": 5,
         "2026-W25": 7,
         "2026-W26": 0
       },
       "type_breakdown": {
+        "feature": 17,
         "chore": 5,
         "bug": 3,
-        "feature": 16,
         "research": 1
       },
       "rama_breakdown": {
+        "feature/kanban-jules-link": 1,
         "master": 5,
         "PRO": 15,
         "feature/dashboard-tag-filter": 1,
@@ -177,17 +176,18 @@
         "feature/dashboard-chat-icon": 1
       },
       "tag_frequency": {
-        "jules": 1,
+        "Infraestructura": 1,
+        "api": 2,
+        "feature": 4,
+        "jules": 2,
+        "ux": 5,
         "infraestructura": 1,
         "UX/UI": 1,
         "bug": 2,
         "hard": 1,
-        "feature": 3,
         "frontend": 3,
-        "ux": 4,
         "chore": 3,
         "docs": 2,
-        "api": 1,
         "n8n": 1,
         "refactor": 2,
         "stability": 1
@@ -196,21 +196,21 @@
         "days": 0.5,
         "estimated_start": true
       },
-      "dependency_impact": 4,
+      "dependency_impact": 5,
       "comment_activity": 1,
       "volatility": {
         "reopens": 5,
         "reprioritizations": 26
       },
       "workload": {
-        "active_tasks": 14,
-        "story_points": 29
+        "active_tasks": 13,
+        "story_points": 25
       }
     },
     "topperh4rley": {
       "member_name": "Alex",
       "completed": {
-        "all_time": 25,
+        "all_time": 26,
         "milestone": 21,
         "week": 0
       },
@@ -219,19 +219,20 @@
         "2026-W20": 0,
         "2026-W21": 3,
         "2026-W22": 5,
-        "2026-W23": 28,
+        "2026-W23": 32,
         "2026-W24": 3,
         "2026-W25": 7,
         "2026-W26": 0
       },
       "type_breakdown": {
         "chore": 3,
+        "feature": 19,
         "bug": 3,
-        "feature": 18,
         "research": 1
       },
       "rama_breakdown": {
         "PRO": 16,
+        "feature/kanban-jules-link": 1,
         "fix/jules-neural-mobile-markdown": 1,
         "master": 5,
         "feature/dashboard-tag-filter": 1,
@@ -241,15 +242,16 @@
       "tag_frequency": {
         "chore": 2,
         "onboarding": 1,
+        "Infraestructura": 1,
+        "api": 2,
+        "feature": 4,
+        "jules": 2,
+        "ux": 6,
         "UX/UI": 2,
         "bug": 3,
         "frontend": 4,
-        "ux": 5,
-        "jules": 1,
         "hard": 1,
-        "feature": 3,
         "docs": 2,
-        "api": 1,
         "n8n": 1,
         "stability": 1
       },
@@ -257,15 +259,15 @@
         "days": 0.5,
         "estimated_start": true
       },
-      "dependency_impact": 4,
+      "dependency_impact": 5,
       "comment_activity": 0,
       "volatility": {
         "reopens": 5,
         "reprioritizations": 26
       },
       "workload": {
-        "active_tasks": 12,
-        "story_points": 31
+        "active_tasks": 11,
+        "story_points": 27
       }
     },
     "dkdidac-design": {
@@ -520,7 +522,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-06-22T00:06:34.398Z"
+      "timestamp": "2026-06-22T00:07:04.601Z"
     }
   ]
 }
