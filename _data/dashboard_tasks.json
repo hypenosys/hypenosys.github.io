@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-22T00:05:23.985Z",
+  "last_updated": "2026-06-22T00:05:36.637Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3088,7 +3088,7 @@
       "repository": null,
       "prioridad": "Major",
       "milestone": "M1",
-      "estado": "OK",
+      "estado": "Obsolete",
       "completitud": 0,
       "resuelto_por": null,
       "detectado_por": "Alex",
@@ -3129,9 +3129,23 @@
           "field": "tags",
           "old_value": "[]",
           "new_value": "[\"test\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-22T00:05:36.053Z",
+          "field": "estado",
+          "old_value": "OK",
+          "new_value": "Obsolete"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-22T00:05:36.053Z",
+          "field": "seccion",
+          "new_value": ""
         }
       ],
-      "id": 54
+      "id": 54,
+      "seccion": ""
     },
     {
       "title": "Nos podemos asegurar que la conexión en Claude chat con la documentación es real?",
@@ -3833,6 +3847,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #54",
+      "user": "Axlfc",
+      "timestamp": "2026-06-22T00:05:36.637Z"
+    },
     {
       "action": "chore: archivar tarea #66",
       "user": "Axlfc",
