@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T23:55:53.914Z",
+  "last_updated": "2026-06-22T00:00:22.560Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -356,7 +356,7 @@
       "estado": "In Review",
       "completitud": 0.25,
       "resuelto_por": "Dídac",
-      "detectado_por": "Javi",
+      "detectado_por": "Axel",
       "rama2": null,
       "ver": true,
       "fecha": "2026-05-24",
@@ -381,8 +381,8 @@
       "estimated_hours": 4,
       "story_points": null,
       "tags": [
-        "devops",
-        "chore"
+        "chore",
+        "devops"
       ],
       "external_links": [],
       "subtasks": [],
@@ -406,9 +406,16 @@
           "field": "repository",
           "old_value": null,
           "new_value": "hypenosys/app"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-22T00:00:21.906Z",
+          "field": "seccion",
+          "new_value": ""
         }
       ],
-      "repository": "hypenosys/app"
+      "repository": "hypenosys/app",
+      "seccion": ""
     },
     {
       "rama": "PRO",
@@ -4340,6 +4347,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #8",
+      "user": "Axlfc",
+      "timestamp": "2026-06-22T00:00:22.560Z"
+    },
     {
       "action": "chore: actualizar tarea #36",
       "user": "Axlfc",
