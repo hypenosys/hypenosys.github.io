@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-21T15:03:22.036Z",
+  "last_updated": "2026-06-22T00:04:52.553Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1680,9 +1680,95 @@
       ],
       "id": 38,
       "seccion": "Image Gen"
+    },
+    {
+      "id": 46,
+      "title": "Consolidación y limpieza de scripts técnicos",
+      "descripcion": "Eliminar versiones duplicadas y obsoletas de los scripts principales (all_scripts.js, v2, v3). Esta deuda técnica induce a errores y dificulta el mantenimiento del código. **Hecho cuando:** Solo existan las versiones necesarias y el dashboard funcione sin errores de referencia.",
+      "tags": [
+        "chore",
+        "refactor"
+      ],
+      "prioridad": "Major",
+      "estado": "OK",
+      "estimated_hours": 4,
+      "comments": [
+        "Hay mucha lógica repetida; deberíamos mover las funciones comunes a módulos independientes antes de borrar las versiones antiguas."
+      ],
+      "rama": "chore/consolidate-scripts",
+      "task_type": "chore",
+      "tema_principal": "QA / Testing",
+      "milestone": "M1",
+      "fecha": "2026-06-08",
+      "asignados": [
+        "axlfc"
+      ],
+      "acceptance_criteria": "Reducción del tamaño total de scripts y eliminación de redundancias.",
+      "subtasks": [],
+      "repository": "hypenosys/hypenosys.github.io",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Unassigned",
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "story_points": null,
+      "external_links": [],
+      "blocks": [],
+      "blocked_by": [],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:34:46.002Z",
+          "field": "prioridad",
+          "old_value": "Low",
+          "new_value": ""
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:34:46.002Z",
+          "field": "completitud",
+          "new_value": 0
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:34:46.002Z",
+          "field": "repository",
+          "old_value": "",
+          "new_value": "hypenosys/hypenosys.github.io"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T10:45:42.192Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "OK"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T10:45:42.192Z",
+          "field": "prioridad",
+          "old_value": "",
+          "new_value": "Major"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:52:26.841Z",
+          "field": "seccion",
+          "new_value": "Web"
+        }
+      ],
+      "seccion": "Web"
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: tarea #46 movida al archivo",
+      "user": "Axlfc",
+      "timestamp": "2026-06-22T00:04:52.553Z"
+    },
     {
       "action": "chore: tarea #38 movida al archivo",
       "user": "Axlfc",
