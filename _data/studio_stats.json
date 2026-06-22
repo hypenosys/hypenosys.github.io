@@ -1,15 +1,15 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-22T00:07:16.067Z",
+  "computed_at": "2026-06-22T00:08:30.828Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 32,
-    "total_ok": 8,
+    "total_ok": 9,
     "total_ko": 0,
-    "total_uncertain": 9,
+    "total_uncertain": 8,
     "total_obsolete": 8,
-    "fixed_found_ratio": 0.2051,
-    "verified_ratio": 0.2
+    "fixed_found_ratio": 0.2308,
+    "verified_ratio": 0.225
   },
   "group": {
     "velocity_trend": {
@@ -22,22 +22,22 @@
       "2026-W25": 5,
       "2026-W26": 0
     },
-    "bug_rate": 0.0833,
+    "bug_rate": 0.087,
     "blocker_health": 1,
     "tag_heatmap": {
       "brainstorm": 1,
-      "chore": 7,
+      "chore": 6,
       "design": 1,
       "docs": 2,
       "topper": 1,
       "testing": 1,
-      "devops": 6,
+      "devops": 5,
       "git": 1,
       "UX/UI": 2,
       "feature": 11,
       "frontend": 2,
       "ux": 2,
-      "api": 7,
+      "api": 6,
       "infraestructura": 1,
       "jules-panel": 1,
       "neural-chat": 1,
@@ -145,7 +145,7 @@
     "axlfc": {
       "member_name": "Axel",
       "completed": {
-        "all_time": 27,
+        "all_time": 28,
         "milestone": 21,
         "week": 1
       },
@@ -154,20 +154,21 @@
         "2026-W20": 0,
         "2026-W21": 3,
         "2026-W22": 4,
-        "2026-W23": 29,
+        "2026-W23": 31,
         "2026-W24": 5,
         "2026-W25": 7,
         "2026-W26": 0
       },
       "type_breakdown": {
         "feature": 18,
-        "chore": 5,
+        "chore": 6,
         "bug": 3,
         "research": 1
       },
       "rama_breakdown": {
         "feature/kanban-jules-link": 1,
         "feature/mobile-github-ops": 1,
+        "chore/scripts-svn-sync": 1,
         "master": 5,
         "PRO": 15,
         "feature/dashboard-tag-filter": 1,
@@ -178,16 +179,17 @@
       },
       "tag_frequency": {
         "Infraestructura": 1,
-        "api": 3,
+        "api": 4,
         "feature": 5,
         "jules": 2,
         "ux": 6,
         "frontend": 4,
+        "chore": 4,
+        "devops": 1,
         "infraestructura": 1,
         "UX/UI": 1,
         "bug": 2,
         "hard": 1,
-        "chore": 3,
         "docs": 2,
         "n8n": 1,
         "refactor": 2,
@@ -197,21 +199,21 @@
         "days": 0.5,
         "estimated_start": true
       },
-      "dependency_impact": 5,
+      "dependency_impact": 6,
       "comment_activity": 1,
       "volatility": {
         "reopens": 5,
         "reprioritizations": 26
       },
       "workload": {
-        "active_tasks": 12,
-        "story_points": 24
+        "active_tasks": 11,
+        "story_points": 22
       }
     },
     "topperh4rley": {
       "member_name": "Alex",
       "completed": {
-        "all_time": 27,
+        "all_time": 28,
         "milestone": 21,
         "week": 0
       },
@@ -220,13 +222,13 @@
         "2026-W20": 0,
         "2026-W21": 3,
         "2026-W22": 5,
-        "2026-W23": 33,
+        "2026-W23": 35,
         "2026-W24": 3,
         "2026-W25": 7,
         "2026-W26": 0
       },
       "type_breakdown": {
-        "chore": 3,
+        "chore": 4,
         "feature": 20,
         "bug": 3,
         "research": 1
@@ -236,22 +238,24 @@
         "feature/kanban-jules-link": 1,
         "feature/mobile-github-ops": 1,
         "fix/jules-neural-mobile-markdown": 1,
+        "chore/scripts-svn-sync": 1,
         "master": 5,
         "feature/dashboard-tag-filter": 1,
         "feature/dashboard-error-boundaries": 1,
         "feature/dashboard-chat-icon": 1
       },
       "tag_frequency": {
-        "chore": 2,
+        "chore": 3,
         "onboarding": 1,
         "Infraestructura": 1,
-        "api": 3,
+        "api": 4,
         "feature": 5,
         "jules": 2,
         "ux": 7,
         "frontend": 5,
         "UX/UI": 2,
         "bug": 3,
+        "devops": 1,
         "hard": 1,
         "docs": 2,
         "n8n": 1,
@@ -261,15 +265,15 @@
         "days": 0.5,
         "estimated_start": true
       },
-      "dependency_impact": 5,
+      "dependency_impact": 6,
       "comment_activity": 0,
       "volatility": {
         "reopens": 5,
         "reprioritizations": 26
       },
       "workload": {
-        "active_tasks": 10,
-        "story_points": 26
+        "active_tasks": 9,
+        "story_points": 24
       }
     },
     "dkdidac-design": {
@@ -524,7 +528,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-06-22T00:07:17.189Z"
+      "timestamp": "2026-06-22T00:08:31.566Z"
     }
   ]
 }
