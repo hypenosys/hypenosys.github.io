@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-22T00:08:28.244Z",
+  "last_updated": "2026-06-22T00:11:01.676Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2873,13 +2873,13 @@
       "seccion": "Dashboard"
     },
     {
-      "title": "Map local Obsidian Markdown Files Knowledge mocking a Vector Database so AI just can recover the needed text",
-      "descripcion": "Use Three Folders and a File.",
+      "title": "Map local Obsidian Markdown Files Knowledge mocking a Vector Databasein SVN  so AI just can recover the needed text",
+      "descripcion": "Use Three Folders and a File in SVN.\n\nConnect Python (beta) and Javascript willing to be run code automated with the runners in n8n.\n\nTools for the AI to call with SVN python virtual environments and so on.\n\nEnsure /docs is properly readable by Neural Chat before starting this",
       "rama": "master",
       "task_type": "chore",
       "tema_principal": "Tools / Automation",
-      "repository": "hypenosys/docs",
-      "prioridad": "Medium",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Major",
       "milestone": "M2",
       "estado": "Working",
       "completitud": 0,
@@ -2954,6 +2954,34 @@
           "timestamp": "2026-06-21T12:44:48.668Z",
           "field": "seccion",
           "new_value": "Documentación Web"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-22T00:11:01.230Z",
+          "field": "title",
+          "old_value": "Map local Obsidian Markdown Files Knowledge mocking a Vector Database so AI just can recover the needed text",
+          "new_value": "Map local Obsidian Markdown Files Knowledge mocking a Vector Databasein SVN  so AI just can recover the needed text"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-22T00:11:01.230Z",
+          "field": "descripcion",
+          "old_value": "Use Three Folders and a File.",
+          "new_value": "Use Three Folders and a File in SVN.\n\nConnect Python (beta) and Javascript willing to be run code automated with the runners in n8n.\n\nTools for the AI to call with SVN python virtual environments and so on.\n\nEnsure /docs is properly readable by Neural Chat before starting this"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-22T00:11:01.230Z",
+          "field": "prioridad",
+          "old_value": "Medium",
+          "new_value": "Major"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-22T00:11:01.230Z",
+          "field": "repository",
+          "old_value": "hypenosys/docs",
+          "new_value": "hypenosys/hypenosys.github.io"
         }
       ],
       "id": 52,
@@ -3814,6 +3842,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #52",
+      "user": "Axlfc",
+      "timestamp": "2026-06-22T00:11:01.676Z"
+    },
     {
       "action": "chore: actualizar tarea #39",
       "user": "Axlfc",
