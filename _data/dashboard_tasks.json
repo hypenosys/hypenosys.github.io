@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-22T00:06:17.840Z",
+  "last_updated": "2026-06-22T00:06:31.270Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1583,7 +1583,7 @@
       "repository": "hypenosys/app",
       "prioridad": "Major",
       "milestone": "M1",
-      "estado": "OK",
+      "estado": "Working",
       "completitud": 0,
       "resuelto_por": "Axel",
       "detectado_por": "Axel",
@@ -1735,6 +1735,13 @@
           "timestamp": "2026-06-21T12:50:30.208Z",
           "field": "seccion",
           "new_value": "SVN Admin Panel"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-22T00:06:30.576Z",
+          "field": "estado",
+          "old_value": "OK",
+          "new_value": "Working"
         }
       ],
       "id": 35,
@@ -3786,6 +3793,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #35",
+      "user": "Axlfc",
+      "timestamp": "2026-06-22T00:06:31.270Z"
+    },
     {
       "action": "chore: archivar tarea #41",
       "user": "Axlfc",
