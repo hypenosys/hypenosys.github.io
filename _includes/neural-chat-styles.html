@@ -363,3 +363,45 @@
         right: 0;
         height: 100%;
         display: flex;
+        align-items: center;
+        background-color: #ff5555;
+        color: white;
+        padding: 0 1rem;
+        z-index: 1;
+        transition: transform 0.2s ease;
+    }
+
+    .swipe-actions {
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: 100%;
+        display: flex;
+    }
+
+    .swipe-action {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 50px;
+        height: 100%;
+        color: white;
+        transition: background-color 0.2s;
+    }
+
+    .swipe-action-archive {
+        background-color: #bd93f9;
+    }
+
+    .swipe-action-delete {
+        background-color: #ff5555;
+    }
+
+    .neural-indicator {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: #50fa7b;
+        box-shadow: 0 0 8px #50fa7b;
+    }
+</style>

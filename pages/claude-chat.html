@@ -1,11 +1,25 @@
 ---
-layout: page
+layout: null
 title: Neural Chat
 hide_title: true
 permalink: /chat/neural/
 ---
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neural Chat — HYPENOSYS</title>
+<link rel="stylesheet" href="{{ '/assets/main.css' | relative_url }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="{{ '/assets/javascript/bootstrap/jquery.min.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/bootstrap/bootstrap.bundle.min.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/ui-components.js' | relative_url }}"></script>
 
 {% include neural-chat-styles.html %}
+
+</head>
+<body>
 
 <!-- Auth Loading Skeleton -->
 <div id="claude-auth-loading" class="fixed inset-0 z-[100] flex items-center justify-center bg-[#282a36]">
@@ -717,3 +731,5 @@ permalink: /chat/neural/
         }
     })();
 </script>
+</body>
+</html>

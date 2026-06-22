@@ -87,6 +87,8 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-success">Fixed</h5>
             <ul>
+              <li><strong>Modularización Crítica:</strong> Solucionado el problema de la "pantalla negra" en las páginas de Jules Panel, Neural Chat y Repo Admin tras el refactor. Se corrigieron etiquetas <code>&lt;style&gt;</code> sin cerrar en los includes y se normalizaron los layouts a <code>layout: null</code> con estructura HTML completa para evitar conflictos con el tema por defecto de Jekyll.</li>
+              <li><strong>Dependencias de Desarrollo:</strong> Corregida la ubicación de <code>playwright</code> en <code>package.json</code>, moviéndolo de dependencies a devDependencies.</li>
               <li><strong>Automatización de "Analizar con Claude":</strong> El flujo de análisis ahora es completamente automático, fusionando fragmentos y preguntas en un solo bloque y disparando la respuesta de Claude instantáneamente sin intervención manual.</li>
               <li><strong>Sincronización Bidireccional Neural Final:</strong> Corregida la latencia y omisión de mensajes de usuario en la sincronización. Los mensajes enviados desde el standalone aparecen ahora instantáneamente en el panel de control gracias al formato de payload <code>NEW_MESSAGE</code> estandarizado.</li>
               <li><strong>Persistencia de la Pestaña ACTIVIDAD:</strong> El feed de actividad de Jules en el standalone ahora se guarda localmente, permitiendo que el historial, planes y logs de terminal sigan siendo visibles tras refrescar la página o cambiar de sesión sin depender del polling.</li>
