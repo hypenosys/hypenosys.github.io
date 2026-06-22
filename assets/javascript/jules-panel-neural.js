@@ -16,7 +16,7 @@ window.saveSessionsV2 = function(skipSync = false) {
                 messages: window.chatV2Messages,
                 updatedAt: new Date().toISOString()
             };
-            localStorage.setItem(`hy_neural_context_\${sessionId}`, JSON.stringify(sessionData));
+            localStorage.setItem(`hy_neural_context_${sessionId}`, JSON.stringify(sessionData));
 
             // Sync via BroadcastChannel (nuevo formato NEW_MESSAGE)
             if (window.neuralSyncChannel && !skipSync && window.chatV2Messages.length > 0) {
@@ -51,7 +51,7 @@ window.loadV2Messages = function() {
     try {
         const sessionId = getLinkedJulesSessionId();
         if (sessionId) {
-            const saved = localStorage.getItem(`hy_neural_context_\${sessionId}`);
+            const saved = localStorage.getItem(`hy_neural_context_${sessionId}`);
             if (saved) {
                 const sessionData = JSON.parse(saved);
                 window.chatV2Messages = sessionData.messages || [];
@@ -79,16 +79,16 @@ window.loadV2Messages = function() {
 }
 
 window.triggerAutomatedAnalysis = async function(output) {
-    const analyzedKey = `v2_jules_analyzed_\${output.session_id}_\${output.status}`;
+    const analyzedKey = `v2_jules_analyzed_${output.session_id}_${output.status}`;
     if (localStorage.getItem(analyzedKey)) return;
     localStorage.setItem(analyzedKey, 'true');
 
-    window.chatV2Messages.push({ role: 'system', content: `Analizando resultado de Jules (Sesión #\${output.session_id})...` });
+    window.chatV2Messages.push({ role: 'system', content: `Analizando resultado de Jules (Sesión #${output.session_id})...` });
     renderChatV2Messages();
 
     try {
         const config = getActiveConfig();
-        const prompt = `Jules ha completado una operación (Estado: \${output.status}).\n\nDETALLES:\n- Sesión: #\${output.session_id}\n- Tarea: \${output.title}\n- Repo: \${output.repo}\n\nAnaliza el resultado y prepara un resumen accionable.`;
+        const prompt = `Jules ha completado una operación (Estado: ${output.status}).\n\nDETALLES:\n- Sesión: #${output.session_id}\n- Tarea: ${output.title}\n- Repo: ${output.repo}\n\nAnaliza el resultado y prepara un resumen accionable.`;
 
         const messages = [
             { role: 'system', content: 'Eres un analista de operaciones de agentes autónomos.' },
@@ -96,7 +96,7 @@ window.triggerAutomatedAnalysis = async function(output) {
         ];
 
         const analysis = await callCustomProvider(config, messages);
-        window.chatV2Messages.push({ role: 'assistant', content: `[ANÁLISIS AUTOMÁTICO JULES]\n\n\${analysis}` });
+        window.chatV2Messages.push({ role: 'assistant', content: `[ANÁLISIS AUTOMÁTICO JULES]\n\n${analysis}` });
         renderChatV2Messages();
     } catch(e) {
         console.error("Auto-analysis failed", e);
@@ -109,7 +109,7 @@ window.showChatLiveActivity = function(tel) {
     if (!monitor || !status) return;
 
     monitor.classList.remove('hidden');
-    status.textContent = `[\${tel.tag}] \${tel.msg}`;
+    status.textContent = `[${tel.tag}] ${tel.msg}`;
 
     if (window.activityTimeout) clearTimeout(window.activityTimeout);
     window.activityTimeout = setTimeout(() => {
@@ -122,21 +122,21 @@ window.buildSystemPrompt = async function(userMessage, basePrompt) {
 
     const t = window.JulesPanelState.activePayload?.source_task;
     if (t) {
-        const blockingInfo = (t.blocks && t.blocks.length > 0) ? `Bloquea a: \${t.blocks.join(', ')}` : 'No bloquea a nadie';
-        const blockedByInfo = (t.blocked_by && t.blocked_by.length > 0) ? `Bloqueada por: \${t.blocked_by.join(', ')}` : 'No tiene bloqueos';
+        const blockingInfo = (t.blocks && t.blocks.length > 0) ? `Bloquea a: ${t.blocks.join(', ')}` : 'No bloquea a nadie';
+        const blockedByInfo = (t.blocked_by && t.blocked_by.length > 0) ? `Bloqueada por: ${t.blocked_by.join(', ')}` : 'No tiene bloqueos';
 
         systemPrompt += `\n\n## Tarea activa en contexto\n` +
-            `ID: #\${t.id}\n` +
-            `Título: \${t.titulo || t.title}\n` +
-            `Descripción: \${t.descripcion || t.description}\n` +
-            `Criterios de Aceptación: \${t.acceptance_criteria || 'N/A'}\n` +
-            `Subtareas: \${JSON.stringify(t.subtasks || [])}\n` +
-            `Estado: \${t.estado || t.status}\n` +
-            `Prioridad: \${t.prioridad || t.priority}\n` +
-            `Rama: \${t.rama || 'N/A'}\n` +
-            `Milestone: \${t.milestone || 'N/A'}\n` +
-            `Repositorio: \${t.repository || t.repo || 'N/A'}\n` +
-            `Dependencias: \${blockingInfo} | \${blockedByInfo}\n`;
+            `ID: #${t.id}\n` +
+            `Título: ${t.titulo || t.title}\n` +
+            `Descripción: ${t.descripcion || t.description}\n` +
+            `Criterios de Aceptación: ${t.acceptance_criteria || 'N/A'}\n` +
+            `Subtareas: ${JSON.stringify(t.subtasks || [])}\n` +
+            `Estado: ${t.estado || t.status}\n` +
+            `Prioridad: ${t.prioridad || t.priority}\n` +
+            `Rama: ${t.rama || 'N/A'}\n` +
+            `Milestone: ${t.milestone || 'N/A'}\n` +
+            `Repositorio: ${t.repository || t.repo || 'N/A'}\n` +
+            `Dependencias: ${blockingInfo} | ${blockedByInfo}\n`;
 
         const linkedSid = getLinkedJulesSessionId();
         if (linkedSid) {
@@ -144,7 +144,7 @@ window.buildSystemPrompt = async function(userMessage, basePrompt) {
                 const activities = await window.julesApi.getActivities(linkedSid, 10);
                 const logs = (activities.activities || []).map(a => a.description || a.progressUpdated?.title).filter(Boolean).join('\n');
                 if (logs) {
-                    systemPrompt += `\n### Historial reciente de Jules (Sesión #\${linkedSid}):\n\${logs}\n`;
+                    systemPrompt += `\n### Historial reciente de Jules (Sesión #${linkedSid}):\n${logs}\n`;
                 }
             } catch (e) { console.warn("Could not fetch Jules activity for context", e); }
         }
@@ -165,7 +165,7 @@ window.callCustomProvider = async function(config, messages) {
     const baseUrl = (config.base_url || "https://api.anthropic.com/v1").replace(/\/$/, "");
     const isAnthropic = baseUrl.includes("anthropic.com");
     const isOllama = baseUrl.includes("localhost") || baseUrl.includes("127.0.0.1");
-    const endpoint = isAnthropic ? `\${baseUrl}/messages` : `\${baseUrl}/chat/completions`;
+    const endpoint = isAnthropic ? `${baseUrl}/messages` : `${baseUrl}/chat/completions`;
     const apiKey = config.api_key || config.apiKey || "";
     const headers = { "Content-Type": "application/json" };
     let body = {};
@@ -180,7 +180,7 @@ window.callCustomProvider = async function(config, messages) {
             messages: messages.filter(m => m.role !== "system")
         };
     } else {
-        if (!isOllama) headers["Authorization"] = `Bearer \${apiKey}`;
+        if (!isOllama) headers["Authorization"] = `Bearer ${apiKey}`;
         body = {
             model: config.model || "llama3",
             messages: messages,
@@ -188,7 +188,7 @@ window.callCustomProvider = async function(config, messages) {
         };
     }
     const res = await fetch(endpoint, { method: "POST", headers, body: JSON.stringify(body) });
-    if (!res.ok) throw new Error(`API Error: \${res.status}`);
+    if (!res.ok) throw new Error(`API Error: ${res.status}`);
     const data = await res.json();
     return isAnthropic ? data.content[0].text : data.choices[0].message.content;
 }
@@ -279,7 +279,7 @@ window.sendChatV2Msg = async function(retryCount = 0) {
         sendBtn.disabled = true;
 
         if (thinking) {
-            thinking.textContent = retryCount > 0 ? `REINTENTANDO (\${retryCount})...` : "CLAUDE ESTÁ PROCESANDO...";
+            thinking.textContent = retryCount > 0 ? `REINTENTANDO (${retryCount})...` : "CLAUDE ESTÁ PROCESANDO...";
             thinking.classList.remove('hidden');
         }
 
@@ -296,12 +296,12 @@ window.sendChatV2Msg = async function(retryCount = 0) {
             let finalMessages = window.chatV2Messages.filter(m => ['user', 'assistant', 'jules'].includes(m.role))
                 .map(m => ({
                     role: m.role === 'jules' ? 'user' : (m.role === 'assistant' ? 'assistant' : 'user'),
-                    content: m.role === 'jules' ? `[JULES ACTIVITY CONTEXT]\n\${m.content}` : m.content
+                    content: m.role === 'jules' ? `[JULES ACTIVITY CONTEXT]\n${m.content}` : m.content
                 }));
 
             if (window.JulesPanelState.activePayload?.source_task) {
                 const t = window.JulesPanelState.activePayload.source_task;
-                const contextPrefix = `[CONTEXTO TAREA #\${t.id}: \${t.titulo}]\n`;
+                const contextPrefix = `[CONTEXTO TAREA #${t.id}: ${t.titulo}]\n`;
                 if (finalMessages.length > 0 && finalMessages[finalMessages.length - 1].role === 'user') {
                     finalMessages[finalMessages.length - 1].content = contextPrefix + finalMessages[finalMessages.length - 1].content;
                 }
@@ -318,7 +318,7 @@ window.sendChatV2Msg = async function(retryCount = 0) {
                 baseUrl += '/v1';
             }
 
-            let endpoint = isAnthropic ? `\${baseUrl}/messages` : `\${baseUrl}/chat/completions`;
+            let endpoint = isAnthropic ? `${baseUrl}/messages` : `${baseUrl}/chat/completions`;
 
             const headers = {
                 'Content-Type': 'application/json',
@@ -327,7 +327,7 @@ window.sendChatV2Msg = async function(retryCount = 0) {
                     'anthropic-version': '2023-06-01',
                     'anthropic-dangerous-direct-browser-access': 'true'
                 } : (!isOllama ? {
-                    'Authorization': `Bearer \${apiKey}`
+                    'Authorization': `Bearer ${apiKey}`
                 } : {}))
             };
 
@@ -357,7 +357,7 @@ window.sendChatV2Msg = async function(retryCount = 0) {
 
             if (!res.ok) {
                 const errData = await res.json().catch(() => ({}));
-                throw new Error(errData.error?.message || `HTTP \${res.status}`);
+                throw new Error(errData.error?.message || `HTTP ${res.status}`);
             }
 
             await consumeStreamV2(res, config.provider || (isAnthropic ? 'anthropic' : 'custom'));
@@ -365,11 +365,11 @@ window.sendChatV2Msg = async function(retryCount = 0) {
         } catch (e) {
             console.error('[ChatV2] Error:', e);
             if ((e.name === 'AbortError' || e.message.toLowerCase().includes('timeout')) && retryCount < 2) {
-                addTel("SYSTEM", `Reintentando comunicación (\${retryCount + 1}/2)...`, "warn");
+                addTel("SYSTEM", `Reintentando comunicación (${retryCount + 1}/2)...`, "warn");
                 return sendChatV2Msg(retryCount + 1);
             }
             showToast("Error en comunicación con Claude", "red");
-            window.chatV2Messages.push({ role: 'system', content: `❌ Error: \${e.message}` });
+            window.chatV2Messages.push({ role: 'system', content: `❌ Error: ${e.message}` });
             saveSessionsV2();
             renderChatV2Messages();
         } finally {
@@ -426,7 +426,7 @@ window.consumeStreamV2 = async function(response, provider) {
                     if (aiContent || thinkingContent) {
                         let finalHtml = '';
                         if (thinkingContent) {
-                            finalHtml += `<div class="thinking-block">\${escapeHtml(thinkingContent)}</div>`;
+                            finalHtml += `<div class="thinking-block">${escapeHtml(thinkingContent)}</div>`;
                         }
                         if (aiContent) {
                             finalHtml += marked.parse(aiContent);
@@ -492,7 +492,7 @@ window.renderChatV2Messages = function() {
 
     container.innerHTML = window.chatV2Messages.map((m, idx) => {
         if (m.role === 'system') {
-            return `<div class="message-system">\${m.content}</div>`;
+            return `<div class="message-system">${m.content}</div>`;
         }
 
         let label = 'CLAUDE';
@@ -514,13 +514,13 @@ window.renderChatV2Messages = function() {
         }
 
         return `
-        <div class="\${roleClass}">
-            <div style="font-size: 10px; font-weight: 800; opacity: 0.7; margin-bottom: 8px; letter-spacing: 0.05em; color: \${labelColor}">
-                \${label}
+        <div class="${roleClass}">
+            <div style="font-size: 10px; font-weight: 800; opacity: 0.7; margin-bottom: 8px; letter-spacing: 0.05em; color: ${labelColor}">
+                ${label}
             </div>
             <div class="prose-invert" style="font-size: 13.5px; line-height: 1.6;">
-                \${m.thinking ? `<div class="thinking-block">\${escapeHtml(m.thinking)}</div>` : ''}
-                \${marked.parse(m.content)}
+                ${m.thinking ? `<div class="thinking-block">${escapeHtml(m.thinking)}</div>` : ''}
+                ${marked.parse(m.content)}
             </div>
         </div>`;
     }).join('');
@@ -548,45 +548,45 @@ window.renderSessionDrawerList = function() {
         const statusColor = isActive ? 'var(--green)' : 'var(--text3)';
         return `
         <div style="background: var(--surface2); border: 1px solid var(--border); border-radius: var(--r-md); padding: 16px; transition: all var(--t-fast); position: relative; overflow: hidden;">
-            \${isActive ? `<div style="position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: var(--accent);"></div>` : ''}
+            ${isActive ? `<div style="position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: var(--accent);"></div>` : ''}
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
                 <div style="min-width: 0; flex: 1;">
-                    <div id="drawer-name-display-\${s.id}" style="font-size: 14px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; display: flex; align-items: center; gap: 8px;" onclick="restoreSessionFromDrawer('\${s.id}')">
-                        \${s.name}
+                    <div id="drawer-name-display-${s.id}" style="font-size: 14px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; display: flex; align-items: center; gap: 8px;" onclick="restoreSessionFromDrawer('${s.id}')">
+                        ${s.name}
                     </div>
-                    <input id="drawer-name-edit-\${s.id}" type="text" class="cfg-input hidden" value="\${s.name}" onblur="saveRenameFromDrawer('\${s.id}')" onkeydown="if(event.key==='Enter') this.blur()" style="height: 28px; font-size: 13px; padding: 4px 8px; margin-top: 4px;">
+                    <input id="drawer-name-edit-${s.id}" type="text" class="cfg-input hidden" value="${s.name}" onblur="saveRenameFromDrawer('${s.id}')" onkeydown="if(event.key==='Enter') this.blur()" style="height: 28px; font-size: 13px; padding: 4px 8px; margin-top: 4px;">
                     <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
-                        <span style="font-size: 9px; color: \${statusColor}; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 4px;">
-                            \${isActive ? `<span class="u-dot" style="width:5px; height:5px;"></span>` : ''} \${isActive ? 'ACTIVA' : 'ARCHIVADA'}
+                        <span style="font-size: 9px; color: ${statusColor}; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 4px;">
+                            ${isActive ? `<span class="u-dot" style="width:5px; height:5px;"></span>` : ''} ${isActive ? 'ACTIVA' : 'ARCHIVADA'}
                         </span>
-                        <span style="font-size: 9px; color: var(--text3); font-family: var(--font-mono);">#\${s.id}</span>
+                        <span style="font-size: 9px; color: var(--text3); font-family: var(--font-mono);">#${s.id}</span>
                     </div>
                 </div>
                 <div style="display: flex; gap: 6px;">
-                    <button onclick="renameFromDrawer('\${s.id}')" class="icon-btn" title="Renombrar" style="width: 28px; height: 28px; background: rgba(255,255,255,0.03); border: 1px solid var(--border);">✏️</button>
-                    <button onclick="archiveFromDrawer('\${s.id}')" class="icon-btn" title="Archivar" style="width: 28px; height: 28px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); \${!isActive ? 'opacity: 0.2; pointer-events: none;' : ''}">🗄️</button>
-                    <button onclick="deleteFromDrawer('\${s.id}')" class="icon-btn" title="Eliminar" style="width: 28px; height: 28px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); color: var(--red);">🗑️</button>
+                    <button onclick="renameFromDrawer('${s.id}')" class="icon-btn" title="Renombrar" style="width: 28px; height: 28px; background: rgba(255,255,255,0.03); border: 1px solid var(--border);">✏️</button>
+                    <button onclick="archiveFromDrawer('${s.id}')" class="icon-btn" title="Archivar" style="width: 28px; height: 28px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); ${!isActive ? 'opacity: 0.2; pointer-events: none;' : ''}">🗄️</button>
+                    <button onclick="deleteFromDrawer('${s.id}')" class="icon-btn" title="Eliminar" style="width: 28px; height: 28px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); color: var(--red);">🗑️</button>
                 </div>
             </div>
             <div style="display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: var(--text2); font-family: var(--font-mono); margin-top: 4px; padding-top: 10px; border-top: 1px solid var(--border);">
                 <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; display: flex; align-items: center; gap: 6px;">
-                    <i class="fas fa-tasks" style="font-size: 8px; color: var(--accent2);"></i> \${s.task_title}
+                    <i class="fas fa-tasks" style="font-size: 8px; color: var(--accent2);"></i> ${s.task_title}
                 </span>
-                <span style="color: var(--text3);">\${new Date(s.start).toLocaleDateString()}</span>
+                <span style="color: var(--text3);">${new Date(s.start).toLocaleDateString()}</span>
             </div>
         </div>`;
     }).join('');
 }
 
 window.renameFromDrawer = (sid) => {
-    $(`drawer-name-display-\${sid}`).classList.add('hidden');
-    const edit = $(`drawer-name-edit-\${sid}`);
+    $(`drawer-name-display-${sid}`).classList.add('hidden');
+    const edit = $(`drawer-name-edit-${sid}`);
     edit.classList.remove('hidden');
     edit.focus();
 };
 
 window.saveRenameFromDrawer = (sid) => {
-    const edit = $(`drawer-name-edit-\${sid}`);
+    const edit = $(`drawer-name-edit-${sid}`);
     const newName = edit.value.trim();
     if (newName) {
         const sessions = JSON.parse(localStorage.getItem('hy_neural_sessions') || '[]');
@@ -634,7 +634,7 @@ window.restoreSessionFromDrawer = (sid) => {
     localStorage.setItem('hy_neural_active', s.status === 'active' ? 'true' : 'false');
     const claudeId = localStorage.getItem('hy_active_claude_session_id');
     if (claudeId) {
-        localStorage.setItem(`hy_neural_session_id_\${claudeId}`, s.id);
+        localStorage.setItem(`hy_neural_session_id_${claudeId}`, s.id);
     }
     localStorage.setItem('hy_neural_session_id', s.id);
     localStorage.setItem('hy_neural_session_name', s.name);

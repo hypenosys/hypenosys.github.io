@@ -13,8 +13,8 @@ window.loadJulesMetrics = async function() {
         const active = sessions.filter(s => ["WORKING", "IN_PROGRESS", "QUEUED", "PLANNING", "AWAITING_PLAN_APPROVAL"].includes(s.state)).length;
         const successRate = total > 0 ? Math.round((completed / (completed + failed || 1)) * 100) : 0;
         const totalTokens = sessions.reduce((acc, s) => acc + (s.usage?.totalTokens || 0), 0);
-        if($("m-success-rate")) $("m-success-rate").textContent = `\${successRate}%`;
-        if($("m-tokens")) $("m-tokens").textContent = totalTokens > 1000 ? `\${Math.round(totalTokens/1000)}k` : totalTokens;
+        if($("m-success-rate")) $("m-success-rate").textContent = `${successRate}%`;
+        if($("m-tokens")) $("m-tokens").textContent = totalTokens > 1000 ? `${Math.round(totalTokens/1000)}k` : totalTokens;
         if($("s-total")) $("s-total").textContent = total;
         if($("s-active")) $("s-active").textContent = active;
         if($("leg-done")) $("leg-done").textContent = completed;
@@ -23,10 +23,10 @@ window.loadJulesMetrics = async function() {
         if($("leg-pending")) $("leg-pending").textContent = sessions.filter(s => s.state === "QUEUED" || s.state === "PLANNING").length;
         const doneP = (completed / total) * 100;
         const errorP = (failed / total) * 100;
-        if($("donut-done")) $("donut-done").setAttribute("stroke-dasharray", `\${doneP} 100`);
+        if($("donut-done")) $("donut-done").setAttribute("stroke-dasharray", `${doneP} 100`);
         if($("donut-error")) {
-            $("donut-error").setAttribute("stroke-dasharray", `\${errorP} 100`);
-            $("donut-error").setAttribute("stroke-dashoffset", `-\${doneP}`);
+            $("donut-error").setAttribute("stroke-dasharray", `${errorP} 100`);
+            $("donut-error").setAttribute("stroke-dashoffset", `-${doneP}`);
         }
     } catch (e) {
         console.warn("[Jules] loadJulesMetrics error:", e);
