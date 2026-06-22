@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-22T00:35:35.122Z",
+  "computed_at": "2026-06-22T00:36:11.018Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 28,
@@ -324,12 +324,12 @@
       "dependency_impact": 1,
       "comment_activity": 0,
       "volatility": {
-        "reopens": 1,
-        "reprioritizations": 12
+        "reopens": 0,
+        "reprioritizations": 11
       },
       "workload": {
-        "active_tasks": 3,
-        "story_points": 5
+        "active_tasks": 2,
+        "story_points": 0
       }
     },
     "javi26031994-a11y": {
@@ -374,12 +374,12 @@
       "dependency_impact": 0,
       "comment_activity": 0,
       "volatility": {
-        "reopens": 1,
-        "reprioritizations": 6
+        "reopens": 0,
+        "reprioritizations": 5
       },
       "workload": {
-        "active_tasks": 2,
-        "story_points": 10
+        "active_tasks": 1,
+        "story_points": 5
       }
     },
     "mitxel2022": {
@@ -528,7 +528,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-06-22T00:35:35.891Z"
+      "timestamp": "2026-06-22T00:36:11.880Z"
     }
   ]
 }
