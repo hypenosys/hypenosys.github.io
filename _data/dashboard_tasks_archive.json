@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-22T00:05:11.032Z",
+  "last_updated": "2026-06-22T00:05:13.554Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1920,6 +1920,89 @@
       "seccion": "Dashboard"
     },
     {
+      "title": "Local AI Backend Docs: ComfyUI, Redis, PostgreSQL, Forgejo, Matrix, Qdrant, n8n, n8n-runner, ollama setup",
+      "descripcion": "Basic mirror actions in forgejoFrom git\nKubernetes ready file from cognito-Backend agent \nThis will be the backend if we finally accept databases.\nn8n-runner lets us process python (beta) and javascript in n8n workflows\n",
+      "rama": "master",
+      "task_type": "research",
+      "tema_principal": "Tools / Automation",
+      "repository": "hypenosys/docs",
+      "prioridad": "Medium",
+      "milestone": "M1",
+      "estado": "OK",
+      "completitud": 0.5,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [
+        "javi26031994-a11y",
+        "topperh4rley"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-06-11",
+      "due_date": "2026-06-14",
+      "estimated_hours": 2,
+      "story_points": 2,
+      "tags": [
+        "docs"
+      ],
+      "external_links": [
+        {
+          "url": "https://github.com/Axlfc/connect-core/tree/master",
+          "label": "Cognito-Agent"
+        }
+      ],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-11",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-11T09:35:32.059Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-11T11:31:28.400Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:32:34.420Z",
+          "field": "asignados",
+          "old_value": "[]",
+          "new_value": "[\"javi26031994-a11y\",\"topperh4rley\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:49:46.080Z",
+          "field": "seccion",
+          "new_value": "Documentación"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T17:07:22.849Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "OK"
+        }
+      ],
+      "id": 49,
+      "seccion": "Documentación"
+    },
+    {
       "title": "Quitar sección vacía entre FILTRAR MIEMBROS y ALERTAS DE RUTA CRÍTICAS ACTIVAS",
       "descripcion": "",
       "rama": "master",
@@ -2010,9 +2093,9 @@
   ],
   "_audit_log": [
     {
-      "action": "chore: tarea #59 movida al archivo",
+      "action": "chore: tarea #49 movida al archivo",
       "user": "Axlfc",
-      "timestamp": "2026-06-22T00:05:11.032Z"
+      "timestamp": "2026-06-22T00:05:13.554Z"
     },
     {
       "action": "chore: tarea #47 movida al archivo",
