@@ -87,6 +87,9 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-success">Fixed</h5>
             <ul>
+              <li><strong>Infraestructura de Auth (Claude Chat):</strong> Restauradas las dependencias de <code>github-api.js</code> y <code>auth.js</code> en <code>claude-chat.html</code>, solucionando el spinner infinito al inicio.</li>
+              <li><strong>Idempotencia de Inicialización:</strong> Implementada una guarda en el failsafe de <code>jules-panel.html</code> para evitar colisiones con <code>AuthManager</code>, eliminando alertas de bucles de redirección.</li>
+              <li><strong>Bridge de Tareas:</strong> Re-implementada la función global <code>window._openTaskInClaude</code> para asegurar que las tareas del Dashboard se abran correctamente en la interfaz neuronal.</li>
               <li><strong>Modularización Crítica:</strong> Solucionado el problema de la "pantalla negra" en las páginas de Jules Panel, Neural Chat y Repo Admin tras el refactor. Se corrigieron etiquetas <code>&lt;style&gt;</code> sin cerrar en los includes y se normalizaron los layouts a <code>layout: null</code> con estructura HTML completa para evitar conflictos con el tema por defecto de Jekyll.</li>
               <li><strong>Dependencias de Desarrollo:</strong> Corregida la ubicación de <code>playwright</code> en <code>package.json</code>, moviéndolo de dependencies a devDependencies.</li>
               <li><strong>Automatización de "Analizar con Claude":</strong> El flujo de análisis ahora es completamente automático, fusionando fragmentos y preguntas en un solo bloque y disparando la respuesta de Claude instantáneamente sin intervención manual.</li>
