@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-22T00:16:05.176Z",
+  "last_updated": "2026-06-22T00:24:20.712Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -11,8 +11,8 @@
       "descripcion": "Finalizar la configuración del núcleo del centro de operaciones. Es fundamental para centralizar la gestión de tareas y métricas del equipo.",
       "fecha": "2025-01-01",
       "tema_principal": "QA / Testing",
-      "detectado_por": "Alex",
-      "resuelto_por": null,
+      "detectado_por": "Unassigned",
+      "resuelto_por": "Mitxel",
       "apoyo": null,
       "estado": "OK",
       "prioridad": "Medium",
@@ -25,13 +25,8 @@
         "javi26031994-a11y",
         "mitxel2022"
       ],
-      "email_responsable": "alex@hypenosys.com",
-      "emails_asignados": [
-        "alex@hypenosys.com",
-        "javi@hypenosys.com",
-        "didac@hypenosys.com",
-        "mitxel@hypenosys.com"
-      ],
+      "email_responsable": "mitxel@hypenosys.com",
+      "emails_asignados": [],
       "images": [],
       "repository": "hypenosys/hypenosys.github.io",
       "title": "Configuración inicial del dashboard operacional",
@@ -95,8 +90,15 @@
           "field": "estado",
           "old_value": "In Review",
           "new_value": "OK"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-22T00:24:20.163Z",
+          "field": "seccion",
+          "new_value": ""
         }
-      ]
+      ],
+      "seccion": ""
     },
     {
       "rama": "docs/brainstorming-ideation",
@@ -3783,6 +3785,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #1",
+      "user": "Axlfc",
+      "timestamp": "2026-06-22T00:24:20.712Z"
+    },
     {
       "action": "chore: archivar tarea #60",
       "user": "Axlfc",
