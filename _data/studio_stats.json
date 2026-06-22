@@ -1,41 +1,64 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-22T00:04:55.073Z",
+  "computed_at": "2026-06-22T00:04:55.696Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 21,
-    "total_ok": 21,
+    "total_tasks": 38,
+    "total_ok": 12,
     "total_ko": 0,
-    "total_uncertain": 0,
-    "total_obsolete": 0,
-    "fixed_found_ratio": 1.1053,
-    "verified_ratio": 1
+    "total_uncertain": 10,
+    "total_obsolete": 7,
+    "fixed_found_ratio": 0.2791,
+    "verified_ratio": 0.2667
   },
   "group": {
     "velocity_trend": {
       "2026-W19": 0,
       "2026-W20": 0,
-      "2026-W21": 8,
-      "2026-W22": 10,
-      "2026-W23": 18,
+      "2026-W21": 4,
+      "2026-W22": 6,
+      "2026-W23": 12,
       "2026-W24": 2,
-      "2026-W25": 0,
+      "2026-W25": 5,
       "2026-W26": 0
     },
-    "bug_rate": 0,
-    "blocker_health": 0,
-    "tag_heatmap": {},
-    "milestone_tasks_remaining": 0,
+    "bug_rate": 0.0769,
+    "blocker_health": 1,
+    "tag_heatmap": {
+      "brainstorm": 1,
+      "chore": 7,
+      "design": 1,
+      "docs": 2,
+      "topper": 1,
+      "testing": 1,
+      "devops": 5,
+      "git": 1,
+      "UX/UI": 2,
+      "feature": 13,
+      "frontend": 3,
+      "ux": 4,
+      "Infraestructura": 1,
+      "api": 8,
+      "jules": 1,
+      "research": 1,
+      "bug": 2,
+      "security": 3,
+      "backend": 2,
+      "master": 10,
+      "menú": 1,
+      "ux/ui": 1
+    },
+    "milestone_tasks_remaining": 14,
     "hall_of_fame_winners": {
       "mvp": {
         "handle": "axlfc",
         "name": "Axel",
-        "value": 9
+        "value": 5
       },
       "bug_slayer": {
         "handle": "axlfc",
         "name": "Axel",
-        "value": 4
+        "value": 3
       },
       "unblocker": {
         "handle": "axlfc",
@@ -45,12 +68,12 @@
       "velocity_king": {
         "handle": "dkdidac-design",
         "name": "Dídac",
-        "value": 4.666666666666667
+        "value": 4.333333333333333
       },
       "researcher": {
         "handle": "axlfc",
         "name": "Axel",
-        "value": 0
+        "value": 1
       },
       "art_lead": {
         "handle": "axlfc",
@@ -60,56 +83,56 @@
       "collaborator": {
         "handle": "axlfc",
         "name": "Axel",
-        "value": 0
+        "value": 1
       }
     },
     "leaderboard": {
       "axlfc": {
         "member_name": "Axel",
-        "mvp_points": 9,
-        "bugs_solved": 4,
+        "mvp_points": 5,
+        "bugs_solved": 3,
         "unblocked_count": 4,
-        "velocity": 2.9411764705882355,
-        "research_solved": 0,
+        "velocity": 2.9523809523809526,
+        "research_solved": 1,
         "art_tasks": 0,
-        "comments_left": 0
+        "comments_left": 1
       },
       "topperh4rley": {
         "member_name": "Alex",
-        "mvp_points": 7,
-        "bugs_solved": 4,
+        "mvp_points": 4.2,
+        "bugs_solved": 3,
         "unblocked_count": 4,
-        "velocity": 3,
-        "research_solved": 0,
+        "velocity": 3.238095238095238,
+        "research_solved": 1,
         "art_tasks": 0,
         "comments_left": 0
       },
       "dkdidac-design": {
         "member_name": "Dídac",
-        "mvp_points": 0,
+        "mvp_points": 0.6000000000000001,
         "bugs_solved": 2,
         "unblocked_count": 0,
-        "velocity": 4.666666666666667,
+        "velocity": 4.333333333333333,
         "research_solved": 0,
         "art_tasks": 0,
         "comments_left": 0
       },
       "javi26031994-a11y": {
         "member_name": "Javi",
-        "mvp_points": 0,
+        "mvp_points": 1.1,
         "bugs_solved": 0,
         "unblocked_count": 0,
-        "velocity": 4,
-        "research_solved": 0,
+        "velocity": 3.3333333333333335,
+        "research_solved": 1,
         "art_tasks": 0,
         "comments_left": 0
       },
       "mitxel2022": {
         "member_name": "Mitxel",
-        "mvp_points": 0,
+        "mvp_points": 0.6000000000000001,
         "bugs_solved": 0,
         "unblocked_count": 0,
-        "velocity": 0,
+        "velocity": 2,
         "research_solved": 0,
         "art_tasks": 0,
         "comments_left": 0
@@ -120,164 +143,187 @@
     "axlfc": {
       "member_name": "Axel",
       "completed": {
-        "all_time": 38,
-        "milestone": 34,
-        "week": 0
+        "all_time": 24,
+        "milestone": 21,
+        "week": 1
       },
       "weekly_velocity": {
         "2026-W19": 0,
         "2026-W20": 0,
-        "2026-W21": 6,
-        "2026-W22": 8,
-        "2026-W23": 46,
-        "2026-W24": 2,
-        "2026-W25": 0,
+        "2026-W21": 3,
+        "2026-W22": 4,
+        "2026-W23": 26,
+        "2026-W24": 3,
+        "2026-W25": 7,
         "2026-W26": 0
       },
       "type_breakdown": {
-        "feature": 28,
-        "chore": 6,
-        "bug": 4
+        "feature": 16,
+        "research": 1,
+        "chore": 4,
+        "bug": 3
       },
       "rama_breakdown": {
-        "PRO": 30,
-        "feature/dashboard-tag-filter": 2,
-        "master": 4,
-        "chore/consolidate-scripts": 2
+        "feature/svn-ai-integration": 1,
+        "feature/dashboard-chat-icon": 1,
+        "master": 5,
+        "PRO": 15,
+        "feature/dashboard-tag-filter": 1,
+        "chore/consolidate-scripts": 1
       },
       "tag_frequency": {
-        "infraestructura": 2,
-        "jules": 2,
-        "UX/UI": 2,
-        "bug": 4,
-        "hard": 2,
-        "feature": 4,
-        "frontend": 2,
-        "ux": 4,
-        "chore": 4,
-        "docs": 2,
         "api": 2,
-        "n8n": 2,
-        "refactor": 2
+        "devops": 1,
+        "feature": 4,
+        "infraestructura": 2,
+        "jules-panel": 1,
+        "neural-chat": 1,
+        "svn": 1,
+        "frontend": 2,
+        "ux": 3,
+        "docs": 2,
+        "jules": 1,
+        "UX/UI": 1,
+        "bug": 2,
+        "hard": 1,
+        "chore": 2,
+        "n8n": 1,
+        "refactor": 1
       },
       "avg_completion_speed": {
         "days": 0.5,
         "estimated_start": true
       },
-      "dependency_impact": 4,
-      "comment_activity": 0,
+      "dependency_impact": 5,
+      "comment_activity": 1,
       "volatility": {
-        "reopens": 2,
-        "reprioritizations": 30
+        "reopens": 4,
+        "reprioritizations": 24
       },
       "workload": {
-        "active_tasks": 0,
-        "story_points": 0
+        "active_tasks": 13,
+        "story_points": 27
       }
     },
     "topperh4rley": {
       "member_name": "Alex",
       "completed": {
-        "all_time": 36,
-        "milestone": 32,
+        "all_time": 24,
+        "milestone": 21,
         "week": 0
       },
       "weekly_velocity": {
         "2026-W19": 0,
         "2026-W20": 0,
-        "2026-W21": 6,
-        "2026-W22": 8,
-        "2026-W23": 46,
-        "2026-W24": 0,
-        "2026-W25": 0,
+        "2026-W21": 3,
+        "2026-W22": 5,
+        "2026-W23": 30,
+        "2026-W24": 2,
+        "2026-W25": 6,
         "2026-W26": 0
       },
       "type_breakdown": {
-        "feature": 30,
-        "bug": 4,
-        "chore": 2
+        "chore": 3,
+        "bug": 3,
+        "feature": 17,
+        "research": 1
       },
       "rama_breakdown": {
-        "PRO": 30,
-        "feature/dashboard-tag-filter": 2,
-        "master": 4
+        "PRO": 16,
+        "fix/jules-neural-mobile-markdown": 1,
+        "feature/svn-ai-integration": 1,
+        "feature/dashboard-chat-icon": 1,
+        "master": 4,
+        "feature/dashboard-tag-filter": 1
       },
       "tag_frequency": {
-        "jules": 2,
-        "UX/UI": 2,
-        "bug": 4,
-        "hard": 2,
-        "feature": 4,
-        "frontend": 2,
-        "ux": 4,
         "chore": 2,
-        "docs": 2,
+        "onboarding": 1,
+        "UX/UI": 2,
+        "bug": 3,
+        "frontend": 3,
+        "ux": 4,
         "api": 2,
-        "n8n": 2
+        "devops": 1,
+        "feature": 4,
+        "infraestructura": 1,
+        "jules-panel": 1,
+        "neural-chat": 1,
+        "svn": 1,
+        "docs": 2,
+        "jules": 1,
+        "hard": 1,
+        "n8n": 1
       },
       "avg_completion_speed": {
         "days": 0.5,
         "estimated_start": true
       },
-      "dependency_impact": 4,
+      "dependency_impact": 5,
       "comment_activity": 0,
       "volatility": {
-        "reopens": 2,
+        "reopens": 4,
         "reprioritizations": 24
       },
       "workload": {
-        "active_tasks": 0,
-        "story_points": 0
+        "active_tasks": 11,
+        "story_points": 29
       }
     },
     "dkdidac-design": {
       "member_name": "Dídac",
       "completed": {
-        "all_time": 10,
+        "all_time": 8,
         "milestone": 6,
         "week": 0
       },
       "weekly_velocity": {
         "2026-W19": 0,
         "2026-W20": 0,
-        "2026-W21": 2,
-        "2026-W22": 0,
-        "2026-W23": 24,
+        "2026-W21": 1,
+        "2026-W22": 1,
+        "2026-W23": 16,
         "2026-W24": 0,
         "2026-W25": 0,
         "2026-W26": 0
       },
       "type_breakdown": {
-        "feature": 6,
-        "bug": 2,
-        "chore": 2
+        "feature": 4,
+        "chore": 2,
+        "bug": 2
       },
       "rama_breakdown": {
-        "PRO": 6,
-        "master": 4
+        "feature/dashboard-core-setup": 1,
+        "PRO": 4,
+        "fix/jules-neural-mobile-markdown": 1,
+        "master": 2
       },
       "tag_frequency": {
-        "bug": 2,
-        "chore": 2,
-        "docs": 2,
-        "api": 2,
+        "devops": 1,
         "feature": 2,
-        "n8n": 2,
-        "ux": 2
+        "frontend": 2,
+        "chore": 2,
+        "onboarding": 1,
+        "UX/UI": 1,
+        "bug": 2,
+        "ux": 2,
+        "docs": 1,
+        "api": 1,
+        "n8n": 1
       },
       "avg_completion_speed": {
         "days": 0.5,
         "estimated_start": true
       },
-      "dependency_impact": 0,
+      "dependency_impact": 1,
       "comment_activity": 0,
       "volatility": {
-        "reopens": 0,
-        "reprioritizations": 10
+        "reopens": 1,
+        "reprioritizations": 12
       },
       "workload": {
-        "active_tasks": 0,
-        "story_points": 0
+        "active_tasks": 4,
+        "story_points": 13
       }
     },
     "javi26031994-a11y": {
@@ -290,23 +336,29 @@
       "weekly_velocity": {
         "2026-W19": 0,
         "2026-W20": 0,
-        "2026-W21": 4,
-        "2026-W22": 0,
-        "2026-W23": 8,
-        "2026-W24": 0,
+        "2026-W21": 2,
+        "2026-W22": 1,
+        "2026-W23": 4,
+        "2026-W24": 2,
         "2026-W25": 0,
         "2026-W26": 0
       },
       "type_breakdown": {
-        "feature": 4,
-        "chore": 2
+        "feature": 3,
+        "chore": 2,
+        "research": 1
       },
       "rama_breakdown": {
-        "PRO": 4,
+        "feature/dashboard-core-setup": 1,
+        "PRO": 3,
         "master": 2
       },
       "tag_frequency": {
+        "devops": 1,
+        "feature": 1,
+        "frontend": 1,
         "chore": 2,
+        "onboarding": 1,
         "docs": 2
       },
       "avg_completion_speed": {
@@ -316,47 +368,59 @@
       "dependency_impact": 0,
       "comment_activity": 0,
       "volatility": {
-        "reopens": 0,
-        "reprioritizations": 4
+        "reopens": 1,
+        "reprioritizations": 6
       },
       "workload": {
-        "active_tasks": 0,
-        "story_points": 0
+        "active_tasks": 3,
+        "story_points": 18
       }
     },
     "mitxel2022": {
       "member_name": "Mitxel",
       "completed": {
-        "all_time": 0,
-        "milestone": 0,
+        "all_time": 2,
+        "milestone": 2,
         "week": 0
       },
       "weekly_velocity": {
         "2026-W19": 0,
         "2026-W20": 0,
         "2026-W21": 0,
-        "2026-W22": 0,
+        "2026-W22": 1,
         "2026-W23": 0,
         "2026-W24": 0,
         "2026-W25": 0,
         "2026-W26": 0
       },
-      "type_breakdown": {},
-      "rama_breakdown": {},
-      "tag_frequency": {},
+      "type_breakdown": {
+        "feature": 1,
+        "chore": 1
+      },
+      "rama_breakdown": {
+        "feature/dashboard-core-setup": 1,
+        "PRO": 1
+      },
+      "tag_frequency": {
+        "devops": 1,
+        "feature": 1,
+        "frontend": 1,
+        "chore": 1,
+        "onboarding": 1
+      },
       "avg_completion_speed": {
-        "days": 0,
+        "days": 0.5,
         "estimated_start": false
       },
       "dependency_impact": 0,
       "comment_activity": 0,
       "volatility": {
-        "reopens": 0,
-        "reprioritizations": 0
+        "reopens": 1,
+        "reprioritizations": 4
       },
       "workload": {
-        "active_tasks": 0,
-        "story_points": 0
+        "active_tasks": 5,
+        "story_points": 7
       }
     }
   },
@@ -366,12 +430,12 @@
         "mvp": {
           "handle": "axlfc",
           "name": "Axel",
-          "value": 9
+          "value": 5
         },
         "bug_slayer": {
           "handle": "axlfc",
           "name": "Axel",
-          "value": 4
+          "value": 3
         },
         "unblocker": {
           "handle": "axlfc",
@@ -381,12 +445,12 @@
         "velocity_king": {
           "handle": "dkdidac-design",
           "name": "Dídac",
-          "value": 4.666666666666667
+          "value": 4.333333333333333
         },
         "researcher": {
           "handle": "axlfc",
           "name": "Axel",
-          "value": 0
+          "value": 1
         },
         "art_lead": {
           "handle": "axlfc",
@@ -396,56 +460,56 @@
         "collaborator": {
           "handle": "axlfc",
           "name": "Axel",
-          "value": 0
+          "value": 1
         }
       },
       "leaderboard": {
         "axlfc": {
           "member_name": "Axel",
-          "mvp_points": 9,
-          "bugs_solved": 4,
+          "mvp_points": 5,
+          "bugs_solved": 3,
           "unblocked_count": 4,
-          "velocity": 2.9411764705882355,
-          "research_solved": 0,
+          "velocity": 2.9523809523809526,
+          "research_solved": 1,
           "art_tasks": 0,
-          "comments_left": 0
+          "comments_left": 1
         },
         "topperh4rley": {
           "member_name": "Alex",
-          "mvp_points": 7,
-          "bugs_solved": 4,
+          "mvp_points": 4.2,
+          "bugs_solved": 3,
           "unblocked_count": 4,
-          "velocity": 3,
-          "research_solved": 0,
+          "velocity": 3.238095238095238,
+          "research_solved": 1,
           "art_tasks": 0,
           "comments_left": 0
         },
         "dkdidac-design": {
           "member_name": "Dídac",
-          "mvp_points": 0,
+          "mvp_points": 0.6000000000000001,
           "bugs_solved": 2,
           "unblocked_count": 0,
-          "velocity": 4.666666666666667,
+          "velocity": 4.333333333333333,
           "research_solved": 0,
           "art_tasks": 0,
           "comments_left": 0
         },
         "javi26031994-a11y": {
           "member_name": "Javi",
-          "mvp_points": 0,
+          "mvp_points": 1.1,
           "bugs_solved": 0,
           "unblocked_count": 0,
-          "velocity": 4,
-          "research_solved": 0,
+          "velocity": 3.3333333333333335,
+          "research_solved": 1,
           "art_tasks": 0,
           "comments_left": 0
         },
         "mitxel2022": {
           "member_name": "Mitxel",
-          "mvp_points": 0,
+          "mvp_points": 0.6000000000000001,
           "bugs_solved": 0,
           "unblocked_count": 0,
-          "velocity": 0,
+          "velocity": 2,
           "research_solved": 0,
           "art_tasks": 0,
           "comments_left": 0
@@ -458,7 +522,12 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-06-22T00:04:55.827Z"
+      "timestamp": "2026-06-22T00:04:59.570Z"
+    },
+    {
+      "action": "chore: recalcular studio_stats.json (Layer A & B)",
+      "user": "Axlfc",
+      "timestamp": "2026-06-22T00:04:57.564Z"
     }
   ]
 }
