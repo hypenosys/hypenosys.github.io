@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-22T00:05:04.325Z",
+  "last_updated": "2026-06-22T00:05:14.215Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3449,72 +3449,6 @@
       "seccion": "Dashboard"
     },
     {
-      "title": "Al expandir la card del kanban, si hay imagenes, debería mostrarlas ahi y poder previsualizarlas flawlessly",
-      "descripcion": "",
-      "rama": "master",
-      "task_type": "feature",
-      "tema_principal": "Programación / Engine",
-      "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Medium",
-      "milestone": "M1",
-      "estado": "OK",
-      "completitud": 0,
-      "resuelto_por": null,
-      "detectado_por": "Axel",
-      "asignados": [],
-      "email_responsable": null,
-      "emails_asignados": [],
-      "start_date": "2026-06-21",
-      "due_date": "2026-06-28",
-      "estimated_hours": 2,
-      "story_points": 2,
-      "tags": [],
-      "external_links": [],
-      "subtasks": [],
-      "acceptance_criteria": "",
-      "blocks": [],
-      "blocked_by": [],
-      "comments": [],
-      "images": [],
-      "rama2": null,
-      "ver": true,
-      "fecha": "2026-06-21",
-      "apoyo": null,
-      "limite": null,
-      "comentario": "",
-      "change_log": [
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T11:12:53.650Z",
-          "field": "id",
-          "old_value": null,
-          "new_value": "Created"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T12:41:11.005Z",
-          "field": "seccion",
-          "new_value": "Dashboard"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T15:04:04.222Z",
-          "field": "title",
-          "old_value": "DASHBOARD: Al expandir la card del kanban, si hay imagenes, debería mostrarlas ahi y poder previsualizarlas flawlessly",
-          "new_value": "Al expandir la card del kanban, si hay imagenes, debería mostrarlas ahi y poder previsualizarlas flawlessly"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T19:26:50.159Z",
-          "field": "estado",
-          "old_value": "Pending",
-          "new_value": "OK"
-        }
-      ],
-      "id": 61,
-      "seccion": "Dashboard"
-    },
-    {
       "title": "Unificar menús en todas las páginas de la plataforma",
       "descripcion": "Actualmente en cada página cada menú es hijo de su padre.\nAñadir botón en el icono de usuario del jules panel para abrirse lo de 'Mi Perfil', 'Configuración API', 'Ajustes Avanzados', 'Cerrar sesión' en Jules Panel etc. hacer un análisis profundo y exhaustivo de qué hay en cada menú en cada página. Y diseñar un menú unificado con todas las características necesarias imprescindibles y específicas que haya.",
       "rama": "master",
@@ -3959,6 +3893,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: archivar tarea #61",
+      "user": "Axlfc",
+      "timestamp": "2026-06-22T00:05:14.215Z"
+    },
     {
       "action": "chore: archivar tarea #59",
       "user": "Axlfc",
