@@ -121,7 +121,7 @@ permalink: /chat/neural/
     </aside>
 
     <!-- Main Chat Area -->
-    <main class="flex-grow flex flex-col relative bg-[#282a36]">
+    <main class="flex-grow flex flex-col relative bg-[#282a36]" id="chat-main-area">
 
         <!-- Header -->
         <header class="h-16 border-b border-[#44475a]/50 flex items-center justify-between px-6 bg-[#1e1f29]/50 backdrop-blur-md sticky top-0 z-20">
@@ -351,6 +351,8 @@ permalink: /chat/neural/
     };
     marked.setOptions({ renderer });
 </script>
+<script src="{{ '/assets/javascript/github-api.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/auth.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/jules-api.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/github-api-ops.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/github-context.js' | relative_url }}"></script>
@@ -578,6 +580,7 @@ permalink: /chat/neural/
             const loading = document.getElementById('claude-auth-loading');
             const gate = document.getElementById('claude-auth-gate');
             const main = document.getElementById('claude-main-interface');
+            const chatArea = document.getElementById('chat-main-area');
 
             if (user) {
                 // PRIORITY 5 — Sync hy_jules_config from profiles
@@ -600,6 +603,7 @@ permalink: /chat/neural/
                 loading.classList.add('hidden');
                 gate.classList.add('hidden');
                 main.classList.remove('hidden');
+                chatArea.classList.remove('hidden');
                 try {
                     await init();
 
@@ -710,6 +714,7 @@ permalink: /chat/neural/
                 loading.classList.add('hidden');
                 gate.classList.remove('hidden');
                 main.classList.add('hidden');
+                chatArea.classList.add('hidden');
             }
         }
 
@@ -731,5 +736,23 @@ permalink: /chat/neural/
         }
     })();
 </script>
+
+<!-- Hypenosys override: neural session entry point -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  setTimeout(function() {
+    window._openTaskInClaude = function(taskData) {
+      try {
+        const payload = encodeURIComponent(JSON.stringify(taskData));
+        const baseUrl = window.SITE_BASEURL || '';
+        window.location.href = baseUrl + '/chat/neural/?task_data=' + payload;
+      } catch (e) {
+        console.error('_openTaskInClaude error:', e);
+      }
+    };
+  }, 100);
+});
+</script>
+
 </body>
 </html>
