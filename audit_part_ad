@@ -1,0 +1,100 @@
+FILE: assets/javascript/jules-panel-metrics.js
+LINE: 17
+BEFORE: if($("m-tokens")) $("m-tokens").textContent = totalTokens > 1000 ? `\${Math.round(totalTokens/1000)}k` : totalTokens;
+AFTER: if($("m-tokens")) $("m-tokens").textContent = totalTokens > 1000 ? `${Math.round(totalTokens/1000)}k` : totalTokens;
+---
+FILE: assets/javascript/jules-panel-metrics.js
+LINE: 26
+BEFORE: if($("donut-done")) $("donut-done").setAttribute("stroke-dasharray", `\${doneP} 100`);
+AFTER: if($("donut-done")) $("donut-done").setAttribute("stroke-dasharray", `${doneP} 100`);
+---
+FILE: assets/javascript/jules-panel-metrics.js
+LINE: 28
+BEFORE: $("donut-error").setAttribute("stroke-dasharray", `\${errorP} 100`);
+AFTER: $("donut-error").setAttribute("stroke-dasharray", `${errorP} 100`);
+---
+FILE: assets/javascript/jules-panel-metrics.js
+LINE: 29
+BEFORE: $("donut-error").setAttribute("stroke-dashoffset", `-\${doneP}`);
+AFTER: $("donut-error").setAttribute("stroke-dashoffset", `-${doneP}`);
+---
+FILE: assets/javascript/jules-panel-kanban.js
+LINE: 76
+BEFORE: const col = $(`col-\${colId}`);
+AFTER: const col = $(`col-${colId}`);
+---
+FILE: assets/javascript/jules-panel-kanban.js
+LINE: 81
+BEFORE: const col = $(`col-\${colId}`);
+AFTER: const col = $(`col-${colId}`);
+---
+FILE: assets/javascript/jules-panel-kanban.js
+LINE: 87
+BEFORE: const col = $(`col-\${targetColId}`);
+AFTER: const col = $(`col-${targetColId}`);
+---
+FILE: assets/javascript/jules-panel-kanban.js
+LINE: 187
+BEFORE: sessCtx.textContent = `\${repoLabel}: \${branch}`;
+AFTER: sessCtx.textContent = `${repoLabel}: ${branch}`;
+---
+FILE: assets/javascript/jules-panel-kanban.js
+LINE: 330
+BEFORE: const colEl = $(`kb-\${colId}`), countEl = $(`kb-count-\${colId}`), mCountEl = $(`m-count-\${colId}`);
+AFTER: const colEl = $(`kb-${colId}`), countEl = $(`kb-count-${colId}`), mCountEl = $(`m-count-${colId}`);
+---
+FILE: assets/javascript/jules-panel-kanban.js
+LINE: 352
+BEFORE: <div class="kb-card \${colId} \${isArchived ? 'archived' : ''}"
+AFTER: <div class="kb-card ${colId} ${isArchived ? 'archived' : ''}"
+---
+FILE: assets/javascript/jules-panel-kanban.js
+LINE: 353
+BEFORE: \${canDrag ? `draggable="true" ondragstart="onDragStart(event, '\${sid}')" ondragend="this.classList.remove('dragging')"` : ''}
+AFTER: ${canDrag ? `draggable="true" ondragstart="onDragStart(event, '${sid}')" ondragend="this.classList.remove('dragging')"` : ''}
+---
+FILE: assets/javascript/jules-panel-kanban.js
+LINE: 354
+BEFORE: onclick="openDrawer('\${s.name}')">
+AFTER: onclick="openDrawer('${s.name}')">
+---
+FILE: assets/javascript/jules-panel-kanban.js
+LINE: 356
+BEFORE: <div class="kb-card-id">#\${sid}\${isArchived ? '<span class="archived-badge">Archived</span>' : ''}</div>
+AFTER: <div class="kb-card-id">#${sid}${isArchived ? '<span class="archived-badge">Archived</span>' : ''}</div>
+---
+FILE: assets/javascript/jules-panel-kanban.js
+LINE: 357
+BEFORE: <span class="sbadge \${s.state.toLowerCase().replace(/_/g, '-')}">\${s.state}</span>
+AFTER: <span class="sbadge ${s.state.toLowerCase().replace(/_/g, '-')}">${s.state}</span>
+---
+FILE: assets/javascript/jules-panel-kanban.js
+LINE: 359
+BEFORE: <div class="kb-card-task">\${escapeHtml(s.title || s.prompt)}</div>
+AFTER: <div class="kb-card-task">${escapeHtml(s.title || s.prompt)}</div>
+---
+FILE: assets/javascript/jules-panel-kanban.js
+LINE: 361
+BEFORE: <span class="kb-card-repo">\${repo}</span>
+AFTER: <span class="kb-card-repo">${repo}</span>
+---
+FILE: assets/javascript/jules-panel-kanban.js
+LINE: 362
+BEFORE: <span class="kb-card-time">\${getTimeAgo(s.createTime)}</span>
+AFTER: <span class="kb-card-time">${getTimeAgo(s.createTime)}</span>
+---
+FILE: assets/javascript/jules-panel-kanban.js
+LINE: 365
+BEFORE: \${isArchived ? `<button class="kb-action-btn" style="color:var(--amber)" onclick="event.stopPropagation(); restoreArchivedCard('\${archiveId}')">Restaurar</button>` : ''}
+AFTER: ${isArchived ? `<button class="kb-action-btn" style="color:var(--amber)" onclick="event.stopPropagation(); restoreArchivedCard('${archiveId}')">Restaurar</button>` : ''}
+---
+FILE: assets/javascript/jules-panel-kanban.js
+LINE: 366
+BEFORE: <button class="kb-action-btn btn-relaunch" onclick="event.stopPropagation(); relaunchJules('\${encodeURIComponent(JSON.stringify(s))}')">Relanzar Jules</button>
+AFTER: <button class="kb-action-btn btn-relaunch" onclick="event.stopPropagation(); relaunchJules('${encodeURIComponent(JSON.stringify(s))}')">Relanzar Jules</button>
+---
+FILE: assets/javascript/jules-panel-kanban.js
+LINE: 367
+BEFORE: <button class="kb-action-btn" onclick="event.stopPropagation(); const cid = localStorage.getItem('hy_active_claude_session_id'); if (cid) localStorage.setItem('hy_neural_session_id_' + cid, '\${sid}'); localStorage.setItem('hy_neural_session_id', '\${sid}'); localStorage.setItem('hy_neural_active', 'true'); switchView('chat');">Ver Neural</button>
+AFTER: <button class="kb-action-btn" onclick="event.stopPropagation(); const cid = localStorage.getItem('hy_active_claude_session_id'); if (cid) localStorage.setItem('hy_neural_session_id_' + cid, '${sid}'); localStorage.setItem('hy_neural_session_id', '${sid}'); localStorage.setItem('hy_neural_active', 'true'); switchView('chat');">Ver Neural</button>
+---

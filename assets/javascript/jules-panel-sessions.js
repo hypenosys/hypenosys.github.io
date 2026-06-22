@@ -15,8 +15,8 @@ window.STATE_CONFIG = {
 
 window.getStateBadge = function(state) {
   const cfg = STATE_CONFIG[state] || { label: state || '—', cls: 'queued', icon: '◌' };
-  return `<span class="session-badge session-badge--\${cfg.cls}">
-    \${cfg.icon} \${cfg.label}
+  return `<span class="session-badge session-badge--${cfg.cls}">
+    ${cfg.icon} ${cfg.label}
   </span>`;
 }
 
@@ -35,7 +35,7 @@ window.refreshActivities = async function(idSafe) {
         const session = currentSessions.find(s => s.name === sessionId);
 
         // Update sticky badge
-        const stickyBadge = document.getElementById(`sticky-badge-\${idSafe}`);
+        const stickyBadge = document.getElementById(`sticky-badge-${idSafe}`);
         if (stickyBadge && session) {
             stickyBadge.innerHTML = getStateBadge(session.state);
             stickyBadge.classList.remove('hidden');
@@ -135,15 +135,15 @@ window.renderActivity = function(activity) {
           if (line.startsWith('+') && !line.startsWith('+++')) cls = 'dl dl-add';
           else if (line.startsWith('-') && !line.startsWith('---')) cls = 'dl dl-del';
           else if (line.startsWith('@@')) cls = 'dl dl-hunk';
-          return `<div class="\${cls}">\${escapeHtml(line)}</div>`;
+          return `<div class="${cls}">${escapeHtml(line)}</div>`;
         }).join('');
 
         const session = currentSessions.find(s => s.name === activity.name?.split('/activities/')[0]);
         const moreHtml = hiddenCount > 0
           ? `<div style="font-size:10px;color:#6b7280;padding:6px;text-align:center;
                border-top:1px solid #2a2a35;">
-               +\${hiddenCount} líneas más —
-               <a href="\${session?.url || '#'}" target="_blank"
+               +${hiddenCount} líneas más —
+               <a href="${session?.url || '#'}" target="_blank"
                   style="color:#8b5cf6;text-decoration:underline;">
                  ver completo en Jules
                </a>
@@ -157,13 +157,13 @@ window.renderActivity = function(activity) {
               display:flex;align-items:center;gap:6px;">
               <span>📄</span>
               <span>Ver cambios en código</span>
-              \${msg ? `<span style="color:#6b7280;font-weight:400;font-size:10px;">
-                — \${escapeHtml(msg)}</span>` : ''}
+              ${msg ? `<span style="color:#6b7280;font-weight:400;font-size:10px;">
+                — ${escapeHtml(msg)}</span>` : ''}
             </summary>
             <div style="border:1px solid #2a2a35;border-radius:6px;
               overflow:hidden;max-height:250px;overflow-y:auto;">
-              \${diffLinesHtml}
-              \${moreHtml}
+              ${diffLinesHtml}
+              ${moreHtml}
             </div>
           </details>`;
       }
@@ -178,18 +178,18 @@ window.renderActivity = function(activity) {
         <div style="padding:8px 0;border-bottom:1px solid #1e1e2a;">
           <div style="display:flex;gap:8px;">
             <span style="color:#7c3aed;font-weight:700;min-width:18px;">
-              \${(s.index || 0) + 1}.
+              ${(s.index || 0) + 1}.
             </span>
             <div style="flex: 1;">
               <div style="color:#e2e8f0;font-size:12px;font-weight:500;">
-                \${s.title || 'Sin título'}
+                ${s.title || 'Sin título'}
               </div>
-              \${s.description ? `
+              ${s.description ? `
                 <div style="color:#6b7280;font-size:11px;margin-top:2px;">
-                  \${s.description}
+                  ${s.description}
                 </div>` : ''}
             </div>
-            <button class="btn-icon" title="Comentar en este paso" onclick="commentOnStep('\${activity.name?.split('/activities/')[0]}', \${(s.index || 0) + 1}, '\${escapeHtml(s.title)}')">
+            <button class="btn-icon" title="Comentar en este paso" onclick="commentOnStep('${activity.name?.split('/activities/')[0]}', ${(s.index || 0) + 1}, '${escapeHtml(s.title)}')">
               <i class="fa-solid fa-comment-dots text-[10px]"></i>
             </button>
           </div>
@@ -200,9 +200,9 @@ window.renderActivity = function(activity) {
       <div class="activity-entry activity-entry--plan">
         <div style="font-size:10px;font-weight:700;color:#8b5cf6;
                     text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">
-          📋 Plan generado (\${steps.length} pasos)
+          📋 Plan generado (${steps.length} pasos)
         </div>
-        <div>\${stepsHtml || '<span style="color:#6b7280">Sin pasos</span>'}</div>
+        <div>${stepsHtml || '<span style="color:#6b7280">Sin pasos</span>'}</div>
       </div>`;
   }
   else if (activity.planApproved) {
@@ -213,12 +213,12 @@ window.renderActivity = function(activity) {
   else if (activity.userMessaged) {
     const msg = activity.userMessaged.userMessage || '';
     const parsed = typeof marked !== 'undefined' ? marked.parse(msg) : escapeHtml(msg);
-    html = `<div class="activity-entry activity-entry--user prose-invert" style="overflow-x: auto; max-width: 100%; word-break: break-word;">\${parsed}</div>`;
+    html = `<div class="activity-entry activity-entry--user prose-invert" style="overflow-x: auto; max-width: 100%; word-break: break-word;">${parsed}</div>`;
   }
   else if (activity.agentMessaged) {
     const msg = activity.agentMessaged.agentMessage || '';
     const parsed = typeof marked !== 'undefined' ? marked.parse(msg) : escapeHtml(msg);
-    html = `<div class="activity-entry activity-entry--agent prose-invert" style="overflow-x: auto; max-width: 100%; word-break: break-word;">\${parsed}</div>`;
+    html = `<div class="activity-entry activity-entry--agent prose-invert" style="overflow-x: auto; max-width: 100%; word-break: break-word;">${parsed}</div>`;
   }
   else if (activity.progressUpdated) {
     const title = activity.progressUpdated.title || '';
@@ -232,18 +232,18 @@ window.renderActivity = function(activity) {
       <div class="activity-entry activity-entry--progress">
         <div class="prose-invert" style="overflow-x:auto;max-width:100%;word-break:break-word;font-size:12px;">
           <span style="color:#8b5cf6;font-weight:700;">⚙️</span>
-          \${parsedTitle}
-          \${parsedDesc ? `<div style="color:#9ca3af;margin-top:4px;">\${parsedDesc}</div>` : ''}
+          ${parsedTitle}
+          ${parsedDesc ? `<div style="color:#9ca3af;margin-top:4px;">${parsedDesc}</div>` : ''}
         </div>
-        \${bash ? `
+        ${bash ? `
           <details style="margin-top:6px;">
             <summary style="font-size:10px;color:#6b7280;cursor:pointer;">
-              $ \${escapeHtml(bash.command || '')}
-              <span style="color:\${bash.exitCode === 0 ? '#10b981' : '#ef4444'}">
-                [exit \${bash.exitCode ?? '?'}]
+              $ ${escapeHtml(bash.command || '')}
+              <span style="color:${bash.exitCode === 0 ? '#10b981' : '#ef4444'}">
+                [exit ${bash.exitCode ?? '?'}]
               </span>
             </summary>
-            <pre class="activity-code">\${escapeHtml(bash.output || "")}</pre>
+            <pre class="activity-code">${escapeHtml(bash.output || "")}</pre>
           </details>` : ''}
       </div>`;
   }
@@ -257,11 +257,11 @@ window.renderActivity = function(activity) {
     html = `
       <div class="activity-entry" style="color:#10b981;font-size:11px;font-weight:600;">
         🏁 Sesión completada
-        \${parsed ? `
+        ${parsed ? `
           <div class="prose-invert" style="overflow-x:auto;max-width:100%;word-break:break-word;
                font-size:11px;font-weight:400;color:#d1d5db;margin-top:6px;
                border-top:1px solid #1e1e2a;padding-top:6px;">
-            \${parsed}
+            ${parsed}
           </div>` : ''}
       </div>`;
   }
@@ -269,7 +269,7 @@ window.renderActivity = function(activity) {
     const reason = activity.sessionFailed.reason || 'Error desconocido';
     html = `<div class="activity-entry"
                      style="color:#ef4444;font-size:11px;">
-      ❌ Sesión fallida: \${escapeHtml(reason)}
+      ❌ Sesión fallida: ${escapeHtml(reason)}
     </div>`;
   }
 
@@ -279,7 +279,7 @@ window.renderActivity = function(activity) {
     if (desc) {
       html = `<div class="activity-entry" style="color:#4b5563;font-size:10px;
         font-style:italic;">
-        \${escapeHtml(desc)}
+        ${escapeHtml(desc)}
       </div>`;
     }
   }
@@ -310,7 +310,7 @@ window.updateApprovalStatus = function(activities, sessionId) {
     if (needsApproval) {
         const btnHtml = `
             <span style="font-size: 11px; color: var(--amber); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Plan pendiente de aprobación</span>
-            <button onclick="approveJulesPlan('\${sessionId}')" class="btn btn-primary btn-sm" style="background: var(--amber); color: #000; box-shadow: 0 0 15px rgba(245, 158, 11, 0.4); min-height: 32px; padding: 4px 12px; border-radius: 6px; font-weight: 800;">
+            <button onclick="approveJulesPlan('${sessionId}')" class="btn btn-primary btn-sm" style="background: var(--amber); color: #000; box-shadow: 0 0 15px rgba(245, 158, 11, 0.4); min-height: 32px; padding: 4px 12px; border-radius: 6px; font-weight: 800;">
                 <i class="fas fa-check mr-2"></i> APROBAR PLAN
             </button>
         `;
@@ -422,7 +422,7 @@ window.renderHistoryTable = function(sessions) {
     // Desktop Table
     body.innerHTML = sessions.map(s => {
         const statusLabel = { 'IN_PROGRESS': 'activo', 'COMPLETED': 'listo', 'FAILED': 'error', 'QUEUED': 'cola', 'PLANNING': 'planificando', 'AWAITING_PLAN_APPROVAL': 'esperando' }[s.state] || 'listo';
-        return `<tr onclick="openDrawer('\${s.name}')"><td><span class="sid">\${s.name.split('/').pop()}</span></td><td class="tdesc">\${escapeHtml(s.title || s.prompt)}</td><td class="tmono">\${s.sourceContext?.source?.split('/').pop() || '---'}</td><td class="tmono">\${s.sourceContext?.githubRepoContext?.startingBranch || '---'}</td><td><span class="sbadge \${s.state.toLowerCase().replace(/_/g, '-')}"><span class="pulse-dot"></span>\${statusLabel}</span></td><td class="tmono">\${getTimeAgo(s.createTime)}</td><td class="tmono">\${new Date(s.createTime).toLocaleDateString()}</td></tr>`;
+        return `<tr onclick="openDrawer('${s.name}')"><td><span class="sid">${s.name.split('/').pop()}</span></td><td class="tdesc">${escapeHtml(s.title || s.prompt)}</td><td class="tmono">${s.sourceContext?.source?.split('/').pop() || '---'}</td><td class="tmono">${s.sourceContext?.githubRepoContext?.startingBranch || '---'}</td><td><span class="sbadge ${s.state.toLowerCase().replace(/_/g, '-')}"><span class="pulse-dot"></span>${statusLabel}</span></td><td class="tmono">${getTimeAgo(s.createTime)}</td><td class="tmono">${new Date(s.createTime).toLocaleDateString()}</td></tr>`;
     }).join('');
 
     // Mobile compact list
@@ -431,15 +431,15 @@ window.renderHistoryTable = function(sessions) {
       mobList.innerHTML = sessions.map(s => {
         const statusLabel = { 'IN_PROGRESS': 'activo', 'COMPLETED': 'listo', 'FAILED': 'error', 'QUEUED': 'cola', 'PLANNING': 'planificando', 'AWAITING_PLAN_APPROVAL': 'esperando' }[s.state] || 'listo';
         return `
-          <div onclick="openDrawer('\${s.name}')" style="padding:14px; border-bottom:1px solid var(--border); display:flex; flex-direction:column; gap:6px">
+          <div onclick="openDrawer('${s.name}')" style="padding:14px; border-bottom:1px solid var(--border); display:flex; flex-direction:column; gap:6px">
             <div style="display:flex; justify-content:space-between; align-items:center">
-              <span class="sid">\${s.name.split('/').pop()}</span>
-              <span class="sbadge \${s.state.toLowerCase().replace(/_/g, '-')}">\${statusLabel}</span>
+              <span class="sid">${s.name.split('/').pop()}</span>
+              <span class="sbadge ${s.state.toLowerCase().replace(/_/g, '-')}">${statusLabel}</span>
             </div>
-            <div style="font-weight:600; color:var(--text); font-size:13px" class="tdesc">\${escapeHtml(s.title || s.prompt)}</div>
+            <div style="font-weight:600; color:var(--text); font-size:13px" class="tdesc">${escapeHtml(s.title || s.prompt)}</div>
             <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--text3)">
-              <span>\${s.sourceContext?.source?.split('/').pop() || '---'}</span>
-              <span>\${getTimeAgo(s.createTime)}</span>
+              <span>${s.sourceContext?.source?.split('/').pop() || '---'}</span>
+              <span>${getTimeAgo(s.createTime)}</span>
             </div>
           </div>
         `;
@@ -493,37 +493,37 @@ window.analyzeSelectedWithClaude = function() {
         let activityType = "Actividad";
         if (act.userMessaged) activityType = "Mensaje del Usuario";
         else if (act.agentMessaged) activityType = "Mensaje de Jules";
-        else if (act.progressUpdated) activityType = `Progreso: \${act.progressUpdated.title}`;
+        else if (act.progressUpdated) activityType = `Progreso: ${act.progressUpdated.title}`;
         else if (act.planGenerated) activityType = "Plan Generado";
         else if (act.sessionCompleted) activityType = "Sesión Completada";
         else if (act.sessionFailed) activityType = "Sesión Fallida";
         else if (act.description) activityType = act.description;
 
-        const separator = `\n--- Actividad: \${activityType} ---\n`;
+        const separator = `\n--- Actividad: ${activityType} ---\n`;
         let content = "";
 
         if (act.userMessaged) {
-            content += `\${act.userMessaged.userMessage}\n`;
+            content += `${act.userMessaged.userMessage}\n`;
         } else if (act.agentMessaged) {
-            content += `\${act.agentMessaged.agentMessage}\n`;
+            content += `${act.agentMessaged.agentMessage}\n`;
         } else if (act.progressUpdated) {
-            if (act.progressUpdated.description) content += `\${act.progressUpdated.description}\n`;
+            if (act.progressUpdated.description) content += `${act.progressUpdated.description}\n`;
         } else if (act.planGenerated) {
             const steps = act.planGenerated.plan?.steps || [];
-            content += `PASOS:\n\${steps.map(s => `\${(s.index || 0) + 1}. \${s.title}: \${s.description || ''}`).join('\n')}\n`;
+            content += `PASOS:\n${steps.map(s => `${(s.index || 0) + 1}. ${s.title}: ${s.description || ''}`).join('\n')}\n`;
         } else if (act.sessionCompleted) {
-            content += `Commit: \${act.sessionCompleted.commitMessage || '---'}\n`;
+            content += `Commit: ${act.sessionCompleted.commitMessage || '---'}\n`;
         } else if (act.sessionFailed) {
-            content += `Razón: \${act.sessionFailed.reason || 'Desconocida'}\n`;
+            content += `Razón: ${act.sessionFailed.reason || 'Desconocida'}\n`;
         }
 
         if (act.artifacts) {
             act.artifacts.forEach(art => {
                 if (art.changeSet?.gitPatch?.unidiffPatch) {
-                    content += `\nCÓDIGO (DIFF):\n\`\`\`diff\n\${art.changeSet.gitPatch.unidiffPatch}\n\`\`\`\n`;
+                    content += `\nCÓDIGO (DIFF):\n\`\`\`diff\n${art.changeSet.gitPatch.unidiffPatch}\n\`\`\`\n`;
                 }
                 if (art.bashOutput) {
-                    content += `\nCOMANDO: \${art.bashOutput.command}\nOUTPUT:\n\`\`\`\n\${art.bashOutput.output}\n\`\`\`\n`;
+                    content += `\nCOMANDO: ${art.bashOutput.command}\nOUTPUT:\n\`\`\`\n${art.bashOutput.output}\n\`\`\`\n`;
                 }
             });
         }
@@ -557,7 +557,7 @@ window.commentOnStep = function(sessionId, stepIndex, stepTitle) {
     const idSafe = getIdSafe(sessionId);
     const input = document.getElementById(`v2-chat-input`);
     if (input) {
-        input.value = `Respecto al paso \${stepIndex} (\${stepTitle}): ` + input.value;
+        input.value = `Respecto al paso ${stepIndex} (${stepTitle}): ` + input.value;
         input.scrollIntoView({ behavior: 'smooth', block: 'center' });
         input.focus();
     }

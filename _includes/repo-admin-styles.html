@@ -1,4 +1,4 @@
-}
+<style>
 .ra-chip-svn { border-color: rgba(249,124,106,0.3); }
 .ra-chip-git { border-color: rgba(106,247,200,0.3); }
 .ra-chip-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--c-text3); transition: all 0.3s; }
@@ -343,45 +343,9 @@
   .ra-drawer { width: 100%; }
   .ra-action-btn, .ra-connect-btn { padding: 10px 16px; font-size: 12px; }
 }
-</style>
 
 <script>
 /* ════════════════════════════════════════
    N8N WORKFLOWS — copy from Settings
    ════════════════════════════════════════ */
-const WORKFLOWS = {
-  'svn-list': {
-    name: "SVN List",
-    nodes: [
-      {
-        parameters: {
-          httpMethod: ["POST"], path: "svn-list",
-          responseMode: "responseNode",
-          options: { allowedOrigins: "https://hypenosys.github.io" }
-        },
-        type: "n8n-nodes-base.webhook", typeVersion: 2.1,
-        position: [400, -200], id: "wh-svn-list", name: "Webhook SVN List"
-      },
-      {
-        parameters: {
-          language: "python",
-          code: `import subprocess, json
-body = items[0]['json']['body']
-path = body.get('path', '')
-svn_url = f"svn://100.64.74.27/hypenosys/trunk/Hypenosys/{path}".rstrip('/')
-user = body.get('user', 'SVN_USERNAME')
-pwd = body.get('password', 'SVN_PASSWORD')
-result = subprocess.run(
-  ['svn', 'list', '--xml', '--username', user, '--password', pwd, '--no-auth-cache', '--non-interactive', svn_url],
-  capture_output=True, text=True, timeout=30
-)
-if result.returncode != 0:
-  return [{'json': {'error': result.stderr, 'path': path}}]
-import xml.etree.ElementTree as ET
-root = ET.fromstring(result.stdout)
-entries = []
-for entry in root.findall('.//entry'):
-  name = entry.find('name').text or ''
-  kind = entry.get('kind', 'file')
-  commit = entry.find('commit')
-  rev = commit.get('revision') if commit is not None else ''
+</style>

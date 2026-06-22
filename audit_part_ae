@@ -1,0 +1,100 @@
+FILE: assets/javascript/jules-panel-kanban.js
+LINE: 379
+BEFORE: const col = $(`col-\${colId}`);
+AFTER: const col = $(`col-${colId}`);
+---
+FILE: assets/javascript/jules-panel-hub.js
+LINE: 11
+BEFORE: const panel = $(`panel-\${tabMap[tabId]}`);
+AFTER: const panel = $(`panel-${tabMap[tabId]}`);
+---
+FILE: assets/javascript/jules-panel-hub.js
+LINE: 20
+BEFORE: const panel = $(`panel-\${tabMap[tabId]}`);
+AFTER: const panel = $(`panel-${tabMap[tabId]}`);
+---
+FILE: assets/javascript/jules-panel-hub.js
+LINE: 31
+BEFORE: } catch (e) { panel.innerHTML = `<div style="padding:20px; color:var(--red);">Error: \${e.message}</div>`; }
+AFTER: } catch (e) { panel.innerHTML = `<div style="padding:20px; color:var(--red);">Error: ${e.message}</div>`; }
+---
+FILE: assets/javascript/jules-panel-hub.js
+LINE: 36
+BEFORE: const res = await window.GHQueue.enqueue(() => fetch(`https://api.github.com/repos/\${owner}/\${repo}/pulls?state=open&per_page=20`, { headers: { Authorization: `Bearer \${token}` } }));
+AFTER: const res = await window.GHQueue.enqueue(() => fetch(`https://api.github.com/repos/${owner}/${repo}/pulls?state=open&per_page=20`, { headers: { Authorization: `Bearer ${token}` } }));
+---
+FILE: assets/javascript/jules-panel-hub.js
+LINE: 38
+BEFORE: $('panel-pr').innerHTML = prs.map(pr => `<div style="padding:12px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;"><div><div style="font-weight:600; color:var(--text);">\${pr.title}</div><div style="font-size:11px; color:var(--text3);">#\${pr.number} por \${pr.user.login} • \${getTimeAgo(pr.updated_at)}</div></div><a href="\${pr.html_url}" target="_blank" class="btn btn-ghost btn-sm">Ver ↗</a></div>`).join('') || '<div style="padding:40px; text-align:center; color:var(--text3);">Sin PRs</div>';
+AFTER: $('panel-pr').innerHTML = prs.map(pr => `<div style="padding:12px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;"><div><div style="font-weight:600; color:var(--text);">${pr.title}</div><div style="font-size:11px; color:var(--text3);">#${pr.number} por ${pr.user.login} • ${getTimeAgo(pr.updated_at)}</div></div><a href="${pr.html_url}" target="_blank" class="btn btn-ghost btn-sm">Ver ↗</a></div>`).join('') || '<div style="padding:40px; text-align:center; color:var(--text3);">Sin PRs</div>';
+---
+FILE: assets/javascript/jules-panel-hub.js
+LINE: 44
+BEFORE: const res = await window.GHQueue.enqueue(() => fetch(`https://api.github.com/repos/\${owner}/\${repo}/issues?state=open&per_page=20`, { headers: { Authorization: `Bearer \${token}` } }));
+AFTER: const res = await window.GHQueue.enqueue(() => fetch(`https://api.github.com/repos/${owner}/${repo}/issues?state=open&per_page=20`, { headers: { Authorization: `Bearer ${token}` } }));
+---
+FILE: assets/javascript/jules-panel-hub.js
+LINE: 46
+BEFORE: $('panel-issues').innerHTML = issues.map(issue => `<div style="padding:12px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;"><div><div style="font-weight:600; color:var(--text);">\${issue.title}</div><div style="font-size:11px; color:var(--text3);">#\${issue.number} • \${getTimeAgo(issue.created_at)}</div></div><a href="\${issue.html_url}" target="_blank" class="btn btn-ghost btn-sm">Ver ↗</a></div>`).join('') || '<div style="padding:40px; text-align:center; color:var(--text3);">Sin issues</div>';
+AFTER: $('panel-issues').innerHTML = issues.map(issue => `<div style="padding:12px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;"><div><div style="font-weight:600; color:var(--text);">${issue.title}</div><div style="font-size:11px; color:var(--text3);">#${issue.number} • ${getTimeAgo(issue.created_at)}</div></div><a href="${issue.html_url}" target="_blank" class="btn btn-ghost btn-sm">Ver ↗</a></div>`).join('') || '<div style="padding:40px; text-align:center; color:var(--text3);">Sin issues</div>';
+---
+FILE: assets/javascript/jules-panel-hub.js
+LINE: 52
+BEFORE: const res = await window.GHQueue.enqueue(() => fetch(`https://api.github.com/repos/\${owner}/\${repo}/branches?per_page=20`, { headers: { Authorization: `Bearer \${token}` } }));
+AFTER: const res = await window.GHQueue.enqueue(() => fetch(`https://api.github.com/repos/${owner}/${repo}/branches?per_page=20`, { headers: { Authorization: `Bearer ${token}` } }));
+---
+FILE: assets/javascript/jules-panel-hub.js
+LINE: 54
+BEFORE: $('panel-branches').innerHTML = branches.map(b => `<div style="padding:12px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px;"><span style="font-family:var(--font-mono); font-size:13px; color:var(--text2);">\${b.name}</span>\${b.protected ? '<span class="nav-badge" style="background:var(--surface-active); color:var(--accent2); font-size:9px;">🔒</span>' : ''}</div>`).join('');
+AFTER: $('panel-branches').innerHTML = branches.map(b => `<div style="padding:12px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px;"><span style="font-family:var(--font-mono); font-size:13px; color:var(--text2);">${b.name}</span>${b.protected ? '<span class="nav-badge" style="background:var(--surface-active); color:var(--accent2); font-size:9px;">🔒</span>' : ''}</div>`).join('');
+---
+FILE: assets/javascript/jules-panel-hub.js
+LINE: 59
+BEFORE: const res = await window.GHQueue.enqueue(() => fetch(`https://api.github.com/repos/\${owner}/\${repo}/actions/runs?per_page=20`, { headers: { Authorization: `Bearer \${token}` } }));
+AFTER: const res = await window.GHQueue.enqueue(() => fetch(`https://api.github.com/repos/${owner}/${repo}/actions/runs?per_page=20`, { headers: { Authorization: `Bearer ${token}` } }));
+---
+FILE: assets/javascript/jules-panel-hub.js
+LINE: 63
+BEFORE: return `<div style="padding:12px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;"><div><div style="font-weight:600; color:var(--text);"><span style="color:\${color}">●</span> \${run.name} #\${run.run_number}</div><div style="font-size:11px; color:var(--text3);">\${run.head_branch} • \${getTimeAgo(run.updated_at)}</div></div><a href="\${run.html_url}" target="_blank" class="btn btn-ghost btn-sm">Logs ↗</a></div>`;
+AFTER: return `<div style="padding:12px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;"><div><div style="font-weight:600; color:var(--text);"><span style="color:${color}">●</span> ${run.name} #${run.run_number}</div><div style="font-size:11px; color:var(--text3);">${run.head_branch} • ${getTimeAgo(run.updated_at)}</div></div><a href="${run.html_url}" target="_blank" class="btn btn-ghost btn-sm">Logs ↗</a></div>`;
+---
+FILE: assets/javascript/jules-panel-hub.js
+LINE: 69
+BEFORE: const res = await window.GHQueue.enqueue(() => fetch(`https://api.github.com/notifications?per_page=20`, { headers: { Authorization: `Bearer \${token}` } }));
+AFTER: const res = await window.GHQueue.enqueue(() => fetch(`https://api.github.com/notifications?per_page=20`, { headers: { Authorization: `Bearer ${token}` } }));
+---
+FILE: assets/javascript/jules-panel-hub.js
+LINE: 71
+BEFORE: $('panel-notifs').innerHTML = notifs.map(n => `<div style="padding:12px; border-bottom:1px solid var(--border);"><div style="font-size:10px; color:var(--text3);">\${n.repository.name}</div><div style="font-weight:600; color:var(--text);">\${n.subject.title}</div></div>`).join('') || '<div style="padding:40px; text-align:center; color:var(--text3);">Estás al día</div>';
+AFTER: $('panel-notifs').innerHTML = notifs.map(n => `<div style="padding:12px; border-bottom:1px solid var(--border);"><div style="font-size:10px; color:var(--text3);">${n.repository.name}</div><div style="font-weight:600; color:var(--text);">${n.subject.title}</div></div>`).join('') || '<div style="padding:40px; text-align:center; color:var(--text3);">Estás al día</div>';
+---
+FILE: assets/javascript/jules-panel-neural.js
+LINE: 19
+BEFORE: localStorage.setItem(`hy_neural_context_\${sessionId}`, JSON.stringify(sessionData));
+AFTER: localStorage.setItem(`hy_neural_context_${sessionId}`, JSON.stringify(sessionData));
+---
+FILE: assets/javascript/jules-panel-neural.js
+LINE: 54
+BEFORE: const saved = localStorage.getItem(`hy_neural_context_\${sessionId}`);
+AFTER: const saved = localStorage.getItem(`hy_neural_context_${sessionId}`);
+---
+FILE: assets/javascript/jules-panel-neural.js
+LINE: 82
+BEFORE: const analyzedKey = `v2_jules_analyzed_\${output.session_id}_\${output.status}`;
+AFTER: const analyzedKey = `v2_jules_analyzed_${output.session_id}_${output.status}`;
+---
+FILE: assets/javascript/jules-panel-neural.js
+LINE: 86
+BEFORE: window.chatV2Messages.push({ role: 'system', content: `Analizando resultado de Jules (Sesión #\${output.session_id})...` });
+AFTER: window.chatV2Messages.push({ role: 'system', content: `Analizando resultado de Jules (Sesión #${output.session_id})...` });
+---
+FILE: assets/javascript/jules-panel-neural.js
+LINE: 91
+BEFORE: const prompt = `Jules ha completado una operación (Estado: \${output.status}).\n\nDETALLES:\n- Sesión: #\${output.session_id}\n- Tarea: \${output.title}\n- Repo: \${output.repo}\n\nAnaliza el resultado y prepara un resumen accionable.`;
+AFTER: const prompt = `Jules ha completado una operación (Estado: ${output.status}).\n\nDETALLES:\n- Sesión: #${output.session_id}\n- Tarea: ${output.title}\n- Repo: ${output.repo}\n\nAnaliza el resultado y prepara un resumen accionable.`;
+---
+FILE: assets/javascript/jules-panel-neural.js
+LINE: 99
+BEFORE: window.chatV2Messages.push({ role: 'assistant', content: `[ANÁLISIS AUTOMÁTICO JULES]\n\n\${analysis}` });
+AFTER: window.chatV2Messages.push({ role: 'assistant', content: `[ANÁLISIS AUTOMÁTICO JULES]\n\n${analysis}` });
+---

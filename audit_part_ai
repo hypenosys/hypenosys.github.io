@@ -1,0 +1,75 @@
+FILE: assets/javascript/jules-panel-auth.js
+LINE: 186
+BEFORE: $('neural-banner-task').textContent = `Tarea #\${task.id}: \${task.titulo || task.title}`;
+AFTER: $('neural-banner-task').textContent = `Tarea #${task.id}: ${task.titulo || task.title}`;
+---
+FILE: assets/javascript/jules-panel-auth.js
+LINE: 253
+BEFORE: $('neural-banner-task').textContent = `Tarea #\${task.id}: \${task.titulo || task.title}`;
+AFTER: $('neural-banner-task').textContent = `Tarea #${task.id}: ${task.titulo || task.title}`;
+---
+FILE: assets/javascript/jules-panel-auth.js
+LINE: 273
+BEFORE: formattedPrompt += `[NOTA DEL USUARIO]\n\${payload.user_note}\n\n`;
+AFTER: formattedPrompt += `[NOTA DEL USUARIO]\n${payload.user_note}\n\n`;
+---
+FILE: assets/javascript/jules-panel-auth.js
+LINE: 277
+BEFORE: formattedPrompt += `[CONTEXTO NEURAL]\n\n\${payload.session_context}\n\n`;
+AFTER: formattedPrompt += `[CONTEXTO NEURAL]\n\n${payload.session_context}\n\n`;
+---
+FILE: assets/javascript/jules-panel-auth.js
+LINE: 281
+BEFORE: formattedPrompt += `[RESPUESTA DE CLAUDE]\n\n\${payload.claude_response}`;
+AFTER: formattedPrompt += `[RESPUESTA DE CLAUDE]\n\n${payload.claude_response}`;
+---
+FILE: assets/javascript/jules-panel-auth.js
+LINE: 337
+BEFORE: const avatarUrl = user.avatar_url || `https://github.com/\${user.login}.png`;
+AFTER: const avatarUrl = user.avatar_url || `https://github.com/${user.login}.png`;
+---
+FILE: assets/javascript/jules-panel-auth.js
+LINE: 340
+BEFORE: $('sb-avatar').innerHTML = `<img src="\${avatarUrl}" style="width:100%; height:100%; border-radius:50%">`;
+AFTER: $('sb-avatar').innerHTML = `<img src="${avatarUrl}" style="width:100%; height:100%; border-radius:50%">`;
+---
+FILE: assets/javascript/jules-panel-auth.js
+LINE: 348
+BEFORE: $('mob-avatar').innerHTML = `<img src="\${avatarUrl}" style="width:100%; height:100%; border-radius:50%">`;
+AFTER: $('mob-avatar').innerHTML = `<img src="${avatarUrl}" style="width:100%; height:100%; border-radius:50%">`;
+---
+FILE: assets/javascript/jules-panel-auth.js
+LINE: 353
+BEFORE: $('hdr-avatar').innerHTML = `<img src="\${avatarUrl}" style="width:100%; height:100%; border-radius:50%">`;
+AFTER: $('hdr-avatar').innerHTML = `<img src="${avatarUrl}" style="width:100%; height:100%; border-radius:50%">`;
+---
+FILE: assets/javascript/jules-panel-auth.js
+LINE: 383
+BEFORE: localStorage.removeItem(`hy_neural_session_id_\${claudeId}`);
+AFTER: localStorage.removeItem(`hy_neural_session_id_${claudeId}`);
+---
+FILE: assets/javascript/jules-panel-auth.js
+LINE: 403
+BEFORE: addTel("SYSTEM", `Iniciando sesión - Source: "\${source}", Branch: "\${branch}"`, "info");
+AFTER: addTel("SYSTEM", `Iniciando sesión - Source: "${source}", Branch: "${branch}"`, "info");
+---
+FILE: assets/javascript/jules-panel-auth.js
+LINE: 420
+BEFORE: prompt += `\n\nIMPORTANTE: Crea y trabaja en una nueva rama dedicada para esta tarea (ej: jules/task-\${Date.now()}).`;
+AFTER: prompt += `\n\nIMPORTANTE: Crea y trabaja en una nueva rama dedicada para esta tarea (ej: jules/task-${Date.now()}).`;
+---
+FILE: assets/javascript/jules-panel-auth.js
+LINE: 443
+BEFORE: addTel("JULES", `Sesión iniciada: \${sid}`, "success");
+AFTER: addTel("JULES", `Sesión iniciada: ${sid}`, "success");
+---
+FILE: assets/javascript/jules-panel-auth.js
+LINE: 447
+BEFORE: localStorage.setItem(`hy_neural_session_id_\${claudeId}`, sid);
+AFTER: localStorage.setItem(`hy_neural_session_id_${claudeId}`, sid);
+---
+FILE: assets/javascript/jules-panel-auth.js
+LINE: 453
+BEFORE: const sessionName = taskContext.titulo || taskContext.title || `Sesión Neural \${new Date().toLocaleDateString()}`;
+AFTER: const sessionName = taskContext.titulo || taskContext.title || `Sesión Neural ${new Date().toLocaleDateString()}`;
+---

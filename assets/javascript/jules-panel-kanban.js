@@ -73,18 +73,18 @@ window.onDragStart = (e, sessionId) => {
 
 window.onDragOver = (e, colId) => {
     e.preventDefault();
-    const col = $(`col-\${colId}`);
+    const col = $(`col-${colId}`);
     if (col) col.classList.add('drag-over');
 };
 
 window.onDragLeave = (colId) => {
-    const col = $(`col-\${colId}`);
+    const col = $(`col-${colId}`);
     if (col) col.classList.remove('drag-over');
 };
 
 window.onDrop = async (e, targetColId) => {
     e.preventDefault();
-    const col = $(`col-\${targetColId}`);
+    const col = $(`col-${targetColId}`);
     if (col) col.classList.remove('drag-over');
 
     const sid = e.dataTransfer.getData('text/plain');
@@ -184,7 +184,7 @@ window.relaunchJules = (sessionJson) => {
                     const sessCtx = $('sess-ctx');
                     if(sessCtx) {
                         const repoLabel = $('repo-label').textContent;
-                        sessCtx.textContent = `\${repoLabel}: \${branch}`;
+                        sessCtx.textContent = `${repoLabel}: ${branch}`;
                     }
                 } else {
                     setTimeout(setBranch, 100);
@@ -327,7 +327,7 @@ window.loadJulesKanban = async function(sessions = null) {
         localStorage.setItem('jules_internal_archive', JSON.stringify(localArchive));
 
         Object.keys(colItems).forEach(colId => {
-            const colEl = $(`kb-\${colId}`), countEl = $(`kb-count-\${colId}`), mCountEl = $(`m-count-\${colId}`);
+            const colEl = $(`kb-${colId}`), countEl = $(`kb-count-${colId}`), mCountEl = $(`m-count-${colId}`);
             if (!colEl) return;
 
             const items = colItems[colId];
@@ -349,22 +349,22 @@ window.loadJulesKanban = async function(sessions = null) {
                 const canDrag = (colId === 'pending' || colId === 'running') && !isArchived;
 
                 return `
-                    <div class="kb-card \${colId} \${isArchived ? 'archived' : ''}"
-                         \${canDrag ? `draggable="true" ondragstart="onDragStart(event, '\${sid}')" ondragend="this.classList.remove('dragging')"` : ''}
-                         onclick="openDrawer('\${s.name}')">
+                    <div class="kb-card ${colId} ${isArchived ? 'archived' : ''}"
+                         ${canDrag ? `draggable="true" ondragstart="onDragStart(event, '${sid}')" ondragend="this.classList.remove('dragging')"` : ''}
+                         onclick="openDrawer('${s.name}')">
                         <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:5px">
-                            <div class="kb-card-id">#\${sid}\${isArchived ? '<span class="archived-badge">Archived</span>' : ''}</div>
-                            <span class="sbadge \${s.state.toLowerCase().replace(/_/g, '-')}">\${s.state}</span>
+                            <div class="kb-card-id">#${sid}${isArchived ? '<span class="archived-badge">Archived</span>' : ''}</div>
+                            <span class="sbadge ${s.state.toLowerCase().replace(/_/g, '-')}">${s.state}</span>
                         </div>
-                        <div class="kb-card-task">\${escapeHtml(s.title || s.prompt)}</div>
+                        <div class="kb-card-task">${escapeHtml(s.title || s.prompt)}</div>
                         <div class="kb-card-meta">
-                            <span class="kb-card-repo">\${repo}</span>
-                            <span class="kb-card-time">\${getTimeAgo(s.createTime)}</span>
+                            <span class="kb-card-repo">${repo}</span>
+                            <span class="kb-card-time">${getTimeAgo(s.createTime)}</span>
                         </div>
                         <div class="kb-card-actions">
-                            \${isArchived ? `<button class="kb-action-btn" style="color:var(--amber)" onclick="event.stopPropagation(); restoreArchivedCard('\${archiveId}')">Restaurar</button>` : ''}
-                            <button class="kb-action-btn btn-relaunch" onclick="event.stopPropagation(); relaunchJules('\${encodeURIComponent(JSON.stringify(s))}')">Relanzar Jules</button>
-                            <button class="kb-action-btn" onclick="event.stopPropagation(); const cid = localStorage.getItem('hy_active_claude_session_id'); if (cid) localStorage.setItem('hy_neural_session_id_' + cid, '\${sid}'); localStorage.setItem('hy_neural_session_id', '\${sid}'); localStorage.setItem('hy_neural_active', 'true'); switchView('chat');">Ver Neural</button>
+                            ${isArchived ? `<button class="kb-action-btn" style="color:var(--amber)" onclick="event.stopPropagation(); restoreArchivedCard('${archiveId}')">Restaurar</button>` : ''}
+                            <button class="kb-action-btn btn-relaunch" onclick="event.stopPropagation(); relaunchJules('${encodeURIComponent(JSON.stringify(s))}')">Relanzar Jules</button>
+                            <button class="kb-action-btn" onclick="event.stopPropagation(); const cid = localStorage.getItem('hy_active_claude_session_id'); if (cid) localStorage.setItem('hy_neural_session_id_' + cid, '${sid}'); localStorage.setItem('hy_neural_session_id', '${sid}'); localStorage.setItem('hy_neural_active', 'true'); switchView('chat');">Ver Neural</button>
                         </div>
                     </div>
                 `;
@@ -376,7 +376,7 @@ window.loadJulesKanban = async function(sessions = null) {
 }
 
 window.scrollToKanbanCol = function(colId, btn) {
-    const col = $(`col-\${colId}`);
+    const col = $(`col-${colId}`);
     if (col) {
         col.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
         document.querySelectorAll('#view-kanban .fpill').forEach(p => p.classList.remove('active'));

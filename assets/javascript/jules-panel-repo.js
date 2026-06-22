@@ -71,7 +71,7 @@ window.renderRepos = function(sources) {
             el.style.opacity = '0.5';
             el.style.cursor = 'not-allowed';
         }
-        el.innerHTML = `<span class="repo-dot"></span><span style="flex:1; overflow:hidden; text-overflow:ellipsis;">\${s.displayName || s.name.split('/').pop()}</span>\${!isInstalled ? '<i class="fas fa-lock" style="font-size:10px; opacity:0.5"></i>' : ''}`;
+        el.innerHTML = `<span class="repo-dot"></span><span style="flex:1; overflow:hidden; text-overflow:ellipsis;">${s.displayName || s.name.split('/').pop()}</span>${!isInstalled ? '<i class="fas fa-lock" style="font-size:10px; opacity:0.5"></i>' : ''}`;
         if (isInstalled) {
             el.onclick = () => switchRepo(s.name, s);
         }
@@ -85,8 +85,8 @@ window.switchRepo = function(sourceName, sourceObj) {
     localStorage.setItem('hypenosys_active_repo', sourceName);
     renderRepos(window.julesSourcesCache || []);
     onRepoSelected(sourceName, sourceObj);
-    if (oldRepo && oldRepo !== sourceName) addTel("REPO", `Contexto cambiado → \${sourceName.split('/').pop()}`, "info");
-    else addTel("SYSTEM", `Contexto: \${sourceName.split('/').pop()}`, "info");
+    if (oldRepo && oldRepo !== sourceName) addTel("REPO", `Contexto cambiado → ${sourceName.split('/').pop()}`, "info");
+    else addTel("SYSTEM", `Contexto: ${sourceName.split('/').pop()}`, "info");
 }
 
 window.onRepoSelected = async function(sourceName, sourceObject) {
@@ -97,7 +97,7 @@ window.onRepoSelected = async function(sourceName, sourceObject) {
     if(cfgPath) cfgPath.textContent = sourceName;
     const displayLabel = sourceObject?.displayName || repoName;
     if(aliasIn) aliasIn.value = window.getRepoAlias(sourceName) || displayLabel;
-    if(sessCtx) sessCtx.textContent = `\${displayLabel}: cargando...`;
+    if(sessCtx) sessCtx.textContent = `${displayLabel}: cargando...`;
     branchSelect.disabled = true;
     branchSelect.innerHTML = '<option value="">Cargando ramas...</option>';
     branchSelect.onchange = (e) => {
@@ -107,7 +107,7 @@ window.onRepoSelected = async function(sourceName, sourceObject) {
         const sessCtx = $('sess-ctx');
         if(sessCtx) {
             const repoLabel = $('repo-label').textContent;
-            sessCtx.textContent = `\${repoLabel}: \${e.target.value}`;
+            sessCtx.textContent = `${repoLabel}: ${e.target.value}`;
         }
         checkBranchWarning();
     };
@@ -115,12 +115,12 @@ window.onRepoSelected = async function(sourceName, sourceObject) {
         const branches = await window.githubContext.getBranches(repoName, repoOwner || undefined);
         const repoData = (await window.githubContext.getRepos()).find(r => r.name === repoName && (repoOwner ? r.owner === repoOwner : true));
         const defaultBranch = repoData ? repoData.default_branch : 'main';
-        branchSelect.innerHTML = branches.map(b => `<option value="\${b.name}" \${b.name === defaultBranch ? 'selected' : ''}>\${b.name}\${b.name === defaultBranch ? ' ★' : ''}</option>`).join('');
+        branchSelect.innerHTML = branches.map(b => `<option value="${b.name}" ${b.name === defaultBranch ? 'selected' : ''}>${b.name}${b.name === defaultBranch ? ' ★' : ''}</option>`).join('');
         const lastSelected = localStorage.getItem('jules_selected_branch');
         if (lastSelected && branches.some(b => b.name === lastSelected)) branchSelect.value = lastSelected;
-        if(branchMeta) branchMeta.innerHTML = `<span class="u-dot"></span><span>\${branches.length} ramas</span>`;
+        if(branchMeta) branchMeta.innerHTML = `<span class="u-dot"></span><span>${branches.length} ramas</span>`;
         const activeBranch = branchSelect.value;
-        if(sessCtx) sessCtx.textContent = `\${displayLabel}: \${activeBranch}`;
+        if(sessCtx) sessCtx.textContent = `${displayLabel}: ${activeBranch}`;
         window.JulesPanelState.activeBranch = activeBranch;
         checkBranchWarning();
     } catch (e) { branchSelect.innerHTML = '<option value="main">main</option>'; }
@@ -135,13 +135,13 @@ window.populateContextSelector = async function(sources, apiFailed = false) {
         filtered.forEach(s => {
             const item = document.createElement('div');
             const isInstalled = s.isJulesInstalled || apiFailed;
-            item.className = `custom-dropdown-item \${!isInstalled ? 'disabled' : ''}`;
+            item.className = `custom-dropdown-item ${!isInstalled ? 'disabled' : ''}`;
             if (!isInstalled) {
                 item.style.opacity = '0.5';
                 item.style.cursor = 'not-allowed';
                 item.title = "Jules App no instalada";
             }
-            item.innerHTML = `<span>\${s.displayName || s.name.split('/').pop()}</span> \${!isInstalled ? '<i class="fas fa-lock" style="font-size:10px; float:right; margin-top:3px"></i>' : ''}`;
+            item.innerHTML = `<span>${s.displayName || s.name.split('/').pop()}</span> ${!isInstalled ? '<i class="fas fa-lock" style="font-size:10px; float:right; margin-top:3px"></i>' : ''}`;
             if (isInstalled) {
                 item.onclick = (e) => { e.stopPropagation(); label.textContent = s.displayName || s.name.split('/').pop(); switchRepo(s.name, s); menu.style.display = 'none'; };
             }
