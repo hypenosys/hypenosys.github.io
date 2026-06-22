@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-22T00:24:36.051Z",
+  "last_updated": "2026-06-22T00:24:42.293Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3155,72 +3155,6 @@
       "seccion": "SVN Admin Panel, Comandos"
     },
     {
-      "title": "arreglar jules panel kanban",
-      "descripcion": "Vincular kanban dashboard, para que salgan las tareas bien,",
-      "rama": "master",
-      "task_type": "feature",
-      "tema_principal": "Programación / Engine",
-      "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Major",
-      "milestone": "M1",
-      "estado": "OK",
-      "completitud": 0,
-      "resuelto_por": "Alex",
-      "detectado_por": "Alex",
-      "asignados": [],
-      "email_responsable": null,
-      "emails_asignados": [],
-      "start_date": null,
-      "due_date": null,
-      "estimated_hours": null,
-      "story_points": null,
-      "tags": [],
-      "external_links": [],
-      "subtasks": [],
-      "acceptance_criteria": "",
-      "blocks": [],
-      "blocked_by": [],
-      "comments": [],
-      "images": [],
-      "rama2": null,
-      "ver": true,
-      "fecha": "2026-06-20",
-      "apoyo": null,
-      "limite": null,
-      "comentario": "",
-      "change_log": [
-        {
-          "author_login": "topperh4rley",
-          "timestamp": "2026-06-20T10:40:50.119Z",
-          "field": "id",
-          "old_value": null,
-          "new_value": "Created"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-22T00:06:05.894Z",
-          "field": "estado",
-          "old_value": "Pending",
-          "new_value": "OK"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-22T00:06:05.894Z",
-          "field": "repository",
-          "old_value": null,
-          "new_value": "hypenosys/hypenosys.github.io"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-22T00:06:05.894Z",
-          "field": "seccion",
-          "new_value": ""
-        }
-      ],
-      "id": 58,
-      "seccion": ""
-    },
-    {
       "title": "Unificar menús en todas las páginas de la plataforma",
       "descripcion": "Actualmente en cada página cada menú es hijo de su padre.\nAñadir botón en el icono de usuario del jules panel para abrirse lo de 'Mi Perfil', 'Configuración API', 'Ajustes Avanzados', 'Cerrar sesión' en Jules Panel etc. hacer un análisis profundo y exhaustivo de qué hay en cada menú en cada página. Y diseñar un menú unificado con todas las características necesarias imprescindibles y específicas que haya.",
       "rama": "master",
@@ -3613,6 +3547,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: archivar tarea #58",
+      "user": "Axlfc",
+      "timestamp": "2026-06-22T00:24:42.293Z"
+    },
     {
       "action": "chore: archivar tarea #31",
       "user": "Axlfc",
