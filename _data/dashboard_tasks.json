@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-22T00:15:40.469Z",
+  "last_updated": "2026-06-22T00:16:05.176Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3391,80 +3391,6 @@
       "seccion": ""
     },
     {
-      "title": "Subida de imágenes al GUARDAR TAREA, no al subir la imagen",
-      "descripcion": "En cuanto se sube una imagen a imágenes en la task, no debería subirla de primeras al tumblr hasta haber guardado la task, si ya se ha subido no hace falta resubirla, pero si aun no se ha subido al tumblr sin guardar la task, no debería haberla subido al Tumblr. Así si subimos algo accidentalmente, no tiene por qué subirse de primeras.",
-      "rama": "master",
-      "task_type": "bug",
-      "tema_principal": "Tools / Automation",
-      "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Medium",
-      "milestone": "M1",
-      "estado": "OK",
-      "completitud": 0,
-      "resuelto_por": "Axel",
-      "detectado_por": "Axel",
-      "asignados": [],
-      "email_responsable": null,
-      "emails_asignados": [],
-      "start_date": null,
-      "due_date": null,
-      "estimated_hours": null,
-      "story_points": null,
-      "tags": [],
-      "external_links": [],
-      "subtasks": [],
-      "acceptance_criteria": "",
-      "blocks": [],
-      "blocked_by": [],
-      "comments": [],
-      "images": [
-        {
-          "url": "https://64.media.tumblr.com/9d59a443e94420f9343ac7a7ee1e21c9/d64319a4a9d3c0e3-71/s1280x1920/3c9b5faf2405837efbf6f35276f29dc6f6b0e622.png",
-          "type": "url",
-          "tumblr_post_id": "820028649918136320",
-          "filename": "8666.png",
-          "uploaded_at": "2026-06-21T11:11:02.213Z"
-        }
-      ],
-      "rama2": null,
-      "ver": true,
-      "fecha": "2026-06-21",
-      "apoyo": null,
-      "limite": null,
-      "comentario": "",
-      "change_log": [
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T11:07:55.438Z",
-          "field": "id",
-          "old_value": null,
-          "new_value": "Created"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T12:42:52.018Z",
-          "field": "seccion",
-          "new_value": "Dashboard"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T14:57:42.586Z",
-          "field": "title",
-          "old_value": "DASHBOARD: Subida de imágenes al GUARDAR TAREA, no al subir la imagen",
-          "new_value": "Subida de imágenes al GUARDAR TAREA, no al subir la imagen"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T20:17:24.231Z",
-          "field": "estado",
-          "old_value": "Pending",
-          "new_value": "OK"
-        }
-      ],
-      "id": 60,
-      "seccion": "Dashboard"
-    },
-    {
       "title": "Unificar menús en todas las páginas de la plataforma",
       "descripcion": "Actualmente en cada página cada menú es hijo de su padre.\nAñadir botón en el icono de usuario del jules panel para abrirse lo de 'Mi Perfil', 'Configuración API', 'Ajustes Avanzados', 'Cerrar sesión' en Jules Panel etc. hacer un análisis profundo y exhaustivo de qué hay en cada menú en cada página. Y diseñar un menú unificado con todas las características necesarias imprescindibles y específicas que haya.",
       "rama": "master",
@@ -3857,6 +3783,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: archivar tarea #60",
+      "user": "Axlfc",
+      "timestamp": "2026-06-22T00:16:05.176Z"
+    },
     {
       "action": "chore: actualizar tarea #68",
       "user": "Axlfc",
