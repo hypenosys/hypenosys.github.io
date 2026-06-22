@@ -1,15 +1,15 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-22T00:04:22.596Z",
+  "computed_at": "2026-06-22T00:04:47.807Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 41,
-    "total_ok": 15,
+    "total_tasks": 40,
+    "total_ok": 14,
     "total_ko": 0,
     "total_uncertain": 10,
     "total_obsolete": 7,
-    "fixed_found_ratio": 0.3409,
-    "verified_ratio": 0.3125
+    "fixed_found_ratio": 0.3182,
+    "verified_ratio": 0.2979
   },
   "group": {
     "velocity_trend": {
@@ -18,7 +18,7 @@
       "2026-W21": 4,
       "2026-W22": 6,
       "2026-W23": 12,
-      "2026-W24": 3,
+      "2026-W24": 2,
       "2026-W25": 5,
       "2026-W26": 0
     },
@@ -92,7 +92,7 @@
         "mvp_points": 5,
         "bugs_solved": 3,
         "unblocked_count": 4,
-        "velocity": 2.909090909090909,
+        "velocity": 2.9523809523809526,
         "research_solved": 1,
         "art_tasks": 0,
         "comments_left": 1
@@ -143,8 +143,8 @@
     "axlfc": {
       "member_name": "Axel",
       "completed": {
-        "all_time": 26,
-        "milestone": 22,
+        "all_time": 25,
+        "milestone": 21,
         "week": 1
       },
       "weekly_velocity": {
@@ -153,20 +153,19 @@
         "2026-W21": 3,
         "2026-W22": 4,
         "2026-W23": 26,
-        "2026-W24": 5,
+        "2026-W24": 4,
         "2026-W25": 7,
         "2026-W26": 0
       },
       "type_breakdown": {
         "feature": 17,
-        "chore": 5,
+        "chore": 4,
         "research": 1,
         "bug": 3
       },
       "rama_breakdown": {
         "feature/svn-ai-integration": 1,
         "feature/dashboard-chat-icon": 1,
-        "chore/consolidate-scripts": 1,
         "chore/decommission-old-panels": 1,
         "feature/dashboard-error-boundaries": 1,
         "master": 5,
@@ -183,8 +182,8 @@
         "svn": 1,
         "frontend": 3,
         "ux": 4,
-        "chore": 3,
-        "refactor": 2,
+        "chore": 2,
+        "refactor": 1,
         "stability": 1,
         "docs": 2,
         "jules": 1,
@@ -201,7 +200,7 @@
       "comment_activity": 1,
       "volatility": {
         "reopens": 4,
-        "reprioritizations": 26
+        "reprioritizations": 24
       },
       "workload": {
         "active_tasks": 13,
@@ -474,7 +473,7 @@
           "mvp_points": 5,
           "bugs_solved": 3,
           "unblocked_count": 4,
-          "velocity": 2.909090909090909,
+          "velocity": 2.9523809523809526,
           "research_solved": 1,
           "art_tasks": 0,
           "comments_left": 1
@@ -527,7 +526,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-06-22T00:04:23.513Z"
+      "timestamp": "2026-06-22T00:04:48.818Z"
     }
   ]
 }
