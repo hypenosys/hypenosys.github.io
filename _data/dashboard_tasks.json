@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-22T00:04:58.166Z",
+  "last_updated": "2026-06-22T00:05:04.325Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3375,94 +3375,6 @@
       "id": 58
     },
     {
-      "title": "Quitar sección vacía entre FILTRAR MIEMBROS y ALERTAS DE RUTA CRÍTICAS ACTIVAS",
-      "descripcion": "",
-      "rama": "master",
-      "task_type": "bug",
-      "tema_principal": "Programación / Engine",
-      "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Cosmetic",
-      "milestone": "M1",
-      "estado": "OK",
-      "completitud": 0,
-      "resuelto_por": null,
-      "detectado_por": "Axel",
-      "asignados": [],
-      "email_responsable": null,
-      "emails_asignados": [],
-      "start_date": null,
-      "due_date": null,
-      "estimated_hours": 1,
-      "story_points": 1,
-      "tags": [],
-      "external_links": [],
-      "subtasks": [],
-      "acceptance_criteria": "",
-      "blocks": [],
-      "blocked_by": [],
-      "comments": [],
-      "images": [
-        {
-          "url": "https://64.media.tumblr.com/761c84dee801b9a6946b34e65273dce9/8d9be6a9fd2cbc80-27/s1280x1920/af86ecace2d4167cccd35db85194e73ace3e0cd2.png",
-          "type": "url",
-          "tumblr_post_id": "820028510419795968",
-          "filename": "8662.png",
-          "uploaded_at": "2026-06-21T11:08:49.433Z"
-        }
-      ],
-      "rama2": null,
-      "ver": true,
-      "fecha": "2026-06-21",
-      "apoyo": null,
-      "limite": null,
-      "comentario": "",
-      "change_log": [
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T11:01:49.877Z",
-          "field": "id",
-          "old_value": null,
-          "new_value": "Created"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T11:08:53.000Z",
-          "field": "title",
-          "old_value": "DASHBOARD: Quitar sección vacía entre FILTRAR MIEMBROS y ",
-          "new_value": "DASHBOARD: Quitar sección vacía entre FILTRAR MIEMBROS y ALERTAS DE RUTA CRÍTICAS ACTIVAS"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T11:09:20.562Z",
-          "field": "prioridad",
-          "old_value": "Major",
-          "new_value": "Cosmetic"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T12:41:01.489Z",
-          "field": "seccion",
-          "new_value": "Dashboard"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T15:04:27.386Z",
-          "field": "title",
-          "old_value": "DASHBOARD: Quitar sección vacía entre FILTRAR MIEMBROS y ALERTAS DE RUTA CRÍTICAS ACTIVAS",
-          "new_value": "Quitar sección vacía entre FILTRAR MIEMBROS y ALERTAS DE RUTA CRÍTICAS ACTIVAS"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T15:33:44.056Z",
-          "field": "estado",
-          "old_value": "Pending",
-          "new_value": "OK"
-        }
-      ],
-      "id": 59,
-      "seccion": "Dashboard"
-    },
-    {
       "title": "Subida de imágenes al GUARDAR TAREA, no al subir la imagen",
       "descripcion": "En cuanto se sube una imagen a imágenes en la task, no debería subirla de primeras al tumblr hasta haber guardado la task, si ya se ha subido no hace falta resubirla, pero si aun no se ha subido al tumblr sin guardar la task, no debería haberla subido al Tumblr. Así si subimos algo accidentalmente, no tiene por qué subirse de primeras.",
       "rama": "master",
@@ -4047,6 +3959,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: archivar tarea #59",
+      "user": "Axlfc",
+      "timestamp": "2026-06-22T00:05:04.325Z"
+    },
     {
       "action": "chore: archivar tarea #49",
       "user": "Axlfc",
