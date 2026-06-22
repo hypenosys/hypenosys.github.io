@@ -1,14 +1,14 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-22T00:05:04.701Z",
+  "computed_at": "2026-06-22T00:05:06.407Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 22,
-    "total_ok": 22,
+    "total_tasks": 23,
+    "total_ok": 23,
     "total_ko": 0,
     "total_uncertain": 0,
     "total_obsolete": 0,
-    "fixed_found_ratio": 1.1,
+    "fixed_found_ratio": 1.15,
     "verified_ratio": 1
   },
   "group": {
@@ -18,7 +18,7 @@
       "2026-W21": 8,
       "2026-W22": 10,
       "2026-W23": 18,
-      "2026-W24": 2,
+      "2026-W24": 4,
       "2026-W25": 0,
       "2026-W26": 0
     },
@@ -69,7 +69,7 @@
         "mvp_points": 9,
         "bugs_solved": 4,
         "unblocked_count": 4,
-        "velocity": 2.9411764705882355,
+        "velocity": 2.888888888888889,
         "research_solved": 0,
         "art_tasks": 0,
         "comments_left": 0
@@ -120,8 +120,8 @@
     "axlfc": {
       "member_name": "Axel",
       "completed": {
-        "all_time": 40,
-        "milestone": 34,
+        "all_time": 42,
+        "milestone": 36,
         "week": 0
       },
       "weekly_velocity": {
@@ -130,13 +130,13 @@
         "2026-W21": 6,
         "2026-W22": 8,
         "2026-W23": 46,
-        "2026-W24": 4,
+        "2026-W24": 6,
         "2026-W25": 0,
         "2026-W26": 0
       },
       "type_breakdown": {
         "feature": 30,
-        "chore": 6,
+        "chore": 8,
         "bug": 4
       },
       "rama_breakdown": {
@@ -144,22 +144,23 @@
         "feature/dashboard-tag-filter": 2,
         "master": 4,
         "chore/consolidate-scripts": 2,
+        "chore/decommission-old-panels": 2,
         "feature/dashboard-error-boundaries": 2
       },
       "tag_frequency": {
-        "infraestructura": 2,
         "jules": 2,
+        "infraestructura": 2,
         "UX/UI": 2,
         "bug": 4,
         "hard": 2,
         "feature": 4,
         "frontend": 4,
         "ux": 6,
-        "chore": 4,
+        "chore": 6,
         "docs": 2,
         "api": 2,
         "n8n": 2,
-        "refactor": 2,
+        "refactor": 4,
         "stability": 2
       },
       "avg_completion_speed": {
@@ -253,17 +254,17 @@
       },
       "type_breakdown": {
         "feature": 6,
-        "bug": 2,
-        "chore": 2
+        "chore": 2,
+        "bug": 2
       },
       "rama_breakdown": {
         "PRO": 6,
         "master": 4
       },
       "tag_frequency": {
-        "bug": 2,
         "chore": 2,
         "docs": 2,
+        "bug": 2,
         "api": 2,
         "feature": 2,
         "n8n": 2,
@@ -409,7 +410,7 @@
           "mvp_points": 9,
           "bugs_solved": 4,
           "unblocked_count": 4,
-          "velocity": 2.9411764705882355,
+          "velocity": 2.888888888888889,
           "research_solved": 0,
           "art_tasks": 0,
           "comments_left": 0
@@ -462,7 +463,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-06-22T00:05:05.554Z"
+      "timestamp": "2026-06-22T00:05:07.290Z"
     }
   ]
 }
