@@ -1,15 +1,15 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-22T00:15:43.061Z",
+  "computed_at": "2026-06-22T00:16:07.628Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 32,
-    "total_ok": 9,
+    "total_tasks": 31,
+    "total_ok": 8,
     "total_ko": 0,
     "total_uncertain": 8,
     "total_obsolete": 8,
-    "fixed_found_ratio": 0.2368,
-    "verified_ratio": 0.225
+    "fixed_found_ratio": 0.2162,
+    "verified_ratio": 0.2051
   },
   "group": {
     "velocity_trend": {
@@ -19,7 +19,7 @@
       "2026-W22": 6,
       "2026-W23": 11,
       "2026-W24": 3,
-      "2026-W25": 5,
+      "2026-W25": 4,
       "2026-W26": 0
     },
     "bug_rate": 0.087,
@@ -58,8 +58,8 @@
         "value": 5
       },
       "bug_slayer": {
-        "handle": "axlfc",
-        "name": "Axel",
+        "handle": "topperh4rley",
+        "name": "Alex",
         "value": 3
       },
       "unblocker": {
@@ -92,9 +92,9 @@
       "axlfc": {
         "member_name": "Axel",
         "mvp_points": 5,
-        "bugs_solved": 3,
+        "bugs_solved": 2,
         "unblocked_count": 3,
-        "velocity": 2.857142857142857,
+        "velocity": 2.9,
         "research_solved": 1,
         "art_tasks": 0,
         "comments_left": 1
@@ -145,9 +145,9 @@
     "axlfc": {
       "member_name": "Axel",
       "completed": {
-        "all_time": 28,
-        "milestone": 21,
-        "week": 1
+        "all_time": 27,
+        "milestone": 20,
+        "week": 0
       },
       "weekly_velocity": {
         "2026-W19": 0,
@@ -156,20 +156,20 @@
         "2026-W22": 4,
         "2026-W23": 31,
         "2026-W24": 5,
-        "2026-W25": 7,
+        "2026-W25": 6,
         "2026-W26": 0
       },
       "type_breakdown": {
         "feature": 18,
         "chore": 6,
-        "bug": 3,
+        "bug": 2,
         "research": 1
       },
       "rama_breakdown": {
         "feature/kanban-jules-link": 1,
         "feature/mobile-github-ops": 1,
         "chore/scripts-svn-sync": 1,
-        "master": 5,
+        "master": 4,
         "PRO": 15,
         "feature/dashboard-tag-filter": 1,
         "chore/consolidate-scripts": 1,
@@ -439,8 +439,8 @@
           "value": 5
         },
         "bug_slayer": {
-          "handle": "axlfc",
-          "name": "Axel",
+          "handle": "topperh4rley",
+          "name": "Alex",
           "value": 3
         },
         "unblocker": {
@@ -473,9 +473,9 @@
         "axlfc": {
           "member_name": "Axel",
           "mvp_points": 5,
-          "bugs_solved": 3,
+          "bugs_solved": 2,
           "unblocked_count": 3,
-          "velocity": 2.857142857142857,
+          "velocity": 2.9,
           "research_solved": 1,
           "art_tasks": 0,
           "comments_left": 1
@@ -528,7 +528,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-06-22T00:15:44.170Z"
+      "timestamp": "2026-06-22T00:16:08.448Z"
     }
   ]
 }
