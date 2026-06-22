@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-22T00:03:24.636Z",
+  "last_updated": "2026-06-22T00:04:19.837Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -828,7 +828,7 @@
       "tema_principal": "Arte / Assets",
       "prioridad": "Cosmetic",
       "milestone": "M1",
-      "estado": "OK",
+      "estado": "In Review",
       "completitud": 0.5,
       "resuelto_por": "Dídac",
       "detectado_por": "Alex",
@@ -982,9 +982,23 @@
           "field": "estado",
           "old_value": "In Review",
           "new_value": "OK"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-22T00:04:19.270Z",
+          "field": "estado",
+          "old_value": "OK",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-22T00:04:19.270Z",
+          "field": "seccion",
+          "new_value": ""
         }
       ],
-      "repository": "hypenosys/hypenosys.github.io"
+      "repository": "hypenosys/hypenosys.github.io",
+      "seccion": ""
     },
     {
       "rama": "PRO",
@@ -4354,6 +4368,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #16",
+      "user": "Axlfc",
+      "timestamp": "2026-06-22T00:04:19.837Z"
+    },
     {
       "action": "chore: actualizar tarea #27",
       "user": "Axlfc",
