@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-22T00:05:14.215Z",
+  "last_updated": "2026-06-22T00:05:23.985Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3719,66 +3719,6 @@
       "seccion": "Chat Neural"
     },
     {
-      "title": "Añadir botón de archivar en cards de columna COMPLETADO para mandar al archivo (cementerio de tareas)",
-      "descripcion": "Ha desaparecido el botón de archivar (mandar al cementerio) las tasks en COMPLETADO",
-      "rama": "master",
-      "task_type": "feature",
-      "tema_principal": "Programación / Engine",
-      "seccion": "Dashboard",
-      "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Medium",
-      "milestone": "M1",
-      "estado": "OK",
-      "completitud": 0,
-      "resuelto_por": null,
-      "detectado_por": "Axel",
-      "asignados": [],
-      "email_responsable": null,
-      "emails_asignados": [],
-      "start_date": "2026-06-21",
-      "due_date": "2026-06-28",
-      "estimated_hours": 1,
-      "story_points": 1,
-      "tags": [],
-      "external_links": [],
-      "subtasks": [],
-      "acceptance_criteria": "",
-      "blocks": [],
-      "blocked_by": [],
-      "comments": [],
-      "images": [],
-      "rama2": null,
-      "ver": true,
-      "fecha": "2026-06-21",
-      "apoyo": null,
-      "limite": null,
-      "comentario": "",
-      "change_log": [
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T12:48:14.131Z",
-          "field": "id",
-          "old_value": null,
-          "new_value": "Created"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T14:50:35.998Z",
-          "field": "estado",
-          "old_value": "Pending",
-          "new_value": "Working"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T15:03:53.908Z",
-          "field": "estado",
-          "old_value": "Working",
-          "new_value": "OK"
-        }
-      ],
-      "id": 66
-    },
-    {
       "title": "Reducir latencia y tiempos de carga",
       "descripcion": "Tarda demasiado, no debería tardar tanto en cargar datos que son prácticamente estáticos. El dashboard y en el panel de Jules (el propio dashboard del panel de Jules) deben cargar en muy poco.",
       "rama": "master",
@@ -3893,6 +3833,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: archivar tarea #66",
+      "user": "Axlfc",
+      "timestamp": "2026-06-22T00:05:23.985Z"
+    },
     {
       "action": "chore: archivar tarea #61",
       "user": "Axlfc",
