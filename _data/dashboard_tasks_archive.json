@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-22T00:16:10.180Z",
+  "last_updated": "2026-06-22T00:24:42.108Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2371,9 +2371,186 @@
       ],
       "id": 60,
       "seccion": "Dashboard"
+    },
+    {
+      "title": "BUG VISUAL: Jules Neural Operation en dashboard en móvil ",
+      "descripcion": "Corregir el renderizado de Markdown en las operaciones de Jules en móviles. Mejora la legibilidad de los logs y planes en pantallas pequeñas.",
+      "rama": "fix/jules-neural-mobile-markdown",
+      "task_type": "bug",
+      "tema_principal": "Tools / Automation",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Cosmetic",
+      "milestone": "M1",
+      "estado": "OK",
+      "completitud": 0,
+      "resuelto_por": "Alex",
+      "detectado_por": "Dídac",
+      "asignados": [
+        "dkdidac-design",
+        "topperh4rley"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-06-06",
+      "due_date": "2026-06-14",
+      "estimated_hours": 4,
+      "story_points": 4,
+      "tags": [
+        "UX/UI",
+        "bug",
+        "frontend",
+        "ux"
+      ],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "El texto con backticks se vea correctamente y el layout no se rompa.",
+      "blocks": [
+        "34"
+      ],
+      "blocked_by": [],
+      "comments": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T10:06:53.716Z",
+          "body": "Se ha escapado el texto con las batticks (```)"
+        },
+        {
+          "author_login": "jules",
+          "timestamp": "2026-06-08T16:19:37.829811",
+          "body": "El problema parece estar en el overflow de los bloques de código; necesitamos un ajuste en el CSS global de los componentes Markdown."
+        }
+      ],
+      "images": [
+        {
+          "url": "https://64.media.tumblr.com/01352f03135f95e9523c1cbcb9463b01/6cb7bf48446dbfae-1a/s1280x1920/e180a980cca794ea55e76698f1e1129bcc238030.png",
+          "type": "url",
+          "tumblr_post_id": "818665621118156800",
+          "filename": "1000052807.png",
+          "uploaded_at": "2026-06-06T10:06:16.582Z"
+        },
+        {
+          "url": "https://64.media.tumblr.com/222b1c2e3a4b052c0ee8a94cc55217e1/78299e332b2c0852-9c/s1280x1920/f59c5928ee5b641da47d4a7db4eac890c9ca7bf8.png",
+          "type": "url",
+          "tumblr_post_id": "818665626369392640",
+          "filename": "1000052808.png",
+          "uploaded_at": "2026-06-06T10:06:21.587Z"
+        }
+      ],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T10:04:33.597Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T10:08:09.053Z",
+          "field": "descripcion",
+          "old_value": "Se ve fatality, debería mostrarse mejor con Markdown, siguiendo la estética de la web",
+          "new_value": "Se ve fatality, debería mostrarse mejor con Markdown, siguiendo la estética de la web (cuidadoito con las batticks ```)"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T10:08:09.053Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Medium"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T10:08:09.053Z",
+          "field": "task_type",
+          "old_value": "feature",
+          "new_value": "bug"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T10:08:31.419Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T10:17:05.370Z",
+          "field": "title",
+          "old_value": "Jules Neural Operation en dashboard en móvil ",
+          "new_value": "BUG: Jules Neural Operation en dashboard en móvil "
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T10:17:05.370Z",
+          "field": "descripcion",
+          "old_value": "Se ve fatality, debería mostrarse mejor con Markdown, siguiendo la estética de la web (cuidadoito con las batticks ```)",
+          "new_value": "Se ve fatality, debería mostrarse mejor con Markdown, siguiendo la estética de la web (cuidadito con las batticks ```)"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T10:17:05.370Z",
+          "field": "prioridad",
+          "old_value": "Medium",
+          "new_value": "Major"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T11:33:06.040Z",
+          "field": "title",
+          "old_value": "BUG: Jules Neural Operation en dashboard en móvil ",
+          "new_value": "BUG VISUAL: Jules Neural Operation en dashboard en móvil "
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T11:38:32.246Z",
+          "field": "blocks",
+          "old_value": "[]",
+          "new_value": "[\"34\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T11:39:41.990Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Cosmetic"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T11:45:04.711Z",
+          "field": "asignados",
+          "old_value": "[\"axlfc\",\"dkdidac-design\"]",
+          "new_value": "[\"dkdidac-design\",\"topperh4rley\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:22:20.236Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:23:21.422Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "OK"
+        }
+      ],
+      "id": 31
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: tarea #31 movida al archivo",
+      "user": "Axlfc",
+      "timestamp": "2026-06-22T00:24:42.108Z"
+    },
     {
       "action": "chore: tarea #60 movida al archivo",
       "user": "Axlfc",
