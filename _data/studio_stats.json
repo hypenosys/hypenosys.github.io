@@ -1,15 +1,15 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-22T10:14:09.264Z",
+  "computed_at": "2026-06-22T10:48:16.643Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 27,
-    "total_ok": 6,
+    "total_tasks": 26,
+    "total_ok": 5,
     "total_ko": 0,
     "total_uncertain": 7,
     "total_obsolete": 9,
-    "fixed_found_ratio": 0.1818,
-    "verified_ratio": 0.1667
+    "fixed_found_ratio": 0.1563,
+    "verified_ratio": 0.1429
   },
   "group": {
     "velocity_trend": {
@@ -145,7 +145,7 @@
     "axlfc": {
       "member_name": "Axel",
       "completed": {
-        "all_time": 29,
+        "all_time": 28,
         "milestone": 22,
         "week": 2
       },
@@ -154,20 +154,19 @@
         "2026-W20": 0,
         "2026-W21": 3,
         "2026-W22": 4,
-        "2026-W23": 31,
+        "2026-W23": 30,
         "2026-W24": 5,
         "2026-W25": 8,
         "2026-W26": 0
       },
       "type_breakdown": {
-        "feature": 18,
+        "feature": 17,
         "chore": 6,
         "bug": 4,
         "research": 1
       },
       "rama_breakdown": {
         "feature/kanban-jules-link": 1,
-        "feature/mobile-github-ops": 1,
         "chore/scripts-svn-sync": 1,
         "master": 6,
         "PRO": 15,
@@ -179,17 +178,17 @@
       },
       "tag_frequency": {
         "Infraestructura": 1,
-        "api": 4,
-        "feature": 5,
+        "api": 3,
+        "feature": 4,
         "jules": 2,
-        "ux": 6,
-        "frontend": 4,
+        "ux": 5,
         "chore": 4,
         "devops": 1,
         "infraestructura": 1,
         "UX/UI": 1,
         "bug": 2,
         "hard": 1,
+        "frontend": 3,
         "docs": 2,
         "n8n": 1,
         "refactor": 2,
@@ -213,7 +212,7 @@
     "topperh4rley": {
       "member_name": "Alex",
       "completed": {
-        "all_time": 28,
+        "all_time": 27,
         "milestone": 21,
         "week": 0
       },
@@ -222,21 +221,20 @@
         "2026-W20": 0,
         "2026-W21": 3,
         "2026-W22": 5,
-        "2026-W23": 35,
+        "2026-W23": 34,
         "2026-W24": 3,
         "2026-W25": 7,
         "2026-W26": 0
       },
       "type_breakdown": {
         "chore": 4,
-        "feature": 20,
+        "feature": 19,
         "bug": 3,
         "research": 1
       },
       "rama_breakdown": {
         "PRO": 16,
         "feature/kanban-jules-link": 1,
-        "feature/mobile-github-ops": 1,
         "chore/scripts-svn-sync": 1,
         "master": 5,
         "feature/dashboard-tag-filter": 1,
@@ -248,15 +246,15 @@
         "chore": 3,
         "onboarding": 1,
         "Infraestructura": 1,
-        "api": 4,
-        "feature": 5,
+        "api": 3,
+        "feature": 4,
         "jules": 2,
-        "ux": 7,
-        "frontend": 5,
+        "ux": 6,
         "devops": 1,
         "UX/UI": 2,
         "bug": 3,
         "hard": 1,
+        "frontend": 4,
         "docs": 2,
         "n8n": 1,
         "stability": 1
@@ -528,7 +526,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-06-22T10:14:10.265Z"
+      "timestamp": "2026-06-22T10:48:17.480Z"
     }
   ]
 }
