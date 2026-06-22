@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-22T00:04:52.553Z",
+  "last_updated": "2026-06-22T00:05:01.037Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1761,9 +1761,104 @@
         }
       ],
       "seccion": "Web"
+    },
+    {
+      "id": 48,
+      "title": "Implementación de Error Boundaries en Dashboard",
+      "descripcion": "Implementar un sistema de Error Boundaries para aislar fallos en componentes críticos del dashboard. Evita que un error en la API de GitHub o en las métricas tumbe toda la interfaz. **Hecho cuando:** Al fallar un componente, se muestre un estado de fallback elegante sin afectar al resto.",
+      "tags": [
+        "frontend",
+        "stability",
+        "ux"
+      ],
+      "prioridad": "Major",
+      "estado": "OK",
+      "estimated_hours": 4,
+      "comments": [
+        "Podemos usar un componente de orden superior para envolver las tarjetas del Kanban y los gráficos de éxito."
+      ],
+      "rama": "feature/dashboard-error-boundaries",
+      "task_type": "feature",
+      "tema_principal": "QA / Testing",
+      "milestone": "M2",
+      "fecha": "2026-06-08",
+      "asignados": [
+        "axlfc",
+        "topperh4rley"
+      ],
+      "acceptance_criteria": "Los errores se capturan y loguean sin romper la sesión del usuario.",
+      "subtasks": [],
+      "repository": "hypenosys/hypenosys.github.io",
+      "completitud": 0,
+      "resuelto_por": "Alex",
+      "detectado_por": "Axel",
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "story_points": null,
+      "external_links": [],
+      "blocks": [],
+      "blocked_by": [],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:34:20.957Z",
+          "field": "prioridad",
+          "old_value": "High",
+          "new_value": ""
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:34:20.957Z",
+          "field": "completitud",
+          "new_value": 0
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:34:20.957Z",
+          "field": "repository",
+          "old_value": "",
+          "new_value": "hypenosys/hypenosys.github.io"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-15T17:11:32.830Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-15T17:11:32.830Z",
+          "field": "prioridad",
+          "old_value": "",
+          "new_value": "Major"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:44:32.295Z",
+          "field": "seccion",
+          "new_value": "Dashboard"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T17:53:42.202Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "OK"
+        }
+      ],
+      "seccion": "Dashboard"
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: tarea #48 movida al archivo",
+      "user": "Axlfc",
+      "timestamp": "2026-06-22T00:05:01.037Z"
+    },
     {
       "action": "chore: tarea #46 movida al archivo",
       "user": "Axlfc",
