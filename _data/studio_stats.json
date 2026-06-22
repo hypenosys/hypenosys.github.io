@@ -1,14 +1,14 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-22T00:05:15.710Z",
+  "computed_at": "2026-06-22T00:05:17.524Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 24,
-    "total_ok": 24,
+    "total_tasks": 25,
+    "total_ok": 25,
     "total_ko": 0,
     "total_uncertain": 0,
     "total_obsolete": 0,
-    "fixed_found_ratio": 1.1429,
+    "fixed_found_ratio": 1.1364,
     "verified_ratio": 1
   },
   "group": {
@@ -18,7 +18,7 @@
       "2026-W21": 8,
       "2026-W22": 10,
       "2026-W23": 18,
-      "2026-W24": 4,
+      "2026-W24": 5,
       "2026-W25": 2,
       "2026-W26": 0
     },
@@ -30,7 +30,7 @@
       "mvp": {
         "handle": "axlfc",
         "name": "Axel",
-        "value": 9
+        "value": 9.5
       },
       "bug_slayer": {
         "handle": "axlfc",
@@ -50,7 +50,7 @@
       "researcher": {
         "handle": "axlfc",
         "name": "Axel",
-        "value": 0
+        "value": 1
       },
       "art_lead": {
         "handle": "axlfc",
@@ -66,21 +66,21 @@
     "leaderboard": {
       "axlfc": {
         "member_name": "Axel",
-        "mvp_points": 9,
+        "mvp_points": 9.5,
         "bugs_solved": 4,
         "unblocked_count": 4,
-        "velocity": 2.888888888888889,
-        "research_solved": 0,
+        "velocity": 2.918918918918919,
+        "research_solved": 1,
         "art_tasks": 0,
         "comments_left": 0
       },
       "topperh4rley": {
         "member_name": "Alex",
-        "mvp_points": 7,
+        "mvp_points": 7.5,
         "bugs_solved": 4,
         "unblocked_count": 4,
-        "velocity": 3,
-        "research_solved": 0,
+        "velocity": 3.0303030303030303,
+        "research_solved": 1,
         "art_tasks": 0,
         "comments_left": 0
       },
@@ -96,11 +96,11 @@
       },
       "javi26031994-a11y": {
         "member_name": "Javi",
-        "mvp_points": 0,
+        "mvp_points": 0.5,
         "bugs_solved": 0,
         "unblocked_count": 0,
         "velocity": 4,
-        "research_solved": 0,
+        "research_solved": 1,
         "art_tasks": 0,
         "comments_left": 0
       },
@@ -120,8 +120,8 @@
     "axlfc": {
       "member_name": "Axel",
       "completed": {
-        "all_time": 42,
-        "milestone": 36,
+        "all_time": 43,
+        "milestone": 37,
         "week": 0
       },
       "weekly_velocity": {
@@ -130,19 +130,20 @@
         "2026-W21": 6,
         "2026-W22": 8,
         "2026-W23": 46,
-        "2026-W24": 6,
+        "2026-W24": 8,
         "2026-W25": 0,
         "2026-W26": 0
       },
       "type_breakdown": {
         "feature": 30,
         "chore": 8,
-        "bug": 4
+        "bug": 4,
+        "research": 1
       },
       "rama_breakdown": {
         "PRO": 30,
         "feature/dashboard-tag-filter": 2,
-        "master": 4,
+        "master": 5,
         "chore/consolidate-scripts": 2,
         "chore/decommission-old-panels": 2,
         "feature/dashboard-error-boundaries": 2
@@ -157,7 +158,7 @@
         "frontend": 4,
         "ux": 6,
         "chore": 6,
-        "docs": 2,
+        "docs": 3,
         "api": 2,
         "n8n": 2,
         "refactor": 4,
@@ -181,8 +182,8 @@
     "topperh4rley": {
       "member_name": "Alex",
       "completed": {
-        "all_time": 38,
-        "milestone": 32,
+        "all_time": 39,
+        "milestone": 33,
         "week": 0
       },
       "weekly_velocity": {
@@ -191,19 +192,20 @@
         "2026-W21": 6,
         "2026-W22": 8,
         "2026-W23": 46,
-        "2026-W24": 2,
+        "2026-W24": 4,
         "2026-W25": 0,
         "2026-W26": 0
       },
       "type_breakdown": {
         "feature": 32,
         "bug": 4,
-        "chore": 2
+        "chore": 2,
+        "research": 1
       },
       "rama_breakdown": {
         "PRO": 30,
         "feature/dashboard-tag-filter": 2,
-        "master": 4,
+        "master": 5,
         "feature/dashboard-error-boundaries": 2
       },
       "tag_frequency": {
@@ -215,7 +217,7 @@
         "frontend": 4,
         "ux": 6,
         "chore": 2,
-        "docs": 2,
+        "docs": 3,
         "api": 2,
         "n8n": 2,
         "stability": 2
@@ -288,8 +290,8 @@
     "javi26031994-a11y": {
       "member_name": "Javi",
       "completed": {
-        "all_time": 6,
-        "milestone": 6,
+        "all_time": 7,
+        "milestone": 7,
         "week": 0
       },
       "weekly_velocity": {
@@ -298,21 +300,22 @@
         "2026-W21": 4,
         "2026-W22": 0,
         "2026-W23": 8,
-        "2026-W24": 0,
+        "2026-W24": 2,
         "2026-W25": 0,
         "2026-W26": 0
       },
       "type_breakdown": {
         "feature": 4,
-        "chore": 2
+        "chore": 2,
+        "research": 1
       },
       "rama_breakdown": {
         "PRO": 4,
-        "master": 2
+        "master": 3
       },
       "tag_frequency": {
         "chore": 2,
-        "docs": 2
+        "docs": 3
       },
       "avg_completion_speed": {
         "days": 0.5,
@@ -371,7 +374,7 @@
         "mvp": {
           "handle": "axlfc",
           "name": "Axel",
-          "value": 9
+          "value": 9.5
         },
         "bug_slayer": {
           "handle": "axlfc",
@@ -391,7 +394,7 @@
         "researcher": {
           "handle": "axlfc",
           "name": "Axel",
-          "value": 0
+          "value": 1
         },
         "art_lead": {
           "handle": "axlfc",
@@ -407,21 +410,21 @@
       "leaderboard": {
         "axlfc": {
           "member_name": "Axel",
-          "mvp_points": 9,
+          "mvp_points": 9.5,
           "bugs_solved": 4,
           "unblocked_count": 4,
-          "velocity": 2.888888888888889,
-          "research_solved": 0,
+          "velocity": 2.918918918918919,
+          "research_solved": 1,
           "art_tasks": 0,
           "comments_left": 0
         },
         "topperh4rley": {
           "member_name": "Alex",
-          "mvp_points": 7,
+          "mvp_points": 7.5,
           "bugs_solved": 4,
           "unblocked_count": 4,
-          "velocity": 3,
-          "research_solved": 0,
+          "velocity": 3.0303030303030303,
+          "research_solved": 1,
           "art_tasks": 0,
           "comments_left": 0
         },
@@ -437,11 +440,11 @@
         },
         "javi26031994-a11y": {
           "member_name": "Javi",
-          "mvp_points": 0,
+          "mvp_points": 0.5,
           "bugs_solved": 0,
           "unblocked_count": 0,
           "velocity": 4,
-          "research_solved": 0,
+          "research_solved": 1,
           "art_tasks": 0,
           "comments_left": 0
         },
@@ -463,7 +466,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-06-22T00:05:16.667Z"
+      "timestamp": "2026-06-22T00:05:18.482Z"
     }
   ]
 }
