@@ -925,7 +925,8 @@ permalink: /jules-panel/
         let arrancado = false;
         window._bootJules = (user) => { if (arrancado) return; arrancado = true; initRealPanel(user); };
         document.addEventListener("authReady", (e) => window._bootJules(e.detail?.user));
-        setTimeout(() => { if (!arrancado) { if (getGitHubToken()) window._bootJules(window.githubApi?.user); else showAuthCard("auth-card-error"); } }, 5000);
+        // Fix: Idempotent failsafe to avoid AuthManager collision (auth.js:164)
+        setTimeout(() => { if (!arrancado && !window.authManager) { if (getGitHubToken()) window._bootJules(window.githubApi?.user); else showAuthCard("auth-card-error"); } }, 5000);
 
         document.querySelectorAll('.opt-pill').forEach(pill => {
             pill.onclick = () => {
