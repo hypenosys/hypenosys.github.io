@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-22T10:14:06.224Z",
+  "last_updated": "2026-06-22T10:48:14.272Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1280,155 +1280,6 @@
       ],
       "id": 27,
       "seccion": "Dashboard"
-    },
-    {
-      "title": "Mobile first: Jules Panel - \"GitHub (Team) Ops\" — Hub completo de gestión de repositorios, conectado con Tasks Kanban y Claude",
-      "descripcion": "Crear un hub de gestión de repositorios optimizado para móviles. Permite gestionar PRs e Issues desde cualquier lugar sin depender de la web de GitHub.",
-      "rama": "feature/mobile-github-ops",
-      "task_type": "feature",
-      "tema_principal": "Programación / Engine",
-      "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Major",
-      "milestone": "M2",
-      "estado": "OK",
-      "completitud": 0,
-      "resuelto_por": "Axel",
-      "detectado_por": "Axel",
-      "asignados": [
-        "axlfc",
-        "topperh4rley"
-      ],
-      "email_responsable": "axel@hypenosys.com",
-      "emails_asignados": [
-        "alex@hypenosys.com"
-      ],
-      "start_date": "2026-06-04",
-      "due_date": "2026-06-07",
-      "estimated_hours": 4,
-      "story_points": 1,
-      "tags": [
-        "api",
-        "feature",
-        "frontend",
-        "ux"
-      ],
-      "external_links": [],
-      "subtasks": [
-        {
-          "id": 1780564938683,
-          "text": "Crear github-ops.html y github-ops.js con arquitectura modular por sección",
-          "done": false
-        },
-        {
-          "id": 1780564954345,
-          "text": "Módulo PR Manager (list + diff viewer + actions)",
-          "done": false
-        },
-        {
-          "id": 1780564965375,
-          "text": "Módulo Issues Manager",
-          "done": false
-        },
-        {
-          "id": 1780564975703,
-          "text": "Módulo Branches & Commits viewer",
-          "done": false
-        },
-        {
-          "id": 1780564986181,
-          "text": "Módulo Actions/Workflows runner",
-          "done": false
-        },
-        {
-          "id": 1780564998085,
-          "text": "Sistema de notificaciones con polling (30s interval)",
-          "done": false
-        },
-        {
-          "id": 1780565011115,
-          "text": "Componente diff viewer con syntax highlighting",
-          "done": false
-        }
-      ],
-      "acceptance_criteria": "Todas las funciones principales de Git sean accesibles desde el móvil.",
-      "blocks": [],
-      "blocked_by": [],
-      "comments": [
-        "El rendimiento en móvil es clave aquí; sugiero usar virtualización para las listas largas de commits y evitar lag en el scroll."
-      ],
-      "images": [],
-      "rama2": null,
-      "ver": true,
-      "fecha": "2026-06-04",
-      "apoyo": null,
-      "limite": null,
-      "comentario": "",
-      "change_log": [
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-04T09:23:38.111Z",
-          "field": "id",
-          "old_value": null,
-          "new_value": "Created"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-05T16:13:55.858Z",
-          "field": "title",
-          "old_value": "Nueva página \"GitHub Operations\" — Hub completo de gestión de repositorios",
-          "new_value": "Nueva página \"GitHub (Team) Ops\" — Hub completo de gestión de repositorios, conectado con Jules y Claude"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-05T16:44:19.904Z",
-          "field": "title",
-          "old_value": "Nueva página \"GitHub (Team) Ops\" — Hub completo de gestión de repositorios, conectado con Jules y Claude",
-          "new_value": "Upgrade Jules Panel with \"GitHub (Team) Ops\" — Hub completo de gestión de repositorios, conectado con Jules y Claude"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-05T16:44:41.430Z",
-          "field": "estado",
-          "old_value": "Pending",
-          "new_value": "Working"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-05T18:51:03.847Z",
-          "field": "estado",
-          "old_value": "Pending",
-          "new_value": "In Review"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-06T22:02:58.274Z",
-          "field": "title",
-          "old_value": "Upgrade Jules Panel with \"GitHub (Team) Ops\" — Hub completo de gestión de repositorios, conectado con Jules y Claude",
-          "new_value": "Mobile first: Upgrade Jules Panel with \"GitHub (Team) Ops\" — Hub completo de gestión de repositorios, conectado con Jules y Claude"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-06T22:04:47.926Z",
-          "field": "title",
-          "old_value": "Mobile first: Upgrade Jules Panel with \"GitHub (Team) Ops\" — Hub completo de gestión de repositorios, conectado con Jules y Claude",
-          "new_value": "Mobile first: Jules Panel - \"GitHub (Team) Ops\" — Hub completo de gestión de repositorios, conectado con Tasks Kanban y Claude"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T12:46:30.813Z",
-          "field": "seccion",
-          "new_value": "Jules Panel"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-22T00:07:12.757Z",
-          "field": "estado",
-          "old_value": "In Review",
-          "new_value": "OK"
-        }
-      ],
-      "id": 28,
-      "seccion": "Jules Panel"
     },
     {
       "title": "Integración SVN en Claude Neural Chat y Jules Panel (orquestación repositorios app, scripts y docs)",
@@ -3506,6 +3357,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: archivar tarea #28",
+      "user": "Axlfc",
+      "timestamp": "2026-06-22T10:48:14.272Z"
+    },
     {
       "action": "chore: actualizar tarea #68",
       "user": "Axlfc",
