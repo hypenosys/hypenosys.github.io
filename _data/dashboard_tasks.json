@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-22T00:04:44.095Z",
+  "last_updated": "2026-06-22T00:04:47.911Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2720,73 +2720,6 @@
       "seccion": "Backend n8n"
     },
     {
-      "id": 47,
-      "title": "Decomisionado de Paneles Jules obsoletos",
-      "descripcion": "Archivar o eliminar las versiones de prueba de los paneles Jules (jules-panel.html, jules-paneltest.html). jules-panel.html es ahora el estándar y mantener los anteriores genera confusión. **Hecho cuando:** Solo el panel principal esté activo y las rutas antiguas redirijan o estén borradas.",
-      "tags": [
-        "chore",
-        "refactor"
-      ],
-      "prioridad": "Medium",
-      "estado": "OK",
-      "estimated_hours": 2,
-      "comments": [
-        "Debemos asegurar que no hay links internos apuntando a las versiones antiguas en la documentación o en el tech-stack."
-      ],
-      "rama": "chore/decommission-old-panels",
-      "task_type": "chore",
-      "tema_principal": "QA / Testing",
-      "milestone": "M1",
-      "fecha": "2026-06-08",
-      "asignados": [
-        "axlfc"
-      ],
-      "acceptance_criteria": "Limpieza del directorio de páginas y actualización de enlaces.",
-      "subtasks": [],
-      "repository": "hypenosys/hypenosys.github.io",
-      "completitud": 0,
-      "resuelto_por": null,
-      "detectado_por": "Unassigned",
-      "email_responsable": null,
-      "emails_asignados": [],
-      "start_date": null,
-      "due_date": null,
-      "story_points": null,
-      "external_links": [],
-      "blocks": [],
-      "blocked_by": [],
-      "images": [],
-      "change_log": [
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-13T09:34:34.675Z",
-          "field": "completitud",
-          "new_value": 0
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-13T09:34:34.675Z",
-          "field": "repository",
-          "old_value": "",
-          "new_value": "hypenosys/hypenosys.github.io"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T10:45:29.685Z",
-          "field": "estado",
-          "old_value": "Pending",
-          "new_value": "OK"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T12:52:35.638Z",
-          "field": "seccion",
-          "new_value": "Jules Panel, Web"
-        }
-      ],
-      "seccion": "Jules Panel, Web"
-    },
-    {
       "id": 48,
       "title": "Implementación de Error Boundaries en Dashboard",
       "descripcion": "Implementar un sistema de Error Boundaries para aislar fallos en componentes críticos del dashboard. Evita que un error en la API de GitHub o en las métricas tumbe toda la interfaz. **Hecho cuando:** Al fallar un componente, se muestre un estado de fallback elegante sin afectar al resto.",
@@ -4287,6 +4220,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: archivar tarea #47",
+      "user": "Axlfc",
+      "timestamp": "2026-06-22T00:04:47.911Z"
+    },
     {
       "action": "chore: archivar tarea #46",
       "user": "Axlfc",
