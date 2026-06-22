@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-22T00:25:13.780Z",
+  "last_updated": "2026-06-22T00:35:32.625Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -376,7 +376,7 @@
         "mitxel@hypenosys.com"
       ],
       "images": [],
-      "title": "Instalar Git, TortoiseSVN(add to path) + Unreal Engine 5.7.4",
+      "title": "Instalar Git, TortoiseSVN(add to path) + Unreal Engine 5.8",
       "task_type": "chore",
       "start_date": null,
       "due_date": null,
@@ -414,6 +414,13 @@
           "timestamp": "2026-06-22T00:00:21.906Z",
           "field": "seccion",
           "new_value": ""
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-22T00:35:31.900Z",
+          "field": "title",
+          "old_value": "Instalar Git, TortoiseSVN(add to path) + Unreal Engine 5.7.4",
+          "new_value": "Instalar Git, TortoiseSVN(add to path) + Unreal Engine 5.8"
         }
       ],
       "repository": "hypenosys/app",
@@ -3561,6 +3568,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #8",
+      "user": "Axlfc",
+      "timestamp": "2026-06-22T00:35:32.625Z"
+    },
     {
       "action": "chore: actualizar tarea #63",
       "user": "Axlfc",
