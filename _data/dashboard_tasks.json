@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-22T00:11:01.676Z",
+  "last_updated": "2026-06-22T00:12:16.152Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2989,7 +2989,7 @@
     },
     {
       "title": "Arreglar subida a Tumblr de audios, video, image para music-gen y image y anim studio",
-      "descripcion": "",
+      "descripcion": "Habrá que crear unos workflows en n8n que de alguna manera, retornen las imágenes y los sonidos que saca ComfyUI de vuelta otra vez a la plataforma, y que estas se suban a Tumblr.\n\nEsta tarea está bloqueada por los filtros NSFW.",
       "rama": "master",
       "task_type": "feature",
       "tema_principal": "Programación / Engine",
@@ -3048,6 +3048,13 @@
           "field": "seccion",
           "old_value": "Music Gen, Image Gen",
           "new_value": "Music Gen, Image Gen, Backend n8n"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-22T00:12:15.482Z",
+          "field": "descripcion",
+          "old_value": "",
+          "new_value": "Habrá que crear unos workflows en n8n que de alguna manera, retornen las imágenes y los sonidos que saca ComfyUI de vuelta otra vez a la plataforma, y que estas se suban a Tumblr.\n\nEsta tarea está bloqueada por los filtros NSFW."
         }
       ],
       "id": 53,
@@ -3842,6 +3849,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #53",
+      "user": "Axlfc",
+      "timestamp": "2026-06-22T00:12:16.152Z"
+    },
     {
       "action": "chore: actualizar tarea #52",
       "user": "Axlfc",
