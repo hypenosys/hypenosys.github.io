@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-22T10:48:14.272Z",
+  "last_updated": "2026-06-23T12:41:16.056Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2174,7 +2174,7 @@
       "seccion": "Chat Neural, Backend n8n"
     },
     {
-      "title": "Cognito-Agent en Claude Neural API desde n8n con ingestión en Qdrant + Kavita (UOC) + PSQL",
+      "title": "Cognito-Agent en Claude Neural API desde n8n con ingestión en Qdrant + Kavita (UOC) + PSQL + Python and JavaScript runners (n8n)",
       "descripcion": "orquestar workflows de forma segura y escalable. Incluye citation",
       "rama": "chore/n8n-api-worker",
       "task_type": "chore",
@@ -2278,6 +2278,13 @@
           "timestamp": "2026-06-21T12:44:24.899Z",
           "field": "seccion",
           "new_value": "Backend n8n"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-23T12:41:15.392Z",
+          "field": "title",
+          "old_value": "Cognito-Agent en Claude Neural API desde n8n con ingestión en Qdrant + Kavita (UOC) + PSQL",
+          "new_value": "Cognito-Agent en Claude Neural API desde n8n con ingestión en Qdrant + Kavita (UOC) + PSQL + Python and JavaScript runners (n8n)"
         }
       ],
       "id": 44,
@@ -3357,6 +3364,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #44",
+      "user": "Axlfc",
+      "timestamp": "2026-06-23T12:41:16.056Z"
+    },
     {
       "action": "chore: archivar tarea #28",
       "user": "Axlfc",
