@@ -55,3 +55,25 @@ window.handleJulesApiError = function(e) {
     showToast("Error de API: " + msg, "red");
     addTel("SYSTEM", "Error API: " + msg, "error");
 }
+
+/**
+ * Persiste los mensajes actuales de chatV2Messages en el almacenamiento local
+ * vinculado a la sesión de Jules activa.
+ * @param {boolean} skipSync - (Opcional) Evita disparar eventos de sincronización adicionales.
+ */
+window.saveSessionsV2 = function(skipSync) {
+    try {
+        const sid = getLinkedJulesSessionId();
+        if (!sid) return;
+
+        const sessions = JSON.parse(localStorage.getItem('hy_neural_sessions') || '[]');
+        const idx = sessions.findIndex(function(s) { return s.id === sid; });
+
+        if (idx !== -1) {
+            sessions[idx].messages = window.chatV2Messages || [];
+            localStorage.setItem('hy_neural_sessions', JSON.stringify(sessions));
+        }
+    } catch (e) {
+        console.error("Error en saveSessionsV2:", e);
+    }
+}
