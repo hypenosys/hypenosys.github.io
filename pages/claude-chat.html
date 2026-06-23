@@ -564,11 +564,16 @@ permalink: /chat/neural/
 
     // ─── Arranque del Neural Chat ──────────────────────────────────────
     (function arrancarClaude() {
-        let arrancado = false;
+        let arrancadoGlobal = false;
+        let arrancadoConUsuario = false;
 
         async function iniciar(user) {
-            if (arrancado && user) return;
-            arrancado = true;
+            // Si ya hemos arrancado con un usuario real, ignoramos llamadas posteriores
+            if (arrancadoConUsuario) return;
+
+            if (user) {
+                arrancadoConUsuario = true;
+            }
 
             // Initialize DOM references here, after DOM is ready
             window.chatMessages = document.getElementById('chat-messages');
@@ -604,108 +609,112 @@ permalink: /chat/neural/
                 gate.classList.add('hidden');
                 main.classList.remove('hidden');
                 chatArea.classList.remove('hidden');
+
                 try {
                     await init();
 
-                    // Area 10: Sync event listeners
-                    window.sendBtn.onclick = sendMessage;
-                    window.chatInput.onkeydown = (e) => {
-                        if (e.key === 'Enter' && !e.shiftKey) {
-                            e.preventDefault();
-                            sendMessage();
-                            window.chatInput.style.height = 'auto';
-                        }
-                    };
-                    window.chatInput.addEventListener('input', function() {
-                        this.style.height = 'auto';
-                        this.style.height = (this.scrollHeight) + 'px';
-                        if (this.scrollHeight > 200) {
-                            this.style.overflowY = 'scroll';
-                            this.style.height = '200px';
-                        } else {
-                            this.style.overflowY = 'hidden';
-                        }
-                    });
-                    window.toggleThinkingBtn.onclick = () => {
-                        window.isThinkingEnabled = !window.isThinkingEnabled;
-                        window.toggleThinkingBtn.classList.toggle('dracula-cyan', window.isThinkingEnabled);
-                        const currentSession = window.sessions.find(s => s.id === window.currentSessionId);
-                        if (currentSession) {
-                            currentSession.thinking = window.isThinkingEnabled;
-                            saveSessions();
-                        }
-                    };
-                    document.getElementById('attach-btn').onclick = () => document.getElementById('image-input').click();
-                    document.getElementById('image-input').onchange = (e) => {
-                        const file = e.target.files[0];
-                        if (!file) return;
-                        const reader = new FileReader();
-                        reader.onload = (ev) => {
-                            window.attachedImage = ev.target.result;
-                            document.getElementById('preview-img').src = window.attachedImage;
-                            document.getElementById('vision-preview').classList.remove('hidden');
+                    // Area 10: Sync event listeners - Solo una vez para evitar duplicados
+                    if (!arrancadoGlobal) {
+                        window.sendBtn.onclick = sendMessage;
+                        window.chatInput.onkeydown = (e) => {
+                            if (e.key === 'Enter' && !e.shiftKey) {
+                                e.preventDefault();
+                                sendMessage();
+                                window.chatInput.style.height = 'auto';
+                            }
                         };
-                        reader.readAsDataURL(file);
-                    };
-                    document.getElementById('toggle-input-mode').onclick = () => {
-                        const config = getActiveConfig();
-                        config.useTextInAudioMode = !config.useTextInAudioMode;
-                        localStorage.setItem('hy_ai_config', JSON.stringify(config));
-                        const profiles = JSON.parse(localStorage.getItem('ai_profiles') || '{}');
-                        const activeId = localStorage.getItem('activeProfile');
-                        if (activeId && profiles[activeId]) {
-                            profiles[activeId].useTextInAudioMode = config.useTextInAudioMode;
-                            localStorage.setItem('ai_profiles', JSON.stringify(profiles));
-                        }
-                        adaptUI(config);
-                    };
-                    const recordBtn = document.getElementById('record-btn');
-                    recordBtn.onmousedown = async () => {
-                        try {
-                            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                            window.mediaRecorder = new MediaRecorder(stream);
-                            window.audioChunks = [];
-                            window.mediaRecorder.ondataavailable = (e) => window.audioChunks.push(e.data);
-                            window.mediaRecorder.onstop = async () => {
-                                const audioBlob = new Blob(window.audioChunks, { type: 'audio/webm' });
-                                await sendAudioTranscription(audioBlob);
+                        window.chatInput.addEventListener('input', function() {
+                            this.style.height = 'auto';
+                            this.style.height = (this.scrollHeight) + 'px';
+                            if (this.scrollHeight > 200) {
+                                this.style.overflowY = 'scroll';
+                                this.style.height = '200px';
+                            } else {
+                                this.style.overflowY = 'hidden';
+                            }
+                        });
+                        window.toggleThinkingBtn.onclick = () => {
+                            window.isThinkingEnabled = !window.isThinkingEnabled;
+                            window.toggleThinkingBtn.classList.toggle('dracula-cyan', window.isThinkingEnabled);
+                            const currentSession = window.sessions.find(s => s.id === window.currentSessionId);
+                            if (currentSession) {
+                                currentSession.thinking = window.isThinkingEnabled;
+                                saveSessions();
+                            }
+                        };
+                        document.getElementById('attach-btn').onclick = () => document.getElementById('image-input').click();
+                        document.getElementById('image-input').onchange = (e) => {
+                            const file = e.target.files[0];
+                            if (!file) return;
+                            const reader = new FileReader();
+                            reader.onload = (ev) => {
+                                window.attachedImage = ev.target.result;
+                                document.getElementById('preview-img').src = window.attachedImage;
+                                document.getElementById('vision-preview').classList.remove('hidden');
                             };
-                            window.mediaRecorder.start();
-                            recordBtn.classList.add('pulse', 'bg-red-500/40');
-                        } catch (e) {
-                            appendSystemMessage('Error al acceder al micrófono: ' + e.message, 'error');
-                        }
-                    };
-                    recordBtn.onmouseup = () => {
-                        if (window.mediaRecorder && window.mediaRecorder.state === 'recording') {
-                            window.mediaRecorder.stop();
-                            recordBtn.classList.remove('pulse', 'bg-red-500/40');
-                        }
-                    };
+                            reader.readAsDataURL(file);
+                        };
+                        document.getElementById('toggle-input-mode').onclick = () => {
+                            const config = getActiveConfig();
+                            config.useTextInAudioMode = !config.useTextInAudioMode;
+                            localStorage.setItem('hy_ai_config', JSON.stringify(config));
+                            const profiles = JSON.parse(localStorage.getItem('ai_profiles') || '{}');
+                            const activeId = localStorage.getItem('activeProfile');
+                            if (activeId && profiles[activeId]) {
+                                profiles[activeId].useTextInAudioMode = config.useTextInAudioMode;
+                                localStorage.setItem('ai_profiles', JSON.stringify(profiles));
+                            }
+                            adaptUI(config);
+                        };
+                        const recordBtn = document.getElementById('record-btn');
+                        recordBtn.onmousedown = async () => {
+                            try {
+                                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                                window.mediaRecorder = new MediaRecorder(stream);
+                                window.audioChunks = [];
+                                window.mediaRecorder.ondataavailable = (e) => window.audioChunks.push(e.data);
+                                window.mediaRecorder.onstop = async () => {
+                                    const audioBlob = new Blob(window.audioChunks, { type: 'audio/webm' });
+                                    await sendAudioTranscription(audioBlob);
+                                };
+                                window.mediaRecorder.start();
+                                recordBtn.classList.add('pulse', 'bg-red-500/40');
+                            } catch (e) {
+                                appendSystemMessage('Error al acceder al micrófono: ' + e.message, 'error');
+                            }
+                        };
+                        recordBtn.onmouseup = () => {
+                            if (window.mediaRecorder && window.mediaRecorder.state === 'recording') {
+                                window.mediaRecorder.stop();
+                                recordBtn.classList.remove('pulse', 'bg-red-500/40');
+                            }
+                        };
 
-                    // Initialize Neural context context sync
-                    window.neuralSyncChannel = new BroadcastChannel('neural-context-sync');
-                    window.neuralSyncChannel.onmessage = (event) => {
-                        if (window.isLoadingSession) return;
-                        const { type, julesSessionId, claudeConversationId, message } = event.data;
-                        if (type === 'NEW_MESSAGE' && message) {
-                            const linkedSid = localStorage.getItem('hy_neural_session_id_' + window.currentSessionId);
-                            if (claudeConversationId === window.currentSessionId || julesSessionId === linkedSid) {
-                                const currentSession = window.sessions.find(s => s.id === window.currentSessionId);
-                                if (currentSession) {
-                                    const exists = currentSession.messages.some(m =>
-                                        m.content === message.content && m.role === message.role &&
-                                        (m.timestamp === message.timestamp || m.createTime === message.createTime)
-                                    );
-                                    if (!exists) {
-                                        currentSession.messages.push(message);
-                                        saveSessions(true);
-                                        renderMessages();
+                        // Initialize Neural context context sync
+                        window.neuralSyncChannel = new BroadcastChannel('neural-context-sync');
+                        window.neuralSyncChannel.onmessage = (event) => {
+                            if (window.isLoadingSession) return;
+                            const { type, julesSessionId, claudeConversationId, message } = event.data;
+                            if (type === 'NEW_MESSAGE' && message) {
+                                const linkedSid = localStorage.getItem('hy_neural_session_id_' + window.currentSessionId);
+                                if (claudeConversationId === window.currentSessionId || julesSessionId === linkedSid) {
+                                    const currentSession = window.sessions.find(s => s.id === window.currentSessionId);
+                                    if (currentSession) {
+                                        const exists = currentSession.messages.some(m =>
+                                            m.content === message.content && m.role === message.role &&
+                                            (m.timestamp === message.timestamp || m.createTime === message.createTime)
+                                        );
+                                        if (!exists) {
+                                            currentSession.messages.push(message);
+                                            saveSessions(true);
+                                            renderMessages();
+                                        }
                                     }
                                 }
                             }
-                        }
-                    };
+                        };
+                        arrancadoGlobal = true;
+                    }
 
                 } catch (e) {
                     console.error('[Claude] Init failed:', e);
@@ -723,7 +732,7 @@ permalink: /chat/neural/
 
         // Failsafe: hide skeleton if no auth event after 3s
         setTimeout(() => {
-            if (!arrancado) {
+            if (!arrancadoConUsuario) {
                 console.warn('[Claude] Auth timeout failsafe triggered');
                 const user = window.githubApi?.user;
                 iniciar(user || null);
