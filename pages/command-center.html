@@ -1,0 +1,1277 @@
+---
+layout: null
+title: Command Center
+hide_title: true
+permalink: /command-center/
+---
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Command Center — HYPENOSYS</title>
+<link rel="stylesheet" href="{{ '/assets/main.css' | relative_url }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<script src="{{ '/assets/javascript/bootstrap/jquery.min.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/bootstrap/bootstrap.bundle.min.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/ui-components.js' | relative_url }}"></script>
+
+<style>
+:root {
+  --cc-bg: #0a0a0f;
+  --cc-surface: #12121a;
+  --cc-surface2: #181822;
+  --cc-surface3: #1f1f2c;
+  --cc-border: #26263580;
+  --cc-border2: #34344a;
+  --cc-text: #f1f1f6;
+  --cc-text2: #a6a6bd;
+  --cc-text3: #6c6c85;
+  --cc-accent: #bd93f9;
+  --cc-accent-dim: rgba(189,147,249,0.12);
+  --cc-success: #50fa7b;
+  --cc-warn: #f1fa8c;
+  --cc-error: #ff5555;
+  --cc-info: #8be9fd;
+  --cc-admin: #ffb86c;
+  --f-sans: 'Space Grotesk', -apple-system, sans-serif;
+  --f-mono: 'Space Mono', 'SFMono-Regular', monospace;
+  --topbar-h: 56px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  background: var(--cc-bg);
+  color: var(--cc-text);
+  font-family: var(--f-sans);
+  margin: 0;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--cc-accent); text-decoration: none; }
+
+#cc-root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─── TOPBAR ─────────────────────────────────────── */
+.cc-topbar {
+  height: var(--topbar-h);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  border-bottom: 1px solid var(--cc-border);
+  background: var(--cc-surface);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.cc-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  font-size: 14px;
+}
+.cc-brand i { color: var(--cc-accent); }
+.cc-brand .cc-sep { color: var(--cc-text3); font-weight: 400; margin: 0 4px; }
+.cc-brand .cc-section { color: var(--cc-text2); font-weight: 500; font-size: 12px; letter-spacing: 0.08em; }
+.cc-topbar-right { display: flex; align-items: center; gap: 10px; }
+.cc-home-link {
+  font-family: var(--f-mono); font-size: 11px; color: var(--cc-text2);
+  border: 1px solid var(--cc-border); padding: 5px 10px; border-radius: 6px;
+  display: flex; align-items: center; gap: 6px; transition: all .15s;
+}
+.cc-home-link:hover { color: var(--cc-text); border-color: var(--cc-border2); }
+
+.cc-role-chip {
+  font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.06em;
+  padding: 4px 9px; border-radius: 20px; display: flex; align-items: center; gap: 5px;
+  border: 1px solid var(--cc-border2); color: var(--cc-text2);
+}
+.cc-role-chip.is-admin { color: var(--cc-admin); border-color: rgba(255,184,108,0.35); background: rgba(255,184,108,0.08); }
+.cc-role-chip.is-member { color: var(--cc-info); border-color: rgba(139,233,253,0.3); background: rgba(139,233,253,0.06); }
+.cc-role-chip i { font-size: 9px; }
+
+.cc-user {
+  display: flex; align-items: center; gap: 8px;
+  position: relative;
+}
+.cc-user-name { font-size: 12px; color: var(--cc-text2); font-family: var(--f-mono); }
+
+/* ─── BODY LAYOUT ────────────────────────────────── */
+.cc-body {
+  flex: 1;
+  padding: 28px 28px 60px;
+  max-width: 1320px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.cc-hero {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  flex-wrap: wrap; gap: 16px;
+  margin-bottom: 26px;
+}
+.cc-hero h1 {
+  font-size: 22px; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 4px;
+}
+.cc-hero p { color: var(--cc-text3); margin: 0; font-size: 13px; }
+.cc-clock {
+  font-family: var(--f-mono); font-size: 12px; color: var(--cc-text3);
+  text-align: right;
+}
+
+/* ─── STATUS STRIP ───────────────────────────────── */
+.cc-status-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1px;
+  background: var(--cc-border);
+  border: 1px solid var(--cc-border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 28px;
+}
+.cc-status-cell {
+  background: var(--cc-surface);
+  padding: 13px 16px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.cc-status-label {
+  font-size: 10px; letter-spacing: 0.08em; color: var(--cc-text3);
+  font-family: var(--f-mono); text-transform: uppercase;
+  display: flex; align-items: center; gap: 6px;
+}
+.cc-status-value { font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 7px; }
+.cc-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--cc-text3); flex-shrink: 0; }
+.cc-dot.ok { background: var(--cc-success); box-shadow: 0 0 6px var(--cc-success); }
+.cc-dot.warn { background: var(--cc-warn); box-shadow: 0 0 6px var(--cc-warn); }
+.cc-dot.error { background: var(--cc-error); box-shadow: 0 0 6px var(--cc-error); }
+.cc-dot.muted { background: var(--cc-text3); }
+
+/* ─── SECTION HEADERS ────────────────────────────── */
+.cc-section-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 14px; margin-top: 36px;
+}
+.cc-section-head h2 {
+  font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--cc-text2); font-weight: 600; margin: 0;
+  display: flex; align-items: center; gap: 8px;
+}
+.cc-section-head h2 i { color: var(--cc-accent); font-size: 12px; }
+.cc-section-action {
+  font-family: var(--f-mono); font-size: 11px; color: var(--cc-text3);
+  border: 1px solid var(--cc-border); padding: 4px 10px; border-radius: 6px;
+  cursor: pointer; transition: all .15s; background: transparent;
+}
+.cc-section-action:hover { color: var(--cc-text); border-color: var(--cc-border2); }
+
+/* ─── MODULE GRID ────────────────────────────────── */
+.cc-module-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+}
+.cc-module-card {
+  background: var(--cc-surface);
+  border: 1px solid var(--cc-border);
+  border-radius: 12px;
+  padding: 18px;
+  display: flex; flex-direction: column; gap: 12px;
+  cursor: pointer;
+  transition: border-color .15s, transform .15s;
+  text-decoration: none;
+  color: var(--cc-text);
+  position: relative;
+  overflow: hidden;
+}
+.cc-module-card:hover { border-color: var(--cc-accent); transform: translateY(-2px); }
+.cc-module-card.is-locked { cursor: not-allowed; opacity: 0.55; }
+.cc-module-card.is-locked:hover { transform: none; border-color: var(--cc-border); }
+.cc-module-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.cc-module-icon {
+  width: 38px; height: 38px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; flex-shrink: 0;
+  background: var(--cc-accent-dim); color: var(--cc-accent);
+}
+.cc-module-card.locked-icon .cc-module-icon { background: var(--cc-surface3); color: var(--cc-text3); }
+.cc-module-status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--cc-text3); margin-top: 4px; }
+.cc-module-status-dot.ok { background: var(--cc-success); box-shadow: 0 0 5px var(--cc-success); }
+.cc-module-status-dot.warn { background: var(--cc-warn); box-shadow: 0 0 5px var(--cc-warn); }
+.cc-module-status-dot.error { background: var(--cc-error); }
+.cc-module-title { font-size: 14.5px; font-weight: 600; margin: 0; }
+.cc-module-desc { font-size: 12px; color: var(--cc-text3); line-height: 1.5; margin: 0; flex: 1; }
+.cc-module-meta {
+  font-family: var(--f-mono); font-size: 11px; color: var(--cc-text2);
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  padding-top: 10px; border-top: 1px solid var(--cc-border);
+}
+.cc-module-meta .pill {
+  background: var(--cc-surface2); padding: 2px 7px; border-radius: 10px;
+  border: 1px solid var(--cc-border);
+}
+.cc-module-lock-badge {
+  position: absolute; top: 10px; right: 10px;
+  font-size: 10px; color: var(--cc-admin); font-family: var(--f-mono);
+  display: flex; align-items: center; gap: 4px;
+}
+
+/* ─── TEAM GRID ──────────────────────────────────── */
+.cc-team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 14px;
+}
+.cc-team-card {
+  background: var(--cc-surface);
+  border: 1px solid var(--cc-border);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex; gap: 12px; align-items: flex-start;
+}
+.cc-team-avatar {
+  width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0;
+  object-fit: cover; border: 2px solid var(--cc-border2);
+}
+.cc-team-info { flex: 1; min-width: 0; }
+.cc-team-name { font-weight: 600; font-size: 13.5px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.cc-team-role { font-size: 11px; color: var(--cc-text3); margin-top: 2px; }
+.cc-team-badge {
+  font-family: var(--f-mono); font-size: 8.5px; padding: 1px 6px; border-radius: 8px;
+  border: 1px solid rgba(255,184,108,0.35); color: var(--cc-admin); background: rgba(255,184,108,0.08);
+  letter-spacing: 0.04em;
+}
+.cc-team-you {
+  font-family: var(--f-mono); font-size: 8.5px; padding: 1px 6px; border-radius: 8px;
+  border: 1px solid var(--cc-border2); color: var(--cc-text2);
+}
+
+/* ─── CONFIG PANEL ───────────────────────────────── */
+.cc-config-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px;
+}
+.cc-config-card {
+  background: var(--cc-surface); border: 1px solid var(--cc-border); border-radius: 12px;
+  padding: 16px; display: flex; flex-direction: column; gap: 10px;
+}
+.cc-config-card-head { display: flex; align-items: center; justify-content: space-between; }
+.cc-config-card-title { font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.cc-config-card-title i { color: var(--cc-accent); font-size: 13px; width: 16px; text-align: center; }
+.cc-config-status { font-size: 10.5px; font-family: var(--f-mono); display: flex; align-items: center; gap: 5px; }
+.cc-config-status.configured { color: var(--cc-success); }
+.cc-config-status.missing { color: var(--cc-text3); }
+.cc-config-desc { font-size: 11.5px; color: var(--cc-text3); line-height: 1.5; margin: 0; }
+.cc-config-btn {
+  margin-top: auto; background: transparent; border: 1px solid var(--cc-border2);
+  color: var(--cc-text2); font-family: var(--f-mono); font-size: 11px;
+  padding: 7px 10px; border-radius: 7px; cursor: pointer; transition: all .15s;
+  text-align: center;
+}
+.cc-config-btn:hover { border-color: var(--cc-accent); color: var(--cc-accent); }
+
+/* ─── ADMIN-ONLY VISIBILITY ──────────────────────── */
+.cc-admin-only { display: none; }
+body.is-admin .cc-admin-only { display: revert; }
+body.is-admin .cc-module-card.is-locked { opacity: 1; cursor: pointer; }
+body.is-admin .cc-module-lock-badge { display: none; }
+
+/* ─── GATES ──────────────────────────────────────── */
+#cc-login-overlay, #cc-denied-overlay {
+  position: fixed; inset: 0; z-index: 999;
+  background: var(--cc-bg);
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 18px; text-align: center; padding: 24px;
+}
+#cc-login-overlay.hidden, #cc-denied-overlay.hidden { display: none; }
+.cc-gate-icon { font-size: 34px; color: var(--cc-accent); }
+#cc-denied-overlay .cc-gate-icon { color: var(--cc-error); }
+.cc-gate-title { font-size: 18px; font-weight: 700; }
+.cc-gate-text { color: var(--cc-text3); font-size: 13px; max-width: 360px; }
+.cc-gate-btn {
+  background: var(--cc-accent); color: #0a0a0f; border: none;
+  font-family: var(--f-sans); font-weight: 600; font-size: 13px;
+  padding: 10px 22px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px;
+}
+.cc-gate-btn.danger { background: var(--cc-error); color: #fff; }
+.cc-gate-checkbox { font-size: 12px; color: var(--cc-text3); display: flex; align-items: center; gap: 6px; }
+
+#cc-app { display: none; }
+body.cc-ready #cc-app { display: block; }
+
+/* ─── MODALS (centralized config) ────────────────── */
+.cc-modal-backdrop {
+  position: fixed; inset: 0; background: rgba(5,5,8,0.7);
+  display: none; align-items: center; justify-content: center; z-index: 900; padding: 20px;
+}
+.cc-modal-backdrop.show { display: flex; }
+.cc-modal {
+  background: var(--cc-surface); border: 1px solid var(--cc-border2);
+  border-radius: 14px; width: 100%; max-width: 480px;
+  max-height: 86vh; overflow-y: auto;
+}
+.cc-modal-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 18px; border-bottom: 1px solid var(--cc-border);
+}
+.cc-modal-head h3 { font-size: 14px; margin: 0; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.cc-modal-head h3 i { color: var(--cc-accent); }
+.cc-modal-close { background: none; border: none; color: var(--cc-text3); font-size: 16px; cursor: pointer; }
+.cc-modal-body { padding: 18px; display: flex; flex-direction: column; gap: 16px; }
+.cc-field label {
+  display: block; font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--cc-text3); font-family: var(--f-mono); margin-bottom: 6px;
+}
+.cc-field input, .cc-field select {
+  width: 100%; background: var(--cc-bg); border: 1px solid var(--cc-border2);
+  color: var(--cc-text); padding: 9px 11px; border-radius: 7px; font-size: 13px;
+  font-family: var(--f-mono);
+}
+.cc-field input:focus, .cc-field select:focus { outline: none; border-color: var(--cc-accent); }
+.cc-field-hint { font-size: 10.5px; color: var(--cc-text3); margin-top: 5px; }
+.cc-field-row { display: flex; gap: 8px; }
+.cc-field-row .cc-field { flex: 1; }
+.cc-modal-foot {
+  padding: 14px 18px; border-top: 1px solid var(--cc-border);
+  display: flex; justify-content: flex-end; gap: 8px;
+}
+.cc-btn {
+  font-family: var(--f-sans); font-size: 12.5px; font-weight: 600;
+  padding: 8px 16px; border-radius: 7px; cursor: pointer; border: 1px solid transparent;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.cc-btn-primary { background: var(--cc-accent); color: #0a0a0f; }
+.cc-btn-primary:hover { opacity: 0.88; }
+.cc-btn-ghost { background: transparent; border-color: var(--cc-border2); color: var(--cc-text2); }
+.cc-btn-ghost:hover { color: var(--cc-text); }
+.cc-tab-group { display: flex; gap: 4px; border-bottom: 1px solid var(--cc-border); margin: -4px -18px 4px; padding: 0 18px; }
+.cc-tab {
+  font-family: var(--f-mono); font-size: 11px; padding: 8px 4px; color: var(--cc-text3);
+  cursor: pointer; border-bottom: 2px solid transparent; margin-right: 14px;
+}
+.cc-tab.active { color: var(--cc-accent); border-bottom-color: var(--cc-accent); }
+.cc-tab-panel { display: none; }
+.cc-tab-panel.active { display: flex; flex-direction: column; gap: 14px; }
+
+.cc-input-group { position: relative; display: flex; }
+.cc-input-group input { padding-right: 36px; }
+.cc-input-eye {
+  position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; color: var(--cc-text3); cursor: pointer; font-size: 12px;
+}
+
+@media (max-width: 640px) {
+  .cc-body { padding: 18px 16px 50px; }
+  .cc-hero { flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════ LOGIN GATE ════════════ -->
+<div id="cc-login-overlay">
+  <i class="fa-solid fa-shield-halved cc-gate-icon"></i>
+  <div class="cc-gate-title">Command Center · Acceso Restringido</div>
+  <p class="cc-gate-text">Este es el centro de comando de Hypenosys. Requiere autenticación de equipo vía GitHub.</p>
+  <label class="cc-gate-checkbox">
+    <input type="checkbox" id="cc-remember-me"> Mantener sesión iniciada (Remember me)
+  </label>
+  <button class="cc-gate-btn" id="cc-btn-login"><i class="fa-brands fa-github"></i> Identificarse con GitHub</button>
+  <a href="{{ '/' | relative_url }}" class="cc-home-link" style="margin-top: 6px;"><i class="fa-solid fa-arrow-left"></i> Volver al Home</a>
+</div>
+
+<!-- ════════════ ACCESS DENIED GATE ════════════ -->
+<div id="cc-denied-overlay" class="hidden">
+  <i class="fa-solid fa-ban cc-gate-icon"></i>
+  <div class="cc-gate-title">Acceso Denegado</div>
+  <p class="cc-gate-text" id="cc-denied-text">Autenticado correctamente, pero tu cuenta no figura en la lista de acceso crítico de Hypenosys.</p>
+  <button class="cc-gate-btn danger" id="cc-btn-logout-denied"><i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión y reintentar</button>
+</div>
+
+<!-- ════════════ MAIN APP ════════════ -->
+<div id="cc-app">
+  <div id="cc-root">
+
+    <!-- TOPBAR -->
+    <header class="cc-topbar">
+      <div class="cc-brand">
+        <i class="fa-solid fa-satellite-dish"></i>
+        <span>HYPENOSYS</span>
+        <span class="cc-sep">／</span>
+        <span class="cc-section">Command Center</span>
+      </div>
+      <div class="cc-topbar-right">
+        <a href="{{ '/' | relative_url }}" class="cc-home-link"><i class="fa-solid fa-house"></i> Home</a>
+        <span class="cc-role-chip" id="cc-role-chip"><i class="fa-solid fa-circle"></i> <span id="cc-role-label">—</span></span>
+        <div class="cc-user">
+          <img id="cc-user-avatar" class="cc-team-avatar" style="width:30px;height:30px;" src="" alt="">
+          <span class="cc-user-name" id="cc-user-name">—</span>
+          <button class="cc-home-link" id="cc-btn-logout" title="Cerrar sesión"><i class="fa-solid fa-right-from-bracket"></i></button>
+        </div>
+      </div>
+    </header>
+
+    <div class="cc-body">
+
+      <!-- HERO -->
+      <div class="cc-hero">
+        <div>
+          <h1>Centro de Comando</h1>
+          <p>Producción, automatización e infraestructura de Hypenosys, en un único punto.</p>
+        </div>
+        <div class="cc-clock" id="cc-clock">—</div>
+      </div>
+
+      <!-- STATUS STRIP -->
+      <div class="cc-status-strip" id="cc-status-strip">
+        <div class="cc-status-cell">
+          <div class="cc-status-label"><i class="fa-brands fa-github"></i> Sesión GitHub</div>
+          <div class="cc-status-value"><span class="cc-dot ok"></span> <span id="cc-stat-session">Conectado</span></div>
+        </div>
+        <div class="cc-status-cell">
+          <div class="cc-status-label"><i class="fa-solid fa-code-branch"></i> Repositorio</div>
+          <div class="cc-status-value" style="font-size:12px; font-family: var(--f-mono);" id="cc-stat-repo">—</div>
+        </div>
+        <div class="cc-status-cell">
+          <div class="cc-status-label"><i class="fa-solid fa-key"></i> Jules API</div>
+          <div class="cc-status-value"><span class="cc-dot" id="cc-dot-jules"></span> <span id="cc-stat-jules">Sin configurar</span></div>
+        </div>
+        <div class="cc-status-cell">
+          <div class="cc-status-label"><i class="fa-solid fa-server"></i> n8n / SVN-Git Bridge</div>
+          <div class="cc-status-value"><span class="cc-dot" id="cc-dot-n8n"></span> <span id="cc-stat-n8n">Sin configurar</span></div>
+        </div>
+        <div class="cc-status-cell">
+          <div class="cc-status-label"><i class="fa-solid fa-table-columns"></i> Tareas Activas</div>
+          <div class="cc-status-value" id="cc-stat-tasks">—</div>
+        </div>
+        <div class="cc-status-cell">
+          <div class="cc-status-label"><i class="fa-solid fa-triangle-exclamation"></i> Bloqueadas</div>
+          <div class="cc-status-value" id="cc-stat-blocked">—</div>
+        </div>
+      </div>
+
+      <!-- MODULES -->
+      <div class="cc-section-head">
+        <h2><i class="fa-solid fa-grip"></i> Módulos</h2>
+      </div>
+      <div class="cc-module-grid" id="cc-module-grid">
+        <!-- inyectado por JS -->
+      </div>
+
+      <!-- TEAM -->
+      <div class="cc-section-head">
+        <h2><i class="fa-solid fa-users"></i> Equipo &amp; Accesos</h2>
+      </div>
+      <div class="cc-team-grid" id="cc-team-grid">
+        <div style="grid-column: 1/-1; color: var(--cc-text3); font-family: var(--f-mono); font-size: 12px;">Cargando equipo…</div>
+      </div>
+
+      <!-- CONFIG -->
+      <div class="cc-section-head">
+        <h2><i class="fa-solid fa-sliders"></i> Configuración Centralizada</h2>
+        <span style="font-family: var(--f-mono); font-size: 10.5px; color: var(--cc-text3);">Todo se guarda en este navegador, no en GitHub</span>
+      </div>
+      <div class="cc-config-grid">
+
+        <div class="cc-config-card">
+          <div class="cc-config-card-head">
+            <div class="cc-config-card-title"><i class="fa-brands fa-github"></i> GitHub &amp; Jules</div>
+            <span class="cc-config-status" id="cc-cfg-status-github"><i class="fa-solid fa-circle" style="font-size:6px;"></i> —</span>
+          </div>
+          <p class="cc-config-desc">Token de acceso (PAT), repositorio objetivo y Jules API Key. Usado por Dashboard, Jules Panel y Neural Chat.</p>
+          <button class="cc-config-btn" id="cc-open-github-cfg">Configurar</button>
+        </div>
+
+        <div class="cc-config-card">
+          <div class="cc-config-card-head">
+            <div class="cc-config-card-title"><i class="fa-solid fa-server"></i> Repository Bridge (n8n)</div>
+            <span class="cc-config-status" id="cc-cfg-status-n8n"><i class="fa-solid fa-circle" style="font-size:6px;"></i> —</span>
+          </div>
+          <p class="cc-config-desc">Endpoints de los webhooks n8n para SVN/Git (svn-list, svn-log, svn-info, svn-diff, git-log) y credenciales SVN.</p>
+          <button class="cc-config-btn" id="cc-open-n8n-cfg">Configurar</button>
+        </div>
+
+        <div class="cc-config-card">
+          <div class="cc-config-card-head">
+            <div class="cc-config-card-title"><i class="fa-solid fa-robot"></i> Proveedor de IA</div>
+            <span class="cc-config-status" id="cc-cfg-status-ai"><i class="fa-solid fa-circle" style="font-size:6px;"></i> —</span>
+          </div>
+          <p class="cc-config-desc">Proveedor y modelo para Neural Chat (Anthropic, OpenAI, Gemini, Ollama local, etc).</p>
+          <button class="cc-config-btn" id="cc-open-ai-cfg">Configurar</button>
+        </div>
+
+        <div class="cc-config-card">
+          <div class="cc-config-card-head">
+            <div class="cc-config-card-title"><i class="fa-solid fa-id-badge"></i> Mi Perfil</div>
+            <span class="cc-config-status configured"><i class="fa-solid fa-circle" style="font-size:6px;"></i> GitHub sync</span>
+          </div>
+          <p class="cc-config-desc">Nombre público, rol, bio, skills y enlaces. Se sincroniza con <code>team_profiles.json</code> vía commit.</p>
+          <button class="cc-config-btn" id="cc-open-profile-cfg">Editar perfil</button>
+        </div>
+
+        <div class="cc-config-card cc-admin-only" style="border-color: rgba(255,184,108,0.3);">
+          <div class="cc-config-card-head">
+            <div class="cc-config-card-title"><i class="fa-solid fa-user-shield" style="color: var(--cc-admin);"></i> Acceso del Equipo</div>
+            <span class="cc-config-status configured"><i class="fa-solid fa-circle" style="font-size:6px;"></i> Solo Admin</span>
+          </div>
+          <p class="cc-config-desc">Whitelist de GitHub logins autorizados y flag <code>is_admin</code> por miembro. Vive en <code>github-api.js</code> y <code>team_profiles.json</code>.</p>
+          <button class="cc-config-btn" id="cc-open-acl-info">Ver detalles</button>
+        </div>
+
+      </div>
+
+    </div>
+
+    <footer style="text-align:center; padding: 24px 0; color: var(--cc-text3); font-size: 11px; font-family: var(--f-mono); border-top: 1px solid var(--cc-border); margin-top: 20px;">
+      HYPENOSYS COMMAND CENTER · Built with passion and lots of coffee.
+    </footer>
+
+  </div>
+</div>
+
+<!-- ════════════ MODAL: GitHub & Jules ════════════ -->
+<div class="cc-modal-backdrop" id="cc-modal-github">
+  <div class="cc-modal">
+    <div class="cc-modal-head">
+      <h3><i class="fa-brands fa-github"></i> GitHub &amp; Jules</h3>
+      <button class="cc-modal-close" data-close-modal="cc-modal-github">&times;</button>
+    </div>
+    <div class="cc-modal-body">
+      <div class="cc-field">
+        <label>Token de Acceso Personal (PAT)</label>
+        <div class="cc-input-group">
+          <input type="password" id="cc-input-pat" placeholder="ghp_xxxxxxxxxxxx">
+          <button class="cc-input-eye" data-toggle-eye="cc-input-pat"><i class="fa-solid fa-eye"></i></button>
+        </div>
+        <div class="cc-field-hint">Requiere permiso <code>repo</code>.</div>
+      </div>
+      <div class="cc-field">
+        <label>Repositorio Objetivo</label>
+        <input type="text" id="cc-input-repo" placeholder="hypenosys/hypenosys.github.io">
+      </div>
+      <div class="cc-field">
+        <label>Jules API Key</label>
+        <div class="cc-input-group">
+          <input type="password" id="cc-input-jules-key" placeholder="AIza...">
+          <button class="cc-input-eye" data-toggle-eye="cc-input-jules-key"><i class="fa-solid fa-eye"></i></button>
+        </div>
+        <div class="cc-field-hint">Consigue tu clave en <a href="https://jules.google.com/settings" target="_blank">jules.google.com/settings</a></div>
+      </div>
+    </div>
+    <div class="cc-modal-foot">
+      <button class="cc-btn cc-btn-ghost" data-close-modal="cc-modal-github">Cancelar</button>
+      <button class="cc-btn cc-btn-primary" id="cc-save-github-cfg">Guardar y Conectar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ MODAL: n8n / Repository Bridge ════════════ -->
+<div class="cc-modal-backdrop" id="cc-modal-n8n">
+  <div class="cc-modal" style="max-width: 560px;">
+    <div class="cc-modal-head">
+      <h3><i class="fa-solid fa-server"></i> Repository Bridge (n8n)</h3>
+      <button class="cc-modal-close" data-close-modal="cc-modal-n8n">&times;</button>
+    </div>
+    <div class="cc-modal-body">
+      <div class="cc-field-row">
+        <div class="cc-field">
+          <label>SVN Usuario</label>
+          <input type="text" id="cc-input-svn-user" placeholder="usuario">
+        </div>
+        <div class="cc-field">
+          <label>SVN Contraseña</label>
+          <div class="cc-input-group">
+            <input type="password" id="cc-input-svn-pass" placeholder="••••••••">
+            <button class="cc-input-eye" data-toggle-eye="cc-input-svn-pass"><i class="fa-solid fa-eye"></i></button>
+          </div>
+        </div>
+      </div>
+      <div class="cc-field">
+        <label>Webhook · svn-list</label>
+        <input type="text" id="cc-input-ep-svn-list" placeholder="https://n8n.tu-dominio.com/webhook/svn-list">
+      </div>
+      <div class="cc-field">
+        <label>Webhook · svn-log</label>
+        <input type="text" id="cc-input-ep-svn-log" placeholder="https://n8n.tu-dominio.com/webhook/svn-log">
+      </div>
+      <div class="cc-field">
+        <label>Webhook · svn-info</label>
+        <input type="text" id="cc-input-ep-svn-info" placeholder="https://n8n.tu-dominio.com/webhook/svn-info">
+      </div>
+      <div class="cc-field">
+        <label>Webhook · svn-diff</label>
+        <input type="text" id="cc-input-ep-svn-diff" placeholder="https://n8n.tu-dominio.com/webhook/svn-diff">
+      </div>
+      <div class="cc-field">
+        <label>Webhook · git-log</label>
+        <input type="text" id="cc-input-ep-git-log" placeholder="https://n8n.tu-dominio.com/webhook/git-log">
+      </div>
+      <div class="cc-field-hint">Estos mismos valores los usa el <a href="{{ '/repo-admin/' | relative_url }}">Repository Control Center</a> (clave local <code>hypenosys_repoAdmin</code>).</div>
+    </div>
+    <div class="cc-modal-foot">
+      <button class="cc-btn cc-btn-ghost" data-close-modal="cc-modal-n8n">Cancelar</button>
+      <button class="cc-btn cc-btn-primary" id="cc-save-n8n-cfg">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ MODAL: AI Provider ════════════ -->
+<div class="cc-modal-backdrop" id="cc-modal-ai">
+  <div class="cc-modal">
+    <div class="cc-modal-head">
+      <h3><i class="fa-solid fa-robot"></i> Proveedor de IA</h3>
+      <button class="cc-modal-close" data-close-modal="cc-modal-ai">&times;</button>
+    </div>
+    <div class="cc-modal-body">
+      <div class="cc-field">
+        <label>Proveedor</label>
+        <select id="cc-input-ai-provider">
+          <option value="none">Ninguno</option>
+          <option value="anthropic">Anthropic (Claude)</option>
+          <option value="openai">OpenAI (ChatGPT)</option>
+          <option value="gemini">Google Gemini</option>
+          <option value="mistral">Mistral AI</option>
+          <option value="openrouter">OpenRouter</option>
+          <option value="ollama">Ollama (Local)</option>
+          <option value="custom">Custom (OpenAI Compatible)</option>
+        </select>
+      </div>
+      <div class="cc-field">
+        <label>Modelo</label>
+        <input type="text" id="cc-input-ai-model" placeholder="ej. claude-sonnet-4-6">
+      </div>
+      <div class="cc-field">
+        <label>API Key</label>
+        <div class="cc-input-group">
+          <input type="password" id="cc-input-ai-key" placeholder="sk-...">
+          <button class="cc-input-eye" data-toggle-eye="cc-input-ai-key"><i class="fa-solid fa-eye"></i></button>
+        </div>
+      </div>
+      <div class="cc-field">
+        <label>Base URL / Endpoint (opcional)</label>
+        <input type="text" id="cc-input-ai-baseurl" placeholder="http://localhost:11434">
+      </div>
+      <div class="cc-field-hint">Esta clave se sincroniza con la usada en Neural Chat (<code>hy_ai_config</code>).</div>
+    </div>
+    <div class="cc-modal-foot">
+      <button class="cc-btn cc-btn-ghost" data-close-modal="cc-modal-ai">Cancelar</button>
+      <button class="cc-btn cc-btn-primary" id="cc-save-ai-cfg">Guardar Configuración</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ MODAL: My Profile ════════════ -->
+<div class="cc-modal-backdrop" id="cc-modal-profile">
+  <div class="cc-modal">
+    <div class="cc-modal-head">
+      <h3><i class="fa-solid fa-id-badge"></i> Mi Perfil</h3>
+      <button class="cc-modal-close" data-close-modal="cc-modal-profile">&times;</button>
+    </div>
+    <div class="cc-modal-body">
+      <div class="cc-field">
+        <label>Nombre Público</label>
+        <input type="text" id="cc-input-profile-name">
+      </div>
+      <div class="cc-field">
+        <label>Rol Profesional</label>
+        <input type="text" id="cc-input-profile-role">
+      </div>
+      <div class="cc-field">
+        <label>Bio</label>
+        <input type="text" id="cc-input-profile-bio">
+      </div>
+      <div class="cc-field">
+        <label>Portfolio URL</label>
+        <input type="text" id="cc-input-profile-portfolio">
+      </div>
+      <div class="cc-field-hint">Al guardar se hace commit directo a <code>team_profiles.json</code> y <code>team.json</code> se reconstruye en el próximo build.</div>
+    </div>
+    <div class="cc-modal-foot">
+      <button class="cc-btn cc-btn-ghost" data-close-modal="cc-modal-profile">Cancelar</button>
+      <button class="cc-btn cc-btn-primary" id="cc-save-profile-cfg">Guardar Cambios</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ MODAL: ACL info (admin only) ════════════ -->
+<div class="cc-modal-backdrop" id="cc-modal-acl">
+  <div class="cc-modal">
+    <div class="cc-modal-head">
+      <h3><i class="fa-solid fa-user-shield"></i> Acceso del Equipo</h3>
+      <button class="cc-modal-close" data-close-modal="cc-modal-acl">&times;</button>
+    </div>
+    <div class="cc-modal-body">
+      <p style="font-size: 12.5px; color: var(--cc-text2); line-height: 1.6; margin:0;">
+        El acceso al Command Center y al resto de paneles protegidos se valida en dos capas:
+      </p>
+      <div class="cc-field">
+        <label>1. Whitelist binaria (quién entra)</label>
+        <p style="font-size: 11.5px; color: var(--cc-text3); margin:0;">
+          Lista fija de logins de GitHub autorizados, definida en <code>assets/javascript/github-api.js</code> (función <code>validateToken</code>). Para añadir o quitar a alguien del estudio, hay que editar esa lista y hacer commit.
+        </p>
+      </div>
+      <div class="cc-field">
+        <label>2. Rol (qué puede hacer)</label>
+        <p style="font-size: 11.5px; color: var(--cc-text3); margin:0;">
+          Una vez dentro, el campo <code>is_admin</code> de cada miembro en <code>assets/data/team_profiles.json</code> determina si ve secciones de administración (esta incluida). Solo Axel tiene <code>is_admin: true</code> actualmente.
+        </p>
+      </div>
+      <div class="cc-field-hint">Este panel es de solo lectura — los cambios de whitelist/roles se hacen editando esos archivos directamente en el repositorio.</div>
+    </div>
+    <div class="cc-modal-foot">
+      <button class="cc-btn cc-btn-primary" data-close-modal="cc-modal-acl">Entendido</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toasts -->
+<div id="hype-toast-container" class="fixed bottom-4 right-4 z-[9999] flex flex-col gap-2 pointer-events-none" style="position:fixed; bottom:16px; right:16px; z-index:9999; display:flex; flex-direction:column; gap:8px; pointer-events:none;"></div>
+
+<!-- ════════════ SCRIPTS ════════════ -->
+<script src="{{ '/assets/javascript/github-api.js' | relative_url }}"></script>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ─── CONFIG ──────────────────────────────────── */
+  const CLIENT_ID = 'Ov23liAVwbXNtvhkHJQe';
+  const REPO_DEFAULT = 'hypenosys/hypenosys.github.io';
+  const TEAM_PROFILES_URL = '{{ "/assets/data/team_profiles.json" | relative_url }}';
+
+  const MODULES = [
+    {
+      id: 'dashboard', title: 'Production Dashboard', icon: 'fa-solid fa-chart-line',
+      desc: 'Kanban, milestones, burndown y métricas de velocidad del equipo.',
+      url: '{{ "/dashboard.html" | relative_url }}', adminOnly: false
+    },
+    {
+      id: 'jules', title: 'Jules Panel', icon: 'fa-solid fa-robot',
+      desc: 'Lanzar sesiones del agente Jules y revisar su historial sobre el repo.',
+      url: '{{ "/jules-panel/" | relative_url }}', adminOnly: false
+    },
+    {
+      id: 'repo-admin', title: 'Repository Control Center', icon: 'fa-solid fa-code-branch',
+      desc: 'Explorador SVN/Git, logs, diffs y workflows de n8n sobre el repositorio.',
+      url: '{{ "/repo-admin/" | relative_url }}', adminOnly: false
+    },
+    {
+      id: 'image-gen', title: 'AI Image Generator', icon: 'fa-solid fa-image',
+      desc: 'Generación de imágenes con Flux.1 Dev / Flux Kontext vía ComfyUI.',
+      url: '{{ "/image-gen/" | relative_url }}', adminOnly: false
+    },
+    {
+      id: 'music-gen', title: 'AI Music Generator', icon: 'fa-solid fa-music',
+      desc: 'Generación de música retro estilo Winamp con ACE Step 1.5 XL Turbo.',
+      url: '{{ "/music-gen/" | relative_url }}', adminOnly: false
+    },
+    {
+      id: 'neural-chat', title: 'Neural Chat', icon: 'fa-solid fa-brain',
+      desc: 'Asistente con contexto God Mode: Kanban, GitHub y Jules en vivo.',
+      url: '{{ "/chat/neural/" | relative_url }}', adminOnly: false
+    },
+    {
+      id: 'docs', title: 'Documentación', icon: 'fa-solid fa-book',
+      desc: 'Estructura del proyecto, guía de comandos, guía UE5+SVN, plan de arranque.',
+      url: '{{ "/documentacion/" | relative_url }}', adminOnly: false
+    },
+    {
+      id: 'tech-stack', title: 'Tech Stack', icon: 'fa-solid fa-layer-group',
+      desc: 'Stack tecnológico completo del estudio y del juego.',
+      url: '{{ "/tech-stack/" | relative_url }}', adminOnly: false
+    },
+    {
+      id: 'changelog', title: 'Changelog', icon: 'fa-solid fa-clock-rotate-left',
+      desc: 'Historial de commits y cambios del proyecto.',
+      url: '{{ "/CHANGELOG.html" | relative_url }}', adminOnly: false
+    }
+  ];
+
+  let currentUser = null;
+  let currentMember = null; // { key, ...profileData }
+  let isAdmin = false;
+
+  /* ─── UTIL ────────────────────────────────────── */
+  function $(id) { return document.getElementById(id); }
+  function toast(msg, type) { if (window.hypeToast) window.hypeToast(msg, type || 'info'); }
+
+  function tickClock() {
+    const now = new Date();
+    const el = $('cc-clock');
+    if (el) {
+      el.textContent = now.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' }) +
+        ' · ' + now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+    }
+  }
+
+  /* ─── AUTH FLOW ───────────────────────────────── */
+  async function handleOAuthCallback() {
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
+    if (!code) return false;
+
+    window.history.replaceState({}, document.title, window.location.pathname);
+    toast('Autenticando…', 'info');
+    try {
+      const result = await window.githubApi.exchangeCodeForToken(code);
+      if (result.valid) {
+        return true;
+      } else {
+        showDenied(result.user);
+        return true; // handled, stop further init
+      }
+    } catch (e) {
+      console.error('[CC] OAuth exchange failed:', e);
+      toast('Fallo de autenticación: ' + (e.message || 'error desconocido'), 'error');
+      showLogin();
+      return true;
+    }
+  }
+
+  function showLogin() {
+    $('cc-login-overlay').classList.remove('hidden');
+    $('cc-denied-overlay').classList.add('hidden');
+    document.body.classList.remove('cc-ready');
+  }
+
+  function showDenied(user) {
+    $('cc-login-overlay').classList.add('hidden');
+    $('cc-denied-overlay').classList.remove('hidden');
+    document.body.classList.remove('cc-ready');
+    if (user && user.login) {
+      $('cc-denied-text').textContent =
+        'Autenticado como ' + user.login + ', pero no figuras en la lista de acceso crítico de Hypenosys.';
+    }
+  }
+
+  async function bootApp(user) {
+    currentUser = user;
+    $('cc-login-overlay').classList.add('hidden');
+    $('cc-denied-overlay').classList.add('hidden');
+    document.body.classList.add('cc-ready');
+
+    $('cc-user-name').textContent = user.login;
+    if (user.avatar_url) $('cc-user-avatar').src = user.avatar_url;
+
+    await resolveRole(user);
+    renderModules();
+    renderStatusStrip();
+    await renderTeam();
+    refreshConfigStatuses();
+  }
+
+  async function resolveRole(user) {
+    try {
+      const res = await fetch(TEAM_PROFILES_URL, { cache: 'no-store' });
+      if (!res.ok) throw new Error('No se pudo cargar team_profiles.json');
+      const data = await res.json();
+      const entry = Object.entries(data.members || {}).find(([, v]) =>
+        (v.github_username || '').toLowerCase() === user.login.toLowerCase()
+      );
+      if (entry) {
+        currentMember = { key: entry[0], ...entry[1] };
+        isAdmin = !!currentMember.is_admin;
+      } else {
+        currentMember = null;
+        isAdmin = false;
+      }
+    } catch (e) {
+      console.warn('[CC] No se pudo resolver el rol, asumiendo colaborador:', e);
+      isAdmin = false;
+    }
+
+    document.body.classList.toggle('is-admin', isAdmin);
+    const chip = $('cc-role-chip');
+    const label = $('cc-role-label');
+    if (isAdmin) {
+      chip.classList.add('is-admin');
+      chip.classList.remove('is-member');
+      label.textContent = 'ADMIN';
+    } else {
+      chip.classList.add('is-member');
+      chip.classList.remove('is-admin');
+      label.textContent = 'COLABORADOR';
+    }
+  }
+
+  /* ─── MODULES GRID ────────────────────────────── */
+  function renderModules() {
+    const grid = $('cc-module-grid');
+    grid.innerHTML = MODULES.map(function (m) {
+      const locked = m.adminOnly && !isAdmin;
+      return (
+        '<a class="cc-module-card' + (locked ? ' is-locked' : '') + '" href="' + (locked ? '#' : m.url) + '" ' +
+        (locked ? 'onclick="return false;"' : '') + '>' +
+          (locked ? '<span class="cc-module-lock-badge"><i class="fa-solid fa-lock"></i> Admin</span>' : '') +
+          '<div class="cc-module-top">' +
+            '<div class="cc-module-icon"><i class="' + m.icon + '"></i></div>' +
+            '<span class="cc-module-status-dot" id="cc-mod-dot-' + m.id + '"></span>' +
+          '</div>' +
+          '<h3 class="cc-module-title">' + m.title + '</h3>' +
+          '<p class="cc-module-desc">' + m.desc + '</p>' +
+          '<div class="cc-module-meta" id="cc-mod-meta-' + m.id + '"><span class="pill">Abrir →</span></div>' +
+        '</a>'
+      );
+    }).join('');
+  }
+
+  /* ─── STATUS STRIP ────────────────────────────── */
+  function readJSON(key, fallback) {
+    try {
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallback;
+    } catch (e) { return fallback; }
+  }
+
+  function renderStatusStrip() {
+    // Session
+    $('cc-stat-session').textContent = currentUser.login;
+
+    // Repo
+    const repo = localStorage.getItem('github_repo') || REPO_DEFAULT;
+    $('cc-stat-repo').textContent = repo;
+
+    // Jules
+    const julesKey = localStorage.getItem('jules_api_key');
+    $('cc-stat-jules').textContent = julesKey ? 'Configurada' : 'Sin configurar';
+    $('cc-dot-jules').className = 'cc-dot ' + (julesKey ? 'ok' : 'muted');
+
+    // n8n bridge
+    const repoAdminCfg = readJSON('hypenosys_repoAdmin', {});
+    const endpoints = repoAdminCfg.endpoints || {};
+    const configuredCount = Object.values(endpoints).filter(Boolean).length;
+    $('cc-stat-n8n').textContent = configuredCount > 0 ? (configuredCount + '/5 endpoints') : 'Sin configurar';
+    $('cc-dot-n8n').className = 'cc-dot ' + (configuredCount === 5 ? 'ok' : configuredCount > 0 ? 'warn' : 'muted');
+
+    // Tasks (best effort, vía GitHub API si hay token)
+    loadTaskStats();
+  }
+
+  async function loadTaskStats() {
+    try {
+      if (!window.githubApi.getAuthToken()) return;
+      const res = await window.githubApi.fetchFileWithSha('_data/dashboard_tasks.json');
+      const tasks = (res && res.content && res.content.tasks) || [];
+      const active = tasks.filter(function (t) {
+        return t.estado && !['OK', 'Closed', 'Obsolete'].includes(t.estado);
+      });
+      const blocked = tasks.filter(function (t) {
+        return Array.isArray(t.bloqueada_por) && t.bloqueada_por.length > 0 && t.estado !== 'OK';
+      });
+      $('cc-stat-tasks').textContent = active.length;
+      $('cc-stat-blocked').textContent = blocked.length;
+
+      const moduleMeta = $('cc-mod-meta-dashboard');
+      if (moduleMeta) {
+        moduleMeta.innerHTML = '<span class="pill">' + active.length + ' activas</span>' +
+          (blocked.length ? '<span class="pill" style="color: var(--cc-error);">' + blocked.length + ' bloqueadas</span>' : '');
+      }
+      const dot = $('cc-mod-dot-dashboard');
+      if (dot) dot.className = 'cc-module-status-dot ' + (blocked.length > 0 ? 'warn' : 'ok');
+    } catch (e) {
+      console.warn('[CC] No se pudieron cargar estadísticas de tareas:', e);
+      $('cc-stat-tasks').textContent = '—';
+      $('cc-stat-blocked').textContent = '—';
+    }
+  }
+
+  /* ─── TEAM ────────────────────────────────────── */
+  async function renderTeam() {
+    const grid = $('cc-team-grid');
+    try {
+      const res = await fetch(TEAM_PROFILES_URL, { cache: 'no-store' });
+      if (!res.ok) throw new Error('No se pudo cargar team_profiles.json');
+      const data = await res.json();
+      const members = Object.entries(data.members || {});
+
+      grid.innerHTML = members.map(function ([key, m]) {
+        const isYou = currentUser && (m.github_username || '').toLowerCase() === currentUser.login.toLowerCase();
+        return (
+          '<div class="cc-team-card">' +
+            '<img class="cc-team-avatar" src="' + (m.avatar_url || '') + '" alt="' + key + '" onerror="this.style.visibility=\'hidden\'">' +
+            '<div class="cc-team-info">' +
+              '<div class="cc-team-name">' + (m.display_name || key) +
+                (m.is_admin ? '<span class="cc-team-badge"><i class="fa-solid fa-shield-halved"></i> ADMIN</span>' : '') +
+                (isYou ? '<span class="cc-team-you">TÚ</span>' : '') +
+              '</div>' +
+              '<div class="cc-team-role">' + (m.lead_role || m.role || '') + '</div>' +
+            '</div>' +
+          '</div>'
+        );
+      }).join('');
+    } catch (e) {
+      console.error('[CC] Error cargando equipo:', e);
+      grid.innerHTML = '<div style="grid-column:1/-1; color: var(--cc-text3); font-family: var(--f-mono); font-size:12px;">No se pudo cargar el equipo.</div>';
+    }
+  }
+
+  /* ─── CONFIG STATUS BADGES ────────────────────── */
+  function refreshConfigStatuses() {
+    const pat = window.githubApi.getAuthToken();
+    setCfgStatus('cc-cfg-status-github', !!pat && !!localStorage.getItem('jules_api_key'));
+
+    const repoAdminCfg = readJSON('hypenosys_repoAdmin', {});
+    const epCount = Object.values(repoAdminCfg.endpoints || {}).filter(Boolean).length;
+    setCfgStatus('cc-cfg-status-n8n', epCount === 5, epCount > 0 ? (epCount + '/5') : null);
+
+    const aiCfg = readJSON('hy_ai_config', {});
+    setCfgStatus('cc-cfg-status-ai', !!(aiCfg.provider && aiCfg.provider !== 'none' && aiCfg.model));
+  }
+
+  function setCfgStatus(elId, ok, partialLabel) {
+    const el = $(elId);
+    if (!el) return;
+    el.className = 'cc-config-status ' + (ok ? 'configured' : 'missing');
+    el.innerHTML = '<i class="fa-solid fa-circle" style="font-size:6px;"></i> ' +
+      (ok ? 'Configurado' : (partialLabel ? ('Parcial · ' + partialLabel) : 'Sin configurar'));
+  }
+
+  /* ─── MODALS ──────────────────────────────────── */
+  function openModal(id) { $(id).classList.add('show'); }
+  function closeModal(id) { $(id).classList.remove('show'); }
+
+  document.addEventListener('click', function (e) {
+    const closeId = e.target.getAttribute && e.target.getAttribute('data-close-modal');
+    if (closeId) closeModal(closeId);
+    if (e.target.classList && e.target.classList.contains('cc-modal-backdrop')) {
+      e.target.classList.remove('show');
+    }
+    const eyeTarget = e.target.closest && e.target.closest('[data-toggle-eye]');
+    if (eyeTarget) {
+      const inputId = eyeTarget.getAttribute('data-toggle-eye');
+      const input = $(inputId);
+      const icon = eyeTarget.querySelector('i');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.className = 'fa-solid fa-eye-slash';
+      } else {
+        input.type = 'password';
+        icon.className = 'fa-solid fa-eye';
+      }
+    }
+  });
+
+  function wireConfigCards() {
+    $('cc-open-github-cfg').addEventListener('click', function () {
+      $('cc-input-pat').value = '';
+      $('cc-input-repo').value = localStorage.getItem('github_repo') || REPO_DEFAULT;
+      $('cc-input-jules-key').value = localStorage.getItem('jules_api_key') || '';
+      openModal('cc-modal-github');
+    });
+
+    $('cc-save-github-cfg').addEventListener('click', async function () {
+      const btn = this;
+      const originalHtml = btn.innerHTML;
+      const pat = $('cc-input-pat').value.trim();
+      const repo = $('cc-input-repo').value.trim();
+      const julesKey = $('cc-input-jules-key').value.trim();
+
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Conectando…';
+      try {
+        if (pat) window.githubApi.setToken(pat, $('cc-remember-me') ? $('cc-remember-me').checked : true);
+        if (repo) window.githubApi.setRepo(repo);
+        if (pat) await window.githubApi.validateToken();
+        if (julesKey) localStorage.setItem('jules_api_key', julesKey);
+        else localStorage.removeItem('jules_api_key');
+
+        toast('Configuración de GitHub/Jules guardada ✓', 'success');
+        closeModal('cc-modal-github');
+        renderStatusStrip();
+        refreshConfigStatuses();
+      } catch (e) {
+        console.error(e);
+        toast('Error al guardar: ' + (e.message || 'desconocido'), 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalHtml;
+      }
+    });
+
+    $('cc-open-n8n-cfg').addEventListener('click', function () {
+      const cfg = readJSON('hypenosys_repoAdmin', {});
+      const ep = cfg.endpoints || {};
+      $('cc-input-svn-user').value = cfg.svnUser || '';
+      $('cc-input-svn-pass').value = cfg.svnPass || '';
+      $('cc-input-ep-svn-list').value = ep['svn-list'] || '';
+      $('cc-input-ep-svn-log').value = ep['svn-log'] || '';
+      $('cc-input-ep-svn-info').value = ep['svn-info'] || '';
+      $('cc-input-ep-svn-diff').value = ep['svn-diff'] || '';
+      $('cc-input-ep-git-log').value = ep['git-log'] || '';
+      openModal('cc-modal-n8n');
+    });
+
+    $('cc-save-n8n-cfg').addEventListener('click', function () {
+      const payload = {
+        endpoints: {
+          'svn-list': $('cc-input-ep-svn-list').value.trim(),
+          'svn-log': $('cc-input-ep-svn-log').value.trim(),
+          'svn-info': $('cc-input-ep-svn-info').value.trim(),
+          'svn-diff': $('cc-input-ep-svn-diff').value.trim(),
+          'git-log': $('cc-input-ep-git-log').value.trim()
+        },
+        svnUser: $('cc-input-svn-user').value.trim(),
+        svnPass: $('cc-input-svn-pass').value.trim()
+      };
+      localStorage.setItem('hypenosys_repoAdmin', JSON.stringify(payload));
+      toast('Configuración del Repository Bridge guardada ✓', 'success');
+      closeModal('cc-modal-n8n');
+      renderStatusStrip();
+      refreshConfigStatuses();
+    });
+
+    $('cc-open-ai-cfg').addEventListener('click', function () {
+      const cfg = readJSON('hy_ai_config', {});
+      $('cc-input-ai-provider').value = cfg.provider || 'none';
+      $('cc-input-ai-model').value = cfg.model || '';
+      $('cc-input-ai-key').value = cfg.api_key || '';
+      $('cc-input-ai-baseurl').value = cfg.base_url || '';
+      openModal('cc-modal-ai');
+    });
+
+    $('cc-save-ai-cfg').addEventListener('click', function () {
+      const payload = {
+        provider: $('cc-input-ai-provider').value,
+        model: $('cc-input-ai-model').value.trim(),
+        api_key: $('cc-input-ai-key').value.trim(),
+        base_url: $('cc-input-ai-baseurl').value.trim(),
+        local_network: false
+      };
+      localStorage.setItem('hy_ai_config', JSON.stringify(payload));
+      if (payload.api_key) localStorage.setItem('jules_api_key_ai', payload.api_key);
+      toast('Configuración de IA guardada ✓', 'success');
+      closeModal('cc-modal-ai');
+      refreshConfigStatuses();
+    });
+
+    $('cc-open-profile-cfg').addEventListener('click', function () {
+      if (!currentMember) {
+        toast('No se encontró tu perfil en team_profiles.json.', 'warning');
+        return;
+      }
+      $('cc-input-profile-name').value = currentMember.display_name || '';
+      $('cc-input-profile-role').value = currentMember.role || '';
+      $('cc-input-profile-bio').value = currentMember.bio || '';
+      $('cc-input-profile-portfolio').value = currentMember.portfolio_url || currentMember.portfolio || '';
+      openModal('cc-modal-profile');
+    });
+
+    $('cc-save-profile-cfg').addEventListener('click', async function () {
+      if (!currentMember) return;
+      const btn = this;
+      const originalHtml = btn.innerHTML;
+      const delta = {
+        display_name: $('cc-input-profile-name').value.trim(),
+        role: $('cc-input-profile-role').value.trim(),
+        bio: $('cc-input-profile-bio').value.trim(),
+        portfolio: $('cc-input-profile-portfolio').value.trim()
+      };
+      if (!delta.display_name || !delta.role) {
+        toast('Nombre y Rol son obligatorios.', 'error');
+        return;
+      }
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando…';
+      try {
+        if (typeof window.githubApi.updateMemberProfile === 'function') {
+          await window.githubApi.updateMemberProfile(currentMember.key, delta);
+          toast('Perfil actualizado ✓ (se reconstruirá en ~1-2 min)', 'success');
+          closeModal('cc-modal-profile');
+          await renderTeam();
+        } else {
+          throw new Error('updateMemberProfile no disponible en esta build de github-api.js');
+        }
+      } catch (e) {
+        console.error(e);
+        toast('Error al guardar perfil: ' + (e.message || 'desconocido'), 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalHtml;
+      }
+    });
+
+    $('cc-open-acl-info').addEventListener('click', function () { openModal('cc-modal-acl'); });
+  }
+
+  /* ─── LOGIN / LOGOUT ──────────────────────────── */
+  function wireAuthButtons() {
+    $('cc-btn-login').addEventListener('click', function () {
+      sessionStorage.setItem('auth_remember_me', $('cc-remember-me').checked ? 'true' : 'false');
+      window.location.href =
+        'https://github.com/login/oauth/authorize?client_id=' + CLIENT_ID + '&scope=repo';
+    });
+    $('cc-btn-logout-denied').addEventListener('click', function () {
+      window.githubApi.clearAuth();
+      window.location.href = window.location.pathname;
+    });
+    $('cc-btn-logout').addEventListener('click', function () {
+      window.githubApi.clearAuth();
+      window.location.href = window.location.pathname;
+    });
+  }
+
+  /* ─── INIT ────────────────────────────────────── */
+  async function init() {
+    wireAuthButtons();
+    wireConfigCards();
+    tickClock();
+    setInterval(tickClock, 30000);
+
+    const handledOAuth = await handleOAuthCallback();
+    if (handledOAuth) {
+      // Either bootApp already happened via validateToken inside exchangeCodeForToken's flow,
+      // or showDenied()/showLogin() was called. Re-check final state:
+      const token = window.githubApi.getAuthToken();
+      if (token) {
+        try {
+          const result = await window.githubApi.validateToken();
+          if (result.valid) { await bootApp(result.user); return; }
+          showDenied(result.user);
+          return;
+        } catch (e) {
+          showLogin();
+          return;
+        }
+      }
+      return;
+    }
+
+    const token = window.githubApi.getAuthToken();
+    if (!token) {
+      showLogin();
+      return;
+    }
+
+    try {
+      const result = await window.githubApi.validateToken();
+      if (result.valid) {
+        await bootApp(result.user);
+      } else {
+        showDenied(result.user);
+      }
+    } catch (e) {
+      console.error('[CC] checkAuthState failed:', e);
+      showLogin();
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', init);
+})();
+</script>
+
+</body>
+</html>
