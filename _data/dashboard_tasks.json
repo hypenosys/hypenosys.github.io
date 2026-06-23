@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-23T20:11:21.511Z",
+  "last_updated": "2026-06-23T21:03:24.929Z",
   "last_updated_by": "Axel",
   "tasks": [
     {
@@ -3407,9 +3407,65 @@
         }
       ],
       "id": 69
+    },
+    {
+      "title": "Improve hypenosys logo",
+      "descripcion": "",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Arte / Assets",
+      "seccion": "Logo",
+      "repository": "hypenosys/hypenosys-logo",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": "Dídac",
+      "detectado_por": "Axel",
+      "asignados": [
+        "topperh4rley"
+      ],
+      "email_responsable": "alex@hypenosys.com",
+      "emails_asignados": [],
+      "start_date": "2026-06-23",
+      "due_date": "2026-06-28",
+      "estimated_hours": 4,
+      "story_points": 4,
+      "tags": [
+        "logo",
+        "Art"
+      ],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-23",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-23T21:03:24.367Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 70
     }
   ],
   "_audit_log": [
+    {
+      "action": "feat: nueva tarea #1782248604368 añadida",
+      "user": "Axlfc",
+      "timestamp": "2026-06-23T21:03:24.929Z"
+    },
     {
       "action": "feat: nueva tarea #1782245480958 añadida",
       "user": "Axlfc",
