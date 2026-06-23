@@ -1,38 +1,40 @@
 /* ════════════════════════════════════════
-   JULES PANEL METRICS & CHARTS
+   JULES PANEL METRICS
    ════════════════════════════════════════ */
 
-window.loadJulesMetrics = async function() {
+async function renderMetrics() {
     try {
-        const data = await window.julesApi.getSessions(100);
-        const sessions = data.sessions || [];
-        if (!sessions.length) return;
+        const sessions = window.julesSessionsCache || [];
         const total = sessions.length;
-        const completed = sessions.filter(s => s.state === "COMPLETED").length;
-        const failed = sessions.filter(s => s.state === "FAILED" || s.state === "ERROR").length;
-        const active = sessions.filter(s => ["WORKING", "IN_PROGRESS", "QUEUED", "PLANNING", "AWAITING_PLAN_APPROVAL"].includes(s.state)).length;
-        const successRate = total > 0 ? Math.round((completed / (completed + failed || 1)) * 100) : 0;
-        const totalTokens = sessions.reduce((acc, s) => acc + (s.usage?.totalTokens || 0), 0);
-        if($("m-success-rate")) $("m-success-rate").textContent = `${successRate}%`;
-        if($("m-tokens")) $("m-tokens").textContent = totalTokens > 1000 ? `${Math.round(totalTokens/1000)}k` : totalTokens;
-        if($("s-total")) $("s-total").textContent = total;
-        if($("s-active")) $("s-active").textContent = active;
-        if($("leg-done")) $("leg-done").textContent = completed;
-        if($("leg-running")) $("leg-running").textContent = sessions.filter(s => ["WORKING", "IN_PROGRESS"].includes(s.state)).length;
-        if($("leg-error")) $("leg-error").textContent = failed;
-        if($("leg-pending")) $("leg-pending").textContent = sessions.filter(s => s.state === "QUEUED" || s.state === "PLANNING").length;
-        const doneP = (completed / total) * 100;
-        const errorP = (failed / total) * 100;
-        if($("donut-done")) $("donut-done").setAttribute("stroke-dasharray", `${doneP} 100`);
-        if($("donut-error")) {
-            $("donut-error").setAttribute("stroke-dasharray", `${errorP} 100`);
-            $("donut-error").setAttribute("stroke-dashoffset", `-${doneP}`);
-        }
-    } catch (e) {
-        console.warn("[Jules] loadJulesMetrics error:", e);
-    }
-}
+        const active = sessions.filter(s => !['COMPLETED','FAILED','CANCELLED','ERROR'].includes(s.state)).length;
 
-window.renderMetrics = function() {
-    loadJulesMetrics();
+        const done = sessions.filter(s => s.state === 'COMPLETED').length;
+        const failed = sessions.filter(s => s.state === 'FAILED' || s.state === 'ERROR').length;
+
+        const doneP = total > 0 ? (done / total) * 100 : 0;
+        const errorP = total > 0 ? (failed / total) * 100 : 0;
+
+        if($('m-active')) $('m-active').innerText = active;
+        if($('m-total')) $('m-total').innerText = total;
+        if($('m-repos')) $('m-repos').innerText = (window.julesSourcesCache || []).length;
+
+        const branches = new Set(sessions.map(s => s.sourceContext?.githubRepoContext?.startingBranch).filter(Boolean));
+        if($('m-branches')) $('m-branches').innerText = branches.size;
+
+        // Update charts if present
+        if($("donut-done")) $("donut-done").setAttribute("stroke-dasharray", doneP + " 100");
+        if($("donut-error")) {
+            $("donut-error").setAttribute("stroke-dasharray", errorP + " 100");
+            $("donut-error").setAttribute("stroke-dashoffset", "-" + doneP);
+        }
+
+        // Remove skeletons
+        const metricsCard = document.querySelector('.card--metrics');
+        if (metricsCard) {
+            metricsCard.querySelectorAll('.skeleton').forEach(s => s.classList.remove('skeleton', 'skeleton--loading'));
+        }
+
+    } catch (e) {
+        console.error("Error rendering metrics:", e);
+    }
 }

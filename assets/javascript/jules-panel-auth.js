@@ -27,9 +27,9 @@ window.initRealPanel = async function(user) {
 
     if (user) {
         updateUserUI(user);
-        addTel("SYSTEM", `Iniciado como ${user.login}`, "success");
+        addTel("SYSTEM", "Iniciado como " + user.login, "success");
     } else {
-        addTel("SYSTEM", `Iniciado como Invitado`, "success");
+        addTel("SYSTEM", "Iniciado como Invitado", "success");
     }
 
     // Initialize components with independent error handling
@@ -78,33 +78,33 @@ window.prefillTaskFromHandoff = async function(task) {
     if (payloadStr) {
         try {
             payload = JSON.parse(payloadStr);
-            if (payload.user_note) formattedPrompt += `[NOTA DEL USUARIO]\n${payload.user_note}\n\n`;
+            if (payload.user_note) formattedPrompt += "[NOTA DEL USUARIO]\n" + payload.user_note + "\n\n";
             if (payload.session_context && typeof payload.session_context === 'string') {
-                formattedPrompt += `[CONTEXTO NEURAL]\n\n${payload.session_context}\n\n`;
+                formattedPrompt += "[CONTEXTO NEURAL]\n\n" + payload.session_context + "\n\n";
             }
             if (payload.claude_response) {
-                formattedPrompt += `[RESPUESTA DE CLAUDE]\n\n${payload.claude_response}`;
+                formattedPrompt += "[RESPUESTA DE CLAUDE]\n\n" + payload.claude_response;
             }
         } catch(e) { console.error("Error parsing payload", e); }
     }
 
     if (!formattedPrompt) {
-        formattedPrompt = `He vinculado esta tarea para su análisis técnico:\n\n📌 TAREA: #${task.id} - ${task.titulo || task.title}\n`;
-        if (task.descripcion) formattedPrompt += `📝 DESCRIPCIÓN: ${task.descripcion}\n`;
-        formattedPrompt += `\n¿Cómo podemos abordar esta tarea?`;
+        formattedPrompt = "He vinculado esta tarea para su análisis técnico:\n\n📌 TAREA: #" + task.id + " - " + (task.titulo || task.title) + "\n";
+        if (task.descripcion) formattedPrompt += "📝 DESCRIPCIÓN: " + task.descripcion + "\n";
+        formattedPrompt += "\n¿Cómo podemos abordar esta tarea?";
     }
 
     const targetRepo = task.repository || task.repo || (payload?.source_task?.repository || payload?.source_task?.repo);
     const targetBranch = task.rama || task.branch || payload?.rama;
 
     if (targetRepo) {
-        const source = (window.julesSourcesCache || []).find(src =>
-            src.name === targetRepo || src.name === `sources/github/${targetRepo}` || src.displayName === targetRepo
-        );
+        const source = (window.julesSourcesCache || []).find(function(src) {
+            return src.name === targetRepo || src.name === 'sources/github/' + targetRepo || src.displayName === targetRepo;
+        });
         if (source) {
             switchRepo(source.name, source);
         } else if (targetRepo.includes('/')) {
-            const sourceName = targetRepo.startsWith('sources/') ? targetRepo : `sources/github/${targetRepo}`;
+            const sourceName = targetRepo.startsWith('sources/') ? targetRepo : 'sources/github/' + targetRepo;
             switchRepo(sourceName, { name: sourceName });
         }
     }
@@ -123,9 +123,9 @@ window.prefillTaskFromHandoff = async function(task) {
                             const sessCtx = $('sess-ctx');
                             if(sessCtx) {
                                 const repoLabel = $('repo-label').textContent;
-                                sessCtx.textContent = `${repoLabel}: ${targetBranch}`;
+                                sessCtx.textContent = repoLabel + ': ' + targetBranch;
                             }
-                            addTel("SYSTEM", `Rama auto-ajustada a ${targetBranch} (Tarea #${task.id})`, "info");
+                            addTel("SYSTEM", "Rama auto-ajustada a " + targetBranch + " (Tarea #" + task.id + ")", "info");
                             resolve(true);
                         } else {
                             resolve(false);
@@ -143,8 +143,8 @@ window.prefillTaskFromHandoff = async function(task) {
 
         const exists = await waitForBranches();
         if (!exists) {
-             formattedPrompt = `Crea la branch ${targetBranch} a partir de main antes de empezar.\n\n` + formattedPrompt;
-             addTel("SYSTEM", `Instrucción de creación de branch añadida al prompt`, "warn");
+             formattedPrompt = "Crea la branch " + targetBranch + " a partir de main antes de empezar.\n\n" + formattedPrompt;
+             addTel("SYSTEM", "Instrucción de creación de branch añadida al prompt", "warn");
         }
     }
 
@@ -183,7 +183,8 @@ window.prefillTaskFromHandoff = async function(task) {
 
         if ($('neural-session-banner')) {
             $('neural-session-banner').classList.remove('hidden');
-            $('neural-banner-task').textContent = `Tarea #${task.id}: ${task.titulo || task.title}`;
+            $('neural-banner-task').textContent = "Tarea #" + task.id + ": " + (task.titulo || task.title);
+            $('neural-banner-task').classList.remove('skeleton');
         }
         showTaskContextInChat(task);
 
@@ -250,7 +251,8 @@ window.checkClipboard = function() {
         const task = JSON.parse(localStorage.getItem('hy_neural_task_context') || '{}');
         if (task.id) {
             $('neural-session-banner').classList.remove('hidden');
-            $('neural-banner-task').textContent = `Tarea #${task.id}: ${task.titulo || task.title}`;
+            $('neural-banner-task').textContent = "Tarea #" + task.id + ": " + (task.titulo || task.title);
+            $('neural-banner-task').classList.remove('skeleton');
             showTaskContextInChat(task);
         }
     }
@@ -270,15 +272,15 @@ window.checkClipboard = function() {
             let formattedPrompt = "";
 
             if (payload.user_note) {
-                formattedPrompt += `[NOTA DEL USUARIO]\n${payload.user_note}\n\n`;
+                formattedPrompt += "[NOTA DEL USUARIO]\n" + payload.user_note + "\n\n";
             }
 
             if (payload.session_context && typeof payload.session_context === 'string') {
-                formattedPrompt += `[CONTEXTO NEURAL]\n\n${payload.session_context}\n\n`;
+                formattedPrompt += "[CONTEXTO NEURAL]\n\n" + payload.session_context + "\n\n";
             }
 
             if (payload.claude_response) {
-                formattedPrompt += `[RESPUESTA DE CLAUDE]\n\n${payload.claude_response}`;
+                formattedPrompt += "[RESPUESTA DE CLAUDE]\n\n" + payload.claude_response;
             }
 
             promptArea.value = formattedPrompt.trim();
@@ -334,10 +336,10 @@ window.checkClipboard = function() {
 }
 
 window.updateUserUI = async function(user) {
-    const avatarUrl = user.avatar_url || `https://github.com/${user.login}.png`;
+    const avatarUrl = user.avatar_url || 'https://github.com/' + user.login + '.png';
 
     if ($('sb-avatar')) {
-        $('sb-avatar').innerHTML = `<img src="${avatarUrl}" style="width:100%; height:100%; border-radius:50%">`;
+        $('sb-avatar').innerHTML = '<img src="' + avatarUrl + '" style="width:100%; height:100%; border-radius:50%">';
     }
     if ($('sb-user-name')) {
         $('sb-user-name').textContent = user.login;
@@ -345,12 +347,12 @@ window.updateUserUI = async function(user) {
 
     if ($('mob-avatar')) {
         $('mob-avatar').style.display = 'flex';
-        $('mob-avatar').innerHTML = `<img src="${avatarUrl}" style="width:100%; height:100%; border-radius:50%">`;
+        $('mob-avatar').innerHTML = '<img src="' + avatarUrl + '" style="width:100%; height:100%; border-radius:50%">';
     }
 
     if ($('hdr-user')) {
         $('hdr-user').style.display = 'flex';
-        $('hdr-avatar').innerHTML = `<img src="${avatarUrl}" style="width:100%; height:100%; border-radius:50%">`;
+        $('hdr-avatar').innerHTML = '<img src="' + avatarUrl + '" style="width:100%; height:100%; border-radius:50%">';
         $('hdr-username').textContent = user.login;
     }
 
@@ -380,7 +382,7 @@ window.desvincularNeuralSession = function() {
     localStorage.removeItem('hy_neural_active');
     const claudeId = localStorage.getItem('hy_active_claude_session_id');
     if (claudeId) {
-        localStorage.removeItem(`hy_neural_session_id_${claudeId}`);
+        localStorage.removeItem('hy_neural_session_id_' + claudeId);
     }
     localStorage.removeItem('hy_neural_session_id');
     localStorage.removeItem('hy_neural_task_context');
@@ -400,7 +402,7 @@ window.launchSession = async function() {
     if (!prompt) { $('session-prompt').focus(); showToast("Escribe una tarea para Jules", "red"); return; }
     const source = window.JulesPanelState.activeRepo, branch = window.JulesPanelState.activeBranch || 'master';
 
-    addTel("SYSTEM", `Iniciando sesión - Source: "${source}", Branch: "${branch}"`, "info");
+    addTel("SYSTEM", "Iniciando sesión - Source: \"" + source + "\", Branch: \"" + branch + "\"", "info");
     console.log("[Jules Debug] Source:", source, "Branch:", branch);
 
     if (!source || source.includes("Cargando")) {
@@ -417,7 +419,7 @@ window.launchSession = async function() {
         prompt += "\n\nIMPORTANTE: Genera tests unitarios automáticos para cubrir estos cambios.";
     }
     if ($('opt-branch').classList.contains('active')) {
-        prompt += `\n\nIMPORTANTE: Crea y trabaja en una nueva rama dedicada para esta tarea (ej: jules/task-${Date.now()}).`;
+        prompt += "\n\nIMPORTANTE: Crea y trabaja en una nueva rama dedicada para esta tarea (ej: jules/task-" + Date.now() + ").";
     }
 
     const btn = $('launch-btn');
@@ -440,17 +442,17 @@ window.launchSession = async function() {
         const res = await window.julesApi.createSession(body);
         const sid = res.name.split('/').pop();
         showToast("Sesión iniciada correctamente", "green");
-        addTel("JULES", `Sesión iniciada: ${sid}`, "success");
+        addTel("JULES", "Sesión iniciada: " + sid, "success");
 
         const claudeId = localStorage.getItem('hy_active_claude_session_id');
         if (claudeId) {
-            localStorage.setItem(`hy_neural_session_id_${claudeId}`, sid);
+            localStorage.setItem('hy_neural_session_id_' + claudeId, sid);
         }
         localStorage.setItem('hy_neural_session_id', sid);
 
         startNeuralPolling(sid, true);
         const taskContext = JSON.parse(localStorage.getItem('hy_neural_task_context') || '{}');
-        const sessionName = taskContext.titulo || taskContext.title || `Sesión Neural ${new Date().toLocaleDateString()}`;
+        const sessionName = taskContext.titulo || taskContext.title || "Sesión Neural " + new Date().toLocaleDateString();
         const now = new Date().toISOString();
 
         localStorage.setItem('hy_neural_active', 'true');
