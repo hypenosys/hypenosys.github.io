@@ -84,6 +84,7 @@ permalink: /CHANGELOG.html
                 <li><strong>Sidebar Colapsable:</strong> Implementado sidebar retráctil (64px) con tooltips informativos y transiciones suaves.</li>
                 <li><strong>Agrupación de Repositorios:</strong> Los repositorios en el sidebar ahora se agrupan por organización/dueño con headers colapsables.</li>
                 <li><strong>Ghost Loading (Skeletons):</strong> Implementados placeholders animados (shimmer effect) para métricas y configuración mientras se cargan los datos.</li>
+                <li><strong>Jules Panel Mobile UI:</strong> Implementación de cabecera y barra de navegación inferior específica para móviles para mejorar la usabilidad en dispositivos táctiles.</li>
             </ul>
           </div>
         </div>
@@ -91,6 +92,8 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-success">Fixed</h5>
             <ul>
+              <li><strong>Sincronización de Datos Jules Panel:</strong> Corregida la desincronización de IDs entre el HTML y JavaScript que impedía mostrar métricas y el historial de sesiones.</li>
+              <li><strong>Inicialización del Panel:</strong> Asegurada la carga de fuentes de Jules al arrancar el panel para evitar estados de carga infinitos.</li>
               <li><strong>Persistencia de Sesiones (Critical):</strong> Implementada la función <code>saveSessionsV2</code> en <code>jules-panel-neural.js</code>, resolviendo el <code>ReferenceError</code> que impedía la carga de datos y el guardado de mensajes en el panel.</li>
               <li><strong>Fetch de Equipo en Producción:</strong> Corregida la llamada a <code>team.json</code> en <code>jules-panel-auth.js</code> eliminando la sintaxis Liquid incompatible con archivos JS estáticos.</li>
               <li><strong>Compatibilidad Jekyll/Liquid:</strong> Eliminados todos los template literals (<code>\${}</code>) en los módulos JS del Jules Panel para evitar conflictos de sintaxis con el motor de plantillas de GitHub Pages.</li>
