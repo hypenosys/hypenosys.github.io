@@ -80,6 +80,10 @@ permalink: /CHANGELOG.html
                 <li><strong>Global Card Archiving (Jules Panel):</strong> Upgraded the internal organization system to be global for all users. Archived states are now persisted in <code>_data/jules_panel_state.json</code> via GitHub commits, ensuring team-wide synchronization of the Kanban board view.</li>
                 <li><strong>Internal Card Archiving (Jules Panel):</strong> Users can now drag session cards from EN COLA/EN PROGRESO to COMPLETADO or BLOQUEADO columns for internal organization. Archived cards are visually dimmed and display an "Archived" badge.</li>
                 <li><strong>Relaunch Jules Session:</strong> Added a "Relanzar Jules" button to every Kanban card in Jules Panel. This button pre-fills the prompt, repository, and branch context for a new session based on the selected card.</li>
+                <li><strong>Navegación Superior Jules Panel:</strong> Migrada la navegación principal a una barra superior en escritorio para optimizar el espacio de trabajo.</li>
+                <li><strong>Sidebar Colapsable:</strong> Implementado sidebar retráctil (64px) con tooltips informativos y transiciones suaves.</li>
+                <li><strong>Agrupación de Repositorios:</strong> Los repositorios en el sidebar ahora se agrupan por organización/dueño con headers colapsables.</li>
+                <li><strong>Ghost Loading (Skeletons):</strong> Implementados placeholders animados (shimmer effect) para métricas y configuración mientras se cargan los datos.</li>
             </ul>
           </div>
         </div>
@@ -87,6 +91,7 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-success">Fixed</h5>
             <ul>
+              <li><strong>Compatibilidad Jekyll/Liquid:</strong> Eliminados todos los template literals (<code>\${}</code>) en los módulos JS del Jules Panel para evitar conflictos de sintaxis con el motor de plantillas de GitHub Pages.</li>
               <li><strong>Autenticación Neural Chat:</strong> Corregido el bug en <code>claude-chat.html</code> que bloqueaba la interfaz en el gate de "Acceso Restringido" tras una autenticación exitosa, asegurando una transición fluida al chat e implementando una inicialización idempotente.</li>
               <li><strong>Infraestructura de Auth (Claude Chat):</strong> Restauradas las dependencias de <code>github-api.js</code> y <code>auth.js</code> en <code>claude-chat.html</code>, solucionando el spinner infinito al inicio.</li>
               <li><strong>Idempotencia de Inicialización:</strong> Implementada una guarda en el failsafe de <code>jules-panel.html</code> para evitar colisiones con <code>AuthManager</code>, eliminando alertas de bucles de redirección.</li>
@@ -180,8 +185,13 @@ permalink: /CHANGELOG.html
               <li><strong>Neural Link Override:</strong> Asegurada la prioridad del override de <code>_openTaskInClaude</code> en el dashboard mediante un listener de <code>DOMContentLoaded</code> con retardo de 100ms, garantizando que gane a la inicialización por defecto de <code>kanban-ui.js</code>.</li>
               <li><strong>Limpieza de Telemetría:</strong> Eliminados los logs de diagnóstico de <code>dashboard.html</code>, <code>kanban-ui.js</code> y <code>/chat/neural/</code> tras la validación exitosa del flujo de navegación "Enviar a Claude".</li>
             </ul>
-            <h5 class="text-success">Added</h5>
+          </div>
+        </div>
+        <div class="card mb-3">
+          <div class="card-body">
+            <h5 class="text-success">Changed</h5>
             <ul>
+              <li><strong>Persistencia de UI:</strong> El estado de colapso del sidebar y de los grupos de repositorios se persiste ahora localmente en el navegador.</li>
               <li><strong>Visualización de Razonamiento (Claude 3.7+):</strong> Implementado el soporte para bloques <code>thinking-block</code> en el chat integrado del Panel V2, permitiendo observar el razonamiento interno de los modelos más avanzados.</li>
               <li><strong>Análisis de Historial Integrado (V2):</strong> Refactorizado el sistema de análisis manual para que los fragmentos seleccionados del historial de Jules se inyecten directamente en el chat de V2, eliminando la dependencia de redirecciones externas.</li>
               <li><strong>Neural Session Drawer:</strong> Implementado nuevo panel lateral unificado para la gestión de tareas entre Claude y Jules.</li>
