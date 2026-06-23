@@ -19,21 +19,26 @@ function renderHistoryTable(sessions) {
     if (!tbody) return;
 
     if (!sessions || sessions.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="notif-empty">No hay sesiones recientes</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="notif-empty">No hay sesiones recientes</td></tr>';
         return;
     }
 
     tbody.innerHTML = sessions.map(s => {
         const sid = s.name.split('/').pop();
         const repo = s.sourceContext?.source?.split('/').pop() || '---';
+        const branch = s.sourceContext?.githubRepoContext?.startingBranch || '---';
         const stateClass = s.state.toLowerCase().replace(/_/g, '-');
+        const duration = '---'; // Need actual duration logic if available
+        const taskTitle = s.title || s.prompt || 'Sin título';
 
-        return '<tr>' +
-               '<td>#' + sid + '</td>' +
+        return '<tr onclick="openDrawer(\'' + s.name + '\')">' +
+               '<td><span class="sid">#' + sid + '</span></td>' +
+               '<td><div class="tdesc" title="' + escapeHtml(taskTitle) + '">' + escapeHtml(taskTitle) + '</div></td>' +
+               '<td><div class="tmono">' + repo + '</div></td>' +
+               '<td><div class="tmono">' + branch + '</div></td>' +
                '<td><span class="sbadge ' + stateClass + '">' + s.state + '</span></td>' +
-               '<td class="u-mono" style="font-size:11px">' + repo + '</td>' +
+               '<td style="color:var(--text3); font-family:var(--font-mono); font-size:11px">' + duration + '</td>' +
                '<td style="font-size:11px; color:var(--text3)">' + getTimeAgo(s.createTime) + '</td>' +
-               '<td style="text-align:right"><button class="btn btn-ghost btn-sm" onclick="openDrawer(\'' + s.name + '\')">Detalles</button></td>' +
                '</tr>';
     }).join('');
 
@@ -58,16 +63,16 @@ function updateNeuralHistory(sessions) {
 }
 
 function updateKanbanCounts(sessions) {
-    const counts = { EN_COLA: 0, EN_PROGRESO: 0, LISTO: 0, ERROR: 0 };
+    const counts = { pending: 0, running: 0, done: 0, error: 0 };
     sessions.forEach(s => {
-        if (['COMPLETED'].includes(s.state)) counts.LISTO++;
-        else if (['FAILED', 'ERROR', 'CANCELLED'].includes(s.state)) counts.ERROR++;
-        else if (['PLANNING', 'EXECUTING'].includes(s.state)) counts.EN_PROGRESO++;
-        else counts.EN_COLA++;
+        if (['COMPLETED'].includes(s.state)) counts.done++;
+        else if (['FAILED', 'ERROR', 'CANCELLED'].includes(s.state)) counts.error++;
+        else if (['PLANNING', 'EXECUTING'].includes(s.state)) counts.running++;
+        else counts.pending++;
     });
 
     Object.keys(counts).forEach(k => {
-        const el = $('kb-count-' + k.toLowerCase());
+        const el = $('kb-count-' + k);
         if (el) el.innerText = counts[k];
     });
 }

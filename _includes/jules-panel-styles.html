@@ -965,5 +965,86 @@ body{
 .pdot{width:7px;height:7px;border-radius:50%;background:var(--border2);flex-shrink:0}
 .pcard.selected .pdot{background:var(--accent);box-shadow:0 0 6px var(--accent)}
 
+/* ─── MOBILE RESPONSIVE ─── */
+.mobile-hdr {
+  display: none;
+  height: 60px;
+  padding: 0 20px;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--surface-opaque);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.mobile-bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 70px;
+  background: rgba(13, 13, 20, 0.98);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border-accent);
+  z-index: 1000;
+  padding: 0 12px 10px;
+  justify-content: space-around;
+  align-items: center;
+  box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+}
+.mtab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  color: var(--text3);
+  cursor: pointer;
+  padding: 8px 4px;
+  flex: 1;
+  transition: all var(--t-fast);
+  text-decoration: none;
+}
+.mtab svg {
+  width: 22px;
+  height: 22px;
+  transition: transform 0.2s;
+}
+.mtab span {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+.mtab.active {
+  color: var(--accent2);
+}
+.mtab.active svg {
+  transform: translateY(-2px);
+  filter: drop-shadow(0 0 8px var(--accent));
+}
+
+@media (max-width: 1024px) {
+  .desktop-only { display: none !important; }
+  .mobile-hdr { display: flex; }
+  .mobile-bottom-nav { display: flex; }
+  .sidebar { display: none; }
+  .main { height: calc(100vh - 130px); }
+  .dheader { display: none; }
+  .stats-row { grid-template-columns: 1fr 1fr; }
+  .dash-grid { grid-template-columns: 1fr; padding: 10px 16px; }
+  .kanban-board { grid-template-columns: 1fr; }
+  .metrics-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+  .stats-row { grid-template-columns: 1fr; }
+  .stat-num { font-size: 28px; }
+}
+
 /* CLAUDE CHAT MODAL */
 </style>
