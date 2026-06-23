@@ -335,6 +335,21 @@ permalink: /documentacion/
         };
 
         /**
+         * Normalizes a string for fuzzy matching (Obsidian-style).
+         * Lowercase, replaces spaces/dashes/special chars with a single dash.
+         */
+        function normalizeFuzzy(str) {
+            if (!str) return '';
+            return str.normalize('NFC')
+                .toLowerCase()
+                .replace(/[^a-z0-9/]/g, '-') // Added / to preserved characters
+                .replace(/-+/g, '-')
+                .replace(/\/+/g, '/')
+                .replace(/^-|-$/g, '')
+                .replace(/\/-|-\//g, '/');
+        }
+
+        /**
          * Finds a "healthy" resource for a given path.
          * If the path is a directory, it looks for README.md, index.md, etc.
          */
@@ -374,6 +389,11 @@ permalink: /documentacion/
                 }
             }
 
+            // 5. Fuzzy Match Fallback
+            const fuzzy = normalizeFuzzy(normalized);
+            const fuzzyMatch = allFilesFlattened.find(f => normalizeFuzzy(f.path) === fuzzy || normalizeFuzzy(f.path.replace('.md', '')) === fuzzy);
+            if (fuzzyMatch) return fuzzyMatch.path;
+
             return normalized;
         }
 
@@ -406,16 +426,18 @@ permalink: /documentacion/
             }
 
             // Step 3: Global/Fuzzy match (Obsidian style)
-            const targetLower = normalizedPart.toLowerCase();
-            const targetFilename = normalizedPart.split('/').pop().toLowerCase();
+            const targetFuzzy = normalizeFuzzy(normalizedPart);
+            const targetFilenameFuzzy = normalizeFuzzy(normalizedPart.split('/').pop());
 
             const matches = allFilesFlattened.filter(f => {
-                const fPath = f.path.normalize('NFC').toLowerCase();
+                const fPath = f.path.normalize('NFC');
+                const fPathFuzzy = normalizeFuzzy(fPath);
                 const fName = fPath.split('/').pop();
-                return fPath === targetLower ||
-                       fPath.endsWith('/' + targetLower) ||
-                       fName === targetFilename ||
-                       fName === targetFilename + '.md';
+                const fNameFuzzy = normalizeFuzzy(fName.replace('.md', ''));
+
+                return fPathFuzzy === targetFuzzy ||
+                       fPathFuzzy.endsWith('/' + targetFuzzy) ||
+                       fNameFuzzy === targetFilenameFuzzy;
             });
 
             if (matches.length > 0) {
@@ -610,7 +632,8 @@ permalink: /documentacion/
                         // If it's a real user click (e is defined), navigate to the healthy resource
                         if (e && (!subContainer || subContainer.classList.contains('hidden'))) {
                             const healthy = findHealthyResource(file.path);
-                            if (healthy !== file.path) {
+                            // Only change hash if we found a specific file (not just the folder again)
+                            if (healthy !== file.path && healthy !== file.path + '/') {
                                 window.location.hash = healthy;
                             }
                         }
@@ -744,6 +767,13 @@ permalink: /documentacion/
 
                 if (!response.ok) {
                     if (response.status === 404) {
+                        // 404 Recovery: Try fuzzy matching before giving up
+                        const healthy = findHealthyResource(cleanPath);
+                        if (healthy && healthy !== cleanPath) {
+                            console.log('404 Recovery: Redirecting to', healthy);
+                            window.location.hash = healthy;
+                            return;
+                        }
                         showResourceNotFound(cleanPath);
                         return;
                     }
