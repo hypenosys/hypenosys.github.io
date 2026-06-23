@@ -1,6 +1,6 @@
 {
   "schema_version": "2.0.0",
-  "last_updated": "2026-06-19T21:31:20.516Z",
+  "last_updated": "2026-06-23T20:42:01.267Z",
   "members": {
     "Axel": {
       "github_username": "Axlfc",
@@ -51,7 +51,7 @@
       },
       "ai_config": {
         "provider": "ollama",
-        "model": "qwen3:8b"
+        "model": "qwen3:14b"
       },
       "portfolio": "https://axlfc.github.io"
     },
@@ -189,6 +189,11 @@
     }
   },
   "_audit_log": [
+    {
+      "action": "chore: actualizar config AI de Axel",
+      "user": "Axlfc",
+      "timestamp": "2026-06-23T20:42:01.267Z"
+    },
     {
       "action": "chore: actualizar config AI de Dídac",
       "user": "dkdidac-design",
