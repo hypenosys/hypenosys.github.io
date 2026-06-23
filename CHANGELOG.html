@@ -80,6 +80,16 @@ permalink: /CHANGELOG.html
                 <li><strong>Global Card Archiving (Jules Panel):</strong> Upgraded the internal organization system to be global for all users. Archived states are now persisted in <code>_data/jules_panel_state.json</code> via GitHub commits, ensuring team-wide synchronization of the Kanban board view.</li>
                 <li><strong>Internal Card Archiving (Jules Panel):</strong> Users can now drag session cards from EN COLA/EN PROGRESO to COMPLETADO or BLOQUEADO columns for internal organization. Archived cards are visually dimmed and display an "Archived" badge.</li>
                 <li><strong>Relaunch Jules Session:</strong> Added a "Relanzar Jules" button to every Kanban card in Jules Panel. This button pre-fills the prompt, repository, and branch context for a new session based on the selected card.</li>
+                <li><strong>Verificación de Integración Claude-Docs:</strong> Implementado sistema de verificación técnica para confirmar la conexión entre Neural Chat y el repositorio de documentación <code>hypenosys/docs</code>.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="card mb-3">
+          <div class="card-body">
+            <h5 class="text-white">Docs</h5>
+            <ul>
+                <li><strong>Informe Técnico (Tarea #55):</strong> Generado reporte detallado en <code>verification/task_55_report.md</code> analizando la arquitectura de recuperación de contexto (RAG) y los disparadores de palabras clave para la inyección de documentación en prompts.</li>
+                <li><strong>Test de Integración Neural:</strong> Añadido script de Playwright <code>verification/verify_neural_docs.spec.js</code> que valida el flujo completo de fetch y snapshot de la documentación desde la API de GitHub.</li>
             </ul>
           </div>
         </div>
