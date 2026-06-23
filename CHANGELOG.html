@@ -87,6 +87,7 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-success">Fixed</h5>
             <ul>
+              <li><strong>Autenticación Neural Chat:</strong> Corregido el bug en <code>claude-chat.html</code> que bloqueaba la interfaz en el gate de "Acceso Restringido" tras una autenticación exitosa, asegurando una transición fluida al chat e implementando una inicialización idempotente.</li>
               <li><strong>Infraestructura de Auth (Claude Chat):</strong> Restauradas las dependencias de <code>github-api.js</code> y <code>auth.js</code> en <code>claude-chat.html</code>, solucionando el spinner infinito al inicio.</li>
               <li><strong>Idempotencia de Inicialización:</strong> Implementada una guarda en el failsafe de <code>jules-panel.html</code> para evitar colisiones con <code>AuthManager</code>, eliminando alertas de bucles de redirección.</li>
               <li><strong>Bridge de Tareas:</strong> Re-implementada la función global <code>window._openTaskInClaude</code> para asegurar que las tareas del Dashboard se abran correctamente en la interfaz neuronal.</li>
