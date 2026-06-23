@@ -180,6 +180,63 @@ a { color: var(--cc-accent); text-decoration: none; }
 }
 .cc-section-action:hover { color: var(--cc-text); border-color: var(--cc-border2); }
 
+/* ─── RISK WIDGET ────────────────────────────────── */
+.cc-risk-widget {
+  background: var(--cc-surface);
+  border: 1px solid var(--cc-border);
+  border-radius: 12px;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 100px repeat(4, 1fr);
+  gap: 1px;
+  background-color: var(--cc-border);
+}
+.cc-risk-cell {
+  background: var(--cc-surface);
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--f-mono);
+  font-size: 11px;
+}
+.cc-risk-head {
+  background: var(--cc-surface2);
+  color: var(--cc-text3);
+  font-weight: 600;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.cc-risk-label {
+  justify-content: flex-start;
+  padding-left: 14px;
+  color: var(--cc-text2);
+  background: var(--cc-surface2);
+  font-weight: 600;
+}
+.cc-risk-count {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--cc-text3);
+}
+.cc-risk-count.has-tasks {
+  color: var(--cc-text);
+}
+.cc-risk-count.is-crit.has-tasks {
+  color: var(--cc-error);
+  text-shadow: 0 0 8px rgba(255,85,85,0.4);
+}
+.cc-risk-loading {
+  grid-column: 1 / -1;
+  padding: 30px;
+  text-align: center;
+  color: var(--cc-text3);
+  font-family: var(--f-mono);
+  font-size: 12px;
+  background: var(--cc-surface);
+}
+
 /* ─── MODULE GRID ────────────────────────────────── */
 .cc-module-grid {
   display: grid;
@@ -462,6 +519,15 @@ body.cc-ready #cc-app { display: block; }
           <div class="cc-status-label"><i class="fa-solid fa-triangle-exclamation"></i> Bloqueadas</div>
           <div class="cc-status-value" id="cc-stat-blocked">—</div>
         </div>
+      </div>
+
+      <!-- RISK TRACKER WIDGET -->
+      <div class="cc-section-head">
+        <h2><i class="fa-solid fa-triangle-exclamation"></i> Matriz de Riesgo Activo</h2>
+        <a href="{{ '/risk-tracker/' | relative_url }}" class="cc-section-action">Ver detalles →</a>
+      </div>
+      <div class="cc-risk-widget" id="cc-risk-widget">
+        <div class="cc-risk-loading"><i class="fa-solid fa-spinner fa-spin"></i> Cargando matriz…</div>
       </div>
 
       <!-- MODULES -->
@@ -770,6 +836,21 @@ body.cc-ready #cc-app { display: block; }
       url: '{{ "/repo-admin/" | relative_url }}', adminOnly: false
     },
     {
+      id: 'asset-library', title: 'Asset Library', icon: 'fa-solid fa-folder-tree',
+      desc: 'Navegador visual de assets de arte (modelos, texturas, audio) sobre el SVN.',
+      url: '{{ "/asset-library/" | relative_url }}', adminOnly: false
+    },
+    {
+      id: 'asset-pipeline', title: 'Asset Pipeline', icon: 'fa-solid fa-palette',
+      desc: 'Estado de las tareas de Arte/Assets del Kanban por estado de producción.',
+      url: '{{ "/asset-pipeline/" | relative_url }}', adminOnly: false
+    },
+    {
+      id: 'risk-tracker', title: 'Risk Tracker', icon: 'fa-solid fa-triangle-exclamation',
+      desc: 'Seguimiento de riesgos, dependencias y bloqueos en las tareas del proyecto.',
+      url: '{{ "/risk-tracker/" | relative_url }}', adminOnly: false
+    },
+    {
       id: 'image-gen', title: 'AI Image Generator', icon: 'fa-solid fa-image',
       desc: 'Generación de imágenes con Flux.1 Dev / Flux Kontext vía ComfyUI.',
       url: '{{ "/image-gen/" | relative_url }}', adminOnly: false
@@ -982,11 +1063,40 @@ body.cc-ready #cc-app { display: block; }
       }
       const dot = $('cc-mod-dot-dashboard');
       if (dot) dot.className = 'cc-module-status-dot ' + (blocked.length > 0 ? 'warn' : 'ok');
+
+      renderRiskWidget(active);
     } catch (e) {
       console.warn('[CC] No se pudieron cargar estadísticas de tareas:', e);
       $('cc-stat-tasks').textContent = '—';
       $('cc-stat-blocked').textContent = '—';
     }
+  }
+
+  function renderRiskWidget(activeTasks) {
+    const priorities = ['Critical', 'Major', 'Medium', 'Minor'];
+    const states = ['Pending', 'ToDo', 'Working', 'In Review'];
+    const widget = $('cc-risk-widget');
+    if (!widget) return;
+
+    let html = '<div class="cc-risk-cell cc-risk-head"></div>';
+    states.forEach(function(s) {
+      html += '<div class="cc-risk-cell cc-risk-head">' + s + '</div>';
+    });
+
+    priorities.forEach(function(p) {
+      html += '<div class="cc-risk-cell cc-risk-label">' + p + '</div>';
+      states.forEach(function(s) {
+        const count = activeTasks.filter(function(t) {
+          return t.prioridad === p && t.estado === s;
+        }).length;
+        const isCrit = p === 'Critical';
+        html += '<div class="cc-risk-cell">' +
+          '<span class="cc-risk-count' + (count > 0 ? ' has-tasks' : '') + (isCrit ? ' is-crit' : '') + '">' +
+          count + '</span></div>';
+      });
+    });
+
+    widget.innerHTML = html;
   }
 
   /* ─── TEAM ────────────────────────────────────── */
