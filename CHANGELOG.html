@@ -65,6 +65,8 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-white">Added</h5>
             <ul>
+                <li><strong>Fuzzy Matching en Documentación:</strong> Implementado sistema de normalización de rutas estilo Obsidian (<code>normalizeFuzzy</code>) para resolver discrepancias en nombres de archivos (espacios vs guiones).</li>
+                <li><strong>Recuperación de 404 (Docs):</strong> Implementado mecanismo de redirección automática en <code>loadDocument</code> que busca coincidencias difusas si la ruta original falla.</li>
                 <li><strong>Sincronización Bidireccional Neural:</strong> Implementada comunicación en tiempo real entre el Jules Panel y el standalone de Claude Chat mediante <code>BroadcastChannel</code>, permitiendo que las respuestas de Claude y los mensajes del usuario aparezcan instantáneamente en ambos interfaces sin recargar.</li>
                 <li><strong>Renderizado de Actividad Jules Mejorado:</strong> El análisis de actividad de Jules ahora utiliza títulos descriptivos reales (ej: "Mensaje de Jules", "Sesión Fallida") en lugar de placeholders numerados opacos.</li>
                 <li><strong>Identidad Visual Neural Unificada:</strong> Actualizada la interfaz de chat en el Panel y Standalone para usar etiquetas visuales estándar (<code>USER</code>, <code>JULES</code>, <code>CLAUDE</code>) con esquemas de color coherentes (Dracula/Neural Purple).</li>
@@ -93,6 +95,8 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-success">Fixed</h5>
             <ul>
+              <li><strong>Navegación de Documentación:</strong> Corregido el bug que impedía cargar archivos con espacios (ej: "00 - Inicio.md") desde el sidebar o mediante enlaces directos.</li>
+              <li><strong>Resolución de Carpetas:</strong> Mejorada la lógica de <code>renderSidebar</code> para que los clics en carpetas resuelvan correctamente el archivo de índice más saludable.</li>
               <li><strong>Persistencia de Sesiones (Critical):</strong> Implementada la función <code>saveSessionsV2</code> en <code>jules-panel-neural.js</code>, resolviendo el <code>ReferenceError</code> que impedía la carga de datos y el guardado de mensajes en el panel.</li>
               <li><strong>Fetch de Equipo en Producción:</strong> Corregida la llamada a <code>team.json</code> en <code>jules-panel-auth.js</code> eliminando la sintaxis Liquid incompatible con archivos JS estáticos.</li>
               <li><strong>Compatibilidad Jekyll/Liquid:</strong> Eliminados todos los template literals (<code>\${}</code>) en los módulos JS del Jules Panel para evitar conflictos de sintaxis con el motor de plantillas de GitHub Pages.</li>
