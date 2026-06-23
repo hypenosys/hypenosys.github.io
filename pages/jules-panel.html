@@ -115,7 +115,10 @@ permalink: /jules-panel/
 
   <!-- ══ SIDEBAR ══ -->
   <aside class="sidebar" id="app-sidebar">
-    <div class="sb-logo">
+    <button id="sb-toggle-btn" class="sb-toggle-btn desktop-only" aria-label="Toggle Sidebar">
+      <i class="fas fa-chevron-left"></i>
+    </button>
+    <div class="sb-logo" title="Hypenosys - Jules Agent V2">
       <div class="sb-logo-row">
         <div class="logo-gem">J</div>
         <span class="logo-text">HYPENOSYS</span>
@@ -125,37 +128,13 @@ permalink: /jules-panel/
     </div>
 
     <div class="nav-group">
-      <div class="nav-label">Core</div>
-      <a class="nav-link active" id="nav-dashboard" onclick="switchView('dashboard',this)">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
-        Dashboard
-      </a>
-      <a class="nav-link" id="nav-kanban" onclick="switchView('kanban',this)">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-        Kanban Tareas
-        <span class="nav-badge" id="kanban-badge">0</span>
-      </a>
-      <a class="nav-link" id="nav-metrics" onclick="switchView('metrics',this)">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2"/></svg>
-        Métricas
-      </a>
-      <a class="nav-link" id="nav-hub" onclick="switchView('hub',this)">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-        GitHub Hub
-        <span class="nav-badge" id="hub-notif-badge">0</span>
-      </a>
-      <a class="nav-link" id="nav-chat" onclick="switchView('chat',this)">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></svg>
-        Neural Chat
-      </a>
-      <a class="nav-link" id="nav-docs" onclick="openDocs()">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-        Documentación
-      </a>
-      <a class="nav-link" id="nav-key" onclick="openApiModal()">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4.56.08A9 9 0 1112 21 9 9 0 0119.56 9.08z"/></svg>
-        Credenciales API
-        <span class="nav-badge">Activa</span>
+      <div class="nav-label">Neural History</div>
+      <div id="sb-neural-history-list" class="sb-history-compact">
+        <div class="notif-empty" style="font-size: 10px; padding: 10px;">Cargando sesiones...</div>
+      </div>
+      <a class="nav-link" style="font-size: 11px; padding: 5px 12px; margin-top: 5px;" onclick="toggleSessionDrawer()" title="Ver todo el historial">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <span>Ver todo el historial</span>
       </a>
     </div>
 
@@ -165,7 +144,7 @@ permalink: /jules-panel/
     </div>
 
     <div class="sb-footer">
-      <div class="user-row" onclick="openApiModal()">
+      <div class="user-row" onclick="openApiModal()" title="Configuración de Cuenta & API">
         <div class="avatar" id="sb-avatar">?</div>
         <div>
           <div class="user-name" id="sb-user-name">Miembro Hypenosys</div>
@@ -180,11 +159,41 @@ permalink: /jules-panel/
 
     <!-- DESKTOP HEADER -->
     <div class="dheader">
-      <div class="breadcrumb">
+      <div class="breadcrumb desktop-only">
         <span>Jules Panel</span>
         <span class="sep">›</span>
         <span class="cur" id="hdr-ctx">Web / master</span>
       </div>
+
+      <nav class="hnav desktop-only">
+        <button class="hnav-link active" data-view="dashboard" onclick="switchView('dashboard', this)">
+          <i class="fas fa-th-large"></i>
+          <span>Dashboard</span>
+        </button>
+        <button class="hnav-link" data-view="kanban" onclick="switchView('kanban', this)">
+          <i class="fas fa-columns"></i>
+          <span>Kanban</span>
+          <span class="nav-badge" id="hdr-kanban-badge">0</span>
+        </button>
+        <button class="hnav-link" data-view="metrics" onclick="switchView('metrics', this)">
+          <i class="fas fa-chart-bar"></i>
+          <span>Métricas</span>
+        </button>
+        <button class="hnav-link" data-view="hub" onclick="switchView('hub', this)">
+          <i class="fab fa-github"></i>
+          <span>GitHub Ops</span>
+          <span class="nav-badge" id="hdr-hub-badge">0</span>
+        </button>
+        <button class="hnav-link" data-view="chat" onclick="switchView('chat', this)">
+          <i class="fas fa-brain"></i>
+          <span>Neural</span>
+        </button>
+        <button class="hnav-link" data-view="config" onclick="switchView('config', this)">
+          <i class="fas fa-cog"></i>
+          <span>Config</span>
+        </button>
+      </nav>
+
       <div class="hactions">
         <!-- NOTIF BELL -->
         <div class="notif-bell" id="notif-bell" onclick="toggleNotifPanel()">
@@ -219,24 +228,24 @@ permalink: /jules-panel/
     <div class="view active" id="view-dashboard">
       <section class="stats-row">
         <div class="stat-tile glass accent" onclick="filterByStatus('running')">
-          <div class="stat-num" id="s-active">2</div>
+          <div class="stat-num skeleton skeleton-stat" id="s-active">...</div>
           <div class="stat-lbl">Sesiones Activas</div>
-          <div class="stat-delta delta-up">▲ +1 hoy</div>
+          <div class="stat-delta delta-up">▲ ...</div>
           <div class="stat-icon">⚡</div>
         </div>
         <div class="stat-tile glass" onclick="switchView('config')">
-          <div class="stat-num" id="s-repos">5</div>
+          <div class="stat-num skeleton skeleton-stat" id="s-repos">...</div>
           <div class="stat-lbl">Repos Conectados</div>
           <div class="stat-icon">📁</div>
         </div>
         <div class="stat-tile glass" onclick="switchView('metrics')">
-          <div class="stat-num" id="s-total">47</div>
+          <div class="stat-num skeleton skeleton-stat" id="s-total">...</div>
           <div class="stat-lbl">Sesiones Totales</div>
-          <div class="stat-delta delta-up">▲ +8 semana</div>
+          <div class="stat-delta delta-up">▲ ...</div>
           <div class="stat-icon">📈</div>
         </div>
         <div class="stat-tile glass" onclick="switchView('config')">
-          <div class="stat-num" id="s-branches">4</div>
+          <div class="stat-num skeleton skeleton-stat" id="s-branches">...</div>
           <div class="stat-lbl">Ramas Activas</div>
           <div class="stat-icon">⌥</div>
         </div>
@@ -260,7 +269,7 @@ permalink: /jules-panel/
           <span class="cfg-label">Selector de Repositorio</span>
           <div class="custom-dropdown" id="repo-context-dropdown">
               <div class="custom-dropdown-trigger" id="repo-trigger">
-                  <span id="repo-label">Cargando fuentes...</span>
+                  <span id="repo-label" class="skeleton skeleton-text" style="width: 120px;">Cargando fuentes...</span>
                   <svg width="10" height="6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4"/></svg>
               </div>
               <div class="custom-dropdown-menu" id="repo-menu" style="display:none">
@@ -272,12 +281,12 @@ permalink: /jules-panel/
           </div>
           <div style="display:none"><select id="jules-repo-select"></select></div>
           <span class="cfg-label">Ruta repositorio</span>
-          <div class="cfg-path" id="cfg-path">sources/github/hypenosys/web</div>
+          <div class="cfg-path skeleton" id="cfg-path">sources/github/hypenosys/web</div>
           <label class="cfg-label" for="alias-in">Alias visual</label>
-          <input class="cfg-input" id="alias-in" value="Web" style="margin-bottom:14px">
+          <input class="cfg-input skeleton" id="alias-in" value="Web" style="margin-bottom:14px">
           <label class="cfg-label" for="branch-sel">Rama activa</label>
           <div class="sel-wrap">
-            <select class="cfg-input" id="branch-sel" style="padding:8px 30px 8px 12px;appearance:none;cursor:pointer"></select>
+            <select class="cfg-input skeleton" id="branch-sel" style="padding:8px 30px 8px 12px;appearance:none;cursor:pointer"></select>
           </div>
           <div class="branch-meta" id="branch-meta"><span class="u-dot"></span><span>4 ramas cargadas</span></div>
           <button class="btn btn-ghost" style="width:100%;justify-content:center;font-size:12px;padding:7px" id="new-branch-btn">+ Nueva rama</button>
@@ -299,7 +308,7 @@ permalink: /jules-panel/
               <span style="font-size: 1.2em;">🧠</span>
               <div>
                   <div style="font-size: 10px; font-weight: 800; color: var(--accent2); text-transform: uppercase; letter-spacing: 0.05em;">Neural Session Activa</div>
-                  <div id="neural-banner-task" style="font-size: 13px; font-weight: 600; color: var(--text);">Tarea #...</div>
+                  <div id="neural-banner-task" class="skeleton skeleton-text" style="font-size: 13px; font-weight: 600; color: var(--text); width: 150px;">Tarea #...</div>
               </div>
           </div>
           <button onclick="desvincularNeuralSession()" style="background: none; border: none; color: var(--red); font-size: 10px; font-weight: 700; text-transform: uppercase; cursor: pointer;">Desvincular</button>
@@ -334,7 +343,7 @@ permalink: /jules-panel/
           <div class="session-foot">
             <div class="meta-tag">
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
-              <span id="sess-ctx">Web: master</span>
+              <span id="sess-ctx" class="skeleton skeleton-text" style="width: 100px;">Web: master</span>
             </div>
             <div id="branch-warning-banner" class="hidden" style="width:100%; padding:10px 14px; background:var(--red-soft); border:1px solid var(--red); border-radius:var(--r-md); margin-bottom:12px; align-items:center; gap:10px">
                 <span style="font-size:18px">⚠️</span>
@@ -403,7 +412,15 @@ permalink: /jules-panel/
                     <th style="width:110px">Fecha</th>
                   </tr>
                 </thead>
-                <tbody id="tbl-body"></tbody>
+                <tbody id="tbl-body">
+                  <tr class="skeleton-row">
+                    <td colspan="7">
+                      <div class="skeleton" style="height: 40px; margin: 10px; width: calc(100% - 20px);"></div>
+                      <div class="skeleton" style="height: 40px; margin: 10px; width: calc(100% - 20px);"></div>
+                      <div class="skeleton" style="height: 40px; margin: 10px; width: calc(100% - 20px);"></div>
+                    </td>
+                  </tr>
+                </tbody>
               </table>
             </div>
           </div>
@@ -940,6 +957,7 @@ permalink: /jules-panel/
         });
 
         if($('launch-btn')) $('launch-btn').onclick = launchSession;
+        if($('sb-toggle-btn')) $('sb-toggle-btn').onclick = toggleSidebar;
         if($('dr-overlay')) $('dr-overlay').onclick = closeDrawer;
         if($('dr-close')) $('dr-close').onclick = closeDrawer;
 
@@ -998,7 +1016,13 @@ permalink: /jules-panel/
             }
         });
     }
-    window.onload = init;
+    window.onload = () => {
+        init();
+        // Restore sidebar state
+        if (localStorage.getItem('hy_sidebar_collapsed') === 'true') {
+            $('app-sidebar').classList.add('collapsed');
+        }
+    };
 </script>
 </body>
 </html>

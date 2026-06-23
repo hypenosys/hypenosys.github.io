@@ -1,186 +1,203 @@
-/* ════════════════════════════════════════
-   JULES PANEL REPO & BRANCH MANAGEMENT
-   ════════════════════════════════════════ */
+/**
+ * Jules Panel - Repositories & Context
+ * Handles repo listing, selection, grouping and branch selection.
+ */
 
-window.initializeRepoSelector = async function() {
-    const launchBtn = $('launch-btn');
-    if (launchBtn) {
-        launchBtn.disabled = true;
-        launchBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Cargando fuentes...';
+window.JulesPanelState = window.JulesPanelState || {};
+
+function initializeRepoSelector() {
+    const btn = $('launch-btn');
+    if (btn) {
+        btn.disabled = true;
+        btn.innerText = 'Cargando fuentes...';
     }
+}
+
+async function fetchJulesSources() {
     try {
-        const [githubRepos, julesSourcesRes] = await Promise.allSettled([
-            window.githubContext.getRepos(),
-            window.julesApi.getSources()
-        ]);
+        const julesSources = await window.julesApi.getSources();
+        const githubRepos = await window.githubApi.getRepos();
 
-        const repos = githubRepos.status === 'fulfilled' ? githubRepos.value : [];
-        const julesSources = julesSourcesRes.status === 'fulfilled' ? julesSourcesRes.value : [];
-
-        const combinedSources = repos.map(r => {
-            const sourceName = `sources/github/${r.full_name}`;
-            const julesSource = julesSources.find(s => s.name === sourceName || s.name === `sources/github-${r.owner}-${r.name}`);
+        const mappedRepos = githubRepos.map(r => {
+            const sourceName = 'sources/github/' + r.full_name;
+            const julesSource = julesSources.find(s => s.name === sourceName || s.name === 'sources/github-' + r.owner + '-' + r.name);
             return {
-                name: julesSource ? julesSource.name : sourceName,
-                githubRepo: { owner: r.owner, repo: r.name },
-                displayName: r.name,
-                isJulesInstalled: !!julesSource,
-                isGitHub: true
+                ...r,
+                jules_name: julesSource ? julesSource.name : null,
+                is_installed: !!julesSource
             };
         });
 
-        // Añadir fuentes de Jules que no estén en la lista de GitHub (si las hay)
-        julesSources.forEach(js => {
-            if (!combinedSources.some(cs => cs.name === js.name)) {
-                combinedSources.push({
-                    name: js.name,
-                    displayName: js.name.split('/').pop(),
-                    isJulesInstalled: true,
-                    isGitHub: false
-                });
-            }
-        });
+        renderRepos(mappedRepos);
 
-        window.julesSourcesCache = combinedSources;
-        renderRepos(combinedSources);
-        populateContextSelector(combinedSources, julesSourcesRes.status === 'rejected');
-
-        if (launchBtn) {
-            launchBtn.disabled = false;
-            launchBtn.innerHTML = '<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Iniciar Ejecución';
+        const activeRepo = localStorage.getItem('hypenosys_active_repo');
+        if (activeRepo) {
+            selectRepo(activeRepo);
         }
     } catch (e) {
-        console.error('[Jules] Repo init failed:', e);
-        if (launchBtn) {
-            launchBtn.disabled = false;
-            launchBtn.innerHTML = '<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Iniciar Ejecución';
-        }
+        console.error('Error fetching sources:', e);
+        addTel('SYSTEM', 'Error al cargar repositorios', 'error');
     }
 }
 
-window.renderRepos = function(sources) {
-    const list = $('repo-list'); if (!list) return;
+function renderRepos(repos) {
+    const list = $('repo-list');
+    if (!list) return;
+
+    // Group repos by organization/owner
+    const groups = {};
+    repos.forEach(r => {
+        const org = r.full_name.split('/')[0];
+        if (!groups[org]) groups[org] = [];
+        groups[org].push(r);
+    });
+
+    const collapsedGroups = JSON.parse(localStorage.getItem('hy_repo_groups_collapsed') || '{}');
+    const activeRepo = localStorage.getItem('hypenosys_active_repo');
+    const activeOrg = activeRepo ? activeRepo.split('/')[0] : null;
+
     list.innerHTML = '';
-    const current = window.JulesPanelState.activeRepo;
+
+    Object.keys(groups).sort().forEach(org => {
+        const orgRepos = groups[org].sort((a, b) => a.name.localeCompare(b.name));
+        const isCollapsed = collapsedGroups[org] === true && org !== activeOrg;
+
+        const groupEl = document.createElement('div');
+        groupEl.className = 'repo-group' + (isCollapsed ? ' collapsed' : '');
+        groupEl.setAttribute('data-org', org);
+
+        const header = document.createElement('div');
+        header.className = 'repo-group-header';
+        header.title = org;
+        header.innerHTML = '<i class="fas fa-chevron-down"></i><span>' + org + '</span>';
+        header.onclick = () => toggleRepoGroup(org);
+
+        const content = document.createElement('div');
+        content.className = 'repo-group-content';
+
+        orgRepos.forEach(repo => {
+            const item = document.createElement('div');
+            item.className = 'repo-item' + (repo.full_name === activeRepo ? ' active' : '');
+            item.setAttribute('data-id', repo.full_name);
+            item.setAttribute('data-jules', repo.jules_name || '');
+            item.title = repo.name;
+
+            item.innerHTML = (repo.is_installed ? '<i class="fas fa-check-circle text-success"></i>' : '<i class="fas fa-circle-notch"></i>') +
+                             '<span>' + repo.name + '</span>';
+
+            item.onclick = () => selectRepo(repo.full_name);
+            content.appendChild(item);
+        });
+
+        groupEl.appendChild(header);
+        groupEl.appendChild(content);
+        list.appendChild(groupEl);
+    });
+
+    const skeletons = list.querySelectorAll('.skeleton');
+    skeletons.forEach(s => s.classList.remove('skeleton', 'skeleton--loading'));
+}
+
+function toggleRepoGroup(org) {
+    const groupEl = document.querySelector('.repo-group[data-org="' + org + '"]');
+    if (!groupEl) return;
+
+    const isCollapsed = groupEl.classList.toggle('collapsed');
+
+    const collapsedGroups = JSON.parse(localStorage.getItem('hy_repo_groups_collapsed') || '{}');
+    collapsedGroups[org] = isCollapsed;
+    localStorage.setItem('hy_repo_groups_collapsed', JSON.stringify(collapsedGroups));
+}
+
+async function selectRepo(repoFullName) {
+    const items = document.querySelectorAll('.repo-item');
+    items.forEach(i => i.classList.remove('active'));
+
+    const selectedItem = Array.from(items).find(i => i.getAttribute('data-id') === repoFullName);
+    const sourceName = selectedItem ? selectedItem.getAttribute('data-jules') : null;
+
+    if (selectedItem) selectedItem.classList.add('active');
+
+    const oldRepo = localStorage.getItem('hypenosys_active_repo');
+    localStorage.setItem('hypenosys_active_repo', repoFullName);
+
+    // Auto-expand group
+    const org = repoFullName.split('/')[0];
+    const groupEl = document.querySelector('.repo-group[data-org="' + org + '"]');
+    if (groupEl && groupEl.classList.contains('collapsed')) {
+        toggleRepoGroup(org);
+    }
+
+    if (oldRepo && oldRepo !== repoFullName) addTel("REPO", "Contexto cambiado → " + repoFullName.split('/').pop(), "info");
+    else if (repoFullName) addTel("SYSTEM", "Contexto: " + repoFullName.split('/').pop(), "info");
+
+    const launchBtn = $('launch-btn');
+    if (launchBtn) {
+        launchBtn.disabled = !sourceName;
+        launchBtn.innerText = sourceName ? 'Iniciar Ejecución' : 'Repo No Conectado';
+    }
+
+    if (sourceName) {
+        loadBranches(repoFullName);
+        updateRepoConfigUI(repoFullName);
+    }
+}
+
+async function loadBranches(repoFullName) {
+    const branchSelect = $('branch-selector');
+    const branchMeta = $('branch-meta');
+    if (!branchSelect) return;
+
+    try {
+        branchSelect.innerHTML = '<option>Cargando...</option>';
+        const branches = await window.githubApi.getBranches(repoFullName);
+        const repoInfo = await window.githubApi.getRepo(repoFullName);
+        const defaultBranch = repoInfo.default_branch;
+
+        branchSelect.innerHTML = branches.map(b => '<option value="' + b.name + '" ' + (b.name === defaultBranch ? 'selected' : '') + '>' + b.name + (b.name === defaultBranch ? ' ★' : '') + '</option>').join('');
+
+        if (branchMeta) {
+            branchMeta.innerHTML = '<span class="u-dot"></span><span>' + branches.length + ' ramas</span>';
+            branchMeta.classList.remove('skeleton', 'skeleton--loading');
+        }
+    } catch (e) {
+        console.error('Error loading branches:', e);
+        branchSelect.innerHTML = '<option>Error</option>';
+    }
+}
+
+function updateRepoConfigUI(repoFullName) {
+    const configCard = document.querySelector('.card--repo-config');
+    if (!configCard) return;
+
+    const title = configCard.querySelector('.card-title');
+    if (title) title.innerText = repoFullName;
+
+    const skeletons = configCard.querySelectorAll('.skeleton');
+    skeletons.forEach(s => s.classList.remove('skeleton', 'skeleton--loading'));
+}
+
+function initSourceDropdown(sources) {
+    const list = $('sources-list');
+    if (!list) return;
+
+    list.innerHTML = '';
     sources.forEach(s => {
-        const el = document.createElement('div');
-        const isInstalled = s.isJulesInstalled;
-        el.className = `repo-item ${s.name === current ? 'selected' : ''} ${!isInstalled ? 'repo-disabled' : ''}`;
-        if (!isInstalled) {
-            el.title = "Jules App no instalada en este repositorio";
-            el.style.opacity = '0.5';
-            el.style.cursor = 'not-allowed';
-        }
-        el.innerHTML = `<span class="repo-dot"></span><span style="flex:1; overflow:hidden; text-overflow:ellipsis;">${s.displayName || s.name.split('/').pop()}</span>${!isInstalled ? '<i class="fas fa-lock" style="font-size:10px; opacity:0.5"></i>' : ''}`;
-        if (isInstalled) {
-            el.onclick = () => switchRepo(s.name, s);
-        }
-        list.appendChild(el);
+        const item = document.createElement('div');
+        const isInstalled = s.name.startsWith('sources/github/');
+        item.className = 'custom-dropdown-item' + (!isInstalled ? ' disabled' : '');
+        item.onclick = () => {
+            if (isInstalled) {
+                $('selected-source-name').innerText = s.displayName || s.name.split('/').pop();
+                list.parentElement.classList.remove('active');
+            }
+        };
+        item.innerHTML = '<span>' + (s.displayName || s.name.split('/').pop()) + '</span>' + (!isInstalled ? ' <i class="fas fa-lock" style="font-size:10px; float:right; margin-top:3px"></i>' : '');
+        list.appendChild(item);
     });
 }
 
-window.switchRepo = function(sourceName, sourceObj) {
-    const oldRepo = window.JulesPanelState.activeRepo;
-    window.JulesPanelState.activeRepo = sourceName;
-    localStorage.setItem('hypenosys_active_repo', sourceName);
-    renderRepos(window.julesSourcesCache || []);
-    onRepoSelected(sourceName, sourceObj);
-    if (oldRepo && oldRepo !== sourceName) addTel("REPO", `Contexto cambiado → ${sourceName.split('/').pop()}`, "info");
-    else addTel("SYSTEM", `Contexto: ${sourceName.split('/').pop()}`, "info");
-}
-
-window.onRepoSelected = async function(sourceName, sourceObject) {
-    const branchSelect = $('branch-sel'), branchMeta = $('branch-meta'), cfgPath = $('cfg-path'), aliasIn = $('alias-in'), sessCtx = $('sess-ctx');
-    if (!sourceName) return;
-    const parsed = window.parseSourceName(sourceName);
-    const repoName = parsed ? parsed.repo : sourceName, repoOwner = parsed ? parsed.owner : null;
-    if(cfgPath) cfgPath.textContent = sourceName;
-    const displayLabel = sourceObject?.displayName || repoName;
-    if(aliasIn) aliasIn.value = window.getRepoAlias(sourceName) || displayLabel;
-    if(sessCtx) sessCtx.textContent = `${displayLabel}: cargando...`;
-    branchSelect.disabled = true;
-    branchSelect.innerHTML = '<option value="">Cargando ramas...</option>';
-    branchSelect.onchange = (e) => {
-        window.JulesPanelState.activeBranch = e.target.value;
-        window.JulesPanelState._branchManuallyChanged = true;
-        localStorage.setItem('jules_selected_branch', e.target.value);
-        const sessCtx = $('sess-ctx');
-        if(sessCtx) {
-            const repoLabel = $('repo-label').textContent;
-            sessCtx.textContent = `${repoLabel}: ${e.target.value}`;
-        }
-        checkBranchWarning();
-    };
-    try {
-        const branches = await window.githubContext.getBranches(repoName, repoOwner || undefined);
-        const repoData = (await window.githubContext.getRepos()).find(r => r.name === repoName && (repoOwner ? r.owner === repoOwner : true));
-        const defaultBranch = repoData ? repoData.default_branch : 'main';
-        branchSelect.innerHTML = branches.map(b => `<option value="${b.name}" ${b.name === defaultBranch ? 'selected' : ''}>${b.name}${b.name === defaultBranch ? ' ★' : ''}</option>`).join('');
-        const lastSelected = localStorage.getItem('jules_selected_branch');
-        if (lastSelected && branches.some(b => b.name === lastSelected)) branchSelect.value = lastSelected;
-        if(branchMeta) branchMeta.innerHTML = `<span class="u-dot"></span><span>${branches.length} ramas</span>`;
-        const activeBranch = branchSelect.value;
-        if(sessCtx) sessCtx.textContent = `${displayLabel}: ${activeBranch}`;
-        window.JulesPanelState.activeBranch = activeBranch;
-        checkBranchWarning();
-    } catch (e) { branchSelect.innerHTML = '<option value="main">main</option>'; }
-    finally { branchSelect.disabled = false; }
-}
-
-window.populateContextSelector = async function(sources, apiFailed = false) {
-    const menu = $('repo-menu'), container = $('repo-items-container'), trigger = $('repo-trigger'), label = $('repo-label'), searchInput = $('repo-search');
-    function renderItems(filter = '') {
-        container.innerHTML = '';
-        const filtered = sources.filter(s => (s.displayName || s.name).toLowerCase().includes(filter.toLowerCase()));
-        filtered.forEach(s => {
-            const item = document.createElement('div');
-            const isInstalled = s.isJulesInstalled || apiFailed;
-            item.className = `custom-dropdown-item ${!isInstalled ? 'disabled' : ''}`;
-            if (!isInstalled) {
-                item.style.opacity = '0.5';
-                item.style.cursor = 'not-allowed';
-                item.title = "Jules App no instalada";
-            }
-            item.innerHTML = `<span>${s.displayName || s.name.split('/').pop()}</span> ${!isInstalled ? '<i class="fas fa-lock" style="font-size:10px; float:right; margin-top:3px"></i>' : ''}`;
-            if (isInstalled) {
-                item.onclick = (e) => { e.stopPropagation(); label.textContent = s.displayName || s.name.split('/').pop(); switchRepo(s.name, s); menu.style.display = 'none'; };
-            }
-            container.appendChild(item);
-        });
-
-        // Input manual como fallback (Requirement 2B)
-        const manualDiv = document.createElement('div');
-        manualDiv.style.padding = '8px';
-        manualDiv.style.borderTop = '1px solid var(--border)';
-        manualDiv.innerHTML = `
-            <div style="font-size:9px; color:var(--text3); text-transform:uppercase; margin-bottom:5px">Entrada Manual</div>
-            <div style="display:flex; gap:5px">
-                <input type="text" id="manual-repo-in" class="cfg-input" style="font-size:11px; height:28px" placeholder="sources/github/owner/repo">
-                <button id="manual-repo-btn" class="btn btn-primary btn-sm" style="height:28px; padding:0 8px"><i class="fas fa-plus"></i></button>
-            </div>
-        `;
-        container.appendChild(manualDiv);
-        const mIn = manualDiv.querySelector('#manual-repo-in');
-        const mBtn = manualDiv.querySelector('#manual-repo-btn');
-        mBtn.onclick = (e) => {
-            e.stopPropagation();
-            const val = mIn.value.trim();
-            if (val) {
-                switchRepo(val, { name: val, isJulesInstalled: true });
-                label.textContent = val.split('/').pop();
-                menu.style.display = 'none';
-            }
-        };
-        mIn.onclick = (e) => e.stopPropagation();
-    }
-    if(trigger) trigger.onclick = (e) => { e.stopPropagation(); menu.style.display = menu.style.display === 'block' ? 'none' : 'block'; };
-    if(searchInput) searchInput.oninput = (e) => renderItems(e.target.value);
-
-    // Initialize label if we have an active repo
-    if (window.JulesPanelState.activeRepo && label) {
-        const active = sources.find(s => s.name === window.JulesPanelState.activeRepo);
-        if (active) label.textContent = active.displayName || active.name.split('/').pop();
-    }
-
-    renderItems();
-}
+// Export functions to global scope
+window.initializeRepoSelector = initializeRepoSelector;
+window.fetchJulesSources = fetchJulesSources;
+window.selectRepo = selectRepo;

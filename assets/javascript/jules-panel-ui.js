@@ -56,8 +56,8 @@ window.showToast = function(msg, type='green'){
   const container = $('toast-wrap');
   if (!container) return;
   const t=document.createElement('div');
-  t.className='toast'; t.style.borderColor=`var(--${type})`;
-  t.innerHTML=`<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span>${msg}</span>`;
+  t.className='toast'; t.style.borderColor = 'var(--' + type + ')';
+  t.innerHTML = '<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span>' + msg + '</span>';
   container.appendChild(t);
   requestAnimationFrame(()=>requestAnimationFrame(()=>t.classList.add('show')));
   setTimeout(()=>{t.classList.remove('show'); setTimeout(()=>t.remove(), 300)}, 3500);
@@ -65,7 +65,7 @@ window.showToast = function(msg, type='green'){
 
 window.addTel = function(tag, msg, type='info'){
   const d=new Date();
-  const ts=`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;
+  const ts = String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0') + ':' + String(d.getSeconds()).padStart(2,'0');
   const box=$('tel-box'); if(!box) return;
 
   // Remove empty state message if it exists
@@ -73,8 +73,8 @@ window.addTel = function(tag, msg, type='info'){
   if (emptyMsg) emptyMsg.remove();
 
   const line=document.createElement('div');
-  line.className=`tel-line ${type}`;
-  line.innerHTML=`<div class="tel-head"><span class="tel-time">${ts}</span><span class="tel-tag ${type}">${tag}</span></div><div class="tel-msg">${msg}</div>`;
+  line.className = 'tel-line ' + type;
+  line.innerHTML = '<div class="tel-head"><span class="tel-time">' + ts + '</span><span class="tel-tag ' + type + '">' + tag + '</span></div><div class="tel-msg">' + msg + '</div>';
   box.appendChild(line);
   box.scrollTop=box.scrollHeight;
 
@@ -89,7 +89,7 @@ window.addTel = function(tag, msg, type='info'){
       analyzer.onclick = () => {
           const task = JSON.parse(localStorage.getItem('hy_neural_task_context') || '{}');
           let thread = JSON.parse(localStorage.getItem('hy_neural_thread') || '[]');
-          const promptText = `Jules ha reportado esto en la telemetría:\n[${tag}] ${msg}`;
+          const promptText = 'Jules ha reportado esto en la telemetría:\n[' + tag + '] ' + msg;
           const newMsg = {
               role: 'user',
               content: promptText,
@@ -121,15 +121,15 @@ window.escapeHtml = function(str) {
 window.getTimeAgo = function(dateStr) {
     const seconds = Math.floor((new Date() - new Date(dateStr)) / 1000);
     let interval = seconds / 31536000;
-    if (interval > 1) return `hace ${Math.floor(interval)} años`;
+    if (interval > 1) return 'hace ' + Math.floor(interval) + ' años';
     interval = seconds / 2592000;
-    if (interval > 1) return `hace ${Math.floor(interval)} meses`;
+    if (interval > 1) return 'hace ' + Math.floor(interval) + ' meses';
     interval = seconds / 86400;
-    if (interval > 1) return `hace ${Math.floor(interval)} días`;
+    if (interval > 1) return 'hace ' + Math.floor(interval) + ' días';
     interval = seconds / 3600;
-    if (interval > 1) return `hace ${Math.floor(interval)} horas`;
+    if (interval > 1) return 'hace ' + Math.floor(interval) + ' horas';
     interval = seconds / 60;
-    if (interval > 1) return `hace ${Math.floor(interval)} min`;
+    if (interval > 1) return 'hace ' + Math.floor(interval) + ' min';
     return 'hace unos segundos';
 }
 
@@ -137,8 +137,8 @@ window.updateRateLimit = function(remaining) {
     if (remaining === null || remaining === undefined) return;
     const count = parseInt(remaining, 10);
     window.JulesPanelState.rateLimitRemaining = count;
-    if (count <= 10 && count > 0) showToast(`⚠️ GitHub API: ${count} peticiones restantes`, 'amber');
-    else if (count === 0) showToast(`🚫 GitHub API: Rate limit alcanzado`, 'red');
+    if (count <= 10 && count > 0) showToast('⚠️ GitHub API: ' + count + ' peticiones restantes', 'amber');
+    else if (count === 0) showToast('🚫 GitHub API: Rate limit alcanzado', 'red');
     window.dispatchEvent(new CustomEvent('ghRateLimitUpdate', { detail: { remaining: count } }));
 }
 
@@ -149,16 +149,22 @@ window.getGitHubToken = function() {
 window.filterByStatus = function(status) {
     switchView('history');
     setTimeout(() => {
-        const filterBtn = document.querySelector(`.fpill[data-filter="${status}"]`);
+        const filterBtn = document.querySelector('.fpill[data-filter="' + status + '"]');
         if (filterBtn) filterBtn.click();
     }, 100);
+}
+
+window.toggleSidebar = function() {
+    const sidebar = $('app-sidebar');
+    const isCollapsed = sidebar.classList.toggle('collapsed');
+    localStorage.setItem('hy_sidebar_collapsed', isCollapsed);
 }
 
 window.switchView = async function(view, navEl) {
     const isMobile = window.innerWidth < 768;
 
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    document.querySelectorAll('.nav-link, .mtab').forEach(n => n.classList.remove('active'));
+    document.querySelectorAll('.nav-link, .mtab, .hnav-link').forEach(n => n.classList.remove('active'));
 
     if (view === 'dashboard' && !isMobile) {
       // Desktop Dashboard: show main views in layout
@@ -175,7 +181,7 @@ window.switchView = async function(view, navEl) {
           grid.appendChild($('view-history'));
       }
     } else {
-      const target = $(`view-${view}`);
+      const target = $('view-' + view);
       if (target) {
           target.classList.add('active');
           // Move out of grid if it's mobile or specific view
@@ -186,9 +192,11 @@ window.switchView = async function(view, navEl) {
     if (navEl) {
       navEl.classList.add('active');
     } else {
-      const sidebarLink = $(`nav-${view}`);
+      const sidebarLink = $('nav-' + view);
       if(sidebarLink) sidebarLink.classList.add('active');
-      const mobileTab = document.querySelector(`.mtab[data-tab="${view}"]`);
+      const headerLink = document.querySelector('.hnav-link[data-view="' + view + '"]');
+      if(headerLink) headerLink.classList.add('active');
+      const mobileTab = document.querySelector('.mtab[data-tab="' + view + '"]');
       if(mobileTab) mobileTab.classList.add('active');
     }
 
@@ -214,7 +222,7 @@ window.switchView = async function(view, navEl) {
     }
     if (view === 'hub') {
         const activeTab = localStorage.getItem('hypenosys_hub_active_tab') || 'pull-requests';
-        const tabEl = document.querySelector(`.dr-tab[data-tab="${activeTab}"]`);
+        const tabEl = document.querySelector('.dr-tab[data-tab="' + activeTab + '"]');
         switchHubTab(activeTab, tabEl);
     }
 }
