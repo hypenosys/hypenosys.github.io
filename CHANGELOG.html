@@ -91,6 +91,8 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-success">Fixed</h5>
             <ul>
+              <li><strong>Persistencia de Sesiones (Critical):</strong> Implementada la función <code>saveSessionsV2</code> en <code>jules-panel-neural.js</code>, resolviendo el <code>ReferenceError</code> que impedía la carga de datos y el guardado de mensajes en el panel.</li>
+              <li><strong>Fetch de Equipo en Producción:</strong> Corregida la llamada a <code>team.json</code> en <code>jules-panel-auth.js</code> eliminando la sintaxis Liquid incompatible con archivos JS estáticos.</li>
               <li><strong>Compatibilidad Jekyll/Liquid:</strong> Eliminados todos los template literals (<code>\${}</code>) en los módulos JS del Jules Panel para evitar conflictos de sintaxis con el motor de plantillas de GitHub Pages.</li>
               <li><strong>Autenticación Neural Chat:</strong> Corregido el bug en <code>claude-chat.html</code> que bloqueaba la interfaz en el gate de "Acceso Restringido" tras una autenticación exitosa, asegurando una transición fluida al chat e implementando una inicialización idempotente.</li>
               <li><strong>Infraestructura de Auth (Claude Chat):</strong> Restauradas las dependencias de <code>github-api.js</code> y <code>auth.js</code> en <code>claude-chat.html</code>, solucionando el spinner infinito al inicio.</li>

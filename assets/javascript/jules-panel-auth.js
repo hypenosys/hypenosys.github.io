@@ -357,7 +357,7 @@ window.updateUserUI = async function(user) {
     }
 
     try {
-        const res = await fetch('{{ "/assets/data/team.json" | relative_url }}');
+        const res = await fetch('/assets/data/team.json');
         if (res.ok) {
             const team = await res.json();
             const member = team.find(m => m.github && m.github.toLowerCase().includes(user.login.toLowerCase()));
