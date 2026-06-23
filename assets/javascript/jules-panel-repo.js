@@ -11,6 +11,7 @@ function initializeRepoSelector() {
         btn.disabled = true;
         btn.innerText = 'Cargando fuentes...';
     }
+    // We trigger source fetching from auth.js but we ensure this exists
 }
 
 async function fetchJulesSources() {

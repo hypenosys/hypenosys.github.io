@@ -38,6 +38,10 @@ window.initRealPanel = async function(user) {
     } catch(e) { console.error("Repo selector failed", e); }
 
     try {
+        await fetchJulesSources();
+    } catch(e) { console.error("Source fetching failed", e); }
+
+    try {
         await refreshDashboard();
     } catch(e) { console.error("Initial dashboard refresh failed", e); }
 

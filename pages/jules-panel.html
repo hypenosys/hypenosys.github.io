@@ -228,24 +228,24 @@ permalink: /jules-panel/
     <div class="view active" id="view-dashboard">
       <section class="stats-row">
         <div class="stat-tile glass accent" onclick="filterByStatus('running')">
-          <div class="stat-num skeleton skeleton-stat" id="s-active">...</div>
+          <div class="stat-num skeleton skeleton-stat" id="m-active">...</div>
           <div class="stat-lbl">Sesiones Activas</div>
           <div class="stat-delta delta-up">▲ ...</div>
           <div class="stat-icon">⚡</div>
         </div>
         <div class="stat-tile glass" onclick="switchView('config')">
-          <div class="stat-num skeleton skeleton-stat" id="s-repos">...</div>
+          <div class="stat-num skeleton skeleton-stat" id="m-repos">...</div>
           <div class="stat-lbl">Repos Conectados</div>
           <div class="stat-icon">📁</div>
         </div>
         <div class="stat-tile glass" onclick="switchView('metrics')">
-          <div class="stat-num skeleton skeleton-stat" id="s-total">...</div>
+          <div class="stat-num skeleton skeleton-stat" id="m-total">...</div>
           <div class="stat-lbl">Sesiones Totales</div>
           <div class="stat-delta delta-up">▲ ...</div>
           <div class="stat-icon">📈</div>
         </div>
         <div class="stat-tile glass" onclick="switchView('config')">
-          <div class="stat-num skeleton skeleton-stat" id="s-branches">...</div>
+          <div class="stat-num skeleton skeleton-stat" id="m-branches">...</div>
           <div class="stat-lbl">Ramas Activas</div>
           <div class="stat-icon">⌥</div>
         </div>
@@ -412,7 +412,7 @@ permalink: /jules-panel/
                     <th style="width:110px">Fecha</th>
                   </tr>
                 </thead>
-                <tbody id="tbl-body">
+                <tbody id="history-tbody">
                   <tr class="skeleton-row">
                     <td colspan="7">
                       <div class="skeleton" style="height: 40px; margin: 10px; width: calc(100% - 20px);"></div>
