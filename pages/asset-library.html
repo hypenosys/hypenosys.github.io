@@ -1,0 +1,440 @@
+---
+layout: null
+title: Asset Library
+hide_title: true
+permalink: /asset-library/
+---
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Asset Library — HYPENOSYS</title>
+<link rel="stylesheet" href="{{ '/assets/main.css' | relative_url }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="{{ '/assets/javascript/bootstrap/jquery.min.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/bootstrap/bootstrap.bundle.min.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/ui-components.js' | relative_url }}"></script>
+
+<style>
+:root {
+  --al-bg: #0a0a0f; --al-surface: #12121a; --al-surface2: #181822; --al-surface3: #1f1f2c;
+  --al-border: #26263580; --al-border2: #34344a;
+  --al-text: #f1f1f6; --al-text2: #a6a6bd; --al-text3: #6c6c85;
+  --al-accent: #bd93f9; --al-accent-dim: rgba(189,147,249,0.12);
+  --al-success: #50fa7b; --al-warn: #f1fa8c; --al-error: #ff5555; --al-svn: #f97c6a;
+  --f-sans: 'Space Grotesk', -apple-system, sans-serif;
+  --f-mono: 'Space Mono', 'SFMono-Regular', monospace;
+  --topbar-h: 56px;
+}
+* { box-sizing: border-box; }
+html, body { background: var(--al-bg); color: var(--al-text); font-family: var(--f-sans); margin: 0; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+a { color: var(--al-accent); text-decoration: none; }
+
+.al-topbar {
+  height: var(--topbar-h); display: flex; align-items: center; justify-content: space-between;
+  padding: 0 20px; border-bottom: 1px solid var(--al-border); background: var(--al-surface);
+  position: sticky; top: 0; z-index: 50;
+}
+.al-brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: 0.06em; font-size: 14px; }
+.al-brand i { color: var(--al-accent); }
+.al-brand .sep { color: var(--al-text3); font-weight: 400; margin: 0 4px; }
+.al-brand .section { color: var(--al-text2); font-weight: 500; font-size: 12px; letter-spacing: 0.08em; }
+.al-nav-link {
+  font-family: var(--f-mono); font-size: 11px; color: var(--al-text2);
+  border: 1px solid var(--al-border); padding: 5px 10px; border-radius: 6px;
+  display: flex; align-items: center; gap: 6px;
+}
+.al-nav-link:hover { color: var(--al-text); border-color: var(--al-border2); }
+.al-topbar-right { display: flex; gap: 10px; align-items: center; }
+
+.al-body { padding: 28px; max-width: 1320px; margin: 0 auto; }
+.al-hero { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 20px; }
+.al-hero h1 { font-size: 22px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.01em; }
+.al-hero p { color: var(--al-text3); margin: 0; font-size: 13px; }
+
+.al-toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 18px; }
+.al-search {
+  flex: 1; min-width: 200px; background: var(--al-surface); border: 1px solid var(--al-border2);
+  border-radius: 8px; padding: 9px 14px; color: var(--al-text); font-family: var(--f-mono); font-size: 12.5px;
+}
+.al-search:focus { outline: none; border-color: var(--al-accent); }
+.al-type-filters { display: flex; gap: 6px; flex-wrap: wrap; }
+.al-type-chip {
+  font-family: var(--f-mono); font-size: 11px; padding: 6px 12px; border-radius: 16px;
+  border: 1px solid var(--al-border2); color: var(--al-text2); cursor: pointer; background: transparent; transition: all .15s;
+}
+.al-type-chip.active { border-color: var(--al-accent); color: var(--al-accent); background: var(--al-accent-dim); }
+.al-view-toggle { display: flex; border: 1px solid var(--al-border2); border-radius: 8px; overflow: hidden; }
+.al-view-btn { background: var(--al-surface); border: none; color: var(--al-text3); padding: 8px 11px; cursor: pointer; }
+.al-view-btn.active { color: var(--al-accent); background: var(--al-accent-dim); }
+
+.al-breadcrumb {
+  font-family: var(--f-mono); font-size: 11px; color: var(--al-text3);
+  display: flex; flex-wrap: wrap; gap: 2px; margin-bottom: 14px;
+}
+.al-bc-item { cursor: pointer; color: var(--al-accent); }
+.al-bc-item:hover { text-decoration: underline; }
+.al-bc-sep { color: var(--al-text3); margin: 0 2px; }
+
+.al-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+.al-card {
+  background: var(--al-surface); border: 1px solid var(--al-border); border-radius: 10px;
+  padding: 14px 12px; display: flex; flex-direction: column; align-items: center; gap: 8px;
+  cursor: pointer; transition: border-color .15s, transform .15s; text-align: center;
+}
+.al-card:hover { border-color: var(--al-accent); transform: translateY(-2px); }
+.al-card.is-dir { background: var(--al-surface2); }
+.al-card-icon { font-size: 26px; }
+.al-card-name { font-size: 11.5px; font-weight: 500; word-break: break-word; line-height: 1.3; }
+.al-card-meta { font-family: var(--f-mono); font-size: 9.5px; color: var(--al-text3); }
+
+.al-list-row {
+  display: grid; grid-template-columns: 28px 1fr 80px 110px 90px; gap: 10px; align-items: center;
+  padding: 9px 12px; border-bottom: 1px solid var(--al-border); font-size: 12px; cursor: pointer;
+}
+.al-list-row:hover { background: var(--al-surface2); }
+.al-list-head { font-family: var(--f-mono); font-size: 10px; color: var(--al-text3); text-transform: uppercase; letter-spacing: 0.05em; }
+.al-list-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.al-list-meta { font-family: var(--f-mono); font-size: 11px; color: var(--al-text3); }
+
+.al-empty-state {
+  text-align: center; padding: 60px 20px; color: var(--al-text3); font-size: 13px;
+  border: 1px dashed var(--al-border2); border-radius: 12px;
+}
+.al-empty-state i { font-size: 26px; margin-bottom: 12px; display: block; }
+.al-connect-btn {
+  background: var(--al-accent); border: none; color: #0a0a0f; font-weight: 600;
+  padding: 9px 18px; border-radius: 8px; cursor: pointer; margin-top: 10px; font-family: var(--f-sans); font-size: 12.5px;
+}
+
+.al-detail-panel {
+  position: fixed; top: 0; right: 0; height: 100vh; width: 340px; max-width: 90vw;
+  background: var(--al-surface); border-left: 1px solid var(--al-border2);
+  transform: translateX(100%); transition: transform .2s; z-index: 80;
+  display: flex; flex-direction: column; padding: 18px;
+}
+.al-detail-panel.open { transform: translateX(0); }
+.al-detail-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+.al-detail-icon { font-size: 30px; margin-bottom: 8px; }
+.al-detail-close { background: none; border: none; color: var(--al-text3); font-size: 16px; cursor: pointer; }
+.al-detail-name { font-size: 14px; font-weight: 600; word-break: break-word; margin-bottom: 4px; }
+.al-detail-row { display: flex; justify-content: space-between; font-size: 11.5px; padding: 8px 0; border-bottom: 1px solid var(--al-border); }
+.al-detail-row span:first-child { color: var(--al-text3); }
+.al-detail-row span:last-child { font-family: var(--f-mono); }
+.al-detail-actions { margin-top: 18px; display: flex; flex-direction: column; gap: 8px; }
+.al-detail-btn {
+  font-family: var(--f-sans); font-size: 12px; font-weight: 600; padding: 9px 12px; border-radius: 7px;
+  border: 1px solid var(--al-border2); color: var(--al-text2); background: transparent; cursor: pointer; text-align: center;
+}
+.al-detail-btn:hover { border-color: var(--al-accent); color: var(--al-accent); }
+.al-detail-btn.primary { background: var(--al-svn); border-color: var(--al-svn); color: #1a0a07; }
+
+.al-stats-strip {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1px;
+  background: var(--al-border); border: 1px solid var(--al-border); border-radius: 10px; overflow: hidden; margin-bottom: 24px;
+}
+.al-stat-cell { background: var(--al-surface); padding: 13px 16px; }
+.al-stat-label { font-size: 10px; letter-spacing: 0.08em; color: var(--al-text3); font-family: var(--f-mono); text-transform: uppercase; margin-bottom: 6px; }
+.al-stat-value { font-size: 20px; font-weight: 700; }
+
+@media (max-width: 640px) {
+  .al-body { padding: 18px 16px 50px; }
+  .al-list-row { grid-template-columns: 24px 1fr 70px; }
+  .al-list-row .al-col-author, .al-list-row .al-col-date { display: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="al-topbar">
+  <div class="al-brand">
+    <i class="fa-solid fa-folder-tree"></i>
+    <span>HYPENOSYS</span>
+    <span class="sep">／</span>
+    <span class="section">Asset Library</span>
+  </div>
+  <div class="al-topbar-right">
+    <a href="{{ '/command-center/' | relative_url }}" class="al-nav-link"><i class="fa-solid fa-satellite-dish"></i> Command Center</a>
+    <a href="{{ '/repo-admin/' | relative_url }}" class="al-nav-link"><i class="fa-solid fa-code-branch"></i> Repository Control Center</a>
+  </div>
+</header>
+
+<div class="al-body">
+
+  <div class="al-hero">
+    <div>
+      <h1>Asset Library</h1>
+      <p>Navegador visual de assets de arte (modelos, texturas, audio) sobre el SVN del proyecto.</p>
+    </div>
+  </div>
+
+  <div class="al-stats-strip" id="al-stats">
+    <div class="al-stat-cell"><div class="al-stat-label">Revisión</div><div class="al-stat-value" id="al-stat-rev">—</div></div>
+    <div class="al-stat-cell"><div class="al-stat-label">Items en carpeta</div><div class="al-stat-value" id="al-stat-count">—</div></div>
+    <div class="al-stat-cell"><div class="al-stat-label">Carpetas</div><div class="al-stat-value" id="al-stat-dirs">—</div></div>
+    <div class="al-stat-cell"><div class="al-stat-label">Assets</div><div class="al-stat-value" id="al-stat-files">—</div></div>
+  </div>
+
+  <div class="al-toolbar">
+    <input type="text" class="al-search" id="al-search" placeholder="Buscar por nombre de archivo…">
+    <div class="al-type-filters" id="al-type-filters">
+      <button class="al-type-chip active" data-type="all">Todo</button>
+      <button class="al-type-chip" data-type="model">🎮 Modelos (.uasset/.fbx)</button>
+      <button class="al-type-chip" data-type="texture">🖼 Texturas</button>
+      <button class="al-type-chip" data-type="audio">🎵 Audio</button>
+      <button class="al-type-chip" data-type="map">🗺 Mapas/Niveles</button>
+    </div>
+    <div class="al-view-toggle">
+      <button class="al-view-btn active" data-view="grid" title="Vista cuadrícula"><i class="fa-solid fa-grip"></i></button>
+      <button class="al-view-btn" data-view="list" title="Vista lista"><i class="fa-solid fa-list"></i></button>
+    </div>
+  </div>
+
+  <div class="al-breadcrumb" id="al-breadcrumb"></div>
+
+  <div id="al-content">
+    <div class="al-empty-state"><i class="fa-solid fa-spinner fa-spin"></i><p>Conectando con el SVN…</p></div>
+  </div>
+
+</div>
+
+<div class="al-detail-panel" id="al-detail">
+  <div class="al-detail-head">
+    <div>
+      <div class="al-detail-icon" id="al-detail-icon">📄</div>
+      <div class="al-detail-name" id="al-detail-name">—</div>
+    </div>
+    <button class="al-detail-close" id="al-detail-close">&times;</button>
+  </div>
+  <div class="al-detail-row"><span>Tipo</span><span id="al-detail-kind">—</span></div>
+  <div class="al-detail-row"><span>Revisión</span><span id="al-detail-rev">—</span></div>
+  <div class="al-detail-row"><span>Autor</span><span id="al-detail-author">—</span></div>
+  <div class="al-detail-row"><span>Fecha</span><span id="al-detail-date">—</span></div>
+  <div class="al-detail-row"><span>Ruta</span><span id="al-detail-path" style="word-break: break-all; text-align: right;">—</span></div>
+  <div class="al-detail-actions">
+    <button class="al-detail-btn primary" id="al-detail-history"><i class="fa-solid fa-clock-rotate-left"></i> Ver historial (SVN log)</button>
+    <a class="al-detail-btn" id="al-detail-copyparty" href="http://100.64.74.27:29708/test/" target="_blank"><i class="fa-solid fa-up-right-from-square"></i> Abrir en CopyParty</a>
+  </div>
+</div>
+
+<div id="hype-toast-container" style="position:fixed; bottom:16px; right:16px; z-index:9999; display:flex; flex-direction:column; gap:8px; pointer-events:none;"></div>
+
+<script src="{{ '/assets/javascript/github-api.js' | relative_url }}"></script>
+<script>
+(function () {
+  'use strict';
+
+  const ASSET_TYPES = {
+    model: ['uasset', 'fbx', 'obj', 'blend'],
+    texture: ['png', 'jpg', 'jpeg', 'tga', 'tif', 'tiff', 'psd'],
+    audio: ['wav', 'mp3', 'ogg', 'flac'],
+    map: ['umap']
+  };
+  const ICON_MAP = { uasset:'🎮', umap:'🗺', fbx:'📐', obj:'📐', blend:'📐', png:'🖼', jpg:'🖼', jpeg:'🖼', tga:'🖼', tif:'🖼', tiff:'🖼', psd:'🖼', wav:'🎵', mp3:'🎵', ogg:'🎵', flac:'🎵', cpp:'📄', h:'📄', cs:'📄', ini:'⚙', cfg:'⚙', json:'📋', md:'📝', txt:'📝', uplugin:'🔌', uproject:'🎯' };
+
+  let currentPath = '';
+  let currentEntries = [];
+  let currentTypeFilter = 'all';
+  let currentView = 'grid';
+  let searchTerm = '';
+
+  function $(id) { return document.getElementById(id); }
+  function toast(msg, type) { if (window.hypeToast) window.hypeToast(msg, type || 'info'); }
+  function esc(s) { return (s || '').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function ext(name) { return (name.split('.').pop() || '').toLowerCase(); }
+  function iconFor(entry) { return entry.kind === 'dir' ? '📁' : (ICON_MAP[ext(entry.name)] || '📄'); }
+  function typeOf(name) {
+    const e = ext(name);
+    for (const [type, exts] of Object.entries(ASSET_TYPES)) {
+      if (exts.includes(e)) return type;
+    }
+    return 'other';
+  }
+
+  function readEndpoints() {
+    try {
+      const cfg = JSON.parse(localStorage.getItem('hypenosys_repoAdmin') || '{}');
+      return { endpoints: cfg.endpoints || {}, svnUser: cfg.svnUser || '', svnPass: cfg.svnPass || '' };
+    } catch (e) { return { endpoints: {}, svnUser: '', svnPass: '' }; }
+  }
+
+  async function apiCall(endpointKey, body) {
+    const { endpoints } = readEndpoints();
+    const url = endpoints[endpointKey];
+    if (!url) {
+      throw Object.assign(new Error('Endpoint "' + endpointKey + '" no configurado.'), { code: 'NO_ENDPOINT' });
+    }
+    const { svnUser, svnPass } = readEndpoints();
+    const resp = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(Object.assign({}, body, { user: svnUser, password: svnPass }))
+    });
+    if (!resp.ok) throw new Error('Error HTTP ' + resp.status);
+    return await resp.json();
+  }
+
+  function showNotConfigured() {
+    $('al-content').innerHTML =
+      '<div class="al-empty-state">' +
+        '<i class="fa-solid fa-plug-circle-xmark"></i>' +
+        '<p>El puente SVN (n8n) no está configurado en este navegador.</p>' +
+        '<p style="font-size:11px;">Esta librería reutiliza los mismos endpoints que el Repository Control Center.</p>' +
+        '<button class="al-connect-btn" id="al-go-configure">Configurar en Command Center</button>' +
+      '</div>';
+    const btn = $('al-go-configure');
+    if (btn) btn.addEventListener('click', () => { window.location.href = '{{ "/command-center/" | relative_url }}'; });
+  }
+
+  async function listPath(path, pushHistory) {
+    currentPath = path || '';
+    $('al-content').innerHTML = '<div class="al-empty-state"><i class="fa-solid fa-spinner fa-spin"></i><p>Cargando…</p></div>';
+    try {
+      const data = await apiCall('svn-list', { path: currentPath });
+      currentEntries = data.entries || [];
+      renderBreadcrumb();
+      renderStats();
+      renderContent();
+    } catch (e) {
+      if (e.code === 'NO_ENDPOINT') {
+        showNotConfigured();
+      } else {
+        $('al-content').innerHTML =
+          '<div class="al-empty-state"><i class="fa-solid fa-triangle-exclamation" style="color:var(--al-error);"></i>' +
+          '<p>' + esc(e.message) + '</p>' +
+          '<button class="al-connect-btn" onclick="window.__alRetry()">Reintentar</button></div>';
+        window.__alRetry = () => listPath(currentPath);
+      }
+    }
+  }
+
+  function renderBreadcrumb() {
+    const parts = currentPath ? currentPath.split('/').filter(Boolean) : [];
+    let html = '<span class="al-bc-item" data-path="">trunk/Hypenosys</span>';
+    let acc = '';
+    parts.forEach((p, i) => {
+      acc += (i === 0 ? '' : '/') + p;
+      html += '<span class="al-bc-sep">/</span><span class="al-bc-item" data-path="' + esc(acc) + '">' + esc(p) + '</span>';
+    });
+    $('al-breadcrumb').innerHTML = html;
+    document.querySelectorAll('#al-breadcrumb .al-bc-item').forEach(el => {
+      el.addEventListener('click', () => listPath(el.getAttribute('data-path')));
+    });
+  }
+
+  function renderStats() {
+    const dirs = currentEntries.filter(e => e.kind === 'dir').length;
+    const files = currentEntries.filter(e => e.kind !== 'dir').length;
+    $('al-stat-rev').textContent = currentEntries[0] ? ('r' + (currentEntries[0].revision || '—')) : '—';
+    $('al-stat-count').textContent = currentEntries.length;
+    $('al-stat-dirs').textContent = dirs;
+    $('al-stat-files').textContent = files;
+  }
+
+  function filteredEntries() {
+    return currentEntries.filter(e => {
+      if (searchTerm && !e.name.toLowerCase().includes(searchTerm)) return false;
+      if (currentTypeFilter !== 'all' && e.kind !== 'dir' && typeOf(e.name) !== currentTypeFilter) return false;
+      if (currentTypeFilter !== 'all' && e.kind === 'dir') return true; // siempre mostrar carpetas para poder navegar
+      return true;
+    });
+  }
+
+  function renderContent() {
+    const entries = filteredEntries();
+    if (!entries.length) {
+      $('al-content').innerHTML = '<div class="al-empty-state"><i class="fa-solid fa-box-open"></i><p>Carpeta vacía o sin coincidencias para este filtro.</p></div>';
+      return;
+    }
+    // Sort: dirs first, then alpha
+    entries.sort((a, b) => {
+      if (a.kind !== b.kind) return a.kind === 'dir' ? -1 : 1;
+      return a.name.localeCompare(b.name);
+    });
+
+    if (currentView === 'grid') {
+      $('al-content').innerHTML = '<div class="al-grid">' + entries.map(e =>
+        '<div class="al-card' + (e.kind === 'dir' ? ' is-dir' : '') + '" data-entry="' + esc(e.name) + '">' +
+          '<div class="al-card-icon">' + iconFor(e) + '</div>' +
+          '<div class="al-card-name">' + esc(e.name) + '</div>' +
+          (e.kind !== 'dir' ? '<div class="al-card-meta">r' + esc(e.revision || '—') + '</div>' : '<div class="al-card-meta">carpeta</div>') +
+        '</div>'
+      ).join('') + '</div>';
+    } else {
+      $('al-content').innerHTML =
+        '<div class="al-list-row al-list-head"><span></span><span>Nombre</span><span>Rev.</span><span class="al-col-author">Autor</span><span class="al-col-date">Fecha</span></div>' +
+        entries.map(e =>
+          '<div class="al-list-row" data-entry="' + esc(e.name) + '">' +
+            '<span>' + iconFor(e) + '</span>' +
+            '<span class="al-list-name">' + esc(e.name) + (e.kind === 'dir' ? '/' : '') + '</span>' +
+            '<span class="al-list-meta">' + (e.kind !== 'dir' ? 'r' + esc(e.revision || '—') : '—') + '</span>' +
+            '<span class="al-list-meta al-col-author">' + esc(e.author || '—') + '</span>' +
+            '<span class="al-list-meta al-col-date">' + esc(e.date || '—') + '</span>' +
+          '</div>'
+        ).join('');
+    }
+
+    document.querySelectorAll('[data-entry]').forEach(el => {
+      el.addEventListener('click', () => {
+        const name = el.getAttribute('data-entry');
+        const entry = currentEntries.find(e => e.name === name);
+        if (!entry) return;
+        if (entry.kind === 'dir') {
+          listPath(currentPath ? currentPath + '/' + name : name);
+        } else {
+          openDetail(entry);
+        }
+      });
+    });
+  }
+
+  function openDetail(entry) {
+    $('al-detail-icon').textContent = iconFor(entry);
+    $('al-detail-name').textContent = entry.name;
+    $('al-detail-kind').textContent = typeOf(entry.name) !== 'other' ? typeOf(entry.name) : (ext(entry.name) || '—');
+    $('al-detail-rev').textContent = 'r' + (entry.revision || '—');
+    $('al-detail-author').textContent = entry.author || '—';
+    $('al-detail-date').textContent = entry.date || '—';
+    $('al-detail-path').textContent = (currentPath ? currentPath + '/' : '') + entry.name;
+    $('al-detail').classList.add('open');
+
+    $('al-detail-history').onclick = async () => {
+      window.location.href = '{{ "/repo-admin/" | relative_url }}';
+    };
+  }
+
+  function wireToolbar() {
+    $('al-search').addEventListener('input', e => {
+      searchTerm = e.target.value.trim().toLowerCase();
+      renderContent();
+    });
+    document.querySelectorAll('#al-type-filters .al-type-chip').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentTypeFilter = btn.getAttribute('data-type');
+        document.querySelectorAll('#al-type-filters .al-type-chip').forEach(b => b.classList.toggle('active', b === btn));
+        renderContent();
+      });
+    });
+    document.querySelectorAll('.al-view-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentView = btn.getAttribute('data-view');
+        document.querySelectorAll('.al-view-btn').forEach(b => b.classList.toggle('active', b === btn));
+        renderContent();
+      });
+    });
+    $('al-detail-close').addEventListener('click', () => $('al-detail').classList.remove('open'));
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    wireToolbar();
+    listPath('');
+  });
+})();
+</script>
+</body>
+</html>

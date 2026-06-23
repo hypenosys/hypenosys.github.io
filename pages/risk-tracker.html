@@ -1,0 +1,346 @@
+---
+layout: null
+title: Risk & Blockers Tracker
+hide_title: true
+permalink: /risk-tracker/
+---
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Risk & Blockers Tracker — HYPENOSYS</title>
+<link rel="stylesheet" href="{{ '/assets/main.css' | relative_url }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="{{ '/assets/javascript/bootstrap/jquery.min.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/bootstrap/bootstrap.bundle.min.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/ui-components.js' | relative_url }}"></script>
+
+<style>
+:root {
+  --rt-bg: #0a0a0f; --rt-surface: #12121a; --rt-surface2: #181822; --rt-surface3: #1f1f2c;
+  --rt-border: #26263580; --rt-border2: #34344a;
+  --rt-text: #f1f1f6; --rt-text2: #a6a6bd; --rt-text3: #6c6c85;
+  --rt-accent: #bd93f9; --rt-accent-dim: rgba(189,147,249,0.12);
+  --rt-critical: #ff5555; --rt-major: #ffb86c; --rt-medium: #f1fa8c; --rt-minor: #8be9fd; --rt-cosmetic: #6c6c85;
+  --rt-success: #50fa7b;
+  --f-sans: 'Space Grotesk', -apple-system, sans-serif;
+  --f-mono: 'Space Mono', 'SFMono-Regular', monospace;
+  --topbar-h: 56px;
+}
+* { box-sizing: border-box; }
+html, body { background: var(--rt-bg); color: var(--rt-text); font-family: var(--f-sans); margin: 0; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+a { color: var(--rt-accent); text-decoration: none; }
+
+.rt-topbar {
+  height: var(--topbar-h); display: flex; align-items: center; justify-content: space-between;
+  padding: 0 20px; border-bottom: 1px solid var(--rt-border); background: var(--rt-surface);
+  position: sticky; top: 0; z-index: 50;
+}
+.rt-brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: 0.06em; font-size: 14px; }
+.rt-brand i { color: var(--rt-accent); }
+.rt-brand .sep { color: var(--rt-text3); font-weight: 400; margin: 0 4px; }
+.rt-brand .section { color: var(--rt-text2); font-weight: 500; font-size: 12px; letter-spacing: 0.08em; }
+.rt-nav-link {
+  font-family: var(--f-mono); font-size: 11px; color: var(--rt-text2);
+  border: 1px solid var(--rt-border); padding: 5px 10px; border-radius: 6px;
+  display: flex; align-items: center; gap: 6px;
+}
+.rt-nav-link:hover { color: var(--rt-text); border-color: var(--rt-border2); }
+.rt-topbar-right { display: flex; gap: 10px; align-items: center; }
+
+.rt-body { padding: 28px; max-width: 1320px; margin: 0 auto; }
+.rt-hero { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 24px; }
+.rt-hero h1 { font-size: 22px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.01em; }
+.rt-hero p { color: var(--rt-text3); margin: 0; font-size: 13px; }
+
+.rt-stats-strip {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1px; background: var(--rt-border); border: 1px solid var(--rt-border);
+  border-radius: 10px; overflow: hidden; margin-bottom: 28px;
+}
+.rt-stat-cell { background: var(--rt-surface); padding: 13px 16px; display: flex; flex-direction: column; gap: 6px; }
+.rt-stat-label { font-size: 10px; letter-spacing: 0.08em; color: var(--rt-text3); font-family: var(--f-mono); text-transform: uppercase; }
+.rt-stat-value { font-size: 22px; font-weight: 700; }
+.rt-stat-value.warn { color: var(--rt-major); }
+.rt-stat-value.crit { color: var(--rt-critical); }
+.rt-stat-value.ok { color: var(--rt-success); }
+
+.rt-section-head { display: flex; align-items: center; justify-content: space-between; margin: 32px 0 14px; }
+.rt-section-head h2 { font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--rt-text2); font-weight: 600; margin: 0; display: flex; align-items: center; gap: 8px; }
+.rt-section-head h2 i { color: var(--rt-accent); font-size: 12px; }
+.rt-filter-bar { display: flex; gap: 8px; flex-wrap: wrap; }
+.rt-filter-chip {
+  font-family: var(--f-mono); font-size: 11px; padding: 5px 12px; border-radius: 16px;
+  border: 1px solid var(--rt-border2); color: var(--rt-text2); cursor: pointer; background: transparent;
+  transition: all .15s;
+}
+.rt-filter-chip.active { border-color: var(--rt-accent); color: var(--rt-accent); background: var(--rt-accent-dim); }
+
+/* Blocked tasks list */
+.rt-blocked-list { display: flex; flex-direction: column; gap: 10px; }
+.rt-blocked-card {
+  background: var(--rt-surface); border: 1px solid var(--rt-border); border-left: 3px solid var(--rt-text3);
+  border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px;
+}
+.rt-blocked-card.sev-Critical { border-left-color: var(--rt-critical); }
+.rt-blocked-card.sev-Major { border-left-color: var(--rt-major); }
+.rt-blocked-card.sev-Medium { border-left-color: var(--rt-medium); }
+.rt-blocked-card.sev-Minor, .rt-blocked-card.sev-Cosmetic, .rt-blocked-card.sev-ToDo { border-left-color: var(--rt-minor); }
+.rt-bc-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.rt-bc-title { font-weight: 600; font-size: 13.5px; display: flex; align-items: center; gap: 8px; }
+.rt-bc-id { font-family: var(--f-mono); font-size: 10.5px; color: var(--rt-text3); }
+.rt-badge {
+  font-family: var(--f-mono); font-size: 9.5px; letter-spacing: 0.04em; padding: 2px 8px; border-radius: 10px;
+  border: 1px solid var(--rt-border2); color: var(--rt-text2);
+}
+.rt-badge.prio-Critical { color: var(--rt-critical); border-color: rgba(255,85,85,0.4); background: rgba(255,85,85,0.08); }
+.rt-badge.prio-Major { color: var(--rt-major); border-color: rgba(255,184,108,0.4); background: rgba(255,184,108,0.08); }
+.rt-badge.prio-Medium { color: var(--rt-medium); border-color: rgba(241,250,140,0.35); background: rgba(241,250,140,0.06); }
+.rt-badge.estado-Working { color: var(--rt-minor); border-color: rgba(139,233,253,0.35); }
+.rt-badge.estado-Pending { color: var(--rt-text2); }
+.rt-badge.estado-InReview, .rt-badge.estado-In_Review { color: var(--rt-accent); border-color: rgba(189,147,249,0.4); }
+.rt-bc-deps { font-size: 12px; color: var(--rt-text3); display: flex; flex-direction: column; gap: 4px; }
+.rt-bc-deps strong { color: var(--rt-text2); font-weight: 600; }
+.rt-bc-deps .dep-chip { font-family: var(--f-mono); font-size: 10.5px; background: var(--rt-surface2); padding: 1px 7px; border-radius: 8px; margin-right: 4px; display: inline-block; }
+.rt-bc-meta { font-family: var(--f-mono); font-size: 10.5px; color: var(--rt-text3); display: flex; gap: 14px; flex-wrap: wrap; }
+.rt-empty-state {
+  text-align: center; padding: 50px 20px; color: var(--rt-text3); font-size: 13px;
+  border: 1px dashed var(--rt-border2); border-radius: 12px;
+}
+.rt-empty-state i { font-size: 22px; color: var(--rt-success); margin-bottom: 10px; display: block; }
+
+/* Risk matrix (priority x state) */
+.rt-matrix { display: grid; grid-template-columns: 120px repeat(6, 1fr); gap: 1px; background: var(--rt-border); border: 1px solid var(--rt-border); border-radius: 10px; overflow: hidden; font-size: 11px; }
+.rt-matrix-cell { background: var(--rt-surface); padding: 10px; display: flex; align-items: center; justify-content: center; font-family: var(--f-mono); }
+.rt-matrix-head { background: var(--rt-surface2); color: var(--rt-text2); font-weight: 600; font-size: 10px; letter-spacing: 0.04em; }
+.rt-matrix-rowlabel { background: var(--rt-surface2); color: var(--rt-text2); justify-content: flex-start; padding-left: 14px; font-weight: 600; }
+.rt-matrix-count { font-size: 14px; font-weight: 700; color: var(--rt-text3); }
+.rt-matrix-count.has-tasks { color: var(--rt-text); }
+.rt-matrix-count.crit-row.has-tasks { color: var(--rt-critical); }
+
+.rt-loading { text-align: center; padding: 60px 0; color: var(--rt-text3); font-family: var(--f-mono); font-size: 12px; }
+
+@media (max-width: 640px) {
+  .rt-body { padding: 18px 16px 50px; }
+  .rt-matrix { font-size: 9px; grid-template-columns: 80px repeat(6, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<header class="rt-topbar">
+  <div class="rt-brand">
+    <i class="fa-solid fa-triangle-exclamation"></i>
+    <span>HYPENOSYS</span>
+    <span class="sep">／</span>
+    <span class="section">Risk &amp; Blockers Tracker</span>
+  </div>
+  <div class="rt-topbar-right">
+    <a href="{{ '/command-center/' | relative_url }}" class="rt-nav-link"><i class="fa-solid fa-satellite-dish"></i> Command Center</a>
+    <a href="{{ '/dashboard.html' | relative_url }}" class="rt-nav-link"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+  </div>
+</header>
+
+<div class="rt-body">
+
+  <div class="rt-hero">
+    <div>
+      <h1>Risk &amp; Blockers Tracker</h1>
+      <p>Qué tarea bloquea a qué, y dónde se concentra el riesgo por prioridad y estado.</p>
+    </div>
+  </div>
+
+  <div id="rt-content">
+    <div class="rt-loading"><i class="fa-solid fa-spinner fa-spin"></i> Cargando dashboard_tasks.json…</div>
+  </div>
+
+</div>
+
+<div id="hype-toast-container" style="position:fixed; bottom:16px; right:16px; z-index:9999; display:flex; flex-direction:column; gap:8px; pointer-events:none;"></div>
+
+<script src="{{ '/assets/javascript/github-api.js' | relative_url }}"></script>
+<script>
+(function () {
+  'use strict';
+
+  const PRIORITY_ORDER = ['Critical', 'Major', 'Medium', 'Minor', 'Cosmetic', 'ToDo'];
+  const STATE_ORDER = ['Pending', 'ToDo', 'Working', 'In Review', 'OK', 'Obsolete'];
+  const ACTIVE_STATES = ['Pending', 'ToDo', 'Working', 'In Review'];
+
+  let allTasks = [];
+  let activeFilter = 'all'; // all | blocked | blocking | critical
+
+  function $(id) { return document.getElementById(id); }
+  function toast(msg, type) { if (window.hypeToast) window.hypeToast(msg, type || 'info'); }
+  function esc(s) { return (s || '').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  async function loadTasks() {
+    try {
+      const token = window.githubApi.getAuthToken();
+      if (!token) {
+        throw new Error('Sin sesión de GitHub activa.');
+      }
+      const res = await window.githubApi.fetchFileWithSha('_data/dashboard_tasks.json');
+      allTasks = (res && res.content && res.content.tasks) || [];
+      render();
+    } catch (e) {
+      console.error('[RiskTracker] Error cargando tareas:', e);
+      $('rt-content').innerHTML =
+        '<div class="rt-empty-state"><i class="fa-solid fa-triangle-exclamation" style="color: var(--rt-major);"></i>' +
+        'No se pudieron cargar las tareas. Inicia sesión desde el <a href="{{ "/command-center/" | relative_url }}">Command Center</a> para conectar con GitHub.</div>';
+    }
+  }
+
+  function taskById(id) { return allTasks.find(t => String(t.id) === String(id)); }
+
+  function render() {
+    const active = allTasks.filter(t => ACTIVE_STATES.includes(t.estado));
+    const blocked = active.filter(t => Array.isArray(t.blocked_by) && t.blocked_by.length > 0);
+    const blocking = active.filter(t => Array.isArray(t.blocks) && t.blocks.length > 0);
+    const criticalActive = active.filter(t => t.prioridad === 'Critical');
+    const criticalBlocked = blocked.filter(t => t.prioridad === 'Critical');
+
+    let html = '';
+
+    // Stats strip
+    html += '<div class="rt-stats-strip">' +
+      statCell('Tareas Activas', active.length, '') +
+      statCell('Bloqueadas', blocked.length, blocked.length > 0 ? 'warn' : 'ok') +
+      statCell('Bloqueantes', blocking.length, '') +
+      statCell('Críticas Activas', criticalActive.length, criticalActive.length > 0 ? 'crit' : 'ok') +
+      statCell('Críticas Bloqueadas', criticalBlocked.length, criticalBlocked.length > 0 ? 'crit' : 'ok') +
+      '</div>';
+
+    // Matrix priority x state
+    html += '<div class="rt-section-head"><h2><i class="fa-solid fa-table-cells"></i> Matriz de Riesgo (Prioridad × Estado)</h2></div>';
+    html += renderMatrix(active);
+
+    // Filter bar + blocked list
+    html += '<div class="rt-section-head">' +
+      '<h2><i class="fa-solid fa-link-slash"></i> Dependencias y Bloqueos</h2>' +
+      '<div class="rt-filter-bar">' +
+        filterChip('all', 'Todas activas') +
+        filterChip('blocked', 'Bloqueadas') +
+        filterChip('blocking', 'Bloqueantes') +
+        filterChip('critical', 'Críticas') +
+      '</div>' +
+    '</div>';
+    html += '<div class="rt-blocked-list" id="rt-list"></div>';
+
+    $('rt-content').innerHTML = html;
+    wireFilters();
+    renderList();
+  }
+
+  function statCell(label, value, cls) {
+    return '<div class="rt-stat-cell"><div class="rt-stat-label">' + label + '</div>' +
+      '<div class="rt-stat-value ' + (cls || '') + '">' + value + '</div></div>';
+  }
+
+  function filterChip(key, label) {
+    return '<button class="rt-filter-chip' + (activeFilter === key ? ' active' : '') + '" data-filter="' + key + '">' + label + '</button>';
+  }
+
+  function wireFilters() {
+    document.querySelectorAll('[data-filter]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        activeFilter = btn.getAttribute('data-filter');
+        document.querySelectorAll('[data-filter]').forEach(b => b.classList.toggle('active', b === btn));
+        renderList();
+      });
+    });
+  }
+
+  function renderMatrix(active) {
+    let html = '<div class="rt-matrix">';
+    html += '<div class="rt-matrix-cell rt-matrix-head"></div>';
+    STATE_ORDER.filter(s => ACTIVE_STATES.includes(s)).forEach(s => {
+      html += '<div class="rt-matrix-cell rt-matrix-head">' + s.toUpperCase() + '</div>';
+    });
+    // pad remaining columns if ACTIVE_STATES < 6 (keep grid consistent, fill blanks)
+    const activeStateCols = STATE_ORDER.filter(s => ACTIVE_STATES.includes(s));
+    for (let i = activeStateCols.length; i < 6; i++) html += '<div class="rt-matrix-cell rt-matrix-head"></div>';
+
+    PRIORITY_ORDER.forEach(p => {
+      html += '<div class="rt-matrix-cell rt-matrix-rowlabel">' + p + '</div>';
+      activeStateCols.forEach(s => {
+        const count = active.filter(t => t.prioridad === p && t.estado === s).length;
+        const isCrit = p === 'Critical';
+        html += '<div class="rt-matrix-cell"><span class="rt-matrix-count' + (count > 0 ? ' has-tasks' : '') + (isCrit ? ' crit-row' : '') + '">' + count + '</span></div>';
+      });
+      for (let i = activeStateCols.length; i < 6; i++) html += '<div class="rt-matrix-cell"></div>';
+    });
+    html += '</div>';
+    return html;
+  }
+
+  function renderList() {
+    const active = allTasks.filter(t => ACTIVE_STATES.includes(t.estado));
+    let list;
+    if (activeFilter === 'blocked') list = active.filter(t => (t.blocked_by || []).length > 0);
+    else if (activeFilter === 'blocking') list = active.filter(t => (t.blocks || []).length > 0);
+    else if (activeFilter === 'critical') list = active.filter(t => t.prioridad === 'Critical');
+    else list = active.filter(t => (t.blocked_by || []).length > 0 || (t.blocks || []).length > 0 || t.prioridad === 'Critical');
+
+    // Sort: critical first, then by due date
+    list = list.slice().sort((a, b) => {
+      const ai = PRIORITY_ORDER.indexOf(a.prioridad), bi = PRIORITY_ORDER.indexOf(b.prioridad);
+      if (ai !== bi) return ai - bi;
+      return (a.due_date || '9999') < (b.due_date || '9999') ? -1 : 1;
+    });
+
+    const container = $('rt-list');
+    if (!list.length) {
+      container.innerHTML = '<div class="rt-empty-state"><i class="fa-solid fa-circle-check"></i>Sin riesgos que mostrar con este filtro. Todo despejado.</div>';
+      return;
+    }
+
+    container.innerHTML = list.map(t => {
+      const blockedByTasks = (t.blocked_by || []).map(id => taskById(id)).filter(Boolean);
+      const blockingTasks = (t.blocks || []).map(id => taskById(id)).filter(Boolean);
+      const sevClass = 'sev-' + (t.prioridad || 'ToDo');
+      const estadoClass = 'estado-' + (t.estado || '').replace(/\s+/g, '_');
+
+      let deps = '';
+      if (blockedByTasks.length) {
+        deps += '<div><strong>Bloqueada por:</strong> ' +
+          blockedByTasks.map(b => '<span class="dep-chip">#' + b.id + ' ' + esc(b.title || '') + '</span>').join('') + '</div>';
+      }
+      if (blockingTasks.length) {
+        deps += '<div><strong>Bloquea a:</strong> ' +
+          blockingTasks.map(b => '<span class="dep-chip">#' + b.id + ' ' + esc(b.title || '') + '</span>').join('') + '</div>';
+      }
+      if ((t.blocked_by || []).length && !blockedByTasks.length) {
+        deps += '<div><strong>Bloqueada por:</strong> <span class="dep-chip" style="color:var(--rt-text3)">IDs ' + esc(t.blocked_by.join(', ')) + ' (no encontrados en datos activos)</span></div>';
+      }
+
+      return (
+        '<div class="rt-blocked-card ' + sevClass + '">' +
+          '<div class="rt-bc-top">' +
+            '<div class="rt-bc-title"><span class="rt-bc-id">#' + t.id + '</span> ' + esc(t.title || t.descripcion || 'Sin título') + '</div>' +
+            '<div style="display:flex; gap:6px;">' +
+              '<span class="rt-badge prio-' + (t.prioridad || '') + '">' + (t.prioridad || '—') + '</span>' +
+              '<span class="rt-badge ' + estadoClass + '">' + (t.estado || '—') + '</span>' +
+            '</div>' +
+          '</div>' +
+          (deps ? '<div class="rt-bc-deps">' + deps + '</div>' : '') +
+          '<div class="rt-bc-meta">' +
+            (t.tema_principal ? '<span><i class="fa-solid fa-layer-group"></i> ' + esc(t.tema_principal) + '</span>' : '') +
+            (t.due_date ? '<span><i class="fa-solid fa-calendar"></i> vence ' + esc(t.due_date) + '</span>' : '') +
+            ((t.asignados || []).length ? '<span><i class="fa-solid fa-user"></i> ' + esc(t.asignados.join(', ')) + '</span>' : '') +
+          '</div>' +
+        '</div>'
+      );
+    }).join('');
+  }
+
+  document.addEventListener('DOMContentLoaded', loadTasks);
+})();
+</script>
+</body>
+</html>

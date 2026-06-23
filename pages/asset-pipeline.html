@@ -1,0 +1,271 @@
+---
+layout: null
+title: Asset Pipeline Status
+hide_title: true
+permalink: /asset-pipeline/
+---
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Asset Pipeline Status — HYPENOSYS</title>
+<link rel="stylesheet" href="{{ '/assets/main.css' | relative_url }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="{{ '/assets/javascript/bootstrap/jquery.min.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/bootstrap/bootstrap.bundle.min.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/ui-components.js' | relative_url }}"></script>
+
+<style>
+:root {
+  --ap-bg: #0a0a0f; --ap-surface: #12121a; --ap-surface2: #181822; --ap-surface3: #1f1f2c;
+  --ap-border: #26263580; --ap-border2: #34344a;
+  --ap-text: #f1f1f6; --ap-text2: #a6a6bd; --ap-text3: #6c6c85;
+  --ap-accent: #38bdf8; --ap-accent-dim: rgba(56,189,248,0.12);
+  --ap-success: #50fa7b; --ap-warn: #f1fa8c; --ap-error: #ff5555;
+  --f-sans: 'Space Grotesk', -apple-system, sans-serif;
+  --f-mono: 'Space Mono', 'SFMono-Regular', monospace;
+  --topbar-h: 56px;
+}
+* { box-sizing: border-box; }
+html, body { background: var(--ap-bg); color: var(--ap-text); font-family: var(--f-sans); margin: 0; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+a { color: var(--ap-accent); text-decoration: none; }
+
+.ap-topbar {
+  height: var(--topbar-h); display: flex; align-items: center; justify-content: space-between;
+  padding: 0 20px; border-bottom: 1px solid var(--ap-border); background: var(--ap-surface);
+  position: sticky; top: 0; z-index: 50;
+}
+.ap-brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: 0.06em; font-size: 14px; }
+.ap-brand i { color: var(--ap-accent); }
+.ap-brand .sep { color: var(--ap-text3); font-weight: 400; margin: 0 4px; }
+.ap-brand .section { color: var(--ap-text2); font-weight: 500; font-size: 12px; letter-spacing: 0.08em; }
+.ap-nav-link {
+  font-family: var(--f-mono); font-size: 11px; color: var(--ap-text2);
+  border: 1px solid var(--ap-border); padding: 5px 10px; border-radius: 6px; display: flex; align-items: center; gap: 6px;
+}
+.ap-nav-link:hover { color: var(--ap-text); border-color: var(--ap-border2); }
+.ap-topbar-right { display: flex; gap: 10px; align-items: center; }
+
+.ap-body { padding: 28px; max-width: 1320px; margin: 0 auto; }
+.ap-hero { margin-bottom: 8px; }
+.ap-hero h1 { font-size: 22px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.01em; }
+.ap-hero p { color: var(--ap-text3); margin: 0; font-size: 13px; }
+.ap-disclaimer {
+  font-size: 11.5px; color: var(--ap-text3); background: var(--ap-surface);
+  border: 1px solid var(--ap-border); border-radius: 8px; padding: 10px 14px; margin: 16px 0 24px;
+  display: flex; gap: 8px; align-items: flex-start;
+}
+.ap-disclaimer i { color: var(--ap-accent); margin-top: 1px; }
+
+.ap-stats-strip {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1px;
+  background: var(--ap-border); border: 1px solid var(--ap-border); border-radius: 10px; overflow: hidden; margin-bottom: 26px;
+}
+.ap-stat-cell { background: var(--ap-surface); padding: 13px 16px; }
+.ap-stat-label { font-size: 10px; letter-spacing: 0.08em; color: var(--ap-text3); font-family: var(--f-mono); text-transform: uppercase; margin-bottom: 6px; }
+.ap-stat-value { font-size: 20px; font-weight: 700; }
+
+.ap-section-head { display: flex; align-items: center; justify-content: space-between; margin: 28px 0 14px; flex-wrap: wrap; gap: 10px; }
+.ap-section-head h2 { font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ap-text2); font-weight: 600; margin: 0; display: flex; align-items: center; gap: 8px; }
+.ap-section-head h2 i { color: var(--ap-accent); font-size: 12px; }
+.ap-member-filters { display: flex; gap: 6px; flex-wrap: wrap; }
+.ap-member-chip {
+  font-family: var(--f-mono); font-size: 10.5px; padding: 5px 11px; border-radius: 16px;
+  border: 1px solid var(--ap-border2); color: var(--ap-text2); cursor: pointer; background: transparent; transition: all .15s;
+}
+.ap-member-chip.active { border-color: var(--ap-accent); color: var(--ap-accent); background: var(--ap-accent-dim); }
+
+/* Board by estado */
+.ap-board { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+.ap-col { background: var(--ap-surface); border: 1px solid var(--ap-border); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 10px; min-height: 80px; }
+.ap-col-head { display: flex; align-items: center; justify-content: space-between; font-family: var(--f-mono); font-size: 10.5px; letter-spacing: 0.06em; color: var(--ap-text2); text-transform: uppercase; padding-bottom: 8px; border-bottom: 1px solid var(--ap-border); }
+.ap-col-count { background: var(--ap-surface2); border-radius: 10px; padding: 1px 8px; font-weight: 700; }
+.ap-task-card { background: var(--ap-surface2); border: 1px solid var(--ap-border); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 6px; }
+.ap-task-title { font-size: 12px; font-weight: 600; }
+.ap-task-meta { font-family: var(--f-mono); font-size: 10px; color: var(--ap-text3); display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.ap-prio-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.ap-prio-Critical { background: var(--ap-error); }
+.ap-prio-Major { background: #ffb86c; }
+.ap-prio-Medium { background: var(--ap-warn); }
+.ap-prio-Minor, .ap-prio-Cosmetic, .ap-prio-ToDo { background: var(--ap-accent); }
+.ap-col-empty { color: var(--ap-text3); font-size: 11px; font-family: var(--f-mono); text-align: center; padding: 14px 0; }
+
+.ap-empty-state { text-align: center; padding: 60px 20px; color: var(--ap-text3); font-size: 13px; border: 1px dashed var(--ap-border2); border-radius: 12px; }
+.ap-empty-state i { font-size: 24px; margin-bottom: 10px; display: block; }
+
+@media (max-width: 640px) {
+  .ap-body { padding: 18px 16px 50px; }
+}
+</style>
+</head>
+<body>
+
+<header class="ap-topbar">
+  <div class="ap-brand">
+    <i class="fa-solid fa-palette"></i>
+    <span>HYPENOSYS</span>
+    <span class="sep">／</span>
+    <span class="section">Asset Pipeline Status</span>
+  </div>
+  <div class="ap-topbar-right">
+    <a href="{{ '/command-center/' | relative_url }}" class="ap-nav-link"><i class="fa-solid fa-satellite-dish"></i> Command Center</a>
+    <a href="{{ '/dashboard.html' | relative_url }}" class="ap-nav-link"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+    <a href="{{ '/asset-library/' | relative_url }}" class="ap-nav-link"><i class="fa-solid fa-folder-tree"></i> Asset Library</a>
+  </div>
+</header>
+
+<div class="ap-body">
+
+  <div class="ap-hero">
+    <h1>Asset Pipeline Status</h1>
+    <p>Estado de las tareas de Arte/Assets del Kanban, agrupadas por estado de producción.</p>
+  </div>
+
+  <div class="ap-disclaimer">
+    <i class="fa-solid fa-circle-info"></i>
+    <span>Esta vista filtra el Kanban existente por <code>tema_principal: "Arte / Assets"</code>. No existen hoy etapas específicas de pipeline (concept → modelado → texturizado → integrado) en los datos — si el equipo quiere ese nivel de detalle, hay que añadir un campo nuevo a las tareas de arte.</span>
+  </div>
+
+  <div id="ap-content">
+    <div class="ap-empty-state"><i class="fa-solid fa-spinner fa-spin"></i><p>Cargando dashboard_tasks.json…</p></div>
+  </div>
+
+</div>
+
+<div id="hype-toast-container" style="position:fixed; bottom:16px; right:16px; z-index:9999; display:flex; flex-direction:column; gap:8px; pointer-events:none;"></div>
+
+<script src="{{ '/assets/javascript/github-api.js' | relative_url }}"></script>
+<script>
+(function () {
+  'use strict';
+
+  const ART_THEME = 'Arte / Assets';
+  const STATE_ORDER = ['Pending', 'ToDo', 'Working', 'In Review', 'OK', 'Obsolete'];
+  const PRIORITY_RANK = { Critical: 0, Major: 1, Medium: 2, Minor: 3, Cosmetic: 4, ToDo: 5 };
+
+  let allTasks = [];
+  let artTasks = [];
+  let memberFilter = 'all';
+
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return (s || '').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  async function loadTasks() {
+    try {
+      const token = window.githubApi.getAuthToken();
+      if (!token) throw new Error('Sin sesión de GitHub activa.');
+      const res = await window.githubApi.fetchFileWithSha('_data/dashboard_tasks.json');
+      allTasks = (res && res.content && res.content.tasks) || [];
+      artTasks = allTasks.filter(t => t.tema_principal === ART_THEME);
+      render();
+    } catch (e) {
+      console.error('[AssetPipeline] Error cargando tareas:', e);
+      $('ap-content').innerHTML =
+        '<div class="ap-empty-state"><i class="fa-solid fa-triangle-exclamation" style="color: var(--ap-warn);"></i>' +
+        'No se pudieron cargar las tareas. Inicia sesión desde el <a href="{{ "/command-center/" | relative_url }}">Command Center</a> para conectar con GitHub.</div>';
+    }
+  }
+
+  function uniqueMembers() {
+    const set = new Set();
+    artTasks.forEach(t => (t.asignados || []).forEach(a => set.add(a)));
+    return Array.from(set).sort();
+  }
+
+  function render() {
+    if (!artTasks.length) {
+      $('ap-content').innerHTML =
+        '<div class="ap-empty-state"><i class="fa-solid fa-box-open"></i>' +
+        'No hay tareas con <code>tema_principal: "Arte / Assets"</code> en el Kanban todavía.</div>';
+      return;
+    }
+
+    const active = artTasks.filter(t => !['OK', 'Obsolete'].includes(t.estado));
+    const done = artTasks.filter(t => t.estado === 'OK');
+    const blocked = active.filter(t => (t.blocked_by || []).length > 0);
+
+    let html = '';
+
+    html += '<div class="ap-stats-strip">' +
+      statCell('Tareas de Arte', artTasks.length) +
+      statCell('Activas', active.length) +
+      statCell('Completadas', done.length) +
+      statCell('Bloqueadas', blocked.length) +
+      '</div>';
+
+    html += '<div class="ap-section-head">' +
+      '<h2><i class="fa-solid fa-table-columns"></i> Por Estado</h2>' +
+      '<div class="ap-member-filters" id="ap-member-filters">' +
+      memberChip('all', 'Todos') +
+      uniqueMembers().map(m => memberChip(m, m)).join('') +
+      '</div>' +
+    '</div>';
+
+    html += '<div class="ap-board" id="ap-board"></div>';
+
+    $('ap-content').innerHTML = html;
+    wireMemberFilters();
+    renderBoard();
+  }
+
+  function statCell(label, value) {
+    return '<div class="ap-stat-cell"><div class="ap-stat-label">' + label + '</div><div class="ap-stat-value">' + value + '</div></div>';
+  }
+
+  function memberChip(key, label) {
+    return '<button class="ap-member-chip' + (memberFilter === key ? ' active' : '') + '" data-member="' + esc(key) + '">' + esc(label) + '</button>';
+  }
+
+  function wireMemberFilters() {
+    document.querySelectorAll('[data-member]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        memberFilter = btn.getAttribute('data-member');
+        document.querySelectorAll('[data-member]').forEach(b => b.classList.toggle('active', b === btn));
+        renderBoard();
+      });
+    });
+  }
+
+  function renderBoard() {
+    const tasks = memberFilter === 'all'
+      ? artTasks
+      : artTasks.filter(t => (t.asignados || []).includes(memberFilter));
+
+    const html = STATE_ORDER.map(state => {
+      const colTasks = tasks.filter(t => t.estado === state).sort((a, b) =>
+        (PRIORITY_RANK[a.prioridad] ?? 9) - (PRIORITY_RANK[b.prioridad] ?? 9)
+      );
+      return (
+        '<div class="ap-col">' +
+          '<div class="ap-col-head"><span>' + state + '</span><span class="ap-col-count">' + colTasks.length + '</span></div>' +
+          (colTasks.length
+            ? colTasks.map(t =>
+                '<div class="ap-task-card">' +
+                  '<div class="ap-task-title">#' + t.id + ' ' + esc(t.title || t.descripcion || 'Sin título') + '</div>' +
+                  '<div class="ap-task-meta">' +
+                    '<span class="ap-prio-dot ap-prio-' + (t.prioridad || 'ToDo') + '"></span>' +
+                    '<span>' + (t.prioridad || '—') + '</span>' +
+                    (t.due_date ? '<span>· vence ' + esc(t.due_date) + '</span>' : '') +
+                  '</div>' +
+                  ((t.asignados || []).length ? '<div class="ap-task-meta"><i class="fa-solid fa-user"></i> ' + esc(t.asignados.join(', ')) + '</div>' : '') +
+                '</div>'
+              ).join('')
+            : '<div class="ap-col-empty">vacío</div>'
+          ) +
+        '</div>'
+      );
+    }).join('');
+
+    $('ap-board').innerHTML = html;
+  }
+
+  document.addEventListener('DOMContentLoaded', loadTasks);
+})();
+</script>
+</body>
+</html>
