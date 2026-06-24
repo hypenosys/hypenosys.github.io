@@ -68,14 +68,23 @@ function _renderLocalMessagesOnly() {
         const icon = msg.role === 'assistant' ? '🤖' : '👤';
         const time = new Date().toLocaleTimeString('es-ES');
 
+        const isClaude = msg.role === 'assistant';
+        const actionBtn = isClaude ?
+            '<div class="activity-actions" style="margin-top: 8px; display: flex; gap: 8px;">' +
+              '<button class="btn btn-ghost btn-sm" style="font-size: 9px; padding: 2px 8px;" onclick="window.sendToJulesFromLocal(' + idx + ')">' +
+                '<i class="fas fa-arrow-right"></i> → ENVIAR A JULES' +
+              '</button>' +
+            '</div>' : '';
+
         div.innerHTML =
             '<span class="activity-icon">' + icon + '</span>' +
             '<div class="activity-body">' +
               '<div class="activity-header">' +
-                '<span class="activity-originator">' + (msg.role === 'assistant' ? 'CLAUDE' : 'USUARIO') + '</span>' +
+                '<span class="activity-originator">' + (isClaude ? 'CLAUDE' : 'USUARIO') + '</span>' +
                 '<span class="activity-time">' + time + '</span>' +
               '</div>' +
               '<div class="activity-content">' + escapeHtml(msg.content) + '</div>' +
+              actionBtn +
             '</div>';
 
         container.appendChild(div);
@@ -310,5 +319,17 @@ window.saveSessionsV2 = function(skipSync) {
         }
     } catch (e) {
         console.error("Error en saveSessionsV2:", e);
+    }
+}
+
+window.sendToJulesFromLocal = function(idx) {
+    const msg = window.chatV2Messages[idx];
+    if (!msg || !msg.content) return;
+
+    const promptTextarea = document.querySelector('#session-prompt');
+    if (promptTextarea) {
+        promptTextarea.value = msg.content;
+        if (window.switchView) window.switchView('neural');
+        showToast('Prompt cargado en Jules ⚡', 'green');
     }
 }

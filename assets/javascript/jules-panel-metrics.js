@@ -6,10 +6,24 @@ async function renderMetrics() {
     try {
         const sessions = window.julesSessionsCache || [];
         const total = sessions.length;
-        const active = sessions.filter(s => ['PLANNING', 'EXECUTING'].includes(s.state)).length;
-        const pending = sessions.filter(s => ['QUEUED'].includes(s.state)).length;
-        const done = sessions.filter(s => s.state === 'COMPLETED').length;
-        const failed = sessions.filter(s => ['FAILED', 'ERROR', 'CANCELLED'].includes(s.state)).length;
+
+        // Normalización y descubrimiento de estados dinámicos
+        const isActive = (state) => {
+            if (!state) return false;
+            const s = state.toUpperCase().trim();
+            return s.includes('PLANNING') || s.includes('EXECUTING') || s.includes('RUNNING') || s.includes('IN_PROGRESS');
+        };
+        const isDone = (state) => state && state.toUpperCase().trim() === 'COMPLETED';
+        const isFailed = (state) => {
+            if (!state) return false;
+            const s = state.toUpperCase().trim();
+            return s === 'FAILED' || s === 'ERROR' || s === 'CANCELLED';
+        };
+
+        const active = sessions.filter(s => isActive(s.state)).length;
+        const done = sessions.filter(s => isDone(s.state)).length;
+        const failed = sessions.filter(s => isFailed(s.state)).length;
+        const pending = total - active - done - failed;
 
         if($('m-active')) $('m-active').innerText = active;
         if($('m-total')) $('m-total').innerText = total;

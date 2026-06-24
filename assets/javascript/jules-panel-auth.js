@@ -405,6 +405,8 @@ window.updateUserUI = async function(user) {
 }
 
 window.desvincularNeuralSession = function() {
+    if (!confirm("¿Estás seguro de que deseas desvincular la sesión neural activa?")) return;
+
     const sid = getLinkedJulesSessionId();
     if (sid) {
         const sessions = JSON.parse(localStorage.getItem('hy_neural_sessions') || '[]');
@@ -415,6 +417,7 @@ window.desvincularNeuralSession = function() {
         }
     }
 
+    // Atomic clear of state
     localStorage.removeItem('hy_neural_active');
     const claudeId = localStorage.getItem('hy_active_claude_session_id');
     if (claudeId) {
@@ -424,13 +427,31 @@ window.desvincularNeuralSession = function() {
     localStorage.removeItem('hy_neural_task_context');
     localStorage.removeItem('hy_neural_pending_prompt');
     localStorage.removeItem('hy_neural_thread');
+
+    // Clear caches
+    window.julesSessionsCache = [];
+    window.julesSourcesCache = [];
+
     stopNeuralPolling();
-    $('neural-session-banner').classList.add('hidden');
-    $('v2-task-context').classList.add('hidden');
+
+    // UI Reset
+    if ($('neural-session-banner')) $('neural-session-banner').classList.add('hidden');
+    if ($('v2-task-context')) $('v2-task-context').classList.add('hidden');
+
     if (window.JulesPanelState.activePayload) {
         delete window.JulesPanelState.activePayload.source_task;
     }
-    showToast("Sesión neural desvinculada (archivada)", "info");
+
+    showToast("Sesión neural desvinculada. Limpiando estado...", "amber");
+
+    // Refresh data atomically
+    if (typeof refreshDashboard === 'function') {
+        refreshDashboard().then(() => {
+            showToast("Estado sincronizado", "green");
+        });
+    } else {
+        location.reload();
+    }
 }
 
 window.launchSession = async function() {
