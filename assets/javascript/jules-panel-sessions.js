@@ -28,10 +28,26 @@ function renderHistoryTable(sessions) {
         const repo = (s.sourceContext && s.sourceContext.source && s.sourceContext.source.split('/').pop()) || '---';
         const branch = (s.sourceContext && s.sourceContext.githubRepoContext && s.sourceContext.githubRepoContext.startingBranch) || '---';
         const stateClass = s.state.toLowerCase().replace(/_/g, '-');
-        const duration = '---'; // Need actual duration logic if available
+
+        // Calculate Duration
+        let duration = '---';
+        if (s.createTime && (s.updateTime || s.state === 'COMPLETED')) {
+            const start = new Date(s.createTime);
+            const end = s.state === 'COMPLETED' ? new Date(s.updateTime || Date.now()) : new Date();
+            const diffMs = end - start;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffSecs = Math.floor((diffMs % 60000) / 1000);
+            duration = diffMins + 'm ' + diffSecs + 's';
+        }
+
         const taskTitle = s.title || s.prompt || 'Sin título';
 
-        return '<tr onclick="openDrawer(\'' + s.name + '\')">' +
+        return '<tr onclick="handleRowClick(event, \'' + s.name + '\')" data-sid="' + sid + '">' +
+               '<td onclick="handleCheckboxClick(event, \'' + sid + '\')">' +
+               '<div class="custom-control custom-checkbox">' +
+               '<input type="checkbox" class="session-checkbox" data-sid="' + sid + '">' +
+               '</div>' +
+               '</td>' +
                '<td><span class="sid">#' + sid + '</span></td>' +
                '<td><div class="tdesc" title="' + escapeHtml(taskTitle) + '">' + escapeHtml(taskTitle) + '</div></td>' +
                '<td><div class="tmono">' + repo + '</div></td>' +
@@ -50,24 +66,131 @@ function updateNeuralHistory(sessions) {
     const list = $('sb-neural-history-list');
     if (!list) return;
 
-    const recent = sessions.slice(0, 10);
-    list.innerHTML = recent.map(s => {
+    if (!sessions || sessions.length === 0) {
+        list.innerHTML = '<div class="notif-empty" style="font-size: 10px; padding: 10px;">No hay sesiones recientes</div>';
+        return;
+    }
+
+    list.innerHTML = sessions.map(s => {
         const sid = s.name.split('/').pop();
         const active = sid === localStorage.getItem('hy_neural_session_id');
-        const title = '#' + sid + ': ' + (s.title || s.prompt || 'Sin título');
-        return '<div class="repo-item' + (active ? ' active' : '') + '" onclick="openDrawer(\'' + s.name + '\')" title="' + title + '">' +
-               '<span class="u-mono" style="font-size:10px; opacity:0.6">#' + sid + '</span>' +
-               '<span>' + (s.title || s.prompt || 'Sin título').substring(0, 20) + '...</span>' +
+        const taskTitle = s.title || s.prompt || 'Sin título';
+        const repo = (s.sourceContext && s.sourceContext.source && s.sourceContext.source.split('/').pop()) || '---';
+        const stateClass = s.state.toLowerCase().replace(/_/g, '-');
+
+        return '<div class="sb-history-item' + (active ? ' active' : '') + '" data-sid="' + sid + '" onclick="selectSession(\'' + s.name + '\')" title="' + escapeHtml(taskTitle) + '">' +
+               '<div class="h-task">' + escapeHtml(taskTitle) + '</div>' +
+               '<div class="h-meta">' +
+               '<span>#' + sid + ' · ' + repo + '</span>' +
+               '<span class="sbadge ' + stateClass + '" style="font-size:7px; padding:1px 4px">' + s.state.substring(0,4) + '</span>' +
+               '</div>' +
                '</div>';
     }).join('');
 }
 
+let lastSelectedIdx = -1;
+
+window.handleRowClick = function(event, sessionName) {
+    const sid = sessionName.split('/').pop();
+    const rows = Array.from(document.querySelectorAll('#history-tbody tr'));
+    const clickedIdx = rows.findIndex(r => r.getAttribute('data-sid') === sid);
+
+    if (event.shiftKey && lastSelectedIdx !== -1) {
+        const start = Math.min(clickedIdx, lastSelectedIdx);
+        const end = Math.max(clickedIdx, lastSelectedIdx);
+        for (let i = start; i <= end; i++) {
+            toggleSelection(rows[i].getAttribute('data-sid'), true);
+        }
+    } else if (event.ctrlKey || event.metaKey) {
+        toggleSelection(sid);
+    } else {
+        // User instruction: Clicking a row selects/deselects it.
+        toggleSelection(sid);
+        selectSession(sessionName);
+    }
+    lastSelectedIdx = clickedIdx;
+}
+
+window.handleCheckboxClick = function(event, sid) {
+    event.stopPropagation();
+    toggleSelection(sid);
+}
+
+function toggleSelection(sid, forceState = null) {
+    const row = document.querySelector('#history-tbody tr[data-sid="' + sid + '"]');
+    const checkbox = document.querySelector('.session-checkbox[data-sid="' + sid + '"]');
+    const sidebarItem = document.querySelector('.sb-history-item[data-sid="' + sid + '"]');
+
+    const newState = forceState !== null ? forceState : !checkbox.checked;
+
+    if (row) row.classList.toggle('selected', newState);
+    if (checkbox) checkbox.checked = newState;
+    if (sidebarItem) sidebarItem.classList.toggle('selected', newState);
+
+    updateSelectionUI();
+}
+
+function updateSelectionUI() {
+    const selected = document.querySelectorAll('.session-checkbox:checked');
+    const count = selected.length;
+
+    const toolbar = $('neural-selection-toolbar');
+    const countEl = $('selection-count');
+    const analyzeBtn = document.querySelector('button[onclick="analyzeSelectedWithClaude()"]');
+
+    if (count > 0) {
+        if (toolbar) toolbar.style.display = 'flex';
+        if (countEl) countEl.innerText = count;
+        if (analyzeBtn) analyzeBtn.disabled = false;
+    } else {
+        if (toolbar) toolbar.style.display = 'none';
+        if (analyzeBtn) analyzeBtn.disabled = true;
+    }
+}
+
+window.clearHistorySelection = function() {
+    document.querySelectorAll('.session-checkbox').forEach(cb => cb.checked = false);
+    document.querySelectorAll('#history-tbody tr').forEach(tr => tr.classList.remove('selected'));
+    document.querySelectorAll('.sb-history-item').forEach(item => item.classList.remove('selected'));
+    updateSelectionUI();
+}
+
+window.selectSession = function(sessionName) {
+    const sid = sessionName.split('/').pop();
+
+    // Highlight in sidebar
+    document.querySelectorAll('.sb-history-item').forEach(el => {
+        el.classList.toggle('active', el.getAttribute('data-sid') === sid);
+    });
+
+    // Highlight in table if visible
+    document.querySelectorAll('#history-tbody tr').forEach(tr => {
+        const trSid = tr.getAttribute('data-sid');
+        tr.classList.toggle('active-row', trSid === sid);
+    });
+
+    openDrawer(sessionName);
+}
+
 function updateKanbanCounts(sessions) {
     const counts = { pending: 0, running: 0, done: 0, error: 0 };
+
+    const isActive = (state) => {
+        if (!state) return false;
+        const s = state.toUpperCase().trim();
+        return s.includes('PLANNING') || s.includes('EXECUTING') || s.includes('RUNNING') || s.includes('IN_PROGRESS');
+    };
+    const isDone = (state) => state && state.toUpperCase().trim() === 'COMPLETED';
+    const isFailed = (state) => {
+        if (!state) return false;
+        const s = state.toUpperCase().trim();
+        return s === 'FAILED' || s === 'ERROR' || s === 'CANCELLED';
+    };
+
     sessions.forEach(s => {
-        if (['COMPLETED'].includes(s.state)) counts.done++;
-        else if (['FAILED', 'ERROR', 'CANCELLED'].includes(s.state)) counts.error++;
-        else if (['PLANNING', 'EXECUTING'].includes(s.state)) counts.running++;
+        if (isDone(s.state)) counts.done++;
+        else if (isFailed(s.state)) counts.error++;
+        else if (isActive(s.state)) counts.running++;
         else counts.pending++;
     });
 
@@ -308,4 +431,58 @@ window.askAboutStep = function(stepIndex, stepTitle) {
         input.value = "Respecto al paso " + stepIndex + " (" + stepTitle + "): " + input.value;
         input.focus();
     }
+}
+
+window.analyzeSelectedWithClaude = async function() {
+    const selectedCheckboxes = document.querySelectorAll('.session-checkbox:checked');
+    if (selectedCheckboxes.length === 0) return;
+
+    const sids = Array.from(selectedCheckboxes).map(cb => cb.getAttribute('data-sid'));
+    const sessions = window.julesSessionsCache || [];
+
+    showToast("Recopilando logs y analizando...", "amber");
+    let context = "Analiza las siguientes sesiones de Jules (incluyendo logs recientes):\n\n";
+
+    for (const sid of sids) {
+        const s = sessions.find(sess => sess.name.endsWith(sid));
+        if (s) {
+            context += "--- SESIÓN #" + sid + " ---\n";
+            context += "TAREA: " + (s.title || s.prompt) + "\n";
+            context += "REPO: " + (s.sourceContext?.source || '---') + "\n";
+            context += "RAMA: " + (s.sourceContext?.githubRepoContext?.startingBranch || '---') + "\n";
+            context += "ESTADO: " + s.state + "\n";
+            context += "FECHA: " + s.createTime + "\n";
+
+            try {
+                const sName = s.name.startsWith('sessions/') ? s.name : 'sessions/' + sid;
+                const activityData = await window.julesApi.getActivities(sName, 5);
+                const activities = activityData.activities || [];
+                if (activities.length > 0) {
+                    context += "LOGS RECIENTES:\n";
+                    activities.forEach(a => {
+                        const msg = a.agentMessaged?.agentMessage || a.progressUpdated?.title || a.description || 'Actividad';
+                        context += "- [" + a.createTime.split('T')[1].split('.')[0] + "] " + msg.substring(0, 100) + "\n";
+                    });
+                }
+            } catch(e) { console.warn("Could not fetch logs for " + sid, e); }
+
+            context += "\n";
+        }
+    }
+
+    context += "¿Qué patrones identificas en estas sesiones? ¿Hay algún problema común o sugerencia de mejora?";
+
+    // Send to Claude
+    localStorage.setItem('hy_neural_pending_prompt', context);
+    switchView('chat');
+
+    // Auto-focus chat input and show pre-filled message (already handled by switchView -> loadV2Messages if we integrate it)
+    if ($('v2-chat-input')) {
+        $('v2-chat-input').value = context;
+        // Trigger resize
+        $('v2-chat-input').dispatchEvent(new Event('input'));
+    }
+
+    clearHistorySelection();
+    showToast("Contexto enviado a Claude", "green");
 }
