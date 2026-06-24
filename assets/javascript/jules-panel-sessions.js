@@ -202,10 +202,17 @@ function updateKanbanCounts(sessions) {
         if (counts[col] !== undefined) counts[col]++;
     });
 
+    let total = 0;
     Object.keys(counts).forEach(k => {
         const el = $('kb-count-' + k);
         if (el) el.innerText = counts[k];
+        const mEl = $('m-count-' + k);
+        if (mEl) mEl.innerText = counts[k];
+        total += counts[k];
     });
+
+    const hdrBadge = $('hdr-kanban-badge');
+    if (hdrBadge) hdrBadge.innerText = total;
 }
 
 // Session Details Drawer logic
