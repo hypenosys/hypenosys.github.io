@@ -201,7 +201,7 @@ window.switchView = async function(view, navEl) {
     }
 
     window.JulesPanelState.currentView = view;
-    if (view === 'kanban') refreshSessions();
+    if (view === 'kanban') { if (typeof refreshDashboard === 'function') refreshDashboard(); }
     if (view === 'metrics' || (view === 'dashboard' && !isMobile)) {
       renderMetrics();
       if (window.julesSessionsCache) renderHistoryTable(window.julesSessionsCache);
