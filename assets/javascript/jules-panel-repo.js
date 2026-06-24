@@ -17,6 +17,7 @@ function initializeRepoSelector() {
 async function fetchJulesSources() {
     try {
         const julesSources = await window.julesApi.getSources();
+        window.julesSourcesCache = julesSources; // Populate the cache
         const githubRepos = await window.githubApi.getRepos();
 
         const mappedRepos = githubRepos.map(r => {

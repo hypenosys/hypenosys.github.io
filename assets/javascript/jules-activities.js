@@ -84,8 +84,16 @@ const JulesActivitiesModule = (() => {
       });
     }
 
+    const isAgent = act.originator === 'agent';
+    const actionBtn = isAgent ? `
+      <div class="activity-actions" style="margin-top: 8px; display: flex; gap: 8px;">
+        <button class="btn btn-ghost btn-sm" style="font-size: 9px; padding: 2px 8px;" onclick="window.sendToJulesFromActivity('${act.id}')">
+          <i class="fas fa-arrow-right"></i> → ENVIAR A JULES
+        </button>
+      </div>` : '';
+
     return `
-      <div class="jules-activity-entry jules-activity-entry--${act.originator || 'system'}">
+      <div class="jules-activity-entry jules-activity-entry--${act.originator || 'system'}" data-activity-id="${act.id}">
         <span class="activity-icon">${icon}</span>
         <div class="activity-body">
           <div class="activity-header">
@@ -94,6 +102,7 @@ const JulesActivitiesModule = (() => {
           </div>
           <div class="activity-content">${content}</div>
           ${extraHTML}
+          ${actionBtn}
         </div>
       </div>`;
   }
@@ -212,6 +221,21 @@ const JulesActivitiesModule = (() => {
     document.body.appendChild(t);
     setTimeout(() => t.remove(), 3000);
   }
+
+  window.sendToJulesFromActivity = (activityId) => {
+    const entry = document.querySelector(`.jules-activity-entry[data-activity-id="${activityId}"]`);
+    if (!entry) return;
+    const content = entry.querySelector('.activity-content')?.innerText;
+    if (!content) return;
+
+    const promptTextarea = document.querySelector('#session-prompt');
+    if (promptTextarea) {
+      promptTextarea.value = content;
+      // Switch view to Neural tab to show the pre-filled prompt
+      if (window.switchView) window.switchView('neural');
+      _showToast('Prompt cargado en Jules ⚡');
+    }
+  };
 
   return { startPolling, stopPolling, sendMessage };
 })();
