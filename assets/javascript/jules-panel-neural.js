@@ -2,6 +2,33 @@
    JULES PANEL NEURAL & CHAT MODULE
    ════════════════════════════════════════ */
 
+// Initialize V2 Messages from local persistence or empty array
+window.chatV2Messages = (function() {
+    try {
+        return JSON.parse(localStorage.getItem('hy_jules_panel_ai_messages') || '[]');
+    } catch (e) {
+        console.error("[JulesPanel Neural] Error loading local messages:", e);
+        return [];
+    }
+})();
+
+function saveLocalV2Messages() {
+    try {
+        localStorage.setItem('hy_jules_panel_ai_messages', JSON.stringify(window.chatV2Messages));
+    } catch (e) {
+        console.error("[JulesPanel Neural] Error saving local messages:", e);
+    }
+}
+
+window.loadV2Messages = function() {
+    try {
+        window.chatV2Messages = JSON.parse(localStorage.getItem('hy_jules_panel_ai_messages') || '[]');
+    } catch (e) {
+        console.error("[JulesPanel Neural] Error loading local messages:", e);
+        window.chatV2Messages = [];
+    }
+}
+
 // Mock logic for chat interactions
 window.sendNeuralMessage = async function() {
     const input = $('v2-chat-input');
@@ -76,6 +103,8 @@ function _renderLocalMessagesOnly() {
               '</button>' +
             '</div>' : '';
 
+        const renderedContent = isClaude && window.marked ? marked.parse(msg.content) : escapeHtml(msg.content);
+
         div.innerHTML =
             '<span class="activity-icon">' + icon + '</span>' +
             '<div class="activity-body">' +
@@ -83,7 +112,7 @@ function _renderLocalMessagesOnly() {
                 '<span class="activity-originator">' + (isClaude ? 'CLAUDE' : 'USUARIO') + '</span>' +
                 '<span class="activity-time">' + time + '</span>' +
               '</div>' +
-              '<div class="activity-content">' + escapeHtml(msg.content) + '</div>' +
+              '<div class="activity-content">' + renderedContent + '</div>' +
               actionBtn +
             '</div>';
 
@@ -175,17 +204,78 @@ window.sendChatV2Msg = async function() {
     if (window.currentSendMode === 'jules') {
         await window.sendNeuralMessage();
     } else {
-        // Claude mode: logic should be implemented in neural-chat-send.js
-        // but if we are in jules-panel we might need a bridge
-        if (window.sendMessage && typeof window.sendMessage === 'function') {
-            await window.sendMessage();
-        } else {
-            // Fallback for jules-panel
-            window.chatV2Messages.push({ role: 'user', content: msg });
-            input.value = '';
-            renderChatV2Messages();
-            addTel("USER", "Enviado a Claude (Simulado)", "info");
+        // AI/Claude mode for Jules Panel
+        input.value = '';
+        if (input.style) input.style.height = 'auto';
+
+        const userMsg = { role: 'user', content: msg, timestamp: Date.now() };
+        window.chatV2Messages.push(userMsg);
+        saveLocalV2Messages();
+        renderChatV2Messages();
+
+        const thinkingIndicator = $('v2-thinking-indicator');
+        if (thinkingIndicator) thinkingIndicator.classList.remove('hidden');
+
+        // Create placeholder for assistant message
+        const assistantMsg = { role: 'assistant', content: '', timestamp: Date.now() };
+        window.chatV2Messages.push(assistantMsg);
+        const assistantIdx = window.chatV2Messages.length - 1;
+
+        try {
+            const messages = window.chatV2Messages.slice(0, -1).map(function(m) { return { role: m.role, content: m.content }; });
+            await window.NeuralProviderClient.sendMessage({
+                messages: messages,
+                onToken: function(token, fullContent) {
+                    window.chatV2Messages[assistantIdx].content = fullContent;
+                    updateLocalAssistantMessage(assistantIdx, fullContent);
+                },
+                onDone: function(fullContent) {
+                    window.chatV2Messages[assistantIdx].content = fullContent;
+                    saveLocalV2Messages();
+                    if (thinkingIndicator) thinkingIndicator.classList.add('hidden');
+                },
+                onError: function(err) {
+                    console.error("[JulesPanel AI] Error:", err);
+                    if (thinkingIndicator) thinkingIndicator.classList.add('hidden');
+                    showToast(err.message, "red");
+
+                    // Remove the empty assistant placeholder on error if it has no content
+                    if (!window.chatV2Messages[assistantIdx].content) {
+                        window.chatV2Messages.splice(assistantIdx, 1);
+                        renderChatV2Messages();
+                    }
+                }
+            });
+        } catch (e) {
+            console.error("[JulesPanel AI] Unexpected error:", e);
+            if (thinkingIndicator) thinkingIndicator.classList.add('hidden');
+            showToast("Error inesperado: " + e.message, "red");
         }
+    }
+}
+
+function updateLocalAssistantMessage(idx, content) {
+    const container = $('v2-chat-messages');
+    if (!container) return;
+
+    const localId = 'local-' + idx;
+    let entry = container.querySelector('[data-id="' + localId + '"]');
+
+    if (!entry) {
+        renderChatV2Messages();
+        entry = container.querySelector('[data-id="' + localId + '"]');
+    }
+
+    if (entry) {
+        const contentEl = entry.querySelector('.activity-content');
+        if (contentEl) {
+            if (window.marked) {
+                contentEl.innerHTML = marked.parse(content);
+            } else {
+                contentEl.innerText = content;
+            }
+        }
+        container.scrollTop = container.scrollHeight;
     }
 }
 

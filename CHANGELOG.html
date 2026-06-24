@@ -65,6 +65,7 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-success">Fixed</h5>
             <ul>
+                <li><strong>Independencia del Jules Panel (Neural):</strong> El panel de control ahora funciona de forma totalmente independiente en el primer arranque. Se ha desacoplado de las variables globales del chat de Claude mediante un nuevo cliente de IA (<code>NeuralProviderClient</code>) que reutiliza la configuración de API existente y soporta streaming y persistencia local propia.</li>
                 <li><strong>Validación de Lanzamiento (Jules Panel):</strong> Corregido el bloqueo que impedía iniciar tareas si solo se seleccionaba "Revisar Cambios". Ahora es posible lanzar sesiones en modo revisión sin requerir una sesión automática previa.</li>
                 <li><strong>Payload de Sesión Jules:</strong> Eliminados campos no soportados (<code>autoMode</code>, <code>reviewChanges</code>) que causaban errores 400 en la API. El modo de revisión ahora se gestiona mediante instrucciones específicas en el prompt y el uso de <code>requirePlanApproval</code>.</li>
                 <li><strong>Validación de Ramas:</strong> Implementada normalización de nombres de ramas (eliminación de símbolos visuales y prefijos <code>refs/heads/</code>) para evitar avisos falsos de "RAMA NO COINCIDE".</li>
