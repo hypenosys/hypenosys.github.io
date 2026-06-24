@@ -121,6 +121,7 @@ permalink: /CHANGELOG.html
               <li><strong>Estabilidad de AuthManager:</strong> Corregido el error <code>TypeError: Cannot read properties of null (reading 'on')</code> en <code>auth.js</code> mediante la implementación de guardas defensivas y el uso explícito de <code>window.jQuery</code> para evitar conflictos de shadowing con el helper <code>$</code> en vistas como Jules Panel.</li>
               <li><strong>Estabilidad de Ejecución (Jules Panel):</strong> Implementada una guarda en la interfaz que deshabilita el botón "Iniciar Ejecución" mientras se cargan los repositorios, evitando el error <code>FAILED_PRECONDITION</code> causado por enviar placeholders vacíos.</li>
               <li><strong>Diagnóstico Neural Mejorado:</strong> Enriquecida la telemetría del sistema con logs detallados de origen (source) y rama (branch) antes de cada disparo a la API de Jules.</li>
+              <li><strong>Consolidación de API en Jules Panel:</strong> Resueltos errores de ejecución mediante la unificación de operaciones de GitHub en <code>window.githubApi</code> y la adición del método <code>listSessions</code> en <code>julesApi</code>. Se implementó una inicialización robusta basada en <code>Object.assign</code> para prevenir la sobrescritura de métodos entre scripts.</li>
             </ul>
           </div>
         </div>
