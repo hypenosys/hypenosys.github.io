@@ -27,23 +27,40 @@ window.onDrop = async function(ev, colId) {
     const card = document.querySelector('.kb-card[data-sid="' + sid + '"]');
     if (!card) return;
 
-    // Determine logical state from column
-    let newState = 'QUEUED';
-    if (colId === 'en_progreso') newState = 'EXECUTING';
-    else if (colId === 'listo') newState = 'COMPLETED';
+    // Mapping columns from HTML to logical Kanban columns
+    const colMap = {
+        'pending': 'pending',
+        'running': 'running',
+        'done':    'done',
+        'error':   'error'
+    };
 
-    // Optimistic UI
-    const targetCol = $('col-' + colId);
-    if(targetCol) targetCol.appendChild(card);
-    card.classList.remove('dragging');
-
-    try {
-        // Note: Jules API doesn't support direct state transition via move,
-        // this is mostly for UI/Archive organization in our dashboard.
-        addTel("SYSTEM", "Sesión #" + sid + " movida a " + colId, "info");
-    } catch(e) {
-        console.error("Drop failed:", e);
+    // Detect if dropped on a column header or body and find the column id
+    let targetColId = colId;
+    if (!colMap[targetColId]) {
+        // Fallback for older colIds or internal mapping
+        if (colId === 'en_progreso') targetColId = 'running';
+        else if (colId === 'listo') targetColId = 'done';
+        else if (colId === 'en_cola') targetColId = 'pending';
     }
+
+    // Persist override locally
+    const overrides = JSON.parse(localStorage.getItem('jules_kanban_overrides') || '{}');
+    overrides[sid] = targetColId;
+    localStorage.setItem('jules_kanban_overrides', JSON.stringify(overrides));
+
+    // Update UI
+    if (window.refreshKanban) window.refreshKanban();
+    if (window.refreshDashboard) {
+        // We only want to update counts, but refreshDashboard also re-fetches sessions.
+        // For immediate feedback we could just call updateKanbanCounts with cache.
+        if (window.julesSessionsCache) {
+             window.updateKanbanCounts(window.julesSessionsCache);
+        }
+    }
+
+    addTel("SYSTEM", "Sesión #" + sid + " movida localmente a " + targetColId, "info");
+    showToast("Estado actualizado localmente", "amber");
 }
 
 window.relaunchJules = function(sessionDataJson) {
@@ -90,14 +107,20 @@ window.relaunchJules = function(sessionDataJson) {
 
 function renderKanban(sessions) {
     const cols = {
-        'en_cola': [],
-        'en_progreso': [],
-        'listo': [],
+        'pending': [],
+        'running': [],
+        'done': [],
         'error': []
     };
 
     // Include archived sessions from local storage
     const archived = JSON.parse(localStorage.getItem('hy_neural_archive') || '{}');
+    const localOverrides = JSON.parse(localStorage.getItem('jules_kanban_overrides') || '{}');
+
+    // User filter
+    const currentUser = window.githubApi.user;
+    const login = currentUser ? currentUser.login.toLowerCase().trim() : null;
+
     const allSessions = [...sessions];
     Object.keys(archived).forEach(id => {
         if (!sessions.find(s => s.name.endsWith('/' + id))) {
@@ -105,21 +128,36 @@ function renderKanban(sessions) {
         }
     });
 
+    let hasOwnershipData = false;
     allSessions.forEach(s => {
         const sid = s.name.split('/').pop();
+
+        // Ownership check
+        const creator = (s.creator || s.metadata?.creator || s.user || '').toLowerCase().trim();
+        if (creator) hasOwnershipData = true;
+
+        if (login && creator && creator !== login) return;
+
         const isArchived = archived[sid];
+        const overrideCol = localOverrides[sid];
 
-        let targetCol = 'en_cola';
-        if (['COMPLETED'].includes(s.state)) targetCol = 'listo';
-        else if (['FAILED', 'ERROR', 'CANCELLED'].includes(s.state)) targetCol = 'error';
-        else if (['PLANNING', 'EXECUTING'].includes(s.state)) targetCol = 'en_progreso';
-
-        cols[targetCol].push({ ...s, isArchived });
+        let targetCol = overrideCol || window.normalizeJulesStatus(s.state);
+        cols[targetCol].push({ ...s, isArchived, isOverridden: !!overrideCol });
     });
 
+    if (!hasOwnershipData && allSessions.length > 0) {
+        console.warn("[JULES-KANBAN] No ownership data found in sessions. Showing all.");
+        // Optional: show a small notice in the UI
+    }
+
     Object.keys(cols).forEach(colId => {
-        const list = $('kb-' + (colId === 'en_cola' ? 'pending' : colId === 'en_progreso' ? 'running' : colId === 'listo' ? 'done' : 'error'));
+        const list = $('kb-' + colId);
         if (!list) return;
+
+        if (cols[colId].length === 0) {
+            list.innerHTML = '<div class="kb-empty">Sin tareas</div>';
+            return;
+        }
 
         list.innerHTML = cols[colId].map(s => {
             const sid = s.name.split('/').pop();
@@ -131,7 +169,10 @@ function renderKanban(sessions) {
                    (canDrag ? 'draggable="true" ondragstart="onDragStart(event, \'' + sid + '\')" ondragend="this.classList.remove(\'dragging\')"' : '') +
                    ' data-sid="' + sid + '" onclick="openDrawer(\'' + s.name + '\')">' +
                    '<div class="kb-card-header">' +
-                   '<div class="kb-card-id">#' + sid + (isArchived ? '<span class="archived-badge">Archived</span>' : '') + '</div>' +
+                   '<div class="kb-card-id">#' + sid +
+                   (isArchived ? '<span class="archived-badge">Archived</span>' : '') +
+                   (s.isOverridden ? '<span class="archived-badge" style="background:var(--amber); color:#000; margin-left:4px">Override</span>' : '') +
+                   '</div>' +
                    '<span class="sbadge ' + s.state.toLowerCase().replace(/_/g, '-') + '">' + s.state + '</span>' +
                    '</div>' +
                    '<div class="kb-card-task">' + escapeHtml(s.title || s.prompt) + '</div>' +

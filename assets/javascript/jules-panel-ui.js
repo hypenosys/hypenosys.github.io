@@ -118,6 +118,27 @@ window.escapeHtml = function(str) {
     .replace(/"/g,'&quot;');
 }
 
+window.normalizeJulesStatus = function(state) {
+    if (!state) return 'pending';
+    const s = String(state).toLowerCase().trim().replace(/_/g, '');
+
+    // Mapeos definidos por requerimiento
+    const map = {
+        'pending': ['pending', 'queued', 'created', 'scheduled', 'waiting', 'ready'],
+        'running': ['running', 'active', 'started', 'working', 'processing', 'inprogress', 'executing', 'planning'],
+        'done':    ['done', 'completed', 'complete', 'success', 'succeeded', 'finished'],
+        'error':   ['error', 'failed', 'blocked', 'cancelled', 'canceled', 'timeout', 'expired', 'rejected']
+    };
+
+    for (const [col, states] of Object.entries(map)) {
+        if (states.includes(s)) return col;
+    }
+
+    // Fallback para estados desconocidos
+    console.warn("[JULES-STATUS] Estado desconocido:", state);
+    return 'pending'; // Columna segura por defecto
+}
+
 window.getTimeAgo = function(dateStr) {
     const seconds = Math.floor((new Date() - new Date(dateStr)) / 1000);
     let interval = seconds / 31536000;

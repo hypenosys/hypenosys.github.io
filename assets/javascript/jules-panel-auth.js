@@ -22,25 +22,40 @@ window.showAuthCard = function(id) {
 
 window.initRealPanel = async function(user) {
     const token = getGitHubToken();
+
+    // Si no hay usuario ni token, directo a login
     if (!user && !token) {
         console.log("[JULES-AUTH] No user and no token. Showing login card.");
         showAuthCard("auth-card-login");
         return;
     }
 
-    // If we have a token but no user object yet, try to validate it once
+    // Si hay token pero no usuario, mostramos carga mientras validamos
     if (!user && token) {
         console.log("[JULES-AUTH] Token present but no user. Validating...");
+        showAuthCard("auth-card-loading");
         try {
             const res = await window.githubApi.validateToken();
             if (res.valid) {
                 user = res.user;
+            } else {
+                console.warn("[JULES-AUTH] Token validation returned invalid.");
+                // Si el token es inválido y no hay bypass, pedimos login
+                if (!window._julesBypass) {
+                    showAuthCard("auth-card-login");
+                    return;
+                }
             }
         } catch (e) {
             console.error("[JULES-AUTH] Pre-init validation failed:", e);
+            if (!window._julesBypass) {
+                showAuthCard("auth-card-error");
+                return;
+            }
         }
     }
 
+    // A este punto, o tenemos usuario, o estamos en bypass
     $("auth-overlay").classList.remove("show");
     $("app-root").classList.remove("locked");
 
