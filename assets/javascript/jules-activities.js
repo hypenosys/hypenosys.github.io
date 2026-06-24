@@ -51,8 +51,8 @@ const JulesActivitiesModule = (() => {
     let content = act.description || '';
     let extraHTML = '';
 
-    if (act.agentMessaged) content = act.agentMessaged.agentMessage || '';
-    if (act.userMessaged) content = act.userMessaged.userMessage || '';
+    if (act.agentMessaged) content = window.escapeHtml ? window.escapeHtml(act.agentMessaged.agentMessage || '') : (act.agentMessaged.agentMessage || '');
+    if (act.userMessaged) content = window.escapeHtml ? window.escapeHtml(act.userMessaged.userMessage || '') : (act.userMessaged.userMessage || '');
     if (act.progressUpdated) {
       const p = act.progressUpdated;
       content = `<strong>${p.title || ''}</strong>${p.description ? ' — ' + p.description : ''}`;
@@ -74,9 +74,11 @@ const JulesActivitiesModule = (() => {
           extraHTML += `<div class="jules-artifact jules-artifact--diff">📄 <em>${msg}</em></div>`;
         }
         if (artifact.bashOutput) {
+          const cmd = window.escapeHtml ? window.escapeHtml(artifact.bashOutput.command || '') : (artifact.bashOutput.command || '');
+          const out = window.escapeHtml ? window.escapeHtml(artifact.bashOutput.output || '') : (artifact.bashOutput.output || '');
           extraHTML += `<div class="jules-artifact jules-artifact--bash">
-            <code>$ ${artifact.bashOutput.command || ''}</code>
-            <pre>${artifact.bashOutput.output || ''}</pre>
+            <code>$ ${cmd}</code>
+            <pre>${out}</pre>
           </div>`;
         }
       });
@@ -108,8 +110,18 @@ const JulesActivitiesModule = (() => {
     newActivities.forEach(act => {
       _renderedIds.add(act.id);
       const div = document.createElement('div');
-      div.innerHTML = _activityToHTML(act);
-      container.appendChild(div.firstElementChild);
+      try {
+        const html = _activityToHTML(act);
+        div.innerHTML = html;
+        const el = div.firstElementChild;
+        if (el) {
+          container.appendChild(el);
+        } else {
+          console.error('[JulesActivities] Failed to parse activity HTML', html);
+        }
+      } catch (e) {
+        console.error('[JulesActivities] Error rendering activity', e, act);
+      }
     });
 
     if (newActivities.length > 0) {

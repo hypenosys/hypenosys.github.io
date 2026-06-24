@@ -160,6 +160,26 @@ window.toggleSidebar = function() {
     localStorage.setItem('hy_sidebar_collapsed', isCollapsed);
 }
 
+window.toggleNavGroup = function(groupId) {
+    const group = $(groupId);
+    if (!group) return;
+    const isCollapsed = group.classList.toggle('collapsed');
+    const collapsedGroups = JSON.parse(localStorage.getItem('hy_nav_groups_collapsed') || '{}');
+    collapsedGroups[groupId] = isCollapsed;
+    localStorage.setItem('hy_nav_groups_collapsed', JSON.stringify(collapsedGroups));
+}
+
+// Restore nav group states on load
+document.addEventListener('DOMContentLoaded', () => {
+    const collapsedGroups = JSON.parse(localStorage.getItem('hy_nav_groups_collapsed') || '{}');
+    Object.keys(collapsedGroups).forEach(id => {
+        if (collapsedGroups[id]) {
+            const el = $(id);
+            if (el) el.classList.add('collapsed');
+        }
+    });
+});
+
 window.switchView = async function(view, navEl) {
     const isMobile = window.innerWidth < 768;
 
@@ -234,3 +254,74 @@ window.closeClaudeChat = function(){ $('claude-modal').classList.remove('open');
 window.openApiModal = function(){ window.authManager.showApiConfigModal(); }
 window.closeApiModal = function(){ $('#modalApiConfig').modal('hide'); }
 window.openDocs = function(){ alert("📚 Jules Agent V2 - Premium Neural Interface"); }
+
+window.toggleNotifPanel = function() {
+    const panel = $('notif-panel');
+    if (!panel) return;
+    const isOpen = panel.classList.toggle('open');
+    if (isOpen) {
+        renderNotifList();
+        // Mark all as read when opening
+        window.JulesPanelState.unreadCount = 0;
+        updateNotifBadge();
+    }
+}
+
+function renderNotifList() {
+    const list = $('notif-list');
+    if (!list) return;
+
+    const notifs = JSON.parse(localStorage.getItem('hy_notifications') || '[]');
+    if (notifs.length === 0) {
+        list.innerHTML = '<div class="notif-empty">Sin notificaciones nuevas</div>';
+        return;
+    }
+
+    list.innerHTML = notifs.map(n => {
+        const time = getTimeAgo(n.timestamp);
+        const icon = n.type === 'success' ? 'check-circle' : n.type === 'error' ? 'exclamation-circle' : 'info-circle';
+        return '<div class="notif-item' + (n.unread ? ' unread' : '') + '">' +
+               '<div class="notif-icon ' + n.type + '"><i class="fas fa-' + icon + '"></i></div>' +
+               '<div class="notif-content">' +
+               '<div class="notif-title">' + escapeHtml(n.title) + '</div>' +
+               '<div class="notif-msg">' + escapeHtml(n.message) + '</div>' +
+               '<div class="notif-time">' + time + '</div>' +
+               '</div>' +
+               '</div>';
+    }).join('');
+}
+
+window.addNotification = function(title, message, type = 'info') {
+    const notifs = JSON.parse(localStorage.getItem('hy_notifications') || '[]');
+    const newNotif = {
+        id: Date.now(),
+        title,
+        message,
+        type,
+        timestamp: new Date().toISOString(),
+        unread: true
+    };
+    notifs.unshift(newNotif);
+    // Keep only last 50
+    localStorage.setItem('hy_notifications', JSON.stringify(notifs.slice(0, 50)));
+
+    window.JulesPanelState.unreadCount++;
+    updateNotifBadge();
+    showToast(title, type);
+}
+
+function updateNotifBadge() {
+    const count = window.JulesPanelState.unreadCount;
+    const pips = document.querySelectorAll('#notif-pip, #mob-notif-pip');
+    pips.forEach(pip => {
+        pip.textContent = count;
+        pip.classList.toggle('hidden', count === 0);
+    });
+}
+
+window.clearNotifs = function() {
+    localStorage.setItem('hy_notifications', '[]');
+    window.JulesPanelState.unreadCount = 0;
+    updateNotifBadge();
+    renderNotifList();
+}

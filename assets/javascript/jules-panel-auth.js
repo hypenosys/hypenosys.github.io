@@ -573,3 +573,22 @@ window.stopNeuralPolling = function() {
         window.neuralPollInterval = null;
     }
 }
+
+window.checkBranchWarning = function() {
+    const banner = $('branch-warning-banner');
+    if (!banner) return;
+
+    const task = JSON.parse(localStorage.getItem('hy_neural_task_context') || '{}');
+    const expectedBranch = task.rama || task.branch;
+    const currentBranch = window.JulesPanelState.activeBranch;
+
+    if (expectedBranch && currentBranch && expectedBranch !== currentBranch) {
+        banner.classList.remove('hidden');
+        banner.style.display = 'flex';
+        const warnText = $('branch-warning-text');
+        if (warnText) warnText.textContent = 'La rama actual (' + currentBranch + ') no es la esperada (' + expectedBranch + ') para esta tarea.';
+    } else {
+        banner.classList.add('hidden');
+        banner.style.display = 'none';
+    }
+}

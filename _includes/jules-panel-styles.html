@@ -120,6 +120,8 @@ body{
   z-index:40;
   transition: width 200ms ease;
   position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 .sidebar.collapsed {
   width: 64px;
@@ -196,7 +198,22 @@ body{
 }
 .sb-sub{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.15em;font-weight:600;margin-top:5px}
 .nav-group{padding:16px 12px 4px}
-.nav-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;padding:0 10px 7px}
+.nav-label{
+  font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;
+  padding:0 10px 7px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;
+  user-select:none;
+}
+.nav-label i {
+  transition: transform var(--t-fast);
+  font-size: 10px;
+}
+.nav-group.collapsed .nav-label i {
+  transform: rotate(-90deg);
+}
+.nav-group.collapsed > div:not(.nav-label),
+.nav-group.collapsed > a {
+  display: none !important;
+}
 .nav-link{
   display:flex;align-items:center;gap:11px;padding:9px 12px;
   border-radius:var(--r-md);color:var(--text2);font-size:13px;font-weight:500;
@@ -268,6 +285,12 @@ body{
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.sb-history-compact .repo-item span:last-child {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
 }
 .group-count {
   font-family: var(--font-mono);
@@ -868,6 +891,17 @@ body{
 .notif-time{font-family:var(--font-mono);font-size:10px;color:var(--text3);margin-top:4px}
 .notif-empty{padding:24px;text-align:center;color:var(--text3);font-size:13px}
 
+.tel-box, .activity-log, .chat-container-v2, #v2-chat-messages {
+  overflow-y: auto;
+  overflow-x: hidden;
+  word-break: break-word;
+  contain: content;
+}
+
+.jules-activity-entry, .tel-line {
+  max-width: 100%;
+}
+
 /* ─── TERMINAL DRAWER ─── */
 .drawer-overlay{
   position:fixed;top:0;left:0;width:100vw;height:100vh;
@@ -1039,11 +1073,53 @@ body{
   .dash-grid { grid-template-columns: 1fr; padding: 10px 16px; }
   .kanban-board { grid-template-columns: 1fr; }
   .metrics-grid { grid-template-columns: 1fr; }
+  .breadcrumb { display: none !important; }
 }
 
 @media (max-width: 640px) {
   .stats-row { grid-template-columns: 1fr; }
   .stat-num { font-size: 28px; }
+}
+
+/* DUAL SEND SWITCH */
+.dual-send-switch {
+  display: flex;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: var(--r-md);
+  padding: 3px;
+  border: 1px solid var(--border);
+  gap: 2px;
+}
+.dual-send-option {
+  padding: 6px 12px;
+  border-radius: var(--r-sm);
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--text3);
+  cursor: pointer;
+  transition: all var(--t-fast);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.dual-send-option i {
+  font-size: 11px;
+}
+.dual-send-option:hover {
+  color: var(--text2);
+  background: rgba(255, 255, 255, 0.05);
+}
+.dual-send-option.active[data-mode="claude"] {
+  background: var(--claude-bg);
+  color: var(--claude-text);
+  box-shadow: 0 0 12px rgba(189, 147, 249, 0.2);
+}
+.dual-send-option.active[data-mode="jules"] {
+  background: var(--surface-active);
+  color: var(--accent2);
+  box-shadow: 0 0 12px rgba(124, 58, 237, 0.2);
 }
 
 /* CLAUDE CHAT MODAL */
