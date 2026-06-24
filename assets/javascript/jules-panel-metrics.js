@@ -18,7 +18,7 @@ async function renderMetrics() {
         if($('m-total')) $('m-total').innerText = total;
         if($('m-repos')) $('m-repos').innerText = (window.julesSourcesCache || []).length;
 
-        const branches = new Set(sessions.map(s => s.sourceContext?.githubRepoContext?.startingBranch).filter(Boolean));
+        const branches = new Set(sessions.map(s => (s.sourceContext && s.sourceContext.githubRepoContext && s.sourceContext.githubRepoContext.startingBranch)).filter(Boolean));
         if($('m-branches')) $('m-branches').innerText = branches.size;
 
         // Update charts if present
@@ -28,11 +28,10 @@ async function renderMetrics() {
             $("donut-error").setAttribute("stroke-dashoffset", "-" + doneP);
         }
 
-        // Remove skeletons
-        const metricsCard = document.querySelector('.card--metrics');
-        if (metricsCard) {
-            metricsCard.querySelectorAll('.skeleton').forEach(s => s.classList.remove('skeleton', 'skeleton--loading'));
-        }
+        // Remove skeletons from stat tiles
+        document.querySelectorAll('.stat-num.skeleton').forEach(function(el) {
+            el.classList.remove('skeleton', 'skeleton-stat');
+        });
 
     } catch (e) {
         console.error("Error rendering metrics:", e);
