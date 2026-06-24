@@ -1,6 +1,6 @@
 {
   "schema_version": "2.0.0",
-  "last_updated": "2026-06-23T20:42:01.267Z",
+  "last_updated": "2026-06-24T14:00:07.759Z",
   "members": {
     "Axel": {
       "github_username": "Axlfc",
@@ -86,8 +86,8 @@
         "volatilidad": 0
       },
       "ai_config": {
-        "provider": "custom",
-        "model": "nemotron-3-nano-omni-30b-a3b-reasoning"
+        "provider": "ollama",
+        "model": "qwen3:14b"
       }
     },
     "Javi": {
@@ -189,6 +189,11 @@
     }
   },
   "_audit_log": [
+    {
+      "action": "chore: actualizar config AI de Alex",
+      "user": "TopperH4rley",
+      "timestamp": "2026-06-24T14:00:07.759Z"
+    },
     {
       "action": "chore: actualizar config AI de Axel",
       "user": "Axlfc",
