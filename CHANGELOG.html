@@ -63,6 +63,12 @@ permalink: /CHANGELOG.html
         <h2 class="text-purple border-bottom border-purple pb-2 mb-4">[Unreleased]</h2>
         <div class="card mb-3">
           <div class="card-body">
+            <h5 class="text-success">Fixed</h5>
+            <ul>
+                <li><strong>Autenticación Unificada (Jules Panel):</strong> Corregido bug donde usuarios válidos aparecían como "Invitado". Se eliminó la dependencia de un allowlist hardcodeado en <code>github-api.js</code>, desacoplando la autenticación (validación del token) de la autorización (membresía de equipo).</li>
+                <li><strong>Single Source of Truth:</strong> Refactorizado <code>AuthManager</code> y el flujo de inicialización del panel para consumir un estado de usuario centralizado, eliminando condiciones de carrera y discrepancias entre módulos.</li>
+                <li><strong>Configuración API:</strong> Habilitado el acceso al modal de API Key para cualquier usuario autenticado, asegurando que el estado de login sea consistente en toda la interfaz.</li>
+            </ul>
             <h5 class="text-white">Added</h5>
             <ul>
                 <li><strong>Rediseño de Sidebar Neural:</strong> Implementado sidebar colapsable (48px/260px) con transiciones suaves, estado persistente en <code>localStorage</code> y tooltips contextuales para navegación rápida.</li>

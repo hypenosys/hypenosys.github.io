@@ -34,12 +34,30 @@ async function validateToken() {
         'Accept': 'application/vnd.github.v3+json'
       }
     });
-    if (!resp.ok) return { valid: false, user: null };
+
+    if (!resp.ok) {
+        if (resp.status === 401) {
+            console.warn('[GITHUB-API] Token expired or invalid (401)');
+        }
+        return { valid: false, user: null, status: resp.status };
+    }
+
     const user = await resp.json();
+
+    // Auth check: Authentication is successful if GitHub returns a valid user
+    if (!user || !user.login) {
+        return { valid: false, user: null };
+    }
+
+    // Permission layer: Decoupled from authentication
     const ALLOWED = ['axlfc', 'mitxel2022', 'topperh4rley', 'dkdidac-design', 'javi26031994-a11y'];
-    return { valid: ALLOWED.includes(user.login.toLowerCase()), user };
+    user.isTeamMember = ALLOWED.includes(user.login.toLowerCase());
+
+    console.log(`[GITHUB-API] Authenticated as ${user.login} (Team: ${user.isTeamMember})`);
+    return { valid: true, user };
   } catch (err) {
-    return { valid: false, user: null };
+    console.error('[GITHUB-API] Validation error:', err);
+    return { valid: false, user: null, error: err.message };
   }
 }
 
@@ -630,9 +648,16 @@ async function validateTokenAndStore() {
 }
 
 // ─── PUBLIC API ───────────────────────────────────────────────
-window.githubApi = Object.assign(window.githubApi || {}, {
+window.githubApi = window.githubApi || {};
+Object.defineProperty(window.githubApi, 'user', {
+  get: function() { return _currentUser; },
+  set: function(val) { _currentUser = val; },
+  enumerable: true,
+  configurable: true
+});
+
+window.githubApi = Object.assign(window.githubApi, {
   // Auth methods (compatibilidad con auth-manager.js)
-  get user() { return _currentUser; },
   setToken(token, rememberMe = false) {
     if (!token) return;
     const cleanToken = token.trim();

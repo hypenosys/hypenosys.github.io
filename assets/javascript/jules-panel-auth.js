@@ -21,14 +21,35 @@ window.showAuthCard = function(id) {
 }
 
 window.initRealPanel = async function(user) {
-    if (!user && !getGitHubToken()) { showAuthCard("auth-card-login"); return; }
+    const token = getGitHubToken();
+    if (!user && !token) {
+        console.log("[JULES-AUTH] No user and no token. Showing login card.");
+        showAuthCard("auth-card-login");
+        return;
+    }
+
+    // If we have a token but no user object yet, try to validate it once
+    if (!user && token) {
+        console.log("[JULES-AUTH] Token present but no user. Validating...");
+        try {
+            const res = await window.githubApi.validateToken();
+            if (res.valid) {
+                user = res.user;
+            }
+        } catch (e) {
+            console.error("[JULES-AUTH] Pre-init validation failed:", e);
+        }
+    }
+
     $("auth-overlay").classList.remove("show");
     $("app-root").classList.remove("locked");
 
-    if (user) {
+    if (user && user.login) {
+        console.log("[JULES-AUTH] Initializing as user:", user.login);
         updateUserUI(user);
         addTel("SYSTEM", "Iniciado como " + user.login, "success");
     } else {
+        console.warn("[JULES-AUTH] Initializing as GUEST (no valid user resolved)");
         addTel("SYSTEM", "Iniciado como Invitado", "success");
     }
 
@@ -488,10 +509,11 @@ window.launchSession = async function() {
         localStorage.setItem('hy_neural_sessions', JSON.stringify(sessions));
 
         if (window.JulesPanelState.linkedTaskId) {
+            const currentUser = window.githubApi.user || user;
             await window.taskOps.updateTask(window.JulesPanelState.linkedTaskId, {
                 jules_session: {
                     session_id: sid,
-                    initiated_by: (window.githubApi.user && window.githubApi.user.login) || 'Invitado',
+                    initiated_by: (currentUser && currentUser.login) || 'Invitado',
                     status: 'PLANNING',
                     updated_at: new Date().toISOString()
                 }

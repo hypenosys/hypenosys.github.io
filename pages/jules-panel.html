@@ -937,10 +937,40 @@ permalink: /jules-panel/
 <script>
     async function init() {
         let arrancado = false;
-        window._bootJules = (user) => { if (arrancado) return; arrancado = true; initRealPanel(user); };
-        document.addEventListener("authReady", (e) => window._bootJules(e.detail?.user));
-        // Fix: Idempotent failsafe to avoid AuthManager collision (auth.js:164)
-        setTimeout(() => { if (!arrancado && !window.authManager) { if (getGitHubToken()) window._bootJules(window.githubApi?.user); else showAuthCard("auth-card-error"); } }, 5000);
+        window._bootJules = (user) => {
+            if (arrancado) {
+                console.log("[JULES-INIT] Already started, ignoring boot call.");
+                return;
+            }
+            arrancado = true;
+            initRealPanel(user);
+        };
+
+        // Listen for AuthManager readiness
+        document.addEventListener("authReady", (e) => {
+            const user = e.detail?.user;
+            console.log("[JULES-INIT] authReady received. User:", user?.login || 'guest');
+            window._bootJules(user);
+        });
+
+        // Failsafe: If AuthManager doesn't fire after 3 seconds, try to boot with what we have
+        setTimeout(() => {
+            if (!arrancado) {
+                console.log("[JULES-INIT] Failsafe triggered. Checking fallback state...");
+                const token = getGitHubToken();
+                const apiUser = window.githubApi?.user;
+
+                if (apiUser) {
+                    window._bootJules(apiUser);
+                } else if (token) {
+                    // We have a token but githubApi.user is not yet populated.
+                    // initRealPanel will handle the validation.
+                    window._bootJules(null);
+                } else {
+                    showAuthCard("auth-card-login");
+                }
+            }
+        }, 3000);
 
         document.querySelectorAll('.opt-pill').forEach(pill => {
             pill.onclick = () => {
