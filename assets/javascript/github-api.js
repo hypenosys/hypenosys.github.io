@@ -630,7 +630,7 @@ async function validateTokenAndStore() {
 }
 
 // ─── PUBLIC API ───────────────────────────────────────────────
-window.githubApi = {
+window.githubApi = Object.assign(window.githubApi || {}, {
   // Auth methods (compatibilidad con auth-manager.js)
   get user() { return _currentUser; },
   setToken(token, rememberMe = false) {
@@ -761,7 +761,7 @@ window.githubApi = {
   totalMonthlyExpenses,
   cumulativeProfitLoss,
   salesNeededBreakEven
-};
+});
 
 /**
  * LEGACY GitHubAPI class for backward compatibility with dashboard.md

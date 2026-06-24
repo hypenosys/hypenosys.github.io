@@ -100,6 +100,15 @@ class JulesAPI {
         return await julesApiCall('GET', url);
     }
 
+    /**
+     * Alias for getSessions that returns only the sessions array.
+     * Expected by jules-panel-sessions.js
+     */
+    async listSessions(pageSize = 100) {
+        const data = await this.getSessions(pageSize);
+        return data.sessions || [];
+    }
+
     async createSession(data) {
         const res = await julesApiCall('POST', '/sessions', data);
         if (res && res.name && window.JulesActivitiesModule) {

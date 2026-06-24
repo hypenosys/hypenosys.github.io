@@ -77,6 +77,53 @@
     // Export to window
     window.githubOps = githubOps;
 
+    // Extend window.githubApi if it exists, otherwise initialize it
+    window.githubApi = window.githubApi || {};
+    window.githubApi.getRepos = async () => {
+        const repos = await githubOps.fetchRepositories();
+        // Ensure the panel has the expected structure
+        return repos.map(r => ({
+            ...r,
+            owner: r.full_name.split('/')[0]
+        }));
+    };
+
+    window.githubApi.getBranches = async (repoFullName) => {
+        const parts = repoFullName.split('/');
+        const repo = parts.pop();
+        const owner = parts.length > 0 ? parts[0] : OPS_ORG;
+
+        const headers = githubOps.getHeaders();
+        const response = await fetch(`${GITHUB_OPS_BASE}/repos/${owner}/${repo}/branches?per_page=100`, {
+            headers
+        });
+
+        if (!response.ok) {
+            const error = await response.json().catch(() => ({ message: 'Unknown error' }));
+            throw new Error(`GitHub API Error: ${response.status} - ${error.message}`);
+        }
+
+        return await response.json();
+    };
+
+    window.githubApi.getRepo = async (repoFullName) => {
+        const parts = repoFullName.split('/');
+        const repo = parts.pop();
+        const owner = parts.length > 0 ? parts[0] : OPS_ORG;
+
+        const headers = githubOps.getHeaders();
+        const response = await fetch(`${GITHUB_OPS_BASE}/repos/${owner}/${repo}`, {
+            headers
+        });
+
+        if (!response.ok) {
+            const error = await response.json().catch(() => ({ message: 'Unknown error' }));
+            throw new Error(`GitHub API Error: ${response.status} - ${error.message}`);
+        }
+
+        return await response.json();
+    };
+
     /**
      * ATOMIC TASK MANAGEMENT (Bloque 2)
      */
