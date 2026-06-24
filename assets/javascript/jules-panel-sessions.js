@@ -25,8 +25,8 @@ function renderHistoryTable(sessions) {
 
     tbody.innerHTML = sessions.map(s => {
         const sid = s.name.split('/').pop();
-        const repo = s.sourceContext?.source?.split('/').pop() || '---';
-        const branch = s.sourceContext?.githubRepoContext?.startingBranch || '---';
+        const repo = (s.sourceContext && s.sourceContext.source && s.sourceContext.source.split('/').pop()) || '---';
+        const branch = (s.sourceContext && s.sourceContext.githubRepoContext && s.sourceContext.githubRepoContext.startingBranch) || '---';
         const stateClass = s.state.toLowerCase().replace(/_/g, '-');
         const duration = '---'; // Need actual duration logic if available
         const taskTitle = s.title || s.prompt || 'Sin título';
@@ -249,7 +249,7 @@ window.exportSessionToMarkdown = function(session, activities) {
         else if (act.progressUpdated) activityType = 'Progreso: ' + act.progressUpdated.title;
         else if (act.sessionCompleted) activityType = 'Completado';
         else if (act.sessionFailed) activityType = 'Fallido';
-        else if (act.artifactGenerated) activityType = 'Artefacto: ' + (act.artifactGenerated.artifact?.name || '---');
+        else if (act.artifactGenerated) activityType = 'Artefacto: ' + ((act.artifactGenerated.artifact && act.artifactGenerated.artifact.name) || '---');
 
         const date = new Date(act.createTime).toLocaleString();
         const separator = "\n--- Actividad: " + activityType + " ---\n";
