@@ -21,7 +21,7 @@ async function julesApiCall(method, endpoint, body = null, customKey = null) {
     const timeout = setTimeout(() => controller.abort(), 15000);
 
     try {
-        const res = await fetch(`${JULES_BASE}${endpoint}`, {
+        const res = await fetch(JULES_BASE + endpoint, {
             method,
             headers: {
                 'x-goog-api-key': key,
@@ -46,8 +46,8 @@ async function julesApiCall(method, endpoint, body = null, customKey = null) {
             throw new Error('RATE_LIMIT');
         }
         if (!res.ok) {
-            const error = new Error(data?.error?.message || `HTTP ${res.status}`);
-            error.fullDetails = data?.error || data;
+            const error = new Error((data && data.error && data.error.message) || ("HTTP " + res.status));
+            error.fullDetails = (data && data.error) || data;
             error.httpStatus = res.status;
             throw error;
         }
@@ -67,7 +67,7 @@ async function julesApiCall(method, endpoint, body = null, customKey = null) {
 async function loadAllSources() {
     let all = [], token = null;
     do {
-        const url = `/sources?pageSize=100${token ? `&pageToken=${token}` : ''}`;
+        const url = "/sources?pageSize=100" + (token ? ("&pageToken=" + token) : "");
         const data = await julesApiCall('GET', url);
         all = all.concat(data.sources || []);
         token = data.nextPageToken || null;
@@ -96,7 +96,7 @@ class JulesAPI {
 
     // Sessions
     async getSessions(pageSize = 30, pageToken = null) {
-        const url = `/sessions?pageSize=${pageSize}${pageToken ? `&pageToken=${pageToken}` : ''}`;
+        const url = "/sessions?pageSize=" + pageSize + (pageToken ? ("&pageToken=" + pageToken) : "");
         return await julesApiCall('GET', url);
     }
 
@@ -119,28 +119,28 @@ class JulesAPI {
     }
 
     async getSession(sessionId) {
-        const path = sessionId.startsWith('/') ? sessionId : `/${sessionId}`;
+        var path = sessionId.startsWith('/') ? sessionId : ("/" + sessionId);
         return await julesApiCall('GET', path);
     }
 
     async deleteSession(sessionId) {
-        const path = sessionId.startsWith('/') ? sessionId : `/${sessionId}`;
+        var path = sessionId.startsWith('/') ? sessionId : ("/" + sessionId);
         return await julesApiCall('DELETE', path);
     }
 
     async approvePlan(sessionId) {
-        const path = sessionId.startsWith('/') ? sessionId : `/${sessionId}`;
-        return await julesApiCall('POST', `${path}:approvePlan`);
+        var path = sessionId.startsWith('/') ? sessionId : ("/" + sessionId);
+        return await julesApiCall('POST', path + ":approvePlan");
     }
 
     async sendMessage(sessionId, message) {
-        const path = sessionId.startsWith('/') ? sessionId : `/${sessionId}`;
-        return await julesApiCall('POST', `${path}:sendMessage`, { prompt: message });
+        var path = sessionId.startsWith('/') ? sessionId : ("/" + sessionId);
+        return await julesApiCall('POST', path + ":sendMessage", { prompt: message });
     }
 
     async getActivities(sessionId, pageSize = 30, pageToken = null) {
-        const path = sessionId.startsWith('/') ? sessionId : `/${sessionId}`;
-        const url = `${path}/activities?pageSize=${pageSize}${pageToken ? `&pageToken=${pageToken}` : ''}`;
+        var path = sessionId.startsWith('/') ? sessionId : ("/" + sessionId);
+        var url = path + "/activities?pageSize=" + pageSize + (pageToken ? ("&pageToken=" + pageToken) : "");
         return await julesApiCall('GET', url);
     }
 }
@@ -187,7 +187,7 @@ function parseSourceName(sourceName) {
 async function loadBranchesForRepo(sourceName, sourceObject) {
   let owner, repo;
 
-  if (sourceObject?.githubRepo) {
+  if (sourceObject && sourceObject.githubRepo) {
     owner = sourceObject.githubRepo.owner;
     repo  = sourceObject.githubRepo.repo;
   } else {
@@ -200,7 +200,7 @@ async function loadBranchesForRepo(sourceName, sourceObject) {
   // Estrategia 1: GitHub API pública (repos públicos, sin auth)
   try {
     const res = await fetch(
-      `https://api.github.com/repos/${owner}/${repo}/branches?per_page=100`,
+      "https://api.github.com/repos/" + owner + "/" + repo + "/branches?per_page=100",
       {
         headers: {
           'Accept': 'application/vnd.github+json',
@@ -220,11 +220,11 @@ async function loadBranchesForRepo(sourceName, sourceObject) {
   try {
     const sessions = await julesApiCall('GET', '/sessions?pageSize=50');
     const matchingSessions = (sessions.sessions || []).filter(s =>
-      s.sourceContext?.source === sourceName
+      s.sourceContext && s.sourceContext.source === sourceName
     );
     const branches = [...new Set(
       matchingSessions
-        .map(s => s.sourceContext?.githubRepoContext?.startingBranch)
+        .map(function(s) { return s.sourceContext && s.sourceContext.githubRepoContext && s.sourceContext.githubRepoContext.startingBranch; })
         .filter(Boolean)
     )];
     if (branches.length > 0) return branches;
