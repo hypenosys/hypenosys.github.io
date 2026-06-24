@@ -1,0 +1,350 @@
+---
+layout: default
+title: "🎮 Unreal Tutorial — Hypenosys Learning"
+permalink: /unreal-tutorial/
+---
+
+<style>
+    :root {
+        --dracula-bg: #282a36;
+        --dracula-fg: #f8f8f2;
+        --dracula-purple: #bd93f9;
+        --dracula-green: #50fa7b;
+        --dracula-red: #ff5555;
+        --dracula-cyan: #8be9fd;
+        --dracula-yellow: #f1fa8c;
+        --dracula-comment: #6272a4;
+    }
+
+    .unreal-hero {
+        background: linear-gradient(135deg, #1a1a1a 0%, #282a36 100%);
+        border: 1px solid var(--dracula-purple);
+        border-radius: 12px;
+        padding: 2.5rem;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .unreal-hero::after {
+        content: 'UE5';
+        position: absolute;
+        bottom: -20px;
+        right: 10px;
+        font-size: 120px;
+        font-weight: 900;
+        color: rgba(189, 147, 249, 0.05);
+        pointer-events: none;
+    }
+
+    .section-card {
+        background: #1e1f29;
+        border: 1px solid #343746;
+        border-radius: 8px;
+        padding: 1.5rem;
+        height: 100%;
+        transition: transform 0.2s;
+    }
+
+    .section-card:hover {
+        border-color: var(--dracula-purple);
+    }
+
+    .step-badge {
+        background: var(--dracula-purple);
+        color: #000;
+        font-weight: bold;
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 10px;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+        display: inline-block;
+    }
+
+    /* Kanban Styles */
+    .unreal-kanban-container {
+        background: #111114;
+        border-radius: 12px;
+        padding: 2rem;
+        border: 1px solid #2a2a35;
+    }
+
+    .kanban-col {
+        background: #1a1a1d;
+        border-radius: 8px;
+        padding: 1rem;
+        min-height: 500px;
+    }
+
+    .kanban-header {
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 1px;
+        color: var(--dracula-comment);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 8px;
+    }
+
+    .unreal-task-card {
+        background: var(--dracula-bg);
+        border: 1px solid #343746;
+        border-radius: 6px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        cursor: grab;
+        transition: all 0.2s;
+    }
+
+    .unreal-task-card:active { cursor: grabbing; }
+    .unreal-task-card:hover { border-color: var(--dracula-cyan); }
+
+    .task-id {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10px;
+        color: var(--dracula-comment);
+    }
+
+    .task-title {
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--dracula-fg);
+        margin: 8px 0;
+    }
+
+    .task-meta {
+        font-size: 11px;
+        color: var(--dracula-comment);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .btn-unreal {
+        background: var(--dracula-purple);
+        color: #000;
+        font-weight: 700;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        font-size: 13px;
+        transition: all 0.2s;
+    }
+
+    .btn-unreal:hover {
+        background: #cba6ff;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(189, 147, 249, 0.3);
+    }
+
+    .practice-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+    }
+
+    .nav-tabs-custom {
+        border-bottom: 1px solid #343746;
+        margin-bottom: 2rem;
+    }
+
+    .nav-tabs-custom .nav-link {
+        color: var(--dracula-comment);
+        border: none;
+        padding: 1rem 1.5rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 12px;
+    }
+
+    .nav-tabs-custom .nav-link.active {
+        background: transparent;
+        color: var(--dracula-purple);
+        border-bottom: 2px solid var(--dracula-purple);
+    }
+
+</style>
+
+<div class="container mt-5">
+    <div class="unreal-hero">
+        <h1 class="display-4 text-purple font-weight-bold">Unreal Engine 5 Fundamentals</h1>
+        <p class="lead text-muted">Programa de capacitación transversal: C++ & Blueprints</p>
+        <div class="d-flex gap-3 mt-4">
+            <span class="badge badge-dark p-2 px-3 border border-secondary">Nivel: Iniciación / Intermedio</span>
+            <span class="badge badge-dark p-2 px-3 border border-secondary">Enfoque: Práctico</span>
+        </div>
+    </div>
+
+    <ul class="nav nav-tabs nav-tabs-custom" id="unrealTabs" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="content-tab" data-toggle="tab" href="#content" role="tab"><i class="fas fa-book-open mr-2"></i> Contenido Didáctico</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="kanban-tab" data-toggle="tab" href="#kanban" role="tab"><i class="fas fa-chalkboard-teacher mr-2"></i> Prácticas (Kanban)</a>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="unrealTabContent">
+        <!-- Tab: Didactic Content -->
+        <div class="tab-pane fade show active" id="content" role="tabpanel">
+
+            <div class="row mb-5">
+                <div class="col-md-12">
+                    <h3 class="text-cyan mb-4"><i class="fas fa-info-circle mr-2"></i> 1. Análisis de Fundamentos</h3>
+                    <div class="practice-grid">
+                        <div class="section-card">
+                            <span class="step-badge">Core Interface</span>
+                            <ul class="list-unstyled text-muted small">
+                                <li class="mb-2"><i class="fas fa-check text-green mr-2"></i> <strong>World Outliner:</strong> Jerarquía de la escena.</li>
+                                <li class="mb-2"><i class="fas fa-check text-green mr-2"></i> <strong>Details:</strong> Configuración de propiedades.</li>
+                                <li class="mb-2"><i class="fas fa-check text-green mr-2"></i> <strong>Content Browser:</strong> Gestión de assets.</li>
+                                <li class="mb-2"><i class="fas fa-check text-green mr-2"></i> <strong>Viewport:</strong> Navegación y transformaciones.</li>
+                            </ul>
+                        </div>
+                        <div class="section-card">
+                            <span class="step-badge">Programación</span>
+                            <h5 class="text-white mb-3">Blueprints & C++</h5>
+                            <p class="small text-muted">Dominio transversal de lógica: Variables, Eventos (BeginPlay, Tick) y control de flujo. Implementación de Clases en C++ vs Logic Graphs en Blueprints.</p>
+                        </div>
+                        <div class="section-card">
+                            <span class="step-badge">Assets</span>
+                            <h5 class="text-white mb-3">Pipeline de Importación</h5>
+                            <p class="small text-muted">Estrategia de carpetas, asignación de materiales y gestión de colisiones básicas.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-5">
+                <div class="col-md-12">
+                    <h3 class="text-purple mb-4"><i class="fas fa-graduation-cap mr-2"></i> 2. Módulos de Aprendizaje</h3>
+                    <div class="accordion" id="modulesAccordion">
+                        <div class="card bg-dark border-secondary mb-2">
+                            <div class="card-header p-0" id="headingOne">
+                                <button class="btn btn-block text-left text-white p-3 font-weight-bold" type="button" data-toggle="collapse" data-target="#collapseOne">
+                                    Módulo 1: Setup y Navegación <i class="fas fa-chevron-down float-right mt-1"></i>
+                                </button>
+                            </div>
+                            <div id="collapseOne" class="collapse show" data-parent="#modulesAccordion">
+                                <div class="card-body small text-muted">
+                                    <p>Configurar proyecto UE5 con plantilla Third Person o Blank. Explicar jerarquía de carpetas en Content Browser. Ejercicio: Importar un modelo 3D y asignar material.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card bg-dark border-secondary mb-2">
+                            <div class="card-header p-0" id="headingTwo">
+                                <button class="btn btn-block text-left text-white p-3 font-weight-bold collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo">
+                                    Módulo 2: Programación (Blueprints & C++) <i class="fas fa-chevron-down float-right mt-1"></i>
+                                </button>
+                            </div>
+                            <div id="collapseTwo" class="collapse" data-parent="#modulesAccordion">
+                                <div class="card-body small text-muted">
+                                    <p><strong>Blueprints:</strong> Crear un Actor con variable pública, Evento BeginPlay + Tick. Usar nodos de flujo y transformaciones.</p>
+                                    <p><strong>C++:</strong> Creación de una clase heredada de <code>AActor</code>. Definición de <code>UPROPERTY</code> y <code>UFUNCTION</code>. Sobrecarga de <code>BeginPlay()</code> y <code>Tick()</code>.</p>
+                                    <p><em>Ejercicio:</em> Hacer que un objeto se mueva al hacer clic en él (implementar en ambos sistemas).</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card bg-dark border-secondary mb-2">
+                            <div class="card-header p-0" id="headingThree">
+                                <button class="btn btn-block text-left text-white p-3 font-weight-bold collapsed" type="button" data-toggle="collapse" data-target="#collapseThree">
+                                    Módulo 3: Gestión de Assets y Debugging <i class="fas fa-chevron-down float-right mt-1"></i>
+                                </button>
+                            </div>
+                            <div id="collapseThree" class="collapse" data-parent="#modulesAccordion">
+                                <div class="card-body small text-muted">
+                                    <p>Usar Launch y Play Mode para testear cambios. Usar Console Commands. Corrección de errores comunes (ej: Missing Reference).</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="section-card border-success">
+                        <h4 class="text-green mb-3">Criterios de Aceptación</h4>
+                        <ul class="small text-muted pl-3">
+                            <li class="mb-2">Replicar una funcionalidad simple (ej: objeto que se destruye al ser golpeado).</li>
+                            <li class="mb-2">Demostrar entendimiento de la comunicación entre C++ y Blueprints (BlueprintNativeEvent / BlueprintCallable).</li>
+                            <li class="mb-2">Autonomía en navegación del editor y debugging básico (Visual Studio / Rider integration).</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="section-card border-warning">
+                        <h4 class="text-yellow mb-3">Entregables</h4>
+                        <div class="bg-black p-3 rounded font-mono text-xs">
+                            Repo: hypenosys/app/research/ue5-fundamentals<br>
+                            - /docs: Guías de referencia<br>
+                            - /tutorials: Material grabado
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Kanban -->
+        <div class="tab-pane fade" id="kanban" role="tabpanel">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h3 class="text-purple mb-1">Prácticas de Capacitación</h3>
+                    <p class="small text-muted mb-0">Gestiona tu progreso en las tareas de aprendizaje de UE5.</p>
+                </div>
+                <button class="btn btn-unreal" onclick="addNewUnrealTask()">
+                    <i class="fas fa-plus mr-2"></i> Nueva Práctica
+                </button>
+            </div>
+
+            <div class="unreal-kanban-container">
+                <div class="row">
+                    <!-- Column: To Do -->
+                    <div class="col-md-4">
+                        <div class="kanban-col" id="col-unreal-todo" ondrop="unrealDrop(event, 'TODO')" ondragover="allowUnrealDrop(event)">
+                            <div class="kanban-header">
+                                <span class="status-dot bg-secondary"></span> TO DO
+                            </div>
+                            <div class="unreal-cards-list"></div>
+                        </div>
+                    </div>
+                    <!-- Column: In Progress -->
+                    <div class="col-md-4">
+                        <div class="kanban-col" id="col-unreal-progress" ondrop="unrealDrop(event, 'WORKING')" ondragover="allowUnrealDrop(event)">
+                            <div class="kanban-header">
+                                <span class="status-dot bg-warning"></span> WORKING
+                            </div>
+                            <div class="unreal-cards-list"></div>
+                        </div>
+                    </div>
+                    <!-- Column: Done -->
+                    <div class="col-md-4">
+                        <div class="kanban-col" id="col-unreal-done" ondrop="unrealDrop(event, 'DONE')" ondragover="allowUnrealDrop(event)">
+                            <div class="kanban-header">
+                                <span class="status-dot bg-success"></span> DONE
+                            </div>
+                            <div class="unreal-cards-list"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4 p-3 bg-dark-transparent rounded border border-secondary text-center">
+                <small class="text-muted"><i class="fas fa-info-circle mr-1"></i> Estos datos son locales para tu navegador y no afectan al repositorio principal de tareas.</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div style="height: 100px;"></div>
+
+<script src="{{ '/assets/javascript/unreal-tutorial.js' | relative_url }}"></script>
