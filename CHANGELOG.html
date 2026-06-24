@@ -66,6 +66,8 @@ permalink: /CHANGELOG.html
             <h5 class="text-success">Fixed</h5>
             <ul>
                 <li><strong>Validación de Lanzamiento (Jules Panel):</strong> Corregido el bloqueo que impedía iniciar tareas si solo se seleccionaba "Revisar Cambios". Ahora es posible lanzar sesiones en modo revisión sin requerir una sesión automática previa.</li>
+                <li><strong>Payload de Sesión Jules:</strong> Eliminados campos no soportados (<code>autoMode</code>, <code>reviewChanges</code>) que causaban errores 400 en la API. El modo de revisión ahora se gestiona mediante instrucciones específicas en el prompt y el uso de <code>requirePlanApproval</code>.</li>
+                <li><strong>Validación de Ramas:</strong> Implementada normalización de nombres de ramas (eliminación de símbolos visuales y prefijos <code>refs/heads/</code>) para evitar avisos falsos de "RAMA NO COINCIDE".</li>
                 <li><strong>Jules Panel Kanban:</strong> Corregido el fallo donde las tarjetas de sesión no se renderizaban a pesar de que los contadores se actualizaban. Se unificó el flujo de renderizado y se implementó un mapeo de estados robusto (<code>normalizeJulesStatus</code>), asegurando que los contadores coincidan con las tarjetas visibles.</li>
                 <li><strong>Filtro de Usuario:</strong> Las sesiones ahora se filtran correctamente por el login del usuario autenticado (<code>window.githubApi.user.login</code>), asegurando una vista personalizada del tablero.</li>
                 <li><strong>Persistencia de Kanban:</strong> Implementado sistema de overrides locales para permitir el drag & drop de sesiones entre columnas, persistiendo el estado visual mediante <code>localStorage</code> con badges indicadores.</li>
