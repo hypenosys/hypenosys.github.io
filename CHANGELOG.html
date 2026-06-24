@@ -65,6 +65,8 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-white">Added</h5>
             <ul>
+                <li><strong>Rediseño de Sidebar Neural:</strong> Implementado sidebar colapsable (48px/260px) con transiciones suaves, estado persistente en <code>localStorage</code> y tooltips contextuales para navegación rápida.</li>
+                <li><strong>Indicadores de Estado Neural:</strong> Añadido sistema de puntos de color (Verde=Activo, Gris=Completado, Rojo=Error) y truncado inteligente de IDs (<code>sess___XXXX</code>) para mejorar la legibilidad del historial.</li>
                 <li><strong>Fuzzy Matching en Documentación:</strong> Implementado sistema de normalización de rutas estilo Obsidian (<code>normalizeFuzzy</code>) para resolver discrepancias en nombres de archivos (espacios vs guiones).</li>
                 <li><strong>Recuperación de 404 (Docs):</strong> Implementado mecanismo de redirección automática en <code>loadDocument</code> que busca coincidencias difusas si la ruta original falla.</li>
                 <li><strong>Sincronización Bidireccional Neural:</strong> Implementada comunicación en tiempo real entre el Jules Panel y el standalone de Claude Chat mediante <code>BroadcastChannel</code>, permitiendo que las respuestas de Claude y los mensajes del usuario aparezcan instantáneamente en ambos interfaces sin recargar.</li>
