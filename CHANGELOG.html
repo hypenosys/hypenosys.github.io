@@ -97,6 +97,7 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-success">Fixed</h5>
             <ul>
+              <li><strong>Drawer de Sesiones (Jules Panel):</strong> Implementadas las funciones <code>toggleSessionDrawer</code> y <code>renderSessionDrawerList</code>, solucionando el error <code>toggleSessionDrawer is not defined</code> y permitiendo la visualización y gestión del historial de sesiones locales.</li>
               <li><strong>Navegación de Documentación:</strong> Corregido el bug que impedía cargar archivos con espacios (ej: "00 - Inicio.md") desde el sidebar o mediante enlaces directos.</li>
               <li><strong>Resolución de Carpetas:</strong> Mejorada la lógica de <code>renderSidebar</code> para que los clics en carpetas resuelvan correctamente el archivo de índice más saludable.</li>
               <li><strong>Persistencia de Sesiones (Critical):</strong> Implementada la función <code>saveSessionsV2</code> en <code>jules-panel-neural.js</code>, resolviendo el <code>ReferenceError</code> que impedía la carga de datos y el guardado de mensajes en el panel.</li>
