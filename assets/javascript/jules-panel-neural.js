@@ -30,11 +30,169 @@ window.sendNeuralMessage = async function() {
 }
 
 window.renderChatV2Messages = function() {
-    const container = $('chat-v2-container');
+    const container = $('v2-chat-messages');
     if (!container) return;
 
-    // This would typically merge session activities and local messages
-    // For now, it's a placeholder for the logic
+    const sid = getLinkedJulesSessionId();
+    if (!sid) {
+        if (window.chatV2Messages && window.chatV2Messages.length > 0) {
+            _renderLocalMessagesOnly();
+        }
+        return;
+    }
+
+    // JulesActivitiesModule handles the actual polling and rendering for V2
+    if (window.JulesActivitiesModule) {
+        window.JulesActivitiesModule.startPolling(sid);
+    }
+}
+
+function _renderLocalMessagesOnly() {
+    const container = $('v2-chat-messages');
+    if (!container) return;
+
+    const welcome = container.querySelector('#v2-welcome-screen');
+    if (welcome) welcome.style.display = 'none';
+
+    // Avoid duplicate rendering
+    const existingIds = Array.from(container.querySelectorAll('.jules-activity-entry')).map(el => el.dataset.id);
+
+    window.chatV2Messages.forEach((msg, idx) => {
+        const localId = 'local-' + idx;
+        if (existingIds.includes(localId)) return;
+
+        const div = document.createElement('div');
+        div.className = 'jules-activity-entry jules-activity-entry--' + (msg.role === 'assistant' ? 'agent' : 'user');
+        div.dataset.id = localId;
+
+        const icon = msg.role === 'assistant' ? '🤖' : '👤';
+        const time = new Date().toLocaleTimeString('es-ES');
+
+        div.innerHTML =
+            '<span class="activity-icon">' + icon + '</span>' +
+            '<div class="activity-body">' +
+              '<div class="activity-header">' +
+                '<span class="activity-originator">' + (msg.role === 'assistant' ? 'CLAUDE' : 'USUARIO') + '</span>' +
+                '<span class="activity-time">' + time + '</span>' +
+              '</div>' +
+              '<div class="activity-content">' + escapeHtml(msg.content) + '</div>' +
+            '</div>';
+
+        container.appendChild(div);
+    });
+    container.scrollTop = container.scrollHeight;
+}
+
+// "Revisar Cambios" Logic
+document.addEventListener('DOMContentLoaded', () => {
+    const optReview = $('opt-review');
+    if (optReview) {
+        optReview.addEventListener('click', async () => {
+            if (optReview.classList.contains('active')) {
+                await openReviewChangesMode();
+            }
+        });
+    }
+});
+
+async function openReviewChangesMode() {
+    const repo = window.JulesPanelState.activeRepo ? window.JulesPanelState.activeRepo.replace('sources/github/', '') : null;
+    const branch = window.JulesPanelState.activeBranch;
+
+    if (!repo || !branch) {
+        showToast("Selecciona un repo y rama para revisar cambios", "amber");
+        return;
+    }
+
+    addTel("SYSTEM", "Cargando cambios para revisión en " + branch, "info");
+
+    try {
+        const token = getGitHubToken();
+        // Get comparison between default branch and current branch
+        const repoInfo = await window.githubApi.getRepo(repo);
+        const base = repoInfo.default_branch;
+
+        const res = await fetch('https://api.github.com/repos/' + repo + '/compare/' + base + '...' + branch, {
+            headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github.v3.diff' }
+        });
+
+        if (!res.ok) throw new Error("No se pudo obtener el diff de GitHub");
+
+        const diff = await res.text();
+
+        if (!diff || diff.trim().length === 0) {
+            showToast("No hay cambios pendientes en esta rama respecto a " + base, "info");
+            return;
+        }
+
+        // Show in drawer
+        const drawer = $('drawer');
+        const overlay = $('dr-overlay');
+        if (drawer && overlay) {
+            drawer.classList.add('open');
+            overlay.classList.add('open');
+            $('dr-title').innerText = 'Revisar Cambios: ' + branch;
+            $('dr-sub').innerText = repo;
+
+            // Switch to diff tab
+            switchDrawerTab('diff', document.querySelectorAll('.dr-tab')[1]);
+
+            const diffCont = $('diff-content');
+            if (diffCont) {
+                diffCont.innerHTML = '<pre class="diff-viewer">' + escapeHtml(diff) + '</pre>';
+            }
+        }
+
+    } catch (e) {
+        console.error("Review changes failed", e);
+        showToast("Error al cargar cambios: " + e.message, "red");
+    }
+}
+
+window.switchDrawerTab = function(tab, el) {
+    document.querySelectorAll('.dr-tab').forEach(t => t.classList.remove('active'));
+    if (el) el.classList.add('active');
+
+    document.querySelectorAll('.dr-panel').forEach(p => p.classList.remove('active'));
+    const panel = $('dr-panel-' + tab);
+    if (panel) panel.classList.add('active');
+}
+
+window.sendChatV2Msg = async function() {
+    const input = $('v2-chat-input');
+    const msg = input.value.trim();
+    if (!msg) return;
+
+    if (window.currentSendMode === 'jules') {
+        await window.sendNeuralMessage();
+    } else {
+        // Claude mode: logic should be implemented in neural-chat-send.js
+        // but if we are in jules-panel we might need a bridge
+        if (window.sendMessage && typeof window.sendMessage === 'function') {
+            await window.sendMessage();
+        } else {
+            // Fallback for jules-panel
+            window.chatV2Messages.push({ role: 'user', content: msg });
+            input.value = '';
+            renderChatV2Messages();
+            addTel("USER", "Enviado a Claude (Simulado)", "info");
+        }
+    }
+}
+
+window.setSendMode = function(mode) {
+    window.currentSendMode = mode;
+    document.querySelectorAll('.dual-send-option').forEach(opt => {
+        opt.classList.toggle('active', opt.dataset.mode === mode);
+    });
+    const wrapper = $('chat-input-wrapper');
+    if (wrapper) {
+        wrapper.classList.toggle('mode-jules', mode === 'jules');
+    }
+    const input = $('v2-chat-input');
+    if (input) {
+        input.placeholder = mode === 'claude' ? "Pregunta a Claude..." : "Enviar orden directa a Jules...";
+    }
 }
 
 async function approvePlan(sessionId) {

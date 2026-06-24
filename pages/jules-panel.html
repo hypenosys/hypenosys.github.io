@@ -127,8 +127,11 @@ permalink: /jules-panel/
       <div class="sb-sub">Jules Control Hub</div>
     </div>
 
-    <div class="nav-group">
-      <div class="nav-label">Neural History</div>
+    <div class="nav-group" id="ng-history">
+      <div class="nav-label" onclick="toggleNavGroup('ng-history')">
+        <span>Neural History</span>
+        <i class="fas fa-chevron-down"></i>
+      </div>
       <div id="sb-neural-history-list" class="sb-history-compact">
         <div class="notif-empty" style="font-size: 10px; padding: 10px;">Cargando sesiones...</div>
       </div>
@@ -138,8 +141,11 @@ permalink: /jules-panel/
       </a>
     </div>
 
-    <div class="nav-group" style="flex:1;display:flex;flex-direction:column">
-      <div class="nav-label">Repositorios</div>
+    <div class="nav-group" id="ng-repos" style="flex:1;display:flex;flex-direction:column">
+      <div class="nav-label" onclick="toggleNavGroup('ng-repos')">
+        <span>Repositorios</span>
+        <i class="fas fa-chevron-down"></i>
+      </div>
       <div class="sb-repos" id="repo-list"></div>
     </div>
 
@@ -204,7 +210,7 @@ permalink: /jules-panel/
           <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
           Docs
         </button>
-        <div id="hdr-user" style="display:none; align-items:center; gap:8px; margin-right:10px; padding-right:10px; border-right:1px solid var(--border)">
+        <div id="hdr-user" style="display:flex; align-items:center; gap:8px; margin-right:10px; padding-right:10px; border-right:1px solid var(--border)">
             <div class="avatar" id="hdr-avatar" style="width:26px; height:26px; font-size:10px">?</div>
             <div style="display:flex; flex-direction:column; line-height:1">
                 <span id="hdr-username" style="font-size:12px; font-weight:700; color:var(--text)">...</span>
@@ -904,7 +910,7 @@ permalink: /jules-panel/
             <span style="font-size: 10px; font-weight: 800; color: var(--accent2); text-transform: uppercase; letter-spacing: 0.15em;">Neural History</span>
             <h3 style="font-family: var(--font-head); font-size: 18px; font-weight: 700; color: var(--text);">Sesiones Guardadas</h3>
         </div>
-        <button onclick="toggleSessionDrawer()" class="icon-btn" style="font-size: 20px;">&times;</button>
+        <button onclick="toggleSessionDrawer()" class="icon-btn" style="display:none">&times;</button>
     </div>
     <div id="sessions-drawer-list" style="flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 12px;">
         <!-- List of hy_neural_sessions -->

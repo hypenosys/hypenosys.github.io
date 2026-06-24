@@ -118,7 +118,7 @@ function renderKanban(sessions) {
     });
 
     Object.keys(cols).forEach(colId => {
-        const list = $('col-' + colId);
+        const list = $('kb-' + (colId === 'en_cola' ? 'pending' : colId === 'en_progreso' ? 'running' : colId === 'listo' ? 'done' : 'error'));
         if (!list) return;
 
         list.innerHTML = cols[colId].map(s => {

@@ -211,9 +211,21 @@ window.refreshActivities = async function(sessionId) {
             const idSafe = sessionId;
             if (act.planGenerated) {
                 if (!localStorage.getItem('jules_notif_approval_' + idSafe)) {
-                    showToast('Sesión ' + idSafe + ' espera revisión. <button onclick="openDrawer(\'' + sName + '\')" style="background:none;border:none;color:#fff;text-decoration:underline;cursor:pointer;padding:0;margin-left:10px;">ABRIR</button>', 'amber');
+                    if (window.addNotification) {
+                        window.addNotification('Plan Generado', 'Sesión #' + idSafe + ' espera revisión del plan.', 'warn');
+                    } else {
+                        showToast('Sesión ' + idSafe + ' espera revisión.', 'amber');
+                    }
                     localStorage.setItem('jules_notif_approval_' + idSafe, Date.now());
                 }
+            }
+            if (act.sessionCompleted && !localStorage.getItem('jules_notif_done_' + idSafe)) {
+                if (window.addNotification) window.addNotification('Tarea Completada', 'Sesión #' + idSafe + ' ha finalizado con éxito.', 'success');
+                localStorage.setItem('jules_notif_done_' + idSafe, Date.now());
+            }
+            if (act.sessionFailed && !localStorage.getItem('jules_notif_fail_' + idSafe)) {
+                if (window.addNotification) window.addNotification('Error en Sesión', 'Sesión #' + idSafe + ' ha fallado.', 'error');
+                localStorage.setItem('jules_notif_fail_' + idSafe, Date.now());
             }
         });
 

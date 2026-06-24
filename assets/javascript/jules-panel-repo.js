@@ -81,10 +81,12 @@ function renderRepos(repos) {
             item.className = 'repo-item' + (repo.full_name === activeRepo ? ' active' : '');
             item.setAttribute('data-id', repo.full_name);
             item.setAttribute('data-jules', repo.jules_name || '');
-            item.title = repo.name;
+
+            const alias = localStorage.getItem('hy_repo_alias_' + repo.full_name) || repo.name;
+            item.title = alias;
 
             item.innerHTML = (repo.is_installed ? '<i class="fas fa-check-circle text-success"></i>' : '<i class="fas fa-circle-notch"></i>') +
-                             '<span>' + repo.name + '</span>';
+                             '<span>' + alias + '</span>';
 
             item.onclick = () => selectRepo(repo.full_name);
             content.appendChild(item);
@@ -111,16 +113,19 @@ function toggleRepoGroup(org) {
 }
 
 async function selectRepo(repoFullName) {
+    if (!repoFullName) return;
+
     const items = document.querySelectorAll('.repo-item');
     items.forEach(i => i.classList.remove('active'));
 
     const selectedItem = Array.from(items).find(i => i.getAttribute('data-id') === repoFullName);
-    const sourceName = selectedItem ? selectedItem.getAttribute('data-jules') : null;
+    const sourceName = selectedItem ? selectedItem.getAttribute('data-jules') : (repoFullName.startsWith('sources/') ? repoFullName : 'sources/github/' + repoFullName);
 
     if (selectedItem) selectedItem.classList.add('active');
 
     const oldRepo = localStorage.getItem('hypenosys_active_repo');
     localStorage.setItem('hypenosys_active_repo', repoFullName);
+    window.JulesPanelState.activeRepo = sourceName;
 
     // Auto-expand group
     const org = repoFullName.split('/')[0];
@@ -138,6 +143,12 @@ async function selectRepo(repoFullName) {
         launchBtn.innerText = sourceName ? 'Iniciar Ejecución' : 'Repo No Conectado';
     }
 
+    const sessCtx = $('sess-ctx');
+    if (sessCtx) {
+        const alias = localStorage.getItem('hy_repo_alias_' + repoFullName) || repoFullName.split('/').pop();
+        sessCtx.textContent = alias + ': ' + (window.JulesPanelState.activeBranch || '...');
+    }
+
     if (sourceName) {
         loadBranches(repoFullName);
         updateRepoConfigUI(repoFullName);
@@ -145,7 +156,7 @@ async function selectRepo(repoFullName) {
 }
 
 async function loadBranches(repoFullName) {
-    const branchSelect = $('branch-selector');
+    const branchSelect = $('branch-sel') || $('branch-selector');
     const branchMeta = $('branch-meta');
     if (!branchSelect) return;
 
@@ -157,10 +168,32 @@ async function loadBranches(repoFullName) {
 
         branchSelect.innerHTML = branches.map(b => '<option value="' + b.name + '" ' + (b.name === defaultBranch ? 'selected' : '') + '>' + b.name + (b.name === defaultBranch ? ' ★' : '') + '</option>').join('');
 
+        const activeBranch = window.JulesPanelState.activeBranch || defaultBranch;
+        branchSelect.value = activeBranch;
+        window.JulesPanelState.activeBranch = activeBranch;
+
         if (branchMeta) {
-            branchMeta.innerHTML = '<span class="u-dot"></span><span>' + branches.length + ' ramas</span>';
-            branchMeta.classList.remove('skeleton', 'skeleton--loading');
+            branchMeta.innerHTML = '<span class="u-dot"></span><span>' + branches.length + ' ramas cargadas</span>';
+            branchMeta.classList.remove('skeleton', 'skeleton--loading', 'skeleton-text');
         }
+
+        branchSelect.onchange = (e) => {
+            window.JulesPanelState.activeBranch = e.target.value;
+            localStorage.setItem('hypenosys_active_branch', e.target.value);
+            const sessCtx = $('sess-ctx');
+            if (sessCtx) {
+                const alias = localStorage.getItem('hy_repo_alias_' + repoFullName) || repoFullName.split('/').pop();
+                sessCtx.textContent = alias + ': ' + e.target.value;
+            }
+            if (window.checkBranchWarning) window.checkBranchWarning();
+        };
+
+        const sessCtx = $('sess-ctx');
+        if (sessCtx) {
+            const alias = localStorage.getItem('hy_repo_alias_' + repoFullName) || repoFullName.split('/').pop();
+            sessCtx.textContent = alias + ': ' + activeBranch;
+        }
+
     } catch (e) {
         console.error('Error loading branches:', e);
         branchSelect.innerHTML = '<option>Error</option>';
@@ -168,14 +201,91 @@ async function loadBranches(repoFullName) {
 }
 
 function updateRepoConfigUI(repoFullName) {
-    const configCard = document.querySelector('.card--repo-config');
-    if (!configCard) return;
+    // Both Config View and optional Modal
+    const configView = $('view-config');
+    const pathEl = $('cfg-path');
+    const aliasIn = $('alias-in');
+    const repoLabel = $('repo-label');
+    const branchSel = $('branch-sel');
 
-    const title = configCard.querySelector('.card-title');
-    if (title) title.innerText = repoFullName;
+    if (pathEl) {
+        pathEl.innerText = 'sources/github/' + repoFullName;
+        pathEl.classList.remove('skeleton');
+    }
 
-    const skeletons = configCard.querySelectorAll('.skeleton');
-    skeletons.forEach(s => s.classList.remove('skeleton', 'skeleton--loading'));
+    if (aliasIn) {
+        const alias = localStorage.getItem('hy_repo_alias_' + repoFullName) || repoFullName.split('/').pop();
+        aliasIn.value = alias;
+        aliasIn.classList.remove('skeleton');
+        aliasIn.onchange = (e) => {
+            const newAlias = e.target.value.trim();
+            if (newAlias) {
+                localStorage.setItem('hy_repo_alias_' + repoFullName, newAlias);
+                showToast("Alias guardado: " + newAlias, "green");
+                if (repoLabel) repoLabel.innerText = newAlias;
+                const sessCtx = $('sess-ctx');
+                if (sessCtx) sessCtx.textContent = newAlias + ': ' + (window.JulesPanelState.activeBranch || '...');
+                // Update in sidebar if possible
+                const sidebarItem = document.querySelector('.repo-item[data-id="' + repoFullName + '"] span');
+                if (sidebarItem) sidebarItem.innerText = newAlias;
+            }
+        };
+    }
+
+    if (repoLabel) {
+        repoLabel.innerText = localStorage.getItem('hy_repo_alias_' + repoFullName) || repoFullName.split('/').pop();
+        repoLabel.classList.remove('skeleton', 'skeleton-text');
+    }
+
+    if (branchSel) {
+        branchSel.classList.remove('skeleton');
+    }
+
+    renderRepoCommitChart(repoFullName);
+}
+
+async function renderRepoCommitChart(repoFullName) {
+    const chart = $('repo-chart');
+    if (!chart) return;
+    const path = chart.querySelector('path');
+    if (!path) return;
+
+    try {
+        const [owner, repo] = repoFullName.split('/');
+        const stats = await window.githubApi.getRepoStats(owner, repo);
+        // window.githubApi.getRepoStats might not exist, check or use generic
+        const res = await fetch('https://api.github.com/repos/' + owner + '/' + repo + '/stats/participation', {
+            headers: { 'Authorization': 'Bearer ' + getGitHubToken() }
+        });
+        const data = await res.json();
+        const commits = data.all || [];
+        const last10 = commits.slice(-10);
+
+        if (last10.length === 0) return;
+
+        const max = Math.max(...last10, 5);
+        const width = 200;
+        const height = 56;
+        const step = width / (last10.length - 1);
+
+        let d = 'M';
+        last10.forEach((v, i) => {
+            const x = i * step;
+            const y = height - (v / max * height);
+            d += (i === 0 ? '' : ' L') + x + ' ' + y;
+        });
+
+        path.setAttribute('d', d);
+        // Trigger animation
+        path.style.strokeDasharray = path.getTotalLength();
+        path.style.strokeDashoffset = path.getTotalLength();
+        path.getBoundingClientRect();
+        path.style.transition = 'stroke-dashoffset 1.5s ease-in-out';
+        path.style.strokeDashoffset = '0';
+
+    } catch (e) {
+        console.warn("Failed to render commit chart", e);
+    }
 }
 
 function initSourceDropdown(sources) {

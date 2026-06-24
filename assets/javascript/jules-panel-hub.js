@@ -83,5 +83,21 @@ window.updateHubBadges = function() {
     const issues = window.JulesPanelState.unreadIssues || 0;
     const notifs = window.JulesPanelState.unreadNotifs || 0;
     const total = prs + issues + notifs;
-    if($('hdr-hub-badge')) $('hdr-hub-badge').textContent = total;
+    if($('hdr-hub-badge')) {
+        $('hdr-hub-badge').textContent = total;
+        $('hdr-hub-badge').classList.toggle('hidden', total === 0);
+    }
 }
+
+// Auto-refresh GitHub Ops every 2 minutes
+setInterval(() => {
+    if (!document.hidden && window.JulesPanelState.activeRepo) {
+        const repo = window.JulesPanelState.activeRepo.replace('sources/github/', '');
+        const [owner, name] = repo.split('/');
+        if (owner && name) {
+            fetchHubPRs(owner, name);
+            fetchHubIssues(owner, name);
+            fetchHubNotifs();
+        }
+    }
+}, 120000);
