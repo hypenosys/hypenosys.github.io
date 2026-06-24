@@ -5,10 +5,19 @@
 async function refreshDashboard() {
     try {
         window.julesSessionsCache = await window.julesApi.listSessions();
+        console.log("[JULES-DEBUG] Sessions received:", window.julesSessionsCache);
+        if (window.julesSessionsCache.length > 0) {
+            console.log("[JULES-DEBUG] Sample session structure:", JSON.stringify(window.julesSessionsCache[0], null, 2));
+        }
         renderMetrics();
         renderHistoryTable(window.julesSessionsCache);
         updateKanbanCounts(window.julesSessionsCache);
         updateNeuralHistory(window.julesSessionsCache);
+
+        // Render Kanban cards
+        if (typeof window.renderKanban === 'function') {
+            window.renderKanban(window.julesSessionsCache);
+        }
     } catch (e) {
         console.error("Dashboard refresh failed:", e);
     }
@@ -174,30 +183,36 @@ window.selectSession = function(sessionName) {
 
 function updateKanbanCounts(sessions) {
     const counts = { pending: 0, running: 0, done: 0, error: 0 };
+    const localOverrides = JSON.parse(localStorage.getItem('jules_kanban_overrides') || '{}');
 
-    const isActive = (state) => {
-        if (!state) return false;
-        const s = state.toUpperCase().trim();
-        return s.includes('PLANNING') || s.includes('EXECUTING') || s.includes('RUNNING') || s.includes('IN_PROGRESS');
-    };
-    const isDone = (state) => state && state.toUpperCase().trim() === 'COMPLETED';
-    const isFailed = (state) => {
-        if (!state) return false;
-        const s = state.toUpperCase().trim();
-        return s === 'FAILED' || s === 'ERROR' || s === 'CANCELLED';
-    };
-
-    sessions.forEach(s => {
-        if (isDone(s.state)) counts.done++;
-        else if (isFailed(s.state)) counts.error++;
-        else if (isActive(s.state)) counts.running++;
-        else counts.pending++;
+    // Apply user filter if applicable
+    const currentUser = window.githubApi.user;
+    const filtered = sessions.filter(s => {
+        if (!currentUser) return true;
+        // Basic check: if no ownership field, keep it
+        const login = currentUser.login.toLowerCase().trim();
+        const creator = (s.creator || s.metadata?.creator || s.user || '').toLowerCase().trim();
+        if (!creator) return true;
+        return creator === login;
     });
 
+    filtered.forEach(s => {
+        const sid = s.name.split('/').pop();
+        const col = localOverrides[sid] || window.normalizeJulesStatus(s.state);
+        if (counts[col] !== undefined) counts[col]++;
+    });
+
+    let total = 0;
     Object.keys(counts).forEach(k => {
         const el = $('kb-count-' + k);
         if (el) el.innerText = counts[k];
+        const mEl = $('m-count-' + k);
+        if (mEl) mEl.innerText = counts[k];
+        total += counts[k];
     });
+
+    const hdrBadge = $('hdr-kanban-badge');
+    if (hdrBadge) hdrBadge.innerText = total;
 }
 
 // Session Details Drawer logic

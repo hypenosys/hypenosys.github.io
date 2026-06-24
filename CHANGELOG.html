@@ -65,6 +65,10 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-success">Fixed</h5>
             <ul>
+                <li><strong>Jules Panel Kanban:</strong> Corregido el fallo donde las tarjetas de sesión no se renderizaban a pesar de que los contadores se actualizaban. Se unificó el flujo de renderizado y se implementó un mapeo de estados robusto (<code>normalizeJulesStatus</code>), asegurando que los contadores coincidan con las tarjetas visibles.</li>
+                <li><strong>Filtro de Usuario:</strong> Las sesiones ahora se filtran correctamente por el login del usuario autenticado (<code>window.githubApi.user.login</code>), asegurando una vista personalizada del tablero.</li>
+                <li><strong>Persistencia de Kanban:</strong> Implementado sistema de overrides locales para permitir el drag & drop de sesiones entre columnas, persistiendo el estado visual mediante <code>localStorage</code> con badges indicadores.</li>
+                <li><strong>Resiliencia de Autenticación:</strong> Mejorado el arranque del panel para evitar el fallback prematuro a "Modo Invitado" mediante un estado de carga mientras se valida el token de GitHub.</li>
                 <li><strong>Autenticación Unificada (Jules Panel):</strong> Corregido bug donde usuarios válidos aparecían como "Invitado". Se eliminó la dependencia de un allowlist hardcodeado en <code>github-api.js</code>, desacoplando la autenticación (validación del token) de la autorización (membresía de equipo).</li>
                 <li><strong>Single Source of Truth:</strong> Refactorizado <code>AuthManager</code> y el flujo de inicialización del panel para consumir un estado de usuario centralizado, eliminando condiciones de carrera y discrepancias entre módulos.</li>
                 <li><strong>Configuración API:</strong> Habilitado el acceso al modal de API Key para cualquier usuario autenticado, asegurando que el estado de login sea consistente en toda la interfaz.</li>
