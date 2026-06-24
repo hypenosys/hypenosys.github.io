@@ -4,7 +4,7 @@
 
 async function refreshDashboard() {
     try {
-        window.julesSessionsCache = await window.julesApi.getSessions();
+        window.julesSessionsCache = await window.julesApi.listSessions();
         renderMetrics();
         renderHistoryTable(window.julesSessionsCache);
         updateKanbanCounts(window.julesSessionsCache);
