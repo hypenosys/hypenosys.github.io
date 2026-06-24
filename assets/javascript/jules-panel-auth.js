@@ -47,8 +47,12 @@ window.initRealPanel = async function(user) {
 
     // Eager-load GitHub Ops badge counts (background, non-blocking)
     if (getGitHubToken()) {
-        fetchHubPRs().catch(function(e) { console.warn("Eager PR badge load failed", e); });
-        fetchHubIssues().catch(function(e) { console.warn("Eager Issues badge load failed", e); });
+        var _eagerRepo = window.JulesPanelState.activeRepo;
+        var _eagerParsed = _eagerRepo && window.parseSourceName ? window.parseSourceName(_eagerRepo) : null;
+        if (_eagerParsed && _eagerParsed.owner && _eagerParsed.repo) {
+            fetchHubPRs(_eagerParsed.owner, _eagerParsed.repo).catch(function(e) { console.warn("Eager PR badge load failed", e); });
+            fetchHubIssues(_eagerParsed.owner, _eagerParsed.repo).catch(function(e) { console.warn("Eager Issues badge load failed", e); });
+        }
         fetchHubNotifs().catch(function(e) { console.warn("Eager Notifs badge load failed", e); });
     }
 
@@ -105,8 +109,8 @@ window.prefillTaskFromHandoff = async function(task) {
         formattedPrompt += "\n¿Cómo podemos abordar esta tarea?";
     }
 
-    const targetRepo = task.repository || task.repo || (payload?.source_task?.repository || payload?.source_task?.repo);
-    const targetBranch = task.rama || task.branch || payload?.rama;
+    const targetRepo = task.repository || task.repo || ((payload && payload.source_task && payload.source_task.repository) || (payload && payload.source_task && payload.source_task.repo));
+    const targetBranch = task.rama || task.branch || (payload && payload.rama);
 
     if (targetRepo) {
         const source = (window.julesSourcesCache || []).find(function(src) {
@@ -487,7 +491,7 @@ window.launchSession = async function() {
             await window.taskOps.updateTask(window.JulesPanelState.linkedTaskId, {
                 jules_session: {
                     session_id: sid,
-                    initiated_by: window.githubApi.user?.login || 'Invitado',
+                    initiated_by: (window.githubApi.user && window.githubApi.user.login) || 'Invitado',
                     status: 'PLANNING',
                     updated_at: new Date().toISOString()
                 }
