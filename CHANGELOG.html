@@ -65,6 +65,7 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-success">Fixed</h5>
             <ul>
+                <li><strong>Independencia del Jules Panel (Neural):</strong> El panel de control ahora funciona de forma totalmente independiente en el primer arranque. Se ha desacoplado de las variables globales del chat de Claude mediante un nuevo cliente de IA (<code>NeuralProviderClient</code>) que reutiliza la configuración de API existente y soporta streaming y persistencia local propia.</li>
                 <li><strong>Validación de Lanzamiento (Jules Panel):</strong> Corregido el bloqueo que impedía iniciar tareas si solo se seleccionaba "Revisar Cambios". Ahora es posible lanzar sesiones en modo revisión sin requerir una sesión automática previa.</li>
                 <li><strong>Jules Panel Kanban:</strong> Corregido el fallo donde las tarjetas de sesión no se renderizaban a pesar de que los contadores se actualizaban. Se unificó el flujo de renderizado y se implementó un mapeo de estados robusto (<code>normalizeJulesStatus</code>), asegurando que los contadores coincidan con las tarjetas visibles.</li>
                 <li><strong>Filtro de Usuario:</strong> Las sesiones ahora se filtran correctamente por el login del usuario autenticado (<code>window.githubApi.user.login</code>), asegurando una vista personalizada del tablero.</li>
