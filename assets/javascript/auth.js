@@ -25,25 +25,25 @@ class AuthManager {
 
             try {
                 const result = await this.handleOAuthCallback();
-                if (result) {
+                if (result && result.valid) {
                     console.log('[AUTH] OAuth exchange successful via AuthManager');
                     this.dispatchAuthReady(result.user);
                     return;
                 }
             } catch (e) {
                 console.error('[AUTH] OAuth exchange failed in init:', e);
-                return;
+                // Continue to check existing state as fallback
             }
 
             console.log('[AUTH] No OAuth code or exchange completed. Checking existing session...');
-            await this.checkAuthState();
-            this.dispatchAuthReady(window.githubApi.user || null);
+            const user = await this.checkAuthState();
+            this.dispatchAuthReady(user);
             return;
         }
 
         await this.handleOAuthCallback();
-        await this.checkAuthState();
-        this.dispatchAuthReady(window.githubApi.user || null);
+        const user = await this.checkAuthState();
+        this.dispatchAuthReady(user);
     }
 
     dispatchAuthReady(user) {
@@ -121,12 +121,12 @@ class AuthManager {
                 if (result.valid) {
                     this.updateHeaderUI(result.user);
                     this.showToast('Éxito', 'Sesión iniciada correctamente.', 'success');
-                    return result; // Retornar resultado para coordinar con dashboard-data.js
+                    return result;
                 } else {
                     const err = {
-                        status: result.user ? 403 : 401,
-                        type: result.user ? 'ACL_DENIED' : 'INVALID',
-                        message: result.user ? 'Usuario no autorizado' : 'Token inválido'
+                        status: result.status || 401,
+                        type: 'INVALID',
+                        message: 'Fallo en la validación del token tras el intercambio.'
                     };
                     this.handleAuthError(err);
                     throw err;
@@ -135,17 +135,10 @@ class AuthManager {
                 console.error('[AUTH] Exchange failed:', e);
                 this.showToast('Error', 'Fallo en la autenticación OAuth: ' + (e.message || 'Error desconocido'), 'error');
 
-            // En páginas protegidas, simplemente limpiar y disparar authReady con null
-            // para que los gates locales tomen el control en lugar de redirigir al home.
-            window.githubApi.clearAuth();
-            document.dispatchEvent(new CustomEvent('authReady', {
-                detail: { user: null }
-            }));
-
+                // Clear auth and notify
+                window.githubApi.clearAuth();
+                this.dispatchAuthReady(null);
                 throw e;
-            } finally {
-                // No reseteamos _oauthExchanging para evitar que otros disparadores lo intenten de nuevo
-                // ya que el código ya fue consumido y la URL limpiada.
             }
         }
         return null;
@@ -155,14 +148,14 @@ class AuthManager {
         const token = window.githubApi.getAuthToken();
         if (!token) {
             this.updateHeaderUI(null);
-            return;
+            return null;
         }
 
         const lastAttempt = parseInt(sessionStorage.getItem('auth_last_attempt') || '0');
         const now = Date.now();
-        if (now - lastAttempt < 2000) {
+        if (now - lastAttempt < 1000) {
             console.warn('[AuthManager] Deteniendo posible bucle de redirección/validación.');
-            return;
+            return window.githubApi.user;
         }
         sessionStorage.setItem('auth_last_attempt', now.toString());
 
@@ -170,14 +163,17 @@ class AuthManager {
             const result = await window.githubApi.validateToken();
             if (result.valid) {
                 this.updateHeaderUI(result.user);
+                return result.user;
             } else {
                 this.handleAuthError({
-                    status: result.user ? 403 : 401,
-                    type: result.user ? 'ACL_DENIED' : 'INVALID'
+                    status: result.status || 401,
+                    type: 'INVALID'
                 });
+                return null;
             }
         } catch (e) {
             this.handleAuthError(e);
+            return null;
         }
     }
 
@@ -253,23 +249,18 @@ class AuthManager {
     }
 
     handleAuthError(e) {
-        if (e.status === 401 || (e.status === 403 && e.type === 'ACL_DENIED') || e.type === 'INVALID') {
+        if (e.status === 401 || e.type === 'INVALID') {
             window.githubApi.clearAuth();
             this.updateHeaderUI(null);
         }
 
         if (e.status === 403 && e.type === 'ACL_DENIED') {
-            const msgEl = document.getElementById('access-denied-message');
-            if (msgEl) msgEl.innerText = "Autenticado con éxito en GitHub, pero no tienes autorización explícita de la facción Hypenosys. Acceso revocado.";
-
-            if (window.jQuery && window.jQuery.fn.modal) {
-                window.jQuery('#settingsModal').modal('hide');
-                window.jQuery('#accessDeniedModal').modal('show');
-            }
+            // Keep the user authenticated but show restricted access if needed
+            // This is now handled at a layer above (e.g., showing a warning instead of locking)
+            this.showToast('Acceso Restringido', 'Estás autenticado pero no tienes permisos de equipo para ciertas operaciones de escritura.', 'warning');
 
             const dashUnauthorized = document.getElementById('unauthorized-overlay');
             if (dashUnauthorized) dashUnauthorized.classList.remove('hidden');
-
         } else if (e.status === 401 || e.type === 'INVALID') {
             this.showToast('Sesión Expirada', 'Tu token es inválido o ha caducado. Por favor, vuelve a iniciar sesión.', 'error');
             const loginOverlay = document.getElementById('login-overlay');
@@ -495,12 +486,13 @@ class AuthManager {
     }
 
     async showApiConfigModal() {
-        if (!window.githubApi.user) {
+        const user = window.githubApi.user;
+        if (!user) {
             this.showToast('Error', 'Debes estar autenticado para configurar la API.', 'error');
             return;
         }
 
-        const login = window.githubApi.user.login;
+        const login = user.login;
         let config = JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
 
         // Fallback to team_profiles.json if localStorage is empty for provider/model
