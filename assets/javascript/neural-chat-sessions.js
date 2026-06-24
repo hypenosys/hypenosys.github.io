@@ -226,43 +226,49 @@ window.deleteSession = function(id, isArchived = false, skipConfirm = false) {
 
 window.renderSessionList = function() {
     const list = document.getElementById('session-list');
+    if (!list) return;
 
     const renderItem = (s, isArchived = false) => {
-        const hasNeural = !!localStorage.getItem('hy_neural_session_id_' + s.id);
+        // Status logic:
+        let status = 'completed';
+
+        const hasError = s.messages && s.messages.length > 0 && s.messages[s.messages.length - 1].isError;
+        const isCurrentlyActive = window.currentSessionId === s.id;
+
+        if (hasError) {
+            status = 'error';
+        } else if (isCurrentlyActive) {
+            status = 'active';
+        } else if (isArchived) {
+            status = 'completed';
+        }
+
+        // Truncate ID (sess___3642 format)
+        const displayId = s.id.startsWith('session_') ? 'sess___' + s.id.slice(-4) : s.id;
+
         return `
-        <div class="session-item ${window.currentSessionId === s.id ? 'active' : ''}"
+        <div class="session-item ${window.currentSessionId === s.id ? 'active' : ''} group relative"
              data-id="${s.id}"
-             data-archived="${isArchived}"
-             onmousedown="handleSessionTouchStart(event, '${s.id}')"
-             ontouchstart="handleSessionTouchStart(event, '${s.id}')">
-            <div class="swipe-actions">
-                <div class="swipe-action swipe-action-archive" onclick="event.stopPropagation(); ${isArchived ? 'unarchiveSession' : 'archiveSession'}('${s.id}')">
-                    <i class="fas fa-${isArchived ? 'box-open' : 'archive'}"></i>
-                </div>
-                <div class="swipe-action swipe-action-delete" onclick="event.stopPropagation(); deleteSession('${s.id}', ${isArchived})">
-                    <i class="fas fa-trash-alt"></i>
-                </div>
-            </div>
+             data-archived="${isArchived}">
+
             <div onclick="loadSession('${s.id}', ${isArchived})" class="session-item-content">
-                ${hasNeural ? '<div class="neural-indicator" title="Sesión Neural vinculada"></div>' : ''}
-                <span class="truncate flex-grow mr-2 text-xs">${s.title}</span>
-                <div class="session-actions">
-                    <button onclick="event.stopPropagation(); exportSession('${s.id}')"
-                            class="action-btn text-[#6272a4] hover:text-[#50fa7b]"
-                            title="Exportar">
-                        <i class="fas fa-download"></i>
-                    </button>
-                    <button onclick="event.stopPropagation(); ${isArchived ? 'unarchiveSession' : 'archiveSession'}('${s.id}')"
-                            class="action-btn"
-                            title="${isArchived ? 'Desarchivar' : 'Archivar'}">
-                        📦
-                    </button>
-                    <button onclick="handleDeleteClick(event, '${s.id}', ${isArchived})"
-                            class="action-btn"
-                            title="Eliminar">
-                        🗑️
-                    </button>
-                </div>
+                <!-- Collapsed view content -->
+                <i class="fas fa-comment-alt session-item-icon"></i>
+
+                <!-- Status dot -->
+                <div class="status-dot ${status}"></div>
+
+                <!-- Expanded view text -->
+                <span class="truncate flex-grow text-[11px] font-medium sidebar-text">${escapeHtml(displayId)}</span>
+
+                <!-- Full title tooltip for collapsed mode -->
+                <div class="session-tooltip collapsed-only">${escapeHtml(s.title)}</div>
+            </div>
+
+            <!-- Hover actions (only shown in expanded mode) -->
+            <div class="absolute right-2 top-1/2 -translate-y-1/2 hidden group-hover:flex items-center gap-1 sidebar-text">
+                <button onclick="event.stopPropagation(); archiveSession('${s.id}')" class="text-[#6272a4] hover:text-[#bd93f9] p-1"><i class="fas fa-archive text-[10px]"></i></button>
+                <button onclick="event.stopPropagation(); deleteSession('${s.id}')" class="text-[#6272a4] hover:text-[#ff5555] p-1"><i class="fas fa-trash text-[10px]"></i></button>
             </div>
         </div>
         `;
@@ -272,15 +278,10 @@ window.renderSessionList = function() {
 
     if (window.archivedSessions.length > 0) {
         html += `
-            <details class="archived-sessions-container mt-4">
-                <summary class="flex items-center justify-between">
-                    <span>Archivadas (${window.archivedSessions.length})</span>
-                    <i class="fas fa-chevron-down text-[8px] opacity-50"></i>
-                </summary>
-                <div class="space-y-1 mt-2">
-                    ${window.archivedSessions.map(s => renderItem(s, true)).join('')}
-                </div>
-            </details>
+            <div class="sidebar-section-label">Sesiones Guardadas</div>
+            <div class="space-y-1">
+                ${window.archivedSessions.map(s => renderItem(s, true)).join('')}
+            </div>
         `;
     }
 

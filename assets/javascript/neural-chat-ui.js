@@ -121,7 +121,7 @@ window.renderMessages = function() {
     window.chatMessages.scrollTop = window.chatMessages.scrollHeight;
 }
 
-window.toggleSidebar = function() {
+window.toggleMobileSidebar = function() {
     const sidebar = document.querySelector('.sidebar');
     const overlay = document.getElementById('sidebar-overlay');
     sidebar.classList.toggle('open');
@@ -134,6 +134,34 @@ window.closeSidebar = function() {
     sidebar.classList.remove('open');
     overlay.classList.remove('active');
 }
+
+window.toggleSidebarCollapse = function() {
+    const sidebar = document.getElementById('neural-sidebar');
+    const chevron = document.getElementById('sidebar-chevron');
+    const isCollapsed = sidebar.classList.toggle('collapsed');
+
+    // Update icon
+    if (isCollapsed) {
+        chevron.classList.replace('fa-chevron-left', 'fa-chevron-right');
+    } else {
+        chevron.classList.replace('fa-chevron-right', 'fa-chevron-left');
+    }
+
+    // Persist state
+    localStorage.setItem('hy_neural_sidebar_collapsed', isCollapsed);
+}
+
+// Initialize sidebar state on load
+document.addEventListener('DOMContentLoaded', () => {
+    const sidebar = document.getElementById('neural-sidebar');
+    const chevron = document.getElementById('sidebar-chevron');
+    const wasCollapsed = localStorage.getItem('hy_neural_sidebar_collapsed') === 'true';
+
+    if (wasCollapsed && sidebar) {
+        sidebar.classList.add('collapsed');
+        if (chevron) chevron.classList.replace('fa-chevron-left', 'fa-chevron-right');
+    }
+});
 
 window.showConfirmationToast = function(message, onConfirm) {
     const container = document.getElementById('hype-toast-container');
