@@ -45,6 +45,13 @@ window.initRealPanel = async function(user) {
         await refreshDashboard();
     } catch(e) { console.error("Initial dashboard refresh failed", e); }
 
+    // Eager-load GitHub Ops badge counts (background, non-blocking)
+    if (getGitHubToken()) {
+        fetchHubPRs().catch(function(e) { console.warn("Eager PR badge load failed", e); });
+        fetchHubIssues().catch(function(e) { console.warn("Eager Issues badge load failed", e); });
+        fetchHubNotifs().catch(function(e) { console.warn("Eager Notifs badge load failed", e); });
+    }
+
     switchView(window.JulesPanelState.currentView || 'dashboard');
     await handleUrlParams();
     checkClipboard();
