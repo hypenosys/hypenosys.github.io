@@ -65,6 +65,7 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-success">Fixed</h5>
             <ul>
+                <li><strong>Validación de Lanzamiento (Jules Panel):</strong> Corregido el bloqueo que impedía iniciar tareas si solo se seleccionaba "Revisar Cambios". Ahora es posible lanzar sesiones en modo revisión sin requerir una sesión automática previa.</li>
                 <li><strong>Jules Panel Kanban:</strong> Corregido el fallo donde las tarjetas de sesión no se renderizaban a pesar de que los contadores se actualizaban. Se unificó el flujo de renderizado y se implementó un mapeo de estados robusto (<code>normalizeJulesStatus</code>), asegurando que los contadores coincidan con las tarjetas visibles.</li>
                 <li><strong>Filtro de Usuario:</strong> Las sesiones ahora se filtran correctamente por el login del usuario autenticado (<code>window.githubApi.user.login</code>), asegurando una vista personalizada del tablero.</li>
                 <li><strong>Persistencia de Kanban:</strong> Implementado sistema de overrides locales para permitir el drag & drop de sesiones entre columnas, persistiendo el estado visual mediante <code>localStorage</code> con badges indicadores.</li>
@@ -149,6 +150,8 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-success">Changed</h5>
             <ul>
+              <li><strong>Modo por Defecto (Jules Panel):</strong> "Revisar Cambios" es ahora el modo de ejecución predeterminado al cargar el panel, promoviendo flujos de trabajo más seguros.</li>
+              <li><strong>Validación de Modos de Ejecución:</strong> Implementada validación obligatoria de al menos un modo (Automático o Revisión) antes del lanzamiento, con mensajes de error claros y telemetría detallada del payload.</li>
               <li><strong>Limpieza de UI Redundante:</strong> Eliminado el botón "USAR COMO PROMPT" del chat integrado en el Panel Jules, ya que el nuevo flujo de handoff automatizado lo hace innecesario.</li>
               <li><strong>Respuestas de Jules en Chat:</strong> Jules ahora responde directamente con burbujas en el flujo de conversación del Neural Chat mediante un sistema de polling de actividades que detecta eventos <code>agentMessaged</code>.</li>
               <li><strong>Unificación de Lectura de Datos:</strong> Migrada toda la lógica de lectura de perfiles y equipo para usar <code>fetch()</code> nativo, simplificando el código y eliminando peticiones innecesarias a la API de GitHub para datos públicos.</li>

@@ -482,8 +482,12 @@ window.launchSession = async function() {
         return;
     }
 
-    if ($('opt-review').classList.contains('active') && !getLinkedJulesSessionId()) {
-        showToast("Selecciona primero Modo Automático para iniciar una nueva sesión", "red");
+    // Capture current UI mode
+    const isAuto = $('opt-auto').classList.contains('active');
+    const isReview = $('opt-review').classList.contains('active');
+
+    if (!isAuto && !isReview) {
+        showToast("Selecciona un modo de ejecución para iniciar la sesión.", "red");
         return;
     }
 
@@ -502,14 +506,29 @@ window.launchSession = async function() {
     btn.innerHTML = 'Iniciando...';
 
     try {
-        const body = { prompt, sourceContext: { source, githubRepoContext: { startingBranch: branch } } };
+        const body = {
+            prompt,
+            sourceContext: { source, githubRepoContext: { startingBranch: branch } },
+            autoMode: isAuto,
+            reviewChanges: isReview,
+            requirePlanApproval: isReview
+        };
 
-        if ($('opt-auto').classList.contains('active')) {
-            body.requirePlanApproval = false;
+        if (isAuto) {
             body.automationMode = "AUTO_CREATE_PR";
-        } else if ($('opt-review').classList.contains('active')) {
-            body.requirePlanApproval = true;
         }
+
+        // Defensive Logging
+        const logPayload = {
+            selectedMode: isAuto ? "auto" : "review",
+            autoMode: body.autoMode,
+            requirePlanApproval: body.requirePlanApproval,
+            reviewChanges: body.reviewChanges,
+            repo: source,
+            branch: branch
+        };
+        console.log("[Jules Launch] Payload:", logPayload);
+        addTel("SYSTEM", "Payload de lanzamiento: " + JSON.stringify(logPayload), "info");
 
         const res = await window.julesApi.createSession(body);
         const sid = res.name.split('/').pop();
