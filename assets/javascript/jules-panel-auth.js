@@ -482,9 +482,18 @@ window.launchSession = async function() {
         return;
     }
 
-    if ($('opt-review').classList.contains('active') && !getLinkedJulesSessionId()) {
-        showToast("Selecciona primero Modo Automático para iniciar una nueva sesión", "red");
+    // Capture current UI mode (frontend state)
+    const isAuto = $('opt-auto').classList.contains('active');
+    const isReview = $('opt-review').classList.contains('active');
+
+    if (!isAuto && !isReview) {
+        showToast("Selecciona un modo de ejecución para iniciar la sesión.", "red");
         return;
+    }
+
+    // Append mode-specific instructions to prompt
+    if (isReview) {
+        prompt += "\n\n[MODO REVISIÓN ACTIVADO]\nInstrucciones obligatorias:\n1. Revisa exclusivamente los cambios actuales en la rama.\n2. NO modifiques ningún archivo.\n3. NO realices commits ni crees PRs.\n4. Devuelve tus hallazgos y sugerencias ordenados por severidad.";
     }
 
     if ($('opt-tests').classList.contains('active')) {
@@ -502,14 +511,30 @@ window.launchSession = async function() {
     btn.innerHTML = 'Iniciando...';
 
     try {
-        const body = { prompt, sourceContext: { source, githubRepoContext: { startingBranch: branch } } };
+        // Prepare API payload (only supported fields)
+        const body = {
+            prompt,
+            sourceContext: { source, githubRepoContext: { startingBranch: branch } },
+            requirePlanApproval: isReview // Review mode requires plan approval as safety
+        };
 
-        if ($('opt-auto').classList.contains('active')) {
+        if (isAuto) {
             body.requirePlanApproval = false;
             body.automationMode = "AUTO_CREATE_PR";
-        } else if ($('opt-review').classList.contains('active')) {
-            body.requirePlanApproval = true;
         }
+
+        // Defensive Logging (internal UI state + final API body)
+        const logPayload = {
+            ui_mode: isAuto ? "auto" : "review",
+            api_body: {
+                requirePlanApproval: body.requirePlanApproval,
+                automationMode: body.automationMode || "NONE",
+                repo: source,
+                branch: branch
+            }
+        };
+        console.log("[Jules Launch] UI State:", {isAuto, isReview}, "API Body:", body);
+        addTel("SYSTEM", "Iniciando (UI:" + logPayload.ui_mode + ") - API Payload: " + JSON.stringify(logPayload.api_body), "info");
 
         const res = await window.julesApi.createSession(body);
         const sid = res.name.split('/').pop();
@@ -618,11 +643,23 @@ window.checkBranchWarning = function() {
     const expectedBranch = task.rama || task.branch;
     const currentBranch = window.JulesPanelState.activeBranch;
 
-    if (expectedBranch && currentBranch && expectedBranch !== currentBranch) {
+    const normalize = (b) => {
+        if (!b) return '';
+        return String(b)
+            .trim()
+            .replace(/^refs\/heads\//, '')
+            .replace(/[★☆]/g, '')
+            .trim();
+    };
+
+    const normExpected = normalize(expectedBranch);
+    const normCurrent = normalize(currentBranch);
+
+    if (normExpected && normCurrent && normExpected !== normCurrent) {
         banner.classList.remove('hidden');
         banner.style.display = 'flex';
         const warnText = $('branch-warning-text');
-        if (warnText) warnText.textContent = 'La rama actual (' + currentBranch + ') no es la esperada (' + expectedBranch + ') para esta tarea.';
+        if (warnText) warnText.textContent = 'La rama actual (' + normCurrent + ') no es la esperada (' + normExpected + ') para esta tarea.';
     } else {
         banner.classList.add('hidden');
         banner.style.display = 'none';
