@@ -24,7 +24,7 @@ window.JulesPanelState = {
 
 window.julesSourcesCache = [];
 window.julesSessionsCache = [];
-window.chatV2Messages = [];
+window.chatV2Messages = []; // Kept for backward compatibility with some scripts
 window.currentSendMode = 'claude';
 window.neuralPollInterval = null;
 window.sessionPollInterval = null;
@@ -252,7 +252,7 @@ window.switchView = async function(view, navEl) {
         renderChatV2Messages();
     }
     if (view === 'chat') {
-        loadV2Messages();
+        if (window.loadJulesPanelSessions) window.loadJulesPanelSessions();
         const sid = getLinkedJulesSessionId();
         if (sid && localStorage.getItem('hy_neural_active') === 'true') {
             startNeuralPolling(sid);

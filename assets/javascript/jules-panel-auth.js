@@ -93,6 +93,7 @@ window.initRealPanel = async function(user) {
     }
 
     switchView(window.JulesPanelState.currentView || 'dashboard');
+    window.initJulesPanelNeuralChat();
     await handleUrlParams();
     checkClipboard();
     startPolling();
@@ -208,10 +209,11 @@ window.prefillTaskFromHandoff = async function(task) {
                 showToast("Orden enviada con éxito", "green");
                 addTel("USER", "Orden enviada vía Neural Link", "info");
 
-                if (typeof window.chatV2Messages !== 'undefined') {
-                    window.chatV2Messages.push({ role: 'user', content: formattedPrompt });
-                    saveSessionsV2();
-                    renderChatV2Messages();
+                const panelSession = window.julesPanelSessions.find(s => s.id === window.currentJulesPanelSessionId);
+                if (panelSession) {
+                    panelSession.messages.push({ role: 'user', content: formattedPrompt, timestamp: Date.now() });
+                    if (window.saveJulesPanelSessions) window.saveJulesPanelSessions();
+                    if (window.renderChatV2Messages) window.renderChatV2Messages();
                 }
 
                 localStorage.setItem('hy_neural_active', 'true');

@@ -367,6 +367,7 @@ permalink: /chat/neural/
 <script src="{{ '/assets/javascript/god-mode-tools.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/ollama-discovery.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/ai-config.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/neural-chat-core.js' | relative_url }}"></script>
 
 <script src="{{ '/assets/javascript/neural-chat-catalogs.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/neural-chat-docs.js' | relative_url }}"></script>
@@ -750,6 +751,7 @@ permalink: /chat/neural/
         if (window.githubApi?.user !== undefined) {
             iniciar(window.githubApi.user);
         }
+        console.log("[Neural Chat Core] Standalone Neural initialized");
     })();
 </script>
 
