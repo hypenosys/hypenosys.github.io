@@ -86,6 +86,7 @@ permalink: /CHANGELOG.html
                 <li><strong>Autenticación Unificada (Jules Panel):</strong> Corregido bug donde usuarios válidos aparecían como "Invitado". Se eliminó la dependencia de un allowlist hardcodeado en <code>github-api.js</code>, desacoplando la autenticación (validación del token) de la autorización (membresía de equipo).</li>
                 <li><strong>Single Source of Truth:</strong> Refactorizado <code>AuthManager</code> y el flujo de inicialización del panel para consumir un estado de usuario centralizado, eliminando condiciones de carrera y discrepancias entre módulos.</li>
                 <li><strong>Configuración API:</strong> Habilitado el acceso al modal de API Key para cualquier usuario autenticado, asegurando que el estado de login sea consistente en toda la interfaz.</li>
+                <li><strong>Layout del Historial Neural (Jules Panel):</strong> Corregido el problema visual donde el drawer de sesiones guardadas aparecía como un bloque de contenido al final de la página. Se añadieron los estilos CSS necesarios para que funcione correctamente como un panel lateral oculto por defecto.</li>
             </ul>
             <h5 class="text-white">Added</h5>
             <ul>
