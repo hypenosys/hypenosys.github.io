@@ -1,5 +1,12 @@
-/* HYPENOSYS — UI MODULE */
+/**
+ * Módulo de Interfaz de Usuario del Dashboard de Hypenosys
+ * Se encarga de coordinar la renderización de todos los componentes visuales.
+ */
 
+/**
+ * Renderiza el dashboard completo invocando de forma segura cada subcomponente.
+ * Utiliza ErrorBoundary para aislar fallos en componentes individuales.
+ */
 function renderDashboard() {
   const eb = window.ErrorBoundary;
 
@@ -17,7 +24,7 @@ function renderDashboard() {
   eb.safeInvoke('team-profiles-grid', 'Team Profiles', renderTeamProfiles);
   eb.safeInvoke('archived-tasks-grid', 'Task Archive', renderTaskArchive);
 
-  // Part 2 — Production Pipeline
+  // Parte 2 — Pipeline de Producción
   eb.safeInvoke('critical-path-panel', 'Critical Path Alerts', renderCriticalPathAlerts);
   eb.safeInvoke('pipeline-swimlanes', 'Pipeline Swimlanes', renderPipelineSwimlanes);
   eb.safeInvoke('milestone-burndown-chart', 'Milestone Burndown Chart', renderMilestoneBurndownChart);
@@ -25,6 +32,9 @@ function renderDashboard() {
   eb.safeInvoke('velocity-tracker-chart', 'Velocity Tracker Chart', renderVelocityTrackerChart);
 }
 
+/**
+ * Renderiza el resumen de estadísticas globales (total, completadas, ratio).
+ */
 function renderStatsSummary() {
   const tasks = getFilteredTasks(currentTasks);
   const activeTasksCount = tasks.filter(t => !['OK', 'Closed', 'Obsolete'].includes(t.estado)).length;
@@ -37,6 +47,9 @@ function renderStatsSummary() {
   document.getElementById('stat-fixed-ratio').textContent = `${(ratio * 100).toFixed(2)}%`;
 }
 
+/**
+ * Renderiza los selectores de filtrado por miembro del equipo.
+ */
 function renderMemberToggles() {
   const container = document.getElementById('member-filters');
   if (!container) return;
@@ -74,6 +87,9 @@ function renderMemberToggles() {
   }
 }
 
+/**
+ * Renderiza la sección Hall of Fame con los ganadores del milestone actual.
+ */
 function renderHallOfFame() {
   const container = document.getElementById('hof-current-winners');
   if (!container) return;
@@ -131,6 +147,9 @@ function renderHallOfFame() {
   });
 }
 
+/**
+ * Renderiza el progreso del milestone actual.
+ */
 function renderMilestoneProgress() {
   if (!currentBudget) return;
   const milId = currentBudget.burnout?.current_milestone || 'M1';
@@ -149,6 +168,9 @@ function renderMilestoneProgress() {
   document.getElementById('milestone-end').textContent = mil.date_end;
 }
 
+/**
+ * Genera alertas automáticas basadas en la "ruta crítica" (tareas críticas pendientes, fechas superadas, etc.).
+ */
 function renderCriticalPathAlerts() {
   const panel = document.getElementById('critical-path-panel');
   if (!panel) return;
@@ -238,14 +260,20 @@ function renderCriticalPathAlerts() {
   }
 }
 
+/**
+ * Alterna el estado colapsado/expandido del panel de alertas.
+ */
 function toggleAlertsPanel() {
     const current = localStorage.getItem('alerts_panel_collapsed') === 'true';
     localStorage.setItem('alerts_panel_collapsed', !current);
     renderCriticalPathAlerts();
 }
 
+/**
+ * Desplaza la vista hasta una tarea específica y la resalta temporalmente.
+ * @param {string|number} id ID de la tarea.
+ */
 function scrollToTask(id) {
-  // Simple search for the task card
   const cards = document.querySelectorAll('.kanban-cards > div');
   for (const card of cards) {
     if (card.querySelector('.text-\\[9px\\]')?.textContent === `#${String(id)}`) {
@@ -257,6 +285,9 @@ function scrollToTask(id) {
   }
 }
 
+/**
+ * Renderiza el listado de tareas archivadas (en el Cementerio).
+ */
 function renderTaskArchive() {
     const grid = document.getElementById('archived-tasks-grid');
     const countEl = document.getElementById('archive-count');
@@ -293,6 +324,9 @@ function renderTaskArchive() {
     });
 }
 
+/**
+ * Alterna el colapso de la sección de archivo.
+ */
 function toggleArchiveCollapse() {
     const content = document.getElementById('archive-content');
     const chevron = document.getElementById('archive-chevron');
@@ -311,6 +345,9 @@ function toggleArchiveCollapse() {
     }
 }
 
+/**
+ * Renderiza las sesiones activas de Jules en el dashboard.
+ */
 function renderJulesSessions() {
     const container = document.getElementById('jules-dashboard-sessions');
     if (!container) return;
@@ -367,6 +404,9 @@ function renderJulesSessions() {
     }).join('');
 }
 
+/**
+ * Actualiza los badges de estado de Jules en las tarjetas Kanban activas.
+ */
 function updateJulesBadges() {
     const cachedSessions = JSON.parse(localStorage.getItem('jules_sessions_cache') || '[]');
     currentTasks.forEach(t => {
@@ -383,12 +423,15 @@ function updateJulesBadges() {
     });
 }
 
+/**
+ * Renderiza el estado y avatar del usuario en el encabezado.
+ * @param {Object} user Información del usuario autenticado.
+ */
 function renderUserStatus(user) {
   if (!user) return;
 
   const desktop = document.getElementById('user-status');
   const mobile = document.getElementById('user-status-mobile');
-
   const avatarHtml = window.HypenosysUI.renderAvatar(user);
 
   const dropdownHtml = (idSuffix) => `
@@ -401,7 +444,6 @@ function renderUserStatus(user) {
         </div>
       </button>
 
-      <!-- Dropdown menu (Tailwind) -->
       <div id="user-menu-${idSuffix}" class="hidden absolute right-0 z-50 mt-2 w-48 origin-top-right rounded-xl bg-slate-900 border border-slate-800 shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none overflow-hidden" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button-${idSuffix}" tabindex="-1">
         <div class="py-1" role="none">
           <button onclick="if(window.profileEditor) window.profileEditor.openModal(); else if(window.authManager) window.authManager.showProfileModal();" class="flex items-center w-full px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-colors" role="menuitem">
@@ -433,6 +475,9 @@ function renderUserStatus(user) {
   }
 }
 
+/**
+ * Configura el comportamiento del menú desplegable de usuario.
+ */
 function setupDropdownToggle(idSuffix) {
   const btn = document.getElementById(`user-menu-button-${idSuffix}`);
   const menu = document.getElementById(`user-menu-${idSuffix}`);
@@ -444,7 +489,6 @@ function setupDropdownToggle(idSuffix) {
     menu.classList.toggle('hidden');
   };
 
-  // Close when clicking outside - ensure only one listener exists globally
   if (!window._dropdownGlobalListener) {
     document.addEventListener('click', (e) => {
       document.querySelectorAll('[id^="user-menu-"]').forEach(m => {
@@ -459,6 +503,12 @@ function setupDropdownToggle(idSuffix) {
   }
 }
 
+/**
+ * Muestra una notificación toast en pantalla.
+ * @param {string} mensaje Texto de la notificación.
+ * @param {string} [tipo='info'] Tipo de toast ('success', 'error', 'info', 'warning').
+ * @param {number} [duracionMs=4000] Tiempo visible en milisegundos.
+ */
 function showToast(mensaje, tipo = 'info', duracionMs = 4000) {
   if (window.hypeToast) {
     window.hypeToast(mensaje, tipo, duracionMs);
@@ -487,8 +537,10 @@ function showToast(mensaje, tipo = 'info', duracionMs = 4000) {
   }
 }
 
+/**
+ * Inicializa los oyentes de eventos globales para el dashboard.
+ */
 function setupEventListeners() {
-  // Lightbox keyboard support
   document.addEventListener('keydown', (e) => {
     const modal = document.getElementById('lightbox-modal');
     if (modal && !modal.classList.contains('hidden')) {
@@ -506,7 +558,6 @@ function setupEventListeners() {
   if (taskCancel) {
       taskCancel.onclick = () => {
           document.getElementById('create-task-modal').classList.add('hidden');
-          // Revoke local blob URLs to free memory
           pendingImages.forEach(img => { if (img.localUrl) URL.revokeObjectURL(img.localUrl); });
           pendingImages = [];
       };
@@ -541,7 +592,6 @@ function setupEventListeners() {
   if (qaCancel) qaCancel.onclick = () => document.getElementById('qa-assignment-modal').classList.add('hidden');
   if (assignCancel) assignCancel.onclick = () => document.getElementById('assignment-modal').classList.add('hidden');
 
-  // Image handling
   const fileInput = document.getElementById('task-image-input');
   const taskModal = document.getElementById('create-task-modal');
   const imageSection = document.getElementById('task-image-section');
@@ -578,6 +628,9 @@ function setupEventListeners() {
   }
 }
 
+/**
+ * Alterna la visibilidad del pipeline de producción.
+ */
 function togglePipelineCollapse() {
   const content = document.getElementById('pipeline-content');
   const chevron = document.getElementById('pipeline-chevron');
@@ -586,6 +639,9 @@ function togglePipelineCollapse() {
   chevron.classList.toggle('fa-chevron-up');
 }
 
+/**
+ * Alterna la visibilidad de los filtros avanzados del Kanban.
+ */
 function toggleKanbanFilters() {
     const container = document.getElementById('kanban-filter-container');
     const arrow = document.getElementById('kanban-filters-arrow');
@@ -616,7 +672,7 @@ function toggleKanbanFilters() {
         if (totalActive > 0) {
             if (label) label.textContent = `Filtros · ${totalActive}`;
             if (badge) {
-                badge.innerHTML = ''; // Just the green dot, no text
+                badge.innerHTML = '';
                 badge.classList.remove('hidden');
             }
         } else {
@@ -632,6 +688,9 @@ function toggleKanbanFilters() {
     }
 }
 
+/**
+ * Alterna la visibilidad de la sección de Operaciones Jules.
+ */
 function toggleJulesCollapse() {
   const content = document.getElementById('jules-ops-content');
   const chevron = document.getElementById('jules-ops-chevron');
@@ -640,12 +699,14 @@ function toggleJulesCollapse() {
   chevron.classList.toggle('fa-chevron-up');
 }
 
+/**
+ * Archiva una sesión de Jules desde el dashboard.
+ */
 window.handleDashboardJulesArchive = (id) => {
     const archivedIds = JSON.parse(localStorage.getItem('jules_archived_ids') || '[]');
     archivedIds.push(id);
     localStorage.setItem('jules_archived_ids', JSON.stringify(archivedIds));
 
-    // Guardar datos completos para el archivo si están en cache
     const cachedSessions = JSON.parse(localStorage.getItem('jules_sessions_cache') || '[]');
     const session = cachedSessions.find(s => s.name.endsWith(id));
     if (session) {
@@ -660,6 +721,9 @@ window.handleDashboardJulesArchive = (id) => {
     renderDashboard();
 };
 
+/**
+ * Envía una sesión de Jules al "Cementerio".
+ */
 window.handleDashboardJulesCemetery = (id) => {
     const cemeteryIds = JSON.parse(localStorage.getItem('jules_cemetery_ids') || '[]');
     cemeteryIds.push(id);
@@ -679,22 +743,24 @@ window.handleDashboardJulesCemetery = (id) => {
     renderDashboard();
 };
 
+/**
+ * Inicia el proceso de login global a través de GitHub OAuth.
+ */
 window.handleDashboardLogin = function() {
-    // Trigger the global auth manager login flow if available
     if (window.authManager) {
         window.authManager.handleLogin();
     } else {
-        // Fallback if authManager isn't available for some reason
         const rememberMe = document.getElementById('chk-remember-me-dashboard')?.checked || false;
         sessionStorage.setItem('auth_remember_me', rememberMe);
-
         const clientId = window.authManager?.clientId || 'Ov23liAVwbXNtvhkHJQe';
         const scope = 'repo';
         window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=${scope}`;
     }
 };
 
-
+/**
+ * Renderiza la barra de filtros del Kanban con todas las dimensiones disponibles (Tags, Equipo, Repos, etc.).
+ */
 function renderKanbanFilters() {
     const container = document.getElementById('kanban-filter-bar');
     if (!container) return;
@@ -708,7 +774,6 @@ function renderKanbanFilters() {
                         kanbanFilters.milestones.length + kanbanFilters.themes.length + kanbanFilters.priorities.length;
     const isCollapsed = filterContainer.style.maxHeight === '0px' || filterContainer.classList.contains('max-h-0');
 
-    // Initial state setup
     if (!filterContainer.dataset.initialized) {
         filterContainer.style.maxHeight = '0px';
         filterContainer.style.opacity = '0';
@@ -717,11 +782,10 @@ function renderKanbanFilters() {
         filterContainer.dataset.initialized = "true";
     }
 
-    // Update Toggle UI
     if (isCollapsed && totalActive > 0) {
         if (label) label.textContent = `Filtros · ${totalActive}`;
         if (badge) {
-            badge.innerHTML = ''; // Emerald dot only
+            badge.innerHTML = '';
             badge.classList.remove('hidden');
         }
     } else {
@@ -729,7 +793,6 @@ function renderKanbanFilters() {
         if (badge) badge.classList.add('hidden');
     }
 
-    // 1. Extraer datos dinámicamente de todas las tareas
     const allTags = new Set();
     const allRepos = new Set();
     const allMilestones = new Set();
@@ -759,7 +822,6 @@ function renderKanbanFilters() {
 
     container.innerHTML = '';
 
-    // Función helper para crear botones/pills
     const createPill = (label, active, onClick, customActiveClass = '') => {
         const btn = document.createElement('button');
         btn.textContent = label;
@@ -774,7 +836,6 @@ function renderKanbanFilters() {
         return btn;
     };
 
-    // Estructura de la barra
     const createRow = (title, icon) => {
         const row = document.createElement('div');
         row.className = 'flex flex-wrap items-center gap-3';

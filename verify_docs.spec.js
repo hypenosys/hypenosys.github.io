@@ -46,8 +46,21 @@ test('Verify documentation navigation and relative links', async ({ page }) => {
     });
   });
 
+  await page.route('**/repos/hypenosys/docs/git/trees/**', async route => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        tree: [
+          { path: 'GDD.md', type: 'blob' },
+          { path: 'tech/architecture.md', type: 'blob' }
+        ]
+      })
+    });
+  });
+
   // Navigate to documentation
-  await page.goto('http://localhost:4000/documentacion.html');
+  await page.goto('http://localhost:4000/documentacion/');
 
   // Wait for sidebar to be rendered
   await page.waitForSelector('.sidebar-link:has-text("GDD")');

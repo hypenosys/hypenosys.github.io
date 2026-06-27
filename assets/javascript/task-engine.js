@@ -1,43 +1,53 @@
 /**
- * Task Engine - Business Logic for the Kanban system
- * Handles alerts, validations and state mapping
+ * Motor de Tareas - Lógica de negocio para el sistema Kanban.
+ * Gestiona alertas, validaciones y mapeo de estados.
  */
 
 (function() {
     const taskEngine = {
         /**
-         * Validates a task object before submission
+         * Valida un objeto de tarea antes de su envío.
+         * @param {Object} task El objeto de la tarea a validar.
+         * @returns {string|null} Mensaje de error o null si es válida.
          */
         validate: (task) => {
-            if (!task.titulo || task.titulo.trim().length === 0) return 'El título es obligatorio';
-            if (!task.asignado_a || task.asignado_a.length === 0) return 'Al menos un asignado es necesario';
+            // Soporte para ambos esquemas de nombres (Inglés/Español)
+            const title = task.title || task.titulo;
+            const asignados = task.asignados || task.asignado_a;
+
+            if (!title || title.trim().length === 0) return 'El título es obligatorio';
+            if (!asignados || asignados.length === 0) return 'Al menos un asignado es necesario';
             return null;
         },
 
         /**
-         * Computes automatic alerts for a task
+         * Calcula alertas automáticas para una tarea basadas en su estado y fechas.
+         * @param {Object} task La tarea a analizar.
+         * @returns {Array<Object>} Lista de alertas detectadas { type, message }.
          */
         computeAlerts: (task) => {
             const alerts = [];
             const now = new Date();
-            const updatedAt = new Date(task.updated_at || task.created_at);
+            const updatedAt = new Date(task.updated_at || task.fecha || task.created_at);
             const diffHours = (now - updatedAt) / (1000 * 60 * 60);
 
-            // 48h WORKING check
-            if (task.estado === 'WORKING' && diffHours > 48) {
+            // Verificación de inactividad en tareas en progreso (48h)
+            const status = (task.estado || '').toUpperCase();
+            if (status === 'WORKING' && diffHours > 48) {
                 alerts.push({ type: 'BLOCKED', message: 'Bloqueada por inactividad (+48h)' });
             }
 
-            // Due date < 24h
-            if (task.due_date) {
-                const dueDate = new Date(task.due_date);
-                const diffDue = (dueDate - now) / (1000 * 60 * 60);
+            // Fecha de entrega próxima (menos de 24h)
+            const dueDate = task.due_date || task.limite;
+            if (dueDate) {
+                const due = new Date(dueDate);
+                const diffDue = (due - now) / (1000 * 60 * 60);
                 if (diffDue > 0 && diffDue < 24) {
                     alerts.push({ type: 'URGENT', message: 'Entrega en menos de 24h' });
                 }
             }
 
-            // Jules loop waiting
+            // Estado de loop de Jules esperando validación
             if (task.jules_loop_estado === 'esperando_validacion') {
                 alerts.push({ type: 'JULES', message: 'Pendiente de validación Jules' });
             }
@@ -46,7 +56,8 @@
         },
 
         /**
-         * Syncs task between multiple tabs using storage events
+         * Inicializa la sincronización de tareas entre múltiples pestañas usando eventos de storage.
+         * @param {Function} callback Función a ejecutar cuando se detecta un cambio.
          */
         initSync: (callback) => {
             window.addEventListener('storage', (e) => {
@@ -56,6 +67,9 @@
             });
         },
 
+        /**
+         * Notifica a otras pestañas/ventanas que las tareas han cambiado.
+         */
         notifyUpdate: () => {
             localStorage.setItem('hypenosys_tasks_updated', Date.now().toString());
         }

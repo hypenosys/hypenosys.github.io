@@ -1,5 +1,12 @@
-/* HYPENOSYS — TASKS MODULE */
+/**
+ * Módulo de Tareas de Hypenosys
+ * Gestiona la creación, edición, archivado y visualización de tareas en el dashboard.
+ */
 
+/**
+ * Cambia entre las pestañas del modal de tareas.
+ * @param {string} tabId ID de la pestaña a activar ('info', 'team', 'extra').
+ */
 function switchTaskModalTab(tabId) {
     const tabs = ['info', 'team', 'extra'];
     tabs.forEach(t => {
@@ -14,26 +21,27 @@ function switchTaskModalTab(tabId) {
     }
 }
 
+/**
+ * Abre el modal para crear una nueva tarea, inicializando campos por defecto.
+ */
 function openCreateTaskModal() {
   switchTaskModalTab('info');
   populateMemberSelects();
   populateRepoSelect();
 
-  // FIX 1 — Auto-detección de repo/branch activo
+  // Auto-detección de repo/branch activo para facilitar la creación
   let defaultRepo = localStorage.getItem('hypenosys_active_repo') || '';
   let defaultBranch = localStorage.getItem('hypenosys_active_branch') || localStorage.getItem('jules_selected_branch') || '';
 
-  // Si no hay datos en hypenosys_*, intentamos extraer de la sesión neural más reciente
   if (!defaultRepo || !defaultBranch) {
       const sessions = JSON.parse(localStorage.getItem('hy_neural_sessions') || '[]');
       if (sessions.length > 0) {
           const s = sessions[0];
-          if (!defaultRepo && s.repo) defaultRepo = s.repo; // Asumiendo que guardamos repo en sesión
+          if (!defaultRepo && s.repo) defaultRepo = s.repo;
           if (!defaultBranch && s.branch) defaultBranch = s.branch;
       }
   }
 
-  // Fallback a config global si sigue vacío
   if (!defaultRepo) {
       const ghConfig = localStorage.getItem('github_repo');
       if (ghConfig) defaultRepo = ghConfig.startsWith('sources/github/') ? ghConfig : `sources/github/${ghConfig}`;
@@ -89,6 +97,10 @@ function openCreateTaskModal() {
   document.getElementById('create-task-modal').classList.remove('hidden');
 }
 
+/**
+ * Abre el modal de edición cargando los datos de una tarea existente.
+ * @param {number|string} taskId ID de la tarea a editar.
+ */
 function openEditTaskModal(taskId) {
     const task = currentTasks.find(t => String(t.id) === String(taskId));
     if (!task) return;
@@ -101,7 +113,6 @@ function openEditTaskModal(taskId) {
     document.getElementById('task-title-input').value = task.title || '';
     document.getElementById('task-desc-input').value = task.descripcion || '';
 
-    // Handle branch initialization
     const branch = task.rama || '';
     document.getElementById('task-rama-input').value = branch;
     updateBranchList(task.repository);
@@ -164,6 +175,10 @@ function openEditTaskModal(taskId) {
     document.getElementById('create-task-modal').classList.remove('hidden');
 }
 
+/**
+ * Gestiona la creación o actualización de una tarea al pulsar Guardar.
+ * Realiza la subida de imágenes y la escritura atómica en GitHub.
+ */
 async function handleCreateTask() {
   const taskId = document.getElementById('task-id-input').value;
   const title = document.getElementById('task-title-input').value;
@@ -228,7 +243,7 @@ async function handleCreateTask() {
   showToast(UI_STRINGS.saving, 'info');
 
   try {
-    // Phase 1: Upload pending images to Tumblr
+    // Fase 1: Subir imágenes pendientes a Tumblr
     await uploadPendingImages();
 
     document.getElementById('create-task-modal').classList.add('hidden');
@@ -266,6 +281,10 @@ async function handleCreateTask() {
   }
 }
 
+/**
+ * Archiva una tarea y gestiona la limpieza opcional de imágenes legacy.
+ * @param {number|string} taskId ID de la tarea a archivar.
+ */
 async function handleArchiveTask(taskId) {
     const task = currentTasks.find(t => String(t.id) === String(taskId));
     if (!task) return;
@@ -284,7 +303,6 @@ async function handleArchiveTask(taskId) {
     try {
         if (deleteLegacy) {
             for (const img of legacyImages) {
-                // If it's a relative path, try to delete it from GitHub
                 if (img.url && !img.url.startsWith('data:') && !img.url.startsWith('http')) {
                     try {
                         const fileData = await window.githubApi.getFile(img.url);
@@ -295,10 +313,8 @@ async function handleArchiveTask(taskId) {
                         console.warn(`[ARCHIVE] Failed to delete file ${img.url}:`, e);
                     }
                 }
-                // Clear the URL to "delete" Base64 or relative path from JSON
                 img.url = "";
             }
-            // Update the task with cleared images before archiving
             await window.githubApi.updateTask(taskId, { images: task.images });
         }
 
@@ -310,6 +326,10 @@ async function handleArchiveTask(taskId) {
     }
 }
 
+/**
+ * Restaura una tarea del archivo a la lista de tareas activas.
+ * @param {number|string} taskId ID de la tarea a restaurar.
+ */
 async function handleRestoreTask(taskId) {
     showToast(UI_STRINGS.saving, 'info');
     try {
@@ -321,6 +341,10 @@ async function handleRestoreTask(taskId) {
     }
 }
 
+/**
+ * Procesa archivos de imagen seleccionados por el usuario.
+ * @param {FileList} files Archivos de imagen.
+ */
 async function handleImageFiles(files) {
     if (!files || files.length === 0) return;
 
@@ -346,6 +370,9 @@ async function handleImageFiles(files) {
     renderImagePreviews();
 }
 
+/**
+ * Sube las imágenes pendientes a Tumblr a través del Worker Gatekeeper.
+ */
 async function uploadPendingImages() {
     if (pendingImages.length === 0) return;
 
@@ -380,23 +407,23 @@ async function uploadPendingImages() {
         } catch (err) {
             console.error('[TUMBLR] Upload failed:', err);
             showToast(`Error al subir ${item.file.name}: ${err.message}`, 'error');
-            throw err; // Stop the save process if upload fails
+            throw err;
         }
     }
     pendingImages = pendingImages.filter(img => !img.uploaded);
 }
 
-
+/**
+ * Renderiza las miniaturas de imágenes (actuales y pendientes) en el modal.
+ */
 function renderImagePreviews() {
     const container = document.getElementById('task-image-grid');
     if (!container) return;
     container.innerHTML = '';
 
-    // 1. Render existing images (Tumblr)
     currentTaskImages.forEach((img, idx) => {
         const thumb = document.createElement('div');
         thumb.className = 'image-thumb group relative';
-
         const isLegacy = img.type === 'binary_legacy';
 
         thumb.innerHTML = `
@@ -426,7 +453,6 @@ function renderImagePreviews() {
         container.appendChild(thumb);
     });
 
-    // 2. Render pending images (Local)
     pendingImages.forEach((img, idx) => {
         const thumb = document.createElement('div');
         thumb.className = 'image-thumb group relative';
@@ -458,7 +484,6 @@ function renderImagePreviews() {
         container.appendChild(thumb);
     });
 
-    // 3. Add button
     const addBtn = document.createElement('div');
     addBtn.className = 'image-add-btn';
     addBtn.onclick = () => document.getElementById('task-image-input').click();
@@ -475,11 +500,17 @@ function renderImagePreviews() {
     container.appendChild(addBtn);
 }
 
+/**
+ * Elimina una imagen existente de la tarea.
+ */
 function removeTaskImage(index) {
     currentTaskImages.splice(index, 1);
     renderImagePreviews();
 }
 
+/**
+ * Elimina una imagen pendiente de subir.
+ */
 function removePendingImage(index) {
     const img = pendingImages[index];
     if (img && img.localUrl) URL.revokeObjectURL(img.localUrl);
@@ -487,6 +518,11 @@ function removePendingImage(index) {
     renderImagePreviews();
 }
 
+/**
+ * Abre el Lightbox global para previsualizar imágenes.
+ * @param {string|number} srcOrTaskId URL de la imagen o ID de la tarea.
+ * @param {number} [imageIndex] Índice de la imagen dentro de la tarea.
+ */
 window.openLightbox = function(srcOrTaskId, imageIndex) {
     const modal = document.getElementById('lightbox-modal');
     const img = document.getElementById('lightbox-img');
@@ -495,20 +531,15 @@ window.openLightbox = function(srcOrTaskId, imageIndex) {
         return;
     }
 
-    // Set guard timestamp to prevent immediate closure on event bubbling/desktop clicks
     modal._lastOpenTime = Date.now();
-
-    // Reset state
     lightboxTask = null;
     lightboxImages = [];
     lightboxIndex = 0;
 
     if (imageIndex === undefined) {
-        // Fallback or direct src
         img.src = srcOrTaskId;
     } else {
         if (srcOrTaskId === 'current') {
-            // Combine current and pending images for the lightbox
             const pendingAsImg = pendingImages.map(p => ({ url: p.localUrl, filename: p.file.name }));
             lightboxImages = currentTaskImages.concat(pendingAsImg);
             lightboxIndex = imageIndex;
@@ -527,11 +558,13 @@ window.openLightbox = function(srcOrTaskId, imageIndex) {
     }
 
     updateLightboxUI();
-    // Force visible immediately
     modal.style.display = 'flex';
     modal.classList.remove('hidden');
 }
 
+/**
+ * Actualiza los controles de navegación del Lightbox.
+ */
 window.updateLightboxUI = function() {
     const prevBtn = document.getElementById('lightbox-prev');
     const nextBtn = document.getElementById('lightbox-next');
@@ -551,6 +584,10 @@ window.updateLightboxUI = function() {
     }
 }
 
+/**
+ * Navega entre las imágenes del Lightbox.
+ * @param {number} direction Dirección del movimiento (-1 o 1).
+ */
 window.navigateLightbox = function(direction) {
     if (lightboxImages.length <= 1) return;
 
@@ -565,21 +602,27 @@ window.navigateLightbox = function(direction) {
     }
 }
 
+/**
+ * Cierra el Lightbox y limpia el estado.
+ */
 window.closeLightbox = function() {
     document.activeElement?.blur();
     const modal = document.getElementById('lightbox-modal');
     if (modal) {
         modal.style.display = 'none';
         modal.classList.add('hidden');
-        // Clear src to avoid flicker on next open
         const img = document.getElementById('lightbox-img');
         if (img) img.src = "";
     }
-    // Phase 2 instruction: Call blur explicitly after close
     document.activeElement?.blur();
 }
 
-
+/**
+ * Calcula las diferencias entre dos objetos de tarea para generar el registro de cambios.
+ * @param {Object} oldTask Tarea original.
+ * @param {Object} newTask Nueva tarea.
+ * @returns {Array<Object>} Lista de cambios detectados.
+ */
 function diffTasks(oldTask, newTask) {
     const fields = ['title', 'descripcion', 'estado', 'prioridad', 'milestone', 'asignados', 'blocks', 'blocked_by', 'due_date', 'task_type', 'tags', 'completitud', 'repository', 'seccion'];
     const changes = [];
@@ -590,7 +633,6 @@ function diffTasks(oldTask, newTask) {
         let oldVal = oldTask ? oldTask[field] : null;
         let newVal = newTask[field];
 
-        // Normalizar arrays para comparación
         if (Array.isArray(oldVal) || Array.isArray(newVal)) {
             const sOld = JSON.stringify((oldVal || []).sort());
             const sNew = JSON.stringify((newVal || []).sort());
@@ -617,6 +659,10 @@ function diffTasks(oldTask, newTask) {
     return changes;
 }
 
+/**
+ * Resuelve los títulos de las tareas referenciadas por ID en campos de bloqueo.
+ * @param {string} type Tipo de referencia ('blocks' o 'blocked_by').
+ */
 function resolveTaskTitles(type) {
     const inputId = type === 'blocks' ? 'task-blocks-input' : 'task-blocked-by-input';
     const containerId = type === 'blocks' ? 'task-blocks-resolved' : 'task-blocked-by-resolved';
@@ -635,6 +681,10 @@ function resolveTaskTitles(type) {
     }).join('');
 }
 
+/**
+ * Renderiza el historial de cambios de una tarea.
+ * @param {Array<Object>} log Lista de entradas del log de cambios.
+ */
 function renderChangeLog(log) {
     const container = document.getElementById('task-changelog-container');
     if (!container) return;
@@ -660,6 +710,9 @@ function renderChangeLog(log) {
     `).join('');
 }
 
+/**
+ * Alterna la visibilidad del registro de cambios.
+ */
 function toggleChangeLog() {
     const container = document.getElementById('task-changelog-container');
     const chevron = document.getElementById('task-changelog-chevron');
@@ -669,22 +722,21 @@ function toggleChangeLog() {
 }
 
 /**
- * Entry point for image preview with event handling
+ * Punto de entrada para la previsualización de imágenes con gestión de eventos.
  */
 function openImagePreview(taskId, idx, event) {
     if (event) {
         if (typeof event.stopPropagation === 'function') event.stopPropagation();
         if (typeof event.preventDefault === 'function') event.preventDefault();
     }
-    // Phase 3 Fix: ensure we don't have pending click states
     document.activeElement?.blur();
     window.openLightbox(taskId, idx);
 }
 
 /**
- * Fix 1 & 2: Dynamic branch selector and validation
+ * Actualiza el estado del selector de ramas basado en el repositorio seleccionado.
+ * @param {string} repoValue Valor del repositorio seleccionado.
  */
-
 async function updateBranchList(repoValue) {
     const btn = document.getElementById('btn-list-branches');
     if (!btn) return;
@@ -699,13 +751,15 @@ async function updateBranchList(repoValue) {
         btn.classList.remove('opacity-50', 'cursor-not-allowed');
     }
 
-    // Trigger validation if there is already a value
     const input = document.getElementById('task-rama-input');
     if (input && input.value) {
         validateBranch();
     }
 }
 
+/**
+ * Muestra el desplegable de ramas del repositorio actual.
+ */
 async function showBranchDropdown() {
     const repoSelect = document.getElementById('task-repo-input');
     const dropdown = document.getElementById('branch-dropdown');
@@ -738,6 +792,9 @@ async function showBranchDropdown() {
     }
 }
 
+/**
+ * Selecciona una rama del desplegable y la valida.
+ */
 function selectBranch(name) {
     const input = document.getElementById('task-rama-input');
     if (input) {
@@ -747,12 +804,15 @@ function selectBranch(name) {
     hideBranchDropdown();
 }
 
+/**
+ * Oculta el desplegable de ramas.
+ */
 function hideBranchDropdown() {
     const dropdown = document.getElementById('branch-dropdown');
     if (dropdown) dropdown.classList.add('hidden');
 }
 
-// Click outside to close dropdown
+// Cerrar desplegable al hacer clic fuera
 document.addEventListener('click', (e) => {
     const dropdown = document.getElementById('branch-dropdown');
     const btn = document.getElementById('btn-list-branches');
@@ -763,6 +823,9 @@ document.addEventListener('click', (e) => {
 
 let branchValidationTimeout = null;
 
+/**
+ * Valida que la rama introducida exista realmente en el repositorio de GitHub.
+ */
 function validateBranch() {
     if (branchValidationTimeout) clearTimeout(branchValidationTimeout);
 
@@ -788,7 +851,6 @@ function validateBranch() {
         }
 
         try {
-            // Usamos githubContext.getBranches que ya tiene cache
             const branches = await window.githubContext.getBranches(path.repo, path.owner);
             const exists = branches.some(b => b.name === branchName);
 
@@ -800,14 +862,13 @@ function validateBranch() {
             }
         } catch (e) {
             console.warn("[Validation] Error validating branch:", e);
-            // Mostrar error amigable si falla la API
             msg.innerHTML = `⚠️ No se pudo validar la rama. GitHub API error o rate limit.`;
             msg.classList.remove('hidden');
         }
     }, 500);
 }
 
-// Attach event listeners for validation
+// Adjuntar oyentes de eventos para la validación
 document.addEventListener('DOMContentLoaded', () => {
     const input = document.getElementById('task-rama-input');
     if (input) {
