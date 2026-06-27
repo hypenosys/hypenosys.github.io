@@ -1,5 +1,7 @@
 # Contributing to this project
 
+* [Quick Start for Newcomers](#quick-start-for-newcomers)
+* [Technical Overview](docs/technical-overview.md)
 * [Contributors Agreement](#user-content-contributors-agreement)
 * [Introduction](#Introduction)
   * [I don't want to read this whole thing I just have a question!!!](#user-content-i-dont-want-to-read-this-whole-thing-i-just-have-a-question)
@@ -11,6 +13,15 @@
 ## Contributors Agreement
 
 By submitting patches to this project you agree to allow them to be redistributed under the project's license, according to the normal forms and usages of the open-source community.
+
+## Quick Start for Newcomers
+
+1.  **Clone the Repo**: `git clone https://github.com/hypenosys/hypenosys.github.io.git`
+2.  **Install Ruby**: Ensure you have Ruby >= 3.2.0.
+3.  **Bootstrap**: Run `bundle install` and `npm install` (for tests).
+4.  **Launch**: `bundle exec jekyll serve` and open `http://localhost:4000`.
+5.  **Configure**: Use the Settings icon in the dashboard to set your GitHub PAT.
+6.  **Read the [Technical Overview](docs/technical-overview.md)**: Understand the serverless architecture.
 
 ## Introduction
 
