@@ -8,7 +8,11 @@ window.NeuralProviderClient = (function() {
 
     function getConfig() {
         try {
-            return JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
+            const config = JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
+            if (config.provider && config.provider !== 'none') {
+                console.log("[Neural Chat Core] Provider config loaded:", config.provider);
+            }
+            return config;
         } catch (e) {
             console.error('[NeuralProviderClient] Error parsing hy_ai_config:', e);
             return {};

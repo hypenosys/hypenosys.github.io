@@ -929,6 +929,7 @@ permalink: /jules-panel/
 <script src="{{ '/assets/javascript/jules-panel-kanban.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/jules-panel-hub.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/neural-provider-client.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/neural-chat-core.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/jules-panel-neural.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/jules-panel-auth.js' | relative_url }}"></script>
 
@@ -1011,25 +1012,7 @@ permalink: /jules-panel/
           tab.onclick = () => switchView(tab.dataset.tab, tab);
         });
 
-        window.neuralSyncChannel = new BroadcastChannel('neural-context-sync');
-        window.neuralSyncChannel.onmessage = (event) => {
-            const { type, julesSessionId, claudeConversationId, message } = event.data;
-            const currentJulesSid = getLinkedJulesSessionId();
-            const currentClaudeSid = localStorage.getItem('hy_active_claude_session_id');
-            if (type === 'NEW_MESSAGE' && (julesSessionId === currentJulesSid || claudeConversationId === currentClaudeSid)) {
-                if (message) {
-                    const exists = chatV2Messages.some(m =>
-                        m.content === message.content && m.role === message.role &&
-                        (m.timestamp === message.timestamp || m.createTime === message.createTime)
-                    );
-                    if (!exists) {
-                        chatV2Messages.push(message);
-                        saveSessionsV2(true);
-                        renderChatV2Messages();
-                    }
-                }
-            }
-        };
+        // BroadcastChannel sync disabled to maintain independent histories between Standalone and Panel
 
         window.addEventListener('storage', (e) => {
             if (e.key === 'jules_live_telemetry' && e.newValue) {

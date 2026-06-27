@@ -2,8 +2,16 @@
    NEURAL CHAT SESSION MANAGEMENT
    ════════════════════════════════════════ */
 
-window.sessions = JSON.parse(localStorage.getItem('claude_chat_sessions') || '[]');
-window.archivedSessions = JSON.parse(localStorage.getItem('claude_archived_sessions') || '[]');
+window.sessions = (function() {
+    try {
+        return JSON.parse(localStorage.getItem('claude_chat_sessions') || '[]');
+    } catch(e) { return []; }
+})();
+window.archivedSessions = (function() {
+    try {
+        return JSON.parse(localStorage.getItem('claude_archived_sessions') || '[]');
+    } catch(e) { return []; }
+})();
 window.currentSessionId = null;
 window.isLoadingSession = false;
 window.currentSendMode = 'claude'; // 'claude' or 'jules'
@@ -17,15 +25,10 @@ window.sessions = window.sessions.map(s => ({
 localStorage.setItem('claude_chat_sessions', JSON.stringify(window.sessions));
 
 window.createNewSession = function() {
-    const id = 'session_' + Date.now();
-    const newSession = {
-        id,
-        title: 'Nueva Conversación',
-        messages: [],
-        systemPrompt: 'Eres un asistente técnico del estudio de videojuegos Hypenosys. Ayudas al equipo a planificar e implementar tareas de desarrollo. Responde siempre en español, de forma directa y técnica.',
-        createdAt: new Date().toISOString(),
-        task_ref: null
-    };
+    const newSession = window.NeuralChatCore.createSession({
+        title: 'Nueva Conversación'
+    });
+    const id = newSession.id;
     window.sessions.unshift(newSession);
     saveSessions();
     renderSessionList();

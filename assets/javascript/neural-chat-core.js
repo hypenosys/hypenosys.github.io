@@ -1,0 +1,129 @@
+/**
+ * Neural Chat Core - Logic for session management and AI interaction
+ * Independent of DOM and storage keys.
+ */
+window.NeuralChatCore = (function() {
+    console.log("[Neural Chat Core] Core loaded");
+
+    function getSessions(storageKey) {
+        try {
+            return JSON.parse(localStorage.getItem(storageKey) || '[]');
+        } catch (e) {
+            console.error("[NeuralChatCore] Error loading sessions:", e);
+            return [];
+        }
+    }
+
+    function saveSessions(storageKey, sessions) {
+        try {
+            localStorage.setItem(storageKey, JSON.stringify(sessions));
+        } catch (e) {
+            console.error("[NeuralChatCore] Error saving sessions:", e);
+        }
+    }
+
+    function createSession({ title, systemPrompt, idPrefix = 'session_' }) {
+        return {
+            id: idPrefix + Date.now(),
+            title: title || 'Nueva Conversación',
+            messages: [],
+            systemPrompt: systemPrompt || 'Eres un asistente técnico del estudio de videojuegos Hypenosys. Ayudas al equipo a planificar e implementar tareas de desarrollo. Responde siempre en español, de forma directa y técnica.',
+            createdAt: new Date().toISOString(),
+            task_ref: null
+        };
+    }
+
+    function deleteSession(sessions, id) {
+        return sessions.filter(s => s.id !== id);
+    }
+
+    function escapeHtml(str) {
+        return String(str ?? '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    async function sendMessage({
+        session,
+        userMessage,
+        onToken,
+        onDone,
+        onError,
+        saveCallback,
+        skipUserMessagePush = false
+    }) {
+        console.log("[Neural Chat Core] Sending message...");
+
+        if (!skipUserMessagePush) {
+            // Add user message to session
+            const userMsg = {
+                role: 'user',
+                content: userMessage,
+                timestamp: Date.now()
+            };
+            session.messages.push(userMsg);
+
+            // Set title from first message if default
+            if ((session.title === 'Nueva Conversación' || !session.title) && userMessage) {
+                session.title = userMessage.substring(0, 40) + (userMessage.length > 40 ? '...' : '');
+            }
+
+            if (saveCallback) saveCallback();
+        }
+
+        // Prepare for assistant message
+        const assistantMsg = {
+            role: 'assistant',
+            content: '',
+            timestamp: Date.now()
+        };
+        session.messages.push(assistantMsg);
+        const assistantIdx = session.messages.length - 1;
+
+        try {
+            // Filter out empty messages and format for API
+            const apiMessages = session.messages
+                .slice(0, -1)
+                .filter(m => m.content)
+                .map(m => ({ role: m.role, content: m.content }));
+
+            await window.NeuralProviderClient.sendMessage({
+                messages: apiMessages,
+                systemPrompt: session.systemPrompt,
+                onToken: (token, fullContent) => {
+                    session.messages[assistantIdx].content = fullContent;
+                    if (onToken) onToken(token, fullContent);
+                },
+                onDone: (fullContent) => {
+                    session.messages[assistantIdx].content = fullContent;
+                    if (saveCallback) saveCallback();
+                    if (onDone) onDone(fullContent);
+                },
+                onError: (err) => {
+                    // Remove empty placeholder
+                    if (!session.messages[assistantIdx].content) {
+                        session.messages.splice(assistantIdx, 1);
+                    }
+                    if (onError) onError(err);
+                }
+            });
+        } catch (e) {
+            if (!session.messages[assistantIdx].content) {
+                session.messages.splice(assistantIdx, 1);
+            }
+            if (onError) onError(e);
+        }
+    }
+
+    return {
+        getSessions,
+        saveSessions,
+        createSession,
+        deleteSession,
+        sendMessage,
+        escapeHtml
+    };
+})();

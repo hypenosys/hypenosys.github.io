@@ -104,18 +104,10 @@ window.sendMessage = async function() {
         return;
     }
 
-    const userMsg = {
-        role: 'user',
-        content: content,
-        timestamp: Date.now(),
-        image: window.attachedImage || undefined
-    };
-    if (currentSession) currentSession.messages.push(userMsg);
-
-    // Sync with Neural Thread
+    // Logic for sync with Neural Thread if needed
     if (localStorage.getItem('hy_neural_active') === 'true') {
         let thread = JSON.parse(localStorage.getItem('hy_neural_thread') || '[]');
-        thread.push({ ...userMsg, source: 'user' });
+        thread.push({ role: 'user', content: content, timestamp: Date.now(), source: 'user', image: window.attachedImage || undefined });
         localStorage.setItem('hy_neural_thread', JSON.stringify(thread));
     }
 
@@ -127,13 +119,8 @@ window.sendMessage = async function() {
         currentSession.title = content.substring(0, 40) + (content.length > 40 ? '...' : '');
     }
 
-    // [FIX 2B] Emitir mensaje del usuario inmediatamente via saveSessions
-    saveSessions();
-
     window.chatInput.value = '';
     window.chatInput.style.height = 'auto';
-    renderMessages();
-    renderSessionList();
 
     // FEATURE #1: Thinking Animation UI
     window.thinkingIndicator.classList.remove('hidden');
@@ -143,18 +130,40 @@ window.sendMessage = async function() {
 
     try {
         const modelType = config.modelType || 'chat';
+        const isStandardProvider = provider === 'ollama' || provider === 'anthropic' || provider === 'custom' || provider === 'openai' || provider === 'openrouter' || provider === 'nvidia_nim';
 
         if (modelType === 'image-gen') {
             await sendMessageImageGen(currentSession, config);
         } else if (modelType === 'audio' && !config.useTextInAudioMode) {
-            // ASR handled by recording, but if they click send...
             if (content) await sendMessageCustom(currentSession, config);
-        } else if (provider === 'ollama') {
-            await sendMessageOllama(currentSession, config);
-        } else if (provider === 'anthropic') {
-            await sendMessageAnthropic(currentSession, config);
-        } else if (provider === 'custom' || provider === 'openai' || provider === 'openrouter' || provider === 'nvidia_nim') {
-            await sendMessageCustom(currentSession, config);
+        } else if (isStandardProvider) {
+            // Optimistic UI: Add user message and render immediately
+            const userMsg = { role: 'user', content: content, timestamp: Date.now() };
+            currentSession.messages.push(userMsg);
+
+            renderMessages();
+            renderSessionList();
+            saveSessions();
+
+            await window.NeuralChatCore.sendMessage({
+                session: currentSession,
+                userMessage: content,
+                saveCallback: () => saveSessions(),
+                skipUserMessagePush: true,
+                onToken: () => {
+                    renderMessages();
+                },
+                onDone: () => {
+                    window.thinkingIndicator.classList.add('hidden');
+                    renderMessages();
+                    renderSessionList();
+                },
+                onError: (err) => {
+                    window.thinkingIndicator.classList.add('hidden');
+                    appendSystemMessage(err.message, 'error');
+                    renderMessages();
+                }
+            });
         } else {
             throw new Error(`Proveedor ${provider} no implementado aún en Neural Chat.`);
         }
