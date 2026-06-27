@@ -346,3 +346,24 @@ window.clearNotifs = function() {
     updateNotifBadge();
     renderNotifList();
 }
+
+/**
+ * Inicia una nueva sesión de chat neural (Neural Chat)
+ */
+window.startNewNeuralSession = function() {
+    console.log("[Jules Panel] Iniciando nueva sesión neural...");
+
+    // Cambiar a la vista de chat
+    if (window.switchView) {
+        window.switchView('chat');
+    }
+
+    // Crear nueva sesión en el core de chat
+    if (window.createNewJulesPanelSession) {
+        window.createNewJulesPanelSession();
+        window.showToast("Nueva sesión de chat iniciada", "green");
+    } else {
+        console.error("[Jules Panel] createNewJulesPanelSession no encontrada");
+        window.showToast("Error al iniciar nueva sesión", "red");
+    }
+}
