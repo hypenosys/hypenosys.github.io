@@ -736,11 +736,22 @@ const githubOps = {
 
     /**
      * Recupera las ramas de un repositorio específico.
-     * @param {string} repoName Nombre del repositorio.
+     * @param {string} repoName Nombre del repositorio o 'owner/repo'.
      * @param {string} [owner=REPO_OWNER] Propietario del repositorio.
      * @returns {Promise<Array>} Lista de ramas.
      */
     fetchBranches: async (repoName, owner = REPO_OWNER) => {
+        if (repoName && repoName.includes('/')) {
+            // Remove Jules prefix if present
+            const clean = repoName.replace('sources/github/', '');
+            const parts = clean.split('/');
+            if (parts.length >= 2) {
+                owner = parts[0];
+                repoName = parts[1];
+            } else {
+                repoName = parts[0];
+            }
+        }
         const headers = getHeaders();
         const response = await fetch(`${GITHUB_API_BASE}/repos/${owner}/${repoName}/branches?per_page=100`, {
             headers
@@ -758,9 +769,19 @@ const githubOps = {
      * Recupera detalles de un repositorio.
      */
     fetchRepo: async (repoFullName) => {
-        const parts = repoFullName.split('/');
-        const repo = parts.pop();
-        const owner = parts.length > 0 ? parts[0] : REPO_OWNER;
+        let repo = repoFullName;
+        let owner = REPO_OWNER;
+
+        if (repoFullName && repoFullName.includes('/')) {
+            const clean = repoFullName.replace('sources/github/', '');
+            const parts = clean.split('/');
+            if (parts.length >= 2) {
+                owner = parts[0];
+                repo = parts[1];
+            } else {
+                repo = parts[0];
+            }
+        }
 
         const headers = getHeaders();
         const response = await fetch(`${GITHUB_API_BASE}/repos/${owner}/${repo}`, {

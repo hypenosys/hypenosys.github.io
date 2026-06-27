@@ -162,29 +162,63 @@ async function loadBranches(repoFullName) {
     if (!branchSelect) return;
 
     try {
-        branchSelect.innerHTML = '<option>Cargando...</option>';
+        branchSelect.disabled = true;
+        branchSelect.innerHTML = '<option value="">Cargando ramas...</option>';
+        if (branchMeta) branchMeta.innerHTML = '';
+
         const branches = await window.githubApi.getBranches(repoFullName);
         const repoInfo = await window.githubApi.getRepo(repoFullName);
         const defaultBranch = repoInfo.default_branch;
 
-        branchSelect.innerHTML = branches.map(b => '<option value="' + b.name + '" ' + (b.name === defaultBranch ? 'selected' : '') + '>' + b.name + (b.name === defaultBranch ? ' ★' : '') + '</option>').join('');
+        if (!branches || branches.length === 0) {
+            branchSelect.innerHTML = '<option value="">Sin ramas disponibles</option>';
+            return;
+        }
 
-        const activeBranch = window.JulesPanelState.activeBranch || defaultBranch;
-        branchSelect.value = activeBranch;
-        window.JulesPanelState.activeBranch = activeBranch;
+        // Normalization and UI population
+        branchSelect.innerHTML = branches.map(b => {
+            const cleanName = window.normalizeBranchName(b.name);
+            const isDefault = b.name === defaultBranch;
+            return '<option value="' + b.name + '">' + cleanName + (isDefault ? ' ★' : '') + '</option>';
+        }).join('');
+
+        // Priority logic for branch selection
+        const persistedBranch = localStorage.getItem('hy_active_branch_' + repoFullName);
+        let branchToSelect = "";
+
+        const branchExists = (name) => branches.some(b => b.name === name);
+
+        if (persistedBranch && branchExists(persistedBranch)) {
+            branchToSelect = persistedBranch;
+        } else if (defaultBranch && branchExists(defaultBranch)) {
+            branchToSelect = defaultBranch;
+        } else {
+            branchToSelect = branches[0].name;
+        }
+
+        branchSelect.value = branchToSelect;
+        window.JulesPanelState.activeBranch = branchToSelect;
+        localStorage.setItem('hypenosys_active_branch', branchToSelect);
+        localStorage.setItem('hy_active_branch_' + repoFullName, branchToSelect);
 
         if (branchMeta) {
             branchMeta.innerHTML = '<span class="u-dot"></span><span>' + branches.length + ' ramas cargadas</span>';
             branchMeta.classList.remove('skeleton', 'skeleton--loading', 'skeleton-text');
         }
 
+        branchSelect.disabled = false;
+
         branchSelect.onchange = (e) => {
-            window.JulesPanelState.activeBranch = e.target.value;
-            localStorage.setItem('hypenosys_active_branch', e.target.value);
+            const val = e.target.value;
+            if (!val) return;
+            window.JulesPanelState.activeBranch = val;
+            localStorage.setItem('hypenosys_active_branch', val);
+            localStorage.setItem('hy_active_branch_' + repoFullName, val);
+
             const sessCtx = $('sess-ctx');
             if (sessCtx) {
                 const alias = localStorage.getItem('hy_repo_alias_' + repoFullName) || repoFullName.split('/').pop();
-                sessCtx.textContent = alias + ': ' + e.target.value;
+                sessCtx.textContent = alias + ': ' + window.normalizeBranchName(val);
             }
             if (window.checkBranchWarning) window.checkBranchWarning();
         };
@@ -192,12 +226,18 @@ async function loadBranches(repoFullName) {
         const sessCtx = $('sess-ctx');
         if (sessCtx) {
             const alias = localStorage.getItem('hy_repo_alias_' + repoFullName) || repoFullName.split('/').pop();
-            sessCtx.textContent = alias + ': ' + activeBranch;
+            sessCtx.textContent = alias + ': ' + window.normalizeBranchName(branchToSelect);
         }
+
+        if (window.checkBranchWarning) window.checkBranchWarning();
 
     } catch (e) {
         console.error('Error loading branches:', e);
-        branchSelect.innerHTML = '<option>Error</option>';
+        branchSelect.innerHTML = '<option value="">No se pudieron cargar las ramas</option>';
+        branchSelect.disabled = true;
+        if (branchMeta) {
+            branchMeta.innerHTML = '<span class="u-dot" style="background:var(--red)"></span><span style="color:var(--red)">Error de conexión con GitHub</span>';
+        }
     }
 }
 

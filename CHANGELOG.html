@@ -73,6 +73,7 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-success">Fixed</h5>
             <ul>
+                <li><strong>Selector de Ramas en Jules Panel:</strong> Corregido bug donde el selector de "RAMA ACTIVA" mostraba "Error" debido a fallos en la resolución del repositorio y falta de normalización. Se implementó persistencia por repositorio, lógica de selección por prioridad (Persistida > Default > Primera) y validación estricta antes del lanzamiento de tareas para asegurar que solo se usen ramas reales.</li>
                 <li><strong>Arquitectura Core Neural Chat:</strong> Extracción de la lógica de sesiones y comunicación con proveedores a un módulo centralizado (<code>neural-chat-core.js</code>), permitiendo que el Jules Panel y el Chat Standalone funcionen de forma 100% independiente sin compartir estado del DOM o inicializadores globales.</li>
                 <li><strong>Independencia del Jules Panel (Neural):</strong> El panel de control ahora funciona de forma totalmente independiente mediante un bootstrap propio y almacenamiento dedicado (<code>hy_jules_panel_neural_sessions</code>), eliminando la necesidad de interactuar previamente con la página standalone.</li>
                 <li><strong>Optimismo UI y Etiquetas:</strong> Implementado renderizado optimista de mensajes del usuario en el chat standalone y normalización de etiquetas (USER, JULES, CLAUDE) en el Jules Panel para evitar discrepancias visuales.</li>
