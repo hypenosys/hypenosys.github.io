@@ -189,3 +189,107 @@ function renderKanban(sessions) {
         }).join('');
     });
 }
+
+/**
+ * Abre el modal para crear una nueva tarea Jules
+ * @param {string} status - Estado inicial ('pending', 'running', 'done', 'error')
+ */
+window.openNewTaskModal = function(status = 'pending') {
+    console.log("[Jules Panel] Abriendo modal Nueva Tarea. Status:", status);
+    const modal = $('new-task-modal');
+    if (!modal) return;
+
+    // Limpiar campos
+    const desc = $('nt-desc');
+    if (desc) {
+        desc.value = '';
+        setTimeout(() => desc.focus(), 100);
+    }
+
+    // Ajustar botones de estado
+    const btns = document.querySelectorAll('#nt-status-btns .fpill');
+    btns.forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.st === status);
+    });
+
+    modal.classList.add('open');
+}
+
+/**
+ * Cierra el modal de nueva tarea
+ */
+window.closeNewTaskModal = function() {
+    const modal = $('new-task-modal');
+    if (modal) modal.classList.remove('open');
+}
+
+/**
+ * Selecciona un estado en el modal de nueva tarea
+ * @param {HTMLElement} btn
+ */
+window.selectTaskStatus = function(btn) {
+    const btns = document.querySelectorAll('#nt-status-btns .fpill');
+    btns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+}
+
+/**
+ * Confirma y crea la nueva tarea
+ */
+window.confirmNewTask = async function() {
+    const desc = $('nt-desc').value.trim();
+    if (!desc) {
+        showToast("Por favor, introduce una descripción", "red");
+        $('nt-desc').focus();
+        return;
+    }
+
+    const activeBtn = document.querySelector('#nt-status-btns .fpill.active');
+    const status = activeBtn ? activeBtn.dataset.st : 'pending';
+
+    console.log("[Jules Panel] Confirmando nueva tarea. Status:", status, "Desc:", desc);
+
+    if (status === 'running') {
+        // Si el estado es "En Progreso", cargamos el prompt directamente en Jules Agent
+        const promptArea = $('session-prompt');
+        if (promptArea) {
+            promptArea.value = desc;
+            window.closeNewTaskModal();
+            window.switchView('neural');
+
+            // Si launchSession existe, lo lanzamos automáticamente
+            if (window.launchSession) {
+                setTimeout(() => window.launchSession(), 500);
+            }
+            showToast("Tarea enviada a Jules Agent", "green");
+        }
+    } else {
+        // Para otros estados, creamos una tarea en el Kanban persistente
+        try {
+            const newTask = {
+                titulo: desc,
+                descripcion: desc,
+                estado: status === 'done' ? 'OK' : (status === 'error' ? 'Critical' : 'Pending'),
+                prioridad: 'Major',
+                milestone: 'M1',
+                asignados: [window.githubApi?.user?.login || 'axlfc'],
+                repository: window.JulesPanelState.activeRepo || localStorage.getItem('github_repo'),
+                rama: window.JulesPanelState.activeBranch || 'master',
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
+            };
+
+            const res = await window.githubApi.createTask(newTask);
+            if (res.success) {
+                window.closeNewTaskModal();
+                showToast("Tarea creada en Kanban", "green");
+                if (window.refreshDashboard) {
+                    await window.refreshDashboard();
+                }
+            }
+        } catch (e) {
+            console.error("[Jules Panel] Error al crear tarea:", e);
+            showToast("Error al crear tarea: " + e.message, "red");
+        }
+    }
+}
