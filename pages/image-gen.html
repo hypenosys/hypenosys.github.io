@@ -52,7 +52,6 @@ permalink: /image-gen/
 
         <div class="ig-section-label">Prompt Engine</div>
 
-        <!-- Dynamic prompt stack -->
         <div id="promptStack" class="ig-prompt-stack"></div>
         <button class="ig-add-btn" onclick="addPrompt()">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -61,7 +60,6 @@ permalink: /image-gen/
 
         <div class="ig-divider"></div>
 
-        <!-- Model selector -->
         <div class="ig-section-label">Model</div>
         <div class="ig-model-chips">
           <button class="ig-model-chip active" data-model="flux-dev" onclick="selectModel(this,'flux-dev')">
@@ -74,7 +72,6 @@ permalink: /image-gen/
 
         <div class="ig-divider"></div>
 
-        <!-- Parameters -->
         <div class="ig-section-label">Parameters</div>
         <div class="ig-param-grid">
           <div class="ig-param">
@@ -107,7 +104,6 @@ permalink: /image-gen/
 
         <div class="ig-divider"></div>
 
-        <!-- Generate -->
         <button class="ig-generate-btn" id="generateBtn" onclick="handleGenerate()">
           <span class="ig-generate-icon">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
@@ -115,7 +111,7 @@ permalink: /image-gen/
           <span id="generateLabel">Generate</span>
         </button>
 
-        <div class="ig-footer-tag">n8n · Ollama gemma4 · ComfyUI</div>
+        <div class="ig-footer-tag">n8n · Ollama · ComfyUI · Flux</div>
       </div>
     </aside>
 
@@ -203,7 +199,6 @@ permalink: /image-gen/
       </div>
       <div class="ig-panel-inner">
 
-        <!-- Reference images -->
         <div class="ig-section-label">Reference Images</div>
         <div class="ig-drop-zone" id="dropZone"
           ondragover="event.preventDefault(); this.classList.add('drag-over')"
@@ -225,7 +220,6 @@ permalink: /image-gen/
 
         <div class="ig-divider"></div>
 
-        <!-- History -->
         <div class="ig-section-label" style="display:flex;justify-content:space-between;align-items:center;">
           History
           <button class="ig-text-btn" onclick="clearHistory()">Clear</button>
@@ -288,7 +282,6 @@ permalink: /image-gen/
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  /* Override any Jekyll body styles */
   margin-left: -15px;
   margin-right: -15px;
   width: calc(100% + 30px);
@@ -315,7 +308,6 @@ permalink: /image-gen/
 .ig-topbar-center { flex: 1; display: flex; justify-content: center; }
 .ig-topbar-right { display: flex; align-items: center; gap: 8px; min-width: 180px; justify-content: flex-end; }
 
-/* Mode pills */
 .ig-mode-pills { display: flex; gap: 2px; background: var(--c-surface2); border: 1px solid var(--c-border); border-radius: 20px; padding: 3px; }
 .ig-pill {
   background: transparent;
@@ -332,7 +324,6 @@ permalink: /image-gen/
 .ig-pill:hover { color: var(--c-text); background: var(--c-surface3); }
 .ig-pill.active { background: var(--c-accent); color: #0d0d0f; font-weight: 600; }
 
-/* Status chip */
 .ig-status-chip {
   display: flex; align-items: center; gap: 6px;
   font-size: 11px; font-family: var(--f-mono);
@@ -405,7 +396,6 @@ permalink: /image-gen/
 }
 .ig-divider { height: 1px; background: var(--c-border); flex-shrink: 0; }
 
-/* Prompt stack */
 .ig-prompt-stack { display: flex; flex-direction: column; gap: 6px; }
 .ig-prompt-row { display: flex; gap: 4px; align-items: flex-start; }
 .ig-prompt-num {
@@ -445,7 +435,6 @@ permalink: /image-gen/
 }
 .ig-add-btn:hover { border-color: var(--c-accent); color: var(--c-accent); }
 
-/* Model chips */
 .ig-model-chips { display: flex; flex-direction: column; gap: 5px; }
 .ig-model-chip {
   background: var(--c-surface2); border: 1px solid var(--c-border);
@@ -460,7 +449,6 @@ permalink: /image-gen/
 .ig-model-dot.flux-dev { background: var(--c-accent); }
 .ig-model-dot.flux-kontext { background: var(--c-accent2); }
 
-/* Params */
 .ig-param-grid { display: flex; flex-direction: column; gap: 12px; }
 .ig-param label {
   display: flex; justify-content: space-between;
@@ -488,7 +476,6 @@ permalink: /image-gen/
 }
 .ig-select:focus { outline: none; border-color: var(--c-accent); }
 
-/* Generate button */
 .ig-generate-btn {
   background: var(--c-accent);
   border: none;
@@ -508,8 +495,7 @@ permalink: /image-gen/
   content: '';
   position: absolute; inset: 0;
   background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 60%);
-  opacity: 0;
-  transition: opacity 0.2s;
+  opacity: 0; transition: opacity 0.2s;
 }
 .ig-generate-btn:hover { background: #cba6ff; box-shadow: 0 0 20px var(--c-accent-glow); }
 .ig-generate-btn:hover::after { opacity: 1; }
@@ -534,7 +520,6 @@ permalink: /image-gen/
   overflow: hidden;
 }
 
-/* Empty state */
 .ig-empty { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
 .ig-empty-grid {
   position: absolute; inset: 0;
@@ -550,7 +535,6 @@ permalink: /image-gen/
 .ig-empty-label { font-family: var(--f-mono); font-size: 14px; color: var(--c-text3); margin-bottom: 6px; }
 .ig-empty-sub { font-size: 12px; color: var(--c-text3); opacity: 0.6; }
 
-/* Loading */
 .ig-loading { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
 .ig-noise-canvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.04; }
 .ig-loading-content { position: relative; display: flex; flex-direction: column; align-items: center; gap: 32px; }
@@ -581,7 +565,6 @@ permalink: /image-gen/
 .ig-step.active .ig-step-dot { background: var(--c-warn); box-shadow: 0 0 6px var(--c-warn); animation: blink 1s infinite; }
 .ig-step.done .ig-step-dot { background: var(--c-success); box-shadow: none; animation: none; }
 
-/* Result */
 .ig-result { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; gap: 12px; }
 .ig-result-img-wrap { position: relative; max-height: calc(100% - 60px); }
 .ig-result-img-wrap:hover .ig-result-overlay { opacity: 1; }
@@ -613,7 +596,6 @@ permalink: /image-gen/
 .ig-result-action:hover { border-color: var(--c-accent); color: var(--c-accent); }
 .ig-result-meta { font-family: var(--f-mono); font-size: 10px; color: var(--c-text3); text-align: center; line-height: 1.7; }
 
-/* Canvas toolbar */
 .ig-canvas-toolbar {
   position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
   background: var(--c-surface); border: 1px solid var(--c-border);
@@ -633,7 +615,7 @@ permalink: /image-gen/
 .ig-canvas-tool:hover { color: var(--c-text); background: var(--c-surface2); }
 .ig-canvas-zoom-label { font-family: var(--f-mono); font-size: 10px; color: var(--c-text3); padding: 0 4px; }
 
-/* ── RIGHT PANEL specifics ── */
+/* ── RIGHT PANEL ── */
 .ig-drop-zone {
   border: 1px dashed var(--c-border2);
   border-radius: var(--radius);
@@ -679,7 +661,6 @@ permalink: /image-gen/
 .ig-mode-hint strong { color: var(--c-accent); }
 .ig-mode-desc { font-size: 10px; }
 
-/* History */
 .ig-history-list { display: flex; flex-direction: column; gap: 6px; max-height: 300px; overflow-y: auto; }
 .ig-history-empty { font-size: 11px; color: var(--c-text3); text-align: center; padding: 16px 0; }
 .ig-history-item {
@@ -723,7 +704,6 @@ permalink: /image-gen/
 
 .hidden { display: none !important; }
 
-/* Range track gradient update via JS */
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 12px; height: 12px;
@@ -738,12 +718,10 @@ input[type="range"]::-moz-range-thumb {
   border: none; cursor: pointer;
 }
 
-/* Scrollbar */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--c-surface3); border-radius: 2px; }
 
-/* Toast */
 .ig-toast {
   position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
   background: var(--c-surface); border: 1px solid var(--c-border2);
@@ -753,9 +731,29 @@ input[type="range"]::-moz-range-thumb {
   z-index: 300; animation: toastIn 0.2s ease;
 }
 @keyframes toastIn { from { opacity:0; transform: translateX(-50%) translateY(10px); } to { opacity:1; transform: translateX(-50%) translateY(0); } }
+
+/* Debug panel */
+.ig-debug {
+  position: fixed; bottom: 24px; right: 24px;
+  background: var(--c-surface); border: 1px solid var(--c-border2);
+  border-radius: var(--radius); padding: 12px 16px;
+  font-family: var(--f-mono); font-size: 10px; color: var(--c-text3);
+  max-width: 340px; max-height: 200px; overflow-y: auto;
+  z-index: 299; display: none;
+  line-height: 1.8;
+}
+.ig-debug.visible { display: block; }
+.ig-debug-line.ok { color: var(--c-success); }
+.ig-debug-line.err { color: var(--c-error); }
+.ig-debug-line.info { color: var(--c-warn); }
 </style>
 
 <script>
+/* ─── CONSTANTS ─── */
+const HISTORY_KEY = 'hypenosys_igHistory';
+const SETTINGS_KEY = 'hypenosys_igSettings';
+const MAX_HISTORY = 10; // base64 es pesado, limitar
+
 /* ─── STATE ─── */
 const STATE = {
   mode: 'txt2img',
@@ -773,15 +771,15 @@ const STATE = {
 };
 
 const MODE_INFO = {
-  txt2img:   { label: 'Text → Image',       desc: 'No reference images needed.' },
-  img2img:   { label: 'Image + Text',        desc: 'Upload 1 reference image + write a prompt.' },
-  kontext:   { label: 'Kontext Edit',        desc: 'Upload 1 image. Flux Kontext will edit it.' },
-  blend:     { label: 'Blend 2 Images',      desc: 'Upload exactly 2 images to blend.' },
-  variation: { label: 'Variation',           desc: 'Upload 1 image. No text needed.' }
+  txt2img:   { label: 'Text → Image',   desc: 'No reference images needed.' },
+  img2img:   { label: 'Image + Text',   desc: 'Upload 1 reference image + write a prompt.' },
+  kontext:   { label: 'Kontext Edit',   desc: 'Upload 1 image. Flux Kontext will edit it.' },
+  blend:     { label: 'Blend 2 Images', desc: 'Upload exactly 2 images to blend.' },
+  variation: { label: 'Variation',      desc: 'Upload 1 image. No text needed.' }
 };
 
 /* ─── INIT ─── */
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function() {
   loadSettings();
   addPrompt();
   initRangeGradients();
@@ -789,22 +787,45 @@ document.addEventListener('DOMContentLoaded', () => {
   updateModeHint();
 });
 
+/* ─── SETTINGS ─── */
 function loadSettings() {
   try {
-    const s = JSON.parse(localStorage.getItem('hypenosys_igSettings') || '{}');
+    var s = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}');
     STATE.endpoints['flux-dev'] = s.fluxDev || '';
     STATE.endpoints['flux-kontext'] = s.fluxKontext || '';
-    if (document.getElementById('cfgFluxDev')) document.getElementById('cfgFluxDev').value = s.fluxDev || '';
-    if (document.getElementById('cfgFluxKontext')) document.getElementById('cfgFluxKontext').value = s.fluxKontext || '';
-  } catch(e) {}
+    var devEl = document.getElementById('cfgFluxDev');
+    var ktxEl = document.getElementById('cfgFluxKontext');
+    if (devEl) devEl.value = s.fluxDev || '';
+    if (ktxEl) ktxEl.value = s.fluxKontext || '';
+  } catch(e) {
+    dbg('loadSettings error: ' + e.message, 'err');
+  }
+
+  // Restaurar historial persistido
+  try {
+    var saved = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+    STATE.history = Array.isArray(saved) ? saved : [];
+    renderHistory();
+    // Mostrar la última imagen generada al cargar la página
+    if (STATE.history.length > 0) {
+      var last = STATE.history[0];
+      showResult(last.base64, last.meta || { prompt: last.prompt, mode: '—', seed: '—', model: '—' });
+      // Reconstruir blob para download/copy
+      blobFromBase64(last.base64, function(blob) {
+        STATE.currentBlob = blob;
+      });
+    }
+  } catch(e) {
+    dbg('loadHistory error: ' + e.message, 'err');
+  }
 }
 
 function saveSettings() {
-  const s = {
+  var s = {
     fluxDev: document.getElementById('cfgFluxDev').value.trim(),
     fluxKontext: document.getElementById('cfgFluxKontext').value.trim()
   };
-  localStorage.setItem('hypenosys_igSettings', JSON.stringify(s));
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
   STATE.endpoints['flux-dev'] = s.fluxDev;
   STATE.endpoints['flux-kontext'] = s.fluxKontext;
   togglePanel('settings');
@@ -813,57 +834,62 @@ function saveSettings() {
 
 /* ─── RANGE GRADIENTS ─── */
 function initRangeGradients() {
-  document.querySelectorAll('input[type="range"]').forEach(r => {
+  document.querySelectorAll('input[type="range"]').forEach(function(r) {
     updateRange(r);
-    r.addEventListener('input', () => updateRange(r));
+    r.addEventListener('input', function() { updateRange(r); });
   });
 }
 function updateRange(r) {
-  const pct = ((r.value - r.min) / (r.max - r.min)) * 100;
-  r.style.background = `linear-gradient(to right, #bd93f9 ${pct}%, #252528 ${pct}%)`;
+  var pct = ((r.value - r.min) / (r.max - r.min)) * 100;
+  r.style.background = 'linear-gradient(to right, #bd93f9 ' + pct + '%, #252528 ' + pct + '%)';
 }
 
 /* ─── PROMPT MANAGEMENT ─── */
-let promptCount = 0;
+var promptCount = 0;
 function addPrompt() {
   promptCount++;
-  const stack = document.getElementById('promptStack');
-  const row = document.createElement('div');
+  var stack = document.getElementById('promptStack');
+  var row = document.createElement('div');
   row.className = 'ig-prompt-row';
-  row.id = `pr-${promptCount}`;
-  row.innerHTML = `
-    <span class="ig-prompt-num">${promptCount}</span>
-    <textarea class="ig-prompt-ta" placeholder="${promptCount === 1 ? 'Describe the image...' : 'Add style, mood, details...'}" rows="3"></textarea>
-    ${promptCount > 1 ? `<button class="ig-prompt-remove" onclick="removePrompt('pr-${promptCount}')">✕</button>` : ''}
-  `;
+  row.id = 'pr-' + promptCount;
+  var placeholder = promptCount === 1 ? 'Describe the image...' : 'Add style, mood, details...';
+  var removeBtn = promptCount > 1
+    ? '<button class="ig-prompt-remove" onclick="removePrompt(\'pr-' + promptCount + '\')">✕</button>'
+    : '';
+  row.innerHTML = '<span class="ig-prompt-num">' + promptCount + '</span>' +
+    '<textarea class="ig-prompt-ta" placeholder="' + placeholder + '" rows="3"></textarea>' +
+    removeBtn;
   stack.appendChild(row);
   row.querySelector('textarea').focus();
 }
 function removePrompt(id) {
-  document.getElementById(id)?.remove();
+  var el = document.getElementById(id);
+  if (el) el.remove();
   renumberPrompts();
 }
 function renumberPrompts() {
-  document.querySelectorAll('.ig-prompt-row').forEach((r, i) => {
+  document.querySelectorAll('.ig-prompt-row').forEach(function(r, i) {
     r.querySelector('.ig-prompt-num').textContent = i + 1;
   });
 }
 function getPrompts() {
   return Array.from(document.querySelectorAll('.ig-prompt-ta'))
-    .map(t => t.value.trim()).filter(Boolean);
+    .map(function(t) { return t.value.trim(); })
+    .filter(Boolean);
 }
 
 /* ─── MODE ─── */
 function setMode(m) {
   STATE.mode = m;
-  document.querySelectorAll('.ig-pill').forEach(p => p.classList.toggle('active', p.dataset.mode === m));
-  // Auto-select model
+  document.querySelectorAll('.ig-pill').forEach(function(p) {
+    p.classList.toggle('active', p.dataset.mode === m);
+  });
   if (m === 'kontext' || m === 'blend') selectModelByKey('flux-kontext');
   else selectModelByKey('flux-dev');
   updateModeHint();
 }
 function updateModeHint() {
-  const info = MODE_INFO[STATE.mode];
+  var info = MODE_INFO[STATE.mode];
   document.getElementById('modeHintLabel').textContent = info.label;
   document.getElementById('modeHintDesc').textContent = info.desc;
 }
@@ -871,11 +897,15 @@ function updateModeHint() {
 /* ─── MODEL ─── */
 function selectModel(el, key) {
   STATE.model = key;
-  document.querySelectorAll('.ig-model-chip').forEach(c => c.classList.toggle('active', c.dataset.model === key));
+  document.querySelectorAll('.ig-model-chip').forEach(function(c) {
+    c.classList.toggle('active', c.dataset.model === key);
+  });
 }
 function selectModelByKey(key) {
   STATE.model = key;
-  document.querySelectorAll('.ig-model-chip').forEach(c => c.classList.toggle('active', c.dataset.model === key));
+  document.querySelectorAll('.ig-model-chip').forEach(function(c) {
+    c.classList.toggle('active', c.dataset.model === key);
+  });
 }
 
 /* ─── PANELS ─── */
@@ -888,7 +918,6 @@ function togglePanel(which) {
     document.getElementById('settingsDrawer').classList.toggle('hidden');
   } else if (which === 'history') {
     document.getElementById('panelRight').classList.remove('collapsed');
-    document.getElementById('panelRight').scrollTop = 999;
   }
 }
 
@@ -896,7 +925,9 @@ function togglePanel(which) {
 function handleDrop(e) {
   e.preventDefault();
   document.getElementById('dropZone').classList.remove('drag-over');
-  const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+  var files = Array.from(e.dataTransfer.files).filter(function(f) {
+    return f.type.startsWith('image/');
+  });
   files.forEach(addRef);
 }
 function handleFileInput(input) {
@@ -904,28 +935,26 @@ function handleFileInput(input) {
   input.value = '';
 }
 function addRef(file) {
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    const id = Date.now() + Math.random();
-    STATE.refs.push({ id, file, dataUrl: e.target.result });
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var id = Date.now() + Math.random();
+    STATE.refs.push({ id: id, file: file, dataUrl: e.target.result });
     renderRefGrid();
   };
   reader.readAsDataURL(file);
 }
 function removeRef(id) {
-  STATE.refs = STATE.refs.filter(r => r.id !== id);
+  STATE.refs = STATE.refs.filter(function(r) { return r.id !== id; });
   renderRefGrid();
 }
 function renderRefGrid() {
-  const grid = document.getElementById('refGrid');
+  var grid = document.getElementById('refGrid');
   grid.innerHTML = '';
-  STATE.refs.forEach(ref => {
-    const item = document.createElement('div');
+  STATE.refs.forEach(function(ref) {
+    var item = document.createElement('div');
     item.className = 'ig-ref-item';
-    item.innerHTML = `
-      <img src="${ref.dataUrl}" alt="ref">
-      <button class="ig-ref-remove" onclick="removeRef(${ref.id})">✕</button>
-    `;
+    item.innerHTML = '<img src="' + ref.dataUrl + '" alt="ref">' +
+      '<button class="ig-ref-remove" onclick="removeRef(' + ref.id + ')">✕</button>';
     grid.appendChild(item);
   });
 }
@@ -935,19 +964,37 @@ function randomSeed() {
   document.getElementById('paramSeed').value = Math.floor(Math.random() * 9999999999);
 }
 
+/* ─── BASE64 HELPERS ─── */
+function blobToBase64(blob) {
+  return new Promise(function(resolve, reject) {
+    var reader = new FileReader();
+    reader.onload = function() { resolve(reader.result); };
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+function blobFromBase64(base64, callback) {
+  // Fetch trick para convertir data URL a Blob
+  fetch(base64)
+    .then(function(r) { return r.blob(); })
+    .then(function(blob) { callback(blob); })
+    .catch(function(e) { dbg('blobFromBase64 error: ' + e.message, 'err'); });
+}
+
 /* ─── GENERATE ─── */
 async function handleGenerate() {
   if (STATE.generating) return;
 
-  const prompts = getPrompts();
-  const mode = STATE.mode;
+  var prompts = getPrompts();
+  var mode = STATE.mode;
 
-  // Validation
+  // Validaciones
   if (mode === 'txt2img' && prompts.length === 0) { toast('Add a prompt first'); return; }
   if (['img2img','kontext','variation'].includes(mode) && STATE.refs.length === 0) { toast('Upload a reference image'); return; }
   if (mode === 'blend' && STATE.refs.length < 2) { toast('Upload 2 images to blend'); return; }
 
-  const endpoint = STATE.endpoints[STATE.model];
+  var endpoint = STATE.endpoints[STATE.model];
   if (!endpoint) {
     togglePanel('settings');
     toast('Set the endpoint URL in Settings ↗');
@@ -960,50 +1007,113 @@ async function handleGenerate() {
   startProgress();
 
   try {
-    const seed = parseInt(document.getElementById('paramSeed').value) || Math.floor(Math.random() * 9999999999);
-    const chatInput = prompts.join('. ') || 'variation of the reference image';
+    var seed = parseInt(document.getElementById('paramSeed').value) || Math.floor(Math.random() * 9999999999);
+    var chatInput = prompts.join('. ') || 'variation of the reference image';
+    var resolution = document.getElementById('paramRes').value;
+    var steps = parseInt(document.getElementById('paramSteps').value);
+    var guidance = parseFloat(document.getElementById('paramGuidance').value);
 
-    let body = { chatInput, mode, seed };
+    var body = { chatInput: chatInput, mode: mode, seed: seed, resolution: resolution, steps: steps, guidance: guidance };
+    if (STATE.refs.length > 0) body.referenceImage = STATE.refs[0].dataUrl;
+    if (STATE.refs.length > 1) body.referenceImage2 = STATE.refs[1].dataUrl;
 
-    if (STATE.refs.length > 0) {
-      body.referenceImage = STATE.refs[0].dataUrl;
-    }
-    if (STATE.refs.length > 1) {
-      body.referenceImage2 = STATE.refs[1].dataUrl;
-    }
+    dbg('POST ' + endpoint, 'info');
+    dbg('payload: mode=' + mode + ' seed=' + seed, 'info');
 
-    stepDone(1);
+    // Step 1: enviando prompt a Ollama via n8n
+    stepActive(1);
+    advanceProgress(15);
 
-    const res = await fetch(endpoint, {
+    var res = await fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
       signal: AbortSignal.timeout(180000)
     });
 
-    stepDone(2);
-    advanceProgress(60);
+    dbg('Response status: ' + res.status, res.ok ? 'ok' : 'err');
+    dbg('Content-Type: ' + (res.headers.get('content-type') || 'none'), 'info');
 
-    if (!res.ok) throw new Error(`n8n responded ${res.status}`);
+    if (!res.ok) {
+      // Intentar leer el cuerpo para mostrar el error real de n8n
+      var errText = '';
+      try { errText = await res.text(); } catch(e) {}
+      dbg('Error body: ' + errText.slice(0, 300), 'err');
+      throw new Error('n8n error ' + res.status + (errText ? ': ' + errText.slice(0, 100) : ''));
+    }
+
+    stepDone(1);
+    stepActive(2);
+    advanceProgress(35);
+
+    // Leer como ArrayBuffer para validar antes de procesar
+    var arrayBuf = await res.arrayBuffer();
+    dbg('ArrayBuffer size: ' + arrayBuf.byteLength + ' bytes', 'info');
+
+    if (arrayBuf.byteLength < 100) {
+      var text = new TextDecoder().decode(arrayBuf);
+      dbg('Respuesta demasiado pequeña: ' + text, 'err');
+      throw new Error('Respuesta inválida de n8n: ' + text.slice(0, 150));
+    }
+
+    // Verificar magic bytes PNG (\x89PNG) o JPEG (\xff\xd8)
+    var bytes = new Uint8Array(arrayBuf);
+    var isPng = bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47;
+    var isJpeg = bytes[0] === 0xff && bytes[1] === 0xd8;
+    dbg('Magic bytes: ' + bytes[0] + ' ' + bytes[1] + ' ' + bytes[2] + ' ' + bytes[3], isPng || isJpeg ? 'ok' : 'err');
+
+    if (!isPng && !isJpeg) {
+      // Probablemente JSON de error — intentar leer
+      var errJson = new TextDecoder().decode(arrayBuf);
+      dbg('No es imagen, contenido: ' + errJson.slice(0, 300), 'err');
+      throw new Error('n8n no devolvió una imagen. Respuesta: ' + errJson.slice(0, 120));
+    }
+
+    var mimeType = isPng ? 'image/png' : 'image/jpeg';
+    var blob = new Blob([arrayBuf], { type: mimeType });
+    STATE.currentBlob = blob;
+
+    stepDone(2);
+    stepActive(3);
+    advanceProgress(70);
+
+    // Convertir a base64 para persistencia
+    var base64 = await blobToBase64(blob);
+    dbg('base64 length: ' + base64.length, 'ok');
 
     stepDone(3);
-    advanceProgress(90);
+    stepActive(4);
+    advanceProgress(95);
 
-    const blob = await res.blob();
-    STATE.currentBlob = blob;
+    var meta = {
+      prompt: chatInput,
+      mode: mode,
+      seed: seed,
+      model: STATE.model,
+      steps: steps,
+      guidance: guidance,
+      resolution: resolution
+    };
 
     stepDone(4);
     advanceProgress(100);
 
-    const url = URL.createObjectURL(blob);
-    showResult(url, { prompt: chatInput, mode, seed, model: STATE.model });
-
-    addHistory(url, chatInput);
+    // Usar base64 directamente como src (no objectURL — sobrevive al reload)
+    showResult(base64, meta);
+    addHistory(base64, chatInput, meta);
     setStatus('done', 'Done');
+    dbg('Generation complete ✓', 'ok');
 
   } catch (err) {
+    dbg('CATCH: ' + err.message, 'err');
+    console.error('[ImageGen]', err);
     setStatus('error', 'Error');
-    showState('empty');
+    // Si ya había una imagen, volver a mostrarla; si no, empty state
+    if (STATE.history.length > 0) {
+      showResult(STATE.history[0].base64, STATE.history[0].meta);
+    } else {
+      showState('empty');
+    }
     toast(err.message || 'Generation failed');
   } finally {
     STATE.generating = false;
@@ -1013,23 +1123,27 @@ async function handleGenerate() {
   }
 }
 
-/* ─── PROGRESS ANIMATION ─── */
-let progressInterval, progressValue = 0, targetProgress = 0;
+/* ─── PROGRESS ─── */
+var progressInterval = null;
+var progressValue = 0;
+var targetProgress = 0;
 
 function startProgress() {
-  progressValue = 0; targetProgress = 40;
+  progressValue = 0;
+  targetProgress = 10;
   document.getElementById('generateBtn').disabled = true;
   document.getElementById('generateLabel').textContent = 'Working...';
-  ['step1','step2','step3','step4'].forEach(s => {
-    const el = document.getElementById(s);
-    el.classList.remove('active','done');
+
+  // Resetear todos los steps
+  ['step1','step2','step3','step4'].forEach(function(s) {
+    var el = document.getElementById(s);
+    el.classList.remove('active', 'done');
   });
-  document.getElementById('step1').classList.add('active');
   setProgressRing(0);
 
-  progressInterval = setInterval(() => {
+  progressInterval = setInterval(function() {
     if (progressValue < targetProgress) {
-      progressValue = Math.min(progressValue + 0.5, targetProgress);
+      progressValue = Math.min(progressValue + 0.4, targetProgress);
       setProgressRing(progressValue);
     }
   }, 80);
@@ -1039,20 +1153,35 @@ function advanceProgress(target) {
   targetProgress = target;
 }
 
+function stepActive(n) {
+  ['step1','step2','step3','step4'].forEach(function(s, i) {
+    var el = document.getElementById(s);
+    if (i + 1 < n) {
+      el.classList.remove('active');
+      el.classList.add('done');
+    } else if (i + 1 === n) {
+      el.classList.remove('done');
+      el.classList.add('active');
+    } else {
+      el.classList.remove('active', 'done');
+    }
+  });
+}
+
 function stepDone(n) {
-  const el = document.getElementById(`step${n}`);
+  var el = document.getElementById('step' + n);
   el.classList.remove('active');
   el.classList.add('done');
-  if (n < 4) document.getElementById(`step${n+1}`).classList.add('active');
 }
 
 function stopProgress() {
   clearInterval(progressInterval);
+  progressInterval = null;
 }
 
 function setProgressRing(pct) {
-  const circumference = 213.6;
-  const offset = circumference * (1 - pct / 100);
+  var circumference = 213.6;
+  var offset = circumference * (1 - pct / 100);
   document.getElementById('progressRing').style.strokeDashoffset = offset;
   document.getElementById('progressPct').textContent = Math.round(pct) + '%';
 }
@@ -1064,18 +1193,21 @@ function showState(state) {
   document.getElementById('resultState').classList.toggle('hidden', state !== 'result');
 }
 
-function showResult(url, meta) {
-  document.getElementById('resultImg').src = url;
+function showResult(src, meta) {
+  document.getElementById('resultImg').src = src;
+  var p = meta.prompt || '';
   document.getElementById('resultMeta').innerHTML =
-    `${meta.model} · ${meta.mode} · seed ${meta.seed}<br>${meta.prompt.slice(0, 80)}${meta.prompt.length > 80 ? '…' : ''}`;
+    (meta.model || '—') + ' · ' + (meta.mode || '—') + ' · seed ' + (meta.seed || '—') +
+    '<br>' + p.slice(0, 90) + (p.length > 90 ? '…' : '');
   STATE.currentMeta = meta;
   STATE.zoom = 1;
   document.getElementById('zoomLabel').textContent = '100%';
+  document.getElementById('resultImg').style.transform = 'scale(1)';
   showState('result');
 }
 
 function setStatus(state, label) {
-  const dot = document.getElementById('statusDot');
+  var dot = document.getElementById('statusDot');
   dot.className = 'ig-status-dot ' + state;
   document.getElementById('statusLabel').textContent = label;
 }
@@ -1083,7 +1215,7 @@ function setStatus(state, label) {
 /* ─── CANVAS ZOOM ─── */
 function zoom(factor) {
   STATE.zoom = Math.max(0.2, Math.min(4, STATE.zoom * factor));
-  document.getElementById('resultImg').style.transform = `scale(${STATE.zoom})`;
+  document.getElementById('resultImg').style.transform = 'scale(' + STATE.zoom + ')';
   document.getElementById('zoomLabel').textContent = Math.round(STATE.zoom * 100) + '%';
 }
 function zoomFit() {
@@ -1094,24 +1226,39 @@ function zoomFit() {
 
 /* ─── RESULT ACTIONS ─── */
 function downloadResult() {
-  if (!STATE.currentBlob) return;
-  const a = document.createElement('a');
+  if (!STATE.currentBlob) {
+    // Fallback: usar src de la imagen directamente
+    var img = document.getElementById('resultImg');
+    if (img.src) {
+      var a = document.createElement('a');
+      a.href = img.src;
+      a.download = 'hypenosys-' + (STATE.currentMeta ? STATE.currentMeta.mode : 'gen') + '-' + Date.now() + '.png';
+      a.click();
+    }
+    return;
+  }
+  var a = document.createElement('a');
   a.href = URL.createObjectURL(STATE.currentBlob);
-  a.download = `hypenosys-${STATE.currentMeta?.mode || 'gen'}-${Date.now()}.png`;
+  a.download = 'hypenosys-' + (STATE.currentMeta ? STATE.currentMeta.mode : 'gen') + '-' + Date.now() + '.png';
   a.click();
 }
 
 function sendToInput() {
-  if (!STATE.currentBlob) return;
-  const url = URL.createObjectURL(STATE.currentBlob);
-  STATE.refs.push({ id: Date.now(), file: null, dataUrl: url });
+  var img = document.getElementById('resultImg');
+  if (!img.src) return;
+  var dataUrl = img.src;
+  var id = Date.now() + Math.random();
+  STATE.refs.push({ id: id, file: null, dataUrl: dataUrl });
   renderRefGrid();
   document.getElementById('panelRight').classList.remove('collapsed');
   toast('Added to references');
 }
 
 async function copyToClipboard() {
-  if (!STATE.currentBlob) return;
+  if (!STATE.currentBlob) {
+    toast('No image to copy');
+    return;
+  }
   try {
     await navigator.clipboard.write([new ClipboardItem({ 'image/png': STATE.currentBlob })]);
     toast('Image copied to clipboard');
@@ -1121,81 +1268,144 @@ async function copyToClipboard() {
 }
 
 /* ─── HISTORY ─── */
-function addHistory(url, prompt) {
-  const entry = { url, prompt, time: new Date().toLocaleTimeString() };
+function addHistory(base64, prompt, meta) {
+  var entry = {
+    base64: base64,
+    prompt: prompt,
+    meta: meta,
+    time: new Date().toLocaleTimeString()
+  };
   STATE.history.unshift(entry);
+  if (STATE.history.length > MAX_HISTORY) {
+    STATE.history = STATE.history.slice(0, MAX_HISTORY);
+  }
+
+  // Persistir en localStorage
+  try {
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(STATE.history));
+    dbg('History saved: ' + STATE.history.length + ' entries', 'ok');
+  } catch(e) {
+    // Storage lleno — recortar a la mitad y reintentar
+    dbg('localStorage full, trimming...', 'err');
+    STATE.history = STATE.history.slice(0, Math.floor(MAX_HISTORY / 2));
+    try {
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(STATE.history));
+    } catch(e2) {
+      dbg('localStorage still full, history not saved', 'err');
+    }
+    toast('History trimmed (storage full)');
+  }
   renderHistory();
 }
+
 function renderHistory() {
-  const list = document.getElementById('historyList');
-  if (STATE.history.length === 0) {
+  var list = document.getElementById('historyList');
+  if (!STATE.history || STATE.history.length === 0) {
     list.innerHTML = '<p class="ig-history-empty">No generations yet.</p>';
     return;
   }
-  list.innerHTML = STATE.history.slice(0, 20).map((h, i) => `
-    <div class="ig-history-item" onclick="restoreHistory(${i})">
-      <img class="ig-history-thumb" src="${h.url}" alt="">
-      <div class="ig-history-info">
-        <div class="ig-history-prompt">${h.prompt}</div>
-        <div class="ig-history-time">${h.time}</div>
-      </div>
-    </div>
-  `).join('');
+  list.innerHTML = STATE.history.slice(0, MAX_HISTORY).map(function(h, i) {
+    var time = h.time || '';
+    var model = (h.meta && h.meta.model) ? ' · ' + h.meta.model : '';
+    return '<div class="ig-history-item" onclick="restoreHistory(' + i + ')">' +
+      '<img class="ig-history-thumb" src="' + h.base64 + '" alt="">' +
+      '<div class="ig-history-info">' +
+        '<div class="ig-history-prompt">' + (h.prompt || '').slice(0, 60) + '</div>' +
+        '<div class="ig-history-time">' + time + model + '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
 }
+
 function restoreHistory(i) {
-  const h = STATE.history[i];
+  var h = STATE.history[i];
   if (!h) return;
-  showResult(h.url, { prompt: h.prompt, mode: '—', seed: '—', model: '—' });
+  showResult(h.base64, h.meta || { prompt: h.prompt, mode: '—', seed: '—', model: '—' });
+  // Reconstruir blob para download/copy
+  blobFromBase64(h.base64, function(blob) {
+    STATE.currentBlob = blob;
+  });
 }
+
 function clearHistory() {
   STATE.history = [];
+  STATE.currentBlob = null;
+  try { localStorage.removeItem(HISTORY_KEY); } catch(e) {}
   renderHistory();
+  showState('empty');
+  setStatus('idle', 'Idle');
   toast('History cleared');
 }
 
-/* ─── NOISE CANVAS (loading bg) ─── */
+/* ─── NOISE CANVAS ─── */
 function initNoise() {
-  const canvas = document.getElementById('noiseCanvas');
+  var canvas = document.getElementById('noiseCanvas');
   if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  function resize() { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; }
+  var ctx = canvas.getContext('2d');
+  function resize() {
+    canvas.width = canvas.offsetWidth || canvas.parentElement.offsetWidth || 400;
+    canvas.height = canvas.offsetHeight || canvas.parentElement.offsetHeight || 400;
+  }
   resize();
-  let frame;
   function drawNoise() {
-    if (!document.getElementById('loadingState') || document.getElementById('loadingState').classList.contains('hidden')) {
-      frame = requestAnimationFrame(drawNoise); return;
+    var loadingEl = document.getElementById('loadingState');
+    if (!loadingEl || loadingEl.classList.contains('hidden')) {
+      requestAnimationFrame(drawNoise);
+      return;
     }
-    const w = canvas.width, h = canvas.height;
-    const img = ctx.createImageData(w, h);
-    for (let i = 0; i < img.data.length; i += 4) {
-      const v = Math.random() * 255 | 0;
+    var w = canvas.width, h = canvas.height;
+    if (w === 0 || h === 0) { resize(); requestAnimationFrame(drawNoise); return; }
+    var img = ctx.createImageData(w, h);
+    for (var i = 0; i < img.data.length; i += 4) {
+      var v = (Math.random() * 255) | 0;
       img.data[i] = v; img.data[i+1] = v; img.data[i+2] = v; img.data[i+3] = 255;
     }
     ctx.putImageData(img, 0, 0);
-    frame = requestAnimationFrame(drawNoise);
+    requestAnimationFrame(drawNoise);
   }
   drawNoise();
   window.addEventListener('resize', resize);
 }
 
 /* ─── TOAST ─── */
-let toastTimer;
+var toastTimer = null;
 function toast(msg) {
-  let t = document.querySelector('.ig-toast');
-  if (t) t.remove();
-  t = document.createElement('div');
+  var existing = document.querySelector('.ig-toast');
+  if (existing) existing.remove();
+  var t = document.createElement('div');
   t.className = 'ig-toast';
   t.textContent = msg;
   document.body.appendChild(t);
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t?.remove(), 3000);
+  toastTimer = setTimeout(function() { if (t.parentNode) t.remove(); }, 3500);
+}
+
+/* ─── DEBUG PANEL (activar con Ctrl+Shift+D) ─── */
+var debugEl = null;
+function dbg(msg, type) {
+  console.log('[IG ' + (type || 'info') + ']', msg);
+  if (!debugEl) return;
+  var line = document.createElement('div');
+  line.className = 'ig-debug-line ' + (type || 'info');
+  line.textContent = msg;
+  debugEl.appendChild(line);
+  debugEl.scrollTop = debugEl.scrollHeight;
+}
+function toggleDebug() {
+  if (!debugEl) {
+    debugEl = document.createElement('div');
+    debugEl.className = 'ig-debug visible';
+    document.body.appendChild(debugEl);
+    dbg('Debug panel activo. Ctrl+Shift+D para cerrar.', 'info');
+  } else {
+    debugEl.classList.toggle('visible');
+  }
 }
 
 /* ─── KEYBOARD SHORTCUTS ─── */
-document.addEventListener('keydown', (e) => {
+document.addEventListener('keydown', function(e) {
   if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) handleGenerate();
-  if (e.key === 'Escape') {
-    document.getElementById('settingsDrawer').classList.add('hidden');
-  }
+  if (e.key === 'Escape') document.getElementById('settingsDrawer').classList.add('hidden');
+  if (e.key === 'D' && e.ctrlKey && e.shiftKey) { e.preventDefault(); toggleDebug(); }
 });
 </script>
