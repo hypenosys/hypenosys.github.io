@@ -118,6 +118,26 @@ window.escapeHtml = function(str) {
     .replace(/"/g,'&quot;');
 }
 
+window.normalizeBranchName = function(branch) {
+    if (!branch) return '';
+    return String(branch)
+        .trim()
+        .replace(/^refs\/heads\//, '')
+        .replace(/[★☆]/g, '')
+        .trim();
+};
+
+window.parseRepoFullName = function(fullName) {
+    if (!fullName) return { owner: 'hypenosys', repo: '' };
+    // Remove prefix if exists
+    let clean = fullName.replace('sources/github/', '');
+    const parts = clean.split('/');
+    if (parts.length >= 2) {
+        return { owner: parts[0], repo: parts[1] };
+    }
+    return { owner: 'hypenosys', repo: parts[0] };
+};
+
 window.normalizeJulesStatus = function(state) {
     if (!state) return 'pending';
     const s = String(state).toLowerCase().trim().replace(/_/g, '');

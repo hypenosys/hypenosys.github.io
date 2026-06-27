@@ -474,7 +474,20 @@ window.desvincularNeuralSession = function() {
 window.launchSession = async function() {
     let prompt = $('session-prompt').value.trim();
     if (!prompt) { $('session-prompt').focus(); showToast("Escribe una tarea para Jules", "red"); return; }
-    const source = window.JulesPanelState.activeRepo, branch = window.JulesPanelState.activeBranch || 'master';
+
+    // Ensure repo and branch are real and normalized
+    const source = window.JulesPanelState.activeRepo;
+    const branch = window.JulesPanelState.activeBranch;
+
+    if (!source || source.includes("Cargando") || source === 'null') {
+        showToast("Selecciona un repositorio válido", "red");
+        return;
+    }
+
+    if (!branch || branch === 'Error' || branch === 'Cargando...') {
+        showToast("Selecciona una rama válida", "red");
+        return;
+    }
 
     addTel("SYSTEM", "Iniciando sesión - Source: \"" + source + "\", Branch: \"" + branch + "\"", "info");
     console.log("[Jules Debug] Source:", source, "Branch:", branch);
@@ -645,17 +658,14 @@ window.checkBranchWarning = function() {
     const expectedBranch = task.rama || task.branch;
     const currentBranch = window.JulesPanelState.activeBranch;
 
-    const normalize = (b) => {
-        if (!b) return '';
-        return String(b)
-            .trim()
-            .replace(/^refs\/heads\//, '')
-            .replace(/[★☆]/g, '')
-            .trim();
-    };
+    if (!expectedBranch || !currentBranch) {
+        banner.classList.add('hidden');
+        banner.style.display = 'none';
+        return;
+    }
 
-    const normExpected = normalize(expectedBranch);
-    const normCurrent = normalize(currentBranch);
+    const normExpected = window.normalizeBranchName(expectedBranch);
+    const normCurrent = window.normalizeBranchName(currentBranch);
 
     if (normExpected && normCurrent && normExpected !== normCurrent) {
         banner.classList.remove('hidden');
