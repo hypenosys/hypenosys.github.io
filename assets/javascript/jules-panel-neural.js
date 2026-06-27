@@ -332,26 +332,32 @@ window.renderJulesPanelSessionDrawerList = function() {
     const listContainer = $('sessions-drawer-list');
     if (!listContainer) return;
 
-    if (window.julesPanelSessions.length === 0) {
+    const sessions = [...window.julesPanelSessions]
+        .filter(s => !s.archived)
+        .sort((a, b) => {
+            return new Date(b.createdAt) - new Date(a.createdAt);
+        });
+
+    if (sessions.length === 0) {
         listContainer.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text3); font-size:13px;">No hay sesiones guardadas</div>';
         return;
     }
 
-    const sessions = [...window.julesPanelSessions].sort((a, b) => {
-        return new Date(b.createdAt) - new Date(a.createdAt);
-    });
-
     listContainer.innerHTML = sessions.map(function(s) {
         const shortId = s.id ? s.id.substring(s.id.lastIndexOf('_') + 1).substring(0, 8) : '--------';
-        const truncatedTitle = s.title.length > 40 ? s.title.substring(0, 40) + '…' : s.title;
         const timeLabel = window.getTimeAgo ? window.getTimeAgo(s.createdAt) : s.createdAt;
 
-        return '<div class="session-drawer-item' + (s.id === window.currentJulesPanelSessionId ? ' active' : '') + '" onclick="window.selectJulesPanelSessionFromDrawer(\'' + s.id + '\')" style="padding:14px; border:1px solid var(--border); border-radius:var(--r-sm); cursor:pointer; transition:all 0.2s; background:var(--surface); margin-bottom: 8px;">' +
-                '<div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4px;">' +
+        return '<div class="session-drawer-item' + (s.id === window.currentJulesPanelSessionId ? ' active' : '') + '" onclick="window.selectJulesPanelSessionFromDrawer(\'' + s.id + '\')" style="padding:14px; border:1px solid var(--border); border-radius:var(--r-sm); cursor:pointer; transition:all 0.2s; background:var(--surface); margin-bottom: 8px; position: relative;">' +
+                '<div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4px; padding-right: 70px;">' +
                     '<span style="font-family:var(--font-mono); font-size:10px; color:var(--accent2); font-weight:700;">#' + shortId + '</span>' +
                     '<span style="font-size:10px; color:var(--text3);">' + timeLabel + '</span>' +
                 '</div>' +
-                '<div style="font-size:13px; font-weight:600; color:var(--text); line-height:1.4; word-break:break-word;">' + window.NeuralChatCore.escapeHtml(truncatedTitle) + '</div>' +
+                '<div style="font-size:13px; font-weight:600; color:var(--text); line-height:1.4; word-break:break-word; padding-right: 70px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">' + window.NeuralChatCore.escapeHtml(s.title) + '</div>' +
+                '<div class="session-drawer-actions" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); display: flex; gap: 6px;">' +
+                    '<button onclick="window.renameJulesPanelSession(event, \'' + s.id + '\')" class="session-action-btn" title="Renombrar"><i class="fas fa-edit"></i></button>' +
+                    '<button onclick="window.archiveJulesPanelSession(event, \'' + s.id + '\')" class="session-action-btn" title="Archivar"><i class="fas fa-archive"></i></button>' +
+                    '<button onclick="window.deleteJulesPanelSession(event, \'' + s.id + '\')" class="session-action-btn danger" title="Borrar"><i class="fas fa-trash"></i></button>' +
+                '</div>' +
             '</div>';
     }).join('');
 }
@@ -420,4 +426,77 @@ window.handleJulesApiError = function(e) {
     const msg = e.message || ("HTTP " + e.httpStatus);
     showToast("Error de API: " + msg, "red");
     addTel("SYSTEM", "Error API: " + msg, "error");
+}
+
+/* ════════════════════════════════════════
+   SESSIONS ACTIONS
+   ════════════════════════════════════════ */
+
+window.renameJulesPanelSession = function(event, id) {
+    if (event) event.stopPropagation();
+    const session = window.julesPanelSessions.find(s => s.id === id);
+    if (!session) return;
+
+    const newTitle = window.prompt("Renombrar sesión:", session.title);
+    if (newTitle !== null && newTitle.trim() !== "") {
+        session.title = newTitle.trim();
+        saveJulesPanelSessions();
+        window.renderJulesPanelSessionDrawerList();
+        if (id === window.currentJulesPanelSessionId) {
+            window.renderChatV2Messages();
+        }
+        showToast("Sesión renombrada", "green");
+    }
+}
+
+window.archiveJulesPanelSession = function(event, id) {
+    if (event) event.stopPropagation();
+    const session = window.julesPanelSessions.find(s => s.id === id);
+    if (!session) return;
+
+    session.archived = true;
+    saveJulesPanelSessions();
+
+    if (id === window.currentJulesPanelSessionId) {
+        // Find next non-archived session
+        const nextSession = window.julesPanelSessions.find(s => !s.archived);
+        if (nextSession) {
+            window.loadJulesPanelSession(nextSession.id);
+        } else {
+            window.createNewJulesPanelSession();
+        }
+    }
+
+    window.renderJulesPanelSessionDrawerList();
+    showToast("Sesión archivada", "amber");
+}
+
+window.deleteJulesPanelSession = function(event, id) {
+    if (event) event.stopPropagation();
+
+    const performDelete = () => {
+        const index = window.julesPanelSessions.findIndex(s => s.id === id);
+        if (index === -1) return;
+
+        window.julesPanelSessions.splice(index, 1);
+        saveJulesPanelSessions();
+
+        if (id === window.currentJulesPanelSessionId) {
+            const nextSession = window.julesPanelSessions.find(s => !s.archived);
+            if (nextSession) {
+                window.loadJulesPanelSession(nextSession.id);
+            } else {
+                window.createNewJulesPanelSession();
+            }
+        }
+
+        window.renderJulesPanelSessionDrawerList();
+        showToast("Sesión eliminada", "red");
+    };
+
+    if (window.showConfirmationToast) {
+        window.showConfirmationToast("¿Seguro que quieres borrar esta sesión? Esta acción no se puede deshacer.", performDelete);
+    } else if (window.confirm("¿Seguro que quieres borrar esta sesión? Esta acción no se puede deshacer.")) {
+        performDelete();
+    }
 }

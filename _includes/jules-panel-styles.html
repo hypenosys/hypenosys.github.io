@@ -1194,6 +1194,35 @@ body{
   box-shadow: 0 0 15px rgba(124, 58, 237, 0.1);
 }
 
+/* SESSION ACTIONS IN DRAWER */
+.session-action-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  color: var(--text3);
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 10px;
+}
+
+.session-action-btn:hover {
+  background: var(--surface-active);
+  color: var(--accent2);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.session-action-btn.danger:hover {
+  background: var(--red-soft);
+  color: var(--red);
+  border-color: var(--red);
+}
+
 @media (max-width: 768px) {
   .neural-drawer {
     width: 100%;
