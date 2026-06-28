@@ -839,6 +839,46 @@ permalink: /music-gen/
   letter-spacing: 0.1em;
 }
 
+/* ─── MOBILE ADAPTATIONS ─── */
+@media (max-width: 768px) {
+  #mg-root { padding: 10px 0; align-items: stretch; }
+  .mg-shell { border-radius: 0; border-left: none; border-right: none; }
+
+  .mg-body { flex-direction: column; min-height: auto; }
+  .mg-divider { width: 100%; height: 1px; }
+
+  .mg-left { width: 100%; padding: 16px 12px; }
+  .mg-right { padding: 16px 12px; min-height: 400px; }
+
+  .mg-titlebar-title { font-size: 9px; }
+  .mg-titlebar-tag { display: none; }
+
+  .mg-tabs {
+    overflow-x: auto;
+    scrollbar-width: none;
+    white-space: nowrap;
+    display: flex;
+    justify-content: flex-start;
+  }
+  .mg-tabs::-webkit-scrollbar { display: none; }
+  .mg-tab { padding: 10px 16px; flex-shrink: 0; }
+
+  .mg-transport-btn { padding: 12px 8px; font-size: 18px; }
+  .mg-transport-play { font-size: 20px; }
+
+  .mg-slider { height: 6px; }
+  .mg-slider::-webkit-slider-thumb { width: 16px; height: 16px; }
+
+  .mg-inline-grid { grid-template-columns: 1fr 1fr; }
+  .mg-inline-grid > div:last-child { grid-column: span 2; }
+
+  .mg-generate-btn { padding: 18px; font-size: 14px; }
+  .mg-generate-kbd { display: none; }
+
+  .mg-statusbar { padding: 8px 12px; flex-direction: column; gap: 4px; height: auto; }
+  .mg-sb-right { text-align: left; }
+}
+
 /* Status bar */
 .mg-statusbar {
   background: #070709;
@@ -1327,11 +1367,20 @@ function initWebAudio(audio) {
 function drawSpectrum() {
   const canvas = document.getElementById('spectrumCanvas');
   const ctx = canvas.getContext('2d');
-  const W = canvas.width, H = canvas.height;
+
+  // Dynamic resize
+  function resize() {
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
   const bufLen = ST.analyser.frequencyBinCount;
   const data = new Uint8Array(bufLen);
 
   function frame() {
+    const W = canvas.width, H = canvas.height;
     ST.vizFrame = requestAnimationFrame(frame);
     ST.analyser.getByteFrequencyData(data);
     ctx.fillStyle = '#000';
@@ -1360,11 +1409,19 @@ function drawSpectrum() {
 function drawWaveform() {
   const canvas = document.getElementById('waveformCanvas');
   const ctx = canvas.getContext('2d');
-  const W = canvas.width, H = canvas.height;
+
+  function resize() {
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
   const bufLen = ST.analyser.fftSize;
   const data = new Uint8Array(bufLen);
 
   function frame() {
+    const W = canvas.width, H = canvas.height;
     ST.waveFrame = requestAnimationFrame(frame);
     ST.analyser.getByteTimeDomainData(data);
     ctx.fillStyle = '#000';
@@ -1393,17 +1450,30 @@ function initIdleSpectrum() {
   const canvas = document.getElementById('spectrumCanvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
-  const W = canvas.width, H = canvas.height;
 
   const waveCanvas = document.getElementById('waveformCanvas');
   if (!waveCanvas) return;
   const wCtx = waveCanvas.getContext('2d');
 
   let t = 0;
+  function resizeIdle() {
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+    waveCanvas.width = waveCanvas.offsetWidth;
+    waveCanvas.height = waveCanvas.offsetHeight;
+  }
+  window.addEventListener('resize', resizeIdle);
+  resizeIdle();
+
   function idleFrame() {
     if (ST.analyser) return;
     requestAnimationFrame(idleFrame);
     t += 0.02;
+
+    const W = canvas.width;
+    const H = canvas.height;
+    const wW = waveCanvas.width;
+    const wH = waveCanvas.height;
 
     // Spectrum idle
     ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
@@ -1414,11 +1484,11 @@ function initIdleSpectrum() {
     }
 
     // Waveform idle
-    wCtx.fillStyle = '#000'; wCtx.fillRect(0, 0, waveCanvas.width, H);
+    wCtx.fillStyle = '#000'; wCtx.fillRect(0, 0, wW, wH);
     wCtx.strokeStyle = 'rgba(0,255,65,0.2)'; wCtx.lineWidth = 1;
     wCtx.beginPath();
-    for (let x = 0; x < waveCanvas.width; x++) {
-      const y = H / 2 + Math.sin(x * 0.05 + t) * 4;
+    for (let x = 0; x < wW; x++) {
+      const y = wH / 2 + Math.sin(x * 0.05 + t) * 4;
       x === 0 ? wCtx.moveTo(x, y) : wCtx.lineTo(x, y);
     }
     wCtx.stroke();
