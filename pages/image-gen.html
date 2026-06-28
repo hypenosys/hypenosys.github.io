@@ -99,9 +99,12 @@ permalink: /image-gen/
   <!-- TOP BAR -->
   <header class="ig-topbar">
     <div class="ig-topbar-left">
+      <button class="ig-icon-btn ig-mobile-only" id="toggleLeftMobile" onclick="togglePanel('left')" style="margin-right: 8px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
       <span class="ig-logo">HYPENOSYS</span>
-      <span class="ig-separator">／</span>
-      <span class="ig-section">Image Synthesis</span>
+      <span class="ig-separator ig-desktop-only">／</span>
+      <span class="ig-section ig-desktop-only">Image Synthesis</span>
     </div>
     <div class="ig-topbar-center">
       <div class="ig-mode-pills" id="modePills">
@@ -113,7 +116,7 @@ permalink: /image-gen/
       </div>
     </div>
     <div class="ig-topbar-right">
-      <div class="ig-status-chip" id="statusChip">
+      <div class="ig-status-chip ig-desktop-only" id="statusChip">
         <span class="ig-status-dot" id="statusDot"></span>
         <span id="statusLabel">Idle</span>
       </div>
@@ -128,6 +131,7 @@ permalink: /image-gen/
 
   <!-- MAIN LAYOUT -->
   <div class="ig-workspace">
+    <div id="mobileBackdrop" class="ig-mobile-backdrop" onclick="togglePanel('closeMobile')"></div>
 
     <!-- LEFT PANEL: PROMPT ENGINE -->
     <aside class="ig-panel ig-panel-left" id="panelLeft">
@@ -842,6 +846,72 @@ input[type="range"]::-moz-range-thumb {
 .ig-debug-line.ok { color: var(--c-success); }
 .ig-debug-line.err { color: var(--c-error); }
 .ig-debug-line.info { color: var(--c-warn); }
+
+/* ─── MOBILE ADAPTATIONS ─── */
+.ig-mobile-only { display: none; }
+.ig-desktop-only { display: flex; }
+
+@media (max-width: 768px) {
+  .ig-mobile-only { display: flex; }
+  .ig-desktop-only { display: none !important; }
+
+  .ig-topbar { padding: 0 10px; height: 56px; gap: 8px; }
+  .ig-topbar-left, .ig-topbar-right { min-width: auto; flex-shrink: 0; }
+  .ig-topbar-center { flex: 1; min-width: 0; overflow: hidden; }
+  .ig-mode-pills {
+    overflow-x: auto;
+    width: 100%;
+    justify-content: flex-start;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    mask-image: linear-gradient(to right, black 85%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
+  }
+  .ig-mode-pills::-webkit-scrollbar { display: none; }
+  .ig-pill { padding: 6px 14px; font-size: 12px; }
+
+  .ig-workspace { height: calc(100vh - 56px); position: relative; }
+
+  .ig-panel {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 85% !important;
+    max-width: 320px;
+    z-index: 500;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 20px 0 50px rgba(0,0,0,0.5);
+  }
+  .ig-panel-left { left: 0; transform: translateX(-100%); border-right: 1px solid var(--c-border); }
+  .ig-panel-right { right: 0; transform: translateX(100%); border-left: 1px solid var(--c-border); box-shadow: -20px 0 50px rgba(0,0,0,0.5); }
+
+  .ig-panel:not(.collapsed) { transform: translateX(0); }
+  .ig-panel.collapsed { transform: translateX(-100%); }
+  .ig-panel-right.collapsed { transform: translateX(100%); }
+
+  .ig-panel-handle { display: none; }
+  .ig-panel-inner { padding: 20px 16px; }
+
+  .ig-canvas-area { width: 100%; height: 100%; }
+  .ig-result { padding: 12px; }
+  .ig-result-img-wrap { max-height: calc(100% - 100px); width: 100%; display: flex; justify-content: center; }
+  .ig-result-img { width: 100%; object-fit: contain; }
+  .ig-result-overlay { opacity: 1; background: transparent; pointer-events: none; }
+  .ig-result-action { pointer-events: auto; width: 44px; height: 44px; }
+
+  .ig-canvas-toolbar { bottom: 20px; scale: 1.1; opacity: 0.9; }
+
+  .ig-generate-btn { padding: 16px; font-size: 14px; }
+
+  /* Overlay for when panels are open */
+  .ig-mobile-backdrop {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(2px);
+    z-index: 499;
+    display: none;
+  }
+  .ig-mobile-backdrop.visible { display: block; }
+}
 </style>
 
 <script>
@@ -904,6 +974,12 @@ document.addEventListener('authReady', async function(e) {
 
     // Resume original init
     loadSettings();
+
+    // On mobile, start collapsed
+    if (window.innerWidth <= 768) {
+      document.getElementById('panelLeft').classList.add('collapsed');
+      document.getElementById('panelRight').classList.add('collapsed');
+    }
 
     // Load form draft if exists, else add empty prompt
     if (!loadFormDraft()) {
@@ -1111,14 +1187,35 @@ function selectModelByKey(key) {
 
 /* ─── PANELS ─── */
 function togglePanel(which) {
+  const isMobile = window.innerWidth <= 768;
+  const panelLeft = document.getElementById('panelLeft');
+  const panelRight = document.getElementById('panelRight');
+  const backdrop = document.getElementById('mobileBackdrop');
+
   if (which === 'left') {
-    document.getElementById('panelLeft').classList.toggle('collapsed');
-  } else if (which === 'right') {
-    document.getElementById('panelRight').classList.toggle('collapsed');
+    const isCollapsed = panelLeft.classList.toggle('collapsed');
+    if (!isCollapsed && isMobile) {
+      panelRight.classList.add('collapsed');
+      if (backdrop) backdrop.classList.add('visible');
+    } else if (isCollapsed && isMobile) {
+      if (backdrop) backdrop.classList.remove('visible');
+    }
+  } else if (which === 'right' || which === 'history') {
+    const isCollapsed = which === 'history' ? false : panelRight.classList.toggle('collapsed');
+    if (which === 'history') panelRight.classList.remove('collapsed');
+
+    if (!isCollapsed && isMobile) {
+      panelLeft.classList.add('collapsed');
+      if (backdrop) backdrop.classList.add('visible');
+    } else if (isCollapsed && isMobile) {
+      if (backdrop) backdrop.classList.remove('visible');
+    }
   } else if (which === 'settings') {
     document.getElementById('settingsDrawer').classList.toggle('hidden');
-  } else if (which === 'history') {
-    document.getElementById('panelRight').classList.remove('collapsed');
+  } else if (which === 'closeMobile') {
+    panelLeft.classList.add('collapsed');
+    panelRight.classList.add('collapsed');
+    if (backdrop) backdrop.classList.remove('visible');
   }
 }
 
