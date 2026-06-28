@@ -1,15 +1,15 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-28T13:45:46.380Z",
+  "computed_at": "2026-06-28T13:45:56.084Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 30,
-    "total_ok": 8,
+    "total_ok": 9,
     "total_ko": 0,
-    "total_uncertain": 6,
+    "total_uncertain": 5,
     "total_obsolete": 9,
-    "fixed_found_ratio": 0.2222,
-    "verified_ratio": 0.2051
+    "fixed_found_ratio": 0.25,
+    "verified_ratio": 0.2308
   },
   "group": {
     "velocity_trend": {
@@ -22,7 +22,7 @@
       "2026-W25": 8,
       "2026-W26": 1
     },
-    "bug_rate": 0.0455,
+    "bug_rate": 0.0476,
     "blocker_health": 1,
     "tag_heatmap": {
       "brainstorm": 1,
@@ -34,9 +34,9 @@
       "devops": 5,
       "git": 1,
       "UX/UI": 1,
-      "feature": 11,
-      "frontend": 2,
-      "ux": 2,
+      "feature": 10,
+      "frontend": 1,
+      "ux": 1,
       "api": 6,
       "infraestructura": 1,
       "jules-panel": 1,
@@ -147,7 +147,7 @@
     "axlfc": {
       "member_name": "Axel",
       "completed": {
-        "all_time": 31,
+        "all_time": 32,
         "milestone": 24,
         "week": 0
       },
@@ -156,13 +156,13 @@
         "2026-W20": 0,
         "2026-W21": 3,
         "2026-W22": 4,
-        "2026-W23": 31,
+        "2026-W23": 33,
         "2026-W24": 5,
         "2026-W25": 10,
         "2026-W26": 3
       },
       "type_breakdown": {
-        "feature": 20,
+        "feature": 21,
         "chore": 6,
         "bug": 4,
         "research": 1
@@ -170,6 +170,7 @@
       "rama_breakdown": {
         "feature/kanban-jules-link": 1,
         "chore/scripts-svn-sync": 1,
+        "feature/kanban-repo-names": 1,
         "master": 8,
         "PRO": 15,
         "feature/dashboard-tag-filter": 1,
@@ -182,16 +183,16 @@
       "tag_frequency": {
         "Infraestructura": 1,
         "api": 4,
-        "feature": 5,
+        "feature": 6,
         "jules": 2,
-        "ux": 6,
+        "ux": 7,
         "chore": 4,
         "devops": 1,
+        "frontend": 5,
         "infraestructura": 1,
         "UX/UI": 1,
         "bug": 2,
         "hard": 1,
-        "frontend": 4,
         "docs": 2,
         "n8n": 1,
         "refactor": 2,
@@ -208,14 +209,14 @@
         "reprioritizations": 26
       },
       "workload": {
-        "active_tasks": 10,
-        "story_points": 17
+        "active_tasks": 9,
+        "story_points": 15
       }
     },
     "topperh4rley": {
       "member_name": "Alex",
       "completed": {
-        "all_time": 28,
+        "all_time": 29,
         "milestone": 21,
         "week": 0
       },
@@ -224,14 +225,14 @@
         "2026-W20": 0,
         "2026-W21": 3,
         "2026-W22": 5,
-        "2026-W23": 35,
+        "2026-W23": 37,
         "2026-W24": 3,
         "2026-W25": 7,
         "2026-W26": 0
       },
       "type_breakdown": {
         "chore": 4,
-        "feature": 20,
+        "feature": 21,
         "bug": 3,
         "research": 1
       },
@@ -239,6 +240,7 @@
         "PRO": 16,
         "feature/kanban-jules-link": 1,
         "chore/scripts-svn-sync": 1,
+        "feature/kanban-repo-names": 1,
         "master": 5,
         "feature/dashboard-tag-filter": 1,
         "feature/dashboard-error-boundaries": 1,
@@ -251,14 +253,14 @@
         "onboarding": 1,
         "Infraestructura": 1,
         "api": 4,
-        "feature": 5,
+        "feature": 6,
         "jules": 2,
-        "ux": 7,
+        "ux": 8,
         "devops": 1,
+        "frontend": 6,
         "UX/UI": 2,
         "bug": 3,
         "hard": 1,
-        "frontend": 5,
         "docs": 2,
         "n8n": 1,
         "stability": 1
@@ -274,8 +276,8 @@
         "reprioritizations": 26
       },
       "workload": {
-        "active_tasks": 9,
-        "story_points": 21
+        "active_tasks": 8,
+        "story_points": 19
       }
     },
     "dkdidac-design": {
@@ -530,7 +532,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-06-28T13:45:47.181Z"
+      "timestamp": "2026-06-28T13:45:56.989Z"
     }
   ]
 }
