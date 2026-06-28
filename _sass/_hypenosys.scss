@@ -360,3 +360,8 @@ footer {
         box-shadow: 0 0 0 0 rgba($purple, 0);
     }
 }
+
+// Global utility for toggling visibility via JS
+.hidden {
+    display: none !important;
+}

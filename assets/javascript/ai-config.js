@@ -49,19 +49,19 @@ class OllamaUI {
             ollamaScanBtnGroup.style.display = 'block';
             ollamaDiscoveryGroup.style.display = 'block';
             ollamaModelsGroup.style.display = 'block';
-            if (ollamaHelpBlock) ollamaHelpBlock.classList.remove('hidden');
+            if (ollamaHelpBlock) ollamaHelpBlock.classList.remove('d-none');
             if (discoverGroup) discoverGroup.style.display = 'block';
         } else if (provider === 'custom' || provider === 'openrouter' || provider === 'openai') {
             ollamaScanBtnGroup.style.display = 'none';
             ollamaDiscoveryGroup.style.display = 'none';
             ollamaModelsGroup.style.display = 'none';
-            if (ollamaHelpBlock) ollamaHelpBlock.classList.add('hidden');
+            if (ollamaHelpBlock) ollamaHelpBlock.classList.add('d-none');
             if (discoverGroup) discoverGroup.style.display = 'block';
         } else {
             ollamaScanBtnGroup.style.display = 'none';
             ollamaDiscoveryGroup.style.display = 'none';
             ollamaModelsGroup.style.display = 'none';
-            if (ollamaHelpBlock) ollamaHelpBlock.classList.add('hidden');
+            if (ollamaHelpBlock) ollamaHelpBlock.classList.add('d-none');
             if (discoverGroup) discoverGroup.style.display = 'none';
         }
     }
