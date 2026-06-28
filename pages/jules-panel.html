@@ -218,6 +218,20 @@ permalink: /jules-panel/
                 <span id="hdr-role" style="font-size:9px; color:var(--text3); text-transform:uppercase">Miembro</span>
             </div>
         </div>
+        <div class="profile-selector-wrapper">
+          <button id="active-profile-btn" class="btn btn-ghost btn-sm">
+            <span id="active-profile-name" class="profile-label-text">ANTHROPIC</span>
+            <i class="fas fa-chevron-down ml-1" style="font-size: 8px; opacity: 0.5;"></i>
+          </button>
+          <div id="profile-dropdown" class="profile-dropdown hidden">
+            <div id="profile-list" class="profile-list-inner"></div>
+            <div class="profile-dropdown-footer">
+              <button onclick="openApiModal()" class="btn btn-ghost btn-xs w-100">
+                <i class="fas fa-plus mr-1"></i> AÑADIR CONFIGURACIÓN
+              </button>
+            </div>
+          </div>
+        </div>
         <button class="btn btn-ghost btn-sm" onclick="openApiModal()">
           <span class="u-dot" style="margin-right:3px"></span>API Key
         </button>
@@ -940,19 +954,30 @@ permalink: /jules-panel/
 <script src="{{ '/assets/javascript/jules-panel-hub.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/neural-provider-client.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/neural-chat-core.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/neural-chat-catalogs.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/neural-chat-profiles.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/jules-panel-neural.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/jules-panel-auth.js' | relative_url }}"></script>
 
 <script>
     async function init() {
         let arrancado = false;
-        window._bootJules = (user) => {
+        window._bootJules = async (user) => {
             if (arrancado) {
                 console.log("[JULES-INIT] Already started, ignoring boot call.");
                 return;
             }
             arrancado = true;
-            initRealPanel(user);
+            await initRealPanel(user);
+
+            // AI Profile Initialization
+            if (typeof window.loadProfiles === 'function') {
+                await window.loadProfiles();
+                const config = window.getActiveConfig();
+                window.updateActiveProfileUI(config);
+                window.setupProfileSelector();
+                window.setupApiModalEnhancements();
+            }
         };
 
         // Listen for AuthManager readiness
