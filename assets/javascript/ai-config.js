@@ -328,7 +328,7 @@ class OllamaUI {
             api_key: document.getElementById('ai_api_key').value,
             base_url: document.getElementById('ai_base_url').value,
             modelType: this.currentModelType || 'chat',
-            localNetwork: document.getElementById('ai_local_network').checked
+            local_network: document.getElementById('ai_local_network').checked
         };
 
         profiles[config.id] = config;
@@ -348,7 +348,9 @@ class OllamaUI {
             alert(`Perfil "${name}" guardado.`);
         }
 
-        // Refresh dropdown in chat if exists
+        // Refresh dropdowns and lists everywhere
+        if (typeof window.renderProfileManagerList === 'function') window.renderProfileManagerList();
+        if (typeof window.renderProfileDropdown === 'function') window.renderProfileDropdown();
         if (typeof window.loadProfiles === 'function') window.loadProfiles();
     }
 }

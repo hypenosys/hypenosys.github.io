@@ -43,6 +43,8 @@ window.loadProfiles = async function() {
 
 window.renderProfileDropdown = function() {
     const list = document.getElementById('profile-list');
+    if (!list) return;
+
     const profiles = JSON.parse(localStorage.getItem('ai_profiles') || '{}');
     const activeId = localStorage.getItem('activeProfile');
 
@@ -107,7 +109,7 @@ window.selectProfile = function(id) {
     if (modelInput) modelInput.value = config.model || '';
     if (keyInput) keyInput.value = config.api_key || '';
     if (urlInput) urlInput.value = config.base_url || '';
-    if (localNetInput) localNetInput.checked = !!config.localNetwork;
+    if (localNetInput) localNetInput.checked = !!(config.local_network || config.localNetwork);
 
     updateActiveProfileUI(config);
     adaptUI(config);
@@ -212,9 +214,11 @@ window.setupProfileSelector = function() {
     const dropdown = document.getElementById('profile-dropdown');
     const overlay = document.getElementById('sidebar-overlay');
 
+    if (!btn || !dropdown) return;
+
     btn.onclick = (e) => {
         e.stopPropagation();
-        if (window.innerWidth <= 768) {
+        if (window.innerWidth <= 768 && overlay) {
             dropdown.classList.add('open');
             overlay.classList.add('active');
         } else {
@@ -224,9 +228,11 @@ window.setupProfileSelector = function() {
 
     document.addEventListener('click', (e) => {
         if (!dropdown.contains(e.target) && !btn.contains(e.target)) {
-            dropdown.classList.remove('open');
+            if (dropdown.classList.contains('open')) {
+                dropdown.classList.remove('open');
+            }
             dropdown.classList.add('hidden');
-            if (window.innerWidth <= 768) overlay.classList.remove('active');
+            if (window.innerWidth <= 768 && overlay) overlay.classList.remove('active');
         }
     });
 }
@@ -313,7 +319,7 @@ window.injectProfileManager = function() {
         managerContainer.id = 'profile-manager-container';
         managerContainer.className = 'form-group mt-4 border-t border-purple pt-3';
         managerContainer.innerHTML = `
-            <label class="text-gray-400 small font-weight-bold uppercase mb-2">Perfiles Guardados</label>
+            <label class="text-gray-400 small font-weight-bold uppercase mb-2">PERFILES GUARDADOS</label>
             <div id="profile-manager-list" class="space-y-1"></div>
         `;
         modalBody.appendChild(managerContainer);
@@ -344,23 +350,24 @@ window.renderProfileManagerList = function() {
         const activeClass = isActive ? 'border-[#bd93f9] bg-[#bd93f9]/5' : 'border-purple/20 bg-dark/30';
 
         return `
-            <div class="profile-item d-flex justify-content-between align-items-start mb-2 p-2 rounded border transition-all ${activeClass} hover:border-purple/50">
-                <div class="flex-grow text-left truncate mr-2 cursor-pointer" onclick="window.selectProfile('${id}')" title="Cargar perfil">
-                    <div class="text-[12px] text-white font-bold truncate">
+            <div class="profile-item d-flex justify-content-between align-items-start mb-3 p-3 rounded border transition-all ${activeClass} hover:border-purple/50">
+                <div class="flex-grow text-left truncate mr-2">
+                    <div class="text-[13px] text-white font-bold truncate mb-1">
                         ${isActive ? '<i class="fas fa-check-circle text-[#bd93f9] mr-1"></i>' : ''}${name}
                     </div>
-                    <div class="text-[10px] text-gray-400 truncate mt-1">
+                    <div class="text-[11px] text-gray-400 truncate">
                         <span class="text-purple/80 uppercase font-bold">${provider}</span> · ${model}
                     </div>
-                    ${endpoint ? `<div class="text-[9px] text-gray-500 truncate font-mono mt-0.5">${endpoint}</div>` : ''}
-                </div>
-                <div class="d-flex flex-column gap-1">
-                    <button class="btn-delete-profile btn btn-sm"
-                            onclick="window._deleteProfileFromModal('${id}', '${name}')"
-                            style="color:#ff5555; background:rgba(255,85,85,0.1); border:1px solid rgba(255,85,85,0.2); padding:4px 8px; border-radius:4px;"
-                            title="Eliminar perfil">
-                        <i class="fas fa-trash-alt text-[10px]"></i>
-                    </button>
+                    ${endpoint ? `<div class="text-[10px] text-gray-500 truncate font-mono mt-1 opacity-70">${endpoint}</div>` : ''}
+
+                    <div class="mt-2 d-flex gap-2">
+                        <button class="btn btn-xs btn-purple px-3" onclick="window.selectProfile('${id}')" style="font-size: 9px; font-weight: 800;">
+                            <i class="fas fa-upload mr-1"></i> CARGAR
+                        </button>
+                        <button class="btn btn-xs btn-outline-danger px-3" onclick="window._deleteProfileFromModal('${id}', '${name}')" style="font-size: 9px; font-weight: 800; border-color: rgba(255,85,85,0.3); color: #ff5555; background: rgba(255,85,85,0.05);">
+                            <i class="fas fa-trash-alt mr-1"></i> BORRAR
+                        </button>
+                    </div>
                 </div>
             </div>
         `;

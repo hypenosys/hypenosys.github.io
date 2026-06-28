@@ -513,17 +513,19 @@ class AuthManager {
             }
         }
 
+        const aiProfileName = document.getElementById('ai_profile_name');
         const aiProvider = document.getElementById('ai_provider');
         const aiModel = document.getElementById('ai_model');
         const aiApiKey = document.getElementById('ai_api_key');
         const aiBaseUrl = document.getElementById('ai_base_url');
         const aiLocalNetwork = document.getElementById('ai_local_network');
 
+        if (aiProfileName) aiProfileName.value = config.name || '';
         if (aiProvider) aiProvider.value = config.provider || 'none';
         if (aiModel) aiModel.value = config.model || '';
         if (aiApiKey) aiApiKey.value = config.api_key || '';
         if (aiBaseUrl) aiBaseUrl.value = config.base_url || '';
-        if (aiLocalNetwork) aiLocalNetwork.checked = !!config.local_network;
+        if (aiLocalNetwork) aiLocalNetwork.checked = !!(config.local_network || config.localNetwork);
 
         if (window.ollamaUI) {
             window.ollamaUI.handleProviderChange();
@@ -535,6 +537,7 @@ class AuthManager {
         if (!window.githubApi.user) return;
         const login = window.githubApi.user.login;
 
+        const name = document.getElementById('ai_profile_name')?.value.trim() || '';
         const provider = document.getElementById('ai_provider')?.value || 'none';
         const model = document.getElementById('ai_model')?.value.trim() || '';
         const apiKey = document.getElementById('ai_api_key')?.value.trim() || '';
@@ -551,7 +554,7 @@ class AuthManager {
 
         try {
             // Save sensitive + all to localStorage
-            const localConfig = { provider, model, api_key: apiKey, base_url: baseUrl, local_network: localNetwork };
+            const localConfig = { name, provider, model, api_key: apiKey, base_url: baseUrl, local_network: localNetwork };
             localStorage.setItem('hy_ai_config', JSON.stringify(localConfig));
 
             // Unify with jules_api_key for cross-module compatibility
