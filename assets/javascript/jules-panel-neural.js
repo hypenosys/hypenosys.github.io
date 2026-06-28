@@ -284,15 +284,27 @@ window.renderChatV2Messages = function() {
     // Al renderizar historial, nos aseguramos que el indicador esté oculto
     setNeuralProcessingState(false);
 
+    const githubUser = window.githubApi ? window.githubApi.user : null;
+
     session.messages.forEach((msg, idx) => {
         const div = document.createElement('div');
         div.className = 'jules-activity-entry jules-activity-entry--' + (msg.role === 'assistant' ? 'agent' : 'user');
         div.dataset.id = 'local-' + idx;
 
-        const icon = msg.role === 'assistant' ? '🤖' : '👤';
-        const time = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString('es-ES') : '--:--';
         const isAssistant = msg.role === 'assistant';
         const isJules = msg.source === 'jules';
+        const time = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString('es-ES') : '--:--';
+
+        let iconHTML = isAssistant ? '🤖' : '👤';
+        let displayName = isJules ? 'JULES' : (isAssistant ? 'CLAUDE' : 'USUARIO');
+
+        // Apply Authenticated User Identity if role is user
+        if (!isAssistant && githubUser) {
+            displayName = githubUser.login || githubUser.name || 'USUARIO';
+            if (githubUser.avatar_url) {
+                iconHTML = '<img src="' + githubUser.avatar_url + '" style="width:24px; height:24px; border-radius:50%; object-fit:cover;">';
+            }
+        }
 
         const actionBtn = isAssistant ?
             '<div class="activity-actions" style="margin-top: 8px; display: flex; gap: 8px;">' +
@@ -304,10 +316,10 @@ window.renderChatV2Messages = function() {
         const renderedContent = isAssistant && window.marked ? marked.parse(msg.content) : window.NeuralChatCore.escapeHtml(msg.content);
 
         div.innerHTML =
-            '<span class="activity-icon">' + icon + '</span>' +
+            '<span class="activity-icon">' + iconHTML + '</span>' +
             '<div class="activity-body">' +
               '<div class="activity-header">' +
-                '<span class="activity-originator">' + (isJules ? 'JULES' : (isAssistant ? 'CLAUDE' : 'USUARIO')) + '</span>' +
+                '<span class="activity-originator">' + displayName + '</span>' +
                 '<span class="activity-time">' + time + '</span>' +
               '</div>' +
               '<div class="activity-content">' + renderedContent + '</div>' +
