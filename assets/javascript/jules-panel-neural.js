@@ -9,6 +9,32 @@ window.julesPanelSessions = [];
 window.currentJulesPanelSessionId = null;
 window.julesPanelPollInterval = null;
 
+let isNeuralChatProcessing = false;
+
+/**
+ * Controla el estado de procesamiento del chat neural (indicador visual y botón enviar)
+ */
+function setNeuralProcessingState(isProcessing) {
+    isNeuralChatProcessing = isProcessing;
+    const thinkingIndicator = $('v2-thinking-indicator');
+    const sendBtn = $('v2-send-btn');
+
+    if (thinkingIndicator) {
+        if (isProcessing) {
+            thinkingIndicator.classList.remove('hidden');
+        } else {
+            thinkingIndicator.classList.add('hidden');
+        }
+    }
+
+    if (sendBtn) {
+        sendBtn.disabled = isProcessing;
+        sendBtn.style.opacity = isProcessing ? '0.5' : '1';
+        sendBtn.style.pointerEvents = isProcessing ? 'none' : 'auto';
+    }
+}
+window.setJulesPanelNeuralProcessingState = setNeuralProcessingState;
+
 function saveJulesPanelSessions() {
     window.NeuralChatCore.saveSessions(window.JULES_PANEL_NEURAL_STORAGE, window.julesPanelSessions);
 }
@@ -25,10 +51,12 @@ window.loadJulesPanelSessions = function() {
 window.initJulesPanelNeuralChat = function() {
     if (window._julesPanelNeuralInitialized) {
         window.renderNeuralChatHistory();
+        setNeuralProcessingState(false);
         return;
     }
     console.log("[Jules Panel Neural] Initializing...");
 
+    setNeuralProcessingState(false);
     window.loadJulesPanelSessions();
 
     if (window.julesPanelSessions.length === 0) {
@@ -136,11 +164,17 @@ window.loadJulesPanelSession = function(id) {
     const session = window.julesPanelSessions.find(s => s.id === id);
     if (!session) return;
 
+    setNeuralProcessingState(false);
     window.renderChatV2Messages();
     window.renderNeuralChatHistory();
 }
 
 window.sendChatV2Msg = async function() {
+    if (isNeuralChatProcessing) {
+        console.log("[Jules Panel Neural] Busy processing, ignoring double send.");
+        return;
+    }
+
     const input = $('v2-chat-input');
     const msg = input.value.trim();
     if (!msg) return;
@@ -161,31 +195,35 @@ window.sendChatV2Msg = async function() {
     input.value = '';
     input.style.height = 'auto';
 
-    const thinkingIndicator = $('v2-thinking-indicator');
-    if (thinkingIndicator) thinkingIndicator.classList.remove('hidden');
+    setNeuralProcessingState(true);
 
     console.log("[Jules Panel Neural] Message sent from Jules Panel Neural");
-    await window.NeuralChatCore.sendMessage({
-        session: session,
-        userMessage: msg,
-        saveCallback: () => {
-            saveJulesPanelSessions();
-            window.renderNeuralChatHistory();
-        },
-        onToken: () => {
-            window.renderChatV2Messages();
-        },
-        onDone: () => {
-            if (thinkingIndicator) thinkingIndicator.classList.add('hidden');
-            window.renderChatV2Messages();
-            window.renderNeuralChatHistory();
-        },
-        onError: (err) => {
-            if (thinkingIndicator) thinkingIndicator.classList.add('hidden');
-            showToast(err.message, "red");
-            window.renderChatV2Messages();
-        }
-    });
+    try {
+        await window.NeuralChatCore.sendMessage({
+            session: session,
+            userMessage: msg,
+            saveCallback: () => {
+                saveJulesPanelSessions();
+                window.renderNeuralChatHistory();
+            },
+            onToken: () => {
+                window.renderChatV2Messages();
+            },
+            onDone: () => {
+                setNeuralProcessingState(false);
+                window.renderChatV2Messages();
+                window.renderNeuralChatHistory();
+            },
+            onError: (err) => {
+                setNeuralProcessingState(false);
+                showToast(err.message, "red");
+                window.renderChatV2Messages();
+            }
+        });
+    } catch (e) {
+        setNeuralProcessingState(false);
+        showToast("Error en la comunicación con el proveedor", "red");
+    }
 }
 
 window.renderNeuralChatHistory = function() {
@@ -242,6 +280,9 @@ window.renderChatV2Messages = function() {
 
     const welcomeHTML = welcome ? welcome.outerHTML : '';
     container.innerHTML = welcomeHTML;
+
+    // Al renderizar historial, nos aseguramos que el indicador esté oculto
+    setNeuralProcessingState(false);
 
     session.messages.forEach((msg, idx) => {
         const div = document.createElement('div');
