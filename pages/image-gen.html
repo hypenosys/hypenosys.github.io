@@ -314,6 +314,11 @@ permalink: /image-gen/
         <div class="ig-history-list" id="historyList">
           <p class="ig-history-empty">No generations yet.</p>
         </div>
+        <div class="ig-pagination" id="historyPagination">
+          <button class="ig-pag-btn" id="prevPage" onclick="changePage(-1)" disabled>◀ Prev</button>
+          <span class="ig-pag-info" id="pageInfo">Page 1</span>
+          <button class="ig-pag-btn" id="nextPage" onclick="changePage(1)" disabled>Next ▶</button>
+        </div>
 
       </div>
     </aside>
@@ -342,6 +347,11 @@ permalink: /image-gen/
 <style>
 /* ── RESET & TOKENS ── */
 #ig-root *, #ig-root *::before, #ig-root *::after { box-sizing: border-box; margin: 0; padding: 0; }
+.ig-pagination { display: flex; align-items: center; justify-content: space-between; padding: 12px 0 0; border-top: 1px solid var(--c-border); margin-top: auto; }
+.ig-pag-btn { background: var(--c-surface2); border: 1px solid var(--c-border); color: var(--c-text2); font-family: var(--f-mono); font-size: 10px; padding: 4px 8px; border-radius: 4px; cursor: pointer; transition: all 0.15s; }
+.ig-pag-btn:hover:not(:disabled) { border-color: var(--c-accent); color: var(--c-accent); }
+.ig-pag-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.ig-pag-info { font-family: var(--f-mono); font-size: 10px; color: var(--c-text3); }
 #ig-root {
   --c-bg: #0d0d0f;
   --c-surface: #141416;
@@ -836,16 +846,19 @@ input[type="range"]::-moz-range-thumb {
 
 <script>
 /* ─── CONSTANTS ─── */
-const HISTORY_KEY = 'hypenosys_igHistory';
+const HISTORY_KEY = 'hypenosys_igHistory_v2'; // Changed to avoid conflicts with old localStorage history
 const SETTINGS_KEY = 'hypenosys_igSettings';
-const MAX_HISTORY = 10; // base64 es pesado, limitar
+const FORM_DRAFT_KEY = 'hypenosys_igFormDraft';
+const PAGE_SIZE = 12;
 
 /* ─── STATE ─── */
 const STATE = {
   mode: 'txt2img',
   model: 'flux-dev',
   refs: [],
-  history: [],
+  history: [], // Current page history
+  currentPage: 0,
+  totalPages: 1,
   currentBlob: null,
   currentMeta: null,
   zoom: 1,
@@ -865,7 +878,7 @@ const MODE_INFO = {
 };
 
 /* ─── INIT ─── */
-document.addEventListener('authReady', function(e) {
+document.addEventListener('authReady', async function(e) {
     const user = e.detail.user;
     const loading = document.getElementById('ig-auth-loading');
     const login = document.getElementById('ig-auth-login');
@@ -891,10 +904,21 @@ document.addEventListener('authReady', function(e) {
 
     // Resume original init
     loadSettings();
-    addPrompt();
+
+    // Load form draft if exists, else add empty prompt
+    if (!loadFormDraft()) {
+      addPrompt();
+    }
+
     initRangeGradients();
     initNoise();
     updateModeHint();
+
+    // Load initial history page
+    await changePage(0);
+
+    // Setup auto-save for form
+    setupAutoSave();
 
     console.log('[ImageGen] Initialized for team member:', user.login);
 });
@@ -924,23 +948,76 @@ function loadSettings() {
   } catch(e) {
     dbg('loadSettings error: ' + e.message, 'err');
   }
+}
 
-  // Restaurar historial persistido
+function setupAutoSave() {
+  const inputs = [
+    '#paramSteps', '#paramGuidance', '#paramSeed', '#paramRes'
+  ];
+  const save = () => saveFormDraft();
+
+  inputs.forEach(sel => {
+    const el = document.querySelector(sel);
+    if (el) el.addEventListener('change', save);
+  });
+
+  // Listen for prompt changes (using delegation)
+  document.getElementById('promptStack').addEventListener('input', save);
+}
+
+function saveFormDraft() {
+  const draft = {
+    mode: STATE.mode,
+    model: STATE.model,
+    prompts: getPrompts(),
+    steps: document.getElementById('paramSteps').value,
+    guidance: document.getElementById('paramGuidance').value,
+    seed: document.getElementById('paramSeed').value,
+    res: document.getElementById('paramRes').value,
+    refs: STATE.refs.map(r => ({ dataUrl: r.dataUrl })) // Only dataUrl is needed
+  };
+  localStorage.setItem(FORM_DRAFT_KEY, JSON.stringify(draft));
+}
+
+function loadFormDraft() {
   try {
-    var saved = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
-    STATE.history = Array.isArray(saved) ? saved : [];
-    renderHistory();
-    // Mostrar la última imagen generada al cargar la página
-    if (STATE.history.length > 0) {
-      var last = STATE.history[0];
-      showResult(last.base64, last.meta || { prompt: last.prompt, mode: '—', seed: '—', model: '—' });
-      // Reconstruir blob para download/copy
-      blobFromBase64(last.base64, function(blob) {
-        STATE.currentBlob = blob;
+    const draft = JSON.parse(localStorage.getItem(FORM_DRAFT_KEY));
+    if (!draft) return false;
+
+    if (draft.mode) setMode(draft.mode);
+    if (draft.model) selectModelByKey(draft.model);
+
+    if (draft.prompts && draft.prompts.length > 0) {
+      document.getElementById('promptStack').innerHTML = '';
+      promptCount = 0;
+      draft.prompts.forEach((p, i) => {
+        addPrompt();
+        const ta = document.querySelectorAll('.ig-prompt-ta')[i];
+        if (ta) ta.value = p;
       });
     }
+
+    if (draft.steps) {
+      document.getElementById('paramSteps').value = draft.steps;
+      document.getElementById('stepsVal').textContent = draft.steps;
+    }
+    if (draft.guidance) {
+      document.getElementById('paramGuidance').value = draft.guidance;
+      document.getElementById('guidanceVal').textContent = draft.guidance;
+    }
+    if (draft.seed) document.getElementById('paramSeed').value = draft.seed;
+    if (draft.res) document.getElementById('paramRes').value = draft.res;
+
+    if (draft.refs && draft.refs.length > 0) {
+      STATE.refs = draft.refs.map((r, i) => ({ id: Date.now() + i, dataUrl: r.dataUrl }));
+      renderRefGrid();
+    }
+
+    initRangeGradients();
+    return true;
   } catch(e) {
-    dbg('loadHistory error: ' + e.message, 'err');
+    console.error('Error loading draft:', e);
+    return false;
   }
 }
 
@@ -1099,10 +1176,11 @@ function blobToBase64(blob) {
 }
 
 function blobFromBase64(base64, callback) {
+  if (!base64) return;
   // Fetch trick para convertir data URL a Blob
   fetch(base64)
     .then(function(r) { return r.blob(); })
-    .then(function(blob) { callback(blob); })
+    .then(function(blob) { if(callback) callback(blob); })
     .catch(function(e) { dbg('blobFromBase64 error: ' + e.message, 'err'); });
 }
 
@@ -1216,7 +1294,9 @@ async function handleGenerate() {
       model: STATE.model,
       steps: steps,
       guidance: guidance,
-      resolution: resolution
+      resolution: resolution,
+      prompts: prompts, // Store all prompt layers
+      refs: STATE.refs.map(r => ({ dataUrl: r.dataUrl })) // Store references
     };
 
     stepDone(4);
@@ -1224,7 +1304,7 @@ async function handleGenerate() {
 
     // Usar base64 directamente como src (no objectURL — sobrevive al reload)
     showResult(base64, meta);
-    addHistory(base64, chatInput, meta);
+    await addHistory(base64, chatInput, meta);
     setStatus('done', 'Done');
     dbg('Generation complete ✓', 'ok');
 
@@ -1392,34 +1472,40 @@ async function copyToClipboard() {
 }
 
 /* ─── HISTORY ─── */
-function addHistory(base64, prompt, meta) {
+async function addHistory(base64, prompt, meta) {
   var entry = {
     base64: base64,
     prompt: prompt,
     meta: meta,
     time: new Date().toLocaleTimeString()
   };
-  STATE.history.unshift(entry);
-  if (STATE.history.length > MAX_HISTORY) {
-    STATE.history = STATE.history.slice(0, MAX_HISTORY);
-  }
 
-  // Persistir en localStorage
-  try {
-    localStorage.setItem(HISTORY_KEY, JSON.stringify(STATE.history));
-    dbg('History saved: ' + STATE.history.length + ' entries', 'ok');
-  } catch(e) {
-    // Storage lleno — recortar a la mitad y reintentar
-    dbg('localStorage full, trimming...', 'err');
-    STATE.history = STATE.history.slice(0, Math.floor(MAX_HISTORY / 2));
-    try {
-      localStorage.setItem(HISTORY_KEY, JSON.stringify(STATE.history));
-    } catch(e2) {
-      dbg('localStorage still full, history not saved', 'err');
-    }
-    toast('History trimmed (storage full)');
-  }
+  await window.aiStorage.saveImage(entry);
+  await changePage(0); // Go to first page to see the new generation
+}
+
+async function changePage(dir) {
+  const newPage = Math.max(0, STATE.currentPage + dir);
+  const totalCount = await window.aiStorage.getImageCount();
+  STATE.totalPages = Math.ceil(totalCount / PAGE_SIZE) || 1;
+
+  if (dir !== 0 && newPage >= STATE.totalPages) return;
+
+  STATE.currentPage = newPage;
+  STATE.history = await window.aiStorage.getImages(STATE.currentPage, PAGE_SIZE);
+
   renderHistory();
+  updatePaginationUI(totalCount);
+}
+
+function updatePaginationUI(totalCount) {
+  const prevBtn = document.getElementById('prevPage');
+  const nextBtn = document.getElementById('nextPage');
+  const pageInfo = document.getElementById('pageInfo');
+
+  if (prevBtn) prevBtn.disabled = STATE.currentPage === 0;
+  if (nextBtn) nextBtn.disabled = STATE.currentPage >= STATE.totalPages - 1;
+  if (pageInfo) pageInfo.textContent = `Page ${STATE.currentPage + 1} of ${STATE.totalPages} (${totalCount})`;
 }
 
 function renderHistory() {
@@ -1428,7 +1514,7 @@ function renderHistory() {
     list.innerHTML = '<p class="ig-history-empty">No generations yet.</p>';
     return;
   }
-  list.innerHTML = STATE.history.slice(0, MAX_HISTORY).map(function(h, i) {
+  list.innerHTML = STATE.history.map(function(h, i) {
     var time = h.time || '';
     var model = (h.meta && h.meta.model) ? ' · ' + h.meta.model : '';
     return '<div class="ig-history-item" onclick="restoreHistory(' + i + ')">' +
@@ -1444,18 +1530,62 @@ function renderHistory() {
 function restoreHistory(i) {
   var h = STATE.history[i];
   if (!h) return;
-  showResult(h.base64, h.meta || { prompt: h.prompt, mode: '—', seed: '—', model: '—' });
+
+  const meta = h.meta || { prompt: h.prompt, mode: '—', seed: '—', model: '—' };
+  showResult(h.base64, meta);
+
+  // Fully restore form state
+  if (meta.mode) setMode(meta.mode);
+  if (meta.model) selectModelByKey(meta.model);
+  if (meta.prompts && meta.prompts.length > 0) {
+    document.getElementById('promptStack').innerHTML = '';
+    promptCount = 0;
+    meta.prompts.forEach((p, idx) => {
+      addPrompt();
+      const ta = document.querySelectorAll('.ig-prompt-ta')[idx];
+      if (ta) ta.value = p;
+    });
+  } else if (meta.prompt) {
+    document.getElementById('promptStack').innerHTML = '';
+    promptCount = 0;
+    addPrompt();
+    const ta = document.querySelector('.ig-prompt-ta');
+    if (ta) ta.value = meta.prompt;
+  }
+
+  if (meta.steps) {
+    document.getElementById('paramSteps').value = meta.steps;
+    document.getElementById('stepsVal').textContent = meta.steps;
+  }
+  if (meta.guidance) {
+    document.getElementById('paramGuidance').value = meta.guidance;
+    document.getElementById('guidanceVal').textContent = meta.guidance;
+  }
+  if (meta.seed) document.getElementById('paramSeed').value = meta.seed;
+  if (meta.resolution) document.getElementById('paramRes').value = meta.resolution;
+
+  if (meta.refs && meta.refs.length > 0) {
+    STATE.refs = meta.refs.map((r, idx) => ({ id: Date.now() + idx, dataUrl: r.dataUrl }));
+    renderRefGrid();
+  } else {
+    STATE.refs = [];
+    renderRefGrid();
+  }
+
+  initRangeGradients();
+  saveFormDraft(); // Persist restored state as draft
+
   // Reconstruir blob para download/copy
   blobFromBase64(h.base64, function(blob) {
     STATE.currentBlob = blob;
   });
 }
 
-function clearHistory() {
-  STATE.history = [];
-  STATE.currentBlob = null;
-  try { localStorage.removeItem(HISTORY_KEY); } catch(e) {}
-  renderHistory();
+async function clearHistory() {
+  if (!confirm('Are you sure you want to clear ALL image history?')) return;
+  await window.aiStorage.clearImages();
+  STATE.currentPage = 0;
+  await changePage(0);
   showState('empty');
   setStatus('idle', 'Idle');
   toast('History cleared');
@@ -1537,6 +1667,7 @@ document.addEventListener('keydown', function(e) {
 <!-- Scripts -->
 <script src="{{ '/assets/javascript/github-api.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/auth.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/storage-db.js' | relative_url }}"></script>
 
 </body>
 </html>
