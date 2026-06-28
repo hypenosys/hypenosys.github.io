@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-27T17:34:11.386Z",
-  "last_updated_by": "Axlfc",
+  "last_updated": "2026-06-28T10:09:47.193Z",
+  "last_updated_by": "Axel",
   "tasks": [
     {
       "id": 1,
@@ -3525,9 +3525,60 @@
         }
       ],
       "id": 71
+    },
+    {
+      "title": "Fix: Img-Gen txt2image - ComfyUI usa CPU en lugar de GPU",
+      "descripcion": "",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "seccion": "n8n",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Major",
+      "milestone": "M2",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [],
+      "email_responsable": "axel@hypenosys.com",
+      "emails_asignados": [],
+      "start_date": "2026-06-28",
+      "due_date": "2026-07-05",
+      "estimated_hours": 3,
+      "story_points": 3,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-28",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-28T10:09:46.784Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 72
     }
   ],
   "_audit_log": [
+    {
+      "action": "feat: nueva tarea #1782641386784 añadida",
+      "user": "Axlfc",
+      "timestamp": "2026-06-28T10:09:47.193Z"
+    },
     {
       "action": "chore: actualizar tarea #69",
       "user": "Axlfc",
