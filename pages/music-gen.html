@@ -1,12 +1,99 @@
 ---
-layout: page
+layout: null
 title: AI Music Generator (ACE Step)
 permalink: /music-gen/
 ---
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-[#0a0a0a]">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neural Audio — HYPENOSYS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ '/assets/main.css' | relative_url }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="{{ '/assets/javascript/bootstrap/jquery.min.js' | relative_url }}"></script>
+    <script src="{{ '/assets/javascript/bootstrap/bootstrap.bundle.min.js' | relative_url }}"></script>
+    <script src="{{ '/assets/javascript/ui-components.js' | relative_url }}"></script>
+    <style>
+        /* Standard Auth Overlay Styles */
+        .auth-overlay {
+            position: fixed; inset: 0; z-index: 5000;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(10, 10, 10, 0.98);
+            backdrop-filter: blur(10px);
+            opacity: 1; transition: opacity 0.5s ease;
+        }
+        .auth-overlay.hidden { opacity: 0; pointer-events: none; }
+        .auth-card {
+            max-width: 420px; width: 90%; padding: 40px;
+            background: #111113; border: 1px solid #2a2a30;
+            border-radius: 4px; text-align: center;
+            box-shadow: 0 0 40px rgba(0,255,65,0.05);
+        }
+        .auth-icon { font-size: 48px; margin-bottom: 20px; color: #00ff41; text-shadow: 0 0 15px rgba(0,255,65,0.5); }
+        .auth-title { font-family: 'Orbitron', sans-serif; font-size: 20px; font-weight: 700; color: #00ff41; margin-bottom: 12px; letter-spacing: 2px; }
+        .auth-desc { color: #666677; font-size: 14px; margin-bottom: 30px; line-height: 1.6; font-family: 'Share Tech Mono', monospace; }
+        .auth-btn-gh {
+            width: 100%; padding: 14px; background: #00ff41; color: #000; border: none;
+            border-radius: 2px; font-weight: 700; font-size: 14px;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            cursor: pointer; transition: all 0.2s ease; margin-bottom: 16px;
+            font-family: 'Orbitron', sans-serif;
+        }
+        .auth-btn-gh:hover { transform: translateY(-2px); box-shadow: 0 0 20px rgba(0,255,65,0.4); }
+        .auth-btn-back { color: #333340; text-decoration: none; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-family: 'Share Tech Mono', monospace; }
+        .auth-btn-back:hover { color: #00ff41; }
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+        .loading-spinner {
+            width: 40px; height: 40px; border: 3px solid rgba(0, 255, 65, 0.1);
+            border-top-color: #00ff41; border-radius: 50%;
+            margin: 0 auto 20px; animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
+        /* App container visibility */
+        #mg-app-container { display: none; }
+        #mg-app-container.visible { display: flex; flex-direction: column; min-height: 100vh; }
+    </style>
+</head>
+<body>
+
+<!-- ══ AUTH OVERLAYS ══ -->
+<div id="mg-auth-loading" class="auth-overlay">
+    <div class="auth-card">
+        <div class="loading-spinner"></div>
+        <h2 class="auth-title">INITIALIZING</h2>
+        <p class="auth-desc">Authenticating with the Neural Audio Cluster...</p>
+    </div>
+</div>
+
+<div id="mg-auth-login" class="auth-overlay" style="display:none">
+    <div class="auth-card">
+        <div class="auth-icon"><i class="fa-solid fa-terminal"></i></div>
+        <h2 class="auth-title">ACCESS DENIED</h2>
+        <p class="auth-desc">Neural Audio Synthesis requires team authentication. Please connect your GitHub session to authorize.</p>
+        <button class="auth-btn-gh" onclick="window.authManager.handleLogin()">
+            <i class="fa-brands fa-github text-xl"></i> LOGIN WITH GITHUB
+        </button>
+        <a href="/" class="auth-btn-back"><i class="fa-solid fa-arrow-left mr-2"></i> BACK TO CORE</a>
+    </div>
+</div>
+
+<div id="mg-auth-unauthorized" class="auth-overlay" style="display:none">
+    <div class="auth-card">
+        <div class="auth-icon" style="color:#ff5555"><i class="fa-solid fa-shield-virus"></i></div>
+        <h2 class="auth-title">UNAUTHORIZED</h2>
+        <p id="unauthorized-msg" class="auth-desc">Your GitHub account is not on the Hypenosys authorized list for neural audio operations.</p>
+        <button class="auth-btn-gh" onclick="sessionStorage.clear(); localStorage.removeItem('gh_access_token'); window.location.reload();" style="background:#ff5555">
+            RETRY AUTHENTICATION
+        </button>
+        <a href="/" class="auth-btn-back"><i class="fa-solid fa-arrow-left mr-2"></i> BACK TO CORE</a>
+    </div>
+</div>
+
+<div id="mg-app-container">
 <div id="mg-root">
 
   <!-- SCANLINE OVERLAY -->
@@ -283,7 +370,8 @@ permalink: /music-gen/
 
   </div><!-- end shell -->
 
-</div><!-- end root -->
+</div><!-- end mg-root -->
+</div><!-- end mg-app-container -->
 
 <style>
 /* ── ROOT ── */
@@ -315,9 +403,7 @@ permalink: /music-gen/
   justify-content: center;
   padding: 24px 16px;
   position: relative;
-  margin-left: -15px;
-  margin-right: -15px;
-  width: calc(100% + 30px);
+  width: 100%;
   box-sizing: border-box;
 }
 
@@ -550,7 +636,7 @@ permalink: /music-gen/
 .mg-led.on { background: var(--c-led-on); box-shadow: 0 0 6px var(--c-led-on); border-color: var(--c-led-on); }
 .mg-led.on-warn { background: var(--c-warn); box-shadow: 0 0 6px var(--c-warn); border-color: var(--c-warn); animation: blink 0.8s infinite; }
 .mg-led.on-err { background: #ff5555; box-shadow: 0 0 6px #ff5555; border-color: #ff5555; }
-.mg-led-label { font-size: 9px; color: var(--c-text3); letter-spacing: 0.1em; }
+.mg-led-label { font-size: 9px; color: var(--text3); letter-spacing: 0.1em; }
 @keyframes blink { 0%,100%{opacity:1}50%{opacity:0.2} }
 
 /* History */
@@ -570,7 +656,7 @@ permalink: /music-gen/
   display: flex; flex-direction: column; gap: 4px;
   scrollbar-width: thin; scrollbar-color: var(--c-border2) transparent;
 }
-.mg-history-empty { font-family: var(--f-vt); font-size: 14px; color: var(--c-text3); text-align: center; padding: 12px 0; }
+.mg-history-empty { font-family: var(--f-vt); font-size: 14px; color: var(--text3); text-align: center; padding: 12px 0; }
 .mg-history-item {
   display: flex; align-items: center; gap: 8px;
   padding: 5px 6px;
@@ -583,9 +669,9 @@ permalink: /music-gen/
 .mg-history-icon { font-size: 12px; color: var(--c-accent); flex-shrink: 0; }
 .mg-history-info { flex: 1; overflow: hidden; }
 .mg-history-name { font-size: 11px; color: var(--c-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.mg-history-sub { font-size: 9px; color: var(--c-text2); margin-top: 1px; }
+.mg-history-sub { font-size: 9px; color: var(--text2); margin-top: 1px; }
 
-/* ── RIGHT PANEL ── */
+/* ─── RIGHT PANEL ─── */
 .mg-right {
   flex: 1;
   padding: 16px 16px;
@@ -605,7 +691,7 @@ permalink: /music-gen/
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
-  color: var(--c-text2);
+  color: var(--text2);
   font-family: var(--f-mono);
   font-size: 11px;
   letter-spacing: 0.08em;
@@ -621,12 +707,12 @@ permalink: /music-gen/
 
 /* Fields */
 .mg-section-label {
-  font-size: 10px; color: var(--c-text3);
+  font-size: 10px; color: var(--text3);
   letter-spacing: 0.08em; margin-bottom: 2px;
 }
 .mg-label {
   display: block;
-  font-size: 10px; color: var(--c-text2);
+  font-size: 10px; color: var(--text2);
   letter-spacing: 0.08em;
   margin-bottom: 4px;
 }
@@ -646,7 +732,7 @@ permalink: /music-gen/
 .mg-textarea:focus { outline: none; border-color: var(--c-accent); box-shadow: 0 0 8px rgba(0,255,65,0.1); }
 .mg-lyrics-ta { flex: 1; min-height: 260px; color: var(--c-text); }
 .mg-lyrics-tools { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
-.mg-char-count { font-size: 10px; color: var(--c-text3); margin-left: auto; }
+.mg-char-count { font-size: 10px; color: var(--text3); margin-left: auto; }
 
 .mg-inline-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
 .mg-input-num {
@@ -670,7 +756,7 @@ permalink: /music-gen/
 .mg-seed-row { display: flex; gap: 4px; }
 .mg-btn-sm {
   background: #0c0c0e; border: 1px solid var(--c-border2);
-  color: var(--c-text2); font-family: var(--f-mono); font-size: 10px;
+  color: var(--text2); font-family: var(--f-mono); font-size: 10px;
   padding: 5px 10px; cursor: pointer; border-radius: 2px;
   letter-spacing: 0.05em; white-space: nowrap;
   transition: all 0.1s; display: block; width: 100%;
@@ -680,10 +766,10 @@ permalink: /music-gen/
 .mg-status-block {
   background: #000; border: 1px solid var(--c-border);
   padding: 8px 10px; border-radius: 2px;
-  font-size: 11px; color: var(--c-text2);
+  font-size: 11px; color: var(--text2);
   min-height: 36px; display: flex; align-items: center;
 }
-.mg-hint { font-size: 10px; color: var(--c-text3); margin: 4px 0; }
+.mg-hint { font-size: 10px; color: var(--text3); margin: 4px 0; }
 .mg-divider-h { height: 1px; background: var(--c-border); }
 
 /* Generate */
@@ -722,19 +808,19 @@ permalink: /music-gen/
 }
 .mg-generate-btn:disabled {
   border-color: var(--c-border2);
-  color: var(--c-text3);
+  color: var(--text3);
   background: #0c0c0e;
   text-shadow: none;
   box-shadow: none;
   cursor: not-allowed;
 }
 .mg-generate-icon { font-size: 18px; }
-.mg-generate-kbd { font-size: 9px; color: var(--c-text3); font-family: var(--f-mono); }
+.mg-generate-kbd { font-size: 9px; color: var(--text3); font-family: var(--f-mono); }
 .mg-gen-status {
   text-align: center;
   font-family: var(--f-vt);
   font-size: 15px;
-  color: var(--c-text3);
+  color: var(--text3);
   letter-spacing: 0.1em;
 }
 
@@ -746,7 +832,7 @@ permalink: /music-gen/
   display: flex;
   justify-content: space-between;
   font-size: 10px;
-  color: var(--c-text3);
+  color: var(--text3);
   letter-spacing: 0.05em;
 }
 .mg-sb-right { color: var(--c-accent); }
@@ -848,34 +934,72 @@ const ST = {
 };
 
 /* ─── INIT ─── */
-document.addEventListener('DOMContentLoaded', () => {
-  loadConfig();
-  setLed('ledPower', 'on');
-  initIdleSpectrum();
-  document.getElementById('paramLyrics').addEventListener('input', updateCharCount);
+document.addEventListener('authReady', function(e) {
+    const user = e.detail.user;
+    const loading = document.getElementById('mg-auth-loading');
+    const login = document.getElementById('mg-auth-login');
+    const unauthorized = document.getElementById('mg-auth-unauthorized');
+    const app = document.getElementById('mg-app-container');
 
-  // Progress bar click
-  document.getElementById('progressBar').addEventListener('click', (e) => {
+    if (!user) {
+        loading.style.display = 'none';
+        login.style.display = 'flex';
+        return;
+    }
+
+    if (!user.isTeamMember) {
+        loading.style.display = 'none';
+        document.getElementById('unauthorized-msg').textContent = `ACCESS DENIED: Account ${user.login} is not authorized for Neural Audio operations.`;
+        unauthorized.style.display = 'flex';
+        return;
+    }
+
+    // Authorized
+    loading.style.display = 'none';
+    app.classList.add('visible');
+
+    // Original init logic
+    loadConfig();
+    setLed('ledPower', 'on');
+    initIdleSpectrum();
+    document.getElementById('paramLyrics').addEventListener('input', updateCharCount);
+
+    // Progress bar click
+    document.getElementById('progressBar').addEventListener('click', (e) => {
+        const audio = document.getElementById('audioPlayer');
+        if (!audio.duration) return;
+        const rect = e.currentTarget.getBoundingClientRect();
+        const pct = (e.clientX - rect.left) / rect.width;
+        audio.currentTime = pct * audio.duration;
+    });
+
     const audio = document.getElementById('audioPlayer');
-    if (!audio.duration) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    const pct = (e.clientX - rect.left) / rect.width;
-    audio.currentTime = pct * audio.duration;
-  });
+    audio.addEventListener('timeupdate', updateProgress);
+    audio.addEventListener('ended', () => {
+        document.getElementById('btnPlay').textContent = '▶';
+        setLed('ledAudio', '');
+    });
+    audio.addEventListener('loadedmetadata', () => {
+        document.getElementById('timeDuration').textContent = formatTime(audio.duration);
+    });
 
-  const audio = document.getElementById('audioPlayer');
-  audio.addEventListener('timeupdate', updateProgress);
-  audio.addEventListener('ended', () => {
-    document.getElementById('btnPlay').textContent = '▶';
-    setLed('ledAudio', '');
-  });
-  audio.addEventListener('loadedmetadata', () => {
-    document.getElementById('timeDuration').textContent = formatTime(audio.duration);
-  });
+    document.getElementById('volumeSlider').value = 0.8;
+    audio.volume = 0.8;
 
-  document.getElementById('volumeSlider').value = 0.8;
-  audio.volume = 0.8;
+    console.log('[MusicGen] Neural Audio Engine Ready. User:', user.login);
 });
+
+// Failsafe
+setTimeout(() => {
+    const loading = document.getElementById('mg-auth-loading');
+    if (loading && loading.style.display !== 'none') {
+        const token = window.githubApi.getAuthToken();
+        if (!token) {
+            loading.style.display = 'none';
+            document.getElementById('mg-auth-login').style.display = 'flex';
+        }
+    }
+}, 3000);
 
 function loadConfig() {
   try {
@@ -1178,10 +1302,12 @@ function drawWaveform() {
 
 function initIdleSpectrum() {
   const canvas = document.getElementById('spectrumCanvas');
+  if (!canvas) return;
   const ctx = canvas.getContext('2d');
   const W = canvas.width, H = canvas.height;
 
   const waveCanvas = document.getElementById('waveformCanvas');
+  if (!waveCanvas) return;
   const wCtx = waveCanvas.getContext('2d');
 
   let t = 0;
@@ -1214,7 +1340,7 @@ function initIdleSpectrum() {
 /* ─── LEDS ─── */
 function setLed(id, cls) {
   const el = document.getElementById(id);
-  el.className = 'mg-led' + (cls ? ' ' + cls : '');
+  if (el) el.className = 'mg-led' + (cls ? ' ' + cls : '');
 }
 
 /* ─── HISTORY ─── */
@@ -1224,6 +1350,7 @@ function addHistory(url, name, meta) {
 }
 function renderHistory() {
   const list = document.getElementById('historyList');
+  if (!list) return;
   if (!ST.history.length) {
     list.innerHTML = '<div class="mg-history-empty">[ NO TRACKS YET ]</div>';
     return;
@@ -1246,7 +1373,8 @@ function playHistoryItem(i) {
 
 /* ─── STATUS BAR ─── */
 function showStatusBar(msg) {
-  document.getElementById('sbRight').textContent = msg;
+  const el = document.getElementById('sbRight');
+  if (el) el.textContent = msg;
 }
 
 /* ─── CONFIG COPY ─── */
@@ -1264,3 +1392,10 @@ document.addEventListener('keydown', (e) => {
   }
 });
 </script>
+
+<!-- Scripts -->
+<script src="{{ '/assets/javascript/github-api.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/auth.js' | relative_url }}"></script>
+
+</body>
+</html>

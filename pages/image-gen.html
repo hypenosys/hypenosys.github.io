@@ -1,13 +1,99 @@
 ---
-layout: page
+layout: null
 title: AI Image Generator (Flux/ComfyUI)
 permalink: /image-gen/
 ---
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-[#0d0d0f]">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Synthesis — HYPENOSYS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ '/assets/main.css' | relative_url }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="{{ '/assets/javascript/bootstrap/jquery.min.js' | relative_url }}"></script>
+    <script src="{{ '/assets/javascript/bootstrap/bootstrap.bundle.min.js' | relative_url }}"></script>
+    <script src="{{ '/assets/javascript/ui-components.js' | relative_url }}"></script>
+    <style>
+        /* Standard Auth Overlay Styles (adapted from Jules Panel/Dashboard) */
+        .auth-overlay {
+            position: fixed; inset: 0; z-index: 5000;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(7, 7, 10, 0.95);
+            backdrop-filter: blur(8px);
+            opacity: 1; transition: opacity 0.5s ease;
+        }
+        .auth-overlay.hidden { opacity: 0; pointer-events: none; }
+        .auth-card {
+            max-width: 420px; width: 90%; padding: 40px;
+            background: #141416; border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 16px; text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+        }
+        .auth-icon { font-size: 48px; margin-bottom: 20px; color: #bd93f9; }
+        .auth-title { font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 12px; }
+        .auth-desc { color: #888892; font-size: 14px; margin-bottom: 30px; line-height: 1.6; }
+        .auth-btn-gh {
+            width: 100%; padding: 14px; background: #fff; color: #000; border: none;
+            border-radius: 8px; font-weight: 700; font-size: 14px;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            cursor: pointer; transition: all 0.2s ease; margin-bottom: 16px;
+        }
+        .auth-btn-gh:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255,255,255,0.1); }
+        .auth-btn-back { color: #555560; text-decoration: none; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        .auth-btn-back:hover { color: #fff; }
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+        .loading-spinner {
+            width: 40px; height: 40px; border: 3px solid rgba(189, 147, 249, 0.1);
+            border-top-color: #bd93f9; border-radius: 50%;
+            margin: 0 auto 20px; animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
+        /* App container visibility */
+        #ig-app-container { display: none; }
+        #ig-app-container.visible { display: flex; flex-direction: column; min-height: 100vh; }
+    </style>
+</head>
+<body>
+
+<!-- ══ AUTH OVERLAYS ══ -->
+<div id="ig-auth-loading" class="auth-overlay">
+    <div class="auth-card">
+        <div class="loading-spinner"></div>
+        <h2 class="auth-title">Verificando...</h2>
+        <p class="auth-desc">Accediendo a la red neuronal de síntesis visual.</p>
+    </div>
+</div>
+
+<div id="ig-auth-login" class="auth-overlay" style="display:none">
+    <div class="auth-card">
+        <div class="auth-icon"><i class="fa-solid fa-lock"></i></div>
+        <h2 class="auth-title">Acceso Restringido</h2>
+        <p class="auth-desc">El generador de imágenes requiere autenticación de equipo. Por favor, conecta tu sesión de GitHub.</p>
+        <button class="auth-btn-gh" onclick="window.authManager.handleLogin()">
+            <i class="fa-brands fa-github text-xl"></i> Identificarse con GitHub
+        </button>
+        <a href="/" class="auth-btn-back"><i class="fa-solid fa-arrow-left mr-2"></i> Volver al Home</a>
+    </div>
+</div>
+
+<div id="ig-auth-unauthorized" class="auth-overlay" style="display:none">
+    <div class="auth-card">
+        <div class="auth-icon" style="color:#ff5555"><i class="fa-solid fa-user-shield"></i></div>
+        <h2 class="auth-title">Acceso Denegado</h2>
+        <p id="unauthorized-msg" class="auth-desc">Tu cuenta de GitHub no figura en la lista autorizada de Hypenosys para acceder a herramientas de síntesis.</p>
+        <button class="auth-btn-gh" onclick="sessionStorage.clear(); localStorage.removeItem('gh_access_token'); window.location.reload();">
+            Cerrar Sesión e Reintentar
+        </button>
+        <a href="/" class="auth-btn-back"><i class="fa-solid fa-arrow-left mr-2"></i> Volver al Home</a>
+    </div>
+</div>
+
+<div id="ig-app-container">
 <div id="ig-root">
 
   <!-- TOP BAR -->
@@ -35,7 +121,7 @@ permalink: /image-gen/
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
       </button>
       <button class="ig-icon-btn" title="Settings" onclick="togglePanel('settings')">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
       </button>
     </div>
   </header>
@@ -250,7 +336,8 @@ permalink: /image-gen/
     </div>
   </div>
 
-</div><!-- end root -->
+</div><!-- end ig-root -->
+</div><!-- end ig-app-container -->
 
 <style>
 /* ── RESET & TOKENS ── */
@@ -283,9 +370,7 @@ permalink: /image-gen/
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  margin-left: -15px;
-  margin-right: -15px;
-  width: calc(100% + 30px);
+  width: 100%;
 }
 
 /* ── TOPBAR ── */
@@ -616,7 +701,7 @@ permalink: /image-gen/
 .ig-canvas-tool:hover { color: var(--c-text); background: var(--c-surface2); }
 .ig-canvas-zoom-label { font-family: var(--f-mono); font-size: 10px; color: var(--c-text3); padding: 0 4px; }
 
-/* ── RIGHT PANEL ── */
+/* ─── RIGHT PANEL ─── */
 .ig-drop-zone {
   border: 1px dashed var(--c-border2);
   border-radius: var(--radius);
@@ -679,7 +764,7 @@ permalink: /image-gen/
 .ig-text-btn { background: transparent; border: none; color: var(--c-text3); font-size: 10px; cursor: pointer; transition: color 0.15s; }
 .ig-text-btn:hover { color: var(--c-accent); }
 
-/* ── SETTINGS DRAWER ── */
+/* ─── SETTINGS DRAWER ─── */
 .ig-drawer {
   position: fixed; top: 0; right: 0; bottom: 0;
   width: 320px; background: var(--c-surface);
@@ -780,13 +865,51 @@ const MODE_INFO = {
 };
 
 /* ─── INIT ─── */
-document.addEventListener('DOMContentLoaded', function() {
-  loadSettings();
-  addPrompt();
-  initRangeGradients();
-  initNoise();
-  updateModeHint();
+document.addEventListener('authReady', function(e) {
+    const user = e.detail.user;
+    const loading = document.getElementById('ig-auth-loading');
+    const login = document.getElementById('ig-auth-login');
+    const unauthorized = document.getElementById('ig-auth-unauthorized');
+    const app = document.getElementById('ig-app-container');
+
+    if (!user) {
+        loading.style.display = 'none';
+        login.style.display = 'flex';
+        return;
+    }
+
+    if (!user.isTeamMember) {
+        loading.style.display = 'none';
+        document.getElementById('unauthorized-msg').textContent = `Tu cuenta (${user.login}) no está autorizada para acceder a síntesis visual.`;
+        unauthorized.style.display = 'flex';
+        return;
+    }
+
+    // Authorized
+    loading.style.display = 'none';
+    app.classList.add('visible');
+
+    // Resume original init
+    loadSettings();
+    addPrompt();
+    initRangeGradients();
+    initNoise();
+    updateModeHint();
+
+    console.log('[ImageGen] Initialized for team member:', user.login);
 });
+
+// Failsafe for auth timeout
+setTimeout(() => {
+    const loading = document.getElementById('ig-auth-loading');
+    if (loading && loading.style.display !== 'none') {
+        const token = window.githubApi.getAuthToken();
+        if (!token) {
+            loading.style.display = 'none';
+            document.getElementById('ig-auth-login').style.display = 'flex';
+        }
+    }
+}, 3000);
 
 /* ─── SETTINGS ─── */
 function loadSettings() {
@@ -1410,3 +1533,10 @@ document.addEventListener('keydown', function(e) {
   if (e.key === 'D' && e.ctrlKey && e.shiftKey) { e.preventDefault(); toggleDebug(); }
 });
 </script>
+
+<!-- Scripts -->
+<script src="{{ '/assets/javascript/github-api.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/auth.js' | relative_url }}"></script>
+
+</body>
+</html>
