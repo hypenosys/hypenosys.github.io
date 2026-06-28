@@ -268,10 +268,12 @@ window.switchView = async function(view, navEl) {
       if (window.julesSessionsCache) renderHistoryTable(window.julesSessionsCache);
     }
     if (view === 'neural') {
-        if($('v2-thinking-indicator')) $('v2-thinking-indicator').classList.add('hidden');
+        if (window.setJulesPanelNeuralProcessingState) window.setJulesPanelNeuralProcessingState(false);
+        else if($('v2-thinking-indicator')) $('v2-thinking-indicator').classList.add('hidden');
         renderChatV2Messages();
     }
     if (view === 'chat') {
+        if (window.setJulesPanelNeuralProcessingState) window.setJulesPanelNeuralProcessingState(false);
         if (window.loadJulesPanelSessions) window.loadJulesPanelSessions();
         const sid = getLinkedJulesSessionId();
         if (sid && localStorage.getItem('hy_neural_active') === 'true') {
