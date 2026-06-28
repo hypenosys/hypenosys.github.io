@@ -16,13 +16,17 @@ function saveJulesPanelSessions() {
 window.loadJulesPanelSessions = function() {
     window.julesPanelSessions = window.NeuralChatCore.getSessions(window.JULES_PANEL_NEURAL_STORAGE);
     window.currentJulesPanelSessionId = localStorage.getItem(window.JULES_PANEL_NEURAL_ACTIVE_ID);
+    window.renderNeuralChatHistory();
 }
 
 /**
  * Initialize Neural Chat for Jules Panel
  */
 window.initJulesPanelNeuralChat = function() {
-    if (window._julesPanelNeuralInitialized) return;
+    if (window._julesPanelNeuralInitialized) {
+        window.renderNeuralChatHistory();
+        return;
+    }
     console.log("[Jules Panel Neural] Initializing...");
 
     window.loadJulesPanelSessions();
@@ -66,9 +70,11 @@ window.initJulesPanelNeuralChat = function() {
     });
 
     window.addEventListener('storage', (e) => {
-        if (e.key === window.JULES_PANEL_NEURAL_STORAGE && $('sessions-drawer')?.classList.contains('open')) {
+        if (e.key === window.JULES_PANEL_NEURAL_STORAGE) {
             window.loadJulesPanelSessions();
-            window.renderJulesPanelSessionDrawerList();
+            if ($('sessions-drawer')?.classList.contains('open')) {
+                window.renderJulesPanelSessionDrawerList();
+            }
         }
     });
 
@@ -120,6 +126,7 @@ window.createNewJulesPanelSession = function() {
     window.julesPanelSessions.unshift(newSession);
     saveJulesPanelSessions();
     window.loadJulesPanelSession(newSession.id);
+    window.renderNeuralChatHistory();
 }
 
 window.loadJulesPanelSession = function(id) {
@@ -130,6 +137,7 @@ window.loadJulesPanelSession = function(id) {
     if (!session) return;
 
     window.renderChatV2Messages();
+    window.renderNeuralChatHistory();
 }
 
 window.sendChatV2Msg = async function() {
@@ -160,13 +168,17 @@ window.sendChatV2Msg = async function() {
     await window.NeuralChatCore.sendMessage({
         session: session,
         userMessage: msg,
-        saveCallback: saveJulesPanelSessions,
+        saveCallback: () => {
+            saveJulesPanelSessions();
+            window.renderNeuralChatHistory();
+        },
         onToken: () => {
             window.renderChatV2Messages();
         },
         onDone: () => {
             if (thinkingIndicator) thinkingIndicator.classList.add('hidden');
             window.renderChatV2Messages();
+            window.renderNeuralChatHistory();
         },
         onError: (err) => {
             if (thinkingIndicator) thinkingIndicator.classList.add('hidden');
@@ -174,6 +186,41 @@ window.sendChatV2Msg = async function() {
             window.renderChatV2Messages();
         }
     });
+}
+
+window.renderNeuralChatHistory = function() {
+    const container = $('chat-history-list');
+    if (!container) return;
+
+    const sessions = (window.julesPanelSessions || []).filter(s => !s.archived);
+
+    if (sessions.length === 0) {
+        container.innerHTML = '<div class="notif-empty" style="font-size: 10px; padding: 10px;">Sin historial de chat</div>';
+        return;
+    }
+
+    container.innerHTML = sessions.map(function(s) {
+        const isActive = s.id === window.currentJulesPanelSessionId;
+
+        // Title logic: title -> first user message -> "Nueva conversación"
+        let displayTitle = s.title;
+        if (!displayTitle || displayTitle === 'Nueva Conversación') {
+            const firstUserMsg = s.messages.find(m => m.role === 'user');
+            if (firstUserMsg) {
+                displayTitle = firstUserMsg.content.substring(0, 40) + (firstUserMsg.content.length > 40 ? '...' : '');
+            } else {
+                displayTitle = 'Nueva conversación';
+            }
+        }
+
+        return '<div class="chat-history-item' + (isActive ? ' active' : '') + '" onclick="window.loadJulesPanelSession(\'' + s.id + '\')">' +
+                 '<div class="chat-dot"></div>' +
+                 '<div class="chat-title" title="' + window.NeuralChatCore.escapeHtml(displayTitle) + '">' + window.NeuralChatCore.escapeHtml(displayTitle) + '</div>' +
+                 '<button class="btn-delete-session" onclick="window.deleteJulesPanelSession(event, \'' + s.id + '\')" title="Borrar">' +
+                   '<i class="fas fa-trash"></i>' +
+                 '</button>' +
+               '</div>';
+    }).join('');
 }
 
 window.renderChatV2Messages = function() {
@@ -474,6 +521,9 @@ window.archiveJulesPanelSession = function(event, id) {
 window.deleteJulesPanelSession = function(event, id) {
     if (event) event.stopPropagation();
 
+    const session = window.julesPanelSessions.find(s => s.id === id);
+    const sessionTitle = session ? session.title : 'esta sesión';
+
     const performDelete = () => {
         const index = window.julesPanelSessions.findIndex(s => s.id === id);
         if (index === -1) return;
@@ -491,12 +541,15 @@ window.deleteJulesPanelSession = function(event, id) {
         }
 
         window.renderJulesPanelSessionDrawerList();
+        window.renderNeuralChatHistory();
         showToast("Sesión eliminada", "red");
     };
 
+    const confirmMsg = "¿Seguro que quieres borrar la sesión \"" + sessionTitle + "\"? Esta acción no se puede deshacer.";
+
     if (window.showConfirmationToast) {
-        window.showConfirmationToast("¿Seguro que quieres borrar esta sesión? Esta acción no se puede deshacer.", performDelete);
-    } else if (window.confirm("¿Seguro que quieres borrar esta sesión? Esta acción no se puede deshacer.")) {
+        window.showConfirmationToast(confirmMsg, performDelete);
+    } else if (window.confirm(confirmMsg)) {
         performDelete();
     }
 }
