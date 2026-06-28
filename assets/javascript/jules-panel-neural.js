@@ -204,7 +204,7 @@ window.renderNeuralChatHistory = function() {
 
         // Title logic: title -> first user message -> "Nueva conversación"
         let displayTitle = s.title;
-        if (!displayTitle || displayTitle === 'Nueva Conversación') {
+        if (!displayTitle || displayTitle.toLowerCase() === 'nueva conversación') {
             const firstUserMsg = s.messages.find(m => m.role === 'user');
             if (firstUserMsg) {
                 displayTitle = firstUserMsg.content.substring(0, 40) + (firstUserMsg.content.length > 40 ? '...' : '');
