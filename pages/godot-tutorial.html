@@ -1,0 +1,365 @@
+---
+layout: default
+title: "🤖 Godot Engine Tutorial — Hypenosys Learning"
+permalink: /godot-tutorial/
+---
+
+<style>
+    :root {
+        --godot-blue: #478cbf;
+        --godot-dark: #202531;
+        --godot-bg: #1a1c22;
+        --godot-fg: #e0e0e0;
+        --godot-purple: #9d7cd8;
+        --godot-green: #9ece6a;
+        --godot-red: #f7768e;
+        --godot-yellow: #e0af68;
+        --godot-comment: #565f89;
+    }
+
+    .godot-hero {
+        background: linear-gradient(135deg, #202531 0%, #478cbf 100%);
+        border: 1px solid var(--godot-blue);
+        border-radius: 12px;
+        padding: 2.5rem;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .godot-hero::after {
+        content: '4.7';
+        position: absolute;
+        bottom: -20px;
+        right: 10px;
+        font-size: 120px;
+        font-weight: 900;
+        color: rgba(255, 255, 255, 0.05);
+        pointer-events: none;
+    }
+
+    .section-card {
+        background: #1e2029;
+        border: 1px solid #323644;
+        border-radius: 8px;
+        padding: 1.5rem;
+        height: 100%;
+        transition: transform 0.2s;
+    }
+
+    .section-card:hover {
+        border-color: var(--godot-blue);
+    }
+
+    .step-badge {
+        background: var(--godot-blue);
+        color: #fff;
+        font-weight: bold;
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 10px;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+        display: inline-block;
+    }
+
+    /* Kanban Styles */
+    .godot-kanban-container {
+        background: #12141a;
+        border-radius: 12px;
+        padding: 2rem;
+        border: 1px solid #2a2d38;
+    }
+
+    .kanban-col {
+        background: #1a1c22;
+        border-radius: 8px;
+        padding: 1rem;
+        min-height: 500px;
+    }
+
+    .kanban-header {
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 1px;
+        color: var(--godot-comment);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 8px;
+    }
+
+    .godot-task-card {
+        background: var(--godot-dark);
+        border: 1px solid #323644;
+        border-radius: 6px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        cursor: grab;
+        transition: all 0.2s;
+    }
+
+    .godot-task-card:active { cursor: grabbing; }
+    .godot-task-card:hover { border-color: var(--godot-blue); }
+
+    .task-id {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10px;
+        color: var(--godot-comment);
+    }
+
+    .task-title {
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--godot-fg);
+        margin: 8px 0;
+    }
+
+    .task-meta {
+        font-size: 11px;
+        color: var(--godot-comment);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .btn-godot {
+        background: var(--godot-blue);
+        color: #fff;
+        font-weight: 700;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        font-size: 13px;
+        transition: all 0.2s;
+    }
+
+    .btn-godot:hover {
+        background: #5ba1d4;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(71, 140, 191, 0.3);
+    }
+
+    .practice-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+    }
+
+    .nav-tabs-custom {
+        border-bottom: 1px solid #323644;
+        margin-bottom: 2rem;
+    }
+
+    .nav-tabs-custom .nav-link {
+        color: var(--godot-comment);
+        border: none;
+        padding: 1rem 1.5rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 12px;
+    }
+
+    .nav-tabs-custom .nav-link.active {
+        background: transparent;
+        color: var(--godot-blue);
+        border-bottom: 2px solid var(--godot-blue);
+    }
+
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+    .text-xs { font-size: 0.75rem; }
+
+</style>
+
+<div class="container mt-5">
+    <div class="godot-hero">
+        <h1 class="display-4 text-white font-weight-bold">Godot Engine 4.7 Mastery</h1>
+        <p class="lead text-white-50">Mastering Nodes, HDR Rendering, and the new Asset Store Workflow</p>
+        <div class="d-flex gap-3 mt-4">
+            <span class="badge badge-dark p-2 px-3 border border-secondary">Version: 4.7 RC</span>
+            <span class="badge badge-dark p-2 px-3 border border-secondary">Nivel: Senior Game Dev</span>
+        </div>
+    </div>
+
+    <ul class="nav nav-tabs nav-tabs-custom" id="godotTabs" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="content-tab" data-toggle="tab" href="#content" role="tab"><i class="fas fa-microchip mr-2"></i> Documentación Técnica</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="kanban-tab" data-toggle="tab" href="#kanban" role="tab"><i class="fas fa-tasks mr-2"></i> Laboratorio de Prácticas</a>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="godotTabContent">
+        <!-- Tab: Didactic Content -->
+        <div class="tab-pane fade show active" id="content" role="tabpanel">
+
+            <div class="row mb-5">
+                <div class="col-md-12">
+                    <h3 class="text-info mb-4"><i class="fas fa-brain mr-2"></i> 1. Arquitectura y Paradigmas</h3>
+                    <div class="practice-grid">
+                        <div class="section-card">
+                            <span class="step-badge">The Node System</span>
+                            <ul class="list-unstyled text-muted small">
+                                <li class="mb-2"><i class="fas fa-circle text-info mr-2"></i> <strong>Scene Tree:</strong> La jerarquía única de Godot.</li>
+                                <li class="mb-2"><i class="fas fa-circle text-info mr-2"></i> <strong>Signals:</strong> Patrón Observer para comunicación desacoplada.</li>
+                                <li class="mb-2"><i class="fas fa-circle text-info mr-2"></i> <strong>Resources:</strong> Gestión eficiente de memoria y assets.</li>
+                                <li class="mb-2"><i class="fas fa-circle text-info mr-2"></i> <strong>Composition:</strong> "Everything is a Scene".</li>
+                            </ul>
+                        </div>
+                        <div class="section-card">
+                            <span class="step-badge">Scripting</span>
+                            <h5 class="text-white mb-3">GDScript 2.0 & C#</h5>
+                            <p class="small text-muted">Uso de Tipado Estático, `@export`, `@onready`, y manejo de hilos. Introducción a GDExtension para alto rendimiento sin recompilar el motor.</p>
+                        </div>
+                        <div class="section-card">
+                            <span class="step-badge">Rendering 4.7</span>
+                            <h5 class="text-white mb-3">HDR & AreaLight3D</h5>
+                            <p class="small text-muted">Implementación de HDR Output, nuevas sombras realistas con AreaLight3D y texturas dibujables por GPU.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-5">
+                <div class="col-md-12">
+                    <h3 class="text-primary mb-4"><i class="fas fa-layer-group mr-2"></i> 2. Módulos de Especialización 4.7</h3>
+                    <div class="accordion" id="godotModulesAccordion">
+                        <div class="card bg-dark border-secondary mb-2">
+                            <div class="card-header p-0" id="h-m1">
+                                <button class="btn btn-block text-left text-white p-3 font-weight-bold" type="button" data-toggle="collapse" data-target="#c-m1">
+                                    Módulo 1: Fundamentos y Entorno <i class="fas fa-chevron-down float-right mt-1"></i>
+                                </button>
+                            </div>
+                            <div id="c-m1" class="collapse show" data-parent="#godotModulesAccordion">
+                                <div class="card-body small text-muted">
+                                    <p>Configuración del Editor. Sistema de archivos y `project.godot`. Creación de escenas heredadas. Uso del sistema de Input Map.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card bg-dark border-secondary mb-2">
+                            <div class="card-header p-0" id="h-m2">
+                                <button class="btn btn-block text-left text-white p-3 font-weight-bold collapsed" type="button" data-toggle="collapse" data-target="#c-m2">
+                                    Módulo 2: 2D Mastery & Mobile UI <i class="fas fa-chevron-down float-right mt-1"></i>
+                                </button>
+                            </div>
+                            <div id="c-m2" class="collapse" data-parent="#godotModulesAccordion">
+                                <div class="card-body small text-muted">
+                                    <p>Migración al nuevo <code>TileMapLayer</code>. Uso del nuevo <code>VirtualJoystick</code> nativo para móviles. Parallax2D para fondos dinámicos. Y-Sort y Light2D.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card bg-dark border-secondary mb-2">
+                            <div class="card-header p-0" id="h-m3">
+                                <button class="btn btn-block text-left text-white p-3 font-weight-bold collapsed" type="button" data-toggle="collapse" data-target="#c-m3">
+                                    Módulo 3: 3D Pipelines <i class="fas fa-chevron-down float-right mt-1"></i>
+                                </button>
+                            </div>
+                            <div id="c-m3" class="collapse" data-parent="#godotModulesAccordion">
+                                <div class="card-body small text-muted">
+                                    <p>Navegación 3D con NavigationServer. WorldEnvironment y Grading de color. Importación de GLTF/FBX. Iluminación Global (SDFGI / VoxelGI).</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card bg-dark border-secondary mb-2">
+                            <div class="card-header p-0" id="h-m4">
+                                <button class="btn btn-block text-left text-white p-3 font-weight-bold collapsed" type="button" data-toggle="collapse" data-target="#c-m4">
+                                    Módulo 4: Animación y Audio <i class="fas fa-chevron-down float-right mt-1"></i>
+                                </button>
+                            </div>
+                            <div id="c-m4" class="collapse" data-parent="#godotModulesAccordion">
+                                <div class="card-body small text-muted">
+                                    <p>Dominio del <code>AnimationPlayer</code> y <code>AnimationTree</code>. El nuevo <code>AnimationMixer</code>. Buses de Audio y efectos en tiempo real.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="section-card border-info">
+                        <h4 class="text-info mb-3">Checklist de Evaluación</h4>
+                        <ul class="small text-muted pl-3">
+                            <li class="mb-2">Arquitectura basada en componentes (Nodos independientes).</li>
+                            <li class="mb-2">Uso correcto de Singletons (Autoload) para persistencia de datos.</li>
+                            <li class="mb-2">Optimización de Draw Calls mediante instanciación de Multimesh.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="section-card border-primary">
+                        <h4 class="text-primary mb-3">Repositorio de Trabajo</h4>
+                        <div class="bg-black p-3 rounded font-mono text-xs">
+                            Repo: hypenosys/lab/godot-4-research<br>
+                            - /src: Código fuente (GD/C#)<br>
+                            - /assets: Modelos y Texturas PBR<br>
+                            - /builds: Export templates (Web/Windows)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Kanban -->
+        <div class="tab-pane fade" id="kanban" role="tabpanel">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h3 class="text-info mb-1">Kanban de Aprendizaje Godot</h3>
+                    <p class="small text-muted mb-0">Rastrea tu progreso técnico en el dominio de Godot 4.7.</p>
+                </div>
+                <button class="btn btn-godot" onclick="addNewGodotTask()">
+                    <i class="fas fa-plus mr-2"></i> Añadir Hito
+                </button>
+            </div>
+
+            <div class="godot-kanban-container">
+                <div class="row">
+                    <!-- Column: To Do -->
+                    <div class="col-md-4">
+                        <div class="kanban-col" id="col-godot-todo" ondrop="godotDrop(event, 'TODO')" ondragover="allowGodotDrop(event)">
+                            <div class="kanban-header">
+                                <span class="status-dot bg-secondary"></span> PENDIENTE
+                            </div>
+                            <div class="godot-cards-list"></div>
+                        </div>
+                    </div>
+                    <!-- Column: In Progress -->
+                    <div class="col-md-4">
+                        <div class="kanban-col" id="col-godot-progress" ondrop="godotDrop(event, 'WORKING')" ondragover="allowGodotDrop(event)">
+                            <div class="kanban-header">
+                                <span class="status-dot bg-info"></span> EN DESARROLLO
+                            </div>
+                            <div class="godot-cards-list"></div>
+                        </div>
+                    </div>
+                    <!-- Column: Done -->
+                    <div class="col-md-4">
+                        <div class="kanban-col" id="col-godot-done" ondrop="godotDrop(event, 'DONE')" ondragover="allowGodotDrop(event)">
+                            <div class="kanban-header">
+                                <span class="status-dot bg-success"></span> COMPLETADO
+                            </div>
+                            <div class="godot-cards-list"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4 p-3 bg-dark-transparent rounded border border-secondary text-center">
+                <small class="text-muted"><i class="fas fa-shield-alt mr-1"></i> Entorno de aprendizaje aislado localmente.</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div style="height: 100px;"></div>
+
+<script src="{{ '/assets/javascript/godot-tutorial.js' | relative_url }}"></script>
