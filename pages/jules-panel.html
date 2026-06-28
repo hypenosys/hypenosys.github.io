@@ -141,12 +141,22 @@ permalink: /jules-panel/
       </a>
     </div>
 
-    <div class="nav-group" id="ng-repos" style="flex:1;display:flex;flex-direction:column">
+    <div class="nav-group" id="ng-repos">
       <div class="nav-label" onclick="toggleNavGroup('ng-repos')">
         <span>Repositorios</span>
         <i class="fas fa-chevron-down"></i>
       </div>
       <div class="sb-repos" id="repo-list"></div>
+    </div>
+
+    <div class="nav-group" id="ng-chat-history">
+      <div class="nav-label" onclick="toggleNavGroup('ng-chat-history')">
+        <span>NEURAL CHAT HISTORY</span>
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="sb-repos" id="chat-history-list">
+        <div class="notif-empty" style="font-size: 10px; padding: 10px;">Cargando historial...</div>
+      </div>
     </div>
 
   </aside>
