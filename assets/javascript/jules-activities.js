@@ -43,10 +43,24 @@ const JulesActivitiesModule = (() => {
 
   function _activityToHTML(act) {
     const time = new Date(act.createTime).toLocaleTimeString('es-ES');
-    const orig = (act.originator || 'system').toUpperCase();
-    let icon = '⚙️';
-    if (act.originator === 'agent') icon = '🤖';
-    if (act.originator === 'user') icon = '👤';
+    const originator = act.originator || 'system';
+
+    let iconHTML = '⚙️';
+    if (originator === 'agent') iconHTML = '🤖';
+    if (originator === 'user') iconHTML = '👤';
+
+    let displayName = originator.toUpperCase();
+
+    // Apply Authenticated User Identity if originator is user
+    if (originator === 'user') {
+      const githubUser = window.githubApi ? window.githubApi.user : null;
+      if (githubUser) {
+        displayName = (githubUser.login || githubUser.name || 'USUARIO').toUpperCase();
+        if (githubUser.avatar_url) {
+          iconHTML = `<img src="${githubUser.avatar_url}" style="width:24px; height:24px; border-radius:50%; object-fit:cover;">`;
+        }
+      }
+    }
 
     let content = act.description || '';
     let extraHTML = '';
@@ -93,11 +107,11 @@ const JulesActivitiesModule = (() => {
       </div>` : '';
 
     return `
-      <div class="jules-activity-entry jules-activity-entry--${act.originator || 'system'}" data-activity-id="${act.id}">
-        <span class="activity-icon">${icon}</span>
+      <div class="jules-activity-entry jules-activity-entry--${originator}" data-activity-id="${act.id}">
+        <span class="activity-icon">${iconHTML}</span>
         <div class="activity-body">
           <div class="activity-header">
-            <span class="activity-originator">${orig}</span>
+            <span class="activity-originator">${displayName}</span>
             <span class="activity-time">${time}</span>
           </div>
           <div class="activity-content">${content}</div>
