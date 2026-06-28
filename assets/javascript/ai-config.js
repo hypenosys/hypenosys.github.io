@@ -293,25 +293,54 @@ class OllamaUI {
     }
 
     saveAsProfile() {
-        const name = document.getElementById('ai_profile_name').value.trim();
+        const nameInput = document.getElementById('ai_profile_name');
+        const name = nameInput.value.trim();
+
         if (!name) {
-            alert('Indica un nombre para el perfil.');
+            if (window.authManager && window.authManager.showToast) {
+                window.authManager.showToast('Error', 'El nombre del perfil es obligatorio.', 'error');
+            } else {
+                alert('El nombre del perfil es obligatorio.');
+            }
+            nameInput.focus();
             return;
         }
 
+        let profiles = JSON.parse(localStorage.getItem('ai_profiles') || '{}');
+        const normalizedName = name.toLowerCase();
+
+        // Find if a profile with the same name already exists
+        const existingProfileId = Object.keys(profiles).find(id =>
+            profiles[id].name && profiles[id].name.trim().toLowerCase() === normalizedName
+        );
+
+        if (existingProfileId) {
+            const confirmOverwrite = confirm(`Ya existe un perfil con el nombre "${profiles[existingProfileId].name}". ¿Quieres sobrescribirlo?`);
+            if (!confirmOverwrite) return;
+        }
+
+        const configId = existingProfileId || 'profile-' + Date.now();
         const config = {
-            id: 'profile-' + Date.now(),
+            id: configId,
             name: name,
             provider: document.getElementById('ai_provider').value,
             model: document.getElementById('ai_model').value,
             api_key: document.getElementById('ai_api_key').value,
             base_url: document.getElementById('ai_base_url').value,
-            modelType: this.currentModelType || 'chat'
+            modelType: this.currentModelType || 'chat',
+            localNetwork: document.getElementById('ai_local_network').checked
         };
 
-        let profiles = JSON.parse(localStorage.getItem('ai_profiles') || '{}');
         profiles[config.id] = config;
         localStorage.setItem('ai_profiles', JSON.stringify(profiles));
+
+        // Set as active profile immediately
+        localStorage.setItem('activeProfile', config.id);
+        localStorage.setItem('hy_ai_config', JSON.stringify(config));
+
+        if (typeof window.updateActiveProfileUI === 'function') {
+            window.updateActiveProfileUI(config);
+        }
 
         if (window.authManager && window.authManager.showToast) {
             window.authManager.showToast('Éxito', `Perfil "${name}" guardado.`, 'success');
