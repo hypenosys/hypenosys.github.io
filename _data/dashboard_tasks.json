@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-28T13:43:30.554Z",
+  "last_updated": "2026-06-28T13:44:44.750Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3251,17 +3251,19 @@
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Major",
       "milestone": "M1",
-      "estado": "Pending",
+      "estado": "Working",
       "completitud": 0,
       "resuelto_por": "Axel",
       "detectado_por": "Axel",
-      "asignados": [],
+      "asignados": [
+        "topperh4rley"
+      ],
       "email_responsable": null,
       "emails_asignados": [],
-      "start_date": null,
-      "due_date": null,
-      "estimated_hours": null,
-      "story_points": null,
+      "start_date": "2026-06-28",
+      "due_date": "2026-07-05",
+      "estimated_hours": 4,
+      "story_points": 2,
       "tags": [],
       "external_links": [],
       "subtasks": [],
@@ -3290,6 +3292,27 @@
           "field": "descripcion",
           "old_value": "Tarda demasiado, no debería tardar tanto en cargar datos que son prácticamente estáticos. El dashboard y en el panel de Jules el propio dashboard del panel de Jules deben cargar en muy poco.",
           "new_value": "Tarda demasiado, no debería tardar tanto en cargar datos que son prácticamente estáticos. El dashboard y en el panel de Jules (el propio dashboard del panel de Jules) deben cargar en muy poco."
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-28T13:44:44.189Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-28T13:44:44.189Z",
+          "field": "asignados",
+          "old_value": "[]",
+          "new_value": "[\"topperh4rley\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-28T13:44:44.189Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-07-05"
         }
       ],
       "id": 67
@@ -3602,6 +3625,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #67",
+      "user": "Axlfc",
+      "timestamp": "2026-06-28T13:44:44.750Z"
+    },
     {
       "action": "chore: actualizar tarea #72",
       "user": "Axlfc",
