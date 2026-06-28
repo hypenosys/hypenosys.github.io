@@ -1,6 +1,6 @@
 {
   "schema_version": "2.0.0",
-  "last_updated": "2026-06-28T21:39:42.268Z",
+  "last_updated": "2026-06-28T22:22:06.015Z",
   "members": {
     "Axel": {
       "github_username": "Axlfc",
@@ -57,7 +57,7 @@
     },
     "Alex": {
       "github_username": "TopperH4rley",
-      "display_name": "Alex",
+      "display_name": "Alex (TopperH4rley)",
       "role": "Main Programming, Secondary Design",
       "lead_role": "Lead de Programación",
       "bio": "El Alex. Capaz de convertir café en código y bugs en 'features experimentales'. Si ves un commit a las 4 AM, es él. O un bot que ha programado para que trabaje por él.",
@@ -88,7 +88,9 @@
       "ai_config": {
         "provider": "ollama",
         "model": "qwen3:14b"
-      }
+      },
+      "github_login": "TopperH4rley",
+      "contact_email": ""
     },
     "Javi": {
       "github_username": "javi26031994-a11y",
@@ -189,6 +191,11 @@
     }
   },
   "_audit_log": [
+    {
+      "action": "chore: actualizar perfil de TopperH4rley",
+      "user": "TopperH4rley",
+      "timestamp": "2026-06-28T22:22:06.015Z"
+    },
     {
       "action": "chore: actualizar config AI de Alex",
       "user": "TopperH4rley",
