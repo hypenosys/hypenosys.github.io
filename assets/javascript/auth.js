@@ -17,10 +17,11 @@ class AuthManager {
         }
 
         const isDashboard = window.location.pathname.includes('dashboard');
-        const isJules = window.location.pathname.includes('jules-panel') || window.location.pathname.includes('jules-panel');
+        const isJules = window.location.pathname.includes('jules-panel');
         const isNeural = window.location.pathname.includes('/chat/neural/') || window.location.pathname.includes('claude-chat');
+        const isGen = window.location.pathname.includes('image-gen') || window.location.pathname.includes('music-gen');
 
-        if (isDashboard || isJules || isNeural) {
+        if (isDashboard || isJules || isNeural || isGen) {
             console.log('[AUTH] Protected page detected. Handling OAuth callback if present...');
 
             try {
