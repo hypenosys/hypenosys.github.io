@@ -1327,6 +1327,74 @@ body{
   border-color: var(--accent);
 }
 
+.profile-dropdown-item {
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  padding: 8px 12px;
+}
+
+.profile-item-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.profile-item-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.profile-icon {
+  font-size: 11px;
+}
+
+.profile-name {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text2);
+}
+
+.profile-name.active {
+  color: var(--accent2);
+}
+
+.profile-delete-btn {
+  opacity: 0;
+  color: var(--red);
+  background: transparent;
+  border: none;
+  font-size: 10px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.profile-item-main:hover .profile-delete-btn {
+  opacity: 1;
+}
+
+.profile-models-list {
+  padding-left: 20px;
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.profile-model-item {
+  font-size: 9px;
+  color: var(--text3);
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.15s;
+}
+
+.profile-model-item:hover {
+  color: var(--text);
+}
+
 .btn-xs {
   padding: 4px 8px;
   font-size: 10px;

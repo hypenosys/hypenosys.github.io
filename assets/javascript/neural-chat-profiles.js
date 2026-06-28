@@ -53,13 +53,21 @@ window.renderProfileDropdown = function() {
         const isOllama = p.id === 'ollama-local';
         const icon = isOllama ? '🟢' : (isNvidia ? '⚡' : '👤');
         const displayName = p.name || p.id;
+        const providerName = p.provider === 'ollama' ? 'Ollama Local' :
+                            (p.provider === 'anthropic' ? 'Anthropic' :
+                            (p.provider === 'openai' ? 'OpenAI' : p.provider));
+
+        let secondaryInfo = `${providerName} · ${p.model || 'Desconocido'}`;
+        if (p.base_url && p.provider === 'custom') {
+            secondaryInfo += `<br><span style="opacity:0.5; font-size:8px;">${p.base_url}</span>`;
+        }
 
         let modelsHtml = '';
         if (p.models && p.models.length > 0) {
             modelsHtml = `
-                <div class="pl-6 space-y-1 mt-1">
+                <div class="profile-models-list">
                     ${p.models.slice(0, 10).map(m => `
-                        <div onclick="selectModelFromProfile('${p.id}', '${m}')" class="text-[9px] text-[#6272a4] hover:text-white cursor-pointer truncate">
+                        <div onclick="selectModelFromProfile('${p.id}', '${m}')" class="profile-model-item" title="${m}">
                             ${m}
                         </div>
                     `).join('')}
@@ -67,14 +75,19 @@ window.renderProfileDropdown = function() {
             `;
         }
 
+        const activeClass = p.id === activeId ? 'active' : '';
+
         return `
-            <div class="px-3 py-2 border-b border-[#44475a]/30">
-                <div onclick="selectProfile('${p.id}')" class="flex items-center justify-between cursor-pointer group">
-                    <div class="flex items-center gap-2">
-                        <span class="text-[10px]">${icon}</span>
-                        <span class="text-[10px] font-bold ${p.id === activeId ? 'text-[#bd93f9]' : 'text-slate-400'}">${displayName}</span>
+            <div class="profile-dropdown-item">
+                <div onclick="selectProfile('${p.id}')" class="profile-item-main group">
+                    <div class="profile-item-info">
+                        <span class="profile-icon">${icon}</span>
+                        <div>
+                            <div class="profile-name ${activeClass}">${displayName}</div>
+                            <div style="font-size: 8px; color: var(--text3); line-height: 1.2;">${secondaryInfo}</div>
+                        </div>
                     </div>
-                    <button onclick="event.stopPropagation(); deleteProfile('${p.id}')" class="opacity-0 group-hover:opacity-100 text-[#ff5555] text-[10px]">
+                    <button onclick="event.stopPropagation(); deleteProfile('${p.id}')" class="profile-delete-btn">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
@@ -186,26 +199,31 @@ window.updateActiveProfileUI = function(config) {
 window.adaptUI = function(config) {
     const type = config.modelType || 'chat';
 
-    // Reset UI
-    document.getElementById('image-resolution').classList.add('hidden');
-    document.getElementById('audio-record-container').classList.add('hidden');
-    window.chatInput.classList.remove('hidden');
-    document.getElementById('attach-btn').classList.add('hidden');
-    document.getElementById('toggle-input-mode').classList.add('hidden');
+    // Reset UI - check if elements exist (Neural Chat only)
+    const imgRes = document.getElementById('image-resolution');
+    const audioRec = document.getElementById('audio-record-container');
+    const attachBtn = document.getElementById('attach-btn');
+    const toggleInput = document.getElementById('toggle-input-mode');
 
-    if (type === 'image-gen') {
-        document.getElementById('image-resolution').classList.remove('hidden');
+    if (imgRes) imgRes.classList.add('hidden');
+    if (audioRec) audioRec.classList.add('hidden');
+    if (window.chatInput) window.chatInput.classList.remove('hidden');
+    if (attachBtn) attachBtn.classList.add('hidden');
+    if (toggleInput) toggleInput.classList.add('hidden');
+
+    if (type === 'image-gen' && imgRes) {
+        imgRes.classList.remove('hidden');
     } else if (type === 'audio') {
         if (!config.useTextInAudioMode) {
-            document.getElementById('audio-record-container').classList.remove('hidden');
-            window.chatInput.classList.add('hidden');
-            document.getElementById('toggle-input-mode').classList.remove('hidden');
-        } else {
-            document.getElementById('toggle-input-mode').classList.remove('hidden');
-            document.getElementById('toggle-input-mode').innerHTML = '<i class="fas fa-microphone text-xs"></i>';
+            if (audioRec) audioRec.classList.remove('hidden');
+            if (window.chatInput) window.chatInput.classList.add('hidden');
+            if (toggleInput) toggleInput.classList.remove('hidden');
+        } else if (toggleInput) {
+            toggleInput.classList.remove('hidden');
+            toggleInput.innerHTML = '<i class="fas fa-microphone text-xs"></i>';
         }
-    } else if (type === 'vision') {
-        document.getElementById('attach-btn').classList.remove('hidden');
+    } else if (type === 'vision' && attachBtn) {
+        attachBtn.classList.remove('hidden');
     }
 }
 
@@ -251,6 +269,8 @@ window.getActiveConfig = function() {
 window.checkConnection = async function(provider, config) {
     const statusBadge = document.getElementById('connection-status');
     const sidebarWarning = document.getElementById('sidebar-ollama-warning');
+
+    if (!statusBadge) return;
 
     try {
         if (provider === 'ollama') {
@@ -342,7 +362,9 @@ window.renderProfileManagerList = function() {
 
     listContainer.innerHTML = profileEntries.map(([id, p]) => {
         const name = p.name || id;
-        const provider = p.provider || 'custom';
+        const provider = p.provider === 'ollama' ? 'Ollama Local' :
+                        (p.provider === 'anthropic' ? 'Anthropic' :
+                        (p.provider === 'openai' ? 'OpenAI' : p.provider || 'custom'));
         const model = p.model || 'unknown';
         const endpoint = p.base_url || '';
 
@@ -361,11 +383,11 @@ window.renderProfileManagerList = function() {
                     ${endpoint ? `<div class="text-[10px] text-gray-500 truncate font-mono mt-1 opacity-70">${endpoint}</div>` : ''}
 
                     <div class="mt-2 d-flex gap-2">
-                        <button class="btn btn-xs btn-purple px-3" onclick="window.selectProfile('${id}')" style="font-size: 9px; font-weight: 800;">
-                            <i class="fas fa-upload mr-1"></i> CARGAR
+                        <button class="btn btn-xs btn-purple px-3" onclick="window.selectProfile('${id}')" style="font-size: 9px; font-weight: 800; background: #7c3aed; color: #fff; border: none; border-radius: 4px;">
+                            [CARGAR]
                         </button>
-                        <button class="btn btn-xs btn-outline-danger px-3" onclick="window._deleteProfileFromModal('${id}', '${name}')" style="font-size: 9px; font-weight: 800; border-color: rgba(255,85,85,0.3); color: #ff5555; background: rgba(255,85,85,0.05);">
-                            <i class="fas fa-trash-alt mr-1"></i> BORRAR
+                        <button class="btn btn-xs btn-outline-danger px-3" onclick="window._deleteProfileFromModal('${id}', '${name}')" style="font-size: 9px; font-weight: 800; border-color: rgba(255,85,85,0.3); color: #ff5555; background: rgba(255,85,85,0.05); border-radius: 4px;">
+                            [BORRAR]
                         </button>
                     </div>
                 </div>
