@@ -188,9 +188,17 @@ permalink: /music-gen/
 
         <!-- HISTORY -->
         <div class="mg-history-frame">
-          <div class="mg-section-label">// GENERATED TRACKS</div>
+          <div class="mg-section-label" style="display:flex;justify-content:space-between;align-items:center;">
+            // GENERATED TRACKS
+            <button class="mg-btn-clear" onclick="clearHistory()">CLEAR</button>
+          </div>
           <div class="mg-history-list" id="historyList">
             <div class="mg-history-empty">[ NO TRACKS YET ]</div>
+          </div>
+          <div class="mg-pagination" id="historyPagination">
+            <button class="mg-pag-btn" id="prevPage" onclick="changePage(-1)" disabled>PREV</button>
+            <span class="mg-pag-info" id="pageInfo">1/1</span>
+            <button class="mg-pag-btn" id="nextPage" onclick="changePage(1)" disabled>NEXT</button>
           </div>
         </div>
 
@@ -666,6 +674,13 @@ permalink: /music-gen/
   transition: all 0.1s;
 }
 .mg-history-item:hover { border-color: var(--c-accent); background: rgba(0,255,65,0.04); }
+.mg-btn-clear { background: transparent; border: 1px solid var(--c-border); color: var(--c-text3); font-family: var(--f-mono); font-size: 9px; padding: 2px 6px; cursor: pointer; transition: all 0.15s; }
+.mg-btn-clear:hover { color: #ff5555; border-color: #ff5555; }
+.mg-pagination { display: flex; align-items: center; justify-content: space-between; padding: 8px 4px 4px; border-top: 1px solid var(--c-border); margin-top: auto; }
+.mg-pag-btn { background: #0c0c0e; border: 1px solid var(--c-border2); color: var(--c-text2); font-family: var(--f-mono); font-size: 9px; padding: 3px 8px; cursor: pointer; border-radius: 2px; }
+.mg-pag-btn:hover:not(:disabled) { border-color: var(--c-accent); color: var(--c-accent); }
+.mg-pag-btn:disabled { opacity: 0.2; cursor: not-allowed; }
+.mg-pag-info { font-family: var(--f-mono); font-size: 9px; color: var(--c-text3); }
 .mg-history-icon { font-size: 12px; color: var(--c-accent); flex-shrink: 0; }
 .mg-history-info { flex: 1; overflow: hidden; }
 .mg-history-name { font-size: 11px; color: var(--c-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -919,10 +934,16 @@ return [{
   "meta": { "templateCredsSetupCompleted": true }
 };
 
+/* ─── CONSTANTS ─── */
+const PAGE_SIZE = 8;
+const FORM_DRAFT_KEY = 'hypenosys_mgFormDraft';
+
 /* ─── STATE ─── */
 const ST = {
   endpoint: '',
   history: [],
+  currentPage: 0,
+  totalPages: 1,
   currentBlob: null,
   currentName: null,
   audioCtx: null,
@@ -934,7 +955,7 @@ const ST = {
 };
 
 /* ─── INIT ─── */
-document.addEventListener('authReady', function(e) {
+document.addEventListener('authReady', async function(e) {
     const user = e.detail.user;
     const loading = document.getElementById('mg-auth-loading');
     const login = document.getElementById('mg-auth-login');
@@ -960,9 +981,16 @@ document.addEventListener('authReady', function(e) {
 
     // Original init logic
     loadConfig();
+    loadFormDraft();
     setLed('ledPower', 'on');
     initIdleSpectrum();
     document.getElementById('paramLyrics').addEventListener('input', updateCharCount);
+
+    // Load initial history page
+    await changePage(0);
+
+    // Setup auto-save for form
+    setupAutoSave();
 
     // Progress bar click
     document.getElementById('progressBar').addEventListener('click', (e) => {
@@ -1009,6 +1037,67 @@ function loadConfig() {
       document.getElementById('cfgEndpoint').value = ST.endpoint;
     }
     updateCfgStatus();
+  } catch(e) {}
+}
+
+function setupAutoSave() {
+  const inputs = [
+    '#mainGenre', '#subGenre', '#paramBpm', '#paramDuration',
+    '#paramTimeSig', '#paramKey', '#paramLang', '#paramSeed',
+    '#paramLyrics', '#paramCfg', '#paramTemp', '#paramTopP',
+    '#paramTopK', '#paramSteps', '#paramShift'
+  ];
+  const save = () => saveFormDraft();
+  inputs.forEach(sel => {
+    const el = document.querySelector(sel);
+    if (el) el.addEventListener('input', save);
+    if (el && el.tagName === 'SELECT') el.addEventListener('change', save);
+  });
+}
+
+function saveFormDraft() {
+  const draft = {
+    mainGenre: document.getElementById('mainGenre').value,
+    subGenre: document.getElementById('subGenre').value,
+    bpm: document.getElementById('paramBpm').value,
+    duration: document.getElementById('paramDuration').value,
+    timeSig: document.getElementById('paramTimeSig').value,
+    key: document.getElementById('paramKey').value,
+    lang: document.getElementById('paramLang').value,
+    seed: document.getElementById('paramSeed').value,
+    lyrics: document.getElementById('paramLyrics').value,
+    cfg: document.getElementById('paramCfg').value,
+    temp: document.getElementById('paramTemp').value,
+    topP: document.getElementById('paramTopP').value,
+    topK: document.getElementById('paramTopK').value,
+    steps: document.getElementById('paramSteps').value,
+    shift: document.getElementById('paramShift').value
+  };
+  localStorage.setItem(FORM_DRAFT_KEY, JSON.stringify(draft));
+}
+
+function loadFormDraft() {
+  try {
+    const draft = JSON.parse(localStorage.getItem(FORM_DRAFT_KEY));
+    if (!draft) return;
+    if (draft.mainGenre) document.getElementById('mainGenre').value = draft.mainGenre;
+    if (draft.subGenre) document.getElementById('subGenre').value = draft.subGenre;
+    if (draft.bpm) document.getElementById('paramBpm').value = draft.bpm;
+    if (draft.duration) document.getElementById('paramDuration').value = draft.duration;
+    if (draft.timeSig) document.getElementById('paramTimeSig').value = draft.timeSig;
+    if (draft.key) document.getElementById('paramKey').value = draft.key;
+    if (draft.lang) document.getElementById('paramLang').value = draft.lang;
+    if (draft.seed) document.getElementById('paramSeed').value = draft.seed;
+    if (draft.lyrics) {
+      document.getElementById('paramLyrics').value = draft.lyrics;
+      updateCharCount();
+    }
+    if (draft.cfg) { document.getElementById('paramCfg').value = draft.cfg; document.getElementById('cfgVal').textContent = parseFloat(draft.cfg).toFixed(1); }
+    if (draft.temp) { document.getElementById('paramTemp').value = draft.temp; document.getElementById('tempVal').textContent = parseFloat(draft.temp).toFixed(2); }
+    if (draft.topP) { document.getElementById('paramTopP').value = draft.topP; document.getElementById('topPVal').textContent = parseFloat(draft.topP).toFixed(2); }
+    if (draft.topK) { document.getElementById('paramTopK').value = draft.topK; document.getElementById('topKVal').textContent = draft.topK; }
+    if (draft.steps) { document.getElementById('paramSteps').value = draft.steps; document.getElementById('stepsVal').textContent = draft.steps; }
+    if (draft.shift) { document.getElementById('paramShift').value = draft.shift; document.getElementById('shiftVal').textContent = parseFloat(draft.shift).toFixed(1); }
   } catch(e) {}
 }
 
@@ -1344,18 +1433,54 @@ function setLed(id, cls) {
 }
 
 /* ─── HISTORY ─── */
-function addHistory(url, name, meta) {
-  ST.history.unshift({ url, name, meta, time: new Date().toLocaleTimeString() });
-  renderHistory();
+async function addHistory(url, name, meta) {
+  // Convert URL (blob) to Blob for storage
+  const res = await fetch(url);
+  const blob = await res.blob();
+
+  const entry = {
+    blob,
+    name,
+    meta,
+    time: new Date().toLocaleTimeString()
+  };
+
+  await window.aiStorage.saveMusic(entry);
+  await changePage(0);
 }
+
+async function changePage(dir) {
+  const newPage = Math.max(0, ST.currentPage + dir);
+  const totalCount = await window.aiStorage.getMusicCount();
+  ST.totalPages = Math.ceil(totalCount / PAGE_SIZE) || 1;
+
+  if (dir !== 0 && newPage >= ST.totalPages) return;
+
+  ST.currentPage = newPage;
+  ST.history = await window.aiStorage.getMusic(ST.currentPage, PAGE_SIZE);
+
+  renderHistory();
+  updatePaginationUI(totalCount);
+}
+
+function updatePaginationUI(totalCount) {
+  const prevBtn = document.getElementById('prevPage');
+  const nextBtn = document.getElementById('nextPage');
+  const pageInfo = document.getElementById('pageInfo');
+
+  if (prevBtn) prevBtn.disabled = ST.currentPage === 0;
+  if (nextBtn) nextBtn.disabled = ST.currentPage >= ST.totalPages - 1;
+  if (pageInfo) pageInfo.textContent = `${ST.currentPage + 1}/${ST.totalPages}`;
+}
+
 function renderHistory() {
   const list = document.getElementById('historyList');
   if (!list) return;
-  if (!ST.history.length) {
+  if (!ST.history || !ST.history.length) {
     list.innerHTML = '<div class="mg-history-empty">[ NO TRACKS YET ]</div>';
     return;
   }
-  list.innerHTML = ST.history.slice(0, 10).map((h, i) => `
+  list.innerHTML = ST.history.map((h, i) => `
     <div class="mg-history-item" onclick="playHistoryItem(${i})">
       <span class="mg-history-icon">♫</span>
       <div class="mg-history-info">
@@ -1365,10 +1490,47 @@ function renderHistory() {
     </div>
   `).join('');
 }
+
 function playHistoryItem(i) {
   const h = ST.history[i];
   if (!h) return;
-  loadAudio(h.url, h.name, h.meta);
+
+  const url = URL.createObjectURL(h.blob);
+  ST.currentBlob = h.blob;
+  ST.currentName = h.name;
+
+  // Restore form state from meta
+  const meta = h.meta || {};
+  if (meta.mainGenre) document.getElementById('mainGenre').value = meta.mainGenre;
+  if (meta.subGenre) document.getElementById('subGenre').value = meta.subGenre;
+  if (meta.bpm) document.getElementById('paramBpm').value = meta.bpm;
+  if (meta.duration) document.getElementById('paramDuration').value = meta.duration;
+  if (meta.timesignature) document.getElementById('paramTimeSig').value = meta.timesignature;
+  if (meta.keyscale) document.getElementById('paramKey').value = meta.keyscale;
+  if (meta.language) document.getElementById('paramLang').value = meta.language;
+  if (meta.seed) document.getElementById('paramSeed').value = meta.seed;
+  if (meta.lyrics) {
+    document.getElementById('paramLyrics').value = meta.lyrics;
+    updateCharCount();
+  }
+
+  if (meta.cfg_scale) { document.getElementById('paramCfg').value = meta.cfg_scale; document.getElementById('cfgVal').textContent = parseFloat(meta.cfg_scale).toFixed(1); }
+  if (meta.temperature) { document.getElementById('paramTemp').value = meta.temperature; document.getElementById('tempVal').textContent = parseFloat(meta.temperature).toFixed(2); }
+  if (meta.top_p) { document.getElementById('paramTopP').value = meta.top_p; document.getElementById('topPVal').textContent = parseFloat(meta.top_p).toFixed(2); }
+  if (meta.top_k) { document.getElementById('paramTopK').value = meta.top_k; document.getElementById('topKVal').textContent = meta.top_k; }
+  if (meta.steps) { document.getElementById('paramSteps').value = meta.steps; document.getElementById('stepsVal').textContent = meta.steps; }
+  if (meta.shift) { document.getElementById('paramShift').value = meta.shift; document.getElementById('shiftVal').textContent = parseFloat(meta.shift).toFixed(1); }
+
+  saveFormDraft(); // Persist restored state
+  loadAudio(url, h.name, meta);
+}
+
+async function clearHistory() {
+  if (!confirm('CLEAR ALL NEURAL AUDIO HISTORY?')) return;
+  await window.aiStorage.clearMusic();
+  ST.currentPage = 0;
+  await changePage(0);
+  showStatusBar('HISTORY CLEARED');
 }
 
 /* ─── STATUS BAR ─── */
@@ -1396,6 +1558,7 @@ document.addEventListener('keydown', (e) => {
 <!-- Scripts -->
 <script src="{{ '/assets/javascript/github-api.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/auth.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/storage-db.js' | relative_url }}"></script>
 
 </body>
 </html>
