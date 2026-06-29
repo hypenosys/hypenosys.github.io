@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-28T22:12:06.177Z",
+  "computed_at": "2026-06-29T09:48:02.094Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 30,
@@ -206,11 +206,11 @@
       "comment_activity": 1,
       "volatility": {
         "reopens": 5,
-        "reprioritizations": 26
+        "reprioritizations": 27
       },
       "workload": {
-        "active_tasks": 9,
-        "story_points": 15
+        "active_tasks": 10,
+        "story_points": 17
       }
     },
     "topperh4rley": {
@@ -531,8 +531,8 @@
   "_audit_log": [
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
-      "user": "TopperH4rley",
-      "timestamp": "2026-06-28T22:12:07.180Z"
+      "user": "Axlfc",
+      "timestamp": "2026-06-29T09:48:02.826Z"
     }
   ]
 }
