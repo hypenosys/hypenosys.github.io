@@ -47,6 +47,29 @@ permalink: /tech-stack/
   .search-icon { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--color-text-tertiary); font-size: 16px; }
   .ts-empty-msg { font-size: 13px; color: var(--color-text-secondary); padding: 2rem; text-align: center; display: none; }
 
+  .ts-shortcut-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 6px;
+    font-size: 10px;
+    font-family: var(--font-mono);
+    color: #10b981;
+    text-decoration: none;
+    border: 0.5px solid rgba(16, 185, 129, 0.25);
+    background: rgba(16, 185, 129, 0.06);
+    padding: 4px 7px;
+    border-radius: 6px;
+    width: fit-content;
+    transition: all 0.2s;
+  }
+  .ts-shortcut-link:hover {
+    color: #fff;
+    background: #10b981;
+    border-color: #10b981;
+    text-decoration: none;
+  }
+
   /* Favorites Panel (CasaOS Style) */
   .ts-favorites { background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: var(--border-radius-xl); padding: 1.25rem; margin-bottom: 2rem; display: none; }
   .ts-favorites-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
@@ -127,6 +150,7 @@ permalink: /tech-stack/
         <div class="ts-purpose">Motor principal del juego</div>
         <div class="ts-desc">El corazón. Lumen, Nanite, Niagara. Aquí vive el juego. Pesado como tu backlog.</div>
         <div class="ts-formats"><span class="ts-fmt">.uproject</span><span class="ts-fmt">.umap</span><span class="ts-fmt">.uasset</span></div>
+        <a class="ts-shortcut-link" href="/shortcuts/?tool=ue5">⌨ Ver shortcuts</a>
       </div>
 
       <div class="ts-card" data-tab="DEV" data-name="godot engine gdscript open source">
@@ -135,6 +159,7 @@ permalink: /tech-stack/
         <div class="ts-purpose">Prototipado rápido e indie</div>
         <div class="ts-desc">Gratis, ligero, con GDScript que aprende en un fin de semana. Para jams y prototipos que no quieren crecer.</div>
         <div class="ts-formats"><span class="ts-fmt">.godot</span><span class="ts-fmt">.gd</span><span class="ts-fmt">.tscn</span></div>
+        <a class="ts-shortcut-link" href="/shortcuts/?tool=godot">⌨ Ver shortcuts</a>
       </div>
 
       <div class="ts-card" data-tab="DEV" data-name="unity c# motor">
@@ -174,6 +199,7 @@ permalink: /tech-stack/
         <div class="ts-purpose">Scripting, web, todo lo demás</div>
         <div class="ts-desc">Para Python, GDScript, web y cualquier cosa que no sea C++ puro. 10.000 extensiones, 9.999 inútiles.</div>
         <div class="ts-formats"><span class="ts-fmt">.py</span><span class="ts-fmt">.js</span><span class="ts-fmt">.ts</span></div>
+        <a class="ts-shortcut-link" href="/shortcuts/?tool=vscode">⌨ Ver shortcuts</a>
       </div>
 
       <div class="ts-card" data-tab="DEV" data-name="rider jetbrains c# unity ide">
@@ -300,6 +326,7 @@ permalink: /tech-stack/
         <div class="ts-purpose">Modelado, rigging y animación</div>
         <div class="ts-desc">La navaja suiza del 3D indie. Gratis, potente y con atajos de teclado que tardas un año en memorizar.</div>
         <div class="ts-formats"><span class="ts-fmt">.blend</span><span class="ts-fmt">.fbx</span><span class="ts-fmt">.obj</span><span class="ts-fmt">.gltf</span></div>
+        <a class="ts-shortcut-link" href="/shortcuts/?tool=blender">⌨ Ver shortcuts</a>
       </div>
 
       <div class="ts-card" data-tab="DIS" data-name="houdini vfx efectos procedural">
