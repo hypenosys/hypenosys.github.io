@@ -178,7 +178,7 @@
   toolSlug: vscode
   category: General
   action: Terminal integrado
-  keys: ["Ctrl", "`"]
+  keys: ["Ctrl", "Backtick"]
   platform: Windows/Linux
   context: Editor
   sourceName: VS Code Docs
@@ -194,4 +194,3095 @@
   context: "Global"
   sourceName: "VS Code Keyboard shortcuts"
   sourceUrl: "https://code.visualstudio.com/docs/getstarted/keybindings"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Transform"
+  action: "Grab / Move selected"
+  keys: ["G"]
+  platform: "Windows/Linux"
+  context: "Object Mode, Edit Mode"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Transform"
+  action: "Rotate selected"
+  keys: ["R"]
+  platform: "Windows/Linux"
+  context: "Object Mode, Edit Mode"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Transform"
+  action: "Scale selected"
+  keys: ["S"]
+  platform: "Windows/Linux"
+  context: "Object Mode, Edit Mode"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Transform"
+  action: "Lock transform to X axis"
+  keys: ["X"]
+  platform: "Windows/Linux"
+  context: "After pressing G, R, or S"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Transform"
+  action: "Lock transform to Y axis"
+  keys: ["Y"]
+  platform: "Windows/Linux"
+  context: "After pressing G, R, or S"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Transform"
+  action: "Lock transform to Z axis"
+  keys: ["Z"]
+  platform: "Windows/Linux"
+  context: "After pressing G, R, or S"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Mode"
+  action: "Toggle Object Mode / Edit Mode"
+  keys: ["Tab"]
+  platform: "Windows/Linux"
+  context: "Global"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Add"
+  action: "Add object / mesh menu"
+  keys: ["Shift", "A"]
+  platform: "Windows/Linux"
+  context: "Object Mode, Edit Mode"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Edit"
+  action: "Delete selected"
+  keys: ["X"]
+  platform: "Windows/Linux"
+  context: "Object Mode, Edit Mode (confirmation dialog)"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Edit"
+  action: "Duplicate selected (independent copy)"
+  keys: ["Shift", "D"]
+  platform: "Windows/Linux"
+  context: "Object Mode, Edit Mode"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Edit"
+  action: "Duplicate linked (shares mesh data)"
+  keys: ["Alt", "D"]
+  platform: "Windows/Linux"
+  context: "Object Mode"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Transform"
+  action: "Apply transforms menu"
+  keys: ["Ctrl", "A"]
+  platform: "Windows/Linux"
+  context: "Object Mode"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Navigation"
+  action: "Search all commands"
+  keys: ["F3"]
+  platform: "Windows/Linux"
+  context: "Global"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "UI"
+  action: "Toggle Properties (N-panel)"
+  keys: ["N"]
+  platform: "Windows/Linux"
+  context: "Viewport"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "UI"
+  action: "Toggle Toolbar"
+  keys: ["T"]
+  platform: "Windows/Linux"
+  context: "Viewport"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Visibility"
+  action: "Hide selected"
+  keys: ["H"]
+  platform: "Windows/Linux"
+  context: "Object Mode, Edit Mode"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Visibility"
+  action: "Unhide all"
+  keys: ["Alt", "H"]
+  platform: "Windows/Linux"
+  context: "Object Mode, Edit Mode"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Organization"
+  action: "Move to collection"
+  keys: ["M"]
+  platform: "Windows/Linux"
+  context: "Object Mode"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Hierarchy"
+  action: "Parent selected to active"
+  keys: ["Ctrl", "P"]
+  platform: "Windows/Linux"
+  context: "Object Mode"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Hierarchy"
+  action: "Clear parent"
+  keys: ["Alt", "P"]
+  platform: "Windows/Linux"
+  context: "Object Mode"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "File"
+  action: "Save file"
+  keys: ["Ctrl", "S"]
+  platform: "Windows/Linux"
+  context: "Global"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "UI"
+  action: "Quick favourites menu"
+  keys: ["Q"]
+  platform: "Windows/Linux"
+  context: "Global"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Edit"
+  action: "Repeat last action"
+  keys: ["Shift", "R"]
+  platform: "Windows/Linux"
+  context: "Global"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Edit"
+  action: "Adjust last operation popup"
+  keys: ["F9"]
+  platform: "Windows/Linux"
+  context: "Global"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Mode"
+  action: "Mode switching pie menu"
+  keys: ["Ctrl", "Tab"]
+  platform: "Windows/Linux"
+  context: "Viewport"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Viewport"
+  action: "Front view (Numpad)"
+  keys: ["Numpad 1"]
+  platform: "Windows/Linux"
+  context: "3D Viewport"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Viewport"
+  action: "Right side view (Numpad)"
+  keys: ["Numpad 3"]
+  platform: "Windows/Linux"
+  context: "3D Viewport"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Viewport"
+  action: "Top view (Numpad)"
+  keys: ["Numpad 7"]
+  platform: "Windows/Linux"
+  context: "3D Viewport"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Viewport"
+  action: "Toggle orthographic / perspective"
+  keys: ["Numpad 5"]
+  platform: "Windows/Linux"
+  context: "3D Viewport"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Viewport"
+  action: "Camera view"
+  keys: ["Numpad 0"]
+  platform: "Windows/Linux"
+  context: "3D Viewport"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Viewport"
+  action: "Focus on selected object"
+  keys: ["Numpad ."]
+  platform: "Windows/Linux"
+  context: "3D Viewport"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Viewport"
+  action: "Toggle local view (isolate object)"
+  keys: ["Numpad /"]
+  platform: "Windows/Linux"
+  context: "3D Viewport"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Viewport"
+  action: "Shading pie menu"
+  keys: ["Z"]
+  platform: "Windows/Linux"
+  context: "3D Viewport"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Viewport"
+  action: "Toggle X-ray mode"
+  keys: ["Alt", "Z"]
+  platform: "Windows/Linux"
+  context: "3D Viewport"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Camera"
+  action: "Set active object as camera"
+  keys: ["Ctrl", "Numpad 0"]
+  platform: "Windows/Linux"
+  context: "Object Mode"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Camera"
+  action: "Align camera to current view"
+  keys: ["Ctrl", "Alt", "Numpad 0"]
+  platform: "Windows/Linux"
+  context: "3D Viewport"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Selection"
+  action: "Select all / Deselect all"
+  keys: ["A"]
+  platform: "Windows/Linux"
+  context: "Object Mode, Edit Mode"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Selection"
+  action: "Deselect all"
+  keys: ["Alt", "A"]
+  platform: "Windows/Linux"
+  context: "Object Mode, Edit Mode"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Selection"
+  action: "Box select"
+  keys: ["B"]
+  platform: "Windows/Linux"
+  context: "Viewport"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Selection"
+  action: "Circle select"
+  keys: ["C"]
+  platform: "Windows/Linux"
+  context: "Viewport"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Selection"
+  action: "Invert selection"
+  keys: ["Ctrl", "I"]
+  platform: "Windows/Linux"
+  context: "Object Mode, Edit Mode"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Selection"
+  action: "Select linked (hover)"
+  keys: ["L"]
+  platform: "Windows/Linux"
+  context: "Edit Mode"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Selection"
+  action: "Select all linked"
+  keys: ["Ctrl", "L"]
+  platform: "Windows/Linux"
+  context: "Edit Mode"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Edit Mode"
+  action: "Vertex select mode"
+  keys: ["1"]
+  platform: "Windows/Linux"
+  context: "Edit Mode"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Edit Mode"
+  action: "Edge select mode"
+  keys: ["2"]
+  platform: "Windows/Linux"
+  context: "Edit Mode"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Edit Mode"
+  action: "Face select mode"
+  keys: ["3"]
+  platform: "Windows/Linux"
+  context: "Edit Mode"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Modeling"
+  action: "Loop cut"
+  keys: ["Ctrl", "R"]
+  platform: "Windows/Linux"
+  context: "Edit Mode"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Modeling"
+  action: "Extrude selected"
+  keys: ["E"]
+  platform: "Windows/Linux"
+  context: "Edit Mode"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Modeling"
+  action: "Inset faces"
+  keys: ["I"]
+  platform: "Windows/Linux"
+  context: "Edit Mode"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Modeling"
+  action: "Bevel edges"
+  keys: ["Ctrl", "B"]
+  platform: "Windows/Linux"
+  context: "Edit Mode"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Modeling"
+  action: "Knife tool"
+  keys: ["K"]
+  platform: "Windows/Linux"
+  context: "Edit Mode"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Modeling"
+  action: "Merge vertices menu"
+  keys: ["M"]
+  platform: "Windows/Linux"
+  context: "Edit Mode"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Modeling"
+  action: "Fill face between selected edges"
+  keys: ["F"]
+  platform: "Windows/Linux"
+  context: "Edit Mode"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Modeling"
+  action: "Subdivide edge / loop"
+  keys: ["W"]
+  platform: "Windows/Linux"
+  context: "Edit Mode"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Modeling"
+  action: "Separate mesh"
+  keys: ["P"]
+  platform: "Windows/Linux"
+  context: "Edit Mode"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Modeling"
+  action: "Toggle proportional editing"
+  keys: ["O"]
+  platform: "Windows/Linux"
+  context: "Edit Mode, Object Mode"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Object"
+  action: "Join selected objects into one"
+  keys: ["Ctrl", "J"]
+  platform: "Windows/Linux"
+  context: "Object Mode"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Transform"
+  action: "Clear location"
+  keys: ["Alt", "G"]
+  platform: "Windows/Linux"
+  context: "Object Mode"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Transform"
+  action: "Clear rotation"
+  keys: ["Alt", "R"]
+  platform: "Windows/Linux"
+  context: "Object Mode"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Transform"
+  action: "Clear scale"
+  keys: ["Alt", "S"]
+  platform: "Windows/Linux"
+  context: "Object Mode"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Snap"
+  action: "Snap cursor menu"
+  keys: ["Shift", "S"]
+  platform: "Windows/Linux"
+  context: "Object Mode, Edit Mode"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Animation"
+  action: "Insert keyframe menu"
+  keys: ["I"]
+  platform: "Windows/Linux"
+  context: "Timeline, 3D Viewport"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Animation"
+  action: "Toggle animation playback"
+  keys: ["Space"]
+  platform: "Windows/Linux"
+  context: "Timeline"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Animation"
+  action: "Jump to next keyframe"
+  keys: ["Right"]
+  platform: "Windows/Linux"
+  context: "Timeline"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Animation"
+  action: "Jump to previous keyframe"
+  keys: ["Left"]
+  platform: "Windows/Linux"
+  context: "Timeline"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Render"
+  action: "Render image"
+  keys: ["F12"]
+  platform: "Windows/Linux"
+  context: "Global"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Blender 4.x"
+  toolSlug: "blender"
+  category: "Render"
+  action: "Render animation"
+  keys: ["Ctrl", "F12"]
+  platform: "Windows/Linux"
+  context: "Global"
+  sourceName: "Tutorial Tactic"
+  sourceUrl: "https://tutorialtactic.com/blog/blender-shortcuts/"
+  verified: true
+
+- tool: "Unreal Engine 5"
+  toolSlug: "ue5"
+  category: "File"
+  action: "Save current asset"
+  keys: ["Ctrl", "S"]
+  platform: "Windows/Linux"
+  context: "Editor"
+  sourceName: "Game Rant"
+  sourceUrl: "https://gamerant.com/important-unreal-engine-5-ue5-hotkeys-shortcuts/"
+  verified: true
+
+- tool: "Unreal Engine 5"
+  toolSlug: "ue5"
+  category: "Edit"
+  action: "Undo"
+  keys: ["Ctrl", "Z"]
+  platform: "Windows/Linux"
+  context: "Global"
+  sourceName: "Game Rant"
+  sourceUrl: "https://gamerant.com/important-unreal-engine-5-ue5-hotkeys-shortcuts/"
+  verified: true
+
+- tool: "Unreal Engine 5"
+  toolSlug: "ue5"
+  category: "Edit"
+  action: "Redo"
+  keys: ["Ctrl", "Y"]
+  platform: "Windows/Linux"
+  context: "Global"
+  sourceName: "Game Rant"
+  sourceUrl: "https://gamerant.com/important-unreal-engine-5-ue5-hotkeys-shortcuts/"
+  verified: true
+
+- tool: "Unreal Engine 5"
+  toolSlug: "ue5"
+  category: "Edit"
+  action: "Duplicate selected actor"
+  keys: ["Ctrl", "D"]
+  platform: "Windows/Linux"
+  context: "Viewport"
+  sourceName: "Game Rant"
+  sourceUrl: "https://gamerant.com/important-unreal-engine-5-ue5-hotkeys-shortcuts/"
+  verified: true
+
+- tool: "Unreal Engine 5"
+  toolSlug: "ue5"
+  category: "Selection"
+  action: "Select all actors"
+  keys: ["Ctrl", "A"]
+  platform: "Windows/Linux"
+  context: "Viewport"
+  sourceName: "Game Rant"
+  sourceUrl: "https://gamerant.com/important-unreal-engine-5-ue5-hotkeys-shortcuts/"
+  verified: true
+
+- tool: "Unreal Engine 5"
+  toolSlug: "ue5"
+  category: "Edit"
+  action: "Rename selected asset"
+  keys: ["F2"]
+  platform: "Windows/Linux"
+  context: "Content Browser"
+  sourceName: "Game Rant"
+  sourceUrl: "https://gamerant.com/important-unreal-engine-5-ue5-hotkeys-shortcuts/"
+  verified: true
+
+- tool: "Unreal Engine 5"
+  toolSlug: "ue5"
+  category: "UI"
+  action: "Open Content Drawer"
+  keys: ["Ctrl", "Space"]
+  platform: "Windows/Linux"
+  context: "Global"
+  sourceName: "Game Rant"
+  sourceUrl: "https://gamerant.com/important-unreal-engine-5-ue5-hotkeys-shortcuts/"
+  verified: true
+
+- tool: "Unreal Engine 5"
+  toolSlug: "ue5"
+  category: "Tools"
+  action: "Select Mode"
+  keys: ["Q"]
+  platform: "Windows/Linux"
+  context: "Viewport"
+  sourceName: "Game Rant"
+  sourceUrl: "https://gamerant.com/important-unreal-engine-5-ue5-hotkeys-shortcuts/"
+  verified: true
+
+- tool: "Unreal Engine 5"
+  toolSlug: "ue5"
+  category: "Tools"
+  action: "Translate / Move tool"
+  keys: ["W"]
+  platform: "Windows/Linux"
+  context: "Viewport"
+  sourceName: "Game Rant"
+  sourceUrl: "https://gamerant.com/important-unreal-engine-5-ue5-hotkeys-shortcuts/"
+  verified: true
+
+- tool: "Unreal Engine 5"
+  toolSlug: "ue5"
+  category: "Tools"
+  action: "Rotate tool"
+  keys: ["E"]
+  platform: "Windows/Linux"
+  context: "Viewport"
+  sourceName: "Game Rant"
+  sourceUrl: "https://gamerant.com/important-unreal-engine-5-ue5-hotkeys-shortcuts/"
+  verified: true
+
+- tool: "Unreal Engine 5"
+  toolSlug: "ue5"
+  category: "Tools"
+  action: "Scale tool"
+  keys: ["R"]
+  platform: "Windows/Linux"
+  context: "Viewport"
+  sourceName: "Game Rant"
+  sourceUrl: "https://gamerant.com/important-unreal-engine-5-ue5-hotkeys-shortcuts/"
+  verified: true
+
+- tool: "Unreal Engine 5"
+  toolSlug: "ue5"
+  category: "Tools"
+  action: "Toggle Move/Rotate/Scale"
+  keys: ["Space"]
+  platform: "Windows/Linux"
+  context: "Viewport"
+  sourceName: "Game Rant"
+  sourceUrl: "https://gamerant.com/important-unreal-engine-5-ue5-hotkeys-shortcuts/"
+  verified: true
+
+- tool: "Unreal Engine 5"
+  toolSlug: "ue5"
+  category: "Navigation"
+  action: "Focus viewport on selected actor"
+  keys: ["F"]
+  platform: "Windows/Linux"
+  context: "Viewport"
+  sourceName: "Game Rant"
+  sourceUrl: "https://gamerant.com/important-unreal-engine-5-ue5-hotkeys-shortcuts/"
+  verified: true
+
+- tool: "Unreal Engine 5"
+  toolSlug: "ue5"
+  category: "Viewport"
+  action: "Show/hide tools and icons (Game View)"
+  keys: ["G"]
+  platform: "Windows/Linux"
+  context: "Viewport"
+  sourceName: "Game Rant"
+  sourceUrl: "https://gamerant.com/important-unreal-engine-5-ue5-hotkeys-shortcuts/"
+  verified: true
+
+- tool: "Unreal Engine 5"
+  toolSlug: "ue5"
+  category: "Viewport"
+  action: "Perspective view"
+  keys: ["Alt", "G"]
+  platform: "Windows/Linux"
+  context: "Viewport"
+  sourceName: "Game Rant"
+  sourceUrl: "https://gamerant.com/important-unreal-engine-5-ue5-hotkeys-shortcuts/"
+  verified: true
+
+- tool: "Unreal Engine 5"
+  toolSlug: "ue5"
+  category: "Viewport"
+  action: "Front view"
+  keys: ["Alt", "H"]
+  platform: "Windows/Linux"
+  context: "Viewport"
+  sourceName: "Game Rant"
+  sourceUrl: "https://gamerant.com/important-unreal-engine-5-ue5-hotkeys-shortcuts/"
+  verified: true
+
+- tool: "Unreal Engine 5"
+  toolSlug: "ue5"
+  category: "Viewport"
+  action: "Top view"
+  keys: ["Alt", "J"]
+  platform: "Windows/Linux"
+  context: "Viewport"
+  sourceName: "Game Rant"
+  sourceUrl: "https://gamerant.com/important-unreal-engine-5-ue5-hotkeys-shortcuts/"
+  verified: true
+
+- tool: "Unreal Engine 5"
+  toolSlug: "ue5"
+  category: "Viewport"
+  action: "Left view"
+  keys: ["Alt", "K"]
+  platform: "Windows/Linux"
+  context: "Viewport"
+  sourceName: "Game Rant"
+  sourceUrl: "https://gamerant.com/important-unreal-engine-5-ue5-hotkeys-shortcuts/"
+  verified: true
+
+- tool: "Unreal Engine 5"
+  toolSlug: "ue5"
+  category: "Viewport"
+  action: "Wireframe view"
+  keys: ["Alt", "2"]
+  platform: "Windows/Linux"
+  context: "Viewport"
+  sourceName: "Game Rant"
+  sourceUrl: "https://gamerant.com/important-unreal-engine-5-ue5-hotkeys-shortcuts/"
+  verified: true
+
+- tool: "Unreal Engine 5"
+  toolSlug: "ue5"
+  category: "Viewport"
+  action: "Unlit view"
+  keys: ["Alt", "3"]
+  platform: "Windows/Linux"
+  context: "Viewport"
+  sourceName: "Game Rant"
+  sourceUrl: "https://gamerant.com/important-unreal-engine-5-ue5-hotkeys-shortcuts/"
+  verified: true
+
+- tool: "Unreal Engine 5"
+  toolSlug: "ue5"
+  category: "Viewport"
+  action: "Lit view"
+  keys: ["Alt", "4"]
+  platform: "Windows/Linux"
+  context: "Viewport"
+  sourceName: "Game Rant"
+  sourceUrl: "https://gamerant.com/important-unreal-engine-5-ue5-hotkeys-shortcuts/"
+  verified: true
+
+- tool: "Unreal Engine 5"
+  toolSlug: "ue5"
+  category: "Navigation"
+  action: "Look around (fly cam)"
+  keys: ["RMB + Drag"]
+  platform: "Windows/Linux"
+  context: "Viewport"
+  sourceName: "Game Rant"
+  sourceUrl: "https://gamerant.com/important-unreal-engine-5-ue5-hotkeys-shortcuts/"
+  verified: true
+
+- tool: "Unreal Engine 5"
+  toolSlug: "ue5"
+  category: "Navigation"
+  action: "Fly camera (WASD)"
+  keys: ["RMB + W"]
+  platform: "Windows/Linux"
+  context: "Viewport — hold RMB"
+  sourceName: "Game Rant"
+  sourceUrl: "https://gamerant.com/important-unreal-engine-5-ue5-hotkeys-shortcuts/"
+  verified: true
+
+- tool: "Unreal Engine 5"
+  toolSlug: "ue5"
+  category: "Navigation"
+  action: "Camera up / down"
+  keys: ["RMB + E"]
+  platform: "Windows/Linux"
+  context: "Viewport — hold RMB, E=up Q=down"
+  sourceName: "Game Rant"
+  sourceUrl: "https://gamerant.com/important-unreal-engine-5-ue5-hotkeys-shortcuts/"
+  verified: true
+
+- tool: "Unreal Engine 5"
+  toolSlug: "ue5"
+  category: "Navigation"
+  action: "Create camera bookmark"
+  keys: ["Ctrl", "1"]
+  platform: "Windows/Linux"
+  context: "Viewport — 1–9 for bookmarks"
+  sourceName: "Game Rant"
+  sourceUrl: "https://gamerant.com/important-unreal-engine-5-ue5-hotkeys-shortcuts/"
+  verified: true
+
+- tool: "Unreal Engine 5"
+  toolSlug: "ue5"
+  category: "Play"
+  action: "Play in Editor (PIE)"
+  keys: ["Alt", "P"]
+  platform: "Windows/Linux"
+  context: "Editor"
+  sourceName: "Game Rant"
+  sourceUrl: "https://gamerant.com/important-unreal-engine-5-ue5-hotkeys-shortcuts/"
+  verified: true
+
+- tool: "Unreal Engine 5"
+  toolSlug: "ue5"
+  category: "Play"
+  action: "Pause PIE"
+  keys: ["Pause"]
+  platform: "Windows/Linux"
+  context: "PIE"
+  sourceName: "Game Rant"
+  sourceUrl: "https://gamerant.com/important-unreal-engine-5-ue5-hotkeys-shortcuts/"
+  verified: true
+
+- tool: "Unreal Engine 5"
+  toolSlug: "ue5"
+  category: "Play"
+  action: "Eject from pawn (editor cursor)"
+  keys: ["F8"]
+  platform: "Windows/Linux"
+  context: "PIE"
+  sourceName: "Game Rant"
+  sourceUrl: "https://gamerant.com/important-unreal-engine-5-ue5-hotkeys-shortcuts/"
+  verified: true
+
+- tool: "Unreal Engine 5"
+  toolSlug: "ue5"
+  category: "UI"
+  action: "Enable fullscreen"
+  keys: ["Shift", "F11"]
+  platform: "Windows/Linux"
+  context: "Editor"
+  sourceName: "Game Rant"
+  sourceUrl: "https://gamerant.com/important-unreal-engine-5-ue5-hotkeys-shortcuts/"
+  verified: true
+
+- tool: "Unreal Engine 5"
+  toolSlug: "ue5"
+  category: "Debug"
+  action: "Open Command Console"
+  keys: ["Backtick"]
+  platform: "Windows/Linux"
+  context: "PIE or Editor"
+  sourceName: "Game Rant"
+  sourceUrl: "https://gamerant.com/important-unreal-engine-5-ue5-hotkeys-shortcuts/"
+  verified: true
+
+- tool: "Unreal Engine 5"
+  toolSlug: "ue5"
+  category: "Snapping"
+  action: "Increase grid snap size"
+  keys: ["Shift", "["]
+  platform: "Windows/Linux"
+  context: "Viewport"
+  sourceName: "Game Rant"
+  sourceUrl: "https://gamerant.com/important-unreal-engine-5-ue5-hotkeys-shortcuts/"
+  verified: true
+
+- tool: "Unreal Engine 5"
+  toolSlug: "ue5"
+  category: "Snapping"
+  action: "Decrease grid snap size"
+  keys: ["Shift", "]"]
+  platform: "Windows/Linux"
+  context: "Viewport"
+  sourceName: "Game Rant"
+  sourceUrl: "https://gamerant.com/important-unreal-engine-5-ue5-hotkeys-shortcuts/"
+  verified: true
+
+- tool: "Unreal Engine 5"
+  toolSlug: "ue5"
+  category: "Blueprint"
+  action: "Find node / search in graph"
+  keys: ["Ctrl", "F"]
+  platform: "Windows/Linux"
+  context: "Blueprint Graph"
+  sourceName: "Game Rant"
+  sourceUrl: "https://gamerant.com/important-unreal-engine-5-ue5-hotkeys-shortcuts/"
+  verified: true
+
+- tool: "Unreal Engine 5"
+  toolSlug: "ue5"
+  category: "Blueprint"
+  action: "Compile Blueprint"
+  keys: ["F7"]
+  platform: "Windows/Linux"
+  context: "Blueprint Editor"
+  sourceName: "Game Rant"
+  sourceUrl: "https://gamerant.com/important-unreal-engine-5-ue5-hotkeys-shortcuts/"
+  verified: true
+
+- tool: "Unreal Engine 5"
+  toolSlug: "ue5"
+  category: "Blueprint"
+  action: "Add comment to selected nodes"
+  keys: ["C"]
+  platform: "Windows/Linux"
+  context: "Blueprint Graph"
+  sourceName: "Game Rant"
+  sourceUrl: "https://gamerant.com/important-unreal-engine-5-ue5-hotkeys-shortcuts/"
+  verified: true
+
+- tool: "Unreal Engine 5"
+  toolSlug: "ue5"
+  category: "Blueprint"
+  action: "Align selected nodes left"
+  keys: ["Shift", "Left"]
+  platform: "Windows/Linux"
+  context: "Blueprint Graph"
+  sourceName: "Game Rant"
+  sourceUrl: "https://gamerant.com/important-unreal-engine-5-ue5-hotkeys-shortcuts/"
+  verified: true
+
+- tool: "Unreal Engine 5"
+  toolSlug: "ue5"
+  category: "Blueprint"
+  action: "Create Branch node (drag + hold B + LMB)"
+  keys: ["B"]
+  platform: "Windows/Linux"
+  context: "Blueprint Graph — hold while LMB clicking"
+  sourceName: "Game Rant"
+  sourceUrl: "https://gamerant.com/important-unreal-engine-5-ue5-hotkeys-shortcuts/"
+  verified: true
+
+- tool: "Unreal Engine 5"
+  toolSlug: "ue5"
+  category: "Blueprint"
+  action: "Create Sequence node"
+  keys: ["S"]
+  platform: "Windows/Linux"
+  context: "Blueprint Graph — hold while LMB clicking"
+  sourceName: "Game Rant"
+  sourceUrl: "https://gamerant.com/important-unreal-engine-5-ue5-hotkeys-shortcuts/"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "File"
+  action: "Save current scene"
+  keys: ["Ctrl", "S"]
+  platform: "Windows/Linux"
+  context: "Editor"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "File"
+  action: "Save scene as"
+  keys: ["Ctrl", "Shift", "S"]
+  platform: "Windows/Linux"
+  context: "Editor"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "File"
+  action: "Open scene"
+  keys: ["Ctrl", "O"]
+  platform: "Windows/Linux"
+  context: "Editor"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "File"
+  action: "New scene"
+  keys: ["Ctrl", "N"]
+  platform: "Windows/Linux"
+  context: "Editor"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "File"
+  action: "Close scene tab"
+  keys: ["Ctrl", "W"]
+  platform: "Windows/Linux"
+  context: "Editor"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "Run"
+  action: "Run project"
+  keys: ["F5"]
+  platform: "Windows/Linux"
+  context: "Editor"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "Run"
+  action: "Run current scene"
+  keys: ["F6"]
+  platform: "Windows/Linux"
+  context: "Editor"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "Run"
+  action: "Stop running project"
+  keys: ["F8"]
+  platform: "Windows/Linux"
+  context: "Editor"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "UI"
+  action: "Toggle distraction-free mode"
+  keys: ["Ctrl", "Shift", "F11"]
+  platform: "Windows/Linux"
+  context: "Editor"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "Edit"
+  action: "Undo"
+  keys: ["Ctrl", "Z"]
+  platform: "Windows/Linux"
+  context: "Global"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "Edit"
+  action: "Redo"
+  keys: ["Ctrl", "Shift", "Z"]
+  platform: "Windows/Linux"
+  context: "Global"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "Script"
+  action: "Toggle line comment"
+  keys: ["Ctrl", "K"]
+  platform: "Windows/Linux"
+  context: "Script Editor"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "Script"
+  action: "Delete line"
+  keys: ["Ctrl", "Shift", "K"]
+  platform: "Windows/Linux"
+  context: "Script Editor"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "Script"
+  action: "Move line up"
+  keys: ["Alt", "Up"]
+  platform: "Windows/Linux"
+  context: "Script Editor"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "Script"
+  action: "Move line down"
+  keys: ["Alt", "Down"]
+  platform: "Windows/Linux"
+  context: "Script Editor"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "Script"
+  action: "Find in script"
+  keys: ["Ctrl", "F"]
+  platform: "Windows/Linux"
+  context: "Script Editor"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "Script"
+  action: "Find and replace"
+  keys: ["Ctrl", "R"]
+  platform: "Windows/Linux"
+  context: "Script Editor"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "Script"
+  action: "Go to line"
+  keys: ["Ctrl", "L"]
+  platform: "Windows/Linux"
+  context: "Script Editor"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "Script"
+  action: "Go to function"
+  keys: ["Ctrl", "Alt", "F"]
+  platform: "Windows/Linux"
+  context: "Script Editor"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "Debug"
+  action: "Toggle breakpoint"
+  keys: ["F9"]
+  platform: "Windows/Linux"
+  context: "Script Editor"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "Script"
+  action: "Trigger code completion"
+  keys: ["Ctrl", "Space"]
+  platform: "Windows/Linux"
+  context: "Script Editor"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "Script"
+  action: "Auto-indent selection"
+  keys: ["Ctrl", "I"]
+  platform: "Windows/Linux"
+  context: "Script Editor"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "Scene"
+  action: "Add child node"
+  keys: ["Ctrl", "A"]
+  platform: "Windows/Linux"
+  context: "Scene Panel"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "Scene"
+  action: "Instantiate child scene"
+  keys: ["Ctrl", "Shift", "A"]
+  platform: "Windows/Linux"
+  context: "Scene Panel"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "Scene"
+  action: "Duplicate node"
+  keys: ["Ctrl", "D"]
+  platform: "Windows/Linux"
+  context: "Scene Panel"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "Scene"
+  action: "Delete node"
+  keys: ["Delete"]
+  platform: "Windows/Linux"
+  context: "Scene Panel"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "Scene"
+  action: "Rename node"
+  keys: ["F2"]
+  platform: "Windows/Linux"
+  context: "Scene Panel"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "Scene"
+  action: "Save branch as scene"
+  keys: ["Ctrl", "Shift", "B"]
+  platform: "Windows/Linux"
+  context: "Scene Panel"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "2D Editor"
+  action: "Select tool (2D)"
+  keys: ["Q"]
+  platform: "Windows/Linux"
+  context: "2D Viewport"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "2D Editor"
+  action: "Move tool (2D)"
+  keys: ["W"]
+  platform: "Windows/Linux"
+  context: "2D Viewport"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "2D Editor"
+  action: "Rotate tool (2D)"
+  keys: ["E"]
+  platform: "Windows/Linux"
+  context: "2D Viewport"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "2D Editor"
+  action: "Scale tool (2D)"
+  keys: ["R"]
+  platform: "Windows/Linux"
+  context: "2D Viewport"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "2D Editor"
+  action: "Frame selection (2D)"
+  keys: ["F"]
+  platform: "Windows/Linux"
+  context: "2D Viewport"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "2D Editor"
+  action: "Toggle smart snap"
+  keys: ["Shift", "Q"]
+  platform: "Windows/Linux"
+  context: "2D Viewport"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "2D Editor"
+  action: "Toggle grid snap"
+  keys: ["G"]
+  platform: "Windows/Linux"
+  context: "2D Viewport"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "3D Editor"
+  action: "Front view (3D)"
+  keys: ["Numpad 1"]
+  platform: "Windows/Linux"
+  context: "3D Viewport"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "3D Editor"
+  action: "Right view (3D)"
+  keys: ["Numpad 3"]
+  platform: "Windows/Linux"
+  context: "3D Viewport"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "3D Editor"
+  action: "Top view (3D)"
+  keys: ["Numpad 7"]
+  platform: "Windows/Linux"
+  context: "3D Viewport"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "3D Editor"
+  action: "Toggle perspective / orthographic (3D)"
+  keys: ["Numpad 5"]
+  platform: "Windows/Linux"
+  context: "3D Viewport"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "3D Editor"
+  action: "Frame selection (3D)"
+  keys: ["F"]
+  platform: "Windows/Linux"
+  context: "3D Viewport"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "3D Editor"
+  action: "Toggle snap (3D)"
+  keys: ["Y"]
+  platform: "Windows/Linux"
+  context: "3D Viewport"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "Debug"
+  action: "Step over (debugger)"
+  keys: ["F10"]
+  platform: "Windows/Linux"
+  context: "Debugger"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "Debug"
+  action: "Step into (debugger)"
+  keys: ["F11"]
+  platform: "Windows/Linux"
+  context: "Debugger"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "Debug"
+  action: "Continue execution"
+  keys: ["F12"]
+  platform: "Windows/Linux"
+  context: "Debugger"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "Navigation"
+  action: "Quick open (any file)"
+  keys: ["Ctrl", "Shift", "O"]
+  platform: "Windows/Linux"
+  context: "Editor"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "Navigation"
+  action: "Quick open script"
+  keys: ["Alt", "Shift", "O"]
+  platform: "Windows/Linux"
+  context: "Editor"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "Navigation"
+  action: "Find in files (project-wide)"
+  keys: ["Ctrl", "Shift", "F"]
+  platform: "Windows/Linux"
+  context: "Editor"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "Navigation"
+  action: "Search help / docs"
+  keys: ["F1"]
+  platform: "Windows/Linux"
+  context: "Editor"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "Navigation"
+  action: "Command palette"
+  keys: ["Ctrl", "Shift", "P"]
+  platform: "Windows/Linux"
+  context: "Editor"
+  sourceName: "Godot Learning"
+  sourceUrl: "https://godotlearning.com/shortcuts"
+  verified: true
+
+- tool: "VS Code"
+  toolSlug: "vscode"
+  category: "UI"
+  action: "Command Palette"
+  keys: ["Ctrl", "Shift", "P"]
+  platform: "Windows/Linux"
+  context: "Global"
+  sourceName: "VS Code Official Docs"
+  sourceUrl: "https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf"
+  verified: true
+
+- tool: "VS Code"
+  toolSlug: "vscode"
+  category: "Navigation"
+  action: "Quick open / go to file"
+  keys: ["Ctrl", "P"]
+  platform: "Windows/Linux"
+  context: "Global"
+  sourceName: "VS Code Official Docs"
+  sourceUrl: "https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf"
+  verified: true
+
+- tool: "VS Code"
+  toolSlug: "vscode"
+  category: "UI"
+  action: "Open settings"
+  keys: ["Ctrl", ","]
+  platform: "Windows/Linux"
+  context: "Global"
+  sourceName: "VS Code Official Docs"
+  sourceUrl: "https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf"
+  verified: true
+
+- tool: "VS Code"
+  toolSlug: "vscode"
+  category: "UI"
+  action: "Toggle sidebar"
+  keys: ["Ctrl", "B"]
+  platform: "Windows/Linux"
+  context: "Global"
+  sourceName: "VS Code Official Docs"
+  sourceUrl: "https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf"
+  verified: true
+
+- tool: "VS Code"
+  toolSlug: "vscode"
+  category: "UI"
+  action: "Toggle integrated terminal"
+  keys: ["Ctrl", "Backtick"]
+  platform: "Windows/Linux"
+  context: "Global"
+  sourceName: "VS Code Official Docs"
+  sourceUrl: "https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf"
+  verified: true
+
+- tool: "VS Code"
+  toolSlug: "vscode"
+  category: "UI"
+  action: "Toggle problems panel"
+  keys: ["Ctrl", "Shift", "M"]
+  platform: "Windows/Linux"
+  context: "Global"
+  sourceName: "VS Code Official Docs"
+  sourceUrl: "https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf"
+  verified: true
+
+- tool: "VS Code"
+  toolSlug: "vscode"
+  category: "UI"
+  action: "Open keyboard shortcuts"
+  keys: ["Ctrl", "K", "Ctrl", "S"]
+  platform: "Windows/Linux"
+  context: "Global (Sequence)"
+  sourceName: "VS Code Official Docs"
+  sourceUrl: "https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf"
+  verified: true
+
+- tool: "VS Code"
+  toolSlug: "vscode"
+  category: "Edit"
+  action: "Cut line (no selection)"
+  keys: ["Ctrl", "X"]
+  platform: "Windows/Linux"
+  context: "Editor"
+  sourceName: "VS Code Official Docs"
+  sourceUrl: "https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf"
+  verified: true
+
+- tool: "VS Code"
+  toolSlug: "vscode"
+  category: "Edit"
+  action: "Copy line (no selection)"
+  keys: ["Ctrl", "C"]
+  platform: "Windows/Linux"
+  context: "Editor"
+  sourceName: "VS Code Official Docs"
+  sourceUrl: "https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf"
+  verified: true
+
+- tool: "VS Code"
+  toolSlug: "vscode"
+  category: "Edit"
+  action: "Delete line"
+  keys: ["Ctrl", "Shift", "K"]
+  platform: "Windows/Linux"
+  context: "Editor"
+  sourceName: "VS Code Official Docs"
+  sourceUrl: "https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf"
+  verified: true
+
+- tool: "VS Code"
+  toolSlug: "vscode"
+  category: "Edit"
+  action: "Move line up"
+  keys: ["Alt", "Up"]
+  platform: "Windows/Linux"
+  context: "Editor"
+  sourceName: "VS Code Official Docs"
+  sourceUrl: "https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf"
+  verified: true
+
+- tool: "VS Code"
+  toolSlug: "vscode"
+  category: "Edit"
+  action: "Move line down"
+  keys: ["Alt", "Down"]
+  platform: "Windows/Linux"
+  context: "Editor"
+  sourceName: "VS Code Official Docs"
+  sourceUrl: "https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf"
+  verified: true
+
+- tool: "VS Code"
+  toolSlug: "vscode"
+  category: "Edit"
+  action: "Copy line down"
+  keys: ["Shift", "Alt", "Down"]
+  platform: "Windows/Linux"
+  context: "Editor"
+  sourceName: "VS Code Official Docs"
+  sourceUrl: "https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf"
+  verified: true
+
+- tool: "VS Code"
+  toolSlug: "vscode"
+  category: "Edit"
+  action: "Copy line up"
+  keys: ["Shift", "Alt", "Up"]
+  platform: "Windows/Linux"
+  context: "Editor"
+  sourceName: "VS Code Official Docs"
+  sourceUrl: "https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf"
+  verified: true
+
+- tool: "VS Code"
+  toolSlug: "vscode"
+  category: "Edit"
+  action: "Toggle line comment"
+  keys: ["Ctrl", "/"]
+  platform: "Windows/Linux"
+  context: "Editor"
+  sourceName: "VS Code Official Docs"
+  sourceUrl: "https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf"
+  verified: true
+
+- tool: "VS Code"
+  toolSlug: "vscode"
+  category: "Edit"
+  action: "Format document"
+  keys: ["Shift", "Alt", "F"]
+  platform: "Windows/Linux"
+  context: "Editor"
+  sourceName: "VS Code Official Docs"
+  sourceUrl: "https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf"
+  verified: true
+
+- tool: "VS Code"
+  toolSlug: "vscode"
+  category: "Multi-cursor"
+  action: "Add cursor above"
+  keys: ["Ctrl", "Alt", "Up"]
+  platform: "Windows/Linux"
+  context: "Editor"
+  sourceName: "VS Code Official Docs"
+  sourceUrl: "https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf"
+  verified: true
+
+- tool: "VS Code"
+  toolSlug: "vscode"
+  category: "Multi-cursor"
+  action: "Add cursor below"
+  keys: ["Ctrl", "Alt", "Down"]
+  platform: "Windows/Linux"
+  context: "Editor"
+  sourceName: "VS Code Official Docs"
+  sourceUrl: "https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf"
+  verified: true
+
+- tool: "VS Code"
+  toolSlug: "vscode"
+  category: "Multi-cursor"
+  action: "Select all occurrences of current word"
+  keys: ["Ctrl", "Shift", "L"]
+  platform: "Windows/Linux"
+  context: "Editor"
+  sourceName: "VS Code Official Docs"
+  sourceUrl: "https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf"
+  verified: true
+
+- tool: "VS Code"
+  toolSlug: "vscode"
+  category: "Multi-cursor"
+  action: "Select next occurrence of current word"
+  keys: ["Ctrl", "D"]
+  platform: "Windows/Linux"
+  context: "Editor"
+  sourceName: "VS Code Official Docs"
+  sourceUrl: "https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf"
+  verified: true
+
+- tool: "VS Code"
+  toolSlug: "vscode"
+  category: "Multi-cursor"
+  action: "Undo last cursor operation"
+  keys: ["Ctrl", "U"]
+  platform: "Windows/Linux"
+  context: "Editor"
+  sourceName: "VS Code Official Docs"
+  sourceUrl: "https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf"
+  verified: true
+
+- tool: "VS Code"
+  toolSlug: "vscode"
+  category: "Navigation"
+  action: "Go to line"
+  keys: ["Ctrl", "G"]
+  platform: "Windows/Linux"
+  context: "Editor"
+  sourceName: "VS Code Official Docs"
+  sourceUrl: "https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf"
+  verified: true
+
+- tool: "VS Code"
+  toolSlug: "vscode"
+  category: "Navigation"
+  action: "Go to symbol in file"
+  keys: ["Ctrl", "Shift", "O"]
+  platform: "Windows/Linux"
+  context: "Editor"
+  sourceName: "VS Code Official Docs"
+  sourceUrl: "https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf"
+  verified: true
+
+- tool: "VS Code"
+  toolSlug: "vscode"
+  category: "Navigation"
+  action: "Go to definition"
+  keys: ["F12"]
+  platform: "Windows/Linux"
+  context: "Editor"
+  sourceName: "VS Code Official Docs"
+  sourceUrl: "https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf"
+  verified: true
+
+- tool: "VS Code"
+  toolSlug: "vscode"
+  category: "Navigation"
+  action: "Peek definition"
+  keys: ["Alt", "F12"]
+  platform: "Windows/Linux"
+  context: "Editor"
+  sourceName: "VS Code Official Docs"
+  sourceUrl: "https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf"
+  verified: true
+
+- tool: "VS Code"
+  toolSlug: "vscode"
+  category: "Navigation"
+  action: "Go back"
+  keys: ["Alt", "Left"]
+  platform: "Windows/Linux"
+  context: "Editor"
+  sourceName: "VS Code Official Docs"
+  sourceUrl: "https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf"
+  verified: true
+
+- tool: "VS Code"
+  toolSlug: "vscode"
+  category: "Navigation"
+  action: "Go forward"
+  keys: ["Alt", "Right"]
+  platform: "Windows/Linux"
+  context: "Editor"
+  sourceName: "VS Code Official Docs"
+  sourceUrl: "https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf"
+  verified: true
+
+- tool: "VS Code"
+  toolSlug: "vscode"
+  category: "Navigation"
+  action: "Switch between open tabs"
+  keys: ["Ctrl", "Tab"]
+  platform: "Windows/Linux"
+  context: "Global"
+  sourceName: "VS Code Official Docs"
+  sourceUrl: "https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf"
+  verified: true
+
+- tool: "VS Code"
+  toolSlug: "vscode"
+  category: "Search"
+  action: "Find in file"
+  keys: ["Ctrl", "F"]
+  platform: "Windows/Linux"
+  context: "Editor"
+  sourceName: "VS Code Official Docs"
+  sourceUrl: "https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf"
+  verified: true
+
+- tool: "VS Code"
+  toolSlug: "vscode"
+  category: "Search"
+  action: "Find and replace"
+  keys: ["Ctrl", "H"]
+  platform: "Windows/Linux"
+  context: "Editor"
+  sourceName: "VS Code Official Docs"
+  sourceUrl: "https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf"
+  verified: true
+
+- tool: "VS Code"
+  toolSlug: "vscode"
+  category: "Search"
+  action: "Find in all files"
+  keys: ["Ctrl", "Shift", "F"]
+  platform: "Windows/Linux"
+  context: "Global"
+  sourceName: "VS Code Official Docs"
+  sourceUrl: "https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf"
+  verified: true
+
+- tool: "VS Code"
+  toolSlug: "vscode"
+  category: "Edit"
+  action: "Fold region"
+  keys: ["Ctrl", "Shift", "["]
+  platform: "Windows/Linux"
+  context: "Editor"
+  sourceName: "VS Code Official Docs"
+  sourceUrl: "https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf"
+  verified: true
+
+- tool: "VS Code"
+  toolSlug: "vscode"
+  category: "Edit"
+  action: "Unfold region"
+  keys: ["Ctrl", "Shift", "]"]
+  platform: "Windows/Linux"
+  context: "Editor"
+  sourceName: "VS Code Official Docs"
+  sourceUrl: "https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf"
+  verified: true
+
+- tool: "VS Code"
+  toolSlug: "vscode"
+  category: "UI"
+  action: "Split editor right"
+  keys: ["Ctrl", "\\"]
+  platform: "Windows/Linux"
+  context: "Global"
+  sourceName: "VS Code Official Docs"
+  sourceUrl: "https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf"
+  verified: true
+
+- tool: "VS Code"
+  toolSlug: "vscode"
+  category: "UI"
+  action: "Focus editor group 1"
+  keys: ["Ctrl", "1"]
+  platform: "Windows/Linux"
+  context: "Global"
+  sourceName: "VS Code Official Docs"
+  sourceUrl: "https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf"
+  verified: true
+
+- tool: "VS Code"
+  toolSlug: "vscode"
+  category: "UI"
+  action: "Focus editor group 2"
+  keys: ["Ctrl", "2"]
+  platform: "Windows/Linux"
+  context: "Global"
+  sourceName: "VS Code Official Docs"
+  sourceUrl: "https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf"
+  verified: true
+
+- tool: "Figma"
+  toolSlug: "design"
+  category: "Tools"
+  action: "Select tool"
+  keys: ["V"]
+  platform: "Windows/Linux"
+  context: "Canvas"
+  sourceName: "Figma Help Center"
+  sourceUrl: "https://help.figma.com/hc/en-us/articles/360040328653"
+  verified: true
+
+- tool: "Figma"
+  toolSlug: "design"
+  category: "Tools"
+  action: "Frame tool"
+  keys: ["F"]
+  platform: "Windows/Linux"
+  context: "Canvas"
+  sourceName: "Figma Help Center"
+  sourceUrl: "https://help.figma.com/hc/en-us/articles/360040328653"
+  verified: true
+
+- tool: "Figma"
+  toolSlug: "design"
+  category: "Tools"
+  action: "Rectangle tool"
+  keys: ["R"]
+  platform: "Windows/Linux"
+  context: "Canvas"
+  sourceName: "Figma Help Center"
+  sourceUrl: "https://help.figma.com/hc/en-us/articles/360040328653"
+  verified: true
+
+- tool: "Figma"
+  toolSlug: "design"
+  category: "Tools"
+  action: "Ellipse tool"
+  keys: ["O"]
+  platform: "Windows/Linux"
+  context: "Canvas"
+  sourceName: "Figma Help Center"
+  sourceUrl: "https://help.figma.com/hc/en-us/articles/360040328653"
+  verified: true
+
+- tool: "Figma"
+  toolSlug: "design"
+  category: "Tools"
+  action: "Line tool"
+  keys: ["L"]
+  platform: "Windows/Linux"
+  context: "Canvas"
+  sourceName: "Figma Help Center"
+  sourceUrl: "https://help.figma.com/hc/en-us/articles/360040328653"
+  verified: true
+
+- tool: "Figma"
+  toolSlug: "design"
+  category: "Tools"
+  action: "Pen / vector tool"
+  keys: ["P"]
+  platform: "Windows/Linux"
+  context: "Canvas"
+  sourceName: "Figma Help Center"
+  sourceUrl: "https://help.figma.com/hc/en-us/articles/360040328653"
+  verified: true
+
+- tool: "Figma"
+  toolSlug: "design"
+  category: "Tools"
+  action: "Text tool"
+  keys: ["T"]
+  platform: "Windows/Linux"
+  context: "Canvas"
+  sourceName: "Figma Help Center"
+  sourceUrl: "https://help.figma.com/hc/en-us/articles/360040328653"
+  verified: true
+
+- tool: "Figma"
+  toolSlug: "design"
+  category: "Tools"
+  action: "Hand tool (pan)"
+  keys: ["H"]
+  platform: "Windows/Linux"
+  context: "Canvas"
+  sourceName: "Figma Help Center"
+  sourceUrl: "https://help.figma.com/hc/en-us/articles/360040328653"
+  verified: true
+
+- tool: "Figma"
+  toolSlug: "design"
+  category: "Tools"
+  action: "Scale tool"
+  keys: ["K"]
+  platform: "Windows/Linux"
+  context: "Canvas"
+  sourceName: "Figma Help Center"
+  sourceUrl: "https://help.figma.com/hc/en-us/articles/360040328653"
+  verified: true
+
+- tool: "Figma"
+  toolSlug: "design"
+  category: "Tools"
+  action: "Color picker / eyedropper"
+  keys: ["I"]
+  platform: "Windows/Linux"
+  context: "Canvas"
+  sourceName: "Figma Help Center"
+  sourceUrl: "https://help.figma.com/hc/en-us/articles/360040328653"
+  verified: true
+
+- tool: "Figma"
+  toolSlug: "design"
+  category: "Edit"
+  action: "Duplicate selected"
+  keys: ["Ctrl", "D"]
+  platform: "Windows/Linux"
+  context: "Canvas"
+  sourceName: "Figma Help Center"
+  sourceUrl: "https://help.figma.com/hc/en-us/articles/360040328653"
+  verified: true
+
+- tool: "Figma"
+  toolSlug: "design"
+  category: "Edit"
+  action: "Group selected layers"
+  keys: ["Ctrl", "G"]
+  platform: "Windows/Linux"
+  context: "Canvas"
+  sourceName: "Figma Help Center"
+  sourceUrl: "https://help.figma.com/hc/en-us/articles/360040328653"
+  verified: true
+
+- tool: "Figma"
+  toolSlug: "design"
+  category: "Edit"
+  action: "Ungroup"
+  keys: ["Ctrl", "Shift", "G"]
+  platform: "Windows/Linux"
+  context: "Canvas"
+  sourceName: "Figma Help Center"
+  sourceUrl: "https://help.figma.com/hc/en-us/articles/360040328653"
+  verified: true
+
+- tool: "Figma"
+  toolSlug: "design"
+  category: "Components"
+  action: "Create component"
+  keys: ["Ctrl", "Alt", "K"]
+  platform: "Windows/Linux"
+  context: "Canvas"
+  sourceName: "Figma Help Center"
+  sourceUrl: "https://help.figma.com/hc/en-us/articles/360040328653"
+  verified: true
+
+- tool: "Figma"
+  toolSlug: "design"
+  category: "Edit"
+  action: "Copy properties (paste style)"
+  keys: ["Ctrl", "Alt", "C"]
+  platform: "Windows/Linux"
+  context: "Canvas"
+  sourceName: "Figma Help Center"
+  sourceUrl: "https://help.figma.com/hc/en-us/articles/360040328653"
+  verified: true
+
+- tool: "Figma"
+  toolSlug: "design"
+  category: "Edit"
+  action: "Paste properties"
+  keys: ["Ctrl", "Alt", "V"]
+  platform: "Windows/Linux"
+  context: "Canvas"
+  sourceName: "Figma Help Center"
+  sourceUrl: "https://help.figma.com/hc/en-us/articles/360040328653"
+  verified: true
+
+- tool: "Figma"
+  toolSlug: "design"
+  category: "Layout"
+  action: "Create auto layout"
+  keys: ["Shift", "A"]
+  platform: "Windows/Linux"
+  context: "Canvas"
+  sourceName: "Figma Help Center"
+  sourceUrl: "https://help.figma.com/hc/en-us/articles/360040328653"
+  verified: true
+
+- tool: "Figma"
+  toolSlug: "design"
+  category: "Layers"
+  action: "Bring layer to front"
+  keys: ["]"]
+  platform: "Windows/Linux"
+  context: "Canvas"
+  sourceName: "Figma Help Center"
+  sourceUrl: "https://help.figma.com/hc/en-us/articles/360040328653"
+  verified: true
+
+- tool: "Figma"
+  toolSlug: "design"
+  category: "Layers"
+  action: "Send layer to back"
+  keys: ["["]
+  platform: "Windows/Linux"
+  context: "Canvas"
+  sourceName: "Figma Help Center"
+  sourceUrl: "https://help.figma.com/hc/en-us/articles/360040328653"
+  verified: true
+
+- tool: "Figma"
+  toolSlug: "design"
+  category: "Layers"
+  action: "Rename selected layer(s)"
+  keys: ["Ctrl", "R"]
+  platform: "Windows/Linux"
+  context: "Layers Panel"
+  sourceName: "Figma Help Center"
+  sourceUrl: "https://help.figma.com/hc/en-us/articles/360040328653"
+  verified: true
+
+- tool: "Figma"
+  toolSlug: "design"
+  category: "Viewport"
+  action: "Zoom in"
+  keys: ["Ctrl", "+"]
+  platform: "Windows/Linux"
+  context: "Canvas"
+  sourceName: "Figma Help Center"
+  sourceUrl: "https://help.figma.com/hc/en-us/articles/360040328653"
+  verified: true
+
+- tool: "Figma"
+  toolSlug: "design"
+  category: "Viewport"
+  action: "Zoom out"
+  keys: ["Ctrl", "-"]
+  platform: "Windows/Linux"
+  context: "Canvas"
+  sourceName: "Figma Help Center"
+  sourceUrl: "https://help.figma.com/hc/en-us/articles/360040328653"
+  verified: true
+
+- tool: "Figma"
+  toolSlug: "design"
+  category: "Viewport"
+  action: "Zoom to fit selection"
+  keys: ["Shift", "2"]
+  platform: "Windows/Linux"
+  context: "Canvas"
+  sourceName: "Figma Help Center"
+  sourceUrl: "https://help.figma.com/hc/en-us/articles/360040328653"
+  verified: true
+
+- tool: "Figma"
+  toolSlug: "design"
+  category: "Viewport"
+  action: "Zoom to fit entire canvas"
+  keys: ["Shift", "1"]
+  platform: "Windows/Linux"
+  context: "Canvas"
+  sourceName: "Figma Help Center"
+  sourceUrl: "https://help.figma.com/hc/en-us/articles/360040328653"
+  verified: true
+
+- tool: "Figma"
+  toolSlug: "design"
+  category: "Viewport"
+  action: "Zoom to 100%"
+  keys: ["Ctrl", "0"]
+  platform: "Windows/Linux"
+  context: "Canvas"
+  sourceName: "Figma Help Center"
+  sourceUrl: "https://help.figma.com/hc/en-us/articles/360040328653"
+  verified: true
+
+- tool: "Figma"
+  toolSlug: "design"
+  category: "View"
+  action: "Toggle show pixel grid"
+  keys: ["Shift", "G"]
+  platform: "Windows/Linux"
+  context: "Canvas"
+  sourceName: "Figma Help Center"
+  sourceUrl: "https://help.figma.com/hc/en-us/articles/360040328653"
+  verified: true
+
+- tool: "Figma"
+  toolSlug: "design"
+  category: "UI"
+  action: "Quick actions menu"
+  keys: ["Ctrl", "/"]
+  platform: "Windows/Linux"
+  context: "Global"
+  sourceName: "Figma Help Center"
+  sourceUrl: "https://help.figma.com/hc/en-us/articles/360040328653"
+  verified: true
+
+- tool: "Figma"
+  toolSlug: "design"
+  category: "View"
+  action: "Toggle rulers"
+  keys: ["Shift", "R"]
+  platform: "Windows/Linux"
+  context: "Canvas"
+  sourceName: "Figma Help Center"
+  sourceUrl: "https://help.figma.com/hc/en-us/articles/360040328653"
+  verified: true
+
+- tool: "Figma"
+  toolSlug: "design"
+  category: "View"
+  action: "Toggle outline mode"
+  keys: ["Ctrl", "Shift", "3"]
+  platform: "Windows/Linux"
+  context: "Canvas"
+  sourceName: "Figma Help Center"
+  sourceUrl: "https://help.figma.com/hc/en-us/articles/360040328653"
+  verified: true
+
+- tool: "DaVinci Resolve"
+  toolSlug: "media"
+  category: "Playback"
+  action: "Play / Pause"
+  keys: ["Space"]
+  platform: "Windows/Linux"
+  context: "Timeline"
+  sourceName: "MASV Blog"
+  sourceUrl: "https://massive.io/tutorials/best-davinci-resolve-keyboard-shortcuts/"
+  verified: true
+
+- tool: "DaVinci Resolve"
+  toolSlug: "media"
+  category: "Playback"
+  action: "Play forward"
+  keys: ["L"]
+  platform: "Windows/Linux"
+  context: "Timeline"
+  sourceName: "MASV Blog"
+  sourceUrl: "https://massive.io/tutorials/best-davinci-resolve-keyboard-shortcuts/"
+  verified: true
+
+- tool: "DaVinci Resolve"
+  toolSlug: "media"
+  category: "Playback"
+  action: "Play backward"
+  keys: ["J"]
+  platform: "Windows/Linux"
+  context: "Timeline"
+  sourceName: "MASV Blog"
+  sourceUrl: "https://massive.io/tutorials/best-davinci-resolve-keyboard-shortcuts/"
+  verified: true
+
+- tool: "DaVinci Resolve"
+  toolSlug: "media"
+  category: "Playback"
+  action: "Stop playback"
+  keys: ["K"]
+  platform: "Windows/Linux"
+  context: "Timeline"
+  sourceName: "MASV Blog"
+  sourceUrl: "https://massive.io/tutorials/best-davinci-resolve-keyboard-shortcuts/"
+  verified: true
+
+- tool: "DaVinci Resolve"
+  toolSlug: "media"
+  category: "Playback"
+  action: "Step forward one frame"
+  keys: ["Right"]
+  platform: "Windows/Linux"
+  context: "Timeline"
+  sourceName: "MASV Blog"
+  sourceUrl: "https://massive.io/tutorials/best-davinci-resolve-keyboard-shortcuts/"
+  verified: true
+
+- tool: "DaVinci Resolve"
+  toolSlug: "media"
+  category: "Playback"
+  action: "Step backward one frame"
+  keys: ["Left"]
+  platform: "Windows/Linux"
+  context: "Timeline"
+  sourceName: "MASV Blog"
+  sourceUrl: "https://massive.io/tutorials/best-davinci-resolve-keyboard-shortcuts/"
+  verified: true
+
+- tool: "DaVinci Resolve"
+  toolSlug: "media"
+  category: "Navigation"
+  action: "Jump to next edit point"
+  keys: ["Down"]
+  platform: "Windows/Linux"
+  context: "Timeline"
+  sourceName: "MASV Blog"
+  sourceUrl: "https://massive.io/tutorials/best-davinci-resolve-keyboard-shortcuts/"
+  verified: true
+
+- tool: "DaVinci Resolve"
+  toolSlug: "media"
+  category: "Navigation"
+  action: "Jump to previous edit point"
+  keys: ["Up"]
+  platform: "Windows/Linux"
+  context: "Timeline"
+  sourceName: "MASV Blog"
+  sourceUrl: "https://massive.io/tutorials/best-davinci-resolve-keyboard-shortcuts/"
+  verified: true
+
+- tool: "DaVinci Resolve"
+  toolSlug: "media"
+  category: "Edit"
+  action: "Blade / Cut at playhead"
+  keys: ["Ctrl", "B"]
+  platform: "Windows/Linux"
+  context: "Edit Page — Timeline"
+  sourceName: "MASV Blog"
+  sourceUrl: "https://massive.io/tutorials/best-davinci-resolve-keyboard-shortcuts/"
+  verified: true
+
+- tool: "DaVinci Resolve"
+  toolSlug: "media"
+  category: "Edit"
+  action: "Ripple delete clip"
+  keys: ["Shift", "Backspace"]
+  platform: "Windows/Linux"
+  context: "Edit Page — Timeline"
+  sourceName: "MASV Blog"
+  sourceUrl: "https://massive.io/tutorials/best-davinci-resolve-keyboard-shortcuts/"
+  verified: true
+
+- tool: "DaVinci Resolve"
+  toolSlug: "media"
+  category: "Edit"
+  action: "Set In point"
+  keys: ["I"]
+  platform: "Windows/Linux"
+  context: "Timeline / Viewer"
+  sourceName: "MASV Blog"
+  sourceUrl: "https://massive.io/tutorials/best-davinci-resolve-keyboard-shortcuts/"
+  verified: true
+
+- tool: "DaVinci Resolve"
+  toolSlug: "media"
+  category: "Edit"
+  action: "Set Out point"
+  keys: ["O"]
+  platform: "Windows/Linux"
+  context: "Timeline / Viewer"
+  sourceName: "MASV Blog"
+  sourceUrl: "https://massive.io/tutorials/best-davinci-resolve-keyboard-shortcuts/"
+  verified: true
+
+- tool: "DaVinci Resolve"
+  toolSlug: "media"
+  category: "Edit"
+  action: "Clear In and Out points"
+  keys: ["Alt", "X"]
+  platform: "Windows/Linux"
+  context: "Timeline"
+  sourceName: "MASV Blog"
+  sourceUrl: "https://massive.io/tutorials/best-davinci-resolve-keyboard-shortcuts/"
+  verified: true
+
+- tool: "DaVinci Resolve"
+  toolSlug: "media"
+  category: "Selection"
+  action: "Select all clips after playhead"
+  keys: ["Alt", "Y"]
+  platform: "Windows/Linux"
+  context: "Timeline"
+  sourceName: "MASV Blog"
+  sourceUrl: "https://massive.io/tutorials/best-davinci-resolve-keyboard-shortcuts/"
+  verified: true
+
+- tool: "DaVinci Resolve"
+  toolSlug: "media"
+  category: "Edit"
+  action: "Trim Edit Mode"
+  keys: ["T"]
+  platform: "Windows/Linux"
+  context: "Edit Page"
+  sourceName: "MASV Blog"
+  sourceUrl: "https://massive.io/tutorials/best-davinci-resolve-keyboard-shortcuts/"
+  verified: true
+
+- tool: "DaVinci Resolve"
+  toolSlug: "media"
+  category: "Edit"
+  action: "Dynamic Trim Mode"
+  keys: ["W"]
+  platform: "Windows/Linux"
+  context: "Edit Page"
+  sourceName: "MASV Blog"
+  sourceUrl: "https://massive.io/tutorials/best-davinci-resolve-keyboard-shortcuts/"
+  verified: true
+
+- tool: "DaVinci Resolve"
+  toolSlug: "media"
+  category: "View"
+  action: "Zoom in timeline"
+  keys: ["Ctrl", "="]
+  platform: "Windows/Linux"
+  context: "Timeline"
+  sourceName: "MASV Blog"
+  sourceUrl: "https://massive.io/tutorials/best-davinci-resolve-keyboard-shortcuts/"
+  verified: true
+
+- tool: "DaVinci Resolve"
+  toolSlug: "media"
+  category: "View"
+  action: "Zoom out timeline"
+  keys: ["Ctrl", "-"]
+  platform: "Windows/Linux"
+  context: "Timeline"
+  sourceName: "MASV Blog"
+  sourceUrl: "https://massive.io/tutorials/best-davinci-resolve-keyboard-shortcuts/"
+  verified: true
+
+- tool: "DaVinci Resolve"
+  toolSlug: "media"
+  category: "Edit"
+  action: "Link / Unlink audio and video"
+  keys: ["Alt", "L"]
+  platform: "Windows/Linux"
+  context: "Timeline"
+  sourceName: "MASV Blog"
+  sourceUrl: "https://massive.io/tutorials/best-davinci-resolve-keyboard-shortcuts/"
+  verified: true
+
+- tool: "DaVinci Resolve"
+  toolSlug: "media"
+  category: "Color"
+  action: "Activate primary color workspace"
+  keys: ["Alt", "P"]
+  platform: "Windows/Linux"
+  context: "Color Page"
+  sourceName: "MASV Blog"
+  sourceUrl: "https://massive.io/tutorials/best-davinci-resolve-keyboard-shortcuts/"
+  verified: true
+
+- tool: "DaVinci Resolve"
+  toolSlug: "media"
+  category: "Color"
+  action: "Highlight shadows"
+  keys: ["Shift", "H"]
+  platform: "Windows/Linux"
+  context: "Color Page"
+  sourceName: "MASV Blog"
+  sourceUrl: "https://massive.io/tutorials/best-davinci-resolve-keyboard-shortcuts/"
+  verified: true
+
+- tool: "DaVinci Resolve"
+  toolSlug: "media"
+  category: "Color"
+  action: "Add node"
+  keys: ["Alt", "S"]
+  platform: "Windows/Linux"
+  context: "Color Page — Node Editor"
+  sourceName: "MASV Blog"
+  sourceUrl: "https://massive.io/tutorials/best-davinci-resolve-keyboard-shortcuts/"
+  verified: true
+
+- tool: "DaVinci Resolve"
+  toolSlug: "media"
+  category: "Navigation"
+  action: "Next clip in timeline"
+  keys: ["Down"]
+  platform: "Windows/Linux"
+  context: "Color Page"
+  sourceName: "MASV Blog"
+  sourceUrl: "https://massive.io/tutorials/best-davinci-resolve-keyboard-shortcuts/"
+  verified: true
+
+- tool: "DaVinci Resolve"
+  toolSlug: "media"
+  category: "Navigation"
+  action: "Previous clip in timeline"
+  keys: ["Up"]
+  platform: "Windows/Linux"
+  context: "Color Page"
+  sourceName: "MASV Blog"
+  sourceUrl: "https://massive.io/tutorials/best-davinci-resolve-keyboard-shortcuts/"
+  verified: true
+
+- tool: "DaVinci Resolve"
+  toolSlug: "media"
+  category: "Markers"
+  action: "Add marker at playhead"
+  keys: ["M"]
+  platform: "Windows/Linux"
+  context: "Timeline"
+  sourceName: "MASV Blog"
+  sourceUrl: "https://massive.io/tutorials/best-davinci-resolve-keyboard-shortcuts/"
+  verified: true
+
+- tool: "DaVinci Resolve"
+  toolSlug: "media"
+  category: "Markers"
+  action: "Go to next marker"
+  keys: ["Shift", "Right"]
+  platform: "Windows/Linux"
+  context: "Timeline"
+  sourceName: "MASV Blog"
+  sourceUrl: "https://massive.io/tutorials/best-davinci-resolve-keyboard-shortcuts/"
+  verified: true
+
+- tool: "DaVinci Resolve"
+  toolSlug: "media"
+  category: "Markers"
+  action: "Go to previous marker"
+  keys: ["Shift", "Left"]
+  platform: "Windows/Linux"
+  context: "Timeline"
+  sourceName: "MASV Blog"
+  sourceUrl: "https://massive.io/tutorials/best-davinci-resolve-keyboard-shortcuts/"
+  verified: true
+
+- tool: "Terminal / Bash"
+  toolSlug: "ops"
+  category: "Navigation"
+  action: "Move cursor to beginning of line"
+  keys: ["Ctrl", "A"]
+  platform: "Linux/macOS"
+  context: "Bash shell"
+  sourceName: "DEV Community"
+  sourceUrl: "https://dev.to/devops_descent/essential-shortcuts-for-linux-terminal-2024-4p9c"
+  verified: true
+
+- tool: "Terminal / Bash"
+  toolSlug: "ops"
+  category: "Navigation"
+  action: "Move cursor to end of line"
+  keys: ["Ctrl", "E"]
+  platform: "Linux/macOS"
+  context: "Bash shell"
+  sourceName: "DEV Community"
+  sourceUrl: "https://dev.to/devops_descent/essential-shortcuts-for-linux-terminal-2024-4p9c"
+  verified: true
+
+- tool: "Terminal / Bash"
+  toolSlug: "ops"
+  category: "Navigation"
+  action: "Move cursor backward one word"
+  keys: ["Alt", "B"]
+  platform: "Linux/macOS"
+  context: "Bash shell"
+  sourceName: "DEV Community"
+  sourceUrl: "https://dev.to/devops_descent/essential-shortcuts-for-linux-terminal-2024-4p9c"
+  verified: true
+
+- tool: "Terminal / Bash"
+  toolSlug: "ops"
+  category: "Navigation"
+  action: "Move cursor forward one word"
+  keys: ["Alt", "F"]
+  platform: "Linux/macOS"
+  context: "Bash shell"
+  sourceName: "DEV Community"
+  sourceUrl: "https://dev.to/devops_descent/essential-shortcuts-for-linux-terminal-2024-4p9c"
+  verified: true
+
+- tool: "Terminal / Bash"
+  toolSlug: "ops"
+  category: "Edit"
+  action: "Cut from cursor to beginning of line"
+  keys: ["Ctrl", "U"]
+  platform: "Linux/macOS"
+  context: "Bash shell"
+  sourceName: "DEV Community"
+  sourceUrl: "https://dev.to/devops_descent/essential-shortcuts-for-linux-terminal-2024-4p9c"
+  verified: true
+
+- tool: "Terminal / Bash"
+  toolSlug: "ops"
+  category: "Edit"
+  action: "Cut from cursor to end of line"
+  keys: ["Ctrl", "K"]
+  platform: "Linux/macOS"
+  context: "Bash shell"
+  sourceName: "DEV Community"
+  sourceUrl: "https://dev.to/devops_descent/essential-shortcuts-for-linux-terminal-2024-4p9c"
+  verified: true
+
+- tool: "Terminal / Bash"
+  toolSlug: "ops"
+  category: "Edit"
+  action: "Cut previous word"
+  keys: ["Ctrl", "W"]
+  platform: "Linux/macOS"
+  context: "Bash shell"
+  sourceName: "DEV Community"
+  sourceUrl: "https://dev.to/devops_descent/essential-shortcuts-for-linux-terminal-2024-4p9c"
+  verified: true
+
+- tool: "Terminal / Bash"
+  toolSlug: "ops"
+  category: "Edit"
+  action: "Paste last cut text (yank)"
+  keys: ["Ctrl", "Y"]
+  platform: "Linux/macOS"
+  context: "Bash shell"
+  sourceName: "DEV Community"
+  sourceUrl: "https://dev.to/devops_descent/essential-shortcuts-for-linux-terminal-2024-4p9c"
+  verified: true
+
+- tool: "Terminal / Bash"
+  toolSlug: "ops"
+  category: "History"
+  action: "Reverse search command history"
+  keys: ["Ctrl", "R"]
+  platform: "Linux/macOS"
+  context: "Bash shell"
+  sourceName: "DEV Community"
+  sourceUrl: "https://dev.to/devops_descent/essential-shortcuts-for-linux-terminal-2024-4p9c"
+  verified: true
+
+- tool: "Terminal / Bash"
+  toolSlug: "ops"
+  category: "History"
+  action: "Previous command"
+  keys: ["Ctrl", "P"]
+  platform: "Linux/macOS"
+  context: "Bash shell"
+  sourceName: "DEV Community"
+  sourceUrl: "https://dev.to/devops_descent/essential-shortcuts-for-linux-terminal-2024-4p9c"
+  verified: true
+
+- tool: "Terminal / Bash"
+  toolSlug: "ops"
+  category: "History"
+  action: "Next command"
+  keys: ["Ctrl", "N"]
+  platform: "Linux/macOS"
+  context: "Bash shell"
+  sourceName: "DEV Community"
+  sourceUrl: "https://dev.to/devops_descent/essential-shortcuts-for-linux-terminal-2024-4p9c"
+  verified: true
+
+- tool: "Terminal / Bash"
+  toolSlug: "ops"
+  category: "Process"
+  action: "Kill current process (SIGINT)"
+  keys: ["Ctrl", "C"]
+  platform: "Linux/macOS"
+  context: "Bash shell"
+  sourceName: "DEV Community"
+  sourceUrl: "https://dev.to/devops_descent/essential-shortcuts-for-linux-terminal-2024-4p9c"
+  verified: true
+
+- tool: "Terminal / Bash"
+  toolSlug: "ops"
+  category: "Process"
+  action: "Suspend current process (SIGTSTP)"
+  keys: ["Ctrl", "Z"]
+  platform: "Linux/macOS"
+  context: "Bash shell"
+  sourceName: "DEV Community"
+  sourceUrl: "https://dev.to/devops_descent/essential-shortcuts-for-linux-terminal-2024-4p9c"
+  verified: true
+
+- tool: "Terminal / Bash"
+  toolSlug: "ops"
+  category: "Process"
+  action: "End of file / logout"
+  keys: ["Ctrl", "D"]
+  platform: "Linux/macOS"
+  context: "Bash shell"
+  sourceName: "DEV Community"
+  sourceUrl: "https://dev.to/devops_descent/essential-shortcuts-for-linux-terminal-2024-4p9c"
+  verified: true
+
+- tool: "Terminal / Bash"
+  toolSlug: "ops"
+  category: "View"
+  action: "Clear terminal screen"
+  keys: ["Ctrl", "L"]
+  platform: "Linux/macOS"
+  context: "Bash shell"
+  sourceName: "DEV Community"
+  sourceUrl: "https://dev.to/devops_descent/essential-shortcuts-for-linux-terminal-2024-4p9c"
+  verified: true
+
+- tool: "Terminal / Bash"
+  toolSlug: "ops"
+  category: "View"
+  action: "Stop output to screen"
+  keys: ["Ctrl", "S"]
+  platform: "Linux/macOS"
+  context: "Bash shell"
+  sourceName: "DEV Community"
+  sourceUrl: "https://dev.to/devops_descent/essential-shortcuts-for-linux-terminal-2024-4p9c"
+  verified: true
+
+- tool: "Terminal / Bash"
+  toolSlug: "ops"
+  category: "View"
+  action: "Resume output to screen"
+  keys: ["Ctrl", "Q"]
+  platform: "Linux/macOS"
+  context: "Bash shell"
+  sourceName: "DEV Community"
+  sourceUrl: "https://dev.to/devops_descent/essential-shortcuts-for-linux-terminal-2024-4p9c"
+  verified: true
+
+- tool: "Excalidraw"
+  toolSlug: "design"
+  category: "Tools"
+  action: "Selection tool"
+  keys: ["V"]
+  platform: "Windows/Linux/macOS"
+  context: "Canvas"
+  sourceName: "Excalidraw Official"
+  sourceUrl: "https://plus.excalidraw.com/how-to-start"
+  verified: true
+
+- tool: "Excalidraw"
+  toolSlug: "design"
+  category: "Tools"
+  action: "Rectangle tool"
+  keys: ["R"]
+  platform: "Windows/Linux/macOS"
+  context: "Canvas"
+  sourceName: "Excalidraw Official"
+  sourceUrl: "https://plus.excalidraw.com/how-to-start"
+  verified: true
+
+- tool: "Excalidraw"
+  toolSlug: "design"
+  category: "Tools"
+  action: "Diamond tool"
+  keys: ["D"]
+  platform: "Windows/Linux/macOS"
+  context: "Canvas"
+  sourceName: "Excalidraw Official"
+  sourceUrl: "https://plus.excalidraw.com/how-to-start"
+  verified: true
+
+- tool: "Excalidraw"
+  toolSlug: "design"
+  category: "Tools"
+  action: "Ellipse tool"
+  keys: ["O"]
+  platform: "Windows/Linux/macOS"
+  context: "Canvas"
+  sourceName: "Excalidraw Official"
+  sourceUrl: "https://plus.excalidraw.com/how-to-start"
+  verified: true
+
+- tool: "Excalidraw"
+  toolSlug: "design"
+  category: "Tools"
+  action: "Arrow tool"
+  keys: ["A"]
+  platform: "Windows/Linux/macOS"
+  context: "Canvas"
+  sourceName: "Excalidraw Official"
+  sourceUrl: "https://plus.excalidraw.com/how-to-start"
+  verified: true
+
+- tool: "Excalidraw"
+  toolSlug: "design"
+  category: "Tools"
+  action: "Line tool"
+  keys: ["L"]
+  platform: "Windows/Linux/macOS"
+  context: "Canvas"
+  sourceName: "Excalidraw Official"
+  sourceUrl: "https://plus.excalidraw.com/how-to-start"
+  verified: true
+
+- tool: "Excalidraw"
+  toolSlug: "design"
+  category: "Tools"
+  action: "Pen tool"
+  keys: ["P"]
+  platform: "Windows/Linux/macOS"
+  context: "Canvas"
+  sourceName: "Excalidraw Official"
+  sourceUrl: "https://plus.excalidraw.com/how-to-start"
+  verified: true
+
+- tool: "Excalidraw"
+  toolSlug: "design"
+  category: "Tools"
+  action: "Text tool"
+  keys: ["T"]
+  platform: "Windows/Linux/macOS"
+  context: "Canvas"
+  sourceName: "Excalidraw Official"
+  sourceUrl: "https://plus.excalidraw.com/how-to-start"
+  verified: true
+
+- tool: "Excalidraw"
+  toolSlug: "design"
+  category: "Tools"
+  action: "Hand tool (pan)"
+  keys: ["H"]
+  platform: "Windows/Linux/macOS"
+  context: "Canvas"
+  sourceName: "Excalidraw Official"
+  sourceUrl: "https://plus.excalidraw.com/how-to-start"
+  verified: true
+
+- tool: "Excalidraw"
+  toolSlug: "design"
+  category: "Tools"
+  action: "Laser tool"
+  keys: ["K"]
+  platform: "Windows/Linux/macOS"
+  context: "Canvas"
+  sourceName: "Excalidraw Official"
+  sourceUrl: "https://plus.excalidraw.com/how-to-start"
+  verified: true
+
+- tool: "Excalidraw"
+  toolSlug: "design"
+  category: "View"
+  action: "Zoom In"
+  keys: ["Ctrl", "+"]
+  platform: "Windows/Linux/macOS"
+  context: "Canvas"
+  sourceName: "Excalidraw Official"
+  sourceUrl: "https://plus.excalidraw.com/how-to-start"
+  verified: true
+
+- tool: "Excalidraw"
+  toolSlug: "design"
+  category: "View"
+  action: "Zoom Out"
+  keys: ["Ctrl", "-"]
+  platform: "Windows/Linux/macOS"
+  context: "Canvas"
+  sourceName: "Excalidraw Official"
+  sourceUrl: "https://plus.excalidraw.com/how-to-start"
+  verified: true
+
+- tool: "Excalidraw"
+  toolSlug: "design"
+  category: "View"
+  action: "Zoom to fit all elements"
+  keys: ["Shift", "1"]
+  platform: "Windows/Linux/macOS"
+  context: "Canvas"
+  sourceName: "Excalidraw Official"
+  sourceUrl: "https://plus.excalidraw.com/how-to-start"
+  verified: true
+
+- tool: "Excalidraw"
+  toolSlug: "design"
+  category: "UI"
+  action: "Command palette"
+  keys: ["Ctrl", "/"]
+  platform: "Windows/Linux/macOS"
+  context: "Global"
+  sourceName: "Excalidraw Official"
+  sourceUrl: "https://plus.excalidraw.com/how-to-start"
+  verified: true
+
+- tool: "Excalidraw"
+  toolSlug: "design"
+  category: "Edit"
+  action: "Undo"
+  keys: ["Ctrl", "Z"]
+  platform: "Windows/Linux/macOS"
+  context: "Canvas"
+  sourceName: "Excalidraw Official"
+  sourceUrl: "https://plus.excalidraw.com/how-to-start"
+  verified: true
+
+- tool: "Excalidraw"
+  toolSlug: "design"
+  category: "Edit"
+  action: "Redo"
+  keys: ["Ctrl", "Shift", "Z"]
+  platform: "Windows/Linux/macOS"
+  context: "Canvas"
+  sourceName: "Excalidraw Official"
+  sourceUrl: "https://plus.excalidraw.com/how-to-start"
+  verified: true
+
+- tool: "Excalidraw"
+  toolSlug: "design"
+  category: "Edit"
+  action: "Delete selected"
+  keys: ["Delete"]
+  platform: "Windows/Linux/macOS"
+  context: "Canvas"
+  sourceName: "Excalidraw Official"
+  sourceUrl: "https://plus.excalidraw.com/how-to-start"
+  verified: true
+
+- tool: "Excalidraw"
+  toolSlug: "design"
+  category: "Edit"
+  action: "Select All"
+  keys: ["Ctrl", "A"]
+  platform: "Windows/Linux/macOS"
+  context: "Canvas"
+  sourceName: "Excalidraw Official"
+  sourceUrl: "https://plus.excalidraw.com/how-to-start"
   verified: true
