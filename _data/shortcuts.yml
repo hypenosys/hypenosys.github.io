@@ -1,0 +1,197 @@
+- tool: "Blender"
+  toolSlug: "blender"
+  category: "General"
+  action: "Mostrar ventana de renderizado"
+  keys: ["F11"]
+  platform: "Windows/Linux/macOS"
+  context: "Keymap por defecto"
+  sourceName: "Blender Manual - Default Keymap"
+  sourceUrl: "https://docs.blender.org/manual/en/latest/interface/keymap/blender_default.html"
+  verified: true
+
+- tool: "Blender"
+  toolSlug: "blender"
+  category: "General"
+  action: "Renderizar frame actual"
+  keys: ["F12"]
+  platform: "Windows/Linux/macOS"
+  context: "Keymap por defecto"
+  sourceName: "Blender Manual - Default Keymap"
+  sourceUrl: "https://docs.blender.org/manual/en/latest/interface/keymap/blender_default.html"
+  verified: true
+
+- tool: "Blender"
+  toolSlug: "blender"
+  category: "Navegación"
+  action: "Orbitar vista"
+  keys: ["MMB"]
+  platform: "Windows/Linux/macOS"
+  context: "3D Viewport"
+  sourceName: "Blender Manual - Default Keymap"
+  sourceUrl: "https://docs.blender.org/manual/en/latest/interface/keymap/blender_default.html"
+  verified: true
+
+- tool: "Blender"
+  toolSlug: "blender"
+  category: "Navegación"
+  action: "Desplazar vista (Pan)"
+  keys: ["Shift", "MMB"]
+  platform: "Windows/Linux/macOS"
+  context: "3D Viewport"
+  sourceName: "Blender Manual - Default Keymap"
+  sourceUrl: "https://docs.blender.org/manual/en/latest/interface/keymap/blender_default.html"
+  verified: true
+
+- tool: Blender
+  toolSlug: blender
+  category: General
+  action: Buscar comandos
+  keys: ["F3"]
+  platform: Windows/macOS/Linux
+  context: Global
+  sourceName: Blender Manual
+  sourceUrl: https://docs.blender.org/manual/en/latest/interface/keymap/blender_default.html
+  verified: true
+
+- tool: Blender
+  toolSlug: blender
+  category: Transformación
+  action: Mover
+  keys: ["G"]
+  platform: Windows/macOS/Linux
+  context: 3D Viewport
+  sourceName: Blender Manual
+  sourceUrl: https://docs.blender.org/manual/en/latest/interface/keymap/blender_default.html
+  verified: true
+
+- tool: "Unreal Engine 5"
+  toolSlug: "ue5"
+  category: "Editor"
+  action: "Reproducir en el editor (Play)"
+  keys: ["Alt", "P"]
+  platform: "Windows"
+  context: "Editor principal"
+  sourceName: "Unreal Engine Documentation"
+  sourceUrl: "https://dev.epicgames.com/documentation/unreal-engine/customizing-keyboard-shortcuts-in-unreal-engine"
+  verified: true
+
+- tool: "Unreal Engine 5"
+  toolSlug: "ue5"
+  category: "Editor"
+  action: "Detener reproducción (Stop)"
+  keys: ["Esc"]
+  platform: "Windows"
+  context: "Editor principal"
+  sourceName: "Unreal Engine Documentation"
+  sourceUrl: "https://dev.epicgames.com/documentation/unreal-engine/customizing-keyboard-shortcuts-in-unreal-engine"
+  verified: true
+
+- tool: Unreal Engine 5
+  toolSlug: ue5
+  category: Editor
+  action: Stop (Esc)
+  keys: ["Esc"]
+  platform: Windows
+  context: Simulation
+  sourceName: Unreal Engine Docs
+  sourceUrl: https://dev.epicgames.com/documentation/unreal-engine/customizing-keyboard-shortcuts-in-unreal-engine
+  verified: true
+
+- tool: Unreal Engine 5
+  toolSlug: ue5
+  category: Editor
+  action: Content Drawer
+  keys: ["Ctrl", "Space"]
+  platform: Windows
+  context: Editor
+  sourceName: Unreal Engine Docs
+  sourceUrl: https://dev.epicgames.com/documentation/unreal-engine/customizing-keyboard-shortcuts-in-unreal-engine
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "Editor"
+  action: "Abrir editor 2D"
+  keys: ["Ctrl", "F1"]
+  platform: "Windows/Linux"
+  context: "Editor principal"
+  sourceName: "Godot Docs - Default editor shortcuts"
+  sourceUrl: "https://docs.godotengine.org/en/latest/tutorials/editor/default_key_mapping.html"
+  verified: true
+
+- tool: "Godot 4"
+  toolSlug: "godot"
+  category: "Editor"
+  action: "Reproducir proyecto (Play)"
+  keys: ["F5"]
+  platform: "Windows/Linux"
+  context: "Editor principal"
+  sourceName: "Godot Docs - Default editor shortcuts"
+  sourceUrl: "https://docs.godotengine.org/en/latest/tutorials/editor/default_key_mapping.html"
+  verified: true
+
+- tool: Godot 4
+  toolSlug: godot
+  category: Editor
+  action: Correr escena actual
+  keys: ["F6"]
+  platform: Windows/macOS/Linux
+  context: Editor
+  sourceName: Godot Docs
+  sourceUrl: https://docs.godotengine.org/en/stable/tutorials/editor/default_key_mapping.html
+  verified: true
+
+- tool: Godot 4
+  toolSlug: godot
+  category: Editor
+  action: Panel de comandos
+  keys: ["Ctrl", "Shift", "P"]
+  platform: Windows/macOS/Linux
+  context: Editor
+  sourceName: Godot Docs
+  sourceUrl: https://docs.godotengine.org/en/stable/tutorials/editor/default_key_mapping.html
+  verified: true
+
+- tool: "VS Code"
+  toolSlug: "vscode"
+  category: "General"
+  action: "Mostrar paleta de comandos"
+  keys: ["Ctrl", "Shift", "P"]
+  platform: "Windows/Linux"
+  context: "Global"
+  sourceName: "VS Code Keyboard shortcuts"
+  sourceUrl: "https://code.visualstudio.com/docs/getstarted/keybindings"
+  verified: true
+
+- tool: VS Code
+  toolSlug: vscode
+  category: Navegación
+  action: Abrir archivo rápido
+  keys: ["Ctrl", "P"]
+  platform: Windows/Linux
+  context: Editor
+  sourceName: VS Code Docs
+  sourceUrl: https://code.visualstudio.com/docs/getstarted/keybindings
+  verified: true
+
+- tool: VS Code
+  toolSlug: vscode
+  category: General
+  action: Terminal integrado
+  keys: ["Ctrl", "`"]
+  platform: Windows/Linux
+  context: Editor
+  sourceName: VS Code Docs
+  sourceUrl: https://code.visualstudio.com/docs/getstarted/keybindings
+  verified: true
+
+- tool: "VS Code"
+  toolSlug: "vscode"
+  category: "General"
+  action: "Apertura rápida (Abrir archivo)"
+  keys: ["Ctrl", "P"]
+  platform: "Windows/Linux"
+  context: "Global"
+  sourceName: "VS Code Keyboard shortcuts"
+  sourceUrl: "https://code.visualstudio.com/docs/getstarted/keybindings"
+  verified: true

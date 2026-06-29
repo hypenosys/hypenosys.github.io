@@ -1,0 +1,419 @@
+---
+layout: default
+title: Keyboard Kung Fu
+permalink: /shortcuts/
+---
+
+<style>
+.kkf-root {
+  --kkf-primary: #10b981;
+  --kkf-bg-card: var(--color-background-primary);
+  --kkf-bg-secondary: var(--color-background-secondary);
+  --kkf-border: var(--color-border-tertiary);
+  --kkf-text-main: var(--color-text-primary);
+  --kkf-text-dim: var(--color-text-secondary);
+  --kkf-text-muted: var(--color-text-tertiary);
+
+  font-family: var(--font-sans);
+  color: var(--kkf-text-main);
+  padding: 1rem 0;
+}
+
+.kkf-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.kkf-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--kkf-text-main);
+}
+
+.kkf-title i {
+  color: var(--kkf-primary);
+}
+
+.kkf-subtitle {
+  font-size: 14px;
+  color: var(--kkf-text-dim);
+  margin: 0;
+}
+
+.kkf-stats {
+  font-size: 12px;
+  color: var(--kkf-text-dim);
+  background: var(--kkf-bg-secondary);
+  border: 0.5px solid var(--kkf-border);
+  padding: 4px 12px;
+  border-radius: 99px;
+}
+
+.kkf-controls {
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.kkf-search-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.kkf-search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--kkf-text-muted);
+  font-size: 18px;
+}
+
+.kkf-search-input {
+  width: 100%;
+  padding: 12px 12px 12px 42px;
+  background: var(--kkf-bg-card);
+  border: 1px solid var(--kkf-border);
+  border-radius: 10px;
+  color: var(--kkf-text-main);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.kkf-search-input:focus {
+  border-color: var(--kkf-primary);
+}
+
+.kkf-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.kkf-filter-btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--kkf-border);
+  background: var(--kkf-bg-secondary);
+  color: var(--kkf-text-dim);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.kkf-filter-btn:hover {
+  background: var(--kkf-bg-card);
+  color: var(--kkf-text-main);
+}
+
+.kkf-filter-btn.active {
+  background: var(--kkf-primary);
+  border-color: var(--kkf-primary);
+  color: #fff;
+}
+
+.kkf-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.kkf-card {
+  background: var(--kkf-bg-card);
+  border: 1px solid var(--kkf-border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.kkf-card:hover {
+  border-color: var(--kkf-primary);
+  transform: translateY(-2px);
+}
+
+.kkf-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.kkf-card-tool {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--kkf-primary);
+}
+
+.kkf-card-badges {
+  display: flex;
+  gap: 6px;
+}
+
+.kkf-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--kkf-bg-secondary);
+  border: 0.5px solid var(--kkf-border);
+  color: var(--kkf-text-muted);
+}
+
+.kkf-badge-verified {
+  color: var(--kkf-primary);
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.2);
+}
+
+.kkf-card-action {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 0.75rem 0;
+  color: var(--kkf-text-main);
+}
+
+.kkf-card-keys {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.kkf-key {
+  display: inline-block;
+  padding: 4px 10px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--kkf-text-main);
+  background: var(--kkf-bg-secondary);
+  border: 1px solid var(--kkf-border);
+  border-bottom: 3px solid var(--kkf-border);
+  border-radius: 6px;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.2);
+}
+
+.kkf-key-sep {
+  color: var(--kkf-text-muted);
+  font-weight: 500;
+}
+
+.kkf-card-meta {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.kkf-meta-item {
+  font-size: 11px;
+  color: var(--kkf-text-dim);
+}
+
+.kkf-meta-item strong {
+  color: var(--kkf-text-muted);
+  font-weight: 600;
+}
+
+.kkf-card-footer {
+  padding-top: 12px;
+  border-top: 1px solid var(--kkf-border);
+}
+
+.kkf-source-link {
+  font-size: 11px;
+  color: var(--kkf-text-muted);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: color 0.2s;
+}
+
+.kkf-source-link:hover {
+  color: var(--kkf-primary);
+}
+
+.kkf-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  color: var(--kkf-text-dim);
+}
+
+.kkf-empty-icon {
+  font-size: 48px;
+  margin-bottom: 1rem;
+  color: var(--kkf-text-muted);
+}
+
+@media (max-width: 640px) {
+  .kkf-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .kkf-stats {
+    align-self: flex-start;
+  }
+
+  .kkf-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+
+<div class="kkf-root">
+  <div class="kkf-header">
+    <div class="kkf-header-left">
+      <h1 class="kkf-title"><i class="ti ti-keyboard"></i> Keyboard Kung Fu</h1>
+      <p class="kkf-subtitle">Domina tus herramientas con shortcuts verificados.</p>
+    </div>
+    <div class="kkf-stats" id="kkf-stats">0 shortcuts</div>
+  </div>
+
+  <div class="kkf-controls">
+    <div class="kkf-search-wrapper">
+      <i class="ti ti-search kkf-search-icon"></i>
+      <input type="text" id="kkf-search-input" class="kkf-search-input" placeholder="Buscar shortcut (herramienta, acción, teclas)..." oninput="window.KeyboardKungFu.doSearch(this.value)">
+    </div>
+
+    <div class="kkf-filters" id="kkf-tool-filters">
+      <button class="kkf-filter-btn active" data-tool="all" onclick="window.KeyboardKungFu.filterTool('all', this)">Todo</button>
+      <button class="kkf-filter-btn" data-tool="blender" onclick="window.KeyboardKungFu.filterTool('blender', this)">Blender</button>
+      <button class="kkf-filter-btn" data-tool="ue5" onclick="window.KeyboardKungFu.filterTool('ue5', this)">Unreal Engine 5</button>
+      <button class="kkf-filter-btn" data-tool="godot" onclick="window.KeyboardKungFu.filterTool('godot', this)">Godot 4</button>
+      <button class="kkf-filter-btn" data-tool="vscode" onclick="window.KeyboardKungFu.filterTool('vscode', this)">VS Code</button>
+      <button class="kkf-filter-btn" data-tool="design" onclick="window.KeyboardKungFu.filterTool('design', this)">Diseño</button>
+      <button class="kkf-filter-btn" data-tool="media" onclick="window.KeyboardKungFu.filterTool('media', this)">Audio/Video</button>
+      <button class="kkf-filter-btn" data-tool="ops" onclick="window.KeyboardKungFu.filterTool('ops', this)">Ops</button>
+    </div>
+  </div>
+
+  <div id="kkf-empty-state" class="kkf-empty-state" style="display: none;">
+    <i class="ti ti-mood-empty kkf-empty-icon"></i>
+    <p>No se encontraron shortcuts que coincidan con tu búsqueda.</p>
+  </div>
+
+  <div class="kkf-grid" id="kkf-grid">
+    <!-- Shortcut cards will be injected here -->
+  </div>
+</div>
+
+<script>
+window.KeyboardKungFu = (() => {
+  const shortcuts = {{ site.data.shortcuts | jsonify }};
+  let currentTool = 'all';
+  let searchTerm = '';
+
+  function render() {
+    const grid = document.getElementById('kkf-grid');
+    const emptyState = document.getElementById('kkf-empty-state');
+    const stats = document.getElementById('kkf-stats');
+
+    grid.innerHTML = '';
+
+    const filtered = shortcuts.filter(s => {
+      const toolMatch = currentTool === 'all' || s.toolSlug === currentTool;
+      const searchStr = `${s.tool} ${s.action} ${s.category} ${s.keys.join(' ')}`.toLowerCase();
+      const searchMatch = !searchTerm || searchStr.includes(searchTerm.toLowerCase());
+      return toolMatch && searchMatch;
+    });
+
+    stats.textContent = `${filtered.length} shortcut${filtered.length !== 1 ? 's' : ''}`;
+
+    if (filtered.length === 0) {
+      emptyState.style.display = 'flex';
+      grid.style.display = 'none';
+    } else {
+      emptyState.style.display = 'none';
+      grid.style.display = 'grid';
+
+      filtered.forEach(s => {
+        const card = document.createElement('div');
+        card.className = 'kkf-card';
+        card.innerHTML = `
+          <div class="kkf-card-header">
+            <span class="kkf-card-tool">${s.tool}</span>
+            <div class="kkf-card-badges">
+              ${s.verified ? '<span class="kkf-badge kkf-badge-verified"><i class="ti ti-circle-check"></i> Verificado</span>' : ''}
+              <span class="kkf-badge kkf-badge-platform">${s.platform}</span>
+            </div>
+          </div>
+          <div class="kkf-card-body">
+            <h3 class="kkf-card-action">${s.action}</h3>
+            <div class="kkf-card-keys">
+              ${s.keys.map(k => `<kbd class="kkf-key">${k}</kbd>`).join('<span class="kkf-key-sep">+</span>')}
+            </div>
+            <div class="kkf-card-meta">
+              <span class="kkf-meta-item"><strong>Categoría:</strong> ${s.category}</span>
+              <span class="kkf-meta-item"><strong>Contexto:</strong> ${s.context}</span>
+            </div>
+          </div>
+          <div class="kkf-card-footer">
+            <a href="${s.sourceUrl}" target="_blank" class="kkf-source-link">
+              <i class="ti ti-external-link"></i> Fuente: ${s.sourceName}
+            </a>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+  }
+
+  function filterTool(tool, el) {
+    currentTool = tool;
+    document.querySelectorAll('.kkf-filter-btn').forEach(btn => btn.classList.remove('active'));
+    if (el) {
+      el.classList.add('active');
+    } else {
+      const btn = document.querySelector(`.kkf-filter-btn[data-tool="${tool}"]`);
+      if (btn) btn.classList.add('active');
+    }
+    render();
+  }
+
+  function doSearch(val) {
+    searchTerm = val;
+    render();
+  }
+
+  function init() {
+    const params = new URLSearchParams(window.location.search);
+    const toolParam = params.get('tool');
+    if (toolParam) {
+      filterTool(toolParam);
+    } else {
+      render();
+    }
+  }
+
+  return {
+    init,
+    filterTool,
+    doSearch
+  };
+})();
+
+document.addEventListener('DOMContentLoaded', () => {
+  window.KeyboardKungFu.init();
+});
+</script>
