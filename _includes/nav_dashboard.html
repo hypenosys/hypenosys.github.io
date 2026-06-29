@@ -1,0 +1,67 @@
+<!-- Dashboard Top Navigation -->
+<header class="dashboard-nav-retro sticky top-0 z-50">
+    <div class="max-w-[1600px] mx-auto px-1.5 sm:px-4 md:px-6 h-16 flex items-center justify-between gap-1.5 sm:gap-4">
+
+        <!-- Left: Logo -->
+        <a href="/" class="flex-shrink-0 transition-transform hover:scale-105 active:scale-95 mr-1" data-title="Volver al Home">
+            <img src="https://raw.githubusercontent.com/hypenosys/hypenosys-logo/master/logo_simple.svg" alt="Hypenosys" class="h-6 sm:h-8 md:h-10 w-auto">
+        </a>
+
+        <!-- Middle/Right: Navigation & Tools -->
+        <div class="flex items-center gap-0.5 sm:gap-2 md:gap-4 ml-auto">
+            <!-- Internal Navigation Icons -->
+            <nav class="flex items-center gap-0.5 sm:gap-2 border-l border-slate-800 pl-1 sm:pl-4">
+                <a href="#kanban-board" class="nav-icon-btn" data-title="Kanban">
+                    <i class="fa-solid fa-table-columns"></i>
+                </a>
+                <a href="#pipeline" class="nav-icon-btn" data-title="Pipeline">
+                    <i class="fa-solid fa-industry"></i>
+                </a>
+                <a href="#group-stats-section" class="nav-icon-btn" data-title="Stats">
+                    <i class="fa-solid fa-chart-pie"></i>
+                </a>
+            </nav>
+
+            <!-- Tools Navigation (External) -->
+            <div class="flex items-center gap-0.5 sm:gap-2 border-l border-slate-800 pl-1 sm:pl-4">
+                <a href="/jules-panel/" class="nav-tool-btn text-emerald-400" data-title="Quick Jules">
+                    <i class="fa-solid fa-robot"></i>
+                </a>
+                <a href="/chat/neural/" class="nav-tool-btn text-purple-400" data-title="Neural Chat">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .52 5.886 3 3 0 1 0 5.174 2.688A4.497 4.497 0 0 1 12 18.5V5Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.52 5.886 3 3 0 1 1-5.174 2.688A4.497 4.497 0 0 0 12 18.5V5Z"/></svg>
+                </a>
+                <a href="/image-gen/" class="nav-tool-btn text-cyan-400" data-title="ImageGen">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                </a>
+                <a href="/music-gen/" class="nav-tool-btn text-pink-400" data-title="MusicGen">
+                    <i class="fa-solid fa-music"></i>
+                </a>
+                <a href="/documentacion/" class="nav-tool-btn text-slate-400" data-title="Documentación">
+                    <i class="fa-solid fa-book"></i>
+                </a>
+                <a href="/tech-stack/" class="nav-tool-btn text-slate-400" data-title="Tech Stack">
+                    <i class="fa-solid fa-layer-group"></i>
+                </a>
+            </div>
+
+            <!-- User Section -->
+            <div id="user-status" class="flex items-center border-l border-slate-800 pl-1 sm:pl-4">
+                <!-- User avatar & name injected here by dashboard-ui.js -->
+            </div>
+            <!-- Hidden mobile container to avoid JS errors if a script expects it -->
+            <div id="user-status-mobile" class="hidden"></div>
+        </div>
+    </div>
+
+    <!-- Sub-header for Member Filters -->
+    <div class="bg-slate-950/50 border-t border-slate-800/50 py-2 px-4 md:px-6">
+        <div class="max-w-[1600px] mx-auto flex items-center justify-between gap-4">
+            <div id="member-filters" class="flex flex-wrap items-center gap-2">
+                <!-- Member filters injected here -->
+            </div>
+            <div id="last-sync-timestamp" class="hidden xl:block text-[10px] font-mono text-slate-500 uppercase tracking-widest">
+                Sincronizando...
+            </div>
+        </div>
+    </div>
+</header>
