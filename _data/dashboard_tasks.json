@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-06-28T22:12:04.056Z",
-  "last_updated_by": "Alex",
+  "last_updated": "2026-06-29T09:47:59.627Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -3054,17 +3054,17 @@
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Cosmetic",
       "milestone": "M1",
-      "estado": "Pending",
+      "estado": "Working",
       "completitud": 0,
-      "resuelto_por": null,
-      "detectado_por": "Axel",
+      "resuelto_por": "Axel",
+      "detectado_por": "Alex",
       "asignados": [],
-      "email_responsable": null,
+      "email_responsable": "axel@hypenosys.com",
       "emails_asignados": [],
-      "start_date": null,
-      "due_date": null,
-      "estimated_hours": null,
-      "story_points": null,
+      "start_date": "2026-06-29",
+      "due_date": "2026-06-30",
+      "estimated_hours": 2,
+      "story_points": 2,
       "tags": [
         "menú",
         "ux/ui"
@@ -3131,6 +3131,20 @@
           "field": "title",
           "old_value": "JULES PANEL - /chat/neural/: Unificar menús en todas las páginas de la plataforma",
           "new_value": "Unificar menús en todas las páginas de la plataforma"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-29T09:47:58.933Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-29T09:47:58.933Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-06-30"
         }
       ],
       "id": 62,
@@ -3646,6 +3660,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #62",
+      "user": "Axlfc",
+      "timestamp": "2026-06-29T09:47:59.627Z"
+    },
     {
       "action": "chore: actualizar estado tarea #64 → Fixed",
       "user": "TopperH4rley",
