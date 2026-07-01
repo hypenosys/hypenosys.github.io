@@ -178,6 +178,30 @@ window.selectSession = function(sessionName) {
         tr.classList.toggle('active-row', trSid === sid);
     });
 
+    // Navigate to Kanban and Highlight
+    if (typeof switchView === 'function') {
+        switchView('kanban');
+
+        // Wait for view switch and cards to be potentially rendered/available
+        setTimeout(() => {
+            const card = document.querySelector('.kb-card[data-sid="' + sid + '"]');
+            if (card) {
+                // Clear previous highlights
+                document.querySelectorAll('.kb-card.highlight-focus').forEach(c => c.classList.remove('highlight-focus'));
+
+                // Add focus highlight
+                card.classList.add('highlight-focus');
+
+                // Ensure it's visible
+                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                console.log("[JULES-UI] Session #" + sid + " highlighted in Kanban.");
+            } else {
+                console.warn("[JULES-UI] Could not find card for #" + sid + " in Kanban view.");
+            }
+        }, 300);
+    }
+
     openDrawer(sessionName);
 }
 

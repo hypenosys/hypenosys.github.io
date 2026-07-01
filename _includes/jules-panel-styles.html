@@ -929,6 +929,16 @@ body{
 }
 .notif-pip.hidden{display:none}
 @keyframes notif-pop{from{transform:scale(0)}to{transform:scale(1)}}
+@keyframes highlight-glow {
+  0% { box-shadow: 0 0 0px rgba(124, 58, 237, 0); border-color: var(--border); }
+  50% { box-shadow: 0 0 25px rgba(124, 58, 237, 0.6); border-color: var(--accent); }
+  100% { box-shadow: 0 0 0px rgba(124, 58, 237, 0); border-color: var(--border); }
+}
+.kb-card.highlight-focus {
+  animation: highlight-glow 2s ease-in-out 3;
+  border-color: var(--accent) !important;
+  z-index: 10;
+}
 .notif-panel{
   position:fixed;top:70px;right:16px;width:340px;z-index:200;
   border-radius:var(--r-xl);overflow:hidden;
