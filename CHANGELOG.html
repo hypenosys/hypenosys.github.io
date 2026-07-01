@@ -63,8 +63,15 @@ permalink: /CHANGELOG.html
         <h2 class="text-purple border-bottom border-purple pb-2 mb-4">[Unreleased]</h2>
         <div class="card mb-3">
           <div class="card-body">
+            <h5 class="text-success">Fixed</h5>
+            <ul>
+                <li><strong>Jules Panel Header:</strong> Eliminado el bloque defectuoso (breadcrumb blanco) en el header superior para una estética oscura limpia.</li>
+            </ul>
             <h5 class="text-success">Added</h5>
             <ul>
+                <li><strong>Contexto Dinámico en Sidebar (Jules Panel):</strong> Implementado un label dinámico en el sidebar que muestra el repositorio activo (o su alias) basándose en la sesión neural cargada o la selección manual.</li>
+                <li><strong>Navegación de Historial Neural Integrada:</strong> Los elementos de <code>NEURAL CHAT HISTORY</code> ahora son completamente funcionales, permitiendo cargar sesiones de Claude y cambiar automáticamente a la vista de chat dentro del panel.</li>
+                <li><strong>Asociación Automática de Repositorio:</strong> Las sesiones de chat neural ahora se vinculan automáticamente al repositorio seleccionado al crearse o al enviar el primer mensaje, garantizando la persistencia del contexto técnico.</li>
                 <li><strong>Expansión Masiva de Keyboard Kung Fu:</strong> Añadidos 281 nuevos shortcuts verificados para Blender 4.x, Unreal Engine 5, Godot 4, VS Code, Figma, DaVinci Resolve, Terminal/Bash y Excalidraw.</li>
                 <li><strong>Seguridad de Datos (Shortcuts):</strong> Implementada una limpieza global de backticks (<code>`</code>) en la base de datos de shortcuts, reemplazándolos con la cadena <code>"Backtick"</code> para evitar conflictos con scripts y plantillas.</li>
                 <li><strong>Keyboard Kung Fu / Shortcuts Reference:</strong> Nueva página interactiva de referencia de shortcuts (<code>/shortcuts/</code>) con comandos verificados para Blender, Unreal Engine 5, Godot 4 y VS Code. Incluye visualización de teclas, filtrado por herramienta, búsqueda avanzada y vinculación directa desde el Tech Stack.</li>
