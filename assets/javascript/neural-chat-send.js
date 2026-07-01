@@ -149,9 +149,12 @@ window.sendMessage = async function() {
             renderSessionList();
             saveSessions();
 
+            const dynamicSystemPrompt = await buildSystemPrompt(content, currentSession.systemPrompt);
+
             await window.NeuralChatCore.sendMessage({
                 session: currentSession,
                 userMessage: content,
+                systemPrompt: dynamicSystemPrompt,
                 saveCallback: () => saveSessions(),
                 skipUserMessagePush: true,
                 onToken: () => {

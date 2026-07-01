@@ -49,6 +49,7 @@ window.NeuralChatCore = (function() {
     async function sendMessage({
         session,
         userMessage,
+        systemPrompt,
         onToken,
         onDone,
         onError,
@@ -97,7 +98,7 @@ window.NeuralChatCore = (function() {
 
             await window.NeuralProviderClient.sendMessage({
                 messages: apiMessages,
-                systemPrompt: session.systemPrompt,
+                systemPrompt: systemPrompt || session.systemPrompt,
                 onToken: (token, fullContent) => {
                     session.messages[assistantIdx].content = fullContent;
                     if (onToken) onToken(token, fullContent);

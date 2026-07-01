@@ -331,13 +331,51 @@ window.buildSystemPrompt = async function(userMessage, basePrompt) {
 
     // Hybrid Docs Search Integration
     const docsEnabled = localStorage.getItem('hypenosys_docs_context_enabled') !== 'false';
-    if (docsEnabled) {
+    if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge] enabled: " + docsEnabled);
+
+    if (docsEnabled && window.DocsBridge) {
         try {
-            const docsContext = await window.DocsBridge.getContextForQuery(userMessage, { limit: 5 });
-            if (docsContext) {
-                systemPrompt += `\n\n${docsContext}`;
-                // Store metadata for the last search to show in the UI
-                window._lastDocsMetadata = await window.DocsBridge.getSourceMetadata(await window.DocsIndex.search(userMessage, 5));
+            if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge] query: \"" + userMessage + "\"");
+
+            const results = await window.DocsIndex.search(userMessage, 5);
+            if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge] results:", results);
+
+            if (results && results.length > 0) {
+                const docsContext = await window.DocsBridge.getContextForQuery(userMessage, { limit: 5 });
+                if (docsContext) {
+                    const guardrail = "\n\nUsa únicamente el CONTEXTO DOCUMENTAL DE HYPENOSYS para responder sobre la documentación.\nNo inventes carpetas, tecnologías, herramientas, estructura del repositorio ni contenido no presente en las fuentes.\nSi el contexto no contiene la respuesta, dilo explícitamente.\n\n";
+                    systemPrompt += "\n\n" + docsContext + guardrail;
+
+                    if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge] contextChars: " + docsContext.length);
+                    if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge] injected: true");
+
+                    // Store metadata for the last search to show in the UI
+                    window._lastDocsMetadata = await window.DocsBridge.getSourceMetadata(results);
+                }
+            } else {
+                // If asking about organization/structure and no documents found, provide real directory info if available
+                const isAskingStructure = /organiza|estructura|carpetas|folders|donde esta|dónde está/i.test(userMessage);
+
+                if (isAskingStructure) {
+                    const allDocs = await window.DocsIndex.getAllDocs();
+                    if (allDocs && allDocs.length > 0) {
+                        const directories = new Set();
+                        allDocs.forEach(d => {
+                            const parts = d.path.split('/');
+                            if (parts.length > 1) directories.add(parts[0]);
+                        });
+
+                        if (directories.size > 0) {
+                            const dirList = Array.from(directories).sort().join('\n- ');
+                            systemPrompt += "\n\nCONTEXTO DE ESTRUCTURA REAL (hypenosys/docs):\nEl repositorio está organizado en las siguientes carpetas principales:\n- " + dirList + "\n\nInstrucción: Usa esta lista real para responder sobre la organización. No inventes otras carpetas.\n";
+                            if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge] Injected directory-based structure info");
+                        }
+                    }
+                }
+
+                const fallbackGuardrail = "\n\nNo hay contexto documental suficiente disponible para responder con certeza sobre la documentación de Hypenosys.\nNo inventes información sobre la estructura del repositorio ni carpetas que no conozcas.\nSi te preguntan por la estructura y no tienes fragmentos que la describan, indica que no tienes acceso a esa información ahora mismo.\n";
+                systemPrompt += fallbackGuardrail;
+                if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge] injected fallback guardrail");
             }
         } catch (e) {
             console.warn("[DocsBridge] Search failed during prompt building", e);
