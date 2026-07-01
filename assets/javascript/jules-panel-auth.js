@@ -94,6 +94,7 @@ window.initRealPanel = async function(user) {
 
     switchView(window.JulesPanelState.currentView || 'dashboard');
     window.initJulesPanelNeuralChat();
+    if (window.updateSidebarContextLabel) window.updateSidebarContextLabel();
     await handleUrlParams();
     checkClipboard();
     startPolling();

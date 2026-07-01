@@ -138,6 +138,9 @@ async function selectRepo(repoFullName) {
     if (oldRepo && oldRepo !== repoFullName) addTel("REPO", "Contexto cambiado → " + repoFullName.split('/').pop(), "info");
     else if (repoFullName) addTel("SYSTEM", "Contexto: " + repoFullName.split('/').pop(), "info");
 
+    // Update Sidebar label
+    if (window.updateSidebarContextLabel) window.updateSidebarContextLabel();
+
     const launchBtn = $('launch-btn');
     if (launchBtn) {
         launchBtn.disabled = !sourceName;

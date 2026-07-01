@@ -151,6 +151,14 @@ window.createNewJulesPanelSession = function() {
         title: 'Nueva Conversación',
         idPrefix: 'jp_sess_'
     });
+
+    // Auto-associate with current repo
+    const currentRepo = localStorage.getItem('hypenosys_active_repo');
+    if (currentRepo) {
+        newSession.repoFullName = currentRepo;
+        newSession.repoName = currentRepo.split('/').pop();
+    }
+
     window.julesPanelSessions.unshift(newSession);
     saveJulesPanelSessions();
     window.loadJulesPanelSession(newSession.id);
@@ -164,9 +172,17 @@ window.loadJulesPanelSession = function(id) {
     const session = window.julesPanelSessions.find(s => s.id === id);
     if (!session) return;
 
+    // Switch view to chat if not already there
+    if (window.switchView) {
+        const chatBtn = document.querySelector('.hnav-link[data-view="chat"]');
+        window.switchView('chat', chatBtn);
+    }
+
     setNeuralProcessingState(false);
     window.renderChatV2Messages();
     window.renderNeuralChatHistory();
+
+    if (window.updateSidebarContextLabel) window.updateSidebarContextLabel();
 }
 
 window.sendChatV2Msg = async function() {
@@ -190,6 +206,16 @@ window.sendChatV2Msg = async function() {
         window.createNewJulesPanelSession();
         setTimeout(() => window.sendChatV2Msg(), 100);
         return;
+    }
+
+    // Ensure repo association on first message if missing
+    if (!session.repoFullName) {
+        const currentRepo = localStorage.getItem('hypenosys_active_repo');
+        if (currentRepo) {
+            session.repoFullName = currentRepo;
+            session.repoName = currentRepo.split('/').pop();
+            if (window.updateSidebarContextLabel) window.updateSidebarContextLabel();
+        }
     }
 
     input.value = '';
