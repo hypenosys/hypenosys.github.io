@@ -11,12 +11,18 @@ const timeoutPromise = (ms) => new Promise((_, reject) =>
 
 window.setSendMode = function(mode) {
     window.currentSendMode = mode;
-    document.querySelectorAll('.dual-send-option').forEach(opt => {
-        opt.classList.toggle('active', opt.dataset.mode === mode);
-    });
+
+    const label = document.getElementById('current-mode-label');
+    if (label) label.textContent = mode.toUpperCase();
+
     document.getElementById('chat-input-container').className = `bg-[#1e1f29] border border-[#44475a] rounded-2xl p-3 flex flex-col gap-2 focus-within:border-[#bd93f9]/50 focus-within:shadow-[0_0_20px_rgba(189,147,249,0.1)] transition-all duration-500 ${mode === 'jules' ? 'mode-jules' : ''}`;
 
     window.chatInput.placeholder = mode === 'claude' ? "¿En qué puedo ayudarte hoy?" : "Enviar orden directa a Jules...";
+};
+
+window.toggleModeDropdown = function() {
+    const dropdown = document.getElementById('mode-dropdown');
+    if (dropdown) dropdown.classList.toggle('hidden');
 };
 
 window.sendMessage = async function() {
@@ -133,9 +139,9 @@ window.sendMessage = async function() {
     window.chatInput.disabled = true;
 
     if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] send clicked");
-    if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] message:", content);
 
     try {
+        if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] message validated");
         const modelType = config.modelType || 'chat';
         const isStandardProvider = provider === 'ollama' || provider === 'anthropic' || provider === 'custom' || provider === 'openai' || provider === 'openrouter' || provider === 'nvidia_nim';
 
@@ -168,8 +174,14 @@ window.sendMessage = async function() {
             currentSession.messages.push(userMsg);
 
             renderMessages();
+        if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] user message rendered");
             renderSessionList();
             saveSessions();
+
+        // FEATURE #1: Thinking Animation UI
+        window.thinkingIndicator.classList.remove('hidden');
+        window.thinkingIndicator.innerHTML = '<div class="thinking-dots"><span>.</span><span>.</span><span>.</span></div> <span class="text-[10px] ml-2">CLAUDE ESTÁ PENSANDO...</span>';
+        if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] thinking indicator shown");
 
             let baseSystemPrompt = await window.JulesDocsBridge.buildSystemPrompt(content, currentSession.systemPrompt);
 
@@ -191,6 +203,7 @@ window.sendMessage = async function() {
                 },
                 skipUserMessagePush: true,
                 onToken: (token, fullContent) => {
+                    window.thinkingIndicator.classList.add('hidden');
                     // Update sources on the placeholder if needed
                     const lastMsg = currentSession.messages[currentSession.messages.length - 1];
                     if (lastMsg && lastMsg.role === 'assistant') {
@@ -204,12 +217,13 @@ window.sendMessage = async function() {
                     if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] assistant rendered");
                     renderMessages();
                     renderSessionList();
+                    saveSessions();
                     if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] send finished");
                 },
                 onError: (err) => {
                     if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] send failed:", err.message);
                     window.thinkingIndicator.classList.add('hidden');
-                    appendSystemMessage(err.message, 'error');
+                    appendSystemMessage("Error del proveedor: " + err.message, 'error');
                     renderMessages();
                 }
             });

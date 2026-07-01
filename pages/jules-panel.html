@@ -696,12 +696,26 @@ permalink: /jules-panel/
 
                 <div id="chat-input-wrapper" class="transition-all duration-500" style="position: relative; display: flex; flex-direction: column; gap: 10px; background: var(--surface-opaque); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 12px;">
                     <div class="flex items-center gap-3">
-                        <div class="dual-send-switch">
-                            <div class="dual-send-option active" data-mode="claude" onclick="setSendMode('claude')">
-                                <i class="fas fa-brain"></i> CLAUDE
-                            </div>
-                            <div class="dual-send-option" data-mode="jules" onclick="setSendMode('jules')">
-                                <i class="fas fa-bolt"></i> JULES
+                        <div class="relative">
+                            <button id="mode-selector-btn" class="flex items-center gap-2 bg-[#44475a]/30 hover:bg-[#44475a]/50 border border-[#bd93f9]/30 px-3 py-1.5 rounded-lg transition-all" onclick="window.toggleModeDropdown()">
+                                <span id="current-mode-label" class="text-[10px] font-black tracking-widest uppercase text-[#bd93f9]">CLAUDE</span>
+                                <i class="fas fa-chevron-up text-[8px] text-[#bd93f9]/50"></i>
+                            </button>
+                            <div id="mode-dropdown" class="hidden absolute bottom-full left-0 mb-2 w-48 bg-[#1e1f29] border border-[#44475a] rounded-xl shadow-2xl z-50 overflow-hidden" style="animation: dropdown-pop 0.2s cubic-bezier(0.4, 0, 0.2, 1);">
+                                <button onclick="setSendMode('claude'); window.toggleModeDropdown()" class="w-full text-left p-3 hover:bg-[#44475a] transition-all flex items-center gap-3" style="background:none; border:none; color:inherit; cursor:pointer;">
+                                    <i class="fas fa-brain text-[#bd93f9]"></i>
+                                    <div>
+                                        <div class="text-[10px] font-bold text-white uppercase">Claude</div>
+                                        <div class="text-[8px] text-[#6272a4]">Análisis técnico y chat</div>
+                                    </div>
+                                </button>
+                                <button onclick="setSendMode('jules'); window.toggleModeDropdown()" class="w-full text-left p-3 hover:bg-[#44475a] transition-all flex items-center gap-3 border-t border-[#44475a]/30" style="background:none; border:none; color:inherit; cursor:pointer;">
+                                    <i class="fas fa-bolt text-[#8be9fd]"></i>
+                                    <div>
+                                        <div class="text-[10px] font-bold text-white uppercase">Jules</div>
+                                        <div class="text-[8px] text-[#6272a4]">Orden directa de ejecución</div>
+                                    </div>
+                                </button>
                             </div>
                         </div>
                         <textarea id="v2-chat-input" placeholder="Pregunta algo..."

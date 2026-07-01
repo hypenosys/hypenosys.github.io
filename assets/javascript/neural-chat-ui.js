@@ -42,7 +42,7 @@ window.appendSystemMessage = function(msg, type = 'error') {
 }
 
 window.renderMessages = function() {
-    const currentSession = window.sessions.find(s => s.id === window.currentSessionId) || window.archivedSessions.find(s => s.id === window.currentSessionId);
+    const currentSession = window.sessions.find(s => s.id === window.currentSessionId);
     if (!currentSession) {
         window.chatMessages.innerHTML = '';
         return;
@@ -56,13 +56,33 @@ window.renderMessages = function() {
         document.getElementById('welcome-screen')?.classList.add('hidden');
     }
 
+    const githubUser = window.githubApi?.user;
+    const localProfile = JSON.parse(localStorage.getItem('hy_user_profile') || 'null');
+
     window.chatMessages.innerHTML = currentSession.messages.map((m, idx) => {
         let content = m.content;
         let reasoningHtml = '';
 
         const isUser = m.role === 'user';
         const isJules = m.source === 'jules' || m.role === 'agent' || m.role === 'jules';
-        const label = isUser ? 'USER' : (isJules ? 'JULES' : 'CLAUDE');
+
+        let label = isUser ? 'USUARIO' : (isJules ? 'JULES' : 'CLAUDE');
+        let iconHTML = isUser ? '<i class="fas fa-user"></i>' : (isJules ? '<i class="fas fa-bolt"></i>' : '<i class="fas fa-robot"></i>');
+
+        if (isUser) {
+            if (githubUser) {
+                label = githubUser.name || githubUser.login || 'USUARIO';
+                if (githubUser.avatar_url) {
+                    iconHTML = `<img src="${githubUser.avatar_url}" class="w-full h-full rounded-full object-cover">`;
+                }
+            } else if (localProfile) {
+                label = localProfile.name || localProfile.login || 'USUARIO';
+                if (localProfile.avatar_url) {
+                    iconHTML = `<img src="${localProfile.avatar_url}" class="w-full h-full rounded-full object-cover">`;
+                }
+            }
+        }
+
         const labelColor = isUser ? 'text-[#f8f8f2]' : (isJules ? 'text-[#6272a4]' : 'text-[#bd93f9]');
         const bubbleClass = isUser ? 'message-user' : (isJules ? 'message-claude border-[#44475a] border shadow-none bg-[#1a1b26]' : 'message-claude shadow-xl');
 
@@ -128,8 +148,13 @@ window.renderMessages = function() {
         return `
         <div class="flex ${isUser ? 'justify-end' : 'justify-start'} group mb-4">
             <div class="max-w-[85%] p-4 ${bubbleClass} relative message-bubble">
-                <div class="text-[10px] font-black tracking-widest uppercase mb-2 ${labelColor} opacity-70">
-                    ${label}
+                <div class="flex items-center gap-2 mb-2">
+                    <div class="w-5 h-5 rounded-full bg-[#44475a] flex items-center justify-center text-[10px] overflow-hidden border border-[#bd93f9]/20">
+                        ${iconHTML}
+                    </div>
+                    <div class="text-[10px] font-black tracking-widest uppercase ${labelColor} opacity-70">
+                        ${label}
+                    </div>
                 </div>
                 ${safetyBadge}
                 ${m.thinking ? `<div class="thinking-block">${escapeHtml(m.thinking)}</div>` : ''}

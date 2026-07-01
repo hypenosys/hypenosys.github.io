@@ -48,6 +48,12 @@ window.NeuralProviderClient = (function() {
         const model = config.model || (provider === 'ollama' ? 'llama3' : 'gpt-3.5-turbo');
         const apiKey = config.api_key || '';
 
+        if (window.HYPENOSYS_NEURAL_DEBUG) {
+            console.log("[Claude Neural] selected provider:", provider);
+            console.log("[Claude Neural] selected model:", model);
+            console.log("[Claude Neural] provider config found:", !!baseUrl);
+        }
+
         console.log(`[NeuralProviderClient] Request started. Provider: ${provider}, Model: ${model}, BaseURL: ${baseUrl}`);
 
         try {
@@ -75,14 +81,21 @@ window.NeuralProviderClient = (function() {
                 headers['x-requested-with'] = 'XMLHttpRequest';
             }
 
+            const payload = {
+                model: model,
+                messages: fullMessages,
+                stream: true
+            };
+
+            if (window.HYPENOSYS_NEURAL_DEBUG) {
+                console.log("[Claude Neural] sending to provider");
+                console.log("[Claude Neural] provider request payload:", payload);
+            }
+
             const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: headers,
-                body: JSON.stringify({
-                    model: model,
-                    messages: fullMessages,
-                    stream: true
-                }),
+                body: JSON.stringify(payload),
                 mode: 'cors',
                 credentials: 'omit'
             });
@@ -98,6 +111,8 @@ window.NeuralProviderClient = (function() {
             const decoder = new TextDecoder();
             let aiContent = '';
             let buffer = '';
+
+            if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] provider response received");
 
             while (true) {
                 const { done, value } = await reader.read();
@@ -129,10 +144,12 @@ window.NeuralProviderClient = (function() {
             }
 
             console.log('[NeuralProviderClient] Done');
+            if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] provider response text:", aiContent);
             if (onDone) onDone(aiContent);
 
         } catch (e) {
             console.error('[NeuralProviderClient] Error:', e);
+            if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] provider call failed:", e.message);
             if (onError) {
                 // Ensure base_url is included in the error for diagnostics as requested
                 const detailedError = new Error(`AI request failed for provider ${provider} at ${baseUrl}. ${e.message}. Check VPN reachability, CORS/OLLAMA_ORIGINS and browser Mixed Content settings.`);
