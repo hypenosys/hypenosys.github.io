@@ -2,10 +2,10 @@
  * JULES DOCS BRIDGE
  * Provides a high-level API for Neural Chat to consume documentation context.
  */
-window.DocsBridge = (function() {
+window.JulesDocsBridge = (function() {
 
     // Debug Flag
-    window.HYPENOSYS_DOCS_DEBUG = localStorage.getItem('hypenosys_docs_debug') === 'true';
+    window.HYPENOSYS_DOCS_DEBUG = true;
 
     // Folder Aliases for fuzzy resolution
     const DOCS_FOLDER_ALIASES = {
@@ -29,13 +29,13 @@ window.DocsBridge = (function() {
     };
 
     // Docs Context Toggle State
-    window.isDocsEnabled = localStorage.getItem('hypenosys_docs_context_enabled') !== 'false';
+    let _isDocsEnabled = localStorage.getItem('hypenosys_docs_context_enabled') !== 'false';
 
     window.toggleDocsContext = function() {
-        window.isDocsEnabled = !window.isDocsEnabled;
-        localStorage.setItem('hypenosys_docs_context_enabled', window.isDocsEnabled);
+        _isDocsEnabled = !_isDocsEnabled;
+        localStorage.setItem('hypenosys_docs_context_enabled', _isDocsEnabled);
         window.updateDocsStatusBadge();
-        if (window.showToast) window.showToast(window.isDocsEnabled ? 'Documentación activada' : 'Documentación desactivada');
+        if (window.showToast) window.showToast(_isDocsEnabled ? 'Documentación activada' : 'Documentación desactivada');
     };
 
     window.updateDocsStatusBadge = function() {
@@ -44,9 +44,9 @@ window.DocsBridge = (function() {
 
         badge.onclick = window.toggleDocsContext;
         badge.style.cursor = 'pointer';
-        badge.title = window.isDocsEnabled ? 'Click para desactivar búsqueda en docs' : 'Click para activar búsqueda en docs';
+        badge.title = _isDocsEnabled ? 'Click para desactivar búsqueda en docs' : 'Click para activar búsqueda en docs';
 
-        if (window.isDocsEnabled) {
+        if (_isDocsEnabled) {
             badge.className = 'flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[9px] font-bold border border-[#50fa7b]/20 bg-[#50fa7b]/10 text-[#50fa7b] transition-all';
             badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-[#50fa7b] shadow-[0_0_5px_#50fa7b]"></span> docs: on';
         } else {
@@ -54,6 +54,85 @@ window.DocsBridge = (function() {
             badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-[#6272a4]"></span> docs: off';
         }
     };
+
+    async function getDocContext(userMessage) {
+        if (!_isDocsEnabled) {
+            if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] docs enabled: false");
+            return "";
+        }
+
+        if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge] enabled: true");
+        if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge] query:", userMessage);
+
+        if (!window.DocsIndex) {
+            console.warn("[DocsBridge] DocsIndex not found");
+            return "";
+        }
+
+        try {
+            // 1. Detect Intent: Folder Summary or specific document read
+            const isSummaryRequest = /resumen|qué hay|que hay|contenido|explica|léeme|leeme|lista|archivos/i.test(userMessage);
+            const targetFolder = resolveFolder(userMessage);
+
+            if (isSummaryRequest && targetFolder) {
+                if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge] Folder summary intent detected for:", targetFolder);
+                const folderContext = await getFolderContext(targetFolder, {
+                    maxDocs: 8,
+                    maxCharsPerDoc: 6000,
+                    totalLimit: 12000
+                });
+
+                if (folderContext) {
+                    const summaryGuardrail = "\n\nResume el contenido de los documentos anteriores de forma exhaustiva.\nNo digas 'según los fragmentos proporcionados', ya que tienes acceso al contenido real.\nSi algún documento está truncado, menciónalo solo si impacta significativamente en el resumen.\nNo inventes carpetas ni herramientas no mencionadas.\n\n";
+                    if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge] injected: true");
+                    return "\n\n" + folderContext + summaryGuardrail;
+                }
+            }
+
+            // 2. Normal Search Mode (Snippets)
+            const results = await window.DocsIndex.search(userMessage, 5);
+            if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge] results count:", (results?.length || 0));
+
+            if (results && results.length > 0) {
+                const docsContext = await getContextForQuery(userMessage, { limit: 5 });
+                if (docsContext) {
+                    const guardrail = "\n\nUsa únicamente el CONTEXTO DOCUMENTAL DE HYPENOSYS para responder sobre la documentación.\nNo inventes carpetas, tecnologías, herramientas, estructura del repositorio ni contenido no presente en las fuentes.\nSi el contexto no contiene la respuesta, dilo explícitamente.\n\n";
+
+                    if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge] context chars:", docsContext.length);
+                    if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge] injected: true");
+
+                    window._lastDocsMetadata = await getSourceMetadata(results);
+                    return "\n\n" + docsContext + guardrail;
+                }
+            } else {
+                // Structural fallback
+                const isAskingStructure = /organiza|estructura|carpetas|folders|donde esta|dónde está/i.test(userMessage);
+                if (isAskingStructure) {
+                    const allDocs = await window.DocsIndex.getAllDocs();
+                    if (allDocs && allDocs.length > 0) {
+                        const directories = new Set();
+                        allDocs.forEach(d => {
+                            const parts = d.path.split('/');
+                            if (parts.length > 1) directories.add(parts[0]);
+                        });
+                        if (directories.size > 0) {
+                            const dirList = Array.from(directories).sort().join('\n- ');
+                            if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge] injected: true");
+                            return "\n\nCONTEXTO DE ESTRUCTURA REAL (hypenosys/docs):\nEl repositorio está organizado en las siguientes carpetas principales:\n- " + dirList + "\n\nInstrucción: Usa esta lista real para responder sobre la organización. No inventes otras carpetas.\n";
+                        }
+                    }
+                }
+
+                const fallbackGuardrail = "\n\nNo hay contexto documental suficiente disponible para responder con certeza sobre la documentación de Hypenosys.\nNo inventes información sobre la estructura del repositorio ni carpetas que no conozcas.\nSi te preguntan por la estructura y no tienes fragmentos que la describan, indica que no tienes acceso a esa información ahora mismo.\n";
+                if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge] injected: true");
+                return fallbackGuardrail;
+            }
+        } catch (e) {
+            console.error("[DocsBridge] Error in getDocContext:", e);
+            throw e;
+        }
+        return "";
+    }
 
     /**
      * Search documentation and build a context prompt
@@ -213,8 +292,6 @@ window.DocsBridge = (function() {
      * Centralizes documentation context injection for all chat interfaces.
      */
     async function buildSystemPrompt(userMessage, basePrompt, contextData = {}) {
-        if (window.HYPENOSYS_DOCS_DEBUG) console.log("[NeuralSend] send started");
-
         let systemPrompt = basePrompt || "Eres un asistente técnico del estudio de videojuegos Hypenosys. Ayudas al equipo a planificar e implementar tareas de desarrollo. Responde siempre en español, de forma directa y técnica.";
 
         // Inject Task Context if provided
@@ -235,91 +312,19 @@ window.DocsBridge = (function() {
                 `Milestone: ${task.milestone || 'N/A'}\n` +
                 `Repositorio: ${task.repository || task.repo || 'N/A'}\n` +
                 `Dependencias: ${blockingInfo} | ${blockedByInfo}\n`;
-        }
 
-        // Hybrid Docs Search Integration with Timeout
-        const docsEnabled = localStorage.getItem('hypenosys_docs_context_enabled') !== 'false';
-        if (window.HYPENOSYS_DOCS_DEBUG) console.log("[NeuralSend] docs enabled: " + docsEnabled);
-
-        if (docsEnabled && window.DocsIndex) {
-            try {
-                if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge] getDocContext started");
-
-                const timeoutPromise = new Promise((_, reject) =>
-                    setTimeout(() => reject(new Error('DocsBridge timeout')), 3500)
-                );
-
-                const docsLogic = async () => {
-                    // 1. Detect Intent: Folder Summary or specific document read
-                    const isSummaryRequest = /resumen|qué hay|que hay|contenido|explica|léeme|leeme|lista|archivos/i.test(userMessage);
-                    const targetFolder = resolveFolder(userMessage);
-
-                    if (isSummaryRequest && targetFolder) {
-                        if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge] Folder summary intent detected for: " + targetFolder);
-                        const folderContext = await getFolderContext(targetFolder, {
-                            maxDocs: 8,
-                            maxCharsPerDoc: 6000,
-                            totalLimit: 12000
-                        });
-
-                        if (folderContext) {
-                            const summaryGuardrail = "\n\nResume el contenido de los documentos anteriores de forma exhaustiva.\nNo digas 'según los fragmentos proporcionados', ya que tienes acceso al contenido real.\nSi algún documento está truncado, menciónalo solo si impacta significativamente en el resumen.\nNo inventes carpetas ni herramientas no mencionadas.\n\n";
-                            if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge] Injected folder context: " + targetFolder);
-                            return "\n\n" + folderContext + summaryGuardrail;
-                        }
+            // Fetch Jules History if linked session exists
+            if (task.jules_session && task.jules_session.session_id && window.julesApi) {
+                try {
+                    const activities = await window.julesApi.getActivities(task.jules_session.session_id, 10);
+                    const logs = (activities.activities || []).map(a => a.description || a.progressUpdated?.title).filter(Boolean).join('\n');
+                    if (logs) {
+                        systemPrompt += `\n### Historial reciente de Jules (Sesión #${task.jules_session.session_id}):\n${logs}\n`;
                     }
-
-                    // 2. Normal Search Mode (Snippets)
-                    const results = await window.DocsIndex.search(userMessage, 5);
-                    if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge] results count: " + (results?.length || 0));
-
-                    if (results && results.length > 0) {
-                        const docsContext = await getContextForQuery(userMessage, { limit: 5 });
-                        if (docsContext) {
-                            const guardrail = "\n\nUsa únicamente el CONTEXTO DOCUMENTAL DE HYPENOSYS para responder sobre la documentación.\nNo inventes carpetas, tecnologías, herramientas, estructura del repositorio ni contenido no presente en las fuentes.\nSi el contexto no contiene la respuesta, dilo explícitamente.\n\n";
-
-                            if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge] context chars: " + docsContext.length);
-                            if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge] injected: true");
-
-                            window._lastDocsMetadata = await getSourceMetadata(results);
-                            return "\n\n" + docsContext + guardrail;
-                        }
-                    } else {
-                        // Structural fallback
-                        const isAskingStructure = /organiza|estructura|carpetas|folders|donde esta|dónde está/i.test(userMessage);
-                        if (isAskingStructure) {
-                            const allDocs = await window.DocsIndex.getAllDocs();
-                            if (allDocs && allDocs.length > 0) {
-                                const directories = new Set();
-                                allDocs.forEach(d => {
-                                    const parts = d.path.split('/');
-                                    if (parts.length > 1) directories.add(parts[0]);
-                                });
-                                if (directories.size > 0) {
-                                    const dirList = Array.from(directories).sort().join('\n- ');
-                                    if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge] injected structure fallback: true");
-                                    return "\n\nCONTEXTO DE ESTRUCTURA REAL (hypenosys/docs):\nEl repositorio está organizado en las siguientes carpetas principales:\n- " + dirList + "\n\nInstrucción: Usa esta lista real para responder sobre la organización. No inventes otras carpetas.\n";
-                                }
-                            }
-                        }
-
-                        const fallbackGuardrail = "\n\nNo hay contexto documental suficiente disponible para responder con certeza sobre la documentación de Hypenosys.\nNo inventes información sobre la estructura del repositorio ni carpetas que no conozcas.\nSi te preguntan por la estructura y no tienes fragmentos que la describan, indica que no tienes acceso a esa información ahora mismo.\n";
-                        if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge] injected fallback guardrail: true");
-                        return fallbackGuardrail;
-                    }
-                    return "";
-                };
-
-                const docsPromptFragment = await Promise.race([docsLogic(), timeoutPromise]);
-                systemPrompt += docsPromptFragment;
-
-            } catch (e) {
-                console.warn("[DocsBridge] Failed, continuing without docs", e);
-                if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge] error: " + e.message);
+                } catch (e) { console.warn("Could not fetch Jules activity for context", e); }
             }
         }
 
-        if (window.HYPENOSYS_DOCS_DEBUG) console.log("[NeuralSend] sending to provider");
         return systemPrompt;
     }
 
@@ -359,6 +364,7 @@ window.DocsBridge = (function() {
     };
 
     return {
+        getDocContext,
         getContextForQuery,
         getSourceMetadata,
         buildSystemPrompt,
@@ -367,3 +373,6 @@ window.DocsBridge = (function() {
         get isDocsEnabled() { return localStorage.getItem('hypenosys_docs_context_enabled') !== 'false'; }
     };
 })();
+
+// Backward compatibility (optional, but requested window.DocsBridge in some places)
+window.DocsBridge = window.JulesDocsBridge;

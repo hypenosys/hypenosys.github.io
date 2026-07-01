@@ -39,11 +39,11 @@ window.createNewSession = function() {
     loadSession(id);
 }
 
-window.loadSession = async function(id, isArchived = false) {
+window.loadSession = async function(id) {
     window.isLoadingSession = true;
     window.currentSessionId = id;
     localStorage.setItem('hy_active_claude_session_id', id);
-    const currentSession = (isArchived ? window.archivedSessions : window.sessions).find(s => s.id === id);
+    const currentSession = window.sessions.find(s => s.id === id);
     if (!currentSession) {
         window.isLoadingSession = false;
         return;
@@ -101,7 +101,58 @@ window.loadSession = async function(id, isArchived = false) {
     window.isLoadingSession = false;
 }
 
+// Real-time synchronization channel
+window.neuralSyncChannel = new BroadcastChannel('hypenosys_neural_sessions_sync');
+window.neuralSyncChannel.onmessage = (event) => {
+    const { type, sessionId } = event.data;
+    if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Neural Sync] Message received:", type, sessionId);
+
+    // Refresh sessions from storage
+    window.sessions = JSON.parse(localStorage.getItem('claude_chat_sessions') || '[]');
+
+    if (type === 'active-session-changed' && sessionId) {
+        if (window.currentSessionId !== sessionId) {
+            loadSession(sessionId);
+        }
+    } else {
+        renderSessionList();
+        if (window.currentSessionId) {
+            renderMessages();
+        }
+    }
+};
+
+window.addEventListener('storage', (e) => {
+    if (e.key === 'claude_chat_sessions' || e.key === 'hy_active_claude_session_id') {
+        try {
+            window.sessions = JSON.parse(localStorage.getItem('claude_chat_sessions') || '[]');
+            const activeId = localStorage.getItem('hy_active_claude_session_id');
+
+            if (e.key === 'hy_active_claude_session_id' && activeId !== window.currentSessionId) {
+                loadSession(activeId);
+            } else {
+                renderSessionList();
+                if (window.currentSessionId) {
+                    const current = window.sessions.find(s => s.id === window.currentSessionId);
+                    if (current) {
+                        renderMessages();
+                    } else {
+                        // Current session was deleted in another tab
+                        window.currentSessionId = null;
+                        window.chatMessages.innerHTML = '';
+                        document.getElementById('welcome-screen')?.classList.remove('hidden');
+                        document.getElementById('session-title').textContent = 'Nueva Conversación';
+                    }
+                }
+            }
+        } catch (err) {
+            console.error('Error syncing sessions from storage:', err);
+        }
+    }
+});
+
 window.saveSessions = function(skipSync = false) {
+    window.neuralSyncChannel.postMessage({ type: 'session-updated' });
     try {
         // Deduplicate sessions by ID before saving to prevent double-entries
         const uniqueSessions = [];
@@ -117,7 +168,8 @@ window.saveSessions = function(skipSync = false) {
         localStorage.setItem('claude_chat_sessions', JSON.stringify(uniqueSessions));
         localStorage.setItem('claude_archived_sessions', JSON.stringify(window.archivedSessions));
 
-        const neuralSessions = uniqueSessions.map(s => ({
+        // Unified cross-tab and cross-component sync
+        const neuralSessions = uniqueSessions.filter(s => !s.archived).map(s => ({
             id: localStorage.getItem('hy_neural_session_id_' + s.id) || s.id,
             name: s.title,
             task_id: s.task_ref?.id || null,
@@ -151,30 +203,52 @@ window.saveSessions = function(skipSync = false) {
 }
 
 window.archiveSession = function(id) {
-    const index = window.sessions.findIndex(s => s.id === id);
-    if (index !== -1) {
-        const currentSession = window.sessions.splice(index, 1)[0];
-        window.archivedSessions.unshift(currentSession);
+    const session = window.sessions.find(s => s.id === id);
+    if (session) {
+        session.archived = true;
         saveSessions();
         renderSessionList();
+
         if (window.currentSessionId === id) {
-            window.currentSessionId = null;
-            window.chatMessages.innerHTML = '';
-            document.getElementById('welcome-screen')?.classList.remove('hidden');
-            document.getElementById('session-title').textContent = 'Nueva Conversación';
+            // Load another session if available
+            const nextSession = window.sessions.find(s => !s.archived);
+            if (nextSession) {
+                loadSession(nextSession.id);
+            } else {
+                window.currentSessionId = null;
+                window.chatMessages.innerHTML = '';
+                document.getElementById('welcome-screen')?.classList.remove('hidden');
+                document.getElementById('session-title').textContent = 'Nueva Conversación';
+            }
         }
         showToast('Conversación archivada');
     }
 }
 
 window.unarchiveSession = function(id) {
-    const index = window.archivedSessions.findIndex(s => s.id === id);
-    if (index !== -1) {
-        const currentSession = window.archivedSessions.splice(index, 1)[0];
-        window.sessions.unshift(currentSession);
+    const session = window.sessions.find(s => s.id === id);
+    if (session) {
+        session.archived = false;
         saveSessions();
         renderSessionList();
         showToast('Conversación restaurada');
+    }
+}
+
+window.renameSession = function(id) {
+    const session = window.sessions.find(s => s.id === id);
+    if (!session) return;
+
+    const newTitle = window.prompt("Renombrar sesión:", session.title);
+    if (newTitle !== null && newTitle.trim() !== "") {
+        session.title = newTitle.trim();
+        session.updatedAt = new Date().toISOString();
+        saveSessions();
+        renderSessionList();
+        if (window.currentSessionId === id) {
+            document.getElementById('session-title').textContent = session.title;
+        }
+        showToast('Sesión renombrada');
     }
 }
 
@@ -196,13 +270,12 @@ window.clearAllActiveSessions = function() {
     });
 }
 
-window.deleteSession = function(id, isArchived = false, skipConfirm = false) {
+window.deleteSession = function(id, skipConfirm = false) {
+    const session = window.sessions.find(s => s.id === id);
+    if (!session) return;
+
     const performDelete = () => {
-        if (isArchived) {
-            window.archivedSessions = window.archivedSessions.filter(s => s.id !== id);
-        } else {
-            window.sessions = window.sessions.filter(s => s.id !== id);
-        }
+        window.sessions = window.sessions.filter(s => s.id !== id);
 
         // Cleanup neural session mapping
         localStorage.removeItem('hy_neural_session_id_' + id);
@@ -223,7 +296,12 @@ window.deleteSession = function(id, isArchived = false, skipConfirm = false) {
     if (skipConfirm) {
         performDelete();
     } else {
-        showConfirmationToast('¿Eliminar esta conversación? Esta acción no se puede deshacer', performDelete);
+        const isLinked = !!(session.metadata && session.metadata.linkedJulesTaskId);
+        const msg = isLinked ?
+            'Esta conversación está vinculada a una tarea Jules. Se borrará el historial local, pero no la tarea remota. ¿Continuar?' :
+            '¿Eliminar esta conversación? Esta acción no se puede deshacer';
+
+        showConfirmationToast(msg, performDelete);
     }
 }
 
@@ -231,7 +309,11 @@ window.renderSessionList = function() {
     const list = document.getElementById('session-list');
     if (!list) return;
 
-    const renderItem = (s, isArchived = false) => {
+    const renderItem = (s) => {
+        const isArchived = !!s.archived;
+        const isMobile = window.innerWidth <= 768;
+        const isLinked = !!(s.metadata && s.metadata.linkedJulesTaskId);
+
         // Status logic:
         let status = 'completed';
 
@@ -241,20 +323,28 @@ window.renderSessionList = function() {
         if (hasError) {
             status = 'error';
         } else if (isCurrentlyActive) {
-            status = 'active';
+            status = isLinked ? 'linked' : 'active';
         } else if (isArchived) {
             status = 'completed';
         }
 
-        // Truncate ID (sess___3642 format)
-        const displayId = s.id.startsWith('session_') ? 'sess___' + s.id.slice(-4) : s.id;
+        // Display Title: prioritize title, then first message, then generic
+        let displayTitle = s.title;
+        if (!displayTitle || displayTitle === 'Nueva Conversación') {
+            const firstMsg = s.messages.find(m => m.role === 'user');
+            if (firstMsg) {
+                displayTitle = firstMsg.content.substring(0, 40) + (firstMsg.content.length > 40 ? '...' : '');
+            } else {
+                displayTitle = 'Nueva Conversación';
+            }
+        }
 
         return `
-        <div class="session-item ${window.currentSessionId === s.id ? 'active' : ''} group relative"
+        <div class="session-item ${window.currentSessionId === s.id ? 'active' : ''} ${isLinked ? 'linked' : ''} group relative"
              data-id="${s.id}"
              data-archived="${isArchived}">
 
-            <div onclick="loadSession('${s.id}', ${isArchived})" class="session-item-content">
+            <div onclick="loadSession('${s.id}')" class="session-item-content">
                 <!-- Collapsed view content -->
                 <i class="fas fa-comment-alt session-item-icon"></i>
 
@@ -262,28 +352,35 @@ window.renderSessionList = function() {
                 <div class="status-dot ${status}"></div>
 
                 <!-- Expanded view text -->
-                <span class="truncate flex-grow text-[11px] font-medium sidebar-text">${escapeHtml(displayId)}</span>
+                <span class="truncate flex-grow text-[11px] font-medium sidebar-text">${escapeHtml(displayTitle)}</span>
 
                 <!-- Full title tooltip for collapsed mode -->
-                <div class="session-tooltip collapsed-only">${escapeHtml(s.title)}</div>
+                <div class="session-tooltip collapsed-only">${escapeHtml(displayTitle)}</div>
             </div>
 
-            <!-- Hover actions (only shown in expanded mode) -->
-            <div class="absolute right-2 top-1/2 -translate-y-1/2 hidden group-hover:flex items-center gap-1 sidebar-text">
-                <button onclick="event.stopPropagation(); archiveSession('${s.id}')" class="text-[#6272a4] hover:text-[#bd93f9] p-1"><i class="fas fa-archive text-[10px]"></i></button>
-                <button onclick="event.stopPropagation(); deleteSession('${s.id}')" class="text-[#6272a4] hover:text-[#ff5555] p-1"><i class="fas fa-trash text-[10px]"></i></button>
+            <!-- Actions -->
+            <div class="absolute right-2 top-1/2 -translate-y-1/2 ${isMobile ? 'flex' : 'hidden group-hover:flex'} items-center gap-1 sidebar-text bg-[#282a36]/80 backdrop-blur-sm pl-1 rounded-l-md">
+                <button onclick="event.stopPropagation(); renameSession('${s.id}')" class="text-[#6272a4] hover:text-[#bd93f9] p-1" title="Renombrar"><i class="fas fa-edit text-[10px]"></i></button>
+                ${isArchived ?
+                    `<button onclick="event.stopPropagation(); unarchiveSession('${s.id}')" class="text-[#6272a4] hover:text-[#50fa7b] p-1" title="Desarchivar"><i class="fas fa-box-open text-[10px]"></i></button>` :
+                    `<button onclick="event.stopPropagation(); archiveSession('${s.id}')" class="text-[#6272a4] hover:text-[#bd93f9] p-1" title="Archivar"><i class="fas fa-archive text-[10px]"></i></button>`
+                }
+                <button onclick="event.stopPropagation(); deleteSession('${s.id}')" class="text-[#6272a4] hover:text-[#ff5555] p-1" title="Borrar"><i class="fas fa-trash text-[10px]"></i></button>
             </div>
         </div>
         `;
     };
 
-    let html = window.sessions.map(s => renderItem(s, false)).join('');
+    const activeSessions = window.sessions.filter(s => !s.archived);
+    const archivedSessions = window.sessions.filter(s => s.archived);
 
-    if (window.archivedSessions.length > 0) {
+    let html = activeSessions.map(s => renderItem(s)).join('');
+
+    if (archivedSessions.length > 0) {
         html += `
-            <div class="sidebar-section-label">Sesiones Guardadas</div>
+            <div class="sidebar-section-label">Sesiones Archivadas</div>
             <div class="space-y-1">
-                ${window.archivedSessions.map(s => renderItem(s, true)).join('')}
+                ${archivedSessions.map(s => renderItem(s)).join('')}
             </div>
         `;
     }

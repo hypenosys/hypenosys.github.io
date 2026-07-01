@@ -17,9 +17,32 @@ window.NeuralChatCore = (function() {
     function saveSessions(storageKey, sessions) {
         try {
             localStorage.setItem(storageKey, JSON.stringify(sessions));
+            // Trigger storage event for same-page sync if needed, though BroadcastChannel is better
         } catch (e) {
             console.error("[NeuralChatCore] Error saving sessions:", e);
         }
+    }
+
+    function appendMessage(sessions, sessionId, message) {
+        return sessions.map(s => {
+            if (s.id === sessionId) {
+                const updatedMessages = [...s.messages, { ...message, timestamp: Date.now() }];
+                let updatedTitle = s.title;
+                if ((s.title === 'Nueva Conversación' || !s.title) && message.role === 'user') {
+                    updatedTitle = message.content.substring(0, 40) + (message.content.length > 40 ? '...' : '');
+                }
+                return { ...s, messages: updatedMessages, title: updatedTitle, updatedAt: new Date().toISOString() };
+            }
+            return s;
+        });
+    }
+
+    function updateActiveSessionId(id) {
+        localStorage.setItem('hy_active_claude_session_id', id);
+    }
+
+    function getActiveSessionId() {
+        return localStorage.getItem('hy_active_claude_session_id');
     }
 
     function createSession({ title, systemPrompt, idPrefix = 'session_' }) {
@@ -35,6 +58,24 @@ window.NeuralChatCore = (function() {
 
     function deleteSession(sessions, id) {
         return sessions.filter(s => s.id !== id);
+    }
+
+    function renameSession(sessions, id, newTitle) {
+        return sessions.map(s => {
+            if (s.id === id) {
+                return { ...s, title: newTitle, updatedAt: new Date().toISOString() };
+            }
+            return s;
+        });
+    }
+
+    function archiveSession(sessions, id, isArchived = true) {
+        return sessions.map(s => {
+            if (s.id === id) {
+                return { ...s, archived: isArchived, updatedAt: new Date().toISOString() };
+            }
+            return s;
+        });
     }
 
     function escapeHtml(str) {
@@ -56,7 +97,7 @@ window.NeuralChatCore = (function() {
         saveCallback,
         skipUserMessagePush = false
     }) {
-        console.log("[Neural Chat Core] Sending message...");
+        if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Neural Chat Core] Sending message...");
 
         if (!skipUserMessagePush) {
             // Add user message to session
@@ -96,21 +137,32 @@ window.NeuralChatCore = (function() {
                 localStorage.setItem('hy_neural_session_id', session.metadata.linkedJulesTaskId);
             }
 
+            if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Neural Chat Core] Provider Client status:", !!window.NeuralProviderClient);
+
+            if (!window.NeuralProviderClient) {
+                throw new Error("NeuralProviderClient no encontrado. Verifica la carga de scripts.");
+            }
+
             await window.NeuralProviderClient.sendMessage({
                 messages: apiMessages,
                 systemPrompt: systemPrompt || session.systemPrompt,
                 onToken: (token, fullContent) => {
-                    session.messages[assistantIdx].content = fullContent;
+                    if (session.messages[assistantIdx]) {
+                        session.messages[assistantIdx].content = fullContent;
+                    }
                     if (onToken) onToken(token, fullContent);
                 },
                 onDone: (fullContent) => {
-                    session.messages[assistantIdx].content = fullContent;
+                    if (session.messages[assistantIdx]) {
+                        session.messages[assistantIdx].content = fullContent;
+                    }
                     if (saveCallback) saveCallback();
                     if (onDone) onDone(fullContent);
                 },
                 onError: (err) => {
+                    if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Neural Chat Core] provider error:", err.message);
                     // Remove empty placeholder
-                    if (!session.messages[assistantIdx].content) {
+                    if (session.messages[assistantIdx] && !session.messages[assistantIdx].content) {
                         session.messages.splice(assistantIdx, 1);
                     }
                     if (onError) onError(err);
@@ -129,6 +181,11 @@ window.NeuralChatCore = (function() {
         saveSessions,
         createSession,
         deleteSession,
+        renameSession,
+        archiveSession,
+        appendMessage,
+        updateActiveSessionId,
+        getActiveSessionId,
         sendMessage,
         escapeHtml
     };
