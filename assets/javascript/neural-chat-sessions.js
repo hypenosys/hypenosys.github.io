@@ -50,7 +50,7 @@ window.loadSession = async function(id, isArchived = false) {
     }
 
     // Sync Neural Session ID for the banner
-    const neuralId = localStorage.getItem('hy_neural_session_id_' + id);
+    let neuralId = currentSession.metadata?.linkedJulesTaskId || localStorage.getItem('hy_neural_session_id_' + id);
     if (neuralId) {
         localStorage.setItem('hy_neural_session_id', neuralId);
         startJulesPolling(neuralId);

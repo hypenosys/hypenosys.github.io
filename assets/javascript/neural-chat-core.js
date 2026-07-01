@@ -90,6 +90,11 @@ window.NeuralChatCore = (function() {
                 .filter(m => m.content)
                 .map(m => ({ role: m.role, content: m.content }));
 
+            // Final sync of linkedJulesTaskId to legacy hy_neural_session_id for real-time polling compatibility
+            if (session.metadata && session.metadata.linkedJulesTaskId) {
+                localStorage.setItem('hy_neural_session_id', session.metadata.linkedJulesTaskId);
+            }
+
             await window.NeuralProviderClient.sendMessage({
                 messages: apiMessages,
                 systemPrompt: session.systemPrompt,

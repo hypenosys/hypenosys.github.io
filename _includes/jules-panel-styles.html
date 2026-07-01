@@ -525,6 +525,31 @@ body{
 .chat-history-item:hover .btn-delete-session {
   opacity: 1;
 }
+
+.chat-history-item.linked {
+    border-left: 3px solid var(--accent2);
+    padding-left: 9px;
+}
+
+.chat-content-wrap {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-link-meta {
+    font-size: 8px;
+    font-weight: 800;
+    color: var(--accent2);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 2px;
+    opacity: 0.8;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 .chat-history-item .btn-delete-session:hover {
   color: var(--red);
   background: var(--red-soft);

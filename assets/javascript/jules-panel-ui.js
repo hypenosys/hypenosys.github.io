@@ -402,12 +402,12 @@ window.updateSidebarContextLabel = function() {
     let repoName = null;
 
     // 1. Intentar obtener repo de la sesión neural activa
-    const activeSessionId = localStorage.getItem(window.JULES_PANEL_NEURAL_ACTIVE_ID || 'hy_jules_panel_neural_active_id');
+    const activeSessionId = localStorage.getItem('hy_active_claude_session_id');
     if (activeSessionId && window.julesPanelSessions) {
         const session = window.julesPanelSessions.find(s => s.id === activeSessionId);
-        if (session && session.repoFullName) {
-            displayRepo = session.repoFullName;
-            repoName = session.repoName || session.repoFullName.split('/').pop();
+        if (session && session.metadata?.repoFullName) {
+            displayRepo = session.metadata.repoFullName;
+            repoName = session.metadata.repoName || session.metadata.repoFullName.split('/').pop();
         }
     }
 
