@@ -139,6 +139,10 @@ window.sendMessage = async function() {
         } else if (modelType === 'audio' && !config.useTextInAudioMode) {
             if (content) await sendMessageCustom(currentSession, config);
         } else if (isStandardProvider) {
+            // Store sources for the upcoming message
+            const currentSources = window._lastDocsMetadata || [];
+            window._lastDocsMetadata = null;
+
             // Optimistic UI: Add user message and render immediately
             const userMsg = { role: 'user', content: content, timestamp: Date.now() };
             currentSession.messages.push(userMsg);
