@@ -180,8 +180,8 @@ window.initJulesPanelNeuralChat = function() {
     const docsBadge = document.getElementById('docs-status-badge');
     if (docsBadge) {
         docsBadge.classList.remove('hidden');
-        if (window.DocsBridge && window.DocsBridge.updateDocsStatusBadge) {
-            window.DocsBridge.updateDocsStatusBadge();
+        if (window.JulesDocsBridge && window.JulesDocsBridge.updateDocsStatusBadge) {
+            window.JulesDocsBridge.updateDocsStatusBadge();
         }
     }
 
@@ -308,7 +308,24 @@ window.sendChatV2Msg = async function() {
 
     console.log("[Jules Panel Neural] Message sent from Jules Panel Neural");
     try {
-        const dynamicSystemPrompt = await window.DocsBridge.buildSystemPrompt(msg, session.systemPrompt);
+        // DOCUMENTATION FAIL-OPEN LOGIC
+        const docsEnabled = localStorage.getItem('hypenosys_docs_context_enabled') !== 'false';
+        let docsContext = null;
+
+        if (docsEnabled && window.JulesDocsBridge?.getDocContext) {
+            try {
+                docsContext = await Promise.race([
+                    window.JulesDocsBridge.getDocContext(msg),
+                    new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 3500))
+                ]);
+            } catch (error) {
+                console.warn('[DocsBridge] failed; continuing without docs', error);
+                docsContext = null;
+            }
+        }
+
+        const baseSystemPrompt = await window.JulesDocsBridge.buildSystemPrompt(msg, session.systemPrompt);
+        const dynamicSystemPrompt = baseSystemPrompt + (docsContext || "");
 
         // Store sources for this turn
         const currentSources = window._lastDocsMetadata || [];
@@ -383,9 +400,11 @@ window.renderNeuralChatHistory = function() {
                     '<div class="chat-title" title="' + window.NeuralChatCore.escapeHtml(displayTitle) + '">' + window.NeuralChatCore.escapeHtml(displayTitle) + '</div>' +
                     (isLinked ? '<div class="chat-link-meta"><i class="fas fa-link"></i> ' + window.NeuralChatCore.escapeHtml(linkedTitle) + '</div>' : '') +
                  '</div>' +
-                 '<button class="btn-delete-session" onclick="window.deleteJulesPanelSession(event, \'' + s.id + '\')" title="Borrar">' +
-                   '<i class="fas fa-trash"></i>' +
-                 '</button>' +
+                 '<div class="chat-history-actions">' +
+                    '<button class="btn-action-session" onclick="window.renameJulesPanelSession(event, \'' + s.id + '\')" title="Renombrar"><i class="fas fa-edit"></i></button>' +
+                    '<button class="btn-action-session" onclick="window.archiveJulesPanelSession(event, \'' + s.id + '\')" title="Archivar"><i class="fas fa-archive"></i></button>' +
+                    '<button class="btn-delete-session" onclick="window.deleteJulesPanelSession(event, \'' + s.id + '\')" title="Borrar"><i class="fas fa-trash"></i></button>' +
+                 '</div>' +
                '</div>';
     }).join('');
 }
@@ -914,7 +933,8 @@ window.deleteJulesPanelSession = function(event, id) {
     if (event) event.stopPropagation();
 
     const session = window.julesPanelSessions.find(s => s.id === id);
-    const sessionTitle = session ? session.title : 'esta sesión';
+    if (!session) return;
+    const sessionTitle = session.title;
 
     const performDelete = () => {
         const index = window.julesPanelSessions.findIndex(s => s.id === id);
@@ -937,7 +957,10 @@ window.deleteJulesPanelSession = function(event, id) {
         showToast("Sesión eliminada", "red");
     };
 
-    const confirmMsg = "¿Seguro que quieres borrar la sesión \"" + sessionTitle + "\"? Esta acción no se puede deshacer.";
+    const isLinked = !!(session.metadata && session.metadata.linkedJulesTaskId);
+    const confirmMsg = isLinked ?
+        'Esta conversación está vinculada a una tarea Jules. Se borrará el historial local, pero no la tarea remota. ¿Continuar?' :
+        "¿Seguro que quieres borrar la sesión \"" + sessionTitle + "\"? Esta acción no se puede deshacer.";
 
     if (window.showConfirmationToast) {
         window.showConfirmationToast(confirmMsg, performDelete);

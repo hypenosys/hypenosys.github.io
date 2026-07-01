@@ -557,8 +557,8 @@ permalink: /chat/neural/
         const docsBadge = document.getElementById('docs-status-badge');
         if (docsBadge) {
             docsBadge.classList.remove('hidden');
-            if (window.DocsBridge && window.DocsBridge.updateDocsStatusBadge) {
-                window.DocsBridge.updateDocsStatusBadge();
+            if (window.JulesDocsBridge && window.JulesDocsBridge.updateDocsStatusBadge) {
+                window.JulesDocsBridge.updateDocsStatusBadge();
             }
         }
 
@@ -579,6 +579,8 @@ permalink: /chat/neural/
         let arrancadoGlobal = false;
         let arrancadoConUsuario = false;
 
+        window.HYPENOSYS_NEURAL_DEBUG = true;
+
         async function iniciar(user) {
             // Si ya hemos arrancado con un usuario real, ignoramos llamadas posteriores
             if (arrancadoConUsuario) return;
@@ -587,10 +589,17 @@ permalink: /chat/neural/
                 arrancadoConUsuario = true;
             }
 
+            if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] init started");
+
             // Initialize DOM references here, after DOM is ready
             window.chatMessages = document.getElementById('chat-messages');
             window.chatInput = document.getElementById('chat-input');
             window.sendBtn = document.getElementById('send-btn');
+
+            if (window.HYPENOSYS_NEURAL_DEBUG) {
+                console.log("[Claude Neural] send button found:", !!window.sendBtn);
+                console.log("[Claude Neural] input found:", !!window.chatInput);
+            }
             window.thinkingIndicator = document.getElementById('thinking-indicator');
             window.toggleThinkingBtn = document.getElementById('toggle-thinking');
 
@@ -627,6 +636,7 @@ permalink: /chat/neural/
 
                     // Area 10: Sync event listeners - Solo una vez para evitar duplicados
                     if (!arrancadoGlobal) {
+                        if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] send handler attached");
                         window.sendBtn.onclick = sendMessage;
                         window.chatInput.onkeydown = (e) => {
                             if (e.key === 'Enter' && !e.shiftKey) {
