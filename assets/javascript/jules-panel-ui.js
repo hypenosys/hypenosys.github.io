@@ -389,3 +389,42 @@ window.startNewNeuralSession = function() {
         window.showToast("Error al iniciar nueva sesión", "red");
     }
 }
+
+/**
+ * Actualiza el label de contexto en el sidebar (sb-context-label).
+ * Prioridad: active session repo > selected repo > fallback.
+ */
+window.updateSidebarContextLabel = function() {
+    const labelEl = document.getElementById('sb-context-label');
+    if (!labelEl) return;
+
+    let displayRepo = null;
+    let repoName = null;
+
+    // 1. Intentar obtener repo de la sesión neural activa
+    const activeSessionId = localStorage.getItem(window.JULES_PANEL_NEURAL_ACTIVE_ID || 'hy_jules_panel_neural_active_id');
+    if (activeSessionId && window.julesPanelSessions) {
+        const session = window.julesPanelSessions.find(s => s.id === activeSessionId);
+        if (session && session.repoFullName) {
+            displayRepo = session.repoFullName;
+            repoName = session.repoName || session.repoFullName.split('/').pop();
+        }
+    }
+
+    // 2. Si no hay sesión o no tiene repo, usar el repo seleccionado en el panel
+    if (!displayRepo) {
+        displayRepo = localStorage.getItem('hypenosys_active_repo');
+        if (displayRepo) {
+            repoName = displayRepo.split('/').pop();
+        }
+    }
+
+    if (displayRepo) {
+        const displayName = window.getRepoDisplayName ? window.getRepoDisplayName(displayRepo, repoName) : repoName;
+        labelEl.innerText = displayName.toUpperCase();
+        labelEl.title = displayName;
+    } else {
+        labelEl.innerText = 'JULES CONTROL HUB';
+        labelEl.title = 'Jules Control Hub';
+    }
+}
