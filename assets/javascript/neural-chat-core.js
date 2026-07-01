@@ -17,9 +17,32 @@ window.NeuralChatCore = (function() {
     function saveSessions(storageKey, sessions) {
         try {
             localStorage.setItem(storageKey, JSON.stringify(sessions));
+            // Trigger storage event for same-page sync if needed, though BroadcastChannel is better
         } catch (e) {
             console.error("[NeuralChatCore] Error saving sessions:", e);
         }
+    }
+
+    function appendMessage(sessions, sessionId, message) {
+        return sessions.map(s => {
+            if (s.id === sessionId) {
+                const updatedMessages = [...s.messages, { ...message, timestamp: Date.now() }];
+                let updatedTitle = s.title;
+                if ((s.title === 'Nueva Conversación' || !s.title) && message.role === 'user') {
+                    updatedTitle = message.content.substring(0, 40) + (message.content.length > 40 ? '...' : '');
+                }
+                return { ...s, messages: updatedMessages, title: updatedTitle, updatedAt: new Date().toISOString() };
+            }
+            return s;
+        });
+    }
+
+    function updateActiveSessionId(id) {
+        localStorage.setItem('hy_active_claude_session_id', id);
+    }
+
+    function getActiveSessionId() {
+        return localStorage.getItem('hy_active_claude_session_id');
     }
 
     function createSession({ title, systemPrompt, idPrefix = 'session_' }) {
@@ -160,6 +183,9 @@ window.NeuralChatCore = (function() {
         deleteSession,
         renameSession,
         archiveSession,
+        appendMessage,
+        updateActiveSessionId,
+        getActiveSessionId,
         sendMessage,
         escapeHtml
     };

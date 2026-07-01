@@ -498,6 +498,10 @@ body{
   flex-shrink: 0;
 }
 .chat-history-item.active .chat-dot {
+  background: var(--green);
+  box-shadow: 0 0 7px var(--green);
+}
+.chat-history-item.active.linked .chat-dot {
   background: var(--accent);
   box-shadow: 0 0 7px var(--accent);
 }
@@ -562,6 +566,45 @@ body{
 }
 .chat-history-item:hover .chat-history-actions {
   opacity: 1;
+}
+
+/* Neural Message Actions Pill */
+.neural-message-actions {
+    opacity: 0;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    transform: translateY(5px);
+}
+.jules-activity-entry:hover .neural-message-actions {
+    opacity: 1;
+    transform: translateY(0);
+}
+.neural-action-mini {
+    height: 24px;
+    padding: 0 10px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    background: var(--surface-opaque);
+    border: 1px solid var(--border);
+    color: var(--text3);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+.neural-action-mini:hover {
+    border-color: var(--accent2);
+    color: var(--accent2);
+    background: var(--surface);
+    transform: translateY(-1px);
+}
+@media (hover: none) {
+    .neural-message-actions {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 .btn-action-session {
   background: transparent;
@@ -1042,6 +1085,7 @@ body{
 
 .jules-activity-entry, .tel-line {
   max-width: 100%;
+  position: relative;
 }
 
 /* ─── TERMINAL DRAWER ─── */

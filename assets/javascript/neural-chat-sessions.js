@@ -101,21 +101,48 @@ window.loadSession = async function(id) {
     window.isLoadingSession = false;
 }
 
+// Real-time synchronization channel
+window.neuralSyncChannel = new BroadcastChannel('hypenosys_neural_sessions_sync');
+window.neuralSyncChannel.onmessage = (event) => {
+    const { type, sessionId } = event.data;
+    if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Neural Sync] Message received:", type, sessionId);
+
+    // Refresh sessions from storage
+    window.sessions = JSON.parse(localStorage.getItem('claude_chat_sessions') || '[]');
+
+    if (type === 'active-session-changed' && sessionId) {
+        if (window.currentSessionId !== sessionId) {
+            loadSession(sessionId);
+        }
+    } else {
+        renderSessionList();
+        if (window.currentSessionId) {
+            renderMessages();
+        }
+    }
+};
+
 window.addEventListener('storage', (e) => {
-    if (e.key === 'claude_chat_sessions') {
+    if (e.key === 'claude_chat_sessions' || e.key === 'hy_active_claude_session_id') {
         try {
-            window.sessions = JSON.parse(e.newValue || '[]');
-            renderSessionList();
-            if (window.currentSessionId) {
-                const current = window.sessions.find(s => s.id === window.currentSessionId);
-                if (current) {
-                    renderMessages();
-                } else {
-                    // Current session was deleted in another tab
-                    window.currentSessionId = null;
-                    window.chatMessages.innerHTML = '';
-                    document.getElementById('welcome-screen')?.classList.remove('hidden');
-                    document.getElementById('session-title').textContent = 'Nueva Conversación';
+            window.sessions = JSON.parse(localStorage.getItem('claude_chat_sessions') || '[]');
+            const activeId = localStorage.getItem('hy_active_claude_session_id');
+
+            if (e.key === 'hy_active_claude_session_id' && activeId !== window.currentSessionId) {
+                loadSession(activeId);
+            } else {
+                renderSessionList();
+                if (window.currentSessionId) {
+                    const current = window.sessions.find(s => s.id === window.currentSessionId);
+                    if (current) {
+                        renderMessages();
+                    } else {
+                        // Current session was deleted in another tab
+                        window.currentSessionId = null;
+                        window.chatMessages.innerHTML = '';
+                        document.getElementById('welcome-screen')?.classList.remove('hidden');
+                        document.getElementById('session-title').textContent = 'Nueva Conversación';
+                    }
                 }
             }
         } catch (err) {
@@ -125,6 +152,7 @@ window.addEventListener('storage', (e) => {
 });
 
 window.saveSessions = function(skipSync = false) {
+    window.neuralSyncChannel.postMessage({ type: 'session-updated' });
     try {
         // Deduplicate sessions by ID before saving to prevent double-entries
         const uniqueSessions = [];
@@ -284,6 +312,8 @@ window.renderSessionList = function() {
     const renderItem = (s) => {
         const isArchived = !!s.archived;
         const isMobile = window.innerWidth <= 768;
+        const isLinked = !!(s.metadata && s.metadata.linkedJulesTaskId);
+
         // Status logic:
         let status = 'completed';
 
@@ -293,7 +323,7 @@ window.renderSessionList = function() {
         if (hasError) {
             status = 'error';
         } else if (isCurrentlyActive) {
-            status = 'active';
+            status = isLinked ? 'linked' : 'active';
         } else if (isArchived) {
             status = 'completed';
         }
@@ -310,7 +340,7 @@ window.renderSessionList = function() {
         }
 
         return `
-        <div class="session-item ${window.currentSessionId === s.id ? 'active' : ''} group relative"
+        <div class="session-item ${window.currentSessionId === s.id ? 'active' : ''} ${isLinked ? 'linked' : ''} group relative"
              data-id="${s.id}"
              data-archived="${isArchived}">
 

@@ -37,6 +37,9 @@ window.setJulesPanelNeuralProcessingState = setNeuralProcessingState;
 
 function saveJulesPanelSessions() {
     window.NeuralChatCore.saveSessions(window.JULES_PANEL_NEURAL_STORAGE, window.julesPanelSessions);
+    if (window.neuralSyncChannel) {
+        window.neuralSyncChannel.postMessage({ type: 'session-updated' });
+    }
 }
 
 window.loadJulesPanelSessions = function() {
@@ -168,13 +171,30 @@ window.initJulesPanelNeuralChat = function() {
     });
 
     window.addEventListener('storage', (e) => {
-        if (e.key === window.JULES_PANEL_NEURAL_STORAGE) {
+        if (e.key === window.JULES_PANEL_NEURAL_STORAGE || e.key === window.JULES_PANEL_NEURAL_ACTIVE_ID) {
             window.loadJulesPanelSessions();
             if ($('sessions-drawer')?.classList.contains('open')) {
                 window.renderJulesPanelSessionDrawerList();
             }
         }
     });
+
+    // Real-time synchronization channel
+    window.neuralSyncChannel = new BroadcastChannel('hypenosys_neural_sessions_sync');
+    window.neuralSyncChannel.onmessage = (event) => {
+        const { type, sessionId } = event.data;
+        if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Jules Panel Sync] Message received:", type, sessionId);
+
+        window.loadJulesPanelSessions();
+        if (type === 'active-session-changed' && sessionId) {
+            if (window.currentJulesPanelSessionId !== sessionId) {
+                window.loadJulesPanelSession(sessionId, true);
+            }
+        } else {
+            window.renderChatV2Messages();
+            window.renderNeuralChatHistory();
+        }
+    };
 
     // Docs Integration Toggle
     const docsBadge = document.getElementById('docs-status-badge');
@@ -245,9 +265,13 @@ window.createNewJulesPanelSession = function() {
     window.renderNeuralChatHistory();
 }
 
-window.loadJulesPanelSession = function(id) {
+window.loadJulesPanelSession = function(id, skipBroadcast = false) {
     window.currentJulesPanelSessionId = id;
     localStorage.setItem(window.JULES_PANEL_NEURAL_ACTIVE_ID, id);
+
+    if (!skipBroadcast && window.neuralSyncChannel) {
+        window.neuralSyncChannel.postMessage({ type: 'active-session-changed', sessionId: id });
+    }
 
     const session = window.julesPanelSessions.find(s => s.id === id);
     if (!session) return;
@@ -391,14 +415,15 @@ window.renderNeuralChatHistory = function() {
             }
         }
 
-        const isLinked = s.metadata && s.metadata.linkedJulesTaskId;
-        const linkedTitle = isLinked ? (s.metadata.linkedJulesTaskTitle || s.metadata.linkedJulesTaskId) : '';
+        const isLinked = !!(s.metadata && s.metadata.linkedJulesTaskId);
+        const linkedTitle = isLinked ? (s.metadata.linkedJulesTaskTitle || s.metadata.linkedJulesTaskId) : 'Sin tarea vinculada';
+        const statusClass = isLinked ? 'linked' : 'unlinked';
 
-        return '<div class="chat-history-item' + (isActive ? ' active' : '') + (isLinked ? ' linked' : '') + '" onclick="window.loadJulesPanelSession(\'' + s.id + '\')">' +
+        return '<div class="chat-history-item ' + (isActive ? 'active' : '') + ' ' + statusClass + '" onclick="window.loadJulesPanelSession(\'' + s.id + '\')">' +
                  '<div class="chat-dot"></div>' +
                  '<div class="chat-content-wrap">' +
                     '<div class="chat-title" title="' + window.NeuralChatCore.escapeHtml(displayTitle) + '">' + window.NeuralChatCore.escapeHtml(displayTitle) + '</div>' +
-                    (isLinked ? '<div class="chat-link-meta"><i class="fas fa-link"></i> ' + window.NeuralChatCore.escapeHtml(linkedTitle) + '</div>' : '') +
+                    '<div class="chat-link-meta"><i class="fas ' + (isLinked ? 'fa-link' : 'fa-info-circle') + '"></i> ' + window.NeuralChatCore.escapeHtml(linkedTitle) + '</div>' +
                  '</div>' +
                  '<div class="chat-history-actions">' +
                     '<button class="btn-action-session" onclick="window.renameJulesPanelSession(event, \'' + s.id + '\')" title="Renombrar"><i class="fas fa-edit"></i></button>' +
@@ -480,9 +505,12 @@ window.renderChatV2Messages = function() {
         }
 
         const actionBtn = isAssistant ?
-            '<div class="activity-actions" style="margin-top: 8px; display: flex; gap: 8px;">' +
-              '<button class="btn btn-ghost btn-sm" style="font-size: 9px; padding: 2px 8px;" onclick="window.sendToJulesFromLocal(' + idx + ')">' +
-                '<i class="fas fa-arrow-right"></i> → ENVIAR A JULES' +
+            '<div class="neural-message-actions absolute -bottom-3 right-4 flex gap-1.5 z-10">' +
+              '<button onclick="window.copyMessage(' + idx + ')" class="neural-action-mini" title="Copiar respuesta">' +
+                '<i class="fas fa-copy"></i> <span class="desktop-only">Copiar</span>' +
+              '</button>' +
+              '<button class="neural-action-mini" title="Enviar a Jules" onclick="window.sendToJulesFromLocal(' + idx + ')">' +
+                '<i class="fas fa-bolt"></i> <span class="desktop-only">→ Jules</span>' +
               '</button>' +
             '</div>' : '';
 
@@ -638,6 +666,15 @@ window.renderJulesPanelSessionDrawerList = function() {
 window.selectJulesPanelSessionFromDrawer = function(id) {
     window.toggleSessionDrawer();
     window.loadJulesPanelSession(id);
+}
+
+window.copyMessage = function(idx) {
+    const session = window.julesPanelSessions.find(s => s.id === window.currentJulesPanelSessionId);
+    if (session && session.messages[idx]) {
+        const text = session.messages[idx].content;
+        navigator.clipboard.writeText(text);
+        showToast('Copiado al portapapeles', 'green');
+    }
 }
 
 window.sendToJulesFromLocal = function(idx) {

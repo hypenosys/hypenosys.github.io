@@ -166,12 +166,12 @@ window.renderMessages = function() {
                 ${docsSourcesHtml}
 
                 ${!isUser ? `
-                <div class="message-actions opacity-0 group-hover:opacity-100 transition-opacity absolute -bottom-6 left-0 flex gap-2">
-                    <button onclick="copyMessage(${idx})" class="text-[9px] font-bold text-[#6272a4] hover:text-[#bd93f9] flex items-center gap-1 bg-[#1e1f29] px-2 py-0.5 rounded border border-[#44475a]">
-                        <i class="fas fa-copy"></i> COPIAR
+                <div class="neural-message-actions absolute -bottom-3 right-4 flex gap-1.5 z-10">
+                    <button onclick="copyMessage(${idx})" class="neural-action-mini" title="Copiar respuesta">
+                        <i class="fas fa-copy"></i> <span class="desktop-only">Copiar</span>
                     </button>
-                    <button onclick="sendToJulesByIndex(${idx})" class="text-[9px] font-bold text-[#6272a4] hover:text-[#50fa7b] flex items-center gap-1 bg-[#1e1f29] px-2 py-0.5 rounded border border-[#44475a]">
-                        <i class="fas fa-arrow-right"></i> → ENVIAR A JULES
+                    <button onclick="sendToJulesByIndex(${idx})" class="neural-action-mini" title="Enviar a Jules">
+                        <i class="fas fa-bolt"></i> <span class="desktop-only">→ Jules</span>
                     </button>
                 </div>
                 ` : ''}

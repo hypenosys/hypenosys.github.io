@@ -111,14 +111,42 @@
     .message-bubble:hover .message-actions {
         opacity: 1;
     }
-    .message-actions {
-        position: absolute;
-        bottom: -25px;
-        right: 0;
+    .neural-message-actions {
         opacity: 0;
-        transition: opacity 0.2s;
+        transition: opacity 0.15s ease, transform 0.15s ease;
+        transform: translateY(5px);
+    }
+    .message-bubble:hover .neural-message-actions {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    .neural-action-mini {
+        height: 24px;
+        padding: 0 10px;
+        border-radius: 999px;
+        font-size: 10px;
+        font-weight: 700;
+        background: #1e1f29;
+        border: 1px solid #44475a;
+        color: #6272a4;
+        cursor: pointer;
         display: flex;
-        gap: 8px;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    .neural-action-mini:hover {
+        border-color: #bd93f9;
+        color: #bd93f9;
+        background: #282a36;
+        transform: translateY(-1px);
+    }
+    @media (hover: none) {
+        .neural-message-actions {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     .sidebar-section-label {
@@ -456,6 +484,7 @@
         flex-shrink: 0;
     }
     .status-dot.active { background-color: #50fa7b; box-shadow: 0 0 6px #50fa7b; }
+    .status-dot.linked { background-color: #bd93f9; box-shadow: 0 0 6px #bd93f9; }
     .status-dot.completed { background-color: #6272a4; }
     .status-dot.error { background-color: #ff5555; box-shadow: 0 0 6px #ff5555; }
 
