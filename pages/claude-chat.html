@@ -233,12 +233,26 @@ permalink: /chat/neural/
 
                 <div id="chat-input-container" class="bg-[#1e1f29] border border-[#44475a] rounded-2xl p-3 flex flex-col gap-2 focus-within:border-[#bd93f9]/50 focus-within:shadow-[0_0_20px_rgba(189,147,249,0.1)] transition-all duration-500">
                     <div class="flex items-center gap-3">
-                        <div class="dual-send-switch">
-                            <div class="dual-send-option active" data-mode="claude" onclick="setSendMode('claude')">
-                                <i class="fas fa-brain"></i> CLAUDE
-                            </div>
-                            <div class="dual-send-option" data-mode="jules" onclick="setSendMode('jules')">
-                                <i class="fas fa-bolt"></i> JULES
+                        <div class="relative">
+                            <button id="mode-selector-btn" class="flex items-center gap-2 bg-[#44475a]/30 hover:bg-[#44475a]/50 border border-[#bd93f9]/30 px-3 py-1.5 rounded-lg transition-all" onclick="window.toggleModeDropdown()">
+                                <span id="current-mode-label" class="text-[10px] font-black tracking-widest uppercase text-[#bd93f9]">CLAUDE</span>
+                                <i class="fas fa-chevron-up text-[8px] text-[#bd93f9]/50"></i>
+                            </button>
+                            <div id="mode-dropdown" class="hidden absolute bottom-full left-0 mb-2 w-48 bg-[#1e1f29] border border-[#44475a] rounded-xl shadow-2xl z-50 overflow-hidden">
+                                <button onclick="setSendMode('claude'); window.toggleModeDropdown()" class="w-full text-left p-3 hover:bg-[#44475a] transition-all flex items-center gap-3">
+                                    <i class="fas fa-brain text-[#bd93f9]"></i>
+                                    <div>
+                                        <div class="text-[10px] font-bold text-white uppercase">Claude</div>
+                                        <div class="text-[8px] text-[#6272a4]">Análisis técnico y chat</div>
+                                    </div>
+                                </button>
+                                <button onclick="setSendMode('jules'); window.toggleModeDropdown()" class="w-full text-left p-3 hover:bg-[#44475a] transition-all flex items-center gap-3 border-t border-[#44475a]/30">
+                                    <i class="fas fa-bolt text-[#8be9fd]"></i>
+                                    <div>
+                                        <div class="text-[10px] font-bold text-white uppercase">Jules</div>
+                                        <div class="text-[8px] text-[#6272a4]">Orden directa de ejecución</div>
+                                    </div>
+                                </button>
                             </div>
                         </div>
                         <textarea id="chat-input" rows="1" placeholder="¿En qué puedo ayudarte hoy?"
@@ -368,6 +382,7 @@ permalink: /chat/neural/
 <script src="{{ '/assets/javascript/ollama-discovery.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/ai-config.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/neural-chat-core.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/neural-provider-client.js' | relative_url }}"></script>
 
 <script src="{{ '/assets/javascript/neural-chat-catalogs.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/hypenosys-docs-client.js' | relative_url }}"></script>
@@ -557,8 +572,8 @@ permalink: /chat/neural/
         const docsBadge = document.getElementById('docs-status-badge');
         if (docsBadge) {
             docsBadge.classList.remove('hidden');
-            if (window.DocsBridge && window.DocsBridge.updateDocsStatusBadge) {
-                window.DocsBridge.updateDocsStatusBadge();
+            if (window.JulesDocsBridge && window.JulesDocsBridge.updateDocsStatusBadge) {
+                window.JulesDocsBridge.updateDocsStatusBadge();
             }
         }
 
@@ -579,6 +594,8 @@ permalink: /chat/neural/
         let arrancadoGlobal = false;
         let arrancadoConUsuario = false;
 
+        window.HYPENOSYS_NEURAL_DEBUG = true;
+
         async function iniciar(user) {
             // Si ya hemos arrancado con un usuario real, ignoramos llamadas posteriores
             if (arrancadoConUsuario) return;
@@ -587,10 +604,17 @@ permalink: /chat/neural/
                 arrancadoConUsuario = true;
             }
 
+            if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] init started");
+
             // Initialize DOM references here, after DOM is ready
             window.chatMessages = document.getElementById('chat-messages');
             window.chatInput = document.getElementById('chat-input');
             window.sendBtn = document.getElementById('send-btn');
+
+            if (window.HYPENOSYS_NEURAL_DEBUG) {
+                console.log("[Claude Neural] send button found:", !!window.sendBtn);
+                console.log("[Claude Neural] input found:", !!window.chatInput);
+            }
             window.thinkingIndicator = document.getElementById('thinking-indicator');
             window.toggleThinkingBtn = document.getElementById('toggle-thinking');
 
@@ -627,6 +651,7 @@ permalink: /chat/neural/
 
                     // Area 10: Sync event listeners - Solo una vez para evitar duplicados
                     if (!arrancadoGlobal) {
+                        if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] send handler attached");
                         window.sendBtn.onclick = sendMessage;
                         window.chatInput.onkeydown = (e) => {
                             if (e.key === 'Enter' && !e.shiftKey) {

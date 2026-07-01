@@ -510,6 +510,20 @@
         letter-spacing: 0.1em;
         transition: color 0.2s;
     }
+
+    #mode-dropdown {
+        animation: dropdown-pop 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    @keyframes dropdown-pop {
+        from { opacity: 0; transform: translateY(10px) scale(0.95); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .mode-jules #mode-selector-btn {
+        border-color: #8be9fd/50;
+    }
+    .mode-jules #current-mode-label {
+        color: #8be9fd;
+    }
     .sidebar-footer-link:hover {
         color: #bd93f9;
     }

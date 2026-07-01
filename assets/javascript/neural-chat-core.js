@@ -37,6 +37,24 @@ window.NeuralChatCore = (function() {
         return sessions.filter(s => s.id !== id);
     }
 
+    function renameSession(sessions, id, newTitle) {
+        return sessions.map(s => {
+            if (s.id === id) {
+                return { ...s, title: newTitle, updatedAt: new Date().toISOString() };
+            }
+            return s;
+        });
+    }
+
+    function archiveSession(sessions, id, isArchived = true) {
+        return sessions.map(s => {
+            if (s.id === id) {
+                return { ...s, archived: isArchived, updatedAt: new Date().toISOString() };
+            }
+            return s;
+        });
+    }
+
     function escapeHtml(str) {
         return String(str ?? '')
             .replace(/&/g, '&amp;')
@@ -56,7 +74,7 @@ window.NeuralChatCore = (function() {
         saveCallback,
         skipUserMessagePush = false
     }) {
-        console.log("[Neural Chat Core] Sending message...");
+        if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Neural Chat Core] Sending message...");
 
         if (!skipUserMessagePush) {
             // Add user message to session
@@ -96,21 +114,32 @@ window.NeuralChatCore = (function() {
                 localStorage.setItem('hy_neural_session_id', session.metadata.linkedJulesTaskId);
             }
 
+            if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Neural Chat Core] Provider Client status:", !!window.NeuralProviderClient);
+
+            if (!window.NeuralProviderClient) {
+                throw new Error("NeuralProviderClient no encontrado. Verifica la carga de scripts.");
+            }
+
             await window.NeuralProviderClient.sendMessage({
                 messages: apiMessages,
                 systemPrompt: systemPrompt || session.systemPrompt,
                 onToken: (token, fullContent) => {
-                    session.messages[assistantIdx].content = fullContent;
+                    if (session.messages[assistantIdx]) {
+                        session.messages[assistantIdx].content = fullContent;
+                    }
                     if (onToken) onToken(token, fullContent);
                 },
                 onDone: (fullContent) => {
-                    session.messages[assistantIdx].content = fullContent;
+                    if (session.messages[assistantIdx]) {
+                        session.messages[assistantIdx].content = fullContent;
+                    }
                     if (saveCallback) saveCallback();
                     if (onDone) onDone(fullContent);
                 },
                 onError: (err) => {
+                    if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Neural Chat Core] provider error:", err.message);
                     // Remove empty placeholder
-                    if (!session.messages[assistantIdx].content) {
+                    if (session.messages[assistantIdx] && !session.messages[assistantIdx].content) {
                         session.messages.splice(assistantIdx, 1);
                     }
                     if (onError) onError(err);
@@ -129,6 +158,8 @@ window.NeuralChatCore = (function() {
         saveSessions,
         createSession,
         deleteSession,
+        renameSession,
+        archiveSession,
         sendMessage,
         escapeHtml
     };

@@ -42,7 +42,7 @@ window.appendSystemMessage = function(msg, type = 'error') {
 }
 
 window.renderMessages = function() {
-    const currentSession = window.sessions.find(s => s.id === window.currentSessionId) || window.archivedSessions.find(s => s.id === window.currentSessionId);
+    const currentSession = window.sessions.find(s => s.id === window.currentSessionId);
     if (!currentSession) {
         window.chatMessages.innerHTML = '';
         return;
@@ -56,13 +56,33 @@ window.renderMessages = function() {
         document.getElementById('welcome-screen')?.classList.add('hidden');
     }
 
+    const githubUser = window.githubApi?.user;
+    const localProfile = JSON.parse(localStorage.getItem('hy_user_profile') || 'null');
+
     window.chatMessages.innerHTML = currentSession.messages.map((m, idx) => {
         let content = m.content;
         let reasoningHtml = '';
 
         const isUser = m.role === 'user';
         const isJules = m.source === 'jules' || m.role === 'agent' || m.role === 'jules';
-        const label = isUser ? 'USER' : (isJules ? 'JULES' : 'CLAUDE');
+
+        let label = isUser ? 'USUARIO' : (isJules ? 'JULES' : 'CLAUDE');
+        let iconHTML = isUser ? '<i class="fas fa-user"></i>' : (isJules ? '<i class="fas fa-bolt"></i>' : '<i class="fas fa-robot"></i>');
+
+        if (isUser) {
+            if (githubUser) {
+                label = githubUser.name || githubUser.login || 'USUARIO';
+                if (githubUser.avatar_url) {
+                    iconHTML = `<img src="${githubUser.avatar_url}" class="w-full h-full rounded-full object-cover">`;
+                }
+            } else if (localProfile) {
+                label = localProfile.name || localProfile.login || 'USUARIO';
+                if (localProfile.avatar_url) {
+                    iconHTML = `<img src="${localProfile.avatar_url}" class="w-full h-full rounded-full object-cover">`;
+                }
+            }
+        }
+
         const labelColor = isUser ? 'text-[#f8f8f2]' : (isJules ? 'text-[#6272a4]' : 'text-[#bd93f9]');
         const bubbleClass = isUser ? 'message-user' : (isJules ? 'message-claude border-[#44475a] border shadow-none bg-[#1a1b26]' : 'message-claude shadow-xl');
 
@@ -128,8 +148,13 @@ window.renderMessages = function() {
         return `
         <div class="flex ${isUser ? 'justify-end' : 'justify-start'} group mb-4">
             <div class="max-w-[85%] p-4 ${bubbleClass} relative message-bubble">
-                <div class="text-[10px] font-black tracking-widest uppercase mb-2 ${labelColor} opacity-70">
-                    ${label}
+                <div class="flex items-center gap-2 mb-2">
+                    <div class="w-5 h-5 rounded-full bg-[#44475a] flex items-center justify-center text-[10px] overflow-hidden border border-[#bd93f9]/20">
+                        ${iconHTML}
+                    </div>
+                    <div class="text-[10px] font-black tracking-widest uppercase ${labelColor} opacity-70">
+                        ${label}
+                    </div>
                 </div>
                 ${safetyBadge}
                 ${m.thinking ? `<div class="thinking-block">${escapeHtml(m.thinking)}</div>` : ''}
@@ -342,76 +367,26 @@ window.buildSystemPrompt = async function(userMessage, basePrompt) {
 
     // Hybrid Docs Search Integration with Timeout
     const docsEnabled = localStorage.getItem('hypenosys_docs_context_enabled') !== 'false';
-    if (window.HYPENOSYS_DOCS_DEBUG) console.log("[NeuralSend] docs enabled: " + docsEnabled);
 
-    if (docsEnabled && window.DocsBridge) {
+    if (docsEnabled && window.JulesDocsBridge) {
         try {
-            if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge] getDocContext started");
-
-            // Non-blocking timeout promise
             const timeoutPromise = new Promise((_, reject) =>
-                setTimeout(() => reject(new Error('DocsBridge timeout')), 3500)
+                setTimeout(() => reject(new Error('timeout')), 3500)
             );
 
-            // Wrap documentation logic in a racing promise to never block the chat
-            const docsLogic = async () => {
-                const results = await window.DocsIndex.search(userMessage, 5);
-                if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge] results count: " + (results?.length || 0));
-
-                if (results && results.length > 0) {
-                    const docsContext = await window.DocsBridge.getContextForQuery(userMessage, { limit: 5 });
-                    if (docsContext) {
-                        const guardrail = "\n\nUsa únicamente el CONTEXTO DOCUMENTAL DE HYPENOSYS para responder sobre la documentación.\nNo inventes carpetas, tecnologías, herramientas, estructura del repositorio ni contenido no presente en las fuentes.\nSi el contexto no contiene la respuesta, dilo explícitamente.\n\n";
-
-                        if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge] context chars: " + docsContext.length);
-                        if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge] injected: true");
-
-                        // Store metadata for the last search to show in the UI
-                        window._lastDocsMetadata = await window.DocsBridge.getSourceMetadata(results);
-                        return "\n\n" + docsContext + guardrail;
-                    }
-                } else {
-                    // If asking about organization/structure and no documents found, provide real directory info if available
-                    const isAskingStructure = /organiza|estructura|carpetas|folders|donde esta|dónde está/i.test(userMessage);
-
-                    if (isAskingStructure) {
-                        const allDocs = await window.DocsIndex.getAllDocs();
-                        if (allDocs && allDocs.length > 0) {
-                            const directories = new Set();
-                            allDocs.forEach(d => {
-                                const parts = d.path.split('/');
-                                if (parts.length > 1) directories.add(parts[0]);
-                            });
-
-                            if (directories.size > 0) {
-                                const dirList = Array.from(directories).sort().join('\n- ');
-                                if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge] injected structure fallback: true");
-                                return "\n\nCONTEXTO DE ESTRUCTURA REAL (hypenosys/docs):\nEl repositorio está organizado en las siguientes carpetas principales:\n- " + dirList + "\n\nInstrucción: Usa esta lista real para responder sobre la organización. No inventes otras carpetas.\n";
-                            }
-                        }
-                    }
-
-                    const fallbackGuardrail = "\n\nNo hay contexto documental suficiente disponible para responder con certeza sobre la documentación de Hypenosys.\nNo inventes información sobre la estructura del repositorio ni carpetas que no conozcas.\nSi te preguntan por la estructura y no tienes fragmentos que la describan, indica que no tienes acceso a esa información ahora mismo.\n";
-                    if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge] injected fallback guardrail: true");
-                    return fallbackGuardrail;
-                }
-                return "";
-            };
-
             const docsPromptFragment = await Promise.race([
-                docsLogic(),
+                window.JulesDocsBridge.getDocContext(userMessage),
                 timeoutPromise
             ]);
 
             systemPrompt += docsPromptFragment;
 
         } catch (e) {
-            console.warn("[DocsBridge] Failed, continuing without docs", e);
-            if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge] error: " + e.message);
+            console.warn("[DocsBridge] failed; continuing without docs", e);
+            if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[DocsBridge] failed; continuing without docs");
         }
     }
 
-    if (window.HYPENOSYS_DOCS_DEBUG) console.log("[NeuralSend] sending to provider");
     return systemPrompt;
 }
 
