@@ -91,6 +91,31 @@ window.renderMessages = function() {
             safetyBadge = `<div class="mb-2 px-2 py-1 rounded bg-red-500/20 border border-red-500/50 text-red-400 text-[9px] font-bold uppercase tracking-widest">⚠️ SAFETY ALERT: FLAG DETECTED</div>`;
         }
 
+        // Handle Consulted Sources (Docs Bridge)
+        let docsSourcesHtml = '';
+        if (m.role === 'assistant' && m.sources && m.sources.length > 0) {
+            docsSourcesHtml = `
+                <div class="mt-4 border-t border-[#44475a]/30 pt-3">
+                    <details class="docs-sources-details">
+                        <summary class="text-[10px] font-bold text-[#6272a4] cursor-pointer hover:text-[#bd93f9] transition-all flex items-center gap-2 uppercase tracking-widest">
+                            <i class="fas fa-book-open"></i> Docs Context · ${m.sources.length} fuentes
+                        </summary>
+                        <div class="mt-2 space-y-2">
+                            ${m.sources.map(s => `
+                                <a href="${s.url}" target="_blank" class="block p-2 bg-[#1e1f29] rounded border border-[#44475a]/50 hover:border-[#bd93f9]/50 transition-all group/source">
+                                    <div class="flex justify-between items-start mb-1">
+                                        <span class="text-[10px] font-bold text-indigo-400 truncate">${s.title}</span>
+                                        <i class="fas fa-external-link-alt text-[8px] text-[#6272a4] group-hover/source:text-[#bd93f9]"></i>
+                                    </div>
+                                    <div class="text-[8px] text-[#6272a4] font-mono truncate">${s.path}</div>
+                                </a>
+                            `).join('')}
+                        </div>
+                    </details>
+                </div>
+            `;
+        }
+
         return `
         <div class="flex ${isUser ? 'justify-end' : 'justify-start'} group mb-4">
             <div class="max-w-[85%] p-4 ${bubbleClass} relative message-bubble">
@@ -103,6 +128,8 @@ window.renderMessages = function() {
                 <div class="prose prose-invert text-sm prose-pre:bg-[#1e1f29] prose-pre:border prose-pre:border-[#44475a] selection:bg-[#bd93f9]/30">
                     ${content ? marked.parse(content) : ''}
                 </div>
+
+                ${docsSourcesHtml}
 
                 ${!isUser ? `
                 <div class="message-actions opacity-0 group-hover:opacity-100 transition-opacity absolute -bottom-6 left-0 flex gap-2">
@@ -267,6 +294,8 @@ window.logDebug = function(msg, type = 'info') {
 }
 
 window.buildSystemPrompt = async function(userMessage, basePrompt) {
+    if (window.HYPENOSYS_DOCS_DEBUG) console.log("[NeuralSend] send started");
+
     const docKeywords = ['documentación', 'docs', 'readme', 'manual', 'cómo funciona', 'qué es', 'explica', 'describe'];
     const needsDocs = docKeywords.some(k => userMessage.toLowerCase().includes(k));
 
@@ -302,10 +331,78 @@ window.buildSystemPrompt = async function(userMessage, basePrompt) {
         }
     }
 
-    if (needsDocs) {
-        const docsSnap = await window.docsContext.buildContextSnapshot(8);
-        systemPrompt += `\n\n${docsSnap}`;
+    // Hybrid Docs Search Integration with Timeout
+    const docsEnabled = localStorage.getItem('hypenosys_docs_context_enabled') !== 'false';
+    if (window.HYPENOSYS_DOCS_DEBUG) console.log("[NeuralSend] docs enabled: " + docsEnabled);
+
+    if (docsEnabled && window.DocsBridge) {
+        try {
+            if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge] getDocContext started");
+
+            // Non-blocking timeout promise
+            const timeoutPromise = new Promise((_, reject) =>
+                setTimeout(() => reject(new Error('DocsBridge timeout')), 3500)
+            );
+
+            // Wrap documentation logic in a racing promise to never block the chat
+            const docsLogic = async () => {
+                const results = await window.DocsIndex.search(userMessage, 5);
+                if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge] results count: " + (results?.length || 0));
+
+                if (results && results.length > 0) {
+                    const docsContext = await window.DocsBridge.getContextForQuery(userMessage, { limit: 5 });
+                    if (docsContext) {
+                        const guardrail = "\n\nUsa únicamente el CONTEXTO DOCUMENTAL DE HYPENOSYS para responder sobre la documentación.\nNo inventes carpetas, tecnologías, herramientas, estructura del repositorio ni contenido no presente en las fuentes.\nSi el contexto no contiene la respuesta, dilo explícitamente.\n\n";
+
+                        if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge] context chars: " + docsContext.length);
+                        if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge] injected: true");
+
+                        // Store metadata for the last search to show in the UI
+                        window._lastDocsMetadata = await window.DocsBridge.getSourceMetadata(results);
+                        return "\n\n" + docsContext + guardrail;
+                    }
+                } else {
+                    // If asking about organization/structure and no documents found, provide real directory info if available
+                    const isAskingStructure = /organiza|estructura|carpetas|folders|donde esta|dónde está/i.test(userMessage);
+
+                    if (isAskingStructure) {
+                        const allDocs = await window.DocsIndex.getAllDocs();
+                        if (allDocs && allDocs.length > 0) {
+                            const directories = new Set();
+                            allDocs.forEach(d => {
+                                const parts = d.path.split('/');
+                                if (parts.length > 1) directories.add(parts[0]);
+                            });
+
+                            if (directories.size > 0) {
+                                const dirList = Array.from(directories).sort().join('\n- ');
+                                if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge] injected structure fallback: true");
+                                return "\n\nCONTEXTO DE ESTRUCTURA REAL (hypenosys/docs):\nEl repositorio está organizado en las siguientes carpetas principales:\n- " + dirList + "\n\nInstrucción: Usa esta lista real para responder sobre la organización. No inventes otras carpetas.\n";
+                            }
+                        }
+                    }
+
+                    const fallbackGuardrail = "\n\nNo hay contexto documental suficiente disponible para responder con certeza sobre la documentación de Hypenosys.\nNo inventes información sobre la estructura del repositorio ni carpetas que no conozcas.\nSi te preguntan por la estructura y no tienes fragmentos que la describan, indica que no tienes acceso a esa información ahora mismo.\n";
+                    if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge] injected fallback guardrail: true");
+                    return fallbackGuardrail;
+                }
+                return "";
+            };
+
+            const docsPromptFragment = await Promise.race([
+                docsLogic(),
+                timeoutPromise
+            ]);
+
+            systemPrompt += docsPromptFragment;
+
+        } catch (e) {
+            console.warn("[DocsBridge] Failed, continuing without docs", e);
+            if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge] error: " + e.message);
+        }
     }
+
+    if (window.HYPENOSYS_DOCS_DEBUG) console.log("[NeuralSend] sending to provider");
     return systemPrompt;
 }
 
