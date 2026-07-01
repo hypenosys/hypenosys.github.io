@@ -94,22 +94,31 @@ window.renderMessages = function() {
         // Handle Consulted Sources (Docs Bridge)
         let docsSourcesHtml = '';
         if (m.role === 'assistant' && m.sources && m.sources.length > 0) {
+            const readStatusCount = m.sources.filter(s => s.readStatus === 'completo' || s.readStatus === 'truncado').length;
+            const contextLabel = readStatusCount > 0 ? `Docs Context · ${readStatusCount} documentos leídos` : `Docs Context · ${m.sources.length} fragmentos`;
+
             docsSourcesHtml = `
                 <div class="mt-4 border-t border-[#44475a]/30 pt-3">
                     <details class="docs-sources-details">
                         <summary class="text-[10px] font-bold text-[#6272a4] cursor-pointer hover:text-[#bd93f9] transition-all flex items-center gap-2 uppercase tracking-widest">
-                            <i class="fas fa-book-open"></i> Docs Context · ${m.sources.length} fuentes
+                            <i class="fas fa-book-open"></i> ${contextLabel}
                         </summary>
                         <div class="mt-2 space-y-2">
-                            ${m.sources.map(s => `
+                            ${m.sources.map(s => {
+                                const statusColor = s.readStatus === 'completo' ? 'text-[#50fa7b]' : (s.readStatus === 'truncado' ? 'text-[#ffb86c]' : 'text-indigo-400');
+                                return `
                                 <a href="${s.url}" target="_blank" class="block p-2 bg-[#1e1f29] rounded border border-[#44475a]/50 hover:border-[#bd93f9]/50 transition-all group/source">
                                     <div class="flex justify-between items-start mb-1">
-                                        <span class="text-[10px] font-bold text-indigo-400 truncate">${s.title}</span>
+                                        <span class="text-[10px] font-bold ${statusColor} truncate">${s.title}</span>
                                         <i class="fas fa-external-link-alt text-[8px] text-[#6272a4] group-hover/source:text-[#bd93f9]"></i>
                                     </div>
-                                    <div class="text-[8px] text-[#6272a4] font-mono truncate">${s.path}</div>
+                                    <div class="flex justify-between items-center">
+                                        <div class="text-[8px] text-[#6272a4] font-mono truncate">${s.path}</div>
+                                        <div class="text-[7px] font-bold uppercase ${statusColor} opacity-70">${s.readStatus || 'fragmento'}</div>
+                                    </div>
                                 </a>
-                            `).join('')}
+                                `;
+                            }).join('')}
                         </div>
                     </details>
                 </div>

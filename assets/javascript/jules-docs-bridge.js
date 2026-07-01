@@ -7,6 +7,27 @@ window.DocsBridge = (function() {
     // Debug Flag
     window.HYPENOSYS_DOCS_DEBUG = localStorage.getItem('hypenosys_docs_debug') === 'true';
 
+    // Folder Aliases for fuzzy resolution
+    const DOCS_FOLDER_ALIASES = {
+        'inicio': '00-Inicio',
+        'worldbuilding': '01-Worldbuilding',
+        'lore': '01-Worldbuilding',
+        'diseño': '02-Diseño-de-juego',
+        'gdd': '02-Diseño-de-juego',
+        'arte': '03-Arte',
+        'dev': '04-Dev',
+        'audio': '05-Audio',
+        'produccion': '06-Produccion',
+        'producción': '06-Produccion',
+        'assets': '07-Assets-y-Recursos',
+        'recursos': '07-Assets-y-Recursos',
+        'archivo': '08-Archivo',
+        'repositorios': '09-Repositorios',
+        'repositorio': '09-Repositorios',
+        'repos': '09-Repositorios',
+        'repo': '09-Repositorios'
+    };
+
     // Docs Context Toggle State
     window.isDocsEnabled = localStorage.getItem('hypenosys_docs_context_enabled') !== 'false';
 
@@ -114,8 +135,77 @@ window.DocsBridge = (function() {
             title: doc.title,
             path: doc.path,
             tags: doc.tags || [],
-            url: `/documentacion/#${doc.path}`
+            url: `/documentacion/#${doc.path}`,
+            readStatus: doc.readStatus || 'fragmento'
         }));
+    }
+
+    /**
+     * Resolve a folder path from a query
+     */
+    function resolveFolder(query) {
+        const lowerQuery = query.toLowerCase();
+
+        // 1. Check direct aliases
+        for (const [alias, folder] of Object.entries(DOCS_FOLDER_ALIASES)) {
+            if (lowerQuery.includes(alias)) return folder;
+        }
+
+        // 2. Fallback: partial match against folder numbers/names if known
+        // (Simplified for now, using the aliases as primary source)
+        return null;
+    }
+
+    /**
+     * Get full context of a folder by reading all documents
+     */
+    async function getFolderContext(folderName, options = {}) {
+        const maxDocs = options.maxDocs || 8;
+        const maxCharsPerDoc = options.maxCharsPerDoc || 6000;
+        const totalLimit = options.totalLimit || 12000;
+
+        try {
+            const allDocs = await window.DocsIndex.getAllDocs();
+            const folderDocs = allDocs.filter(d => d.path.startsWith(folderName + '/'));
+
+            if (folderDocs.length === 0) return null;
+
+            let context = `CONTEXTO DOCUMENTAL DE HYPENOSYS — LECTURA DE CARPETA\n\n`;
+            context += `Carpeta resuelta: ${folderName}\n`;
+            context += `Se han leído los siguientes documentos para generar el resumen:\n\n`;
+
+            let totalChars = 0;
+            const consulted = [];
+
+            for (const doc of folderDocs.slice(0, maxDocs)) {
+                if (totalChars > totalLimit) break;
+
+                let content = doc.content || '';
+                let status = 'completo';
+
+                if (content.length > maxCharsPerDoc) {
+                    content = content.substring(0, maxCharsPerDoc) + "\n... [Documento truncado por límite de longitud]";
+                    status = 'truncado';
+                }
+
+                const entry = `Documento: ${doc.path}\nContenido:\n${content}\n\n---\n\n`;
+
+                if (totalChars + entry.length > totalLimit) {
+                    context += `Documento: ${doc.path}\n[Omitido por límite total de contexto]\n\n`;
+                    continue;
+                }
+
+                context += entry;
+                totalChars += entry.length;
+                consulted.push({ ...doc, readStatus: status });
+            }
+
+            window._lastDocsMetadata = await getSourceMetadata(consulted);
+            return context;
+        } catch (e) {
+            console.error('[DocsBridge] Error reading folder:', e);
+            return null;
+        }
     }
 
     /**
@@ -160,6 +250,26 @@ window.DocsBridge = (function() {
                 );
 
                 const docsLogic = async () => {
+                    // 1. Detect Intent: Folder Summary or specific document read
+                    const isSummaryRequest = /resumen|qué hay|que hay|contenido|explica|léeme|leeme|lista|archivos/i.test(userMessage);
+                    const targetFolder = resolveFolder(userMessage);
+
+                    if (isSummaryRequest && targetFolder) {
+                        if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge] Folder summary intent detected for: " + targetFolder);
+                        const folderContext = await getFolderContext(targetFolder, {
+                            maxDocs: 8,
+                            maxCharsPerDoc: 6000,
+                            totalLimit: 12000
+                        });
+
+                        if (folderContext) {
+                            const summaryGuardrail = "\n\nResume el contenido de los documentos anteriores de forma exhaustiva.\nNo digas 'según los fragmentos proporcionados', ya que tienes acceso al contenido real.\nSi algún documento está truncado, menciónalo solo si impacta significativamente en el resumen.\nNo inventes carpetas ni herramientas no mencionadas.\n\n";
+                            if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge] Injected folder context: " + targetFolder);
+                            return "\n\n" + folderContext + summaryGuardrail;
+                        }
+                    }
+
+                    // 2. Normal Search Mode (Snippets)
                     const results = await window.DocsIndex.search(userMessage, 5);
                     if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge] results count: " + (results?.length || 0));
 
