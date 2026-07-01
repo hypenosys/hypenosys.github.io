@@ -550,13 +550,14 @@ permalink: /chat/neural/
         setupProfileSelector();
         setupApiModalEnhancements();
 
-        // Start docs polling
+        // Initialize Docs Toggle
         const docsBadge = document.getElementById('docs-status-badge');
-        if (docsBadge) docsBadge.classList.remove('hidden');
-        window.docsContext.startPolling(() => {
-            if (window.authManager) window.authManager.showToast('Docs Actualizados', 'Se han detectado cambios en el repositorio de documentación.', 'info');
-            else showToast('Documentación actualizada');
-        });
+        if (docsBadge) {
+            docsBadge.classList.remove('hidden');
+            if (window.DocsBridge && window.DocsBridge.updateDocsStatusBadge) {
+                window.DocsBridge.updateDocsStatusBadge();
+            }
+        }
 
         // FEATURE 2: Listen for Jules Output
         window.addEventListener('storage', (e) => {
