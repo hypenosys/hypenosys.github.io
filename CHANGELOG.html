@@ -67,6 +67,14 @@ permalink: /CHANGELOG.html
             <ul>
                 <li><strong>Jules Panel Header:</strong> Eliminado el bloque defectuoso (breadcrumb blanco) en el header superior para una estética oscura limpia.</li>
             </ul>
+            <h5 class="text-purple">Added</h5>
+            <ul>
+                <li><strong>Unificación de Sesiones Neurales:</strong> Implementada la sincronización bidireccional de conversaciones entre el Jules Panel y Neural Chat (Standalone) usando <code>claude_chat_sessions</code> como fuente de verdad única.</li>
+                <li><strong>Vinculación Persistente Jules-Claude:</strong> Introducido el sistema de enlace entre hilos de Claude y tareas técnicas de Jules mediante metadatos (<code>linkedJulesTaskId</code>), permitiendo un flujo de trabajo fluido entre análisis y ejecución.</li>
+                <li><strong>Selector de Contexto Inteligente:</strong> El envío de mensajes hacia Jules ahora detecta automáticamente la falta de conversación activa o tarea vinculada, abriendo selectores integrados sin perder el mensaje del usuario.</li>
+                <li><strong>UI de Estado de Vínculo:</strong> Nueva barra de estado en el chat de Jules Panel que muestra la vinculación actual y ofrece acciones rápidas para cambiar de tarea o desvincular el contexto técnico.</li>
+                <li><strong>Migración Defensiva de Datos:</strong> Implementado motor de migración que fusiona sesiones antiguas del panel con el almacenamiento unificado de Claude sin pérdida de mensajes ni duplicados.</li>
+            </ul>
             <h5 class="text-success">Added</h5>
             <ul>
                 <li><strong>Contexto Dinámico en Sidebar (Jules Panel):</strong> Implementado un label dinámico en el sidebar que muestra el repositorio activo (o su alias) basándose en la sesión neural cargada o la selección manual.</li>

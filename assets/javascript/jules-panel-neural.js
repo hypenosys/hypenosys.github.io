@@ -2,8 +2,8 @@
    JULES PANEL NEURAL & CHAT MODULE
    ════════════════════════════════════════ */
 
-window.JULES_PANEL_NEURAL_STORAGE = 'hy_jules_panel_neural_sessions';
-window.JULES_PANEL_NEURAL_ACTIVE_ID = 'hy_jules_panel_neural_active_id';
+window.JULES_PANEL_NEURAL_STORAGE = 'claude_chat_sessions';
+window.JULES_PANEL_NEURAL_ACTIVE_ID = 'hy_active_claude_session_id';
 
 window.julesPanelSessions = [];
 window.currentJulesPanelSessionId = null;
@@ -46,6 +46,75 @@ window.loadJulesPanelSessions = function() {
 }
 
 /**
+ * Migración defensiva de sesiones del panel a la key unificada de Claude.
+ */
+function migrateJulesPanelSessions() {
+    const OLD_KEY = 'hy_jules_panel_neural_sessions';
+    const NEW_KEY = 'claude_chat_sessions';
+    const OLD_ACTIVE_ID = 'hy_jules_panel_neural_active_id';
+    const NEW_ACTIVE_ID = 'hy_active_claude_session_id';
+
+    const oldData = localStorage.getItem(OLD_KEY);
+    if (!oldData || localStorage.getItem(OLD_KEY + '_migrated') === 'true') return;
+
+    try {
+        const oldSessions = JSON.parse(oldData);
+        if (!Array.isArray(oldSessions) || oldSessions.length === 0) return;
+
+        console.log("[Migration] Migrating Jules Panel sessions to unified Claude storage...");
+
+        // Backup
+        localStorage.setItem('hy_bak_' + OLD_KEY, oldData);
+        const currentClaudeData = localStorage.getItem(NEW_KEY);
+        if (currentClaudeData) localStorage.setItem('hy_bak_' + NEW_KEY, currentClaudeData);
+
+        let claudeSessions = JSON.parse(currentClaudeData || '[]');
+        let migratedCount = 0;
+
+        oldSessions.forEach(oldSess => {
+            const existingIdx = claudeSessions.findIndex(s => s.id === oldSess.id);
+            if (existingIdx !== -1) {
+                // Fusionar mensajes
+                const existing = claudeSessions[existingIdx];
+                oldSess.messages.forEach(m => {
+                    const exists = existing.messages.some(em =>
+                        em.content === m.content && em.role === m.role && em.timestamp === m.timestamp
+                    );
+                    if (!exists) {
+                        existing.messages.push(m);
+                        existing.messages.sort((a,b) => (a.timestamp || 0) - (b.timestamp || 0));
+                    }
+                });
+                // Preservar metadata del panel
+                existing.metadata = existing.metadata || {};
+                if (oldSess.repoFullName) existing.metadata.repoFullName = oldSess.repoFullName;
+                if (oldSess.repoName) existing.metadata.repoName = oldSess.repoName;
+            } else {
+                // Nueva sesión, normalizar metadata
+                oldSess.metadata = oldSess.metadata || {};
+                if (oldSess.repoFullName) oldSess.metadata.repoFullName = oldSess.repoFullName;
+                if (oldSess.repoName) oldSess.metadata.repoName = oldSess.repoName;
+                claudeSessions.push(oldSess);
+                migratedCount++;
+            }
+        });
+
+        localStorage.setItem(NEW_KEY, JSON.stringify(claudeSessions));
+        localStorage.setItem(OLD_KEY + '_migrated', 'true');
+
+        // Sync active ID if needed
+        const oldActiveId = localStorage.getItem(OLD_ACTIVE_ID);
+        if (oldActiveId && !localStorage.getItem(NEW_ACTIVE_ID)) {
+            localStorage.setItem(NEW_ACTIVE_ID, oldActiveId);
+        }
+
+        console.log(`[Migration] Successfully migrated ${migratedCount} sessions.`);
+    } catch (e) {
+        console.error("[Migration] Error migrating sessions:", e);
+    }
+}
+
+/**
  * Initialize Neural Chat for Jules Panel
  */
 window.initJulesPanelNeuralChat = function() {
@@ -56,12 +125,13 @@ window.initJulesPanelNeuralChat = function() {
     }
     console.log("[Jules Panel Neural] Initializing...");
 
+    migrateJulesPanelSessions();
     setNeuralProcessingState(false);
     window.loadJulesPanelSessions();
 
-    if (window.julesPanelSessions.length === 0) {
+    if (window.julesPanelSessions.length === 0 && !window.location.search.includes('skip_auto_session')) {
         window.createNewJulesPanelSession();
-    } else if (!window.currentJulesPanelSessionId) {
+    } else if (!window.currentJulesPanelSessionId && !window.location.search.includes('skip_auto_session')) {
         window.loadJulesPanelSession(window.julesPanelSessions[0].id);
     } else {
         window.loadJulesPanelSession(window.currentJulesPanelSessionId);
@@ -149,14 +219,15 @@ function _syncJulesActivitiesToSession(activities) {
 window.createNewJulesPanelSession = function() {
     const newSession = window.NeuralChatCore.createSession({
         title: 'Nueva Conversación',
-        idPrefix: 'jp_sess_'
+        idPrefix: 'session_'
     });
 
     // Auto-associate with current repo
     const currentRepo = localStorage.getItem('hypenosys_active_repo');
+    newSession.metadata = newSession.metadata || {};
     if (currentRepo) {
-        newSession.repoFullName = currentRepo;
-        newSession.repoName = currentRepo.split('/').pop();
+        newSession.metadata.repoFullName = currentRepo;
+        newSession.metadata.repoName = currentRepo.split('/').pop();
     }
 
     window.julesPanelSessions.unshift(newSession);
@@ -203,17 +274,20 @@ window.sendChatV2Msg = async function() {
     // AI/Claude mode
     const session = window.julesPanelSessions.find(s => s.id === window.currentJulesPanelSessionId);
     if (!session) {
+        // En lugar de crear una nueva, pedimos seleccionar una o crearla.
+        // Pero para mantener compatibilidad simple por ahora, la creamos si no hay ninguna.
         window.createNewJulesPanelSession();
         setTimeout(() => window.sendChatV2Msg(), 100);
         return;
     }
 
     // Ensure repo association on first message if missing
-    if (!session.repoFullName) {
+    if (!session.metadata?.repoFullName) {
         const currentRepo = localStorage.getItem('hypenosys_active_repo');
         if (currentRepo) {
-            session.repoFullName = currentRepo;
-            session.repoName = currentRepo.split('/').pop();
+            session.metadata = session.metadata || {};
+            session.metadata.repoFullName = currentRepo;
+            session.metadata.repoName = currentRepo.split('/').pop();
             if (window.updateSidebarContextLabel) window.updateSidebarContextLabel();
         }
     }
@@ -277,9 +351,15 @@ window.renderNeuralChatHistory = function() {
             }
         }
 
-        return '<div class="chat-history-item' + (isActive ? ' active' : '') + '" onclick="window.loadJulesPanelSession(\'' + s.id + '\')">' +
+        const isLinked = s.metadata && s.metadata.linkedJulesTaskId;
+        const linkedTitle = isLinked ? (s.metadata.linkedJulesTaskTitle || s.metadata.linkedJulesTaskId) : '';
+
+        return '<div class="chat-history-item' + (isActive ? ' active' : '') + (isLinked ? ' linked' : '') + '" onclick="window.loadJulesPanelSession(\'' + s.id + '\')">' +
                  '<div class="chat-dot"></div>' +
-                 '<div class="chat-title" title="' + window.NeuralChatCore.escapeHtml(displayTitle) + '">' + window.NeuralChatCore.escapeHtml(displayTitle) + '</div>' +
+                 '<div class="chat-content-wrap">' +
+                    '<div class="chat-title" title="' + window.NeuralChatCore.escapeHtml(displayTitle) + '">' + window.NeuralChatCore.escapeHtml(displayTitle) + '</div>' +
+                    (isLinked ? '<div class="chat-link-meta"><i class="fas fa-link"></i> ' + window.NeuralChatCore.escapeHtml(linkedTitle) + '</div>' : '') +
+                 '</div>' +
                  '<button class="btn-delete-session" onclick="window.deleteJulesPanelSession(event, \'' + s.id + '\')" title="Borrar">' +
                    '<i class="fas fa-trash"></i>' +
                  '</button>' +
@@ -292,6 +372,31 @@ window.renderChatV2Messages = function() {
     if (!container) return;
 
     const session = window.julesPanelSessions.find(s => s.id === window.currentJulesPanelSessionId);
+
+    // Update Linking Status Bar
+    const statusLabel = $('chat-live-status');
+    const statusMonitor = $('chat-live-monitor');
+
+    if (!session) {
+        if (statusLabel) statusLabel.innerHTML = 'No hay conversación activa vinculada. <button onclick="window.openClaudeSessionSelector()" class="btn btn-ghost btn-xs" style="color:var(--accent2); text-decoration:underline; margin-left:10px">Elegir conversación</button>';
+        if (statusMonitor) statusMonitor.classList.remove('hidden');
+    } else {
+        const isLinked = session.metadata && session.metadata.linkedJulesTaskId;
+        const linkedTitle = isLinked ? (session.metadata.linkedJulesTaskTitle || session.metadata.linkedJulesTaskId) : 'Ninguna';
+
+        if (statusLabel) {
+            if (isLinked) {
+                statusLabel.innerHTML = `Conversación: <strong>${window.NeuralChatCore.escapeHtml(session.title)}</strong> · Jules: <strong>${window.NeuralChatCore.escapeHtml(linkedTitle)}</strong>
+                <button onclick="window.openJulesTaskSelector()" class="btn btn-ghost btn-xs" style="color:var(--accent2); margin-left:10px">Cambiar tarea</button>
+                <button onclick="window.unlinkClaudeFromJulesTask('${session.id}')" class="btn btn-ghost btn-xs" style="color:var(--red); margin-left:5px">Desvincular</button>`;
+            } else {
+                statusLabel.innerHTML = `Conversación: <strong>${window.NeuralChatCore.escapeHtml(session.title)}</strong> · Sin tarea Jules vinculada
+                <button onclick="window.openJulesTaskSelector()" class="btn btn-ghost btn-xs" style="color:var(--accent2); margin-left:10px">Vincular tarea Jules</button>`;
+            }
+        }
+        if (statusMonitor) statusMonitor.classList.remove('hidden');
+    }
+
     if (!session) return;
 
     const welcome = container.querySelector('#v2-welcome-screen');
@@ -512,7 +617,11 @@ window.sendNeuralMessage = async function() {
     if (!msg) return;
 
     const sid = getLinkedJulesSessionId();
-    if (!sid) { showToast("No hay sesión activa vinculada", "red"); return; }
+    if (!sid) {
+        // Intercept and open linkers
+        window.handleJulesSendInterception(msg);
+        return;
+    }
 
     const targetId = sid.startsWith('sessions/') ? sid : 'sessions/' + sid;
     input.value = '';
@@ -548,6 +657,130 @@ window.approvePlan = async function(sessionId) {
 }
 
 // Ensure error handling doesn't use template literals
+/**
+ * Intercepta el envío a Jules cuando falta contexto (Conversación o Tarea)
+ */
+window.handleJulesSendInterception = function(message) {
+    window.pendingJulesMessage = message;
+
+    // 1. Validar conversación Claude
+    if (!window.currentJulesPanelSessionId) {
+        window.openClaudeSessionSelector();
+        return;
+    }
+
+    // 2. Validar vínculo a tarea Jules
+    const sid = getLinkedJulesSessionId();
+    if (!sid) {
+        window.openJulesTaskSelector();
+        return;
+    }
+
+    // Si llegamos aquí por error, reintentar envío normal
+    window.sendNeuralMessage();
+}
+
+/**
+ * Abre un selector para elegir una conversación de Claude existente
+ */
+window.openClaudeSessionSelector = function() {
+    const sessions = window.NeuralChatCore.getSessions(window.JULES_PANEL_NEURAL_STORAGE);
+
+    let html = '<div style="margin-bottom:15px; font-size:13px; color:var(--text2)">Selecciona una conversación de Claude para activar en el panel:</div>';
+
+    if (sessions.length === 0) {
+        html += '<div style="padding:20px; text-align:center; border:1px dashed var(--border); border-radius:8px; font-size:12px;">No hay conversaciones disponibles.</div>';
+    } else {
+        html += '<div style="max-height:300px; overflow-y:auto; display:flex; flex-direction:column; gap:8px;">';
+        sessions.slice(0, 15).forEach(s => {
+            html += `<button onclick="window.selectClaudeFromSelector('${s.id}')" class="btn btn-ghost" style="width:100%; justify-content:flex-start; text-align:left; padding:10px; height:auto;">
+                <div style="font-weight:700; font-size:12px; margin-bottom:2px;">${window.NeuralChatCore.escapeHtml(s.title)}</div>
+                <div style="font-size:10px; color:var(--text3); font-family:var(--font-mono); opacity:0.7;">ID: ${s.id.slice(-8)} · ${new Date(s.createdAt).toLocaleDateString()}</div>
+            </button>`;
+        });
+        html += '</div>';
+    }
+
+    // Usar modal genérico si existe o crear uno rápido
+    const modalHtml = `
+        <div id="neural-selector-modal" class="modal-overlay open" style="z-index:9999">
+            <div class="modal-card glass" style="max-width:400px">
+                <div class="modal-head">
+                    <h3 class="modal-title">Conversación Claude</h3>
+                    <button class="icon-btn" onclick="document.getElementById('neural-selector-modal').remove()">✕</button>
+                </div>
+                <div class="modal-body">${html}</div>
+                <div class="modal-foot">
+                    <button class="btn btn-primary btn-sm" onclick="window.createNewJulesPanelSession(); document.getElementById('neural-selector-modal').remove(); setTimeout(()=>window.handleJulesSendInterception(window.pendingJulesMessage), 300);">+ Nueva Conversación</button>
+                    <button class="btn btn-ghost btn-sm" onclick="document.getElementById('neural-selector-modal').remove()">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+
+window.selectClaudeFromSelector = function(id) {
+    document.getElementById('neural-selector-modal').remove();
+    window.loadJulesPanelSession(id);
+    // Re-evaluar siguiente paso
+    setTimeout(() => window.handleJulesSendInterception(window.pendingJulesMessage), 100);
+}
+
+/**
+ * Abre un selector para elegir una tarea de Jules (Jules Session) real
+ */
+window.openJulesTaskSelector = function() {
+    const tasks = window.julesSessionsCache || [];
+
+    let html = '<div style="margin-bottom:15px; font-size:13px; color:var(--text2)">Selecciona la tarea de Jules a la que quieres enviar este mensaje:</div>';
+
+    if (tasks.length === 0) {
+        html += '<div style="padding:20px; text-align:center; border:1px dashed var(--border); border-radius:8px; font-size:12px;">No se encontraron tareas de Jules recientes.</div>';
+    } else {
+        html += '<div style="max-height:300px; overflow-y:auto; display:flex; flex-direction:column; gap:8px;">';
+        tasks.slice(0, 15).forEach(t => {
+            const sid = t.name.split('/').pop();
+            const title = t.title || t.prompt || 'Sin título';
+            html += `<button onclick="window.selectJulesTaskFromSelector('${sid}', '${window.NeuralChatCore.escapeHtml(title).replace(/'/g, "\\'")}')" class="btn btn-ghost" style="width:100%; justify-content:flex-start; text-align:left; padding:10px; height:auto;">
+                <div style="font-weight:700; font-size:12px; margin-bottom:2px;">${window.NeuralChatCore.escapeHtml(title)}</div>
+                <div style="font-size:10px; color:var(--text3); font-family:var(--font-mono); opacity:0.7;">#${sid} · ${t.state}</div>
+            </button>`;
+        });
+        html += '</div>';
+    }
+
+    const modalHtml = `
+        <div id="neural-selector-modal" class="modal-overlay open" style="z-index:9999">
+            <div class="modal-card glass" style="max-width:400px">
+                <div class="modal-head">
+                    <h3 class="modal-title">Vincular Tarea Jules</h3>
+                    <button class="icon-btn" onclick="document.getElementById('neural-selector-modal').remove()">✕</button>
+                </div>
+                <div class="modal-body">${html}</div>
+                <div class="modal-foot">
+                    <button class="btn btn-primary btn-sm" onclick="document.getElementById('neural-selector-modal').remove(); switchView('neural'); showToast('Crea la tarea antes de vincularla', 'info');">+ Nueva Tarea Jules</button>
+                    <button class="btn btn-ghost btn-sm" onclick="document.getElementById('neural-selector-modal').remove()">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+
+window.selectJulesTaskFromSelector = function(sid, title) {
+    document.getElementById('neural-selector-modal').remove();
+    window.linkClaudeToJulesTask(window.currentJulesPanelSessionId, sid, title);
+
+    // Todo listo, enviar mensaje final
+    if (window.pendingJulesMessage) {
+        const input = $('v2-chat-input');
+        if (input) input.value = window.pendingJulesMessage;
+        window.sendNeuralMessage();
+        window.pendingJulesMessage = null;
+    }
+}
+
 window.handleJulesApiError = function(e) {
     const msg = e.message || ("HTTP " + e.httpStatus);
     showToast("Error de API: " + msg, "red");
@@ -572,6 +805,63 @@ window.renameJulesPanelSession = function(event, id) {
             window.renderChatV2Messages();
         }
         showToast("Sesión renombrada", "green");
+    }
+}
+
+/**
+ * Vincula una conversación de Claude con una tarea de Jules
+ */
+window.linkClaudeToJulesTask = function(claudeId, julesTaskId, julesTaskTitle) {
+    if (!claudeId || !julesTaskId) return;
+
+    const sessions = window.NeuralChatCore.getSessions(window.JULES_PANEL_NEURAL_STORAGE);
+    const session = sessions.find(s => s.id === claudeId);
+
+    if (session) {
+        session.metadata = session.metadata || {};
+        session.metadata.linkedJulesTaskId = julesTaskId;
+        session.metadata.linkedJulesTaskTitle = julesTaskTitle || julesTaskId;
+        session.metadata.updatedAt = new Date().toISOString();
+
+        window.NeuralChatCore.saveSessions(window.JULES_PANEL_NEURAL_STORAGE, sessions);
+        window.loadJulesPanelSessions(); // Refresh local cache
+
+        // Legacy sync
+        localStorage.setItem('hy_neural_session_id_' + claudeId, julesTaskId);
+        if (claudeId === window.currentJulesPanelSessionId) {
+            localStorage.setItem('hy_neural_session_id', julesTaskId);
+            window.renderChatV2Messages();
+        }
+
+        showToast("Conversación vinculada a la tarea de Jules", "green");
+    }
+}
+
+/**
+ * Desvincula una conversación de Claude de su tarea de Jules
+ */
+window.unlinkClaudeFromJulesTask = function(claudeId) {
+    if (!claudeId) return;
+
+    const sessions = window.NeuralChatCore.getSessions(window.JULES_PANEL_NEURAL_STORAGE);
+    const session = sessions.find(s => s.id === claudeId);
+
+    if (session && session.metadata) {
+        delete session.metadata.linkedJulesTaskId;
+        delete session.metadata.linkedJulesTaskTitle;
+        session.metadata.updatedAt = new Date().toISOString();
+
+        window.NeuralChatCore.saveSessions(window.JULES_PANEL_NEURAL_STORAGE, sessions);
+        window.loadJulesPanelSessions();
+
+        // Legacy cleanup
+        localStorage.removeItem('hy_neural_session_id_' + claudeId);
+        if (claudeId === window.currentJulesPanelSessionId) {
+            localStorage.removeItem('hy_neural_session_id');
+            window.renderChatV2Messages();
+        }
+
+        showToast("Vínculo con Jules eliminado", "amber");
     }
 }
 
