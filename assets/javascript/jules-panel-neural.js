@@ -176,6 +176,15 @@ window.initJulesPanelNeuralChat = function() {
         }
     });
 
+    // Docs Integration Toggle
+    const docsBadge = document.getElementById('docs-status-badge');
+    if (docsBadge) {
+        docsBadge.classList.remove('hidden');
+        if (window.DocsBridge && window.DocsBridge.updateDocsStatusBadge) {
+            window.DocsBridge.updateDocsStatusBadge();
+        }
+    }
+
     window._julesPanelNeuralInitialized = true;
     console.log("[Jules Panel Neural] Jules Panel Neural initialized");
 }
@@ -299,9 +308,23 @@ window.sendChatV2Msg = async function() {
 
     console.log("[Jules Panel Neural] Message sent from Jules Panel Neural");
     try {
+        const dynamicSystemPrompt = await window.DocsBridge.buildSystemPrompt(msg, session.systemPrompt);
+
+        // Store sources for this turn
+        const currentSources = window._lastDocsMetadata || [];
+        window._lastDocsMetadata = null;
+
         await window.NeuralChatCore.sendMessage({
             session: session,
             userMessage: msg,
+            systemPrompt: dynamicSystemPrompt,
+            onToken: () => {
+                const lastMsg = session.messages[session.messages.length - 1];
+                if (lastMsg && lastMsg.role === 'assistant') {
+                    lastMsg.sources = currentSources;
+                }
+                window.renderChatV2Messages();
+            },
             saveCallback: () => {
                 saveJulesPanelSessions();
                 window.renderNeuralChatHistory();

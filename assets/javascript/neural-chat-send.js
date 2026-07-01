@@ -128,6 +128,8 @@ window.sendMessage = async function() {
     window.sendBtn.disabled = true;
     window.chatInput.disabled = true;
 
+    if (window.HYPENOSYS_DOCS_DEBUG) console.log("[NeuralSend] starting processing");
+
     try {
         const modelType = config.modelType || 'chat';
         const isStandardProvider = provider === 'ollama' || provider === 'anthropic' || provider === 'custom' || provider === 'openai' || provider === 'openrouter' || provider === 'nvidia_nim';
@@ -145,20 +147,41 @@ window.sendMessage = async function() {
             renderSessionList();
             saveSessions();
 
+            const dynamicSystemPrompt = await window.DocsBridge.buildSystemPrompt(content, currentSession.systemPrompt);
+
+            // Store sources for the upcoming message (populated by buildSystemPrompt)
+            const currentSources = window._lastDocsMetadata || [];
+            window._lastDocsMetadata = null;
+
+            if (window.HYPENOSYS_DOCS_DEBUG) console.log("[NeuralSend] sending to core");
+
             await window.NeuralChatCore.sendMessage({
                 session: currentSession,
                 userMessage: content,
-                saveCallback: () => saveSessions(),
-                skipUserMessagePush: true,
-                onToken: () => {
-                    renderMessages();
-                },
-                onDone: () => {
-                    window.thinkingIndicator.classList.add('hidden');
-                    renderMessages();
+                systemPrompt: dynamicSystemPrompt,
+                saveCallback: () => {
+                    saveSessions();
                     renderSessionList();
                 },
+                skipUserMessagePush: true,
+                onToken: (token, fullContent) => {
+                    // Update sources on the placeholder if needed
+                    const lastMsg = currentSession.messages[currentSession.messages.length - 1];
+                    if (lastMsg && lastMsg.role === 'assistant') {
+                        lastMsg.sources = currentSources;
+                    }
+                    renderMessages();
+                },
+                onDone: (fullContent) => {
+                    if (window.HYPENOSYS_DOCS_DEBUG) console.log("[NeuralSend] provider response received");
+                    window.thinkingIndicator.classList.add('hidden');
+                    if (window.HYPENOSYS_DOCS_DEBUG) console.log("[NeuralSend] render assistant message");
+                    renderMessages();
+                    renderSessionList();
+                    if (window.HYPENOSYS_DOCS_DEBUG) console.log("[NeuralSend] send finished");
+                },
                 onError: (err) => {
+                    if (window.HYPENOSYS_DOCS_DEBUG) console.log("[NeuralSend] error: " + err.message);
                     window.thinkingIndicator.classList.add('hidden');
                     appendSystemMessage(err.message, 'error');
                     renderMessages();

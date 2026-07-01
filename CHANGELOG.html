@@ -63,6 +63,18 @@ permalink: /CHANGELOG.html
         <h2 class="text-purple border-bottom border-purple pb-2 mb-4">[Unreleased]</h2>
         <div class="card mb-3">
           <div class="card-body">
+            <h5 class="text-purple">Added</h5>
+            <ul>
+                <li><strong>Integración Robusta de Documentación:</strong> Implementada una arquitectura modular para consumir el repositorio <code>hypenosys/docs</code> en tiempo real.
+                    <ul>
+                        <li><strong>Obsidian Renderer:</strong> Soporte completo para Wikilinks, Callouts, Embeds, Highlights, Footnotes y Frontmatter.</li>
+                        <li><strong>Búsqueda Indexada:</strong> Índice local en <code>IndexedDB</code> con invalidación por SHA del último commit, permitiendo búsquedas instantáneas sin backend.</li>
+                        <li><strong>RAG en Neural Chat:</strong> El agente de Claude ahora puede consultar automáticamente la documentación relevante antes de responder, inyectando fragmentos técnicos precisos en el prompt.</li>
+                        <li><strong>Docs Toggle:</strong> Añadido control ON/OFF para activar/desactivar la consulta documental en Claude Chat y Jules Panel, con persistencia de preferencia.</li>
+                        <li><strong>Visualización de Fuentes:</strong> Las respuestas de Claude incluyen ahora una sección colapsable con las fuentes documentales consultadas y enlaces directos a las notas.</li>
+                    </ul>
+                </li>
+            </ul>
             <h5 class="text-success">Fixed</h5>
             <ul>
                 <li><strong>Jules Panel Header:</strong> Eliminado el bloque defectuoso (breadcrumb blanco) en el header superior para una estética oscura limpia.</li>
