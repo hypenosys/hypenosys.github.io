@@ -554,6 +554,30 @@ body{
   color: var(--red);
   background: var(--red-soft);
 }
+.chat-history-actions {
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.chat-history-item:hover .chat-history-actions {
+  opacity: 1;
+}
+.btn-action-session {
+  background: transparent;
+  border: none;
+  color: var(--text3);
+  cursor: pointer;
+  font-size: 10px;
+  padding: 4px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn-action-session:hover {
+  color: var(--accent2);
+}
 /* Mobile compatibility for delete button */
 @media (max-width: 1024px) {
   .chat-history-item .btn-delete-session {

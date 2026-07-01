@@ -5,6 +5,10 @@
 window.isThinkingEnabled = false;
 window.attachedImage = null;
 
+const timeoutPromise = (ms) => new Promise((_, reject) =>
+    setTimeout(() => reject(new Error('timeout')), ms)
+);
+
 window.setSendMode = function(mode) {
     window.currentSendMode = mode;
     document.querySelectorAll('.dual-send-option').forEach(opt => {
@@ -128,7 +132,8 @@ window.sendMessage = async function() {
     window.sendBtn.disabled = true;
     window.chatInput.disabled = true;
 
-    if (window.HYPENOSYS_DOCS_DEBUG) console.log("[NeuralSend] starting processing");
+    if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] send clicked");
+    if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] message:", content);
 
     try {
         const modelType = config.modelType || 'chat';
@@ -139,9 +144,24 @@ window.sendMessage = async function() {
         } else if (modelType === 'audio' && !config.useTextInAudioMode) {
             if (content) await sendMessageCustom(currentSession, config);
         } else if (isStandardProvider) {
-            // Store sources for the upcoming message
-            const currentSources = window._lastDocsMetadata || [];
-            window._lastDocsMetadata = null;
+            // DOCUMENTATION FAIL-OPEN LOGIC
+            const docsEnabled = localStorage.getItem('hypenosys_docs_context_enabled') !== 'false';
+            let docsContext = null;
+
+            if (docsEnabled && window.JulesDocsBridge?.getDocContext) {
+                try {
+                    docsContext = await Promise.race([
+                        window.JulesDocsBridge.getDocContext(content),
+                        timeoutPromise(3500)
+                    ]);
+                } catch (error) {
+                    console.warn('[DocsBridge] failed; continuing without docs', error);
+                    if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[DocsBridge] failed; continuing without docs");
+                    docsContext = null;
+                }
+            } else {
+                if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] skipping docs");
+            }
 
             // Optimistic UI: Add user message and render immediately
             const userMsg = { role: 'user', content: content, timestamp: Date.now() };
@@ -151,13 +171,15 @@ window.sendMessage = async function() {
             renderSessionList();
             saveSessions();
 
-            const dynamicSystemPrompt = await window.DocsBridge.buildSystemPrompt(content, currentSession.systemPrompt);
+            let baseSystemPrompt = await window.JulesDocsBridge.buildSystemPrompt(content, currentSession.systemPrompt);
 
-            // Store sources for the upcoming message (populated by buildSystemPrompt)
+            // Store sources for the upcoming message (captured during buildSystemPrompt)
             const currentSources = window._lastDocsMetadata || [];
             window._lastDocsMetadata = null;
 
-            if (window.HYPENOSYS_DOCS_DEBUG) console.log("[NeuralSend] sending to core");
+            const dynamicSystemPrompt = baseSystemPrompt + (docsContext || "");
+
+            if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] sending to provider");
 
             await window.NeuralChatCore.sendMessage({
                 session: currentSession,
@@ -177,15 +199,15 @@ window.sendMessage = async function() {
                     renderMessages();
                 },
                 onDone: (fullContent) => {
-                    if (window.HYPENOSYS_DOCS_DEBUG) console.log("[NeuralSend] provider response received");
+                    if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] provider response received");
                     window.thinkingIndicator.classList.add('hidden');
-                    if (window.HYPENOSYS_DOCS_DEBUG) console.log("[NeuralSend] render assistant message");
+                    if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] assistant rendered");
                     renderMessages();
                     renderSessionList();
-                    if (window.HYPENOSYS_DOCS_DEBUG) console.log("[NeuralSend] send finished");
+                    if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] send finished");
                 },
                 onError: (err) => {
-                    if (window.HYPENOSYS_DOCS_DEBUG) console.log("[NeuralSend] error: " + err.message);
+                    if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] send failed:", err.message);
                     window.thinkingIndicator.classList.add('hidden');
                     appendSystemMessage(err.message, 'error');
                     renderMessages();
@@ -195,6 +217,7 @@ window.sendMessage = async function() {
             throw new Error(`Proveedor ${provider} no implementado aún en Neural Chat.`);
         }
     } catch (e) {
+        if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] send failed:", e.message);
         console.error('[ClaudeChat] Send error:', e);
         const errorMsg = provider === 'ollama' ? window.ollamaDiscovery.getErrorMessage(e, config.base_url) : e.message;
         appendSystemMessage(errorMsg, 'error');
@@ -207,179 +230,6 @@ window.sendMessage = async function() {
     }
 }
 
-window.sendMessageAnthropic = async function(session, config) {
-    const apiKey = config.api_key;
-    if (!apiKey) throw new Error('Anthropic API Key no configurada.');
-
-    const lastUserMessage = session.messages[session.messages.length - 1].content;
-    const dynamicSystemPrompt = await buildSystemPrompt(lastUserMessage, session.systemPrompt);
-
-    const requestBody = {
-        model: config.model || 'claude-3-5-sonnet-20241022',
-        max_tokens: 4096,
-        messages: session.messages.map(m => ({ role: m.role, content: m.content })),
-        system: dynamicSystemPrompt,
-        stream: true
-    };
-
-    if (window.isThinkingEnabled) {
-        requestBody.thinking = { type: "enabled", budget_tokens: 16000 };
-        requestBody.max_tokens = 20000;
-    }
-
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-            'x-api-key': apiKey,
-            'anthropic-version': '2023-06-01',
-            'content-type': 'application/json',
-            'anthropic-dangerous-direct-browser-access': 'true'
-        },
-        body: JSON.stringify(requestBody)
-    });
-
-    if (!response.ok) {
-        const errData = await response.json().catch(() => ({}));
-        throw new Error(errData.error?.message || `API Error: ${response.status}`);
-    }
-
-    await consumeStream(response, session, 'anthropic');
-}
-
-window.sendMessageOllama = async function(session, config) {
-    let baseUrl = config.base_url || '';
-    if (baseUrl && !baseUrl.startsWith('http')) {
-        baseUrl = 'http://' + baseUrl;
-    }
-    baseUrl = baseUrl.trim().replace(/\/+$/, '');
-    if (!baseUrl.endsWith('/v1')) {
-        baseUrl += '/v1';
-    }
-    const model = config.model || 'llama3';
-
-    if (!baseUrl) {
-        throw new Error('Base URL de Ollama no configurada. Por favor, configura el endpoint en API CONFIG.');
-    }
-
-    const lastUserMessage = session.messages[session.messages.length - 1].content;
-    const dynamicSystemPrompt = await buildSystemPrompt(lastUserMessage, session.systemPrompt);
-
-    // Use OpenAI-compatible endpoint for Ollama
-    const response = await fetch(`${baseUrl}/chat/completions`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        mode: 'cors',
-        credentials: 'omit',
-        body: JSON.stringify({
-            model: model,
-            messages: [
-                { role: 'system', content: dynamicSystemPrompt },
-                ...session.messages.map(m => ({ role: m.role, content: m.content }))
-            ],
-            stream: true
-        })
-    });
-
-    if (!response.ok) throw new Error(`Ollama Error: ${response.status}`);
-
-    await consumeStream(response, session, 'ollama');
-}
-
-window.consumeStream = async function(response, session, provider) {
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
-    let aiContent = '';
-    let thinkingContent = '';
-    let buffer = '';
-
-    const msgDiv = document.createElement('div');
-    msgDiv.className = 'flex justify-start group mb-4';
-    msgDiv.innerHTML = `
-        <div class="max-w-[85%] p-4 message-claude shadow-xl relative message-bubble">
-            <div class="text-[10px] font-black tracking-widest uppercase mb-2 text-[#bd93f9] opacity-70">CLAUDE</div>
-            <div id="thinking-block" class="thinking-block hidden"></div>
-            <div class="prose prose-invert text-sm" id="streaming-content"></div>
-        </div>
-    `;
-    window.chatMessages.appendChild(msgDiv);
-    const streamEl = msgDiv.querySelector('#streaming-content');
-    const thinkEl = msgDiv.querySelector('#thinking-block');
-
-    logDebug(`Stream started (Provider: ${provider})`, 'info');
-
-    try {
-        while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
-
-            const chunk = decoder.decode(value, { stream: true });
-            buffer += chunk;
-            const lines = buffer.split('\n');
-            buffer = lines.pop(); // Keep incomplete line in buffer
-
-            for (const line of lines) {
-                const trimmedLine = line.trim();
-                if (!trimmedLine) continue;
-
-                try {
-                    let data;
-                    if (trimmedLine.startsWith('data: ')) {
-                        data = JSON.parse(trimmedLine.substring(6));
-                    } else {
-                        data = JSON.parse(trimmedLine);
-                    }
-
-                    if (provider === 'anthropic') {
-                        if (data.type === 'content_block_delta') {
-                            if (data.delta.type === 'text_delta') {
-                                aiContent += data.delta.text;
-                            } else if (data.delta.type === 'thinking_delta') {
-                                thinkingContent += data.delta.thinking;
-                                thinkEl.classList.remove('hidden');
-                                thinkEl.textContent = thinkingContent;
-                            }
-                        }
-                    } else if (provider === 'ollama') {
-                        // OpenAI compatible stream format
-                        const delta = data.choices?.[0]?.delta?.content || data.choices?.[0]?.text || '';
-                        aiContent += delta;
-
-                        if (data.error) {
-                            logDebug(`Ollama stream error: ${data.error}`, 'error');
-                        }
-                    }
-
-                    if (aiContent) {
-                        streamEl.innerHTML = marked.parse(aiContent);
-                    }
-                    window.chatMessages.scrollTop = window.chatMessages.scrollHeight;
-                } catch (e) {
-                    logDebug(`JSON parse error: ${e.message} in line: ${trimmedLine}`, 'warn');
-                }
-            }
-        }
-    } catch (e) {
-        logDebug(`Stream read error: ${e.message}`, 'error');
-        throw e;
-    }
-
-    const assistantMsg = {
-        role: 'assistant',
-        content: aiContent,
-        thinking: thinkingContent || undefined
-    };
-    session.messages.push(assistantMsg);
-
-    // Sync with Neural Thread
-    if (localStorage.getItem('hy_neural_active') === 'true') {
-        let thread = JSON.parse(localStorage.getItem('hy_neural_thread') || '[]');
-        thread.push({ ...assistantMsg, source: 'claude' });
-        localStorage.setItem('hy_neural_thread', JSON.stringify(thread));
-    }
-
-    saveSessions();
-    renderMessages();
-}
 
 window.sendMessageCustom = async function(session, config) {
     const baseUrl = (config.base_url || '').trim();

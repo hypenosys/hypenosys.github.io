@@ -63,6 +63,17 @@ permalink: /CHANGELOG.html
         <h2 class="text-purple border-bottom border-purple pb-2 mb-4">[Unreleased]</h2>
         <div class="card mb-3">
           <div class="card-body">
+            <h5 class="text-success">Fixed</h5>
+            <ul>
+                <li><strong>Claude Neural Standalone Runtime:</strong> Corregida regresión crítica que impedía el envío de mensajes mediante el botón ENVIAR y la tecla Enter. Se eliminó una sintaxis errónea (declaración duplicada) y se estabilizó el flujo de inicialización.</li>
+                <li><strong>DocsBridge Fail-Open:</strong> Implementado mecanismo de seguridad que garantiza que el chat nunca se bloquee por la documentación. Si DocsBridge falla o tarda más de 3500ms, el chat continúa automáticamente sin contexto.</li>
+            </ul>
+            <h5 class="text-purple">Added</h5>
+            <ul>
+                <li><strong>Gestión Unificada de Sesiones:</strong> Implementada fuente de verdad única (<code>claude_chat_sessions</code>) compartida entre Standalone y Jules Panel, con sincronización en tiempo real entre pestañas.</li>
+                <li><strong>Acciones de Sesión Completas:</strong> Añadida funcionalidad para <strong>Renombrar</strong>, <strong>Archivar</strong> y <strong>Borrar</strong> conversaciones desde el sidebar de ambos entornos.</li>
+                <li><strong>UI de Historial Mejorada:</strong> Los títulos en la sidebar ahora son legibles y descriptivos. Se añadieron menús de acción rápidos con soporte para dispositivos táctiles.</li>
+            </ul>
             <h5 class="text-purple">Added</h5>
             <ul>
                 <li><strong>Integración Robusta de Documentación:</strong> Implementada una arquitectura modular para consumir el repositorio <code>hypenosys/docs</code> en tiempo real.
