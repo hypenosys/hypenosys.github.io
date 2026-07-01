@@ -176,6 +176,15 @@ window.initJulesPanelNeuralChat = function() {
         }
     });
 
+    // Docs Integration Toggle
+    const docsBadge = document.getElementById('docs-status-badge');
+    if (docsBadge) {
+        docsBadge.classList.remove('hidden');
+        if (window.DocsBridge && window.DocsBridge.updateDocsStatusBadge) {
+            window.DocsBridge.updateDocsStatusBadge();
+        }
+    }
+
     window._julesPanelNeuralInitialized = true;
     console.log("[Jules Panel Neural] Jules Panel Neural initialized");
 }
@@ -299,9 +308,67 @@ window.sendChatV2Msg = async function() {
 
     console.log("[Jules Panel Neural] Message sent from Jules Panel Neural");
     try {
+        // Hybrid Docs Search Integration (Panel side)
+        let docsContextPrompt = "";
+        const docsEnabled = localStorage.getItem('hypenosys_docs_context_enabled') !== 'false';
+        if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge-Panel] enabled: " + docsEnabled);
+
+        if (docsEnabled && window.DocsBridge) {
+            try {
+                if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge-Panel] query: \"" + msg + "\"");
+                const results = await window.DocsIndex.search(msg, 5);
+                if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge-Panel] results:", results);
+
+                if (results && results.length > 0) {
+                    const docsContext = await window.DocsBridge.getContextForQuery(msg, { limit: 5 });
+                    if (docsContext) {
+                        const guardrail = "\n\nUsa únicamente el CONTEXTO DOCUMENTAL DE HYPENOSYS para responder sobre la documentación.\nNo inventes carpetas, tecnologías, herramientas, estructura del repositorio ni contenido no presente en las fuentes.\nSi el contexto no contiene la respuesta, dilo explícitamente.\n\n";
+                        docsContextPrompt = "\n\n" + docsContext + guardrail;
+
+                        if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge-Panel] contextChars: " + docsContext.length);
+                        if (window.HYPENOSYS_DOCS_DEBUG) console.log("[DocsBridge-Panel] injected: true");
+
+                        window._lastDocsMetadata = await window.DocsBridge.getSourceMetadata(results);
+                    }
+                } else {
+                    const isAskingStructure = /organiza|estructura|carpetas|folders|donde esta|dónde está/i.test(msg);
+                    if (isAskingStructure) {
+                        const allDocs = await window.DocsIndex.getAllDocs();
+                        if (allDocs && allDocs.length > 0) {
+                            const directories = new Set();
+                            allDocs.forEach(d => {
+                                const parts = d.path.split('/');
+                                if (parts.length > 1) directories.add(parts[0]);
+                            });
+                            if (directories.size > 0) {
+                                const dirList = Array.from(directories).sort().join('\n- ');
+                                docsContextPrompt = "\n\nCONTEXTO DE ESTRUCTURA REAL (hypenosys/docs):\nEl repositorio está organizado en las siguientes carpetas principales:\n- " + dirList + "\n\nInstrucción: Usa esta lista real para responder sobre la organización. No inventes otras carpetas.\n";
+                            }
+                        }
+                    }
+                    const fallbackGuardrail = "\n\nNo hay contexto documental suficiente disponible para responder con certeza sobre la documentación de Hypenosys.\nNo inventes información sobre la estructura del repositorio ni carpetas que no conozcas.\nSi te preguntan por la estructura y no tienes fragmentos que la describan, indica que no tienes acceso a esa información ahora mismo.\n";
+                    docsContextPrompt += fallbackGuardrail;
+                }
+            } catch (e) {
+                console.warn("[DocsBridge] Search failed in panel", e);
+            }
+        }
+
+        // Store sources for this turn
+        const currentSources = window._lastDocsMetadata || [];
+        window._lastDocsMetadata = null;
+
         await window.NeuralChatCore.sendMessage({
             session: session,
             userMessage: msg,
+            systemPrompt: (session.systemPrompt || "") + docsContextPrompt,
+            onToken: () => {
+                const lastMsg = session.messages[session.messages.length - 1];
+                if (lastMsg && lastMsg.role === 'assistant') {
+                    lastMsg.sources = currentSources;
+                }
+                window.renderChatV2Messages();
+            },
             saveCallback: () => {
                 saveJulesPanelSessions();
                 window.renderNeuralChatHistory();
