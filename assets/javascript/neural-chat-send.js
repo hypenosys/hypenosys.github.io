@@ -172,11 +172,12 @@ window.sendMessage = async function() {
             saveSessions();
 
             let baseSystemPrompt = await window.JulesDocsBridge.buildSystemPrompt(content, currentSession.systemPrompt);
-            const dynamicSystemPrompt = baseSystemPrompt + (docsContext || "");
 
-            // Store sources for the upcoming message
+            // Store sources for the upcoming message (captured during buildSystemPrompt)
             const currentSources = window._lastDocsMetadata || [];
             window._lastDocsMetadata = null;
+
+            const dynamicSystemPrompt = baseSystemPrompt + (docsContext || "");
 
             if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] sending to provider");
 

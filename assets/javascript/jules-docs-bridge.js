@@ -312,6 +312,17 @@ window.JulesDocsBridge = (function() {
                 `Milestone: ${task.milestone || 'N/A'}\n` +
                 `Repositorio: ${task.repository || task.repo || 'N/A'}\n` +
                 `Dependencias: ${blockingInfo} | ${blockedByInfo}\n`;
+
+            // Fetch Jules History if linked session exists
+            if (task.jules_session && task.jules_session.session_id && window.julesApi) {
+                try {
+                    const activities = await window.julesApi.getActivities(task.jules_session.session_id, 10);
+                    const logs = (activities.activities || []).map(a => a.description || a.progressUpdated?.title).filter(Boolean).join('\n');
+                    if (logs) {
+                        systemPrompt += `\n### Historial reciente de Jules (Sesión #${task.jules_session.session_id}):\n${logs}\n`;
+                    }
+                } catch (e) { console.warn("Could not fetch Jules activity for context", e); }
+            }
         }
 
         return systemPrompt;
