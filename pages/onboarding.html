@@ -1,0 +1,832 @@
+---
+layout: null
+title: "Pipeline Dev — Onboarding Hypenosys"
+permalink: /onboarding/
+---
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pipeline Dev — Onboarding Hypenosys</title>
+<meta name="description" content="Guía rápida para conectar GitHub, Jules y el flujo interno de Hypenosys antes de empezar a trabajar en tareas reales.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ==========================================================================
+   Pipeline Dev — Onboarding Hypenosys
+   Namespaced under .pipeline-dev-page (prefix: pdp-) to avoid collisions
+   with existing global styles / Bootstrap / Tailwind on hypenosys.github.io.
+   ========================================================================== */
+
+.pipeline-dev-page {
+  --pdp-bg: #0a0b10;
+  --pdp-bg-raised: #0f1117;
+  --pdp-glass: rgba(255,255,255,0.035);
+  --pdp-glass-border: rgba(255,255,255,0.09);
+  --pdp-text: #e8eaf0;
+  --pdp-text-muted: #8d93a6;
+  --pdp-text-faint: #565c6e;
+
+  --pdp-github: #7c8cff;
+  --pdp-jules: #33d6bd;
+  --pdp-claude: #ff9466;
+  --pdp-pr: #ffd166;
+
+  --pdp-font-display: 'Space Grotesk', sans-serif;
+  --pdp-font-body: 'Inter', sans-serif;
+  --pdp-font-mono: 'JetBrains Mono', monospace;
+
+  background: var(--pdp-bg);
+  color: var(--pdp-text);
+  font-family: var(--pdp-font-body);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.pipeline-dev-page * { box-sizing: border-box; }
+
+.pipeline-dev-page .pdp-wrap {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Background texture: faint radial glow + hairline grid, echoes a schematic/board */
+.pipeline-dev-page .pdp-bgfx {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 900px 500px at 15% -10%, rgba(124,140,255,0.14), transparent 60%),
+    radial-gradient(ellipse 700px 500px at 100% 10%, rgba(51,214,189,0.10), transparent 55%),
+    linear-gradient(var(--pdp-bg), var(--pdp-bg));
+}
+.pipeline-dev-page .pdp-bgfx::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(ellipse 800px 500px at 20% 0%, black, transparent 70%);
+}
+
+.pipeline-dev-page section {
+  position: relative;
+  z-index: 1;
+  padding: 64px 0;
+}
+
+.pipeline-dev-page .pdp-eyebrow {
+  font-family: var(--pdp-font-mono);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--pdp-text-faint);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.pipeline-dev-page .pdp-eyebrow::before {
+  content: "";
+  width: 18px;
+  height: 1px;
+  background: var(--pdp-text-faint);
+}
+
+.pipeline-dev-page h1, .pipeline-dev-page h2, .pipeline-dev-page h3 {
+  font-family: var(--pdp-font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #fff;
+  margin: 0;
+}
+
+/* ---------- HERO ---------- */
+.pipeline-dev-page .pdp-hero {
+  padding: 96px 0 56px;
+}
+.pipeline-dev-page .pdp-hero h1 {
+  font-size: clamp(34px, 5.4vw, 56px);
+  line-height: 1.05;
+  max-width: 16ch;
+}
+.pipeline-dev-page .pdp-hero h1 span {
+  background: linear-gradient(100deg, var(--pdp-github), var(--pdp-jules) 55%, var(--pdp-claude));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.pipeline-dev-page .pdp-hero p {
+  margin-top: 20px;
+  font-size: 17px;
+  color: var(--pdp-text-muted);
+  max-width: 56ch;
+}
+.pipeline-dev-page .pdp-hero-audience {
+  margin-top: 28px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--pdp-font-mono);
+  font-size: 12.5px;
+  color: var(--pdp-text-muted);
+  padding: 8px 14px;
+  border: 1px solid var(--pdp-glass-border);
+  border-radius: 999px;
+  background: var(--pdp-glass);
+}
+.pipeline-dev-page .pdp-hero-audience .pdp-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--pdp-jules);
+  box-shadow: 0 0 0 3px rgba(51,214,189,0.18);
+}
+
+/* ---------- BADGES ---------- */
+.pipeline-dev-page .pdp-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--pdp-font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid;
+  white-space: nowrap;
+}
+.pipeline-dev-page .pdp-badge--github { color: var(--pdp-github); border-color: rgba(124,140,255,0.35); background: rgba(124,140,255,0.08); }
+.pipeline-dev-page .pdp-badge--jules  { color: var(--pdp-jules);  border-color: rgba(51,214,189,0.35);  background: rgba(51,214,189,0.08); }
+.pipeline-dev-page .pdp-badge--claude { color: var(--pdp-claude); border-color: rgba(255,148,102,0.35); background: rgba(255,148,102,0.08); }
+.pipeline-dev-page .pdp-badge--pr     { color: var(--pdp-pr);     border-color: rgba(255,209,102,0.35); background: rgba(255,209,102,0.08); }
+.pipeline-dev-page .pdp-badge--review { color: var(--pdp-text-muted); border-color: var(--pdp-glass-border); background: var(--pdp-glass); }
+
+/* ---------- GLASS CARD ---------- */
+.pipeline-dev-page .pdp-card {
+  background: var(--pdp-glass);
+  border: 1px solid var(--pdp-glass-border);
+  border-radius: 16px;
+  padding: 28px;
+  backdrop-filter: blur(6px);
+}
+
+/* ---------- WARNING / BEFORE YOU START ---------- */
+.pipeline-dev-page .pdp-before {
+  border-left: 2px solid var(--pdp-claude);
+}
+.pipeline-dev-page .pdp-before h2 {
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.pipeline-dev-page .pdp-before ul {
+  margin: 18px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 11px;
+}
+.pipeline-dev-page .pdp-before li {
+  display: flex;
+  gap: 10px;
+  font-size: 14.5px;
+  color: var(--pdp-text-muted);
+}
+.pipeline-dev-page .pdp-before li::before {
+  content: "→";
+  color: var(--pdp-claude);
+  flex-shrink: 0;
+  font-family: var(--pdp-font-mono);
+}
+.pipeline-dev-page .pdp-before li strong { color: var(--pdp-text); font-weight: 500; }
+
+/* ---------- STEP SECTIONS ---------- */
+.pipeline-dev-page .pdp-step {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  gap: 24px;
+  padding: 44px 0;
+  border-top: 1px solid var(--pdp-glass-border);
+}
+.pipeline-dev-page .pdp-step:first-of-type { border-top: none; }
+.pipeline-dev-page .pdp-step-num {
+  font-family: var(--pdp-font-mono);
+  font-size: 13px;
+  color: var(--pdp-text-faint);
+  padding-top: 4px;
+}
+.pipeline-dev-page .pdp-step-num .pdp-n {
+  display: block;
+  font-size: 26px;
+  font-family: var(--pdp-font-display);
+  color: var(--pdp-text-faint);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.pipeline-dev-page .pdp-step h3 {
+  font-size: 21px;
+  margin-bottom: 6px;
+}
+.pipeline-dev-page .pdp-step-badges { margin: 10px 0 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+.pipeline-dev-page .pdp-step p { color: var(--pdp-text-muted); font-size: 15px; margin: 0 0 14px; }
+.pipeline-dev-page .pdp-step ul.pdp-checklist {
+  list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 9px;
+}
+.pipeline-dev-page .pdp-checklist li {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 14px; color: var(--pdp-text-muted);
+}
+.pipeline-dev-page .pdp-checklist li::before {
+  content: "";
+  flex-shrink: 0;
+  width: 15px; height: 15px;
+  margin-top: 2px;
+  border-radius: 4px;
+  border: 1px solid var(--pdp-glass-border);
+  background: var(--pdp-glass);
+}
+.pipeline-dev-page .pdp-link-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--pdp-font-mono); font-size: 13px;
+  color: var(--pdp-text);
+  background: var(--pdp-glass);
+  border: 1px solid var(--pdp-glass-border);
+  padding: 9px 16px; border-radius: 8px;
+  text-decoration: none;
+  margin-top: 4px;
+  transition: border-color .15s ease, transform .15s ease;
+}
+.pipeline-dev-page .pdp-link-btn:hover { border-color: var(--pdp-jules); transform: translateY(-1px); }
+
+/* ---------- PROMPT BLOCKS ---------- */
+.pipeline-dev-page .pdp-prompt {
+  position: relative;
+  margin-top: 16px;
+  background: #0d0f15;
+  border: 1px solid var(--pdp-glass-border);
+  border-radius: 12px;
+  padding: 18px 50px 18px 18px;
+}
+.pipeline-dev-page .pdp-prompt-label {
+  font-family: var(--pdp-font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--pdp-text-faint);
+  display: block;
+  margin-bottom: 8px;
+}
+.pipeline-dev-page .pdp-prompt pre {
+  margin: 0;
+  font-family: var(--pdp-font-mono);
+  font-size: 13px;
+  line-height: 1.65;
+  color: #cfd3e0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.pipeline-dev-page .pdp-copy {
+  position: absolute;
+  top: 14px; right: 14px;
+  font-family: var(--pdp-font-mono);
+  font-size: 11px;
+  color: var(--pdp-text-muted);
+  background: var(--pdp-glass);
+  border: 1px solid var(--pdp-glass-border);
+  border-radius: 6px;
+  padding: 5px 9px;
+  cursor: pointer;
+}
+.pipeline-dev-page .pdp-copy:hover { color: var(--pdp-text); border-color: var(--pdp-jules); }
+.pipeline-dev-page .pdp-copy.pdp-copied { color: var(--pdp-jules); border-color: var(--pdp-jules); }
+
+/* ---------- INTERNAL FLOW ---------- */
+.pipeline-dev-page .pdp-internal {
+  border: 1px solid rgba(51,214,189,0.25);
+  background: linear-gradient(180deg, rgba(51,214,189,0.06), rgba(51,214,189,0.015));
+}
+.pipeline-dev-page .pdp-internal h2 { font-size: 24px; }
+.pipeline-dev-page .pdp-internal-sub { color: var(--pdp-text-muted); font-size: 15px; margin-top: 8px; max-width: 60ch; }
+.pipeline-dev-page .pdp-flow-list {
+  list-style: none; padding: 0; margin: 24px 0 0;
+  counter-reset: pdp-flow;
+  display: grid; gap: 10px;
+}
+.pipeline-dev-page .pdp-flow-list li {
+  counter-increment: pdp-flow;
+  display: flex; align-items: baseline; gap: 12px;
+  font-size: 14.5px; color: var(--pdp-text-muted);
+  padding: 10px 0;
+  border-bottom: 1px dashed var(--pdp-glass-border);
+}
+.pipeline-dev-page .pdp-flow-list li:last-child { border-bottom: none; }
+.pipeline-dev-page .pdp-flow-list li::before {
+  content: counter(pdp-flow);
+  font-family: var(--pdp-font-mono);
+  font-size: 12px;
+  color: var(--pdp-jules);
+  border: 1px solid rgba(51,214,189,0.35);
+  border-radius: 50%;
+  width: 20px; height: 20px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.pipeline-dev-page .pdp-flow-list li strong { color: var(--pdp-text); font-weight: 500; }
+
+.pipeline-dev-page .pdp-role-split {
+  margin-top: 28px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+.pipeline-dev-page .pdp-role {
+  padding: 16px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--pdp-glass-border);
+}
+.pipeline-dev-page .pdp-role h4 {
+  font-family: var(--pdp-font-mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0 0 8px;
+}
+.pipeline-dev-page .pdp-role p { margin: 0; font-size: 13.5px; color: var(--pdp-text-muted); }
+.pipeline-dev-page .pdp-role--claude h4 { color: var(--pdp-claude); }
+.pipeline-dev-page .pdp-role--jules h4 { color: var(--pdp-jules); }
+.pipeline-dev-page .pdp-role--github h4 { color: var(--pdp-github); }
+
+/* ---------- SIGNAL RAIL (pipeline diagram — signature element) ---------- */
+.pipeline-dev-page .pdp-rail-section h2 { font-size: 24px; margin-bottom: 6px; }
+.pipeline-dev-page .pdp-rail-section > p { color: var(--pdp-text-muted); font-size: 14.5px; margin: 8px 0 40px; }
+
+.pipeline-dev-page .pdp-rail {
+  position: relative;
+  display: flex;
+  overflow-x: auto;
+  gap: 0;
+  padding-bottom: 12px;
+  scrollbar-width: thin;
+}
+.pipeline-dev-page .pdp-rail-node {
+  position: relative;
+  flex: 0 0 auto;
+  width: 148px;
+  text-align: center;
+  padding-top: 34px;
+}
+.pipeline-dev-page .pdp-rail-node::before {
+  /* the node dot, sits on the rail line */
+  content: "";
+  position: absolute;
+  top: 22px; left: 50%;
+  transform: translateX(-50%);
+  width: 11px; height: 11px;
+  border-radius: 50%;
+  background: var(--pdp-node-color, var(--pdp-jules));
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--pdp-node-color, var(--pdp-jules)) 18%, transparent);
+  z-index: 2;
+}
+.pipeline-dev-page .pdp-rail-node::after {
+  /* the connecting line segment, colored toward this node */
+  content: "";
+  position: absolute;
+  top: 27px; left: -50%;
+  width: 100%; height: 2px;
+  background: linear-gradient(90deg, var(--pdp-prev-color, transparent), var(--pdp-node-color, var(--pdp-jules)));
+  z-index: 1;
+}
+.pipeline-dev-page .pdp-rail-node:first-child::after { display: none; }
+.pipeline-dev-page .pdp-rail-node .pdp-rail-label {
+  font-family: var(--pdp-font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--pdp-text);
+}
+.pipeline-dev-page .pdp-rail-node .pdp-rail-sub {
+  font-size: 11.5px;
+  color: var(--pdp-text-faint);
+  margin-top: 3px;
+}
+
+/* ---------- BEST PRACTICES ---------- */
+.pipeline-dev-page .pdp-practices ul {
+  list-style: none; padding: 0; margin: 24px 0 0;
+  columns: 2; column-gap: 32px;
+}
+.pipeline-dev-page .pdp-practices li {
+  break-inside: avoid;
+  display: flex; gap: 10px;
+  font-size: 14.5px; color: var(--pdp-text-muted);
+  padding-bottom: 14px;
+}
+.pipeline-dev-page .pdp-practices li::before {
+  content: "✓";
+  color: var(--pdp-jules);
+  font-family: var(--pdp-font-mono);
+  flex-shrink: 0;
+}
+
+/* ---------- FAQ / TROUBLESHOOTING ---------- */
+.pipeline-dev-page .pdp-faq-item {
+  border-bottom: 1px solid var(--pdp-glass-border);
+}
+.pipeline-dev-page .pdp-faq-item:first-child { border-top: 1px solid var(--pdp-glass-border); }
+.pipeline-dev-page .pdp-faq-q {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 20px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  font-family: var(--pdp-font-body);
+  font-size: 15.5px;
+  font-weight: 500;
+  color: var(--pdp-text);
+}
+.pipeline-dev-page .pdp-faq-q .pdp-plus {
+  font-family: var(--pdp-font-mono);
+  color: var(--pdp-text-faint);
+  transition: transform .2s ease;
+  flex-shrink: 0;
+}
+.pipeline-dev-page .pdp-faq-item.pdp-open .pdp-faq-q .pdp-plus { transform: rotate(45deg); color: var(--pdp-jules); }
+.pipeline-dev-page .pdp-faq-a {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .25s ease;
+}
+.pipeline-dev-page .pdp-faq-item.pdp-open .pdp-faq-a { max-height: 400px; }
+.pipeline-dev-page .pdp-faq-a-inner { padding: 0 0 22px; }
+.pipeline-dev-page .pdp-faq-a p { margin: 0 0 10px; color: var(--pdp-text-muted); font-size: 14px; }
+.pipeline-dev-page .pdp-faq-a ul { margin: 0; padding-left: 18px; color: var(--pdp-text-muted); font-size: 14px; display: grid; gap: 6px; }
+
+/* ---------- FOOTER NOTE ---------- */
+.pipeline-dev-page .pdp-footer-note {
+  border-top: 1px solid var(--pdp-glass-border);
+  padding-top: 32px;
+  color: var(--pdp-text-faint);
+  font-size: 13px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 720px) {
+  .pipeline-dev-page .pdp-step { grid-template-columns: 1fr; gap: 10px; }
+  .pipeline-dev-page .pdp-step-num { display: flex; align-items: center; gap: 10px; }
+  .pipeline-dev-page .pdp-step-num .pdp-n { margin-bottom: 0; }
+  .pipeline-dev-page .pdp-role-split { grid-template-columns: 1fr; }
+  .pipeline-dev-page .pdp-practices ul { columns: 1; }
+  .pipeline-dev-page .pdp-hero { padding-top: 64px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pipeline-dev-page * { transition: none !important; animation: none !important; }
+}
+</style>
+</head>
+<body>
+<div class="pipeline-dev-page">
+<div class="pdp-bgfx"></div>
+
+<!-- ============ HERO ============ -->
+<section class="pdp-hero">
+  <div class="pdp-wrap">
+    <div class="pdp-eyebrow">Hypenosys · Pipeline Dev</div>
+    <h1>Onboarding para <span>nuevos devs</span> del pipeline Hypenosys</h1>
+    <p>Guía rápida para conectar GitHub, Jules y el flujo interno de Hypenosys antes de empezar a trabajar en tareas reales.</p>
+    <div class="pdp-hero-audience"><span class="pdp-dot"></span> Para nuevos desarrolladores y colaboradores técnicos</div>
+  </div>
+</section>
+
+<!-- ============ ANTES DE EMPEZAR ============ -->
+<section>
+  <div class="pdp-wrap">
+    <div class="pdp-card pdp-before">
+      <h2>Antes de empezar</h2>
+      <ul>
+        <li><strong>Cuenta de GitHub</strong> — necesaria para todo el flujo.</li>
+        <li>Debes <strong>aceptar la invitación</strong> a la organización <code>hypenosys</code> en GitHub.</li>
+        <li>Debes tener acceso al repositorio de prueba <strong>Minecraft-Server-Docker</strong>.</li>
+        <li>El repositorio puede estar <strong>vacío inicialmente</strong> — es normal.</li>
+        <li>La primera tarea sirve para comprobar que <strong>Jules puede generar cambios y abrir una PR</strong> correctamente.</li>
+        <li><strong>No uses un repositorio crítico</strong> para esta primera prueba.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PASOS 1-5 ============ -->
+<section>
+  <div class="pdp-wrap">
+    <div class="pdp-eyebrow">Flujo oficial · jules.google.com</div>
+
+    <div class="pdp-step">
+      <div class="pdp-step-num"><span class="pdp-n">01</span>Org</div>
+      <div>
+        <h3>Aceptar la invitación a la organización Hypenosys</h3>
+        <div class="pdp-step-badges"><span class="pdp-badge pdp-badge--github">GitHub</span></div>
+        <p>Revisa tu correo o tus notificaciones de GitHub y acepta la invitación para entrar en la organización <code>hypenosys</code>. Comprueba que puedes ver la organización desde tu cuenta.</p>
+        <ul class="pdp-checklist">
+          <li>He aceptado la invitación a <code>hypenosys</code></li>
+          <li>Veo la organización en mi lista de GitHub</li>
+          <li>Veo el repositorio <code>Minecraft-Server-Docker</code></li>
+          <li>Si no lo veo, aviso al administrador del proyecto</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pdp-step">
+      <div class="pdp-step-num"><span class="pdp-n">02</span>Jules</div>
+      <div>
+        <h3>Crear cuenta o entrar en Jules</h3>
+        <div class="pdp-step-badges"><span class="pdp-badge pdp-badge--jules">Jules</span><span class="pdp-badge pdp-badge--github">GitHub</span></div>
+        <p>Entra en Jules e inicia sesión con tu cuenta de Google, creando la cuenta si es necesario. Vincula GitHub cuando Jules lo solicite y autoriza el acceso a los repositorios necesarios.</p>
+        <a class="pdp-link-btn" href="https://jules.google.com" target="_blank" rel="noopener">jules.google.com ↗</a>
+        <ul class="pdp-checklist">
+          <li>Sesión iniciada con Google</li>
+          <li>GitHub vinculado a Jules</li>
+          <li>Acceso autorizado a los repos necesarios</li>
+          <li>Jules ve repositorios de la organización Hypenosys</li>
+        </ul>
+        <p style="margin-top:16px; font-size:13px; color: var(--pdp-text-faint);">Los permisos exactos dependen de la configuración de GitHub, OAuth y la autorización de la organización — no hay automatismos garantizados aquí.</p>
+      </div>
+    </div>
+
+    <div class="pdp-step">
+      <div class="pdp-step-num"><span class="pdp-n">03</span>Repo</div>
+      <div>
+        <h3>Seleccionar el repositorio de prueba</h3>
+        <div class="pdp-step-badges"><span class="pdp-badge pdp-badge--github">Minecraft-Server-Docker</span></div>
+        <p>Este repositorio es un entorno seguro de prueba y puede estar vacío al inicio. Su única finalidad es comprobar que el pipeline Jules → GitHub → Pull Request funciona. Selecciónalo dentro de Jules antes de escribir el prompt.</p>
+      </div>
+    </div>
+
+    <div class="pdp-step">
+      <div class="pdp-step-num"><span class="pdp-n">04</span>Tarea</div>
+      <div>
+        <h3>Lanzar la primera tarea en Jules</h3>
+        <div class="pdp-step-badges"><span class="pdp-badge pdp-badge--jules">Jules</span></div>
+        <p>Puedes usar el modo <strong>Interactive Plan</strong> si quieres revisar el enfoque antes de que Jules modifique archivos, o <strong>Start</strong> si quieres que Jules genere la solución directamente.</p>
+
+        <div class="pdp-prompt">
+          <span class="pdp-prompt-label">Prompt sugerido</span>
+          <button class="pdp-copy" data-copy-target="pdp-prompt-1">Copiar</button>
+          <pre id="pdp-prompt-1">Quiero un Docker Compose para un servidor local de Minecraft para BoinaLand. El objetivo es tener una configuración inicial sencilla, reproducible y documentada. Incluye los archivos necesarios, una estructura clara del proyecto y un README con instrucciones para levantar el servidor en local.</pre>
+        </div>
+
+        <div class="pdp-prompt">
+          <span class="pdp-prompt-label">Versión estricta</span>
+          <button class="pdp-copy" data-copy-target="pdp-prompt-2">Copiar</button>
+          <pre id="pdp-prompt-2">Crea una configuración Docker Compose para un servidor local de Minecraft llamado BoinaLand. El repositorio puede estar vacío, así que genera la estructura mínima necesaria. Incluye docker-compose.yml, .env.example, carpetas persistentes si son necesarias y un README.md con instrucciones claras para iniciar, parar, configurar y actualizar el servidor. No uses secretos reales. Prioriza simplicidad, persistencia de datos y facilidad de mantenimiento.</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="pdp-step">
+      <div class="pdp-step-num"><span class="pdp-n">05</span>PR</div>
+      <div>
+        <h3>Revisar cambios y Pull Request</h3>
+        <div class="pdp-step-badges"><span class="pdp-badge pdp-badge--pr">PR</span><span class="pdp-badge pdp-badge--review">Review</span></div>
+        <p>Si todo va bien, Jules debería generar cambios en el repositorio y permitir crear una Pull Request. Revisa los archivos antes de aprobar — la PR debe ser revisada antes de mergear.</p>
+        <ul class="pdp-checklist">
+          <li><code>docker-compose.yml</code> existe</li>
+          <li>Hay volúmenes persistentes</li>
+          <li>Hay <code>README.md</code></li>
+          <li>No hay secretos ni tokens reales</li>
+          <li>El nombre <strong>BoinaLand</strong> aparece donde corresponde</li>
+          <li>La configuración puede arrancar en local</li>
+          <li>La PR tiene descripción clara</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FLUJO INTERNO ============ -->
+<section>
+  <div class="pdp-wrap">
+    <div class="pdp-card pdp-internal">
+      <div class="pdp-eyebrow" style="margin-bottom:6px;">Alternativa</div>
+      <h2>Flujo interno desde Hypenosys</h2>
+      <p class="pdp-internal-sub">Además del flujo directo con jules.google.com, también puedes trabajar desde <strong>hypenosys.github.io</strong>, usando el Jules Panel y el Claude Chat del sistema.</p>
+
+      <ol class="pdp-flow-list">
+        <li>Entrar en <strong>hypenosys.github.io</strong></li>
+        <li>Abrir el <strong>Jules Panel</strong></li>
+        <li>Autenticarte con GitHub si el panel lo solicita</li>
+        <li>Seleccionar la organización / repositorio correspondiente</li>
+        <li>Usar el <strong>Chat Neural / Claude Chat</strong> para preparar o refinar el prompt</li>
+        <li>Enviar la tarea a Jules desde el panel cuando el prompt esté validado</li>
+        <li>Revisar el estado de la tarea, actividad, rama y Pull Request desde el panel</li>
+      </ol>
+
+      <div class="pdp-role-split">
+        <div class="pdp-role pdp-role--claude">
+          <h4>Claude Chat</h4>
+          <p>Razona, prepara, refina y valida instrucciones antes de enviarlas.</p>
+        </div>
+        <div class="pdp-role pdp-role--jules">
+          <h4>Jules</h4>
+          <p>Ejecuta tareas técnicas sobre los repositorios.</p>
+        </div>
+        <div class="pdp-role pdp-role--github">
+          <h4>GitHub</h4>
+          <p>Es la fuente de verdad para ramas, commits y Pull Requests.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PIPELINE DIAGRAM (signal rail) ============ -->
+<section class="pdp-rail-section">
+  <div class="pdp-wrap">
+    <div class="pdp-eyebrow">Vista completa</div>
+    <h2>El pipeline, de punta a punta</h2>
+    <p>Desplázate en horizontal en móvil. Cada nodo cambia de color según a quién le toca actuar.</p>
+
+    <div class="pdp-rail">
+      <div class="pdp-rail-node" style="--pdp-node-color: var(--pdp-github);">
+        <div class="pdp-rail-label">Nuevo dev</div>
+        <div class="pdp-rail-sub">Punto de partida</div>
+      </div>
+      <div class="pdp-rail-node" style="--pdp-node-color: var(--pdp-github); --pdp-prev-color: var(--pdp-github);">
+        <div class="pdp-rail-label">Org Hypenosys</div>
+        <div class="pdp-rail-sub">GitHub</div>
+      </div>
+      <div class="pdp-rail-node" style="--pdp-node-color: var(--pdp-jules); --pdp-prev-color: var(--pdp-github);">
+        <div class="pdp-rail-label">Jules conectado</div>
+        <div class="pdp-rail-sub">OAuth GitHub</div>
+      </div>
+      <div class="pdp-rail-node" style="--pdp-node-color: var(--pdp-jules); --pdp-prev-color: var(--pdp-jules);">
+        <div class="pdp-rail-label">Repo de prueba</div>
+        <div class="pdp-rail-sub">Minecraft-Server-Docker</div>
+      </div>
+      <div class="pdp-rail-node" style="--pdp-node-color: var(--pdp-claude); --pdp-prev-color: var(--pdp-jules);">
+        <div class="pdp-rail-label">Prompt técnico</div>
+        <div class="pdp-rail-sub">Claude Chat (opcional)</div>
+      </div>
+      <div class="pdp-rail-node" style="--pdp-node-color: var(--pdp-jules); --pdp-prev-color: var(--pdp-claude);">
+        <div class="pdp-rail-label">Cambios generados</div>
+        <div class="pdp-rail-sub">Jules</div>
+      </div>
+      <div class="pdp-rail-node" style="--pdp-node-color: var(--pdp-pr); --pdp-prev-color: var(--pdp-jules);">
+        <div class="pdp-rail-label">Pull Request</div>
+        <div class="pdp-rail-sub">GitHub</div>
+      </div>
+      <div class="pdp-rail-node" style="--pdp-node-color: var(--pdp-pr); --pdp-prev-color: var(--pdp-pr);">
+        <div class="pdp-rail-label">Revisión</div>
+        <div class="pdp-rail-sub">Humana</div>
+      </div>
+      <div class="pdp-rail-node" style="--pdp-node-color: var(--pdp-github); --pdp-prev-color: var(--pdp-pr);">
+        <div class="pdp-rail-label">Merge</div>
+        <div class="pdp-rail-sub">Si procede</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BUENAS PRÁCTICAS ============ -->
+<section class="pdp-practices">
+  <div class="pdp-wrap">
+    <div class="pdp-eyebrow">Recomendaciones</div>
+    <h2>Buenas prácticas</h2>
+    <ul>
+      <li>Empieza siempre en repositorios de prueba</li>
+      <li>No uses secretos reales</li>
+      <li>Pide README y documentación desde el primer prompt</li>
+      <li>Usa ramas separadas para cada tarea</li>
+      <li>Revisa la PR antes de mergear</li>
+      <li>Prefiere prompts concretos, con estructura esperada de archivos</li>
+      <li>Si Jules propone un plan, revísalo antes de aceptarlo</li>
+      <li>Si algo falla, copia el error exacto y documéntalo en el panel o en una issue</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ ERRORES COMUNES / FAQ ============ -->
+<section>
+  <div class="pdp-wrap">
+    <div class="pdp-eyebrow">Troubleshooting</div>
+    <h2 style="margin-bottom: 20px;">Errores comunes</h2>
+
+    <div class="pdp-faq">
+      <div class="pdp-faq-item">
+        <button class="pdp-faq-q"><span>Jules no ve el repositorio</span><span class="pdp-plus">+</span></button>
+        <div class="pdp-faq-a"><div class="pdp-faq-a-inner">
+          <p>Posibles causas:</p>
+          <ul>
+            <li>No has aceptado la invitación a la organización</li>
+            <li>GitHub no ha autorizado a Jules para esa organización</li>
+            <li>Jules no tiene permisos sobre ese repo</li>
+            <li>El repositorio es privado y falta autorización</li>
+          </ul>
+        </div></div>
+      </div>
+
+      <div class="pdp-faq-item">
+        <button class="pdp-faq-q"><span>No me deja hacer PR</span><span class="pdp-plus">+</span></button>
+        <div class="pdp-faq-a"><div class="pdp-faq-a-inner">
+          <p>Posibles causas:</p>
+          <ul>
+            <li>Falta permiso de escritura</li>
+            <li>La rama no se ha creado correctamente</li>
+            <li>Jules no tiene autorización suficiente</li>
+            <li>El repo está vacío y Jules necesita generar la estructura inicial</li>
+          </ul>
+        </div></div>
+      </div>
+
+      <div class="pdp-faq-item">
+        <button class="pdp-faq-q"><span>El panel de Hypenosys no muestra el repo</span><span class="pdp-plus">+</span></button>
+        <div class="pdp-faq-a"><div class="pdp-faq-a-inner">
+          <p>Posibles causas:</p>
+          <ul>
+            <li>Falta autenticación con GitHub</li>
+            <li>Token caducado</li>
+            <li>No se ha refrescado la lista de repositorios</li>
+            <li>Todavía no perteneces a la organización correcta</li>
+          </ul>
+        </div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<section style="padding-top: 0;">
+  <div class="pdp-wrap">
+    <div class="pdp-footer-note">
+      <span>Hypenosys · Pipeline Dev Onboarding</span>
+      <span>Repo de prueba actual: Minecraft-Server-Docker</span>
+    </div>
+  </div>
+</section>
+
+</div>
+
+{% raw %}
+<script>
+(function () {
+  var root = document.currentScript.closest('.pipeline-dev-page') || document;
+
+  // FAQ accordion
+  var faqButtons = root.querySelectorAll('.pdp-faq-q');
+  for (var i = 0; i < faqButtons.length; i++) {
+    faqButtons[i].addEventListener('click', function () {
+      this.closest('.pdp-faq-item').classList.toggle('pdp-open');
+    });
+  }
+
+  // Copy-to-clipboard for prompt blocks
+  var copyButtons = root.querySelectorAll('.pdp-copy');
+  for (var j = 0; j < copyButtons.length; j++) {
+    copyButtons[j].addEventListener('click', function () {
+      var btn = this;
+      var targetId = btn.getAttribute('data-copy-target');
+      var target = document.getElementById(targetId);
+      if (!target) { return; }
+      var text = target.textContent;
+      var done = function () {
+        var original = btn.textContent;
+        btn.textContent = 'Copiado';
+        btn.classList.add('pdp-copied');
+        setTimeout(function () {
+          btn.textContent = original;
+          btn.classList.remove('pdp-copied');
+        }, 1500);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done);
+      } else {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(ta);
+        done();
+      }
+    });
+  }
+})();
+</script>
+{% endraw %}
+</body>
+</html>
