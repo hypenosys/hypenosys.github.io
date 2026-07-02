@@ -81,6 +81,7 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-purple">Added</h5>
             <ul>
+                 <li><strong>Sistema de Diagnóstico NVIDIA NIM:</strong> Implementado el botón "TEST NIM DIRECT" en el modal de configuración de IA. Permite ejecutar pruebas de conectividad aisladas (no-streaming, minimal payload) y obtener un reporte detallado de errores HTTP y de red (CORS, EOL de modelos, API keys inválidas) directamente en la interfaz.</li>
                 <li><strong>Integración Formal de NVIDIA NIM:</strong> Implementado NVIDIA NIM como proveedor de IA de primer nivel en el modal de configuración, eliminando inyecciones dinámicas frágiles.</li>
                 <li><strong>Descubrimiento Robustecido de Modelos NIM:</strong> Añadido sistema de descubrimiento automático vía <code>/v1/models</code> con fallback garantizado al catálogo estático (<code>NVIDIA_NIM_CATALOG</code>) en caso de fallos de CORS o autenticación.</li>
                 <li><strong>Bloque de Ayuda NIM:</strong> Nueva sección informativa en el modal de configuración detallando los riesgos de CORS y recomendando el uso de proxies seguros para NVIDIA NIM Cloud.</li>
@@ -107,6 +108,8 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-success">Fixed</h5>
             <ul>
+                <li><strong>Compatibilidad NVIDIA NIM:</strong> Resuelta la incompatibilidad crítica con el proveedor NVIDIA NIM en el frontend. Se eliminó el header <code>x-requested-with</code> que provocaba bloqueos de CORS/Preflight y se mejoró la lógica de construcción de endpoints para mayor estabilidad.</li>
+                <li><strong>Mensajes de Error Inteligentes:</strong> Rediseñado el sistema de reporte de errores de <code>NeuralProviderClient</code> para ser consciente del proveedor. Ya no se mencionan parámetros de Ollama (como <code>OLLAMA_ORIGINS</code>) en errores de servicios cloud, y se ha añadido detección automática de bloqueos por <strong>Mixed Content</strong>.</li>
                 <li><strong>Jules Panel Header:</strong> Eliminado el bloque defectuoso (breadcrumb blanco) en el header superior para una estética oscura limpia.</li>
             </ul>
             <h5 class="text-purple">Added</h5>

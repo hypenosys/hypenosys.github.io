@@ -398,6 +398,125 @@ class OllamaUI {
         if (typeof window.renderProfileDropdown === 'function') window.renderProfileDropdown();
         if (typeof window.loadProfiles === 'function') window.loadProfiles();
     }
+
+    async testNIMDirect() {
+        const baseUrl = document.getElementById('ai_base_url').value.trim();
+        const apiKey = document.getElementById('ai_api_key').value.trim();
+        const resultsDiv = document.getElementById('nim-diagnostic-results');
+        const btn = document.getElementById('btn-test-nim');
+
+        if (!baseUrl) {
+            alert('Por favor, indica la Base URL de NVIDIA NIM.');
+            return;
+        }
+        if (!apiKey) {
+            alert('Por favor, indica tu NVIDIA API Key.');
+            return;
+        }
+
+        resultsDiv.classList.remove('d-none');
+        resultsDiv.innerHTML = '<div class="text-warning"><i class="fas fa-circle-notch fa-spin mr-1"></i> Ejecutando diagnóstico aislado...</div>';
+        btn.disabled = true;
+
+        const diagnosticModel = "nvidia/nemotron-3-super-120b-a12b";
+        const endpoint = `${baseUrl.replace(/\/+$/, '')}/chat/completions`;
+
+        const payload = {
+            model: diagnosticModel,
+            messages: [
+                { role: "user", content: "Responde solo: NIM OK" }
+            ],
+            temperature: 0.2,
+            top_p: 0.95,
+            max_tokens: 128,
+            stream: false
+        };
+
+        const headers = {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${apiKey}`
+        };
+
+        try {
+            const startTime = Date.now();
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(payload),
+                mode: 'cors',
+                credentials: 'omit'
+            });
+            const duration = Date.now() - startTime;
+
+            let resultHtml = `<div class="text-info mb-1 font-weight-bold">[NVIDIA NIM DIAGNOSTIC REPORT]</div>`;
+            resultHtml += `<div>• Provider: nvidia_nim</div>`;
+            resultHtml += `<div>• Endpoint: <span class="text-gray-400">${endpoint}</span></div>`;
+            resultHtml += `<div>• Model: <span class="text-gray-400">${diagnosticModel}</span></div>`;
+            resultHtml += `<div>• Stream: false</div>`;
+            resultHtml += `<div>• HTTP Status Received: <span class="text-success">YES</span></div>`;
+            resultHtml += `<div>• Status Code: <span class="text-warning">${response.status} ${response.statusText}</span></div>`;
+            resultHtml += `<div>• Duration: ${duration}ms</div><br>`;
+
+            if (response.ok) {
+                const data = await response.json();
+                const content = data.choices?.[0]?.message?.content || JSON.stringify(data);
+                resultHtml += `<div class="text-success font-weight-bold">SUCCESS: NVIDIA NIM direct test succeeded.</div>`;
+                resultHtml += `<div class="mt-1 text-gray-400" style="border-left: 2px solid #28a745; padding-left: 5px;">Response: "${content}"</div>`;
+            } else {
+                const errorText = await response.text().catch(() => "No error body");
+                resultHtml += `<div class="text-danger font-weight-bold">FAILURE: Request reached NVIDIA but returned an error.</div>`;
+
+                let classification = "";
+                switch(response.status) {
+                    case 401: classification = "API key missing or invalid."; break;
+                    case 403: classification = "Forbidden or entitlement issue for this NVIDIA account/model."; break;
+                    case 404: classification = "Model not found. Check the model ID."; break;
+                    case 410: classification = "This NVIDIA NIM model is no longer available or has reached end-of-life (EOL)."; break;
+                    case 429: classification = "Rate limit or quota exceeded."; break;
+                    case 500:
+                    case 502:
+                    case 503: classification = "NVIDIA upstream server error."; break;
+                    default: classification = `Unhandled error (${response.status}).`;
+                }
+                resultHtml += `<div class="text-warning mt-1 font-weight-bold">${classification}</div>`;
+                resultHtml += `<div class="text-gray-500 mt-1" style="font-size: 9px; overflow-wrap: break-word; background: #111; padding: 4px; border-radius: 2px;">Raw error: ${errorText.substring(0, 300)}</div>`;
+            }
+
+            resultsDiv.innerHTML = resultHtml;
+
+        } catch (e) {
+            let resultHtml = `<div class="text-info mb-1 font-weight-bold">[NVIDIA NIM DIAGNOSTIC REPORT]</div>`;
+            resultHtml += `<div>• Provider: nvidia_nim</div>`;
+            resultHtml += `<div>• Endpoint: <span class="text-gray-400">${endpoint}</span></div>`;
+            resultHtml += `<div>• HTTP Status Received: <span class="text-danger">NO</span></div>`;
+            resultHtml += `<div class="text-danger font-weight-bold mt-2">FAILURE: Browser fetch failed before reaching NVIDIA servers.</div>`;
+
+            let classification = "Possible causes: CORS/preflight block, browser privacy settings/extensions blocking the request, network interruption, or the endpoint is blocked by the browser policy.";
+
+            // Provider-aware checks for common failures
+            if (baseUrl.startsWith('http://') && window.location.protocol === 'https:') {
+                classification += "<br><span class='text-danger'>• Mixed Content detected: requesting HTTP from an HTTPS page. Use HTTPS for the endpoint.</span>";
+            }
+            if (/(^127\.)|(^192\.168\.)|(^10\.)|(^172\.(1[6-9]|2[0-9]|3[0-1])\.)|(^localhost)/.test(baseUrl.replace(/^https?:\/\//, ''))) {
+                classification += "<br>• Endpoint appears to be a local or private IP. Check VPN/Network connectivity.";
+            }
+
+            resultHtml += `<div class="text-warning mt-1" style="font-size: 10px;">${classification}</div>`;
+
+            // Sanitize error message to prevent API key leakage
+            let safeErrorMessage = e.message || "Unknown error";
+            if (apiKey) {
+                const escapedKey = apiKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                safeErrorMessage = safeErrorMessage.replace(new RegExp(escapedKey, 'g'), 'nvapi-***REDACTED***');
+            }
+            resultHtml += `<div class="text-gray-500 mt-2" style="font-size: 9px;">Error details: ${safeErrorMessage}</div>`;
+
+            resultsDiv.innerHTML = resultHtml;
+        } finally {
+            btn.disabled = false;
+        }
+    }
 }
 
 window.ollamaUI = new OllamaUI();

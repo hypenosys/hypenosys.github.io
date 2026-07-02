@@ -75,14 +75,8 @@ window.NeuralProviderClient = (function() {
                 headers['Authorization'] = `Bearer ${apiKey}`;
             }
 
-            // Specific check for NVIDIA NIM as seen in neural-chat-send.js
-            const isNIM = (config.base_url || '').includes('nvidia.com') ||
-                          (config.model || '').startsWith('nvidia/') ||
-                          (config.model || '').startsWith('meta/') ||
-                          (config.model || '').startsWith('mistralai/');
-            if (isNIM) {
-                headers['x-requested-with'] = 'XMLHttpRequest';
-            }
+            // Remove x-requested-with as it can trigger CORS preflight issues
+            // and was confirmed unnecessary in functional Termux tests.
 
             const payload = {
                 model: model,
@@ -162,8 +156,20 @@ window.NeuralProviderClient = (function() {
 
             if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] provider call failed:", safeMessage);
             if (onError) {
-                // Ensure base_url is included in the error for diagnostics as requested
-                const detailedError = new Error(`AI request failed for provider ${provider} at ${baseUrl}. ${safeMessage}. Check VPN reachability, CORS/OLLAMA_ORIGINS and browser Mixed Content settings.`);
+                // Provider-aware error messages
+                let troubleshooting = "Check VPN reachability";
+
+                if (provider === 'ollama') {
+                    troubleshooting += ", CORS/OLLAMA_ORIGINS and local network connectivity.";
+                } else if (provider === 'nvidia_nim') {
+                    troubleshooting += ", browser CORS policy and API key validity.";
+                }
+
+                if (baseUrl.startsWith('http://') && window.location.protocol === 'https:') {
+                    troubleshooting += " (Possible Mixed Content block)";
+                }
+
+                const detailedError = new Error(`AI request failed for provider ${provider} at ${baseUrl}. ${safeMessage}. ${troubleshooting}`);
                 onError(detailedError);
             }
         }
