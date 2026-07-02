@@ -81,6 +81,11 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-purple">Added</h5>
             <ul>
+                <li><strong>Integración Formal de NVIDIA NIM:</strong> Implementado NVIDIA NIM como proveedor de IA de primer nivel en el modal de configuración, eliminando inyecciones dinámicas frágiles.</li>
+                <li><strong>Descubrimiento Robustecido de Modelos NIM:</strong> Añadido sistema de descubrimiento automático vía <code>/v1/models</code> con fallback garantizado al catálogo estático (<code>NVIDIA_NIM_CATALOG</code>) en caso de fallos de CORS o autenticación.</li>
+                <li><strong>Bloque de Ayuda NIM:</strong> Nueva sección informativa en el modal de configuración detallando los riesgos de CORS y recomendando el uso de proxies seguros para NVIDIA NIM Cloud.</li>
+                <li><strong>Sanitización de Errores:</strong> Implementada la redacción automática de API Keys en los mensajes de error de <code>NeuralProviderClient</code> para evitar fugas de secretos en el frontend.</li>
+                <li><strong>Normalización de URLs Inteligente:</strong> Mejorada la lógica de construcción de endpoints para preservar estructuras de URL personalizadas en NIM sin afectar el flujo forzado de <code>/v1</code> de Ollama.</li>
                 <li><strong>Sincronización Bidireccional en Tiempo Real:</strong> Implementado sistema de mensajería entre pestañas (<code>BroadcastChannel</code>) que permite que cualquier cambio en una conversación se refleje instantáneamente en todas las ventanas abiertas (Standalone y Panel).</li>
                 <li><strong>Identidad de Usuario Real:</strong> Las burbujas de chat ahora muestran el nombre y avatar real del usuario de GitHub, eliminando la etiqueta genérica "USER".</li>
                 <li><strong>Selector de Modo Rediseñado:</strong> Consolidado el selector Claude/Jules en un menú desplegable único y elegante, eliminando la confusión visual en la interfaz de entrada.</li>
