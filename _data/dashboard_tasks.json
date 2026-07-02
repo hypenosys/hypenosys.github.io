@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-07-02T23:01:30.853Z",
+  "last_updated": "2026-07-02T23:02:21.988Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2867,15 +2867,15 @@
       "milestone": "M2",
       "estado": "Working",
       "completitud": 0,
-      "resuelto_por": null,
+      "resuelto_por": "Axel",
       "detectado_por": "Axel",
       "asignados": [],
-      "email_responsable": null,
+      "email_responsable": "axel@hypenosys.com",
       "emails_asignados": [],
-      "start_date": null,
-      "due_date": null,
-      "estimated_hours": null,
-      "story_points": null,
+      "start_date": "2026-07-03",
+      "due_date": "2026-07-03",
+      "estimated_hours": 2,
+      "story_points": 2,
       "tags": [],
       "external_links": [],
       "subtasks": [],
@@ -2910,6 +2910,13 @@
           "timestamp": "2026-06-21T12:44:58.553Z",
           "field": "seccion",
           "new_value": "Chat Neural"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-02T23:02:21.205Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-07-03"
         }
       ],
       "id": 55,
@@ -3667,6 +3674,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #55",
+      "user": "Axlfc",
+      "timestamp": "2026-07-02T23:02:21.988Z"
+    },
     {
       "action": "chore: actualizar tarea #36",
       "user": "Axlfc",
