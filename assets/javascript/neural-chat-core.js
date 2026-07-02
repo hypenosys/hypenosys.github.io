@@ -107,6 +107,7 @@ window.NeuralChatCore = (function() {
                 timestamp: Date.now()
             };
             session.messages.push(userMsg);
+            session.updatedAt = new Date().toISOString();
 
             // Set title from first message if default
             if ((session.title === 'Nueva Conversación' || !session.title) && userMessage) {
@@ -123,6 +124,7 @@ window.NeuralChatCore = (function() {
             timestamp: Date.now()
         };
         session.messages.push(assistantMsg);
+        session.updatedAt = new Date().toISOString();
         const assistantIdx = session.messages.length - 1;
 
         try {
@@ -155,6 +157,8 @@ window.NeuralChatCore = (function() {
                 onDone: (fullContent) => {
                     if (session.messages[assistantIdx]) {
                         session.messages[assistantIdx].content = fullContent;
+                        session.messages[assistantIdx].timestamp = Date.now();
+                        session.updatedAt = new Date().toISOString();
                     }
                     if (saveCallback) saveCallback();
                     if (onDone) onDone(fullContent);

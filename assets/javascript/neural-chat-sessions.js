@@ -152,7 +152,6 @@ window.addEventListener('storage', (e) => {
 });
 
 window.saveSessions = function(skipSync = false) {
-    window.neuralSyncChannel.postMessage({ type: 'session-updated' });
     try {
         // Deduplicate sessions by ID before saving to prevent double-entries
         const uniqueSessions = [];
@@ -167,6 +166,10 @@ window.saveSessions = function(skipSync = false) {
 
         localStorage.setItem('claude_chat_sessions', JSON.stringify(uniqueSessions));
         localStorage.setItem('claude_archived_sessions', JSON.stringify(window.archivedSessions));
+
+        if (window.neuralSyncChannel) {
+            window.neuralSyncChannel.postMessage({ type: 'session-updated' });
+        }
 
         // Unified cross-tab and cross-component sync
         const neuralSessions = uniqueSessions.filter(s => !s.archived).map(s => ({
