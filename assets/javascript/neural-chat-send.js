@@ -231,7 +231,7 @@ window.sendMessage = async function() {
                 onError: (err) => {
                     if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] send failed:", err.message);
                     window.thinkingIndicator.classList.add('hidden');
-                    appendSystemMessage("Error del proveedor: " + err.message, 'error');
+                    appendSystemMessage(err.message, 'error');
                     renderMessages();
                 }
             });
@@ -328,16 +328,6 @@ window.callCustomProvider = async function(config, messages) {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${config.api_key}`
     };
-
-    // Detect NIM provider automatically
-    const isNIM = (config.base_url || '').includes('nvidia.com') ||
-                  (config.model || '').startsWith('nvidia/') ||
-                  (config.model || '').startsWith('meta/') ||
-                  (config.model || '').startsWith('mistralai/');
-
-    if (isNIM) {
-        headers['x-requested-with'] = 'XMLHttpRequest';
-    }
 
     const response = await fetch(endpoint, {
         method: 'POST',

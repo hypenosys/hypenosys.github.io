@@ -211,14 +211,14 @@ class AuthManager {
             const user = await window.githubApi.validateToken();
             this.updateHeaderUI(user);
 
-            if (!julesKey) throw new Error("Se requiere una Jules API Key para conectar con el agente de IA.");
-
-            try {
-                await window.julesApiCall('GET', '/sources', null, julesKey);
-                localStorage.setItem('jules_api_key', julesKey);
-            } catch (julesErr) {
-                console.error("Jules validation failed:", julesErr);
-                throw new Error("Jules API Key inválida o error de conexión: " + julesErr.message);
+            if (julesKey) {
+                try {
+                    await window.julesApiCall('GET', '/sources', null, julesKey);
+                    localStorage.setItem('jules_api_key', julesKey);
+                } catch (julesErr) {
+                    console.error("Jules validation failed:", julesErr);
+                    throw new Error("Jules API Key inválida o error de conexión: " + julesErr.message);
+                }
             }
 
             if (window.jQuery) window.jQuery('#settingsModal').modal('hide');
@@ -429,8 +429,6 @@ class AuthManager {
 
         if (julesKey) {
             localStorage.setItem('jules_api_key', julesKey);
-        } else {
-            localStorage.removeItem('jules_api_key');
         }
 
         if (!name || !role) {
@@ -557,10 +555,8 @@ class AuthManager {
             const localConfig = { name, provider, model, api_key: apiKey, base_url: baseUrl, local_network: localNetwork };
             localStorage.setItem('hy_ai_config', JSON.stringify(localConfig));
 
-            // Unify with jules_api_key for cross-module compatibility
-            if (apiKey) {
-                localStorage.setItem('jules_api_key', apiKey);
-            }
+            // jules_api_key is separate and should not be overwritten by AI provider key
+            // The existing unification logic was causing issues.
 
             // Sync non-sensitive to team_profiles.json via safe public wrapper
             const response = await fetch('/assets/data/team_profiles.json');

@@ -5,7 +5,7 @@ window.NVIDIA_NIM_CATALOG = {
   chat: [
     // ── Nemotron ──
     { id: 'nvidia/nemotron-3-ultra-550b-a55b',        label: 'Nemotron 3 Ultra 550B' },
-    { id: 'nvidia/nemotron-3-super-120b-a12b',        label: 'Nemotron 3 Super 120B' },
+    { id: 'nvidia/nemotron-3-super-120b-a12b',        label: 'Nemotron 3 Super 120B (Recomendado)' },
     { id: 'nvidia/nemotron-nano-4b-v1.1',             label: 'Nemotron Nano 4B' },
     // ── Llama ──
     { id: 'meta/llama-3.3-70b-instruct',              label: 'Llama 3.3 70B Instruct' },
@@ -31,7 +31,6 @@ window.NVIDIA_NIM_CATALOG = {
     { id: 'microsoft/phi-4-mini-instruct',            label: 'Phi 4 Mini' },
     // ── Otros ──
     { id: 'gpt-oss/gpt-oss-120b',                     label: 'GPT-OSS 120B' },
-    { id: 'zhipuai/glm-5.1',                          label: 'GLM 5.1' },
     { id: 'moonshotai/kimi-k2',                       label: 'Kimi K2' },
     { id: 'sarvam/sarvam-m',                          label: 'Sarvam-M (Indic languages)' },
   ],

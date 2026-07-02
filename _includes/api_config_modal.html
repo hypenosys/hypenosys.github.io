@@ -148,14 +148,14 @@
                 <div id="nim-help-block" class="mt-3 d-none">
                     <div class="card bg-black border-warning text-warning small mb-3">
                         <div class="card-header p-2 cursor-pointer d-flex justify-between items-center" onclick="$('#nim-help-content').collapse('toggle')">
-                            <span><i class="fas fa-shield-alt mr-1"></i> Seguridad y CORS (NVIDIA NIM)</span>
+                            <span><i class="fas fa-shield-alt mr-1"></i> Conectividad y CORS (NVIDIA NIM)</span>
                             <i class="fas fa-chevron-down"></i>
                         </div>
                         <div id="nim-help-content" class="collapse">
                             <div class="card-body p-2 font-mono text-[10px]">
-                                <p class="mb-2">Las llamadas directas desde el navegador a <code>integrate.api.nvidia.com</code> pueden fallar por políticas de CORS y exponen tu API Key en las cabeceras.</p>
-                                <p class="mb-2"><strong>Recomendación:</strong> Utiliza un proxy seguro (Cloudflare Worker o similar) que inyecte la clave en el lado del servidor.</p>
-                                <p>Si usas NIM local/self-hosted (HTTP), asegúrate de permitir el origen de este sitio o usa una extensión de CORS.</p>
+                                <p class="mb-2">Las llamadas directas desde el navegador a <code>integrate.api.nvidia.com</code> pueden fallar por políticas del navegador, CORS o preflight desde dominios como GitHub Pages.</p>
+                                <p class="mb-2">Usa <strong>TEST NIM DIRECT</strong> para comprobar si este navegador y origen permiten el modo directo. Si falla sin recibir HTTP status, el problema no es necesariamente tu API key ni el modelo.</p>
+                                <p>Si usas NIM local/self-hosted, asegúrate de permitir el origen de este sitio o usa una extensión de CORS si es necesario.</p>
                             </div>
                         </div>
                     </div>
