@@ -63,6 +63,14 @@ permalink: /CHANGELOG.html
         <h2 class="text-purple border-bottom border-purple pb-2 mb-4">[Unreleased]</h2>
         <div class="card mb-3">
           <div class="card-body">
+            <h5 class="text-success">Changed</h5>
+            <ul>
+                <li><strong>Pulido de UI Neural Chat:</strong> Implementado un nuevo selector de modo Claude/Jules mediante un control segmentado premium integrado en el área de input, eliminando el estilo blanco desalineado.</li>
+                <li><strong>Puntos de Estado Semánticos:</strong> Los indicadores de sesión ahora usan colores semánticos estrictos: <strong>Verde</strong> para conversaciones normales y <strong>Morado/Violeta</strong> para sesiones vinculadas a tareas de Jules.</li>
+                <li><strong>Indicador de Sesión Activa:</strong> Se ha desacoplado el estado "activo" del color del punto, utilizando ahora un resaltado de fondo y borde en la tarjeta de la sesión seleccionada.</li>
+                <li><strong>Acciones de Mensaje Compactas:</strong> Rediseñados los botones de "Copiar" y "Enviar a Jules" como mini-pills elegantes con interacciones de hover optimizadas y mejor accesibilidad táctil.</li>
+                <li><strong>Lógica de Vinculación Ampliada:</strong> Mejorada la detección de tareas Jules vinculadas comprobando múltiples campos de metadatos (<code>linkedJulesTaskId</code>, <code>julesTaskId</code>, etc.) tanto en la raíz como en el objeto metadata.</li>
+            </ul>
             <h5 class="text-success">Fixed</h5>
             <ul>
                 <li><strong>Robustez de Sesiones (Claude Neural):</strong> Implementada hidratación garantizada de <code>window.sessions</code> desde <code>claude_chat_sessions</code> y protección defensiva en <code>saveSessions</code> para evitar la pérdida de datos durante el inicio o migraciones fallidas en el modo standalone.</li>

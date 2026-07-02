@@ -579,26 +579,33 @@ body{
     transform: translateY(0);
 }
 .neural-action-mini {
-    height: 24px;
+    height: 22px;
     padding: 0 10px;
-    border-radius: 999px;
-    font-size: 10px;
-    font-weight: 700;
+    border-radius: var(--r-full);
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
     background: var(--surface-opaque);
+    backdrop-filter: blur(8px);
     border: 1px solid var(--border);
-    color: var(--text3);
+    color: var(--text2);
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 6px;
     transition: all 0.2s;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
 }
 .neural-action-mini:hover {
     border-color: var(--accent2);
-    color: var(--accent2);
-    background: var(--surface);
+    color: #fff;
+    background: var(--accent-grad);
     transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+}
+.neural-action-mini i {
+    font-size: 10px;
 }
 @media (hover: none) {
     .neural-message-actions {
@@ -1286,45 +1293,81 @@ body{
   animation: notif-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* DUAL SEND SWITCH */
-.dual-send-switch {
+/* JULES NEURAL MODE TOGGLE (Segmented Control) */
+.jules-neural-mode-toggle {
   display: flex;
   background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border-accent);
   border-radius: var(--r-md);
-  padding: 3px;
-  border: 1px solid var(--border);
+  padding: 2px;
   gap: 2px;
+  align-self: flex-start;
 }
-.dual-send-option {
-  padding: 6px 12px;
-  border-radius: var(--r-sm);
-  font-size: 10px;
-  font-weight: 800;
-  color: var(--text3);
-  cursor: pointer;
-  transition: all var(--t-fast);
+.jules-neural-mode-option {
   display: flex;
   align-items: center;
   gap: 6px;
-  text-transform: uppercase;
+  padding: 6px 12px;
+  border-radius: var(--r-sm);
+  background: transparent;
+  border: none;
+  color: var(--text3);
+  font-size: 10px;
+  font-weight: 800;
   letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all var(--t-norm);
+  white-space: nowrap;
 }
-.dual-send-option i {
+.jules-neural-mode-option i {
   font-size: 11px;
 }
-.dual-send-option:hover {
+.jules-neural-mode-option:hover {
   color: var(--text2);
   background: rgba(255, 255, 255, 0.05);
 }
-.dual-send-option.active[data-mode="claude"] {
-  background: var(--claude-bg);
-  color: var(--claude-text);
-  box-shadow: 0 0 12px rgba(189, 147, 249, 0.2);
+.jules-neural-mode-option.active {
+  color: #fff;
 }
-.dual-send-option.active[data-mode="jules"] {
-  background: var(--surface-active);
+.jules-neural-mode-option.active[data-mode="claude"] {
+  background: rgba(189, 147, 249, 0.15);
+  color: #bd93f9;
+  box-shadow: 0 0 10px rgba(189, 147, 249, 0.2);
+}
+.jules-neural-mode-option.active[data-mode="jules"] {
+  background: rgba(124, 58, 237, 0.15);
   color: var(--accent2);
-  box-shadow: 0 0 12px rgba(124, 58, 237, 0.2);
+  box-shadow: 0 0 10px rgba(124, 58, 237, 0.2);
+}
+
+/* SEMANTIC STATUS DOTS */
+.chat-history-item .chat-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--green); /* Default: Normal (Green) */
+  flex-shrink: 0;
+  transition: all var(--t-norm);
+}
+.chat-history-item.linked .chat-dot {
+  background: var(--accent); /* Linked (Purple) */
+  box-shadow: 0 0 7px var(--accent);
+}
+.chat-history-item:not(.linked) .chat-dot {
+  background: var(--green);
+  box-shadow: 0 0 7px var(--green);
+}
+
+/* ACTIVE SESSION STYLE (Non-semantic indicator) */
+.chat-history-item.active {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-left: 2px solid var(--accent) !important;
+  box-shadow: inset 0 0 15px rgba(124, 58, 237, 0.05);
+}
+.chat-history-item.active .chat-title {
+  color: #fff;
+  font-weight: 600;
 }
 
 /* NEURAL SESSIONS DRAWER */
