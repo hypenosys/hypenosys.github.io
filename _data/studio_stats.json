@@ -1,15 +1,15 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-06-29T09:48:02.094Z",
+  "computed_at": "2026-07-02T23:01:33.502Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 30,
-    "total_ok": 9,
+    "total_ok": 10,
     "total_ko": 0,
     "total_uncertain": 5,
     "total_obsolete": 9,
-    "fixed_found_ratio": 0.25,
-    "verified_ratio": 0.2308
+    "fixed_found_ratio": 0.2778,
+    "verified_ratio": 0.2564
   },
   "group": {
     "velocity_trend": {
@@ -22,7 +22,7 @@
       "2026-W26": 1,
       "2026-W27": 0
     },
-    "bug_rate": 0.0476,
+    "bug_rate": 0.05,
     "blocker_health": 1,
     "tag_heatmap": {
       "brainstorm": 1,
@@ -31,18 +31,17 @@
       "docs": 2,
       "topper": 1,
       "testing": 1,
-      "devops": 5,
+      "devops": 4,
       "git": 1,
       "UX/UI": 1,
       "feature": 10,
       "frontend": 1,
       "ux": 1,
-      "api": 6,
+      "api": 5,
       "infraestructura": 1,
       "jules-panel": 1,
       "neural-chat": 1,
       "svn": 1,
-      "research": 1,
       "bug": 1,
       "security": 3,
       "backend": 2,
@@ -147,7 +146,7 @@
     "axlfc": {
       "member_name": "Axel",
       "completed": {
-        "all_time": 32,
+        "all_time": 33,
         "milestone": 24,
         "week": 0
       },
@@ -155,7 +154,7 @@
         "2026-W20": 0,
         "2026-W21": 3,
         "2026-W22": 4,
-        "2026-W23": 33,
+        "2026-W23": 38,
         "2026-W24": 5,
         "2026-W25": 10,
         "2026-W26": 3,
@@ -163,12 +162,13 @@
       },
       "type_breakdown": {
         "feature": 21,
+        "research": 2,
         "chore": 6,
-        "bug": 4,
-        "research": 1
+        "bug": 4
       },
       "rama_breakdown": {
         "feature/kanban-jules-link": 1,
+        "feature/n8n-providers-nim-agent": 1,
         "chore/scripts-svn-sync": 1,
         "feature/kanban-repo-names": 1,
         "master": 8,
@@ -182,12 +182,13 @@
       },
       "tag_frequency": {
         "Infraestructura": 1,
-        "api": 4,
+        "api": 5,
         "feature": 6,
         "jules": 2,
         "ux": 7,
+        "devops": 2,
+        "research": 1,
         "chore": 4,
-        "devops": 1,
         "frontend": 5,
         "infraestructura": 1,
         "UX/UI": 1,
@@ -209,14 +210,14 @@
         "reprioritizations": 27
       },
       "workload": {
-        "active_tasks": 10,
+        "active_tasks": 9,
         "story_points": 17
       }
     },
     "topperh4rley": {
       "member_name": "Alex",
       "completed": {
-        "all_time": 29,
+        "all_time": 30,
         "milestone": 21,
         "week": 0
       },
@@ -224,7 +225,7 @@
         "2026-W20": 0,
         "2026-W21": 3,
         "2026-W22": 5,
-        "2026-W23": 37,
+        "2026-W23": 42,
         "2026-W24": 3,
         "2026-W25": 7,
         "2026-W26": 0,
@@ -233,12 +234,13 @@
       "type_breakdown": {
         "chore": 4,
         "feature": 21,
-        "bug": 3,
-        "research": 1
+        "research": 2,
+        "bug": 3
       },
       "rama_breakdown": {
         "PRO": 16,
         "feature/kanban-jules-link": 1,
+        "feature/n8n-providers-nim-agent": 1,
         "chore/scripts-svn-sync": 1,
         "feature/kanban-repo-names": 1,
         "master": 5,
@@ -252,11 +254,12 @@
         "chore": 3,
         "onboarding": 1,
         "Infraestructura": 1,
-        "api": 4,
+        "api": 5,
         "feature": 6,
         "jules": 2,
         "ux": 8,
-        "devops": 1,
+        "devops": 2,
+        "research": 1,
         "frontend": 6,
         "UX/UI": 2,
         "bug": 3,
@@ -276,7 +279,7 @@
         "reprioritizations": 26
       },
       "workload": {
-        "active_tasks": 9,
+        "active_tasks": 8,
         "story_points": 19
       }
     },
@@ -532,7 +535,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-06-29T09:48:02.826Z"
+      "timestamp": "2026-07-02T23:01:34.330Z"
     }
   ]
 }
