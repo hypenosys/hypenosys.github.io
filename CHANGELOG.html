@@ -65,6 +65,7 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-success">Fixed</h5>
             <ul>
+                <li><strong>Robustez de Sesiones (Claude Neural):</strong> Implementada hidratación garantizada de <code>window.sessions</code> desde <code>claude_chat_sessions</code> y protección defensiva en <code>saveSessions</code> para evitar la pérdida de datos durante el inicio o migraciones fallidas en el modo standalone.</li>
                 <li><strong>Persistencia de Mensajes (Neural Chat):</strong> Resuelto el problema donde los mensajes desaparecían al refrescar la página. Se corrigió una colisión de variables globales en <code>BroadcastChannel</code> y se añadieron llamadas de guardado garantizado durante el flujo de envío y streaming.</li>
                 <li><strong>Claude Neural Standalone Runtime:</strong> Corregida regresión crítica que impedía el envío y recepción de respuestas. Se resolvió la falta de carga del cliente de proveedor y se añadieron logs de diagnóstico exhaustivos.</li>
                 <li><strong>Indicador de Pensamiento:</strong> Restaurada la visibilidad del estado "Claude está pensando" para proporcionar feedback visual inmediato durante la generación.</li>
