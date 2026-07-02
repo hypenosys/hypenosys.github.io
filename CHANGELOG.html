@@ -65,6 +65,7 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-success">Fixed</h5>
             <ul>
+                <li><strong>Persistencia de Mensajes (Neural Chat):</strong> Resuelto el problema donde los mensajes desaparecían al refrescar la página. Se corrigió una colisión de variables globales en <code>BroadcastChannel</code> y se añadieron llamadas de guardado garantizado durante el flujo de envío y streaming.</li>
                 <li><strong>Claude Neural Standalone Runtime:</strong> Corregida regresión crítica que impedía el envío y recepción de respuestas. Se resolvió la falta de carga del cliente de proveedor y se añadieron logs de diagnóstico exhaustivos.</li>
                 <li><strong>Indicador de Pensamiento:</strong> Restaurada la visibilidad del estado "Claude está pensando" para proporcionar feedback visual inmediato durante la generación.</li>
                 <li><strong>DocsBridge Fail-Open:</strong> Implementado mecanismo de seguridad que garantiza que el chat nunca se bloquee por la documentación. Si DocsBridge falla o tarda más de 3500ms, el chat continúa automáticamente sin contexto.</li>
