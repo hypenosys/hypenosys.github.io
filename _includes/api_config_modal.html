@@ -153,9 +153,14 @@
                         </div>
                         <div id="nim-help-content" class="collapse">
                             <div class="card-body p-2 font-mono text-[10px]">
-                                <p class="mb-2">Las llamadas directas desde el navegador a <code>integrate.api.nvidia.com</code> pueden fallar por políticas del navegador, CORS o preflight desde dominios como GitHub Pages.</p>
-                                <p class="mb-2">Usa <strong>TEST NIM DIRECT</strong> para comprobar si este navegador y origen permiten el modo directo. Si falla sin recibir HTTP status, el problema no es necesariamente tu API key ni el modelo.</p>
-                                <p>Si usas NIM local/self-hosted, asegúrate de permitir el origen de este sitio o usa una extensión de CORS si es necesario.</p>
+                                <p class="mb-2 font-weight-bold text-white">MODO DIRECTO:</p>
+                                <p class="mb-2">Base URL: <code>https://integrate.api.nvidia.com/v1</code></p>
+                                <p class="mb-2">Suele fallar por <strong>CORS/Preflight</strong> desde GitHub Pages.</p>
+                                <hr class="border-warning opacity-20">
+                                <p class="mb-2 font-weight-bold text-white">MODO RELAY (Recomendado):</p>
+                                <p class="mb-2">Base URL: <code>https://hypenosys-gatekeeper-v2.axlffcc.workers.dev/v1</code></p>
+                                <p class="mb-2">Evita bloqueos de navegador. Sigue usando tu propia API Key. El Worker no almacena secretos.</p>
+                                <p>Usa <strong>TEST NIM DIRECT</strong> para diagnosticar la conectividad.</p>
                             </div>
                         </div>
                     </div>

@@ -24,7 +24,7 @@ class OllamaUI {
             'gemini': 'gemini-2.5-flash',
             'mistral': 'mistral-large-latest',
             'openrouter': 'openrouter/auto',
-            'nvidia_nim': 'nvidia/nemotron-3-ultra-550b-a55b',
+            'nvidia_nim': 'nvidia/nemotron-3-super-120b-a12b',
             'ollama': 'llama3',
             'none': '',
             'custom': ''
@@ -449,8 +449,13 @@ class OllamaUI {
             });
             const duration = Date.now() - startTime;
 
+            let detectedMode = "Custom compatible endpoint";
+            if (baseUrl.includes('integrate.api.nvidia.com')) detectedMode = "Direct NVIDIA Cloud";
+            else if (baseUrl.includes('hypenosys-gatekeeper-v2.axlffcc.workers.dev')) detectedMode = "Hypenosys Gatekeeper Relay";
+
             let resultHtml = `<div class="text-info mb-1 font-weight-bold">[NVIDIA NIM DIAGNOSTIC REPORT]</div>`;
             resultHtml += `<div>• Provider: nvidia_nim</div>`;
+            resultHtml += `<div>• Detected Mode: <span class="text-accent2">${detectedMode}</span></div>`;
             resultHtml += `<div>• Endpoint: <span class="text-gray-400">${endpoint}</span></div>`;
             resultHtml += `<div>• Model: <span class="text-gray-400">${diagnosticModel}</span></div>`;
             resultHtml += `<div>• Stream: false</div>`;
@@ -486,13 +491,25 @@ class OllamaUI {
             resultsDiv.innerHTML = resultHtml;
 
         } catch (e) {
+            let detectedMode = "Custom compatible endpoint";
+            if (baseUrl.includes('integrate.api.nvidia.com')) detectedMode = "Direct NVIDIA Cloud";
+            else if (baseUrl.includes('hypenosys-gatekeeper-v2.axlffcc.workers.dev')) detectedMode = "Hypenosys Gatekeeper Relay";
+
             let resultHtml = `<div class="text-info mb-1 font-weight-bold">[NVIDIA NIM DIAGNOSTIC REPORT]</div>`;
             resultHtml += `<div>• Provider: nvidia_nim</div>`;
+            resultHtml += `<div>• Detected Mode: <span class="text-accent2">${detectedMode}</span></div>`;
             resultHtml += `<div>• Endpoint: <span class="text-gray-400">${endpoint}</span></div>`;
             resultHtml += `<div>• HTTP Status Received: <span class="text-danger">NO</span></div>`;
-            resultHtml += `<div class="text-danger font-weight-bold mt-2">FAILURE: Browser fetch failed before reaching NVIDIA servers.</div>`;
+            resultHtml += `<div class="text-danger font-weight-bold mt-2">FAILURE: Browser fetch failed before reaching the server.</div>`;
 
-            let classification = "Possible causes: CORS/preflight block, browser privacy settings/extensions blocking the request, network interruption, or the endpoint is blocked by the browser policy.";
+            let classification = "";
+            if (detectedMode === "Direct NVIDIA Cloud") {
+                classification = "This is likely a CORS/preflight block from GitHub Pages. NVIDIA direct API often blocks browser requests. Use the Hypenosys Gatekeeper Relay for stable usage.";
+            } else if (detectedMode === "Hypenosys Gatekeeper Relay") {
+                classification = "Relay endpoint could not be reached. Check the relay Base URL, CORS configuration, or Worker availability.";
+            } else {
+                classification = "Possible causes: CORS/preflight block, mixed content (HTTP on HTTPS), or the endpoint is offline.";
+            }
 
             // Provider-aware checks for common failures
             if (baseUrl.startsWith('http://') && window.location.protocol === 'https:') {

@@ -63,6 +63,40 @@ class AuthManager {
         }
     }
 
+    /**
+     * Fallback validation for Jules API Key to avoid dependency on jules-api.js
+     * and handle key separation/contamination.
+     */
+    async validateJulesKey(key) {
+        if (!key) return false;
+
+        // Detect and reject AI provider keys in Jules slot
+        if (key.startsWith('nvapi-') || key.startsWith('sk-')) {
+            throw new Error("A provider API key (NVIDIA/OpenAI) was detected. Please enter your real Jules API key.");
+        }
+
+        try {
+            // Direct fetch to Jules API
+            const endpoint = 'https://jules.googleapis.com/v1alpha/sources?pageSize=1';
+            const response = await fetch(endpoint, {
+                method: 'GET',
+                headers: {
+                    'x-goog-api-key': key,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.ok) return true;
+            if (response.status === 401 || response.status === 403) {
+                throw new Error("Jules API Key inválida (Unauthorized/Forbidden)");
+            }
+            throw new Error(`Error de conexión Jules: ${response.status} ${response.statusText}`);
+        } catch (e) {
+            console.error('[AUTH] Jules validation failed:', e.message);
+            throw e;
+        }
+    }
+
     bindEvents() {
         document.getElementById('btn-save-settings')?.addEventListener('click', () => this.handleSaveSettings());
         document.getElementById('btn-logout-denied')?.addEventListener('click', () => this.handleLogout());
@@ -88,7 +122,19 @@ class AuthManager {
 
                     if (inputPat) inputPat.value = localStorage.getItem('github_token') || '';
                     if (inputRepo) inputRepo.value = localStorage.getItem('github_repo') || 'hypenosys/hypenosys.github.io';
-                    if (inputJulesKey) inputJulesKey.value = localStorage.getItem('jules_api_key') || '';
+
+                    if (inputJulesKey) {
+                        const storedKey = localStorage.getItem('jules_api_key') || '';
+                        // Clean existing contamination from UI and Storage
+                        if (storedKey.startsWith('nvapi-') || storedKey.startsWith('sk-')) {
+                            inputJulesKey.value = '';
+                            inputJulesKey.placeholder = 'Enter real Jules API key (AI key detected)';
+                            console.warn('[AUTH] Contaminated jules_api_key found and cleared.');
+                            localStorage.removeItem('jules_api_key');
+                        } else {
+                            inputJulesKey.value = storedKey;
+                        }
+                    }
                 });
             }
         }
@@ -213,12 +259,16 @@ class AuthManager {
 
             if (julesKey) {
                 try {
-                    await window.julesApiCall('GET', '/sources', null, julesKey);
+                    // Use local validation to avoid "window.julesApiCall is not a function"
+                    await this.validateJulesKey(julesKey);
                     localStorage.setItem('jules_api_key', julesKey);
                 } catch (julesErr) {
                     console.error("Jules validation failed:", julesErr);
                     throw new Error("Jules API Key inválida o error de conexión: " + julesErr.message);
                 }
+            } else {
+                // Allow clearing the key
+                localStorage.removeItem('jules_api_key');
             }
 
             if (window.jQuery) window.jQuery('#settingsModal').modal('hide');
@@ -407,7 +457,16 @@ class AuthManager {
             if (editProfileRole) editProfileRole.value = member.role || '';
             if (editProfileDesc) editProfileDesc.value = member.description || '';
             if (editProfilePortfolio) editProfilePortfolio.value = member.portfolio || '';
-            if (inputJulesKey) inputJulesKey.value = localStorage.getItem('jules_api_key') || '';
+
+            if (inputJulesKey) {
+                const storedKey = localStorage.getItem('jules_api_key') || '';
+                if (storedKey.startsWith('nvapi-') || storedKey.startsWith('sk-')) {
+                    inputJulesKey.value = '';
+                    inputJulesKey.placeholder = 'Re-enter real Jules API key';
+                } else {
+                    inputJulesKey.value = storedKey;
+                }
+            }
 
             this.currentTeamData = team;
             this.currentFileSha = fileData.sha;
@@ -428,7 +487,12 @@ class AuthManager {
         const julesKey = document.getElementById('input-jules-key')?.value.trim() || '';
 
         if (julesKey) {
-            localStorage.setItem('jules_api_key', julesKey);
+            // Separation: never save AI provider keys here
+            if (!julesKey.startsWith('nvapi-') && !julesKey.startsWith('sk-')) {
+                localStorage.setItem('jules_api_key', julesKey);
+            } else {
+                console.warn('[AUTH] AI provider key blocked from jules_api_key slot');
+            }
         }
 
         if (!name || !role) {
