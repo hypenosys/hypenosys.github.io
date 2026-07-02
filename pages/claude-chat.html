@@ -727,9 +727,9 @@ permalink: /chat/neural/
                             }
                         };
 
-                        // Initialize Neural context context sync
-                        window.neuralSyncChannel = new BroadcastChannel('neural-context-sync');
-                        window.neuralSyncChannel.onmessage = (event) => {
+                        // Initialize Neural context context sync - Use a distinct name to avoid collision with neural-chat-sessions.js
+                        window.neuralContextSyncChannel = new BroadcastChannel('neural-context-sync');
+                        window.neuralContextSyncChannel.onmessage = (event) => {
                             if (window.isLoadingSession) return;
                             const { type, julesSessionId, claudeConversationId, message } = event.data;
                             if (type === 'NEW_MESSAGE' && message) {

@@ -125,8 +125,11 @@ window.sendMessage = async function() {
     if (window.attachedImage) removeAttachedImage();
 
     // Set title from first message (Tarea 2.5 - 40 chars)
-    if (currentSession && currentSession.title === 'Nueva Conversación' && content) {
+    if (currentSession && (currentSession.title === 'Nueva Conversación' || !currentSession.title) && content) {
         currentSession.title = content.substring(0, 40) + (content.length > 40 ? '...' : '');
+        currentSession.updatedAt = new Date().toISOString();
+        saveSessions();
+        renderSessionList();
     }
 
     window.chatInput.value = '';
@@ -172,9 +175,10 @@ window.sendMessage = async function() {
             // Optimistic UI: Add user message and render immediately
             const userMsg = { role: 'user', content: content, timestamp: Date.now() };
             currentSession.messages.push(userMsg);
+            currentSession.updatedAt = new Date().toISOString();
 
             renderMessages();
-        if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] user message rendered");
+            if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] user message rendered");
             renderSessionList();
             saveSessions();
 
@@ -210,6 +214,10 @@ window.sendMessage = async function() {
                         lastMsg.sources = currentSources;
                     }
                     renderMessages();
+                    // Periodic save during streaming to prevent loss if refresh occurs
+                    if (fullContent.length % 50 < token.length) {
+                        saveSessions(true); // skipSync to avoid flooding BroadcastChannel
+                    }
                 },
                 onDone: (fullContent) => {
                     if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] provider response received");
