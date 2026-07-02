@@ -44,7 +44,7 @@ window.startJulesPolling = function(sessionId) {
                 });
 
                 if (changed) {
-                    saveSessions();
+                    saveSessions(false, 'jules-polling-new-msgs');
                     renderMessages();
                 }
             }
@@ -109,7 +109,7 @@ window.analyzeJulesOutput = async function(output, isInitial = false) {
                 content: `[ANÁLISIS JULES: #${output.session_id}]\n\n${analysis}`,
                 jules_analysis: true
             });
-            saveSessions();
+            saveSessions(false, 'jules-output-analysis');
             renderMessages();
         }
     } catch (e) {
