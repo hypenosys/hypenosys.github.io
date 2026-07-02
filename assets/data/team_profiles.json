@@ -1,6 +1,6 @@
 {
   "schema_version": "2.0.0",
-  "last_updated": "2026-06-28T22:22:06.015Z",
+  "last_updated": "2026-07-02T18:39:05.810Z",
   "members": {
     "Axel": {
       "github_username": "Axlfc",
@@ -50,8 +50,8 @@
         "volatilidad": 0
       },
       "ai_config": {
-        "provider": "ollama",
-        "model": "qwen3:14b"
+        "provider": "nvidia_nim",
+        "model": "deepseek-ai/deepseek-v4-flash"
       },
       "portfolio": "https://axlfc.github.io"
     },
@@ -191,6 +191,11 @@
     }
   },
   "_audit_log": [
+    {
+      "action": "chore: actualizar config AI de Axel",
+      "user": "Axlfc",
+      "timestamp": "2026-07-02T18:39:05.810Z"
+    },
     {
       "action": "chore: actualizar perfil de TopperH4rley",
       "user": "TopperH4rley",
