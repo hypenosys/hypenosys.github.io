@@ -73,6 +73,7 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-success">Fixed</h5>
             <ul>
+                <li><strong>Mensajes de Error NVIDIA NIM:</strong> Corregido el sistema de reporte de errores para el proveedor NVIDIA NIM. Ahora identifica fallos de red/CORS antes de recibir un estado HTTP y muestra un mensaje específico y accionable sobre bloqueos de origen en GitHub Pages, evitando sugerencias engañosas de VPN o validez de API Key en estos casos.</li>
                 <li><strong>Robustez de Sesiones (Claude Neural):</strong> Implementada hidratación garantizada de <code>window.sessions</code> desde <code>claude_chat_sessions</code> y protección defensiva en <code>saveSessions</code> para evitar la pérdida de datos durante el inicio o migraciones fallidas en el modo standalone.</li>
                 <li><strong>Persistencia de Mensajes (Neural Chat):</strong> Resuelto el problema donde los mensajes desaparecían al refrescar la página. Se corrigió una colisión de variables globales en <code>BroadcastChannel</code> y se añadieron llamadas de guardado garantizado durante el flujo de envío y streaming.</li>
                 <li><strong>Claude Neural Standalone Runtime:</strong> Corregida regresión crítica que impedía el envío y recepción de respuestas. Se resolvió la falta de carga del cliente de proveedor y se añadieron logs de diagnóstico exhaustivos.</li>
@@ -318,6 +319,8 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-success">Changed</h5>
             <ul>
+                <li><strong>Clasificación de Errores Inteligente:</strong> Rediseñado el motor de excepciones de <code>NeuralProviderClient</code> para ser consciente del contexto. El diagnóstico de VPN y red local ahora se limita estrictamente a endpoints privados (localhost, 127.x, 192.x, 10.x, 100.x, .local).</li>
+                <li><strong>Sanitización Mejorada de API Keys:</strong> Actualizada la lógica de redacción de secretos para usar el prefijo <code>nvapi-***REDACTED***</code> específicamente para NVIDIA NIM, manteniendo el estándar de seguridad en logs y UI.</li>
               <li><strong>Persistencia de UI:</strong> El estado de colapso del sidebar y de los grupos de repositorios se persiste ahora localmente en el navegador.</li>
               <li><strong>Visualización de Razonamiento (Claude 3.7+):</strong> Implementado el soporte para bloques <code>thinking-block</code> en el chat integrado del Panel V2, permitiendo observar el razonamiento interno de los modelos más avanzados.</li>
               <li><strong>Análisis de Historial Integrado (V2):</strong> Refactorizado el sistema de análisis manual para que los fragmentos seleccionados del historial de Jules se inyecten directamente en el chat de V2, eliminando la dependencia de redirecciones externas.</li>
