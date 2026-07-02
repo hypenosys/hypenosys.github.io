@@ -1,6 +1,6 @@
 {
   "schema_version": "2.0.0",
-  "last_updated": "2026-07-02T22:28:56.737Z",
+  "last_updated": "2026-07-02T22:31:36.686Z",
   "members": {
     "Axel": {
       "github_username": "Axlfc",
@@ -51,7 +51,7 @@
       },
       "ai_config": {
         "provider": "nvidia_nim",
-        "model": "deepseek-ai/deepseek-v4-flash"
+        "model": "nvidia/nemotron-3-super-120b-a12b"
       },
       "portfolio": "https://axlfc.github.io"
     },
@@ -191,6 +191,11 @@
     }
   },
   "_audit_log": [
+    {
+      "action": "chore: actualizar config AI de Axel",
+      "user": "Axlfc",
+      "timestamp": "2026-07-02T22:31:36.686Z"
+    },
     {
       "action": "chore: actualizar config AI de Axel",
       "user": "Axlfc",
