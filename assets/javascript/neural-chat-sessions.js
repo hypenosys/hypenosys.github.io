@@ -3,9 +3,19 @@
    ════════════════════════════════════════ */
 
 window.sessions = (function() {
+    if (window.HYPENOSYS_NEURAL_DEBUG) {
+        const raw = localStorage.getItem('claude_chat_sessions');
+        if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Chat] Storage before init:", raw ? JSON.parse(raw).length : 0, "sessions");
+    }
     try {
-        return JSON.parse(localStorage.getItem('claude_chat_sessions') || '[]');
-    } catch(e) { return []; }
+        // PRIORITY: Always initialize from claude_chat_sessions as source of truth
+        const stored = JSON.parse(localStorage.getItem('claude_chat_sessions') || '[]');
+        if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Chat] window.sessions init count:", stored.length);
+        return Array.isArray(stored) ? stored : [];
+    } catch(e) {
+        if (window.HYPENOSYS_NEURAL_DEBUG) console.error("[Claude Chat] Failed to parse sessions during init", e);
+        return [];
+    }
 })();
 window.archivedSessions = (function() {
     try {
@@ -18,11 +28,25 @@ window.currentSendMode = 'claude'; // 'claude' or 'jules'
 window._activeTaskContext = null;
 
 // Migrate sessions if needed
-window.sessions = window.sessions.map(s => ({
-    ...s,
-    task_ref: s.task_ref || null
-}));
-localStorage.setItem('claude_chat_sessions', JSON.stringify(window.sessions));
+if (window.sessions && window.sessions.length > 0) {
+    if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Chat] Running migration for", window.sessions.length, "sessions");
+    const migrated = window.sessions.map(s => ({
+        ...s,
+        task_ref: s.task_ref || null
+    }));
+
+    // Only update if something actually changed to avoid unnecessary writes
+    const hasChanged = JSON.stringify(window.sessions) !== JSON.stringify(migrated);
+    if (hasChanged) {
+        window.sessions = migrated;
+        localStorage.setItem('claude_chat_sessions', JSON.stringify(window.sessions));
+        if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Chat] Migration completed and saved");
+    } else {
+        if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Chat] Migration skipped (no-op)");
+    }
+} else if (window.HYPENOSYS_NEURAL_DEBUG) {
+    if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Chat] Migration skipped (no sessions)");
+}
 
 window.createNewSession = function() {
     const newSession = window.NeuralChatCore.createSession({
@@ -30,7 +54,7 @@ window.createNewSession = function() {
     });
     const id = newSession.id;
     window.sessions.unshift(newSession);
-    saveSessions();
+    saveSessions(false, 'create-session');
     renderSessionList();
 
     // Clean global neural link when creating a new session
@@ -151,7 +175,8 @@ window.addEventListener('storage', (e) => {
     }
 });
 
-window.saveSessions = function(skipSync = false) {
+window.saveSessions = function(skipSync = false, reason = 'unknown') {
+    if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Chat] saveSessions called. Reason:", reason, "skipSync:", skipSync);
     try {
         // Deduplicate sessions by ID before saving to prevent double-entries
         const uniqueSessions = [];
@@ -164,7 +189,23 @@ window.saveSessions = function(skipSync = false) {
             }
         });
 
+        // DEFENSIVE CHECK: Never overwrite with empty if we had data before and this is an implicit call
+        if (uniqueSessions.length === 0 && reason !== 'clear-all' && reason !== 'delete-session') {
+            const raw = localStorage.getItem('claude_chat_sessions');
+            if (raw) {
+                try {
+                    const stored = JSON.parse(raw);
+                    if (Array.isArray(stored) && stored.length > 0) {
+                        console.warn("[Claude Chat] blocked potentially destructive empty save. Reason:", reason);
+                        return;
+                    }
+                } catch(e) {}
+            }
+        }
+
         localStorage.setItem('claude_chat_sessions', JSON.stringify(uniqueSessions));
+        if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Chat] Storage after save:", uniqueSessions.length, "sessions");
+
         localStorage.setItem('claude_archived_sessions', JSON.stringify(window.archivedSessions));
 
         if (window.neuralSyncChannel) {
@@ -209,7 +250,7 @@ window.archiveSession = function(id) {
     const session = window.sessions.find(s => s.id === id);
     if (session) {
         session.archived = true;
-        saveSessions();
+        saveSessions(false, 'archive-session');
         renderSessionList();
 
         if (window.currentSessionId === id) {
@@ -232,7 +273,7 @@ window.unarchiveSession = function(id) {
     const session = window.sessions.find(s => s.id === id);
     if (session) {
         session.archived = false;
-        saveSessions();
+        saveSessions(false, 'unarchive-session');
         renderSessionList();
         showToast('Conversación restaurada');
     }
@@ -246,7 +287,7 @@ window.renameSession = function(id) {
     if (newTitle !== null && newTitle.trim() !== "") {
         session.title = newTitle.trim();
         session.updatedAt = new Date().toISOString();
-        saveSessions();
+        saveSessions(false, 'rename-session');
         renderSessionList();
         if (window.currentSessionId === id) {
             document.getElementById('session-title').textContent = session.title;
@@ -265,7 +306,7 @@ window.clearAllActiveSessions = function() {
         window.sessions = [];
         window.currentSessionId = null;
         localStorage.removeItem('hy_neural_session_id');
-        saveSessions();
+        saveSessions(false, 'clear-all');
         renderSessionList();
         window.chatMessages.innerHTML = '';
         document.getElementById('welcome-screen')?.classList.remove('hidden');
@@ -291,7 +332,7 @@ window.deleteSession = function(id, skipConfirm = false) {
             document.getElementById('session-title').textContent = 'Nueva Conversación';
         }
 
-        saveSessions();
+        saveSessions(false, 'delete-session');
         renderSessionList();
         showToast('Conversación eliminada');
     };

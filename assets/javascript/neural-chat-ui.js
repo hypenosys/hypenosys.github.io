@@ -283,7 +283,7 @@ window.saveSystemPrompt = function() {
     const currentSession = window.sessions.find(s => s.id === window.currentSessionId);
     if (currentSession) {
         currentSession.systemPrompt = val;
-        saveSessions();
+        saveSessions(false, 'save-system-prompt');
     }
     closeSystemPrompt();
 }

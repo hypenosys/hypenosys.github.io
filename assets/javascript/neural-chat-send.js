@@ -65,7 +65,7 @@ window.sendMessage = async function() {
         const userMsg = { role: 'user', content: content, timestamp: Date.now() };
         if (currentSession) {
             currentSession.messages.push(userMsg);
-            saveSessions(); // [FIX 2B] Emitir inmediatamente
+            saveSessions(false, 'jules-direct-user-msg'); // [FIX 2B] Emitir inmediatamente
             renderMessages();
         }
 
@@ -128,7 +128,7 @@ window.sendMessage = async function() {
     if (currentSession && (currentSession.title === 'Nueva Conversación' || !currentSession.title) && content) {
         currentSession.title = content.substring(0, 40) + (content.length > 40 ? '...' : '');
         currentSession.updatedAt = new Date().toISOString();
-        saveSessions();
+        saveSessions(false, 'set-title');
         renderSessionList();
     }
 
@@ -180,7 +180,7 @@ window.sendMessage = async function() {
             renderMessages();
             if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] user message rendered");
             renderSessionList();
-            saveSessions();
+            saveSessions(false, 'user-message');
 
         // FEATURE #1: Thinking Animation UI
         window.thinkingIndicator.classList.remove('hidden');
@@ -202,7 +202,7 @@ window.sendMessage = async function() {
                 userMessage: content,
                 systemPrompt: dynamicSystemPrompt,
                 saveCallback: () => {
-                    saveSessions();
+                    saveSessions(false, 'core-save-callback');
                     renderSessionList();
                 },
                 skipUserMessagePush: true,
@@ -216,7 +216,7 @@ window.sendMessage = async function() {
                     renderMessages();
                     // Periodic save during streaming to prevent loss if refresh occurs
                     if (fullContent.length % 50 < token.length) {
-                        saveSessions(true); // skipSync to avoid flooding BroadcastChannel
+                        saveSessions(true, 'streaming-incremental'); // skipSync to avoid flooding BroadcastChannel
                     }
                 },
                 onDone: (fullContent) => {
@@ -225,7 +225,7 @@ window.sendMessage = async function() {
                     if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] assistant rendered");
                     renderMessages();
                     renderSessionList();
-                    saveSessions();
+                    saveSessions(false, 'assistant-done');
                     if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] send finished");
                 },
                 onError: (err) => {
@@ -298,7 +298,7 @@ window.sendMessageCustom = async function(session, config) {
         playTTS(aiContent, config);
     }
 
-    saveSessions();
+    saveSessions(false, 'custom-provider-done');
     renderMessages();
 
     // FEATURE 1: Check for session compaction
@@ -413,7 +413,7 @@ window.compactSession = async function(session) {
                     compacted: true
                 }
             ];
-            saveSessions();
+            saveSessions(false, 'compaction-done');
             if (window.currentSessionId === session.id) {
                 renderMessages();
                 showToast("Sesión compactada automáticamente", "info");
@@ -461,7 +461,7 @@ window.sendMessageImageGen = async function(session, config) {
         content: `![Generada](${imageUrl})`
     });
 
-    saveSessions();
+    saveSessions(false, 'image-gen-done');
     renderMessages();
 }
 
