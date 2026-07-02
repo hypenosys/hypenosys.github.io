@@ -24,6 +24,7 @@ class OllamaUI {
             'gemini': 'gemini-2.5-flash',
             'mistral': 'mistral-large-latest',
             'openrouter': 'openrouter/auto',
+            'nvidia_nim': 'nvidia/nemotron-3-ultra-550b-a55b',
             'ollama': 'llama3',
             'none': '',
             'custom': ''
@@ -33,16 +34,18 @@ class OllamaUI {
             modelInput.placeholder = suggestions[provider] || (provider === 'custom' ? '' : 'Selecciona un proveedor');
         }
 
-        if (provider === 'ollama' || provider === 'custom') {
+        if (provider === 'ollama' || provider === 'custom' || provider === 'nvidia_nim') {
             baseUrlGroup.style.display = 'block';
-            if (!baseUrlInput.value && provider === 'ollama') {
-                baseUrlInput.value = 'http://localhost:11434/v1';
+            if (!baseUrlInput.value) {
+                if (provider === 'ollama') baseUrlInput.value = 'http://localhost:11434/v1';
+                if (provider === 'nvidia_nim') baseUrlInput.value = 'https://integrate.api.nvidia.com/v1';
             }
         } else {
             baseUrlGroup.style.display = 'none';
         }
 
         const ollamaHelpBlock = document.getElementById('ollama-help-block');
+        const nimHelpBlock = document.getElementById('nim-help-block');
         const discoverGroup = document.getElementById('group-discover-models');
 
         if (provider === 'ollama') {
@@ -50,18 +53,28 @@ class OllamaUI {
             ollamaDiscoveryGroup.style.display = 'block';
             ollamaModelsGroup.style.display = 'block';
             if (ollamaHelpBlock) ollamaHelpBlock.classList.remove('d-none');
+            if (nimHelpBlock) nimHelpBlock.classList.add('d-none');
+            if (discoverGroup) discoverGroup.style.display = 'block';
+        } else if (provider === 'nvidia_nim') {
+            ollamaScanBtnGroup.style.display = 'none';
+            ollamaDiscoveryGroup.style.display = 'none';
+            ollamaModelsGroup.style.display = 'none';
+            if (ollamaHelpBlock) ollamaHelpBlock.classList.add('d-none');
+            if (nimHelpBlock) nimHelpBlock.classList.remove('d-none');
             if (discoverGroup) discoverGroup.style.display = 'block';
         } else if (provider === 'custom' || provider === 'openrouter' || provider === 'openai') {
             ollamaScanBtnGroup.style.display = 'none';
             ollamaDiscoveryGroup.style.display = 'none';
             ollamaModelsGroup.style.display = 'none';
             if (ollamaHelpBlock) ollamaHelpBlock.classList.add('d-none');
+            if (nimHelpBlock) nimHelpBlock.classList.add('d-none');
             if (discoverGroup) discoverGroup.style.display = 'block';
         } else {
             ollamaScanBtnGroup.style.display = 'none';
             ollamaDiscoveryGroup.style.display = 'none';
             ollamaModelsGroup.style.display = 'none';
             if (ollamaHelpBlock) ollamaHelpBlock.classList.add('d-none');
+            if (nimHelpBlock) nimHelpBlock.classList.add('d-none');
             if (discoverGroup) discoverGroup.style.display = 'none';
         }
     }
@@ -226,9 +239,41 @@ class OllamaUI {
                 const res = await fetch(`${baseUrl.replace(/\/v1$/, '')}/api/tags`);
                 const data = await res.json();
                 models = data.models.map(m => ({ id: m.name }));
+            } else if (provider === 'nvidia_nim') {
+                // Try live discovery for NIM
+                try {
+                    const res = await fetch(`${baseUrl.replace(/\/+$/, '')}/models`, {
+                        headers: apiKey ? { 'Authorization': `Bearer ${apiKey}` } : {}
+                    });
+                    if (res.ok) {
+                        const data = await res.json();
+                        models = data.data || [];
+                    } else {
+                        const errText = await res.text().catch(() => "Unknown error");
+                        throw new Error(`NIM API error ${res.status}: ${errText}`);
+                    }
+                } catch (nimErr) {
+                    console.warn('[NIM] Live discovery failed, using static catalog:', nimErr.message);
+
+                    // Show a toast if possible to inform the user why fallback occurred
+                    if (window.authManager && window.authManager.showToast) {
+                        window.authManager.showToast('NIM Discovery', 'Usando catálogo estático (Fallo en endpoint/CORS)', 'info');
+                    }
+
+                    // Use static catalog from neural-chat-catalogs.js
+                    if (window.NVIDIA_NIM_CATALOG) {
+                        const catalog = window.NVIDIA_NIM_CATALOG;
+                        models = [
+                            ...catalog.chat,
+                            ...catalog.vision,
+                            ...catalog.speech,
+                            ...catalog.embeddings
+                        ];
+                    }
+                }
             } else {
                 // Standard OpenAI /models
-                const res = await fetch(`${baseUrl}/models`, {
+                const res = await fetch(`${baseUrl.replace(/\/+$/, '')}/models`, {
                     headers: { 'Authorization': `Bearer ${apiKey}` }
                 });
                 const data = await res.json();

@@ -30,6 +30,9 @@ window.NeuralProviderClient = (function() {
             if (!normalized.endsWith('/v1')) {
                 normalized += '/v1';
             }
+        } else if (provider === 'nvidia_nim') {
+            // Preserve NIM URLs exactly as provided (with trim/trailing slash removed)
+            // If user provided https://integrate.api.nvidia.com/v1, we keep it as is.
         }
         return normalized;
     }
@@ -149,10 +152,18 @@ window.NeuralProviderClient = (function() {
 
         } catch (e) {
             console.error('[NeuralProviderClient] Error:', e);
-            if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] provider call failed:", e.message);
+
+            // Sanitize error message to prevent API key leakage if it was somehow included
+            let safeMessage = e.message || "Unknown error";
+            if (apiKey) {
+                const escapedKey = apiKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                safeMessage = safeMessage.replace(new RegExp(escapedKey, 'g'), '[REDACTED]');
+            }
+
+            if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] provider call failed:", safeMessage);
             if (onError) {
                 // Ensure base_url is included in the error for diagnostics as requested
-                const detailedError = new Error(`AI request failed for provider ${provider} at ${baseUrl}. ${e.message}. Check VPN reachability, CORS/OLLAMA_ORIGINS and browser Mixed Content settings.`);
+                const detailedError = new Error(`AI request failed for provider ${provider} at ${baseUrl}. ${safeMessage}. Check VPN reachability, CORS/OLLAMA_ORIGINS and browser Mixed Content settings.`);
                 onError(detailedError);
             }
         }

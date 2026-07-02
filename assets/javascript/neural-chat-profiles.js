@@ -5,16 +5,19 @@
 window.loadProfiles = async function() {
     let profiles = JSON.parse(localStorage.getItem('ai_profiles') || '{}');
 
-    // Auto-detect NVIDIA NIM
+    // Auto-detect NVIDIA NIM (Formalized as nvidia_nim)
     const currentConfig = JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
-    if (currentConfig.base_url?.includes('integrate.api.nvidia.com')) {
-        profiles['nvidia-nim'] = {
-            ...currentConfig,
-            id: 'nvidia-nim',
-            name: 'NVIDIA NIM',
-            provider: 'custom',
-            modelType: 'chat'
-        };
+    if (currentConfig.base_url?.includes('integrate.api.nvidia.com') || currentConfig.provider === 'nvidia_nim') {
+        const nimId = 'nvidia-nim-default';
+        if (!profiles[nimId]) {
+            profiles[nimId] = {
+                ...currentConfig,
+                id: nimId,
+                name: 'NVIDIA NIM',
+                provider: 'nvidia_nim',
+                modelType: currentConfig.modelType || 'chat'
+            };
+        }
     }
 
     // Auto-detect Ollama
@@ -49,13 +52,14 @@ window.renderProfileDropdown = function() {
     const activeId = localStorage.getItem('activeProfile');
 
     list.innerHTML = Object.values(profiles).map(p => {
-        const isNvidia = p.id === 'nvidia-nim';
-        const isOllama = p.id === 'ollama-local';
+        const isNvidia = p.provider === 'nvidia_nim' || p.id === 'nvidia-nim' || p.id === 'nvidia-nim-default';
+        const isOllama = p.id === 'ollama-local' || p.provider === 'ollama';
         const icon = isOllama ? '🟢' : (isNvidia ? '⚡' : '👤');
         const displayName = p.name || p.id;
         const providerName = p.provider === 'ollama' ? 'Ollama Local' :
                             (p.provider === 'anthropic' ? 'Anthropic' :
-                            (p.provider === 'openai' ? 'OpenAI' : p.provider));
+                            (p.provider === 'openai' ? 'OpenAI' :
+                            (p.provider === 'nvidia_nim' ? 'NVIDIA NIM' : p.provider)));
 
         let secondaryInfo = `${providerName} · ${p.model || 'Desconocido'}`;
         if (p.base_url && p.provider === 'custom') {
@@ -316,7 +320,6 @@ window.setupApiModalEnhancements = function() {
             if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
                 const modal = mutation.target;
                 if (modal.classList.contains('show')) {
-                    injectNIMOption();
                     injectProfileManager();
                 }
             }
@@ -396,131 +399,6 @@ window.renderProfileManagerList = function() {
     }).join('');
 }
 
-window._enhancedDiscoverModels = async function() {
-    const provider = document.getElementById('ai_provider').value;
-    const baseUrl = (document.getElementById('ai_base_url').value || '').trim();
-    const apiKey = document.getElementById('ai_api_key').value;
-    const modelInput = document.getElementById('ai_model');
-
-    const discoverBtn = document.querySelector('#group-discover-models button');
-    const originalText = discoverBtn.innerHTML;
-
-    // Handle UI feedback area
-    let feedbackEl = document.getElementById('discover-feedback');
-    if (!feedbackEl) {
-        feedbackEl = document.createElement('div');
-        feedbackEl.id = 'discover-feedback';
-        feedbackEl.className = 'text-[10px] mt-2 font-bold';
-        modelInput.parentElement.after(feedbackEl);
-    }
-    feedbackEl.innerHTML = '';
-    feedbackEl.className = 'text-[10px] mt-2 font-bold';
-
-    if (provider === 'nvidia_nim') {
-        // Task: NO fetch. Render grouped list.
-        const select = document.createElement('select');
-        select.className = 'form-control bg-dark text-white border-purple mt-2';
-        select.innerHTML = '<option value="">-- Selecciona modelo NIM --</option>';
-
-        const groups = [
-            { label: '🤖 Chat', key: 'chat' },
-            { label: '👁️ Visión & Multimodal', key: 'vision' },
-            { label: '🎙️ Voz (ASR/TTS)', key: 'speech' },
-            { label: '🔍 Embeddings', key: 'embeddings' }
-        ];
-
-        groups.forEach(g => {
-            const optgroup = document.createElement('optgroup');
-            optgroup.label = g.label;
-            NVIDIA_NIM_CATALOG[g.key].forEach(m => {
-                const opt = document.createElement('option');
-                opt.value = m.id;
-                opt.textContent = m.label;
-                optgroup.appendChild(opt);
-            });
-            select.appendChild(optgroup);
-        });
-
-        select.onchange = () => { if (select.value) modelInput.value = select.value; };
-        feedbackEl.appendChild(select);
-        return;
-    }
-
-    if (provider === 'ollama') {
-        discoverBtn.disabled = true;
-        discoverBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-
-        try {
-            const controller = new AbortController();
-            const id = setTimeout(() => controller.abort(), 3000);
-
-            // Use OpenAI-compatible /models endpoint if baseUrl is /v1
-            const res = await fetch(`${baseUrl}/models`, {
-                headers: { 'Authorization': 'Bearer ollama' },
-                signal: controller.signal
-            });
-            clearTimeout(id);
-
-            if (res.ok) {
-                const data = await res.json();
-                const models = data.data || [];
-                if (models.length > 0) {
-                    const select = document.createElement('select');
-                    select.className = 'form-control bg-dark text-white border-purple mt-2';
-                    select.innerHTML = models.map(m => `<option value="${m.id}">${m.id}</option>`).join('');
-                    select.onchange = () => { modelInput.value = select.value; };
-                    feedbackEl.appendChild(select);
-                } else {
-                    throw new Error("No hay modelos instalados");
-                }
-            } else {
-                throw new Error("Ollama offline");
-            }
-        } catch (e) {
-            feedbackEl.className += ' text-orange-400';
-            feedbackEl.innerHTML = '⚠️ Ollama no detectado — catálogo de referencia';
-
-            const select = document.createElement('select');
-            select.className = 'form-control bg-dark text-white border-purple mt-2';
-            select.innerHTML = '<option value="">-- Catálogo Ollama --</option>' +
-                OLLAMA_DEFAULT_CATALOG.map(m => `<option value="${m.id}">${m.label}</option>`).join('');
-            select.onchange = () => { if (select.value) modelInput.value = select.value; };
-            feedbackEl.appendChild(select);
-        } finally {
-            discoverBtn.disabled = false;
-            discoverBtn.innerHTML = originalText;
-        }
-        return;
-    }
-
-    // Custom / Others
-    discoverBtn.disabled = true;
-    discoverBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-    try {
-        const res = await fetch(`${baseUrl}/models`, {
-            headers: { 'Authorization': `Bearer ${apiKey}` }
-        });
-        const data = await res.json();
-        const models = data.data || [];
-
-        if (models.length > 0) {
-            const select = document.createElement('select');
-            select.className = 'form-control bg-dark text-white border-purple mt-2';
-            select.innerHTML = models.map(m => `<option value="${m.id}">${m.id}</option>`).join('');
-            select.onchange = () => { modelInput.value = select.value; };
-            feedbackEl.appendChild(select);
-        } else {
-            throw new Error("No se encontraron modelos");
-        }
-    } catch (e) {
-        feedbackEl.className += ' text-red-500';
-        feedbackEl.innerText = `Error: ${e.message}`;
-    } finally {
-        discoverBtn.disabled = false;
-        discoverBtn.innerHTML = originalText;
-    }
-};
-
 window._deleteProfileFromModal = function(id, name) {
     if (confirm(`¿Eliminar perfil "${name}"?`)) {
         let profiles = JSON.parse(localStorage.getItem('ai_profiles') || '{}');
@@ -542,62 +420,3 @@ window._deleteProfileFromModal = function(id, name) {
     }
 };
 
-window.injectNIMOption = function() {
-    const providerSelect = document.getElementById('ai_provider');
-    if (!providerSelect) return;
-
-    if (!providerSelect.querySelector('option[value="nvidia_nim"]')) {
-        const nimOpt = document.createElement('option');
-        nimOpt.value = 'nvidia_nim';
-        nimOpt.textContent = 'NVIDIA NIM';
-        providerSelect.appendChild(nimOpt);
-    }
-
-    // Ensure we handle provider change with autocomplete
-    const originalOnChange = providerSelect.onchange;
-    providerSelect.onchange = (e) => {
-        const val = providerSelect.value;
-        const modelInput = document.getElementById('ai_model');
-        const baseUrlInput = document.getElementById('ai_base_url');
-
-        if (val === 'nvidia_nim') {
-            baseUrlInput.value = 'https://integrate.api.nvidia.com/v1';
-            modelInput.value = 'nvidia/nemotron-3-ultra-550b-a55b';
-            handleNIMSelection();
-        } else if (val === 'ollama') {
-            baseUrlInput.value = 'http://localhost:11434/v1';
-            modelInput.value = 'llama3.3';
-            if (originalOnChange) originalOnChange.call(providerSelect, e);
-        } else if (originalOnChange) {
-            originalOnChange.call(providerSelect, e);
-        }
-    };
-
-    // Redirect DESCUBRIR button
-    const discoverBtn = document.querySelector('#group-discover-models button');
-    if (discoverBtn) {
-        discoverBtn.onclick = () => window._enhancedDiscoverModels();
-    }
-}
-
-window.handleNIMSelection = function() {
-    const modelInput = document.getElementById('ai_model');
-    const baseUrlInput = document.getElementById('ai_base_url');
-    const apiKeyInput = document.getElementById('ai_api_key');
-    const baseUrlGroup = document.getElementById('group-base-url');
-
-    baseUrlInput.value = 'https://integrate.api.nvidia.com/v1';
-    modelInput.placeholder = 'nvidia/nemotron-3-ultra-550b-a55b';
-    apiKeyInput.placeholder = 'Tu API key empieza con nvapi-';
-    baseUrlGroup.style.display = 'block';
-
-    // Hide Ollama specific groups
-    ['ollama-scan-btn-group', 'group-ollama-discovery', 'group-ollama-models'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.style.display = 'none';
-    });
-    const ollamaHelp = document.getElementById('ollama-help-block');
-    if (ollamaHelp) ollamaHelp.classList.add('hidden');
-    const discoverGroup = document.getElementById('group-discover-models');
-    if (discoverGroup) discoverGroup.style.display = 'block';
-}
