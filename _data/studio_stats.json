@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-07-02T23:02:24.701Z",
+  "computed_at": "2026-07-02T23:03:00.605Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 30,
@@ -48,8 +48,8 @@
       "master": 8,
       "menú": 1,
       "ux/ui": 1,
-      "logo": 1,
-      "Art": 1
+      "Art": 1,
+      "logo": 1
     },
     "milestone_tasks_remaining": 12,
     "hall_of_fame_winners": {
@@ -535,7 +535,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-07-02T23:02:25.594Z"
+      "timestamp": "2026-07-02T23:03:01.735Z"
     }
   ]
 }
