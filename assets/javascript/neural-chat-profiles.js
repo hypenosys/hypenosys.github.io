@@ -297,11 +297,24 @@ window.checkConnection = async function(provider, config) {
             } else {
                 throw new Error();
             }
+        } else if (provider === 'nvidia_nim') {
+            const key = config.api_key || '';
+            if (key.startsWith('nvapi-')) {
+                statusBadge.className = "flex items-center gap-2 text-[10px] font-black tracking-widest text-[#ffb86c] bg-[#ffb86c]/5 px-3 py-1 rounded-full border border-[#ffb86c]/20";
+                statusBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-[#ffb86c] shadow-[0_0_8px_#ffb86c] animate-pulse"></span> NVIDIA NIM: READY';
+            } else {
+                statusBadge.className = "flex items-center gap-2 text-[10px] font-black tracking-widest text-[#ff5555] bg-[#ff5555]/5 px-3 py-1 rounded-full border border-[#ff5555]/20";
+                statusBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-[#ff5555] shadow-[0_0_8px_#ff5555]"></span> CONFIG REQUIRED';
+            }
         } else {
-            const key = config.api_key;
-            if (key && key.startsWith('sk-')) {
+            const key = config.api_key || '';
+            const isAnthropic = provider === 'anthropic' && key.startsWith('sk-ant-');
+            const isOpenAI = provider === 'openai' && key.startsWith('sk-');
+
+            if (isAnthropic || isOpenAI || key) {
+                const label = provider.toUpperCase();
                 statusBadge.className = "flex items-center gap-2 text-[10px] font-black tracking-widest text-[#8be9fd] bg-[#8be9fd]/5 px-3 py-1 rounded-full border border-[#8be9fd]/20";
-                statusBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-[#8be9fd] shadow-[0_0_8px_#8be9fd] animate-pulse"></span> ANTHROPIC: READY';
+                statusBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-[#8be9fd] shadow-[0_0_8px_#8be9fd] animate-pulse"></span> ${label}: READY`;
             } else {
                 statusBadge.className = "flex items-center gap-2 text-[10px] font-black tracking-widest text-[#ff5555] bg-[#ff5555]/5 px-3 py-1 rounded-full border border-[#ff5555]/20";
                 statusBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-[#ff5555] shadow-[0_0_8px_#ff5555]"></span> CONFIG REQUIRED';

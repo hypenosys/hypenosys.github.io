@@ -73,6 +73,14 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-success">Fixed</h5>
             <ul>
+                <li><strong>Estabilización de NVIDIA NIM (Direct Mode):</strong> Implementado soporte robusto para NVIDIA NIM sin requerir infraestructura externa.
+                    <ul>
+                        <li><strong>Modo No-Streaming:</strong> Forzado <code>stream: false</code> por defecto para NVIDIA NIM para mejorar la estabilidad en el navegador.</li>
+                        <li><strong>Clasificación de Errores:</strong> Mapeo detallado de estados HTTP (400, 401, 403, 404, 410, 429, 5xx) y detección específica de bloqueos de nivel navegador (CORS/Preflight) en GitHub Pages con mensajes de diagnóstico claros.</li>
+                        <li><strong>Seguridad de Keys:</strong> Corregida la lógica de almacenamiento en <code>auth.js</code> para evitar que las claves de proveedores de IA sobrescriban o borren la <code>jules_api_key</code>.</li>
+                        <li><strong>Limpieza de Headers:</strong> Eliminado el header <code>x-requested-with</code> que causaba bloqueos innecesarios en la API de NVIDIA.</li>
+                    </ul>
+                </li>
                 <li><strong>Mensajes de Error NVIDIA NIM:</strong> Corregido el sistema de reporte de errores para el proveedor NVIDIA NIM. Ahora identifica fallos de red/CORS antes de recibir un estado HTTP y muestra un mensaje específico y accionable sobre bloqueos de origen en GitHub Pages, evitando sugerencias engañosas de VPN o validez de API Key en estos casos.</li>
                 <li><strong>Robustez de Sesiones (Claude Neural):</strong> Implementada hidratación garantizada de <code>window.sessions</code> desde <code>claude_chat_sessions</code> y protección defensiva en <code>saveSessions</code> para evitar la pérdida de datos durante el inicio o migraciones fallidas en el modo standalone.</li>
                 <li><strong>Persistencia de Mensajes (Neural Chat):</strong> Resuelto el problema donde los mensajes desaparecían al refrescar la página. Se corrigió una colisión de variables globales en <code>BroadcastChannel</code> y se añadieron llamadas de guardado garantizado durante el flujo de envío y streaming.</li>
@@ -82,6 +90,9 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-purple">Added</h5>
             <ul>
+                <li><strong>NVIDIA NIM Status Intelligence:</strong> El badge de estado ahora reconoce prefijos <code>nvapi-</code> como configuraciones válidas y listas para NVIDIA NIM sin requerir comprobaciones de red obligatorias.</li>
+                <li><strong>Modelos NIM Recomendados:</strong> Actualizado el catálogo de NVIDIA NIM para incluir y recomendar el modelo <code>nvidia/nemotron-3-super-120b-a12b</code>, eliminando opciones obsoletas.</li>
+                <li><strong>Cache-Busting Directo:</strong> Aplicada la versión <code>?v=nim-direct-v1</code> a los scripts core modificados para forzar la actualización en navegadores de usuarios finales tras el despliegue en GitHub Pages.</li>
                  <li><strong>Sistema de Diagnóstico NVIDIA NIM:</strong> Implementado el botón "TEST NIM DIRECT" en el modal de configuración de IA. Permite ejecutar pruebas de conectividad aisladas (no-streaming, minimal payload) y obtener un reporte detallado de errores HTTP y de red (CORS, EOL de modelos, API keys inválidas) directamente en la interfaz.</li>
                 <li><strong>Integración Formal de NVIDIA NIM:</strong> Implementado NVIDIA NIM como proveedor de IA de primer nivel en el modal de configuración, eliminando inyecciones dinámicas frágiles.</li>
                 <li><strong>Descubrimiento Robustecido de Modelos NIM:</strong> Añadido sistema de descubrimiento automático vía <code>/v1/models</code> con fallback garantizado al catálogo estático (<code>NVIDIA_NIM_CATALOG</code>) en caso de fallos de CORS o autenticación.</li>

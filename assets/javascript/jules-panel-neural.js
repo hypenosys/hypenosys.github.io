@@ -386,7 +386,7 @@ window.sendChatV2Msg = async function() {
         });
     } catch (e) {
         setNeuralProcessingState(false);
-        showToast("Error en la comunicación con el proveedor", "red");
+        showToast(e.message, "red");
     }
 }
 

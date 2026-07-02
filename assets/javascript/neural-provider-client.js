@@ -78,10 +78,12 @@ window.NeuralProviderClient = (function() {
             // Remove x-requested-with as it can trigger CORS preflight issues
             // and was confirmed unnecessary in functional Termux tests.
 
+            const useStream = provider !== 'nvidia_nim';
+
             const payload = {
                 model: model,
                 messages: fullMessages,
-                stream: true
+                stream: useStream
             };
 
             if (window.HYPENOSYS_NEURAL_DEBUG) {
@@ -102,42 +104,49 @@ window.NeuralProviderClient = (function() {
                 throw new Error(`AI request failed for provider ${provider} at ${baseUrl}. Status: ${response.status}. ${errText}`);
             }
 
-            console.log('[NeuralProviderClient] Stream started');
-
-            const reader = response.body.getReader();
-            const decoder = new TextDecoder();
             let aiContent = '';
-            let buffer = '';
 
-            if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] provider response received");
+            if (useStream) {
+                console.log('[NeuralProviderClient] Stream started');
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let buffer = '';
 
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
+                if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] provider response received");
 
-                const chunk = decoder.decode(value, { stream: true });
-                buffer += chunk;
-                const lines = buffer.split('\n');
-                buffer = lines.pop();
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
 
-                for (const line of lines) {
-                    const trimmedLine = line.trim();
-                    if (!trimmedLine || !trimmedLine.startsWith('data: ')) continue;
+                    const chunk = decoder.decode(value, { stream: true });
+                    buffer += chunk;
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop();
 
-                    const dataStr = trimmedLine.substring(6);
-                    if (dataStr === '[DONE]') break;
+                    for (const line of lines) {
+                        const trimmedLine = line.trim();
+                        if (!trimmedLine || !trimmedLine.startsWith('data: ')) continue;
 
-                    try {
-                        const data = JSON.parse(dataStr);
-                        const delta = data.choices?.[0]?.delta?.content || '';
-                        if (delta) {
-                            aiContent += delta;
-                            if (onToken) onToken(delta, aiContent);
+                        const dataStr = trimmedLine.substring(6);
+                        if (dataStr === '[DONE]') break;
+
+                        try {
+                            const data = JSON.parse(dataStr);
+                            const delta = data.choices?.[0]?.delta?.content || '';
+                            if (delta) {
+                                aiContent += delta;
+                                if (onToken) onToken(delta, aiContent);
+                            }
+                        } catch (e) {
+                            console.warn('[NeuralProviderClient] JSON parse error in stream:', e);
                         }
-                    } catch (e) {
-                        console.warn('[NeuralProviderClient] JSON parse error in stream:', e);
                     }
                 }
+            } else {
+                console.log('[NeuralProviderClient] Non-streaming response received');
+                const data = await response.json();
+                aiContent = data.choices?.[0]?.message?.content || data.choices?.[0]?.text || JSON.stringify(data);
+                if (onToken) onToken(aiContent, aiContent);
             }
 
             console.log('[NeuralProviderClient] Done');
@@ -166,7 +175,7 @@ window.NeuralProviderClient = (function() {
 
                 // Specific case: NVIDIA Cloud direct browser failure (CORS/Preflight)
                 if (isNvidiaCloud && isNetworkFailure) {
-                    const nimError = new Error(`NVIDIA NIM direct browser request failed before receiving an HTTP response. The endpoint/model/API key have been confirmed working outside the browser, so this points to browser/origin blocking such as CORS or preflight from GitHub Pages. Use TEST NIM DIRECT for details or configure a CORS-compatible relay endpoint.`);
+                    const nimError = new Error(`NVIDIA NIM direct browser request failed before receiving an HTTP response. The same endpoint/model/API key works outside the browser, so this points to browser/origin blocking such as CORS or preflight from GitHub Pages. Use TEST NIM DIRECT for details.`);
                     onError(nimError);
                     return;
                 }
@@ -193,10 +202,20 @@ window.NeuralProviderClient = (function() {
                 } else if (provider === 'nvidia_nim') {
                     if (!isNetworkFailure) {
                         // We have an HTTP status if it's not a network failure
-                        if (safeMessage.includes('Status: 401') || safeMessage.includes('Status: 403')) {
-                            troubleshooting.push("Check API key validity and entitlements");
+                        if (safeMessage.includes('Status: 400')) {
+                            troubleshooting.push("Invalid payload or unsupported parameters");
+                        } else if (safeMessage.includes('Status: 401')) {
+                            troubleshooting.push("Check API key validity (Authentication failed)");
+                        } else if (safeMessage.includes('Status: 403')) {
+                            troubleshooting.push("Forbidden: Check entitlements or permissions for this model");
+                        } else if (safeMessage.includes('Status: 404')) {
+                            troubleshooting.push("Model not found. Verify the model ID");
                         } else if (safeMessage.includes('Status: 410')) {
-                            troubleshooting.push("This model has reached end-of-life (EOL)");
+                            troubleshooting.push("This model has reached end-of-life (EOL) and is no longer available");
+                        } else if (safeMessage.includes('Status: 429')) {
+                            troubleshooting.push("Rate limit or quota exceeded");
+                        } else if (safeMessage.includes('Status: 500') || safeMessage.includes('Status: 502') || safeMessage.includes('Status: 503')) {
+                            troubleshooting.push("NVIDIA upstream server error");
                         }
                     }
                 }
