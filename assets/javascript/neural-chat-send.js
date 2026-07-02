@@ -241,7 +241,12 @@ window.sendMessage = async function() {
     } catch (e) {
         if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] send failed:", e.message);
         console.error('[ClaudeChat] Send error:', e);
-        const errorMsg = provider === 'ollama' ? window.ollamaDiscovery.getErrorMessage(e, config.base_url) : e.message;
+
+        // Use provider-specific logic for general catch (if it didn't come from onError)
+        let errorMsg = e.message;
+        if (provider === 'ollama' && window.ollamaDiscovery) {
+            errorMsg = window.ollamaDiscovery.getErrorMessage(e, config.base_url);
+        }
         appendSystemMessage(errorMsg, 'error');
     } finally {
         window.thinkingIndicator.classList.add('hidden');

@@ -145,31 +145,69 @@ window.NeuralProviderClient = (function() {
             if (onDone) onDone(aiContent);
 
         } catch (e) {
-            console.error('[NeuralProviderClient] Error:', e);
-
-            // Sanitize error message to prevent API key leakage if it was somehow included
+            // Sanitize error message to prevent API key leakage
             let safeMessage = e.message || "Unknown error";
             if (apiKey) {
                 const escapedKey = apiKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                safeMessage = safeMessage.replace(new RegExp(escapedKey, 'g'), '[REDACTED]');
+                const replacement = apiKey.startsWith('nvapi-') ? 'nvapi-***REDACTED***' : '[REDACTED]';
+                safeMessage = safeMessage.replace(new RegExp(escapedKey, 'g'), replacement);
             }
 
+            console.error('[NeuralProviderClient] Error:', safeMessage);
             if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] provider call failed:", safeMessage);
+
             if (onError) {
-                // Provider-aware error messages
-                let troubleshooting = "Check VPN reachability";
+                const isNetworkFailure = safeMessage.includes('Failed to fetch') ||
+                                       safeMessage.includes('NetworkError') ||
+                                       !safeMessage.includes('Status:');
 
-                if (provider === 'ollama') {
-                    troubleshooting += ", CORS/OLLAMA_ORIGINS and local network connectivity.";
-                } else if (provider === 'nvidia_nim') {
-                    troubleshooting += ", browser CORS policy and API key validity.";
+                const isNvidiaCloud = provider === 'nvidia_nim' && baseUrl.includes('integrate.api.nvidia.com');
+                const isOllama = provider === 'ollama';
+
+                // Specific case: NVIDIA Cloud direct browser failure (CORS/Preflight)
+                if (isNvidiaCloud && isNetworkFailure) {
+                    const nimError = new Error(`NVIDIA NIM direct browser request failed before receiving an HTTP response. The endpoint/model/API key have been confirmed working outside the browser, so this points to browser/origin blocking such as CORS or preflight from GitHub Pages. Use TEST NIM DIRECT for details or configure a CORS-compatible relay endpoint.`);
+                    onError(nimError);
+                    return;
                 }
 
+                // General provider-aware troubleshooting
+                let troubleshooting = [];
+
+                // 1. Mixed Content
                 if (baseUrl.startsWith('http://') && window.location.protocol === 'https:') {
-                    troubleshooting += " (Possible Mixed Content block)";
+                    troubleshooting.push("Possible Mixed Content block (HTTP requested from HTTPS)");
                 }
 
-                const detailedError = new Error(`AI request failed for provider ${provider} at ${baseUrl}. ${safeMessage}. ${troubleshooting}`);
+                // 2. Private/Local Network (only if endpoint is private)
+                const host = baseUrl.replace(/^https?:\/\//, '').split('/')[0].split(':')[0];
+                const isPrivate = /(^127\.)|(^192\.168\.)|(^10\.)|(^172\.(1[6-9]|2[0-9]|3[0-1])\.)|(^100\.)|(^localhost)|(\.local$)/.test(host);
+
+                if (isPrivate) {
+                    troubleshooting.push("Check VPN reachability and local network connectivity");
+                }
+
+                // 3. Provider Specifics
+                if (isOllama) {
+                    troubleshooting.push("Check OLLAMA_ORIGINS and if Ollama is running");
+                } else if (provider === 'nvidia_nim') {
+                    if (!isNetworkFailure) {
+                        // We have an HTTP status if it's not a network failure
+                        if (safeMessage.includes('Status: 401') || safeMessage.includes('Status: 403')) {
+                            troubleshooting.push("Check API key validity and entitlements");
+                        } else if (safeMessage.includes('Status: 410')) {
+                            troubleshooting.push("This model has reached end-of-life (EOL)");
+                        }
+                    }
+                }
+
+                // Default if no specific troubleshooting found and it's a generic network error
+                if (troubleshooting.length === 0 && isNetworkFailure && !isNvidiaCloud) {
+                    troubleshooting.push("Check your internet connection or browser blocking policies");
+                }
+
+                const troubleshootingText = troubleshooting.length > 0 ? `. ${troubleshooting.join('. ')}.` : '';
+                const detailedError = new Error(`AI request failed for provider ${provider} at ${baseUrl}. ${safeMessage}${troubleshootingText}`);
                 onError(detailedError);
             }
         }
