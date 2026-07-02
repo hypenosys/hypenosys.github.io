@@ -1,6 +1,6 @@
 # 🌌 Hypenosys Dashboard
 
-Bienvenido al centro de operaciones de **Hypenosys**, un estudio de videojuegos indie enfocado en la perfección técnica y la estética oscura. Este dashboard centraliza la gestión de tareas, métricas de equipo e integración avanzada con agentes de IA.
+Bienvenido al centro de operaciones de Hypenosys, un estudio de videojuegos indie enfocado en la perfección técnica y la estética oscura. Este dashboard centraliza la gestión de tareas, métricas de equipo e integración avanzada con agentes de IA.
 
 Construido sobre **Jekyll** y desplegado mediante **GitHub Pages**, el sistema utiliza una arquitectura "serverless" basada en el almacenamiento del lado del cliente y la API de GitHub para la persistencia de datos.
 
