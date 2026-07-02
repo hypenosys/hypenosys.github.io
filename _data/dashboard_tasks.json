@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-07-02T23:02:21.988Z",
+  "last_updated": "2026-07-02T23:02:58.484Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3525,22 +3525,22 @@
       "repository": "hypenosys/hypenosys-logo",
       "prioridad": "Major",
       "milestone": "M1",
-      "estado": "Pending",
+      "estado": "Working",
       "completitud": 0,
       "resuelto_por": "Dídac",
       "detectado_por": "Axel",
       "asignados": [
         "topperh4rley"
       ],
-      "email_responsable": "alex@hypenosys.com",
+      "email_responsable": "didac@hypenosys.com",
       "emails_asignados": [],
       "start_date": "2026-06-23",
       "due_date": "2026-06-28",
       "estimated_hours": 4,
       "story_points": 4,
       "tags": [
-        "logo",
-        "Art"
+        "Art",
+        "logo"
       ],
       "external_links": [],
       "subtasks": [],
@@ -3562,6 +3562,13 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-02T23:02:57.924Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
         }
       ],
       "id": 70
@@ -3674,6 +3681,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #70",
+      "user": "Axlfc",
+      "timestamp": "2026-07-02T23:02:58.484Z"
+    },
     {
       "action": "chore: actualizar tarea #55",
       "user": "Axlfc",
