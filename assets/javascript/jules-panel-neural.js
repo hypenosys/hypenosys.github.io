@@ -443,13 +443,23 @@ window.renderChatV2Messages = function() {
     // Update Linking Status Bar
     const statusLabel = $('chat-live-status');
     const statusMonitor = $('chat-live-monitor');
+    const statusDot = statusMonitor ? statusMonitor.querySelector('.live-dot') : null;
 
     if (!session) {
         if (statusLabel) statusLabel.innerHTML = 'No hay conversación activa vinculada. <button onclick="window.openClaudeSessionSelector()" class="btn btn-ghost btn-xs" style="color:var(--accent2); text-decoration:underline; margin-left:10px">Elegir conversación</button>';
         if (statusMonitor) statusMonitor.classList.remove('hidden');
+        if (statusDot) statusDot.style.background = 'var(--text3)';
     } else {
-        const isLinked = session.metadata && session.metadata.linkedJulesTaskId;
-        const linkedTitle = isLinked ? (session.metadata.linkedJulesTaskTitle || session.metadata.linkedJulesTaskId) : 'Ninguna';
+        // Expanded Linkage Logic
+        const isLinked = Boolean(
+            session.linkedJulesTaskId ||
+            session.julesTaskId ||
+            session.julesSessionId ||
+            session.metadata?.linkedJulesTaskId ||
+            session.metadata?.julesTaskId ||
+            session.metadata?.julesSessionId
+        );
+        const linkedTitle = isLinked ? (session.metadata?.linkedJulesTaskTitle || session.metadata?.linkedJulesTaskId || session.julesTaskId || session.julesSessionId || 'Vinculada') : 'Ninguna';
 
         if (statusLabel) {
             if (isLinked) {
@@ -462,6 +472,12 @@ window.renderChatV2Messages = function() {
             }
         }
         if (statusMonitor) statusMonitor.classList.remove('hidden');
+
+        // Update Dot Color
+        if (statusDot) {
+            statusDot.style.background = isLinked ? 'var(--accent)' : 'var(--green)';
+            statusDot.style.boxShadow = isLinked ? '0 0 8px var(--accent)' : '0 0 8px var(--green)';
+        }
     }
 
     if (!session) return;
@@ -603,12 +619,12 @@ window.switchDrawerTab = function(tab, el) {
 
 window.setSendMode = function(mode) {
     window.currentSendMode = mode;
-    document.querySelectorAll('.dual-send-option').forEach(opt => {
+    document.querySelectorAll('.jules-neural-mode-option').forEach(opt => {
         opt.classList.toggle('active', opt.dataset.mode === mode);
     });
     const wrapper = $('chat-input-wrapper');
     if (wrapper) {
-        wrapper.classList.toggle('mode-jules', mode === 'jules');
+        // wrapper.classList.toggle('mode-jules', mode === 'jules'); // Optional: Add extra styling if needed
     }
     const input = $('v2-chat-input');
     if (input) {

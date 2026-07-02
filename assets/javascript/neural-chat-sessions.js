@@ -356,7 +356,16 @@ window.renderSessionList = function() {
     const renderItem = (s) => {
         const isArchived = !!s.archived;
         const isMobile = window.innerWidth <= 768;
-        const isLinked = !!(s.metadata && s.metadata.linkedJulesTaskId);
+
+        // Expanded Linkage Logic
+        const isLinked = Boolean(
+            s.linkedJulesTaskId ||
+            s.julesTaskId ||
+            s.julesSessionId ||
+            s.metadata?.linkedJulesTaskId ||
+            s.metadata?.julesTaskId ||
+            s.metadata?.julesSessionId
+        );
 
         // Status logic:
         let status = 'completed';
