@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-07-03T11:07:42.906Z",
+  "last_updated": "2026-07-03T11:09:13.397Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1283,7 +1283,7 @@
     },
     {
       "title": "Integración SVN en Claude Neural Chat y Jules Panel (orquestación repositorios app, scripts y docs)",
-      "descripcion": "Permitir que las herramientas de IA realicen acciones directamente sobre el SVN usando los runners de python. Automatiza tareas de gestión de assets y sincronización técnica similarmente a como se hace con la documentación.",
+      "descripcion": "Permitir que las herramientas de IA realicen acciones directamente sobre el SVN usando los runners de python. Automatiza tareas de gestión de assets y sincronización técnica similarmente a como se hace con la documentación. Así la IA tiene acceso a los assets del SVN y tal, espero que me entiendas.",
       "rama": "feature/svn-ai-integration",
       "task_type": "feature",
       "tema_principal": "Tools / Automation",
@@ -1315,7 +1315,7 @@
       ],
       "external_links": [],
       "subtasks": [],
-      "acceptance_criteria": "Jules pueda leer y escribir en el SVN tras validar credenciales.",
+      "acceptance_criteria": "Claude Chat pueda leer y y ejecutar los runners de n8n y hacer consultar en el SVN tras validar las credenciales.",
       "blocks": [],
       "blocked_by": [
         "39"
@@ -1470,6 +1470,13 @@
           "field": "repository",
           "old_value": "hypenosys/app",
           "new_value": "hypenosys/hypenosys.github.io"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-03T11:09:12.879Z",
+          "field": "descripcion",
+          "old_value": "Permitir que las herramientas de IA realicen acciones directamente sobre el SVN usando los runners de python. Automatiza tareas de gestión de assets y sincronización técnica similarmente a como se hace con la documentación.",
+          "new_value": "Permitir que las herramientas de IA realicen acciones directamente sobre el SVN usando los runners de python. Automatiza tareas de gestión de assets y sincronización técnica similarmente a como se hace con la documentación. Así la IA tiene acceso a los assets del SVN y tal, espero que me entiendas."
         }
       ],
       "id": 35,
@@ -3667,6 +3674,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #35",
+      "user": "Axlfc",
+      "timestamp": "2026-07-03T11:09:13.397Z"
+    },
     {
       "action": "chore: actualizar tarea #35",
       "user": "Axlfc",
