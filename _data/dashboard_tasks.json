@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-07-02T23:02:58.484Z",
-  "last_updated_by": "Axlfc",
+  "last_updated": "2026-07-03T09:32:43.896Z",
+  "last_updated_by": "Axel",
   "tasks": [
     {
       "id": 1,
@@ -3678,9 +3678,62 @@
         }
       ],
       "id": 72
+    },
+    {
+      "title": "Crear matrix server en Zimaboard2",
+      "descripcion": "Para los pipes de comunicación, pudiendo crear rooms y foros indexados con creación de wiki continua además del CHANGELOG.md",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Matrix-Server-Docker",
+      "repository": "hypenosys/Minecraft-Server-Docker",
+      "prioridad": "Major",
+      "milestone": "M2",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [
+        "mitxel2022"
+      ],
+      "email_responsable": "axel@hypenosys.com",
+      "emails_asignados": [],
+      "start_date": "2026-07-03",
+      "due_date": "2026-07-19",
+      "estimated_hours": 6,
+      "story_points": 6,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-07-03",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-03T09:32:43.263Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 73
     }
   ],
   "_audit_log": [
+    {
+      "action": "feat: nueva tarea #1783071163264 añadida",
+      "user": "Axlfc",
+      "timestamp": "2026-07-03T09:32:43.896Z"
+    },
     {
       "action": "chore: actualizar tarea #70",
       "user": "Axlfc",
