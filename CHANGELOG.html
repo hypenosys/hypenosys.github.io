@@ -65,6 +65,7 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-success">Added</h5>
             <ul>
+                <li><strong>SVN Bridge - Path Targeting & File Reading:</strong> Implementada la capacidad de apuntar a carpetas y archivos específicos en las consultas SVN. Se añadió el nuevo comando <code>svn-cat</code> para leer y resumir el contenido de archivos directamente en el chat.</li>
                 <li><strong>SVN Access Toggle (Neural Chat & Jules Panel):</strong> Implementado un control ON/OFF para inyectar contexto del repositorio SVN (trunk/Hypenosys) en las conversaciones con Claude. Incluye detección de intención heurística (diff, log, list, info) y protecciones de configuración en <code>repo-admin</code>.</li>
                 <li><strong>Mobile AI Config (Jules Panel):</strong> Implementado un chip interactivo en el header móvil que muestra el perfil activo y abre el selector de perfiles.</li>
                 <li><strong>Drawer de Perfiles:</strong> Nueva interfaz estilo "bottom sheet" para la selección de modelos de IA en dispositivos móviles.</li>
@@ -82,6 +83,7 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-success">Changed</h5>
             <ul>
+                <li><strong>Heurística de Extracción SVN:</strong> Mejorada la detección de rutas en los mensajes del usuario, permitiendo identificar archivos por extensión o nombres de carpeta capitalizados tras la intención.</li>
                 <li><strong>Pulido de UI Neural Chat:</strong> Implementado un nuevo selector de modo Claude/Jules mediante un control segmentado premium integrado en el área de input, eliminando el estilo blanco desalineado.</li>
                 <li><strong>Puntos de Estado Semánticos:</strong> Los indicadores de sesión ahora usan colores semánticos estrictos: <strong>Verde</strong> para conversaciones normales y <strong>Morado/Violeta</strong> para sesiones vinculadas a tareas de Jules.</li>
                 <li><strong>Indicador de Sesión Activa:</strong> Se ha desacoplado el estado "activo" del color del punto, utilizando ahora un resaltado de fondo y borde en la tarjeta de la sesión seleccionada.</li>
