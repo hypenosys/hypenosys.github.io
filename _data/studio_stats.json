@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-07-03T09:32:46.822Z",
+  "computed_at": "2026-07-03T09:46:18.095Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 31,
@@ -26,7 +26,7 @@
     "blocker_health": 1,
     "tag_heatmap": {
       "brainstorm": 1,
-      "chore": 6,
+      "chore": 5,
       "design": 1,
       "docs": 2,
       "topper": 1,
@@ -45,7 +45,10 @@
       "bug": 1,
       "security": 3,
       "backend": 2,
-      "master": 9,
+      "Infraestructura": 1,
+      "chat": 1,
+      "matrix": 1,
+      "master": 8,
       "menú": 1,
       "ux/ui": 1,
       "Art": 1,
@@ -207,11 +210,11 @@
       "comment_activity": 1,
       "volatility": {
         "reopens": 5,
-        "reprioritizations": 27
+        "reprioritizations": 29
       },
       "workload": {
-        "active_tasks": 11,
-        "story_points": 25
+        "active_tasks": 12,
+        "story_points": 32
       }
     },
     "topperh4rley": {
@@ -535,7 +538,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-07-03T09:32:47.663Z"
+      "timestamp": "2026-07-03T09:46:18.994Z"
     }
   ]
 }
