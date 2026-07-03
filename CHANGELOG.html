@@ -63,6 +63,14 @@ permalink: /CHANGELOG.html
         <h2 class="text-purple border-bottom border-purple pb-2 mb-4">[Unreleased]</h2>
         <div class="card mb-3">
           <div class="card-body">
+            <h5 class="text-success">Fixed</h5>
+            <ul>
+                <li><strong>Regresión de Jules API Key:</strong> Restaurada la funcionalidad de configuración de Jules desde el menú de Ajustes Avanzados. Se implementó un validador local en <code>auth.js</code> para eliminar la dependencia de <code>jules-api.js</code> en la página de inicio.</li>
+                <li><strong>Seguridad y Separación de Keys:</strong> Garantizada la independencia absoluta entre <code>jules_api_key</code> y las claves de proveedores de IA (<code>hy_ai_config.api_key</code>). Se añadió detección y limpieza automática de claves contaminadas (<code>nvapi-</code>, <code>sk-</code>) en el slot de Jules.</li>
+                <li><strong>NVIDIA NIM Relay Integration:</strong> Implementado soporte completo para el worker relay <code>hypenosys-gatekeeper-v2</code> para evitar bloqueos de CORS en GitHub Pages.</li>
+                <li><strong>Estabilización NVIDIA NIM:</strong> Forzado el modo <code>stream: false</code> por defecto para NVIDIA NIM y mejorada la clasificación de errores (410 EOL, fallos de red/relay).</li>
+                <li><strong>Limpieza de Headers:</strong> Eliminación garantizada del header <code>x-requested-with</code> en las peticiones a proveedores de IA para maximizar compatibilidad.</li>
+            </ul>
             <h5 class="text-success">Changed</h5>
             <ul>
                 <li><strong>Pulido de UI Neural Chat:</strong> Implementado un nuevo selector de modo Claude/Jules mediante un control segmentado premium integrado en el área de input, eliminando el estilo blanco desalineado.</li>
@@ -73,12 +81,14 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-success">Fixed</h5>
             <ul>
-                <li><strong>Estabilización de NVIDIA NIM (Direct Mode):</strong> Implementado soporte robusto para NVIDIA NIM sin requerir infraestructura externa.
+                <li><strong>Regresión de Jules API Key:</strong> Restaurada la capacidad de configurar Jules desde el menú de Ajustes Avanzados en la página de inicio. Se implementó un validador local en <code>auth.js</code> para eliminar la dependencia de <code>jules-api.js</code> en el index y se garantizó la separación total de <code>jules_api_key</code> frente a claves de IA.</li>
+                <li><strong>NVIDIA NIM Relay Mode:</strong> Implementada la integración completa con el worker <code>hypenosys-gatekeeper-v2</code> como relay recomendado para evitar bloqueos de CORS/Preflight en GitHub Pages.</li>
+                <li><strong>Limpieza de Contaminación de Keys:</strong> El sistema ahora detecta y limpia automáticamente claves de proveedores (<code>nvapi-</code>, <code>sk-</code>) que se hayan filtrado erróneamente en el campo de Jules API Key, solicitando al usuario la clave correcta.</li>
+                <li><strong>Estabilización de NVIDIA NIM:</strong> Implementado soporte robusto tanto para modo Directo como Relay.
                     <ul>
-                        <li><strong>Modo No-Streaming:</strong> Forzado <code>stream: false</code> por defecto para NVIDIA NIM para mejorar la estabilidad en el navegador.</li>
-                        <li><strong>Clasificación de Errores:</strong> Mapeo detallado de estados HTTP (400, 401, 403, 404, 410, 429, 5xx) y detección específica de bloqueos de nivel navegador (CORS/Preflight) en GitHub Pages con mensajes de diagnóstico claros.</li>
-                        <li><strong>Seguridad de Keys:</strong> Corregida la lógica de almacenamiento en <code>auth.js</code> para evitar que las claves de proveedores de IA sobrescriban o borren la <code>jules_api_key</code>.</li>
-                        <li><strong>Limpieza de Headers:</strong> Eliminado el header <code>x-requested-with</code> que causaba bloqueos innecesarios en la API de NVIDIA.</li>
+                        <li><strong>Modo No-Streaming:</strong> Forzado <code>stream: false</code> por defecto para NVIDIA NIM para asegurar compatibilidad con el Worker Relay.</li>
+                        <li><strong>Clasificación de Errores:</strong> Diferenciación clara entre fallos de CORS (Directo) y fallos de alcance del Relay, junto con mensajes específicos para error 410 (Modelo EOL).</li>
+                        <li><strong>Limpieza de Headers:</strong> Eliminación garantizada del header <code>x-requested-with</code> en todos los flujos de proveedores de IA.</li>
                     </ul>
                 </li>
                 <li><strong>Mensajes de Error NVIDIA NIM:</strong> Corregido el sistema de reporte de errores para el proveedor NVIDIA NIM. Ahora identifica fallos de red/CORS antes de recibir un estado HTTP y muestra un mensaje específico y accionable sobre bloqueos de origen en GitHub Pages, evitando sugerencias engañosas de VPN o validez de API Key en estos casos.</li>
