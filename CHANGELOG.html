@@ -73,6 +73,9 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-success">Fixed</h5>
             <ul>
+                <li><strong>SVN Bridge:</strong> Corrección de la heurística de extracción de rutas en consultas de lenguaje natural en español (<code>extractPath</code>).</li>
+                <li><strong>SVN Bridge:</strong> Implementación de lógica "fail-loud", inyectando mensajes de error descriptivos en el contexto para evitar alucinaciones de la IA cuando falla la recuperación de datos.</li>
+                <li><strong>SVN Bridge:</strong> Mejora en la detección de intención y extracción de rutas mediante un enfoque multi-paso (extensiones de archivo, rutas de múltiples segmentos, palabras activadoras y exclusión de acrónimos capitalizados).</li>
                 <li><strong>API CONFIG en Tablet (/chat/neural/):</strong> Resuelto el problema donde el botón de configuración no funcionaba en tablets debido a la falta del modal en el DOM y conflictos de sidebar.</li>
                 <li><strong>Sincronización de Perfiles:</strong> Garantizada la actualización en tiempo real de los indicadores de perfil activo en todos los headers (desktop/mobile).</li>
                 <li><strong>Regresión de Jules API Key:</strong> Restaurada la funcionalidad de configuración de Jules desde el menú de Ajustes Avanzados. Se implementó un validador local en <code>auth.js</code> para eliminar la dependencia de <code>jules-api.js</code> en la página de inicio.</li>

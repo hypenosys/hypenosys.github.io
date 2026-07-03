@@ -1,0 +1,54 @@
+127.0.0.1 - - [03/Jul/2026 20:01:19] "HEAD /pages/claude-chat.html HTTP/1.1" 200 -
+127.0.0.1 - - [03/Jul/2026 20:01:35] "GET /pages/claude-chat.html HTTP/1.1" 200 -
+127.0.0.1 - - [03/Jul/2026 20:01:35] code 404, message File not found
+127.0.0.1 - - [03/Jul/2026 20:01:35] "GET /pages/%7B%7B%20'/assets/main.css'%20%7C%20relative_url%20%7D%7D HTTP/1.1" 404 -
+127.0.0.1 - - [03/Jul/2026 20:01:35] code 404, message File not found
+127.0.0.1 - - [03/Jul/2026 20:01:35] "GET /pages/%7B%7B%20'/assets/javascript/auth.js'%20%7C%20relative_url%20%7D%7D?v=nim-relay-v1 HTTP/1.1" 404 -
+127.0.0.1 - - [03/Jul/2026 20:01:35] code 404, message File not found
+127.0.0.1 - - [03/Jul/2026 20:01:35] "GET /pages/%7B%7B%20'/assets/javascript/bootstrap/jquery.min.js'%20%7C%20relative_url%20%7D%7D HTTP/1.1" 404 -
+127.0.0.1 - - [03/Jul/2026 20:01:35] code 404, message File not found
+127.0.0.1 - - [03/Jul/2026 20:01:35] "GET /pages/%7B%7B%20'/assets/javascript/ui-components.js'%20%7C%20relative_url%20%7D%7D HTTP/1.1" 404 -
+127.0.0.1 - - [03/Jul/2026 20:01:35] code 404, message File not found
+127.0.0.1 - - [03/Jul/2026 20:01:35] "GET /pages/%7B%7B%20'/assets/javascript/github-api.js'%20%7C%20relative_url%20%7D%7D HTTP/1.1" 404 -
+127.0.0.1 - - [03/Jul/2026 20:01:35] code 404, message File not found
+127.0.0.1 - - [03/Jul/2026 20:01:35] "GET /pages/%7B%7B%20'/assets/javascript/jules-api.js'%20%7C%20relative_url%20%7D%7D HTTP/1.1" 404 -
+127.0.0.1 - - [03/Jul/2026 20:01:35] code 404, message File not found
+127.0.0.1 - - [03/Jul/2026 20:01:35] "GET /pages/%7B%7B%20'/assets/javascript/bootstrap/bootstrap.bundle.min.js'%20%7C%20relative_url%20%7D%7D HTTP/1.1" 404 -
+127.0.0.1 - - [03/Jul/2026 20:01:35] code 404, message File not found
+127.0.0.1 - - [03/Jul/2026 20:01:35] "GET /pages/%7B%7B%20'/assets/javascript/github-context.js'%20%7C%20relative_url%20%7D%7D HTTP/1.1" 404 -
+127.0.0.1 - - [03/Jul/2026 20:01:35] code 404, message File not found
+127.0.0.1 - - [03/Jul/2026 20:01:35] "GET /pages/%7B%7B%20'/assets/javascript/task-engine.js'%20%7C%20relative_url%20%7D%7D HTTP/1.1" 404 -
+127.0.0.1 - - [03/Jul/2026 20:01:35] code 404, message File not found
+127.0.0.1 - - [03/Jul/2026 20:01:35] "GET /pages/%7B%7B%20'/assets/javascript/god-mode-tools.js'%20%7C%20relative_url%20%7D%7D HTTP/1.1" 404 -
+127.0.0.1 - - [03/Jul/2026 20:01:35] code 404, message File not found
+127.0.0.1 - - [03/Jul/2026 20:01:35] "GET /pages/%7B%7B%20'/assets/javascript/ollama-discovery.js'%20%7C%20relative_url%20%7D%7D HTTP/1.1" 404 -
+127.0.0.1 - - [03/Jul/2026 20:01:35] code 404, message File not found
+127.0.0.1 - - [03/Jul/2026 20:01:35] "GET /pages/%7B%7B%20'/assets/javascript/neural-chat-core.js'%20%7C%20relative_url%20%7D%7D HTTP/1.1" 404 -
+127.0.0.1 - - [03/Jul/2026 20:01:35] code 404, message File not found
+127.0.0.1 - - [03/Jul/2026 20:01:35] "GET /pages/%7B%7B%20'/assets/javascript/ai-config.js'%20%7C%20relative_url%20%7D%7D?v=nim-relay-v1 HTTP/1.1" 404 -
+127.0.0.1 - - [03/Jul/2026 20:01:35] code 404, message File not found
+127.0.0.1 - - [03/Jul/2026 20:01:35] "GET /pages/%7B%7B%20'/assets/javascript/neural-provider-client.js'%20%7C%20relative_url%20%7D%7D?v=nim-relay-v1 HTTP/1.1" 404 -
+127.0.0.1 - - [03/Jul/2026 20:01:35] code 404, message File not found
+127.0.0.1 - - [03/Jul/2026 20:01:35] "GET /pages/%7B%7B%20'/assets/javascript/hypenosys-docs-client.js'%20%7C%20relative_url%20%7D%7D HTTP/1.1" 404 -
+127.0.0.1 - - [03/Jul/2026 20:01:35] code 404, message File not found
+127.0.0.1 - - [03/Jul/2026 20:01:35] "GET /pages/%7B%7B%20'/assets/javascript/neural-chat-catalogs.js'%20%7C%20relative_url%20%7D%7D?v=nim-relay-v1 HTTP/1.1" 404 -
+127.0.0.1 - - [03/Jul/2026 20:01:35] code 404, message File not found
+127.0.0.1 - - [03/Jul/2026 20:01:35] "GET /pages/%7B%7B%20'/assets/javascript/obsidian-markdown-renderer.js'%20%7C%20relative_url%20%7D%7D HTTP/1.1" 404 -
+127.0.0.1 - - [03/Jul/2026 20:01:35] code 404, message File not found
+127.0.0.1 - - [03/Jul/2026 20:01:35] "GET /pages/%7B%7B%20'/assets/javascript/hypenosys-docs-index.js'%20%7C%20relative_url%20%7D%7D HTTP/1.1" 404 -
+127.0.0.1 - - [03/Jul/2026 20:01:35] code 404, message File not found
+127.0.0.1 - - [03/Jul/2026 20:01:35] "GET /pages/%7B%7B%20'/assets/javascript/neural-chat-ui.js'%20%7C%20relative_url%20%7D%7D HTTP/1.1" 404 -
+127.0.0.1 - - [03/Jul/2026 20:01:35] code 404, message File not found
+127.0.0.1 - - [03/Jul/2026 20:01:35] "GET /pages/%7B%7B%20'/assets/javascript/neural-chat-sessions.js'%20%7C%20relative_url%20%7D%7D HTTP/1.1" 404 -
+127.0.0.1 - - [03/Jul/2026 20:01:35] code 404, message File not found
+127.0.0.1 - - [03/Jul/2026 20:01:35] "GET /pages/%7B%7B%20'/assets/javascript/neural-chat-profiles.js'%20%7C%20relative_url%20%7D%7D?v=nim-relay-v1 HTTP/1.1" 404 -
+127.0.0.1 - - [03/Jul/2026 20:01:35] code 404, message File not found
+127.0.0.1 - - [03/Jul/2026 20:01:35] "GET /pages/%7B%7B%20'/assets/javascript/jules-svn-bridge.js'%20%7C%20relative_url%20%7D%7D HTTP/1.1" 404 -
+127.0.0.1 - - [03/Jul/2026 20:01:35] code 404, message File not found
+127.0.0.1 - - [03/Jul/2026 20:01:35] "GET /pages/%7B%7B%20'/assets/javascript/jules-docs-bridge.js'%20%7C%20relative_url%20%7D%7D HTTP/1.1" 404 -
+127.0.0.1 - - [03/Jul/2026 20:01:35] code 404, message File not found
+127.0.0.1 - - [03/Jul/2026 20:01:35] "GET /pages/%7B%7B%20'/assets/javascript/neural-chat-jules.js'%20%7C%20relative_url%20%7D%7D HTTP/1.1" 404 -
+127.0.0.1 - - [03/Jul/2026 20:01:35] code 404, message File not found
+127.0.0.1 - - [03/Jul/2026 20:01:35] "GET /pages/%7B%7B%20'/assets/javascript/neural-chat-send.js'%20%7C%20relative_url%20%7D%7D?v=nim-direct-v1 HTTP/1.1" 404 -
+127.0.0.1 - - [03/Jul/2026 20:01:35] code 404, message File not found
+127.0.0.1 - - [03/Jul/2026 20:01:35] "GET /pages/%7B%7B%20'/assets/javascript/neural-chat-activity.js'%20%7C%20relative_url%20%7D%7D HTTP/1.1" 404 -
