@@ -21,7 +21,7 @@ window.JulesSvnBridge = (function() {
             try {
                 const settings = JSON.parse(localStorage.getItem('hypenosys_repoAdmin') || '{}');
                 const endpoints = settings.endpoints || {};
-                const required = ['svn-list', 'svn-log', 'svn-info', 'svn-diff'];
+                const required = ['svn-list', 'svn-log', 'svn-info', 'svn-diff', 'svn-cat'];
                 const missing = required.some(k => !endpoints[k]);
 
                 if (missing) {
@@ -97,12 +97,46 @@ window.JulesSvnBridge = (function() {
     }
 
     /**
+     * Path Extraction Heuristic (Phase 2 Refined)
+     * Extracts folder/file from query tokens appearing AFTER the matched intent.
+     */
+    function extractPath(query, intentMatch) {
+        if (!intentMatch) return '';
+
+        const afterMatch = query.split(intentMatch)[1] || '';
+        const tokens = afterMatch.trim().split(/\s+/).filter(Boolean);
+
+        if (!tokens.length) return '';
+
+        for (let i = 0; i < tokens.length; i++) {
+            let token = tokens[i].replace(/[?¿!¡,.;:]/g, '');
+
+            // Client-side Sanitization: defense in depth
+            if (token.includes('..')) continue;
+
+            // Heuristic A: After "carpeta", "archivo", "fichero", "en"
+            const prevToken = i > 0 ? tokens[i-1].toLowerCase() : '';
+            if (['carpeta', 'archivo', 'fichero', 'en'].includes(prevToken)) return token;
+
+            // Heuristic B: Has file extension
+            if (/\.(cs|json|uasset|umap|cpp|h|ini|cfg|png|jpg|wav|mp3|fbx|obj|md|txt)$/i.test(token)) return token;
+
+            // Heuristic C: Capitalized word (likely Unreal/Unity folder/file), but skip first word of message
+            // Note: Since we are scanning after intentMatch, tokens[0] is NOT necessarily the first word of the message.
+            // But we already restricted scan to AFTER intentMatch.
+            if (/^[A-Z][a-zA-Z0-9_\-\/.]+$/.test(token)) return token;
+        }
+        return '';
+    }
+
+    /**
      * getSvnContext(query)
      *
      * Heuristic Intent Detection:
      * - "diff": keywords [cambios, diff, diferencia, qué cambió] -> calls svn-diff
      * - "log": keywords [log, historial, commit, quién tocó] -> calls svn-log
      * - "list": keywords [archivos, qué hay, lista, carpetas, estructura] -> calls svn-list
+     * - "read": keywords [resume, resumen, analiza, qué hace, contenido de, abre, muestra el archivo] -> calls svn-cat
      * - "info": keywords [info, revisión, revision, rev, estado del repo] -> calls svn-info
      *
      * FALLBACK: If no keywords match, returns an empty string ("") to avoid polluting
@@ -114,27 +148,53 @@ window.JulesSvnBridge = (function() {
         const query = userMessage.toLowerCase();
         let context = "\n\n## CONTEXTO SVN (trunk/Hypenosys)\n";
         let data = null;
+        let matchedIntent = null;
+        let path = '';
 
         try {
-            if (/cambios|diff|diferencia|qué cambió|que cambio/i.test(query)) {
-                // Intent: Diff (Summary of latest changes)
-                data = await svnBridgeApiCall('svn-diff', { path: '', rev1: 'PREV', rev2: 'HEAD' });
+            if (/(cambios|diff|diferencia|qué cambió|que cambio)/i.test(query)) {
+                matchedIntent = query.match(/(cambios|diff|diferencia|qué cambió|que cambio)/i)[0];
+                path = extractPath(userMessage, matchedIntent);
+                // Intent: Diff (Summary of changes)
+                data = await svnBridgeApiCall('svn-diff', { path, rev1: 'PREV', rev2: 'HEAD' });
                 if (data && data.diff) {
-                    context += "Últimos cambios detectados (svn diff):\n" + data.diff.substring(0, 2500) + "\n";
+                    let diffText = data.diff;
+                    if (diffText.length > 2500) {
+                        diffText = diffText.substring(0, 2500) + "\n[CONTENIDO TRUNCADO]";
+                    }
+                    context += `Cambios detectados en ${path || 'raíz'} (svn diff):\n` + diffText + "\n";
                 }
             }
-            else if (/log|historial|commit|quién tocó|quien toco/i.test(query)) {
+            else if (/(log|historial|commit|quién tocó|quien toco)/i.test(query)) {
+                matchedIntent = query.match(/(log|historial|commit|quién tocó|quien toco)/i)[0];
+                path = extractPath(userMessage, matchedIntent);
                 // Intent: Log (Last 5 commits)
-                data = await svnBridgeApiCall('svn-log', { path: '', limit: 5 });
+                data = await svnBridgeApiCall('svn-log', { path, limit: 5 });
                 if (data && data.log) {
-                    context += "Historial reciente de commits (svn log):\n" + data.log.map(e => `r${e.revision} | ${e.author} | ${e.date}\nMsg: ${e.message}`).join('\n---\n') + "\n";
+                    context += `Historial reciente en ${path || 'raíz'} (svn log):\n` + data.log.map(e => `r${e.revision} | ${e.author} | ${e.date}\nMsg: ${e.message}`).join('\n---\n') + "\n";
                 }
             }
-            else if (/archivos|qué hay|que hay|lista|carpetas|estructura/i.test(query)) {
-                // Intent: List (Root structure)
-                data = await svnBridgeApiCall('svn-list', { path: '' });
+            else if (/(archivos|qué hay|que hay|lista|carpetas|estructura)/i.test(query)) {
+                matchedIntent = query.match(/(archivos|qué hay|que hay|lista|carpetas|estructura)/i)[0];
+                path = extractPath(userMessage, matchedIntent);
+                // Intent: List (Structure)
+                data = await svnBridgeApiCall('svn-list', { path });
                 if (data && data.entries) {
-                    context += "Estructura de archivos en raíz (svn list):\n" + data.entries.map(e => `- ${e.name}${e.kind === 'dir' ? '/' : ''} (r${e.revision})`).join('\n') + "\n";
+                    context += `Estructura de archivos en ${path || 'raíz'} (svn list):\n` + data.entries.map(e => `- ${e.name}${e.kind === 'dir' ? '/' : ''} (r${e.revision})`).join('\n') + "\n";
+                }
+            }
+            else if (/(resume|resumen|analiza|qué hace|que hace|contenido de|abre|muestra el archivo)/i.test(query)) {
+                matchedIntent = query.match(/(resume|resumen|analiza|qué hace|que hace|contenido de|abre|muestra el archivo)/i)[0];
+                path = extractPath(userMessage, matchedIntent);
+                if (!path) return ""; // Cat requires a path
+                // Intent: Read (File content)
+                data = await svnBridgeApiCall('svn-cat', { path });
+                if (data && data.content) {
+                    let content = data.content;
+                    if (content.length > 2500) {
+                        content = content.substring(0, 2500) + "\n[CONTENIDO TRUNCADO]";
+                    }
+                    context += `Contenido del archivo ${path} (svn cat):\n` + content + "\n";
                 }
             }
             else if (/info|revisión|revision|rev|estado del repo/i.test(query)) {

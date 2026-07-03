@@ -1,6 +1,7 @@
 /* ════════════════════════════════════════
    N8N WORKFLOWS — copy from Settings
    ════════════════════════════════════════ */
+// NOTE: This object is a static reference only used for display in the Settings UI and for copying the JSON structure to the clipboard; it is not read via any API call to dynamically create or update workflows in n8n.
 window.WORKFLOWS = {
   'svn-list': {
     name: "SVN List",
@@ -225,6 +226,53 @@ return [{'json': {'diff': result.stdout, 'error': result.stderr, 'path': path, '
       "SVN Diff": { main: [[{ node: "Respond", type: "main", index: 0 }]] }
     }
   },
+  'svn-cat': {
+    name: "SVN Cat",
+    nodes: [
+      {
+        parameters: {
+          httpMethod: ["POST"], path: "svn-cat",
+          responseMode: "responseNode",
+          options: { allowedOrigins: "https://hypenosys.github.io" }
+        },
+        type: "n8n-nodes-base.webhook", typeVersion: 2.1,
+        position: [400, -200], id: "wh-svn-cat", name: "Webhook SVN Cat"
+      },
+      {
+        parameters: {
+          language: "python",
+          code: `import subprocess
+body = items[0]['json']['body']
+path = body.get('path', '')
+rev = str(body.get('rev', 'HEAD'))
+user = body.get('user', 'SVN_USERNAME')
+pwd = body.get('password', 'SVN_PASSWORD')
+svn_url = f"svn://100.64.74.27/hypenosys/trunk/Hypenosys/{path}".rstrip('/')
+result = subprocess.run(
+  ['svn', 'cat', '-r', rev, '--username', user, '--password', pwd, '--no-auth-cache', '--non-interactive', svn_url],
+  capture_output=True, text=True, timeout=30
+)
+content = result.stdout
+truncated = False
+if len(content) > 8000:
+    content = content[:8000]
+    truncated = True
+return [{'json': {'content': content, 'truncated': truncated, 'error': result.stderr, 'path': path, 'rev': rev}}]`
+        },
+        type: "n8n-nodes-base.code", typeVersion: 2,
+        position: [600, -200], id: "code-svn-cat", name: "SVN Cat"
+      },
+      {
+        parameters: { respondWith: "json", responseBody: "={{ JSON.stringify($json) }}", options: { responseHeaders: { entries: [{ name: "Content-Type", value: "application/json" }] } } },
+        type: "n8n-nodes-base.respondToWebhook", typeVersion: 1.4,
+        position: [800, -200], id: "resp-svn-cat", name: "Respond"
+      }
+    ],
+    connections: {
+      "Webhook SVN Cat": { main: [[{ node: "SVN Cat", type: "main", index: 0 }]] },
+      "SVN Cat": { main: [[{ node: "Respond", type: "main", index: 0 }]] }
+    }
+  },
   'git-log': {
     name: "Git Log",
     nodes: [
@@ -318,6 +366,7 @@ window.saveSettings = function() {
     'svn-log': document.getElementById('cfgSvnLog').value.trim(),
     'svn-info': document.getElementById('cfgSvnInfo').value.trim(),
     'svn-diff': document.getElementById('cfgSvnDiff').value.trim(),
+    'svn-cat': document.getElementById('cfgSvnCat')?.value.trim() || ST.endpoints['svn-cat'] || '',
     'git-log': document.getElementById('cfgGitLog').value.trim(),
   };
   ST.svnUser = document.getElementById('cfgSvnUser').value.trim();
