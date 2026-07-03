@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-07-03T20:05:28.826Z",
-  "last_updated_by": "Axel",
+  "last_updated": "2026-07-03T20:06:54.665Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -3723,7 +3723,7 @@
     },
     {
       "title": "Cargar embeddings locales (opcional) en menú de configuración de IA",
-      "descripcion": "",
+      "descripcion": "Ejemplo:\n\nTenemos dos modelos locales de embeddings en ollama.",
       "rama": "master",
       "task_type": "feature",
       "tema_principal": "Programación / Engine",
@@ -3763,12 +3763,24 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-03T20:06:53.726Z",
+          "field": "descripcion",
+          "old_value": "",
+          "new_value": "Ejemplo:\n\nTenemos dos modelos locales de embeddings en ollama."
         }
       ],
       "id": 74
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #74",
+      "user": "Axlfc",
+      "timestamp": "2026-07-03T20:06:54.665Z"
+    },
     {
       "action": "feat: nueva tarea #1783109128097 añadida",
       "user": "Axlfc",
