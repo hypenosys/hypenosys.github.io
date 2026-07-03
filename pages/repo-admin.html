@@ -301,6 +301,10 @@ permalink: /repo-admin/
         <input type="url" id="cfgSvnDiff" class="ra-input" placeholder="https://n8n.../webhook/svn-diff">
       </div>
       <div class="ra-field-group">
+        <label class="ra-label">SVN Cat webhook</label>
+        <input type="url" id="cfgSvnCat" class="ra-input" placeholder="https://n8n.../webhook/svn-cat">
+      </div>
+      <div class="ra-field-group">
         <label class="ra-label">Git Log webhook</label>
         <input type="url" id="cfgGitLog" class="ra-input" placeholder="https://n8n.../webhook/git-log">
       </div>
@@ -319,6 +323,7 @@ permalink: /repo-admin/
         <button class="ra-mini-btn" style="width:100%;margin-top:4px" onclick="copyWorkflows('svn-log')">SVN Log workflow</button>
         <button class="ra-mini-btn" style="width:100%;margin-top:4px" onclick="copyWorkflows('svn-info')">SVN Info workflow</button>
         <button class="ra-mini-btn" style="width:100%;margin-top:4px" onclick="copyWorkflows('svn-diff')">SVN Diff workflow</button>
+        <button class="ra-mini-btn" style="width:100%;margin-top:4px" onclick="copyWorkflows('svn-cat')">SVN Cat workflow</button>
         <button class="ra-mini-btn" style="width:100%;margin-top:4px" onclick="copyWorkflows('git-log')">Git Log workflow</button>
       </div>
     </div>
