@@ -205,6 +205,14 @@ window.initJulesPanelNeuralChat = function() {
         }
     }
 
+    // SVN Integration Toggle
+    const svnBadge = document.getElementById('svn-status-badge');
+    if (svnBadge) {
+        if (window.JulesSvnBridge && window.JulesSvnBridge.updateSvnStatusBadge) {
+            window.JulesSvnBridge.updateSvnStatusBadge();
+        }
+    }
+
     window._julesPanelNeuralInitialized = true;
     console.log("[Jules Panel Neural] Jules Panel Neural initialized");
 }
@@ -348,8 +356,24 @@ window.sendChatV2Msg = async function() {
             }
         }
 
+        // SVN CONTEXT INJECTION
+        const svnEnabled = localStorage.getItem('hypenosys_svn_context_enabled') === 'true';
+        let svnContext = null;
+
+        if (svnEnabled && window.JulesSvnBridge?.getSvnContext) {
+            try {
+                svnContext = await Promise.race([
+                    window.JulesSvnBridge.getSvnContext(msg),
+                    new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 3500))
+                ]);
+            } catch (error) {
+                console.warn('[SvnBridge] failed; continuing without svn', error);
+                svnContext = null;
+            }
+        }
+
         const baseSystemPrompt = await window.JulesDocsBridge.buildSystemPrompt(msg, session.systemPrompt);
-        const dynamicSystemPrompt = baseSystemPrompt + (docsContext || "");
+        const dynamicSystemPrompt = baseSystemPrompt + (docsContext || "") + (svnContext || "");
 
         // Store sources for this turn
         const currentSources = window._lastDocsMetadata || [];

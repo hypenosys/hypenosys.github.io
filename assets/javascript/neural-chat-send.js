@@ -172,6 +172,22 @@ window.sendMessage = async function() {
                 if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] skipping docs");
             }
 
+            // SVN CONTEXT INJECTION
+            const svnEnabled = localStorage.getItem('hypenosys_svn_context_enabled') === 'true';
+            let svnContext = null;
+
+            if (svnEnabled && window.JulesSvnBridge?.getSvnContext) {
+                try {
+                    svnContext = await Promise.race([
+                        window.JulesSvnBridge.getSvnContext(content),
+                        timeoutPromise(3500)
+                    ]);
+                } catch (error) {
+                    console.warn('[SvnBridge] failed; continuing without svn', error);
+                    svnContext = null;
+                }
+            }
+
             // Optimistic UI: Add user message and render immediately
             const userMsg = { role: 'user', content: content, timestamp: Date.now() };
             currentSession.messages.push(userMsg);
@@ -193,7 +209,7 @@ window.sendMessage = async function() {
             const currentSources = window._lastDocsMetadata || [];
             window._lastDocsMetadata = null;
 
-            const dynamicSystemPrompt = baseSystemPrompt + (docsContext || "");
+            const dynamicSystemPrompt = baseSystemPrompt + (docsContext || "") + (svnContext || "");
 
             if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] sending to provider");
 
