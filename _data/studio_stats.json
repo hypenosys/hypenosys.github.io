@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-07-03T19:37:08.849Z",
+  "computed_at": "2026-07-03T19:37:36.069Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 29,
@@ -216,8 +216,8 @@
         "reprioritizations": 29
       },
       "workload": {
-        "active_tasks": 11,
-        "story_points": 32
+        "active_tasks": 12,
+        "story_points": 36
       }
     },
     "topperh4rley": {
@@ -541,7 +541,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-07-03T19:37:09.798Z"
+      "timestamp": "2026-07-03T19:37:37.368Z"
     }
   ]
 }
