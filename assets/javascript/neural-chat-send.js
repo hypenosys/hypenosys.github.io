@@ -15,9 +15,11 @@ window.setSendMode = function(mode) {
     const label = document.getElementById('current-mode-label');
     if (label) label.textContent = mode.toUpperCase();
 
-    document.getElementById('chat-input-container').className = `bg-[#1e1f29] border border-[#44475a] rounded-2xl p-3 flex flex-col gap-2 focus-within:border-[#bd93f9]/50 focus-within:shadow-[0_0_20px_rgba(189,147,249,0.1)] transition-all duration-500 ${mode === 'jules' ? 'mode-jules' : ''}`;
+    document.getElementById('chat-input-container').className = `bg-[#1e1f29] border border-[#44475a] rounded-2xl p-3 flex flex-col gap-2 focus-within:border-[#bd93f9]/50 focus-within:shadow-[0_0_20px_rgba(189,147,249,0.1)] transition-all duration-500 ${mode === 'jules' ? 'mode-jules' : ''} ${mode === 'runners' ? 'mode-runners' : ''}`;
 
-    window.chatInput.placeholder = mode === 'claude' ? "¿En qué puedo ayudarte hoy?" : "Enviar orden directa a Jules...";
+    if (mode === 'claude') window.chatInput.placeholder = "¿En qué puedo ayudarte hoy?";
+    else if (mode === 'jules') window.chatInput.placeholder = "Enviar orden directa a Jules...";
+    else if (mode === 'runners') window.chatInput.placeholder = "IA escribirá y ejecutará Python por ti...";
 };
 
 window.toggleModeDropdown = function() {
@@ -36,6 +38,59 @@ window.sendMessage = async function() {
 
     // Look in active or archived sessions
     const currentSession = window.sessions.find(s => s.id === window.currentSessionId) || window.archivedSessions.find(s => s.id === window.currentSessionId);
+
+    // Handle Runners (REPL AI) Mode
+    if (window.currentSendMode === 'runners') {
+        const config = JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
+        const provider = config.provider || 'none';
+        if (provider === 'none') {
+            alert('Configura un proveedor de IA para usar el modo Runners.');
+            return;
+        }
+
+        window.sendBtn.disabled = true;
+        window.chatInput.disabled = true;
+        window.thinkingIndicator.classList.remove('hidden');
+        window.thinkingIndicator.innerHTML = '<div class="thinking-dots"><span>.</span><span>.</span><span>.</span></div> <span class="text-[10px] ml-2">IA GENERANDO CÓDIGO...</span>';
+
+        try {
+            const systemPrompt = "Eres un generador de scripts para ejecución inmediata. Tu objetivo es escribir código funcional (Python por defecto, o Javascript si se solicita) que resuelva la petición del usuario. Responde ÚNICAMENTE con el código necesario, sin explicaciones ni bloques de markdown. El código se ejecutará en un sandbox aislado sin internet.";
+
+            await window.NeuralChatCore.sendMessage({
+                session: currentSession,
+                userMessage: content,
+                systemPrompt: systemPrompt,
+                saveCallback: () => {},
+                onDone: (fullContent) => {
+                    window.thinkingIndicator.classList.add('hidden');
+                    window.sendBtn.disabled = false;
+                    window.chatInput.disabled = false;
+                    window.chatInput.value = '';
+
+                    // Detect language and clean code
+                    let lang = 'python';
+                    if (fullContent.includes('```javascript') || fullContent.includes('```js')) lang = 'javascript';
+
+                    let cleanCode = fullContent.replace(/```(python|javascript|js)?\n?|```/g, '').trim();
+
+                    if (window.JulesExecBridge) {
+                        const b64 = window.JulesExecBridge.b64EncodeUnicode(cleanCode);
+                        window.JulesExecBridge.confirmExecution(b64, lang);
+                    }
+                },
+                onError: (err) => {
+                    window.thinkingIndicator.classList.add('hidden');
+                    appendSystemMessage("Error generando código: " + err.message, 'error');
+                }
+            });
+        } catch(e) {
+            console.error('[RunnersMode] Error:', e);
+        } finally {
+            window.sendBtn.disabled = false;
+            window.chatInput.disabled = false;
+        }
+        return;
+    }
 
     // Handle Jules Direct Mode
     if (window.currentSendMode === 'jules') {

@@ -309,6 +309,18 @@ permalink: /repo-admin/
         <input type="url" id="cfgGitLog" class="ra-input" placeholder="https://n8n.../webhook/git-log">
       </div>
       <div class="ra-field-group">
+        <label class="ra-label">Python Runner webhook</label>
+        <input type="url" id="cfgPythonRunner" class="ra-input" placeholder="https://n8n.../webhook/python-runner">
+      </div>
+      <div class="ra-field-group">
+        <label class="ra-label">Javascript Runner webhook</label>
+        <input type="url" id="cfgJavascriptRunner" class="ra-input" placeholder="https://n8n.../webhook/javascript-runner">
+      </div>
+      <div class="ra-field-group">
+        <label class="ra-label">n8n Base URL</label>
+        <input type="url" id="cfgN8nBase" class="ra-input" placeholder="https://n8n.example.com">
+      </div>
+      <div class="ra-field-group">
         <label class="ra-label">SVN Username</label>
         <input type="text" id="cfgSvnUser" class="ra-input" placeholder="your_svn_user" autocomplete="username">
       </div>
@@ -325,6 +337,8 @@ permalink: /repo-admin/
         <button class="ra-mini-btn" style="width:100%;margin-top:4px" onclick="copyWorkflows('svn-diff')">SVN Diff workflow</button>
         <button class="ra-mini-btn" style="width:100%;margin-top:4px" onclick="copyWorkflows('svn-cat')">SVN Cat workflow</button>
         <button class="ra-mini-btn" style="width:100%;margin-top:4px" onclick="copyWorkflows('git-log')">Git Log workflow</button>
+        <button class="ra-mini-btn" style="width:100%;margin-top:4px" onclick="copyWorkflows('python-runner')">Python Runner workflow</button>
+        <button class="ra-mini-btn" style="width:100%;margin-top:4px" onclick="copyWorkflows('javascript-runner')">Javascript Runner workflow</button>
       </div>
     </div>
   </div>

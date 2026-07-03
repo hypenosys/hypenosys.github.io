@@ -124,6 +124,8 @@ window.selectProfile = function(id) {
         }
     }
     if (modelInput) modelInput.value = config.model || '';
+    const embeddingInput = document.getElementById('ai_embedding_model');
+    if (embeddingInput) embeddingInput.value = config.embedding_model || '';
     if (keyInput) keyInput.value = config.api_key || '';
     if (urlInput) urlInput.value = config.base_url || '';
     if (localNetInput) localNetInput.checked = !!(config.local_network || config.localNetwork);
