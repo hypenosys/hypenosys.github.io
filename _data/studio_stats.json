@@ -1,14 +1,14 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-07-03T10:00:28.403Z",
+  "computed_at": "2026-07-03T10:00:30.574Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 34,
-    "total_ok": 34,
+    "total_tasks": 35,
+    "total_ok": 35,
     "total_ko": 0,
     "total_uncertain": 0,
     "total_obsolete": 0,
-    "fixed_found_ratio": 1.1333,
+    "fixed_found_ratio": 1.129,
     "verified_ratio": 1
   },
   "group": {
@@ -19,7 +19,7 @@
       "2026-W23": 22,
       "2026-W24": 6,
       "2026-W25": 14,
-      "2026-W26": 0,
+      "2026-W26": 2,
       "2026-W27": 0
     },
     "bug_rate": 0,
@@ -69,7 +69,7 @@
         "mvp_points": 10,
         "bugs_solved": 8,
         "unblocked_count": 4,
-        "velocity": 2.869565217391304,
+        "velocity": 3,
         "research_solved": 2,
         "art_tasks": 0,
         "comments_left": 2
@@ -120,8 +120,8 @@
     "axlfc": {
       "member_name": "Axel",
       "completed": {
-        "all_time": 54,
-        "milestone": 46,
+        "all_time": 56,
+        "milestone": 48,
         "week": 0
       },
       "weekly_velocity": {
@@ -131,11 +131,11 @@
         "2026-W23": 50,
         "2026-W24": 10,
         "2026-W25": 8,
-        "2026-W26": 0,
+        "2026-W26": 6,
         "2026-W27": 0
       },
       "type_breakdown": {
-        "feature": 36,
+        "feature": 38,
         "chore": 8,
         "bug": 8,
         "research": 2
@@ -143,7 +143,7 @@
       "rama_breakdown": {
         "PRO": 30,
         "feature/dashboard-tag-filter": 2,
-        "master": 12,
+        "master": 14,
         "chore/consolidate-scripts": 2,
         "chore/decommission-old-panels": 2,
         "feature/dashboard-error-boundaries": 2,
@@ -421,7 +421,7 @@
           "mvp_points": 10,
           "bugs_solved": 8,
           "unblocked_count": 4,
-          "velocity": 2.869565217391304,
+          "velocity": 3,
           "research_solved": 2,
           "art_tasks": 0,
           "comments_left": 2
@@ -474,7 +474,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-07-03T10:00:29.476Z"
+      "timestamp": "2026-07-03T10:00:31.508Z"
     }
   ]
 }
