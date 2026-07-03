@@ -189,14 +189,29 @@ window.detectModelType = function(modelId) {
 
 window.updateActiveProfileUI = function(config) {
     const nameEl = document.getElementById('active-profile-name');
-    if (!nameEl) return;
+    const mobNameEl = document.getElementById('mob-active-profile-name');
 
-    // Priority: Custom Name > Model Name > Default
-    if (config.name) {
-        nameEl.textContent = config.name;
-    } else {
-        const model = config.model || 'SONNET-3.5';
-        nameEl.textContent = model.split('/').pop().toUpperCase();
+    let text = 'CONFIG IA';
+    if (config && config.provider && config.provider !== 'none') {
+        // Priority: Custom Name > Model Name > Provider
+        if (config.name) {
+            text = config.name;
+        } else if (config.model) {
+            text = config.model.split('/').pop().toUpperCase();
+        } else {
+            text = config.provider.toUpperCase();
+        }
+    }
+
+    if (nameEl) {
+        nameEl.textContent = text === 'CONFIG IA' ? 'ANTHROPIC' : text; // Desktop fallback to Anthropic label if empty for legacy
+    }
+
+    if (mobNameEl) {
+        // For mobile, maybe even more compact
+        let mobText = text;
+        if (mobText.length > 15) mobText = mobText.substring(0, 12) + '...';
+        mobNameEl.textContent = mobText;
     }
 }
 
