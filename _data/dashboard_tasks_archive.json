@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-07-03T10:00:25.948Z",
+  "last_updated": "2026-07-03T10:00:28.253Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2914,9 +2914,88 @@
         }
       ],
       "id": 68
+    },
+    {
+      "title": "Return images with n8n workflow when generating them",
+      "descripcion": "actualmente no devolvemos la imagen en el workflow de vuelta a la web",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "seccion": "",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "OK",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [],
+      "email_responsable": "axel@hypenosys.com",
+      "emails_asignados": [],
+      "start_date": "2026-06-28",
+      "due_date": "2026-06-28",
+      "estimated_hours": 2,
+      "story_points": 3,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-23",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-23T20:11:20.958Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-27T17:34:11.043Z",
+          "field": "descripcion",
+          "old_value": "",
+          "new_value": "actualmente no devolvemos la imagen en el workflow de vuelta a la web"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-27T17:34:11.043Z",
+          "field": "repository",
+          "old_value": null,
+          "new_value": "hypenosys/hypenosys.github.io"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-28T13:42:56.691Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "OK"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-28T13:42:56.691Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-06-28"
+        }
+      ],
+      "id": 69
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: tarea #69 movida al archivo",
+      "user": "Axlfc",
+      "timestamp": "2026-07-03T10:00:28.253Z"
+    },
     {
       "action": "chore: tarea #68 movida al archivo",
       "user": "Axlfc",
