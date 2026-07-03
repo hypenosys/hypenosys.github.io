@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-07-03T19:37:06.337Z",
+  "last_updated": "2026-07-03T19:37:33.619Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3110,17 +3110,17 @@
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Major",
       "milestone": "M2",
-      "estado": "Pending",
+      "estado": "Working",
       "completitud": 0,
-      "resuelto_por": null,
+      "resuelto_por": "Axel",
       "detectado_por": "Axel",
       "asignados": [],
       "email_responsable": null,
       "emails_asignados": [],
       "start_date": null,
       "due_date": null,
-      "estimated_hours": null,
-      "story_points": null,
+      "estimated_hours": 4,
+      "story_points": 4,
       "tags": [],
       "external_links": [],
       "subtasks": [],
@@ -3162,6 +3162,13 @@
           "field": "milestone",
           "old_value": "M1",
           "new_value": "M2"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-03T19:37:32.805Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
         }
       ],
       "id": 57,
@@ -3702,6 +3709,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #57",
+      "user": "Axlfc",
+      "timestamp": "2026-07-03T19:37:33.619Z"
+    },
     {
       "action": "chore: actualizar tarea #70",
       "user": "Axlfc",
