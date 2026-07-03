@@ -1,15 +1,15 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-07-03T19:35:58.994Z",
+  "computed_at": "2026-07-03T19:36:16.006Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 29,
-    "total_ok": 8,
+    "total_ok": 9,
     "total_ko": 0,
     "total_uncertain": 6,
     "total_obsolete": 9,
-    "fixed_found_ratio": 0.2286,
-    "verified_ratio": 0.2105
+    "fixed_found_ratio": 0.2571,
+    "verified_ratio": 0.2368
   },
   "group": {
     "velocity_trend": {
@@ -22,7 +22,7 @@
       "2026-W26": 1,
       "2026-W27": 0
     },
-    "bug_rate": 0.0476,
+    "bug_rate": 0.05,
     "blocker_health": 1,
     "tag_heatmap": {
       "brainstorm": 1,
@@ -37,14 +37,14 @@
       "feature": 11,
       "frontend": 1,
       "ux": 1,
-      "api": 5,
+      "api": 4,
       "infraestructura": 1,
       "jules-panel": 1,
       "neural-chat": 1,
       "svn": 1,
       "bug": 1,
-      "security": 3,
-      "backend": 2,
+      "security": 2,
+      "backend": 1,
       "Infraestructura": 1,
       "chat": 1,
       "matrix": 1,
@@ -149,7 +149,7 @@
     "axlfc": {
       "member_name": "Axel",
       "completed": {
-        "all_time": 33,
+        "all_time": 34,
         "milestone": 24,
         "week": 0
       },
@@ -158,13 +158,13 @@
         "2026-W21": 3,
         "2026-W22": 4,
         "2026-W23": 38,
-        "2026-W24": 5,
+        "2026-W24": 6,
         "2026-W25": 10,
         "2026-W26": 3,
         "2026-W27": 0
       },
       "type_breakdown": {
-        "feature": 21,
+        "feature": 22,
         "research": 2,
         "chore": 6,
         "bug": 4
@@ -174,6 +174,7 @@
         "feature/n8n-providers-nim-agent": 1,
         "chore/scripts-svn-sync": 1,
         "feature/kanban-repo-names": 1,
+        "feature/ollama-proxy-relay": 1,
         "master": 8,
         "PRO": 15,
         "feature/dashboard-tag-filter": 1,
@@ -185,7 +186,7 @@
       },
       "tag_frequency": {
         "Infraestructura": 1,
-        "api": 5,
+        "api": 6,
         "feature": 6,
         "jules": 2,
         "ux": 7,
@@ -193,6 +194,8 @@
         "research": 1,
         "chore": 4,
         "frontend": 5,
+        "backend": 1,
+        "security": 1,
         "infraestructura": 1,
         "UX/UI": 1,
         "bug": 2,
@@ -213,7 +216,7 @@
         "reprioritizations": 29
       },
       "workload": {
-        "active_tasks": 12,
+        "active_tasks": 11,
         "story_points": 32
       }
     },
@@ -538,7 +541,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-07-03T19:36:00.096Z"
+      "timestamp": "2026-07-03T19:36:16.912Z"
     }
   ]
 }
