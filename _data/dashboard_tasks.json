@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-07-03T19:42:46.401Z",
-  "last_updated_by": "Axlfc",
+  "last_updated": "2026-07-03T20:05:28.826Z",
+  "last_updated_by": "Axel",
   "tasks": [
     {
       "id": 1,
@@ -3720,9 +3720,60 @@
         }
       ],
       "id": 73
+    },
+    {
+      "title": "Cargar embeddings locales (opcional) en menú de configuración de IA",
+      "descripcion": "",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Chat Neural",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Axel",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-07-03",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-03T20:05:28.097Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 74
     }
   ],
   "_audit_log": [
+    {
+      "action": "feat: nueva tarea #1783109128097 añadida",
+      "user": "Axlfc",
+      "timestamp": "2026-07-03T20:05:28.826Z"
+    },
     {
       "action": "chore: actualizar tarea #73",
       "user": "Axlfc",
