@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-07-03T10:00:12.955Z",
+  "last_updated": "2026-07-03T10:00:19.089Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3433,88 +3433,6 @@
       "id": 67
     },
     {
-      "title": "Partir /jules-panel y /chat/neural en ficheros más pequeños específicos",
-      "descripcion": "Los ficheros tienen demasiadas líneas (˜3000 y ˜5000 líneas) queremos partir los ficheros en otros ficheros más pequeños y que siga funcionando flawlessly. Primero montar las estrategias pasándole los ficheros completos a Claude para que cree las estructuras de ficheros especializados por cada sección (claude chat y jules panel) y luego sacar dos prompts para Jules, uno para particularizar el Jules Panel y otro para particularizar el Claude Chat /chat/neural en ficheros más pequeños.",
-      "rama": "master",
-      "task_type": "feature",
-      "tema_principal": "Programación / Engine",
-      "seccion": "Jules Panel, Chat Neural",
-      "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Critical",
-      "milestone": "M1",
-      "estado": "OK",
-      "completitud": 0,
-      "resuelto_por": "Axel",
-      "detectado_por": "Axel",
-      "asignados": [],
-      "email_responsable": "axel@hypenosys.com",
-      "emails_asignados": [],
-      "start_date": "2026-06-21",
-      "due_date": "2026-06-28",
-      "estimated_hours": 2,
-      "story_points": 2,
-      "tags": [],
-      "external_links": [],
-      "subtasks": [],
-      "acceptance_criteria": "",
-      "blocks": [],
-      "blocked_by": [],
-      "comments": [],
-      "images": [
-        {
-          "url": "https://64.media.tumblr.com/10aaf09862ff3b6c48433f5d8d1856de/afe87eff01af2acc-70/s1280x1920/13f4d7212076cd2267da9ba06d8b802cde6d7eeb.jpg",
-          "type": "url",
-          "tumblr_post_id": "820078013886627840",
-          "filename": "8803.jpg",
-          "uploaded_at": "2026-06-22T00:15:39.990Z"
-        }
-      ],
-      "rama2": null,
-      "ver": true,
-      "fecha": "2026-06-21",
-      "apoyo": null,
-      "limite": null,
-      "comentario": "",
-      "change_log": [
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T18:29:51.054Z",
-          "field": "id",
-          "old_value": null,
-          "new_value": "Created"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T18:31:02.697Z",
-          "field": "estado",
-          "old_value": "Pending",
-          "new_value": "Working"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T22:47:14.017Z",
-          "field": "prioridad",
-          "old_value": "Major",
-          "new_value": "Critical"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-22T10:14:05.711Z",
-          "field": "estado",
-          "old_value": "Working",
-          "new_value": "In Review"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-28T13:45:35.266Z",
-          "field": "estado",
-          "old_value": "In Review",
-          "new_value": "OK"
-        }
-      ],
-      "id": 68
-    },
-    {
       "title": "Improve hypenosys logo",
       "descripcion": "",
       "rama": "master",
@@ -3728,6 +3646,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: archivar tarea #68",
+      "user": "Axlfc",
+      "timestamp": "2026-07-03T10:00:19.089Z"
+    },
     {
       "action": "chore: archivar tarea #69",
       "user": "Axlfc",
