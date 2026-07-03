@@ -371,6 +371,17 @@ window.refreshActivities = async function(sessionId) {
         // Handle specific activities
         activities.forEach(act => {
             const idSafe = sessionId;
+
+            // Trigger Wiki/Changelog Proposal on Completion
+            if (act.sessionCompleted && session.state === 'COMPLETED') {
+                const processed = JSON.parse(localStorage.getItem('hy_wiki_processed_tasks') || '[]');
+                if (!processed.includes(idSafe)) {
+                    document.dispatchEvent(new CustomEvent('hy:task-completed', {
+                        detail: { taskId: idSafe, session: session }
+                    }));
+                }
+            }
+
             if (act.planGenerated) {
                 if (!localStorage.getItem('jules_notif_approval_' + idSafe)) {
                     if (window.addNotification) {

@@ -189,6 +189,11 @@ permalink: /jules-panel/
           <i class="fas fa-brain"></i>
           <span>Neural</span>
         </button>
+        <button class="hnav-link" data-view="wiki" onclick="switchView('wiki', this)">
+          <i class="fas fa-book"></i>
+          <span>Wiki Ops</span>
+          <span class="nav-badge hidden" id="hdr-wiki-badge">1</span>
+        </button>
         <button class="hnav-link" data-view="config" onclick="switchView('config', this)">
           <i class="fas fa-cog"></i>
           <span>Config</span>
@@ -719,6 +724,24 @@ permalink: /jules-panel/
     </div>
 
     <!-- ─── HUB VIEW ─── -->
+    <!-- ─── WIKI OPS VIEW ─── -->
+    <div class="view" id="view-wiki" style="padding: 22px 30px;">
+        <div class="metrics-header" style="margin-bottom: 20px;">
+            <div class="metrics-title">Wiki & Changelog Ops</div>
+            <div class="hactions">
+                <div class="live-badge"><span class="live-dot"></span>REVISIÓN REQUERIDA</div>
+            </div>
+        </div>
+
+        <div id="wiki-proposal-container">
+            <div class="card glass" style="padding: 40px; text-align: center; color: var(--text3);">
+                <i class="fas fa-file-medical mb-3" style="font-size: 2em; opacity: 0.3;"></i>
+                <p>No hay propuestas de documentación pendientes.</p>
+                <p style="font-size: 11px;">Las propuestas aparecen automáticamente cuando una sesión de Jules finaliza con éxito.</p>
+            </div>
+        </div>
+    </div>
+
     <div class="view" id="view-hub" style="padding: 22px 30px;">
         <div class="metrics-header" style="margin-bottom: 20px;">
             <div class="metrics-title">GitHub Hub</div>
@@ -949,6 +972,7 @@ permalink: /jules-panel/
 <script src="{{ '/assets/javascript/jules-panel-metrics.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/jules-panel-kanban.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/jules-panel-hub.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/jules-panel-wiki.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/neural-provider-client.js' | relative_url }}?v=nim-relay-v1"></script>
 <script src="{{ '/assets/javascript/neural-chat-core.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/neural-chat-catalogs.js' | relative_url }}?v=nim-relay-v1"></script>
