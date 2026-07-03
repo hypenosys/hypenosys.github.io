@@ -288,6 +288,12 @@ window.switchView = async function(view, navEl) {
         const tabEl = document.querySelector('.dr-tab[data-tab="' + activeTab + '"]');
         switchHubTab(activeTab, tabEl);
     }
+    if (view === 'wiki') {
+        if (window.JulesWikiModule) {
+            const proposal = window.JulesWikiModule.getProposal();
+            window.JulesWikiModule.renderProposal(proposal);
+        }
+    }
 }
 
 window.openMobileSidebar = function(){ $('app-sidebar').classList.add('mob-open'); $('sidebar-backdrop').classList.add('open'); }
