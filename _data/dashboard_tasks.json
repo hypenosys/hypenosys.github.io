@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-07-03T19:35:56.793Z",
+  "last_updated": "2026-07-03T19:36:13.957Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2342,7 +2342,7 @@
         "security"
       ],
       "prioridad": "Medium",
-      "estado": "Pending",
+      "estado": "OK",
       "estimated_hours": 6,
       "comments": [
         "He notado que este es el principal bloqueador para nuevos usuarios de Ollama; el relay debería ser ligero, preferiblemente un worker o un pequeño servicio node."
@@ -2403,6 +2403,13 @@
           "timestamp": "2026-06-21T12:43:42.289Z",
           "field": "seccion",
           "new_value": "Backend n8n"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-03T19:36:13.268Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "OK"
         }
       ],
       "seccion": "Backend n8n"
@@ -3681,6 +3688,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #45",
+      "user": "Axlfc",
+      "timestamp": "2026-07-03T19:36:13.957Z"
+    },
     {
       "action": "chore: actualizar tarea #67",
       "user": "Axlfc",
