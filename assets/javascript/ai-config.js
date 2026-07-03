@@ -370,6 +370,7 @@ class OllamaUI {
             name: name,
             provider: document.getElementById('ai_provider').value,
             model: document.getElementById('ai_model').value,
+            embedding_model: document.getElementById('ai_embedding_model').value,
             api_key: document.getElementById('ai_api_key').value,
             base_url: document.getElementById('ai_base_url').value,
             modelType: this.currentModelType || 'chat',
