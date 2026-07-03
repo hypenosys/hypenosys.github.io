@@ -336,8 +336,9 @@ window.callCustomProvider = async function(config, messages) {
     });
 
     if (!response.ok) {
-        const err = await response.text();
-        throw new Error(`NIM/Custom API error ${response.status}: ${err}`);
+        // Delegate error classification to NeuralProviderClient if possible or handle locally
+        const errText = await response.text().catch(() => 'Unknown error');
+        throw new Error(`AI request failed for provider ${config.provider} at ${baseUrl}. Status: ${response.status}. ${errText}`);
     }
 
     const data = await response.json();

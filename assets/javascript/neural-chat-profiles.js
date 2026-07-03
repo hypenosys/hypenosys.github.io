@@ -302,6 +302,9 @@ window.checkConnection = async function(provider, config) {
             if (key.startsWith('nvapi-')) {
                 statusBadge.className = "flex items-center gap-2 text-[10px] font-black tracking-widest text-[#ffb86c] bg-[#ffb86c]/5 px-3 py-1 rounded-full border border-[#ffb86c]/20";
                 statusBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-[#ffb86c] shadow-[0_0_8px_#ffb86c] animate-pulse"></span> NVIDIA NIM: READY';
+            } else if (key) {
+                 statusBadge.className = "flex items-center gap-2 text-[10px] font-black tracking-widest text-[#8be9fd] bg-[#8be9fd]/5 px-3 py-1 rounded-full border border-[#8be9fd]/20";
+                 statusBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-[#8be9fd] shadow-[0_0_8px_#8be9fd] animate-pulse"></span> NIM COMPATIBLE: READY';
             } else {
                 statusBadge.className = "flex items-center gap-2 text-[10px] font-black tracking-widest text-[#ff5555] bg-[#ff5555]/5 px-3 py-1 rounded-full border border-[#ff5555]/20";
                 statusBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-[#ff5555] shadow-[0_0_8px_#ff5555]"></span> CONFIG REQUIRED';

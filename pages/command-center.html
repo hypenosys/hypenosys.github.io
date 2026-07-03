@@ -1179,7 +1179,15 @@ body.cc-ready #cc-app { display: block; }
     $('cc-open-github-cfg').addEventListener('click', function () {
       $('cc-input-pat').value = '';
       $('cc-input-repo').value = localStorage.getItem('github_repo') || REPO_DEFAULT;
-      $('cc-input-jules-key').value = localStorage.getItem('jules_api_key') || '';
+
+      const storedKey = localStorage.getItem('jules_api_key') || '';
+      if (storedKey.startsWith('nvapi-') || storedKey.startsWith('sk-')) {
+        $('cc-input-jules-key').value = '';
+        $('cc-input-jules-key').placeholder = 'Enter real Jules API key (AI key detected)';
+      } else {
+        $('cc-input-jules-key').value = storedKey;
+      }
+
       openModal('cc-modal-github');
     });
 
@@ -1190,14 +1198,28 @@ body.cc-ready #cc-app { display: block; }
       const repo = $('cc-input-repo').value.trim();
       const julesKey = $('cc-input-jules-key').value.trim();
 
+      if (julesKey && (julesKey.startsWith('nvapi-') || julesKey.startsWith('sk-'))) {
+        toast('Error: Clave de proveedor de IA detectada en campo Jules.', 'error');
+        return;
+      }
+
       btn.disabled = true;
       btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Conectando…';
       try {
         if (pat) window.githubApi.setToken(pat, $('cc-remember-me') ? $('cc-remember-me').checked : true);
         if (repo) window.githubApi.setRepo(repo);
         if (pat) await window.githubApi.validateToken();
-        if (julesKey) localStorage.setItem('jules_api_key', julesKey);
-        else localStorage.removeItem('jules_api_key');
+
+        if (julesKey) {
+            // Basic validation
+            const res = await fetch('https://jules.googleapis.com/v1alpha/sources?pageSize=1', {
+                headers: { 'x-goog-api-key': julesKey }
+            });
+            if (!res.ok) throw new Error('Jules API Key inválida o error de conexión (' + res.status + ')');
+            localStorage.setItem('jules_api_key', julesKey);
+        } else {
+            localStorage.removeItem('jules_api_key');
+        }
 
         toast('Configuración de GitHub/Jules guardada ✓', 'success');
         closeModal('cc-modal-github');
@@ -1262,7 +1284,7 @@ body.cc-ready #cc-app { display: block; }
         local_network: false
       };
       localStorage.setItem('hy_ai_config', JSON.stringify(payload));
-      if (payload.api_key) localStorage.setItem('jules_api_key_ai', payload.api_key);
+      // Removed redundant and potentially confusing jules_api_key_ai storage
       toast('Configuración de IA guardada ✓', 'success');
       closeModal('cc-modal-ai');
       refreshConfigStatuses();

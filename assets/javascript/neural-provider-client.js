@@ -171,12 +171,20 @@ window.NeuralProviderClient = (function() {
                                        !safeMessage.includes('Status:');
 
                 const isNvidiaCloud = provider === 'nvidia_nim' && baseUrl.includes('integrate.api.nvidia.com');
+                const isNvidiaRelay = provider === 'nvidia_nim' && baseUrl.includes('hypenosys-gatekeeper-v2.axlffcc.workers.dev');
                 const isOllama = provider === 'ollama';
 
                 // Specific case: NVIDIA Cloud direct browser failure (CORS/Preflight)
                 if (isNvidiaCloud && isNetworkFailure) {
                     const nimError = new Error(`NVIDIA NIM direct browser request failed before receiving an HTTP response. The same endpoint/model/API key works outside the browser, so this points to browser/origin blocking such as CORS or preflight from GitHub Pages. Use TEST NIM DIRECT for details.`);
                     onError(nimError);
+                    return;
+                }
+
+                // Specific case: NVIDIA Relay failure
+                if (isNvidiaRelay && isNetworkFailure) {
+                    const relayError = new Error(`Relay endpoint could not be reached. Check the relay Base URL, CORS configuration, or Worker availability. No HTTP status was received.`);
+                    onError(relayError);
                     return;
                 }
 
@@ -211,7 +219,7 @@ window.NeuralProviderClient = (function() {
                         } else if (safeMessage.includes('Status: 404')) {
                             troubleshooting.push("Model not found. Verify the model ID");
                         } else if (safeMessage.includes('Status: 410')) {
-                            troubleshooting.push("This model has reached end-of-life (EOL) and is no longer available");
+                            troubleshooting.push("This NVIDIA NIM model is no longer available or has reached end-of-life (EOL). Please choose another model or refresh the catalog.");
                         } else if (safeMessage.includes('Status: 429')) {
                             troubleshooting.push("Rate limit or quota exceeded");
                         } else if (safeMessage.includes('Status: 500') || safeMessage.includes('Status: 502') || safeMessage.includes('Status: 503')) {
