@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-07-03T19:41:52.952Z",
+  "last_updated": "2026-07-03T19:42:46.401Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3669,8 +3669,8 @@
       "repository": "hypenosys/Minecraft-Server-Docker",
       "prioridad": "Major",
       "milestone": "M2",
-      "estado": "Pending",
-      "completitud": 0,
+      "estado": "Working",
+      "completitud": 0.3,
       "resuelto_por": "Axel",
       "detectado_por": "Axel",
       "asignados": [
@@ -3703,12 +3703,31 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-03T19:42:45.702Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-03T19:42:45.702Z",
+          "field": "completitud",
+          "old_value": 0,
+          "new_value": 0.3
         }
       ],
       "id": 73
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #73",
+      "user": "Axlfc",
+      "timestamp": "2026-07-03T19:42:46.401Z"
+    },
     {
       "action": "chore: actualizar tarea #73",
       "user": "Axlfc",
