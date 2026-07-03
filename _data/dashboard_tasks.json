@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-07-03T09:32:43.896Z",
-  "last_updated_by": "Axel",
+  "last_updated": "2026-07-03T09:46:15.502Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -2594,8 +2594,8 @@
       "seccion": "Dashboard"
     },
     {
-      "title": "Map local Obsidian Markdown Files Knowledge mocking a Vector Database in SVN  so AI just can recover the needed text",
-      "descripcion": "Use Three Folders and a File in SVN.\n\nConnect Python (beta) and Javascript willing to be run code automated with the runners in n8n.\n\nTools for the AI to call with SVN python virtual environments and so on.\n\nEnsure /docs is properly readable by Neural Chat before starting this",
+      "title": "Map local repositories as Obsidian Markdown Files Knowledge mocking a Vector Database in SVN  so AI just can recover the needed text and giving visual proof",
+      "descripcion": "Use Three Folders and a File in SVN.\n\nConnect Python (beta) and Javascript willing to be run code automated with the runners in n8n. Create mocks of shared Templates structures and RAG retrieval with critique\n\nTools for the AI to call with SVN python virtual environments and so on.\n\nEnsure /docs is properly readable by Neural Chat before starting this. WE HAVE IT!! But the needed of mock could let us troubleshoot all repositories and so on.",
       "rama": "master",
       "task_type": "chore",
       "tema_principal": "Tools / Automation",
@@ -2603,19 +2603,43 @@
       "prioridad": "Major",
       "milestone": "M2",
       "estado": "Working",
-      "completitud": 0,
-      "resuelto_por": null,
+      "completitud": 0.3,
+      "resuelto_por": "Axel",
       "detectado_por": "Axel",
-      "asignados": [],
-      "email_responsable": null,
-      "emails_asignados": [],
+      "asignados": [
+        "axlfc"
+      ],
+      "email_responsable": "axel@hypenosys.github.io",
+      "emails_asignados": [
+        "axel@hypenosys.com"
+      ],
       "start_date": "2026-06-14",
       "due_date": "2026-06-21",
-      "estimated_hours": null,
-      "story_points": null,
-      "tags": [],
+      "estimated_hours": 24,
+      "story_points": 7,
+      "tags": [
+        "Infraestructura",
+        "chat",
+        "matrix"
+      ],
       "external_links": [],
-      "subtasks": [],
+      "subtasks": [
+        {
+          "id": 1783071463048,
+          "text": "Instalar server de matrix en ZimaBoard",
+          "done": false
+        },
+        {
+          "id": 1783071714380,
+          "text": "Crear UX/UI en una nueva página creada parecida a claude chat, pero grupal y utilizamos el backend de matrix para gestionar las comunicaciones",
+          "done": false
+        },
+        {
+          "id": 1783071763769,
+          "text": "Asegurar que backend responde al uso acorde al sistema de login con seguridad y encriptamiento end to end",
+          "done": false
+        }
+      ],
       "acceptance_criteria": "",
       "blocks": [],
       "blocked_by": [],
@@ -2710,6 +2734,41 @@
           "field": "title",
           "old_value": "Map local Obsidian Markdown Files Knowledge mocking a Vector Databasein SVN  so AI just can recover the needed text",
           "new_value": "Map local Obsidian Markdown Files Knowledge mocking a Vector Database in SVN  so AI just can recover the needed text"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-03T09:46:15.007Z",
+          "field": "title",
+          "old_value": "Map local Obsidian Markdown Files Knowledge mocking a Vector Database in SVN  so AI just can recover the needed text",
+          "new_value": "Map local repositories as Obsidian Markdown Files Knowledge mocking a Vector Database in SVN  so AI just can recover the needed text and giving visual proof"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-03T09:46:15.007Z",
+          "field": "descripcion",
+          "old_value": "Use Three Folders and a File in SVN.\n\nConnect Python (beta) and Javascript willing to be run code automated with the runners in n8n.\n\nTools for the AI to call with SVN python virtual environments and so on.\n\nEnsure /docs is properly readable by Neural Chat before starting this",
+          "new_value": "Use Three Folders and a File in SVN.\n\nConnect Python (beta) and Javascript willing to be run code automated with the runners in n8n. Create mocks of shared Templates structures and RAG retrieval with critique\n\nTools for the AI to call with SVN python virtual environments and so on.\n\nEnsure /docs is properly readable by Neural Chat before starting this. WE HAVE IT!! But the needed of mock could let us troubleshoot all repositories and so on."
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-03T09:46:15.007Z",
+          "field": "asignados",
+          "old_value": "[]",
+          "new_value": "[\"axlfc\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-03T09:46:15.007Z",
+          "field": "tags",
+          "old_value": "[]",
+          "new_value": "[\"Infraestructura\",\"chat\",\"matrix\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-03T09:46:15.007Z",
+          "field": "completitud",
+          "old_value": 0,
+          "new_value": 0.3
         }
       ],
       "id": 52,
@@ -3729,6 +3788,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #52",
+      "user": "Axlfc",
+      "timestamp": "2026-07-03T09:46:15.502Z"
+    },
     {
       "action": "feat: nueva tarea #1783071163264 añadida",
       "user": "Axlfc",
