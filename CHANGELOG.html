@@ -63,8 +63,16 @@ permalink: /CHANGELOG.html
         <h2 class="text-purple border-bottom border-purple pb-2 mb-4">[Unreleased]</h2>
         <div class="card mb-3">
           <div class="card-body">
+            <h5 class="text-success">Added</h5>
+            <ul>
+                <li><strong>Mobile AI Config (Jules Panel):</strong> Implementado un chip interactivo en el header móvil que muestra el perfil activo y abre el selector de perfiles.</li>
+                <li><strong>Drawer de Perfiles:</strong> Nueva interfaz estilo "bottom sheet" para la selección de modelos de IA en dispositivos móviles.</li>
+                <li><strong>Acceso en Config:</strong> Añadida sección de "IA Provider" en la pestaña de configuración del Jules Panel.</li>
+            </ul>
             <h5 class="text-success">Fixed</h5>
             <ul>
+                <li><strong>API CONFIG en Tablet (/chat/neural/):</strong> Resuelto el problema donde el botón de configuración no funcionaba en tablets debido a la falta del modal en el DOM y conflictos de sidebar.</li>
+                <li><strong>Sincronización de Perfiles:</strong> Garantizada la actualización en tiempo real de los indicadores de perfil activo en todos los headers (desktop/mobile).</li>
                 <li><strong>Regresión de Jules API Key:</strong> Restaurada la funcionalidad de configuración de Jules desde el menú de Ajustes Avanzados. Se implementó un validador local en <code>auth.js</code> para eliminar la dependencia de <code>jules-api.js</code> en la página de inicio.</li>
                 <li><strong>Seguridad y Separación de Keys:</strong> Garantizada la independencia absoluta entre <code>jules_api_key</code> y las claves de proveedores de IA (<code>hy_ai_config.api_key</code>). Se añadió detección y limpieza automática de claves contaminadas (<code>nvapi-</code>, <code>sk-</code>) en el slot de Jules.</li>
                 <li><strong>NVIDIA NIM Relay Integration:</strong> Implementado soporte completo para el worker relay <code>hypenosys-gatekeeper-v2</code> para evitar bloqueos de CORS en GitHub Pages.</li>

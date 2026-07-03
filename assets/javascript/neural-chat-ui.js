@@ -288,7 +288,13 @@ window.saveSystemPrompt = function() {
     closeSystemPrompt();
 }
 
-window.openSettings = function() { window.authManager.showApiConfigModal(); }
+window.openSettings = function() {
+    // Close mobile sidebar if open
+    if (window.innerWidth <= 768) {
+        window.closeSidebar();
+    }
+    window.authManager.showApiConfigModal();
+}
 
 window.quickPrompt = function(text) {
     window.chatInput.value = text;

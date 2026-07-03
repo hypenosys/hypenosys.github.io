@@ -67,6 +67,10 @@ permalink: /jules-panel/
 <header class="mobile-hdr" id="mob-hdr">
   <div style="display:flex;align-items:center;gap:10px">
     <div class="logo-gem">J</div>
+    <div id="mob-active-profile-chip" class="mobile-only" style="display:flex; align-items:center; gap:6px; background:rgba(124,58,237,0.1); border:1px solid var(--border-accent); padding:5px 10px; border-radius:var(--r-full); cursor:pointer">
+      <span class="u-dot" style="width:4px; height:4px"></span>
+      <span id="mob-active-profile-name" style="font-size:9px; font-weight:800; color:var(--accent2); text-transform:uppercase; letter-spacing:0.05em">CONFIG IA</span>
+    </div>
     <div class="avatar" id="mob-avatar" style="width:28px; height:28px; font-size:10px; display:none">?</div>
   </div>
   <div style="display:flex;align-items:center;gap:12px">
@@ -309,6 +313,21 @@ permalink: /jules-panel/
               <path fill="none" stroke="url(#cg)" stroke-width="2.5" stroke-linecap="round"/>
             </svg>
           </div>
+        </div>
+      </div>
+
+      <div class="card glass" style="margin-top: 18px;">
+        <div class="card-head">
+          <div class="card-title">
+            <i class="fas fa-brain mr-2" style="font-size: 14px; opacity: 0.7;"></i>
+            IA Provider
+          </div>
+        </div>
+        <div class="card-body">
+          <p style="font-size: 11px; color: var(--text3); margin-bottom: 15px;">Configura el proveedor de inteligencia artificial para Jules y Neural Chat.</p>
+          <button class="btn btn-ghost" style="width:100%; justify-content:center; font-size:12px; padding:10px" onclick="openApiModal()">
+            <i class="fas fa-key mr-2"></i> Ajustes de API
+          </button>
         </div>
       </div>
     </div>
@@ -1019,6 +1038,30 @@ permalink: /jules-panel/
         });
 
         if($('launch-btn')) $('launch-btn').onclick = launchSession;
+        if($('mob-active-profile-chip')) $('mob-active-profile-chip').onclick = (e) => {
+            e.stopPropagation();
+            const dropdown = $('profile-dropdown');
+            if (dropdown) {
+                if (window.innerWidth <= 768) {
+                    dropdown.classList.add('open');
+                    // We might need an overlay if it doesn't exist in Jules Panel
+                    let overlay = $('sidebar-overlay-jules');
+                    if (!overlay) {
+                        overlay = document.createElement('div');
+                        overlay.id = 'sidebar-overlay-jules';
+                        overlay.className = 'sidebar-overlay'; // Reusing style from styles
+                        overlay.onclick = () => {
+                            dropdown.classList.remove('open');
+                            overlay.classList.remove('active');
+                        };
+                        document.body.appendChild(overlay);
+                    }
+                    overlay.classList.add('active');
+                } else {
+                    dropdown.classList.toggle('hidden');
+                }
+            }
+        };
         if($('sb-toggle-btn')) $('sb-toggle-btn').onclick = toggleSidebar;
         if($('dr-overlay')) $('dr-overlay').onclick = closeDrawer;
         if($('dr-close')) $('dr-close').onclick = closeDrawer;
