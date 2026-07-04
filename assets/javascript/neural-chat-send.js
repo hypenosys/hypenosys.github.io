@@ -19,7 +19,30 @@ window.setSendMode = function(mode) {
 
     if (mode === 'claude') window.chatInput.placeholder = "¿En qué puedo ayudarte hoy?";
     else if (mode === 'jules') window.chatInput.placeholder = "Enviar orden directa a Jules...";
-    else if (mode === 'runners') window.chatInput.placeholder = "IA escribirá y ejecutará Python por ti...";
+    else if (mode === 'runners') window.chatInput.placeholder = "IA escribirá y ejecutará código por ti...";
+
+    const runnersSelector = document.getElementById('runners-lang-selector');
+    if (runnersSelector) {
+        if (mode === 'runners') runnersSelector.classList.remove('hidden');
+        else runnersSelector.classList.add('hidden');
+    }
+};
+
+window.currentRunnersLang = 'auto';
+window.setRunnersLang = function(lang) {
+    window.currentRunnersLang = lang;
+    ['auto', 'python', 'javascript'].forEach(l => {
+        const btn = document.getElementById('r-lang-' + l);
+        if (btn) {
+            if (l === lang) {
+                btn.classList.add('bg-[#50fa7b]', 'text-[#282a36]');
+                btn.classList.remove('text-[#6272a4]');
+            } else {
+                btn.classList.remove('bg-[#50fa7b]', 'text-[#282a36]');
+                btn.classList.add('text-[#6272a4]');
+            }
+        }
+    });
 };
 
 window.toggleModeDropdown = function() {
@@ -54,7 +77,9 @@ window.sendMessage = async function() {
         window.thinkingIndicator.innerHTML = '<div class="thinking-dots"><span>.</span><span>.</span><span>.</span></div> <span class="text-[10px] ml-2">IA GENERANDO CÓDIGO...</span>';
 
         try {
-            const systemPrompt = "Eres un generador de scripts para ejecución inmediata. Tu objetivo es escribir código funcional (Python por defecto, o Javascript si se solicita) que resuelva la petición del usuario. Responde ÚNICAMENTE con el código necesario, sin explicaciones ni bloques de markdown. El código se ejecutará en un sandbox aislado sin internet.";
+            const requestedLang = window.currentRunnersLang || 'auto';
+            const langInstruction = requestedLang === 'auto' ? "Python por defecto, o Javascript si el contexto lo sugiere" : requestedLang.toUpperCase();
+            const systemPrompt = `Eres un generador de scripts para ejecución inmediata. Tu objetivo es escribir código funcional (${langInstruction}) que resuelva la petición del usuario. Responde ÚNICAMENTE con el código necesario, sin explicaciones ni bloques de markdown. El código se ejecutará en un sandbox aislado sin internet.`;
 
             await window.NeuralChatCore.sendMessage({
                 session: currentSession,
@@ -68,10 +93,12 @@ window.sendMessage = async function() {
                     window.chatInput.value = '';
 
                     // Detect language and clean code
-                    let lang = 'python';
-                    if (fullContent.includes('```javascript') || fullContent.includes('```js')) lang = 'javascript';
-
                     let cleanCode = fullContent.replace(/```(python|javascript|js)?\n?|```/g, '').trim();
+                    let lang = requestedLang;
+
+                    if (lang === 'auto') {
+                        lang = detectCodeLanguage(cleanCode);
+                    }
 
                     if (window.JulesExecBridge) {
                         const b64 = window.JulesExecBridge.b64EncodeUnicode(cleanCode);
@@ -542,4 +569,41 @@ window.copyMessage = function(idx) {
 window.copyToClipboard = function(text) {
     navigator.clipboard.writeText(text);
     showToast('Copiado al portapapeles');
+}
+
+function detectCodeLanguage(code) {
+    if (!code) return 'python';
+
+    // Javascript hints
+    const jsHints = [
+        /\bconsole\.log\b/,
+        /\bconst\s+\w+\s*=/,
+        /\blet\s+\w+\s*=/,
+        /\bfunction\s+\w+\s*\(/,
+        /\b=>\b/,
+        /\bimport\s+.*\s+from\b/,
+        /\brequire\s*\(/,
+        /\bmodule\.exports\b/,
+        /\bprocess\.exit\b/
+    ];
+
+    // Python hints
+    const pyHints = [
+        /\bprint\s*\(/,
+        /\bdef\s+\w+\s*\(/,
+        /\bimport\s+\w+\b/,
+        /\bfrom\s+\w+\s+import\b/,
+        /\bif\s+__name__\s*==\s*['"]__main__['"]:/,
+        /\belif\b/,
+        /:\s*$/m, // Ends with colon (very common in PY)
+        /\bsys\.exit\b/
+    ];
+
+    let jsScore = 0;
+    let pyScore = 0;
+
+    jsHints.forEach(regex => { if (regex.test(code)) jsScore++; });
+    pyHints.forEach(regex => { if (regex.test(code)) pyScore++; });
+
+    return jsScore > pyScore ? 'javascript' : 'python';
 }

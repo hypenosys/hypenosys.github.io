@@ -65,8 +65,8 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-success">Added</h5>
             <ul>
-                <li><strong>Code Runners (Python & JS):</strong> Implementada la ejecución de código Python y Javascript en entornos Docker aislados vía n8n, con botones de ejecución integrados en los bloques de código del chat.</li>
-                <li><strong>Modo "Runners" (AI REPL):</strong> Nuevo modo en Neural Chat que genera scripts Python/JS automáticamente a partir de lenguaje natural y activa el flujo de ejecución.</li>
+                <li><strong>Code Runners (Python & JS):</strong> Implementada la ejecución de código Python y Javascript en entornos Docker aislados vía n8n, con botones de ejecución integrados en los bloques de código del chat y soporte para argumentos CLI y stdin.</li>
+                <li><strong>Modo "Runners" (AI REPL):</strong> Nuevo modo en Neural Chat que genera scripts automáticamente con selector de lenguaje (AUTO/PY/JS) y enrutamiento inteligente mediante <code>detectCodeLanguage</code>.</li>
                 <li><strong>Configuración Ampliada:</strong> Añadido soporte para configurar el endpoint de Javascript Runner, la URL base de n8n y modelos de embeddings por perfil de IA.</li>
                 <li><strong>SVN Bridge - Path Targeting & File Reading:</strong> Implementada la capacidad de apuntar a carpetas y archivos específicos en las consultas SVN. Se añadió el nuevo comando <code>svn-cat</code> para leer y resumir el contenido de archivos directamente en el chat.</li>
                 <li><strong>SVN Access Toggle (Neural Chat & Jules Panel):</strong> Implementado un control ON/OFF para inyectar contexto del repositorio SVN (trunk/Hypenosys) en las conversaciones con Claude. Incluye detección de intención heurística (diff, log, list, info) y protecciones de configuración en <code>repo-admin</code>.</li>

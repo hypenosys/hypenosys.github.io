@@ -18,17 +18,31 @@ window.JulesExecBridge = (function() {
             renderer: {
                 code(code, language, isEscaped) {
                     // Support both old and new marked.js signature
-                    let codeVal = typeof code === 'object' ? code.text : code;
-                    let lang = typeof code === 'object' ? code.lang : language;
+                    const isToken = typeof code === 'object';
+                    const codeVal = isToken ? code.text : code;
+                    const lang = isToken ? code.lang : language;
 
                     // Generate standard HTML using a clean renderer to avoid recursion
                     const cleanRenderer = new marked.Renderer();
-                    // We MUST pass a string to the renderer, not the token object
-                    const html = cleanRenderer.code(codeVal, lang, isEscaped);
+
+                    // marked >= 4.0 expects a token object if it was called with one
+                    // marked < 4.0 expects (code, lang, escaped)
+                    let html = '';
+                    if (isToken) {
+                        html = cleanRenderer.code(code);
+                    } else {
+                        html = cleanRenderer.code(codeVal, lang, isEscaped);
+                    }
+
+                    // Fallback for [object Object] bug: if html is not a string or looks like an object
+                    if (typeof html !== 'string' || html === '[object Object]') {
+                         html = `<pre><code class="language-${lang || 'none'}">${escapeHtml(codeVal)}</code></pre>`;
+                    }
 
                     if (lang === 'python' || lang === 'javascript' || lang === 'js') {
-                        const displayLang = lang === 'python' ? 'PYTHON' : 'JS';
-                        const btnColor = lang === 'python' ? 'bg-[#50fa7b]' : 'bg-[#f1fa8c]';
+                        const isPy = lang === 'python';
+                        const displayLang = isPy ? 'PYTHON' : 'JS';
+                        const btnColor = isPy ? 'bg-[#50fa7b]' : 'bg-[#f1fa8c]';
 
                         // We wrap the original pre in a container and add the button
                         return `
@@ -81,10 +95,10 @@ window.JulesExecBridge = (function() {
     function injectModal() {
         const modalHtml = `
             <div id="exec-confirm-modal" class="hidden fixed inset-0 z-[2000] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-                <div class="bg-[#282a36] border border-[#50fa7b]/30 rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
+                <div id="exec-modal-container" class="bg-[#282a36] border border-[#50fa7b]/30 rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
                     <div class="p-4 border-b border-[#44475a] flex items-center justify-between bg-[#1e1f29]">
-                        <h3 class="font-bold text-sm tracking-widest flex items-center gap-2 text-[#50fa7b]">
-                            <i class="fas fa-terminal"></i> CONFIRMAR EJECUCIÓN PYTHON
+                        <h3 class="font-bold text-sm tracking-widest flex items-center gap-2 text-[#50fa7b]" id="exec-modal-title">
+                            <i class="fas fa-terminal"></i> CONFIRMAR EJECUCIÓN
                         </h3>
                         <button onclick="window.JulesExecBridge.closeModal()" class="text-[#6272a4] hover:text-white transition-all">
                             <i class="fas fa-times"></i>
@@ -145,9 +159,28 @@ window.JulesExecBridge = (function() {
         currentPendingLang = lang;
 
         const modal = document.getElementById('exec-confirm-modal');
+        const container = document.getElementById('exec-modal-container');
+        const title = document.getElementById('exec-modal-title');
         const preview = document.getElementById('exec-code-preview');
+        const runBtn = document.getElementById('exec-run-btn');
 
-        if (preview) preview.textContent = code;
+        const isPy = lang === 'python';
+        const color = isPy ? '#50fa7b' : '#f1fa8c';
+        const darkColor = isPy ? '#282a36' : '#282a36'; // Standard dracula bg
+
+        if (title) title.innerHTML = `<i class="fas fa-terminal"></i> CONFIRMAR EJECUCIÓN ${isPy ? 'PYTHON' : 'JS'}`;
+        if (title) title.style.color = color;
+        if (container) container.style.borderColor = color + '4D'; // 30% alpha
+        if (preview) {
+            preview.textContent = code;
+            preview.style.color = color;
+        }
+        if (runBtn) {
+            runBtn.style.backgroundColor = color;
+            runBtn.style.color = darkColor;
+            runBtn.innerHTML = `<i class="fas fa-play"></i> ▶ EJECUTAR AHORA (${isPy ? 'PYTHON' : 'JS'})`;
+        }
+
         if (modal) modal.classList.remove('hidden');
 
         // Reset inputs
@@ -185,9 +218,12 @@ window.JulesExecBridge = (function() {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
+                    language: currentPendingLang,
                     code: currentPendingCode,
                     args: args,
-                    stdin: stdin
+                    stdin: stdin,
+                    source: 'neural-chat-exec',
+                    sessionId: window.currentSessionId || 'sandbox'
                 }),
                 signal: AbortSignal.timeout(25000)
             });
@@ -195,7 +231,7 @@ window.JulesExecBridge = (function() {
             if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
             const data = await res.json();
 
-            renderResult(data);
+            renderResult(data, currentPendingLang);
             logExecution(currentPendingCode, args, stdin, data);
             closeModal();
 
@@ -208,23 +244,30 @@ window.JulesExecBridge = (function() {
         }
     }
 
-    function renderResult(data) {
+    function renderResult(data, lang) {
         if (!window.chatMessages) return;
 
+        const isPy = lang === 'python';
         const msgDiv = document.createElement('div');
         msgDiv.className = 'flex justify-start mb-4';
 
-        const exitColor = data.exitCode === 0 ? 'text-[#50fa7b]' : 'text-[#ff5555]';
-        const borderColor = data.exitCode === 0 ? 'border-[#50fa7b]/30' : 'border-[#ff5555]/30';
+        const successColor = isPy ? '#50fa7b' : '#f1fa8c';
+        const exitColor = data.exitCode === 0 ? `text-[${successColor}]` : 'text-[#ff5555]';
+        const borderColor = data.exitCode === 0 ? `border-[${successColor}]/30` : 'border-[#ff5555]/30';
+
+        // Tailwind sometimes has trouble with dynamic class names like text-[#...] if they aren't pre-compiled
+        // so we'll use style attribute for the specific colors if needed, but let's try classes first
+        const statusColorClass = data.exitCode === 0 ? (isPy ? 'text-[#50fa7b]' : 'text-[#f1fa8c]') : 'text-[#ff5555]';
+        const statusBorderClass = data.exitCode === 0 ? (isPy ? 'border-[#50fa7b]/30' : 'border-[#f1fa8c]/30') : 'border-[#ff5555]/30';
 
         let html = `
-            <div class="max-w-[90%] p-4 bg-[#1e1f29] border ${borderColor} rounded-xl shadow-2xl relative overflow-hidden">
+            <div class="max-w-[90%] p-4 bg-[#1e1f29] border ${statusBorderClass} rounded-xl shadow-2xl relative overflow-hidden">
                 <div class="flex items-center justify-between mb-3 border-b border-[#44475a] pb-2">
                     <div class="flex items-center gap-2">
-                        <i class="fas fa-terminal ${exitColor}"></i>
-                        <span class="text-[10px] font-black tracking-widest uppercase text-white/70">RESULTADO DE EJECUCIÓN</span>
+                        <i class="fas fa-terminal ${statusColorClass}"></i>
+                        <span class="text-[10px] font-black tracking-widest uppercase text-white/70">RESULTADO DE EJECUCIÓN ${isPy ? 'PYTHON' : 'JS'}</span>
                     </div>
-                    <div class="text-[9px] font-mono ${exitColor} font-bold">
+                    <div class="text-[9px] font-mono ${statusColorClass} font-bold">
                         EXIT CODE: ${data.exitCode} ${data.timedOut ? '(TIMEOUT)' : ''}
                     </div>
                 </div>
@@ -252,9 +295,11 @@ window.JulesExecBridge = (function() {
             html += `<div class="text-xs text-[#6272a4] italic">Sin salida en consola</div>`;
         }
 
+        const envName = isPy ? 'PYTHON 3.10-SLIM' : 'NODE.JS 18-SLIM';
+
         html += `
                 <div class="mt-3 flex justify-between items-center opacity-40">
-                    <span class="text-[8px] font-mono">SANDBOXED PYTHON 3.10-SLIM</span>
+                    <span class="text-[8px] font-mono uppercase tracking-tighter">SANDBOXED ${envName}</span>
                     <span class="text-[8px] font-mono">${new Date().toLocaleTimeString()}</span>
                 </div>
             </div>
