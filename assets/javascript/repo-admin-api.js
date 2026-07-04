@@ -321,6 +321,214 @@ return [{'json': {'commits': commits, 'count': len(commits), 'branch': branch}}]
       "Webhook Git Log": { main: [[{ node: "Git Log", type: "main", index: 0 }]] },
       "Git Log": { main: [[{ node: "Respond", type: "main", index: 0 }]] }
     }
+  },
+  'python-runner': {
+    name: "Python Runner",
+    nodes: [
+      {
+        parameters: {
+          httpMethod: ["POST"], path: "python-runner",
+          responseMode: "responseNode",
+          options: { allowedOrigins: "https://hypenosys.github.io" }
+        },
+        type: "n8n-nodes-base.webhook", typeVersion: 2.1,
+        position: [400, -200], id: "wh-python-runner", name: "Webhook Python Runner"
+      },
+      {
+        parameters: {
+          language: "python",
+          code: `import subprocess, os, tempfile, json
+
+body = items[0]['json']['body']
+code = body.get('code', '')
+args = body.get('args', [])
+stdin_input = body.get('stdin', '')
+
+if not code:
+    return [{'json': {'error': 'No code provided', 'exitCode': 1}}]
+
+# Create a temporary file for the script
+with tempfile.NamedTemporaryFile(suffix='.py', delete=False) as tmp:
+    tmp.write(code.encode('utf-8'))
+    tmp_path = tmp.name
+
+try:
+    # Prepare Docker command
+    # --rm: remove container after run
+    # --network none: no internet access
+    # --memory=128m: limit RAM
+    # --cpus=0.5: limit CPU
+    # --read-only: filesystem is read-only
+    # --tmpfs /tmp: allow writing to /tmp
+    # -v {tmp_path}:/app/script.py:ro : mount script as read-only
+
+    cmd = [
+        'timeout', '10s',
+        'docker', 'run', '--rm', '--network', 'none',
+        '--memory=128m', '--cpus=0.5',
+        '--read-only', '--tmpfs', '/tmp',
+        '-v', f'{tmp_path}:/app/script.py:ro',
+        'python:3.10-slim',
+        'python', '/app/script.py'
+    ]
+
+    if args:
+        if isinstance(args, str):
+            import shlex
+            cmd.extend(shlex.split(args))
+        elif isinstance(args, list):
+            cmd.extend([str(a) for a in args])
+
+    # Execute
+    process = subprocess.run(
+        cmd,
+        input=stdin_input,
+        capture_output=True,
+        text=True,
+        timeout=12 # slightly more than the timeout command
+    )
+
+    stdout = process.stdout
+    stderr = process.stderr
+    exit_code = process.returncode
+
+    truncated = False
+    if len(stdout) > 4000:
+        stdout = stdout[:4000] + "\\n[STDOUT TRUNCATED]"
+        truncated = True
+    if len(stderr) > 4000:
+        stderr = stderr[:4000] + "\\n[STDERR TRUNCATED]"
+        truncated = True
+
+    return [{'json': {
+        'stdout': stdout,
+        'stderr': stderr,
+        'exitCode': exit_code,
+        'truncated': truncated,
+        'timedOut': exit_code == 124 # timeout command exit code
+    }}]
+
+except subprocess.TimeoutExpired:
+    return [{'json': {'error': 'Execution timed out', 'timedOut': True, 'exitCode': 124}}]
+except Exception as e:
+    return [{'json': {'error': str(e), 'exitCode': 1}}]
+finally:
+    if os.path.exists(tmp_path):
+        os.remove(tmp_path)`
+        },
+        type: "n8n-nodes-base.code", typeVersion: 2,
+        position: [600, -200], id: "code-python-runner", name: "Python Runner"
+      },
+      {
+        parameters: { respondWith: "json", responseBody: "={{ JSON.stringify($json) }}", options: { responseHeaders: { entries: [{ name: "Content-Type", value: "application/json" }] } } },
+        type: "n8n-nodes-base.respondToWebhook", typeVersion: 1.4,
+        position: [800, -200], id: "resp-python-runner", name: "Respond"
+      }
+    ],
+    connections: {
+      "Webhook Python Runner": { main: [[{ node: "Python Runner", type: "main", index: 0 }]] },
+      "Python Runner": { main: [[{ node: "Respond", type: "main", index: 0 }]] }
+    }
+  },
+  'javascript-runner': {
+    name: "Javascript Runner",
+    nodes: [
+      {
+        parameters: {
+          httpMethod: ["POST"], path: "javascript-runner",
+          responseMode: "responseNode",
+          options: { allowedOrigins: "https://hypenosys.github.io" }
+        },
+        type: "n8n-nodes-base.webhook", typeVersion: 2.1,
+        position: [400, -200], id: "wh-javascript-runner", name: "Webhook Javascript Runner"
+      },
+      {
+        parameters: {
+          language: "python",
+          code: `import subprocess, os, tempfile, json
+
+body = items[0]['json']['body']
+code = body.get('code', '')
+args = body.get('args', [])
+stdin_input = body.get('stdin', '')
+
+if not code:
+    return [{'json': {'error': 'No code provided', 'exitCode': 1}}]
+
+# Create a temporary file for the script
+with tempfile.NamedTemporaryFile(suffix='.js', delete=False) as tmp:
+    tmp.write(code.encode('utf-8'))
+    tmp_path = tmp.name
+
+try:
+    # Prepare Docker command
+    cmd = [
+        'timeout', '10s',
+        'docker', 'run', '--rm', '--network', 'none',
+        '--memory=128m', '--cpus=0.5',
+        '--read-only', '--tmpfs', '/tmp',
+        '-v', f'{tmp_path}:/app/script.js:ro',
+        'node:18-slim',
+        'node', '/app/script.js'
+    ]
+
+    if args:
+        if isinstance(args, str):
+            import shlex
+            cmd.extend(shlex.split(args))
+        elif isinstance(args, list):
+            cmd.extend([str(a) for a in args])
+
+    # Execute
+    process = subprocess.run(
+        cmd,
+        input=stdin_input,
+        capture_output=True,
+        text=True,
+        timeout=12
+    )
+
+    stdout = process.stdout
+    stderr = process.stderr
+    exit_code = process.returncode
+
+    truncated = False
+    if len(stdout) > 4000:
+        stdout = stdout[:4000] + "\\n[STDOUT TRUNCATED]"
+        truncated = True
+    if len(stderr) > 4000:
+        stderr = stderr[:4000] + "\\n[STDERR TRUNCATED]"
+        truncated = True
+
+    return [{'json': {
+        'stdout': stdout,
+        'stderr': stderr,
+        'exitCode': exit_code,
+        'truncated': truncated,
+        'timedOut': exit_code == 124
+    }}]
+
+except subprocess.TimeoutExpired:
+    return [{'json': {'error': 'Execution timed out', 'timedOut': True, 'exitCode': 124}}]
+except Exception as e:
+    return [{'json': {'error': str(e), 'exitCode': 1}}]
+finally:
+    if os.path.exists(tmp_path):
+        os.remove(tmp_path)`
+        },
+        type: "n8n-nodes-base.code", typeVersion: 2,
+        position: [600, -200], id: "code-javascript-runner", name: "Javascript Runner"
+      },
+      {
+        parameters: { respondWith: "json", responseBody: "={{ JSON.stringify($json) }}", options: { responseHeaders: { entries: [{ name: "Content-Type", value: "application/json" }] } } },
+        type: "n8n-nodes-base.respondToWebhook", typeVersion: 1.4,
+        position: [800, -200], id: "resp-javascript-runner", name: "Respond"
+      }
+    ],
+    connections: {
+      "Webhook Javascript Runner": { main: [[{ node: "Javascript Runner", type: "main", index: 0 }]] },
+      "Javascript Runner": { main: [[{ node: "Respond", type: "main", index: 0 }]] }
+    }
   }
 };
 
@@ -349,8 +557,14 @@ window.loadSettings = function() {
     ST.svnPass = s.svnPass || '';
     const userEl = document.getElementById('cfgSvnUser');
     const passEl = document.getElementById('cfgSvnPass');
+    const runnerEl = document.getElementById('cfgPythonRunner');
+    const jsRunnerEl = document.getElementById('cfgJavascriptRunner');
+    const n8nBaseEl = document.getElementById('cfgN8nBase');
     if (userEl) userEl.value = ST.svnUser;
     if (passEl) passEl.value = ST.svnPass;
+    if (runnerEl && ST.endpoints['python-runner']) runnerEl.value = ST.endpoints['python-runner'];
+    if (jsRunnerEl && ST.endpoints['javascript-runner']) jsRunnerEl.value = ST.endpoints['javascript-runner'];
+    if (n8nBaseEl && ST.endpoints['n8n-base']) n8nBaseEl.value = ST.endpoints['n8n-base'];
     if (s.endpoints) {
       Object.keys(s.endpoints).forEach(k => {
         const el = document.getElementById('cfg' + k.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(''));
@@ -368,6 +582,9 @@ window.saveSettings = function() {
     'svn-diff': document.getElementById('cfgSvnDiff').value.trim(),
     'svn-cat': document.getElementById('cfgSvnCat')?.value.trim() || ST.endpoints['svn-cat'] || '',
     'git-log': document.getElementById('cfgGitLog').value.trim(),
+    'python-runner': document.getElementById('cfgPythonRunner')?.value.trim() || ST.endpoints['python-runner'] || '',
+    'javascript-runner': document.getElementById('cfgJavascriptRunner')?.value.trim() || ST.endpoints['javascript-runner'] || '',
+    'n8n-base': document.getElementById('cfgN8nBase')?.value.trim() || ST.endpoints['n8n-base'] || '',
   };
   ST.svnUser = document.getElementById('cfgSvnUser').value.trim();
   ST.svnPass = document.getElementById('cfgSvnPass').value.trim();

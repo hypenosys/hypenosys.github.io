@@ -254,6 +254,13 @@ permalink: /chat/neural/
                                         <div class="text-[8px] text-[#6272a4]">Orden directa de ejecución</div>
                                     </div>
                                 </button>
+                                <button onclick="setSendMode('runners'); window.toggleModeDropdown()" class="w-full text-left p-3 hover:bg-[#44475a] transition-all flex items-center gap-3 border-t border-[#44475a]/30">
+                                    <i class="fas fa-terminal text-[#50fa7b]"></i>
+                                    <div>
+                                        <div class="text-[10px] font-bold text-white uppercase">Runners</div>
+                                        <div class="text-[8px] text-[#6272a4]">REPL asistido por IA</div>
+                                    </div>
+                                </button>
                             </div>
                         </div>
                         <textarea id="chat-input" rows="1" placeholder="¿En qué puedo ayudarte hoy?"
@@ -280,6 +287,12 @@ permalink: /chat/neural/
                             <button id="toggle-thinking" title="Toggle Extended Thinking" class="text-[#6272a4] hover:text-[#8be9fd] transition-colors">
                                 <i class="fas fa-brain text-xs"></i>
                             </button>
+
+                            <div id="runners-lang-selector" class="hidden flex items-center gap-1 bg-[#44475a]/30 rounded-lg p-1 border border-[#50fa7b]/20">
+                                <button onclick="setRunnersLang('auto')" id="r-lang-auto" class="px-2 py-0.5 rounded text-[8px] font-black tracking-tighter transition-all bg-[#50fa7b] text-[#282a36]">AUTO</button>
+                                <button onclick="setRunnersLang('python')" id="r-lang-python" class="px-2 py-0.5 rounded text-[8px] font-black tracking-tighter transition-all text-[#6272a4] hover:text-[#50fa7b]">PY</button>
+                                <button onclick="setRunnersLang('javascript')" id="r-lang-javascript" class="px-2 py-0.5 rounded text-[8px] font-black tracking-tighter transition-all text-[#6272a4] hover:text-[#f1fa8c]">JS</button>
+                            </div>
                             <button onclick="openSystemPrompt()" title="System Prompt" class="text-[#6272a4] hover:text-[#bd93f9] transition-colors">
                                 <i class="fas fa-terminal text-xs"></i>
                             </button>
@@ -393,6 +406,7 @@ permalink: /chat/neural/
 <script src="{{ '/assets/javascript/hypenosys-docs-index.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/jules-docs-bridge.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/jules-svn-bridge.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/jules-exec-bridge.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/neural-chat-ui.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/neural-chat-sessions.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/neural-chat-profiles.js' | relative_url }}?v=nim-relay-v1"></script>

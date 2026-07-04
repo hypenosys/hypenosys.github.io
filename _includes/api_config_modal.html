@@ -32,7 +32,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="ai_model" class="text-gray-400 small font-weight-bold uppercase">Modelo</label>
+                    <label for="ai_model" class="text-gray-400 small font-weight-bold uppercase">Modelo Principal</label>
                     <div class="input-group">
                         <input type="text" id="ai_model" class="form-control bg-dark text-white border-purple" placeholder="Selecciona un proveedor">
                         <div class="input-group-append" id="group-discover-models" style="display: none;">
@@ -41,6 +41,11 @@
                             </button>
                         </div>
                     </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="ai_embedding_model" class="text-gray-400 small font-weight-bold uppercase">Modelo de Embeddings (Opcional)</label>
+                    <input type="text" id="ai_embedding_model" class="form-control bg-dark text-white border-purple" placeholder="nomic-embed-text, text-embedding-3-small...">
                 </div>
 
                 <div id="group-model-type" class="form-group" style="display: none;">
