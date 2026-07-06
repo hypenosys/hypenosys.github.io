@@ -45,4 +45,4 @@ exclude:
   - Gemfile
   - Gemfile.lock
   - node_modules
-  - update_boostrap.sh
+  - scripts/update_bootstrap.sh
