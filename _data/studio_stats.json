@@ -1,28 +1,28 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-07-03T20:06:57.105Z",
+  "computed_at": "2026-07-07T19:33:24.161Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 30,
+    "total_tasks": 31,
     "total_ok": 9,
     "total_ko": 0,
     "total_uncertain": 6,
     "total_obsolete": 9,
-    "fixed_found_ratio": 0.25,
-    "verified_ratio": 0.2308
+    "fixed_found_ratio": 0.2432,
+    "verified_ratio": 0.225
   },
   "group": {
     "velocity_trend": {
-      "2026-W20": 0,
       "2026-W21": 4,
       "2026-W22": 6,
       "2026-W23": 11,
       "2026-W24": 3,
       "2026-W25": 8,
       "2026-W26": 1,
-      "2026-W27": 0
+      "2026-W27": 0,
+      "2026-W28": 0
     },
-    "bug_rate": 0.0476,
+    "bug_rate": 0.0909,
     "blocker_health": 1,
     "tag_heatmap": {
       "brainstorm": 1,
@@ -42,7 +42,7 @@
       "jules-panel": 1,
       "neural-chat": 1,
       "svn": 1,
-      "bug": 1,
+      "bug": 2,
       "security": 2,
       "backend": 1,
       "Infraestructura": 1,
@@ -54,7 +54,7 @@
       "Art": 1,
       "logo": 1
     },
-    "milestone_tasks_remaining": 13,
+    "milestone_tasks_remaining": 14,
     "hall_of_fame_winners": {
       "mvp": {
         "handle": "axlfc",
@@ -154,14 +154,14 @@
         "week": 0
       },
       "weekly_velocity": {
-        "2026-W20": 0,
         "2026-W21": 3,
         "2026-W22": 4,
         "2026-W23": 38,
         "2026-W24": 6,
         "2026-W25": 10,
         "2026-W26": 3,
-        "2026-W27": 0
+        "2026-W27": 0,
+        "2026-W28": 0
       },
       "type_breakdown": {
         "feature": 22,
@@ -228,14 +228,14 @@
         "week": 0
       },
       "weekly_velocity": {
-        "2026-W20": 0,
         "2026-W21": 3,
         "2026-W22": 5,
         "2026-W23": 42,
         "2026-W24": 3,
         "2026-W25": 7,
         "2026-W26": 0,
-        "2026-W27": 0
+        "2026-W27": 0,
+        "2026-W28": 0
       },
       "type_breakdown": {
         "chore": 4,
@@ -297,14 +297,14 @@
         "week": 0
       },
       "weekly_velocity": {
-        "2026-W20": 0,
         "2026-W21": 1,
         "2026-W22": 1,
         "2026-W23": 16,
         "2026-W24": 0,
         "2026-W25": 0,
         "2026-W26": 0,
-        "2026-W27": 0
+        "2026-W27": 0,
+        "2026-W28": 0
       },
       "type_breakdown": {
         "feature": 4,
@@ -353,14 +353,14 @@
         "week": 0
       },
       "weekly_velocity": {
-        "2026-W20": 0,
         "2026-W21": 2,
         "2026-W22": 1,
         "2026-W23": 4,
         "2026-W24": 2,
         "2026-W25": 0,
         "2026-W26": 0,
-        "2026-W27": 0
+        "2026-W27": 0,
+        "2026-W28": 0
       },
       "type_breakdown": {
         "feature": 3,
@@ -403,14 +403,14 @@
         "week": 0
       },
       "weekly_velocity": {
-        "2026-W20": 0,
         "2026-W21": 0,
         "2026-W22": 1,
         "2026-W23": 0,
         "2026-W24": 0,
         "2026-W25": 0,
         "2026-W26": 0,
-        "2026-W27": 0
+        "2026-W27": 0,
+        "2026-W28": 0
       },
       "type_breakdown": {
         "feature": 1,
@@ -540,8 +540,8 @@
   "_audit_log": [
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
-      "user": "Axlfc",
-      "timestamp": "2026-07-03T20:06:57.934Z"
+      "user": "dkdidac-design",
+      "timestamp": "2026-07-07T19:33:24.880Z"
     }
   ]
 }
