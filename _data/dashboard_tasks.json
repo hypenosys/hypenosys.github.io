@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-07-07T19:38:35.663Z",
-  "last_updated_by": "Sistema",
+  "last_updated": "2026-07-07T20:06:37.201Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -3844,7 +3844,7 @@
       "tags": [],
       "external_links": [],
       "subtasks": [],
-      "acceptance_criteria": "",
+      "acceptance_criteria": "El botón de VER TAREA debe navegar y resaltar en el kanban la tarea correspondiente ",
       "blocks": [],
       "blocked_by": [],
       "comments": [],
@@ -3868,6 +3868,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #76",
+      "user": "Axlfc",
+      "timestamp": "2026-07-07T20:06:37.201Z"
+    },
     {
       "action": "chore: actualizar estado tarea #76 → Pending",
       "user": "dkdidac-design",
