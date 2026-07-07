@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-07-07T19:33:21.709Z",
+  "last_updated": "2026-07-07T19:35:46.657Z",
   "last_updated_by": "Dídac",
   "tasks": [
     {
@@ -3819,9 +3819,60 @@
         }
       ],
       "id": 75
+    },
+    {
+      "title": "No funciona el boton ver tarea",
+      "descripcion": "el boton de ver tarea del banner rojo del dashboard no te redirige a la tarea",
+      "rama": "",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "seccion": "",
+      "repository": null,
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Dídac",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-07-07",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "dkdidac-design",
+          "timestamp": "2026-07-07T19:35:46.292Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 76
     }
   ],
   "_audit_log": [
+    {
+      "action": "feat: nueva tarea #1783452946292 añadida",
+      "user": "dkdidac-design",
+      "timestamp": "2026-07-07T19:35:46.657Z"
+    },
     {
       "action": "feat: nueva tarea #1783452801205 añadida",
       "user": "dkdidac-design",
