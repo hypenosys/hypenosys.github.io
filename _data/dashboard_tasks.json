@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-07-03T20:06:54.665Z",
-  "last_updated_by": "Axlfc",
+  "last_updated": "2026-07-07T19:33:21.709Z",
+  "last_updated_by": "Dídac",
   "tasks": [
     {
       "id": 1,
@@ -3773,9 +3773,60 @@
         }
       ],
       "id": 74
+    },
+    {
+      "title": "Todas las cabezeras de la web son diferente.",
+      "descripcion": "Es neccesario decidir una interfaz unificada para todas las seccion, igualar colores, interfaz, boton de retorno al inicio en todas las pagina ",
+      "rama": "",
+      "task_type": "bug",
+      "tema_principal": "Programación / Engine",
+      "seccion": "",
+      "repository": "hypenosys/app",
+      "prioridad": "Critical",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Dídac",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-07-07",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "dkdidac-design",
+          "timestamp": "2026-07-07T19:33:21.205Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 75
     }
   ],
   "_audit_log": [
+    {
+      "action": "feat: nueva tarea #1783452801205 añadida",
+      "user": "dkdidac-design",
+      "timestamp": "2026-07-07T19:33:21.709Z"
+    },
     {
       "action": "chore: actualizar tarea #74",
       "user": "Axlfc",
