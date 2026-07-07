@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-07-07T19:35:46.657Z",
-  "last_updated_by": "Dídac",
+  "last_updated": "2026-07-07T19:38:35.663Z",
+  "last_updated_by": "Sistema",
   "tasks": [
     {
       "id": 1,
@@ -3868,6 +3868,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar estado tarea #76 → Pending",
+      "user": "dkdidac-design",
+      "timestamp": "2026-07-07T19:38:35.663Z"
+    },
     {
       "action": "feat: nueva tarea #1783452946292 añadida",
       "user": "dkdidac-design",
