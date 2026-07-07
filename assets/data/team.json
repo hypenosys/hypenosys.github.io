@@ -73,5 +73,29 @@
       "Art"
     ],
     "github": "https://github.com/mitxel2022"
+  },
+  {
+    "name": "silmaril464",
+    "role": "New Member",
+    "description": "Nuevo miembro del equipo Hypenosys.",
+    "image": "https://github.com/silmaril464.png",
+    "skills": [],
+    "github": "https://github.com/silmaril464"
+  },
+  {
+    "name": "lachicadelaboina",
+    "role": "New Member",
+    "description": "Nueva miembro del equipo Hypenosys.",
+    "image": "https://github.com/lachicadelaboina.png",
+    "skills": [],
+    "github": "https://github.com/lachicadelaboina"
+  },
+  {
+    "name": "spongebob3bray",
+    "role": "New Member",
+    "description": "Nuevo miembro del equipo Hypenosys.",
+    "image": "https://github.com/spongebob3bray.png",
+    "skills": [],
+    "github": "https://github.com/spongebob3bray"
   }
 ]

@@ -188,9 +188,98 @@
         "impacto": 0,
         "volatilidad": 0
       }
+    },
+    "silmaril464": {
+      "github_username": "silmaril464",
+      "display_name": "silmaril464",
+      "role": "New Member",
+      "lead_role": "",
+      "bio": "Nuevo miembro del equipo Hypenosys.",
+      "avatar_url": "https://github.com/silmaril464.png",
+      "portfolio_url": "",
+      "color_accent": "#34d399",
+      "is_admin": false,
+      "skills": [],
+      "extra_links": [
+        {
+          "label": "GitHub",
+          "url": "https://github.com/silmaril464"
+        }
+      ],
+      "social": {
+        "twitter": "",
+        "itchio": ""
+      },
+      "stats": {
+        "completadas": 0,
+        "velocity": "0.5d",
+        "impacto": 0,
+        "volatilidad": 0
+      }
+    },
+    "lachicadelaboina": {
+      "github_username": "lachicadelaboina",
+      "display_name": "lachicadelaboina",
+      "role": "New Member",
+      "lead_role": "",
+      "bio": "Nueva miembro del equipo Hypenosys.",
+      "avatar_url": "https://github.com/lachicadelaboina.png",
+      "portfolio_url": "",
+      "color_accent": "#f472b6",
+      "is_admin": false,
+      "skills": [],
+      "extra_links": [
+        {
+          "label": "GitHub",
+          "url": "https://github.com/lachicadelaboina"
+        }
+      ],
+      "social": {
+        "twitter": "",
+        "itchio": ""
+      },
+      "stats": {
+        "completadas": 0,
+        "velocity": "0.5d",
+        "impacto": 0,
+        "volatilidad": 0
+      }
+    },
+    "spongebob3bray": {
+      "github_username": "spongebob3bray",
+      "display_name": "spongebob3bray",
+      "role": "New Member",
+      "lead_role": "",
+      "bio": "Nuevo miembro del equipo Hypenosys.",
+      "avatar_url": "https://github.com/spongebob3bray.png",
+      "portfolio_url": "",
+      "color_accent": "#fb923c",
+      "is_admin": false,
+      "skills": [],
+      "extra_links": [
+        {
+          "label": "GitHub",
+          "url": "https://github.com/spongebob3bray"
+        }
+      ],
+      "social": {
+        "twitter": "",
+        "itchio": ""
+      },
+      "stats": {
+        "completadas": 0,
+        "velocity": "0.5d",
+        "impacto": 0,
+        "volatilidad": 0
+      }
     }
   },
   "_audit_log": [
+    {
+      "action": "chore: añadir nuevos miembros (silmaril464, lachicadelaboina, spongebob3bray)",
+      "user": "Jules",
+      "timestamp": "2026-07-07T18:15:00.000Z"
+    },
     {
       "action": "chore: actualizar config AI de Axel",
       "user": "Axlfc",
