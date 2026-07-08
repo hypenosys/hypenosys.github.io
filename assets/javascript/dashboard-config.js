@@ -7,9 +7,9 @@ const MEMBER_MAPPING = {
     'javi26031994-a11y': 'Javi',
     'dkdidac-design': 'Dídac',
     'mitxel2022': 'Mitxel',
-    'silmaril464': 'silmaril464',
-    'lachicadelaboina': 'lachicadelaboina',
-    'spongebob3bray': 'spongebob3bray'
+    'silmaril464': 'Alex',
+    'lachicadelaboina': 'Laura',
+    'spongebob3bray': 'Bray'
 };
 const STAGES = ['Concepto / GDD', 'Pre-producción', 'Tools / Automation', 'Arte / Assets', 'Programación / Engine', 'QA / Testing', 'Build / Deploy', 'Post-launch'];
 const REFRESH_INTERVAL_MS = 30000; // 30 seconds
