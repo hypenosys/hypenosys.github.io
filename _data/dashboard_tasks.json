@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-07-08T23:48:29.482Z",
+  "last_updated": "2026-07-08T23:49:09.332Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1290,12 +1290,13 @@
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Major",
       "milestone": "M1",
-      "estado": "Working",
+      "estado": "In Review",
       "completitud": 0,
       "resuelto_por": "Axel",
       "detectado_por": "Axel",
       "asignados": [
         "axlfc",
+        "silmaril464",
         "topperh4rley"
       ],
       "email_responsable": "axel@hypenosys.com",
@@ -1477,6 +1478,20 @@
           "field": "descripcion",
           "old_value": "Permitir que las herramientas de IA realicen acciones directamente sobre el SVN usando los runners de python. Automatiza tareas de gestión de assets y sincronización técnica similarmente a como se hace con la documentación.",
           "new_value": "Permitir que las herramientas de IA realicen acciones directamente sobre el SVN usando los runners de python. Automatiza tareas de gestión de assets y sincronización técnica similarmente a como se hace con la documentación. Así la IA tiene acceso a los assets del SVN y tal, espero que me entiendas."
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-08T23:49:08.895Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-08T23:49:08.895Z",
+          "field": "asignados",
+          "old_value": "[\"axlfc\",\"topperh4rley\"]",
+          "new_value": "[\"axlfc\",\"silmaril464\",\"topperh4rley\"]"
         }
       ],
       "id": 35,
@@ -3967,6 +3982,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #35",
+      "user": "Axlfc",
+      "timestamp": "2026-07-08T23:49:09.332Z"
+    },
     {
       "action": "chore: actualizar tarea #75",
       "user": "Axlfc",
