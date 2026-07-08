@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-07-08T23:49:09.332Z",
-  "last_updated_by": "Axlfc",
+  "last_updated": "2026-07-08T23:51:26.211Z",
+  "last_updated_by": "Axel",
   "tasks": [
     {
       "id": 1,
@@ -3979,9 +3979,62 @@
         }
       ],
       "id": 77
+    },
+    {
+      "title": "2.0: estabilizar master y sacar el build y guardarlo en CopyParty",
+      "descripcion": "",
+      "rama": "master",
+      "task_type": "chore",
+      "tema_principal": "Programación / Engine",
+      "seccion": "",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Critical",
+      "milestone": "M3",
+      "estado": "Working",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-07-09",
+      "due_date": "2026-07-19",
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-07-08",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-08T23:51:25.714Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 78
     }
   ],
   "_audit_log": [
+    {
+      "action": "feat: nueva tarea #1783554685715 añadida",
+      "user": "Axlfc",
+      "timestamp": "2026-07-08T23:51:26.211Z"
+    },
     {
       "action": "chore: actualizar tarea #35",
       "user": "Axlfc",
