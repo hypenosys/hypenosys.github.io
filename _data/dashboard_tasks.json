@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-07-08T08:41:02.320Z",
+  "last_updated": "2026-07-08T08:41:18.859Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3805,7 +3805,7 @@
       "repository": "hypenosys/app",
       "prioridad": "Critical",
       "milestone": "M1",
-      "estado": "Pending",
+      "estado": "Working",
       "completitud": 0,
       "resuelto_por": "Axel",
       "detectado_por": "Dídac",
@@ -3844,6 +3844,13 @@
           "field": "due_date",
           "old_value": null,
           "new_value": "2026-07-08"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-08T08:41:18.359Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
         }
       ],
       "id": 75
@@ -3896,6 +3903,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #75",
+      "user": "Axlfc",
+      "timestamp": "2026-07-08T08:41:18.859Z"
+    },
     {
       "action": "chore: actualizar tarea #67",
       "user": "Axlfc",
