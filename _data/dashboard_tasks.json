@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-07-08T08:41:18.859Z",
-  "last_updated_by": "Axlfc",
+  "last_updated": "2026-07-08T11:24:24.226Z",
+  "last_updated_by": "Axel",
   "tasks": [
     {
       "id": 1,
@@ -3900,9 +3900,60 @@
         }
       ],
       "id": 76
+    },
+    {
+      "title": "Creación de favicon.ico de hypenosys",
+      "descripcion": "Crear el favicon de la web de hypenosys. Luego ya lo asociaremos, se momento solo crear el icono en pequeño.",
+      "rama": "master",
+      "task_type": "chore",
+      "tema_principal": "Programación / Engine",
+      "seccion": "logo",
+      "repository": "hypenosys/hypenosys-logo",
+      "prioridad": "Medium",
+      "milestone": "M2",
+      "estado": "Working",
+      "completitud": 0,
+      "resuelto_por": "Dídac",
+      "detectado_por": "Axel",
+      "asignados": [],
+      "email_responsable": "didac@hypenosys.com",
+      "emails_asignados": [],
+      "start_date": "2026-07-08",
+      "due_date": "2026-07-22",
+      "estimated_hours": 4,
+      "story_points": 4,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-07-08",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-08T11:24:23.574Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 77
     }
   ],
   "_audit_log": [
+    {
+      "action": "feat: nueva tarea #1783509863574 añadida",
+      "user": "Axlfc",
+      "timestamp": "2026-07-08T11:24:24.226Z"
+    },
     {
       "action": "chore: actualizar tarea #75",
       "user": "Axlfc",
