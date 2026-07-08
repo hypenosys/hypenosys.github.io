@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-07-08T11:24:24.226Z",
-  "last_updated_by": "Axel",
+  "last_updated": "2026-07-08T23:48:13.536Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -3915,7 +3915,9 @@
       "completitud": 0,
       "resuelto_por": "Dídac",
       "detectado_por": "Axel",
-      "asignados": [],
+      "asignados": [
+        "dkdidac-design"
+      ],
       "email_responsable": "didac@hypenosys.com",
       "emails_asignados": [],
       "start_date": "2026-07-08",
@@ -3943,12 +3945,24 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-08T23:48:12.921Z",
+          "field": "asignados",
+          "old_value": "[]",
+          "new_value": "[\"dkdidac-design\"]"
         }
       ],
       "id": 77
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #77",
+      "user": "Axlfc",
+      "timestamp": "2026-07-08T23:48:13.536Z"
+    },
     {
       "action": "feat: nueva tarea #1783509863574 añadida",
       "user": "Axlfc",
