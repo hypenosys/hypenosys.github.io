@@ -193,10 +193,10 @@
     },
     "silmaril464": {
       "github_username": "silmaril464",
-      "display_name": "silmaril464",
-      "role": "New Member",
-      "lead_role": "",
-      "bio": "Nuevo miembro del equipo Hypenosys.",
+      "display_name": "Alex",
+      "role": "QA/Test",
+      "lead_role": "QA",
+      "bio": "Te domotiza la casa al igual que te arregla el fluorescente de la cocina, un verdadero crack, si encuentra algún bug, el equipo DEV entero se sincroniza a sudar.",
       "avatar_url": "https://github.com/silmaril464.png",
       "portfolio_url": "",
       "color_accent": "#34d399",
@@ -221,10 +221,10 @@
     },
     "lachicadelaboina": {
       "github_username": "lachicadelaboina",
-      "display_name": "lachicadelaboina",
-      "role": "New Member",
-      "lead_role": "",
-      "bio": "Nueva miembro del equipo Hypenosys.",
+      "display_name": "Laura",
+      "role": "Técnica de Sonido",
+      "lead_role": "Sonido",
+      "bio": "¿¡¿¿¿¡MANDE???!??!",
       "avatar_url": "https://github.com/lachicadelaboina.png",
       "portfolio_url": "",
       "color_accent": "#f472b6",
@@ -237,7 +237,7 @@
         }
       ],
       "social": {
-        "twitter": "",
+        "twitter": "lachicadlaboina",
         "itchio": ""
       },
       "stats": {
@@ -249,10 +249,10 @@
     },
     "spongebob3bray": {
       "github_username": "spongebob3bray",
-      "display_name": "spongebob3bray",
+      "display_name": "Bry",
       "role": "New Member",
       "lead_role": "",
-      "bio": "Nuevo miembro del equipo Hypenosys.",
+      "bio": "maincra",
       "avatar_url": "https://github.com/spongebob3bray.png",
       "portfolio_url": "",
       "color_accent": "#fb923c",
