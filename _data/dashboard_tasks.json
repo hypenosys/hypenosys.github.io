@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-07-07T20:06:37.201Z",
+  "last_updated": "2026-07-08T07:02:56.739Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3786,13 +3786,13 @@
       "milestone": "M1",
       "estado": "Pending",
       "completitud": 0,
-      "resuelto_por": null,
+      "resuelto_por": "Axel",
       "detectado_por": "Dídac",
       "asignados": [],
       "email_responsable": null,
       "emails_asignados": [],
-      "start_date": null,
-      "due_date": null,
+      "start_date": "2026-07-08",
+      "due_date": "2026-07-08",
       "estimated_hours": null,
       "story_points": null,
       "tags": [],
@@ -3816,6 +3816,13 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-08T07:02:56.123Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-07-08"
         }
       ],
       "id": 75
@@ -3868,6 +3875,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #75",
+      "user": "Axlfc",
+      "timestamp": "2026-07-08T07:02:56.739Z"
+    },
     {
       "action": "chore: actualizar tarea #76",
       "user": "Axlfc",
