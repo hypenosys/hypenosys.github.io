@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-07-09T00:02:22.534Z",
+  "computed_at": "2026-07-09T00:02:50.655Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 35,
@@ -48,7 +48,7 @@
       "Infraestructura": 1,
       "chat": 1,
       "matrix": 1,
-      "master": 12,
+      "master": 13,
       "menú": 1,
       "ux/ui": 1,
       "Art": 1,
@@ -541,7 +541,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-07-09T00:02:23.598Z"
+      "timestamp": "2026-07-09T00:02:51.503Z"
     }
   ]
 }
