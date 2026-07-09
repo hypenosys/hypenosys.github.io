@@ -89,6 +89,7 @@ permalink: /CHANGELOG.html
                 <li><strong>NVIDIA NIM Relay Integration:</strong> Implementado soporte completo para el worker relay <code>hypenosys-gatekeeper-v2</code> para evitar bloqueos de CORS en GitHub Pages.</li>
                 <li><strong>Estabilización NVIDIA NIM:</strong> Forzado el modo <code>stream: false</code> por defecto para NVIDIA NIM y mejorada la clasificación de errores (410 EOL, fallos de red/relay).</li>
                 <li><strong>Limpieza de Headers:</strong> Eliminación garantizada del header <code>x-requested-with</code> en las peticiones a proveedores de IA para maximizar compatibilidad.</li>
+                <li><strong>Global Header Dropdown:</strong> Corregido el bug donde los menús desplegables se cerraban inesperadamente al mover el ratón hacia las opciones debido al margen superior. Se implementó un "hover bridge" mediante un pseudo-elemento <code>::before</code>.</li>
             </ul>
             <h5 class="text-success">Changed</h5>
             <ul>
