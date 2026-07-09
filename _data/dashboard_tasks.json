@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-07-09T00:02:48.434Z",
+  "last_updated": "2026-07-09T00:16:34.083Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -4022,8 +4022,8 @@
       "emails_asignados": [],
       "start_date": "2026-07-09",
       "due_date": "2026-07-19",
-      "estimated_hours": null,
-      "story_points": null,
+      "estimated_hours": 8,
+      "story_points": 5,
       "tags": [],
       "external_links": [],
       "subtasks": [],
@@ -4102,6 +4102,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #78",
+      "user": "Axlfc",
+      "timestamp": "2026-07-09T00:16:34.083Z"
+    },
     {
       "action": "chore: actualizar tarea #76",
       "user": "Axlfc",
