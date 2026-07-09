@@ -17,6 +17,8 @@ permalink: /image-gen/
     <script src="{{ '/assets/javascript/bootstrap/jquery.min.js' | relative_url }}"></script>
     <script src="{{ '/assets/javascript/bootstrap/bootstrap.bundle.min.js' | relative_url }}"></script>
     <script src="{{ '/assets/javascript/ui-components.js' | relative_url }}"></script>
+<script>window.HYPENOSYS_PAGE_SECTIONS = [{ label: "Generador", href: "javascript:void(0)", onclick: "togglePanel('left')", icon: "fas fa-wand-magic-sparkles" },{ label: "Historial", href: "javascript:void(0)", onclick: "togglePanel('history')", icon: "fas fa-history" },{ label: "Ajustes", href: "javascript:void(0)", onclick: "togglePanel('settings')", icon: "fas fa-cog" }];</script>
+    <script src="/assets/javascript/global-header.js"></script>
     <style>
         /* Standard Auth Overlay Styles (adapted from Jules Panel/Dashboard) */
         .auth-overlay {
@@ -94,7 +96,7 @@ permalink: /image-gen/
 </div>
 
 <div id="ig-app-container">
-<div id="ig-root">
+<div id="ig-root" style="margin-top: 64px;">
 
   <!-- TOP BAR -->
   <header class="ig-topbar">
