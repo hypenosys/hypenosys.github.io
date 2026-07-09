@@ -2,10 +2,55 @@
    JULES PANEL SESSIONS & HISTORY
    ════════════════════════════════════════ */
 
+function loadCachedSessions() {
+    try {
+        const cached = localStorage.getItem('jules_sessions_cache');
+        if (cached) {
+            window.julesSessionsCache = JSON.parse(cached);
+            console.log("[JULES-SYNC] Loading sessions from cache...");
+            renderMetrics();
+            renderHistoryTable(window.julesSessionsCache);
+            updateKanbanCounts(window.julesSessionsCache);
+            updateNeuralHistory(window.julesSessionsCache);
+            if (typeof window.renderKanban === 'function') {
+                window.renderKanban(window.julesSessionsCache);
+            }
+        }
+    } catch (e) {
+        console.warn("[JULES-SYNC] Failed to load cached sessions:", e);
+    }
+}
+
 async function refreshDashboard() {
     try {
+        if (!window.julesSessionsCache && !window._sessionsLoaded) {
+            loadCachedSessions();
+        }
+
         window.julesSessionsCache = await window.julesApi.listSessions();
         console.log("[JULES-DEBUG] Sessions received:", window.julesSessionsCache);
+
+        // Persist to shared localStorage for Dashboard consumption
+        localStorage.setItem('jules_sessions_cache', JSON.stringify(window.julesSessionsCache));
+
+        // Notify other tabs via BroadcastChannel
+        try {
+            if (!window.neuralSyncChannel) {
+                window.neuralSyncChannel = new BroadcastChannel('hypenosys_neural_sessions_sync');
+            }
+            window.neuralSyncChannel.postMessage({ type: 'sessions-updated', sessions: window.julesSessionsCache });
+        } catch(e) {
+            console.warn("[JULES-SYNC] Failed to broadcast sessions:", e);
+        }
+
+        // Optimization: skip re-render if sessions haven't changed
+        const sessString = JSON.stringify(window.julesSessionsCache);
+        if (window._lastSessionsString === sessString) {
+            console.log("[JULES-SYNC] Sessions unchanged, skipping render.");
+            return;
+        }
+        window._lastSessionsString = sessString;
+
         if (window.julesSessionsCache.length > 0) {
             console.log("[JULES-DEBUG] Sample session structure:", JSON.stringify(window.julesSessionsCache[0], null, 2));
         }
@@ -18,6 +63,7 @@ async function refreshDashboard() {
         if (typeof window.renderKanban === 'function') {
             window.renderKanban(window.julesSessionsCache);
         }
+        window._sessionsLoaded = true;
     } catch (e) {
         console.error("Dashboard refresh failed:", e);
     }

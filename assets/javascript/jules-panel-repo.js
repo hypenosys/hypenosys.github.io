@@ -14,8 +14,30 @@ function initializeRepoSelector() {
     // We trigger source fetching from auth.js but we ensure this exists
 }
 
+function loadCachedRepos() {
+    try {
+        const cached = localStorage.getItem('hy_jules_repo_cache');
+        if (cached) {
+            const data = JSON.parse(cached);
+            if (data && data.repos) {
+                console.log("[JULES-REPO] Loading repos from cache...");
+                renderRepos(data.repos);
+                const activeRepo = localStorage.getItem('hypenosys_active_repo');
+                if (activeRepo) selectRepo(activeRepo, true); // skip loading branches if just cache
+            }
+        }
+    } catch (e) {
+        console.warn("[JULES-REPO] Failed to load cached repos:", e);
+    }
+}
+
 async function fetchJulesSources() {
     try {
+        // Immediate cache load
+        if (!window._reposLoaded) {
+            loadCachedRepos();
+        }
+
         const julesSources = await window.julesApi.getSources();
         window.julesSourcesCache = julesSources; // Populate the cache
         const githubRepos = await window.githubApi.getRepos();
@@ -30,7 +52,18 @@ async function fetchJulesSources() {
             };
         });
 
+        // Optimization: only render and cache if changed
+        const repoStr = JSON.stringify(mappedRepos);
+        if (window._lastRepoStr === repoStr) {
+            console.log("[JULES-REPO] Repos unchanged, skipping.");
+            window._reposLoaded = true;
+            return;
+        }
+        window._lastRepoStr = repoStr;
+
         renderRepos(mappedRepos);
+        localStorage.setItem('hy_jules_repo_cache', JSON.stringify({ repos: mappedRepos, ts: Date.now() }));
+        window._reposLoaded = true;
 
         const activeRepo = localStorage.getItem('hypenosys_active_repo');
         if (activeRepo) {
@@ -113,7 +146,7 @@ function toggleRepoGroup(org) {
     localStorage.setItem('hy_repo_groups_collapsed', JSON.stringify(collapsedGroups));
 }
 
-async function selectRepo(repoFullName) {
+async function selectRepo(repoFullName, onlyUI = false) {
     if (!repoFullName) return;
 
     const items = document.querySelectorAll('.repo-item');
@@ -153,7 +186,7 @@ async function selectRepo(repoFullName) {
         sessCtx.textContent = alias + ': ' + (window.JulesPanelState.activeBranch || '...');
     }
 
-    if (sourceName) {
+    if (sourceName && !onlyUI) {
         loadBranches(repoFullName);
         updateRepoConfigUI(repoFullName);
     }

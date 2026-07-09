@@ -296,6 +296,10 @@ async function atomicWrite(filePath, mutatorFn, commitMessage, mergeStrategyFn) 
                 if (filePath.includes('dashboard_tasks')) {
                     await recomputeAndSaveStats(newContent);
                 }
+
+                // Broadcast update to other tabs
+                broadcastUpdate(filePath);
+
                 return { success: true, content: newContent };
             }
 
@@ -865,6 +869,38 @@ async function validateTokenAndStore() {
         }
     }
     return result;
+}
+
+// ─── CROSS-TAB SYNC ENGINE ─────────────────────────────────────
+
+const SYNC_CHANNEL_NAME = 'hypenosys_neural_sessions_sync';
+let _syncChannel = null;
+
+try {
+    _syncChannel = new BroadcastChannel(SYNC_CHANNEL_NAME);
+    _syncChannel.onmessage = (event) => {
+        const { type, filePath } = event.data;
+        console.log(`[SYNC] Message received: ${type} ${filePath || ''}`);
+
+        if (type === 'data-updated') {
+            // Trigger refresh in dashboard if active
+            if (typeof window.refreshDashboardData === 'function') {
+                window.refreshDashboardData();
+            }
+            // Trigger refresh in jules panel if active
+            if (typeof window.refreshDashboard === 'function') {
+                window.refreshDashboard();
+            }
+        }
+    };
+} catch (e) {
+    console.warn('[SYNC] BroadcastChannel not supported or failed:', e);
+}
+
+function broadcastUpdate(filePath) {
+    if (_syncChannel) {
+        _syncChannel.postMessage({ type: 'data-updated', filePath });
+    }
 }
 
 // ─── EXPOSICIÓN DE API GLOBAL (window.githubApi) ───────────────
