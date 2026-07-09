@@ -138,8 +138,40 @@ async function migrateTasks(data) {
     return data;
 }
 
+/**
+ * Loads data from localStorage if available to provide immediate feedback (Stale-While-Revalidate).
+ */
+function loadCachedData() {
+    try {
+        const cachedTasks = localStorage.getItem('hy_cache_tasks');
+        const cachedArchive = localStorage.getItem('hy_cache_archive');
+        const cachedStats = localStorage.getItem('hy_cache_stats');
+        const cachedBudget = localStorage.getItem('hy_cache_budget');
+        const cachedProfiles = localStorage.getItem('hy_cache_profiles');
+
+        if (cachedTasks) currentTasks = JSON.parse(cachedTasks);
+        if (cachedArchive) archivedTasks = JSON.parse(cachedArchive);
+        if (cachedStats) currentStats = JSON.parse(cachedStats);
+        if (cachedBudget) currentBudget = JSON.parse(cachedBudget);
+        if (cachedProfiles) currentProfiles = JSON.parse(cachedProfiles);
+
+        if (cachedTasks || cachedArchive || cachedStats || cachedBudget || cachedProfiles) {
+            console.log('[DASHBOARD] Loaded initial data from cache.');
+            renderDashboard();
+        }
+    } catch (e) {
+        console.warn('[DASHBOARD] Failed to load cached data:', e);
+    }
+}
+
 async function refreshDashboardData() {
   try {
+    // Initial cache load for first run
+    if (currentTasks.length === 0 && !window._cacheLoaded) {
+        loadCachedData();
+        window._cacheLoaded = true;
+    }
+
     const [tasksRes, archiveRes, statsRes, budgetRes, profilesRes] = await Promise.all([
       window.githubApi.fetchFileWithSha('_data/dashboard_tasks.json'),
       window.githubApi.fetchFileWithSha('_data/dashboard_tasks_archive.json'),
@@ -151,11 +183,32 @@ async function refreshDashboardData() {
     const migratedTasksData = await migrateTasks(tasksRes.content);
     const migratedArchiveData = await migrateTasks(archiveRes.content);
 
-    currentTasks    = migratedTasksData.tasks || [];
-    archivedTasks   = migratedArchiveData.tasks || [];
-    currentStats    = statsRes.content;
-    currentBudget   = budgetRes.content;
-    currentProfiles = profilesRes.content;
+    const newTasks = migratedTasksData.tasks || [];
+    const newArchive = migratedArchiveData.tasks || [];
+    const newStats = statsRes.content;
+    const newBudget = budgetRes.content;
+    const newProfiles = profilesRes.content;
+
+    // Check if data actually changed to avoid redundant renders
+    const dataString = JSON.stringify({ newTasks, newArchive, newStats, newBudget, newProfiles });
+    if (window._lastDataString === dataString) {
+        console.log('[DASHBOARD] Data unchanged, skipping render.');
+        return;
+    }
+    window._lastDataString = dataString;
+
+    currentTasks    = newTasks;
+    archivedTasks   = newArchive;
+    currentStats    = newStats;
+    currentBudget   = newBudget;
+    currentProfiles = newProfiles;
+
+    // Persist to cache
+    localStorage.setItem('hy_cache_tasks', JSON.stringify(currentTasks));
+    localStorage.setItem('hy_cache_archive', JSON.stringify(archivedTasks));
+    localStorage.setItem('hy_cache_stats', JSON.stringify(currentStats));
+    localStorage.setItem('hy_cache_budget', JSON.stringify(currentBudget));
+    localStorage.setItem('hy_cache_profiles', JSON.stringify(currentProfiles));
 
     const isStatsEmpty = !currentStats || !currentStats.computed_at || Object.keys(currentStats.members || {}).length === 0;
     if (currentStats && (currentStats.schema_version !== "1.1.0" || isStatsEmpty)) {
@@ -163,6 +216,7 @@ async function refreshDashboardData() {
         await window.githubApi.recomputeAndSaveStats(migratedTasksData);
         const freshStats = await window.githubApi.fetchFileWithSha('_data/studio_stats.json');
         currentStats = freshStats.content;
+        localStorage.setItem('hy_cache_stats', JSON.stringify(currentStats));
     }
 
     renderDashboard();

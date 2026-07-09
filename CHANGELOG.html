@@ -63,6 +63,14 @@ permalink: /CHANGELOG.html
         <h2 class="text-purple border-bottom border-purple pb-2 mb-4">[Unreleased]</h2>
         <div class="card mb-3">
           <div class="card-body">
+            <h5 class="text-success">Changed</h5>
+            <ul>
+                <li><strong>Optimización de Carga (Dashboard):</strong> Implementado patrón <i>Stale-While-Revalidate</i>. El Dashboard ahora carga instantáneamente los datos desde la caché local mientras se valida la versión más reciente en segundo plano.</li>
+                <li><strong>Renderizado Eficiente (Kanban):</strong> Implementado renderizado por lotes mediante <code>requestAnimationFrame</code> y <code>DocumentFragment</code>, eliminando bloqueos de UI al procesar grandes volúmenes de tareas.</li>
+                <li><strong>Sincronización en Tiempo Real:</strong> Implementada comunicación cross-tab mediante <code>BroadcastChannel</code>. Los cambios realizados en una pestaña (creación de tareas, actualizaciones de sesión) se reflejan instantáneamente en todas las ventanas abiertas sin esperar al ciclo de polling.</li>
+                <li><strong>Persistencia de Sesiones Jules:</strong> Asegurada la persistencia de las sesiones de Jules en un almacén compartido, permitiendo que el Dashboard visualice el estado de ejecución del agente en tiempo real.</li>
+                <li><strong>Reducción de Renders Redundantes:</strong> Añadida lógica de comparación de contenido para omitir actualizaciones de la interfaz si los datos recuperados no han cambiado.</li>
+            </ul>
             <h5 class="text-success">Fixed</h5>
             <ul>
                 <li><strong>Handoff de Tareas (Dashboard → Claude):</strong> Migración completa del traspaso de datos a <code>localStorage</code> (claves <code>hy_neural_task_context</code> y <code>hy_neural_new_task_sent</code>), eliminando el uso de parámetros de URL para evitar errores de <code>URI Too Long</code> y mejorar la fiabilidad en descripciones extensas.</li>

@@ -6,6 +6,26 @@ async function refreshDashboard() {
     try {
         window.julesSessionsCache = await window.julesApi.listSessions();
         console.log("[JULES-DEBUG] Sessions received:", window.julesSessionsCache);
+
+        // Persist to shared localStorage for Dashboard consumption
+        localStorage.setItem('jules_sessions_cache', JSON.stringify(window.julesSessionsCache));
+
+        // Notify other tabs via BroadcastChannel
+        try {
+            const syncChannel = new BroadcastChannel('hypenosys_neural_sessions_sync');
+            syncChannel.postMessage({ type: 'sessions-updated', sessions: window.julesSessionsCache });
+        } catch(e) {
+            console.warn("[JULES-SYNC] Failed to broadcast sessions:", e);
+        }
+
+        // Optimization: skip re-render if sessions haven't changed
+        const sessString = JSON.stringify(window.julesSessionsCache);
+        if (window._lastSessionsString === sessString) {
+            console.log("[JULES-SYNC] Sessions unchanged, skipping render.");
+            return;
+        }
+        window._lastSessionsString = sessString;
+
         if (window.julesSessionsCache.length > 0) {
             console.log("[JULES-DEBUG] Sample session structure:", JSON.stringify(window.julesSessionsCache[0], null, 2));
         }

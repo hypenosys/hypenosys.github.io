@@ -654,6 +654,19 @@ function setupEventListeners() {
           }
       };
   }
+
+  // Cross-Tab Sync Listener
+  try {
+    const syncChannel = new BroadcastChannel('hypenosys_neural_sessions_sync');
+    syncChannel.onmessage = (event) => {
+        if (event.data.type === 'data-updated' || event.data.type === 'sessions-updated') {
+            console.log('[DASHBOARD-SYNC] Sync event received:', event.data.type);
+            refreshDashboardData();
+        }
+    };
+  } catch(e) {
+    console.warn('[DASHBOARD-SYNC] BroadcastChannel failed:', e);
+  }
 }
 
 /**
