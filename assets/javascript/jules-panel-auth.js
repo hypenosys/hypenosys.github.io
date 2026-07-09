@@ -271,13 +271,19 @@ window.handleUrlParams = async function() {
     const urlParams = new URLSearchParams(window.location.search);
     const taskDataRaw = urlParams.get('task_data');
     const taskId = urlParams.get('task_id');
+    const isNewTaskSent = localStorage.getItem('hy_neural_new_task_sent') === 'true';
 
-    if (taskDataRaw || taskId) {
+    if (taskDataRaw || taskId || isNewTaskSent) {
         let task = null;
         if (taskDataRaw) {
             try {
                 task = JSON.parse(decodeURIComponent(taskDataRaw));
             } catch(e) { console.error("Error parsing task_data param", e); }
+        } else if (isNewTaskSent) {
+            try {
+                task = JSON.parse(localStorage.getItem('hy_neural_task_context'));
+                localStorage.removeItem('hy_neural_new_task_sent');
+            } catch(e) { console.error("Error parsing localStorage task context", e); }
         } else if (taskId && window.JulesPanelState.tasks) {
             task = window.JulesPanelState.tasks.find(t => String(t.id) === String(taskId));
         }

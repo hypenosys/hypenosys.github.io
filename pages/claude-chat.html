@@ -346,6 +346,9 @@ permalink: /chat/neural/
 
 </div>
 
+<!-- Global Hype Toast Container -->
+<div id="hype-toast-container" class="fixed bottom-4 right-4 z-[9999] flex flex-col gap-2 pointer-events-none"></div>
+
 {% include api_config_modal.html %}
 
 <script src="https://cdn.tailwindcss.com"></script>
@@ -398,11 +401,12 @@ permalink: /chat/neural/
     async function init() {
         const urlParams = new URLSearchParams(window.location.search);
         const taskDataRaw = urlParams.get('task_data');
+        const isNewTaskSent = localStorage.getItem('hy_neural_new_task_sent') === 'true';
 
         // 1. Initialize session UI first
         renderSessionList();
 
-        // 2. Handle Task Data from URL
+        // 2. Handle Task Data from URL or LocalStorage
         let task = null;
         if (taskDataRaw) {
             try {
@@ -412,10 +416,13 @@ permalink: /chat/neural/
             } catch (e) {
                 console.error('[NEURAL] Error parsing task_data:', e);
             }
-        } else if (localStorage.getItem('hy_neural_active') === 'true') {
+        } else if (isNewTaskSent || localStorage.getItem('hy_neural_active') === 'true') {
             try {
-                task = JSON.parse(localStorage.getItem('hy_neural_task_context'));
-            } catch(e){}
+                const stored = localStorage.getItem('hy_neural_task_context');
+                if (stored) task = JSON.parse(stored);
+            } catch(e){
+                console.error('[NEURAL] Error parsing task context from localStorage:', e);
+            }
         }
 
         // 3. Load initial session (this will also render the banner if task exists)
@@ -449,7 +456,10 @@ permalink: /chat/neural/
 
             // If coming fresh from URL or with pending prompt, pre-fill prompt
             const pendingPrompt = localStorage.getItem('hy_neural_pending_prompt');
-            if (taskDataRaw || pendingPrompt) {
+            if (taskDataRaw || isNewTaskSent || pendingPrompt) {
+                if (isNewTaskSent) {
+                    localStorage.removeItem('hy_neural_new_task_sent');
+                }
                 const currentSession = window.sessions.find(s => s.id === window.currentSessionId);
                 if (currentSession && currentSession.messages.length > 0) {
                     createNewSession();
@@ -458,7 +468,7 @@ permalink: /chat/neural/
                 }
 
                 let prompt = "";
-                if (taskDataRaw) {
+                if (taskDataRaw || (isNewTaskSent && task)) {
                     // Format the pre-filled technical summary
                     const blocks = ["He vinculado esta tarea para su análisis técnico:"];
 

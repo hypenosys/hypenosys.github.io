@@ -1176,9 +1176,12 @@ layout: null
                       || { id: id };
             }
 
-            const payload = encodeURIComponent(JSON.stringify(taskData));
+            localStorage.setItem('hy_neural_task_context', JSON.stringify(taskData));
+            localStorage.setItem('hy_neural_active', 'true');
+            localStorage.setItem('hy_neural_new_task_sent', 'true');
+
             const baseUrl = window.SITE_BASEURL || '';
-            window.location.href = baseUrl + '/chat/neural/?task_data=' + payload;
+            window.location.href = baseUrl + '/chat/neural/';
           } catch (e) {
             console.error('_openTaskInClaude error:', e, e.stack);
           }
