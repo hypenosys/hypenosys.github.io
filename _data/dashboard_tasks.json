@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-07-09T00:02:20.212Z",
-  "last_updated_by": "Axel",
+  "last_updated": "2026-07-09T00:02:48.434Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -3882,12 +3882,12 @@
     {
       "title": "No funciona el boton ver tarea",
       "descripcion": "el boton de ver tarea del banner rojo del dashboard no te redirige a la tarea",
-      "rama": "",
+      "rama": "master",
       "task_type": "feature",
       "tema_principal": "Programación / Engine",
-      "seccion": "",
-      "repository": null,
-      "prioridad": "Major",
+      "seccion": "Dashboard",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Minor",
       "milestone": "M1",
       "estado": "Pending",
       "completitud": 0,
@@ -3921,6 +3921,27 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-09T00:02:47.847Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Minor"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-09T00:02:47.847Z",
+          "field": "repository",
+          "old_value": null,
+          "new_value": "hypenosys/hypenosys.github.io"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-09T00:02:47.847Z",
+          "field": "seccion",
+          "old_value": "",
+          "new_value": "Dashboard"
         }
       ],
       "id": 76
@@ -4081,6 +4102,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #76",
+      "user": "Axlfc",
+      "timestamp": "2026-07-09T00:02:48.434Z"
+    },
     {
       "action": "feat: nueva tarea #1783555339760 añadida",
       "user": "Axlfc",
