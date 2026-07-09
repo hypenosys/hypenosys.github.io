@@ -8,6 +8,7 @@ permalink: /documentacion/
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Documentación | Hypenosys</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/assets/javascript/global-header.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -196,22 +197,6 @@ permalink: /documentacion/
 </head>
 <body class="h-full text-slate-100 flex flex-col">
 
-    <!-- Top Navigation -->
-    <header class="bg-slate-900 border-b border-slate-800 px-4 md:px-6 py-4 flex justify-between items-center sticky top-0 z-40">
-        <div class="flex items-center gap-4">
-            <a href="/" class="text-emerald-400 text-2xl font-bold tracking-tighter flex items-center gap-2">
-                <i class="fa-solid fa-microchip"></i> HYPENOSYS <span class="text-slate-500 font-light text-sm tracking-normal">DOCS</span>
-            </a>
-            <nav class="hidden md:flex items-center ml-8 gap-6">
-                <a href="/" class="text-xs font-bold text-slate-400 hover:text-white transition-all uppercase">Inicio</a>
-                <a href="/dashboard.html" class="text-xs font-bold text-slate-400 hover:text-white transition-all uppercase">Dashboard</a>
-                <a href="/jules-panel/" class="text-xs font-bold text-slate-400 hover:text-white transition-all uppercase">Jules</a>
-            </nav>
-        </div>
-        <div class="flex items-center gap-4">
-            <div id="github-status-dot" class="w-2 h-2 rounded-full bg-slate-700"></div>
-            <span class="text-[10px] font-mono text-slate-500 uppercase tracking-widest hidden sm:inline">Repo Sincronizado</span>
-        </div>
     </header>
 
     <div class="flex flex-grow overflow-hidden">
@@ -336,6 +321,7 @@ permalink: /documentacion/
     <script src="/assets/javascript/hypenosys-docs-index.js"></script>
 
     <script>
+        document.addEventListener("hypenosysHeaderReady", () => { const slot = document.getElementById("header-status-slot"); if (slot) { slot.innerHTML = `<div class="flex items-center gap-2 bg-slate-900/50 px-3 py-1 rounded-full border border-slate-800 mr-4"><div id="github-status-dot" class="w-2 h-2 rounded-full bg-slate-700"></div><span class="text-[9px] font-mono text-slate-500 uppercase tracking-widest hidden sm:inline">Repo Sincronizado</span></div>`; } });
         let currentPath = '';
         let allFilesFlattened = [];
 
@@ -482,6 +468,7 @@ permalink: /documentacion/
 
             // Ensure folders are expanded
             const parts = cleanPath.split('/');
+        document.addEventListener("hypenosysHeaderReady", () => { const slot = document.getElementById("header-status-slot"); if (slot) { slot.innerHTML = `<div class="flex items-center gap-2 bg-slate-900/50 px-3 py-1 rounded-full border border-slate-800 mr-4"><div id="github-status-dot" class="w-2 h-2 rounded-full bg-slate-700"></div><span class="text-[9px] font-mono text-slate-500 uppercase tracking-widest hidden sm:inline">Repo Sincronizado</span></div>`; } });
             let currentPathPart = '';
             for (let i = 0; i < parts.length - 1; i++) {
                 currentPathPart += (currentPathPart ? '/' : '') + parts[i];

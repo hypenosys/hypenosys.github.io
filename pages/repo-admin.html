@@ -14,6 +14,8 @@ permalink: /repo-admin/
 <script src="{{ '/assets/javascript/bootstrap/jquery.min.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/bootstrap/bootstrap.bundle.min.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/ui-components.js' | relative_url }}"></script>
+<script>window.HYPENOSYS_PAGE_SECTIONS = [{ label: "Endpoints", href: "#section-endpoints", icon: "fas fa-plug" },{ label: "Webhooks", href: "#section-webhooks", icon: "fas fa-link" },{ label: "Repositorios", href: "#section-repos", icon: "fas fa-code-branch" }];</script>
+    <script src="/assets/javascript/global-header.js"></script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -23,11 +25,11 @@ permalink: /repo-admin/
 </head>
 <body>
 
-<div id="ra-root">
+<div id="ra-root" style="margin-top: 64px;">
   <div class="ra-scanlines" aria-hidden="true"></div>
 
   <!-- TOP BAR -->
-  <header class="ra-topbar">
+  <header class="ra-topbar" style="top: 64px;">
     <div class="ra-topbar-left">
       <div class="ra-logo-group">
         <span class="ra-logo">HYPENOSYS</span>

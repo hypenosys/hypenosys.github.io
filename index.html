@@ -1,8 +1,22 @@
 ---
-layout: home
-title: Hypenosys Indie Studio
+layout: null
+permalink: /
 ---
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hypenosys Indie Studio</title>
+    <link rel="stylesheet" href="/assets/main.css">
+    <script src="/assets/javascript/bootstrap/jquery.min.js"></script>
+    <script src="/assets/javascript/bootstrap/bootstrap.bundle.min.js"></script>
+    <script src="/assets/javascript/ui-components.js"></script>
+    <script src="/assets/javascript/global-header.js"></script>
+</head>
+<body class="bg-slate-950 text-white">
 
+<div class="container py-5">
 <div class="jumbotron bg-dark text-purple border border-purple shadow-lg mb-5">
   <h1 class="display-4 font-weight-bold">HYPENOSYS</h1>
   <p class="lead text-white">Donde las pesadillas se vuelven código y el arte cobra vida.</p>
@@ -13,31 +27,31 @@ title: Hypenosys Indie Studio
 <div class="row">
   <div class="col-lg-8">
     <h2 class="mb-4">🚀 Project Hub & Documentation</h2>
-    <div class="card p-4 mb-5 shadow-sm">
+    <div class="card p-4 mb-5 shadow-sm bg-dark border-secondary">
       <p>Bienvenido al centro de mando. Aquí encontrarás toda la documentación y guías necesarias para el proyecto.</p>
       <ul class="tree-view">
-        <li><a href="{{ '/CHANGELOG.html' | relative_url }}">Changelog & Project Logs</a></li>
-        <li><a href="{{ '/estructura_del_proyecto/' | relative_url }}">Estructura del Proyecto</a></li>
-        <li><a href="{{ '/guia-comandos/' | relative_url }}">Guía Técnica: Comandos y Flujos</a></li>
-        <li><a href="{{ '/guia-ue5-svn/' | relative_url }}">Guía de Supervivencia: UE5 + SVN</a></li>
-        <li><a href="{{ '/plan_de_arranque/' | relative_url }}">Plan de Arranque</a></li>
-        <li><a href="{{ '/tech-stack' | relative_url }}">Tech Stack</a></li>
+        <li><a href="/CHANGELOG.html">Changelog & Project Logs</a></li>
+        <li><a href="/estructura_del_proyecto/">Estructura del Proyecto</a></li>
+        <li><a href="/guia-comandos/">Guía Técnica: Comandos y Flujos</a></li>
+        <li><a href="/guia-ue5-svn/">Guía de Supervivencia: UE5 + SVN</a></li>
+        <li><a href="/plan_de_arranque/">Plan de Arranque</a></li>
+        <li><a href="/tech-stack/">Tech Stack</a></li>
       </ul>
     </div>
 
     <h2 class="mb-4">⚡ Latest Updates</h2>
-    <div class="card p-4 mb-5 shadow-sm">
-      <p>Consulta el <a href="{{ '/CHANGELOG.html' | relative_url }}" class="text-purple font-weight-bold">Changelog</a> para estar al día de los commits y cambios en el proyecto.</p>
+    <div class="card p-4 mb-5 shadow-sm bg-dark border-secondary">
+      <p>Consulta el <a href="/CHANGELOG.html" class="text-purple font-weight-bold">Changelog</a> para estar al día de los commits y cambios en el proyecto.</p>
     </div>
   </div>
 
   <div class="col-lg-4">
     <h2 class="mb-4">🛠️ Quick Links</h2>
     <div class="list-group shadow-sm">
-      <a href="{{ '/guia-ue5-svn' | relative_url }}" class="list-group-item list-group-item-action bg-dark text-white border-purple">
+      <a href="/guia-ue5-svn/" class="list-group-item list-group-item-action bg-dark text-white border-purple">
         <i class="fas fa-book mr-2 text-purple"></i> Guía UE5 + SVN
       </a>
-      <a href="{{ '/plan_de_arranque' | relative_url }}" class="list-group-item list-group-item-action bg-dark text-white border-purple">
+      <a href="/plan_de_arranque/" class="list-group-item list-group-item-action bg-dark text-white border-purple">
         <i class="fas fa-rocket mr-2 text-purple"></i> Plan de Arranque
       </a>
     </div>
@@ -48,3 +62,10 @@ title: Hypenosys Indie Studio
 
 <h2 class="mb-4 text-center">👥 The Dream Team</h2>
 {% include team_section.html %}
+</div>
+
+<script src="/assets/javascript/github-api.js"></script>
+<script src="/assets/javascript/auth.js"></script>
+
+</body>
+</html>

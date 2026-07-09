@@ -16,6 +16,8 @@ permalink: /music-gen/
     <script src="{{ '/assets/javascript/bootstrap/jquery.min.js' | relative_url }}"></script>
     <script src="{{ '/assets/javascript/bootstrap/bootstrap.bundle.min.js' | relative_url }}"></script>
     <script src="{{ '/assets/javascript/ui-components.js' | relative_url }}"></script>
+<script>window.HYPENOSYS_PAGE_SECTIONS = [{ label: "Compose", href: "javascript:switchTab('compose')", icon: "fas fa-music" },{ label: "Lyrics", href: "javascript:switchTab('lyrics')", icon: "fas fa-align-left" },{ label: "Advanced", href: "javascript:switchTab('advanced')", icon: "fas fa-sliders-h" },{ label: "Config", href: "javascript:switchTab('config')", icon: "fas fa-cog" }];</script>
+    <script src="/assets/javascript/global-header.js"></script>
     <style>
         /* Standard Auth Overlay Styles */
         .auth-overlay {
@@ -94,7 +96,7 @@ permalink: /music-gen/
 </div>
 
 <div id="mg-app-container">
-<div id="mg-root">
+<div id="mg-root" style="margin-top: 64px;">
 
   <!-- SCANLINE OVERLAY -->
   <div class="mg-scanlines" aria-hidden="true"></div>
