@@ -13,30 +13,37 @@ function renderKanbanBoard() {
     }
   }
 
-  for (const col of KANBAN_COLUMNS) {
-    const colEl = document.getElementById(`kanban-col-${col.id}`);
-    if (!colEl) continue;
-    const cardsEl = colEl.querySelector('.kanban-cards');
-    const countEl = colEl.querySelector('.col-count');
+  // Use requestAnimationFrame to batch rendering and keep UI responsive
+  requestAnimationFrame(() => {
+    for (const col of KANBAN_COLUMNS) {
+        const colEl = document.getElementById(`kanban-col-${col.id}`);
+        if (!colEl) continue;
+        const cardsEl = colEl.querySelector('.kanban-cards');
+        const countEl = colEl.querySelector('.col-count');
 
-    const colTasks = tasks.filter(t => getTaskColumn(t) === col.id);
-    countEl.textContent = colTasks.length;
-    cardsEl.innerHTML = '';
+        const colTasks = tasks.filter(t => getTaskColumn(t) === col.id);
+        countEl.textContent = colTasks.length;
 
-    for (const task of colTasks) {
-      const card = buildTaskCard(task);
-      cardsEl.appendChild(card);
+        // Efficiently render cards in batches if needed, or just standard for smaller sets
+        cardsEl.innerHTML = '';
+
+        const fragment = document.createDocumentFragment();
+        colTasks.forEach((task, index) => {
+            const card = buildTaskCard(task);
+            fragment.appendChild(card);
+        });
+        cardsEl.appendChild(fragment);
+
+        cardsEl.ondragover = (e) => { e.preventDefault(); colEl.classList.add('drag-over'); };
+        cardsEl.ondragleave = () => colEl.classList.remove('drag-over');
+        cardsEl.ondrop = async (e) => {
+          e.preventDefault();
+          colEl.classList.remove('drag-over');
+          const taskId = e.dataTransfer.getData('text/plain');
+          await handleCardDrop(taskId, col.id);
+        };
     }
-
-    cardsEl.ondragover = (e) => { e.preventDefault(); colEl.classList.add('drag-over'); };
-    cardsEl.ondragleave = () => colEl.classList.remove('drag-over');
-    cardsEl.ondrop = async (e) => {
-      e.preventDefault();
-      colEl.classList.remove('drag-over');
-      const taskId = e.dataTransfer.getData('text/plain');
-      await handleCardDrop(taskId, col.id);
-    };
-  }
+  });
 }
 
 function getTaskColumn(task) {
