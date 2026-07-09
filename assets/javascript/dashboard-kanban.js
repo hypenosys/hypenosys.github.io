@@ -216,8 +216,10 @@ window._openTaskInClaudeWithContext = function(taskId) {
         repositorio: task.repository || task.repo || '',
         rama: task.rama || task.branch || ''
       };
-      localStorage.setItem('claude_task_context', JSON.stringify(payload));
+      localStorage.setItem('hy_neural_task_context', JSON.stringify(payload));
+      localStorage.setItem('hy_neural_active', 'true');
+      localStorage.setItem('hy_neural_new_task_sent', 'true');
     }
   }
-  window.location.href = `/chat/neural/?task_id=${taskId}&from=dashboard`;
+  window.location.href = `/chat/neural/?from=dashboard`;
 };

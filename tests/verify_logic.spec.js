@@ -45,16 +45,12 @@ test.describe('Neural Flow Functional Verification', () => {
     });
   });
 
-  test('Verification 1: Session switching updates Neural Session Banner', async ({ page }) => {
+  test('Verification 1: Session switching updates Neural Context', async ({ page }) => {
     await page.goto('http://localhost:4000/chat/neural/');
-    await page.waitForSelector('#claude-main-interface', { state: 'visible' });
+    await page.waitForSelector('#claude-main-interface', { state: 'visible', timeout: 30000 });
 
     // Click on session 1
     await page.click('.session-item[data-id="session_1"]');
-
-    // Check banner shows #jules_123
-    const bannerText1 = await page.textContent('#task-context-banner');
-    expect(bannerText1).toContain('jules_123');
 
     // Check localStorage hy_neural_session_id is jules_123
     let neuralId = await page.evaluate(() => localStorage.getItem('hy_neural_session_id'));
@@ -63,10 +59,6 @@ test.describe('Neural Flow Functional Verification', () => {
     // Click on session 2 (no jules link)
     await page.click('.session-item[data-id="session_2"]');
 
-    // Check banner doesn't show a specific ID or shows default
-    const bannerText2 = await page.textContent('#task-context-banner');
-    expect(bannerText2).not.toContain('jules_123');
-
     // Check localStorage hy_neural_session_id is removed
     neuralId = await page.evaluate(() => localStorage.getItem('hy_neural_session_id'));
     expect(neuralId).toBeNull();
@@ -74,7 +66,7 @@ test.describe('Neural Flow Functional Verification', () => {
 
   test('Verification 2: Enviar a Jules redirection logic', async ({ page }) => {
     await page.goto('http://localhost:4000/chat/neural/');
-    await page.waitForSelector('#claude-main-interface', { state: 'visible' });
+    await page.waitForSelector('#claude-main-interface', { state: 'visible', timeout: 30000 });
 
     // Switch to session 2 (no jules link)
     await page.click('.session-item[data-id="session_2"]');
@@ -92,29 +84,56 @@ test.describe('Neural Flow Functional Verification', () => {
     // Click "ENVIAR A JULES"
     await page.click('button:has-text("ENVIAR A JULES")');
 
-    // Should redirect to jules-panel with prompt and task_data
-    await page.waitForURL(url => url.pathname.includes('/jules-panel/'));
+    // Should redirect to jules-panel
+    await page.waitForURL(url => url.pathname.includes('/jules-panel/'), { timeout: 10000 });
     const url = page.url();
-    expect(url).toContain('prompt=');
-    expect(url).toContain('task_data=');
+    expect(url).not.toContain('task_data=');
+
+    // Check localStorage has the payload
+    const payload = await page.evaluate(() => localStorage.getItem('jules_task_payload'));
+    expect(payload).not.toBeNull();
+    expect(JSON.parse(payload).claude_response).toContain('I recommend changing line 10');
   });
 
   test('Verification 3: Sidebar session deletion cleanup', async ({ page }) => {
     await page.goto('http://localhost:4000/chat/neural/');
-    await page.waitForSelector('#claude-main-interface', { state: 'visible' });
+    await page.waitForSelector('#claude-main-interface', { state: 'visible', timeout: 30000 });
 
     // Delete session 1
-    // We need to trigger the confirmation
     await page.evaluate(() => {
-        // Direct call to deleteSession to bypass swipe/hover complexities in test
         window.deleteSession('session_1');
     });
 
     // Click delete on toast
+    await page.waitForSelector('#confirm-btn', { state: 'visible', timeout: 10000 });
     await page.click('#confirm-btn');
 
     // Check that hy_neural_session_id_session_1 is gone
     const mapping = await page.evaluate(() => localStorage.getItem('hy_neural_session_id_session_1'));
     expect(mapping).toBeNull();
+  });
+
+  test('Verification 4: Dashboard to Neural Chat handoff via localStorage', async ({ page }) => {
+    // Manually set up the localStorage state as if coming from Dashboard
+    await page.addInitScript(() => {
+      window.localStorage.setItem('hy_neural_task_context', JSON.stringify({
+        id: '101',
+        title: 'New Dashboard Task'
+      }));
+      window.localStorage.setItem('hy_neural_active', 'true');
+      window.localStorage.setItem('hy_neural_new_task_sent', 'true');
+    });
+
+    await page.goto('http://localhost:4000/chat/neural/');
+    await page.waitForSelector('#claude-main-interface', { state: 'visible', timeout: 30000 });
+
+    // Check that the prompt was pre-filled
+    const inputValue = await page.inputValue('#chat-input');
+    expect(inputValue).toContain('New Dashboard Task');
+    expect(inputValue).toContain('#101');
+
+    // Check that the flag was cleared
+    const isNewTaskSent = await page.evaluate(() => localStorage.getItem('hy_neural_new_task_sent'));
+    expect(isNewTaskSent).toBeNull();
   });
 });

@@ -63,6 +63,11 @@ permalink: /CHANGELOG.html
         <h2 class="text-purple border-bottom border-purple pb-2 mb-4">[Unreleased]</h2>
         <div class="card mb-3">
           <div class="card-body">
+            <h5 class="text-success">Fixed</h5>
+            <ul>
+                <li><strong>Handoff de Tareas (Dashboard → Claude):</strong> Migración completa del traspaso de datos a <code>localStorage</code> (claves <code>hy_neural_task_context</code> y <code>hy_neural_new_task_sent</code>), eliminando el uso de parámetros de URL para evitar errores de <code>URI Too Long</code> y mejorar la fiabilidad en descripciones extensas.</li>
+                <li><strong>Neural Chat UI:</strong> Añadido contenedor de notificaciones faltante (<code>#hype-toast-container</code>) para permitir diálogos de confirmación en la gestión de sesiones.</li>
+            </ul>
             <h5 class="text-success">Added</h5>
             <ul>
                 <li><strong>Gestión de Equipo:</strong> Añadidos nuevos miembros al estudio: 'silmaril464', 'lachicadelaboina' y 'spongebob3bray'.</li>
