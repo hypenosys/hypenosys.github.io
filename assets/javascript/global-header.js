@@ -126,6 +126,17 @@ class GlobalHeader {
                 display: block;
             }
 
+            /* Bridge the gap between toggle and dropdown content */
+            .gh-dropdown-content::before {
+                content: '';
+                position: absolute;
+                top: -0.5rem;
+                left: 0;
+                right: 0;
+                height: 0.5rem;
+                background: transparent;
+            }
+
             .gh-dropdown-link {
                 display: flex;
                 align-items: center;
