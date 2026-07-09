@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-07-09T09:16:47.640Z",
+  "last_updated": "2026-07-09T10:31:44.219Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3820,26 +3820,27 @@
     {
       "title": "Todas las cabezeras de la web son diferente.",
       "descripcion": "Es neccesario decidir una interfaz unificada para todas las seccion, igualar colores, interfaz, boton de retorno al inicio en todas las pagina ",
-      "rama": "",
+      "rama": "master",
       "task_type": "bug",
       "tema_principal": "Programación / Engine",
       "seccion": "",
-      "repository": "hypenosys/app",
+      "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Critical",
       "milestone": "M1",
-      "estado": "Working",
+      "estado": "In Review",
       "completitud": 0,
       "resuelto_por": "Axel",
       "detectado_por": "Dídac",
       "asignados": [
-        "axlfc"
+        "axlfc",
+        "dkdidac-design"
       ],
-      "email_responsable": null,
+      "email_responsable": "didac@hypenosys.com",
       "emails_asignados": [],
       "start_date": "2026-07-08",
       "due_date": "2026-07-08",
-      "estimated_hours": null,
-      "story_points": null,
+      "estimated_hours": 4,
+      "story_points": 4,
       "tags": [],
       "external_links": [],
       "subtasks": [],
@@ -3882,6 +3883,27 @@
           "field": "asignados",
           "old_value": "[]",
           "new_value": "[\"axlfc\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-09T10:31:43.601Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-09T10:31:43.601Z",
+          "field": "asignados",
+          "old_value": "[\"axlfc\"]",
+          "new_value": "[\"axlfc\",\"dkdidac-design\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-09T10:31:43.601Z",
+          "field": "repository",
+          "old_value": "hypenosys/app",
+          "new_value": "hypenosys/hypenosys.github.io"
         }
       ],
       "id": 75
@@ -4132,6 +4154,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #75",
+      "user": "Axlfc",
+      "timestamp": "2026-07-09T10:31:44.219Z"
+    },
     {
       "action": "chore: actualizar tarea #76",
       "user": "Axlfc",
