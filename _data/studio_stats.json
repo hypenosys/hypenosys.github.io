@@ -1,15 +1,15 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-07-09T08:33:24.003Z",
+  "computed_at": "2026-07-09T09:16:49.948Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 35,
-    "total_ok": 9,
+    "total_ok": 10,
     "total_ko": 0,
     "total_uncertain": 8,
     "total_obsolete": 9,
-    "fixed_found_ratio": 0.2195,
-    "verified_ratio": 0.2045
+    "fixed_found_ratio": 0.2439,
+    "verified_ratio": 0.2273
   },
   "group": {
     "velocity_trend": {
@@ -20,9 +20,9 @@
       "2026-W25": 8,
       "2026-W26": 1,
       "2026-W27": 0,
-      "2026-W28": 0
+      "2026-W28": 1
     },
-    "bug_rate": 0.0769,
+    "bug_rate": 0.08,
     "blocker_health": 1,
     "tag_heatmap": {
       "brainstorm": 1,
@@ -34,7 +34,7 @@
       "devops": 4,
       "git": 1,
       "UX/UI": 1,
-      "feature": 14,
+      "feature": 13,
       "frontend": 1,
       "ux": 1,
       "api": 4,
@@ -48,13 +48,13 @@
       "Infraestructura": 1,
       "chat": 1,
       "matrix": 1,
-      "master": 13,
+      "master": 12,
       "menú": 1,
       "ux/ui": 1,
       "Art": 1,
       "logo": 1
     },
-    "milestone_tasks_remaining": 16,
+    "milestone_tasks_remaining": 15,
     "hall_of_fame_winners": {
       "mvp": {
         "handle": "axlfc",
@@ -98,7 +98,7 @@
         "mvp_points": 5,
         "bugs_solved": 4,
         "unblocked_count": 3,
-        "velocity": 3,
+        "velocity": 3.12,
         "research_solved": 1,
         "art_tasks": 0,
         "comments_left": 1
@@ -149,9 +149,9 @@
     "axlfc": {
       "member_name": "Axel",
       "completed": {
-        "all_time": 34,
-        "milestone": 24,
-        "week": 0
+        "all_time": 35,
+        "milestone": 25,
+        "week": 1
       },
       "weekly_velocity": {
         "2026-W21": 3,
@@ -161,10 +161,10 @@
         "2026-W25": 10,
         "2026-W26": 3,
         "2026-W27": 0,
-        "2026-W28": 0
+        "2026-W28": 3
       },
       "type_breakdown": {
-        "feature": 22,
+        "feature": 23,
         "research": 2,
         "chore": 6,
         "bug": 4
@@ -175,7 +175,7 @@
         "chore/scripts-svn-sync": 1,
         "feature/kanban-repo-names": 1,
         "feature/ollama-proxy-relay": 1,
-        "master": 8,
+        "master": 9,
         "PRO": 15,
         "feature/dashboard-tag-filter": 1,
         "chore/consolidate-scripts": 1,
@@ -213,7 +213,7 @@
       "comment_activity": 1,
       "volatility": {
         "reopens": 5,
-        "reprioritizations": 29
+        "reprioritizations": 30
       },
       "workload": {
         "active_tasks": 14,
@@ -488,7 +488,7 @@
           "mvp_points": 5,
           "bugs_solved": 4,
           "unblocked_count": 3,
-          "velocity": 3,
+          "velocity": 3.12,
           "research_solved": 1,
           "art_tasks": 0,
           "comments_left": 1
@@ -541,7 +541,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-07-09T08:33:24.963Z"
+      "timestamp": "2026-07-09T09:16:50.812Z"
     }
   ]
 }
