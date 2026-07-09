@@ -180,7 +180,8 @@ function renderCriticalPathAlerts() {
   const alerts = [];
   const today = new Date().toISOString().split('T')[0];
 
-  const tasksToAnalyze = getFilteredTasks(currentTasks);
+  // Las alertas críticas se calculan sobre TODAS las tareas, independientemente de filtros.
+  const tasksToAnalyze = currentTasks;
 
   tasksToAnalyze.forEach(t => {
     if (t.estado === 'Obsolete' || t.estado === 'OK' || t.estado === 'Closed') return;
@@ -271,18 +272,45 @@ function toggleAlertsPanel() {
 
 /**
  * Desplaza la vista hasta una tarea específica y la resalta temporalmente.
+ * Garantiza que la tarea esté visible eliminando filtros y expandiendo la tarjeta.
  * @param {string|number} id ID de la tarea.
  */
 function scrollToTask(id) {
-  const cards = document.querySelectorAll('.kanban-cards > div');
-  for (const card of cards) {
-    if (card.querySelector('.text-\\[9px\\]')?.textContent === `#${String(id)}`) {
-      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      card.classList.add('ring-4', 'ring-emerald-500', 'ring-offset-4', 'ring-offset-slate-950');
-      setTimeout(() => card.classList.remove('ring-4', 'ring-emerald-500', 'ring-offset-4', 'ring-offset-slate-950'), 3000);
-      return;
-    }
-  }
+  // 1. Limpiar filtros globales para asegurar que la tarea se renderice
+  activeFilter = null;
+  activeStageFilter = null;
+  kanbanFilters = {
+    tags: [],
+    members: [],
+    repos: [],
+    states: [],
+    milestones: [],
+    themes: [],
+    priorities: [],
+    sections: []
+  };
+
+  // 2. Forzar expansión de la tarea
+  localStorage.setItem(`task_minimized_${String(id)}`, 'false');
+
+  // 3. Re-renderizar el dashboard
+  renderDashboard();
+
+  // 4. Esperar al siguiente frame para asegurar que el DOM esté listo
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      const card = document.getElementById(`card-${id}`);
+      if (card) {
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        card.classList.add('ring-4', 'ring-emerald-500', 'ring-offset-4', 'ring-offset-slate-950');
+        setTimeout(() => {
+          card.classList.remove('ring-4', 'ring-emerald-500', 'ring-offset-4', 'ring-offset-slate-950');
+        }, 3000);
+      } else {
+        console.warn(`[DASHBOARD] No se pudo encontrar la tarjeta card-${id} tras re-renderizar.`);
+      }
+    }, 100);
+  });
 }
 
 /**
