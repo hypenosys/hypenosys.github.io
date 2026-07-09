@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-07-08T23:51:26.211Z",
+  "last_updated": "2026-07-09T00:02:20.212Z",
   "last_updated_by": "Axel",
   "tasks": [
     {
@@ -4027,9 +4027,65 @@
         }
       ],
       "id": 78
+    },
+    {
+      "title": "Crear página \"3DGen\" ",
+      "descripcion": "Pillar workflows de plantillas del comfyui de tripo3d 3.0, exportar como API y ponerlo automatizado en n8n usando el nodo de comfyui",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Tools / Automation",
+      "seccion": "3DGen",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Working",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc",
+        "topperh4rley"
+      ],
+      "email_responsable": "axel@hypenosys.com",
+      "emails_asignados": [
+        "alex@hypenosys.com"
+      ],
+      "start_date": "2026-07-09",
+      "due_date": "2026-07-16",
+      "estimated_hours": 4,
+      "story_points": 2,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-07-09",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-09T00:02:19.759Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 79
     }
   ],
   "_audit_log": [
+    {
+      "action": "feat: nueva tarea #1783555339760 añadida",
+      "user": "Axlfc",
+      "timestamp": "2026-07-09T00:02:20.212Z"
+    },
     {
       "action": "feat: nueva tarea #1783554685715 añadida",
       "user": "Axlfc",
