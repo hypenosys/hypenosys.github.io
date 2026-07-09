@@ -33,6 +33,7 @@ permalink: /onboarding/
   --pdp-jules: #33d6bd;
   --pdp-claude: #ff9466;
   --pdp-pr: #ffd166;
+  --pdp-config: #b98eff;
 
   --pdp-font-display: 'Space Grotesk', sans-serif;
   --pdp-font-body: 'Inter', sans-serif;
@@ -166,6 +167,7 @@ permalink: /onboarding/
 .pipeline-dev-page .pdp-badge--claude { color: var(--pdp-claude); border-color: rgba(255,148,102,0.35); background: rgba(255,148,102,0.08); }
 .pipeline-dev-page .pdp-badge--pr     { color: var(--pdp-pr);     border-color: rgba(255,209,102,0.35); background: rgba(255,209,102,0.08); }
 .pipeline-dev-page .pdp-badge--review { color: var(--pdp-text-muted); border-color: var(--pdp-glass-border); background: var(--pdp-glass); }
+.pipeline-dev-page .pdp-badge--config { color: var(--pdp-config); border-color: rgba(185,142,255,0.35); background: rgba(185,142,255,0.08); }
 
 /* ---------- GLASS CARD ---------- */
 .pipeline-dev-page .pdp-card {
@@ -417,6 +419,80 @@ permalink: /onboarding/
   margin-top: 3px;
 }
 
+/* ---------- CONFIG / INFRA SECTION ---------- */
+.pipeline-dev-page .pdp-infra-grid {
+  margin-top: 8px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+.pipeline-dev-page .pdp-infra-card {
+  padding: 22px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--pdp-glass-border);
+}
+.pipeline-dev-page .pdp-infra-card h4 {
+  font-family: var(--pdp-font-display);
+  font-size: 16px;
+  color: #fff;
+  margin: 0 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.pipeline-dev-page .pdp-infra-card p {
+  font-size: 13.5px;
+  color: var(--pdp-text-muted);
+  margin: 0 0 12px;
+}
+.pipeline-dev-page .pdp-infra-card .pdp-link-btn { font-size: 12px; padding: 7px 13px; }
+.pipeline-dev-page .pdp-redacted {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px dashed var(--pdp-glass-border);
+  background: rgba(255,255,255,0.015);
+  margin: 4px 0 12px;
+}
+.pipeline-dev-page .pdp-redacted-icon {
+  font-size: 15px;
+  line-height: 1;
+  margin-top: 1px;
+  flex-shrink: 0;
+  opacity: 0.75;
+}
+.pipeline-dev-page .pdp-redacted-label {
+  font-family: var(--pdp-font-mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--pdp-text-faint);
+  margin-bottom: 3px;
+}
+.pipeline-dev-page .pdp-redacted-text {
+  font-size: 12.5px;
+  color: var(--pdp-text-muted);
+}
+.pipeline-dev-page .pdp-redacted-text strong { color: var(--pdp-jules); font-weight: 500; }
+.pipeline-dev-page .pdp-pill-list { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 4px; }
+.pipeline-dev-page .pdp-pill {
+  font-family: var(--pdp-font-mono);
+  font-size: 11.5px;
+  color: var(--pdp-text-muted);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--pdp-glass-border);
+  padding: 4px 9px;
+  border-radius: 6px;
+}
+.pipeline-dev-page .pdp-infra-note {
+  font-size: 12.5px;
+  color: var(--pdp-text-faint);
+}
+
 /* ---------- BEST PRACTICES ---------- */
 .pipeline-dev-page .pdp-practices ul {
   list-style: none; padding: 0; margin: 24px 0 0;
@@ -491,6 +567,7 @@ permalink: /onboarding/
   .pipeline-dev-page .pdp-step-num { display: flex; align-items: center; gap: 10px; }
   .pipeline-dev-page .pdp-step-num .pdp-n { margin-bottom: 0; }
   .pipeline-dev-page .pdp-role-split { grid-template-columns: 1fr; }
+  .pipeline-dev-page .pdp-infra-grid { grid-template-columns: 1fr; }
   .pipeline-dev-page .pdp-practices ul { columns: 1; }
   .pipeline-dev-page .pdp-hero { padding-top: 64px; }
 }
@@ -531,7 +608,7 @@ permalink: /onboarding/
   </div>
 </section>
 
-<!-- ============ PASOS 1-5 ============ -->
+<!-- ============ PASOS 1-6 ============ -->
 <section>
   <div class="pdp-wrap">
     <div class="pdp-eyebrow">Flujo oficial · jules.google.com</div>
@@ -613,6 +690,16 @@ permalink: /onboarding/
           <li>La configuración puede arrancar en local</li>
           <li>La PR tiene descripción clara</li>
         </ul>
+      </div>
+    </div>
+
+    <div class="pdp-step">
+      <div class="pdp-step-num"><span class="pdp-n">06</span>Config</div>
+      <div>
+        <h3>Configurar tu proveedor de IA y accesos internos</h3>
+        <div class="pdp-step-badges"><span class="pdp-badge pdp-badge--config">IA</span><span class="pdp-badge pdp-badge--config">n8n</span></div>
+        <p>Antes de usar Claude Chat o generar contenido con IA (imagen, música), necesitas un proveedor de IA configurado (NVIDIA NIM u Ollama) y, para algunas funciones, las URLs internas de n8n o SVN. Estas direcciones no están publicadas en esta página por seguridad — pídeselas a <strong>Axel</strong> o consúltalas en el <strong>canal interno de Discord del equipo</strong>.</p>
+        <a class="pdp-link-btn" href="#config-infra">Ver configuración detallada ↓</a>
       </div>
     </div>
   </div>
@@ -702,6 +789,119 @@ permalink: /onboarding/
   </div>
 </section>
 
+<!-- ============ CONFIGURACIÓN DE INFRAESTRUCTURA ============ -->
+<section id="config-infra">
+  <div class="pdp-wrap">
+    <div class="pdp-eyebrow">Referencia técnica</div>
+    <h2 style="font-size:24px; margin-bottom:6px;">Configuración de infraestructura y herramientas</h2>
+    <p style="color:var(--pdp-text-muted); font-size:14.5px; margin:8px 0 32px; max-width:64ch;">Todo lo que puede hacer falta configurar más allá del flujo básico de Jules: proveedor de IA, automatizaciones de n8n, SVN y el resto de herramientas self-hosted del stack.</p>
+
+    <div class="pdp-card pdp-before" style="margin-bottom:28px;">
+      <h2 style="font-size:18px;">⚠️ Reglas de configuración</h2>
+      <ul>
+        <li>Las <strong>IPs y URLs internas</strong> (n8n, SVN, ComfyUI, CopyParty, gatekeeper) no se publican aquí — pídelas a <strong>Axel</strong> o consúltalas en el <strong>Discord interno del equipo</strong>.</li>
+        <li>Configura IPs de SVN <strong>solo con autorización</strong> del equipo.</li>
+        <li><strong>No subas datos externos</strong> sin revisión técnica.</li>
+        <li>Builds y archivos temporales van a <strong>CopyParty</strong>, nunca al repositorio.</li>
+        <li>Nunca compartas API keys ni tokens en commits, issues o esta página.</li>
+      </ul>
+    </div>
+
+    <div class="pdp-infra-grid">
+
+      <div class="pdp-infra-card">
+        <h4><span class="pdp-badge pdp-badge--config">IA</span> Proveedor de IA (NVIDIA NIM / Ollama)</h4>
+        <p>Se configura desde el <strong>Jules Panel → pestaña Config → Configuración API</strong>: ahí eliges el proveedor (Claude, Ollama o NVIDIA NIM), el modelo y, si aplica, la URL base.</p>
+        <div class="pdp-redacted">
+          <span class="pdp-redacted-icon">🔒</span>
+          <div>
+            <div class="pdp-redacted-label">IP del servidor Ollama</div>
+            <div class="pdp-redacted-text">Pídesela a <strong>Axel</strong> o consúltala en el Discord del equipo.</div>
+          </div>
+        </div>
+        <p class="pdp-infra-note">Si Chrome bloquea la conexión por origen inseguro: <code>chrome://flags/#unsafely-treat-insecure-origin-as-secure</code> → pega ahí la IP del servidor Ollama.</p>
+        <div class="pdp-redacted" style="margin-top:12px;">
+          <span class="pdp-redacted-icon">🔒</span>
+          <div>
+            <div class="pdp-redacted-label">Endpoint NVIDIA NIM</div>
+            <div class="pdp-redacted-text">Pasa por el relay de Cloudflare (gatekeeper) para evitar problemas de CORS. URL exacta: pídesela a Axel o al Discord.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pdp-infra-card">
+        <h4><span class="pdp-badge pdp-badge--config">n8n</span> Automatizaciones (repo-config)</h4>
+        <p>La URL base de n8n se configura en <strong>repo-config</strong>. Desde ahí se disparan los webhooks que usan SVN y la generación de contenido con IA.</p>
+        <div class="pdp-redacted">
+          <span class="pdp-redacted-icon">🔒</span>
+          <div>
+            <div class="pdp-redacted-label">URL base de n8n</div>
+            <div class="pdp-redacted-text">Pídesela a Axel o consúltala en el Discord del equipo.</div>
+          </div>
+        </div>
+        <div class="pdp-redacted-label" style="margin:10px 0 6px;">Webhooks disponibles</div>
+        <div class="pdp-pill-list">
+          <span class="pdp-pill">git-log</span>
+          <span class="pdp-pill">svn-diff</span>
+          <span class="pdp-pill">svn-info</span>
+          <span class="pdp-pill">svn-log</span>
+          <span class="pdp-pill">svn-list</span>
+          <span class="pdp-pill">music-gen</span>
+          <span class="pdp-pill">flux-img</span>
+          <span class="pdp-pill">flux-kontext</span>
+        </div>
+      </div>
+
+      <div class="pdp-infra-card">
+        <h4><span class="pdp-badge pdp-badge--github">SVN</span> Repositorio SVN</h4>
+        <p>El panel de administración es público y accesible directamente:</p>
+        <a class="pdp-link-btn" href="https://hypenosys.github.io/repo-admin/" target="_blank" rel="noopener">Repo Admin ↗</a>
+        <div class="pdp-redacted" style="margin-top:14px;">
+          <span class="pdp-redacted-icon">🔒</span>
+          <div>
+            <div class="pdp-redacted-label">IP del servidor SVN</div>
+            <div class="pdp-redacted-text">Pídesela a Axel o consúltala en el Discord del equipo.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pdp-infra-card">
+        <h4><span class="pdp-badge pdp-badge--config">Media</span> ComfyUI</h4>
+        <p>Backend de generación de imagen, audio y animación con IA del stack self-hosted.</p>
+        <div class="pdp-redacted">
+          <span class="pdp-redacted-icon">🔒</span>
+          <div>
+            <div class="pdp-redacted-label">URL de ComfyUI</div>
+            <div class="pdp-redacted-text">Pídesela a Axel o consúltala en el Discord del equipo.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pdp-infra-card">
+        <h4><span class="pdp-badge pdp-badge--pr">Files</span> CopyParty</h4>
+        <p>Almacén de builds y archivos temporales. Nunca subas este contenido al repositorio.</p>
+        <div class="pdp-redacted">
+          <span class="pdp-redacted-icon">🔒</span>
+          <div>
+            <div class="pdp-redacted-label">URL de CopyParty</div>
+            <div class="pdp-redacted-text">Pídesela a Axel o consúltala en el Discord del equipo.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pdp-infra-card">
+        <h4><span class="pdp-badge pdp-badge--jules">Stack</span> Stack IA completo (cognito-stack)</h4>
+        <p>n8n + Ollama + ComfyUI + Matrix + Qdrant + GPU, documentado en el repositorio público.</p>
+        <a class="pdp-link-btn" href="https://github.com/Axlfc/connect-core" target="_blank" rel="noopener">connect-core ↗</a>
+        <a class="pdp-link-btn" href="https://deepwiki.com/Axlfc/connect-core" target="_blank" rel="noopener" style="margin-left:8px;">DeepWiki ↗</a>
+        <br>
+        <a class="pdp-link-btn" href="https://github.com/Axlfc/tc" target="_blank" rel="noopener" style="margin-top:10px;">tc ↗</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
 <!-- ============ BUENAS PRÁCTICAS ============ -->
 <section class="pdp-practices">
   <div class="pdp-wrap">
@@ -716,6 +916,8 @@ permalink: /onboarding/
       <li>Prefiere prompts concretos, con estructura esperada de archivos</li>
       <li>Si Jules propone un plan, revísalo antes de aceptarlo</li>
       <li>Si algo falla, copia el error exacto y documéntalo en el panel o en una issue</li>
+      <li>Pide las URLs de configuración (n8n, SVN, IA) a Axel o al Discord del equipo — nunca están en el código público</li>
+      <li>Guarda tokens y API keys solo en tu configuración local, nunca los subas a un commit</li>
     </ul>
   </div>
 </section>
@@ -765,6 +967,25 @@ permalink: /onboarding/
           </ul>
         </div></div>
       </div>
+
+      <div class="pdp-faq-item">
+        <button class="pdp-faq-q"><span>¿Dónde consigo las IPs y URLs internas (n8n, SVN, ComfyUI...)?</span><span class="pdp-plus">+</span></button>
+        <div class="pdp-faq-a"><div class="pdp-faq-a-inner">
+          <p>Por seguridad no están publicadas en esta página ni en el repositorio. Pídeselas directamente a <strong>Axel</strong> o consúltalas en el canal interno de Discord del equipo.</p>
+        </div></div>
+      </div>
+
+      <div class="pdp-faq-item">
+        <button class="pdp-faq-q"><span>No encuentro la opción de proveedor de IA en el panel</span><span class="pdp-plus">+</span></button>
+        <div class="pdp-faq-a"><div class="pdp-faq-a-inner">
+          <p>Posibles causas:</p>
+          <ul>
+            <li>No estás en la pestaña <strong>Config → Configuración API</strong> del Jules Panel</li>
+            <li>Tu build no está actualizado</li>
+            <li>Aún no tienes credenciales asignadas — pídeselas a Axel</li>
+          </ul>
+        </div></div>
+      </div>
     </div>
   </div>
 </section>
@@ -775,6 +996,7 @@ permalink: /onboarding/
     <div class="pdp-footer-note">
       <span>Hypenosys · Pipeline Dev Onboarding</span>
       <span>Repo de prueba actual: Minecraft-Server-Docker</span>
+      <span>Credenciales y URLs internas → pregunta a Axel o al Discord del equipo</span>
     </div>
   </div>
 </section>
