@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-07-09T12:34:18.954Z",
+  "last_updated": "2026-07-11T13:24:44.876Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3455,10 +3455,10 @@
       "task_type": "feature",
       "tema_principal": "Programación / Engine",
       "seccion": "Dashboard, Jules Panel",
-      "repository": "hypenosys/hypenosys.github.io",
+      "repository": null,
       "prioridad": "Major",
       "milestone": "M1",
-      "estado": "Working",
+      "estado": "In Review",
       "completitud": 0,
       "resuelto_por": "Alex",
       "detectado_por": "Axel",
@@ -3470,7 +3470,7 @@
       "start_date": "2026-06-28",
       "due_date": "2026-07-15",
       "estimated_hours": 4,
-      "story_points": 2,
+      "story_points": 5,
       "tags": [],
       "external_links": [],
       "subtasks": [],
@@ -3548,6 +3548,20 @@
           "field": "due_date",
           "old_value": "2026-07-05",
           "new_value": "2026-07-15"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-11T13:24:44.399Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-11T13:24:44.399Z",
+          "field": "repository",
+          "old_value": "hypenosys/hypenosys.github.io",
+          "new_value": null
         }
       ],
       "id": 67
@@ -4182,6 +4196,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #67",
+      "user": "Axlfc",
+      "timestamp": "2026-07-11T13:24:44.876Z"
+    },
     {
       "action": "chore: actualizar tarea #57",
       "user": "Axlfc",
