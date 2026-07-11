@@ -1,0 +1,198 @@
+name: Apply Jules Session Flex Fix
+
+on:
+  push:
+    branches:
+      - fix/jules-session-card-flex-layout
+
+permissions:
+  contents: write
+
+jobs:
+  apply-fix:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/jules-session-card-flex-layout
+
+      - name: Update Jules Panel styles and changelog
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          styles_path = Path('_includes/jules-panel-styles.html')
+          styles = styles_path.read_text(encoding='utf-8')
+
+          old_equalization = re.compile(
+              r"#view-config > \.card,\s*#view-neural > \.session-card,\s*#view-monitor > \.card \{.*?#view-neural > \.session-card \{\s*flex: 1;\s*\}",
+              re.S,
+          )
+          new_equalization = """#view-config > .card,
+#view-monitor > .card {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+}
+
+#view-neural {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+}
+
+#view-neural > #neural-session-banner {
+    flex: 0 0 auto;
+}
+
+#view-neural > .session-card {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    width: 100%;
+    height: auto;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+}
+
+#view-neural .session-card > .card-head {
+    flex: 0 0 auto;
+}"""
+          styles, count = old_equalization.subn(new_equalization, styles, count=1)
+          if count != 1:
+              raise SystemExit('Could not replace workspace equalization block')
+
+          styles, count = re.subn(
+              r"\.session-card\{[^\n]*\}",
+              ".session-card{border:1px solid var(--border);background:var(--surface);border-radius:var(--r-xl);overflow:hidden;display:flex;flex-direction:column}",
+              styles,
+              count=1,
+          )
+          if count != 1:
+              raise SystemExit('Could not update .session-card')
+
+          styles, count = re.subn(
+              r"\.prompt-area\{.*?\n\}",
+              """.prompt-area{
+  flex:1 1 auto;width:100%;height:auto;min-height:0;padding:18px 20px;
+  background:rgba(0,0,0,.18);border:none;border-bottom:1px solid var(--border);
+  color:var(--text);font-family:var(--font-ui);font-size:13.5px;line-height:1.6;
+  resize:none;overflow-y:auto;transition:border-color var(--t-fast);
+}""",
+              styles,
+              count=1,
+              flags=re.S,
+          )
+          if count != 1:
+              raise SystemExit('Could not update .prompt-area')
+
+          styles, count = re.subn(
+              r"\.opts-grid\{.*?\n\}",
+              """.opts-grid{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;
+  flex:0 0 auto;padding:16px 18px;background:rgba(0,0,0,.08);border-bottom:1px solid var(--border);
+}""",
+              styles,
+              count=1,
+              flags=re.S,
+          )
+          if count != 1:
+              raise SystemExit('Could not update .opts-grid')
+
+          styles, count = re.subn(
+              r"\.session-foot\{[^\n]*\}",
+              ".session-foot{flex:0 0 auto;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}',
+              styles,
+              count=1,
+          )
+          if count != 1:
+              raise SystemExit('Could not update .session-foot')
+
+          responsive = """
+/* ─── NUEVA TAREA JULES: FLEXIBLE VERTICAL LAYOUT ─── */
+@media (min-width: 900px) {
+    #view-neural .prompt-area {
+        min-height: 260px;
+    }
+}
+
+@media (max-width: 899px) {
+    #view-neural {
+        height: auto;
+    }
+
+    #view-neural > .session-card {
+        flex: 0 0 auto;
+        height: auto;
+    }
+
+    #view-neural .prompt-area {
+        flex: none;
+        height: auto;
+        min-height: 260px;
+        max-height: 420px;
+    }
+
+    #view-neural .session-foot {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    #view-neural .meta-tag,
+    #view-neural #branch-warning-banner,
+    #view-neural #launch-btn {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    #view-neural #launch-btn {
+        justify-content: center;
+    }
+}
+
+"""
+          marker = '/* ─── PREVENT OVERFLOWS ─── */'
+          if marker not in styles:
+              raise SystemExit('Could not find overflow marker')
+          styles = styles.replace(marker, responsive + marker, 1)
+          styles_path.write_text(styles, encoding='utf-8')
+
+          changelog_path = Path('CHANGELOG.html')
+          changelog = changelog_path.read_text(encoding='utf-8')
+          entry = '                <li><strong>Distribución Vertical de Nueva Tarea Jules:</strong> Reorganizada la tarjeta central del Jules Panel como un contenedor flex vertical. El área de prompt absorbe ahora el espacio disponible con scroll interno, mientras las opciones de ejecución y el footer conservan una altura natural y compacta. Añadido comportamiento responsivo para escritorio, tablet y móvil sin huecos inferiores ni pérdida de alineación entre columnas.</li>\n'
+          anchor = '            <ul>\n                <li><strong>Distribución en Tres Columnas del Jules Panel:'
+          if 'Distribución Vertical de Nueva Tarea Jules' not in changelog:
+              if anchor not in changelog:
+                  raise SystemExit('Could not find Unreleased Changed anchor')
+              changelog = changelog.replace(
+                  '            <ul>\n                <li><strong>Distribución en Tres Columnas del Jules Panel:',
+                  '            <ul>\n' + entry + '                <li><strong>Distribución en Tres Columnas del Jules Panel:',
+                  1,
+              )
+          changelog_path.write_text(changelog, encoding='utf-8')
+
+          workflow = Path('.github/workflows/apply-jules-session-flex-fix.yml')
+          workflow.unlink()
+          PY
+
+      - name: Validate targeted changes
+        run: |
+          grep -q "#view-neural .prompt-area" _includes/jules-panel-styles.html
+          grep -q "flex:0 0 auto;padding:16px 18px" _includes/jules-panel-styles.html
+          grep -q "Distribución Vertical de Nueva Tarea Jules" CHANGELOG.html
+          test ! -f .github/workflows/apply-jules-session-flex-fix.yml
+
+      - name: Commit generated changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add _includes/jules-panel-styles.html CHANGELOG.html .github/workflows/apply-jules-session-flex-fix.yml
+          git commit -m "fix: balance Jules task card vertical layout"
+          git push origin HEAD:fix/jules-session-card-flex-layout
