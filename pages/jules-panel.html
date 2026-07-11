@@ -1034,7 +1034,7 @@ permalink: /jules-panel/
             // Hydrate Jules API Key card
             const julesKeyInput = document.getElementById('jules-panel-api-key-input');
             if (julesKeyInput) {
-                const storedKey = typeof window.getJulesApiKey === 'function' ? window.getJulesApiKey() : localStorage.getItem('jules_api_key');
+                const storedKey = (typeof window.getJulesApiKey === 'function' ? window.getJulesApiKey() : localStorage.getItem('jules_api_key')) || '';
                 if (typeof window.isJulesApiKeyValid === 'function' && window.isJulesApiKeyValid(storedKey)) {
                     julesKeyInput.value = storedKey;
                     window.julesApiAuthState = 'configured';
@@ -1094,6 +1094,13 @@ permalink: /jules-panel/
                     localStorage.setItem('jules_api_key', val);
                 }
 
+                // Abort old inflight requests and increment generation
+                if (window.activeJulesAbortController) {
+                    window.activeJulesAbortController.abort();
+                }
+                window.julesRequestGeneration = (window.julesRequestGeneration || 0) + 1;
+                window.isJulesRefreshInFlight = false;
+
                 // Reset backoff & retry
                 window.julesBackoffDelay = 5000;
                 if (typeof window.clearJulesRetry === 'function') {
@@ -1108,9 +1115,6 @@ permalink: /jules-panel/
                 showToast("API Key guardada ✓", "green");
 
                 // Immediate single refresh
-                if (typeof fetchJulesSources === 'function') {
-                    await fetchJulesSources();
-                }
                 if (typeof refreshDashboard === 'function') {
                     await refreshDashboard();
                 }
@@ -1140,6 +1144,13 @@ permalink: /jules-panel/
                     const icon = toggleBtn.querySelector('i');
                     if (icon) icon.className = 'fas fa-eye';
                 }
+
+                // Abort old inflight requests and increment generation
+                if (window.activeJulesAbortController) {
+                    window.activeJulesAbortController.abort();
+                }
+                window.julesRequestGeneration = (window.julesRequestGeneration || 0) + 1;
+                window.isJulesRefreshInFlight = false;
 
                 // Stop polling & clear caches/state
                 if (typeof window.stopJulesPolling === 'function') {

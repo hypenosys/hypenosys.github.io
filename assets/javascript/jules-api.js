@@ -11,7 +11,7 @@ function isJulesApiKeyValid(key) {
 }
 
 function getJulesApiKey() {
-    return localStorage.getItem('jules_api_key');
+    return localStorage.getItem('jules_api_key') || '';
 }
 
 function saveJulesApiKey(key) {
@@ -60,6 +60,14 @@ async function julesApiCall(method, endpoint, body = null, customKey = null) {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 15000);
 
+    // Link coordinated AbortController signal if active
+    if (window.activeJulesAbortController && typeof window.activeJulesAbortController.signal === 'object') {
+        const onAbort = () => {
+            try { controller.abort(); } catch(e) {}
+        };
+        window.activeJulesAbortController.signal.addEventListener('abort', onAbort);
+    }
+
     try {
         const res = await fetch(JULES_BASE + endpoint, {
             method,
@@ -72,24 +80,52 @@ async function julesApiCall(method, endpoint, body = null, customKey = null) {
         });
         clearTimeout(timeout);
 
-        // 204 No Content o respuesta vacía con status 200
-        if (res.status === 204 || (res.status === 200 && res.headers.get('content-length') === '0')) {
-            return {};
+        // Read response body safely as text first to avoid assuming JSON
+        const rawText = await res.text();
+        let data = {};
+        if (rawText.trim()) {
+            try {
+                data = JSON.parse(rawText);
+            } catch (jsonErr) {
+                console.warn("[JULES-API] Failed to parse JSON response:", jsonErr.message);
+                data = { error: { message: rawText.substring(0, 500) } };
+            }
         }
 
-        const data = await res.json();
-
+        // Differentiate status codes robustly
         if (res.status === 401 || res.status === 403) {
             throw new Error('API_KEY_INVALID');
         }
         if (res.status === 429) {
-            throw new Error('RATE_LIMIT');
+            const retryAfter = res.headers.get('Retry-After');
+            let retryAfterMs = 5000; // default 5s
+            if (retryAfter) {
+                if (/^\d+$/.test(retryAfter)) {
+                    retryAfterMs = parseInt(retryAfter, 10) * 1000;
+                } else {
+                    const parsedDate = Date.parse(retryAfter);
+                    if (!isNaN(parsedDate)) {
+                        retryAfterMs = Math.max(0, parsedDate - Date.now());
+                    }
+                }
+            }
+            // Limit to reasonable boundaries (min 1s, max 5 minutes)
+            retryAfterMs = Math.min(300000, Math.max(1000, retryAfterMs));
+            const error = new Error('RATE_LIMIT');
+            error.retryAfterMs = retryAfterMs;
+            throw error;
         }
         if (!res.ok) {
-            const error = new Error((data && data.error && data.error.message) || ("HTTP " + res.status));
+            const errMsg = (data && data.error && data.error.message) || ("HTTP " + res.status);
+            const error = new Error(errMsg);
             error.fullDetails = (data && data.error) || data;
             error.httpStatus = res.status;
             throw error;
+        }
+
+        // Handle empty or No Content responses
+        if (res.status === 204 || !rawText.trim()) {
+            return {};
         }
 
         return data;

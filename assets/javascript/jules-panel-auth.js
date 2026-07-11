@@ -636,6 +636,13 @@ window.startJulesPolling = function() {
         return;
     }
 
+    // Do not allow starting standard polling if in active backoff error/retry state
+    const errStates = ['network-error', 'rate-limited', 'service-error'];
+    if (errStates.includes(window.currentJulesState)) {
+        console.log("[JULES-POLLING] Cannot start polling: Dashboard is in active retry state (" + window.currentJulesState + ").");
+        return;
+    }
+
     console.log("[JULES-POLLING] Starting polling interval...");
     window.sessionPollInterval = setInterval(() => {
         if (!document.hidden) {
@@ -645,6 +652,10 @@ window.startJulesPolling = function() {
                 return;
             }
             if (window.julesApiAuthState === 'unauthorized') {
+                window.stopJulesPolling();
+                return;
+            }
+            if (errStates.includes(window.currentJulesState)) {
                 window.stopJulesPolling();
                 return;
             }

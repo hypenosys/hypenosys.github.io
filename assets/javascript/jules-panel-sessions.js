@@ -227,21 +227,30 @@ window.setJulesDashboardState = setJulesDashboardState;
 window.julesBackoffDelay = 5000;
 let julesRetryTimeoutId = null;
 
-function scheduleJulesRetry() {
-    clearJulesRetry();
-    if (window.julesBackoffDelay < 5000) window.julesBackoffDelay = 5000;
+function scheduleJulesRetry(delayOverride = null) {
+    // Stop standard polling before scheduling retry
+    if (typeof window.stopJulesPolling === 'function') {
+        window.stopJulesPolling();
+    }
 
-    console.log("[JULES-RETRY] Scheduling retry in", window.julesBackoffDelay / 1000, "seconds");
+    clearJulesRetry();
+
+    let delay = delayOverride !== null ? delayOverride : window.julesBackoffDelay;
+    if (delay < 5000) delay = 5000;
+
+    console.log("[JULES-RETRY] Scheduling retry in", delay / 1000, "seconds");
     julesRetryTimeoutId = setTimeout(() => {
         if (typeof refreshDashboard === 'function') {
             refreshDashboard();
         }
-    }, window.julesBackoffDelay);
+    }, delay);
 
-    // Exponential backoff strategy up to max 60s
-    if (window.julesBackoffDelay === 5000) window.julesBackoffDelay = 15000;
-    else if (window.julesBackoffDelay === 15000) window.julesBackoffDelay = 30000;
-    else window.julesBackoffDelay = 60000;
+    // Exponential backoff strategy up to max 60s (only step up if not overridden)
+    if (delayOverride === null) {
+        if (window.julesBackoffDelay === 5000) window.julesBackoffDelay = 15000;
+        else if (window.julesBackoffDelay === 15000) window.julesBackoffDelay = 30000;
+        else window.julesBackoffDelay = 60000;
+    }
 }
 
 function clearJulesRetry() {
