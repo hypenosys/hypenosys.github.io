@@ -1,6 +1,6 @@
 {
   "schema_version": "2.0.0",
-  "last_updated": "2026-07-11T16:53:03.870Z",
+  "last_updated": "2026-07-11T16:54:10.963Z",
   "members": {
     "Axel": {
       "github_username": "Axlfc",
@@ -87,7 +87,7 @@
       },
       "ai_config": {
         "provider": "nvidia_nim",
-        "model": "deepseek-ai/deepseek-v4-flash"
+        "model": "nvidia/nemotron-3-ultra-550b-a55b"
       },
       "github_login": "TopperH4rley",
       "contact_email": ""
@@ -277,6 +277,11 @@
     }
   },
   "_audit_log": [
+    {
+      "action": "chore: actualizar config AI de Alex",
+      "user": "TopperH4rley",
+      "timestamp": "2026-07-11T16:54:10.963Z"
+    },
     {
       "action": "chore: actualizar config AI de Alex",
       "user": "TopperH4rley",
