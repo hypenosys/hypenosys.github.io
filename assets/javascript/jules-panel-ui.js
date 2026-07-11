@@ -230,32 +230,73 @@ document.addEventListener('DOMContentLoaded', () => {
 window.switchView = async function(view, navEl) {
     const isMobile = window.innerWidth < 768;
 
+    // Helper to safely append views to a host
+    function appendViews(host, views) {
+        views.filter(Boolean).forEach(view => host.appendChild(view));
+    }
+
+    // Deactivate all views and navigation states
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.querySelectorAll('.nav-link, .mtab, .hnav-link').forEach(n => n.classList.remove('active'));
 
-    if (view === 'dashboard' && !isMobile) {
-      // Desktop Dashboard: show main views in layout
-      $('view-dashboard').classList.add('active');
-      $('view-config').classList.add('active');
-      $('view-neural').classList.add('active');
-      $('view-history').classList.add('active');
+    const neuralWs = $('neural-workspace');
 
-      // Re-insert views into dash-grid for desktop if not already there
-      const grid = document.querySelector('#view-dashboard .dash-grid');
-      if (grid) {
-          grid.appendChild($('view-config'));
-          grid.appendChild($('view-neural'));
-          grid.appendChild($('view-history'));
-      }
+    if (view === 'dashboard') {
+        // Show the Dashboard container
+        $('view-dashboard').classList.add('active');
+
+        // Move views to the Dashboard layout hosts
+        const workspace = $('dashboard-workspace');
+        const historySlot = $('dashboard-history-slot');
+        if (workspace && historySlot) {
+            appendViews(workspace, [$('view-config'), $('view-neural'), $('view-monitor')]);
+            appendViews(historySlot, [$('view-history')]);
+        }
+
+        // Activate the composite dashboard views
+        $('view-config').classList.add('active');
+        $('view-neural').classList.add('active');
+        $('view-monitor').classList.add('active');
+        $('view-history').classList.add('active');
+
+        // Hide neural standalone workspace
+        if (neuralWs) {
+            neuralWs.style.display = 'none';
+            neuralWs.setAttribute('hidden', 'true');
+        }
+    } else if (view === 'neural') {
+        // Hide dashboard
+        $('view-dashboard').classList.remove('active');
+
+        // Show neural standalone workspace
+        if (neuralWs) {
+            neuralWs.style.display = '';
+            neuralWs.removeAttribute('hidden');
+            appendViews(neuralWs, [$('view-neural'), $('view-monitor')]);
+        }
+
+        // Activate views for Neural Operations
+        $('view-neural').classList.add('active');
+        $('view-monitor').classList.add('active');
     } else {
-      const target = $('view-' + view);
-      if (target) {
-          target.classList.add('active');
-          // Move out of grid if it's mobile or specific view
-          document.querySelector('.main').appendChild(target);
-      }
+        // Hide neural standalone workspace
+        if (neuralWs) {
+            neuralWs.style.display = 'none';
+            neuralWs.setAttribute('hidden', 'true');
+        }
+
+        // General view activation: move back to root host (.main) and activate
+        const target = $('view-' + view);
+        if (target) {
+            target.classList.add('active');
+            const mainContainer = document.querySelector('.main');
+            if (mainContainer) {
+                mainContainer.appendChild(target);
+            }
+        }
     }
 
+    // Update active nav state
     if (navEl) {
       navEl.classList.add('active');
     } else {
@@ -269,7 +310,7 @@ window.switchView = async function(view, navEl) {
 
     window.JulesPanelState.currentView = view;
     if (view === 'kanban') { if (typeof refreshDashboard === 'function') refreshDashboard(); }
-    if (view === 'metrics' || (view === 'dashboard' && !isMobile)) {
+    if (view === 'metrics' || view === 'dashboard') {
       renderMetrics();
       if (window.julesSessionsCache) renderHistoryTable(window.julesSessionsCache);
     }
