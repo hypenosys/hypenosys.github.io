@@ -73,13 +73,10 @@ window.initRealPanel = async function(user) {
         await initializeRepoSelector();
     } catch(e) { console.error("Repo selector failed", e); }
 
+    // Execute exactly one coordinated parallel load instead of two separate functions
     try {
-        await fetchJulesSources();
-    } catch(e) { console.error("Source fetching failed", e); }
-
-    try {
-        await refreshDashboard();
-    } catch(e) { console.error("Initial dashboard refresh failed", e); }
+        await refreshJulesDataCoordinated();
+    } catch(e) { console.error("Initial coordinated Jules refresh failed", e); }
 
     // Eager-load GitHub Ops badge counts (background, non-blocking)
     if (getGitHubToken()) {
@@ -97,7 +94,12 @@ window.initRealPanel = async function(user) {
     if (window.updateSidebarContextLabel) window.updateSidebarContextLabel();
     await handleUrlParams();
     checkClipboard();
-    startPolling();
+
+    // Start polling ONLY if the initial load was fully successful (authenticated and ready/empty)
+    const errStates = ['network-error', 'rate-limited', 'service-error'];
+    if (window.julesApiAuthState === 'authenticated' && !errStates.includes(window.currentJulesState)) {
+        startPolling();
+    }
 }
 
 window.prefillTaskFromHandoff = async function(task) {

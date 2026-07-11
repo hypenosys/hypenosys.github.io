@@ -1087,104 +1087,27 @@ permalink: /jules-panel/
                     return;
                 }
 
-                // Save
-                if (typeof window.saveJulesApiKey === 'function') {
-                    window.saveJulesApiKey(val);
+                showToast("Guardando API Key...", "cyan");
+                if (typeof window.handleJulesApiKeyChanged === 'function') {
+                    await window.handleJulesApiKeyChanged(val);
                 } else {
                     localStorage.setItem('jules_api_key', val);
                 }
-
-                // Abort old inflight requests and increment generation
-                if (window.activeJulesAbortController) {
-                    window.activeJulesAbortController.abort();
-                }
-                window.julesRequestGeneration = (window.julesRequestGeneration || 0) + 1;
-                window.isJulesRefreshInFlight = false;
-
-                // Reset backoff & retry
-                window.julesBackoffDelay = 5000;
-                if (typeof window.clearJulesRetry === 'function') {
-                    window.clearJulesRetry();
-                }
-
-                window.julesApiAuthState = 'configured';
-                if (typeof window.updateConfigCardStateIndicator === 'function') {
-                    window.updateConfigCardStateIndicator();
-                }
-
                 showToast("API Key guardada ✓", "green");
-
-                // Immediate single refresh
-                if (typeof refreshDashboard === 'function') {
-                    await refreshDashboard();
-                }
-
-                // Start Polling
-                if (typeof window.startJulesPolling === 'function') {
-                    window.startJulesPolling();
-                }
             };
         }
 
         const btnDeleteJulesKey = document.getElementById('btn-delete-jules-api-key');
         if (btnDeleteJulesKey) {
-            btnDeleteJulesKey.onclick = () => {
+            btnDeleteJulesKey.onclick = async () => {
                 if (!confirm("¿Estás seguro de que deseas borrar la Jules API Key de este navegador?")) return;
 
-                const input = document.getElementById('jules-panel-api-key-input');
-                if (input) {
-                    input.value = '';
-                    input.type = 'password';
-                }
-
-                const toggleBtn = document.getElementById('jules-panel-api-key-toggle');
-                if (toggleBtn) {
-                    toggleBtn.setAttribute('aria-pressed', 'false');
-                    toggleBtn.setAttribute('aria-label', 'Mostrar API Key');
-                    const icon = toggleBtn.querySelector('i');
-                    if (icon) icon.className = 'fas fa-eye';
-                }
-
-                // Abort old inflight requests and increment generation
-                if (window.activeJulesAbortController) {
-                    window.activeJulesAbortController.abort();
-                }
-                window.julesRequestGeneration = (window.julesRequestGeneration || 0) + 1;
-                window.isJulesRefreshInFlight = false;
-
-                // Stop polling & clear caches/state
-                if (typeof window.stopJulesPolling === 'function') {
-                    window.stopJulesPolling();
-                }
-                if (typeof window.clearJulesRetry === 'function') {
-                    window.clearJulesRetry();
-                }
-
-                if (typeof window.removeJulesApiKey === 'function') {
-                    window.removeJulesApiKey();
+                showToast("Borrando API Key...", "amber");
+                if (typeof window.handleJulesApiKeyChanged === 'function') {
+                    await window.handleJulesApiKeyChanged('');
                 } else {
                     localStorage.removeItem('jules_api_key');
                 }
-
-                window.julesSessionsCache = [];
-                window.julesApiAuthState = 'none';
-                if (typeof window.updateConfigCardStateIndicator === 'function') {
-                    window.updateConfigCardStateIndicator();
-                }
-
-                // Clear cached sessions list
-                localStorage.removeItem('jules_sessions_cache');
-
-                // Transition UI to pending-config immediately
-                if (typeof window.setJulesDashboardState === 'function') {
-                    window.setJulesDashboardState('pending-config');
-                }
-
-                // Refresh repo listing immediately
-                if (typeof fetchJulesSources === 'function') {
-                    fetchJulesSources();
-                }
-
                 showToast("API Key eliminada con éxito", "amber");
             };
         }
@@ -1192,31 +1115,10 @@ permalink: /jules-panel/
         // Support Cross-Tab Sync via Storage Event
         window.addEventListener('storage', (e) => {
             if (e.key === 'jules_api_key') {
-                const newVal = e.newValue;
-                const input = document.getElementById('jules-panel-api-key-input');
-                if (input) {
-                    input.value = newVal || '';
-                }
-                if (newVal) {
-                    window.julesApiAuthState = 'configured';
-                    if (typeof window.updateConfigCardStateIndicator === 'function') {
-                        window.updateConfigCardStateIndicator();
-                    }
-                    if (typeof fetchJulesSources === 'function') fetchJulesSources();
-                    if (typeof refreshDashboard === 'function') refreshDashboard();
-                    if (typeof window.startJulesPolling === 'function') window.startJulesPolling();
-                } else {
-                    window.julesApiAuthState = 'none';
-                    if (typeof window.updateConfigCardStateIndicator === 'function') {
-                        window.updateConfigCardStateIndicator();
-                    }
-                    if (typeof window.stopJulesPolling === 'function') window.stopJulesPolling();
-                    window.julesSessionsCache = [];
-                    localStorage.removeItem('jules_sessions_cache');
-                    if (typeof window.setJulesDashboardState === 'function') {
-                        window.setJulesDashboardState('pending-config');
-                    }
-                    if (typeof fetchJulesSources === 'function') fetchJulesSources();
+                const newVal = e.newValue || '';
+                console.log("[JULES-STORAGE] jules_api_key storage change event detected across tabs.");
+                if (typeof window.handleJulesApiKeyChanged === 'function') {
+                    window.handleJulesApiKeyChanged(newVal);
                 }
             }
         });

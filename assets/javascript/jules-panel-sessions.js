@@ -2,6 +2,24 @@
    JULES PANEL SESSIONS & HISTORY
    ════════════════════════════════════════ */
 
+// Centralized request generation & cancellation
+window.julesRequestGeneration = 0;
+window.activeJulesAbortController = null;
+
+function invalidateJulesRequests() {
+    window.julesRequestGeneration++;
+    if (window.activeJulesAbortController) {
+        try {
+            window.activeJulesAbortController.abort();
+        } catch(e) {
+            console.warn("[JULES-CANCEL] Error aborting in-flight request:", e);
+        }
+    }
+    window.activeJulesAbortController = null;
+    window.isJulesRefreshInFlight = false;
+}
+window.invalidateJulesRequests = invalidateJulesRequests;
+
 // Centralized Auth State for Jules API
 window.julesApiAuthState = 'none'; // 'none', 'configured', 'verifying', 'authenticated', 'unauthorized'
 
@@ -289,19 +307,26 @@ function loadCachedSessions() {
 // Guard for inflight request
 window.isJulesRefreshInFlight = false;
 
-async function refreshDashboard() {
+async function refreshJulesDataCoordinated() {
     if (window.isJulesRefreshInFlight) {
-        console.log("[JULES-REFRESH] Refresh already in flight, returning early.");
+        console.log("[JULES-COORDINATED] Refresh already in flight, returning early.");
         return;
     }
 
-    const key = window.getJulesApiKey ? window.getJulesApiKey() : localStorage.getItem('jules_api_key');
-    if (window.isJulesApiKeyValid && !window.isJulesApiKeyValid(key)) {
-        console.log("[JULES-REFRESH] Skipping fetch: API key missing.");
+    const key = typeof window.getJulesApiKey === 'function' ? window.getJulesApiKey() : '';
+    if (typeof window.isJulesApiKeyValid === 'function' && !window.isJulesApiKeyValid(key)) {
+        console.log("[JULES-COORDINATED] Skipping coordinated fetch: API key missing.");
         window.julesApiAuthState = 'none';
         setJulesDashboardState('pending-config');
         return;
     }
+
+    // Cancel old in-flight fetch and get fresh AbortController & generation ID
+    if (window.activeJulesAbortController) {
+        try { window.activeJulesAbortController.abort(); } catch(e) {}
+    }
+    window.activeJulesAbortController = new AbortController();
+    const currentGeneration = ++window.julesRequestGeneration;
 
     window.isJulesRefreshInFlight = true;
     window.setJulesDashboardState('loading');
@@ -311,47 +336,110 @@ async function refreshDashboard() {
     }
 
     try {
-        if (!window.julesSessionsCache && !window._sessionsLoaded) {
-            loadCachedSessions();
+        console.log("[JULES-COORDINATED] Launching parallel fetch (Gen: " + currentGeneration + ")...");
+
+        // Parallel requests using Promise.allSettled to prevent either from breaking the other
+        const [sessionsResult, sourcesResult] = await Promise.allSettled([
+            window.julesApi.getSessions(30),
+            window.julesApi.getSources()
+        ]);
+
+        // Discard stale responses if generation changed
+        if (currentGeneration !== window.julesRequestGeneration) {
+            console.log("[JULES-COORDINATED] Discarding stale response from generation " + currentGeneration);
+            return;
         }
 
-        window.julesSessionsCache = await window.julesApi.listSessions();
-        console.log("[JULES-DEBUG] Sessions received:", window.julesSessionsCache);
+        // Evaluate results individually
+        let sessionsData = null;
+        let sessionsError = null;
+        if (sessionsResult.status === 'fulfilled') {
+            sessionsData = sessionsResult.value.sessions || [];
+        } else {
+            sessionsError = sessionsResult.reason;
+        }
 
-        // Success -> Reset backoff and update Auth state
-        resetJulesBackoff();
+        let sourcesData = null;
+        let sourcesError = null;
+        if (sourcesResult.status === 'fulfilled') {
+            sourcesData = sourcesResult.value || [];
+        } else {
+            sourcesError = sourcesResult.reason;
+        }
+
+        // Determine if there was an authentication or structural error to propagate
+        const firstError = sessionsError || sourcesError;
+        if (firstError) {
+            throw firstError;
+        }
+
+        // Successfully loaded! Update state
         window.julesApiAuthState = 'authenticated';
+        resetJulesBackoff();
+        if (typeof window.startJulesPolling === 'function') {
+            window.startJulesPolling();
+        }
 
-        // Persist to shared localStorage for Dashboard consumption
+        // 1. Update sessions cache
+        window.julesSessionsCache = sessionsData;
         localStorage.setItem('jules_sessions_cache', JSON.stringify(window.julesSessionsCache));
 
-        // Notify other tabs via BroadcastChannel
+        // 2. Update sources cache and map repos
+        window.julesSourcesCache = sourcesData;
+        let githubRepos = [];
+        try {
+            githubRepos = await window.githubApi.getRepos();
+        } catch (ghErr) {
+            console.warn("[JULES-COORDINATED] GitHub getRepos failed, using empty list:", ghErr.message);
+        }
+
+        const mappedRepos = githubRepos.map(r => {
+            const sourceName = 'sources/github/' + r.full_name;
+            const julesSource = sourcesData.find(s => s.name === sourceName || s.name === 'sources/github-' + r.owner + '-' + r.name);
+            return {
+                ...r,
+                jules_name: julesSource ? julesSource.name : null,
+                is_installed: !!julesSource
+            };
+        });
+
+        // Cache repository list
+        localStorage.setItem('hy_jules_repo_cache', JSON.stringify({ repos: mappedRepos, ts: Date.now() }));
+
+        // Render repositories
+        if (typeof window.renderRepos === 'function') {
+            window.renderRepos(mappedRepos);
+        }
+
+        const activeRepo = localStorage.getItem('hypenosys_active_repo');
+        if (activeRepo && typeof window.selectRepo === 'function') {
+            // Restore active repository
+            window.selectRepo(activeRepo);
+        }
+
+        // Broadcast sessions sync
         try {
             if (!window.neuralSyncChannel) {
                 window.neuralSyncChannel = new BroadcastChannel('hypenosys_neural_sessions_sync');
             }
             window.neuralSyncChannel.postMessage({ type: 'sessions-updated', sessions: window.julesSessionsCache });
-        } catch(e) {
-            console.warn("[JULES-SYNC] Failed to broadcast sessions:", e);
+        } catch(bcErr) {
+            console.warn("[JULES-SYNC] Failed to broadcast sessions:", bcErr);
         }
 
+        // Render normal dashboard states
         if (window.julesSessionsCache.length === 0) {
             setJulesDashboardState('empty');
             window._sessionsLoaded = true;
-            return;
-        }
 
-        // Optimization: skip re-render if sessions haven't changed
-        const sessString = JSON.stringify(window.julesSessionsCache);
-        if (window._lastSessionsString === sessString) {
-            console.log("[JULES-SYNC] Sessions unchanged, skipping render.");
-            setJulesDashboardState('ready');
+            // Render metrics and Kanban with empty state
+            renderMetrics();
+            updateKanbanCounts(window.julesSessionsCache);
+            updateNeuralHistory(window.julesSessionsCache);
+            if (typeof window.renderKanban === 'function') {
+                window.renderKanban(window.julesSessionsCache);
+            }
             return;
-        }
-        window._lastSessionsString = sessString;
-
-        if (window.julesSessionsCache.length > 0) {
-            console.log("[JULES-DEBUG] Sample session structure:", JSON.stringify(window.julesSessionsCache[0], null, 2));
         }
 
         setJulesDashboardState('ready');
@@ -365,34 +453,56 @@ async function refreshDashboard() {
             window.renderKanban(window.julesSessionsCache);
         }
         window._sessionsLoaded = true;
+
     } catch (e) {
-        // Differentiate errors exactly as requested
-        if (e.message === 'API_KEY_MISSING') {
+        if (currentGeneration !== window.julesRequestGeneration) {
+            return; // Discard error from old generation
+        }
+
+        const message = String(e?.message || '');
+        const status = Number(e?.httpStatus || 0);
+
+        if (message === 'REQUEST_ABORTED' || message === 'STALE_REQUEST' || e.name === 'AbortError') {
+            console.log("[JULES-COORDINATED] Request intentionally aborted. Ignoring and doing nothing.");
+            return;
+        }
+
+        if (message === 'API_KEY_MISSING') {
             window.julesApiAuthState = 'none';
             setJulesDashboardState('pending-config');
-            stopJulesPolling();
-        } else if (e.message === 'API_KEY_INVALID') {
+            if (typeof window.stopJulesPolling === 'function') {
+                window.stopJulesPolling();
+            }
+        } else if (message === 'API_KEY_INVALID') {
             window.julesApiAuthState = 'unauthorized';
             setJulesDashboardState('unauthorized');
-            stopJulesPolling();
-        } else if (e.message === 'RATE_LIMIT') {
+            if (typeof window.stopJulesPolling === 'function') {
+                window.stopJulesPolling();
+            }
+        } else if (message === 'RATE_LIMIT') {
             setJulesDashboardState('rate-limited');
+            scheduleJulesRetry(e.retryAfterMs);
+        } else if (status >= 500) {
+            setJulesDashboardState('service-error', message);
             scheduleJulesRetry();
-        } else if (e.httpStatus >= 500) {
-            setJulesDashboardState('service-error', e.message);
-            scheduleJulesRetry();
-        } else if (e.message === 'TIMEOUT' || e.name === 'TypeError' || e.message.includes('fetch') || e.message.includes('Failed to fetch') || e.message.includes('NetworkError')) {
-            setJulesDashboardState('network-error', e.message);
+        } else if (message === 'TIMEOUT' || e.name === 'TypeError' || message.includes('fetch') || message.includes('Failed to fetch') || message.includes('NetworkError')) {
+            setJulesDashboardState('network-error', message);
             scheduleJulesRetry();
         } else {
             // Other remote error
-            setJulesDashboardState('service-error', e.message);
+            setJulesDashboardState('service-error', message);
             scheduleJulesRetry();
         }
     } finally {
-        window.isJulesRefreshInFlight = false;
+        if (currentGeneration === window.julesRequestGeneration) {
+            window.isJulesRefreshInFlight = false;
+        }
     }
 }
+window.refreshJulesDataCoordinated = refreshJulesDataCoordinated;
+
+// Compatibility alias
+window.refreshDashboard = refreshJulesDataCoordinated;
 
 function renderHistoryTable(sessions) {
     const tbody = $('history-tbody');
@@ -914,3 +1024,71 @@ window.analyzeSelectedWithClaude = async function() {
     clearHistorySelection();
     showToast("Contexto enviado a Claude", "green");
 }
+
+async function handleJulesApiKeyChanged(newKey) {
+    console.log("[JULES-AUTH] handleJulesApiKeyChanged triggered.");
+
+    // 1. Detener polling y limpiar retries
+    if (typeof stopJulesPolling === 'function') stopJulesPolling();
+    if (typeof clearJulesRetry === 'function') clearJulesRetry();
+
+    // 2. Invalidar y abortar peticiones activas
+    if (typeof invalidateJulesRequests === 'function') {
+        invalidateJulesRequests();
+    }
+
+    const trimmedKey = typeof newKey === 'string' ? newKey.trim() : '';
+
+    // 3. Guardar o borrar mediante las utilities
+    if (trimmedKey === '') {
+        if (typeof removeJulesApiKey === 'function') removeJulesApiKey();
+        window.julesSessionsCache = [];
+        localStorage.removeItem('jules_sessions_cache');
+        window.julesApiAuthState = 'none';
+
+        // Actualizar UI del input
+        const input = document.getElementById('jules-panel-api-key-input');
+        if (input) {
+            input.value = '';
+            input.type = 'password';
+        }
+
+        const toggleBtn = document.getElementById('jules-panel-api-key-toggle');
+        if (toggleBtn) {
+            toggleBtn.setAttribute('aria-pressed', 'false');
+            toggleBtn.setAttribute('aria-label', 'Mostrar API Key');
+            const icon = toggleBtn.querySelector('i');
+            if (icon) icon.className = 'fas fa-eye';
+        }
+
+        // Cambiar UI a pending-config e iniciar refresh
+        setJulesDashboardState('pending-config');
+        if (typeof fetchJulesSources === 'function') fetchJulesSources();
+    } else {
+        if (typeof saveJulesApiKey === 'function') {
+            saveJulesApiKey(trimmedKey);
+        }
+
+        // Actualizar UI del input
+        const input = document.getElementById('jules-panel-api-key-input');
+        if (input) {
+            input.value = trimmedKey;
+        }
+
+        window.julesApiAuthState = 'configured';
+        updateConfigCardStateIndicator();
+
+        // Resetear backoff
+        resetJulesBackoff();
+
+        // 4. Ejecutar exactamente un refresh coordinado
+        await refreshJulesDataCoordinated();
+
+        // 5. Iniciar polling sólo si el resultado fue exitoso (ready o empty)
+        const successStates = ['ready', 'empty'];
+        if (window.julesApiAuthState === 'authenticated' && successStates.includes(window.currentJulesState)) {
+            if (typeof startJulesPolling === 'function') startJulesPolling();
+        }
+    }
+}
+window.handleJulesApiKeyChanged = handleJulesApiKeyChanged;
