@@ -440,6 +440,14 @@ permalink: /jules-panel/
                 <button class="fpill" data-filter="error">Errores</button>
                 <button class="fpill" data-filter="pending">Cola</button>
               </div>
+              <div class="history-controls-right">
+                <span id="history-results-count" class="history-results-count">Mostrando 0 de 0 sesiones</span>
+                <select id="history-limit-select" class="history-limit-select" aria-label="Cantidad de sesiones mostradas">
+                  <option value="5">5 últimas</option>
+                  <option value="10">10 últimas</option>
+                  <option value="30">30 últimas</option>
+                </select>
+              </div>
             </div>
             <div class="tbl-wrap">
               <table class="stbl">
@@ -457,7 +465,7 @@ permalink: /jules-panel/
                 </thead>
                 <tbody id="history-tbody">
                   <tr class="skeleton-row">
-                    <td colspan="7">
+                    <td colspan="8">
                       <div class="skeleton" style="height: 40px; margin: 10px; width: calc(100% - 20px);"></div>
                       <div class="skeleton" style="height: 40px; margin: 10px; width: calc(100% - 20px);"></div>
                       <div class="skeleton" style="height: 40px; margin: 10px; width: calc(100% - 20px);"></div>

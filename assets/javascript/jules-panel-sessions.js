@@ -560,16 +560,166 @@ window.refreshJulesDataCoordinated = refreshJulesDataCoordinated;
 // Compatibility alias
 window.refreshDashboard = refreshJulesDataCoordinated;
 
+window._historyControlsInitialized = false;
+
+window.initHistoryControls = function() {
+    if (window._historyControlsInitialized) {
+        return;
+    }
+
+    const tblSearch = $('tbl-search');
+    if (tblSearch) {
+        tblSearch.addEventListener('input', () => {
+            if (window.julesSessionsCache) {
+                renderHistoryTable(window.julesSessionsCache);
+            }
+        });
+    }
+
+    const filterPillsContainer = $('filter-pills');
+    if (filterPillsContainer) {
+        filterPillsContainer.addEventListener('click', (e) => {
+            const pill = e.target.closest('.fpill');
+            if (pill) {
+                const allPills = filterPillsContainer.querySelectorAll('.fpill');
+                allPills.forEach(p => p.classList.remove('active'));
+                pill.classList.add('active');
+                if (window.julesSessionsCache) {
+                    renderHistoryTable(window.julesSessionsCache);
+                }
+            }
+        });
+    }
+
+    const limitSelect = $('history-limit-select');
+    if (limitSelect) {
+        const savedLimit = localStorage.getItem('hypenosys_jules_history_limit');
+        if (savedLimit === '5' || savedLimit === '10' || savedLimit === '30') {
+            limitSelect.value = savedLimit;
+        } else {
+            limitSelect.value = '5';
+            localStorage.setItem('hypenosys_jules_history_limit', '5');
+        }
+
+        limitSelect.addEventListener('change', () => {
+            const val = limitSelect.value;
+            if (val === '5' || val === '10' || val === '30') {
+                localStorage.setItem('hypenosys_jules_history_limit', val);
+            } else {
+                localStorage.setItem('hypenosys_jules_history_limit', '5');
+                limitSelect.value = '5';
+            }
+            if (window.julesSessionsCache) {
+                renderHistoryTable(window.julesSessionsCache);
+            }
+        });
+    }
+
+    window._historyControlsInitialized = true;
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    window.initHistoryControls();
+});
+
 function renderHistoryTable(sessions) {
+    if (typeof window.initHistoryControls === 'function') {
+        window.initHistoryControls();
+    }
+
     const tbody = $('history-tbody');
     if (!tbody) return;
 
     if (!sessions || sessions.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" class="notif-empty">No hay sesiones recientes</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" class="notif-empty">No hay sesiones recientes</td></tr>';
+        const counterEl = $('history-results-count');
+        if (counterEl) {
+            counterEl.textContent = 'Mostrando 0 de 0 sesiones';
+        }
         return;
     }
 
-    tbody.innerHTML = sessions.map(s => {
+    // Get filter and search parameters
+    const query = ($('tbl-search')?.value || '').toLowerCase().trim();
+    const filterPillActive = document.querySelector('#filter-pills .fpill.active');
+    const filter = filterPillActive ? (filterPillActive.dataset.filter || 'all') : 'all';
+
+    let filteredSessions = [...sessions];
+
+    // 1. Filter by status pill
+    if (filter !== 'all') {
+        filteredSessions = filteredSessions.filter(s => window.normalizeJulesStatus(s.state) === filter);
+    }
+
+    // 2. Filter by search query
+    if (query) {
+        filteredSessions = filteredSessions.filter(s => {
+            const sid = s.name.split('/').pop().toLowerCase();
+            const title = (s.title || s.prompt || '').toLowerCase();
+            const prompt = (s.prompt || '').toLowerCase();
+            const repo = ((s.sourceContext && s.sourceContext.source) || '').toLowerCase();
+            const branch = ((s.sourceContext && s.sourceContext.githubRepoContext && s.sourceContext.githubRepoContext.startingBranch) || '').toLowerCase();
+            return sid.includes(query) || title.includes(query) || prompt.includes(query) || repo.includes(query) || branch.includes(query);
+        });
+    }
+
+    const totalFiltrados = filteredSessions.length;
+
+    // 3. Sort descendently by date
+    filteredSessions.sort((a, b) => {
+        const getSessionTimestamp = (s) => {
+            const dates = [
+                s.updatedAt,
+                s.updated_at,
+                s.updateTime,
+                s.createdAt,
+                s.created_at,
+                s.createTime
+            ];
+            for (const d of dates) {
+                if (d) {
+                    const parsed = Date.parse(d);
+                    if (!isNaN(parsed)) {
+                        return parsed;
+                    }
+                }
+            }
+            return 0; // Invalid date goes to the bottom
+        };
+
+        const timeA = getSessionTimestamp(a);
+        const timeB = getSessionTimestamp(b);
+
+        if (timeA === 0 && timeB === 0) return 0;
+        if (timeA === 0) return 1;
+        if (timeB === 0) return -1;
+
+        return timeB - timeA;
+    });
+
+    // 4. Slice to selected limit
+    let limit = 5;
+    const savedLimit = localStorage.getItem('hypenosys_jules_history_limit');
+    if (savedLimit === '5' || savedLimit === '10' || savedLimit === '30') {
+        limit = parseInt(savedLimit, 10);
+    } else {
+        localStorage.setItem('hypenosys_jules_history_limit', '5');
+    }
+
+    const slicedSessions = filteredSessions.slice(0, limit);
+
+    // Update Counter
+    const counterEl = $('history-results-count');
+    if (counterEl) {
+        counterEl.textContent = 'Mostrando ' + slicedSessions.length + ' de ' + totalFiltrados + ' ' + (totalFiltrados === 1 ? 'sesión' : 'sesiones');
+    }
+
+    if (slicedSessions.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="notif-empty">No se encontraron sesiones con los filtros actuales.</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = slicedSessions.map(s => {
         const sid = s.name.split('/').pop();
         const repo = (s.sourceContext && s.sourceContext.source && s.sourceContext.source.split('/').pop()) || '---';
         const branch = (s.sourceContext && s.sourceContext.githubRepoContext && s.sourceContext.githubRepoContext.startingBranch) || '---';
