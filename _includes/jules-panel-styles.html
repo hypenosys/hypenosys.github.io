@@ -713,7 +713,7 @@ body{
 
 /* ─── DASHBOARD GRID ─── */
 .dash-grid{
-  display:grid;grid-template-columns:1fr 1.6fr 1.1fr;
+  display:grid;grid-template-columns: minmax(320px, 370px) minmax(0, 1fr);
   gap:18px;padding:10px 30px 24px;align-items:start;
 }
 .card{border-radius:var(--r-xl);overflow:hidden;display:flex;flex-direction:column}
@@ -838,12 +838,72 @@ body{
 .stbl{width:100%;border-collapse:collapse;text-align:left}
 
 /* ─── SPECIFIC FIXES FOR HISTORIAL DE SESIONES SCOPED UNDER #view-history ─── */
-#view-history,
+#view-config {
+  grid-column: 1;
+}
+
+#view-neural {
+  grid-column: 2;
+}
+
+#view-history {
+  grid-column: 1 / -1;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
 #view-history .table-card {
   width: 100%;
   max-width: 100%;
   min-width: 0;
   box-sizing: border-box;
+}
+
+.history-controls-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+
+.history-results-count {
+  font-size: 11.5px;
+  color: var(--text3);
+  font-family: var(--font-ui);
+  white-space: nowrap;
+}
+
+.history-limit-select {
+  width: auto;
+  max-width: 140px;
+  background: rgba(0,0,0,.2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 4px 24px 4px 10px;
+  color: var(--text2);
+  font-family: var(--font-ui);
+  font-size: 11.5px;
+  height: auto;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239090b0' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 10px;
+  transition: var(--t-fast);
+}
+
+.history-limit-select:focus {
+  border-color: var(--accent);
+  color: var(--text);
+  box-shadow: 0 0 10px rgba(124,58,237,.2);
+}
+
+.history-limit-select option {
+  background: var(--surface-opaque);
+  color: var(--text2);
 }
 
 #view-history .filter-bar {
@@ -1335,6 +1395,7 @@ body{
   .dheader { display: none; }
   .stats-row { grid-template-columns: 1fr 1fr; }
   .dash-grid { grid-template-columns: 1fr; padding: 10px 16px; }
+  #view-config, #view-neural, #view-history { grid-column: auto !important; }
   .kanban-board { grid-template-columns: 1fr; }
   .metrics-grid { grid-template-columns: 1fr; }
   .breadcrumb { display: none !important; }
