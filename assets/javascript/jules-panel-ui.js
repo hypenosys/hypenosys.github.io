@@ -368,7 +368,14 @@ window.switchView = async function(view, navEl) {
     }
 
     window.JulesPanelState.currentView = view;
-    if (view === 'kanban') { if (typeof refreshDashboard === 'function') refreshDashboard(); }
+    if (view === 'kanban') {
+        const sessions = Array.isArray(window.julesSessionsCache)
+          ? window.julesSessionsCache
+          : [];
+        if (typeof window.renderKanban === 'function') {
+            window.renderKanban(sessions);
+        }
+    }
     if (view === 'metrics' || view === 'dashboard') {
       renderMetrics();
       if (window.julesSessionsCache) renderHistoryTable(window.julesSessionsCache);
