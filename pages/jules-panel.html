@@ -247,9 +247,13 @@ permalink: /jules-panel/
       </section>
 
       <section class="dash-grid">
-        <!-- Dashboard grid content moved to independent views below -->
+        <div class="jules-workspace-grid" id="dashboard-workspace"></div>
+        <div class="jules-history-slot" id="dashboard-history-slot"></div>
       </section>
     </div>
+
+    <!-- ─── NEURAL STANDALONE WORKSPACE ─── -->
+    <section class="jules-neural-workspace" id="neural-workspace" hidden></section>
 
     <!-- ─── CONFIG VIEW ─── -->
     <div class="view" id="view-config">
@@ -296,7 +300,7 @@ permalink: /jules-panel/
       </div>
     </div>
 
-    <!-- ─── NEURAL VIEW (Tarea + Telemetry) ─── -->
+    <!-- ─── NEURAL VIEW (Nueva Tarea Jules) ─── -->
     <div class="view" id="view-neural">
       <div id="neural-session-banner" class="hidden" style="margin-bottom: 12px; background: rgba(124,58,237,0.1); border: 1px solid var(--border-accent); border-radius: var(--r-md); padding: 12px 18px; display: flex; align-items: center; justify-content: space-between;">
           <div style="display: flex; align-items: center; gap: 12px;">
@@ -353,9 +357,11 @@ permalink: /jules-panel/
             </button>
           </div>
         </div>
+    </div>
 
-      <!-- Telemetry Card -->
-        <div class="card glass">
+    <!-- ─── NEURAL MONITOR VIEW ─── -->
+    <div class="view" id="view-monitor">
+        <div class="card glass neural-monitor-card">
           <div class="card-head">
             <div class="card-title">
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2"/></svg>
