@@ -178,6 +178,42 @@
                         <!-- Diagnostic output here -->
                     </div>
                 </div>
+
+                <hr class="border-purple my-4 opacity-30">
+
+                <!-- Sección Jules API Key -->
+                <div class="border border-purple rounded p-3 bg-dark/40">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <h6 class="text-purple font-weight-bold m-0 uppercase" style="font-size: 11px; letter-spacing: .08em;">
+                            <i class="fas fa-robot mr-2"></i> Jules API Key
+                        </h6>
+                        <div id="jules-panel-api-key-state" aria-live="polite" class="small">
+                            <span class="u-dot" style="background:var(--amber)"></span><span style="color:var(--amber)">No configurada</span>
+                        </div>
+                    </div>
+                    <p style="font-size: 11px; color: #94a3b8; margin-bottom: 15px; line-height: 1.5;">
+                        Esta credencial se utiliza para consultar tus sesiones y repositorios de Jules. Se almacena de forma segura únicamente en este navegador local.
+                    </p>
+                    <div class="form-group mb-3">
+                        <label class="text-gray-400 small font-weight-bold uppercase" for="jules-panel-api-key-input">Credencial</label>
+                        <div class="input-group">
+                            <input type="password" id="jules-panel-api-key-input" class="form-control bg-dark text-white border-purple" placeholder="AIzaSy..." aria-label="Jules API Key">
+                            <div class="input-group-append">
+                                <button id="jules-panel-api-key-toggle" class="btn btn-outline-purple" type="button" aria-label="Mostrar API Key" aria-pressed="false">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex" style="gap: 8px;">
+                        <button class="btn btn-purple btn-sm flex-fill" id="btn-save-jules-api-key">
+                            <i class="fas fa-save mr-2"></i> Guardar Key
+                        </button>
+                        <button class="btn btn-outline-danger btn-sm" id="btn-delete-jules-api-key" style="border-color: rgba(239, 68, 68, 0.2); color: var(--red); background: rgba(239, 68, 68, 0.05);">
+                            <i class="fas fa-trash mr-2"></i> Borrar
+                        </button>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer border-purple flex-column">
                 <div class="w-100 d-flex gap-2 mb-3">
