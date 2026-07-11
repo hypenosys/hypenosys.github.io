@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-07-11T13:24:44.876Z",
+  "last_updated": "2026-07-11T13:28:21.656Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3455,7 +3455,7 @@
       "task_type": "feature",
       "tema_principal": "Programación / Engine",
       "seccion": "Dashboard, Jules Panel",
-      "repository": null,
+      "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Major",
       "milestone": "M1",
       "estado": "In Review",
@@ -3562,6 +3562,13 @@
           "field": "repository",
           "old_value": "hypenosys/hypenosys.github.io",
           "new_value": null
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-11T13:28:21.227Z",
+          "field": "repository",
+          "old_value": null,
+          "new_value": "hypenosys/hypenosys.github.io"
         }
       ],
       "id": 67
@@ -4196,6 +4203,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #67",
+      "user": "Axlfc",
+      "timestamp": "2026-07-11T13:28:21.656Z"
+    },
     {
       "action": "chore: actualizar tarea #67",
       "user": "Axlfc",
