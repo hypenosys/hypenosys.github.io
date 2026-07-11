@@ -51,21 +51,25 @@ window.hasJulesApiKey = hasJulesApiKey;
  * @param {string} endpoint - Endpoint de la API (ej: '/sources')
  * @param {Object|null} body - Cuerpo de la petición (opcional)
  * @param {string|null} customKey - API Key personalizada para validación (opcional)
+ * @param {Object} options - Opciones de la petición, ej: { signal } (opcional)
  * @returns {Promise<Object>} - Datos de respuesta de la API
  */
-async function julesApiCall(method, endpoint, body = null, customKey = null) {
+async function julesApiCall(method, endpoint, body = null, customKey = null, options = {}) {
     const key = customKey || getJulesApiKey();
     if (!isJulesApiKeyValid(key)) throw new Error('API_KEY_MISSING');
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 15000);
 
-    // Link coordinated AbortController signal if active
-    if (window.activeJulesAbortController && typeof window.activeJulesAbortController.signal === 'object') {
+    // Link explicitly passed AbortSignal if present
+    if (options && options.signal && typeof options.signal.addEventListener === 'function') {
         const onAbort = () => {
             try { controller.abort(); } catch(e) {}
         };
-        window.activeJulesAbortController.signal.addEventListener('abort', onAbort);
+        options.signal.addEventListener('abort', onAbort);
+        if (options.signal.aborted) {
+            controller.abort();
+        }
     }
 
     try {
@@ -131,7 +135,14 @@ async function julesApiCall(method, endpoint, body = null, customKey = null) {
         return data;
     } catch (err) {
         clearTimeout(timeout);
-        if (err.name === 'AbortError') throw new Error('TIMEOUT');
+        if (err.name === 'AbortError') {
+            if (options && options.signal && options.signal.aborted) {
+                const abortError = new Error('REQUEST_ABORTED');
+                abortError.name = 'AbortError';
+                throw abortError;
+            }
+            throw new Error('TIMEOUT');
+        }
         throw err;
     }
 }
@@ -140,11 +151,11 @@ async function julesApiCall(method, endpoint, body = null, customKey = null) {
  * Carga TODAS las fuentes disponibles mediante paginación automática.
  * @returns {Promise<Array>} - Lista completa de fuentes
  */
-async function loadAllSources() {
+async function loadAllSources(options = {}) {
     let all = [], token = null;
     do {
         const url = "/sources?pageSize=100" + (token ? ("&pageToken=" + token) : "");
-        const data = await julesApiCall('GET', url);
+        const data = await julesApiCall('GET', url, null, null, options);
         all = all.concat(data.sources || []);
         token = data.nextPageToken || null;
     } while (token);
@@ -161,27 +172,27 @@ class JulesAPI {
     }
 
     // Proxy a la función central para mantener compatibilidad si es necesario
-    async call(method, endpoint, body) {
-        return await julesApiCall(method, endpoint, body);
+    async call(method, endpoint, body, customKey = null, options = {}) {
+        return await julesApiCall(method, endpoint, body, customKey, options);
     }
 
     // Sources
-    async getSources() {
-        return await loadAllSources();
+    async getSources(options = {}) {
+        return await loadAllSources(options);
     }
 
     // Sessions
-    async getSessions(pageSize = 30, pageToken = null) {
+    async getSessions(pageSize = 30, pageToken = null, options = {}) {
         const url = "/sessions?pageSize=" + pageSize + (pageToken ? ("&pageToken=" + pageToken) : "");
-        return await julesApiCall('GET', url);
+        return await julesApiCall('GET', url, null, null, options);
     }
 
     /**
      * Alias for getSessions that returns only the sessions array.
      * Expected by jules-panel-sessions.js
      */
-    async listSessions(pageSize = 100) {
-        const data = await this.getSessions(pageSize);
+    async listSessions(pageSize = 100, options = {}) {
+        const data = await this.getSessions(pageSize, null, options);
         return data.sessions || [];
     }
 

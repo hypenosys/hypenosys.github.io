@@ -338,15 +338,15 @@ async function refreshJulesDataCoordinated() {
     try {
         console.log("[JULES-COORDINATED] Launching parallel fetch (Gen: " + currentGeneration + ")...");
 
-        // Parallel requests using Promise.allSettled to prevent either from breaking the other
+        // Parallel requests using Promise.allSettled, passing AbortSignal explicitly
         const [sessionsResult, sourcesResult] = await Promise.allSettled([
-            window.julesApi.getSessions(30),
-            window.julesApi.getSources()
+            window.julesApi.getSessions(100, null, { signal: window.activeJulesAbortController.signal }),
+            window.julesApi.getSources({ signal: window.activeJulesAbortController.signal })
         ]);
 
         // Discard stale responses if generation changed
         if (currentGeneration !== window.julesRequestGeneration) {
-            console.log("[JULES-COORDINATED] Discarding stale response from generation " + currentGeneration);
+            console.log("[JULES-COORDINATED] Discarding stale response from generation " + currentGeneration + " after initial API fetch.");
             return;
         }
 
@@ -373,6 +373,9 @@ async function refreshJulesDataCoordinated() {
             throw firstError;
         }
 
+        // Check generation before state modifications
+        if (currentGeneration !== window.julesRequestGeneration) return;
+
         // Successfully loaded! Update state
         window.julesApiAuthState = 'authenticated';
         resetJulesBackoff();
@@ -380,31 +383,64 @@ async function refreshJulesDataCoordinated() {
             window.startJulesPolling();
         }
 
+        // Check generation before saving sessions
+        if (currentGeneration !== window.julesRequestGeneration) return;
+
         // 1. Update sessions cache
         window.julesSessionsCache = sessionsData;
         localStorage.setItem('jules_sessions_cache', JSON.stringify(window.julesSessionsCache));
 
         // 2. Update sources cache and map repos
+        if (currentGeneration !== window.julesRequestGeneration) return;
         window.julesSourcesCache = sourcesData;
-        let githubRepos = [];
+
+        let githubRepos = null;
+        let fetchGithubSuccess = false;
         try {
             githubRepos = await window.githubApi.getRepos();
+            fetchGithubSuccess = true;
         } catch (ghErr) {
-            console.warn("[JULES-COORDINATED] GitHub getRepos failed, using empty list:", ghErr.message);
+            console.warn("[JULES-COORDINATED] GitHub getRepos failed, preserving existing cache and render:", ghErr.message);
         }
 
-        const mappedRepos = githubRepos.map(r => {
-            const sourceName = 'sources/github/' + r.full_name;
-            const julesSource = sourcesData.find(s => s.name === sourceName || s.name === 'sources/github-' + r.owner + '-' + r.name);
-            return {
-                ...r,
-                jules_name: julesSource ? julesSource.name : null,
-                is_installed: !!julesSource
-            };
-        });
+        // Check generation immediately after any await
+        if (currentGeneration !== window.julesRequestGeneration) {
+            console.log("[JULES-COORDINATED] Discarding stale response after GitHub getRepos (Gen: " + currentGeneration + ")");
+            return;
+        }
 
-        // Cache repository list
-        localStorage.setItem('hy_jules_repo_cache', JSON.stringify({ repos: mappedRepos, ts: Date.now() }));
+        let mappedRepos = [];
+        if (fetchGithubSuccess && githubRepos) {
+            // Successfully fetched repos from GitHub API
+            mappedRepos = githubRepos.map(r => {
+                const sourceName = 'sources/github/' + r.full_name;
+                const julesSource = sourcesData.find(s => s.name === sourceName || s.name === 'sources/github-' + r.owner + '-' + r.name);
+                return {
+                    ...r,
+                    jules_name: julesSource ? julesSource.name : null,
+                    is_installed: !!julesSource
+                };
+            });
+            // ONLY save to cache if GitHub API succeeded
+            localStorage.setItem('hy_jules_repo_cache', JSON.stringify({ repos: mappedRepos, ts: Date.now() }));
+        } else {
+            // FAILED to fetch from GitHub: read the last successfully saved repos from cache
+            try {
+                const cachedData = localStorage.getItem('hy_jules_repo_cache');
+                if (cachedData) {
+                    const parsed = JSON.parse(cachedData);
+                    mappedRepos = parsed.repos || [];
+                    console.log("[JULES-COORDINATED] Successfully read repos from cache to preserve UI stability.");
+                }
+            } catch (err) {
+                console.warn("[JULES-COORDINATED] Failed to read cached repos:", err);
+            }
+            // Show a non-blocking toast warning about GitHub connectivity
+            showToast("Advertencia: No se pudo conectar con GitHub. Mostrando repositorios en caché.", "amber");
+        }
+
+        // Check generation before rendering or committing UI state
+        if (currentGeneration !== window.julesRequestGeneration) return;
 
         // Render repositories
         if (typeof window.renderRepos === 'function') {
@@ -426,6 +462,9 @@ async function refreshJulesDataCoordinated() {
         } catch(bcErr) {
             console.warn("[JULES-SYNC] Failed to broadcast sessions:", bcErr);
         }
+
+        // Check generation before final state/rendering commits
+        if (currentGeneration !== window.julesRequestGeneration) return;
 
         // Render normal dashboard states
         if (window.julesSessionsCache.length === 0) {
@@ -463,7 +502,7 @@ async function refreshJulesDataCoordinated() {
         const status = Number(e?.httpStatus || 0);
 
         if (message === 'REQUEST_ABORTED' || message === 'STALE_REQUEST' || e.name === 'AbortError') {
-            console.log("[JULES-COORDINATED] Request intentionally aborted. Ignoring and doing nothing.");
+            console.log("[JULES-COORDINATED] Request intentionally aborted or stale. Ignoring and doing nothing.");
             return;
         }
 
