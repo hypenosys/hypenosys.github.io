@@ -5,6 +5,28 @@
 
 window.JulesPanelState = window.JulesPanelState || {};
 
+window._loadedRepoContext = null;
+
+window.getCanonicalRepoName = function(fullName) {
+    if (!fullName) return null;
+    let clean = String(fullName).trim();
+    if (clean.startsWith('sources/github-')) {
+        clean = clean.substring('sources/github-'.length);
+        const dashIdx = clean.indexOf('-');
+        if (dashIdx !== -1) {
+            const owner = clean.substring(0, dashIdx);
+            const repo = clean.substring(dashIdx + 1);
+            return (owner + '/' + repo).toLowerCase();
+        }
+    }
+    clean = clean.replace(/^sources\/github\//, '');
+    const parts = clean.split('/');
+    if (parts.length >= 2) {
+        return (parts[0] + '/' + parts[1]).toLowerCase();
+    }
+    return ('hypenosys/' + clean).toLowerCase();
+};
+
 function initializeRepoSelector() {
     const btn = $('launch-btn');
     if (btn) {
@@ -171,10 +193,16 @@ async function selectRepo(repoFullName, onlyUI = false) {
     }
 }
 
+window._loadBranchesRequestId = window._loadBranchesRequestId || 0;
+
 async function loadBranches(repoFullName) {
     const branchSelect = $('branch-sel') || $('branch-selector');
     const branchMeta = $('branch-meta');
     if (!branchSelect) return;
+
+    window._loadBranchesRequestId++;
+    const currentRequestId = window._loadBranchesRequestId;
+    const requestedCanonical = window.getCanonicalRepoName(repoFullName);
 
     try {
         branchSelect.disabled = true;
@@ -183,10 +211,23 @@ async function loadBranches(repoFullName) {
 
         const branches = await window.githubApi.getBranches(repoFullName);
         const repoInfo = await window.githubApi.getRepo(repoFullName);
-        const defaultBranch = repoInfo.default_branch;
+
+        // Check if obsolete
+        if (currentRequestId !== window._loadBranchesRequestId) {
+            console.log("[JULES-REPO] loadBranches discarded: newer request is running.");
+            return;
+        }
+        const activeRepo = localStorage.getItem('hypenosys_active_repo');
+        if (window.getCanonicalRepoName(activeRepo) !== requestedCanonical) {
+            console.log("[JULES-REPO] loadBranches discarded: active repo changed.");
+            return;
+        }
+
+        const defaultBranch = repoInfo ? repoInfo.default_branch : null;
 
         if (!branches || branches.length === 0) {
             branchSelect.innerHTML = '<option value="">Sin ramas disponibles</option>';
+            delete branchSelect.dataset.repo;
             return;
         }
 
@@ -223,6 +264,10 @@ async function loadBranches(repoFullName) {
 
         branchSelect.disabled = false;
 
+        // Success assignment!
+        branchSelect.dataset.repo = requestedCanonical;
+        window._loadedRepoContext = requestedCanonical;
+
         branchSelect.onchange = (e) => {
             const val = e.target.value;
             if (!val) return;
@@ -247,11 +292,19 @@ async function loadBranches(repoFullName) {
         if (window.checkBranchWarning) window.checkBranchWarning();
 
     } catch (e) {
-        console.error('Error loading branches:', e);
-        branchSelect.innerHTML = '<option value="">No se pudieron cargar las ramas</option>';
-        branchSelect.disabled = true;
-        if (branchMeta) {
-            branchMeta.innerHTML = '<span class="u-dot" style="background:var(--red)"></span><span style="color:var(--red)">Error de conexión con GitHub</span>';
+        if (currentRequestId === window._loadBranchesRequestId) {
+            console.error('Error loading branches:', e);
+            branchSelect.innerHTML = '<option value="">No se pudieron cargar las ramas</option>';
+            branchSelect.disabled = true;
+            delete branchSelect.dataset.repo;
+            if (window._loadedRepoContext === requestedCanonical) {
+                window._loadedRepoContext = null;
+            }
+            if (branchMeta) {
+                branchMeta.innerHTML = '<span class="u-dot" style="background:var(--red)"></span><span style="color:var(--red)">Error de conexión con GitHub</span>';
+            }
+        } else {
+            console.log("[JULES-REPO] Ignored loadBranches error for stale request.");
         }
     }
 }
@@ -300,28 +353,101 @@ function updateRepoConfigUI(repoFullName) {
     renderRepoCommitChart(repoFullName);
 }
 
+window._repoCommitChartAbortController = null;
+
 async function renderRepoCommitChart(repoFullName) {
     const chart = $('repo-chart');
     if (!chart) return;
     const path = chart.querySelector('path');
     if (!path) return;
 
+    // 1. Abort previous request
+    if (window._repoCommitChartAbortController) {
+        try {
+            window._repoCommitChartAbortController.abort();
+        } catch(e) {}
+    }
+
+    // 2. Create new AbortController
+    window._repoCommitChartAbortController = new AbortController();
+    const currentSignal = window._repoCommitChartAbortController.signal;
+    const requestedCanonical = window.getCanonicalRepoName(repoFullName);
+
+    const clearChart = () => {
+        path.setAttribute('d', '');
+    };
+
     try {
         const [owner, repo] = repoFullName.split('/');
-        const stats = await window.githubApi.getRepoStats(owner, repo);
-        // window.githubApi.getRepoStats might not exist, check or use generic
-        const res = await fetch('https://api.github.com/repos/' + owner + '/' + repo + '/stats/participation', {
-            headers: { 'Authorization': 'Bearer ' + getGitHubToken() }
-        });
-        const data = await res.json();
-        const commits = data.all || [];
-        const last10 = commits.slice(-10);
 
-        if (last10.length === 0) return;
+        // Prepare Headers
+        const headers = { 'Accept': 'application/vnd.github.v3+json' };
+        const token = typeof getGitHubToken === 'function' ? getGitHubToken() : null;
+        if (token && token !== 'null' && token !== '') {
+            headers['Authorization'] = 'Bearer ' + token;
+        }
+
+        // Fetch stats
+        const res = await fetch('https://api.github.com/repos/' + owner + '/' + repo + '/stats/participation', {
+            headers: headers,
+            signal: currentSignal
+        });
+
+        // Check if obsolete/aborted before reading body
+        if (currentSignal.aborted) return;
+        const activeRepo = localStorage.getItem('hypenosys_active_repo');
+        if (window.getCanonicalRepoName(activeRepo) !== requestedCanonical) {
+            return; // Obsolete
+        }
+
+        if (res.status === 202) {
+            clearChart();
+            console.debug('[JULES-REPO] Commit statistics are still being generated for ' + repoFullName);
+            return;
+        }
+
+        if (!res.ok) {
+            clearChart();
+            let errMsg = 'HTTP ' + res.status;
+            try {
+                const errData = await res.json();
+                if (errData && errData.message) errMsg += ': ' + errData.message;
+            } catch(e) {}
+            console.warn('[JULES-REPO] Failed to fetch commit chart statistics: ' + errMsg);
+            return;
+        }
+
+        const data = await res.json();
+
+        // Check again after async operations
+        if (currentSignal.aborted) return;
+        if (window.getCanonicalRepoName(localStorage.getItem('hypenosys_active_repo')) !== requestedCanonical) {
+            return; // Obsolete
+        }
+
+        const commits = data ? data.all : null;
+        if (!Array.isArray(commits) || commits.length === 0) {
+            clearChart();
+            return;
+        }
+
+        const last10 = commits.slice(-10);
+        if (last10.length === 0) {
+            clearChart();
+            return;
+        }
 
         const max = Math.max(...last10, 5);
         const width = 200;
         const height = 56;
+
+        // Handle zero or one points to avoid division by zero
+        if (last10.length === 1) {
+            const y = height - (last10[0] / max * height);
+            path.setAttribute('d', 'M 0 ' + y + ' L ' + width + ' ' + y);
+            return;
+        }
+
         const step = width / (last10.length - 1);
 
         let d = 'M';
@@ -340,7 +466,12 @@ async function renderRepoCommitChart(repoFullName) {
         path.style.strokeDashoffset = '0';
 
     } catch (e) {
-        console.warn("Failed to render commit chart", e);
+        if (e.name === 'AbortError' || currentSignal.aborted) {
+            // Cancelled request, ignore quietly
+            return;
+        }
+        clearChart();
+        console.warn('[JULES-REPO] Network or other error rendering commit chart:', e.message || e);
     }
 }
 
