@@ -73,6 +73,7 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-success">Fixed</h5>
             <ul>
+                <li><strong>Desbordamiento en Historial de Sesiones (Jules Panel):</strong> Corregido el desbordamiento horizontal en el panel "HISTORIAL DE SESIONES". Se encapsularon los estilos bajo el selector `#view-history` para aislar los cambios del resto de la interfaz. Se estableció un contenedor flexible con soporte de scroll horizontal interno en `.tbl-wrap`, un ancho mínimo de 700px para la tabla `.stbl` para garantizar legibilidad, y flex wrapping adaptativo para la barra de filtros y búsqueda.</li>
                 <li><strong>Estabilización de Polling y Contexto de Jules Panel:</strong>
                     <ul>
                         <li>Centraliza el lifecycle de polling y evita reselecciones y recargas redundantes del contexto de repositorio durante los refresh periódicos.</li>
