@@ -104,15 +104,8 @@ function setJulesDashboardState(state, errorDetail = null) {
             const btn = document.getElementById('btn-configurar-jules-pending');
             if (btn) {
                 btn.addEventListener('click', () => {
-                    if (typeof window.switchView === 'function') {
-                        window.switchView('config', document.querySelector('[data-view=config]'));
-                        setTimeout(() => {
-                            const input = document.getElementById('jules-panel-api-key-input');
-                            if (input) {
-                                input.focus();
-                                input.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                            }
-                        }, 200);
+                    if (window.authManager && typeof window.authManager.showApiConfigModal === 'function') {
+                        window.authManager.showApiConfigModal();
                     }
                 });
             }
@@ -149,15 +142,8 @@ function setJulesDashboardState(state, errorDetail = null) {
             const btn = document.getElementById('btn-configurar-jules-unauthorized');
             if (btn) {
                 btn.addEventListener('click', () => {
-                    if (typeof window.switchView === 'function') {
-                        window.switchView('config', document.querySelector('[data-view=config]'));
-                        setTimeout(() => {
-                            const input = document.getElementById('jules-panel-api-key-input');
-                            if (input) {
-                                input.focus();
-                                input.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                            }
-                        }, 200);
+                    if (window.authManager && typeof window.authManager.showApiConfigModal === 'function') {
+                        window.authManager.showApiConfigModal();
                     }
                 });
             }

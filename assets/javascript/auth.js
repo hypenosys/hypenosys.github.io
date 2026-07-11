@@ -608,6 +608,42 @@ class AuthManager {
         if (window.ollamaUI) {
             window.ollamaUI.handleProviderChange();
         }
+
+        // Hydrate Jules API Key Section
+        const julesKeyInput = document.getElementById('jules-panel-api-key-input');
+        if (julesKeyInput) {
+            const storedKey = (typeof window.getJulesApiKey === 'function' ? window.getJulesApiKey() : localStorage.getItem('jules_api_key')) || '';
+            julesKeyInput.value = storedKey;
+            julesKeyInput.type = 'password';
+
+            // Reset Toggle Button State
+            const julesKeyToggle = document.getElementById('jules-panel-api-key-toggle');
+            if (julesKeyToggle) {
+                julesKeyToggle.setAttribute('aria-pressed', 'false');
+                julesKeyToggle.setAttribute('aria-label', 'Mostrar API Key');
+                const toggleIcon = julesKeyToggle.querySelector('i');
+                if (toggleIcon) toggleIcon.className = 'fas fa-eye';
+            }
+
+            // Sync auth state
+            if (typeof window.isJulesApiKeyValid === 'function' && window.isJulesApiKeyValid(storedKey)) {
+                if (window.julesApiAuthState !== 'authenticated') {
+                    window.julesApiAuthState = 'configured';
+                }
+            } else {
+                window.julesApiAuthState = 'none';
+            }
+
+            if (typeof window.updateConfigCardStateIndicator === 'function') {
+                window.updateConfigCardStateIndicator();
+            }
+        }
+
+        // Ensure listeners are initialized
+        if (typeof window.initJulesApiKeyModalListeners === 'function') {
+            window.initJulesApiKeyModalListeners();
+        }
+
         if (window.jQuery) window.jQuery('#modalApiConfig').modal('show');
     }
 
@@ -706,8 +742,82 @@ class AuthManager {
     }
 }
 
+window.initJulesApiKeyModalListeners = function() {
+    if (window._julesApiKeyEventsInitialized) return;
+
+    const julesKeyToggle = document.getElementById('jules-panel-api-key-toggle');
+    if (julesKeyToggle) {
+        julesKeyToggle.addEventListener('click', () => {
+            const input = document.getElementById('jules-panel-api-key-input');
+            if (!input) return;
+            const isPressed = julesKeyToggle.getAttribute('aria-pressed') === 'true';
+            if (input.type === 'password') {
+                input.type = 'text';
+                julesKeyToggle.setAttribute('aria-pressed', 'true');
+                julesKeyToggle.setAttribute('aria-label', 'Ocultar API Key');
+                const icon = julesKeyToggle.querySelector('i');
+                if (icon) icon.className = 'fas fa-eye-slash';
+            } else {
+                input.type = 'password';
+                julesKeyToggle.setAttribute('aria-pressed', 'false');
+                julesKeyToggle.setAttribute('aria-label', 'Mostrar API Key');
+                const icon = julesKeyToggle.querySelector('i');
+                if (icon) icon.className = 'fas fa-eye';
+            }
+        });
+    }
+
+    const btnSaveJulesKey = document.getElementById('btn-save-jules-api-key');
+    if (btnSaveJulesKey) {
+        btnSaveJulesKey.addEventListener('click', async () => {
+            const input = document.getElementById('jules-panel-api-key-input');
+            if (!input) return;
+            const val = input.value.trim();
+
+            if (!val) {
+                if (typeof window.showToast === 'function') window.showToast("Introduce una API Key válida", "amber");
+                else alert("Introduce una API Key válida");
+                input.focus();
+                return;
+            }
+
+            if (typeof window.isJulesApiKeyValid === 'function' && !window.isJulesApiKeyValid(val)) {
+                if (typeof window.showToast === 'function') window.showToast("Estructura de Jules API Key inválida", "red");
+                else alert("Estructura de Jules API Key inválida");
+                return;
+            }
+
+            if (typeof window.showToast === 'function') window.showToast("Guardando API Key...", "cyan");
+            if (typeof window.handleJulesApiKeyChanged === 'function') {
+                await window.handleJulesApiKeyChanged(val);
+            } else {
+                localStorage.setItem('jules_api_key', val);
+            }
+            if (typeof window.showToast === 'function') window.showToast("API Key guardada ✓", "green");
+        });
+    }
+
+    const btnDeleteJulesKey = document.getElementById('btn-delete-jules-api-key');
+    if (btnDeleteJulesKey) {
+        btnDeleteJulesKey.addEventListener('click', async () => {
+            if (!confirm("¿Estás seguro de que deseas borrar la Jules API Key de este navegador?")) return;
+
+            if (typeof window.showToast === 'function') window.showToast("Borrando API Key...", "amber");
+            if (typeof window.handleJulesApiKeyChanged === 'function') {
+                await window.handleJulesApiKeyChanged('');
+            } else {
+                localStorage.removeItem('jules_api_key');
+            }
+            if (typeof window.showToast === 'function') window.showToast("API Key eliminada con éxito", "amber");
+        });
+    }
+
+    window._julesApiKeyEventsInitialized = true;
+};
+
 document.addEventListener('DOMContentLoaded', () => {
     window.authManager = new AuthManager();
+    window.initJulesApiKeyModalListeners();
 });
 
 function togglePasswordVisibility(id) {
