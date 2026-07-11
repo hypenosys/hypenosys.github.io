@@ -73,6 +73,7 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-success">Fixed</h5>
             <ul>
+                <li><strong>Inicialización de Jules Panel:</strong> Diagnosticado y corregido un error de inicialización duplicado (<code>API_KEY_MISSING</code>) provocado por llamadas asíncronas no protegidas antes de configurar las credenciales. Se implementó una capa centralizada para la Jules API key, estados de UI para configuraciones pendientes e invalidaciones (unauthorized), control estricto del ciclo de vida del polling con backoff controlado y una tarjeta premium de configuración de la Jules API key directamente en el panel.</li>
                 <li><strong>Handoff de Tareas (Dashboard → Claude):</strong> Migración completa del traspaso de datos a <code>localStorage</code> (claves <code>hy_neural_task_context</code> y <code>hy_neural_new_task_sent</code>), eliminando el uso de parámetros de URL para evitar errores de <code>URI Too Long</code> y mejorar la fiabilidad en descripciones extensas.</li>
                 <li><strong>Neural Chat UI:</strong> Añadido contenedor de notificaciones faltante (<code>#hype-toast-container</code>) para permitir diálogos de confirmación en la gestión de sesiones.</li>
             </ul>

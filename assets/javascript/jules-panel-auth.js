@@ -73,13 +73,10 @@ window.initRealPanel = async function(user) {
         await initializeRepoSelector();
     } catch(e) { console.error("Repo selector failed", e); }
 
+    // Execute exactly one coordinated parallel load instead of two separate functions
     try {
-        await fetchJulesSources();
-    } catch(e) { console.error("Source fetching failed", e); }
-
-    try {
-        await refreshDashboard();
-    } catch(e) { console.error("Initial dashboard refresh failed", e); }
+        await refreshJulesDataCoordinated();
+    } catch(e) { console.error("Initial coordinated Jules refresh failed", e); }
 
     // Eager-load GitHub Ops badge counts (background, non-blocking)
     if (getGitHubToken()) {
@@ -97,7 +94,12 @@ window.initRealPanel = async function(user) {
     if (window.updateSidebarContextLabel) window.updateSidebarContextLabel();
     await handleUrlParams();
     checkClipboard();
-    startPolling();
+
+    // Start polling ONLY if the initial load was fully successful (authenticated and ready/empty)
+    const errStates = ['network-error', 'rate-limited', 'service-error'];
+    if (window.julesApiAuthState === 'authenticated' && !errStates.includes(window.currentJulesState)) {
+        startPolling();
+    }
 }
 
 window.prefillTaskFromHandoff = async function(task) {
@@ -622,16 +624,69 @@ window.launchSession = async function() {
     }
 }
 
-window.startPolling = function() {
-    stopPolling();
+window.startJulesPolling = function() {
+    window.stopJulesPolling(); // Clear existing to prevent duplicates
+
+    const key = typeof window.getJulesApiKey === 'function' ? window.getJulesApiKey() : localStorage.getItem('jules_api_key');
+    if (typeof window.isJulesApiKeyValid === 'function' && !window.isJulesApiKeyValid(key)) {
+        console.log("[JULES-POLLING] Cannot start polling: Jules API key is missing or invalid.");
+        return;
+    }
+
+    if (window.julesApiAuthState === 'unauthorized') {
+        console.log("[JULES-POLLING] Cannot start polling: Credentials are unauthorized.");
+        return;
+    }
+
+    // Do not allow starting standard polling if in active backoff error/retry state
+    const errStates = ['network-error', 'rate-limited', 'service-error'];
+    if (errStates.includes(window.currentJulesState)) {
+        console.log("[JULES-POLLING] Cannot start polling: Dashboard is in active retry state (" + window.currentJulesState + ").");
+        return;
+    }
+
+    console.log("[JULES-POLLING] Starting polling interval...");
     window.sessionPollInterval = setInterval(() => {
         if (!document.hidden) {
-            refreshDashboard();
-            checkClipboard();
+            const k = typeof window.getJulesApiKey === 'function' ? window.getJulesApiKey() : localStorage.getItem('jules_api_key');
+            if (typeof window.isJulesApiKeyValid === 'function' && !window.isJulesApiKeyValid(k)) {
+                window.stopJulesPolling();
+                return;
+            }
+            if (window.julesApiAuthState === 'unauthorized') {
+                window.stopJulesPolling();
+                return;
+            }
+            if (errStates.includes(window.currentJulesState)) {
+                window.stopJulesPolling();
+                return;
+            }
+
+            if (typeof refreshDashboard === 'function') {
+                refreshDashboard();
+            }
+            if (typeof checkClipboard === 'function') {
+                checkClipboard();
+            }
         }
     }, 10000);
 }
-window.stopPolling = function() { if (window.sessionPollInterval) clearInterval(window.sessionPollInterval); }
+
+window.stopJulesPolling = function() {
+    if (window.sessionPollInterval) {
+        console.log("[JULES-POLLING] Stopping polling interval.");
+        clearInterval(window.sessionPollInterval);
+        window.sessionPollInterval = null;
+    }
+    // Also clear any scheduled backoff retry
+    if (typeof window.clearJulesRetry === 'function') {
+        window.clearJulesRetry();
+    }
+}
+
+// Keep backward compatibility
+window.startPolling = window.startJulesPolling;
+window.stopPolling = window.stopJulesPolling;
 
 window.startNeuralPolling = function(sessionId = null) {
     const sid = sessionId || getLinkedJulesSessionId();

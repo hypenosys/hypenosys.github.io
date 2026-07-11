@@ -5,20 +5,72 @@
 
 const JULES_BASE = 'https://jules.googleapis.com/v1alpha';
 
+function isJulesApiKeyValid(key) {
+    if (!key || typeof key !== 'string') return false;
+    return key.trim().length > 0;
+}
+
+function getJulesApiKey() {
+    return localStorage.getItem('jules_api_key') || '';
+}
+
+function saveJulesApiKey(key) {
+    if (typeof key === 'string') {
+        const trimmed = key.trim();
+        if (trimmed) {
+            localStorage.setItem('jules_api_key', trimmed);
+            // Sincronizar clientes u otros componentes
+            const event = new CustomEvent('julesApiKeySaved');
+            document.dispatchEvent(event);
+            return;
+        }
+    }
+    removeJulesApiKey();
+}
+
+function removeJulesApiKey() {
+    localStorage.removeItem('jules_api_key');
+    const event = new CustomEvent('julesApiKeyRemoved');
+    document.dispatchEvent(event);
+}
+
+function hasJulesApiKey() {
+    return isJulesApiKeyValid(getJulesApiKey());
+}
+
+// Expose globally
+window.isJulesApiKeyValid = isJulesApiKeyValid;
+window.getJulesApiKey = getJulesApiKey;
+window.saveJulesApiKey = saveJulesApiKey;
+window.removeJulesApiKey = removeJulesApiKey;
+window.hasJulesApiKey = hasJulesApiKey;
+
 /**
  * Función central para llamadas a la API de Jules con manejo completo de errores.
  * @param {string} method - Método HTTP (GET, POST, DELETE, etc.)
  * @param {string} endpoint - Endpoint de la API (ej: '/sources')
  * @param {Object|null} body - Cuerpo de la petición (opcional)
  * @param {string|null} customKey - API Key personalizada para validación (opcional)
+ * @param {Object} options - Opciones de la petición, ej: { signal } (opcional)
  * @returns {Promise<Object>} - Datos de respuesta de la API
  */
-async function julesApiCall(method, endpoint, body = null, customKey = null) {
-    const key = customKey || localStorage.getItem('jules_api_key');
-    if (!key) throw new Error('API_KEY_MISSING');
+async function julesApiCall(method, endpoint, body = null, customKey = null, options = {}) {
+    const key = customKey || getJulesApiKey();
+    if (!isJulesApiKeyValid(key)) throw new Error('API_KEY_MISSING');
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 15000);
+
+    // Link explicitly passed AbortSignal if present
+    if (options && options.signal && typeof options.signal.addEventListener === 'function') {
+        const onAbort = () => {
+            try { controller.abort(); } catch(e) {}
+        };
+        options.signal.addEventListener('abort', onAbort);
+        if (options.signal.aborted) {
+            controller.abort();
+        }
+    }
 
     try {
         const res = await fetch(JULES_BASE + endpoint, {
@@ -32,30 +84,65 @@ async function julesApiCall(method, endpoint, body = null, customKey = null) {
         });
         clearTimeout(timeout);
 
-        // 204 No Content o respuesta vacía con status 200
-        if (res.status === 204 || (res.status === 200 && res.headers.get('content-length') === '0')) {
-            return {};
+        // Read response body safely as text first to avoid assuming JSON
+        const rawText = await res.text();
+        let data = {};
+        if (rawText.trim()) {
+            try {
+                data = JSON.parse(rawText);
+            } catch (jsonErr) {
+                console.warn("[JULES-API] Failed to parse JSON response:", jsonErr.message);
+                data = { error: { message: rawText.substring(0, 500) } };
+            }
         }
 
-        const data = await res.json();
-
+        // Differentiate status codes robustly
         if (res.status === 401 || res.status === 403) {
             throw new Error('API_KEY_INVALID');
         }
         if (res.status === 429) {
-            throw new Error('RATE_LIMIT');
+            const retryAfter = res.headers.get('Retry-After');
+            let retryAfterMs = 5000; // default 5s
+            if (retryAfter) {
+                if (/^\d+$/.test(retryAfter)) {
+                    retryAfterMs = parseInt(retryAfter, 10) * 1000;
+                } else {
+                    const parsedDate = Date.parse(retryAfter);
+                    if (!isNaN(parsedDate)) {
+                        retryAfterMs = Math.max(0, parsedDate - Date.now());
+                    }
+                }
+            }
+            // Limit to reasonable boundaries (min 1s, max 5 minutes)
+            retryAfterMs = Math.min(300000, Math.max(1000, retryAfterMs));
+            const error = new Error('RATE_LIMIT');
+            error.retryAfterMs = retryAfterMs;
+            throw error;
         }
         if (!res.ok) {
-            const error = new Error((data && data.error && data.error.message) || ("HTTP " + res.status));
+            const errMsg = (data && data.error && data.error.message) || ("HTTP " + res.status);
+            const error = new Error(errMsg);
             error.fullDetails = (data && data.error) || data;
             error.httpStatus = res.status;
             throw error;
         }
 
+        // Handle empty or No Content responses
+        if (res.status === 204 || !rawText.trim()) {
+            return {};
+        }
+
         return data;
     } catch (err) {
         clearTimeout(timeout);
-        if (err.name === 'AbortError') throw new Error('TIMEOUT');
+        if (err.name === 'AbortError') {
+            if (options && options.signal && options.signal.aborted) {
+                const abortError = new Error('REQUEST_ABORTED');
+                abortError.name = 'AbortError';
+                throw abortError;
+            }
+            throw new Error('TIMEOUT');
+        }
         throw err;
     }
 }
@@ -64,11 +151,11 @@ async function julesApiCall(method, endpoint, body = null, customKey = null) {
  * Carga TODAS las fuentes disponibles mediante paginación automática.
  * @returns {Promise<Array>} - Lista completa de fuentes
  */
-async function loadAllSources() {
+async function loadAllSources(options = {}) {
     let all = [], token = null;
     do {
         const url = "/sources?pageSize=100" + (token ? ("&pageToken=" + token) : "");
-        const data = await julesApiCall('GET', url);
+        const data = await julesApiCall('GET', url, null, null, options);
         all = all.concat(data.sources || []);
         token = data.nextPageToken || null;
     } while (token);
@@ -81,31 +168,31 @@ class JulesAPI {
     }
 
     get apiKey() {
-        return localStorage.getItem('jules_api_key');
+        return getJulesApiKey();
     }
 
     // Proxy a la función central para mantener compatibilidad si es necesario
-    async call(method, endpoint, body) {
-        return await julesApiCall(method, endpoint, body);
+    async call(method, endpoint, body, customKey = null, options = {}) {
+        return await julesApiCall(method, endpoint, body, customKey, options);
     }
 
     // Sources
-    async getSources() {
-        return await loadAllSources();
+    async getSources(options = {}) {
+        return await loadAllSources(options);
     }
 
     // Sessions
-    async getSessions(pageSize = 30, pageToken = null) {
+    async getSessions(pageSize = 30, pageToken = null, options = {}) {
         const url = "/sessions?pageSize=" + pageSize + (pageToken ? ("&pageToken=" + pageToken) : "");
-        return await julesApiCall('GET', url);
+        return await julesApiCall('GET', url, null, null, options);
     }
 
     /**
      * Alias for getSessions that returns only the sessions array.
      * Expected by jules-panel-sessions.js
      */
-    async listSessions(pageSize = 100) {
-        const data = await this.getSessions(pageSize);
+    async listSessions(pageSize = 100, options = {}) {
+        const data = await this.getSessions(pageSize, null, options);
         return data.sessions || [];
     }
 
