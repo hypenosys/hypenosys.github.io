@@ -55,52 +55,104 @@ window.initRealPanel = async function(user) {
         }
     }
 
-    // A este punto, o tenemos usuario, o estamos en bypass
-    $("auth-overlay").classList.remove("show");
-    $("app-root").classList.remove("locked");
+    window.__julesPanelState ||= {
+      initializationPromise: null,
+      initialized: false,
+      listenersRegistered: false
+    };
 
-    if (user && user.login) {
-        console.log("[JULES-AUTH] Initializing as user:", user.login);
-        updateUserUI(user);
-        addTel("SYSTEM", "Iniciado como " + user.login, "success");
-    } else {
-        console.warn("[JULES-AUTH] Initializing as GUEST (no valid user resolved)");
-        addTel("SYSTEM", "Iniciado como Invitado", "success");
+    const state = window.__julesPanelState;
+
+    if (state.initialized) {
+        return;
     }
 
-    // Initialize components with independent error handling
-    try {
-        await initializeRepoSelector();
-    } catch(e) { console.error("Repo selector failed", e); }
+    if (state.initializationPromise) {
+        return state.initializationPromise;
+    }
 
-    // Execute exactly one coordinated parallel load instead of two separate functions
-    try {
-        await refreshJulesDataCoordinated();
-    } catch(e) { console.error("Initial coordinated Jules refresh failed", e); }
+    state.initializationPromise = (async () => {
+        // A este punto, o tenemos usuario, o estamos en bypass
+        $("auth-overlay").classList.remove("show");
+        $("app-root").classList.remove("locked");
 
-    // Eager-load GitHub Ops badge counts (background, non-blocking)
-    if (getGitHubToken()) {
-        var _eagerRepo = window.JulesPanelState.activeRepo;
-        var _eagerParsed = _eagerRepo && window.parseSourceName ? window.parseSourceName(_eagerRepo) : null;
-        if (_eagerParsed && _eagerParsed.owner && _eagerParsed.repo) {
-            fetchHubPRs(_eagerParsed.owner, _eagerParsed.repo).catch(function(e) { console.warn("Eager PR badge load failed", e); });
-            fetchHubIssues(_eagerParsed.owner, _eagerParsed.repo).catch(function(e) { console.warn("Eager Issues badge load failed", e); });
+        if (user && user.login) {
+            console.log("[JULES-AUTH] Initializing as user:", user.login);
+            updateUserUI(user);
+            addTel("SYSTEM", "Iniciado como " + user.login, "success");
+        } else {
+            console.warn("[JULES-AUTH] Initializing as GUEST (no valid user resolved)");
+            addTel("SYSTEM", "Iniciado como Invitado", "success");
         }
-        fetchHubNotifs().catch(function(e) { console.warn("Eager Notifs badge load failed", e); });
-    }
 
-    switchView(window.JulesPanelState.currentView || 'dashboard');
-    window.initJulesPanelNeuralChat();
-    if (window.updateSidebarContextLabel) window.updateSidebarContextLabel();
-    await handleUrlParams();
-    checkClipboard();
+        // Initialize components with independent error handling
+        try {
+            await initializeRepoSelector();
+        } catch(e) { console.error("Repo selector failed", e); }
 
-    // Start polling ONLY if the initial load was fully successful (authenticated and ready/empty)
-    const errStates = ['network-error', 'rate-limited', 'service-error'];
-    if (window.julesApiAuthState === 'authenticated' && !errStates.includes(window.currentJulesState)) {
-        startPolling();
+        registerPanelListenersOnce();
+
+        // Execute exactly one coordinated parallel load instead of two separate functions
+        try {
+            await requestDashboardRefresh('initial-load', { force: true, immediate: true });
+        } catch(e) { console.error("Initial coordinated Jules refresh failed", e); }
+
+        // Eager-load GitHub Ops badge counts (background, non-blocking)
+        if (getGitHubToken()) {
+            var _eagerRepo = window.JulesPanelState.activeRepo;
+            var _eagerParsed = _eagerRepo && window.parseSourceName ? window.parseSourceName(_eagerRepo) : null;
+            if (_eagerParsed && _eagerParsed.owner && _eagerParsed.repo) {
+                fetchHubPRs(_eagerParsed.owner, _eagerParsed.repo).catch(function(e) { console.warn("Eager PR badge load failed", e); });
+                fetchHubIssues(_eagerParsed.owner, _eagerParsed.repo).catch(function(e) { console.warn("Eager Issues badge load failed", e); });
+            }
+            fetchHubNotifs().catch(function(e) { console.warn("Eager Notifs badge load failed", e); });
+        }
+
+        switchView(window.JulesPanelState.currentView || 'dashboard');
+        window.initJulesPanelNeuralChat();
+        if (window.updateSidebarContextLabel) window.updateSidebarContextLabel();
+        await handleUrlParams();
+        checkClipboard();
+
+        // Start polling ONLY if the initial load was fully successful (authenticated and ready/empty)
+        const errStates = ['network-error', 'rate-limited', 'service-error'];
+        if (window.julesApiAuthState === 'authenticated' && !errStates.includes(window.currentJulesState)) {
+            startPolling();
+        }
+
+        state.initialized = true;
+    })();
+
+    try {
+        await state.initializationPromise;
+    } catch (err) {
+        console.error("[JULES-AUTH] initRealPanel promise failed:", err);
+        state.initialized = false;
+        throw err;
+    } finally {
+        state.initializationPromise = null;
     }
 }
+
+window.registerPanelListenersOnce = function() {
+    window.__julesPanelState ||= {
+      initializationPromise: null,
+      initialized: false,
+      listenersRegistered: false
+    };
+
+    const state = window.__julesPanelState;
+    if (state.listenersRegistered) {
+        return;
+    }
+    state.listenersRegistered = true;
+
+    console.log("[JULES-INIT] Registering once-only panel listeners.");
+
+    if (typeof window.initHistoryControls === 'function') {
+        window.initHistoryControls();
+    }
+};
 
 window.prefillTaskFromHandoff = async function(task) {
     if (!task) return;
@@ -625,63 +677,17 @@ window.launchSession = async function() {
 }
 
 window.startJulesPolling = function() {
-    if (window.sessionPollInterval) {
-        console.log("[JULES-POLLING] Polling already active; skipping start.");
-        return;
+    console.log("[JULES-POLLING] startJulesPolling bridging to active-session polling.");
+    if (typeof window.syncSessionPolling === 'function') {
+        window.syncSessionPolling();
     }
-
-    const key = typeof window.getJulesApiKey === 'function' ? window.getJulesApiKey() : localStorage.getItem('jules_api_key');
-    if (typeof window.isJulesApiKeyValid === 'function' && !window.isJulesApiKeyValid(key)) {
-        console.log("[JULES-POLLING] Cannot start polling: Jules API key is missing or invalid.");
-        return;
-    }
-
-    if (window.julesApiAuthState === 'unauthorized') {
-        console.log("[JULES-POLLING] Cannot start polling: Credentials are unauthorized.");
-        return;
-    }
-
-    // Do not allow starting standard polling if in active backoff error/retry state
-    const errStates = ['network-error', 'rate-limited', 'service-error'];
-    if (errStates.includes(window.currentJulesState)) {
-        console.log("[JULES-POLLING] Cannot start polling: Dashboard is in active retry state (" + window.currentJulesState + ").");
-        return;
-    }
-
-    console.log("[JULES-POLLING] Starting polling interval...");
-    window.sessionPollInterval = setInterval(() => {
-        if (!document.hidden) {
-            const k = typeof window.getJulesApiKey === 'function' ? window.getJulesApiKey() : localStorage.getItem('jules_api_key');
-            if (typeof window.isJulesApiKeyValid === 'function' && !window.isJulesApiKeyValid(k)) {
-                window.stopJulesPolling();
-                return;
-            }
-            if (window.julesApiAuthState === 'unauthorized') {
-                window.stopJulesPolling();
-                return;
-            }
-            if (errStates.includes(window.currentJulesState)) {
-                window.stopJulesPolling();
-                return;
-            }
-
-            if (typeof refreshDashboard === 'function') {
-                refreshDashboard();
-            }
-            if (typeof checkClipboard === 'function') {
-                checkClipboard();
-            }
-        }
-    }, 10000);
 }
 
 window.stopJulesPolling = function() {
-    if (window.sessionPollInterval) {
-        console.log("[JULES-POLLING] Stopping polling interval.");
-        clearInterval(window.sessionPollInterval);
-        window.sessionPollInterval = null;
+    console.log("[JULES-POLLING] stopJulesPolling bridging to stopActiveSessionPolling.");
+    if (typeof window.stopActiveSessionPolling === 'function') {
+        window.stopActiveSessionPolling();
     }
-    // Also clear any scheduled backoff retry
     if (typeof window.clearJulesRetry === 'function') {
         window.clearJulesRetry();
     }

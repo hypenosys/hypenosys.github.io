@@ -6,6 +6,24 @@
 window.JulesPanelState = window.JulesPanelState || {};
 
 window._loadedRepoContext = null;
+window.lastLoggedContextSignature = null;
+
+window.logContextIfChanged = function(repository, branch) {
+    if (!repository) return;
+    const normRepo = String(repository).trim();
+    const normBranch = branch ? window.normalizeBranchName(branch) : '';
+    const contextSignature = `${normRepo}:${normBranch}`;
+
+    if (contextSignature === window.lastLoggedContextSignature) {
+        return;
+    }
+
+    window.lastLoggedContextSignature = contextSignature;
+
+    // Changing only repo or branch counts as a real change. Desired telemetry format:
+    const displayBranch = normBranch ? ` / ${normBranch}` : '';
+    addTel('SYSTEM', `Contexto: ${normRepo}${displayBranch}`, 'info');
+};
 
 window.getCanonicalRepoName = function(fullName) {
     if (!fullName) return null;
@@ -169,9 +187,6 @@ async function selectRepo(repoFullName, onlyUI = false) {
         toggleRepoGroup(org);
     }
 
-    if (oldRepo && oldRepo !== repoFullName) addTel("REPO", "Contexto cambiado → " + repoFullName.split('/').pop(), "info");
-    else if (repoFullName) addTel("SYSTEM", "Contexto: " + repoFullName.split('/').pop(), "info");
-
     // Update Sidebar label
     if (window.updateSidebarContextLabel) window.updateSidebarContextLabel();
 
@@ -281,6 +296,14 @@ async function loadBranches(repoFullName) {
                 sessCtx.textContent = alias + ': ' + window.normalizeBranchName(val);
             }
             if (window.checkBranchWarning) window.checkBranchWarning();
+
+            // Log telemetry and trigger refresh after branch change
+            if (typeof window.logContextIfChanged === 'function') {
+                window.logContextIfChanged(repoFullName, val);
+            }
+            if (typeof window.requestDashboardRefresh === 'function') {
+                window.requestDashboardRefresh('branch-changed');
+            }
         };
 
         const sessCtx = $('sess-ctx');
@@ -290,6 +313,11 @@ async function loadBranches(repoFullName) {
         }
 
         if (window.checkBranchWarning) window.checkBranchWarning();
+
+        // Emit telemetry on load/selection of branch
+        if (typeof window.logContextIfChanged === 'function') {
+            window.logContextIfChanged(repoFullName, branchToSelect);
+        }
 
     } catch (e) {
         if (currentRequestId === window._loadBranchesRequestId) {

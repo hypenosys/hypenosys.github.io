@@ -290,15 +290,9 @@ function loadCachedSessions() {
     }
 }
 
-// Guard for inflight request
 window.isJulesRefreshInFlight = false;
 
-async function refreshJulesDataCoordinated() {
-    if (window.isJulesRefreshInFlight) {
-        console.log("[JULES-COORDINATED] Refresh already in flight, returning early.");
-        return;
-    }
-
+async function performDashboardRefresh() {
     const key = typeof window.getJulesApiKey === 'function' ? window.getJulesApiKey() : '';
     if (typeof window.isJulesApiKeyValid === 'function' && !window.isJulesApiKeyValid(key)) {
         console.log("[JULES-COORDINATED] Skipping coordinated fetch: API key missing.");
@@ -314,7 +308,6 @@ async function refreshJulesDataCoordinated() {
     window.activeJulesAbortController = new AbortController();
     const currentGeneration = ++window.julesRequestGeneration;
 
-    window.isJulesRefreshInFlight = true;
     window.setJulesDashboardState('loading');
     if (window.julesApiAuthState === 'none' || window.julesApiAuthState === 'unauthorized') {
         window.julesApiAuthState = 'verifying';
@@ -536,21 +529,279 @@ async function refreshJulesDataCoordinated() {
             scheduleJulesRetry();
         }
     } finally {
-        if (currentGeneration === window.julesRequestGeneration) {
-            window.isJulesRefreshInFlight = false;
-        }
+        // Handled by the refresh coordinator
     }
 }
-window.refreshJulesDataCoordinated = refreshJulesDataCoordinated;
+
+window.__refreshCoordinatorState = window.__refreshCoordinatorState || {
+  refreshInFlight: false,
+  refreshTimer: null,
+  pendingReasons: new Set(),
+  trailingRefreshRequested: false,
+  currentRefreshPromise: null
+};
+
+window.requestDashboardRefresh = function(reason, options = {}) {
+    const force = !!options.force;
+    const immediate = !!options.immediate;
+    const state = window.__refreshCoordinatorState;
+
+    if (reason) {
+        state.pendingReasons.add(reason);
+    }
+
+    console.log(`[JULES-COORDINATOR] requestDashboardRefresh called. Reason: "${reason}", force: ${force}, immediate: ${immediate}`);
+
+    if (state.refreshInFlight) {
+        if (!state.trailingRefreshRequested) {
+            console.log("[JULES-COORDINATOR] Refresh in progress. Trailing refresh queued.");
+            state.trailingRefreshRequested = true;
+        }
+        return state.currentRefreshPromise || Promise.resolve();
+    }
+
+    if (state.refreshTimer) {
+        clearTimeout(state.refreshTimer);
+        state.refreshTimer = null;
+    }
+
+    const triggerActualRefresh = () => {
+        const reasonsStr = Array.from(state.pendingReasons).join(', ');
+        state.pendingReasons.clear();
+        console.log(`[JULES-COORDINATOR] Executing actual refresh. Reasons: [${reasonsStr}]`);
+
+        state.refreshInFlight = true;
+        window.isJulesRefreshInFlight = true;
+
+        const refreshBtn = document.getElementById('btn-refresh-session-history');
+        const refreshIcon = document.getElementById('history-refresh-icon');
+        if (refreshBtn) {
+            refreshBtn.disabled = true;
+            if (refreshIcon) refreshIcon.classList.add('fa-spin');
+        }
+
+        state.currentRefreshPromise = (async () => {
+            try {
+                await performDashboardRefresh();
+
+                // Keep the sync polling updated
+                if (typeof syncSessionPolling === 'function') {
+                    syncSessionPolling();
+                }
+            } catch (err) {
+                console.error("[JULES-COORDINATOR] Error during performDashboardRefresh:", err);
+            } finally {
+                state.refreshInFlight = false;
+                window.isJulesRefreshInFlight = false;
+                state.currentRefreshPromise = null;
+
+                if (refreshBtn) {
+                    refreshBtn.disabled = false;
+                    if (refreshIcon) refreshIcon.classList.remove('fa-spin');
+                }
+
+                if (state.trailingRefreshRequested) {
+                    state.trailingRefreshRequested = false;
+                    console.log("[JULES-COORDINATOR] Executing queued trailing refresh.");
+                    setTimeout(() => {
+                        window.requestDashboardRefresh('trailing-refresh', { force: true });
+                    }, 100);
+                }
+            }
+        })();
+
+        return state.currentRefreshPromise;
+    };
+
+    if (immediate || force) {
+        return triggerActualRefresh();
+    } else {
+        return new Promise((resolve) => {
+            state.refreshTimer = setTimeout(() => {
+                state.refreshTimer = null;
+                triggerActualRefresh().then(resolve);
+            }, 350);
+        });
+    }
+};
+
+window.refreshJulesDataCoordinated = function() {
+    return window.requestDashboardRefresh('legacy-coordinated-refresh');
+};
 
 // Compatibility alias
-window.refreshDashboard = refreshJulesDataCoordinated;
+window.refreshDashboard = function() {
+    return window.requestDashboardRefresh('legacy-refresh-dashboard');
+};
+
+const ACTIVE_SESSION_STATES = new Set(['pending', 'running']); // normalized states
+
+window.syncSessionPolling = function() {
+    const sessions = window.julesSessionsCache || [];
+    const hasActiveSessions = sessions.some(s =>
+        ACTIVE_SESSION_STATES.has(window.normalizeJulesStatus(s.state))
+    );
+
+    console.log(`[JULES-POLLING] syncSessionPolling. Active sessions present: ${hasActiveSessions}`);
+
+    if (hasActiveSessions) {
+        window.startActiveSessionPolling();
+    } else {
+        window.stopActiveSessionPolling();
+    }
+};
+
+window.activeSessionPollInterval = null;
+let activeSessionPollAbortController = null;
+let isPollActiveSessionInFlight = false;
+
+window.startActiveSessionPolling = function() {
+    if (window.activeSessionPollInterval) {
+        return; // Already polling
+    }
+
+    console.log("[JULES-POLLING] Starting active session polling.");
+
+    window.activeSessionPollInterval = setInterval(async () => {
+        // Pause or reduce polling when page is hidden
+        if (document.hidden) {
+            console.log("[JULES-POLLING] Document hidden, skipping active session polling cycle.");
+            return;
+        }
+        await window.pollActiveSessionStatuses();
+    }, 10000); // Poll every 10 seconds
+
+    // Register visibility change listener once
+    if (!window._visibilityListenerRegistered) {
+        document.addEventListener('visibilitychange', async () => {
+            if (!document.hidden && window.activeSessionPollInterval) {
+                console.log("[JULES-POLLING] Document became visible, triggering immediate status check.");
+                await window.pollActiveSessionStatuses();
+            }
+        });
+        window._visibilityListenerRegistered = true;
+    }
+};
+
+window.stopActiveSessionPolling = function() {
+    if (window.activeSessionPollInterval) {
+        console.log("[JULES-POLLING] Stopping active session polling.");
+        clearInterval(window.activeSessionPollInterval);
+        window.activeSessionPollInterval = null;
+    }
+    if (activeSessionPollAbortController) {
+        activeSessionPollAbortController.abort();
+        activeSessionPollAbortController = null;
+    }
+    isPollActiveSessionInFlight = false;
+};
+
+window.pollActiveSessionStatuses = async function() {
+    if (isPollActiveSessionInFlight) {
+        console.log("[JULES-POLLING] Active session status poll already in progress, skipping.");
+        return;
+    }
+
+    const key = typeof window.getJulesApiKey === 'function' ? window.getJulesApiKey() : localStorage.getItem('jules_api_key');
+    if (typeof window.isJulesApiKeyValid === 'function' && !window.isJulesApiKeyValid(key)) {
+        window.stopActiveSessionPolling();
+        return;
+    }
+
+    const sessions = window.julesSessionsCache || [];
+    const activeSessions = sessions.filter(s =>
+        ACTIVE_SESSION_STATES.has(window.normalizeJulesStatus(s.state))
+    );
+
+    if (activeSessions.length === 0) {
+        window.stopActiveSessionPolling();
+        return;
+    }
+
+    isPollActiveSessionInFlight = true;
+    if (activeSessionPollAbortController) {
+        activeSessionPollAbortController.abort();
+    }
+    activeSessionPollAbortController = new AbortController();
+    const currentSignal = activeSessionPollAbortController.signal;
+
+    try {
+        console.log(`[JULES-POLLING] Checking statuses for ${activeSessions.length} active sessions...`);
+
+        const promises = activeSessions.map(async (sess) => {
+            try {
+                const freshSess = await window.julesApi.getSession(sess.name);
+                return { name: sess.name, fresh: freshSess, success: true };
+            } catch (err) {
+                console.warn(`[JULES-POLLING] Failed to get session status for ${sess.name}:`, err);
+                return { name: sess.name, error: err, success: false };
+            }
+        });
+
+        const results = await Promise.all(promises);
+        if (currentSignal.aborted) return;
+
+        let anyTransitionDetected = false;
+
+        results.forEach((res) => {
+            if (!res.success) return;
+            const fresh = res.fresh;
+            const cachedIndex = window.julesSessionsCache.findIndex(s => s.name === res.name);
+
+            if (cachedIndex !== -1 && fresh && fresh.state) {
+                const cached = window.julesSessionsCache[cachedIndex];
+                const prevNormalized = window.normalizeJulesStatus(cached.state);
+                const nextNormalized = window.normalizeJulesStatus(fresh.state);
+
+                if (cached.state !== fresh.state || prevNormalized !== nextNormalized) {
+                    console.log(`[JULES-POLLING] Transition detected for ${res.name}: ${cached.state} -> ${fresh.state}`);
+                    anyTransitionDetected = true;
+                    window.julesSessionsCache[cachedIndex] = {
+                        ...cached,
+                        ...fresh
+                    };
+                }
+            }
+        });
+
+        if (anyTransitionDetected) {
+            localStorage.setItem('jules_sessions_cache', JSON.stringify(window.julesSessionsCache));
+            await window.requestDashboardRefresh('active-session-status-transition');
+        }
+
+    } catch (err) {
+        console.warn("[JULES-POLLING] Polling error:", err);
+    } finally {
+        isPollActiveSessionInFlight = false;
+        window.syncSessionPolling();
+    }
+};
 
 window._historyControlsInitialized = false;
 
 window.initHistoryControls = function() {
     if (window._historyControlsInitialized) {
         return;
+    }
+
+    const refreshBtn = $('btn-refresh-session-history');
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', async () => {
+            const icon = $('history-refresh-icon');
+            if (icon) icon.classList.add('fa-spin');
+            refreshBtn.disabled = true;
+            try {
+                await window.requestDashboardRefresh('manual-session-history-refresh', {
+                    force: true,
+                    immediate: true
+                });
+            } catch (err) {
+                console.error("[JULES-MANUAL-REFRESH] Manual refresh error:", err);
+            } finally {
+                if (icon) icon.classList.remove('fa-spin');
+                refreshBtn.disabled = false;
+            }
+        });
     }
 
     const tblSearch = $('tbl-search');

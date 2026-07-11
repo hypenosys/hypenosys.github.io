@@ -1150,6 +1150,33 @@ body{
   white-space: nowrap;
 }
 
+#btn-refresh-session-history {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+  background: rgba(0,0,0,.2);
+  color: var(--text2);
+  cursor: pointer;
+  transition: var(--t-fast);
+}
+
+#btn-refresh-session-history:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--text);
+  box-shadow: 0 0 10px rgba(124,58,237,.2);
+  background: rgba(124,58,237,.1);
+}
+
+#btn-refresh-session-history:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .history-limit-select {
   width: auto;
   max-width: 140px;
