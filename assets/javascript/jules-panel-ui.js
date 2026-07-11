@@ -68,6 +68,11 @@ window.addTel = function(tag, msg, type='info'){
   const ts = String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0') + ':' + String(d.getSeconds()).padStart(2,'0');
   const box=$('tel-box'); if(!box) return;
 
+  // Measure before DOM modification
+  const distanceFromBottom = box.scrollHeight - box.scrollTop - box.clientHeight;
+  const wasNearBottom = distanceFromBottom <= 50;
+  const isInitialHydration = !box._isHydrated;
+
   // Remove empty state message if it exists
   const emptyMsg = box.querySelector('.notif-empty');
   if (emptyMsg) emptyMsg.remove();
@@ -76,7 +81,32 @@ window.addTel = function(tag, msg, type='info'){
   line.className = 'tel-line ' + type;
   line.innerHTML = '<div class="tel-head"><span class="tel-time">' + ts + '</span><span class="tel-tag ' + type + '">' + tag + '</span></div><div class="tel-msg">' + msg + '</div>';
   box.appendChild(line);
-  box.scrollTop=box.scrollHeight;
+
+  // Limit DOM nodes to a maximum of 300 telemetry entries
+  const telLines = box.querySelectorAll('.tel-line');
+  if (telLines.length > 300) {
+    const oldest = box.querySelector('.tel-line');
+    if (oldest) {
+      const oldestHeight = oldest.offsetHeight + 7; // height plus gap
+      oldest.remove();
+
+      // If the user was NOT at the bottom (reading previous content),
+      // visually preserve their position by adjusting scrollTop to prevent jumps!
+      if (!wasNearBottom && !isInitialHydration) {
+        box.scrollTop = Math.max(0, box.scrollTop - oldestHeight);
+      }
+    }
+  }
+
+  // Scroll to bottom if wasNearBottom or during initial hydration
+  if (wasNearBottom || isInitialHydration) {
+    box.scrollTop = box.scrollHeight;
+  }
+
+  // Complete hydration mark
+  if (isInitialHydration) {
+    box._isHydrated = true;
+  }
 
   // Neural Loop: Add "Analizar con Claude" button to telemetry
   if (localStorage.getItem('hy_neural_active') === 'true') {
@@ -109,6 +139,35 @@ window.addTel = function(tag, msg, type='info'){
       tag, msg, type, timestamp: d.toISOString()
   }));
 }
+
+window.hydrateTelemetry = function(events) {
+  const box = $('tel-box'); if (!box) return;
+
+  // Re-initialize hydration status
+  box._isHydrated = false;
+  box.innerHTML = '';
+
+  if (!events || events.length === 0) {
+    box.innerHTML = '<div class="notif-empty" style="padding: 40px; text-align: center; color: var(--text3);">Sin actividad en esta sesión</div>';
+    return;
+  }
+
+  // Slice to last 300 elements
+  const visibleEvents = events.slice(-300);
+  const fragment = document.createDocumentFragment();
+
+  visibleEvents.forEach(evt => {
+    const ts = evt.timestamp ? new Date(evt.timestamp).toLocaleTimeString('es-ES') : new Date().toLocaleTimeString('es-ES');
+    const line = document.createElement('div');
+    line.className = 'tel-line ' + (evt.type || 'info');
+    line.innerHTML = '<div class="tel-head"><span class="tel-time">' + ts + '</span><span class="tel-tag ' + (evt.type || 'info') + '">' + (evt.tag || 'SYSTEM') + '</span></div><div class="tel-msg">' + (evt.msg || '') + '</div>';
+    fragment.appendChild(line);
+  });
+
+  box.appendChild(fragment);
+  box.scrollTop = box.scrollHeight;
+  box._isHydrated = true;
+};
 
 window.escapeHtml = function(str) {
   return String(str ?? '')
