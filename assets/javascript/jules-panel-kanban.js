@@ -188,7 +188,7 @@ function renderKanban(sessions) {
                    '<div class="kb-card-actions">' +
                    (isArchived ? '<button class="kb-action-btn" style="color:var(--amber)" onclick="event.stopPropagation(); restoreArchivedCard(\'' + sid + '\')">Restaurar</button>' : '') +
                    '<button class="kb-action-btn btn-relaunch" onclick="event.stopPropagation(); relaunchJules(\'' + encodeURIComponent(JSON.stringify(s)) + '\')">Relanzar</button>' +
-                   '<button class="kb-action-btn" onclick="event.stopPropagation(); switchView(\'chat\'); localStorage.setItem(\'hy_neural_session_id\', \'' + sid + '\'); startNeuralPolling(\'' + sid + '\');">Ver Neural</button>' +
+                   '<button class="kb-action-btn" onclick="event.stopPropagation(); selectSession(\'sessions/' + sid + '\', { navigateTo: \'chat\' });">Ver Neural</button>' +
                    '</div>' +
                    '</div>';
         }).join('');
