@@ -622,16 +622,58 @@ window.launchSession = async function() {
     }
 }
 
-window.startPolling = function() {
-    stopPolling();
+window.startJulesPolling = function() {
+    window.stopJulesPolling(); // Clear existing to prevent duplicates
+
+    const key = typeof window.getJulesApiKey === 'function' ? window.getJulesApiKey() : localStorage.getItem('jules_api_key');
+    if (typeof window.isJulesApiKeyValid === 'function' && !window.isJulesApiKeyValid(key)) {
+        console.log("[JULES-POLLING] Cannot start polling: Jules API key is missing or invalid.");
+        return;
+    }
+
+    if (window.julesApiAuthState === 'unauthorized') {
+        console.log("[JULES-POLLING] Cannot start polling: Credentials are unauthorized.");
+        return;
+    }
+
+    console.log("[JULES-POLLING] Starting polling interval...");
     window.sessionPollInterval = setInterval(() => {
         if (!document.hidden) {
-            refreshDashboard();
-            checkClipboard();
+            const k = typeof window.getJulesApiKey === 'function' ? window.getJulesApiKey() : localStorage.getItem('jules_api_key');
+            if (typeof window.isJulesApiKeyValid === 'function' && !window.isJulesApiKeyValid(k)) {
+                window.stopJulesPolling();
+                return;
+            }
+            if (window.julesApiAuthState === 'unauthorized') {
+                window.stopJulesPolling();
+                return;
+            }
+
+            if (typeof refreshDashboard === 'function') {
+                refreshDashboard();
+            }
+            if (typeof checkClipboard === 'function') {
+                checkClipboard();
+            }
         }
     }, 10000);
 }
-window.stopPolling = function() { if (window.sessionPollInterval) clearInterval(window.sessionPollInterval); }
+
+window.stopJulesPolling = function() {
+    if (window.sessionPollInterval) {
+        console.log("[JULES-POLLING] Stopping polling interval.");
+        clearInterval(window.sessionPollInterval);
+        window.sessionPollInterval = null;
+    }
+    // Also clear any scheduled backoff retry
+    if (typeof window.clearJulesRetry === 'function') {
+        window.clearJulesRetry();
+    }
+}
+
+// Keep backward compatibility
+window.startPolling = window.startJulesPolling;
+window.stopPolling = window.stopJulesPolling;
 
 window.startNeuralPolling = function(sessionId = null) {
     const sid = sessionId || getLinkedJulesSessionId();

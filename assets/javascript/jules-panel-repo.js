@@ -32,6 +32,24 @@ function loadCachedRepos() {
 }
 
 async function fetchJulesSources() {
+    const key = typeof window.getJulesApiKey === 'function' ? window.getJulesApiKey() : localStorage.getItem('jules_api_key');
+    if (typeof window.isJulesApiKeyValid === 'function' && !window.isJulesApiKeyValid(key)) {
+        console.log("[JULES-REPO] Skipping source fetch: API key missing or invalid.");
+        const list = $('repo-list');
+        if (list) {
+            list.innerHTML = '<div class="notif-empty" style="font-size: 11px; padding: 20px; color: var(--text3); text-align: center; line-height: 1.5;">' +
+                '<i class="fas fa-key mr-2" style="color:var(--amber)"></i> Jules requiere API Key<br>' +
+                '<span style="font-size: 9px; opacity:0.7">Configura la clave para cargar repos</span>' +
+                '</div>';
+        }
+        const label = $('repo-label');
+        if (label) {
+            label.innerText = 'Sin configurar';
+            label.classList.remove('skeleton', 'skeleton-text');
+        }
+        return;
+    }
+
     try {
         // Immediate cache load
         if (!window._reposLoaded) {

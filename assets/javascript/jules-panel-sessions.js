@@ -2,6 +2,262 @@
    JULES PANEL SESSIONS & HISTORY
    ════════════════════════════════════════ */
 
+// Centralized Auth State for Jules API
+window.julesApiAuthState = 'none'; // 'none', 'configured', 'verifying', 'authenticated', 'unauthorized'
+
+// Centralized UI State Trackers
+window.currentJulesState = 'loading';
+
+function updateConfigCardStateIndicator() {
+    const indicator = $('jules-panel-api-key-state');
+    if (!indicator) return;
+
+    const state = window.julesApiAuthState;
+    if (state === 'none') {
+        indicator.innerHTML = '<span class="u-dot" style="background:var(--amber)"></span><span style="color:var(--amber)">No configurada</span>';
+    } else if (state === 'configured') {
+        indicator.innerHTML = '<span class="u-dot" style="background:var(--cyan)"></span><span style="color:var(--cyan)">Configurada</span>';
+    } else if (state === 'verifying') {
+        indicator.innerHTML = '<span class="u-dot" style="background:var(--cyan); animation: pulse 1s infinite;"></span><span style="color:var(--cyan)">Verificando...</span>';
+    } else if (state === 'authenticated') {
+        indicator.innerHTML = '<span class="u-dot" style="background:var(--green)"></span><span style="color:var(--green)">Válida y Conectada ✓</span>';
+    } else if (state === 'unauthorized') {
+        indicator.innerHTML = '<span class="u-dot" style="background:var(--red)"></span><span style="color:var(--red)">Inválida o Rechazada ⚠️</span>';
+    }
+}
+window.updateConfigCardStateIndicator = updateConfigCardStateIndicator;
+
+function setJulesDashboardState(state, errorDetail = null) {
+    window.currentJulesState = state;
+    console.log("[JULES-STATE] Transitioning to:", state, errorDetail ? "(" + errorDetail + ")" : "");
+
+    // Clear loading skeletons if not in loading state
+    if (state !== 'loading') {
+        document.querySelectorAll('.skeleton, .skeleton-stat').forEach(el => {
+            el.classList.remove('skeleton', 'skeleton-stat', 'skeleton-text');
+        });
+    }
+
+    const tbody = $('history-tbody');
+    const list = $('repo-list');
+    const label = $('repo-label');
+    const activeProfileBtn = $('active-profile-btn');
+
+    // Update config card state indicator in view-config if visible
+    updateConfigCardStateIndicator();
+
+    const updateMetricsPlaceholder = (val) => {
+        if ($('m-active')) $('m-active').innerText = val;
+        if ($('m-total')) $('m-total').innerText = val;
+        if ($('m-repos')) $('m-repos').innerText = val;
+        if ($('m-branches')) $('m-branches').innerText = val;
+        if ($('m-success-rate')) $('m-success-rate').innerText = val;
+    };
+
+    const emptyMetricsDonutAndTimeline = () => {
+        if ($('donut-done')) $('donut-done').setAttribute('stroke-dasharray', '0 100');
+        if ($('donut-running')) $('donut-running').setAttribute('stroke-dasharray', '0 100');
+        if ($('donut-error')) $('donut-error').setAttribute('stroke-dasharray', '0 100');
+        if ($('donut-pending')) $('donut-pending').setAttribute('stroke-dasharray', '0 100');
+        if ($('leg-done')) $('leg-done').innerText = '0';
+        if ($('leg-running')) $('leg-running').innerText = '0';
+        if ($('leg-error')) $('leg-error').innerText = '0';
+        if ($('leg-pending')) $('leg-pending').innerText = '0';
+        if ($('bar-sessions')) $('bar-sessions').innerHTML = '';
+        if ($('token-timeline')) $('token-timeline').innerHTML = '';
+    };
+
+    if (state === 'pending-config') {
+        updateMetricsPlaceholder('—');
+        emptyMetricsDonutAndTimeline();
+
+        // 1. History Table pending configuration row
+        if (tbody) {
+            tbody.innerHTML = '<tr><td colspan="8" class="notif-empty" style="padding: 40px; text-align: center;">' +
+                '<div style="color: var(--amber); margin-bottom: 12px; font-weight: 600; font-size: 14px;"><i class="fas fa-exclamation-triangle mr-2"></i> Configuración de Jules Pendiente</div>' +
+                '<div style="font-size: 11px; color: var(--text3); margin-bottom: 16px; max-width: 340px; margin-left: auto; margin-right: auto; line-height: 1.5;">' +
+                'Para ver el historial de sesiones y sincronizar con Jules, introduce tu Jules API Key en la pestaña de Configuración.' +
+                '</div>' +
+                '<button class="btn btn-primary btn-sm" id="btn-configurar-jules-pending" style="display: inline-flex; align-items: center; gap: 8px; margin: 0 auto;">' +
+                '<i class="fas fa-cog"></i> Configurar Jules' +
+                '</button>' +
+                '</td></tr>';
+
+            const btn = document.getElementById('btn-configurar-jules-pending');
+            if (btn) {
+                btn.addEventListener('click', () => {
+                    if (typeof window.switchView === 'function') {
+                        window.switchView('config', document.querySelector('[data-view=config]'));
+                        setTimeout(() => {
+                            const input = document.getElementById('jules-panel-api-key-input');
+                            if (input) {
+                                input.focus();
+                                input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }
+                        }, 200);
+                    }
+                });
+            }
+        }
+
+        // 2. Repo List pending configuration notice
+        if (list) {
+            list.innerHTML = '<div class="notif-empty" style="font-size: 11px; padding: 20px; color: var(--text3); text-align: center; line-height: 1.5;">' +
+                '<i class="fas fa-key mr-2" style="color:var(--amber)"></i> Jules requiere API Key<br>' +
+                '<span style="font-size: 9px; opacity:0.7">Configura la clave para cargar repos</span>' +
+                '</div>';
+        }
+        if (label) {
+            label.innerText = 'Sin configurar';
+        }
+    }
+
+    else if (state === 'unauthorized') {
+        updateMetricsPlaceholder('—');
+        emptyMetricsDonutAndTimeline();
+
+        // 1. History Table unauthorized row
+        if (tbody) {
+            tbody.innerHTML = '<tr><td colspan="8" class="notif-empty" style="padding: 40px; text-align: center;">' +
+                '<div style="color: var(--red); margin-bottom: 12px; font-weight: 600; font-size: 14px;"><i class="fas fa-shield-alt mr-2"></i> Credenciales de Jules Inválidas (401/403)</div>' +
+                '<div style="font-size: 11px; color: var(--text3); margin-bottom: 16px; max-width: 340px; margin-left: auto; margin-right: auto; line-height: 1.5;">' +
+                'La Jules API Key almacenada fue rechazada por el servidor. Por favor, corrígela en la pestaña de Configuración.' +
+                '</div>' +
+                '<button class="btn btn-primary btn-sm" id="btn-configurar-jules-unauthorized" style="display: inline-flex; align-items: center; gap: 8px; margin: 0 auto;">' +
+                '<i class="fas fa-edit"></i> Corregir API Key' +
+                '</button>' +
+                '</td></tr>';
+
+            const btn = document.getElementById('btn-configurar-jules-unauthorized');
+            if (btn) {
+                btn.addEventListener('click', () => {
+                    if (typeof window.switchView === 'function') {
+                        window.switchView('config', document.querySelector('[data-view=config]'));
+                        setTimeout(() => {
+                            const input = document.getElementById('jules-panel-api-key-input');
+                            if (input) {
+                                input.focus();
+                                input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }
+                        }, 200);
+                    }
+                });
+            }
+        }
+
+        // 2. Repo List unauthorized notice
+        if (list) {
+            list.innerHTML = '<div class="notif-empty" style="font-size: 11px; padding: 20px; color: var(--text3); text-align: center; line-height: 1.5;">' +
+                '<i class="fas fa-times-circle mr-2" style="color:var(--red)"></i> Jules API Key inválida<br>' +
+                '<span style="font-size: 9px; opacity:0.7">Corrige la clave para cargar repos</span>' +
+                '</div>';
+        }
+        if (label) {
+            label.innerText = 'Error de autenticación';
+        }
+    }
+
+    else if (state === 'network-error') {
+        const hasCache = window.julesSessionsCache && window.julesSessionsCache.length > 0;
+        if (!hasCache) {
+            updateMetricsPlaceholder('—');
+            emptyMetricsDonutAndTimeline();
+        }
+
+        if (tbody && !hasCache) {
+            tbody.innerHTML = '<tr><td colspan="8" class="notif-empty" style="padding: 40px; text-align: center;">' +
+                '<div style="color: var(--amber); margin-bottom: 12px; font-weight: 600; font-size: 14px;"><i class="fas fa-wifi mr-2"></i> Error de Conexión de Red</div>' +
+                '<div style="font-size: 11px; color: var(--text3); margin-bottom: 16px; max-width: 340px; margin-left: auto; margin-right: auto; line-height: 1.5;">' +
+                'No se pudo conectar con el servicio de Jules. Verifica tu conexión de red o firewall.' +
+                (errorDetail ? '<br><code style="font-size: 10px; opacity: 0.7;">' + escapeHtml(errorDetail) + '</code>' : '') +
+                '</div>' +
+                '<button class="btn btn-ghost btn-sm" id="btn-configurar-jules-retry" style="display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--border-accent); margin: 0 auto;">' +
+                '<i class="fas fa-sync"></i> Reintentar ahora' +
+                '</button>' +
+                '</td></tr>';
+
+            const btn = document.getElementById('btn-configurar-jules-retry');
+            if (btn) {
+                btn.addEventListener('click', () => {
+                    if (typeof refreshDashboard === 'function') {
+                        refreshDashboard();
+                    }
+                });
+            }
+        }
+    }
+
+    else if (state === 'rate-limited') {
+        const hasCache = window.julesSessionsCache && window.julesSessionsCache.length > 0;
+        if (tbody && !hasCache) {
+            tbody.innerHTML = '<tr><td colspan="8" class="notif-empty" style="padding: 40px; text-align: center;">' +
+                '<div style="color: var(--amber); margin-bottom: 12px; font-weight: 600; font-size: 14px;"><i class="fas fa-hourglass-half mr-2"></i> Límite de Peticiones Alcanzado (429)</div>' +
+                '<div style="font-size: 11px; color: var(--text3); margin-bottom: 16px; max-width: 340px; margin-left: auto; margin-right: auto; line-height: 1.5;">' +
+                'Has alcanzado el límite de peticiones del servidor. Por favor, espera unos minutos.' +
+                '</div>' +
+                '</td></tr>';
+        }
+    }
+
+    else if (state === 'service-error') {
+        const hasCache = window.julesSessionsCache && window.julesSessionsCache.length > 0;
+        if (tbody && !hasCache) {
+            tbody.innerHTML = '<tr><td colspan="8" class="notif-empty" style="padding: 40px; text-align: center;">' +
+                '<div style="color: var(--red); margin-bottom: 12px; font-weight: 600; font-size: 14px;"><i class="fas fa-server mr-2"></i> Error del Servicio Jules (5xx)</div>' +
+                '<div style="font-size: 11px; color: var(--text3); margin-bottom: 16px; max-width: 340px; margin-left: auto; margin-right: auto; line-height: 1.5;">' +
+                'El servicio remoto de Jules experimentó un error interno. Reintentando con backoff controlado.' +
+                (errorDetail ? '<br><code style="font-size: 10px; opacity: 0.7;">' + escapeHtml(errorDetail) + '</code>' : '') +
+                '</div>' +
+                '</td></tr>';
+        }
+    }
+
+    else if (state === 'empty') {
+        updateMetricsPlaceholder('0');
+        emptyMetricsDonutAndTimeline();
+
+        if (tbody) {
+            tbody.innerHTML = '<tr><td colspan="8" class="notif-empty">No hay sesiones recientes</td></tr>';
+        }
+    }
+}
+window.setJulesDashboardState = setJulesDashboardState;
+
+// Exponential Backoff retry state
+window.julesBackoffDelay = 5000;
+let julesRetryTimeoutId = null;
+
+function scheduleJulesRetry() {
+    clearJulesRetry();
+    if (window.julesBackoffDelay < 5000) window.julesBackoffDelay = 5000;
+
+    console.log("[JULES-RETRY] Scheduling retry in", window.julesBackoffDelay / 1000, "seconds");
+    julesRetryTimeoutId = setTimeout(() => {
+        if (typeof refreshDashboard === 'function') {
+            refreshDashboard();
+        }
+    }, window.julesBackoffDelay);
+
+    // Exponential backoff strategy up to max 60s
+    if (window.julesBackoffDelay === 5000) window.julesBackoffDelay = 15000;
+    else if (window.julesBackoffDelay === 15000) window.julesBackoffDelay = 30000;
+    else window.julesBackoffDelay = 60000;
+}
+
+function clearJulesRetry() {
+    if (julesRetryTimeoutId) {
+        clearTimeout(julesRetryTimeoutId);
+        julesRetryTimeoutId = null;
+    }
+}
+window.scheduleJulesRetry = scheduleJulesRetry;
+window.clearJulesRetry = clearJulesRetry;
+
+function resetJulesBackoff() {
+    window.julesBackoffDelay = 5000;
+    clearJulesRetry();
+}
+
 function loadCachedSessions() {
     try {
         const cached = localStorage.getItem('jules_sessions_cache');
@@ -21,7 +277,30 @@ function loadCachedSessions() {
     }
 }
 
+// Guard for inflight request
+window.isJulesRefreshInFlight = false;
+
 async function refreshDashboard() {
+    if (window.isJulesRefreshInFlight) {
+        console.log("[JULES-REFRESH] Refresh already in flight, returning early.");
+        return;
+    }
+
+    const key = window.getJulesApiKey ? window.getJulesApiKey() : localStorage.getItem('jules_api_key');
+    if (window.isJulesApiKeyValid && !window.isJulesApiKeyValid(key)) {
+        console.log("[JULES-REFRESH] Skipping fetch: API key missing.");
+        window.julesApiAuthState = 'none';
+        setJulesDashboardState('pending-config');
+        return;
+    }
+
+    window.isJulesRefreshInFlight = true;
+    window.setJulesDashboardState('loading');
+    if (window.julesApiAuthState === 'none' || window.julesApiAuthState === 'unauthorized') {
+        window.julesApiAuthState = 'verifying';
+        updateConfigCardStateIndicator();
+    }
+
     try {
         if (!window.julesSessionsCache && !window._sessionsLoaded) {
             loadCachedSessions();
@@ -29,6 +308,10 @@ async function refreshDashboard() {
 
         window.julesSessionsCache = await window.julesApi.listSessions();
         console.log("[JULES-DEBUG] Sessions received:", window.julesSessionsCache);
+
+        // Success -> Reset backoff and update Auth state
+        resetJulesBackoff();
+        window.julesApiAuthState = 'authenticated';
 
         // Persist to shared localStorage for Dashboard consumption
         localStorage.setItem('jules_sessions_cache', JSON.stringify(window.julesSessionsCache));
@@ -43,10 +326,17 @@ async function refreshDashboard() {
             console.warn("[JULES-SYNC] Failed to broadcast sessions:", e);
         }
 
+        if (window.julesSessionsCache.length === 0) {
+            setJulesDashboardState('empty');
+            window._sessionsLoaded = true;
+            return;
+        }
+
         // Optimization: skip re-render if sessions haven't changed
         const sessString = JSON.stringify(window.julesSessionsCache);
         if (window._lastSessionsString === sessString) {
             console.log("[JULES-SYNC] Sessions unchanged, skipping render.");
+            setJulesDashboardState('ready');
             return;
         }
         window._lastSessionsString = sessString;
@@ -54,6 +344,8 @@ async function refreshDashboard() {
         if (window.julesSessionsCache.length > 0) {
             console.log("[JULES-DEBUG] Sample session structure:", JSON.stringify(window.julesSessionsCache[0], null, 2));
         }
+
+        setJulesDashboardState('ready');
         renderMetrics();
         renderHistoryTable(window.julesSessionsCache);
         updateKanbanCounts(window.julesSessionsCache);
@@ -65,7 +357,31 @@ async function refreshDashboard() {
         }
         window._sessionsLoaded = true;
     } catch (e) {
-        console.error("Dashboard refresh failed:", e);
+        // Differentiate errors exactly as requested
+        if (e.message === 'API_KEY_MISSING') {
+            window.julesApiAuthState = 'none';
+            setJulesDashboardState('pending-config');
+            stopJulesPolling();
+        } else if (e.message === 'API_KEY_INVALID') {
+            window.julesApiAuthState = 'unauthorized';
+            setJulesDashboardState('unauthorized');
+            stopJulesPolling();
+        } else if (e.message === 'RATE_LIMIT') {
+            setJulesDashboardState('rate-limited');
+            scheduleJulesRetry();
+        } else if (e.httpStatus >= 500) {
+            setJulesDashboardState('service-error', e.message);
+            scheduleJulesRetry();
+        } else if (e.message === 'TIMEOUT' || e.name === 'TypeError' || e.message.includes('fetch') || e.message.includes('Failed to fetch') || e.message.includes('NetworkError')) {
+            setJulesDashboardState('network-error', e.message);
+            scheduleJulesRetry();
+        } else {
+            // Other remote error
+            setJulesDashboardState('service-error', e.message);
+            scheduleJulesRetry();
+        }
+    } finally {
+        window.isJulesRefreshInFlight = false;
     }
 }
 

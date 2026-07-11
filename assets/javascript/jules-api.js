@@ -5,6 +5,46 @@
 
 const JULES_BASE = 'https://jules.googleapis.com/v1alpha';
 
+function isJulesApiKeyValid(key) {
+    if (!key || typeof key !== 'string') return false;
+    return key.trim().length > 0;
+}
+
+function getJulesApiKey() {
+    return localStorage.getItem('jules_api_key');
+}
+
+function saveJulesApiKey(key) {
+    if (typeof key === 'string') {
+        const trimmed = key.trim();
+        if (trimmed) {
+            localStorage.setItem('jules_api_key', trimmed);
+            // Sincronizar clientes u otros componentes
+            const event = new CustomEvent('julesApiKeySaved');
+            document.dispatchEvent(event);
+            return;
+        }
+    }
+    removeJulesApiKey();
+}
+
+function removeJulesApiKey() {
+    localStorage.removeItem('jules_api_key');
+    const event = new CustomEvent('julesApiKeyRemoved');
+    document.dispatchEvent(event);
+}
+
+function hasJulesApiKey() {
+    return isJulesApiKeyValid(getJulesApiKey());
+}
+
+// Expose globally
+window.isJulesApiKeyValid = isJulesApiKeyValid;
+window.getJulesApiKey = getJulesApiKey;
+window.saveJulesApiKey = saveJulesApiKey;
+window.removeJulesApiKey = removeJulesApiKey;
+window.hasJulesApiKey = hasJulesApiKey;
+
 /**
  * Función central para llamadas a la API de Jules con manejo completo de errores.
  * @param {string} method - Método HTTP (GET, POST, DELETE, etc.)
@@ -14,8 +54,8 @@ const JULES_BASE = 'https://jules.googleapis.com/v1alpha';
  * @returns {Promise<Object>} - Datos de respuesta de la API
  */
 async function julesApiCall(method, endpoint, body = null, customKey = null) {
-    const key = customKey || localStorage.getItem('jules_api_key');
-    if (!key) throw new Error('API_KEY_MISSING');
+    const key = customKey || getJulesApiKey();
+    if (!isJulesApiKeyValid(key)) throw new Error('API_KEY_MISSING');
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 15000);
@@ -81,7 +121,7 @@ class JulesAPI {
     }
 
     get apiKey() {
-        return localStorage.getItem('jules_api_key');
+        return getJulesApiKey();
     }
 
     // Proxy a la función central para mantener compatibilidad si es necesario

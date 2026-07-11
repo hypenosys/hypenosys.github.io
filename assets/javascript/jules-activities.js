@@ -9,7 +9,7 @@ const JulesActivitiesModule = (() => {
   const POLL_MS = 5000;
 
   function _getApiKey() {
-    return localStorage.getItem('jules_api_key') || '';
+    return typeof window.getJulesApiKey === 'function' ? window.getJulesApiKey() : (localStorage.getItem('jules_api_key') || '');
   }
 
   function _getHistoryContainer() {

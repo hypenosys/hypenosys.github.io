@@ -124,13 +124,17 @@ class AuthManager {
                     if (inputRepo) inputRepo.value = localStorage.getItem('github_repo') || 'hypenosys/hypenosys.github.io';
 
                     if (inputJulesKey) {
-                        const storedKey = localStorage.getItem('jules_api_key') || '';
+                        const storedKey = typeof window.getJulesApiKey === 'function' ? window.getJulesApiKey() : (localStorage.getItem('jules_api_key') || '');
                         // Clean existing contamination from UI and Storage
                         if (storedKey.startsWith('nvapi-') || storedKey.startsWith('sk-')) {
                             inputJulesKey.value = '';
                             inputJulesKey.placeholder = 'Enter real Jules API key (AI key detected)';
                             console.warn('[AUTH] Contaminated jules_api_key found and cleared.');
-                            localStorage.removeItem('jules_api_key');
+                            if (typeof window.removeJulesApiKey === 'function') {
+                                window.removeJulesApiKey();
+                            } else {
+                                localStorage.removeItem('jules_api_key');
+                            }
                         } else {
                             inputJulesKey.value = storedKey;
                         }
@@ -261,14 +265,22 @@ class AuthManager {
                 try {
                     // Use local validation to avoid "window.julesApiCall is not a function"
                     await this.validateJulesKey(julesKey);
-                    localStorage.setItem('jules_api_key', julesKey);
+                    if (typeof window.saveJulesApiKey === 'function') {
+                        window.saveJulesApiKey(julesKey);
+                    } else {
+                        localStorage.setItem('jules_api_key', julesKey);
+                    }
                 } catch (julesErr) {
                     console.error("Jules validation failed:", julesErr);
                     throw new Error("Jules API Key inválida o error de conexión: " + julesErr.message);
                 }
             } else {
                 // Allow clearing the key
-                localStorage.removeItem('jules_api_key');
+                if (typeof window.removeJulesApiKey === 'function') {
+                    window.removeJulesApiKey();
+                } else {
+                    localStorage.removeItem('jules_api_key');
+                }
             }
 
             if (window.jQuery) window.jQuery('#settingsModal').modal('hide');
@@ -459,7 +471,7 @@ class AuthManager {
             if (editProfilePortfolio) editProfilePortfolio.value = member.portfolio || '';
 
             if (inputJulesKey) {
-                const storedKey = localStorage.getItem('jules_api_key') || '';
+                const storedKey = typeof window.getJulesApiKey === 'function' ? window.getJulesApiKey() : (localStorage.getItem('jules_api_key') || '');
                 if (storedKey.startsWith('nvapi-') || storedKey.startsWith('sk-')) {
                     inputJulesKey.value = '';
                     inputJulesKey.placeholder = 'Re-enter real Jules API key';
@@ -489,7 +501,11 @@ class AuthManager {
         if (julesKey) {
             // Separation: never save AI provider keys here
             if (!julesKey.startsWith('nvapi-') && !julesKey.startsWith('sk-')) {
-                localStorage.setItem('jules_api_key', julesKey);
+                if (typeof window.saveJulesApiKey === 'function') {
+                    window.saveJulesApiKey(julesKey);
+                } else {
+                    localStorage.setItem('jules_api_key', julesKey);
+                }
             } else {
                 console.warn('[AUTH] AI provider key blocked from jules_api_key slot');
             }

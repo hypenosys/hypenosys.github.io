@@ -309,6 +309,38 @@ permalink: /jules-panel/
           </button>
         </div>
       </div>
+
+      <div class="card glass" style="margin-top: 18px;">
+        <div class="card-head">
+          <div class="card-title">
+            <i class="fas fa-key mr-2" style="font-size: 14px; opacity: 0.7;"></i>
+            Jules API Key
+          </div>
+          <div id="jules-panel-api-key-state" aria-live="polite">
+              <span class="u-dot" style="background:var(--amber)"></span><span style="color:var(--amber)">No configurada</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <p style="font-size: 11px; color: var(--text3); margin-bottom: 15px;">Esta credencial se utiliza para consultar tus sesiones y repositorios de Jules. Se almacena de forma segura únicamente en este navegador local.</p>
+          <div class="form-group mb-3">
+              <label class="cfg-label" for="jules-panel-api-key-input">Credencial</label>
+              <div class="input-group" style="position: relative; display: flex;">
+                  <input type="password" id="jules-panel-api-key-input" class="cfg-input" style="padding-right: 40px; width: 100%;" placeholder="AIzaSy..." aria-label="Jules API Key">
+                  <button id="jules-panel-api-key-toggle" class="btn btn-ghost" type="button" aria-label="Mostrar API Key" aria-pressed="false" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); border: none; background: transparent; color: var(--text3); z-index: 10;">
+                      <i class="fas fa-eye"></i>
+                  </button>
+              </div>
+          </div>
+          <div style="display: flex; gap: 8px; margin-top: 15px;">
+              <button class="btn btn-primary" id="btn-save-jules-api-key" style="flex: 1; justify-content: center; font-size: 12px; padding: 10px;">
+                  <i class="fas fa-save mr-2"></i> Guardar Key
+              </button>
+              <button class="btn btn-ghost" id="btn-delete-jules-api-key" style="color: var(--red); border: 1px solid rgba(239, 68, 68, 0.2); justify-content: center; font-size: 12px; padding: 10px;">
+                  <i class="fas fa-trash mr-2"></i> Borrar
+              </button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- ─── NEURAL VIEW (Tarea + Telemetry) ─── -->
@@ -998,7 +1030,185 @@ permalink: /jules-panel/
                 window.setupProfileSelector();
                 window.setupApiModalEnhancements();
             }
+
+            // Hydrate Jules API Key card
+            const julesKeyInput = document.getElementById('jules-panel-api-key-input');
+            if (julesKeyInput) {
+                const storedKey = typeof window.getJulesApiKey === 'function' ? window.getJulesApiKey() : localStorage.getItem('jules_api_key');
+                if (typeof window.isJulesApiKeyValid === 'function' && window.isJulesApiKeyValid(storedKey)) {
+                    julesKeyInput.value = storedKey;
+                    window.julesApiAuthState = 'configured';
+                } else {
+                    julesKeyInput.value = '';
+                    window.julesApiAuthState = 'none';
+                }
+                if (typeof window.updateConfigCardStateIndicator === 'function') {
+                    window.updateConfigCardStateIndicator();
+                }
+            }
         };
+
+        // Jules API Key Card Actions & Toggle Password Visibility
+        const julesKeyToggle = document.getElementById('jules-panel-api-key-toggle');
+        if (julesKeyToggle) {
+            julesKeyToggle.onclick = () => {
+                const input = document.getElementById('jules-panel-api-key-input');
+                if (!input) return;
+                const isPressed = julesKeyToggle.getAttribute('aria-pressed') === 'true';
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    julesKeyToggle.setAttribute('aria-pressed', 'true');
+                    julesKeyToggle.setAttribute('aria-label', 'Ocultar API Key');
+                    julesKeyToggle.querySelector('i').className = 'fas fa-eye-slash';
+                } else {
+                    input.type = 'password';
+                    julesKeyToggle.setAttribute('aria-pressed', 'false');
+                    julesKeyToggle.setAttribute('aria-label', 'Mostrar API Key');
+                    julesKeyToggle.querySelector('i').className = 'fas fa-eye';
+                }
+            };
+        }
+
+        const btnSaveJulesKey = document.getElementById('btn-save-jules-api-key');
+        if (btnSaveJulesKey) {
+            btnSaveJulesKey.onclick = async () => {
+                const input = document.getElementById('jules-panel-api-key-input');
+                if (!input) return;
+                const val = input.value.trim();
+
+                if (!val) {
+                    showToast("Introduce una API Key válida", "amber");
+                    input.focus();
+                    return;
+                }
+
+                if (typeof window.isJulesApiKeyValid === 'function' && !window.isJulesApiKeyValid(val)) {
+                    showToast("Estructura de Jules API Key inválida", "red");
+                    return;
+                }
+
+                // Save
+                if (typeof window.saveJulesApiKey === 'function') {
+                    window.saveJulesApiKey(val);
+                } else {
+                    localStorage.setItem('jules_api_key', val);
+                }
+
+                // Reset backoff & retry
+                window.julesBackoffDelay = 5000;
+                if (typeof window.clearJulesRetry === 'function') {
+                    window.clearJulesRetry();
+                }
+
+                window.julesApiAuthState = 'configured';
+                if (typeof window.updateConfigCardStateIndicator === 'function') {
+                    window.updateConfigCardStateIndicator();
+                }
+
+                showToast("API Key guardada ✓", "green");
+
+                // Immediate single refresh
+                if (typeof fetchJulesSources === 'function') {
+                    await fetchJulesSources();
+                }
+                if (typeof refreshDashboard === 'function') {
+                    await refreshDashboard();
+                }
+
+                // Start Polling
+                if (typeof window.startJulesPolling === 'function') {
+                    window.startJulesPolling();
+                }
+            };
+        }
+
+        const btnDeleteJulesKey = document.getElementById('btn-delete-jules-api-key');
+        if (btnDeleteJulesKey) {
+            btnDeleteJulesKey.onclick = () => {
+                if (!confirm("¿Estás seguro de que deseas borrar la Jules API Key de este navegador?")) return;
+
+                const input = document.getElementById('jules-panel-api-key-input');
+                if (input) {
+                    input.value = '';
+                    input.type = 'password';
+                }
+
+                const toggleBtn = document.getElementById('jules-panel-api-key-toggle');
+                if (toggleBtn) {
+                    toggleBtn.setAttribute('aria-pressed', 'false');
+                    toggleBtn.setAttribute('aria-label', 'Mostrar API Key');
+                    const icon = toggleBtn.querySelector('i');
+                    if (icon) icon.className = 'fas fa-eye';
+                }
+
+                // Stop polling & clear caches/state
+                if (typeof window.stopJulesPolling === 'function') {
+                    window.stopJulesPolling();
+                }
+                if (typeof window.clearJulesRetry === 'function') {
+                    window.clearJulesRetry();
+                }
+
+                if (typeof window.removeJulesApiKey === 'function') {
+                    window.removeJulesApiKey();
+                } else {
+                    localStorage.removeItem('jules_api_key');
+                }
+
+                window.julesSessionsCache = [];
+                window.julesApiAuthState = 'none';
+                if (typeof window.updateConfigCardStateIndicator === 'function') {
+                    window.updateConfigCardStateIndicator();
+                }
+
+                // Clear cached sessions list
+                localStorage.removeItem('jules_sessions_cache');
+
+                // Transition UI to pending-config immediately
+                if (typeof window.setJulesDashboardState === 'function') {
+                    window.setJulesDashboardState('pending-config');
+                }
+
+                // Refresh repo listing immediately
+                if (typeof fetchJulesSources === 'function') {
+                    fetchJulesSources();
+                }
+
+                showToast("API Key eliminada con éxito", "amber");
+            };
+        }
+
+        // Support Cross-Tab Sync via Storage Event
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'jules_api_key') {
+                const newVal = e.newValue;
+                const input = document.getElementById('jules-panel-api-key-input');
+                if (input) {
+                    input.value = newVal || '';
+                }
+                if (newVal) {
+                    window.julesApiAuthState = 'configured';
+                    if (typeof window.updateConfigCardStateIndicator === 'function') {
+                        window.updateConfigCardStateIndicator();
+                    }
+                    if (typeof fetchJulesSources === 'function') fetchJulesSources();
+                    if (typeof refreshDashboard === 'function') refreshDashboard();
+                    if (typeof window.startJulesPolling === 'function') window.startJulesPolling();
+                } else {
+                    window.julesApiAuthState = 'none';
+                    if (typeof window.updateConfigCardStateIndicator === 'function') {
+                        window.updateConfigCardStateIndicator();
+                    }
+                    if (typeof window.stopJulesPolling === 'function') window.stopJulesPolling();
+                    window.julesSessionsCache = [];
+                    localStorage.removeItem('jules_sessions_cache');
+                    if (typeof window.setJulesDashboardState === 'function') {
+                        window.setJulesDashboardState('pending-config');
+                    }
+                    if (typeof fetchJulesSources === 'function') fetchJulesSources();
+                }
+            }
+        });
 
         // Listen for AuthManager readiness
         document.addEventListener("authReady", (e) => {
