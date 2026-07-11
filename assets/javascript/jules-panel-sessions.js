@@ -379,9 +379,6 @@ async function refreshJulesDataCoordinated() {
         // Successfully loaded! Update state
         window.julesApiAuthState = 'authenticated';
         resetJulesBackoff();
-        if (typeof window.startJulesPolling === 'function') {
-            window.startJulesPolling();
-        }
 
         // Check generation before saving sessions
         if (currentGeneration !== window.julesRequestGeneration) return;
@@ -449,8 +446,28 @@ async function refreshJulesDataCoordinated() {
 
         const activeRepo = localStorage.getItem('hypenosys_active_repo');
         if (activeRepo && typeof window.selectRepo === 'function') {
-            // Restore active repository
-            window.selectRepo(activeRepo);
+            // Check if we actually need to load/select this repository context
+            const activeCanonical = window.getCanonicalRepoName ? window.getCanonicalRepoName(activeRepo) : activeRepo.toLowerCase();
+            const loadedCanonical = window._loadedRepoContext;
+
+            const branchSelect = document.getElementById('branch-sel') || document.getElementById('branch-selector');
+            const branchSelectRepo = branchSelect ? branchSelect.dataset.repo : null;
+            const branchSelectHasOptions = branchSelect ? (branchSelect.options.length > 0 && branchSelect.value !== "") : false;
+            const branchSelectIsLoadingOrError = branchSelect ? (branchSelect.innerHTML.includes("Cargando") || branchSelect.innerHTML.includes("No se pudieron")) : true;
+
+            const needsSelection = !loadedCanonical ||
+                                   loadedCanonical !== activeCanonical ||
+                                   branchSelectRepo !== activeCanonical ||
+                                   !branchSelectHasOptions ||
+                                   branchSelectIsLoadingOrError;
+
+            if (needsSelection) {
+                console.log("[JULES-REPO] Selecting and restoring active repository context: " + activeRepo);
+                window.selectRepo(activeRepo);
+            } else {
+                // Ensure only visual selection state is highlighted, without re-loading branches or configuration side-effects
+                window.selectRepo(activeRepo, true);
+            }
         }
 
         // Broadcast sessions sync
@@ -1123,9 +1140,9 @@ async function handleJulesApiKeyChanged(newKey) {
         // 4. Ejecutar exactamente un refresh coordinado
         await refreshJulesDataCoordinated();
 
-        // 5. Iniciar polling sólo si el resultado fue exitoso (ready o empty)
+        // 5. Iniciar polling sólo si el resultado fue exitoso (ready o empty) y no hay un intervalo activo
         const successStates = ['ready', 'empty'];
-        if (window.julesApiAuthState === 'authenticated' && successStates.includes(window.currentJulesState)) {
+        if (window.julesApiAuthState === 'authenticated' && successStates.includes(window.currentJulesState) && !window.sessionPollInterval) {
             if (typeof startJulesPolling === 'function') startJulesPolling();
         }
     }

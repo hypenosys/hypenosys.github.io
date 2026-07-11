@@ -138,13 +138,15 @@ window.parseRepoFullName = function(fullName) {
     return { owner: 'hypenosys', repo: parts[0] };
 };
 
+window._warnedUnknownJulesStatuses = window._warnedUnknownJulesStatuses || new Set();
+
 window.normalizeJulesStatus = function(state) {
     if (!state) return 'pending';
     const s = String(state).toLowerCase().trim().replace(/_/g, '');
 
     // Mapeos definidos por requerimiento
     const map = {
-        'pending': ['pending', 'queued', 'created', 'scheduled', 'waiting', 'ready'],
+        'pending': ['pending', 'queued', 'created', 'scheduled', 'waiting', 'ready', 'paused'],
         'running': ['running', 'active', 'started', 'working', 'processing', 'inprogress', 'executing', 'planning'],
         'done':    ['done', 'completed', 'complete', 'success', 'succeeded', 'finished'],
         'error':   ['error', 'failed', 'blocked', 'cancelled', 'canceled', 'timeout', 'expired', 'rejected']
@@ -155,7 +157,11 @@ window.normalizeJulesStatus = function(state) {
     }
 
     // Fallback para estados desconocidos
-    console.warn("[JULES-STATUS] Estado desconocido:", state);
+    const upperState = String(state).toUpperCase().trim();
+    if (!window._warnedUnknownJulesStatuses.has(upperState)) {
+        window._warnedUnknownJulesStatuses.add(upperState);
+        console.warn("[JULES-STATUS] Estado desconocido:", state);
+    }
     return 'pending'; // Columna segura por defecto
 }
 

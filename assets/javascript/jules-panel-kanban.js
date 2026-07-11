@@ -2,6 +2,8 @@
    JULES PANEL KANBAN UI
    ════════════════════════════════════════ */
 
+window._julesOwnershipWarningShown = window._julesOwnershipWarningShown || false;
+
 window.refreshKanban = async function() {
     try {
         const sessions = window.julesSessionsCache || [];
@@ -146,7 +148,10 @@ function renderKanban(sessions) {
     });
 
     if (!hasOwnershipData && allSessions.length > 0) {
-        console.warn("[JULES-KANBAN] No ownership data found in sessions. Showing all.");
+        if (!window._julesOwnershipWarningShown) {
+            console.warn("[JULES-KANBAN] No ownership data found in sessions. Showing all.");
+            window._julesOwnershipWarningShown = true;
+        }
         // Optional: show a small notice in the UI
     }
 

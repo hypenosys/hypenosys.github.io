@@ -625,7 +625,10 @@ window.launchSession = async function() {
 }
 
 window.startJulesPolling = function() {
-    window.stopJulesPolling(); // Clear existing to prevent duplicates
+    if (window.sessionPollInterval) {
+        console.log("[JULES-POLLING] Polling already active; skipping start.");
+        return;
+    }
 
     const key = typeof window.getJulesApiKey === 'function' ? window.getJulesApiKey() : localStorage.getItem('jules_api_key');
     if (typeof window.isJulesApiKeyValid === 'function' && !window.isJulesApiKeyValid(key)) {
