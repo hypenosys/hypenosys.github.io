@@ -61,81 +61,174 @@ function startAutoRefresh() {
   setInterval(refreshDashboardData, REFRESH_INTERVAL_MS);
 }
 
+const activeMigrations = new Map();
+
 /**
- * Migrates tasks from schema 1.0.0 to 1.2.0
+ * Pure function to transform task schemas from 1.0.0/1.1.0 to 1.2.0
  */
-async function migrateTasks(data) {
-    if (!data || !data.schema_version) return data;
-    let isDirty = false;
-
-    if (data.schema_version === "1.0.0" || data.schema_version === "1.1.0") {
-        console.log(`[MIGRATION] Upgrading from ${data.schema_version} to 1.2.0`);
-        isDirty = true;
-
-        const tasks = data.tasks || [];
-        tasks.forEach(task => {
-            if (!task.title) {
-                let desc = task.descripcion || "";
-                let title = desc.substring(0, 60);
-                if (desc.length > 60) {
-                    const lastSpace = title.lastIndexOf(' ');
-                    if (lastSpace > 0) title = title.substring(0, lastSpace);
-                }
-                task.title = title.trim() || "Sin título";
-            }
-
-            if (task.due_date === undefined) task.due_date = task.limite || null;
-            if (task.start_date === undefined) task.start_date = null;
-            if (task.estimated_hours === undefined) task.estimated_hours = null;
-            if (task.story_points === undefined) task.story_points = null;
-            if (task.task_type === undefined) task.task_type = "feature";
-            if (task.tags === undefined) task.tags = [];
-            if (task.blocks === undefined) task.blocks = [];
-            if (task.blocked_by === undefined) task.blocked_by = [];
-            if (task.acceptance_criteria === undefined) task.acceptance_criteria = "";
-            if (task.external_links === undefined) task.external_links = [];
-            if (task.subtasks === undefined) task.subtasks = [];
-            if (task.comments === undefined) task.comments = [];
-            if (task.change_log === undefined) task.change_log = [];
-
-            // New fields for 1.2.0
-            if (task.jules_session === undefined) task.jules_session = null;
-            if (task.repository === undefined) task.repository = "";
-            if (task.branch === undefined) task.branch = "Programación (PRO)";
-
-            if (task.comentario) {
-                const blockedByRegex = /#BLOCKED_BY:(\d+)/g;
-                let match;
-                while ((match = blockedByRegex.exec(task.comentario)) !== null) {
-                    if (!task.blocked_by.includes(match[1])) task.blocked_by.push(match[1]);
-                }
-                const blocksRegex = /#BLOCKS:(\d+)/g;
-                while ((match = blocksRegex.exec(task.comentario)) !== null) {
-                    if (!task.blocks.includes(match[1])) task.blocks.push(match[1]);
-                }
-                task.comentario = task.comentario
-                    .replace(/#BLOCKED_BY:\d+/g, '')
-                    .replace(/#BLOCKS:\d+/g, '')
-                    .trim();
-            }
-        });
-
-        data.schema_version = "1.2.0";
+function migrateTasksSchema(data) {
+    if (!data || !data.schema_version) {
+        return {
+            content: data,
+            changed: false,
+            previousVersion: null,
+            targetVersion: '1.2.0'
+        };
     }
 
-    if (isDirty) {
-        try {
-            console.log(`[MIGRATION] Persisting schema changes to GitHub...`);
-            await window.githubApi.atomicWrite('_data/dashboard_tasks.json', data, `chore: migrate dashboard_tasks.json to schema 1.2.0`);
-            if (window.hypeToast) {
-                window.hypeToast(`Schema migrado: ${data.tasks.length} tareas actualizadas`, 'success');
-            }
-        } catch (err) {
-            console.error(`[MIGRATION] Failed to persist migration:`, err);
+    // Safe deep clone
+    let cloned;
+    try {
+        if (typeof structuredClone === 'function') {
+            cloned = structuredClone(data);
+        } else {
+            cloned = JSON.parse(JSON.stringify(data));
         }
+    } catch (e) {
+        console.error('[MIGRATION] Failed to clone data:', e);
+        return {
+            content: data,
+            changed: false,
+            previousVersion: null,
+            targetVersion: '1.2.0'
+        };
     }
 
-    return data;
+    const version = cloned.schema_version;
+    if (version !== "1.0.0" && version !== "1.1.0") {
+        return {
+            content: cloned,
+            changed: false,
+            previousVersion: null,
+            targetVersion: '1.2.0'
+        };
+    }
+
+    const tasks = cloned.tasks || [];
+    tasks.forEach(task => {
+        if (!task.title) {
+            let desc = task.descripcion || "";
+            let title = desc.substring(0, 60);
+            if (desc.length > 60) {
+                const lastSpace = title.lastIndexOf(' ');
+                if (lastSpace > 0) title = title.substring(0, lastSpace);
+            }
+            task.title = title.trim() || "Sin título";
+        }
+
+        if (task.due_date === undefined) task.due_date = task.limite || null;
+        if (task.start_date === undefined) task.start_date = null;
+        if (task.estimated_hours === undefined) task.estimated_hours = null;
+        if (task.story_points === undefined) task.story_points = null;
+        if (task.task_type === undefined) task.task_type = "feature";
+        if (task.tags === undefined) task.tags = [];
+        if (task.blocks === undefined) task.blocks = [];
+        if (task.blocked_by === undefined) task.blocked_by = [];
+        if (task.acceptance_criteria === undefined) task.acceptance_criteria = "";
+        if (task.external_links === undefined) task.external_links = [];
+        if (task.subtasks === undefined) task.subtasks = [];
+        if (task.comments === undefined) task.comments = [];
+        if (task.change_log === undefined) task.change_log = [];
+
+        // New fields for 1.2.0
+        if (task.jules_session === undefined) task.jules_session = null;
+        if (task.repository === undefined) task.repository = "";
+        if (task.branch === undefined) task.branch = "Programación (PRO)";
+
+        if (task.comentario) {
+            const blockedByRegex = /#BLOCKED_BY:(\d+)/g;
+            let match;
+            while ((match = blockedByRegex.exec(task.comentario)) !== null) {
+                const idStr = String(match[1]);
+                if (!task.blocked_by.includes(idStr)) task.blocked_by.push(idStr);
+            }
+            const blocksRegex = /#BLOCKS:(\d+)/g;
+            while ((match = blocksRegex.exec(task.comentario)) !== null) {
+                const idStr = String(match[1]);
+                if (!task.blocks.includes(idStr)) task.blocks.push(idStr);
+            }
+            task.comentario = task.comentario
+                .replace(/#BLOCKED_BY:\d+/g, '')
+                .replace(/#BLOCKS:\d+/g, '')
+                .trim();
+        }
+    });
+
+    cloned.schema_version = "1.2.0";
+
+    return {
+        content: cloned,
+        changed: true,
+        previousVersion: version,
+        targetVersion: '1.2.0'
+    };
+}
+
+/**
+ * Path-aware schema migration wrapper. Uses a local activeMigrations Map to prevent concurrent overlapping executions on the same file path.
+ */
+async function migrateTasks(data, filePath) {
+    if (!filePath) {
+        console.error('[MIGRATION] Cannot run migration: filePath is missing.');
+        return data;
+    }
+
+    // Preliminary check to avoid entering write flow if not needed
+    const preCheck = migrateTasksSchema(data);
+    if (!preCheck.changed) {
+        // No migration needed
+        return preCheck.content;
+    }
+
+    // Check if migration is already in flight for this filePath
+    if (activeMigrations.has(filePath)) {
+        console.log(`[MIGRATION] Migration already in progress for ${filePath}, waiting/reusing promise...`);
+        return activeMigrations.get(filePath);
+    }
+
+    const migrationPromise = (async () => {
+        try {
+            console.log(`[MIGRATION] Starting schema migration for ${filePath} from ${preCheck.previousVersion} to 1.2.0...`);
+
+            // atomicWrite will fetch the freshest remoteContent and execute mutatorFn.
+            // Our mutatorFn will call migrateTasksSchema on that fresh remote content.
+            const result = await window.githubApi.atomicWrite(
+                filePath,
+                (remoteContent) => {
+                    const migration = migrateTasksSchema(remoteContent);
+                    return {
+                        content: migration.content,
+                        changed: migration.changed
+                    };
+                },
+                `chore: migrate ${filePath} to schema 1.2.0`,
+                { recomputeStats: false }
+            );
+
+            if (result.success && result.changed) {
+                console.log(`[MIGRATION] Successfully persisted migration for ${filePath}`);
+                if (window.hypeToast) {
+                    window.hypeToast(`Schema migrado en ${filePath}: ${result.content.tasks.length} tareas actualizadas`, 'success');
+                }
+            } else {
+                console.log(`[MIGRATION] Migration was a no-op or already applied by another tab for ${filePath}`);
+            }
+
+            return result.content;
+        } catch (err) {
+            console.error(`[MIGRATION] Failed to persist migration for ${filePath}:`, err);
+            // Fallback to locally migrated data if saving fails, so the app can still try to render
+            return preCheck.content;
+        }
+    })();
+
+    activeMigrations.set(filePath, migrationPromise);
+
+    try {
+        return await migrationPromise;
+    } finally {
+        activeMigrations.delete(filePath);
+    }
 }
 
 /**
@@ -180,8 +273,8 @@ async function refreshDashboardData() {
       fetch('/assets/data/team_profiles.json').then(res => res.json().then(data => ({ content: data })))
     ]);
 
-    const migratedTasksData = await migrateTasks(tasksRes.content);
-    const migratedArchiveData = await migrateTasks(archiveRes.content);
+    const migratedTasksData = await migrateTasks(tasksRes.content, '_data/dashboard_tasks.json');
+    const migratedArchiveData = await migrateTasks(archiveRes.content, '_data/dashboard_tasks_archive.json');
 
     const newTasks = migratedTasksData.tasks || [];
     const newArchive = migratedArchiveData.tasks || [];
