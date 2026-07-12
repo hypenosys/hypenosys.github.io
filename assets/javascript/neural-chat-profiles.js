@@ -45,14 +45,13 @@ window.loadProfiles = async function() {
 }
 
 window.renderProfileDropdown = function() {
-    const list1 = document.getElementById('profile-list');
-    const list2 = document.getElementById('profile-list-chat');
-    if (!list1 && !list2) return;
+    const list = document.getElementById('profile-list');
+    if (!list) return;
 
     const profiles = JSON.parse(localStorage.getItem('ai_profiles') || '{}');
     const activeId = localStorage.getItem('activeProfile');
 
-    const html = Object.values(profiles).map(p => {
+    list.innerHTML = Object.values(profiles).map(p => {
         const isNvidia = p.provider === 'nvidia_nim' || p.id === 'nvidia-nim' || p.id === 'nvidia-nim-default';
         const isOllama = p.id === 'ollama-local' || p.provider === 'ollama';
         const icon = isOllama ? '🟢' : (isNvidia ? '⚡' : '👤');
@@ -100,9 +99,6 @@ window.renderProfileDropdown = function() {
             </div>
         `;
     }).join('');
-
-    if (list1) list1.innerHTML = html;
-    if (list2) list2.innerHTML = html;
 }
 
 window.selectProfile = function(id) {
@@ -195,7 +191,6 @@ window.detectModelType = function(modelId) {
 
 window.updateActiveProfileUI = function(config) {
     const nameEl = document.getElementById('active-profile-name');
-    const chatNameEl = document.getElementById('active-profile-name-chat');
     const mobNameEl = document.getElementById('mob-active-profile-name');
 
     let text = 'CONFIG IA';
@@ -212,10 +207,6 @@ window.updateActiveProfileUI = function(config) {
 
     if (nameEl) {
         nameEl.textContent = text === 'CONFIG IA' ? 'ANTHROPIC' : text; // Desktop fallback to Anthropic label if empty for legacy
-    }
-
-    if (chatNameEl) {
-        chatNameEl.textContent = text === 'CONFIG IA' ? 'ANTHROPIC' : text;
     }
 
     if (mobNameEl) {
