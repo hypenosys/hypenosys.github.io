@@ -1078,6 +1078,15 @@ window.deleteJulesPanelSession = function(event, id) {
 
 window.linkedHistoryLoadRevision = 0;
 
+window.escapeHtml = function(text) {
+    if (!text || typeof text !== 'string') return '';
+    return text.replace(/&/g, "&amp;")
+               .replace(/</g, "&lt;")
+               .replace(/>/g, "&gt;")
+               .replace(/"/g, "&quot;")
+               .replace(/'/g, "&#039;");
+};
+
 window.resolveLinkedJulesId = function(conversation) {
     if (!conversation) return null;
     return conversation.linkedJulesTaskId ||
@@ -1116,17 +1125,48 @@ window.normalizeJulesActivity = function(raw, sessionId) {
     } else if (act.role === 'assistant' || act.role === 'agent' || act.agentMessaged) {
         originator = 'agent';
     }
-    act.originator = originator;
+    act.originator = window.escapeHtml(originator);
 
     // Ensure description / content mapping
     const contentText = act.description || act.content || act.text || '';
-    act.description = contentText;
+    act.description = window.escapeHtml(contentText);
 
     // Normalize userMessaged / agentMessaged from generic message/role shapes
     if (originator === 'user' && !act.userMessaged) {
-        act.userMessaged = { userMessage: contentText };
+        act.userMessaged = { userMessage: act.description };
     } else if (originator === 'agent' && !act.agentMessaged) {
-        act.agentMessaged = { agentMessage: contentText };
+        act.agentMessaged = { agentMessage: act.description };
+    } else {
+        if (act.userMessaged) act.userMessaged.userMessage = window.escapeHtml(act.userMessaged.userMessage || '');
+        if (act.agentMessaged) act.agentMessaged.agentMessage = window.escapeHtml(act.agentMessaged.agentMessage || '');
+    }
+
+    if (act.progressUpdated) {
+        act.progressUpdated.title = window.escapeHtml(act.progressUpdated.title || '');
+        act.progressUpdated.description = window.escapeHtml(act.progressUpdated.description || '');
+    }
+
+    if (act.planGenerated && act.planGenerated.plan && Array.isArray(act.planGenerated.plan.steps)) {
+        act.planGenerated.plan.steps.forEach(s => {
+            s.title = window.escapeHtml(s.title || '');
+            s.description = window.escapeHtml(s.description || '');
+        });
+    }
+
+    if (act.sessionFailed) {
+        act.sessionFailed.reason = window.escapeHtml(act.sessionFailed.reason || '');
+    }
+
+    if (act.artifacts && Array.isArray(act.artifacts)) {
+        act.artifacts.forEach(art => {
+            if (art.changeSet && art.changeSet.gitPatch) {
+                art.changeSet.gitPatch.suggestedCommitMessage = window.escapeHtml(art.changeSet.gitPatch.suggestedCommitMessage || '');
+            }
+            if (art.bashOutput) {
+                art.bashOutput.command = window.escapeHtml(art.bashOutput.command || '');
+                art.bashOutput.output = window.escapeHtml(art.bashOutput.output || '');
+            }
+        });
     }
 
     return act;
@@ -1312,10 +1352,21 @@ window.loadAndRenderJulesSession = async function(sid, forceScroll = false) {
             return;
         }
 
-        // Save to cache
-        localStorage.setItem(`jules_activities_cache_${cleanSid}`, JSON.stringify(freshRawActivities));
+        // Merge fresh activities with cached activities to prevent losing any historical records
+        let mergedFresh = [...freshRawActivities];
+        if (cachedActivities && cachedActivities.length > 0) {
+            cachedActivities.forEach(cached => {
+                const exists = mergedFresh.some(fresh => (fresh.id && fresh.id === cached.id) || (fresh.messageId && fresh.messageId === cached.messageId));
+                if (!exists) {
+                    mergedFresh.push(cached);
+                }
+            });
+        }
 
-        let mergedRaw = [...freshRawActivities];
+        // Save merged list to cache
+        localStorage.setItem(`jules_activities_cache_${cleanSid}`, JSON.stringify(mergedFresh));
+
+        let mergedRaw = [...mergedFresh];
         try {
             const sessionData = await window.julesApi.getSession(targetSessionName);
             if (sessionData) {

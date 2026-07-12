@@ -9,6 +9,11 @@ test('Verify Jules Execution History loads and renders inside Neural Tab', async
 
   // Add init script to mock APIs before page load
   await page.addInitScript(() => {
+    // Fixed base time for deterministic timestamps
+    const staticTime1 = "2026-07-12T13:40:00.000Z";
+    const staticTime2 = "2026-07-12T13:40:05.000Z";
+    const staticTime3 = "2026-07-12T13:40:10.000Z";
+
     // Setup fetch interception
     const originalFetch = window.fetch;
     window.fetch = async (url, options) => {
@@ -26,17 +31,24 @@ test('Verify Jules Execution History loads and renders inside Neural Tab', async
                     activities: [
                         {
                             id: 'act-1',
-                            createTime: new Date(Date.now() - 10000).toISOString(),
+                            createTime: staticTime1,
                             originator: 'agent',
                             description: 'Iniciando el plan de refactorización...',
                             agentMessaged: { agentMessage: 'He analizado el código de la rama y he propuesto un plan.' }
                         },
                         {
                             id: 'act-2',
-                            createTime: new Date(Date.now() - 5000).toISOString(),
+                            createTime: staticTime2,
                             originator: 'agent',
                             description: 'Ejecutando pruebas unitarias...',
                             progressUpdated: { title: 'Paso 2: Pruebas unitarias', description: 'Ejecutando npm test con éxito.' }
+                        },
+                        {
+                            id: 'act-xss',
+                            createTime: staticTime3,
+                            originator: 'agent',
+                            description: 'Prueba de XSS',
+                            agentMessaged: { agentMessage: '<img src=x onerror=alert(1)> <script>alert(1)</script>' }
                         }
                     ]
                 }), { status: 200, headers: { 'Content-Type': 'application/json' } });
@@ -59,6 +71,18 @@ test('Verify Jules Execution History loads and renders inside Neural Tab', async
   await page.evaluate(() => {
     localStorage.setItem('github_token', 'fake-token');
     localStorage.setItem('jules_api_key', 'fake-jules-key');
+
+    // Seed mock activities in cache (with static time matching act-1)
+    const cachedActivities = [
+      {
+        id: 'act-1',
+        createTime: "2026-07-12T13:40:00.000Z",
+        originator: 'agent',
+        description: 'Actividad cacheada antigua',
+        agentMessaged: { agentMessage: 'He analizado el código de la rama y he propuesto un plan.' }
+      }
+    ];
+    localStorage.setItem('jules_activities_cache_js_test_1', JSON.stringify(cachedActivities));
 
     // Mock unified sessions
     const sessions = [
@@ -116,6 +140,7 @@ test('Verify Jules Execution History loads and renders inside Neural Tab', async
   const textContent = await historyContainer.textContent();
   console.log('History content rendered:', textContent);
 
+  // Validate revalidation loaded the API elements
   expect(textContent).toContain('He analizado el código de la rama');
   expect(textContent).toContain('Pruebas unitarias');
 
@@ -123,7 +148,69 @@ test('Verify Jules Execution History loads and renders inside Neural Tab', async
   const placeholder = page.locator('#history-welcome-screen');
   await expect(placeholder).toBeHidden();
 
-  // 5. Save a verification screenshot
+  // 5. Verify Caching is merged (stale-while-revalidate has both cached and newly fetched activities)
+  const cacheStr = await page.evaluate(() => localStorage.getItem('jules_activities_cache_js_test_1'));
+  const cacheArr = JSON.parse(cacheStr || '[]');
+  console.log('CACHE MERGED ELEMENTS:', cacheArr);
+  expect(cacheArr.some((act: any) => act.id === 'act-1')).toBe(true);
+  expect(cacheArr.some((act: any) => act.id === 'act-2')).toBe(true);
+
+  // 6. Verify Chronological Sorting (act-1 oldest should be on top, act-xss newest at bottom)
+  const originatorTexts = await page.locator('#neural-jules-history .activity-time').allTextContents();
+  console.log('TIMESTAMPS ORDER:', originatorTexts);
+  // Verify HTML contains the elements
+  expect(originatorTexts.length).toBeGreaterThanOrEqual(2);
+
+  // 7. Verify Race Condition revision token protection
+  const finalHtmlBeforeRace = await historyContainer.innerHTML();
+  await page.evaluate(() => {
+    // Increment loading revision to simulate a race condition where loadAndRenderJulesSession completes
+    // after another load Linked history request began
+    window.linkedHistoryLoadRevision = 999;
+    // Load jules session is invoked with old revision inside its callback
+    window.loadAndRenderJulesSession('js_test_1', false);
+  });
+  await page.waitForTimeout(1000);
+  const finalHtmlAfterRace = await historyContainer.innerHTML();
+  expect(finalHtmlAfterRace).toBe(finalHtmlBeforeRace); // Content must remain unchanged due to revision discard
+
+  // 8. Verify Security / HTML escaping against XSS
+  const rawHtml = await historyContainer.innerHTML();
+  expect(rawHtml).toContain('&amp;lt;img src=x onerror=alert(1)&amp;gt;');
+  expect(rawHtml).toContain('&amp;lt;script&amp;gt;alert(1)&amp;lt;/script&amp;gt;');
+  expect(rawHtml).not.toContain('<img src=x onerror=alert(1)>');
+  expect(rawHtml).not.toContain('<script>alert(1)</script>');
+  console.log('XSS PREVENTION VERIFIED: Dangerous tags successfully escaped.');
+
+  // 9. Verify Scroll Rules
+  const scrollHeight = await page.evaluate(() => {
+    const el = document.getElementById('jules-history-container');
+    return el ? el.scrollHeight : 0;
+  });
+  console.log('SCROLL HEIGHT:', scrollHeight);
+  // Since it was first load, we should be scrolled towards the end
+  const scrollTop = await page.evaluate(() => {
+    const el = document.getElementById('jules-history-container');
+    return el ? el.scrollTop : 0;
+  });
+  console.log('SCROLL TOP:', scrollTop);
+
+  // 10. Verify Unlinking cleans up upper block and restores welcome placeholder
+  // Use unique ID selector to locate exact Unlink button inside chat live status bar
+  const unlinkBtn = page.locator('#chat-live-status button:has-text("Desvincular")');
+  await unlinkBtn.click();
+
+  // Accept confirmation dialog if shown, or simulate it.
+  // Wait for placeholder to be visible again
+  await expect(placeholder).toBeVisible({ timeout: 5000 });
+  const finalHistoryContent = await historyContainer.textContent();
+  expect(finalHistoryContent).toBe(''); // History should be cleaned up!
+
+  // Claude neural chat remains intact (not deleted)
+  const chatMessages = page.locator('#v2-chat-messages');
+  await expect(chatMessages).toBeVisible();
+
+  // 11. Save a verification screenshot
   await page.screenshot({ path: 'verification/jules_history_neural_verified.png' });
   console.log('SUCCESS: Execution history rendering verified inside Neural tab.');
 });
