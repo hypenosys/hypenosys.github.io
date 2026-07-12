@@ -124,6 +124,10 @@ window.initJulesPanelNeuralChat = function() {
     if (window._julesPanelNeuralInitialized) {
         window.renderNeuralChatHistory();
         setNeuralProcessingState(false);
+        const session = window.julesPanelSessions.find(s => s.id === window.currentJulesPanelSessionId);
+        if (session) {
+            window.loadLinkedJulesHistoryForConversation(session);
+        }
         return;
     }
     console.log("[Jules Panel Neural] Initializing...");
@@ -165,8 +169,15 @@ window.initJulesPanelNeuralChat = function() {
     window.addEventListener('julesActivitiesUpdated', (e) => {
         const { sessionId, activities } = e.detail;
         const currentJulesSid = getLinkedJulesSessionId();
-        if (sessionId === currentJulesSid) {
-            _syncJulesActivitiesToSession(activities);
+        const cleanSessionId = sessionId ? sessionId.replace('sessions/', '') : '';
+        const cleanCurrentJulesSid = currentJulesSid ? currentJulesSid.replace('sessions/', '') : '';
+
+        if (cleanSessionId === cleanCurrentJulesSid && cleanCurrentJulesSid) {
+            if (activities) {
+                localStorage.setItem(`jules_activities_cache_${cleanCurrentJulesSid}`, JSON.stringify(activities));
+            }
+            window.loadAndRenderJulesSession(cleanCurrentJulesSid, false);
+            _syncJulesActivitiesToSession(activities || []);
         }
     });
 
@@ -175,6 +186,10 @@ window.initJulesPanelNeuralChat = function() {
             window.loadJulesPanelSessions();
             if ($('sessions-drawer')?.classList.contains('open')) {
                 window.renderJulesPanelSessionDrawerList();
+            }
+            const session = window.julesPanelSessions.find(s => s.id === window.currentJulesPanelSessionId);
+            if (session) {
+                window.loadLinkedJulesHistoryForConversation(session);
             }
         }
     });
@@ -193,6 +208,10 @@ window.initJulesPanelNeuralChat = function() {
         } else {
             window.renderChatV2Messages();
             window.renderNeuralChatHistory();
+            const session = window.julesPanelSessions.find(s => s.id === window.currentJulesPanelSessionId);
+            if (session) {
+                window.loadLinkedJulesHistoryForConversation(session);
+            }
         }
     };
 
@@ -295,6 +314,9 @@ window.loadJulesPanelSession = function(id, skipBroadcast = false) {
     window.renderNeuralChatHistory();
 
     if (window.updateSidebarContextLabel) window.updateSidebarContextLabel();
+
+    // Load execution history
+    window.loadLinkedJulesHistoryForConversation(session);
 }
 
 window.sendChatV2Msg = async function() {
@@ -950,6 +972,8 @@ window.linkClaudeToJulesTask = function(claudeId, julesTaskId, julesTaskTitle) {
         if (claudeId === window.currentJulesPanelSessionId) {
             localStorage.setItem('hy_neural_session_id', julesTaskId);
             window.renderChatV2Messages();
+            // Load execution history
+            window.loadLinkedJulesHistoryForConversation(session);
         }
 
         showToast("Conversación vinculada a la tarea de Jules", "green");
@@ -978,6 +1002,8 @@ window.unlinkClaudeFromJulesTask = function(claudeId) {
         if (claudeId === window.currentJulesPanelSessionId) {
             localStorage.removeItem('hy_neural_session_id');
             window.renderChatV2Messages();
+            // Load execution history
+            window.loadLinkedJulesHistoryForConversation(session);
         }
 
         showToast("Vínculo con Jules eliminado", "amber");
@@ -1044,4 +1070,303 @@ window.deleteJulesPanelSession = function(event, id) {
     } else if (window.confirm(confirmMsg)) {
         performDelete();
     }
+}
+
+/* ════════════════════════════════════════
+   CANONICAL HISTORY LOADER & NORMALIZER
+   ════════════════════════════════════════ */
+
+window.linkedHistoryLoadRevision = 0;
+
+window.resolveLinkedJulesId = function(conversation) {
+    if (!conversation) return null;
+    return conversation.linkedJulesTaskId ||
+           conversation.linkedJulesSessionId ||
+           conversation.julesTaskId ||
+           conversation.julesSessionId ||
+           conversation.metadata?.linkedJulesTaskId ||
+           conversation.metadata?.linkedJulesSessionId ||
+           conversation.metadata?.julesTaskId ||
+           conversation.metadata?.julesSessionId ||
+           localStorage.getItem('hy_neural_session_id_' + conversation.id);
+}
+
+window.normalizeJulesActivity = function(raw, sessionId) {
+    if (!raw) return null;
+
+    // Deep clone to avoid mutating the original
+    const act = JSON.parse(JSON.stringify(raw));
+
+    // Ensure session ID
+    act.sessionId = sessionId;
+
+    // Resolve createTime
+    const rawTime = act.createTime || act.create_time || act.timestamp || act.updateTime || act.update_time || act.createdAt || act.created_at;
+    act.createTime = rawTime ? new Date(rawTime).toISOString() : new Date().toISOString();
+
+    // Resolve id
+    if (!act.id) {
+        act.id = act.activityId || act.messageId || act.eventId || `gen-${sessionId}-${new Date(act.createTime).getTime()}-${Math.random().toString(36).substr(2, 9)}`;
+    }
+
+    // Resolve originator
+    let originator = act.originator || act.actor || 'system';
+    if (act.role === 'user' || act.userMessaged) {
+        originator = 'user';
+    } else if (act.role === 'assistant' || act.role === 'agent' || act.agentMessaged) {
+        originator = 'agent';
+    }
+    act.originator = originator;
+
+    // Ensure description / content mapping
+    const contentText = act.description || act.content || act.text || '';
+    act.description = contentText;
+
+    // Normalize userMessaged / agentMessaged from generic message/role shapes
+    if (originator === 'user' && !act.userMessaged) {
+        act.userMessaged = { userMessage: contentText };
+    } else if (originator === 'agent' && !act.agentMessaged) {
+        act.agentMessaged = { agentMessage: contentText };
+    }
+
+    return act;
+}
+
+window.generateActivitySignature = function(act) {
+    if (!act) return '';
+    const type = act.agentMessaged ? 'agent' : (act.userMessaged ? 'user' : (act.progressUpdated ? 'progress' : (act.planGenerated ? 'plan' : 'other')));
+    const content = act.agentMessaged?.agentMessage || act.userMessaged?.userMessage || act.progressUpdated?.title || act.description || '';
+    const ts = act.createTime ? new Date(act.createTime).getTime() : 0;
+    const actor = act.originator || '';
+    return `${type}-${ts}-${actor}-${content.substring(0, 100)}`;
+}
+
+window.deduplicateActivities = function(activities) {
+    if (!activities) return [];
+    const seenIds = new Set();
+    const seenSignatures = new Set();
+    const unique = [];
+
+    for (const act of activities) {
+        const id = act.id;
+        const sig = window.generateActivitySignature(act);
+
+        if (seenIds.has(id)) continue;
+        if (sig && seenSignatures.has(sig)) continue;
+
+        seenIds.add(id);
+        if (sig) seenSignatures.add(sig);
+        unique.push(act);
+    }
+    return unique;
+}
+
+window.renderJulesActivityToHTML = function(act) {
+    try {
+        if (window.JulesActivitiesModule && typeof window.JulesActivitiesModule.activityToHTML === 'function') {
+            return window.JulesActivitiesModule.activityToHTML(act);
+        }
+    } catch (e) {
+        console.warn("[Jules History] Failed rich render, falling back", e);
+    }
+    if (typeof window.renderActivityLine === 'function') {
+        return window.renderActivityLine(act);
+    }
+    return `<div class="jules-activity-entry"><div>${act.description || ''}</div></div>`;
+}
+
+window.clearLinkedJulesHistory = function() {
+    const historyContainer = document.getElementById('neural-jules-history');
+    if (historyContainer) historyContainer.innerHTML = '';
+    const welcomeScreen = document.getElementById('history-welcome-screen');
+    if (welcomeScreen) {
+        welcomeScreen.classList.remove('hidden');
+        welcomeScreen.style.display = 'flex';
+        welcomeScreen.innerHTML = `
+            <div style="font-size: 40px;">⚡</div>
+            <h3 style="font-family: var(--font-head); font-weight: 700; font-size: 16px;">Jules Execution History</h3>
+            <p style="max-width: 260px; font-size: 12px;">Aquí se mostrará el progreso real de Jules, cambios de código y logs de ejecución.</p>
+        `;
+    }
+}
+
+window.setJulesHistoryState = function(state, errorMsg = null) {
+    const historyContainer = document.getElementById('neural-jules-history');
+    const welcomeScreen = document.getElementById('history-welcome-screen');
+
+    if (!welcomeScreen) return;
+
+    if (state === 'none') {
+        window.clearLinkedJulesHistory();
+    } else if (state === 'loading') {
+        if (historyContainer) historyContainer.innerHTML = '';
+        welcomeScreen.classList.remove('hidden');
+        welcomeScreen.style.display = 'flex';
+        welcomeScreen.innerHTML = `
+            <div class="auth-loading-spinner" style="width: 24px; height: 24px; border-width: 2px; margin-bottom: 10px;"></div>
+            <h3 style="font-family: var(--font-head); font-weight: 700; font-size: 14px;">Cargando historial de Jules...</h3>
+            <p style="max-width: 260px; font-size: 11px; opacity: 0.7;">Buscando actividades en la caché y la API neural...</p>
+        `;
+    } else if (state === 'empty') {
+        if (historyContainer) historyContainer.innerHTML = '';
+        welcomeScreen.classList.remove('hidden');
+        welcomeScreen.style.display = 'flex';
+        welcomeScreen.innerHTML = `
+            <div style="font-size: 32px; margin-bottom: 10px;">📋</div>
+            <h3 style="font-family: var(--font-head); font-weight: 700; font-size: 14px;">Sin actividad todavía</h3>
+            <p style="max-width: 260px; font-size: 11px; opacity: 0.7;">Esta sesión está vinculada, pero aún no tiene actividades ni progreso registrado.</p>
+        `;
+    } else if (state === 'error') {
+        welcomeScreen.classList.add('hidden');
+        welcomeScreen.style.display = 'none';
+        if (historyContainer) {
+            historyContainer.innerHTML = `
+                <div class="jules-activity-entry" style="border-left: 3px solid var(--red); background: rgba(239, 68, 68, 0.05); padding: 12px; border-radius: 4px; margin: 10px 0;">
+                    <div style="color: var(--red); font-weight: bold; margin-bottom: 4px;"><i class="fas fa-exclamation-circle mr-2"></i> Error al cargar el historial</div>
+                    <div style="font-size: 11px; opacity: 0.8;">${errorMsg || 'No se pudo recuperar la información de la sesión Jules.'}</div>
+                </div>
+            `;
+        }
+    } else if (state === 'ready') {
+        welcomeScreen.classList.add('hidden');
+        welcomeScreen.style.display = 'none';
+    }
+}
+
+window.renderNormalizedActivities = function(normalizedList, forceScroll) {
+    const historyContainer = document.getElementById('neural-jules-history');
+    if (!historyContainer) return;
+
+    if (!normalizedList || normalizedList.length === 0) {
+        window.setJulesHistoryState('empty');
+        return;
+    }
+
+    window.setJulesHistoryState('ready');
+
+    const scrollContainer = document.getElementById('jules-history-container');
+    let isNearBottom = false;
+    if (scrollContainer) {
+        const distanceFromBottom = scrollContainer.scrollHeight - scrollContainer.scrollTop - scrollContainer.clientHeight;
+        isNearBottom = distanceFromBottom <= 120;
+    }
+
+    const sorted = [...normalizedList].sort((a, b) => {
+        return new Date(a.createTime).getTime() - new Date(b.createTime).getTime();
+    });
+
+    const html = sorted.map(act => window.renderJulesActivityToHTML(act)).join('');
+    historyContainer.innerHTML = html;
+
+    if (scrollContainer) {
+        if (forceScroll || isNearBottom) {
+            scrollContainer.scrollTop = scrollContainer.scrollHeight;
+        }
+    }
+}
+
+window.loadAndRenderJulesSession = async function(sid, forceScroll = false) {
+    if (!sid) {
+        window.clearLinkedJulesHistory();
+        return;
+    }
+
+    const revision = window.linkedHistoryLoadRevision;
+    const targetSessionName = sid.startsWith('sessions/') ? sid : 'sessions/' + sid;
+    const cleanSid = sid.replace('sessions/', '');
+
+    // 1. Load from cache (stale)
+    let cachedActivities = [];
+    try {
+        const cachedStr = localStorage.getItem(`jules_activities_cache_${cleanSid}`);
+        if (cachedStr) {
+            cachedActivities = JSON.parse(cachedStr);
+        }
+    } catch (e) {
+        console.warn("[Jules History] Failed to parse cached activities", e);
+    }
+
+    let renderedSignatures = '';
+    if (cachedActivities && cachedActivities.length > 0) {
+        const normalized = cachedActivities.map(act => window.normalizeJulesActivity(act, cleanSid)).filter(Boolean);
+        const unique = window.deduplicateActivities(normalized);
+        window.renderNormalizedActivities(unique, forceScroll);
+        renderedSignatures = unique.map(act => window.generateActivitySignature(act)).join('|');
+    } else {
+        window.setJulesHistoryState('loading');
+    }
+
+    // 2. Revalidate asynchronously
+    try {
+        const activityData = await window.julesApi.getActivities(targetSessionName, 100);
+        const freshRawActivities = activityData.activities || [];
+
+        if (revision !== window.linkedHistoryLoadRevision) {
+            console.log("[Jules History] Stale request discarded (revision changed)");
+            return;
+        }
+
+        const currentJulesSid = window.getLinkedJulesSessionId();
+        if (currentJulesSid !== cleanSid) {
+            console.log("[Jules History] Stale request discarded (active Jules ID changed)");
+            return;
+        }
+
+        // Save to cache
+        localStorage.setItem(`jules_activities_cache_${cleanSid}`, JSON.stringify(freshRawActivities));
+
+        let mergedRaw = [...freshRawActivities];
+        try {
+            const sessionData = await window.julesApi.getSession(targetSessionName);
+            if (sessionData) {
+                if (Array.isArray(sessionData.activities)) {
+                    mergedRaw = mergedRaw.concat(sessionData.activities);
+                }
+                if (Array.isArray(sessionData.messages)) {
+                    mergedRaw = mergedRaw.concat(sessionData.messages);
+                }
+                if (Array.isArray(sessionData.events)) {
+                    mergedRaw = mergedRaw.concat(sessionData.events);
+                }
+            }
+        } catch (sessErr) {
+            console.warn("[Jules History] Failed to load session details fallback", sessErr);
+        }
+
+        const normalized = mergedRaw.map(act => window.normalizeJulesActivity(act, cleanSid)).filter(Boolean);
+        const unique = window.deduplicateActivities(normalized);
+        const newSignatures = unique.map(act => window.generateActivitySignature(act)).join('|');
+
+        if (newSignatures !== renderedSignatures) {
+            window.renderNormalizedActivities(unique, forceScroll);
+        }
+    } catch (err) {
+        console.error("[Jules History] API refresh failed:", err);
+        if (revision === window.linkedHistoryLoadRevision && (!cachedActivities || cachedActivities.length === 0)) {
+            window.setJulesHistoryState('error', err.message);
+        }
+    }
+}
+
+window.loadLinkedJulesHistoryForConversation = function(conversation) {
+    window.linkedHistoryLoadRevision++;
+
+    if (!conversation) {
+        window.clearLinkedJulesHistory();
+        return;
+    }
+
+    const linkedId = window.resolveLinkedJulesId(conversation);
+    if (linkedId) {
+        window.JulesPanelState.activeSessionId = linkedId;
+    } else {
+        window.JulesPanelState.activeSessionId = null;
+    }
+
+    if (!linkedId) {
+        window.clearLinkedJulesHistory();
+        return;
+    }
+
+    window.loadAndRenderJulesSession(linkedId, true);
 }

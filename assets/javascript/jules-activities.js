@@ -251,7 +251,7 @@ const JulesActivitiesModule = (() => {
     }
   };
 
-  return { startPolling, stopPolling, sendMessage };
+  return { startPolling, stopPolling, sendMessage, activityToHTML: _activityToHTML };
 })();
 
 window.JulesActivitiesModule = JulesActivitiesModule;

@@ -1328,8 +1328,8 @@ window.getLinkedJulesSessionId = function() {
         // First check in session metadata (new unified way)
         const sessions = JSON.parse(localStorage.getItem('claude_chat_sessions') || '[]');
         const current = sessions.find(s => s.id === claudeId);
-        if (current && current.metadata && current.metadata.linkedJulesTaskId) {
-            return current.metadata.linkedJulesTaskId;
+        if (current) {
+            return window.resolveLinkedJulesId(current);
         }
         // Fallback to legacy mapping
         return localStorage.getItem('hy_neural_session_id_' + claudeId) || localStorage.getItem('hy_neural_session_id');
