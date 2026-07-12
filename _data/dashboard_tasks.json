@@ -1,6 +1,6 @@
 {
-  "schema_version": "1.0.0",
-  "last_updated": "2026-07-12T10:02:50.946Z",
+  "schema_version": "1.2.0",
+  "last_updated": "2026-07-12T10:42:41.965Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -98,7 +98,9 @@
           "new_value": ""
         }
       ],
-      "seccion": ""
+      "seccion": "",
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "rama": "docs/brainstorming-ideation",
@@ -231,7 +233,9 @@
         }
       ],
       "repository": "hypenosys/docs",
-      "seccion": "Videojuego"
+      "seccion": "Videojuego",
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "rama": "research/ue5-fundamentals",
@@ -318,7 +322,9 @@
           "new_value": 0.2
         }
       ],
-      "repository": "hypenosys/app"
+      "repository": "hypenosys/app",
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "rama": "PRO",
@@ -347,7 +353,23 @@
         "mitxel@hypenosys.com"
       ],
       "images": [],
-      "repository": null
+      "repository": null,
+      "title": "Engatusar a Dídac y Mitxel para que se unan al Tailscale",
+      "due_date": null,
+      "start_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "task_type": "feature",
+      "tags": [],
+      "blocks": [],
+      "blocked_by": [],
+      "acceptance_criteria": "",
+      "external_links": [],
+      "subtasks": [],
+      "comments": [],
+      "change_log": [],
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "rama": "chore/dev-env-setup",
@@ -424,7 +446,9 @@
         }
       ],
       "repository": "hypenosys/app",
-      "seccion": ""
+      "seccion": "",
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "rama": "PRO",
@@ -451,7 +475,23 @@
         "mitxel@hypenosys.com"
       ],
       "images": [],
-      "repository": null
+      "repository": null,
+      "title": "Instalar Tailscale + TortoiseSVN + Unreal Engine 5.7.4",
+      "due_date": null,
+      "start_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "task_type": "feature",
+      "tags": [],
+      "blocks": [],
+      "blocked_by": [],
+      "acceptance_criteria": "",
+      "external_links": [],
+      "subtasks": [],
+      "comments": [],
+      "change_log": [],
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "rama": "chore/upgrade-ue-5.7.4",
@@ -652,7 +692,9 @@
         }
       ],
       "repository": "hypenosys/app",
-      "seccion": "App"
+      "seccion": "App",
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "rama": "PRO",
@@ -756,7 +798,9 @@
         }
       ],
       "repository": "hypenosys/hypenosys.github.io",
-      "seccion": "Dashboard"
+      "seccion": "Dashboard",
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "rama": "PRO",
@@ -829,7 +873,9 @@
           "new_value": "Obsolete"
         }
       ],
-      "repository": "hypenosys/hypenosys.github.io"
+      "repository": "hypenosys/hypenosys.github.io",
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "rama": "feature/repo-labels-ui",
@@ -1012,7 +1058,9 @@
         }
       ],
       "repository": "hypenosys/hypenosys.github.io",
-      "seccion": ""
+      "seccion": "",
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "rama": "PRO",
@@ -1035,7 +1083,23 @@
       "limite": null,
       "comentario": "",
       "id": 20,
-      "repository": null
+      "repository": null,
+      "title": "prueba",
+      "due_date": null,
+      "start_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "task_type": "feature",
+      "tags": [],
+      "blocks": [],
+      "blocked_by": [],
+      "acceptance_criteria": "",
+      "external_links": [],
+      "subtasks": [],
+      "comments": [],
+      "change_log": [],
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "title": "1234",
@@ -1095,7 +1159,9 @@
         }
       ],
       "id": 25,
-      "repository": null
+      "repository": null,
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "title": "Botón \"🤖 Enviar a Jules\" en tarjetas Kanban con estado de sesión Neural Operations",
@@ -1279,7 +1345,9 @@
         }
       ],
       "id": 27,
-      "seccion": "Dashboard"
+      "seccion": "Dashboard",
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "title": "Integración SVN en Claude Neural Chat y Jules Panel (orquestación repositorios app, scripts y docs)",
@@ -1495,7 +1563,9 @@
         }
       ],
       "id": 35,
-      "seccion": "SVN Admin Panel"
+      "seccion": "SVN Admin Panel",
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "title": "n8n: Añadir NIM y cognito-agent como providers en la configuración de Claude Neural Chat",
@@ -1649,7 +1719,9 @@
         }
       ],
       "id": 36,
-      "seccion": "Chat Neural"
+      "seccion": "Chat Neural",
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "title": "EDITAR ALIAS / CONFIG Arreglar edit aliases Lightbox en panel de Jules ",
@@ -1713,7 +1785,9 @@
           "new_value": "Obsolete"
         }
       ],
-      "id": 37
+      "id": 37,
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "title": "Añadir hypenosys/scripts a SVN",
@@ -1823,7 +1897,9 @@
         }
       ],
       "id": 39,
-      "seccion": "SVN Admin Panel, App"
+      "seccion": "SVN Admin Panel, App",
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "title": "protección nsfw en las subidas a Tumblr y filtro is Cloudflare on por si peta la subida imágenes",
@@ -2053,7 +2129,9 @@
         }
       ],
       "id": 40,
-      "seccion": "Dashboard"
+      "seccion": "Dashboard",
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "title": "Falta nombre del repo (o alias) en las cards en dashboard de Jules Neural Operations",
@@ -2156,7 +2234,9 @@
         }
       ],
       "id": 42,
-      "seccion": "Dashboard, Jules Panel"
+      "seccion": "Dashboard, Jules Panel",
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "title": "Claude Neural: llamadas a apis js y python en n8n-runners",
@@ -2235,7 +2315,9 @@
         }
       ],
       "id": 43,
-      "seccion": "Chat Neural, Backend n8n"
+      "seccion": "Chat Neural, Backend n8n",
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "title": "Cognito-Agent en Claude Neural API desde n8n con ingestión en Qdrant + Kavita (UOC) + PSQL + Python and JavaScript runners (n8n)",
@@ -2352,7 +2434,9 @@
         }
       ],
       "id": 44,
-      "seccion": "Backend n8n"
+      "seccion": "Backend n8n",
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "id": 45,
@@ -2434,7 +2518,9 @@
           "new_value": "OK"
         }
       ],
-      "seccion": "Backend n8n"
+      "seccion": "Backend n8n",
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "title": "Install Penpot and Hermes Agent in ZimaBoard",
@@ -2493,7 +2579,9 @@
           "new_value": "Obsolete"
         }
       ],
-      "id": 50
+      "id": 50,
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "title": "Análisis de representación conceptual y visual: Dashboard",
@@ -2648,7 +2736,9 @@
         }
       ],
       "id": 51,
-      "seccion": "Dashboard"
+      "seccion": "Dashboard",
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "title": "Map local repositories as Obsidian Markdown Files Knowledge mocking a Vector Database in SVN  so AI just can recover the needed text and giving visual proof",
@@ -2829,7 +2919,9 @@
         }
       ],
       "id": 52,
-      "seccion": "Documentación Web"
+      "seccion": "Documentación Web",
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "title": "Arreglar subida a Tumblr de audios, video, image para music-gen y image y anim studio",
@@ -2902,7 +2994,9 @@
         }
       ],
       "id": 53,
-      "seccion": "Music Gen, Image Gen, Backend n8n"
+      "seccion": "Music Gen, Image Gen, Backend n8n",
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "title": "tarea de prueba",
@@ -2970,7 +3064,9 @@
         }
       ],
       "id": 54,
-      "seccion": ""
+      "seccion": "",
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "title": "Nos podemos asegurar que la conexión en Claude chat con la documentación es real?",
@@ -3050,7 +3146,9 @@
         }
       ],
       "id": 55,
-      "seccion": "Chat Neural"
+      "seccion": "Chat Neural",
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "title": "sync python scripts with docs in /app",
@@ -3121,7 +3219,9 @@
         }
       ],
       "id": 56,
-      "seccion": "App"
+      "seccion": "App",
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "title": "Añadir terminal física en 'comandos' cuando están logueados en github y SVN en repo-admin",
@@ -3208,7 +3308,9 @@
         }
       ],
       "id": 57,
-      "seccion": "SVN Admin Panel, Comandos"
+      "seccion": "SVN Admin Panel, Comandos",
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "title": "Unificar menús en todas las páginas de la plataforma",
@@ -3327,7 +3429,9 @@
         }
       ],
       "id": 62,
-      "seccion": "Jules Panel, Chat Neural"
+      "seccion": "Jules Panel, Chat Neural",
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "title": "Arreglar sesiones jules panel",
@@ -3372,7 +3476,9 @@
           "new_value": "Created"
         }
       ],
-      "id": 64
+      "id": 64,
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "title": "/chat/neural/:  Arreglar display de borrar/archivar sesiones",
@@ -3446,7 +3552,9 @@
         }
       ],
       "id": 65,
-      "seccion": "Chat Neural"
+      "seccion": "Chat Neural",
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "title": "Reducir latencia y tiempos de carga",
@@ -3571,7 +3679,9 @@
           "new_value": "hypenosys/hypenosys.github.io"
         }
       ],
-      "id": 67
+      "id": 67,
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "title": "Improve hypenosys logo",
@@ -3643,7 +3753,9 @@
           "new_value": "Cosmetic"
         }
       ],
-      "id": 70
+      "id": 70,
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "title": "Arreglo de jjules panel descripcion de repo y branch",
@@ -3689,7 +3801,9 @@
           "new_value": "Created"
         }
       ],
-      "id": 71
+      "id": 71,
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "title": "Fix: Img-Gen txt2image - ComfyUI usa CPU en lugar de GPU",
@@ -3749,7 +3863,9 @@
           "new_value": "In Review"
         }
       ],
-      "id": 72
+      "id": 72,
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "title": "Crear matrix server en Zimaboard2",
@@ -3811,7 +3927,9 @@
           "new_value": 0.3
         }
       ],
-      "id": 73
+      "id": 73,
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "title": "Cargar embeddings locales (opcional) en menú de configuración de IA",
@@ -3864,7 +3982,9 @@
           "new_value": "Ejemplo:\n\nTenemos dos modelos locales de embeddings en ollama."
         }
       ],
-      "id": 74
+      "id": 74,
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "title": "Todas las cabezeras de la web son diferente.",
@@ -3955,7 +4075,9 @@
           "new_value": "hypenosys/hypenosys.github.io"
         }
       ],
-      "id": 75
+      "id": 75,
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "title": "No funciona el boton ver tarea",
@@ -4045,7 +4167,9 @@
           "new_value": "2026-07-10"
         }
       ],
-      "id": 76
+      "id": 76,
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "title": "Creación de favicon.ico de hypenosys",
@@ -4100,7 +4224,9 @@
           "new_value": "[\"dkdidac-design\"]"
         }
       ],
-      "id": 77
+      "id": 77,
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "title": "2.0: estabilizar master y sacar el build y guardarlo en CopyParty",
@@ -4148,7 +4274,9 @@
           "new_value": "Created"
         }
       ],
-      "id": 78
+      "id": 78,
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "title": "Crear página \"3DGen\" ",
@@ -4199,7 +4327,9 @@
           "new_value": "Created"
         }
       ],
-      "id": 79
+      "id": 79,
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "title": "Superposición de títulos de sección del menú con Neural Session Activa, y hay superposición",
@@ -4262,10 +4392,17 @@
           "new_value": "Superposición de títulos de sección del menú con Neural Session Activa, y hay superposición"
         }
       ],
-      "id": 80
+      "id": 80,
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: migrate _data/dashboard_tasks.json to schema 1.2.0",
+      "user": "TopperH4rley",
+      "timestamp": "2026-07-12T10:42:41.965Z"
+    },
     {
       "action": "chore: actualizar tarea #80",
       "user": "Axlfc",
