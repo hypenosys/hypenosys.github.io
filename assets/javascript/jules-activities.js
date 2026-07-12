@@ -42,14 +42,18 @@ const JulesActivitiesModule = (() => {
   }
 
   function _activityToHTML(act) {
-    const time = new Date(act.createTime).toLocaleTimeString('es-ES');
+    const time = new Date(act.createTime || new Date()).toLocaleTimeString('es-ES');
     const originator = act.originator || 'system';
 
-    let iconHTML = '⚙️';
-    if (originator === 'agent') iconHTML = '🤖';
-    if (originator === 'user') iconHTML = '👤';
-
+    // Normalize originator / role to display JULES for agent, assistant, jules
     let displayName = originator.toUpperCase();
+    if (displayName === 'AGENT' || displayName === 'ASSISTANT' || displayName === 'JULES') {
+      displayName = 'JULES';
+    }
+
+    let iconHTML = '⚙️';
+    if (displayName === 'JULES') iconHTML = '🤖';
+    if (originator === 'user') iconHTML = '👤';
 
     // Apply Authenticated User Identity if originator is user
     if (originator === 'user') {
@@ -57,65 +61,135 @@ const JulesActivitiesModule = (() => {
       if (githubUser) {
         displayName = (githubUser.login || githubUser.name || 'USUARIO').toUpperCase();
         if (githubUser.avatar_url) {
-          iconHTML = `<img src="${githubUser.avatar_url}" style="width:24px; height:24px; border-radius:50%; object-fit:cover;">`;
+          iconHTML = `<img src="${githubUser.avatar_url}" style="width:24px; height:24px; border-radius:50%; object-fit:cover;" alt="Avatar">`;
         }
       }
     }
 
-    let content = act.description || '';
+    // Helper to decode entities once, escape, and parse code blocks safely
+    const renderTextContent = (text) => {
+      if (!text) return '';
+      const decoded = window.decodeHtmlEntities ? window.decodeHtmlEntities(text) : text;
+      let escaped = window.escapeHtml ? window.escapeHtml(decoded) : decoded;
+
+      // Escape code inside ``` blocks safely
+      escaped = escaped.replace(/```([\s\S]*?)```/g, function(match, code) {
+        const lines = code.trim().split('\n');
+        let lang = "";
+        if (lines[0] && lines[0].length < 10 && !lines[0].includes(' ')) {
+          lang = lines.shift();
+        }
+        const cleanCode = lines.join('\n');
+        return `<pre class="code-block" data-lang="${lang}"><code>${cleanCode}</code></pre>`;
+      });
+
+      escaped = escaped.replace(/`([^`]+)`/g, '<code class="u-mono">$1</code>');
+
+      const paragraphs = escaped.split('\n\n').map(p => {
+        const lines = p.split('\n').map(line => {
+            if (line.startsWith('- ') || line.startsWith('* ')) {
+                return `<li>${line.substring(2)}</li>`;
+            }
+            return line;
+        }).join('<br>');
+
+        if (lines.includes('<li>')) {
+            return `<ul>${lines}</ul>`;
+        }
+        return `<p>${lines}</p>`;
+      }).join('');
+
+      return paragraphs;
+    };
+
+    let content = '';
     let extraHTML = '';
 
-    if (act.agentMessaged) content = window.escapeHtml ? window.escapeHtml(act.agentMessaged.agentMessage || '') : (act.agentMessaged.agentMessage || '');
-    if (act.userMessaged) content = window.escapeHtml ? window.escapeHtml(act.userMessaged.userMessage || '') : (act.userMessaged.userMessage || '');
-    if (act.progressUpdated) {
-      const p = act.progressUpdated;
-      content = `<strong>${p.title || ''}</strong>${p.description ? ' — ' + p.description : ''}`;
-    }
-    if (act.planGenerated) {
+    if (act.sessionCompleted) {
+      content = '✅ Sesión completada correctamente';
+    } else if (act.sessionFailed) {
+      const reason = window.decodeHtmlEntities(act.sessionFailed.reason || 'desconocido');
+      content = `❌ Error: ${window.escapeHtml(reason)}`;
+    } else if (act.planGenerated) {
       const steps = (act.planGenerated.plan?.steps || []);
       content = '📋 Plan generado';
-      extraHTML = `<ol class="jules-plan-steps">${steps.map(s =>
-        `<li><strong>${s.title}</strong>${s.description ? ': ' + s.description : ''}</li>`
-      ).join('')}</ol>`;
+      extraHTML = `<ol class="jules-plan-steps">${steps.map(s => {
+        const stepTitle = window.decodeHtmlEntities(s.title || '');
+        const stepDesc = window.decodeHtmlEntities(s.description || '');
+        return `<li><strong>${window.escapeHtml(stepTitle)}</strong>${stepDesc ? ': ' + window.escapeHtml(stepDesc) : ''}</li>`;
+      }).join('')}</ol>`;
+    } else if (act.progressUpdated) {
+      const p = act.progressUpdated;
+      const title = window.decodeHtmlEntities(p.title || '');
+      const desc = window.decodeHtmlEntities(p.description || '');
+      content = `<strong>${window.escapeHtml(title)}</strong>${desc ? ' — ' + window.escapeHtml(desc) : ''}`;
+    } else if (act.agentMessaged) {
+      content = renderTextContent(act.agentMessaged.agentMessage || '');
+    } else if (act.userMessaged) {
+      content = renderTextContent(act.userMessaged.userMessage || '');
+    } else {
+      content = renderTextContent(act.description || '');
     }
-    if (act.sessionCompleted) content = '✅ Sesión completada correctamente';
-    if (act.sessionFailed) content = `❌ Error: ${act.sessionFailed.reason || 'desconocido'}`;
 
     if (act.artifacts?.length) {
       act.artifacts.forEach(artifact => {
         if (artifact.changeSet?.gitPatch) {
-          const msg = artifact.changeSet.gitPatch.suggestedCommitMessage || '';
-          extraHTML += `<div class="jules-artifact jules-artifact--diff">📄 <em>${msg}</em></div>`;
+          const msg = window.decodeHtmlEntities(artifact.changeSet.gitPatch.suggestedCommitMessage || '');
+          extraHTML += `<div class="jules-artifact jules-artifact--diff">📄 <em>${window.escapeHtml(msg)}</em></div>`;
         }
         if (artifact.bashOutput) {
-          const cmd = window.escapeHtml ? window.escapeHtml(artifact.bashOutput.command || '') : (artifact.bashOutput.command || '');
-          const out = window.escapeHtml ? window.escapeHtml(artifact.bashOutput.output || '') : (artifact.bashOutput.output || '');
+          const cmd = window.decodeHtmlEntities(artifact.bashOutput.command || '');
+          const out = window.decodeHtmlEntities(artifact.bashOutput.output || '');
           extraHTML += `<div class="jules-artifact jules-artifact--bash">
-            <code>$ ${cmd}</code>
-            <pre>${out}</pre>
+            <code>$ ${window.escapeHtml(cmd)}</code>
+            <pre class="code-block" style="max-height: 200px; overflow-y: auto;">${window.escapeHtml(out)}</pre>
           </div>`;
         }
       });
     }
 
-    const isAgent = act.originator === 'agent';
+    let stateClass = 'jules-state-info';
+    if (act.sessionCompleted) {
+      stateClass = 'jules-state-success';
+      iconHTML = '✅';
+    } else if (act.sessionFailed) {
+      stateClass = 'jules-state-error';
+      iconHTML = '❌';
+    } else if (act.planGenerated || act.planApproved) {
+      stateClass = 'jules-state-plan';
+      iconHTML = '📋';
+    } else if (act.progressUpdated) {
+      stateClass = 'jules-state-prog';
+      iconHTML = '⚙️';
+    } else if (act.artifacts?.length) {
+      stateClass = 'jules-state-prog';
+      iconHTML = '📄';
+    } else if (originator === 'user') {
+      stateClass = 'jules-state-user';
+      iconHTML = '👤';
+    } else if (displayName === 'JULES') {
+      stateClass = 'jules-state-purple';
+      iconHTML = '🤖';
+    }
+
+    const isAgent = originator === 'agent' || displayName === 'JULES';
     const actionBtn = isAgent ? `
-      <div class="activity-actions" style="margin-top: 8px; display: flex; gap: 8px;">
-        <button class="btn btn-ghost btn-sm" style="font-size: 9px; padding: 2px 8px;" onclick="window.sendToJulesFromActivity('${act.id}')">
+      <div class="entry-actions">
+        <button class="btn btn-ghost btn-sm" style="font-size: 9px; padding: 2px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px;" onclick="window.sendToJulesFromActivity('${act.id}')">
           <i class="fas fa-arrow-right"></i> → ENVIAR A JULES
         </button>
       </div>` : '';
 
     return `
-      <div class="jules-activity-entry jules-activity-entry--${originator}" data-activity-id="${act.id}">
-        <span class="activity-icon">${iconHTML}</span>
-        <div class="activity-body">
-          <div class="activity-header">
-            <span class="activity-originator">${displayName}</span>
-            <span class="activity-time">${time}</span>
+      <div class="jules-activity-entry jules-timeline-entry ${stateClass}" data-activity-id="${act.id}">
+        <span class="entry-icon">${iconHTML}</span>
+        <div class="entry-body">
+          <div class="entry-header">
+            <span class="activity-originator entry-originator">${displayName}</span>
+            <span class="activity-time entry-time">${time}</span>
           </div>
-          <div class="activity-content">${content}</div>
-          ${extraHTML}
+          <div class="activity-content entry-content">${content}</div>
+          ${extraHTML ? `<div class="entry-extra">${extraHTML}</div>` : ''}
           ${actionBtn}
         </div>
       </div>`;

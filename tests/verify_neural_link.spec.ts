@@ -14,7 +14,8 @@ test('verify multiple selection and dual-send toggle', async ({ page }) => {
     document.getElementById('app-root')?.classList.remove('locked');
   });
 
-  await page.click('#nav-chat');
+  const chatLink = page.locator('.hnav-link[data-view="chat"]');
+  await chatLink.click();
 
   // Inject multiple activities to test selection
   await page.evaluate(() => {
