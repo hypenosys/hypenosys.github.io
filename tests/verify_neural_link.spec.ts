@@ -42,22 +42,45 @@ test('verify multiple selection and dual-send toggle', async ({ page }) => {
   await page.screenshot({ path: 'jules_multiple_selection.png' });
 
   // 2. Verify Dual-Send Toggle in Claude Chat
-  await page.goto('http://localhost:4000/claude-chat.html');
+  const context = await page.context();
+  const newPage = await context.newPage();
+  await newPage.setViewportSize({ width: 1280, height: 1024 });
 
-  await page.evaluate(() => {
-      localStorage.setItem('hy_neural_active', 'true');
-      localStorage.setItem('hy_neural_task_context', JSON.stringify({ id: '123', titulo: 'Test Task' }));
+  await newPage.addInitScript(() => {
+    window.localStorage.setItem('gh_access_token', 'mock_token');
+    window.localStorage.setItem('github_user', JSON.stringify({ login: 'testuser', avatar_url: '' }));
+    window.localStorage.setItem('hy_neural_active', 'true');
+    window.localStorage.setItem('hy_neural_task_context', JSON.stringify({ id: '123', titulo: 'Test Task' }));
 
-      document.getElementById('claude-main-interface')?.classList.remove('hidden');
-      document.getElementById('claude-auth-loading')?.classList.add('hidden');
-      document.getElementById('claude-auth-gate')?.classList.add('hidden');
+    // Setup fetch interception to mock GitHub responses
+    const originalFetch = window.fetch;
+    window.fetch = async (url, options) => {
+        const urlStr = String(url);
+        if (urlStr.includes('api.github.com')) {
+            if (urlStr.includes('/user')) {
+                return new Response(JSON.stringify({ login: 'testuser', name: 'Test User', avatar_url: '' }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+            }
+            return new Response(JSON.stringify([]), { status: 200, headers: { 'Content-Type': 'application/json' } });
+        }
+        return originalFetch(url, options);
+    };
 
-      if (typeof window.init === 'function') window.init();
+    setTimeout(() => {
+      document.dispatchEvent(new CustomEvent('authReady', {
+        detail: { user: { login: 'testuser', avatar_url: '' } }
+      }));
+    }, 500);
   });
 
-  const toggleJules = page.locator('.dual-send-option[data-mode="jules"]');
+  await newPage.goto('http://localhost:4000/chat/neural/');
+  await newPage.waitForSelector('#claude-main-interface', { state: 'visible', timeout: 15000 });
+
+  const modeSelector = newPage.locator('#mode-selector-btn');
+  await modeSelector.click();
+
+  const toggleJules = newPage.locator('#mode-dropdown button:has-text("Jules")');
   await toggleJules.click();
 
-  await page.waitForTimeout(500);
-  await page.screenshot({ path: 'claude_dual_send_toggle.png' });
+  await newPage.waitForTimeout(500);
+  await newPage.screenshot({ path: 'claude_dual_send_toggle.png' });
 });
