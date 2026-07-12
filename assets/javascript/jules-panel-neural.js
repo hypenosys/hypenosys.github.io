@@ -1087,6 +1087,36 @@ window.escapeHtml = function(text) {
                .replace(/'/g, "&#039;");
 };
 
+window.decodeHtmlEntities = function(str) {
+    if (!str || typeof str !== 'string') return '';
+    const entityMap = {
+        '&#039;': "'",
+        '&#39;': "'",
+        '&apos;': "'",
+        '&quot;': '"',
+        '&amp;': '&',
+        '&lt;': '<',
+        '&gt;': '>',
+        '&middot;': '·',
+        '&bull;': '•'
+    };
+    let decoded = str.replace(/&(amp|lt|gt|quot|apos|middot|bull|#\d+|#[xX][a-fA-F0-9]+);/g, function(match, name) {
+        if (entityMap[match]) {
+            return entityMap[match];
+        }
+        if (match.startsWith('&#x') || match.startsWith('&#X')) {
+            const hex = match.substring(3, match.length - 1);
+            return String.fromCharCode(parseInt(hex, 16));
+        }
+        if (match.startsWith('&#')) {
+            const dec = match.substring(2, match.length - 1);
+            return String.fromCharCode(parseInt(dec, 10));
+        }
+        return match;
+    });
+    return decoded;
+};
+
 window.resolveLinkedJulesId = function(conversation) {
     if (!conversation) return null;
     return conversation.linkedJulesTaskId ||
@@ -1125,11 +1155,11 @@ window.normalizeJulesActivity = function(raw, sessionId) {
     } else if (act.role === 'assistant' || act.role === 'agent' || act.agentMessaged) {
         originator = 'agent';
     }
-    act.originator = window.escapeHtml(originator);
+    act.originator = originator;
 
-    // Ensure description / content mapping
+    // Ensure description / content mapping - DECODED & RAW (not escaped twice)
     const contentText = act.description || act.content || act.text || '';
-    act.description = window.escapeHtml(contentText);
+    act.description = window.decodeHtmlEntities(contentText);
 
     // Normalize userMessaged / agentMessaged from generic message/role shapes
     if (originator === 'user' && !act.userMessaged) {
@@ -1137,34 +1167,34 @@ window.normalizeJulesActivity = function(raw, sessionId) {
     } else if (originator === 'agent' && !act.agentMessaged) {
         act.agentMessaged = { agentMessage: act.description };
     } else {
-        if (act.userMessaged) act.userMessaged.userMessage = window.escapeHtml(act.userMessaged.userMessage || '');
-        if (act.agentMessaged) act.agentMessaged.agentMessage = window.escapeHtml(act.agentMessaged.agentMessage || '');
+        if (act.userMessaged) act.userMessaged.userMessage = window.decodeHtmlEntities(act.userMessaged.userMessage || '');
+        if (act.agentMessaged) act.agentMessaged.agentMessage = window.decodeHtmlEntities(act.agentMessaged.agentMessage || '');
     }
 
     if (act.progressUpdated) {
-        act.progressUpdated.title = window.escapeHtml(act.progressUpdated.title || '');
-        act.progressUpdated.description = window.escapeHtml(act.progressUpdated.description || '');
+        act.progressUpdated.title = window.decodeHtmlEntities(act.progressUpdated.title || '');
+        act.progressUpdated.description = window.decodeHtmlEntities(act.progressUpdated.description || '');
     }
 
     if (act.planGenerated && act.planGenerated.plan && Array.isArray(act.planGenerated.plan.steps)) {
         act.planGenerated.plan.steps.forEach(s => {
-            s.title = window.escapeHtml(s.title || '');
-            s.description = window.escapeHtml(s.description || '');
+            s.title = window.decodeHtmlEntities(s.title || '');
+            s.description = window.decodeHtmlEntities(s.description || '');
         });
     }
 
     if (act.sessionFailed) {
-        act.sessionFailed.reason = window.escapeHtml(act.sessionFailed.reason || '');
+        act.sessionFailed.reason = window.decodeHtmlEntities(act.sessionFailed.reason || '');
     }
 
     if (act.artifacts && Array.isArray(act.artifacts)) {
         act.artifacts.forEach(art => {
             if (art.changeSet && art.changeSet.gitPatch) {
-                art.changeSet.gitPatch.suggestedCommitMessage = window.escapeHtml(art.changeSet.gitPatch.suggestedCommitMessage || '');
+                art.changeSet.gitPatch.suggestedCommitMessage = window.decodeHtmlEntities(art.changeSet.gitPatch.suggestedCommitMessage || '');
             }
             if (art.bashOutput) {
-                art.bashOutput.command = window.escapeHtml(art.bashOutput.command || '');
-                art.bashOutput.output = window.escapeHtml(art.bashOutput.output || '');
+                art.bashOutput.command = window.decodeHtmlEntities(art.bashOutput.command || '');
+                art.bashOutput.output = window.decodeHtmlEntities(art.bashOutput.output || '');
             }
         });
     }
@@ -1273,6 +1303,106 @@ window.setJulesHistoryState = function(state, errorMsg = null) {
     }
 }
 
+window.julesHistoryLimit = 50;
+window.lastNormalizedList = null;
+window.unseenJulesActivitiesCount = 0;
+window.previousListLength = 0;
+
+window.loadPreviousJulesActivities = function(event) {
+    if (event) event.preventDefault();
+    const scrollContainer = document.getElementById('jules-history-container');
+    if (!scrollContainer) return;
+
+    const previousScrollHeight = scrollContainer.scrollHeight;
+    const previousScrollTop = scrollContainer.scrollTop;
+
+    // Increase visual pagination limit by 50
+    window.julesHistoryLimit = (window.julesHistoryLimit || 50) + 50;
+
+    // Re-render visually over cached list
+    if (window.lastNormalizedList) {
+        window.renderNormalizedActivities(window.lastNormalizedList, false);
+    }
+
+    // Preserve visual scroll position exactly
+    scrollContainer.scrollTop = previousScrollTop + (scrollContainer.scrollHeight - previousScrollHeight);
+};
+
+window.scrollToLastActivity = function(event) {
+    if (event) event.preventDefault();
+    const scrollContainer = document.getElementById('jules-history-container');
+    if (!scrollContainer) return;
+
+    scrollContainer.scrollTo({
+        top: scrollContainer.scrollHeight,
+        behavior: 'smooth'
+    });
+
+    const btn = document.getElementById('jules-scroll-bottom-btn');
+    if (btn) {
+        btn.classList.remove('visible');
+    }
+    window.unseenJulesActivitiesCount = 0;
+};
+
+window.initJulesHistoryScrollListener = function() {
+    const scrollContainer = document.getElementById('jules-history-container');
+    if (!scrollContainer || scrollContainer._scrollListenerWired) return;
+
+    scrollContainer._scrollListenerWired = true;
+    scrollContainer.addEventListener('scroll', () => {
+        const distanceFromBottom = scrollContainer.scrollHeight - scrollContainer.scrollTop - scrollContainer.clientHeight;
+        const isNearBottom = distanceFromBottom <= 100;
+
+        if (isNearBottom) {
+            const btn = document.getElementById('jules-scroll-bottom-btn');
+            if (btn) {
+                btn.classList.remove('visible');
+            }
+            window.unseenJulesActivitiesCount = 0;
+        }
+    });
+};
+
+window.toggleCollapsibleBlock = function(event, id) {
+    if (event) event.preventDefault();
+    const el = document.getElementById(id);
+    const btn = event.currentTarget || event.target;
+    if (!el || !btn) return;
+
+    if (el.classList.contains('collapsed')) {
+        el.classList.remove('collapsed');
+        el.style.maxHeight = el.scrollHeight + 'px';
+        btn.textContent = 'Mostrar menos';
+    } else {
+        el.classList.add('collapsed');
+        el.style.maxHeight = '240px';
+        btn.textContent = 'Mostrar más';
+    }
+};
+
+window.setupCollapsibleHeightChecks = function() {
+    const entries = document.querySelectorAll('.jules-timeline-entry .entry-content');
+    entries.forEach(el => {
+        // Skip if already processed
+        if (el.querySelector('.collapsible-wrapper') || el.classList.contains('collapsible-processed')) return;
+
+        const charLength = el.innerText ? el.innerText.length : 0;
+        if (el.scrollHeight > 240 || charLength > 1200) {
+            el.classList.add('collapsible-processed');
+            const rawHtml = el.innerHTML;
+            const uniqueId = 'coll-' + Math.random().toString(36).substr(2, 9);
+
+            el.innerHTML = `
+                <div class="collapsible-wrapper collapsed" id="${uniqueId}" style="max-height: 240px;">
+                    ${rawHtml}
+                </div>
+                <button class="collapsible-toggle" onclick="window.toggleCollapsibleBlock(event, '${uniqueId}')">Mostrar más</button>
+            `;
+        }
+    });
+};
+
 window.renderNormalizedActivities = function(normalizedList, forceScroll) {
     const historyContainer = document.getElementById('neural-jules-history');
     if (!historyContainer) return;
@@ -1284,23 +1414,63 @@ window.renderNormalizedActivities = function(normalizedList, forceScroll) {
 
     window.setJulesHistoryState('ready');
 
+    // Ensure scroll listener is registered
+    window.initJulesHistoryScrollListener();
+
+    // Store in global cache for local pagination actions
+    window.lastNormalizedList = normalizedList;
+    window.julesHistoryLimit = window.julesHistoryLimit || 50;
+
     const scrollContainer = document.getElementById('jules-history-container');
     let isNearBottom = false;
     if (scrollContainer) {
         const distanceFromBottom = scrollContainer.scrollHeight - scrollContainer.scrollTop - scrollContainer.clientHeight;
-        isNearBottom = distanceFromBottom <= 120;
+        isNearBottom = distanceFromBottom <= 100; // 100px threshold
     }
 
     const sorted = [...normalizedList].sort((a, b) => {
         return new Date(a.createTime).getTime() - new Date(b.createTime).getTime();
     });
 
-    const html = sorted.map(act => window.renderJulesActivityToHTML(act)).join('');
+    // Check if new activities arrived and user is scrolled up
+    if (scrollContainer && !forceScroll && !isNearBottom) {
+        if (window.previousListLength && sorted.length > window.previousListLength) {
+            const diff = sorted.length - window.previousListLength;
+            window.unseenJulesActivitiesCount = (window.unseenJulesActivitiesCount || 0) + diff;
+
+            const btn = document.getElementById('jules-scroll-bottom-btn');
+            const btnText = document.getElementById('jules-scroll-bottom-text');
+            if (btn && btnText) {
+                btnText.textContent = `${window.unseenJulesActivitiesCount} nuevas actividades`;
+                btn.classList.add('visible');
+            }
+        }
+    }
+    window.previousListLength = sorted.length;
+
+    const hasMore = sorted.length > window.julesHistoryLimit;
+    const sliced = hasMore ? sorted.slice(-window.julesHistoryLimit) : sorted;
+
+    let html = '';
+    if (hasMore) {
+        html += `<button class="load-prev-btn" onclick="window.loadPreviousJulesActivities(event)" aria-label="Cargar actividades anteriores"><i class="fas fa-history"></i> Cargar actividades anteriores</button>`;
+    }
+    html += sliced.map(act => window.renderJulesActivityToHTML(act)).join('');
     historyContainer.innerHTML = html;
+
+    // Run dynamic height check and convert long items to collapsible
+    window.setupCollapsibleHeightChecks();
 
     if (scrollContainer) {
         if (forceScroll || isNearBottom) {
             scrollContainer.scrollTop = scrollContainer.scrollHeight;
+
+            // Hide floating button & reset unseen count
+            const btn = document.getElementById('jules-scroll-bottom-btn');
+            if (btn) {
+                btn.classList.remove('visible');
+            }
+            window.unseenJulesActivitiesCount = 0;
         }
     }
 }
@@ -1401,6 +1571,9 @@ window.loadAndRenderJulesSession = async function(sid, forceScroll = false) {
 
 window.loadLinkedJulesHistoryForConversation = function(conversation) {
     window.linkedHistoryLoadRevision++;
+    window.julesHistoryLimit = 50; // Reset pagination limit on conversation change
+    window.unseenJulesActivitiesCount = 0; // Reset unseen activities count
+    window.previousListLength = 0; // Reset previous list length tracker
 
     if (!conversation) {
         window.clearLinkedJulesHistory();

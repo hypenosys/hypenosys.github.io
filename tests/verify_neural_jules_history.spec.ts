@@ -176,8 +176,8 @@ test('Verify Jules Execution History loads and renders inside Neural Tab', async
 
   // 8. Verify Security / HTML escaping against XSS
   const rawHtml = await historyContainer.innerHTML();
-  expect(rawHtml).toContain('&amp;lt;img src=x onerror=alert(1)&amp;gt;');
-  expect(rawHtml).toContain('&amp;lt;script&amp;gt;alert(1)&amp;lt;/script&amp;gt;');
+  expect(rawHtml).toContain('&lt;img src=x onerror=alert(1)&gt;');
+  expect(rawHtml).toContain('&lt;script&gt;alert(1)&lt;/script&gt;');
   expect(rawHtml).not.toContain('<img src=x onerror=alert(1)>');
   expect(rawHtml).not.toContain('<script>alert(1)</script>');
   console.log('XSS PREVENTION VERIFIED: Dangerous tags successfully escaped.');
