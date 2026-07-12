@@ -27,20 +27,8 @@ window.julesApiAuthState = 'none'; // 'none', 'configured', 'verifying', 'authen
 window.currentJulesState = 'loading';
 
 function updateConfigCardStateIndicator() {
-    const indicator = $('jules-panel-api-key-state');
-    if (!indicator) return;
-
-    const state = window.julesApiAuthState;
-    if (state === 'none') {
-        indicator.innerHTML = '<span class="u-dot" style="background:var(--amber)"></span><span style="color:var(--amber)">No configurada</span>';
-    } else if (state === 'configured') {
-        indicator.innerHTML = '<span class="u-dot" style="background:var(--cyan)"></span><span style="color:var(--cyan)">Configurada</span>';
-    } else if (state === 'verifying') {
-        indicator.innerHTML = '<span class="u-dot" style="background:var(--cyan); animation: pulse 1s infinite;"></span><span style="color:var(--cyan)">Verificando...</span>';
-    } else if (state === 'authenticated') {
-        indicator.innerHTML = '<span class="u-dot" style="background:var(--green)"></span><span style="color:var(--green)">Válida y Conectada ✓</span>';
-    } else if (state === 'unauthorized') {
-        indicator.innerHTML = '<span class="u-dot" style="background:var(--red)"></span><span style="color:var(--red)">Inválida o Rechazada ⚠️</span>';
+    if (typeof window.updateJulesApiKeyStateIndicator === 'function') {
+        window.updateJulesApiKeyStateIndicator(window.julesApiAuthState);
     }
 }
 window.updateConfigCardStateIndicator = updateConfigCardStateIndicator;
