@@ -765,7 +765,7 @@ body{
     min-width: 0;
 }
 
-#view-neural {
+#view-neural.active {
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -907,7 +907,7 @@ body{
 }
 
 @media (max-width: 899px) {
-    #view-neural {
+    #view-neural.active {
         height: auto;
     }
 
@@ -2044,7 +2044,7 @@ body{
 }
 
 /* --- NEURAL CHAT VIEWER REFINEMENTS --- */
-#view-chat {
+#view-chat.active {
   height: calc(100vh - var(--header-h)) !important;
   height: calc(100dvh - var(--header-h)) !important;
   min-height: 0 !important;
