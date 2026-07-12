@@ -15,27 +15,111 @@ function getJulesApiKey() {
 }
 
 function saveJulesApiKey(key) {
-    if (typeof key === 'string') {
-        const trimmed = key.trim();
-        if (trimmed) {
-            localStorage.setItem('jules_api_key', trimmed);
-            // Sincronizar clientes u otros componentes
-            const event = new CustomEvent('julesApiKeySaved');
-            document.dispatchEvent(event);
-            return;
-        }
+    if (typeof key !== 'string') throw new Error('Format error: API Key must be a string');
+    const trimmed = key.trim();
+    if (!trimmed) {
+        throw new Error('Format error: API Key cannot be empty');
     }
-    removeJulesApiKey();
+    if (trimmed.startsWith('nvapi-') || trimmed.startsWith('sk-')) {
+        throw new Error('Format error: A provider API key (NVIDIA/OpenAI) was detected. Please enter your real Jules API key.');
+    }
+
+    try {
+        localStorage.setItem('jules_api_key', trimmed);
+    } catch (e) {
+        throw new Error('Storage write failed: localStorage might be blocked or full.');
+    }
+
+    // Verify written key integrity immediately
+    const readVal = localStorage.getItem('jules_api_key');
+    if (readVal !== trimmed) {
+        throw new Error('Integrity check failed: written key does not match storage.');
+    }
+
+    console.log("[JULES-KEY] Persistent key saved successfully");
+
+    // Dispatch events (unified and legacy)
+    window.dispatchEvent(new CustomEvent('julesApiKeyChanged', {
+        detail: {
+            configured: true,
+            source: 'save'
+        }
+    }));
+
+    document.dispatchEvent(new CustomEvent('julesApiKeySaved'));
 }
 
 function removeJulesApiKey() {
     localStorage.removeItem('jules_api_key');
-    const event = new CustomEvent('julesApiKeyRemoved');
-    document.dispatchEvent(event);
+
+    // Dispatch events (unified and legacy)
+    window.dispatchEvent(new CustomEvent('julesApiKeyChanged', {
+        detail: {
+            configured: false,
+            source: 'delete'
+        }
+    }));
+
+    document.dispatchEvent(new CustomEvent('julesApiKeyRemoved'));
 }
 
 function hasJulesApiKey() {
     return isJulesApiKeyValid(getJulesApiKey());
+}
+
+function updateJulesApiKeyStateIndicator(state) {
+    const indicator = document.getElementById('jules-panel-api-key-state');
+    if (!indicator) return;
+
+    if (state === 'none') {
+        indicator.innerHTML = '<span class="u-dot" style="background:var(--amber, #f59e0b); display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px;"></span><span style="color:var(--amber, #f59e0b)">No configurada</span>';
+    } else if (state === 'configured') {
+        indicator.innerHTML = '<span class="u-dot" style="background:var(--cyan, #06b6d4); display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px;"></span><span style="color:var(--cyan, #06b6d4)">Configurada</span>';
+    } else if (state === 'verifying') {
+        indicator.innerHTML = '<span class="u-dot" style="background:var(--cyan, #06b6d4); display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; animation: pulse 1s infinite;"></span><span style="color:var(--cyan, #06b6d4)">Verificando...</span>';
+    } else if (state === 'authenticated') {
+        indicator.innerHTML = '<span class="u-dot" style="background:var(--green, #22c55e); display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px;"></span><span style="color:var(--green, #22c55e)">Válida y Conectada ✓</span>';
+    } else if (state === 'unauthorized') {
+        indicator.innerHTML = '<span class="u-dot" style="background:var(--red, #ef4444); display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px;"></span><span style="color:var(--red, #ef4444)">Inválida o Rechazada ⚠️</span>';
+    }
+}
+
+function hydrateJulesApiKeyModal() {
+    const input = document.getElementById('jules-panel-api-key-input');
+    if (!input) return;
+
+    const storedKey = getJulesApiKey();
+    if (storedKey.startsWith('nvapi-') || storedKey.startsWith('sk-')) {
+        input.value = '';
+        input.placeholder = 'Enter real Jules API key (AI key detected)';
+        console.warn('[AUTH] Contaminated jules_api_key found and cleared.');
+        removeJulesApiKey();
+        updateJulesApiKeyStateIndicator('none');
+    } else {
+        input.value = storedKey;
+        input.type = 'password';
+
+        // Reset Toggle Button State
+        const toggleBtn = document.getElementById('jules-panel-api-key-toggle');
+        if (toggleBtn) {
+            toggleBtn.setAttribute('aria-pressed', 'false');
+            toggleBtn.setAttribute('aria-label', 'Mostrar API Key');
+            const toggleIcon = toggleBtn.querySelector('i');
+            if (toggleIcon) toggleIcon.className = 'fas fa-eye';
+        }
+
+        // Sync auth state and update indicator
+        let state = 'none';
+        if (isJulesApiKeyValid(storedKey)) {
+            state = window.julesApiAuthState || 'configured';
+            if (state === 'none') {
+                state = 'configured';
+            }
+        }
+        window.julesApiAuthState = state;
+        updateJulesApiKeyStateIndicator(state);
+    }
+    console.log("[JULES-KEY] Modal hydrated: configured=" + isJulesApiKeyValid(getJulesApiKey()));
 }
 
 // Expose globally
@@ -44,6 +128,8 @@ window.getJulesApiKey = getJulesApiKey;
 window.saveJulesApiKey = saveJulesApiKey;
 window.removeJulesApiKey = removeJulesApiKey;
 window.hasJulesApiKey = hasJulesApiKey;
+window.updateJulesApiKeyStateIndicator = updateJulesApiKeyStateIndicator;
+window.hydrateJulesApiKeyModal = hydrateJulesApiKeyModal;
 
 /**
  * Función central para llamadas a la API de Jules con manejo completo de errores.

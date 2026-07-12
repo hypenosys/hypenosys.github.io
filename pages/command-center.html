@@ -1216,9 +1216,17 @@ body.cc-ready #cc-app { display: block; }
                 headers: { 'x-goog-api-key': julesKey }
             });
             if (!res.ok) throw new Error('Jules API Key inválida o error de conexión (' + res.status + ')');
-            localStorage.setItem('jules_api_key', julesKey);
+            if (typeof window.saveJulesApiKey === 'function') {
+                window.saveJulesApiKey(julesKey);
+            } else {
+                localStorage.setItem('jules_api_key', julesKey.trim());
+            }
         } else {
-            localStorage.removeItem('jules_api_key');
+            if (typeof window.removeJulesApiKey === 'function') {
+                window.removeJulesApiKey();
+            } else {
+                localStorage.removeItem('jules_api_key');
+            }
         }
 
         toast('Configuración de GitHub/Jules guardada ✓', 'success');
