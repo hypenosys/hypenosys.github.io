@@ -154,7 +154,7 @@ window.JulesWikiModule = (function() {
                 const date = new Date().toISOString().split('T')[0];
                 const entry = `## [${date}] - Tarea #${proposal.taskId}\n\n${proposal.aiContent.changelog}\n\n**Archivos:**\n${proposal.filesChanged.map(f => `- \`${f}\``).join('\n')}\n\n---\n\n`;
                 return entry + (content || '');
-            }, `docs: update CHANGELOG for task #${proposal.taskId}`);
+            }, `docs: update CHANGELOG for task #${proposal.taskId}`, { contentType: 'text' });
 
             // 2. Update Wiki pages
             for (const update of proposal.aiContent.wiki_updates) {
@@ -166,14 +166,14 @@ window.JulesWikiModule = (function() {
                         // Append to existing content
                         return content + `\n\n### Actualización ${new Date().toLocaleDateString()}\n${update.content}`;
                     }
-                }, `docs: update wiki page ${update.page} for task #${proposal.taskId}`);
+                }, `docs: update wiki page ${update.page} for task #${proposal.taskId}`, { contentType: 'text' });
             }
 
             // 3. Update .last-update.json
             await window.githubApi.atomicWrite(LAST_UPDATE_FILE, () => ({
                 lastSessionId: proposal.taskId,
                 updatedAt: new Date().toISOString()
-            }), `docs: update wiki metadata for task #${proposal.taskId}`);
+            }), `docs: update wiki metadata for task #${proposal.taskId}`, { contentType: 'json' });
 
             // 4. Mark as processed locally
             const processed = JSON.parse(localStorage.getItem(STORAGE_PREFIX + 'processed_tasks') || '[]');

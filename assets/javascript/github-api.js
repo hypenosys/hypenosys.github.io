@@ -81,11 +81,30 @@ async function validateToken() {
 // ─── OPERACIONES DE LECTURA ─────────────────────────────────────
 
 /**
+ * Custom Error classes to avoid programming/validation errors from being retried.
+ */
+class AtomicWriteValidationError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = 'AtomicWriteValidationError';
+    }
+}
+
+class AtomicWriteNonRetryableError extends Error {
+    constructor(message, status = null) {
+        super(message);
+        this.name = 'AtomicWriteNonRetryableError';
+        this.status = status;
+    }
+}
+
+/**
  * Recupera un archivo del repositorio con su SHA actual.
  * @param {string} filePath Ruta del archivo en el repositorio.
- * @returns {Promise<Object>} { content: Object|null, sha: string|null }.
+ * @param {string} contentType 'json' o 'text'
+ * @returns {Promise<Object>} { content: Object|string|null, sha: string|null }.
  */
-async function fetchFileWithSha(filePath) {
+async function fetchFileWithSha(filePath, contentType = 'json') {
     const url = `${GITHUB_API_BASE}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filePath}?ref=${DATA_BRANCH}&t=${Date.now()}`;
     const response = await fetch(url, {
         headers: getHeaders()
@@ -94,11 +113,26 @@ async function fetchFileWithSha(filePath) {
         if (response.status === 404) {
             return { content: null, sha: null };
         }
-        const err = await response.json();
-        throw new Error(`Error leyendo ${filePath}: ${err.message}`);
+        // Handle explicit auth/permissions and non-retryable issues
+        let errData = {};
+        try { errData = await response.json(); } catch(e) {}
+        const msg = errData.message || `HTTP ${response.status}`;
+        if (response.status === 401 || response.status === 403 || response.status === 400) {
+            throw new AtomicWriteNonRetryableError(`Error leyendo ${filePath}: ${msg}`, response.status);
+        }
+        throw new Error(`Error leyendo ${filePath}: ${msg}`);
     }
     const data = await response.json();
-    const content = JSON.parse(decodeURIComponent(escape(atob(data.content.replace(/\n/g, '')))));
+    const decoded = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ''))));
+
+    let content = decoded;
+    if (contentType === 'json') {
+        try {
+            content = JSON.parse(decoded);
+        } catch (e) {
+            throw new AtomicWriteNonRetryableError(`[AtomicWrite] JSON malformado en ${filePath}: ${e.message}`);
+        }
+    }
     return { content, sha: data.sha };
 }
 
@@ -125,15 +159,28 @@ async function getFile(filePath) {
  * Sube o actualiza el contenido de un archivo en GitHub.
  * @param {string} filePath Ruta del archivo.
  * @param {string} sha SHA del archivo actual (necesario para actualizaciones).
- * @param {Object} newContent Nuevo contenido del archivo (se convertirá a JSON).
+ * @param {Object|string} newContent Nuevo contenido del archivo.
  * @param {string} commitMessage Mensaje del commit.
- * @returns {Promise<Object>} Resultado de la operación { ok: boolean, status: number, data: Object }.
+ * @param {string} contentType 'json' o 'text'
+ * @returns {Promise<Object>} Resultado de la operación { ok: boolean, status: number, data: Object, retryAfter: number|null }.
  */
-async function putFileContent(filePath, sha, newContent, commitMessage) {
+async function putFileContent(filePath, sha, newContent, commitMessage, contentType = 'json') {
     const url = `${GITHUB_API_BASE}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filePath}`;
+
+    let contentString;
+    if (contentType === 'json') {
+        try {
+            contentString = JSON.stringify(newContent, null, 2);
+        } catch (e) {
+            throw new AtomicWriteNonRetryableError(`[AtomicWrite] Fallo de serialización JSON: ${e.message}`);
+        }
+    } else {
+        contentString = String(newContent);
+    }
+
     const body = JSON.stringify({
         message: commitMessage,
-        content: btoa(unescape(encodeURIComponent(JSON.stringify(newContent, null, 2)))),
+        content: btoa(unescape(encodeURIComponent(contentString))),
         sha: sha,
         branch: DATA_BRANCH
     });
@@ -145,7 +192,33 @@ async function putFileContent(filePath, sha, newContent, commitMessage) {
         },
         body
     });
-    return { ok: response.ok, status: response.status, data: await response.json() };
+
+    let retryAfter = null;
+    const retryAfterHeader = response.headers.get('Retry-After');
+    if (retryAfterHeader) {
+        const parsed = parseInt(retryAfterHeader, 10);
+        if (!isNaN(parsed)) {
+            retryAfter = parsed;
+        } else {
+            // Parse as HTTP date
+            const dateMs = Date.parse(retryAfterHeader);
+            if (!isNaN(dateMs)) {
+                retryAfter = Math.max(1, Math.ceil((dateMs - Date.now()) / 1000));
+            }
+        }
+    }
+
+    let resData = {};
+    try {
+        resData = await response.json();
+    } catch(e) {}
+
+    return {
+        ok: response.ok,
+        status: response.status,
+        data: resData,
+        retryAfter
+    };
 }
 
 /**
@@ -256,72 +329,232 @@ function mergeBudgetObjects(localBudget, remoteBudget) {
 const MAX_RETRIES = 4;
 
 /**
- * Realiza una escritura atómica en un archivo JSON, manejando conflictos 409 mediante reintentos y estrategias de mezcla.
- * @param {string} filePath Ruta del archivo.
- * @param {Function} mutatorFn Función que recibe el contenido actual y devuelve el nuevo contenido.
- * @param {string} commitMessage Mensaje del commit.
- * @param {Function} [mergeStrategyFn] Función opcional para resolver conflictos de mezcla.
+ * Helper to check if a value is a plain JSON object.
  */
-async function atomicWrite(filePath, mutatorFn, commitMessage, mergeStrategyFn) {
+function isPlainObject(value) {
+    return value !== null
+        && typeof value === 'object'
+        && !Array.isArray(value);
+}
+
+/**
+ * Realiza una escritura atómica en un archivo JSON o de texto, manejando conflictos 409 mediante reintentos,
+ * idempotencia y estrategias de mezcla opcionales.
+ *
+ * Soporta dos firmas:
+ * - Legacy: atomicWrite(filePath, mutatorFn, commitMessage, mergeStrategyFn)
+ * - Nueva:  atomicWrite(filePath, mutatorFn, commitMessage, options)
+ *
+ * @param {string} filePath Ruta del archivo.
+ * @param {Function} mutatorFn Función que recibe el contenido actual y devuelve el nuevo contenido (o un objeto { content, changed }).
+ * @param {string} commitMessage Mensaje del commit.
+ * @param {Function|Object} [optionsOrMergeStrategy] Estrategia de mezcla legacy o configuración avanzada.
+ */
+async function atomicWrite(filePath, mutatorFn, commitMessage, optionsOrMergeStrategy) {
+    // 1. Validaciones inmediatas antes de cualquier petición o bucle de reintento
+    if (typeof filePath !== 'string' || filePath.trim() === '') {
+        throw new AtomicWriteValidationError('[AtomicWrite] Invalid filePath: expected non-empty string.');
+    }
+    if (typeof mutatorFn !== 'function') {
+        throw new AtomicWriteValidationError(`[AtomicWrite] Invalid mutator for ${filePath}: expected function, received ${typeof mutatorFn}`);
+    }
+    if (typeof commitMessage !== 'string' || commitMessage.trim() === '') {
+        throw new AtomicWriteValidationError(`[AtomicWrite] Invalid commitMessage for ${filePath}: expected non-empty string.`);
+    }
+
+    // Normalizar opciones
+    let options = {
+        mergeStrategy: null,
+        recomputeStats: false,
+        contentType: 'json',
+        audit: true,
+        createIfMissing: false,
+        initialContent: null
+    };
+
+    if (typeof optionsOrMergeStrategy === 'function') {
+        options.mergeStrategy = optionsOrMergeStrategy;
+    } else if (isPlainObject(optionsOrMergeStrategy)) {
+        options = { ...options, ...optionsOrMergeStrategy };
+    } else if (optionsOrMergeStrategy !== undefined && optionsOrMergeStrategy !== null) {
+        throw new AtomicWriteValidationError(`[AtomicWrite] Invalid fourth argument for ${filePath}: expected function or options object.`);
+    }
+
+    if (options.contentType !== 'json' && options.contentType !== 'text') {
+        throw new AtomicWriteValidationError(`[AtomicWrite] Invalid contentType: expected 'json' or 'text', received '${options.contentType}'.`);
+    }
+
+    // default file setup for specific files
+    if (options.initialContent === null) {
+        if (filePath === '_data/dashboard_tasks.json' || filePath === '_data/dashboard_tasks_archive.json') {
+            options.createIfMissing = true;
+            options.initialContent = { tasks: [], _audit_log: [], schema_version: '1.2.0' };
+        } else if (filePath === '_data/studio_stats.json') {
+            options.createIfMissing = true;
+            options.initialContent = { schema_version: '1.1.0', computed_at: '', global: {}, members: {}, group: {} };
+        } else if (filePath === '_data/jules_panel_state.json') {
+            options.createIfMissing = true;
+            options.initialContent = { archive: {}, last_updated: '' };
+        }
+    }
+
     let attempt = 0;
     let lastError = null;
 
     while (attempt < MAX_RETRIES) {
         attempt++;
         try {
-            let { content: remoteContent, sha: remoteSha } = await fetchFileWithSha(filePath);
+            // Leer el archivo de GitHub con el tipo de contenido indicado
+            let { content: remoteContent, sha: remoteSha } = await fetchFileWithSha(filePath, options.contentType);
 
-            if (remoteContent === null && filePath.endsWith('.json')) {
-                console.warn(`[AtomicWrite] File ${filePath} not found. Initializing with default structure.`);
-                remoteContent = { tasks: [], _audit_log: [], _version: 1 };
+            // Manejo de archivo inexistente
+            if (remoteContent === null) {
+                if (options.createIfMissing) {
+                    console.warn(`[AtomicWrite] File ${filePath} not found. Initializing with provided default structure.`);
+                    remoteContent = options.initialContent;
+                } else {
+                    throw new AtomicWriteNonRetryableError(`[AtomicWrite] File ${filePath} not found and creation is disabled.`, 404);
+                }
             }
 
-            const newContent = await mutatorFn(remoteContent);
-
-            if (newContent.last_updated !== undefined) {
-                newContent.last_updated = new Date().toISOString();
+            // Ejecutar el mutador
+            let mutatorResult;
+            try {
+                mutatorResult = await mutatorFn(remoteContent);
+            } catch (e) {
+                throw new AtomicWriteNonRetryableError(`[AtomicWrite] Mutator threw an error on ${filePath}: ${e.message}`);
             }
 
-            if (!newContent._audit_log) newContent._audit_log = [];
-            newContent._audit_log.unshift({
-                action: commitMessage,
-                user: _currentUser?.login || 'Sistema',
-                timestamp: new Date().toISOString()
-            });
-            if (newContent._audit_log.length > 500) newContent._audit_log.pop();
+            // Desestructurar resultado del mutador (soportando { content, changed } o retorno directo legacy)
+            let newContent;
+            let changed = true; // Por compatibilidad legacy
 
-            const result = await putFileContent(filePath, remoteSha, newContent, commitMessage);
+            if (isPlainObject(mutatorResult) && mutatorResult.hasOwnProperty('content') && mutatorResult.hasOwnProperty('changed')) {
+                newContent = mutatorResult.content;
+                changed = mutatorResult.changed;
+            } else {
+                newContent = mutatorResult;
+            }
+
+            // Validar el resultado del mutador
+            if (newContent === null || newContent === undefined) {
+                throw new AtomicWriteNonRetryableError(`[AtomicWrite] Mutator returned null or undefined for ${filePath}.`);
+            }
+
+            if (options.contentType === 'json') {
+                if (typeof newContent !== 'object') {
+                    throw new AtomicWriteNonRetryableError(`[AtomicWrite] Invalid mutator output type for JSON contentType: expected object/array, received ${typeof newContent}.`);
+                }
+            } else {
+                if (typeof newContent !== 'string') {
+                    throw new AtomicWriteNonRetryableError(`[AtomicWrite] Invalid mutator output type for text contentType: expected string, received ${typeof newContent}.`);
+                }
+            }
+
+            // Comportamiento para NO-OP (changed === false)
+            if (!changed) {
+                console.log(`[AtomicWrite] Mutation detected as no-op for ${filePath}. Skipping persist.`);
+                return { success: true, changed: false, content: remoteContent };
+            }
+
+            // Aplicar auditoría e indicators de actualización solo si corresponde
+            if (options.contentType === 'json' && isPlainObject(newContent)) {
+                if (options.audit) {
+                    if (newContent.last_updated !== undefined || filePath.includes('dashboard_tasks')) {
+                        newContent.last_updated = new Date().toISOString();
+                    }
+                    if (!newContent._audit_log) newContent._audit_log = [];
+                    newContent._audit_log.unshift({
+                        action: commitMessage,
+                        user: _currentUser?.login || 'Sistema',
+                        timestamp: new Date().toISOString()
+                    });
+                    if (newContent._audit_log.length > 500) newContent._audit_log.pop();
+                }
+            }
+
+            // Realizar escritura
+            const result = await putFileContent(filePath, remoteSha, newContent, commitMessage, options.contentType);
 
             if (result.ok) {
-                if (filePath.includes('dashboard_tasks')) {
+                // Ejecutar efectos secundarios explícitamente solicitados
+                if (options.recomputeStats) {
                     await recomputeAndSaveStats(newContent);
                 }
 
                 // Broadcast update to other tabs
                 broadcastUpdate(filePath);
 
-                return { success: true, content: newContent };
+                return { success: true, changed: true, content: newContent };
             }
 
+            // Manejar conflictos 409
             if (result.status === 409) {
-                console.warn(`[AtomicWrite] Conflicto detectado en ${filePath} (intento ${attempt}/${MAX_RETRIES}). Ejecutando merge...`);
-                const { content: freshRemote, sha: freshSha } = await fetchFileWithSha(filePath);
-                const merged = mergeStrategyFn ? mergeStrategyFn(newContent, freshRemote) : { ...freshRemote, ...newContent };
-                const retryResult = await putFileContent(filePath, freshSha, merged, `${commitMessage} [merge-retry-${attempt}]`);
+                console.warn(`[AtomicWrite] Conflicto detectado en ${filePath} (intento ${attempt}/${MAX_RETRIES}). Re-intentando con fresh remote...`);
+                // En conflictos 409, volvemos a leer freshRemote y freshSha
+                const { content: freshRemote, sha: freshSha } = await fetchFileWithSha(filePath, options.contentType);
+
+                let merged;
+                if (options.mergeStrategy) {
+                    merged = options.mergeStrategy(newContent, freshRemote);
+                } else {
+                    // Para migraciones y escrituras JSON comunes, re-ejecutamos el mutador sobre el fresh content remoto
+                    let retryMutatorResult;
+                    try {
+                        retryMutatorResult = await mutatorFn(freshRemote);
+                    } catch (e) {
+                        throw new AtomicWriteNonRetryableError(`[AtomicWrite] Mutator threw an error on merge retry: ${e.message}`);
+                    }
+
+                    let retryNewContent;
+                    let retryChanged = true;
+                    if (isPlainObject(retryMutatorResult) && retryMutatorResult.hasOwnProperty('content') && retryMutatorResult.hasOwnProperty('changed')) {
+                        retryNewContent = retryMutatorResult.content;
+                        retryChanged = retryMutatorResult.changed;
+                    } else {
+                        retryNewContent = retryMutatorResult;
+                    }
+
+                    if (!retryChanged) {
+                        console.log(`[AtomicWrite] Merge mutation evaluated as no-op on fresh remote content for ${filePath}. Skipping persist.`);
+                        return { success: true, changed: false, content: freshRemote };
+                    }
+                    merged = retryNewContent;
+                }
+
+                // Escribir el merged content usando freshSha
+                const retryResult = await putFileContent(filePath, freshSha, merged, `${commitMessage} [merge-retry-${attempt}]`, options.contentType);
                 if (retryResult.ok) {
-                    if (filePath.includes('dashboard_tasks')) {
+                    if (options.recomputeStats) {
                         await recomputeAndSaveStats(merged);
                     }
-                    return { success: true, content: merged };
+                    broadcastUpdate(filePath);
+                    return { success: true, changed: true, content: merged };
                 }
-                lastError = `HTTP ${retryResult.status}`;
+                lastError = `HTTP ${retryResult.status} en reintento`;
                 continue;
             }
+
+            // Clasificación de errores no reintentables basados en el código HTTP
+            if (result.status === 400 || result.status === 401 || result.status === 403 || result.status === 404) {
+                throw new AtomicWriteNonRetryableError(`Error no recuperable escribiendo ${filePath}: HTTP ${result.status} — ${JSON.stringify(result.data)}`, result.status);
+            }
+
             throw new Error(`Error inesperado escribiendo ${filePath}: HTTP ${result.status} — ${JSON.stringify(result.data)}`);
+
         } catch (err) {
+            // Si el error es de validación o no recuperable de forma explícita, abortar inmediatamente
+            if (err instanceof AtomicWriteValidationError || err instanceof AtomicWriteNonRetryableError) {
+                throw err;
+            }
+
             lastError = err.message;
+            console.error(`[AtomicWrite] Intento ${attempt}/${MAX_RETRIES} fallido para ${filePath}. Error: ${lastError}`);
+
             if (attempt < MAX_RETRIES) {
-                await new Promise(res => setTimeout(res, 500 * Math.pow(2, attempt - 1)));
+                // Backoff exponencial para fallos temporales
+                const delay = 500 * Math.pow(2, attempt - 1);
+                await new Promise(res => setTimeout(res, delay));
                 continue;
             }
         }
@@ -520,9 +753,12 @@ async function createTask(taskObject) {
         db.tasks.push(taskObject);
         db.last_updated_by = taskObject.detectado_por || 'Sistema';
         return db;
-    }, `feat: nueva tarea #${Date.now()} añadida`, (local, remote) => {
-        local.tasks = mergeTaskArrays(local.tasks, remote.tasks);
-        return local;
+    }, `feat: nueva tarea #${Date.now()} añadida`, {
+        mergeStrategy: (local, remote) => {
+            local.tasks = mergeTaskArrays(local.tasks, remote.tasks);
+            return local;
+        },
+        recomputeStats: true
     });
 }
 
@@ -536,9 +772,12 @@ async function updateTask(taskId, taskDelta) {
         db.tasks[taskIndex] = { ...db.tasks[taskIndex], ...taskDelta };
         db.last_updated_by = _currentUser?.login || 'Sistema';
         return db;
-    }, `chore: actualizar tarea #${taskId}`, (local, remote) => {
-        local.tasks = mergeTaskArrays(local.tasks, remote.tasks);
-        return local;
+    }, `chore: actualizar tarea #${taskId}`, {
+        mergeStrategy: (local, remote) => {
+            local.tasks = mergeTaskArrays(local.tasks, remote.tasks);
+            return local;
+        },
+        recomputeStats: true
     });
 }
 
@@ -554,9 +793,12 @@ async function updateTaskStatus(taskId, newEstado, resolverHandle, testerHandle)
         if (testerHandle) task.detectado_por = testerHandle;
         db.last_updated_by = resolverHandle || testerHandle || 'Sistema';
         return db;
-    }, `chore: actualizar estado tarea #${taskId} → ${newEstado}`, (local, remote) => {
-        local.tasks = mergeTaskArrays(local.tasks, remote.tasks);
-        return local;
+    }, `chore: actualizar estado tarea #${taskId} → ${newEstado}`, {
+        mergeStrategy: (local, remote) => {
+            local.tasks = mergeTaskArrays(local.tasks, remote.tasks);
+            return local;
+        },
+        recomputeStats: true
     });
 }
 
@@ -566,25 +808,33 @@ async function updateTaskStatus(taskId, newEstado, resolverHandle, testerHandle)
 async function archiveTask(taskId) {
     let taskToArchive = null;
 
+    // Primer paso: Eliminar de activos sin recomputar estadísticas aún (recomputeStats: false)
     await atomicWrite('_data/dashboard_tasks.json', (db) => {
         const idx = db.tasks.findIndex(t => String(t.id) === String(taskId));
         if (idx === -1) throw new Error(`Tarea #${taskId} no encontrada en activos.`);
         taskToArchive = db.tasks.splice(idx, 1)[0];
         db.last_updated_by = _currentUser?.login || 'Sistema';
         return db;
-    }, `chore: archivar tarea #${taskId}`, (local) => local);
+    }, `chore: archivar tarea #${taskId}`, {
+        mergeStrategy: (local) => local,
+        recomputeStats: false
+    });
 
     if (!taskToArchive) return;
 
+    // Segundo paso: Añadir al archivo y recomputar estadísticas una sola vez al final (recomputeStats: true)
     await atomicWrite('_data/dashboard_tasks_archive.json', (db) => {
         if (!db.tasks.find(t => String(t.id) === String(taskId))) {
             db.tasks.push(taskToArchive);
         }
         db.last_updated_by = _currentUser?.login || 'Sistema';
         return db;
-    }, `chore: tarea #${taskId} movida al archivo`, (local, remote) => {
-        local.tasks = mergeTaskArrays(local.tasks, remote.tasks);
-        return local;
+    }, `chore: tarea #${taskId} movida al archivo`, {
+        mergeStrategy: (local, remote) => {
+            local.tasks = mergeTaskArrays(local.tasks, remote.tasks);
+            return local;
+        },
+        recomputeStats: true
     });
 }
 
@@ -594,25 +844,33 @@ async function archiveTask(taskId) {
 async function restoreTask(taskId) {
     let taskToRestore = null;
 
+    // Primer paso: Eliminar del archivo sin recomputar estadísticas aún (recomputeStats: false)
     await atomicWrite('_data/dashboard_tasks_archive.json', (db) => {
         const idx = db.tasks.findIndex(t => String(t.id) === String(taskId));
         if (idx === -1) throw new Error(`Tarea #${taskId} no encontrada en el archivo.`);
         taskToRestore = db.tasks.splice(idx, 1)[0];
         db.last_updated_by = _currentUser?.login || 'Sistema';
         return db;
-    }, `chore: desarchivar tarea #${taskId}`, (local) => local);
+    }, `chore: desarchivar tarea #${taskId}`, {
+        mergeStrategy: (local) => local,
+        recomputeStats: false
+    });
 
     if (!taskToRestore) return;
 
+    // Segundo paso: Añadir a activos y recomputar estadísticas una sola vez al final (recomputeStats: true)
     await atomicWrite('_data/dashboard_tasks.json', (db) => {
         if (!db.tasks.find(t => String(t.id) === String(taskId))) {
             db.tasks.push(taskToRestore);
         }
         db.last_updated_by = _currentUser?.login || 'Sistema';
         return db;
-    }, `chore: tarea #${taskId} restaurada desde el archivo`, (local, remote) => {
-        local.tasks = mergeTaskArrays(local.tasks, remote.tasks);
-        return local;
+    }, `chore: tarea #${taskId} restaurada desde el archivo`, {
+        mergeStrategy: (local, remote) => {
+            local.tasks = mergeTaskArrays(local.tasks, remote.tasks);
+            return local;
+        },
+        recomputeStats: true
     });
 }
 
@@ -823,7 +1081,7 @@ const taskOps = {
             db.tasks.push(newTask);
             db.last_updated = now;
             return db;
-        }, `feat: nueva tarea ${task.titulo}`);
+        }, `feat: nueva tarea ${task.titulo}`, { recomputeStats: true });
     },
 
     /**
@@ -841,7 +1099,7 @@ const taskOps = {
             };
             db.last_updated = new Date().toISOString();
             return db;
-        }, `chore: actualizar tarea ${taskId}`);
+        }, `chore: actualizar tarea ${taskId}`, { recomputeStats: true });
     },
 
     /**
