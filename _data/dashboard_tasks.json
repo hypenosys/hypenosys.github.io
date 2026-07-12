@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-07-11T13:28:21.656Z",
-  "last_updated_by": "Axlfc",
+  "last_updated": "2026-07-12T09:26:41.608Z",
+  "last_updated_by": "Axel",
   "tasks": [
     {
       "id": 1,
@@ -4200,9 +4200,70 @@
         }
       ],
       "id": 79
+    },
+    {
+      "title": "BUG Visual: Superposición de títulos de sección del menú con Neural Session Activa, y hay superposición",
+      "descripcion": "Reproducción:\nDesde el kanban: le doy a Ver Neural, me lleva a una conversación random (?) y si actualizo y vuelvo a Kanban de nuevo sale esa mierda visual como superpuesta",
+      "rama": "master",
+      "task_type": "bug",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Jules Panel",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Medium",
+      "milestone": "M2",
+      "estado": "Working",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc"
+      ],
+      "email_responsable": "axel@hypenosys.com",
+      "emails_asignados": [],
+      "start_date": "2026-07-12",
+      "due_date": "2026-07-19",
+      "estimated_hours": 4,
+      "story_points": 4,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [
+        {
+          "url": "https://64.media.tumblr.com/2f6ef9fecbfff9e1ba6b533aec5bc604/03de27673296d808-d4/s1280x1920/667d567c52ae139f908b154ff8997e5906466b53.png",
+          "type": "url",
+          "tumblr_post_id": "821924620357763072",
+          "filename": "image.png",
+          "uploaded_at": "2026-07-12T09:26:41.127Z"
+        }
+      ],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-07-12",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-12T09:26:41.129Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 80
     }
   ],
   "_audit_log": [
+    {
+      "action": "feat: nueva tarea #1783848401129 añadida",
+      "user": "Axlfc",
+      "timestamp": "2026-07-12T09:26:41.608Z"
+    },
     {
       "action": "chore: actualizar tarea #67",
       "user": "Axlfc",
