@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-07-12T09:26:41.608Z",
-  "last_updated_by": "Axel",
+  "last_updated": "2026-07-12T10:02:50.946Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -4202,7 +4202,7 @@
       "id": 79
     },
     {
-      "title": "BUG Visual: Superposición de títulos de sección del menú con Neural Session Activa, y hay superposición",
+      "title": "Superposición de títulos de sección del menú con Neural Session Activa, y hay superposición",
       "descripcion": "Reproducción:\nDesde el kanban: le doy a Ver Neural, me lleva a una conversación random (?) y si actualizo y vuelvo a Kanban de nuevo sale esa mierda visual como superpuesta",
       "rama": "master",
       "task_type": "bug",
@@ -4253,12 +4253,24 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-12T10:02:50.212Z",
+          "field": "title",
+          "old_value": "BUG Visual: Superposición de títulos de sección del menú con Neural Session Activa, y hay superposición",
+          "new_value": "Superposición de títulos de sección del menú con Neural Session Activa, y hay superposición"
         }
       ],
       "id": 80
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #80",
+      "user": "Axlfc",
+      "timestamp": "2026-07-12T10:02:50.946Z"
+    },
     {
       "action": "feat: nueva tarea #1783848401129 añadida",
       "user": "Axlfc",
