@@ -37,9 +37,7 @@ window.setJulesPanelNeuralProcessingState = setNeuralProcessingState;
 
 function saveJulesPanelSessions() {
     window.NeuralChatCore.saveSessions(window.JULES_PANEL_NEURAL_STORAGE, window.julesPanelSessions);
-    if (window.neuralSyncChannel) {
-        window.neuralSyncChannel.postMessage({ type: 'session-updated' });
-    }
+    window.broadcastNeuralEvent('sessions-updated', window.currentJulesPanelSessionId);
 }
 
 window.loadJulesPanelSessions = function() {
@@ -148,6 +146,21 @@ window.initJulesPanelNeuralChat = function() {
         sendBtn.onclick = () => window.sendChatV2Msg();
     }
 
+    // Chat Header Profile Selector Initialization
+    const chatProfileBtn = document.getElementById('active-profile-btn-chat');
+    const chatProfileDropdown = document.getElementById('profile-dropdown-chat');
+    if (chatProfileBtn && chatProfileDropdown) {
+        chatProfileBtn.onclick = (e) => {
+            e.stopPropagation();
+            chatProfileDropdown.classList.toggle('hidden');
+        };
+        document.addEventListener('click', (e) => {
+            if (!chatProfileBtn.contains(e.target) && !chatProfileDropdown.contains(e.target)) {
+                chatProfileDropdown.classList.add('hidden');
+            }
+        });
+    }
+
     if (chatInput) {
         chatInput.onkeydown = (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
@@ -182,18 +195,22 @@ window.initJulesPanelNeuralChat = function() {
     // Real-time synchronization channel
     window.neuralSyncChannel = new BroadcastChannel('hypenosys_neural_sessions_sync');
     window.neuralSyncChannel.onmessage = (event) => {
-        const { type, sessionId } = event.data;
-        if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Jules Panel Sync] Message received:", type, sessionId);
-
-        window.loadJulesPanelSessions();
-        if (type === 'active-session-changed' && sessionId) {
-            if (window.currentJulesPanelSessionId !== sessionId) {
-                window.loadJulesPanelSession(sessionId, true);
+        window.handleNeuralSyncMessage(
+            event.data,
+            () => {
+                window.julesPanelSessions = window.NeuralChatCore.getSessions(window.JULES_PANEL_NEURAL_STORAGE);
+                window.currentJulesPanelSessionId = localStorage.getItem(window.JULES_PANEL_NEURAL_ACTIVE_ID);
+            },
+            (sessionId) => {
+                if (window.currentJulesPanelSessionId !== sessionId) {
+                    window.loadJulesPanelSession(sessionId, true);
+                }
+            },
+            () => {
+                window.renderChatV2Messages();
+                window.renderNeuralChatHistory();
             }
-        } else {
-            window.renderChatV2Messages();
-            window.renderNeuralChatHistory();
-        }
+        );
     };
 
     // Docs Integration Toggle
@@ -277,8 +294,8 @@ window.loadJulesPanelSession = function(id, skipBroadcast = false) {
     window.currentJulesPanelSessionId = id;
     localStorage.setItem(window.JULES_PANEL_NEURAL_ACTIVE_ID, id);
 
-    if (!skipBroadcast && window.neuralSyncChannel) {
-        window.neuralSyncChannel.postMessage({ type: 'active-session-changed', sessionId: id });
+    if (!skipBroadcast) {
+        window.broadcastNeuralEvent('active-session-changed', id);
     }
 
     const session = window.julesPanelSessions.find(s => s.id === id);
@@ -307,16 +324,92 @@ window.sendChatV2Msg = async function() {
     const msg = input.value.trim();
     if (!msg) return;
 
+    // Direct JULES Mode
     if (window.currentSendMode === 'jules') {
         await window.sendNeuralMessage();
         return;
     }
 
-    // AI/Claude mode
+    // RUNNERS Mode
+    if (window.currentSendMode === 'runners') {
+        const config = JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
+        const provider = config.provider || 'none';
+        if (provider === 'none') {
+            showToast('Configura un proveedor de IA para usar el modo Runners.', 'red');
+            return;
+        }
+
+        const session = window.julesPanelSessions.find(s => s.id === window.currentJulesPanelSessionId);
+        if (!session) {
+            window.createNewJulesPanelSession();
+            setTimeout(() => window.sendChatV2Msg(), 100);
+            return;
+        }
+
+        if (!window.JulesExecBridge) {
+            showToast('El bridge de ejecución (JulesExecBridge) no está disponible en este momento.', 'red');
+            return;
+        }
+
+        input.value = '';
+        input.style.height = 'auto';
+
+        setNeuralProcessingState(true);
+        const thinkingIndicator = $('v2-thinking-indicator');
+        if (thinkingIndicator) {
+            thinkingIndicator.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-1"></i> IA GENERANDO CÓDIGO...';
+        }
+
+        try {
+            const requestedLang = window.currentRunnersLang || 'auto';
+            const langInstruction = requestedLang === 'auto' ? "Python por defecto, o Javascript si el contexto lo sugiere" : requestedLang.toUpperCase();
+            const systemPrompt = `Eres un generador de scripts para ejecución inmediata. Tu objetivo es escribir código funcional (${langInstruction}) que resuelva la petición del usuario. Responde ÚNICAMENTE con el código necesario, sin explicaciones ni bloques de markdown. El código se ejecutará en un sandbox aislado sin internet.`;
+
+            await window.NeuralChatCore.sendMessage({
+                session: session,
+                userMessage: msg,
+                systemPrompt: systemPrompt,
+                saveCallback: () => {
+                    saveJulesPanelSessions();
+                    window.renderNeuralChatHistory();
+                },
+                onToken: () => {
+                    window.renderChatV2Messages();
+                },
+                onDone: (fullContent) => {
+                    setNeuralProcessingState(false);
+                    window.renderChatV2Messages();
+                    window.renderNeuralChatHistory();
+
+                    // Clean code and execute
+                    let cleanCode = fullContent.replace(/```(python|javascript|js)?\n?|```/g, '').trim();
+                    let lang = requestedLang;
+
+                    if (lang === 'auto') {
+                        lang = (cleanCode.includes('console.log') || cleanCode.includes('const ') || cleanCode.includes('let ')) ? 'javascript' : 'python';
+                    }
+
+                    if (window.JulesExecBridge) {
+                        const b64 = window.JulesExecBridge.b64EncodeUnicode(cleanCode);
+                        window.JulesExecBridge.confirmExecution(b64, lang);
+                    }
+                },
+                onError: (err) => {
+                    setNeuralProcessingState(false);
+                    showToast("Error generando código: " + err.message, 'red');
+                    window.renderChatV2Messages();
+                }
+            });
+        } catch (e) {
+            setNeuralProcessingState(false);
+            showToast(e.message, 'red');
+        }
+        return;
+    }
+
+    // CLAUDE (AI) Mode
     const session = window.julesPanelSessions.find(s => s.id === window.currentJulesPanelSessionId);
     if (!session) {
-        // En lugar de crear una nueva, pedimos seleccionar una o crearla.
-        // Pero para mantener compatibilidad simple por ahora, la creamos si no hay ninguna.
         window.createNewJulesPanelSession();
         setTimeout(() => window.sendChatV2Msg(), 100);
         return;
@@ -338,9 +431,7 @@ window.sendChatV2Msg = async function() {
 
     setNeuralProcessingState(true);
 
-    console.log("[Jules Panel Neural] Message sent from Jules Panel Neural");
     try {
-        // DOCUMENTATION FAIL-OPEN LOGIC
         const docsEnabled = localStorage.getItem('hypenosys_docs_context_enabled') !== 'false';
         let docsContext = null;
 
@@ -356,7 +447,6 @@ window.sendChatV2Msg = async function() {
             }
         }
 
-        // SVN CONTEXT INJECTION
         const svnEnabled = localStorage.getItem('hypenosys_svn_context_enabled') === 'true';
         let svnContext = null;
 
@@ -375,7 +465,6 @@ window.sendChatV2Msg = async function() {
         const baseSystemPrompt = await window.JulesDocsBridge.buildSystemPrompt(msg, session.systemPrompt);
         const dynamicSystemPrompt = baseSystemPrompt + (docsContext || "") + (svnContext || "");
 
-        // Store sources for this turn
         const currentSources = window._lastDocsMetadata || [];
         window._lastDocsMetadata = null;
 
@@ -383,18 +472,15 @@ window.sendChatV2Msg = async function() {
             session: session,
             userMessage: msg,
             systemPrompt: dynamicSystemPrompt,
-            onToken: () => {
-                const lastMsg = session.messages[session.messages.length - 1];
-                if (lastMsg && lastMsg.role === 'assistant') {
-                    lastMsg.sources = currentSources;
-                }
-                window.renderChatV2Messages();
-            },
             saveCallback: () => {
                 saveJulesPanelSessions();
                 window.renderNeuralChatHistory();
             },
             onToken: () => {
+                const lastMsg = session.messages[session.messages.length - 1];
+                if (lastMsg && lastMsg.role === 'assistant') {
+                    lastMsg.sources = currentSources;
+                }
                 window.renderChatV2Messages();
             },
             onDone: () => {
@@ -1043,5 +1129,329 @@ window.deleteJulesPanelSession = function(event, id) {
         window.showConfirmationToast(confirmMsg, performDelete);
     } else if (window.confirm(confirmMsg)) {
         performDelete();
+    }
+}
+
+/* ════════════════════════════════════════
+   TAB AND DRAWER INTEGRATION
+   ════════════════════════════════════════ */
+
+window.switchJulesPanelChatView = function(view) {
+    const chatTab = document.getElementById('tab-chat-v2');
+    const activityTab = document.getElementById('tab-activity-v2');
+    const chatView = document.getElementById('panel-chat-view');
+    const activityView = document.getElementById('panel-activity-view');
+
+    if (view === 'chat') {
+        if (chatTab) {
+            chatTab.classList.add('border-b-[#bd93f9]', 'text-[#bd93f9]');
+            chatTab.classList.remove('border-b-transparent', 'text-[#6272a4]');
+        }
+        if (activityTab) {
+            activityTab.classList.add('border-b-transparent', 'text-[#6272a4]');
+            activityTab.classList.remove('border-b-[#bd93f9]', 'text-[#bd93f9]');
+        }
+        if (chatView) chatView.style.display = 'flex';
+        if (activityView) activityView.style.display = 'none';
+
+        window.renderChatV2Messages();
+    } else {
+        if (activityTab) {
+            activityTab.classList.add('border-b-[#bd93f9]', 'text-[#bd93f9]');
+            activityTab.classList.remove('border-b-transparent', 'text-[#6272a4]');
+        }
+        if (chatTab) {
+            chatTab.classList.add('border-b-transparent', 'text-[#6272a4]');
+            chatTab.classList.remove('border-b-[#bd93f9]', 'text-[#bd93f9]');
+        }
+        if (chatView) chatView.style.display = 'none';
+        if (activityView) activityView.style.display = 'flex';
+
+        const activeId = localStorage.getItem('hy_neural_session_id') || window.getLinkedJulesSessionId();
+        if (activeId && window._loadAndRenderActivityTab) {
+            window._loadAndRenderActivityTab(activeId);
+        }
+    }
+}
+
+window.toggleContextDrawer = function() {
+    const drawer = document.getElementById('v2-context-drawer');
+    if (!drawer) return;
+    const isClosed = drawer.style.transform === 'translateX(100%)' || drawer.style.transform === '';
+    drawer.style.transform = isClosed ? 'translateX(0)' : 'translateX(100%)';
+
+    if (isClosed) {
+        window.renderContextDrawerDetails();
+    }
+}
+
+window.renderContextDrawerDetails = function() {
+    const container = document.getElementById('v2-drawer-task-details');
+    if (!container) return;
+
+    const taskContextRaw = localStorage.getItem('hy_neural_task_context');
+    const repo = localStorage.getItem('hypenosys_active_repo') || '---';
+    const branch = localStorage.getItem('hypenosys_active_branch') || '---';
+
+    let html = `
+        <div style="margin-bottom: 14px;">
+            <div style="font-size: 10px; font-weight: 800; color: var(--accent2); text-transform: uppercase; margin-bottom: 4px;">Repositorio</div>
+            <div style="font-family: var(--font-mono); font-size: 11px; background: rgba(0,0,0,0.2); padding: 6px 10px; border-radius: var(--r-sm); border: 1px solid var(--border); overflow: hidden; text-overflow: ellipsis;">${repo}</div>
+        </div>
+        <div style="margin-bottom: 14px;">
+            <div style="font-size: 10px; font-weight: 800; color: var(--accent2); text-transform: uppercase; margin-bottom: 4px;">Rama Activa</div>
+            <div style="font-family: var(--font-mono); font-size: 11px; background: rgba(0,0,0,0.2); padding: 6px 10px; border-radius: var(--r-sm); border: 1px solid var(--border); overflow: hidden; text-overflow: ellipsis;">${branch}</div>
+        </div>
+    `;
+
+    if (taskContextRaw) {
+        try {
+            const task = JSON.parse(taskContextRaw);
+            html += `
+                <div style="margin-bottom: 14px; border-top: 1px solid var(--border); padding-top: 14px;">
+                    <div style="font-size: 10px; font-weight: 800; color: var(--accent2); text-transform: uppercase; margin-bottom: 4px;">Tarea Vinculada</div>
+                    <div style="font-weight: 700; color: #fff; margin-bottom: 6px;">#${task.id} - ${task.titulo || task.title}</div>
+                    <div style="font-size: 11px; line-height: 1.5; background: rgba(0,0,0,0.1); padding: 10px; border-radius: var(--r-sm); border: 1px solid var(--border); max-height: 150px; overflow-y: auto;">
+                        ${task.descripcion || task.description || 'Sin descripción.'}
+                    </div>
+                </div>
+            `;
+        } catch (e) {
+            console.warn("[Context Drawer] Error parsing task context:", e);
+        }
+    } else {
+        html += `
+            <div style="margin-bottom: 14px; border-top: 1px solid var(--border); padding-top: 14px; text-align: center; padding: 20px 0; color: var(--text3);">
+                <i class="fas fa-unlink" style="font-size: 24px; margin-bottom: 8px; display: block;"></i>
+                Sin tarea Jules vinculada.
+            </div>
+        `;
+    }
+
+    container.innerHTML = html;
+}
+
+/* ════════════════════════════════════════
+   ACTIVIDAD TAB & LINE SELECTION
+   ════════════════════════════════════════ */
+
+window._loadAndRenderActivityTab = async function(sessionId) {
+    const container = document.getElementById('neural-jules-history');
+    if (!container) return;
+
+    container.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text3);"><i class="fas fa-spinner fa-spin mr-2"></i> Cargando historial...</div>';
+
+    try {
+        const path = sessionId.startsWith('sessions/') ? sessionId : 'sessions/' + sessionId;
+        const data = await window.julesApi.getActivities(path, 50);
+        const activities = data.activities || [];
+
+        if (activities.length === 0) {
+            container.innerHTML = '<div class="notif-empty" style="padding: 40px; text-align: center; color: var(--text3);">Sin actividad en esta sesión</div>';
+            return;
+        }
+
+        const welcomeScreen = document.getElementById('history-welcome-screen');
+        if (welcomeScreen) welcomeScreen.style.display = 'none';
+
+        container.innerHTML = activities.reverse().map(act => {
+            const time = new Date(act.createTime).toLocaleTimeString();
+            const id = act.id;
+            let type = 'INFO';
+            let content = act.description || '';
+            let extra = '';
+
+            if (act.userMessaged) { type = 'USER'; content = act.userMessaged.userMessage; }
+            else if (act.agentMessaged) { type = 'AGENT'; content = act.agentMessaged.agentMessage; }
+            else if (act.planGenerated) {
+                type = 'PLAN';
+                content = 'Plan generado';
+                const steps = act.planGenerated.plan?.steps || [];
+                extra = `<ol class="jules-plan-steps" style="margin-top: 8px; padding-left: 20px;">${steps.map(s =>
+                    `<li><strong>${s.title}</strong>${s.description ? ': ' + s.description : ''}</li>`
+                ).join('')}</ol>`;
+            }
+            else if (act.planApproved) { type = 'PLAN'; content = 'Plan aprobado por el usuario'; }
+            else if (act.progressUpdated) { type = 'PROG'; content = `<strong>${act.progressUpdated.title || ''}</strong>${act.progressUpdated.description ? ' — ' + act.progressUpdated.description : ''}`; }
+            else if (act.sessionCompleted) { type = 'DONE'; content = 'Sesión completada correctamente'; }
+            else if (act.sessionFailed) { type = 'FAIL'; content = 'Sesión fallida: ' + (act.sessionFailed.reason || '---'); }
+
+            if (act.artifacts?.length) {
+                act.artifacts.forEach(artifact => {
+                    if (artifact.changeSet?.gitPatch) {
+                        const msg = artifact.changeSet.gitPatch.suggestedCommitMessage || '';
+                        extra += `<div class="jules-artifact jules-artifact--diff" style="margin-top:8px; padding:8px; background:rgba(0,0,0,0.2); border-radius:4px; font-family:var(--font-mono); font-size:11px;">📄 <em>${msg}</em></div>`;
+                    }
+                    if (artifact.bashOutput) {
+                        const cmd = window.NeuralChatCore.escapeHtml(artifact.bashOutput.command || '');
+                        const out = window.NeuralChatCore.escapeHtml(artifact.bashOutput.output || '');
+                        extra += `<div class="jules-artifact jules-artifact--bash" style="margin-top:8px; padding:8px; background:#000; border-radius:4px; font-family:var(--font-mono); font-size:11px; border:1px solid var(--border);">
+                            <code style="color:var(--cyan);">$ ${cmd}</code>
+                            <pre style="color:#fff; margin-top:4px; overflow-x:auto;">${out}</pre>
+                        </div>`;
+                    }
+                });
+            }
+
+            const typeClass = type.toLowerCase();
+
+            return `
+                <div class="jules-activity-entry jules-activity-entry--${typeClass}" data-activity-id="${id}" onclick="window.handleActivityRowClick(event, '${id}')" style="display: flex; gap: 12px; padding: 12px; border-bottom: 1px solid var(--border); transition: background 0.2s; position: relative; cursor: pointer;">
+                    <div onclick="window.handleActivityCheckboxClick(event, '${id}')" style="display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <input type="checkbox" class="activity-line-checkbox" data-id="${id}" style="cursor: pointer;">
+                    </div>
+                    <span class="activity-icon" style="flex-shrink: 0; font-size: 16px;">
+                        ${type === 'USER' ? '👤' : (type === 'AGENT' ? '🤖' : '⚙️')}
+                    </span>
+                    <div class="activity-body" style="flex: 1; min-width: 0;">
+                        <div class="activity-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                            <span class="activity-originator" style="font-weight: 700; font-size: 11px; color: var(--text2);">${type}</span>
+                            <span class="activity-time" style="font-size: 10px; color: var(--text3);">${time}</span>
+                        </div>
+                        <div class="activity-content" style="font-size: 12.5px; line-height: 1.5; color: var(--text);">${content}</div>
+                        ${extra}
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        window.clearActivitySelection();
+
+    } catch (e) {
+        container.innerHTML = `<div style="padding:40px; text-align:center; color:var(--red); font-size:12px;">Error al cargar actividades: ${e.message}</div>`;
+    }
+}
+
+window.handleActivityRowClick = function(event, id) {
+    if (event.target.tagName === 'INPUT' || event.target.closest('input')) return;
+    window.toggleActivitySelection(id);
+}
+
+window.handleActivityCheckboxClick = function(event, id) {
+    event.stopPropagation();
+    window.toggleActivitySelection(id);
+}
+
+window.toggleActivitySelection = function(id) {
+    const checkbox = document.querySelector(`.activity-line-checkbox[data-id="${id}"]`);
+    const row = document.querySelector(`.jules-activity-entry[data-activity-id="${id}"]`);
+    if (!checkbox || !row) return;
+
+    const newState = !checkbox.checked;
+    checkbox.checked = newState;
+    row.classList.toggle('selected', newState);
+    if (newState) {
+        row.style.background = 'rgba(124, 58, 237, 0.08)';
+    } else {
+        row.style.background = 'transparent';
+    }
+
+    window.updateActivitySelectionUI();
+}
+
+window.updateActivitySelectionUI = function() {
+    const selected = document.querySelectorAll('.activity-line-checkbox:checked');
+    const count = selected.length;
+
+    const toolbar = document.getElementById('neural-selection-toolbar');
+    const countEl = document.getElementById('selection-count');
+
+    if (toolbar && countEl) {
+        if (count > 0) {
+            toolbar.style.display = 'flex';
+            countEl.innerText = count;
+        } else {
+            toolbar.style.display = 'none';
+        }
+    }
+}
+
+window.clearActivitySelection = function() {
+    document.querySelectorAll('.activity-line-checkbox').forEach(cb => {
+        cb.checked = false;
+        const row = cb.closest('.jules-activity-entry');
+        if (row) {
+            row.classList.remove('selected');
+            row.style.background = 'transparent';
+        }
+    });
+    window.updateActivitySelectionUI();
+}
+
+window.analyzeSelectedWithClaude = async function() {
+    const selectedHistory = document.querySelectorAll('.session-checkbox:checked');
+    const selectedActivity = document.querySelectorAll('.activity-line-checkbox:checked');
+
+    if (selectedHistory.length > 0) {
+        const sids = Array.from(selectedHistory).map(cb => cb.getAttribute('data-sid'));
+        const sessions = window.julesSessionsCache || [];
+
+        showToast("Recopilando logs y analizando...", "amber");
+        let context = "Analiza las siguientes sesiones de Jules (incluyendo logs recientes):\n\n";
+
+        for (const sid of sids) {
+            const s = sessions.find(sess => sess.name.endsWith(sid));
+            if (s) {
+                context += "--- SESIÓN #" + sid + " ---\n";
+                context += "TAREA: " + (s.title || s.prompt) + "\n";
+                context += "REPO: " + (s.sourceContext?.source || '---') + "\n";
+                context += "RAMA: " + (s.sourceContext?.githubRepoContext?.startingBranch || '---') + "\n";
+                context += "ESTADO: " + s.state + "\n";
+                context += "FECHA: " + s.createTime + "\n";
+
+                try {
+                    const sName = s.name.startsWith('sessions/') ? s.name : 'sessions/' + sid;
+                    const activityData = await window.julesApi.getActivities(sName, 5);
+                    const activities = activityData.activities || [];
+                    if (activities.length > 0) {
+                        context += "LOGS RECIENTES:\n";
+                        activities.forEach(a => {
+                            const msg = a.agentMessaged?.agentMessage || a.progressUpdated?.title || a.description || 'Actividad';
+                            context += "- [" + a.createTime.split('T')[1].split('.')[0] + "] " + msg.substring(0, 100) + "\n";
+                        });
+                    }
+                } catch(e) { console.warn("Could not fetch logs for " + sid, e); }
+
+                context += "\n";
+            }
+        }
+
+        context += "¿Qué patrones identificas en estas sesiones? ¿Hay algún problema común o sugerencia de mejora?";
+
+        window.switchView('chat');
+        if ($('v2-chat-input')) {
+            $('v2-chat-input').value = context;
+            $('v2-chat-input').dispatchEvent(new Event('input'));
+        }
+
+        window.clearHistorySelection();
+        showToast("Contexto de sesiones enviado a Claude", "green");
+    } else if (selectedActivity.length > 0) {
+        showToast("Recopilando logs y analizando...", "amber");
+        let context = "Analiza la siguiente actividad de Jules:\n\n";
+
+        selectedActivity.forEach(cb => {
+            const row = cb.closest('.jules-activity-entry');
+            if (row) {
+                const originator = row.querySelector('.activity-originator')?.innerText || 'INFO';
+                const time = row.querySelector('.activity-time')?.innerText || '';
+                const content = row.querySelector('.activity-content')?.innerText || '';
+                context += `-[${time}] [${originator}] ${content}\n`;
+            }
+        });
+
+        context += "\n¿Qué opinas sobre este progreso/error? ¿Qué sugerencias o próximos pasos recomiendas?";
+
+        window.switchJulesPanelChatView('chat');
+
+        const input = $('v2-chat-input');
+        if (input) {
+            input.value = context;
+            input.dispatchEvent(new Event('input'));
+            input.focus();
+        }
+
+        window.clearActivitySelection();
+        showToast("Actividad cargada para análisis", "green");
     }
 }

@@ -128,22 +128,23 @@ window.loadSession = async function(id) {
 // Real-time synchronization channel
 window.neuralSyncChannel = new BroadcastChannel('hypenosys_neural_sessions_sync');
 window.neuralSyncChannel.onmessage = (event) => {
-    const { type, sessionId } = event.data;
-    if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Neural Sync] Message received:", type, sessionId);
-
-    // Refresh sessions from storage
-    window.sessions = JSON.parse(localStorage.getItem('claude_chat_sessions') || '[]');
-
-    if (type === 'active-session-changed' && sessionId) {
-        if (window.currentSessionId !== sessionId) {
-            loadSession(sessionId);
+    window.handleNeuralSyncMessage(
+        event.data,
+        () => {
+            window.sessions = JSON.parse(localStorage.getItem('claude_chat_sessions') || '[]');
+        },
+        (sessionId) => {
+            if (window.currentSessionId !== sessionId) {
+                loadSession(sessionId);
+            }
+        },
+        () => {
+            renderSessionList();
+            if (window.currentSessionId) {
+                renderMessages();
+            }
         }
-    } else {
-        renderSessionList();
-        if (window.currentSessionId) {
-            renderMessages();
-        }
-    }
+    );
 };
 
 window.addEventListener('storage', (e) => {
@@ -208,8 +209,8 @@ window.saveSessions = function(skipSync = false, reason = 'unknown') {
 
         localStorage.setItem('claude_archived_sessions', JSON.stringify(window.archivedSessions));
 
-        if (window.neuralSyncChannel) {
-            window.neuralSyncChannel.postMessage({ type: 'session-updated' });
+        if (!skipSync) {
+            window.broadcastNeuralEvent('sessions-updated', window.currentSessionId);
         }
 
         // Unified cross-tab and cross-component sync
@@ -224,15 +225,13 @@ window.saveSessions = function(skipSync = false, reason = 'unknown') {
         localStorage.setItem('hy_neural_sessions', JSON.stringify(neuralSessions));
 
         // Sync via BroadcastChannel
-        if (window.neuralSyncChannel && !skipSync && window.currentSessionId) {
+        if (!skipSync && window.currentSessionId) {
             const linkedSid = localStorage.getItem('hy_neural_session_id_' + window.currentSessionId);
             const currentSession = window.sessions.find(s => s.id === window.currentSessionId);
             if (currentSession && currentSession.messages.length > 0) {
                 const lastMsg = currentSession.messages[currentSession.messages.length - 1];
-                window.neuralSyncChannel.postMessage({
-                    type: 'NEW_MESSAGE',
+                window.broadcastNeuralEvent('NEW_MESSAGE', window.currentSessionId, {
                     julesSessionId: linkedSid || localStorage.getItem('hy_active_jules_session'),
-                    claudeConversationId: window.currentSessionId,
                     message: {
                         role: lastMsg.role,
                         content: lastMsg.content,

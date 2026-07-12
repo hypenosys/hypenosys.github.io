@@ -2,6 +2,82 @@
  * Neural Chat Core - Logic for session management and AI interaction
  * Independent of DOM and storage keys.
  */
+// Tab synchronization protocol properties
+window.neuralTabSourceId = window.neuralTabSourceId || 'tab_' + Math.random().toString(36).substring(2, 11) + '_' + Date.now();
+window.neuralSyncHistory = window.neuralSyncHistory || new Set();
+
+window.broadcastNeuralEvent = function(type, sessionId, payload = {}) {
+    if (!window.neuralSyncChannel) {
+        window.neuralSyncChannel = new BroadcastChannel('hypenosys_neural_sessions_sync');
+    }
+    const eventId = 'evt_' + Math.random().toString(36).substring(2, 11) + '_' + Date.now();
+    const eventMsg = {
+        v: '2.0.0',
+        eventId: eventId,
+        sourceId: window.neuralTabSourceId,
+        type: type,
+        sessionId: sessionId,
+        timestamp: Date.now(),
+        payload: payload
+    };
+    window.neuralSyncHistory.add(eventId);
+    if (window.neuralSyncHistory.size > 200) {
+        const first = window.neuralSyncHistory.values().next().value;
+        window.neuralSyncHistory.delete(first);
+    }
+    try {
+        window.neuralSyncChannel.postMessage(eventMsg);
+    } catch (e) {
+        console.warn("[Neural Sync] Failed to post message:", e);
+    }
+};
+
+window.handleNeuralSyncMessage = function(eventData, onLoadSessions, onActiveSessionChanged, onRender) {
+    if (!eventData || typeof eventData !== 'object') return;
+    const { v, eventId, sourceId, type, sessionId, payload } = eventData;
+
+    // Ignore events from same source tab
+    if (sourceId === window.neuralTabSourceId) return;
+
+    // Ignore duplicate events
+    if (window.neuralSyncHistory.has(eventId)) return;
+    window.neuralSyncHistory.add(eventId);
+    if (window.neuralSyncHistory.size > 200) {
+        const first = window.neuralSyncHistory.values().next().value;
+        window.neuralSyncHistory.delete(first);
+    }
+
+    if (window.HYPENOSYS_NEURAL_DEBUG) {
+        console.log(`[Neural Sync] Received remote event: ${type} (Session: ${sessionId}) from Source: ${sourceId}`);
+    }
+
+    // Process event
+    if (onLoadSessions) onLoadSessions();
+
+    if (type === 'active-session-changed' && sessionId) {
+        if (onActiveSessionChanged) onActiveSessionChanged(sessionId);
+    } else if (type === 'NEW_MESSAGE' && payload) {
+        const activeId = localStorage.getItem('hy_active_claude_session_id');
+        if (sessionId === activeId) {
+            const currentSession = (window.sessions || []).find(s => s.id === activeId) ||
+                                   (window.julesPanelSessions || []).find(s => s.id === activeId);
+            const { message } = payload;
+            if (currentSession && message) {
+                const exists = currentSession.messages.some(m =>
+                    m.content === message.content && m.role === message.role &&
+                    (m.timestamp === message.timestamp || m.createTime === message.createTime)
+                );
+                if (!exists) {
+                    currentSession.messages.push(message);
+                    if (onRender) onRender();
+                }
+            }
+        }
+    } else {
+        if (onRender) onRender();
+    }
+};
+
 window.NeuralChatCore = (function() {
     console.log("[Neural Chat Core] Core loaded");
 
