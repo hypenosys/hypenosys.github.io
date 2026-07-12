@@ -1,6 +1,6 @@
 {
   "schema_version": "2.0.0",
-  "last_updated": "2026-07-11T16:54:10.963Z",
+  "last_updated": "2026-07-12T08:56:50.640Z",
   "members": {
     "Axel": {
       "github_username": "Axlfc",
@@ -86,8 +86,8 @@
         "volatilidad": 0
       },
       "ai_config": {
-        "provider": "nvidia_nim",
-        "model": "nvidia/nemotron-3-ultra-550b-a55b"
+        "provider": "ollama",
+        "model": "qwen3.5:9b"
       },
       "github_login": "TopperH4rley",
       "contact_email": ""
@@ -277,6 +277,11 @@
     }
   },
   "_audit_log": [
+    {
+      "action": "chore: actualizar config AI de Alex",
+      "user": "TopperH4rley",
+      "timestamp": "2026-07-12T08:56:50.640Z"
+    },
     {
       "action": "chore: actualizar config AI de Alex",
       "user": "TopperH4rley",
