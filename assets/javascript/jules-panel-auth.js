@@ -617,15 +617,22 @@ window.launchSession = async function() {
         showToast("Sesión iniciada correctamente", "green");
         addTel("JULES", "Sesión iniciada: " + sid, "success");
 
-        const claudeId = localStorage.getItem('hy_active_claude_session_id');
-        if (claudeId) {
-            localStorage.setItem('hy_neural_session_id_' + claudeId, sid);
-        }
-        localStorage.setItem('hy_neural_session_id', sid);
-
-        startNeuralPolling(sid, true);
         const taskContext = JSON.parse(localStorage.getItem('hy_neural_task_context') || '{}');
         const sessionName = taskContext.titulo || taskContext.title || "Sesión Neural " + new Date().toLocaleDateString();
+
+        startNeuralPolling(sid, true);
+
+        // Show the premium choice dialog to let the user select how they want to link this newly created session
+        if (window.showJulesCreationLinkingChoices) {
+            window.showJulesCreationLinkingChoices(sid, sessionName);
+        } else {
+            // Fallback for safety
+            const claudeId = localStorage.getItem('hy_active_claude_session_id');
+            if (claudeId) {
+                localStorage.setItem('hy_neural_session_id_' + claudeId, sid);
+            }
+            localStorage.setItem('hy_neural_session_id', sid);
+        }
         const now = new Date().toISOString();
 
         localStorage.setItem('hy_neural_active', 'true');

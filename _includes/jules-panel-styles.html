@@ -2271,4 +2271,134 @@ body{
 }
 
 /* CLAUDE CHAT MODAL */
+
+/* NEURAL WORKSPACE WORK MODE SELECTOR & LINKING STYLE */
+.neural-workspace-header {
+  padding: 12px 24px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(10, 10, 15, 0.45);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 15;
+  flex-shrink: 0;
+}
+.neural-mode-tabs {
+  display: inline-flex;
+  background: rgba(13, 13, 20, 0.8);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 3px;
+  gap: 4px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+.neural-tab {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text3);
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 6px 16px;
+  border-radius: calc(var(--r-lg) - 2px);
+  cursor: pointer;
+  transition: all var(--t-fast) cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  outline: none;
+}
+.neural-tab:hover {
+  color: var(--text2);
+  background: rgba(255, 255, 255, 0.03);
+}
+.neural-tab:focus-visible {
+  box-shadow: 0 0 0 2px var(--accent2);
+}
+.neural-tab[aria-selected="true"] {
+  background: var(--accent);
+  color: #ffffff;
+  border-color: rgba(189, 147, 249, 0.3);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 12px rgba(124, 58, 237, 0.35);
+}
+.is-hidden {
+  display: none !important;
+}
+
+/* LINKING STATUS BAR */
+.neural-linking-bar {
+  background: rgba(124, 58, 237, 0.08);
+  border-bottom: 1px solid rgba(124, 58, 237, 0.25);
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-shrink: 0;
+  font-family: var(--font-ui);
+  box-shadow: inset 0 -4px 12px rgba(124, 58, 237, 0.02);
+}
+.neural-linking-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.neural-linking-bar-title {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--accent2);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.neural-linking-bar-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  max-width: 280px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.neural-linking-bar-actions {
+  display: flex;
+  gap: 6px;
+}
+.neural-link-badge {
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: var(--r-full);
+  font-weight: 700;
+}
+.neural-link-badge.claude-only {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text3);
+  border: 1px solid var(--border);
+}
+.neural-link-badge.claude-jules {
+  background: rgba(124, 58, 237, 0.15);
+  color: var(--accent2);
+  border: 1px solid rgba(124, 58, 237, 0.3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .neural-tab, .neural-linking-bar {
+    transition: none !important;
+  }
+}
+@media (max-width: 768px) {
+  .neural-linking-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 12px 18px;
+  }
+  .neural-linking-bar-actions {
+    width: 100%;
+    justify-content: flex-start;
+    margin-top: 4px;
+  }
+}
 </style>

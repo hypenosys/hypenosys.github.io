@@ -11,6 +11,495 @@ window.julesPanelPollInterval = null;
 
 let isNeuralChatProcessing = false;
 
+// Neural Workspace Work Mode State Model
+window.NeuralWorkspaceState = {
+  activeMode: 'claude', // 'claude' or 'jules'
+  activeClaudeConversationId: null,
+  activeJulesSessionId: null
+};
+
+window.getNeuralWorkspaceState = function() {
+    return window.NeuralWorkspaceState;
+};
+
+window.persistNeuralWorkspaceState = function() {
+    localStorage.setItem('hypenosys_neural_workspace_mode', window.NeuralWorkspaceState.activeMode);
+    if (window.NeuralWorkspaceState.activeClaudeConversationId) {
+        localStorage.setItem('hy_active_claude_session_id', window.NeuralWorkspaceState.activeClaudeConversationId);
+    } else {
+        localStorage.removeItem('hy_active_claude_session_id');
+    }
+    if (window.NeuralWorkspaceState.activeJulesSessionId) {
+        localStorage.setItem('hy_neural_session_id', window.NeuralWorkspaceState.activeJulesSessionId);
+    } else {
+        localStorage.removeItem('hy_neural_session_id');
+    }
+};
+
+window.resolveLinkedClaudeConversationId = function(julesSessionId) {
+    if (!julesSessionId) return null;
+    const cleanId = julesSessionId.replace('sessions/', '');
+    const found = (window.julesPanelSessions || []).find(s => {
+        const lid = window.resolveLinkedJulesId(s);
+        return lid && (lid.replace('sessions/', '') === cleanId);
+    });
+    return found ? found.id : null;
+};
+
+window.restoreNeuralWorkspaceState = function() {
+    let savedMode = localStorage.getItem('hypenosys_neural_workspace_mode');
+    if (savedMode !== 'claude' && savedMode !== 'jules') {
+        savedMode = 'claude';
+    }
+    window.NeuralWorkspaceState.activeMode = savedMode;
+
+    let savedClaudeId = localStorage.getItem('hy_active_claude_session_id');
+    let claudeSession = window.julesPanelSessions.find(s => s.id === savedClaudeId);
+    if (!claudeSession) {
+        claudeSession = window.julesPanelSessions.find(s => !s.archived) || window.julesPanelSessions[0];
+        if (claudeSession) {
+            savedClaudeId = claudeSession.id;
+        } else {
+            savedClaudeId = null;
+        }
+    }
+    window.NeuralWorkspaceState.activeClaudeConversationId = savedClaudeId;
+    window.currentJulesPanelSessionId = savedClaudeId;
+
+    let canonicalJulesId = window.resolveLinkedJulesId(claudeSession);
+    let savedJulesId = localStorage.getItem('hy_neural_session_id');
+
+    if (canonicalJulesId) {
+        window.NeuralWorkspaceState.activeJulesSessionId = canonicalJulesId;
+    } else {
+        if (savedMode === 'claude') {
+            window.NeuralWorkspaceState.activeJulesSessionId = null;
+        } else {
+            window.NeuralWorkspaceState.activeJulesSessionId = savedJulesId || null;
+        }
+    }
+
+    window.persistNeuralWorkspaceState();
+};
+
+window.setNeuralWorkspaceMode = function(mode, options = {}) {
+    if (mode !== 'claude' && mode !== 'jules') {
+        console.error("[Neural Workspace] Invalid mode:", mode);
+        return;
+    }
+
+    console.log("[Neural Workspace] Setting mode to:", mode);
+    window.NeuralWorkspaceState.activeMode = mode;
+
+    // Update tab elements
+    const tabClaude = $('neural-tab-claude');
+    const tabJules = $('neural-tab-jules');
+    if (tabClaude && tabJules) {
+        tabClaude.setAttribute('aria-selected', mode === 'claude' ? 'true' : 'false');
+        tabClaude.setAttribute('tabindex', mode === 'claude' ? '0' : '-1');
+        tabClaude.classList.toggle('active', mode === 'claude');
+
+        tabJules.setAttribute('aria-selected', mode === 'jules' ? 'true' : 'false');
+        tabJules.setAttribute('tabindex', mode === 'jules' ? '0' : '-1');
+        tabJules.classList.toggle('active', mode === 'jules');
+    }
+
+    // Update "+ Nueva sesión" button text and behavior dynamically
+    const newBtn = $('hdr-new-btn');
+    if (newBtn) {
+        newBtn.innerHTML = mode === 'claude' ? '<i class="fas fa-plus mr-1"></i> Nueva conversación' : '<i class="fas fa-plus mr-1"></i> Nueva sesión Jules';
+    }
+
+    // Resolve active Claude session and check linked Jules ID
+    const currentClaudeSession = window.julesPanelSessions.find(s => s.id === window.NeuralWorkspaceState.activeClaudeConversationId);
+    if (currentClaudeSession) {
+        window.NeuralWorkspaceState.activeJulesSessionId = window.resolveLinkedJulesId(currentClaudeSession);
+    } else {
+        window.NeuralWorkspaceState.activeJulesSessionId = null;
+    }
+
+    // Switch workspace container visibilities
+    const isClaude = mode === 'claude';
+    const claudeWorkspace = document.getElementById('neural-claude-workspace');
+    const julesWorkspace = document.getElementById('neural-jules-workspace');
+
+    if (claudeWorkspace) {
+        claudeWorkspace.hidden = !isClaude;
+        claudeWorkspace.setAttribute('aria-hidden', String(!isClaude));
+    }
+    if (julesWorkspace) {
+        julesWorkspace.hidden = isClaude;
+        julesWorkspace.setAttribute('aria-hidden', String(isClaude));
+    }
+
+    if (isClaude) {
+        window.currentSendMode = 'claude';
+        const input = $('v2-chat-input');
+        if (input) {
+            input.placeholder = "Escribe un mensaje para Claude...";
+        }
+        const innerToggle = document.querySelector('.jules-neural-mode-toggle');
+        if (innerToggle) innerToggle.style.display = 'none';
+
+        // Toggle sidebars
+        const ngHistory = $('ng-history');
+        const ngChatHistory = $('ng-chat-history');
+        if (ngHistory) {
+            ngHistory.style.display = 'none';
+            ngHistory.classList.add('hidden');
+        }
+        if (ngChatHistory) {
+            ngChatHistory.style.display = 'block';
+            ngChatHistory.classList.remove('hidden');
+            const label = ngChatHistory.querySelector('.nav-label span');
+            if (label) label.textContent = "CLAUDE CHAT HISTORY";
+        }
+
+        window.renderChatV2Messages();
+        window.renderNeuralChatHistory();
+
+        // Stop Jules polling when not on Jules tab
+        window.stopNeuralWorkspacePolling();
+    } else {
+        window.currentSendMode = 'jules';
+        const input = $('v2-chat-input');
+        if (input) {
+            input.placeholder = "Enviar instrucción directa a Jules...";
+        }
+        const innerToggle = document.querySelector('.jules-neural-mode-toggle');
+        if (innerToggle) innerToggle.style.display = 'none';
+
+        // Toggle sidebars
+        const ngHistory = $('ng-history');
+        const ngChatHistory = $('ng-chat-history');
+        if (ngChatHistory) {
+            ngChatHistory.style.display = 'none';
+            ngChatHistory.classList.add('hidden');
+        }
+        if (ngHistory) {
+            ngHistory.style.display = 'block';
+            ngHistory.classList.remove('hidden');
+            const label = ngHistory.querySelector('.nav-label span');
+            if (label) label.textContent = "JULES HISTORY";
+        }
+
+        // Load the linked session or render unlinked state
+        const julesSessionId = window.NeuralWorkspaceState.activeJulesSessionId;
+        if (julesSessionId) {
+            window.loadAndRenderJulesSession(julesSessionId, true);
+            window.startNeuralWorkspacePolling(julesSessionId);
+        } else {
+            window.renderJulesEmptyState();
+        }
+
+        // Refresh sidebar Jules history
+        if (window.updateNeuralHistory && window.julesSessionsCache) {
+            window.updateNeuralHistory(window.julesSessionsCache);
+        }
+    }
+
+    // Toggle the hidden class of #v2-task-context based on mode and session presence
+    const v2TaskContext = document.getElementById('v2-task-context');
+    if (v2TaskContext) {
+        if (!isClaude && window.NeuralWorkspaceState.activeJulesSessionId) {
+            v2TaskContext.classList.remove('hidden');
+        } else {
+            v2TaskContext.classList.add('hidden');
+        }
+    }
+
+    window.persistNeuralWorkspaceState();
+
+    if (window.neuralSyncChannel) {
+        window.neuralSyncChannel.postMessage({ type: 'workspace-mode-changed', mode: mode, sessionId: window.currentJulesPanelSessionId });
+    }
+};
+
+window.selectLinkedClaudeConversation = function(conversationId, options = {}) {
+    console.log("[Neural Workspace] Selecting Claude conversation:", conversationId);
+    window.NeuralWorkspaceState.activeClaudeConversationId = conversationId;
+    window.currentJulesPanelSessionId = conversationId;
+
+    const session = window.julesPanelSessions.find(s => s.id === conversationId);
+    const linkedJulesId = window.resolveLinkedJulesId(session);
+
+    window.NeuralWorkspaceState.activeJulesSessionId = linkedJulesId || null;
+    window.persistNeuralWorkspaceState();
+
+    // Re-render
+    if (window.NeuralWorkspaceState.activeMode === 'claude') {
+        window.renderChatV2Messages();
+        window.renderNeuralChatHistory();
+    } else {
+        // If we are in Jules mode, load the newly selected pair's Jules task!
+        if (linkedJulesId) {
+            window.loadAndRenderJulesSession(linkedJulesId, true);
+            window.startNeuralWorkspacePolling(linkedJulesId);
+        } else {
+            window.renderJulesEmptyState();
+        }
+        if (window.updateNeuralHistory && window.julesSessionsCache) {
+            window.updateNeuralHistory(window.julesSessionsCache);
+        }
+    }
+};
+
+window.selectLinkedJulesSession = function(julesSessionId, options = {}) {
+    console.log("[Neural Workspace] Selecting Jules session:", julesSessionId);
+    const cleanJulesId = julesSessionId ? julesSessionId.replace('sessions/', '') : null;
+    window.NeuralWorkspaceState.activeJulesSessionId = cleanJulesId;
+
+    // Find canonically linked Claude session
+    const linkedClaudeId = window.resolveLinkedClaudeConversationId(cleanJulesId);
+    window.NeuralWorkspaceState.activeClaudeConversationId = linkedClaudeId;
+    window.currentJulesPanelSessionId = linkedClaudeId;
+
+    window.persistNeuralWorkspaceState();
+
+    if (window.NeuralWorkspaceState.activeMode === 'jules') {
+        if (cleanJulesId) {
+            window.loadAndRenderJulesSession(cleanJulesId, true);
+            window.startNeuralWorkspacePolling(cleanJulesId);
+        } else {
+            window.renderJulesEmptyState();
+        }
+        if (window.updateNeuralHistory && window.julesSessionsCache) {
+            window.updateNeuralHistory(window.julesSessionsCache);
+        }
+    } else {
+        window.renderChatV2Messages();
+        window.renderNeuralChatHistory();
+    }
+};
+
+window.renderJulesEmptyState = function() {
+    window.stopNeuralWorkspacePolling();
+
+    const julesLinkingBar = document.getElementById('jules-linking-bar');
+    if (julesLinkingBar) julesLinkingBar.innerHTML = '';
+
+    const welcome = document.getElementById('history-welcome-screen');
+    if (welcome) {
+        welcome.style.display = 'flex';
+        welcome.classList.remove('hidden');
+
+        welcome.innerHTML = `
+            <div style="font-size: 40px;">⚡</div>
+            <h3 style="font-family: var(--font-head); font-weight: 700; font-size: 16px; color: var(--accent2);">Esta conversación todavía no tiene una sesión Jules vinculada</h3>
+            <p style="max-width: 320px; font-size: 12px; color: var(--text3); margin-bottom: 15px;">
+                Para que Jules trabaje y ejecute comandos en este repositorio, crea una nueva sesión de Jules o vincula una tarea existente.
+            </p>
+            <div style="display: flex; gap: 10px; justify-content: center; align-items: center;">
+                <button class="btn btn-primary btn-sm" id="btn-create-jules-linked" style="box-shadow: 0 0 15px rgba(124, 58, 237, 0.3); font-size: 11px;">
+                    <i class="fas fa-plus mr-1"></i> Crear sesión Jules vinculada
+                </button>
+                <button class="btn btn-ghost btn-sm" id="btn-link-jules-existing" style="font-size: 11px;">
+                    <i class="fas fa-link mr-1"></i> Vincular sesión existente
+                </button>
+            </div>
+        `;
+
+        const btnCreate = document.getElementById('btn-create-jules-linked');
+        const btnLink = document.getElementById('btn-link-jules-existing');
+        if (btnCreate) {
+            btnCreate.onclick = () => window.startLinkedJulesCreationFlow();
+        }
+        if (btnLink) {
+            btnLink.onclick = () => window.openJulesTaskSelector();
+        }
+    }
+
+    const historyContainer = document.getElementById('neural-jules-history');
+    if (historyContainer) {
+        historyContainer.innerHTML = '';
+        historyContainer.style.display = 'none';
+    }
+
+    const v2TaskContext = $('v2-task-context');
+    if (v2TaskContext) v2TaskContext.classList.add('hidden');
+};
+
+window.renderJulesLinkingBar = function() {
+    const bar = document.getElementById('jules-linking-bar');
+    if (!bar) return;
+
+    const activeMode = window.NeuralWorkspaceState?.activeMode;
+    if (activeMode !== 'jules') {
+        bar.innerHTML = '';
+        return;
+    }
+
+    const julesSessionId = window.NeuralWorkspaceState?.activeJulesSessionId;
+    if (!julesSessionId) {
+        bar.innerHTML = '';
+        return;
+    }
+
+    const linkedClaudeId = window.resolveLinkedClaudeConversationId(julesSessionId);
+    if (linkedClaudeId) {
+        const session = window.julesPanelSessions.find(s => s.id === linkedClaudeId);
+        const claudeTitle = session ? session.title : 'Conversación #' + linkedClaudeId;
+
+        bar.innerHTML = `
+            <div class="neural-linking-bar">
+                <div class="neural-linking-bar-left">
+                    <span class="neural-link-badge claude-jules">Claude + Jules</span>
+                    <span class="neural-linking-bar-title">Conversación Claude vinculada:</span>
+                    <span class="neural-linking-bar-value" title="${window.escapeHtml(claudeTitle)}">${window.escapeHtml(claudeTitle)}</span>
+                </div>
+                <div class="neural-linking-bar-actions">
+                    <button class="btn btn-ghost btn-xs" id="btn-view-in-claude" style="color: var(--accent2); font-weight: 700;"><i class="fas fa-eye mr-1"></i> Ver en Claude</button>
+                    <button class="btn btn-ghost btn-xs" id="btn-change-claude-link" style="color: var(--accent2);"><i class="fas fa-exchange-alt mr-1"></i> Cambiar conversación</button>
+                    <button class="btn btn-ghost btn-xs" id="btn-unlink-claude-link" style="color: var(--red);"><i class="fas fa-unlink mr-1"></i> Desvincular</button>
+                </div>
+            </div>
+        `;
+
+        const btnView = document.getElementById('btn-view-in-claude');
+        const btnChange = document.getElementById('btn-change-claude-link');
+        const btnUnlink = document.getElementById('btn-unlink-claude-link');
+
+        if (btnView) {
+            btnView.onclick = () => {
+                window.setNeuralWorkspaceMode('claude');
+            };
+        }
+        if (btnChange) {
+            btnChange.onclick = () => {
+                window.openClaudeSessionSelector();
+            };
+        }
+        if (btnUnlink) {
+            btnUnlink.onclick = () => {
+                window.unlinkClaudeFromJulesTask(linkedClaudeId);
+            };
+        }
+    } else {
+        bar.innerHTML = `
+            <div class="neural-linking-bar">
+                <div class="neural-linking-bar-left">
+                    <span class="neural-link-badge claude-only">Jules Only</span>
+                    <span class="neural-linking-bar-title" style="color: var(--text3); text-transform: none; font-weight: normal; font-size: 12.5px;">Esta sesión Jules todavía no tiene una conversación Claude vinculada.</span>
+                </div>
+                <div class="neural-linking-bar-actions">
+                    <button class="btn btn-primary btn-xs" id="btn-create-claude-link" style="box-shadow: 0 0 10px rgba(124, 58, 237, 0.2);"><i class="fas fa-plus mr-1"></i> Crear conversación Claude</button>
+                    <button class="btn btn-ghost btn-xs" id="btn-link-claude-link" style="color: var(--accent2);"><i class="fas fa-link mr-1"></i> Vincular conversación existente</button>
+                </div>
+            </div>
+        `;
+
+        const btnCreate = document.getElementById('btn-create-claude-link');
+        const btnLink = document.getElementById('btn-link-claude-link');
+
+        if (btnCreate) {
+            btnCreate.onclick = () => {
+                window.createNewClaudeFromJulesSession(julesSessionId);
+            };
+        }
+        if (btnLink) {
+            btnLink.onclick = () => {
+                window.openClaudeSessionSelector();
+            };
+        }
+    }
+};
+
+window.createNewClaudeFromJulesSession = function(julesSessionId) {
+    if (!julesSessionId) return;
+
+    const cleanJulesId = julesSessionId.replace('sessions/', '');
+
+    // Find task in cache for a good title
+    const cachedTask = (window.julesSessionsCache || []).find(s => s.name.endsWith(cleanJulesId));
+    const title = cachedTask ? (cachedTask.title || cachedTask.prompt || 'Conversación vinculada') : 'Conversación vinculada';
+
+    const newSession = window.NeuralChatCore.createSession({
+        title: title,
+        idPrefix: 'session_'
+    });
+
+    newSession.metadata = newSession.metadata || {};
+    newSession.metadata.linkedJulesTaskId = cleanJulesId;
+    if (cachedTask && (cachedTask.title || cachedTask.prompt)) {
+        newSession.metadata.linkedJulesTaskTitle = cachedTask.title || cachedTask.prompt;
+    }
+
+    window.julesPanelSessions.unshift(newSession);
+    saveJulesPanelSessions();
+
+    localStorage.setItem('hy_neural_session_id_' + newSession.id, cleanJulesId);
+
+    window.selectLinkedJulesSession(cleanJulesId);
+    showToast("Conversación Claude vinculada creada", "green");
+};
+
+window.neuralWorkspacePollInterval = null;
+
+window.startNeuralWorkspacePolling = function(sessionId) {
+    window.stopNeuralWorkspacePolling();
+    if (!sessionId) return;
+
+    const poll = async () => {
+        const cleanSid = sessionId.replace('sessions/', '');
+        const targetSessionName = 'sessions/' + cleanSid;
+
+        try {
+            const activityData = await window.julesApi.getActivities(targetSessionName, 100);
+            const freshRawActivities = activityData.activities || [];
+
+            // Check if active session changed during request
+            const currentJulesSid = window.NeuralWorkspaceState?.activeJulesSessionId;
+            if (!currentJulesSid || currentJulesSid.replace('sessions/', '') !== cleanSid) {
+                return;
+            }
+
+            // Retrieve cached to merge
+            let cachedActivities = [];
+            try {
+                const cachedStr = localStorage.getItem(`jules_activities_cache_${cleanSid}`);
+                if (cachedStr) {
+                    cachedActivities = JSON.parse(cachedStr);
+                }
+            } catch (e) {}
+
+            let mergedFresh = [...freshRawActivities];
+            if (cachedActivities && cachedActivities.length > 0) {
+                cachedActivities.forEach(cached => {
+                    const exists = mergedFresh.some(fresh => (fresh.id && fresh.id === cached.id) || (fresh.messageId && fresh.messageId === cached.messageId));
+                    if (!exists) {
+                        mergedFresh.push(cached);
+                    }
+                });
+            }
+
+            const normalized = mergedFresh.map(act => window.normalizeJulesActivity(act, cleanSid)).filter(Boolean);
+            const unique = window.deduplicateActivities(normalized);
+
+            window.renderNormalizedActivities(unique, false);
+
+            localStorage.setItem(`jules_activities_cache_${cleanSid}`, JSON.stringify(unique));
+            _syncJulesActivitiesToSession(freshRawActivities);
+
+            const isDone = freshRawActivities.some(a => a.sessionCompleted || a.sessionFailed);
+            if (isDone) {
+                window.stopNeuralWorkspacePolling();
+            }
+        } catch (e) {
+            console.warn("[Neural Workspace Polling] Error:", e);
+        }
+    };
+
+    poll(); // immediate initial call
+    window.neuralWorkspacePollInterval = setInterval(poll, 5000);
+};
+
+window.stopNeuralWorkspacePolling = function() {
+    if (window.neuralWorkspacePollInterval) {
+        clearInterval(window.neuralWorkspacePollInterval);
+        window.neuralWorkspacePollInterval = null;
+    }
+};
+
 /**
  * Controla el estado de procesamiento del chat neural (indicador visual y botón enviar)
  */
@@ -45,6 +534,16 @@ function saveJulesPanelSessions() {
 window.loadJulesPanelSessions = function() {
     window.julesPanelSessions = window.NeuralChatCore.getSessions(window.JULES_PANEL_NEURAL_STORAGE);
     window.currentJulesPanelSessionId = localStorage.getItem(window.JULES_PANEL_NEURAL_ACTIVE_ID);
+
+    // Populate NeuralWorkspaceState
+    window.NeuralWorkspaceState.activeClaudeConversationId = window.currentJulesPanelSessionId;
+    const session = window.julesPanelSessions.find(s => s.id === window.currentJulesPanelSessionId);
+    if (session) {
+        window.NeuralWorkspaceState.activeJulesSessionId = window.resolveLinkedJulesId(session);
+    } else {
+        window.NeuralWorkspaceState.activeJulesSessionId = null;
+    }
+
     window.renderNeuralChatHistory();
 }
 
@@ -122,12 +621,8 @@ function migrateJulesPanelSessions() {
  */
 window.initJulesPanelNeuralChat = function() {
     if (window._julesPanelNeuralInitialized) {
-        window.renderNeuralChatHistory();
-        setNeuralProcessingState(false);
-        const session = window.julesPanelSessions.find(s => s.id === window.currentJulesPanelSessionId);
-        if (session) {
-            window.loadLinkedJulesHistoryForConversation(session);
-        }
+        window.restoreNeuralWorkspaceState();
+        window.setNeuralWorkspaceMode(window.NeuralWorkspaceState.activeMode);
         return;
     }
     console.log("[Jules Panel Neural] Initializing...");
@@ -138,10 +633,8 @@ window.initJulesPanelNeuralChat = function() {
 
     if (window.julesPanelSessions.length === 0 && !window.location.search.includes('skip_auto_session')) {
         window.createNewJulesPanelSession();
-    } else if (!window.currentJulesPanelSessionId && !window.location.search.includes('skip_auto_session')) {
-        window.loadJulesPanelSession(window.julesPanelSessions[0].id);
     } else {
-        window.loadJulesPanelSession(window.currentJulesPanelSessionId);
+        window.restoreNeuralWorkspaceState();
     }
 
     // Bind UI Events
@@ -165,6 +658,45 @@ window.initJulesPanelNeuralChat = function() {
         });
     }
 
+    // Bind tab events for the premium segmented workspace mode selector
+    const tabClaude = $('neural-tab-claude');
+    const tabJules = $('neural-tab-jules');
+    if (tabClaude) {
+        tabClaude.onclick = () => window.setNeuralWorkspaceMode('claude');
+    }
+    if (tabJules) {
+        tabJules.onclick = () => window.setNeuralWorkspaceMode('jules');
+    }
+
+    // Keyboard navigation on tabs
+    const tabContainer = document.getElementById('neural-workspace-tabs');
+    if (tabContainer) {
+        const tabs = Array.from(tabContainer.querySelectorAll('[role="tab"]'));
+        tabs.forEach((tab, index) => {
+            tab.addEventListener('keydown', (e) => {
+                let targetTab = null;
+                if (e.key === 'ArrowRight') {
+                    targetTab = tabs[(index + 1) % tabs.length];
+                } else if (e.key === 'ArrowLeft') {
+                    targetTab = tabs[(index - 1 + tabs.length) % tabs.length];
+                } else if (e.key === 'Home') {
+                    targetTab = tabs[0];
+                } else if (e.key === 'End') {
+                    targetTab = tabs[tabs.length - 1];
+                }
+
+                if (targetTab) {
+                    targetTab.focus();
+                    targetTab.click();
+                    e.preventDefault();
+                }
+            });
+        });
+    }
+
+    // Set initial mode on first render
+    window.setNeuralWorkspaceMode(window.NeuralWorkspaceState.activeMode);
+
     // Setup Listeners
     window.addEventListener('julesActivitiesUpdated', (e) => {
         const { sessionId, activities } = e.detail;
@@ -182,36 +714,36 @@ window.initJulesPanelNeuralChat = function() {
     });
 
     window.addEventListener('storage', (e) => {
-        if (e.key === window.JULES_PANEL_NEURAL_STORAGE || e.key === window.JULES_PANEL_NEURAL_ACTIVE_ID) {
+        if (e.key === window.JULES_PANEL_NEURAL_STORAGE || e.key === window.JULES_PANEL_NEURAL_ACTIVE_ID || e.key === 'hypenosys_neural_workspace_mode') {
             window.loadJulesPanelSessions();
             if ($('sessions-drawer')?.classList.contains('open')) {
                 window.renderJulesPanelSessionDrawerList();
             }
-            const session = window.julesPanelSessions.find(s => s.id === window.currentJulesPanelSessionId);
-            if (session) {
-                window.loadLinkedJulesHistoryForConversation(session);
-            }
+
+            window.restoreNeuralWorkspaceState();
+            window.setNeuralWorkspaceMode(window.NeuralWorkspaceState.activeMode);
         }
     });
 
     // Real-time synchronization channel
     window.neuralSyncChannel = new BroadcastChannel('hypenosys_neural_sessions_sync');
     window.neuralSyncChannel.onmessage = (event) => {
-        const { type, sessionId } = event.data;
-        if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Jules Panel Sync] Message received:", type, sessionId);
+        const { type, sessionId, mode } = event.data;
+        if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Jules Panel Sync] Message received:", type, sessionId, mode);
 
         window.loadJulesPanelSessions();
+
+        if (mode && mode !== window.NeuralWorkspaceState.activeMode) {
+            window.NeuralWorkspaceState.activeMode = mode;
+        }
+
         if (type === 'active-session-changed' && sessionId) {
             if (window.currentJulesPanelSessionId !== sessionId) {
                 window.loadJulesPanelSession(sessionId, true);
             }
         } else {
-            window.renderChatV2Messages();
-            window.renderNeuralChatHistory();
-            const session = window.julesPanelSessions.find(s => s.id === window.currentJulesPanelSessionId);
-            if (session) {
-                window.loadLinkedJulesHistoryForConversation(session);
-            }
+            window.restoreNeuralWorkspaceState();
+            window.setNeuralWorkspaceMode(window.NeuralWorkspaceState.activeMode);
         }
     };
 
@@ -293,9 +825,6 @@ window.createNewJulesPanelSession = function() {
 }
 
 window.loadJulesPanelSession = function(id, skipBroadcast = false) {
-    window.currentJulesPanelSessionId = id;
-    localStorage.setItem(window.JULES_PANEL_NEURAL_ACTIVE_ID, id);
-
     if (!skipBroadcast && window.neuralSyncChannel) {
         window.neuralSyncChannel.postMessage({ type: 'active-session-changed', sessionId: id });
     }
@@ -304,19 +833,15 @@ window.loadJulesPanelSession = function(id, skipBroadcast = false) {
     if (!session) return;
 
     // Switch view to chat if not already there
-    if (window.switchView) {
+    if (window.switchView && window.JulesPanelState?.currentView !== 'chat') {
         const chatBtn = document.querySelector('.hnav-link[data-view="chat"]');
         window.switchView('chat', chatBtn);
     }
 
     setNeuralProcessingState(false);
-    window.renderChatV2Messages();
-    window.renderNeuralChatHistory();
+    window.selectLinkedClaudeConversation(id);
 
     if (window.updateSidebarContextLabel) window.updateSidebarContextLabel();
-
-    // Load execution history
-    window.loadLinkedJulesHistoryForConversation(session);
 }
 
 window.sendChatV2Msg = async function() {
@@ -486,7 +1011,89 @@ window.renderChatV2Messages = function() {
 
     const session = window.julesPanelSessions.find(s => s.id === window.currentJulesPanelSessionId);
 
-    // Update Linking Status Bar
+    // Update Premium Claude Linking Status Bar
+    const bar = document.getElementById('claude-linking-bar');
+    if (bar) {
+        if (!session) {
+            bar.innerHTML = '';
+        } else {
+            const linkedId = window.resolveLinkedJulesId(session);
+            if (linkedId) {
+                const cleanLinkedId = linkedId.replace('sessions/', '');
+                let taskTitle = '#' + cleanLinkedId;
+                const cachedTask = (window.julesSessionsCache || []).find(s => s.name.endsWith(cleanLinkedId));
+                if (cachedTask && (cachedTask.title || cachedTask.prompt)) {
+                    taskTitle = '#' + cleanLinkedId + ' · ' + (cachedTask.title || cachedTask.prompt);
+                } else if (session.metadata?.linkedJulesTaskTitle) {
+                    taskTitle = '#' + cleanLinkedId + ' · ' + session.metadata.linkedJulesTaskTitle;
+                }
+
+                bar.innerHTML = `
+                    <div class="neural-linking-bar">
+                        <div class="neural-linking-bar-left">
+                            <span class="neural-link-badge claude-jules">Claude + Jules</span>
+                            <span class="neural-linking-bar-title">Vinculada con Jules:</span>
+                            <span class="neural-linking-bar-value" title="${window.NeuralChatCore.escapeHtml(taskTitle)}">${window.NeuralChatCore.escapeHtml(taskTitle)}</span>
+                        </div>
+                        <div class="neural-linking-bar-actions">
+                            <button class="btn btn-ghost btn-xs" id="btn-view-in-jules" style="color: var(--accent2); font-weight: 700;"><i class="fas fa-eye mr-1"></i> Ver en Jules</button>
+                            <button class="btn btn-ghost btn-xs" id="btn-change-jules-task" style="color: var(--accent2);"><i class="fas fa-exchange-alt mr-1"></i> Cambiar tarea</button>
+                            <button class="btn btn-ghost btn-xs" id="btn-unlink-jules-task" style="color: var(--red);"><i class="fas fa-unlink mr-1"></i> Desvincular</button>
+                        </div>
+                    </div>
+                `;
+
+                const btnView = document.getElementById('btn-view-in-jules');
+                const btnChange = document.getElementById('btn-change-jules-task');
+                const btnUnlink = document.getElementById('btn-unlink-jules-task');
+
+                if (btnView) {
+                    btnView.onclick = () => {
+                        window.setNeuralWorkspaceMode('jules');
+                    };
+                }
+                if (btnChange) {
+                    btnChange.onclick = () => {
+                        window.openJulesTaskSelector();
+                    };
+                }
+                if (btnUnlink) {
+                    btnUnlink.onclick = () => {
+                        window.unlinkClaudeFromJulesTask(session.id);
+                    };
+                }
+            } else {
+                bar.innerHTML = `
+                    <div class="neural-linking-bar">
+                        <div class="neural-linking-bar-left">
+                            <span class="neural-link-badge claude-only">Claude Only</span>
+                            <span class="neural-linking-bar-title" style="color: var(--text3); text-transform: none; font-weight: normal; font-size: 12.5px;">Esta conversación todavía no tiene una sesión Jules vinculada.</span>
+                        </div>
+                        <div class="neural-linking-bar-actions">
+                            <button class="btn btn-primary btn-xs" id="btn-create-jules-task" style="box-shadow: 0 0 10px rgba(124, 58, 237, 0.2);"><i class="fas fa-plus mr-1"></i> Crear sesión Jules</button>
+                            <button class="btn btn-ghost btn-xs" id="btn-link-jules-task" style="color: var(--accent2);"><i class="fas fa-link mr-1"></i> Vincular sesión existente</button>
+                        </div>
+                    </div>
+                `;
+
+                const btnCreate = document.getElementById('btn-create-jules-task');
+                const btnLink = document.getElementById('btn-link-jules-task');
+
+                if (btnCreate) {
+                    btnCreate.onclick = () => {
+                        window.startLinkedJulesCreationFlow();
+                    };
+                }
+                if (btnLink) {
+                    btnLink.onclick = () => {
+                        window.openJulesTaskSelector();
+                    };
+                }
+            }
+        }
+    }
+
+    // Update Linking Status Bar (Legacy compatibility fallback)
     const statusLabel = $('chat-live-status');
     const statusMonitor = $('chat-live-monitor');
     const statusDot = statusMonitor ? statusMonitor.querySelector('.live-dot') : null;
@@ -757,6 +1364,25 @@ window.sendNeuralMessage = async function() {
     const msg = input.value.trim();
     if (!msg) return;
 
+    // Safety check: LINKED_SESSION_MISMATCH
+    const activeClaudeId = window.NeuralWorkspaceState?.activeClaudeConversationId;
+    if (activeClaudeId) {
+        const session = window.julesPanelSessions.find(s => s.id === activeClaudeId);
+        const expectedJulesId = window.resolveLinkedJulesId(session);
+        if (expectedJulesId) {
+            const cleanExpected = expectedJulesId.replace('sessions/', '');
+            const cleanActiveJules = window.NeuralWorkspaceState.activeJulesSessionId ? window.NeuralWorkspaceState.activeJulesSessionId.replace('sessions/', '') : '';
+            if (cleanExpected !== cleanActiveJules) {
+                // Reconcile and block
+                window.NeuralWorkspaceState.activeJulesSessionId = cleanExpected;
+                window.persistNeuralWorkspaceState();
+                showToast("Discrepancia detectada (LINKED_SESSION_MISMATCH). Workspace reconciliado. Reintente el envío.", "red");
+                window.setNeuralWorkspaceMode(window.NeuralWorkspaceState.activeMode);
+                throw new Error('LINKED_SESSION_MISMATCH');
+            }
+        }
+    }
+
     const sid = getLinkedJulesSessionId();
     if (!sid) {
         // Intercept and open linkers
@@ -824,18 +1450,20 @@ window.handleJulesSendInterception = function(message) {
 /**
  * Abre un selector para elegir una conversación de Claude existente
  */
-window.openClaudeSessionSelector = function() {
+window.openClaudeSessionSelector = function(linkJulesSessionId = '', julesSessionTitle = '') {
     const sessions = window.NeuralChatCore.getSessions(window.JULES_PANEL_NEURAL_STORAGE);
 
-    let html = '<div style="margin-bottom:15px; font-size:13px; color:var(--text2)">Selecciona una conversación de Claude para activar en el panel:</div>';
+    let html = `<div style="margin-bottom:15px; font-size:13px; color:var(--text2)">${linkJulesSessionId ? 'Selecciona una conversación de Claude para vincular con esta sesión Jules:' : 'Selecciona una conversación de Claude para activar en el panel:'}</div>`;
 
     if (sessions.length === 0) {
         html += '<div style="padding:20px; text-align:center; border:1px dashed var(--border); border-radius:8px; font-size:12px;">No hay conversaciones disponibles.</div>';
     } else {
         html += '<div style="max-height:300px; overflow-y:auto; display:flex; flex-direction:column; gap:8px;">';
         sessions.slice(0, 15).forEach(s => {
-            html += `<button onclick="window.selectClaudeFromSelector('${s.id}')" class="btn btn-ghost" style="width:100%; justify-content:flex-start; text-align:left; padding:10px; height:auto;">
-                <div style="font-weight:700; font-size:12px; margin-bottom:2px;">${window.NeuralChatCore.escapeHtml(s.title)}</div>
+            const escapedTitle = window.NeuralChatCore.escapeHtml(s.title);
+            const escapedJulesTitle = window.NeuralChatCore.escapeHtml(julesSessionTitle).replace(/'/g, "\\'");
+            html += `<button onclick="window.selectClaudeFromSelector('${s.id}', '${linkJulesSessionId}', '${escapedJulesTitle}')" class="btn btn-ghost" style="width:100%; justify-content:flex-start; text-align:left; padding:10px; height:auto;">
+                <div style="font-weight:700; font-size:12px; margin-bottom:2px;">${escapedTitle}</div>
                 <div style="font-size:10px; color:var(--text3); font-family:var(--font-mono); opacity:0.7;">ID: ${s.id.slice(-8)} · ${new Date(s.createdAt).toLocaleDateString()}</div>
             </button>`;
         });
@@ -847,12 +1475,12 @@ window.openClaudeSessionSelector = function() {
         <div id="neural-selector-modal" class="modal-overlay open" style="z-index:9999">
             <div class="modal-card glass" style="max-width:400px">
                 <div class="modal-head">
-                    <h3 class="modal-title">Conversación Claude</h3>
+                    <h3 class="modal-title">${linkJulesSessionId ? 'Vincular Claude' : 'Conversación Claude'}</h3>
                     <button class="icon-btn" onclick="document.getElementById('neural-selector-modal').remove()">✕</button>
                 </div>
                 <div class="modal-body">${html}</div>
                 <div class="modal-foot">
-                    <button class="btn btn-primary btn-sm" onclick="window.createNewJulesPanelSession(); document.getElementById('neural-selector-modal').remove(); setTimeout(()=>window.handleJulesSendInterception(window.pendingJulesMessage), 300);">+ Nueva Conversación</button>
+                    ${linkJulesSessionId ? '' : `<button class="btn btn-primary btn-sm" onclick="window.createNewJulesPanelSession(); document.getElementById('neural-selector-modal').remove(); setTimeout(()=>window.handleJulesSendInterception(window.pendingJulesMessage), 300);">+ Nueva Conversación</button>`}
                     <button class="btn btn-ghost btn-sm" onclick="document.getElementById('neural-selector-modal').remove()">Cancelar</button>
                 </div>
             </div>
@@ -861,12 +1489,24 @@ window.openClaudeSessionSelector = function() {
     document.body.insertAdjacentHTML('beforeend', modalHtml);
 }
 
-window.selectClaudeFromSelector = function(id) {
-    document.getElementById('neural-selector-modal').remove();
-    window.loadJulesPanelSession(id);
-    // Re-evaluar siguiente paso
-    setTimeout(() => window.handleJulesSendInterception(window.pendingJulesMessage), 100);
+window.selectClaudeFromSelector = function(id, linkJulesSessionId = '', julesSessionTitle = '') {
+    const modal = document.getElementById('neural-selector-modal');
+    if (modal) modal.remove();
+
+    if (linkJulesSessionId) {
+        window.linkClaudeToJulesTask(id, linkJulesSessionId, julesSessionTitle);
+        // Automatically select the freshly linked Jules session
+        window.selectLinkedJulesSession(linkJulesSessionId);
+    } else {
+        window.loadJulesPanelSession(id);
+        // Re-evaluar siguiente paso
+        setTimeout(() => window.handleJulesSendInterception(window.pendingJulesMessage), 100);
+    }
 }
+
+window.openClaudeSessionSelectorForJulesSession = function(sid, title) {
+    window.openClaudeSessionSelector(sid, title);
+};
 
 /**
  * Abre un selector para elegir una tarea de Jules (Jules Session) real
@@ -959,6 +1599,18 @@ window.linkClaudeToJulesTask = function(claudeId, julesTaskId, julesTaskTitle) {
     const session = sessions.find(s => s.id === claudeId);
 
     if (session) {
+        // Enforce 1-to-1 relationship by unlinking any other Claude session that was linked to this same Jules task
+        sessions.forEach(s => {
+            const lid = window.resolveLinkedJulesId(s);
+            if (s.id !== claudeId && lid && lid.replace('sessions/', '') === julesTaskId.replace('sessions/', '')) {
+                if (s.metadata) {
+                    delete s.metadata.linkedJulesTaskId;
+                    delete s.metadata.linkedJulesTaskTitle;
+                }
+                localStorage.removeItem('hy_neural_session_id_' + s.id);
+            }
+        });
+
         session.metadata = session.metadata || {};
         session.metadata.linkedJulesTaskId = julesTaskId;
         session.metadata.linkedJulesTaskTitle = julesTaskTitle || julesTaskId;
@@ -971,9 +1623,16 @@ window.linkClaudeToJulesTask = function(claudeId, julesTaskId, julesTaskTitle) {
         localStorage.setItem('hy_neural_session_id_' + claudeId, julesTaskId);
         if (claudeId === window.currentJulesPanelSessionId) {
             localStorage.setItem('hy_neural_session_id', julesTaskId);
-            window.renderChatV2Messages();
-            // Load execution history
-            window.loadLinkedJulesHistoryForConversation(session);
+            window.NeuralWorkspaceState.activeJulesSessionId = julesTaskId;
+            window.persistNeuralWorkspaceState();
+
+            // Re-render based on active workspace mode
+            if (window.NeuralWorkspaceState.activeMode === 'claude') {
+                window.renderChatV2Messages();
+            } else {
+                window.loadAndRenderJulesSession(julesTaskId, true);
+                window.startNeuralWorkspacePolling(julesTaskId);
+            }
         }
 
         showToast("Conversación vinculada a la tarea de Jules", "green");
@@ -1001,9 +1660,15 @@ window.unlinkClaudeFromJulesTask = function(claudeId) {
         localStorage.removeItem('hy_neural_session_id_' + claudeId);
         if (claudeId === window.currentJulesPanelSessionId) {
             localStorage.removeItem('hy_neural_session_id');
-            window.renderChatV2Messages();
-            // Load execution history
-            window.loadLinkedJulesHistoryForConversation(session);
+            window.NeuralWorkspaceState.activeJulesSessionId = null;
+            window.persistNeuralWorkspaceState();
+
+            if (window.NeuralWorkspaceState.activeMode === 'claude') {
+                window.renderChatV2Messages();
+            } else {
+                window.renderJulesEmptyState();
+                window.stopNeuralWorkspacePolling();
+            }
         }
 
         showToast("Vínculo con Jules eliminado", "amber");
@@ -1404,6 +2069,11 @@ window.setupCollapsibleHeightChecks = function() {
 };
 
 window.renderNormalizedActivities = function(normalizedList, forceScroll) {
+    if (window.NeuralWorkspaceState?.activeMode !== 'jules') {
+        console.log("[Jules History] Blocked render: activeMode is not jules.");
+        return;
+    }
+
     const historyContainer = document.getElementById('neural-jules-history');
     if (!historyContainer) return;
 
@@ -1413,6 +2083,14 @@ window.renderNormalizedActivities = function(normalizedList, forceScroll) {
     }
 
     window.setJulesHistoryState('ready');
+
+    // Hide welcome, show history container
+    const welcome = document.getElementById('history-welcome-screen');
+    if (welcome) {
+        welcome.style.display = 'none';
+        welcome.classList.add('hidden');
+    }
+    historyContainer.style.display = 'block';
 
     // Ensure scroll listener is registered
     window.initJulesHistoryScrollListener();
@@ -1476,6 +2154,11 @@ window.renderNormalizedActivities = function(normalizedList, forceScroll) {
 }
 
 window.loadAndRenderJulesSession = async function(sid, forceScroll = false) {
+    // Render the Jules inverse linking bar
+    if (window.renderJulesLinkingBar) {
+        window.renderJulesLinkingBar();
+    }
+
     if (!sid) {
         window.clearLinkedJulesHistory();
         return;
@@ -1508,11 +2191,13 @@ window.loadAndRenderJulesSession = async function(sid, forceScroll = false) {
 
     // 2. Revalidate asynchronously
     try {
+        console.log("REVALIDATION: fetching activities for", targetSessionName);
         const activityData = await window.julesApi.getActivities(targetSessionName, 100);
         const freshRawActivities = activityData.activities || [];
+        console.log("REVALIDATION: fetched activities count", freshRawActivities.length);
 
         if (revision !== window.linkedHistoryLoadRevision) {
-            console.log("[Jules History] Stale request discarded (revision changed)");
+            console.log("[Jules History] Stale request discarded (revision changed)", revision, window.linkedHistoryLoadRevision);
             return;
         }
 

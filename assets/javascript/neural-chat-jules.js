@@ -54,6 +54,14 @@ window.startJulesPolling = function(sessionId) {
                 window._updateActivityFeed(activities);
             }
 
+            // Dispatch event to sync and re-render Jules History Workspace!
+            window.dispatchEvent(new CustomEvent('julesActivitiesUpdated', {
+                detail: {
+                    sessionId: sessionId,
+                    activities: activities
+                }
+            }));
+
             // If session is completed or failed, stop polling
             const isDone = activities.some(a => a.sessionCompleted || a.sessionFailed);
             if (isDone) {
