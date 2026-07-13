@@ -18,6 +18,7 @@ test('Verify Jules Execution History loads and renders inside Neural Tab', async
     const originalFetch = window.fetch;
     window.fetch = async (url, options) => {
         const urlStr = String(url);
+        console.log("INTERCEPTED FETCH:", urlStr);
         if (urlStr.includes('api.github.com')) {
             // Mock GitHub responses
             if (urlStr.includes('/user')) {
@@ -129,6 +130,11 @@ test('Verify Jules Execution History loads and renders inside Neural Tab', async
   const chatLink = page.locator('.hnav-link[data-view="chat"]');
   await chatLink.click();
 
+  // Switch to Jules workspace tab
+  const julesTab = page.locator('#neural-tab-jules');
+  await expect(julesTab).toBeVisible();
+  await julesTab.click();
+
   // 4. Verify the activities are rendered in `#neural-jules-history`
   const historyContainer = page.locator('#neural-jules-history');
   await expect(historyContainer).toBeVisible();
@@ -136,6 +142,9 @@ test('Verify Jules Execution History loads and renders inside Neural Tab', async
   // Wait for the mock activities to be populated
   const activity1 = page.locator('#neural-jules-history .jules-activity-entry').first();
   await expect(activity1).toBeVisible({ timeout: 15000 });
+
+  // Wait for revalidated activities to load asynchronously
+  await page.waitForSelector('text=Pruebas unitarias', { timeout: 10000 });
 
   const textContent = await historyContainer.textContent();
   console.log('History content rendered:', textContent);
@@ -197,7 +206,7 @@ test('Verify Jules Execution History loads and renders inside Neural Tab', async
 
   // 10. Verify Unlinking cleans up upper block and restores welcome placeholder
   // Use unique ID selector to locate exact Unlink button inside chat live status bar
-  const unlinkBtn = page.locator('#chat-live-status button:has-text("Desvincular")');
+  const unlinkBtn = page.locator('#btn-unlink-claude-link');
   await unlinkBtn.click();
 
   // Accept confirmation dialog if shown, or simulate it.
@@ -206,7 +215,10 @@ test('Verify Jules Execution History loads and renders inside Neural Tab', async
   const finalHistoryContent = await historyContainer.textContent();
   expect(finalHistoryContent).toBe(''); // History should be cleaned up!
 
-  // Claude neural chat remains intact (not deleted)
+  // Switch back to Claude mode to verify Claude neural chat remains intact (not deleted)
+  const tabClaudeBtn = page.locator('#neural-tab-claude');
+  await tabClaudeBtn.click();
+
   const chatMessages = page.locator('#v2-chat-messages');
   await expect(chatMessages).toBeVisible();
 

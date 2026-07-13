@@ -999,7 +999,8 @@ function updateNeuralHistory(sessions) {
         const repo = (s.sourceContext && s.sourceContext.source && s.sourceContext.source.split('/').pop()) || '---';
         const stateClass = s.state.toLowerCase().replace(/_/g, '-');
 
-        return '<div class="sb-history-item' + (active ? ' active' : '') + '" data-sid="' + sid + '" onclick="selectSession(\'' + s.name + '\')" title="' + escapeHtml(taskTitle) + '">' +
+        const clickHandler = "if(window.NeuralWorkspaceState && window.NeuralWorkspaceState.activeMode === 'jules' && window.JulesPanelState && window.JulesPanelState.currentView === 'chat'){ window.selectLinkedJulesSession('" + sid + "'); } else { selectSession('" + s.name + "'); }";
+        return '<div class="sb-history-item' + (active ? ' active' : '') + '" data-sid="' + sid + '" onclick="' + clickHandler + '" title="' + escapeHtml(taskTitle) + '">' +
                '<div class="h-task">' + escapeHtml(taskTitle) + '</div>' +
                '<div class="h-meta">' +
                '<span>#' + sid + ' · ' + repo + '</span>' +

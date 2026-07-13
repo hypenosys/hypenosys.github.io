@@ -494,18 +494,28 @@ window.clearNotifs = function() {
 window.startNewNeuralSession = function() {
     console.log("[Jules Panel] Iniciando nueva sesión neural...");
 
-    // Cambiar a la vista de chat
-    if (window.switchView) {
+    // Cambiar a la vista de chat si no estamos ya
+    if (window.switchView && window.JulesPanelState?.currentView !== 'chat') {
         window.switchView('chat');
     }
 
-    // Crear nueva sesión en el core de chat
-    if (window.createNewJulesPanelSession) {
-        window.createNewJulesPanelSession();
-        window.showToast("Nueva sesión de chat iniciada", "green");
+    const mode = window.NeuralWorkspaceState ? window.NeuralWorkspaceState.activeMode : 'claude';
+    if (mode === 'claude') {
+        if (window.createNewJulesPanelSession) {
+            window.createNewJulesPanelSession();
+            window.showToast("Nueva conversación de chat iniciada", "green");
+        } else {
+            console.error("[Jules Panel] createNewJulesPanelSession no encontrada");
+            window.showToast("Error al iniciar nueva sesión", "red");
+        }
     } else {
-        console.error("[Jules Panel] createNewJulesPanelSession no encontrada");
-        window.showToast("Error al iniciar nueva sesión", "red");
+        // Jules mode: open the new task modal with status 'running' to trigger Jules Agent
+        if (window.openNewTaskModal) {
+            window.openNewTaskModal('running');
+        } else {
+            console.error("[Jules Panel] openNewTaskModal no encontrada");
+            window.showToast("Error al abrir creador de tareas", "red");
+        }
     }
 }
 
