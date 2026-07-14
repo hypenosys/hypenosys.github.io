@@ -65,6 +65,7 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-success">Added</h5>
             <ul>
+                <li><strong>6 nuevas herramientas en el Stack Tecnológico:</strong> Incorporación de las herramientas GIMP, Pixelorama, MuseScore, Vaultwarden, GitHub Actions y BackstopJS a sus respectivas secciones del Stack Tecnológico, manteniendo el formato visual y las clases css canónicas.</li>
                 <li><strong>Independencia y Sincronización de Workspaces de Claude y Jules:</strong> Consolidado el control de cambio de modo en el Jules Panel a través del controlador canónico <code>setNeuralWorkspaceMode</code>, logrando una sincronización simétrica perfecta entre el selector superior de pestañas y el selector del composer.</li>
                 <li><strong>Desacoplamiento Completo del Vínculo Claude-Jules:</strong> Implementada la resolución de sesiones de Jules basada en una cadena de prioridad determinista (<code>resolveActiveJulesSessionId</code>), permitiendo al usuario navegar y utilizar el historial de Jules sin depender de que la conversación Claude actual tenga un vínculo establecido.</li>
                 <li><strong>Mecanismo de Recuperación de IDs Obsoletos:</strong> Diseñada la función <code>handleObsoleteJulesSession</code> para capturar errores 404/not found y re-enrutar la visualización a la siguiente sesión válida más reciente o a un estado vacío interactivo de Jules.</li>
