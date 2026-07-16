@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-07-16T07:19:24.304Z",
+  "last_updated": "2026-07-16T08:07:01.667Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -4295,7 +4295,7 @@
     },
     {
       "title": "2.0: estabilizar master y sacar el build y guardarlo en CopyParty",
-      "descripcion": "",
+      "descripcion": "Cuando esté estable, sacamos build e iniciamos volcado de cambios en 'develop' branch",
       "rama": "master",
       "task_type": "chore",
       "tema_principal": "Programación / Engine",
@@ -4337,6 +4337,13 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-16T08:07:00.835Z",
+          "field": "descripcion",
+          "old_value": "",
+          "new_value": "Cuando esté estable, sacamos build e iniciamos volcado de cambios en 'develop' branch"
         }
       ],
       "id": 78,
@@ -4518,6 +4525,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #78",
+      "user": "Axlfc",
+      "timestamp": "2026-07-16T08:07:01.667Z"
+    },
     {
       "action": "chore: actualizar tarea #79",
       "user": "Axlfc",
