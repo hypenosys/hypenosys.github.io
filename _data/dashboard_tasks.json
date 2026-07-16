@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-07-16T07:18:46.734Z",
+  "last_updated": "2026-07-16T07:19:00.082Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2335,7 +2335,7 @@
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Medium",
       "milestone": "M3",
-      "estado": "Working",
+      "estado": "In Review",
       "completitud": 0,
       "resuelto_por": "Axel",
       "detectado_por": "Axel",
@@ -2438,6 +2438,13 @@
           "field": "title",
           "old_value": "Cognito-Agent en Claude Neural API desde n8n con ingestión en Qdrant + Kavita (UOC) + PSQL",
           "new_value": "Cognito-Agent en Claude Neural API desde n8n con ingestión en Qdrant + Kavita (UOC) + PSQL + Python and JavaScript runners (n8n)"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-16T07:18:59.596Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
         }
       ],
       "id": 44,
@@ -4497,6 +4504,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #44",
+      "user": "Axlfc",
+      "timestamp": "2026-07-16T07:19:00.082Z"
+    },
     {
       "action": "chore: actualizar tarea #16",
       "user": "Axlfc",
