@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-07-16T07:17:51.366Z",
+  "last_updated": "2026-07-16T07:18:23.116Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3821,7 +3821,7 @@
     },
     {
       "title": "Fix: Img-Gen txt2image - ComfyUI usa CPU en lugar de GPU",
-      "descripcion": "Hemos vaciado la memoria de la GPU del modelo al generar la imagen",
+      "descripcion": "Hemos vaciado la memoria de la GPU del modelo al generar la imagen, pero hay como un bug que sigue tirando de CPU en lugar de usar la GPU",
       "rama": "master",
       "task_type": "feature",
       "tema_principal": "Programación / Engine",
@@ -3829,11 +3829,13 @@
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Major",
       "milestone": "M2",
-      "estado": "In Review",
+      "estado": "Working",
       "completitud": 0,
       "resuelto_por": "Axel",
       "detectado_por": "Axel",
-      "asignados": [],
+      "asignados": [
+        "axlfc"
+      ],
       "email_responsable": "axel@hypenosys.com",
       "emails_asignados": [],
       "start_date": "2026-06-28",
@@ -3875,6 +3877,27 @@
           "field": "estado",
           "old_value": "Pending",
           "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-16T07:18:22.664Z",
+          "field": "descripcion",
+          "old_value": "Hemos vaciado la memoria de la GPU del modelo al generar la imagen",
+          "new_value": "Hemos vaciado la memoria de la GPU del modelo al generar la imagen, pero hay como un bug que sigue tirando de CPU en lugar de usar la GPU"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-16T07:18:22.664Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-16T07:18:22.664Z",
+          "field": "asignados",
+          "old_value": "[]",
+          "new_value": "[\"axlfc\"]"
         }
       ],
       "id": 72,
@@ -4460,6 +4483,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #72",
+      "user": "Axlfc",
+      "timestamp": "2026-07-16T07:18:23.116Z"
+    },
     {
       "action": "chore: actualizar tarea #67",
       "user": "Axlfc",
