@@ -1,7 +1,7 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-07-16T08:07:01.667Z",
-  "last_updated_by": "Axlfc",
+  "last_updated": "2026-07-17T10:28:05.053Z",
+  "last_updated_by": "Axel",
   "tasks": [
     {
       "id": 1,
@@ -4522,9 +4522,62 @@
         }
       ],
       "id": 81
+    },
+    {
+      "title": "Añadir Organizaciones y Kanban Personal ",
+      "descripcion": "Añadir al dashboard Organizaciones (aparte de hypenosys, poder crear otras organizaciones) así como un kanban personal por usuario (independiente de organizaciones, solo personal y solo accesible en la web al estar loggeado)",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Dashboard",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Medium",
+      "milestone": "M2",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc"
+      ],
+      "email_responsable": "axel@hypenosys.com",
+      "emails_asignados": [],
+      "start_date": "2026-07-17",
+      "due_date": "2026-07-26",
+      "estimated_hours": 4,
+      "story_points": 4,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-07-17",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-17T10:28:04.480Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 82
     }
   ],
   "_audit_log": [
+    {
+      "action": "feat: nueva tarea #1784284084480 añadida",
+      "user": "Axlfc",
+      "timestamp": "2026-07-17T10:28:05.053Z"
+    },
     {
       "action": "chore: actualizar tarea #78",
       "user": "Axlfc",
