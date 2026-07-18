@@ -1,15 +1,15 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-07-18T11:58:48.464Z",
+  "computed_at": "2026-07-18T12:01:12.914Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 40,
+    "total_tasks": 41,
     "total_ok": 17,
     "total_ko": 0,
     "total_uncertain": 5,
     "total_obsolete": 9,
-    "fixed_found_ratio": 0.3696,
-    "verified_ratio": 0.3469
+    "fixed_found_ratio": 0.3617,
+    "verified_ratio": 0.34
   },
   "group": {
     "velocity_trend": {
@@ -22,7 +22,7 @@
       "2026-W28": 2,
       "2026-W29": 0
     },
-    "bug_rate": 0.1304,
+    "bug_rate": 0.125,
     "blocker_health": 1,
     "tag_heatmap": {
       "brainstorm": 1,
@@ -33,7 +33,7 @@
       "testing": 1,
       "devops": 3,
       "api": 3,
-      "feature": 12,
+      "feature": 13,
       "infraestructura": 1,
       "jules-panel": 1,
       "neural-chat": 1,
@@ -43,7 +43,7 @@
       "Infraestructura": 1,
       "chat": 1,
       "matrix": 1,
-      "master": 15,
+      "master": 16,
       "Art": 1,
       "logo": 1
     },
@@ -213,8 +213,8 @@
         "reprioritizations": 31
       },
       "workload": {
-        "active_tasks": 14,
-        "story_points": 44
+        "active_tasks": 15,
+        "story_points": 46
       }
     },
     "topperh4rley": {
@@ -541,7 +541,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-07-18T11:58:49.173Z"
+      "timestamp": "2026-07-18T12:01:13.617Z"
     }
   ]
 }
