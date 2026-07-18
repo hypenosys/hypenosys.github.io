@@ -1,7 +1,7 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-07-18T11:38:56.199Z",
-  "last_updated_by": "Axlfc",
+  "last_updated": "2026-07-18T11:39:52.314Z",
+  "last_updated_by": "Axel",
   "tasks": [
     {
       "id": 1,
@@ -4584,9 +4584,62 @@
         }
       ],
       "id": 82
+    },
+    {
+      "title": "Crear página VideoGen",
+      "descripcion": "",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Tools / Automation",
+      "seccion": "VideoGen",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Medium",
+      "milestone": "M2",
+      "estado": "Working",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-07-18",
+      "due_date": "2026-07-26",
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-07-18",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-18T11:39:51.955Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 83
     }
   ],
   "_audit_log": [
+    {
+      "action": "feat: nueva tarea #1784374791955 añadida",
+      "user": "Axlfc",
+      "timestamp": "2026-07-18T11:39:52.314Z"
+    },
     {
       "action": "chore: actualizar tarea #11",
       "user": "Axlfc",
