@@ -1,19 +1,19 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-07-17T11:45:17.462Z",
+  "computed_at": "2026-07-18T11:38:58.480Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 38,
-    "total_ok": 16,
+    "total_ok": 17,
     "total_ko": 0,
     "total_uncertain": 5,
     "total_obsolete": 9,
-    "fixed_found_ratio": 0.3636,
-    "verified_ratio": 0.3404
+    "fixed_found_ratio": 0.3864,
+    "verified_ratio": 0.3617
   },
   "group": {
     "velocity_trend": {
-      "2026-W22": 7,
+      "2026-W22": 8,
       "2026-W23": 11,
       "2026-W24": 3,
       "2026-W25": 10,
@@ -22,17 +22,16 @@
       "2026-W28": 2,
       "2026-W29": 0
     },
-    "bug_rate": 0.1364,
+    "bug_rate": 0.1429,
     "blocker_health": 1,
     "tag_heatmap": {
       "brainstorm": 1,
-      "chore": 7,
+      "chore": 6,
       "design": 1,
       "docs": 2,
       "topper": 1,
       "testing": 1,
-      "devops": 4,
-      "git": 1,
+      "devops": 3,
       "api": 3,
       "feature": 10,
       "infraestructura": 1,
@@ -48,12 +47,12 @@
       "Art": 1,
       "logo": 1
     },
-    "milestone_tasks_remaining": 12,
+    "milestone_tasks_remaining": 11,
     "hall_of_fame_winners": {
       "mvp": {
         "handle": "axlfc",
         "name": "Axel",
-        "value": 5
+        "value": 5.9
       },
       "bug_slayer": {
         "handle": "axlfc",
@@ -89,20 +88,20 @@
     "leaderboard": {
       "axlfc": {
         "member_name": "Axel",
-        "mvp_points": 5,
+        "mvp_points": 5.9,
         "bugs_solved": 5,
         "unblocked_count": 3,
-        "velocity": 3.3333333333333335,
+        "velocity": 3.2857142857142856,
         "research_solved": 1,
         "art_tasks": 0,
         "comments_left": 1
       },
       "topperh4rley": {
         "member_name": "Alex",
-        "mvp_points": 4.7,
+        "mvp_points": 5.6,
         "bugs_solved": 3,
         "unblocked_count": 4,
-        "velocity": 3.739130434782609,
+        "velocity": 3.6666666666666665,
         "research_solved": 1,
         "art_tasks": 0,
         "comments_left": 0
@@ -143,12 +142,12 @@
     "axlfc": {
       "member_name": "Axel",
       "completed": {
-        "all_time": 38,
-        "milestone": 27,
+        "all_time": 39,
+        "milestone": 28,
         "week": 0
       },
       "weekly_velocity": {
-        "2026-W22": 4,
+        "2026-W22": 5,
         "2026-W23": 38,
         "2026-W24": 6,
         "2026-W25": 14,
@@ -158,12 +157,13 @@
         "2026-W29": 0
       },
       "type_breakdown": {
+        "chore": 7,
         "feature": 25,
         "research": 2,
-        "chore": 6,
         "bug": 5
       },
       "rama_breakdown": {
+        "chore/upgrade-ue-5.7.4": 1,
         "feature/kanban-jules-link": 1,
         "feature/n8n-providers-nim-agent": 1,
         "chore/scripts-svn-sync": 1,
@@ -179,14 +179,15 @@
         "feature/mobile-github-ops": 1
       },
       "tag_frequency": {
+        "chore": 5,
+        "devops": 3,
+        "git": 1,
         "Infraestructura": 1,
         "api": 6,
         "feature": 6,
         "jules": 2,
         "ux": 7,
-        "devops": 2,
         "research": 1,
-        "chore": 4,
         "frontend": 5,
         "backend": 1,
         "security": 1,
@@ -212,19 +213,19 @@
         "reprioritizations": 31
       },
       "workload": {
-        "active_tasks": 13,
-        "story_points": 45
+        "active_tasks": 12,
+        "story_points": 44
       }
     },
     "topperh4rley": {
       "member_name": "Alex",
       "completed": {
-        "all_time": 32,
-        "milestone": 23,
+        "all_time": 33,
+        "milestone": 24,
         "week": 0
       },
       "weekly_velocity": {
-        "2026-W22": 10,
+        "2026-W22": 11,
         "2026-W23": 42,
         "2026-W24": 3,
         "2026-W25": 12,
@@ -234,12 +235,13 @@
         "2026-W29": 0
       },
       "type_breakdown": {
-        "chore": 4,
+        "chore": 5,
         "feature": 23,
         "research": 2,
         "bug": 3
       },
       "rama_breakdown": {
+        "chore/upgrade-ue-5.7.4": 1,
         "PRO": 16,
         "feature/repo-labels-ui": 1,
         "feature/kanban-jules-link": 1,
@@ -254,7 +256,9 @@
         "feature/mobile-github-ops": 1
       },
       "tag_frequency": {
-        "chore": 3,
+        "chore": 4,
+        "devops": 3,
+        "git": 1,
         "onboarding": 1,
         "UX/UI": 3,
         "feature": 7,
@@ -263,7 +267,6 @@
         "Infraestructura": 1,
         "api": 5,
         "jules": 2,
-        "devops": 2,
         "research": 1,
         "bug": 3,
         "hard": 1,
@@ -282,8 +285,8 @@
         "reprioritizations": 27
       },
       "workload": {
-        "active_tasks": 8,
-        "story_points": 14
+        "active_tasks": 7,
+        "story_points": 13
       }
     },
     "dkdidac-design": {
@@ -446,7 +449,7 @@
         "mvp": {
           "handle": "axlfc",
           "name": "Axel",
-          "value": 5
+          "value": 5.9
         },
         "bug_slayer": {
           "handle": "axlfc",
@@ -482,20 +485,20 @@
       "leaderboard": {
         "axlfc": {
           "member_name": "Axel",
-          "mvp_points": 5,
+          "mvp_points": 5.9,
           "bugs_solved": 5,
           "unblocked_count": 3,
-          "velocity": 3.3333333333333335,
+          "velocity": 3.2857142857142856,
           "research_solved": 1,
           "art_tasks": 0,
           "comments_left": 1
         },
         "topperh4rley": {
           "member_name": "Alex",
-          "mvp_points": 4.7,
+          "mvp_points": 5.6,
           "bugs_solved": 3,
           "unblocked_count": 4,
-          "velocity": 3.739130434782609,
+          "velocity": 3.6666666666666665,
           "research_solved": 1,
           "art_tasks": 0,
           "comments_left": 0
@@ -538,7 +541,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-07-17T11:45:18.387Z"
+      "timestamp": "2026-07-18T11:38:59.285Z"
     }
   ]
 }
