@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-07-12T10:42:43.993Z",
+  "last_updated": "2026-07-18T13:37:59.341Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3136,9 +3136,113 @@
       "id": 69,
       "jules_session": null,
       "branch": "Programación (PRO)"
+    },
+    {
+      "id": 1,
+      "rama": "feature/dashboard-core-setup",
+      "rama2": null,
+      "ver": true,
+      "descripcion": "Finalizar la configuración del núcleo del centro de operaciones. Es fundamental para centralizar la gestión de tareas y métricas del equipo.",
+      "fecha": "2025-01-01",
+      "tema_principal": "QA / Testing",
+      "detectado_por": "Unassigned",
+      "resuelto_por": "Mitxel",
+      "apoyo": null,
+      "estado": "OK",
+      "prioridad": "Medium",
+      "limite": null,
+      "comentario": "Implementación del núcleo del Operations Center usando Jekyll y Tailwind. Configuración de la API de GitHub para persistencia de tareas y visualización de métricas de QA.",
+      "milestone": "M1",
+      "completitud": 0.4,
+      "asignados": [
+        "dkdidac-design",
+        "javi26031994-a11y",
+        "mitxel2022"
+      ],
+      "email_responsable": "mitxel@hypenosys.com",
+      "emails_asignados": [],
+      "images": [],
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "Configuración inicial del dashboard operacional",
+      "task_type": "feature",
+      "start_date": "2026-06-01",
+      "due_date": "2026-06-30",
+      "estimated_hours": 1,
+      "story_points": 1,
+      "tags": [
+        "devops",
+        "feature",
+        "frontend"
+      ],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "El dashboard sea funcional y persista datos correctamente mediante la API de GitHub.",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [
+        "He revisado la estructura inicial y parece sólida, pero debemos asegurar que el manejo de errores de la API de GitHub sea robusto para evitar pérdida de datos."
+      ],
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-03T07:34:56.611Z",
+          "field": "repository",
+          "old_value": null,
+          "new_value": "hypenosys/hypenosys.github.io"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-03T11:24:28.628Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-06-30"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-05T16:46:06.282Z",
+          "field": "asignados",
+          "old_value": "[\"axlfc\",\"dkdidac-design\",\"javi26031994-a11y\",\"mitxel2022\",\"topperh4rley\"]",
+          "new_value": "[\"dkdidac-design\",\"javi26031994-a11y\",\"mitxel2022\",\"topperh4rley\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:22:39.120Z",
+          "field": "asignados",
+          "old_value": "[\"dkdidac-design\",\"javi26031994-a11y\",\"mitxel2022\",\"topperh4rley\"]",
+          "new_value": "[\"dkdidac-design\",\"javi26031994-a11y\",\"mitxel2022\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:22:39.120Z",
+          "field": "completitud",
+          "old_value": 0.6,
+          "new_value": 0.4
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T10:48:50.014Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "OK"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-22T00:24:20.163Z",
+          "field": "seccion",
+          "new_value": ""
+        }
+      ],
+      "seccion": "",
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: tarea #1 movida al archivo",
+      "user": "Axlfc",
+      "timestamp": "2026-07-18T13:37:59.341Z"
+    },
     {
       "action": "chore: migrate _data/dashboard_tasks_archive.json to schema 1.2.0",
       "user": "TopperH4rley",
