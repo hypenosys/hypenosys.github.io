@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-07-18T13:38:38.631Z",
+  "last_updated": "2026-07-18T13:38:49.123Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3695,9 +3695,95 @@
       "seccion": "SVN Admin Panel, App",
       "jules_session": null,
       "branch": "Programación (PRO)"
+    },
+    {
+      "title": "Claude Neural: llamadas a apis js y python en n8n-runners",
+      "descripcion": "Habilitar la ejecución de scripts Python y JavaScript desde el chat neural mediante n8n. Proporciona un entorno flexible para automatización.",
+      "rama": "feature/n8n-python-js-runners",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Major",
+      "milestone": "M2",
+      "estado": "OK",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Axel",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": 8,
+      "story_points": null,
+      "tags": [
+        "api",
+        "backend",
+        "feature"
+      ],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "Se puedan disparar scripts y recibir el output directamente en el chat.",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [
+        "Esto nos permitirá automatizar el análisis de logs pesados o conversiones de datos complejas que antes hacíamos manualmente."
+      ],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-08",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:39:44.850Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-11T11:41:02.898Z",
+          "field": "milestone",
+          "old_value": "M3",
+          "new_value": "M2"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-15T17:11:09.228Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:45:19.387Z",
+          "field": "seccion",
+          "new_value": "Chat Neural, Backend n8n"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-09T10:32:21.194Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "OK"
+        }
+      ],
+      "id": 43,
+      "seccion": "Chat Neural, Backend n8n",
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: tarea #43 movida al archivo",
+      "user": "Axlfc",
+      "timestamp": "2026-07-18T13:38:49.123Z"
+    },
     {
       "action": "chore: tarea #39 movida al archivo",
       "user": "Axlfc",
