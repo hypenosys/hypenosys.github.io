@@ -1,8 +1,107 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-07-18T13:39:27.502Z",
+  "last_updated": "2026-07-18T13:39:32.146Z",
   "last_updated_by": "Axlfc",
   "tasks": [
+    {
+      "id": 1,
+      "rama": "feature/dashboard-core-setup",
+      "rama2": null,
+      "ver": true,
+      "descripcion": "Finalizar la configuración del núcleo del centro de operaciones. Es fundamental para centralizar la gestión de tareas y métricas del equipo.",
+      "fecha": "2025-01-01",
+      "tema_principal": "QA / Testing",
+      "detectado_por": "Unassigned",
+      "resuelto_por": "Mitxel",
+      "apoyo": null,
+      "estado": "OK",
+      "prioridad": "Medium",
+      "limite": null,
+      "comentario": "Implementación del núcleo del Operations Center usando Jekyll y Tailwind. Configuración de la API de GitHub para persistencia de tareas y visualización de métricas de QA.",
+      "milestone": "M1",
+      "completitud": 0.4,
+      "asignados": [
+        "dkdidac-design",
+        "javi26031994-a11y",
+        "mitxel2022"
+      ],
+      "email_responsable": "mitxel@hypenosys.com",
+      "emails_asignados": [],
+      "images": [],
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "Configuración inicial del dashboard operacional",
+      "task_type": "feature",
+      "start_date": "2026-06-01",
+      "due_date": "2026-06-30",
+      "estimated_hours": 1,
+      "story_points": 1,
+      "tags": [
+        "devops",
+        "feature",
+        "frontend"
+      ],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "El dashboard sea funcional y persista datos correctamente mediante la API de GitHub.",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [
+        "He revisado la estructura inicial y parece sólida, pero debemos asegurar que el manejo de errores de la API de GitHub sea robusto para evitar pérdida de datos."
+      ],
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-03T07:34:56.611Z",
+          "field": "repository",
+          "old_value": null,
+          "new_value": "hypenosys/hypenosys.github.io"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-03T11:24:28.628Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-06-30"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-05T16:46:06.282Z",
+          "field": "asignados",
+          "old_value": "[\"axlfc\",\"dkdidac-design\",\"javi26031994-a11y\",\"mitxel2022\",\"topperh4rley\"]",
+          "new_value": "[\"dkdidac-design\",\"javi26031994-a11y\",\"mitxel2022\",\"topperh4rley\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:22:39.120Z",
+          "field": "asignados",
+          "old_value": "[\"dkdidac-design\",\"javi26031994-a11y\",\"mitxel2022\",\"topperh4rley\"]",
+          "new_value": "[\"dkdidac-design\",\"javi26031994-a11y\",\"mitxel2022\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:22:39.120Z",
+          "field": "completitud",
+          "old_value": 0.6,
+          "new_value": 0.4
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T10:48:50.014Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "OK"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-22T00:24:20.163Z",
+          "field": "seccion",
+          "new_value": ""
+        }
+      ],
+      "seccion": "",
+      "jules_session": null,
+      "branch": "Programación (PRO)"
+    },
     {
       "rama": "PRO",
       "rama2": null,
@@ -303,6 +402,198 @@
       ],
       "jules_session": null,
       "repository": "",
+      "branch": "Programación (PRO)"
+    },
+    {
+      "rama": "feature/repo-labels-ui",
+      "descripcion": "Añadir etiquetas visuales a los repositorios en el panel para mejorar la organización. Facilita la identificación rápida del propósito de cada proyecto.",
+      "tema_principal": "Arte / Assets",
+      "prioridad": "Cosmetic",
+      "milestone": "M1",
+      "estado": "OK",
+      "completitud": 0.5,
+      "resuelto_por": "Alex",
+      "detectado_por": "Alex",
+      "asignados": [
+        "topperh4rley"
+      ],
+      "email_responsable": "alex@hypenosys.com",
+      "emails_asignados": [
+        "alex@hypenosys.com",
+        "didac@hypenosys.com"
+      ],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-05-31",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "id": 16,
+      "images": [
+        {
+          "url": "https://64.media.tumblr.com/605e9e85b6ddcf50b22c7f5d18ba8f6f/83752d027874b98a-bc/s500x750/2fdc7473a881cf1b6b414c2fd7d012c4aac3a1d7.png",
+          "type": "url",
+          "tumblr_post_id": "818198128507355136",
+          "filename": "7019.png",
+          "uploaded_at": "2026-06-01T06:15:45.017Z"
+        },
+        {
+          "url": "https://64.media.tumblr.com/b9b65e70015e7380f8390f78688c0582/8d84af7686f0fe3b-1f/s500x750/b3b138e02c625db68ab513cb449b1e4ac5d196df.png",
+          "type": "url",
+          "tumblr_post_id": "818198155896176640",
+          "filename": "7020.png",
+          "uploaded_at": "2026-06-01T06:16:11.128Z"
+        }
+      ],
+      "title": "Implementación de etiquetas de categorización en el listado de repositorios del Panel de Jules",
+      "task_type": "feature",
+      "start_date": "2026-06-01",
+      "due_date": "2026-06-07",
+      "estimated_hours": 2,
+      "story_points": 5,
+      "tags": [
+        "UX/UI",
+        "feature",
+        "frontend",
+        "ux"
+      ],
+      "external_links": [],
+      "subtasks": [
+        {
+          "id": 1780935577829,
+          "text": "Rediseño de componentes visuales de etiquetas",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Los tags aparezcan correctamente en la UI y sean filtrables.",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [
+        "He notado que el diseño anterior era confuso; el nuevo sistema de colores debería ser más intuitivo y accesible."
+      ],
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T06:47:52.169Z",
+          "field": "title",
+          "old_value": "Poder ponder tags en los repositorios en el Panel de Jules",
+          "new_value": "Implementación de etiquetas de categorización en el listado de repositorios del Panel de Jules"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T07:00:58.393Z",
+          "field": "descripcion",
+          "old_value": "Poder ponder tags en los repositorios en el Panel de Jules para mejorar acessibilidad (Ex: Documentación; Website, Game Scripts...) JAVI MODIFICAR EL ARTE PORQUE ESTA HORRENDO TODO",
+          "new_value": "Actualmente es difícil identificar de un vistazo el propósito de cada repositorio. Se busca implementar un sistema de etiquetas visuales para categorizarlos de forma rápida.\nEjemplos de etiquetas a incluir:\n\nDocumentación\n\nWebsite\n\nGame Scripts\n\nHerramientas internas\n\n---\n\nEl estado visual actual de la interfaz para esta funcionalidad requiere una revisión completa. Es necesario rediseñar los componentes visuales y el sistema de etiquetas antes de proceder con la implementación final, ya que el diseño previo no cumple con los estándares estandares de calidad de la plataforma.\n---\n\nPoder ponder tags en los repositorios en el Panel de Jules para mejorar acessibilidad (Ex: Documentación; Website, Game Scripts...) JAVI MODIFICAR EL ARTE PORQUE ESTA HORRENDO TODO\n\n"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T07:01:33.685Z",
+          "field": "descripcion",
+          "old_value": "Actualmente es difícil identificar de un vistazo el propósito de cada repositorio. Se busca implementar un sistema de etiquetas visuales para categorizarlos de forma rápida.\nEjemplos de etiquetas a incluir:\n\nDocumentación\n\nWebsite\n\nGame Scripts\n\nHerramientas internas\n\n---\n\nEl estado visual actual de la interfaz para esta funcionalidad requiere una revisión completa. Es necesario rediseñar los componentes visuales y el sistema de etiquetas antes de proceder con la implementación final, ya que el diseño previo no cumple con los estándares estandares de calidad de la plataforma.\n---\n\nPoder ponder tags en los repositorios en el Panel de Jules para mejorar acessibilidad (Ex: Documentación; Website, Game Scripts...) JAVI MODIFICAR EL ARTE PORQUE ESTA HORRENDO TODO\n\n",
+          "new_value": "Actualmente es difícil identificar de un vistazo el propósito de cada repositorio. Se busca implementar un sistema de etiquetas visuales para categorizarlos de forma rápida.\nEjemplos de etiquetas a incluir:\n\n- Documentación\n\n- Website\n\n- Game Scripts\n\n- Herramientas internas\n\n---\n\nEl estado visual actual de la interfaz para esta funcionalidad requiere una revisión completa. Es necesario rediseñar los componentes visuales y el sistema de etiquetas antes de proceder con la implementación final, ya que el diseño previo no cumple con los estándares estandares de calidad de la plataforma.\n---\n\nPoder ponder tags en los repositorios en el Panel de Jules para mejorar acessibilidad (Ex: Documentación; Website, Game Scripts...) JAVI MODIFICAR EL ARTE PORQUE ESTA HORRENDO TODO\n\n"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T07:26:06.068Z",
+          "field": "prioridad",
+          "old_value": "Medium",
+          "new_value": "Cosmetic"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T20:30:34.056Z",
+          "field": "asignados",
+          "old_value": "[\"dkdidac-design\",\"javi26031994-a11y\",\"topperh4rley\"]",
+          "new_value": "[\"axlfc\",\"dkdidac-design\",\"javi26031994-a11y\",\"topperh4rley\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-03T06:39:48.709Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-06-05"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-03T07:34:42.516Z",
+          "field": "repository",
+          "old_value": null,
+          "new_value": "hypenosys/hypenosys.github.io"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-04T08:32:00.396Z",
+          "field": "due_date",
+          "old_value": "2026-06-05",
+          "new_value": "2026-06-07"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-04T09:11:06.853Z",
+          "field": "asignados",
+          "old_value": "[\"axlfc\",\"dkdidac-design\",\"javi26031994-a11y\",\"topperh4rley\"]",
+          "new_value": "[\"dkdidac-design\",\"javi26031994-a11y\",\"topperh4rley\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-05T16:14:45.831Z",
+          "field": "tags",
+          "old_value": "[]",
+          "new_value": "[\"UX/UI\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:21:44.778Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:21:44.778Z",
+          "field": "completitud",
+          "old_value": 0,
+          "new_value": 0.5
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:23:01.599Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "OK"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-22T00:04:19.270Z",
+          "field": "estado",
+          "old_value": "OK",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-22T00:04:19.270Z",
+          "field": "seccion",
+          "new_value": ""
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-22T00:36:07.665Z",
+          "field": "asignados",
+          "old_value": "[\"dkdidac-design\",\"javi26031994-a11y\",\"topperh4rley\"]",
+          "new_value": "[\"topperh4rley\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-16T07:18:46.247Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "OK"
+        }
+      ],
+      "repository": "hypenosys/hypenosys.github.io",
+      "seccion": "",
+      "jules_session": null,
       "branch": "Programación (PRO)"
     },
     {
@@ -1027,6 +1318,157 @@
       "branch": "Programación (PRO)"
     },
     {
+      "title": "Mobile first: Jules Panel - \"GitHub (Team) Ops\" — Hub completo de gestión de repositorios, conectado con Tasks Kanban y Claude",
+      "descripcion": "Crear un hub de gestión de repositorios optimizado para móviles. Permite gestionar PRs e Issues desde cualquier lugar sin depender de la web de GitHub.",
+      "rama": "feature/mobile-github-ops",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Major",
+      "milestone": "M2",
+      "estado": "OK",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc",
+        "topperh4rley"
+      ],
+      "email_responsable": "axel@hypenosys.com",
+      "emails_asignados": [
+        "alex@hypenosys.com"
+      ],
+      "start_date": "2026-06-04",
+      "due_date": "2026-06-07",
+      "estimated_hours": 4,
+      "story_points": 1,
+      "tags": [
+        "api",
+        "feature",
+        "frontend",
+        "ux"
+      ],
+      "external_links": [],
+      "subtasks": [
+        {
+          "id": 1780564938683,
+          "text": "Crear github-ops.html y github-ops.js con arquitectura modular por sección",
+          "done": false
+        },
+        {
+          "id": 1780564954345,
+          "text": "Módulo PR Manager (list + diff viewer + actions)",
+          "done": false
+        },
+        {
+          "id": 1780564965375,
+          "text": "Módulo Issues Manager",
+          "done": false
+        },
+        {
+          "id": 1780564975703,
+          "text": "Módulo Branches & Commits viewer",
+          "done": false
+        },
+        {
+          "id": 1780564986181,
+          "text": "Módulo Actions/Workflows runner",
+          "done": false
+        },
+        {
+          "id": 1780564998085,
+          "text": "Sistema de notificaciones con polling (30s interval)",
+          "done": false
+        },
+        {
+          "id": 1780565011115,
+          "text": "Componente diff viewer con syntax highlighting",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Todas las funciones principales de Git sean accesibles desde el móvil.",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [
+        "El rendimiento en móvil es clave aquí; sugiero usar virtualización para las listas largas de commits y evitar lag en el scroll."
+      ],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-04",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-04T09:23:38.111Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-05T16:13:55.858Z",
+          "field": "title",
+          "old_value": "Nueva página \"GitHub Operations\" — Hub completo de gestión de repositorios",
+          "new_value": "Nueva página \"GitHub (Team) Ops\" — Hub completo de gestión de repositorios, conectado con Jules y Claude"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-05T16:44:19.904Z",
+          "field": "title",
+          "old_value": "Nueva página \"GitHub (Team) Ops\" — Hub completo de gestión de repositorios, conectado con Jules y Claude",
+          "new_value": "Upgrade Jules Panel with \"GitHub (Team) Ops\" — Hub completo de gestión de repositorios, conectado con Jules y Claude"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-05T16:44:41.430Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-05T18:51:03.847Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T22:02:58.274Z",
+          "field": "title",
+          "old_value": "Upgrade Jules Panel with \"GitHub (Team) Ops\" — Hub completo de gestión de repositorios, conectado con Jules y Claude",
+          "new_value": "Mobile first: Upgrade Jules Panel with \"GitHub (Team) Ops\" — Hub completo de gestión de repositorios, conectado con Jules y Claude"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T22:04:47.926Z",
+          "field": "title",
+          "old_value": "Mobile first: Upgrade Jules Panel with \"GitHub (Team) Ops\" — Hub completo de gestión de repositorios, conectado con Jules y Claude",
+          "new_value": "Mobile first: Jules Panel - \"GitHub (Team) Ops\" — Hub completo de gestión de repositorios, conectado con Tasks Kanban y Claude"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:46:30.813Z",
+          "field": "seccion",
+          "new_value": "Jules Panel"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-22T00:07:12.757Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "OK"
+        }
+      ],
+      "id": 28,
+      "seccion": "Jules Panel",
+      "jules_session": null,
+      "branch": "Programación (PRO)"
+    },
+    {
       "title": "Nueva página \"Claude Neural Chat\" — Interfaz de chat privado con Claude API / local AI ollama support",
       "descripcion": "Crear una página /neural-chat/ con una interfaz estilo ChatGPT pero con estética Dracula, conectada directamente a la API de Claude (claude-sonnet-4-6). Sesiones de chat múltiples y persistidas en localStorage, streaming de respuestas en tiempo real via SSE, soporte de Extended Thinking para razonamiento complejo, system prompts configurables por sesión, y capacidad de usar Claude como orquestador que puede crear tasks en el dashboard de Hypenosys y notificar a responsables — sentando las bases del flujo end-to-end autónomo.",
       "rama": "PRO",
@@ -1252,6 +1694,180 @@
         }
       ],
       "id": 30,
+      "jules_session": null,
+      "branch": "Programación (PRO)"
+    },
+    {
+      "title": "BUG VISUAL: Jules Neural Operation en dashboard en móvil ",
+      "descripcion": "Corregir el renderizado de Markdown en las operaciones de Jules en móviles. Mejora la legibilidad de los logs y planes en pantallas pequeñas.",
+      "rama": "fix/jules-neural-mobile-markdown",
+      "task_type": "bug",
+      "tema_principal": "Tools / Automation",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Cosmetic",
+      "milestone": "M1",
+      "estado": "OK",
+      "completitud": 0,
+      "resuelto_por": "Alex",
+      "detectado_por": "Dídac",
+      "asignados": [
+        "dkdidac-design",
+        "topperh4rley"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-06-06",
+      "due_date": "2026-06-14",
+      "estimated_hours": 4,
+      "story_points": 4,
+      "tags": [
+        "UX/UI",
+        "bug",
+        "frontend",
+        "ux"
+      ],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "El texto con backticks se vea correctamente y el layout no se rompa.",
+      "blocks": [
+        "34"
+      ],
+      "blocked_by": [],
+      "comments": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T10:06:53.716Z",
+          "body": "Se ha escapado el texto con las batticks (```)"
+        },
+        {
+          "author_login": "jules",
+          "timestamp": "2026-06-08T16:19:37.829811",
+          "body": "El problema parece estar en el overflow de los bloques de código; necesitamos un ajuste en el CSS global de los componentes Markdown."
+        }
+      ],
+      "images": [
+        {
+          "url": "https://64.media.tumblr.com/01352f03135f95e9523c1cbcb9463b01/6cb7bf48446dbfae-1a/s1280x1920/e180a980cca794ea55e76698f1e1129bcc238030.png",
+          "type": "url",
+          "tumblr_post_id": "818665621118156800",
+          "filename": "1000052807.png",
+          "uploaded_at": "2026-06-06T10:06:16.582Z"
+        },
+        {
+          "url": "https://64.media.tumblr.com/222b1c2e3a4b052c0ee8a94cc55217e1/78299e332b2c0852-9c/s1280x1920/f59c5928ee5b641da47d4a7db4eac890c9ca7bf8.png",
+          "type": "url",
+          "tumblr_post_id": "818665626369392640",
+          "filename": "1000052808.png",
+          "uploaded_at": "2026-06-06T10:06:21.587Z"
+        }
+      ],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T10:04:33.597Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T10:08:09.053Z",
+          "field": "descripcion",
+          "old_value": "Se ve fatality, debería mostrarse mejor con Markdown, siguiendo la estética de la web",
+          "new_value": "Se ve fatality, debería mostrarse mejor con Markdown, siguiendo la estética de la web (cuidadoito con las batticks ```)"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T10:08:09.053Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Medium"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T10:08:09.053Z",
+          "field": "task_type",
+          "old_value": "feature",
+          "new_value": "bug"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T10:08:31.419Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T10:17:05.370Z",
+          "field": "title",
+          "old_value": "Jules Neural Operation en dashboard en móvil ",
+          "new_value": "BUG: Jules Neural Operation en dashboard en móvil "
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T10:17:05.370Z",
+          "field": "descripcion",
+          "old_value": "Se ve fatality, debería mostrarse mejor con Markdown, siguiendo la estética de la web (cuidadoito con las batticks ```)",
+          "new_value": "Se ve fatality, debería mostrarse mejor con Markdown, siguiendo la estética de la web (cuidadito con las batticks ```)"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T10:17:05.370Z",
+          "field": "prioridad",
+          "old_value": "Medium",
+          "new_value": "Major"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T11:33:06.040Z",
+          "field": "title",
+          "old_value": "BUG: Jules Neural Operation en dashboard en móvil ",
+          "new_value": "BUG VISUAL: Jules Neural Operation en dashboard en móvil "
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T11:38:32.246Z",
+          "field": "blocks",
+          "old_value": "[]",
+          "new_value": "[\"34\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T11:39:41.990Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Cosmetic"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T11:45:04.711Z",
+          "field": "asignados",
+          "old_value": "[\"axlfc\",\"dkdidac-design\"]",
+          "new_value": "[\"dkdidac-design\",\"topperh4rley\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:22:20.236Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:23:21.422Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "OK"
+        }
+      ],
+      "id": 31,
       "jules_session": null,
       "branch": "Programación (PRO)"
     },
@@ -1635,6 +2251,162 @@
       "branch": "Programación (PRO)"
     },
     {
+      "title": "n8n: Añadir NIM y cognito-agent como providers en la configuración de Claude Neural Chat",
+      "descripcion": "Configurar nuevos proveedores de IA en el ecosistema de n8n. Amplía las capacidades de procesamiento y automatización del Neural Chat.",
+      "rama": "feature/n8n-providers-nim-agent",
+      "task_type": "research",
+      "tema_principal": "Tools / Automation",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Medium",
+      "milestone": "M2",
+      "estado": "OK",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Alex",
+      "asignados": [
+        "topperh4rley"
+      ],
+      "email_responsable": "axel@hypenosys.com",
+      "emails_asignados": [
+        "alex@hypenosys.com",
+        "axel@hypenosys.com"
+      ],
+      "start_date": "2026-06-22",
+      "due_date": "2026-07-05",
+      "estimated_hours": 6,
+      "story_points": 5,
+      "tags": [
+        "api",
+        "devops",
+        "research"
+      ],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "NIM y cognito-agent respondan correctamente a los webhooks.",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [
+        "He visto que la latencia de NIM es muy baja, lo cual será genial para las respuestas del chat en tiempo real."
+      ],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T22:07:04.609Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:19:36.619Z",
+          "field": "task_type",
+          "old_value": "feature",
+          "new_value": "research"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:29:39.989Z",
+          "field": "title",
+          "old_value": "Añadir NVIDIA NIM como provider en la configuración de Claude Neural Chat",
+          "new_value": "n8n: Añadir NVIDIA NIM y cognito-agent como providers en la configuración de Claude Neural Chat"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:29:39.989Z",
+          "field": "prioridad",
+          "old_value": "Minor",
+          "new_value": "Medium"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T12:27:44.014Z",
+          "field": "title",
+          "old_value": "n8n: Añadir NVIDIA NIM y cognito-agent como providers en la configuración de Claude Neural Chat",
+          "new_value": "n8n: Añadir NIM y cognito-agent como providers en la configuración de Claude Neural Chat"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T12:27:44.014Z",
+          "field": "descripcion",
+          "old_value": "",
+          "new_value": "webhooks"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-15T19:08:51.475Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "ToDo"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T10:45:52.768Z",
+          "field": "estado",
+          "old_value": "ToDo",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:44:14.567Z",
+          "field": "seccion",
+          "new_value": "Chat Neural"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T22:54:11.586Z",
+          "field": "asignados",
+          "old_value": "[\"topperh4rley\"]",
+          "new_value": "[]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T22:54:11.586Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-06-28"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T22:55:46.568Z",
+          "field": "asignados",
+          "old_value": "[]",
+          "new_value": "[\"axlfc\",\"topperh4rley\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T22:55:46.568Z",
+          "field": "due_date",
+          "old_value": "2026-06-28",
+          "new_value": "2026-07-05"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T23:55:53.068Z",
+          "field": "asignados",
+          "old_value": "[\"axlfc\",\"topperh4rley\"]",
+          "new_value": "[\"topperh4rley\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-02T23:01:29.758Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "OK"
+        }
+      ],
+      "id": 36,
+      "seccion": "Chat Neural",
+      "jules_session": null,
+      "branch": "Programación (PRO)"
+    },
+    {
       "title": "New page pages/image-gen to generate image or text context and flux dev or kontext up to 2 images and text ",
       "descripcion": "Crear una página dedicada a la generación de imágenes y contenido mediante IA. Centraliza las herramientas creativas Flux/ComfyUI en una interfaz.",
       "rama": "master",
@@ -1796,6 +2568,283 @@
       ],
       "id": 38,
       "seccion": "Image Gen",
+      "jules_session": null,
+      "branch": "Programación (PRO)"
+    },
+    {
+      "title": "Añadir hypenosys/scripts a SVN",
+      "descripcion": "Sincronizar el repositorio de scripts con el chat neural y la estructura del SVN. Facilita el acceso de la IA a la lógica para mantenimiento.",
+      "rama": "chore/scripts-svn-sync",
+      "task_type": "chore",
+      "tema_principal": "Programación / Engine",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Major",
+      "milestone": "M2",
+      "estado": "OK",
+      "completitud": 0.5,
+      "resuelto_por": "Alex",
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc",
+        "topperh4rley"
+      ],
+      "email_responsable": "alex@hypenosys.com",
+      "emails_asignados": [],
+      "start_date": "2026-06-07",
+      "due_date": "2026-06-14",
+      "estimated_hours": 4,
+      "story_points": 2,
+      "tags": [
+        "api",
+        "chore",
+        "devops"
+      ],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "La IA pueda consultar el código de scripts y existan mirrors en SVN.",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [
+        "He notado que la jerarquía de carpetas en SVN difiere de Git; necesitaremos un script de mapeo para evitar archivos duplicados."
+      ],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-07",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T18:54:31.515Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:17:01.792Z",
+          "field": "task_type",
+          "old_value": "feature",
+          "new_value": "chore"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:35:07.866Z",
+          "field": "descripcion",
+          "old_value": "Ahora está docs (check verde por verificar) ",
+          "new_value": "Ahora está docs (check verde por verificar) . Queremos sincronizar la carpeta de los scripts de hypenosys/scripts en la carpeta Scripts del SVN."
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T20:10:38.541Z",
+          "field": "title",
+          "old_value": "Añadir repo hypenosys/scripts a neural-chat",
+          "new_value": "Añadir hypenosys/scripts a neural-chat y SVN"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-15T17:09:44.480Z",
+          "field": "title",
+          "old_value": "Añadir hypenosys/scripts a neural-chat y SVN",
+          "new_value": "Añadir hypenosys/scripts a SVN"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-15T19:09:38.441Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-15T19:09:38.441Z",
+          "field": "completitud",
+          "old_value": 0,
+          "new_value": 0.5
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:46:21.831Z",
+          "field": "seccion",
+          "new_value": "SVN Admin Panel, App"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-22T00:08:27.817Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "OK"
+        }
+      ],
+      "id": 39,
+      "seccion": "SVN Admin Panel, App",
+      "jules_session": null,
+      "branch": "Programación (PRO)"
+    },
+    {
+      "title": "Añadir icono de neural-chat al lado del robot en el menú del dashboard",
+      "descripcion": "Añadir el acceso directo al Neural Chat en la navegación principal. Mejora la accesibilidad a la asistencia IA desde cualquier sección.",
+      "rama": "feature/dashboard-chat-icon",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Cosmetic",
+      "milestone": "M1",
+      "estado": "OK",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Unassigned",
+      "asignados": [
+        "axlfc",
+        "topperh4rley"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-06-07",
+      "due_date": "2026-06-14",
+      "estimated_hours": 3,
+      "story_points": null,
+      "tags": [
+        "feature",
+        "frontend",
+        "ux"
+      ],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "El icono sea visible, respete el estilo Dracula y lleve al chat.",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [
+        "He elegido un icono que mantenga la coherencia visual con el resto de la interfaz; cuidado con el espaciado en la versión móvil."
+      ],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-07",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:23:56.499Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:40:33.588Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:05:47.017Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "ToDo"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-15T17:10:55.092Z",
+          "field": "estado",
+          "old_value": "ToDo",
+          "new_value": "OK"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:52:17.234Z",
+          "field": "seccion",
+          "new_value": "Dashboard"
+        }
+      ],
+      "id": 41,
+      "seccion": "Dashboard",
+      "jules_session": null,
+      "branch": "Programación (PRO)"
+    },
+    {
+      "title": "Claude Neural: llamadas a apis js y python en n8n-runners",
+      "descripcion": "Habilitar la ejecución de scripts Python y JavaScript desde el chat neural mediante n8n. Proporciona un entorno flexible para automatización.",
+      "rama": "feature/n8n-python-js-runners",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Major",
+      "milestone": "M2",
+      "estado": "OK",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Axel",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": 8,
+      "story_points": null,
+      "tags": [
+        "api",
+        "backend",
+        "feature"
+      ],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "Se puedan disparar scripts y recibir el output directamente en el chat.",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [
+        "Esto nos permitirá automatizar el análisis de logs pesados o conversiones de datos complejas que antes hacíamos manualmente."
+      ],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-08",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:39:44.850Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-11T11:41:02.898Z",
+          "field": "milestone",
+          "old_value": "M3",
+          "new_value": "M2"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-15T17:11:09.228Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:45:19.387Z",
+          "field": "seccion",
+          "new_value": "Chat Neural, Backend n8n"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-09T10:32:21.194Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "OK"
+        }
+      ],
+      "id": 43,
+      "seccion": "Chat Neural, Backend n8n",
       "jules_session": null,
       "branch": "Programación (PRO)"
     },
@@ -2129,6 +3178,74 @@
       "branch": "Programación (PRO)"
     },
     {
+      "title": "arreglar jules panel kanban",
+      "descripcion": "Vincular kanban dashboard, para que salgan las tareas bien,",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "OK",
+      "completitud": 0,
+      "resuelto_por": "Alex",
+      "detectado_por": "Alex",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-20",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "topperh4rley",
+          "timestamp": "2026-06-20T10:40:50.119Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-22T00:06:05.894Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "OK"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-22T00:06:05.894Z",
+          "field": "repository",
+          "old_value": null,
+          "new_value": "hypenosys/hypenosys.github.io"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-22T00:06:05.894Z",
+          "field": "seccion",
+          "new_value": ""
+        }
+      ],
+      "id": 58,
+      "seccion": "",
+      "jules_session": null,
+      "branch": "Programación (PRO)"
+    },
+    {
       "title": "Quitar sección vacía entre FILTRAR MIEMBROS y ALERTAS DE RUTA CRÍTICAS ACTIVAS",
       "descripcion": "",
       "rama": "master",
@@ -2219,220 +3336,6 @@
       "branch": "Programación (PRO)"
     },
     {
-      "title": "Al expandir la card del kanban, si hay imagenes, debería mostrarlas ahi y poder previsualizarlas flawlessly",
-      "descripcion": "",
-      "rama": "master",
-      "task_type": "feature",
-      "tema_principal": "Programación / Engine",
-      "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Medium",
-      "milestone": "M1",
-      "estado": "OK",
-      "completitud": 0,
-      "resuelto_por": null,
-      "detectado_por": "Axel",
-      "asignados": [],
-      "email_responsable": null,
-      "emails_asignados": [],
-      "start_date": "2026-06-21",
-      "due_date": "2026-06-28",
-      "estimated_hours": 2,
-      "story_points": 2,
-      "tags": [],
-      "external_links": [],
-      "subtasks": [],
-      "acceptance_criteria": "",
-      "blocks": [],
-      "blocked_by": [],
-      "comments": [],
-      "images": [],
-      "rama2": null,
-      "ver": true,
-      "fecha": "2026-06-21",
-      "apoyo": null,
-      "limite": null,
-      "comentario": "",
-      "change_log": [
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T11:12:53.650Z",
-          "field": "id",
-          "old_value": null,
-          "new_value": "Created"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T12:41:11.005Z",
-          "field": "seccion",
-          "new_value": "Dashboard"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T15:04:04.222Z",
-          "field": "title",
-          "old_value": "DASHBOARD: Al expandir la card del kanban, si hay imagenes, debería mostrarlas ahi y poder previsualizarlas flawlessly",
-          "new_value": "Al expandir la card del kanban, si hay imagenes, debería mostrarlas ahi y poder previsualizarlas flawlessly"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T19:26:50.159Z",
-          "field": "estado",
-          "old_value": "Pending",
-          "new_value": "OK"
-        }
-      ],
-      "id": 61,
-      "seccion": "Dashboard",
-      "jules_session": null,
-      "branch": "Programación (PRO)"
-    },
-    {
-      "title": "Añadir botón de archivar en cards de columna COMPLETADO para mandar al archivo (cementerio de tareas)",
-      "descripcion": "Ha desaparecido el botón de archivar (mandar al cementerio) las tasks en COMPLETADO",
-      "rama": "master",
-      "task_type": "feature",
-      "tema_principal": "Programación / Engine",
-      "seccion": "Dashboard",
-      "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Medium",
-      "milestone": "M1",
-      "estado": "OK",
-      "completitud": 0,
-      "resuelto_por": null,
-      "detectado_por": "Axel",
-      "asignados": [],
-      "email_responsable": null,
-      "emails_asignados": [],
-      "start_date": "2026-06-21",
-      "due_date": "2026-06-28",
-      "estimated_hours": 1,
-      "story_points": 1,
-      "tags": [],
-      "external_links": [],
-      "subtasks": [],
-      "acceptance_criteria": "",
-      "blocks": [],
-      "blocked_by": [],
-      "comments": [],
-      "images": [],
-      "rama2": null,
-      "ver": true,
-      "fecha": "2026-06-21",
-      "apoyo": null,
-      "limite": null,
-      "comentario": "",
-      "change_log": [
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T12:48:14.131Z",
-          "field": "id",
-          "old_value": null,
-          "new_value": "Created"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T14:50:35.998Z",
-          "field": "estado",
-          "old_value": "Pending",
-          "new_value": "Working"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T15:03:53.908Z",
-          "field": "estado",
-          "old_value": "Working",
-          "new_value": "OK"
-        }
-      ],
-      "id": 66,
-      "jules_session": null,
-      "branch": "Programación (PRO)"
-    },
-    {
-      "title": "Añadir icono de neural-chat al lado del robot en el menú del dashboard",
-      "descripcion": "Añadir el acceso directo al Neural Chat en la navegación principal. Mejora la accesibilidad a la asistencia IA desde cualquier sección.",
-      "rama": "feature/dashboard-chat-icon",
-      "task_type": "feature",
-      "tema_principal": "Programación / Engine",
-      "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Cosmetic",
-      "milestone": "M1",
-      "estado": "OK",
-      "completitud": 0,
-      "resuelto_por": null,
-      "detectado_por": "Unassigned",
-      "asignados": [
-        "axlfc",
-        "topperh4rley"
-      ],
-      "email_responsable": null,
-      "emails_asignados": [],
-      "start_date": "2026-06-07",
-      "due_date": "2026-06-14",
-      "estimated_hours": 3,
-      "story_points": null,
-      "tags": [
-        "feature",
-        "frontend",
-        "ux"
-      ],
-      "external_links": [],
-      "subtasks": [],
-      "acceptance_criteria": "El icono sea visible, respete el estilo Dracula y lleve al chat.",
-      "blocks": [],
-      "blocked_by": [],
-      "comments": [
-        "He elegido un icono que mantenga la coherencia visual con el resto de la interfaz; cuidado con el espaciado en la versión móvil."
-      ],
-      "images": [],
-      "rama2": null,
-      "ver": true,
-      "fecha": "2026-06-07",
-      "apoyo": null,
-      "limite": null,
-      "comentario": "",
-      "change_log": [
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-07T19:23:56.499Z",
-          "field": "id",
-          "old_value": null,
-          "new_value": "Created"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-08T10:40:33.588Z",
-          "field": "estado",
-          "old_value": "Pending",
-          "new_value": "Working"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-13T09:05:47.017Z",
-          "field": "estado",
-          "old_value": "Working",
-          "new_value": "ToDo"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-15T17:10:55.092Z",
-          "field": "estado",
-          "old_value": "ToDo",
-          "new_value": "OK"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T12:52:17.234Z",
-          "field": "seccion",
-          "new_value": "Dashboard"
-        }
-      ],
-      "id": 41,
-      "seccion": "Dashboard",
-      "jules_session": null,
-      "branch": "Programación (PRO)"
-    },
-    {
       "title": "Subida de imágenes al GUARDAR TAREA, no al subir la imagen",
       "descripcion": "En cuanto se sube una imagen a imágenes en la task, no debería subirla de primeras al tumblr hasta haber guardado la task, si ya se ha subido no hace falta resubirla, pero si aun no se ha subido al tumblr sin guardar la task, no debería haberla subido al Tumblr. Así si subimos algo accidentalmente, no tiene por qué subirse de primeras.",
       "rama": "master",
@@ -2509,199 +3412,25 @@
       "branch": "Programación (PRO)"
     },
     {
-      "title": "BUG VISUAL: Jules Neural Operation en dashboard en móvil ",
-      "descripcion": "Corregir el renderizado de Markdown en las operaciones de Jules en móviles. Mejora la legibilidad de los logs y planes en pantallas pequeñas.",
-      "rama": "fix/jules-neural-mobile-markdown",
-      "task_type": "bug",
-      "tema_principal": "Tools / Automation",
-      "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Cosmetic",
-      "milestone": "M1",
-      "estado": "OK",
-      "completitud": 0,
-      "resuelto_por": "Alex",
-      "detectado_por": "Dídac",
-      "asignados": [
-        "dkdidac-design",
-        "topperh4rley"
-      ],
-      "email_responsable": null,
-      "emails_asignados": [],
-      "start_date": "2026-06-06",
-      "due_date": "2026-06-14",
-      "estimated_hours": 4,
-      "story_points": 4,
-      "tags": [
-        "UX/UI",
-        "bug",
-        "frontend",
-        "ux"
-      ],
-      "external_links": [],
-      "subtasks": [],
-      "acceptance_criteria": "El texto con backticks se vea correctamente y el layout no se rompa.",
-      "blocks": [
-        "34"
-      ],
-      "blocked_by": [],
-      "comments": [
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-06T10:06:53.716Z",
-          "body": "Se ha escapado el texto con las batticks (```)"
-        },
-        {
-          "author_login": "jules",
-          "timestamp": "2026-06-08T16:19:37.829811",
-          "body": "El problema parece estar en el overflow de los bloques de código; necesitamos un ajuste en el CSS global de los componentes Markdown."
-        }
-      ],
-      "images": [
-        {
-          "url": "https://64.media.tumblr.com/01352f03135f95e9523c1cbcb9463b01/6cb7bf48446dbfae-1a/s1280x1920/e180a980cca794ea55e76698f1e1129bcc238030.png",
-          "type": "url",
-          "tumblr_post_id": "818665621118156800",
-          "filename": "1000052807.png",
-          "uploaded_at": "2026-06-06T10:06:16.582Z"
-        },
-        {
-          "url": "https://64.media.tumblr.com/222b1c2e3a4b052c0ee8a94cc55217e1/78299e332b2c0852-9c/s1280x1920/f59c5928ee5b641da47d4a7db4eac890c9ca7bf8.png",
-          "type": "url",
-          "tumblr_post_id": "818665626369392640",
-          "filename": "1000052808.png",
-          "uploaded_at": "2026-06-06T10:06:21.587Z"
-        }
-      ],
-      "rama2": null,
-      "ver": true,
-      "fecha": "2026-06-06",
-      "apoyo": null,
-      "limite": null,
-      "comentario": "",
-      "change_log": [
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-06T10:04:33.597Z",
-          "field": "id",
-          "old_value": null,
-          "new_value": "Created"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-06T10:08:09.053Z",
-          "field": "descripcion",
-          "old_value": "Se ve fatality, debería mostrarse mejor con Markdown, siguiendo la estética de la web",
-          "new_value": "Se ve fatality, debería mostrarse mejor con Markdown, siguiendo la estética de la web (cuidadoito con las batticks ```)"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-06T10:08:09.053Z",
-          "field": "prioridad",
-          "old_value": "Major",
-          "new_value": "Medium"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-06T10:08:09.053Z",
-          "field": "task_type",
-          "old_value": "feature",
-          "new_value": "bug"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-06T10:08:31.419Z",
-          "field": "estado",
-          "old_value": "Pending",
-          "new_value": "Working"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-06T10:17:05.370Z",
-          "field": "title",
-          "old_value": "Jules Neural Operation en dashboard en móvil ",
-          "new_value": "BUG: Jules Neural Operation en dashboard en móvil "
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-06T10:17:05.370Z",
-          "field": "descripcion",
-          "old_value": "Se ve fatality, debería mostrarse mejor con Markdown, siguiendo la estética de la web (cuidadoito con las batticks ```)",
-          "new_value": "Se ve fatality, debería mostrarse mejor con Markdown, siguiendo la estética de la web (cuidadito con las batticks ```)"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-06T10:17:05.370Z",
-          "field": "prioridad",
-          "old_value": "Medium",
-          "new_value": "Major"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-06T11:33:06.040Z",
-          "field": "title",
-          "old_value": "BUG: Jules Neural Operation en dashboard en móvil ",
-          "new_value": "BUG VISUAL: Jules Neural Operation en dashboard en móvil "
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-06T11:38:32.246Z",
-          "field": "blocks",
-          "old_value": "[]",
-          "new_value": "[\"34\"]"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-06T11:39:41.990Z",
-          "field": "prioridad",
-          "old_value": "Major",
-          "new_value": "Cosmetic"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-06T11:45:04.711Z",
-          "field": "asignados",
-          "old_value": "[\"axlfc\",\"dkdidac-design\"]",
-          "new_value": "[\"dkdidac-design\",\"topperh4rley\"]"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-07T19:22:20.236Z",
-          "field": "estado",
-          "old_value": "Working",
-          "new_value": "In Review"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-13T09:23:21.422Z",
-          "field": "estado",
-          "old_value": "In Review",
-          "new_value": "OK"
-        }
-      ],
-      "id": 31,
-      "jules_session": null,
-      "branch": "Programación (PRO)"
-    },
-    {
-      "title": "arreglar jules panel kanban",
-      "descripcion": "Vincular kanban dashboard, para que salgan las tareas bien,",
+      "title": "Al expandir la card del kanban, si hay imagenes, debería mostrarlas ahi y poder previsualizarlas flawlessly",
+      "descripcion": "",
       "rama": "master",
       "task_type": "feature",
       "tema_principal": "Programación / Engine",
       "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Major",
+      "prioridad": "Medium",
       "milestone": "M1",
       "estado": "OK",
       "completitud": 0,
-      "resuelto_por": "Alex",
-      "detectado_por": "Alex",
+      "resuelto_por": null,
+      "detectado_por": "Axel",
       "asignados": [],
       "email_responsable": null,
       "emails_asignados": [],
-      "start_date": null,
-      "due_date": null,
-      "estimated_hours": null,
-      "story_points": null,
+      "start_date": "2026-06-21",
+      "due_date": "2026-06-28",
+      "estimated_hours": 2,
+      "story_points": 2,
       "tags": [],
       "external_links": [],
       "subtasks": [],
@@ -2712,41 +3441,162 @@
       "images": [],
       "rama2": null,
       "ver": true,
-      "fecha": "2026-06-20",
+      "fecha": "2026-06-21",
       "apoyo": null,
       "limite": null,
       "comentario": "",
       "change_log": [
         {
-          "author_login": "topperh4rley",
-          "timestamp": "2026-06-20T10:40:50.119Z",
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T11:12:53.650Z",
           "field": "id",
           "old_value": null,
           "new_value": "Created"
         },
         {
           "author_login": "axlfc",
-          "timestamp": "2026-06-22T00:06:05.894Z",
+          "timestamp": "2026-06-21T12:41:11.005Z",
+          "field": "seccion",
+          "new_value": "Dashboard"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T15:04:04.222Z",
+          "field": "title",
+          "old_value": "DASHBOARD: Al expandir la card del kanban, si hay imagenes, debería mostrarlas ahi y poder previsualizarlas flawlessly",
+          "new_value": "Al expandir la card del kanban, si hay imagenes, debería mostrarlas ahi y poder previsualizarlas flawlessly"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T19:26:50.159Z",
           "field": "estado",
           "old_value": "Pending",
           "new_value": "OK"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-22T00:06:05.894Z",
-          "field": "repository",
-          "old_value": null,
-          "new_value": "hypenosys/hypenosys.github.io"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-22T00:06:05.894Z",
-          "field": "seccion",
-          "new_value": ""
         }
       ],
-      "id": 58,
-      "seccion": "",
+      "id": 61,
+      "seccion": "Dashboard",
+      "jules_session": null,
+      "branch": "Programación (PRO)"
+    },
+    {
+      "title": "Unificar menús en todas las páginas de la plataforma",
+      "descripcion": "Actualmente en cada página cada menú es hijo de su padre.\nAñadir botón en el icono de usuario del jules panel para abrirse lo de 'Mi Perfil', 'Configuración API', 'Ajustes Avanzados', 'Cerrar sesión' en Jules Panel etc. hacer un análisis profundo y exhaustivo de qué hay en cada menú en cada página. Y diseñar un menú unificado con todas las características necesarias imprescindibles y específicas que haya.",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Cosmetic",
+      "milestone": "M1",
+      "estado": "OK",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Alex",
+      "asignados": [],
+      "email_responsable": "axel@hypenosys.com",
+      "emails_asignados": [],
+      "start_date": "2026-06-29",
+      "due_date": "2026-06-30",
+      "estimated_hours": 2,
+      "story_points": 2,
+      "tags": [
+        "menú",
+        "ux/ui"
+      ],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [
+        {
+          "url": "https://64.media.tumblr.com/f9925a42fc2adb24137550bc0d84dbc9/741b536a55b97ace-65/s1280x1920/75c352dc16cb1bbb6876ceefd5574d00b548652c.jpg",
+          "type": "url",
+          "tumblr_post_id": "820029148159475712",
+          "filename": "8669.jpg",
+          "uploaded_at": "2026-06-21T11:18:57.781Z"
+        }
+      ],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-21",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T11:21:14.577Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T11:33:28.272Z",
+          "field": "title",
+          "old_value": "JULES PANEL: Unificar menús en todas las páginas de la plataforma",
+          "new_value": "JULES PANEL - /chat/neural/: Unificar menús en todas las páginas de la plataforma"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T11:33:28.272Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Cosmetic"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:41:20.991Z",
+          "field": "seccion",
+          "new_value": "Jules Panel, Chat Neural"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T14:43:16.433Z",
+          "field": "descripcion",
+          "old_value": "Actualmente en cada página cada menú es hijo de su padre.\nAñadir botón en el icono de usuario del jules panel para abrirse lo de 'Mi Perfil', 'Configuración API', 'Ajustes Avanzados', 'Cerrar sesión' en Jules Panel etc.",
+          "new_value": "Actualmente en cada página cada menú es hijo de su padre.\nAñadir botón en el icono de usuario del jules panel para abrirse lo de 'Mi Perfil', 'Configuración API', 'Ajustes Avanzados', 'Cerrar sesión' en Jules Panel etc. hacer un análisis profundo y exhaustivo de qué hay en cada menú en cada página. Y diseñar un menú unificado con todas las características necesarias imprescindibles y específicas que haya."
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T15:04:16.289Z",
+          "field": "title",
+          "old_value": "JULES PANEL - /chat/neural/: Unificar menús en todas las páginas de la plataforma",
+          "new_value": "Unificar menús en todas las páginas de la plataforma"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-29T09:47:58.933Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-29T09:47:58.933Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-06-30"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-09T08:33:20.845Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-09T10:32:09.390Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "OK"
+        }
+      ],
+      "id": 62,
+      "seccion": "Jules Panel, Chat Neural",
       "jules_session": null,
       "branch": "Programación (PRO)"
     },
@@ -2827,153 +3677,198 @@
       "branch": "Programación (PRO)"
     },
     {
-      "title": "Mobile first: Jules Panel - \"GitHub (Team) Ops\" — Hub completo de gestión de repositorios, conectado con Tasks Kanban y Claude",
-      "descripcion": "Crear un hub de gestión de repositorios optimizado para móviles. Permite gestionar PRs e Issues desde cualquier lugar sin depender de la web de GitHub.",
-      "rama": "feature/mobile-github-ops",
+      "title": "Añadir botón de archivar en cards de columna COMPLETADO para mandar al archivo (cementerio de tareas)",
+      "descripcion": "Ha desaparecido el botón de archivar (mandar al cementerio) las tasks en COMPLETADO",
+      "rama": "master",
       "task_type": "feature",
       "tema_principal": "Programación / Engine",
+      "seccion": "Dashboard",
       "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Major",
-      "milestone": "M2",
+      "prioridad": "Medium",
+      "milestone": "M1",
       "estado": "OK",
       "completitud": 0,
-      "resuelto_por": "Axel",
+      "resuelto_por": null,
       "detectado_por": "Axel",
-      "asignados": [
-        "axlfc",
-        "topperh4rley"
-      ],
-      "email_responsable": "axel@hypenosys.com",
-      "emails_asignados": [
-        "alex@hypenosys.com"
-      ],
-      "start_date": "2026-06-04",
-      "due_date": "2026-06-07",
-      "estimated_hours": 4,
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-06-21",
+      "due_date": "2026-06-28",
+      "estimated_hours": 1,
       "story_points": 1,
-      "tags": [
-        "api",
-        "feature",
-        "frontend",
-        "ux"
-      ],
+      "tags": [],
       "external_links": [],
-      "subtasks": [
-        {
-          "id": 1780564938683,
-          "text": "Crear github-ops.html y github-ops.js con arquitectura modular por sección",
-          "done": false
-        },
-        {
-          "id": 1780564954345,
-          "text": "Módulo PR Manager (list + diff viewer + actions)",
-          "done": false
-        },
-        {
-          "id": 1780564965375,
-          "text": "Módulo Issues Manager",
-          "done": false
-        },
-        {
-          "id": 1780564975703,
-          "text": "Módulo Branches & Commits viewer",
-          "done": false
-        },
-        {
-          "id": 1780564986181,
-          "text": "Módulo Actions/Workflows runner",
-          "done": false
-        },
-        {
-          "id": 1780564998085,
-          "text": "Sistema de notificaciones con polling (30s interval)",
-          "done": false
-        },
-        {
-          "id": 1780565011115,
-          "text": "Componente diff viewer con syntax highlighting",
-          "done": false
-        }
-      ],
-      "acceptance_criteria": "Todas las funciones principales de Git sean accesibles desde el móvil.",
+      "subtasks": [],
+      "acceptance_criteria": "",
       "blocks": [],
       "blocked_by": [],
-      "comments": [
-        "El rendimiento en móvil es clave aquí; sugiero usar virtualización para las listas largas de commits y evitar lag en el scroll."
-      ],
+      "comments": [],
       "images": [],
       "rama2": null,
       "ver": true,
-      "fecha": "2026-06-04",
+      "fecha": "2026-06-21",
       "apoyo": null,
       "limite": null,
       "comentario": "",
       "change_log": [
         {
           "author_login": "axlfc",
-          "timestamp": "2026-06-04T09:23:38.111Z",
+          "timestamp": "2026-06-21T12:48:14.131Z",
           "field": "id",
           "old_value": null,
           "new_value": "Created"
         },
         {
           "author_login": "axlfc",
-          "timestamp": "2026-06-05T16:13:55.858Z",
-          "field": "title",
-          "old_value": "Nueva página \"GitHub Operations\" — Hub completo de gestión de repositorios",
-          "new_value": "Nueva página \"GitHub (Team) Ops\" — Hub completo de gestión de repositorios, conectado con Jules y Claude"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-05T16:44:19.904Z",
-          "field": "title",
-          "old_value": "Nueva página \"GitHub (Team) Ops\" — Hub completo de gestión de repositorios, conectado con Jules y Claude",
-          "new_value": "Upgrade Jules Panel with \"GitHub (Team) Ops\" — Hub completo de gestión de repositorios, conectado con Jules y Claude"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-05T16:44:41.430Z",
+          "timestamp": "2026-06-21T14:50:35.998Z",
           "field": "estado",
           "old_value": "Pending",
           "new_value": "Working"
         },
         {
           "author_login": "axlfc",
-          "timestamp": "2026-06-05T18:51:03.847Z",
+          "timestamp": "2026-06-21T15:03:53.908Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "OK"
+        }
+      ],
+      "id": 66,
+      "jules_session": null,
+      "branch": "Programación (PRO)"
+    },
+    {
+      "title": "Reducir latencia y tiempos de carga",
+      "descripcion": "Tarda demasiado, no debería tardar tanto en cargar datos que son prácticamente estáticos. El dashboard y en el panel de Jules (el propio dashboard del panel de Jules) deben cargar en muy poco. Además, las sesiones de Jules no aparecen sincronizadas en el Dashboard.",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Dashboard, Jules Panel",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "OK",
+      "completitud": 0,
+      "resuelto_por": "Alex",
+      "detectado_por": "Axel",
+      "asignados": [
+        "topperh4rley"
+      ],
+      "email_responsable": "alex@hypenosys.com",
+      "emails_asignados": [],
+      "start_date": "2026-06-28",
+      "due_date": "2026-07-15",
+      "estimated_hours": 4,
+      "story_points": 5,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-21",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T17:06:12.883Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T18:34:27.422Z",
+          "field": "descripcion",
+          "old_value": "Tarda demasiado, no debería tardar tanto en cargar datos que son prácticamente estáticos. El dashboard y en el panel de Jules el propio dashboard del panel de Jules deben cargar en muy poco.",
+          "new_value": "Tarda demasiado, no debería tardar tanto en cargar datos que son prácticamente estáticos. El dashboard y en el panel de Jules (el propio dashboard del panel de Jules) deben cargar en muy poco."
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-28T13:44:44.189Z",
           "field": "estado",
           "old_value": "Pending",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-28T13:44:44.189Z",
+          "field": "asignados",
+          "old_value": "[]",
+          "new_value": "[\"topperh4rley\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-28T13:44:44.189Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-07-05"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-03T19:35:56.183Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "Pending"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-08T08:41:01.530Z",
+          "field": "descripcion",
+          "old_value": "Tarda demasiado, no debería tardar tanto en cargar datos que son prácticamente estáticos. El dashboard y en el panel de Jules (el propio dashboard del panel de Jules) deben cargar en muy poco.",
+          "new_value": "Tarda demasiado, no debería tardar tanto en cargar datos que son prácticamente estáticos. El dashboard y en el panel de Jules (el propio dashboard del panel de Jules) deben cargar en muy poco. Además, las sesiones de Jules no aparecen sincronizadas en el Dashboard."
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-08T08:41:01.530Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-08T08:41:01.530Z",
+          "field": "due_date",
+          "old_value": "2026-07-05",
+          "new_value": "2026-07-15"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-11T13:24:44.399Z",
+          "field": "estado",
+          "old_value": "Working",
           "new_value": "In Review"
         },
         {
           "author_login": "axlfc",
-          "timestamp": "2026-06-06T22:02:58.274Z",
-          "field": "title",
-          "old_value": "Upgrade Jules Panel with \"GitHub (Team) Ops\" — Hub completo de gestión de repositorios, conectado con Jules y Claude",
-          "new_value": "Mobile first: Upgrade Jules Panel with \"GitHub (Team) Ops\" — Hub completo de gestión de repositorios, conectado con Jules y Claude"
+          "timestamp": "2026-07-11T13:24:44.399Z",
+          "field": "repository",
+          "old_value": "hypenosys/hypenosys.github.io",
+          "new_value": null
         },
         {
           "author_login": "axlfc",
-          "timestamp": "2026-06-06T22:04:47.926Z",
-          "field": "title",
-          "old_value": "Mobile first: Upgrade Jules Panel with \"GitHub (Team) Ops\" — Hub completo de gestión de repositorios, conectado con Jules y Claude",
-          "new_value": "Mobile first: Jules Panel - \"GitHub (Team) Ops\" — Hub completo de gestión de repositorios, conectado con Tasks Kanban y Claude"
+          "timestamp": "2026-07-11T13:28:21.227Z",
+          "field": "repository",
+          "old_value": null,
+          "new_value": "hypenosys/hypenosys.github.io"
         },
         {
           "author_login": "axlfc",
-          "timestamp": "2026-06-21T12:46:30.813Z",
-          "field": "seccion",
-          "new_value": "Jules Panel"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-22T00:07:12.757Z",
+          "timestamp": "2026-07-16T07:17:50.846Z",
           "field": "estado",
           "old_value": "In Review",
           "new_value": "OK"
         }
       ],
-      "id": 28,
-      "seccion": "Jules Panel",
+      "id": 67,
       "jules_session": null,
       "branch": "Programación (PRO)"
     },
@@ -3138,901 +4033,6 @@
       "branch": "Programación (PRO)"
     },
     {
-      "id": 1,
-      "rama": "feature/dashboard-core-setup",
-      "rama2": null,
-      "ver": true,
-      "descripcion": "Finalizar la configuración del núcleo del centro de operaciones. Es fundamental para centralizar la gestión de tareas y métricas del equipo.",
-      "fecha": "2025-01-01",
-      "tema_principal": "QA / Testing",
-      "detectado_por": "Unassigned",
-      "resuelto_por": "Mitxel",
-      "apoyo": null,
-      "estado": "OK",
-      "prioridad": "Medium",
-      "limite": null,
-      "comentario": "Implementación del núcleo del Operations Center usando Jekyll y Tailwind. Configuración de la API de GitHub para persistencia de tareas y visualización de métricas de QA.",
-      "milestone": "M1",
-      "completitud": 0.4,
-      "asignados": [
-        "dkdidac-design",
-        "javi26031994-a11y",
-        "mitxel2022"
-      ],
-      "email_responsable": "mitxel@hypenosys.com",
-      "emails_asignados": [],
-      "images": [],
-      "repository": "hypenosys/hypenosys.github.io",
-      "title": "Configuración inicial del dashboard operacional",
-      "task_type": "feature",
-      "start_date": "2026-06-01",
-      "due_date": "2026-06-30",
-      "estimated_hours": 1,
-      "story_points": 1,
-      "tags": [
-        "devops",
-        "feature",
-        "frontend"
-      ],
-      "external_links": [],
-      "subtasks": [],
-      "acceptance_criteria": "El dashboard sea funcional y persista datos correctamente mediante la API de GitHub.",
-      "blocks": [],
-      "blocked_by": [],
-      "comments": [
-        "He revisado la estructura inicial y parece sólida, pero debemos asegurar que el manejo de errores de la API de GitHub sea robusto para evitar pérdida de datos."
-      ],
-      "change_log": [
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-03T07:34:56.611Z",
-          "field": "repository",
-          "old_value": null,
-          "new_value": "hypenosys/hypenosys.github.io"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-03T11:24:28.628Z",
-          "field": "due_date",
-          "old_value": null,
-          "new_value": "2026-06-30"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-05T16:46:06.282Z",
-          "field": "asignados",
-          "old_value": "[\"axlfc\",\"dkdidac-design\",\"javi26031994-a11y\",\"mitxel2022\",\"topperh4rley\"]",
-          "new_value": "[\"dkdidac-design\",\"javi26031994-a11y\",\"mitxel2022\",\"topperh4rley\"]"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-13T09:22:39.120Z",
-          "field": "asignados",
-          "old_value": "[\"dkdidac-design\",\"javi26031994-a11y\",\"mitxel2022\",\"topperh4rley\"]",
-          "new_value": "[\"dkdidac-design\",\"javi26031994-a11y\",\"mitxel2022\"]"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-13T09:22:39.120Z",
-          "field": "completitud",
-          "old_value": 0.6,
-          "new_value": 0.4
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T10:48:50.014Z",
-          "field": "estado",
-          "old_value": "In Review",
-          "new_value": "OK"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-22T00:24:20.163Z",
-          "field": "seccion",
-          "new_value": ""
-        }
-      ],
-      "seccion": "",
-      "jules_session": null,
-      "branch": "Programación (PRO)"
-    },
-    {
-      "rama": "feature/repo-labels-ui",
-      "descripcion": "Añadir etiquetas visuales a los repositorios en el panel para mejorar la organización. Facilita la identificación rápida del propósito de cada proyecto.",
-      "tema_principal": "Arte / Assets",
-      "prioridad": "Cosmetic",
-      "milestone": "M1",
-      "estado": "OK",
-      "completitud": 0.5,
-      "resuelto_por": "Alex",
-      "detectado_por": "Alex",
-      "asignados": [
-        "topperh4rley"
-      ],
-      "email_responsable": "alex@hypenosys.com",
-      "emails_asignados": [
-        "alex@hypenosys.com",
-        "didac@hypenosys.com"
-      ],
-      "rama2": null,
-      "ver": true,
-      "fecha": "2026-05-31",
-      "apoyo": null,
-      "limite": null,
-      "comentario": "",
-      "id": 16,
-      "images": [
-        {
-          "url": "https://64.media.tumblr.com/605e9e85b6ddcf50b22c7f5d18ba8f6f/83752d027874b98a-bc/s500x750/2fdc7473a881cf1b6b414c2fd7d012c4aac3a1d7.png",
-          "type": "url",
-          "tumblr_post_id": "818198128507355136",
-          "filename": "7019.png",
-          "uploaded_at": "2026-06-01T06:15:45.017Z"
-        },
-        {
-          "url": "https://64.media.tumblr.com/b9b65e70015e7380f8390f78688c0582/8d84af7686f0fe3b-1f/s500x750/b3b138e02c625db68ab513cb449b1e4ac5d196df.png",
-          "type": "url",
-          "tumblr_post_id": "818198155896176640",
-          "filename": "7020.png",
-          "uploaded_at": "2026-06-01T06:16:11.128Z"
-        }
-      ],
-      "title": "Implementación de etiquetas de categorización en el listado de repositorios del Panel de Jules",
-      "task_type": "feature",
-      "start_date": "2026-06-01",
-      "due_date": "2026-06-07",
-      "estimated_hours": 2,
-      "story_points": 5,
-      "tags": [
-        "UX/UI",
-        "feature",
-        "frontend",
-        "ux"
-      ],
-      "external_links": [],
-      "subtasks": [
-        {
-          "id": 1780935577829,
-          "text": "Rediseño de componentes visuales de etiquetas",
-          "done": false
-        }
-      ],
-      "acceptance_criteria": "Los tags aparezcan correctamente en la UI y sean filtrables.",
-      "blocks": [],
-      "blocked_by": [],
-      "comments": [
-        "He notado que el diseño anterior era confuso; el nuevo sistema de colores debería ser más intuitivo y accesible."
-      ],
-      "change_log": [
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-01T06:47:52.169Z",
-          "field": "title",
-          "old_value": "Poder ponder tags en los repositorios en el Panel de Jules",
-          "new_value": "Implementación de etiquetas de categorización en el listado de repositorios del Panel de Jules"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-01T07:00:58.393Z",
-          "field": "descripcion",
-          "old_value": "Poder ponder tags en los repositorios en el Panel de Jules para mejorar acessibilidad (Ex: Documentación; Website, Game Scripts...) JAVI MODIFICAR EL ARTE PORQUE ESTA HORRENDO TODO",
-          "new_value": "Actualmente es difícil identificar de un vistazo el propósito de cada repositorio. Se busca implementar un sistema de etiquetas visuales para categorizarlos de forma rápida.\nEjemplos de etiquetas a incluir:\n\nDocumentación\n\nWebsite\n\nGame Scripts\n\nHerramientas internas\n\n---\n\nEl estado visual actual de la interfaz para esta funcionalidad requiere una revisión completa. Es necesario rediseñar los componentes visuales y el sistema de etiquetas antes de proceder con la implementación final, ya que el diseño previo no cumple con los estándares estandares de calidad de la plataforma.\n---\n\nPoder ponder tags en los repositorios en el Panel de Jules para mejorar acessibilidad (Ex: Documentación; Website, Game Scripts...) JAVI MODIFICAR EL ARTE PORQUE ESTA HORRENDO TODO\n\n"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-01T07:01:33.685Z",
-          "field": "descripcion",
-          "old_value": "Actualmente es difícil identificar de un vistazo el propósito de cada repositorio. Se busca implementar un sistema de etiquetas visuales para categorizarlos de forma rápida.\nEjemplos de etiquetas a incluir:\n\nDocumentación\n\nWebsite\n\nGame Scripts\n\nHerramientas internas\n\n---\n\nEl estado visual actual de la interfaz para esta funcionalidad requiere una revisión completa. Es necesario rediseñar los componentes visuales y el sistema de etiquetas antes de proceder con la implementación final, ya que el diseño previo no cumple con los estándares estandares de calidad de la plataforma.\n---\n\nPoder ponder tags en los repositorios en el Panel de Jules para mejorar acessibilidad (Ex: Documentación; Website, Game Scripts...) JAVI MODIFICAR EL ARTE PORQUE ESTA HORRENDO TODO\n\n",
-          "new_value": "Actualmente es difícil identificar de un vistazo el propósito de cada repositorio. Se busca implementar un sistema de etiquetas visuales para categorizarlos de forma rápida.\nEjemplos de etiquetas a incluir:\n\n- Documentación\n\n- Website\n\n- Game Scripts\n\n- Herramientas internas\n\n---\n\nEl estado visual actual de la interfaz para esta funcionalidad requiere una revisión completa. Es necesario rediseñar los componentes visuales y el sistema de etiquetas antes de proceder con la implementación final, ya que el diseño previo no cumple con los estándares estandares de calidad de la plataforma.\n---\n\nPoder ponder tags en los repositorios en el Panel de Jules para mejorar acessibilidad (Ex: Documentación; Website, Game Scripts...) JAVI MODIFICAR EL ARTE PORQUE ESTA HORRENDO TODO\n\n"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-01T07:26:06.068Z",
-          "field": "prioridad",
-          "old_value": "Medium",
-          "new_value": "Cosmetic"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-01T20:30:34.056Z",
-          "field": "asignados",
-          "old_value": "[\"dkdidac-design\",\"javi26031994-a11y\",\"topperh4rley\"]",
-          "new_value": "[\"axlfc\",\"dkdidac-design\",\"javi26031994-a11y\",\"topperh4rley\"]"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-03T06:39:48.709Z",
-          "field": "due_date",
-          "old_value": null,
-          "new_value": "2026-06-05"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-03T07:34:42.516Z",
-          "field": "repository",
-          "old_value": null,
-          "new_value": "hypenosys/hypenosys.github.io"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-04T08:32:00.396Z",
-          "field": "due_date",
-          "old_value": "2026-06-05",
-          "new_value": "2026-06-07"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-04T09:11:06.853Z",
-          "field": "asignados",
-          "old_value": "[\"axlfc\",\"dkdidac-design\",\"javi26031994-a11y\",\"topperh4rley\"]",
-          "new_value": "[\"dkdidac-design\",\"javi26031994-a11y\",\"topperh4rley\"]"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-05T16:14:45.831Z",
-          "field": "tags",
-          "old_value": "[]",
-          "new_value": "[\"UX/UI\"]"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-07T19:21:44.778Z",
-          "field": "estado",
-          "old_value": "Working",
-          "new_value": "In Review"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-07T19:21:44.778Z",
-          "field": "completitud",
-          "old_value": 0,
-          "new_value": 0.5
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-13T09:23:01.599Z",
-          "field": "estado",
-          "old_value": "In Review",
-          "new_value": "OK"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-22T00:04:19.270Z",
-          "field": "estado",
-          "old_value": "OK",
-          "new_value": "In Review"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-22T00:04:19.270Z",
-          "field": "seccion",
-          "new_value": ""
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-22T00:36:07.665Z",
-          "field": "asignados",
-          "old_value": "[\"dkdidac-design\",\"javi26031994-a11y\",\"topperh4rley\"]",
-          "new_value": "[\"topperh4rley\"]"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-16T07:18:46.247Z",
-          "field": "estado",
-          "old_value": "In Review",
-          "new_value": "OK"
-        }
-      ],
-      "repository": "hypenosys/hypenosys.github.io",
-      "seccion": "",
-      "jules_session": null,
-      "branch": "Programación (PRO)"
-    },
-    {
-      "title": "n8n: Añadir NIM y cognito-agent como providers en la configuración de Claude Neural Chat",
-      "descripcion": "Configurar nuevos proveedores de IA en el ecosistema de n8n. Amplía las capacidades de procesamiento y automatización del Neural Chat.",
-      "rama": "feature/n8n-providers-nim-agent",
-      "task_type": "research",
-      "tema_principal": "Tools / Automation",
-      "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Medium",
-      "milestone": "M2",
-      "estado": "OK",
-      "completitud": 0,
-      "resuelto_por": "Axel",
-      "detectado_por": "Alex",
-      "asignados": [
-        "topperh4rley"
-      ],
-      "email_responsable": "axel@hypenosys.com",
-      "emails_asignados": [
-        "alex@hypenosys.com",
-        "axel@hypenosys.com"
-      ],
-      "start_date": "2026-06-22",
-      "due_date": "2026-07-05",
-      "estimated_hours": 6,
-      "story_points": 5,
-      "tags": [
-        "api",
-        "devops",
-        "research"
-      ],
-      "external_links": [],
-      "subtasks": [],
-      "acceptance_criteria": "NIM y cognito-agent respondan correctamente a los webhooks.",
-      "blocks": [],
-      "blocked_by": [],
-      "comments": [
-        "He visto que la latencia de NIM es muy baja, lo cual será genial para las respuestas del chat en tiempo real."
-      ],
-      "images": [],
-      "rama2": null,
-      "ver": true,
-      "fecha": "2026-06-06",
-      "apoyo": null,
-      "limite": null,
-      "comentario": "",
-      "change_log": [
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-06T22:07:04.609Z",
-          "field": "id",
-          "old_value": null,
-          "new_value": "Created"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-07T19:19:36.619Z",
-          "field": "task_type",
-          "old_value": "feature",
-          "new_value": "research"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-08T10:29:39.989Z",
-          "field": "title",
-          "old_value": "Añadir NVIDIA NIM como provider en la configuración de Claude Neural Chat",
-          "new_value": "n8n: Añadir NVIDIA NIM y cognito-agent como providers en la configuración de Claude Neural Chat"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-08T10:29:39.989Z",
-          "field": "prioridad",
-          "old_value": "Minor",
-          "new_value": "Medium"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-08T12:27:44.014Z",
-          "field": "title",
-          "old_value": "n8n: Añadir NVIDIA NIM y cognito-agent como providers en la configuración de Claude Neural Chat",
-          "new_value": "n8n: Añadir NIM y cognito-agent como providers en la configuración de Claude Neural Chat"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-08T12:27:44.014Z",
-          "field": "descripcion",
-          "old_value": "",
-          "new_value": "webhooks"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-15T19:08:51.475Z",
-          "field": "estado",
-          "old_value": "Working",
-          "new_value": "ToDo"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T10:45:52.768Z",
-          "field": "estado",
-          "old_value": "ToDo",
-          "new_value": "Working"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T12:44:14.567Z",
-          "field": "seccion",
-          "new_value": "Chat Neural"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T22:54:11.586Z",
-          "field": "asignados",
-          "old_value": "[\"topperh4rley\"]",
-          "new_value": "[]"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T22:54:11.586Z",
-          "field": "due_date",
-          "old_value": null,
-          "new_value": "2026-06-28"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T22:55:46.568Z",
-          "field": "asignados",
-          "old_value": "[]",
-          "new_value": "[\"axlfc\",\"topperh4rley\"]"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T22:55:46.568Z",
-          "field": "due_date",
-          "old_value": "2026-06-28",
-          "new_value": "2026-07-05"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T23:55:53.068Z",
-          "field": "asignados",
-          "old_value": "[\"axlfc\",\"topperh4rley\"]",
-          "new_value": "[\"topperh4rley\"]"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-02T23:01:29.758Z",
-          "field": "estado",
-          "old_value": "Working",
-          "new_value": "OK"
-        }
-      ],
-      "id": 36,
-      "seccion": "Chat Neural",
-      "jules_session": null,
-      "branch": "Programación (PRO)"
-    },
-    {
-      "title": "Añadir hypenosys/scripts a SVN",
-      "descripcion": "Sincronizar el repositorio de scripts con el chat neural y la estructura del SVN. Facilita el acceso de la IA a la lógica para mantenimiento.",
-      "rama": "chore/scripts-svn-sync",
-      "task_type": "chore",
-      "tema_principal": "Programación / Engine",
-      "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Major",
-      "milestone": "M2",
-      "estado": "OK",
-      "completitud": 0.5,
-      "resuelto_por": "Alex",
-      "detectado_por": "Axel",
-      "asignados": [
-        "axlfc",
-        "topperh4rley"
-      ],
-      "email_responsable": "alex@hypenosys.com",
-      "emails_asignados": [],
-      "start_date": "2026-06-07",
-      "due_date": "2026-06-14",
-      "estimated_hours": 4,
-      "story_points": 2,
-      "tags": [
-        "api",
-        "chore",
-        "devops"
-      ],
-      "external_links": [],
-      "subtasks": [],
-      "acceptance_criteria": "La IA pueda consultar el código de scripts y existan mirrors en SVN.",
-      "blocks": [],
-      "blocked_by": [],
-      "comments": [
-        "He notado que la jerarquía de carpetas en SVN difiere de Git; necesitaremos un script de mapeo para evitar archivos duplicados."
-      ],
-      "images": [],
-      "rama2": null,
-      "ver": true,
-      "fecha": "2026-06-07",
-      "apoyo": null,
-      "limite": null,
-      "comentario": "",
-      "change_log": [
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-07T18:54:31.515Z",
-          "field": "id",
-          "old_value": null,
-          "new_value": "Created"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-07T19:17:01.792Z",
-          "field": "task_type",
-          "old_value": "feature",
-          "new_value": "chore"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-07T19:35:07.866Z",
-          "field": "descripcion",
-          "old_value": "Ahora está docs (check verde por verificar) ",
-          "new_value": "Ahora está docs (check verde por verificar) . Queremos sincronizar la carpeta de los scripts de hypenosys/scripts en la carpeta Scripts del SVN."
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-07T20:10:38.541Z",
-          "field": "title",
-          "old_value": "Añadir repo hypenosys/scripts a neural-chat",
-          "new_value": "Añadir hypenosys/scripts a neural-chat y SVN"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-15T17:09:44.480Z",
-          "field": "title",
-          "old_value": "Añadir hypenosys/scripts a neural-chat y SVN",
-          "new_value": "Añadir hypenosys/scripts a SVN"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-15T19:09:38.441Z",
-          "field": "estado",
-          "old_value": "Working",
-          "new_value": "In Review"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-15T19:09:38.441Z",
-          "field": "completitud",
-          "old_value": 0,
-          "new_value": 0.5
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T12:46:21.831Z",
-          "field": "seccion",
-          "new_value": "SVN Admin Panel, App"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-22T00:08:27.817Z",
-          "field": "estado",
-          "old_value": "In Review",
-          "new_value": "OK"
-        }
-      ],
-      "id": 39,
-      "seccion": "SVN Admin Panel, App",
-      "jules_session": null,
-      "branch": "Programación (PRO)"
-    },
-    {
-      "title": "Claude Neural: llamadas a apis js y python en n8n-runners",
-      "descripcion": "Habilitar la ejecución de scripts Python y JavaScript desde el chat neural mediante n8n. Proporciona un entorno flexible para automatización.",
-      "rama": "feature/n8n-python-js-runners",
-      "task_type": "feature",
-      "tema_principal": "Programación / Engine",
-      "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Major",
-      "milestone": "M2",
-      "estado": "OK",
-      "completitud": 0,
-      "resuelto_por": null,
-      "detectado_por": "Axel",
-      "asignados": [],
-      "email_responsable": null,
-      "emails_asignados": [],
-      "start_date": null,
-      "due_date": null,
-      "estimated_hours": 8,
-      "story_points": null,
-      "tags": [
-        "api",
-        "backend",
-        "feature"
-      ],
-      "external_links": [],
-      "subtasks": [],
-      "acceptance_criteria": "Se puedan disparar scripts y recibir el output directamente en el chat.",
-      "blocks": [],
-      "blocked_by": [],
-      "comments": [
-        "Esto nos permitirá automatizar el análisis de logs pesados o conversiones de datos complejas que antes hacíamos manualmente."
-      ],
-      "images": [],
-      "rama2": null,
-      "ver": true,
-      "fecha": "2026-06-08",
-      "apoyo": null,
-      "limite": null,
-      "comentario": "",
-      "change_log": [
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-08T10:39:44.850Z",
-          "field": "id",
-          "old_value": null,
-          "new_value": "Created"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-11T11:41:02.898Z",
-          "field": "milestone",
-          "old_value": "M3",
-          "new_value": "M2"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-15T17:11:09.228Z",
-          "field": "estado",
-          "old_value": "Pending",
-          "new_value": "In Review"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T12:45:19.387Z",
-          "field": "seccion",
-          "new_value": "Chat Neural, Backend n8n"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-09T10:32:21.194Z",
-          "field": "estado",
-          "old_value": "In Review",
-          "new_value": "OK"
-        }
-      ],
-      "id": 43,
-      "seccion": "Chat Neural, Backend n8n",
-      "jules_session": null,
-      "branch": "Programación (PRO)"
-    },
-    {
-      "title": "Unificar menús en todas las páginas de la plataforma",
-      "descripcion": "Actualmente en cada página cada menú es hijo de su padre.\nAñadir botón en el icono de usuario del jules panel para abrirse lo de 'Mi Perfil', 'Configuración API', 'Ajustes Avanzados', 'Cerrar sesión' en Jules Panel etc. hacer un análisis profundo y exhaustivo de qué hay en cada menú en cada página. Y diseñar un menú unificado con todas las características necesarias imprescindibles y específicas que haya.",
-      "rama": "master",
-      "task_type": "feature",
-      "tema_principal": "Programación / Engine",
-      "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Cosmetic",
-      "milestone": "M1",
-      "estado": "OK",
-      "completitud": 0,
-      "resuelto_por": "Axel",
-      "detectado_por": "Alex",
-      "asignados": [],
-      "email_responsable": "axel@hypenosys.com",
-      "emails_asignados": [],
-      "start_date": "2026-06-29",
-      "due_date": "2026-06-30",
-      "estimated_hours": 2,
-      "story_points": 2,
-      "tags": [
-        "menú",
-        "ux/ui"
-      ],
-      "external_links": [],
-      "subtasks": [],
-      "acceptance_criteria": "",
-      "blocks": [],
-      "blocked_by": [],
-      "comments": [],
-      "images": [
-        {
-          "url": "https://64.media.tumblr.com/f9925a42fc2adb24137550bc0d84dbc9/741b536a55b97ace-65/s1280x1920/75c352dc16cb1bbb6876ceefd5574d00b548652c.jpg",
-          "type": "url",
-          "tumblr_post_id": "820029148159475712",
-          "filename": "8669.jpg",
-          "uploaded_at": "2026-06-21T11:18:57.781Z"
-        }
-      ],
-      "rama2": null,
-      "ver": true,
-      "fecha": "2026-06-21",
-      "apoyo": null,
-      "limite": null,
-      "comentario": "",
-      "change_log": [
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T11:21:14.577Z",
-          "field": "id",
-          "old_value": null,
-          "new_value": "Created"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T11:33:28.272Z",
-          "field": "title",
-          "old_value": "JULES PANEL: Unificar menús en todas las páginas de la plataforma",
-          "new_value": "JULES PANEL - /chat/neural/: Unificar menús en todas las páginas de la plataforma"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T11:33:28.272Z",
-          "field": "prioridad",
-          "old_value": "Major",
-          "new_value": "Cosmetic"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T12:41:20.991Z",
-          "field": "seccion",
-          "new_value": "Jules Panel, Chat Neural"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T14:43:16.433Z",
-          "field": "descripcion",
-          "old_value": "Actualmente en cada página cada menú es hijo de su padre.\nAñadir botón en el icono de usuario del jules panel para abrirse lo de 'Mi Perfil', 'Configuración API', 'Ajustes Avanzados', 'Cerrar sesión' en Jules Panel etc.",
-          "new_value": "Actualmente en cada página cada menú es hijo de su padre.\nAñadir botón en el icono de usuario del jules panel para abrirse lo de 'Mi Perfil', 'Configuración API', 'Ajustes Avanzados', 'Cerrar sesión' en Jules Panel etc. hacer un análisis profundo y exhaustivo de qué hay en cada menú en cada página. Y diseñar un menú unificado con todas las características necesarias imprescindibles y específicas que haya."
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T15:04:16.289Z",
-          "field": "title",
-          "old_value": "JULES PANEL - /chat/neural/: Unificar menús en todas las páginas de la plataforma",
-          "new_value": "Unificar menús en todas las páginas de la plataforma"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-29T09:47:58.933Z",
-          "field": "estado",
-          "old_value": "Pending",
-          "new_value": "Working"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-29T09:47:58.933Z",
-          "field": "due_date",
-          "old_value": null,
-          "new_value": "2026-06-30"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-09T08:33:20.845Z",
-          "field": "estado",
-          "old_value": "Working",
-          "new_value": "In Review"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-09T10:32:09.390Z",
-          "field": "estado",
-          "old_value": "In Review",
-          "new_value": "OK"
-        }
-      ],
-      "id": 62,
-      "seccion": "Jules Panel, Chat Neural",
-      "jules_session": null,
-      "branch": "Programación (PRO)"
-    },
-    {
-      "title": "Reducir latencia y tiempos de carga",
-      "descripcion": "Tarda demasiado, no debería tardar tanto en cargar datos que son prácticamente estáticos. El dashboard y en el panel de Jules (el propio dashboard del panel de Jules) deben cargar en muy poco. Además, las sesiones de Jules no aparecen sincronizadas en el Dashboard.",
-      "rama": "master",
-      "task_type": "feature",
-      "tema_principal": "Programación / Engine",
-      "seccion": "Dashboard, Jules Panel",
-      "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Major",
-      "milestone": "M1",
-      "estado": "OK",
-      "completitud": 0,
-      "resuelto_por": "Alex",
-      "detectado_por": "Axel",
-      "asignados": [
-        "topperh4rley"
-      ],
-      "email_responsable": "alex@hypenosys.com",
-      "emails_asignados": [],
-      "start_date": "2026-06-28",
-      "due_date": "2026-07-15",
-      "estimated_hours": 4,
-      "story_points": 5,
-      "tags": [],
-      "external_links": [],
-      "subtasks": [],
-      "acceptance_criteria": "",
-      "blocks": [],
-      "blocked_by": [],
-      "comments": [],
-      "images": [],
-      "rama2": null,
-      "ver": true,
-      "fecha": "2026-06-21",
-      "apoyo": null,
-      "limite": null,
-      "comentario": "",
-      "change_log": [
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T17:06:12.883Z",
-          "field": "id",
-          "old_value": null,
-          "new_value": "Created"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T18:34:27.422Z",
-          "field": "descripcion",
-          "old_value": "Tarda demasiado, no debería tardar tanto en cargar datos que son prácticamente estáticos. El dashboard y en el panel de Jules el propio dashboard del panel de Jules deben cargar en muy poco.",
-          "new_value": "Tarda demasiado, no debería tardar tanto en cargar datos que son prácticamente estáticos. El dashboard y en el panel de Jules (el propio dashboard del panel de Jules) deben cargar en muy poco."
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-28T13:44:44.189Z",
-          "field": "estado",
-          "old_value": "Pending",
-          "new_value": "Working"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-28T13:44:44.189Z",
-          "field": "asignados",
-          "old_value": "[]",
-          "new_value": "[\"topperh4rley\"]"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-28T13:44:44.189Z",
-          "field": "due_date",
-          "old_value": null,
-          "new_value": "2026-07-05"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-03T19:35:56.183Z",
-          "field": "estado",
-          "old_value": "Working",
-          "new_value": "Pending"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-08T08:41:01.530Z",
-          "field": "descripcion",
-          "old_value": "Tarda demasiado, no debería tardar tanto en cargar datos que son prácticamente estáticos. El dashboard y en el panel de Jules (el propio dashboard del panel de Jules) deben cargar en muy poco.",
-          "new_value": "Tarda demasiado, no debería tardar tanto en cargar datos que son prácticamente estáticos. El dashboard y en el panel de Jules (el propio dashboard del panel de Jules) deben cargar en muy poco. Además, las sesiones de Jules no aparecen sincronizadas en el Dashboard."
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-08T08:41:01.530Z",
-          "field": "estado",
-          "old_value": "Pending",
-          "new_value": "Working"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-08T08:41:01.530Z",
-          "field": "due_date",
-          "old_value": "2026-07-05",
-          "new_value": "2026-07-15"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-11T13:24:44.399Z",
-          "field": "estado",
-          "old_value": "Working",
-          "new_value": "In Review"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-11T13:24:44.399Z",
-          "field": "repository",
-          "old_value": "hypenosys/hypenosys.github.io",
-          "new_value": null
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-11T13:28:21.227Z",
-          "field": "repository",
-          "old_value": null,
-          "new_value": "hypenosys/hypenosys.github.io"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-16T07:17:50.846Z",
-          "field": "estado",
-          "old_value": "In Review",
-          "new_value": "OK"
-        }
-      ],
-      "id": 67,
-      "jules_session": null,
-      "branch": "Programación (PRO)"
-    },
-    {
       "title": "Todas las cabeceras de la web son diferente.",
       "descripcion": "Es neccesario decidir una interfaz unificada para todas las seccion, igualar colores, interfaz, boton de retorno al inicio en todas las pagina ",
       "rama": "master",
@@ -4138,9 +4138,106 @@
       "id": 75,
       "jules_session": null,
       "branch": "Programación (PRO)"
+    },
+    {
+      "title": "No funciona el boton ver tarea",
+      "descripcion": "el boton de ver tarea del banner rojo del dashboard no te redirige a la tarea",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Dashboard",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Minor",
+      "milestone": "M1",
+      "estado": "OK",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Dídac",
+      "asignados": [
+        "axlfc"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-07-09",
+      "due_date": "2026-07-10",
+      "estimated_hours": 16,
+      "story_points": 3,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "El botón de VER TAREA debe navegar y resaltar en el kanban la tarea correspondiente ",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-07-07",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "dkdidac-design",
+          "timestamp": "2026-07-07T19:35:46.292Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-09T00:02:47.847Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Minor"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-09T00:02:47.847Z",
+          "field": "repository",
+          "old_value": null,
+          "new_value": "hypenosys/hypenosys.github.io"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-09T00:02:47.847Z",
+          "field": "seccion",
+          "old_value": "",
+          "new_value": "Dashboard"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-09T09:16:47.239Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "OK"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-09T09:16:47.239Z",
+          "field": "asignados",
+          "old_value": "[]",
+          "new_value": "[\"axlfc\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-09T09:16:47.239Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-07-10"
+        }
+      ],
+      "id": 76,
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: tarea #76 movida al archivo",
+      "user": "Axlfc",
+      "timestamp": "2026-07-18T13:39:32.146Z"
+    },
     {
       "action": "chore: tarea #75 movida al archivo",
       "user": "Axlfc",
