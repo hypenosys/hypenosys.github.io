@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-07-18T11:58:46.192Z",
+  "last_updated": "2026-07-18T12:01:10.865Z",
   "last_updated_by": "Axel",
   "tasks": [
     {
@@ -4680,9 +4680,60 @@
         }
       ],
       "id": 84
+    },
+    {
+      "title": "Crear Qdrant server en Zimaboard2",
+      "descripcion": "Para RAG/Vector search",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Tools / Automation",
+      "seccion": "",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Major",
+      "milestone": "M2",
+      "estado": "Working",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-07-18",
+      "due_date": "2026-07-26",
+      "estimated_hours": 2,
+      "story_points": 2,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-07-18",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-18T12:01:10.171Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 85
     }
   ],
   "_audit_log": [
+    {
+      "action": "feat: nueva tarea #1784376070171 añadida",
+      "user": "Axlfc",
+      "timestamp": "2026-07-18T12:01:10.865Z"
+    },
     {
       "action": "feat: nueva tarea #1784375925390 añadida",
       "user": "Axlfc",
