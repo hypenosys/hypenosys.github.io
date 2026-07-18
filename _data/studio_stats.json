@@ -1,12 +1,12 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-07-18T12:03:31.493Z",
+  "computed_at": "2026-07-18T13:37:49.652Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 42,
     "total_ok": 17,
     "total_ko": 0,
-    "total_uncertain": 5,
+    "total_uncertain": 4,
     "total_obsolete": 9,
     "fixed_found_ratio": 0.3542,
     "verified_ratio": 0.3333
@@ -541,7 +541,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-07-18T12:03:32.182Z"
+      "timestamp": "2026-07-18T13:37:50.357Z"
     }
   ]
 }
