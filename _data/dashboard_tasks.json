@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-07-18T13:37:57.654Z",
+  "last_updated": "2026-07-18T13:38:05.030Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -782,198 +782,6 @@
         }
       ],
       "repository": "hypenosys/hypenosys.github.io",
-      "jules_session": null,
-      "branch": "Programación (PRO)"
-    },
-    {
-      "rama": "feature/repo-labels-ui",
-      "descripcion": "Añadir etiquetas visuales a los repositorios en el panel para mejorar la organización. Facilita la identificación rápida del propósito de cada proyecto.",
-      "tema_principal": "Arte / Assets",
-      "prioridad": "Cosmetic",
-      "milestone": "M1",
-      "estado": "OK",
-      "completitud": 0.5,
-      "resuelto_por": "Alex",
-      "detectado_por": "Alex",
-      "asignados": [
-        "topperh4rley"
-      ],
-      "email_responsable": "alex@hypenosys.com",
-      "emails_asignados": [
-        "alex@hypenosys.com",
-        "didac@hypenosys.com"
-      ],
-      "rama2": null,
-      "ver": true,
-      "fecha": "2026-05-31",
-      "apoyo": null,
-      "limite": null,
-      "comentario": "",
-      "id": 16,
-      "images": [
-        {
-          "url": "https://64.media.tumblr.com/605e9e85b6ddcf50b22c7f5d18ba8f6f/83752d027874b98a-bc/s500x750/2fdc7473a881cf1b6b414c2fd7d012c4aac3a1d7.png",
-          "type": "url",
-          "tumblr_post_id": "818198128507355136",
-          "filename": "7019.png",
-          "uploaded_at": "2026-06-01T06:15:45.017Z"
-        },
-        {
-          "url": "https://64.media.tumblr.com/b9b65e70015e7380f8390f78688c0582/8d84af7686f0fe3b-1f/s500x750/b3b138e02c625db68ab513cb449b1e4ac5d196df.png",
-          "type": "url",
-          "tumblr_post_id": "818198155896176640",
-          "filename": "7020.png",
-          "uploaded_at": "2026-06-01T06:16:11.128Z"
-        }
-      ],
-      "title": "Implementación de etiquetas de categorización en el listado de repositorios del Panel de Jules",
-      "task_type": "feature",
-      "start_date": "2026-06-01",
-      "due_date": "2026-06-07",
-      "estimated_hours": 2,
-      "story_points": 5,
-      "tags": [
-        "UX/UI",
-        "feature",
-        "frontend",
-        "ux"
-      ],
-      "external_links": [],
-      "subtasks": [
-        {
-          "id": 1780935577829,
-          "text": "Rediseño de componentes visuales de etiquetas",
-          "done": false
-        }
-      ],
-      "acceptance_criteria": "Los tags aparezcan correctamente en la UI y sean filtrables.",
-      "blocks": [],
-      "blocked_by": [],
-      "comments": [
-        "He notado que el diseño anterior era confuso; el nuevo sistema de colores debería ser más intuitivo y accesible."
-      ],
-      "change_log": [
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-01T06:47:52.169Z",
-          "field": "title",
-          "old_value": "Poder ponder tags en los repositorios en el Panel de Jules",
-          "new_value": "Implementación de etiquetas de categorización en el listado de repositorios del Panel de Jules"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-01T07:00:58.393Z",
-          "field": "descripcion",
-          "old_value": "Poder ponder tags en los repositorios en el Panel de Jules para mejorar acessibilidad (Ex: Documentación; Website, Game Scripts...) JAVI MODIFICAR EL ARTE PORQUE ESTA HORRENDO TODO",
-          "new_value": "Actualmente es difícil identificar de un vistazo el propósito de cada repositorio. Se busca implementar un sistema de etiquetas visuales para categorizarlos de forma rápida.\nEjemplos de etiquetas a incluir:\n\nDocumentación\n\nWebsite\n\nGame Scripts\n\nHerramientas internas\n\n---\n\nEl estado visual actual de la interfaz para esta funcionalidad requiere una revisión completa. Es necesario rediseñar los componentes visuales y el sistema de etiquetas antes de proceder con la implementación final, ya que el diseño previo no cumple con los estándares estandares de calidad de la plataforma.\n---\n\nPoder ponder tags en los repositorios en el Panel de Jules para mejorar acessibilidad (Ex: Documentación; Website, Game Scripts...) JAVI MODIFICAR EL ARTE PORQUE ESTA HORRENDO TODO\n\n"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-01T07:01:33.685Z",
-          "field": "descripcion",
-          "old_value": "Actualmente es difícil identificar de un vistazo el propósito de cada repositorio. Se busca implementar un sistema de etiquetas visuales para categorizarlos de forma rápida.\nEjemplos de etiquetas a incluir:\n\nDocumentación\n\nWebsite\n\nGame Scripts\n\nHerramientas internas\n\n---\n\nEl estado visual actual de la interfaz para esta funcionalidad requiere una revisión completa. Es necesario rediseñar los componentes visuales y el sistema de etiquetas antes de proceder con la implementación final, ya que el diseño previo no cumple con los estándares estandares de calidad de la plataforma.\n---\n\nPoder ponder tags en los repositorios en el Panel de Jules para mejorar acessibilidad (Ex: Documentación; Website, Game Scripts...) JAVI MODIFICAR EL ARTE PORQUE ESTA HORRENDO TODO\n\n",
-          "new_value": "Actualmente es difícil identificar de un vistazo el propósito de cada repositorio. Se busca implementar un sistema de etiquetas visuales para categorizarlos de forma rápida.\nEjemplos de etiquetas a incluir:\n\n- Documentación\n\n- Website\n\n- Game Scripts\n\n- Herramientas internas\n\n---\n\nEl estado visual actual de la interfaz para esta funcionalidad requiere una revisión completa. Es necesario rediseñar los componentes visuales y el sistema de etiquetas antes de proceder con la implementación final, ya que el diseño previo no cumple con los estándares estandares de calidad de la plataforma.\n---\n\nPoder ponder tags en los repositorios en el Panel de Jules para mejorar acessibilidad (Ex: Documentación; Website, Game Scripts...) JAVI MODIFICAR EL ARTE PORQUE ESTA HORRENDO TODO\n\n"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-01T07:26:06.068Z",
-          "field": "prioridad",
-          "old_value": "Medium",
-          "new_value": "Cosmetic"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-01T20:30:34.056Z",
-          "field": "asignados",
-          "old_value": "[\"dkdidac-design\",\"javi26031994-a11y\",\"topperh4rley\"]",
-          "new_value": "[\"axlfc\",\"dkdidac-design\",\"javi26031994-a11y\",\"topperh4rley\"]"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-03T06:39:48.709Z",
-          "field": "due_date",
-          "old_value": null,
-          "new_value": "2026-06-05"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-03T07:34:42.516Z",
-          "field": "repository",
-          "old_value": null,
-          "new_value": "hypenosys/hypenosys.github.io"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-04T08:32:00.396Z",
-          "field": "due_date",
-          "old_value": "2026-06-05",
-          "new_value": "2026-06-07"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-04T09:11:06.853Z",
-          "field": "asignados",
-          "old_value": "[\"axlfc\",\"dkdidac-design\",\"javi26031994-a11y\",\"topperh4rley\"]",
-          "new_value": "[\"dkdidac-design\",\"javi26031994-a11y\",\"topperh4rley\"]"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-05T16:14:45.831Z",
-          "field": "tags",
-          "old_value": "[]",
-          "new_value": "[\"UX/UI\"]"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-07T19:21:44.778Z",
-          "field": "estado",
-          "old_value": "Working",
-          "new_value": "In Review"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-07T19:21:44.778Z",
-          "field": "completitud",
-          "old_value": 0,
-          "new_value": 0.5
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-13T09:23:01.599Z",
-          "field": "estado",
-          "old_value": "In Review",
-          "new_value": "OK"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-22T00:04:19.270Z",
-          "field": "estado",
-          "old_value": "OK",
-          "new_value": "In Review"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-22T00:04:19.270Z",
-          "field": "seccion",
-          "new_value": ""
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-22T00:36:07.665Z",
-          "field": "asignados",
-          "old_value": "[\"dkdidac-design\",\"javi26031994-a11y\",\"topperh4rley\"]",
-          "new_value": "[\"topperh4rley\"]"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-16T07:18:46.247Z",
-          "field": "estado",
-          "old_value": "In Review",
-          "new_value": "OK"
-        }
-      ],
-      "repository": "hypenosys/hypenosys.github.io",
-      "seccion": "",
       "jules_session": null,
       "branch": "Programación (PRO)"
     },
@@ -4692,6 +4500,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: archivar tarea #16",
+      "user": "Axlfc",
+      "timestamp": "2026-07-18T13:38:05.030Z"
+    },
     {
       "action": "chore: archivar tarea #1",
       "user": "Axlfc",
