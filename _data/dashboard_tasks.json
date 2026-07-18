@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-07-18T12:01:10.865Z",
+  "last_updated": "2026-07-18T12:03:13.051Z",
   "last_updated_by": "Axel",
   "tasks": [
     {
@@ -4726,9 +4726,62 @@
         }
       ],
       "id": 85
+    },
+    {
+      "title": "Crear Redis server",
+      "descripcion": "",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Tools / Automation",
+      "seccion": "",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Major",
+      "milestone": "M2",
+      "estado": "Working",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-07-18",
+      "due_date": "2026-07-26",
+      "estimated_hours": 2,
+      "story_points": 2,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-07-18",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-18T12:03:12.523Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 86
     }
   ],
   "_audit_log": [
+    {
+      "action": "feat: nueva tarea #1784376192523 añadida",
+      "user": "Axlfc",
+      "timestamp": "2026-07-18T12:03:13.051Z"
+    },
     {
       "action": "feat: nueva tarea #1784376070171 añadida",
       "user": "Axlfc",
