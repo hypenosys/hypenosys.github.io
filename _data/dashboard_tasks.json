@@ -1,7 +1,7 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-07-18T12:03:13.051Z",
-  "last_updated_by": "Axel",
+  "last_updated": "2026-07-18T12:03:29.340Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "id": 1,
@@ -4634,7 +4634,7 @@
       "id": 83
     },
     {
-      "title": "Creat Forjejo (Git) en ZimaBoard2",
+      "title": "Crear Forjejo (Git) en ZimaBoard2",
       "descripcion": "Para los pipes de Git en development local, pudiendo crear repos, ficheros, wikis...",
       "rama": "master",
       "task_type": "feature",
@@ -4677,6 +4677,13 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-18T12:03:28.707Z",
+          "field": "title",
+          "old_value": "Creat Forjejo (Git) en ZimaBoard2",
+          "new_value": "Crear Forjejo (Git) en ZimaBoard2"
         }
       ],
       "id": 84
@@ -4777,6 +4784,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #84",
+      "user": "Axlfc",
+      "timestamp": "2026-07-18T12:03:29.340Z"
+    },
     {
       "action": "feat: nueva tarea #1784376192523 añadida",
       "user": "Axlfc",
