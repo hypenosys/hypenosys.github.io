@@ -126,3 +126,68 @@ window.formatDate = function(isoString) {
     const timePart = date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: false });
     return `${datePart} · ${timePart}`;
 };
+
+/**
+ * ZROK & CORS UTILITIES
+ * Canonically handles zrok public share bypass and interstitial detection.
+ */
+window.isZrokUrl = function(url) {
+    if (!url) return false;
+    try {
+        const u = new URL(url);
+        return u.hostname.endsWith('.shares.zrok.io') || u.hostname.endsWith('.share.zrok.io');
+    } catch (e) {
+        // Fallback simple check in case of relative URL or parse failure
+        return url.includes('.shares.zrok.io') || url.includes('.share.zrok.io');
+    }
+};
+
+window.getZrokHeaders = function(url, existingHeaders = {}) {
+    const headers = {};
+
+    // Normalize existing headers into a plain object with lowercase keys
+    if (existingHeaders instanceof Headers) {
+        existingHeaders.forEach((value, key) => {
+            headers[key.toLowerCase()] = value;
+        });
+    } else if (existingHeaders && typeof existingHeaders === 'object') {
+        Object.keys(existingHeaders).forEach(key => {
+            headers[key.toLowerCase()] = existingHeaders[key];
+        });
+    }
+
+    if (window.isZrokUrl(url)) {
+        headers['skip_zrok_interstitial'] = 'true';
+    }
+
+    // Convert back to capitalized/standard form if they were input as such
+    const finalHeaders = {};
+    Object.keys(headers).forEach(key => {
+        // Keep standard casing for common headers
+        if (key === 'content-type') finalHeaders['Content-Type'] = headers[key];
+        else if (key === 'authorization') finalHeaders['Authorization'] = headers[key];
+        else if (key === 'accept') finalHeaders['Accept'] = headers[key];
+        else finalHeaders[key] = headers[key];
+    });
+
+    return finalHeaders;
+};
+
+window.hypenosysFetch = async function(url, options = {}) {
+    options = { ...options };
+    options.headers = window.getZrokHeaders(url, options.headers || {});
+
+    const response = await fetch(url, options);
+
+    // Detección explícita del interstitial de zrok
+    const contentType = response.headers.get('content-type') || '';
+    if (contentType.includes('text/html')) {
+        const clone = response.clone();
+        const htmlText = await clone.text();
+        if (htmlText.includes('zrok') && (htmlText.includes('interstitial') || htmlText.includes('advertencia') || htmlText.includes('warning') || htmlText.includes('public share'))) {
+            throw new Error('ZROK_INTERSTITIAL_BLOCKED');
+        }
+    }
+
+    return response;
+};

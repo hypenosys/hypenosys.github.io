@@ -10,7 +10,7 @@ window.WORKFLOWS = {
         parameters: {
           httpMethod: ["POST"], path: "svn-list",
           responseMode: "responseNode",
-          options: { allowedOrigins: "https://hypenosys.github.io" }
+          options: { allowedOrigins: "https://hypenosys.github.io,https://hypenosys.com,https://www.hypenosys.com" }
         },
         type: "n8n-nodes-base.webhook", typeVersion: 2.1,
         position: [400, -200], id: "wh-svn-list", name: "Webhook SVN List"
@@ -69,7 +69,7 @@ return [{'json': {'entries': entries, 'path': path}}]`
         parameters: {
           httpMethod: ["POST"], path: "svn-log",
           responseMode: "responseNode",
-          options: { allowedOrigins: "https://hypenosys.github.io" }
+          options: { allowedOrigins: "https://hypenosys.github.io,https://hypenosys.com,https://www.hypenosys.com" }
         },
         type: "n8n-nodes-base.webhook", typeVersion: 2.1,
         position: [400, -200], id: "wh-svn-log", name: "Webhook SVN Log"
@@ -133,7 +133,7 @@ return [{'json': {'log': entries, 'count': len(entries)}}]`
         parameters: {
           httpMethod: ["POST"], path: "svn-info",
           responseMode: "responseNode",
-          options: { allowedOrigins: "https://hypenosys.github.io" }
+          options: { allowedOrigins: "https://hypenosys.github.io,https://hypenosys.com,https://www.hypenosys.com" }
         },
         type: "n8n-nodes-base.webhook", typeVersion: 2.1,
         position: [400, -200], id: "wh-svn-info", name: "Webhook SVN Info"
@@ -190,7 +190,7 @@ return [{'json': info}]`
         parameters: {
           httpMethod: ["POST"], path: "svn-diff",
           responseMode: "responseNode",
-          options: { allowedOrigins: "https://hypenosys.github.io" }
+          options: { allowedOrigins: "https://hypenosys.github.io,https://hypenosys.com,https://www.hypenosys.com" }
         },
         type: "n8n-nodes-base.webhook", typeVersion: 2.1,
         position: [400, -200], id: "wh-svn-diff", name: "Webhook SVN Diff"
@@ -233,7 +233,7 @@ return [{'json': {'diff': result.stdout, 'error': result.stderr, 'path': path, '
         parameters: {
           httpMethod: ["POST"], path: "svn-cat",
           responseMode: "responseNode",
-          options: { allowedOrigins: "https://hypenosys.github.io" }
+          options: { allowedOrigins: "https://hypenosys.github.io,https://hypenosys.com,https://www.hypenosys.com" }
         },
         type: "n8n-nodes-base.webhook", typeVersion: 2.1,
         position: [400, -200], id: "wh-svn-cat", name: "Webhook SVN Cat"
@@ -280,7 +280,7 @@ return [{'json': {'content': content, 'truncated': truncated, 'error': result.st
         parameters: {
           httpMethod: ["POST"], path: "git-log",
           responseMode: "responseNode",
-          options: { allowedOrigins: "https://hypenosys.github.io" }
+          options: { allowedOrigins: "https://hypenosys.github.io,https://hypenosys.com,https://www.hypenosys.com" }
         },
         type: "n8n-nodes-base.webhook", typeVersion: 2.1,
         position: [400, -200], id: "wh-git-log", name: "Webhook Git Log"
@@ -329,7 +329,7 @@ return [{'json': {'commits': commits, 'count': len(commits), 'branch': branch}}]
         parameters: {
           httpMethod: ["POST"], path: "python-runner",
           responseMode: "responseNode",
-          options: { allowedOrigins: "https://hypenosys.github.io" }
+          options: { allowedOrigins: "https://hypenosys.github.io,https://hypenosys.com,https://www.hypenosys.com" }
         },
         type: "n8n-nodes-base.webhook", typeVersion: 2.1,
         position: [400, -200], id: "wh-python-runner", name: "Webhook Python Runner"
@@ -437,7 +437,7 @@ finally:
         parameters: {
           httpMethod: ["POST"], path: "javascript-runner",
           responseMode: "responseNode",
-          options: { allowedOrigins: "https://hypenosys.github.io" }
+          options: { allowedOrigins: "https://hypenosys.github.io,https://hypenosys.com,https://www.hypenosys.com" }
         },
         type: "n8n-nodes-base.webhook", typeVersion: 2.1,
         position: [400, -200], id: "wh-javascript-runner", name: "Webhook Javascript Runner"
@@ -609,7 +609,7 @@ window.apiCall = async function(endpointKey, body) {
   }
   setStatus('loading', 'Loading...');
   log('cmd', `POST ${endpointKey} ${JSON.stringify(body)}`);
-  const res = await fetch(url, {
+  const res = await window.hypenosysFetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ ...body, user: ST.svnUser || 'SVN_USERNAME', password: ST.svnPass || 'SVN_PASSWORD' }),
