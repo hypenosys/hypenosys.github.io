@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-07-18T13:38:56.815Z",
+  "last_updated": "2026-07-18T13:39:02.362Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2838,140 +2838,6 @@
       "branch": "Programación (PRO)"
     },
     {
-      "title": "Reducir latencia y tiempos de carga",
-      "descripcion": "Tarda demasiado, no debería tardar tanto en cargar datos que son prácticamente estáticos. El dashboard y en el panel de Jules (el propio dashboard del panel de Jules) deben cargar en muy poco. Además, las sesiones de Jules no aparecen sincronizadas en el Dashboard.",
-      "rama": "master",
-      "task_type": "feature",
-      "tema_principal": "Programación / Engine",
-      "seccion": "Dashboard, Jules Panel",
-      "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Major",
-      "milestone": "M1",
-      "estado": "OK",
-      "completitud": 0,
-      "resuelto_por": "Alex",
-      "detectado_por": "Axel",
-      "asignados": [
-        "topperh4rley"
-      ],
-      "email_responsable": "alex@hypenosys.com",
-      "emails_asignados": [],
-      "start_date": "2026-06-28",
-      "due_date": "2026-07-15",
-      "estimated_hours": 4,
-      "story_points": 5,
-      "tags": [],
-      "external_links": [],
-      "subtasks": [],
-      "acceptance_criteria": "",
-      "blocks": [],
-      "blocked_by": [],
-      "comments": [],
-      "images": [],
-      "rama2": null,
-      "ver": true,
-      "fecha": "2026-06-21",
-      "apoyo": null,
-      "limite": null,
-      "comentario": "",
-      "change_log": [
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T17:06:12.883Z",
-          "field": "id",
-          "old_value": null,
-          "new_value": "Created"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T18:34:27.422Z",
-          "field": "descripcion",
-          "old_value": "Tarda demasiado, no debería tardar tanto en cargar datos que son prácticamente estáticos. El dashboard y en el panel de Jules el propio dashboard del panel de Jules deben cargar en muy poco.",
-          "new_value": "Tarda demasiado, no debería tardar tanto en cargar datos que son prácticamente estáticos. El dashboard y en el panel de Jules (el propio dashboard del panel de Jules) deben cargar en muy poco."
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-28T13:44:44.189Z",
-          "field": "estado",
-          "old_value": "Pending",
-          "new_value": "Working"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-28T13:44:44.189Z",
-          "field": "asignados",
-          "old_value": "[]",
-          "new_value": "[\"topperh4rley\"]"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-28T13:44:44.189Z",
-          "field": "due_date",
-          "old_value": null,
-          "new_value": "2026-07-05"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-03T19:35:56.183Z",
-          "field": "estado",
-          "old_value": "Working",
-          "new_value": "Pending"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-08T08:41:01.530Z",
-          "field": "descripcion",
-          "old_value": "Tarda demasiado, no debería tardar tanto en cargar datos que son prácticamente estáticos. El dashboard y en el panel de Jules (el propio dashboard del panel de Jules) deben cargar en muy poco.",
-          "new_value": "Tarda demasiado, no debería tardar tanto en cargar datos que son prácticamente estáticos. El dashboard y en el panel de Jules (el propio dashboard del panel de Jules) deben cargar en muy poco. Además, las sesiones de Jules no aparecen sincronizadas en el Dashboard."
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-08T08:41:01.530Z",
-          "field": "estado",
-          "old_value": "Pending",
-          "new_value": "Working"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-08T08:41:01.530Z",
-          "field": "due_date",
-          "old_value": "2026-07-05",
-          "new_value": "2026-07-15"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-11T13:24:44.399Z",
-          "field": "estado",
-          "old_value": "Working",
-          "new_value": "In Review"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-11T13:24:44.399Z",
-          "field": "repository",
-          "old_value": "hypenosys/hypenosys.github.io",
-          "new_value": null
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-11T13:28:21.227Z",
-          "field": "repository",
-          "old_value": null,
-          "new_value": "hypenosys/hypenosys.github.io"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-16T07:17:50.846Z",
-          "field": "estado",
-          "old_value": "In Review",
-          "new_value": "OK"
-        }
-      ],
-      "id": 67,
-      "jules_session": null,
-      "branch": "Programación (PRO)"
-    },
-    {
       "title": "Improve hypenosys logo",
       "descripcion": "Usar sesiones de Jules para sacar versiones y variaciones del logo",
       "rama": "master",
@@ -4030,6 +3896,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: archivar tarea #67",
+      "user": "Axlfc",
+      "timestamp": "2026-07-18T13:39:02.362Z"
+    },
     {
       "action": "chore: archivar tarea #62",
       "user": "Axlfc",
