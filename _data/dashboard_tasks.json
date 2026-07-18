@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-07-18T13:39:02.362Z",
+  "last_updated": "2026-07-18T13:39:12.249Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3171,7 +3171,7 @@
       "branch": "Programación (PRO)"
     },
     {
-      "title": "Todas las cabezeras de la web son diferente.",
+      "title": "Todas las cabeceras de la web son diferente.",
       "descripcion": "Es neccesario decidir una interfaz unificada para todas las seccion, igualar colores, interfaz, boton de retorno al inicio en todas las pagina ",
       "rama": "master",
       "task_type": "bug",
@@ -3264,6 +3264,13 @@
           "field": "estado",
           "old_value": "In Review",
           "new_value": "OK"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-18T13:39:11.866Z",
+          "field": "title",
+          "old_value": "Todas las cabezeras de la web son diferente.",
+          "new_value": "Todas las cabeceras de la web son diferente."
         }
       ],
       "id": 75,
@@ -3896,6 +3903,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #75",
+      "user": "Axlfc",
+      "timestamp": "2026-07-18T13:39:12.249Z"
+    },
     {
       "action": "chore: archivar tarea #67",
       "user": "Axlfc",
