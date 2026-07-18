@@ -21,7 +21,8 @@ window.WORKFLOWS = {
           code: `import subprocess, json
 body = items[0]['json']['body']
 path = body.get('path', '')
-svn_url = f"svn://100.64.74.27/hypenosys/trunk/Hypenosys/{path}".rstrip('/')
+svn_base = body.get('svnUrl', 'svn://example.com/repo')
+svn_url = f"{svn_base}/trunk/Hypenosys/{path}".rstrip('/')
 user = body.get('user', 'SVN_USERNAME')
 pwd = body.get('password', 'SVN_PASSWORD')
 result = subprocess.run(
@@ -83,7 +84,8 @@ path = body.get('path', '')
 limit = int(body.get('limit', 20))
 user = body.get('user', 'SVN_USERNAME')
 pwd = body.get('password', 'SVN_PASSWORD')
-svn_url = f"svn://100.64.74.27/hypenosys/trunk/Hypenosys/{path}".rstrip('/')
+svn_base = body.get('svnUrl', 'svn://example.com/repo')
+svn_url = f"{svn_base}/trunk/Hypenosys/{path}".rstrip('/')
 result = subprocess.run(
   ['svn', 'log', '--xml', '-l', str(limit), '--username', user, '--password', pwd, '--no-auth-cache', '--non-interactive', svn_url],
   capture_output=True, text=True, timeout=30
@@ -145,7 +147,8 @@ return [{'json': {'log': entries, 'count': len(entries)}}]`
 body = items[0]['json']['body']
 user = body.get('user', 'SVN_USERNAME')
 pwd = body.get('password', 'SVN_PASSWORD')
-svn_url = 'svn://100.64.74.27/hypenosys/trunk/Hypenosys'
+svn_base = body.get('svnUrl', 'svn://example.com/repo')
+svn_url = f"{svn_base}/trunk/Hypenosys"
 result = subprocess.run(
   ['svn', 'info', '--xml', '--username', user, '--password', pwd, '--no-auth-cache', '--non-interactive', svn_url],
   capture_output=True, text=True, timeout=15
@@ -205,7 +208,8 @@ rev1 = str(body.get('rev1', 'PREV'))
 rev2 = str(body.get('rev2', 'HEAD'))
 user = body.get('user', 'SVN_USERNAME')
 pwd = body.get('password', 'SVN_PASSWORD')
-svn_url = f"svn://100.64.74.27/hypenosys/trunk/Hypenosys/{path}".rstrip('/')
+svn_base = body.get('svnUrl', 'svn://example.com/repo')
+svn_url = f"{svn_base}/trunk/Hypenosys/{path}".rstrip('/')
 result = subprocess.run(
   ['svn', 'diff', '-r', f'{rev1}:{rev2}', '--username', user, '--password', pwd, '--no-auth-cache', '--non-interactive', svn_url],
   capture_output=True, text=True, timeout=30
@@ -247,7 +251,8 @@ path = body.get('path', '')
 rev = str(body.get('rev', 'HEAD'))
 user = body.get('user', 'SVN_USERNAME')
 pwd = body.get('password', 'SVN_PASSWORD')
-svn_url = f"svn://100.64.74.27/hypenosys/trunk/Hypenosys/{path}".rstrip('/')
+svn_base = body.get('svnUrl', 'svn://example.com/repo')
+svn_url = f"{svn_base}/trunk/Hypenosys/{path}".rstrip('/')
 result = subprocess.run(
   ['svn', 'cat', '-r', rev, '--username', user, '--password', pwd, '--no-auth-cache', '--non-interactive', svn_url],
   capture_output=True, text=True, timeout=30
@@ -555,13 +560,16 @@ window.loadSettings = function() {
     ST.endpoints = s.endpoints || {};
     ST.svnUser = s.svnUser || '';
     ST.svnPass = s.svnPass || '';
+    ST.svnUrl = s.svnUrl || 'svn://example.com/repo';
     const userEl = document.getElementById('cfgSvnUser');
     const passEl = document.getElementById('cfgSvnPass');
+    const urlEl = document.getElementById('cfgSvnUrl');
     const runnerEl = document.getElementById('cfgPythonRunner');
     const jsRunnerEl = document.getElementById('cfgJavascriptRunner');
     const n8nBaseEl = document.getElementById('cfgN8nBase');
     if (userEl) userEl.value = ST.svnUser;
     if (passEl) passEl.value = ST.svnPass;
+    if (urlEl) urlEl.value = ST.svnUrl;
     if (runnerEl && ST.endpoints['python-runner']) runnerEl.value = ST.endpoints['python-runner'];
     if (jsRunnerEl && ST.endpoints['javascript-runner']) jsRunnerEl.value = ST.endpoints['javascript-runner'];
     if (n8nBaseEl && ST.endpoints['n8n-base']) n8nBaseEl.value = ST.endpoints['n8n-base'];
@@ -571,6 +579,8 @@ window.loadSettings = function() {
         if (el) el.value = s.endpoints[k];
       });
     }
+    const statRepoEl = document.getElementById('statRepo');
+    if (statRepoEl) statRepoEl.textContent = ST.svnUrl;
   } catch(e) {}
 }
 
@@ -588,11 +598,15 @@ window.saveSettings = function() {
   };
   ST.svnUser = document.getElementById('cfgSvnUser').value.trim();
   ST.svnPass = document.getElementById('cfgSvnPass').value.trim();
+  ST.svnUrl = document.getElementById('cfgSvnUrl')?.value.trim() || 'svn://example.com/repo';
   localStorage.setItem('hypenosys_repoAdmin', JSON.stringify({
     endpoints: ST.endpoints,
     svnUser: ST.svnUser,
-    svnPass: ST.svnPass
+    svnPass: ST.svnPass,
+    svnUrl: ST.svnUrl
   }));
+  const statRepoEl = document.getElementById('statRepo');
+  if (statRepoEl) statRepoEl.textContent = ST.svnUrl;
   toggleSettings();
   log('success', 'Settings saved');
 }
@@ -612,7 +626,12 @@ window.apiCall = async function(endpointKey, body) {
   const res = await window.hypenosysFetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ ...body, user: ST.svnUser || 'SVN_USERNAME', password: ST.svnPass || 'SVN_PASSWORD' }),
+    body: JSON.stringify({
+      ...body,
+      svnUrl: ST.svnUrl || 'svn://example.com/repo',
+      user: ST.svnUser || 'SVN_USERNAME',
+      password: ST.svnPass || 'SVN_PASSWORD'
+    }),
     signal: AbortSignal.timeout(45000)
   });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);

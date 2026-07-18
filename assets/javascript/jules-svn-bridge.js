@@ -82,6 +82,7 @@ window.JulesSvnBridge = (function() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     ...body,
+                    svnUrl: settings.svnUrl || 'svn://example.com/repo',
                     user: settings.svnUser || 'SVN_USERNAME',
                     password: settings.svnPass || 'SVN_PASSWORD'
                 }),
