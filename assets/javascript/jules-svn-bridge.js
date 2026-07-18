@@ -83,6 +83,7 @@ window.JulesSvnBridge = (function() {
                 body: JSON.stringify({
                     ...body,
                     svnUrl: settings.svnUrl || 'svn://example.com/repo',
+                    svnRepo: settings.svnRepo || 'svn://example.com/repo/trunk/Hypenosys',
                     user: settings.svnUser || 'SVN_USERNAME',
                     password: settings.svnPass || 'SVN_PASSWORD'
                 }),
