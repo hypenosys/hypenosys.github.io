@@ -1,14 +1,14 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-07-18T13:39:00.329Z",
+  "computed_at": "2026-07-18T13:39:08.517Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 41,
-    "total_ok": 41,
+    "total_tasks": 42,
+    "total_ok": 42,
     "total_ko": 0,
     "total_uncertain": 0,
     "total_obsolete": 0,
-    "fixed_found_ratio": 1.1389,
+    "fixed_found_ratio": 1.1351,
     "verified_ratio": 1
   },
   "group": {
@@ -16,7 +16,7 @@
       "2026-W22": 12,
       "2026-W23": 22,
       "2026-W24": 6,
-      "2026-W25": 16,
+      "2026-W25": 18,
       "2026-W26": 2,
       "2026-W27": 0,
       "2026-W28": 0,
@@ -79,7 +79,7 @@
         "mvp_points": 9,
         "bugs_solved": 6,
         "unblocked_count": 8,
-        "velocity": 3.5238095238095237,
+        "velocity": 3.8181818181818183,
         "research_solved": 2,
         "art_tasks": 0,
         "comments_left": 0
@@ -190,22 +190,22 @@
     "topperh4rley": {
       "member_name": "Alex",
       "completed": {
-        "all_time": 54,
-        "milestone": 42,
+        "all_time": 56,
+        "milestone": 44,
         "week": 0
       },
       "weekly_velocity": {
         "2026-W22": 18,
         "2026-W23": 72,
         "2026-W24": 6,
-        "2026-W25": 2,
+        "2026-W25": 12,
         "2026-W26": 0,
         "2026-W27": 0,
         "2026-W28": 0,
         "2026-W29": 0
       },
       "type_breakdown": {
-        "feature": 40,
+        "feature": 42,
         "bug": 6,
         "chore": 4,
         "research": 4
@@ -213,7 +213,7 @@
       "rama_breakdown": {
         "PRO": 30,
         "feature/dashboard-tag-filter": 2,
-        "master": 8,
+        "master": 10,
         "feature/dashboard-error-boundaries": 2,
         "feature/dashboard-chat-icon": 2,
         "fix/jules-neural-mobile-markdown": 2,
@@ -456,7 +456,7 @@
           "mvp_points": 9,
           "bugs_solved": 6,
           "unblocked_count": 8,
-          "velocity": 3.5238095238095237,
+          "velocity": 3.8181818181818183,
           "research_solved": 2,
           "art_tasks": 0,
           "comments_left": 0
@@ -499,7 +499,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-07-18T13:39:01.809Z"
+      "timestamp": "2026-07-18T13:39:09.370Z"
     }
   ]
 }
