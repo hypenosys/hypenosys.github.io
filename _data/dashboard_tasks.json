@@ -1,7 +1,7 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-07-18T11:57:55.221Z",
-  "last_updated_by": "Sistema",
+  "last_updated": "2026-07-18T11:58:46.192Z",
+  "last_updated_by": "Axel",
   "tasks": [
     {
       "id": 1,
@@ -4632,9 +4632,62 @@
         }
       ],
       "id": 83
+    },
+    {
+      "title": "Creat Forjejo (Git) en ZimaBoard2",
+      "descripcion": "Para los pipes de Git en development local, pudiendo crear repos, ficheros, wikis...",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Tools / Automation",
+      "seccion": "",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Medium",
+      "milestone": "M2",
+      "estado": "Working",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-07-18",
+      "due_date": "2026-07-26",
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-07-18",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-18T11:58:45.390Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 84
     }
   ],
   "_audit_log": [
+    {
+      "action": "feat: nueva tarea #1784375925390 añadida",
+      "user": "Axlfc",
+      "timestamp": "2026-07-18T11:58:46.192Z"
+    },
     {
       "action": "chore: actualizar estado tarea #73 → Working",
       "user": "Axlfc",
