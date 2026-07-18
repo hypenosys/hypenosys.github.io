@@ -1,14 +1,14 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-07-18T13:38:51.054Z",
+  "computed_at": "2026-07-18T13:39:00.329Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 40,
-    "total_ok": 40,
+    "total_tasks": 41,
+    "total_ok": 41,
     "total_ko": 0,
     "total_uncertain": 0,
     "total_obsolete": 0,
-    "fixed_found_ratio": 1.1429,
+    "fixed_found_ratio": 1.1389,
     "verified_ratio": 1
   },
   "group": {
@@ -16,7 +16,7 @@
       "2026-W22": 12,
       "2026-W23": 22,
       "2026-W24": 6,
-      "2026-W25": 14,
+      "2026-W25": 16,
       "2026-W26": 2,
       "2026-W27": 0,
       "2026-W28": 0,
@@ -69,7 +69,7 @@
         "mvp_points": 10,
         "bugs_solved": 8,
         "unblocked_count": 4,
-        "velocity": 3,
+        "velocity": 3.04,
         "research_solved": 2,
         "art_tasks": 0,
         "comments_left": 2
@@ -120,22 +120,22 @@
     "axlfc": {
       "member_name": "Axel",
       "completed": {
-        "all_time": 60,
-        "milestone": 48,
+        "all_time": 62,
+        "milestone": 50,
         "week": 0
       },
       "weekly_velocity": {
         "2026-W22": 8,
         "2026-W23": 64,
         "2026-W24": 10,
-        "2026-W25": 8,
+        "2026-W25": 12,
         "2026-W26": 6,
         "2026-W27": 0,
         "2026-W28": 0,
         "2026-W29": 0
       },
       "type_breakdown": {
-        "feature": 38,
+        "feature": 40,
         "chore": 10,
         "bug": 8,
         "research": 4
@@ -143,7 +143,7 @@
       "rama_breakdown": {
         "PRO": 30,
         "feature/dashboard-tag-filter": 2,
-        "master": 14,
+        "master": 16,
         "chore/consolidate-scripts": 2,
         "chore/decommission-old-panels": 2,
         "feature/dashboard-error-boundaries": 2,
@@ -168,7 +168,9 @@
         "refactor": 4,
         "stability": 2,
         "devops": 4,
-        "research": 2
+        "research": 2,
+        "menú": 2,
+        "ux/ui": 2
       },
       "avg_completion_speed": {
         "days": 0.5,
@@ -178,7 +180,7 @@
       "comment_activity": 2,
       "volatility": {
         "reopens": 2,
-        "reprioritizations": 38
+        "reprioritizations": 40
       },
       "workload": {
         "active_tasks": 0,
@@ -444,7 +446,7 @@
           "mvp_points": 10,
           "bugs_solved": 8,
           "unblocked_count": 4,
-          "velocity": 3,
+          "velocity": 3.04,
           "research_solved": 2,
           "art_tasks": 0,
           "comments_left": 2
@@ -497,7 +499,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-07-18T13:38:51.951Z"
+      "timestamp": "2026-07-18T13:39:01.809Z"
     }
   ]
 }
