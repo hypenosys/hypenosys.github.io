@@ -1,19 +1,19 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-07-18T13:38:02.099Z",
+  "computed_at": "2026-07-18T13:38:08.688Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 36,
-    "total_ok": 36,
+    "total_tasks": 37,
+    "total_ok": 37,
     "total_ko": 0,
     "total_uncertain": 0,
     "total_obsolete": 0,
-    "fixed_found_ratio": 1.1613,
+    "fixed_found_ratio": 1.1563,
     "verified_ratio": 1
   },
   "group": {
     "velocity_trend": {
-      "2026-W22": 10,
+      "2026-W22": 12,
       "2026-W23": 22,
       "2026-W24": 6,
       "2026-W25": 14,
@@ -38,9 +38,9 @@
         "value": 8
       },
       "unblocker": {
-        "handle": "axlfc",
-        "name": "Axel",
-        "value": 4
+        "handle": "topperh4rley",
+        "name": "Alex",
+        "value": 8
       },
       "velocity_king": {
         "handle": "dkdidac-design",
@@ -76,10 +76,10 @@
       },
       "topperh4rley": {
         "member_name": "Alex",
-        "mvp_points": 8,
+        "mvp_points": 9,
         "bugs_solved": 6,
-        "unblocked_count": 4,
-        "velocity": 3.2,
+        "unblocked_count": 8,
+        "velocity": 3.5238095238095237,
         "research_solved": 2,
         "art_tasks": 0,
         "comments_left": 0
@@ -184,12 +184,12 @@
     "topperh4rley": {
       "member_name": "Alex",
       "completed": {
-        "all_time": 48,
-        "milestone": 40,
+        "all_time": 50,
+        "milestone": 42,
         "week": 0
       },
       "weekly_velocity": {
-        "2026-W22": 8,
+        "2026-W22": 18,
         "2026-W23": 58,
         "2026-W24": 6,
         "2026-W25": 2,
@@ -199,7 +199,7 @@
         "2026-W29": 0
       },
       "type_breakdown": {
-        "feature": 38,
+        "feature": 40,
         "bug": 6,
         "chore": 2,
         "research": 2
@@ -211,16 +211,17 @@
         "feature/dashboard-error-boundaries": 2,
         "feature/dashboard-chat-icon": 2,
         "fix/jules-neural-mobile-markdown": 2,
-        "feature/mobile-github-ops": 2
+        "feature/mobile-github-ops": 2,
+        "feature/repo-labels-ui": 2
       },
       "tag_frequency": {
         "jules": 2,
-        "UX/UI": 4,
+        "UX/UI": 6,
         "bug": 6,
         "hard": 2,
-        "feature": 8,
-        "frontend": 10,
-        "ux": 12,
+        "feature": 10,
+        "frontend": 12,
+        "ux": 14,
         "chore": 2,
         "docs": 4,
         "api": 4,
@@ -231,11 +232,11 @@
         "days": 0.5,
         "estimated_start": true
       },
-      "dependency_impact": 4,
+      "dependency_impact": 8,
       "comment_activity": 0,
       "volatility": {
-        "reopens": 2,
-        "reprioritizations": 34
+        "reopens": 4,
+        "reprioritizations": 36
       },
       "workload": {
         "active_tasks": 0,
@@ -404,9 +405,9 @@
           "value": 8
         },
         "unblocker": {
-          "handle": "axlfc",
-          "name": "Axel",
-          "value": 4
+          "handle": "topperh4rley",
+          "name": "Alex",
+          "value": 8
         },
         "velocity_king": {
           "handle": "dkdidac-design",
@@ -442,10 +443,10 @@
         },
         "topperh4rley": {
           "member_name": "Alex",
-          "mvp_points": 8,
+          "mvp_points": 9,
           "bugs_solved": 6,
-          "unblocked_count": 4,
-          "velocity": 3.2,
+          "unblocked_count": 8,
+          "velocity": 3.5238095238095237,
           "research_solved": 2,
           "art_tasks": 0,
           "comments_left": 0
@@ -488,7 +489,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-07-18T13:38:02.800Z"
+      "timestamp": "2026-07-18T13:38:10.564Z"
     }
   ]
 }
