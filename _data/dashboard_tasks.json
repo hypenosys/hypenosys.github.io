@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-07-18T13:39:12.249Z",
+  "last_updated": "2026-07-18T13:39:21.875Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3171,113 +3171,6 @@
       "branch": "Programación (PRO)"
     },
     {
-      "title": "Todas las cabeceras de la web son diferente.",
-      "descripcion": "Es neccesario decidir una interfaz unificada para todas las seccion, igualar colores, interfaz, boton de retorno al inicio en todas las pagina ",
-      "rama": "master",
-      "task_type": "bug",
-      "tema_principal": "Programación / Engine",
-      "seccion": "",
-      "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Critical",
-      "milestone": "M1",
-      "estado": "OK",
-      "completitud": 0,
-      "resuelto_por": "Axel",
-      "detectado_por": "Dídac",
-      "asignados": [
-        "axlfc",
-        "dkdidac-design"
-      ],
-      "email_responsable": "didac@hypenosys.com",
-      "emails_asignados": [],
-      "start_date": "2026-07-08",
-      "due_date": "2026-07-08",
-      "estimated_hours": 4,
-      "story_points": 4,
-      "tags": [],
-      "external_links": [],
-      "subtasks": [],
-      "acceptance_criteria": "",
-      "blocks": [],
-      "blocked_by": [],
-      "comments": [],
-      "images": [],
-      "rama2": null,
-      "ver": true,
-      "fecha": "2026-07-07",
-      "apoyo": null,
-      "limite": null,
-      "comentario": "",
-      "change_log": [
-        {
-          "author_login": "dkdidac-design",
-          "timestamp": "2026-07-07T19:33:21.205Z",
-          "field": "id",
-          "old_value": null,
-          "new_value": "Created"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-08T07:02:56.123Z",
-          "field": "due_date",
-          "old_value": null,
-          "new_value": "2026-07-08"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-08T08:41:18.359Z",
-          "field": "estado",
-          "old_value": "Pending",
-          "new_value": "Working"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-08T23:48:28.875Z",
-          "field": "asignados",
-          "old_value": "[]",
-          "new_value": "[\"axlfc\"]"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-09T10:31:43.601Z",
-          "field": "estado",
-          "old_value": "Working",
-          "new_value": "In Review"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-09T10:31:43.601Z",
-          "field": "asignados",
-          "old_value": "[\"axlfc\"]",
-          "new_value": "[\"axlfc\",\"dkdidac-design\"]"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-09T10:31:43.601Z",
-          "field": "repository",
-          "old_value": "hypenosys/app",
-          "new_value": "hypenosys/hypenosys.github.io"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-16T07:18:30.069Z",
-          "field": "estado",
-          "old_value": "In Review",
-          "new_value": "OK"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-18T13:39:11.866Z",
-          "field": "title",
-          "old_value": "Todas las cabezeras de la web son diferente.",
-          "new_value": "Todas las cabeceras de la web son diferente."
-        }
-      ],
-      "id": 75,
-      "jules_session": null,
-      "branch": "Programación (PRO)"
-    },
-    {
       "title": "No funciona el boton ver tarea",
       "descripcion": "el boton de ver tarea del banner rojo del dashboard no te redirige a la tarea",
       "rama": "master",
@@ -3903,6 +3796,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: archivar tarea #75",
+      "user": "Axlfc",
+      "timestamp": "2026-07-18T13:39:21.875Z"
+    },
     {
       "action": "chore: actualizar tarea #75",
       "user": "Axlfc",
