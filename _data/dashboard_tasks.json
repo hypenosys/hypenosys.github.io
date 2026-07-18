@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-07-18T13:38:05.030Z",
+  "last_updated": "2026-07-18T13:38:10.799Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1294,162 +1294,6 @@
       ],
       "id": 35,
       "seccion": "SVN Admin Panel",
-      "jules_session": null,
-      "branch": "Programación (PRO)"
-    },
-    {
-      "title": "n8n: Añadir NIM y cognito-agent como providers en la configuración de Claude Neural Chat",
-      "descripcion": "Configurar nuevos proveedores de IA en el ecosistema de n8n. Amplía las capacidades de procesamiento y automatización del Neural Chat.",
-      "rama": "feature/n8n-providers-nim-agent",
-      "task_type": "research",
-      "tema_principal": "Tools / Automation",
-      "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Medium",
-      "milestone": "M2",
-      "estado": "OK",
-      "completitud": 0,
-      "resuelto_por": "Axel",
-      "detectado_por": "Alex",
-      "asignados": [
-        "topperh4rley"
-      ],
-      "email_responsable": "axel@hypenosys.com",
-      "emails_asignados": [
-        "alex@hypenosys.com",
-        "axel@hypenosys.com"
-      ],
-      "start_date": "2026-06-22",
-      "due_date": "2026-07-05",
-      "estimated_hours": 6,
-      "story_points": 5,
-      "tags": [
-        "api",
-        "devops",
-        "research"
-      ],
-      "external_links": [],
-      "subtasks": [],
-      "acceptance_criteria": "NIM y cognito-agent respondan correctamente a los webhooks.",
-      "blocks": [],
-      "blocked_by": [],
-      "comments": [
-        "He visto que la latencia de NIM es muy baja, lo cual será genial para las respuestas del chat en tiempo real."
-      ],
-      "images": [],
-      "rama2": null,
-      "ver": true,
-      "fecha": "2026-06-06",
-      "apoyo": null,
-      "limite": null,
-      "comentario": "",
-      "change_log": [
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-06T22:07:04.609Z",
-          "field": "id",
-          "old_value": null,
-          "new_value": "Created"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-07T19:19:36.619Z",
-          "field": "task_type",
-          "old_value": "feature",
-          "new_value": "research"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-08T10:29:39.989Z",
-          "field": "title",
-          "old_value": "Añadir NVIDIA NIM como provider en la configuración de Claude Neural Chat",
-          "new_value": "n8n: Añadir NVIDIA NIM y cognito-agent como providers en la configuración de Claude Neural Chat"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-08T10:29:39.989Z",
-          "field": "prioridad",
-          "old_value": "Minor",
-          "new_value": "Medium"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-08T12:27:44.014Z",
-          "field": "title",
-          "old_value": "n8n: Añadir NVIDIA NIM y cognito-agent como providers en la configuración de Claude Neural Chat",
-          "new_value": "n8n: Añadir NIM y cognito-agent como providers en la configuración de Claude Neural Chat"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-08T12:27:44.014Z",
-          "field": "descripcion",
-          "old_value": "",
-          "new_value": "webhooks"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-15T19:08:51.475Z",
-          "field": "estado",
-          "old_value": "Working",
-          "new_value": "ToDo"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T10:45:52.768Z",
-          "field": "estado",
-          "old_value": "ToDo",
-          "new_value": "Working"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T12:44:14.567Z",
-          "field": "seccion",
-          "new_value": "Chat Neural"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T22:54:11.586Z",
-          "field": "asignados",
-          "old_value": "[\"topperh4rley\"]",
-          "new_value": "[]"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T22:54:11.586Z",
-          "field": "due_date",
-          "old_value": null,
-          "new_value": "2026-06-28"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T22:55:46.568Z",
-          "field": "asignados",
-          "old_value": "[]",
-          "new_value": "[\"axlfc\",\"topperh4rley\"]"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T22:55:46.568Z",
-          "field": "due_date",
-          "old_value": "2026-06-28",
-          "new_value": "2026-07-05"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T23:55:53.068Z",
-          "field": "asignados",
-          "old_value": "[\"axlfc\",\"topperh4rley\"]",
-          "new_value": "[\"topperh4rley\"]"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-02T23:01:29.758Z",
-          "field": "estado",
-          "old_value": "Working",
-          "new_value": "OK"
-        }
-      ],
-      "id": 36,
-      "seccion": "Chat Neural",
       "jules_session": null,
       "branch": "Programación (PRO)"
     },
@@ -4500,6 +4344,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: archivar tarea #36",
+      "user": "Axlfc",
+      "timestamp": "2026-07-18T13:38:10.799Z"
+    },
     {
       "action": "chore: archivar tarea #16",
       "user": "Axlfc",
