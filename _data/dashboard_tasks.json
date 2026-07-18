@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-07-18T13:39:21.875Z",
+  "last_updated": "2026-07-18T13:39:30.704Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3171,98 +3171,6 @@
       "branch": "Programación (PRO)"
     },
     {
-      "title": "No funciona el boton ver tarea",
-      "descripcion": "el boton de ver tarea del banner rojo del dashboard no te redirige a la tarea",
-      "rama": "master",
-      "task_type": "feature",
-      "tema_principal": "Programación / Engine",
-      "seccion": "Dashboard",
-      "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Minor",
-      "milestone": "M1",
-      "estado": "OK",
-      "completitud": 0,
-      "resuelto_por": "Axel",
-      "detectado_por": "Dídac",
-      "asignados": [
-        "axlfc"
-      ],
-      "email_responsable": null,
-      "emails_asignados": [],
-      "start_date": "2026-07-09",
-      "due_date": "2026-07-10",
-      "estimated_hours": 16,
-      "story_points": 3,
-      "tags": [],
-      "external_links": [],
-      "subtasks": [],
-      "acceptance_criteria": "El botón de VER TAREA debe navegar y resaltar en el kanban la tarea correspondiente ",
-      "blocks": [],
-      "blocked_by": [],
-      "comments": [],
-      "images": [],
-      "rama2": null,
-      "ver": true,
-      "fecha": "2026-07-07",
-      "apoyo": null,
-      "limite": null,
-      "comentario": "",
-      "change_log": [
-        {
-          "author_login": "dkdidac-design",
-          "timestamp": "2026-07-07T19:35:46.292Z",
-          "field": "id",
-          "old_value": null,
-          "new_value": "Created"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-09T00:02:47.847Z",
-          "field": "prioridad",
-          "old_value": "Major",
-          "new_value": "Minor"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-09T00:02:47.847Z",
-          "field": "repository",
-          "old_value": null,
-          "new_value": "hypenosys/hypenosys.github.io"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-09T00:02:47.847Z",
-          "field": "seccion",
-          "old_value": "",
-          "new_value": "Dashboard"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-09T09:16:47.239Z",
-          "field": "estado",
-          "old_value": "Pending",
-          "new_value": "OK"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-09T09:16:47.239Z",
-          "field": "asignados",
-          "old_value": "[]",
-          "new_value": "[\"axlfc\"]"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-09T09:16:47.239Z",
-          "field": "due_date",
-          "old_value": null,
-          "new_value": "2026-07-10"
-        }
-      ],
-      "id": 76,
-      "jules_session": null,
-      "branch": "Programación (PRO)"
-    },
-    {
       "title": "Creación de favicon.ico de hypenosys",
       "descripcion": "Crear el favicon de la web de hypenosys. Luego ya lo asociaremos, se momento solo crear el icono en pequeño.",
       "rama": "master",
@@ -3796,6 +3704,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: archivar tarea #76",
+      "user": "Axlfc",
+      "timestamp": "2026-07-18T13:39:30.704Z"
+    },
     {
       "action": "chore: archivar tarea #75",
       "user": "Axlfc",
