@@ -77,7 +77,7 @@ window.JulesSvnBridge = (function() {
         }
 
         try {
-            const res = await fetch(url, {
+            const res = await window.hypenosysFetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

@@ -906,7 +906,7 @@ const N8N_WORKFLOW = {
         "httpMethod": ["POST"],
         "path": "music-gen",
         "responseMode": "responseNode",
-        "options": { "allowedOrigins": "https://hypenosys.github.io" }
+        "options": { "allowedOrigins": "https://hypenosys.github.io,https://hypenosys.com,https://www.hypenosys.com" }
       },
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
@@ -1164,7 +1164,7 @@ function updateCfgStatus() {
 async function testEndpoint() {
   if (!ST.endpoint) { showStatusBar('SET ENDPOINT FIRST'); return; }
   try {
-    const r = await fetch(ST.endpoint, { method: 'OPTIONS' });
+    const r = await window.hypenosysFetch(ST.endpoint, { method: 'OPTIONS' });
     document.getElementById('cfgStatusText').textContent = `[ PING OK ] ${r.status}`;
     document.getElementById('cfgStatusText').style.color = 'var(--c-accent)';
   } catch(e) {
@@ -1238,7 +1238,7 @@ async function handleGenerate() {
   };
 
   try {
-    const res = await fetch(ST.endpoint, {
+    const res = await window.hypenosysFetch(ST.endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),

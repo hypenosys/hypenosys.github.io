@@ -1325,7 +1325,7 @@ async function handleGenerate() {
     stepActive(1);
     advanceProgress(15);
 
-    var res = await fetch(endpoint, {
+    var res = await window.hypenosysFetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
