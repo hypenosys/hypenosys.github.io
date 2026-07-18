@@ -1,14 +1,14 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-07-18T13:38:16.136Z",
+  "computed_at": "2026-07-18T13:38:40.439Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 38,
-    "total_ok": 38,
+    "total_tasks": 39,
+    "total_ok": 39,
     "total_ko": 0,
     "total_uncertain": 0,
     "total_obsolete": 0,
-    "fixed_found_ratio": 1.1515,
+    "fixed_found_ratio": 1.1471,
     "verified_ratio": 1
   },
   "group": {
@@ -120,13 +120,13 @@
     "axlfc": {
       "member_name": "Axel",
       "completed": {
-        "all_time": 58,
+        "all_time": 60,
         "milestone": 48,
         "week": 0
       },
       "weekly_velocity": {
         "2026-W22": 8,
-        "2026-W23": 60,
+        "2026-W23": 64,
         "2026-W24": 10,
         "2026-W25": 8,
         "2026-W26": 6,
@@ -136,7 +136,7 @@
       },
       "type_breakdown": {
         "feature": 38,
-        "chore": 8,
+        "chore": 10,
         "bug": 8,
         "research": 4
       },
@@ -149,7 +149,8 @@
         "feature/dashboard-error-boundaries": 2,
         "feature/dashboard-chat-icon": 2,
         "feature/mobile-github-ops": 2,
-        "feature/n8n-providers-nim-agent": 2
+        "feature/n8n-providers-nim-agent": 2,
+        "chore/scripts-svn-sync": 2
       },
       "tag_frequency": {
         "jules": 2,
@@ -160,13 +161,13 @@
         "feature": 8,
         "frontend": 8,
         "ux": 10,
-        "chore": 6,
+        "chore": 8,
         "docs": 4,
-        "api": 6,
+        "api": 8,
         "n8n": 2,
         "refactor": 4,
         "stability": 2,
-        "devops": 2,
+        "devops": 4,
         "research": 2
       },
       "avg_completion_speed": {
@@ -187,13 +188,13 @@
     "topperh4rley": {
       "member_name": "Alex",
       "completed": {
-        "all_time": 52,
+        "all_time": 54,
         "milestone": 42,
         "week": 0
       },
       "weekly_velocity": {
         "2026-W22": 18,
-        "2026-W23": 68,
+        "2026-W23": 72,
         "2026-W24": 6,
         "2026-W25": 2,
         "2026-W26": 0,
@@ -204,7 +205,7 @@
       "type_breakdown": {
         "feature": 40,
         "bug": 6,
-        "chore": 2,
+        "chore": 4,
         "research": 4
       },
       "rama_breakdown": {
@@ -216,7 +217,8 @@
         "fix/jules-neural-mobile-markdown": 2,
         "feature/mobile-github-ops": 2,
         "feature/repo-labels-ui": 2,
-        "feature/n8n-providers-nim-agent": 2
+        "feature/n8n-providers-nim-agent": 2,
+        "chore/scripts-svn-sync": 2
       },
       "tag_frequency": {
         "jules": 2,
@@ -226,12 +228,12 @@
         "feature": 10,
         "frontend": 12,
         "ux": 14,
-        "chore": 2,
+        "chore": 4,
         "docs": 4,
-        "api": 6,
+        "api": 8,
         "n8n": 2,
         "stability": 2,
-        "devops": 2,
+        "devops": 4,
         "research": 2
       },
       "avg_completion_speed": {
@@ -495,7 +497,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-07-18T13:38:16.847Z"
+      "timestamp": "2026-07-18T13:38:41.136Z"
     }
   ]
 }
