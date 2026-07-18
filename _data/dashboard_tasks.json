@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-07-17T11:45:14.846Z",
+  "last_updated": "2026-07-18T11:38:56.199Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -499,9 +499,9 @@
       "tema_principal": "Tools / Automation",
       "prioridad": "ToDo",
       "milestone": "M1",
-      "estado": "Pending",
+      "estado": "OK",
       "completitud": 0.9,
-      "resuelto_por": "Alex",
+      "resuelto_por": "Axel",
       "detectado_por": "Axel",
       "asignados": [
         "axlfc",
@@ -689,6 +689,13 @@
           "field": "descripcion",
           "old_value": "Actualizar el repositorio 'app' a la v5.7.4 de Unreal Engine y sincronizar con SVN. Necesario para mantener la compatibilidad con las últimas herramientas.",
           "new_value": "Actualizar el repositorio 'app' a la v5.8 de Unreal Engine y sincronizar con SVN. Necesario para mantener la compatibilidad con las últimas herramientas."
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-18T11:38:55.650Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "OK"
         }
       ],
       "repository": "hypenosys/app",
@@ -4580,6 +4587,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #11",
+      "user": "Axlfc",
+      "timestamp": "2026-07-18T11:38:56.199Z"
+    },
     {
       "action": "chore: actualizar tarea #74",
       "user": "Axlfc",
