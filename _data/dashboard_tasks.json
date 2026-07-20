@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-07-20T20:12:33.495Z",
+  "last_updated": "2026-07-20T20:12:59.392Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3676,7 +3676,7 @@
       "id": 85
     },
     {
-      "title": "Crear Redis server",
+      "title": "Crear Redis server en Oracle",
       "descripcion": "",
       "rama": "master",
       "task_type": "feature",
@@ -3719,12 +3719,24 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-20T20:12:58.942Z",
+          "field": "title",
+          "old_value": "Crear Redis server",
+          "new_value": "Crear Redis server en Oracle"
         }
       ],
       "id": 86
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #86",
+      "user": "Axlfc",
+      "timestamp": "2026-07-20T20:12:59.392Z"
+    },
     {
       "action": "chore: actualizar tarea #83",
       "user": "Axlfc",
