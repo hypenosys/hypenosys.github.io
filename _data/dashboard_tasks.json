@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-07-18T13:39:30.704Z",
+  "last_updated": "2026-07-20T20:12:11.825Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3458,8 +3458,8 @@
       "id": 81
     },
     {
-      "title": "Añadir Organizaciones y Kanban Personal ",
-      "descripcion": "Añadir al dashboard Organizaciones (aparte de hypenosys, poder crear otras organizaciones) así como un kanban personal por usuario (independiente de organizaciones, solo personal y solo accesible en la web al estar loggeado)",
+      "title": "Añadir Organizaciones y Kanban Personal (Local Only)",
+      "descripcion": "Añadir al dashboard Organizaciones (aparte de hypenosys, poder crear otras organizaciones) así como un kanban personal local only (localStorage) por usuario (independiente de organizaciones, solo personal y solo accesible en la web al estar loggeado y almacenado en localStorage y con herramientas de Importación/exportación)",
       "rama": "master",
       "task_type": "feature",
       "tema_principal": "Programación / Engine",
@@ -3501,6 +3501,20 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-20T20:12:10.912Z",
+          "field": "title",
+          "old_value": "Añadir Organizaciones y Kanban Personal ",
+          "new_value": "Añadir Organizaciones y Kanban Personal (Local Only)"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-20T20:12:10.912Z",
+          "field": "descripcion",
+          "old_value": "Añadir al dashboard Organizaciones (aparte de hypenosys, poder crear otras organizaciones) así como un kanban personal por usuario (independiente de organizaciones, solo personal y solo accesible en la web al estar loggeado)",
+          "new_value": "Añadir al dashboard Organizaciones (aparte de hypenosys, poder crear otras organizaciones) así como un kanban personal local only (localStorage) por usuario (independiente de organizaciones, solo personal y solo accesible en la web al estar loggeado y almacenado en localStorage y con herramientas de Importación/exportación)"
         }
       ],
       "id": 82
@@ -3704,6 +3718,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #82",
+      "user": "Axlfc",
+      "timestamp": "2026-07-20T20:12:11.825Z"
+    },
     {
       "action": "chore: archivar tarea #76",
       "user": "Axlfc",
