@@ -1077,8 +1077,24 @@ window.clearHistorySelection = function() {
     updateSelectionUI();
 }
 
-window.selectSession = function(sessionName) {
-    const sid = sessionName.split('/').pop();
+window.normalizeJulesSessionId = function(id) {
+    if (!id) return '';
+    const str = String(id).trim();
+    return str.split('/').pop();
+};
+
+window.getJulesSessionResourceName = function(id) {
+    const rawId = window.normalizeJulesSessionId(id);
+    return rawId ? 'sessions/' + rawId : '';
+};
+
+window.selectSession = function(sessionName, options = {}) {
+    if (!sessionName) return;
+    const sid = window.normalizeJulesSessionId(sessionName);
+
+    // Save state in canonical state trackers
+    window.JulesPanelState.activeSessionId = sid;
+    localStorage.setItem('hy_neural_session_id', sid);
 
     // Highlight in sidebar
     document.querySelectorAll('.sb-history-item').forEach(el => {
@@ -1091,32 +1107,287 @@ window.selectSession = function(sessionName) {
         tr.classList.toggle('active-row', trSid === sid);
     });
 
-    // Navigate to Kanban and Highlight
-    if (typeof switchView === 'function') {
-        switchView('kanban');
-
-        // Wait for view switch and cards to be potentially rendered/available
-        setTimeout(() => {
-            const card = document.querySelector('.kb-card[data-sid="' + sid + '"]');
-            if (card) {
-                // Clear previous highlights
-                document.querySelectorAll('.kb-card.highlight-focus').forEach(c => c.classList.remove('highlight-focus'));
-
-                // Add focus highlight
-                card.classList.add('highlight-focus');
-
-                // Ensure it's visible
-                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-                console.log("[JULES-UI] Session #" + sid + " highlighted in Kanban.");
-            } else {
-                console.warn("[JULES-UI] Could not find card for #" + sid + " in Kanban view.");
-            }
-        }, 300);
+    // Determine target view contextually
+    let targetView = options.navigateTo;
+    if (!targetView) {
+        const currentView = window.JulesPanelState.currentView || 'dashboard';
+        targetView = (currentView === 'chat') ? 'chat' : 'kanban';
     }
 
-    openDrawer(sessionName);
+    if (targetView === 'kanban') {
+        if (typeof switchView === 'function') {
+            switchView('kanban');
+
+            // Wait for view switch and cards to be potentially rendered/available
+            setTimeout(() => {
+                const card = document.querySelector('.kb-card[data-sid="' + sid + '"]');
+                if (card) {
+                    // Clear previous highlights
+                    document.querySelectorAll('.kb-card.highlight-focus').forEach(c => c.classList.remove('highlight-focus'));
+
+                    // Add focus highlight
+                    card.classList.add('highlight-focus');
+
+                    // Ensure it's visible
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                    console.log("[JULES-UI] Session #" + sid + " highlighted in Kanban.");
+                } else {
+                    console.warn("[JULES-UI] Could not find card for #" + sid + " in Kanban view.");
+                }
+            }, 300);
+        }
+        openDrawer(window.getJulesSessionResourceName(sid));
+    } else if (targetView === 'chat') {
+        // Load first to set window._loadingJulesSessionId and avoid duplicate loads
+        if (typeof window.loadAndRenderJulesSession === 'function') {
+            window.loadAndRenderJulesSession(sid);
+        }
+
+        if (typeof switchView === 'function') {
+            switchView('chat');
+        }
+    }
 }
+
+window.renderActivityLine = renderActivityLine;
+window.parseActivityContent = parseActivityContent;
+
+window._currentJulesLoadSessionId = null;
+window._julesSessionFetchPromises = {};
+
+window.loadAndRenderJulesSession = async function(sid) {
+    if (!sid) return;
+
+    const normalizedSid = window.normalizeJulesSessionId(sid);
+    const sName = window.getJulesSessionResourceName(normalizedSid);
+
+    // Track generation to prevent rapid consecutive clicks from racing/overwriting
+    window._currentJulesLoadSessionId = normalizedSid;
+    const currentGeneration = normalizedSid;
+
+    // Cache containers
+    const historyContainer = $('neural-jules-history');
+    const welcomeScreen = $('history-welcome-screen');
+    const taskContext = $('v2-task-context');
+    const titleEl = $('v2-task-title');
+    const detailsEl = $('v2-task-details');
+
+    // Display a controlled loading state
+    if (welcomeScreen) welcomeScreen.style.display = 'none';
+    if (historyContainer && (historyContainer.children.length === 0 || historyContainer.innerHTML.includes('Cargando'))) {
+        historyContainer.innerHTML = '<div style="padding:20px; text-align:center; color:var(--text3); font-size:13px;"><i class="fas fa-circle-notch fa-spin mr-2"></i> Cargando actividades de Jules...</div>';
+    }
+
+    if (taskContext) {
+        taskContext.classList.remove('hidden');
+        if (titleEl) titleEl.textContent = 'Cargando tarea...';
+        if (detailsEl) {
+            if (detailsEl.children.length === 0 || detailsEl.innerHTML.includes('Cargando')) {
+                detailsEl.innerHTML = '<div style="padding:10px; color:var(--text3); font-size:12px;"><i class="fas fa-circle-notch fa-spin mr-2"></i> Cargando detalles de la tarea...</div>';
+            }
+        }
+    }
+
+    // Set neural processing state to false to keep indicators clean
+    window._loadingJulesSessionId = normalizedSid;
+
+    try {
+        let session = (window.julesSessionsCache || []).find(s => {
+            return window.normalizeJulesSessionId(s.name) === normalizedSid;
+        });
+
+        let activitiesData = null;
+
+        // Fetch from API if missing or incomplete
+        const fetchSessionPromise = async () => {
+            if (window._julesSessionFetchPromises[normalizedSid]) {
+                return window._julesSessionFetchPromises[normalizedSid];
+            }
+
+            const apiPromise = (async () => {
+                let freshSession = session;
+                if (!freshSession) {
+                    freshSession = await window.julesApi.getSession(sName);
+                }
+                const activities = await window.julesApi.getActivities(sName, 100);
+                return { session: freshSession, activities: activities.activities || activities || [] };
+            })();
+
+            window._julesSessionFetchPromises[normalizedSid] = apiPromise;
+            try {
+                return await apiPromise;
+            } finally {
+                delete window._julesSessionFetchPromises[normalizedSid];
+            }
+        };
+
+        const result = await fetchSessionPromise();
+
+        // Discard stale responses if user clicked another session during async load
+        if (window._currentJulesLoadSessionId !== currentGeneration) {
+            console.log("[LOAD-SESSION] Discarding stale response for session #" + normalizedSid);
+            return;
+        }
+
+        session = result.session;
+        activitiesData = result.activities;
+
+        if (!session) {
+            throw new Error("No se pudo obtener la información de la sesión.");
+        }
+
+        // Commit active state in cache if fetched fresh
+        if (!window.julesSessionsCache.some(s => window.normalizeJulesSessionId(s.name) === normalizedSid)) {
+            window.julesSessionsCache.push(session);
+            localStorage.setItem('jules_sessions_cache', JSON.stringify(window.julesSessionsCache));
+            if (typeof window.updateNeuralHistory === 'function') {
+                window.updateNeuralHistory(window.julesSessionsCache);
+            }
+            if (typeof window.renderHistoryTable === 'function') {
+                window.renderHistoryTable(window.julesSessionsCache);
+            }
+        }
+
+        // Highlight in NEURAL HISTORY list in sidebar
+        document.querySelectorAll('.sb-history-item').forEach(el => {
+            el.classList.toggle('active', el.getAttribute('data-sid') === normalizedSid);
+        });
+        const activeSidebarItem = document.querySelector('.sb-history-item[data-sid="' + normalizedSid + '"]');
+        if (activeSidebarItem) {
+            activeSidebarItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Render activities in chronological order (oldest -> newest)
+        if (historyContainer) {
+            const distanceFromBottom = historyContainer.scrollHeight - historyContainer.scrollTop - historyContainer.clientHeight;
+            const wasNearBottom = distanceFromBottom <= 100;
+            const isInitialLoad = !historyContainer._renderedSessionId || historyContainer._renderedSessionId !== normalizedSid;
+
+            historyContainer.innerHTML = '';
+            if (activitiesData.length === 0) {
+                historyContainer.innerHTML = '<div class="notif-empty" style="padding: 20px; text-align: center; color: var(--text3);">Sin actividad en esta sesión</div>';
+            } else {
+                const chronologicalActivities = [...activitiesData].reverse();
+                chronologicalActivities.forEach(act => {
+                    const lineHtml = window.renderActivityLine(act);
+                    historyContainer.insertAdjacentHTML('beforeend', lineHtml);
+                });
+            }
+
+            if (wasNearBottom || isInitialLoad) {
+                historyContainer.scrollTop = historyContainer.scrollHeight;
+            }
+
+            historyContainer._renderedSessionId = normalizedSid;
+        }
+
+        // Populate and Render task context header
+        if (taskContext) {
+            if (titleEl) titleEl.textContent = session.title || session.prompt || 'Sin título';
+
+            if (detailsEl) {
+                const repoFullName = session.sourceContext?.source || '---';
+                const repo = repoFullName.split('/').pop() || '---';
+                const branch = (session.sourceContext && session.sourceContext.githubRepoContext && session.sourceContext.githubRepoContext.startingBranch) || '---';
+                const stateClass = session.state.toLowerCase().replace(/_/g, '-');
+
+                let detailsHtml = `
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; font-size: 12px; color: var(--text2);">
+                        <div><strong>Repositorio:</strong> <span class="u-mono" style="color:var(--text);">${window.escapeHtml(repo)}</span></div>
+                        <div><strong>Rama:</strong> <span class="u-mono" style="color:var(--text);">${window.escapeHtml(branch)}</span></div>
+                        <div><strong>Estado:</strong> <span class="sbadge ${stateClass}" style="padding: 2px 8px; font-size: 10px;">${window.escapeHtml(session.state)}</span></div>
+                        <div><strong>Identificador:</strong> <span class="u-mono" style="color:var(--accent2);">#${window.escapeHtml(normalizedSid)}</span></div>
+                    </div>
+                    <div style="margin-top: 10px; padding: 10px; background: rgba(255,255,255,0.02); border-radius: var(--r-sm); border: 1px solid var(--border);">
+                        <div style="font-weight: 700; font-size: 10px; color: var(--text3); text-transform: uppercase; margin-bottom: 4px;">Prompt Original</div>
+                        <div style="max-height: 80px; overflow-y: auto; white-space: pre-wrap; font-size: 12px; opacity: 0.85; line-height: 1.4;">${window.escapeHtml(session.prompt)}</div>
+                    </div>
+                `;
+
+                // External outputs and PR action links
+                const parsedRepo = window.parseRepoFullName(repoFullName);
+                const githubOwner = parsedRepo.owner;
+                const githubRepoName = parsedRepo.repo;
+
+                let actionButtonsHtml = '<div class="jules-output-actions" style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px;">';
+
+                if (githubOwner && githubRepoName && branch !== '---') {
+                    const branchUrl = `https://github.com/${githubOwner}/${githubRepoName}/tree/${branch}`;
+                    actionButtonsHtml += `
+                        <a href="${branchUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-xs" style="display:inline-flex; align-items:center; gap:6px;">
+                            <i class="fab fa-git-alt"></i> Ver rama
+                        </a>
+                    `;
+
+                    const compareUrl = `https://github.com/${githubOwner}/${githubRepoName}/compare/${branch}?expand=1`;
+                    actionButtonsHtml += `
+                        <a href="${compareUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-xs" style="display:inline-flex; align-items:center; gap:6px;">
+                            <i class="fas fa-exchange-alt"></i> Comparar cambios
+                        </a>
+                    `;
+
+                    // Check for Pull Request using cache to avoid excessive requests
+                    const prCacheKey = 'jules_pr_cache_' + githubOwner + '_' + githubRepoName + '_' + branch;
+                    const cachedPrUrl = localStorage.getItem(prCacheKey);
+
+                    if (cachedPrUrl) {
+                        actionButtonsHtml += `
+                            <a href="${cachedPrUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-xs" style="display:inline-flex; align-items:center; gap:6px;">
+                                <i class="fab fa-github"></i> Ver Pull Request
+                            </a>
+                        `;
+                    } else {
+                        const token = window.getGitHubToken();
+                        if (token) {
+                            fetch(`https://api.github.com/repos/${githubOwner}/${githubRepoName}/pulls?head=${githubOwner}:${branch}&state=all`, {
+                                headers: { 'Authorization': 'Bearer ' + token }
+                            })
+                            .then(res => res.json())
+                            .then(prs => {
+                                if (Array.isArray(prs) && prs.length > 0) {
+                                    const pr = prs[0];
+                                    localStorage.setItem(prCacheKey, pr.html_url);
+                                    const prBtn = document.getElementById('jules-pr-action-btn');
+                                    if (prBtn) {
+                                        prBtn.href = pr.html_url;
+                                        prBtn.innerHTML = `<i class="fab fa-github"></i> Ver Pull Request (#${pr.number})`;
+                                        prBtn.style.display = 'inline-flex';
+                                        prBtn.className = 'btn btn-primary btn-xs';
+                                    }
+                                }
+                            })
+                            .catch(err => console.warn("[PR-FETCH] Error fetching PR status:", err));
+                        }
+
+                        actionButtonsHtml += `
+                            <a id="jules-pr-action-btn" href="https://github.com/${githubOwner}/${githubRepoName}/pulls" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-xs" style="display:inline-flex; align-items:center; gap:6px;">
+                                <i class="fab fa-github"></i> Ver Pull Requests
+                            </a>
+                        `;
+                    }
+                }
+
+                actionButtonsHtml += '</div>';
+                detailsHtml += actionButtonsHtml;
+                detailsEl.innerHTML = detailsHtml;
+            }
+        }
+
+        // Start active Neural polling for this session to keep it live
+        if (typeof window.startNeuralPolling === 'function') {
+            window.startNeuralPolling(normalizedSid);
+        }
+
+    } catch (err) {
+        console.error("[LOAD-SESSION] Failed to load Jules session:", err);
+        showToast("No se ha podido cargar la sesión de Jules seleccionada.", "red");
+
+        if (historyContainer && historyContainer.innerHTML.includes('Cargando')) {
+            historyContainer.innerHTML = '<div class="notif-empty" style="padding: 20px; text-align: center; color: var(--red);">Error al cargar la sesión.</div>';
+        }
+    }
+};
 
 function updateKanbanCounts(sessions) {
     const counts = { pending: 0, running: 0, done: 0, error: 0 };
@@ -1524,3 +1795,39 @@ async function handleJulesApiKeyChanged(newKey) {
     }
 }
 window.handleJulesApiKeyChanged = handleJulesApiKeyChanged;
+
+// Register once-only listener for live activity updates from polling
+window.addEventListener('julesActivitiesUpdated', (e) => {
+    const { sessionId, activities } = e.detail;
+    if (!sessionId) return;
+
+    const normalizedEventId = window.normalizeJulesSessionId(sessionId);
+    const activeJulesSid = window.JulesPanelState.activeSessionId;
+
+    if (activeJulesSid && normalizedEventId === activeJulesSid) {
+        const historyContainer = $('neural-jules-history');
+        if (historyContainer) {
+            const actList = activities.activities || activities || [];
+
+            // Measure if user was near bottom before updating DOM
+            const distanceFromBottom = historyContainer.scrollHeight - historyContainer.scrollTop - historyContainer.clientHeight;
+            const wasNearBottom = distanceFromBottom <= 100;
+
+            historyContainer.innerHTML = '';
+            if (actList.length === 0) {
+                historyContainer.innerHTML = '<div class="notif-empty" style="padding: 20px; text-align: center; color: var(--text3);">Sin actividad en esta sesión</div>';
+            } else {
+                const chronologicalActivities = [...actList].reverse();
+                chronologicalActivities.forEach(act => {
+                    const lineHtml = window.renderActivityLine(act);
+                    historyContainer.insertAdjacentHTML('beforeend', lineHtml);
+                });
+            }
+
+            // Scroll to bottom only if user was already at the bottom or near it
+            if (wasNearBottom) {
+                historyContainer.scrollTop = historyContainer.scrollHeight;
+            }
+        }
+    }
+});

@@ -286,6 +286,44 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+window.showTaskContextInChat = function(task) {
+    const container = $('v2-task-context');
+    const titleEl = $('v2-task-title');
+    const detailsEl = $('v2-task-details');
+
+    if (!container) return;
+
+    if (!task || !task.id) {
+        container.classList.add('hidden');
+        return;
+    }
+
+    container.classList.remove('hidden');
+    if (titleEl) {
+        titleEl.textContent = task.titulo || task.title || ('Tarea #' + task.id);
+    }
+
+    if (detailsEl) {
+        const repo = task.repository || task.repo || '---';
+        const branch = task.rama || task.branch || '---';
+        const status = task.estado || task.state || '---';
+
+        detailsEl.innerHTML = `
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; font-size: 12px; color: var(--text2);">
+                <div><strong>Repositorio:</strong> <span class="u-mono" style="color:var(--text);">${window.escapeHtml(repo)}</span></div>
+                <div><strong>Rama:</strong> <span class="u-mono" style="color:var(--text);">${window.escapeHtml(branch)}</span></div>
+                <div><strong>Estado:</strong> <span class="sbadge" style="padding: 2px 8px; font-size: 10px;">${window.escapeHtml(status)}</span></div>
+                <div><strong>Identificador:</strong> <span class="u-mono" style="color:var(--accent2);">#${window.escapeHtml(task.id)}</span></div>
+            </div>
+            ${task.descripcion || task.description ? `
+            <div style="margin-top: 10px; padding: 10px; background: rgba(255,255,255,0.02); border-radius: var(--r-sm); border: 1px solid var(--border);">
+                <div style="font-weight: 700; font-size: 10px; color: var(--text3); text-transform: uppercase; margin-bottom: 4px;">Descripción</div>
+                <div style="max-height: 80px; overflow-y: auto; white-space: pre-wrap; font-size: 12px; opacity: 0.85; line-height: 1.4;">${window.escapeHtml(task.descripcion || task.description)}</div>
+            </div>` : ''}
+        `;
+    }
+};
+
 window.switchView = async function(view, navEl) {
     const isMobile = window.innerWidth < 768;
 
@@ -395,6 +433,14 @@ window.switchView = async function(view, navEl) {
             if (task.id) showTaskContextInChat(task);
         }
         renderChatV2Messages();
+
+        // Load and render active Jules session, avoiding duplicate loads
+        const activeJulesSid = window.JulesPanelState.activeSessionId || localStorage.getItem('hy_neural_session_id');
+        if (activeJulesSid && window._loadingJulesSessionId !== activeJulesSid) {
+            if (typeof window.loadAndRenderJulesSession === 'function') {
+                window.loadAndRenderJulesSession(activeJulesSid);
+            }
+        }
     }
     if (view === 'hub') {
         const activeTab = localStorage.getItem('hypenosys_hub_active_tab') || 'pull-requests';
