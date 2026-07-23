@@ -1,14 +1,14 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-07-23T10:42:43.562Z",
+  "computed_at": "2026-07-23T10:43:07.992Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 47,
-    "total_ok": 47,
+    "total_tasks": 48,
+    "total_ok": 48,
     "total_ko": 0,
     "total_uncertain": 0,
     "total_obsolete": 0,
-    "fixed_found_ratio": 1.1463,
+    "fixed_found_ratio": 1.1429,
     "verified_ratio": 1
   },
   "group": {
@@ -120,12 +120,12 @@
     "axlfc": {
       "member_name": "Axel",
       "completed": {
-        "all_time": 70,
+        "all_time": 72,
         "milestone": 56,
         "week": 0
       },
       "weekly_velocity": {
-        "2026-W23": 72,
+        "2026-W23": 76,
         "2026-W24": 10,
         "2026-W25": 12,
         "2026-W26": 6,
@@ -135,7 +135,7 @@
         "2026-W30": 0
       },
       "type_breakdown": {
-        "feature": 44,
+        "feature": 46,
         "chore": 12,
         "bug": 10,
         "research": 4
@@ -152,7 +152,8 @@
         "chore/decommission-old-panels": 2,
         "feature/dashboard-error-boundaries": 2,
         "chore/upgrade-ue-5.7.4": 2,
-        "feature/kanban-jules-link": 2
+        "feature/kanban-jules-link": 2,
+        "feature/kanban-repo-names": 2
       },
       "tag_frequency": {
         "jules": 4,
@@ -161,9 +162,9 @@
         "bug": 4,
         "hard": 2,
         "api": 10,
-        "feature": 10,
-        "frontend": 8,
-        "ux": 12,
+        "feature": 12,
+        "frontend": 10,
+        "ux": 14,
         "chore": 10,
         "docs": 4,
         "devops": 6,
@@ -194,12 +195,12 @@
     "topperh4rley": {
       "member_name": "Alex",
       "completed": {
-        "all_time": 62,
+        "all_time": 64,
         "milestone": 48,
         "week": 0
       },
       "weekly_velocity": {
-        "2026-W23": 80,
+        "2026-W23": 84,
         "2026-W24": 6,
         "2026-W25": 12,
         "2026-W26": 0,
@@ -209,7 +210,7 @@
         "2026-W30": 0
       },
       "type_breakdown": {
-        "feature": 44,
+        "feature": 46,
         "bug": 6,
         "chore": 8,
         "research": 4
@@ -226,14 +227,15 @@
         "feature/dashboard-chat-icon": 2,
         "feature/dashboard-error-boundaries": 2,
         "chore/upgrade-ue-5.7.4": 2,
-        "feature/kanban-jules-link": 2
+        "feature/kanban-jules-link": 2,
+        "feature/kanban-repo-names": 2
       },
       "tag_frequency": {
         "jules": 4,
         "UX/UI": 6,
-        "feature": 12,
-        "frontend": 12,
-        "ux": 16,
+        "feature": 14,
+        "frontend": 14,
+        "ux": 18,
         "bug": 6,
         "hard": 2,
         "api": 10,
@@ -514,7 +516,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-07-23T10:42:44.854Z"
+      "timestamp": "2026-07-23T10:43:08.850Z"
     }
   ]
 }
