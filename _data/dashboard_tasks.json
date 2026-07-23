@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-07-20T20:12:59.392Z",
+  "last_updated": "2026-07-23T10:26:44.225Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2839,7 +2839,7 @@
     },
     {
       "title": "Improve hypenosys logo",
-      "descripcion": "Usar sesiones de Jules para sacar versiones y variaciones del logo",
+      "descripcion": "Usar sesiones de Jules para sacar versiones y variaciones del logo,\n\nCrear logo cuadrado pequeño",
       "rama": "master",
       "task_type": "feature",
       "tema_principal": "Arte / Assets",
@@ -2857,7 +2857,7 @@
       "email_responsable": "didac@hypenosys.com",
       "emails_asignados": [],
       "start_date": "2026-06-23",
-      "due_date": "2026-06-28",
+      "due_date": "2026-07-26",
       "estimated_hours": 4,
       "story_points": 4,
       "tags": [
@@ -2905,6 +2905,20 @@
           "field": "prioridad",
           "old_value": "Major",
           "new_value": "Cosmetic"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-23T10:26:43.538Z",
+          "field": "descripcion",
+          "old_value": "Usar sesiones de Jules para sacar versiones y variaciones del logo",
+          "new_value": "Usar sesiones de Jules para sacar versiones y variaciones del logo,\n\nCrear logo cuadrado pequeño"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-23T10:26:43.538Z",
+          "field": "due_date",
+          "old_value": "2026-06-28",
+          "new_value": "2026-07-26"
         }
       ],
       "id": 70,
@@ -3732,6 +3746,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #70",
+      "user": "Axlfc",
+      "timestamp": "2026-07-23T10:26:44.225Z"
+    },
     {
       "action": "chore: actualizar tarea #86",
       "user": "Axlfc",
