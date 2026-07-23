@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-07-23T10:44:41.787Z",
+  "last_updated": "2026-07-23T10:45:29.459Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2169,7 +2169,7 @@
       "tema_principal": "Arte / Assets",
       "seccion": "Logo",
       "repository": "hypenosys/hypenosys-logo",
-      "prioridad": "Cosmetic",
+      "prioridad": "Critical",
       "milestone": "M1",
       "estado": "Working",
       "completitud": 0,
@@ -2243,6 +2243,13 @@
           "field": "due_date",
           "old_value": "2026-06-28",
           "new_value": "2026-07-26"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-23T10:45:28.711Z",
+          "field": "prioridad",
+          "old_value": "Cosmetic",
+          "new_value": "Critical"
         }
       ],
       "id": 70,
@@ -3135,6 +3142,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #70",
+      "user": "Axlfc",
+      "timestamp": "2026-07-23T10:45:29.459Z"
+    },
     {
       "action": "chore: actualizar tarea #74",
       "user": "Axlfc",
