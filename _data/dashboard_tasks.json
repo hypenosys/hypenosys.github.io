@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-07-23T10:43:26.913Z",
+  "last_updated": "2026-07-23T10:43:37.406Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2162,82 +2162,6 @@
       "branch": "Programación (PRO)"
     },
     {
-      "title": "/chat/neural/:  Arreglar display de borrar/archivar sesiones",
-      "descripcion": "Actualmente es poco intuitivo, poner iconos emoji directamente con click. ",
-      "rama": "master",
-      "task_type": "feature",
-      "tema_principal": "Programación / Engine",
-      "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Cosmetic",
-      "milestone": "M1",
-      "estado": "OK",
-      "completitud": 0,
-      "resuelto_por": null,
-      "detectado_por": "Axel",
-      "asignados": [],
-      "email_responsable": null,
-      "emails_asignados": [],
-      "start_date": "2026-06-21",
-      "due_date": "2026-06-28",
-      "estimated_hours": 2,
-      "story_points": 2,
-      "tags": [],
-      "external_links": [],
-      "subtasks": [],
-      "acceptance_criteria": "",
-      "blocks": [],
-      "blocked_by": [],
-      "comments": [],
-      "images": [
-        {
-          "url": "https://64.media.tumblr.com/c9b495cd9bae8183b8f503348a89c8fb/307dec7b5bcf13cc-5a/s1280x1920/9389d8f5c887f30553f4bf6884c0b0564ef7279d.png",
-          "type": "url",
-          "tumblr_post_id": "820029962349330432",
-          "filename": "8677.png",
-          "uploaded_at": "2026-06-21T11:31:53.720Z"
-        }
-      ],
-      "rama2": null,
-      "ver": true,
-      "fecha": "2026-06-21",
-      "apoyo": null,
-      "limite": null,
-      "comentario": "",
-      "change_log": [
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T11:32:56.778Z",
-          "field": "id",
-          "old_value": null,
-          "new_value": "Created"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T12:41:37.108Z",
-          "field": "seccion",
-          "new_value": "Chat Neural"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T14:42:35.162Z",
-          "field": "estado",
-          "old_value": "Pending",
-          "new_value": "In Review"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-28T13:45:43.397Z",
-          "field": "estado",
-          "old_value": "In Review",
-          "new_value": "OK"
-        }
-      ],
-      "id": 65,
-      "seccion": "Chat Neural",
-      "jules_session": null,
-      "branch": "Programación (PRO)"
-    },
-    {
       "title": "Improve hypenosys logo",
       "descripcion": "Usar sesiones de Jules para sacar versiones y variaciones del logo,\n\nCrear logo cuadrado pequeño",
       "rama": "master",
@@ -3188,6 +3112,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: archivar tarea #65",
+      "user": "Axlfc",
+      "timestamp": "2026-07-23T10:43:37.406Z"
+    },
     {
       "action": "chore: actualizar tarea #72",
       "user": "Axlfc",
