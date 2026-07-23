@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-07-23T10:42:14.967Z",
+  "last_updated": "2026-07-23T10:42:37.769Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -567,192 +567,6 @@
       ],
       "id": 25,
       "repository": null,
-      "jules_session": null,
-      "branch": "Programación (PRO)"
-    },
-    {
-      "title": "Botón \"🤖 Enviar a Jules\" en tarjetas Kanban con estado de sesión Neural Operations",
-      "descripcion": "Integrar un botón para enviar tareas directamente a Jules desde el Kanban. Automatiza la creación de prompts y mejora la eficiencia de la IA.",
-      "rama": "feature/kanban-jules-link",
-      "task_type": "feature",
-      "tema_principal": "Programación / Engine",
-      "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Major",
-      "milestone": "M2",
-      "estado": "OK",
-      "completitud": 0.5,
-      "resuelto_por": "Axel",
-      "detectado_por": "Axel",
-      "asignados": [
-        "axlfc",
-        "topperh4rley"
-      ],
-      "email_responsable": "axel@hypenosys.com",
-      "emails_asignados": [
-        "alex@hypenosys.com"
-      ],
-      "start_date": "2026-06-04",
-      "due_date": "2026-06-07",
-      "estimated_hours": 8,
-      "story_points": 4,
-      "tags": [
-        "Infraestructura",
-        "api",
-        "feature",
-        "jules",
-        "ux"
-      ],
-      "external_links": [],
-      "subtasks": [
-        {
-          "id": 1780563025064,
-          "text": "Añadir botón 🤖 y lógica de construcción de prompt en ui-components.js",
-          "done": false
-        },
-        {
-          "id": 1780563033138,
-          "text": "Crear validador de prompt (campos faltantes + filtro de imágenes)",
-          "done": false
-        },
-        {
-          "id": 1780563041180,
-          "text": "Añadir campo jules_session al schema de dashboard_tasks.json",
-          "done": false
-        },
-        {
-          "id": 1780563049548,
-          "text": "Renderizar badge de estado Jules en tarjetas Kanban",
-          "done": false
-        },
-        {
-          "id": 1780563057273,
-          "text": "Vincular tarjeta ↔ sesión Jules por ID en jules-panel.html",
-          "done": false
-        },
-        {
-          "id": 1780936990388,
-          "text": "BUG: Botón robot no pre-rellena contexto en Neural Chat (tags: frontend, ux, bug)",
-          "done": false
-        }
-      ],
-      "acceptance_criteria": "El botón genere el prompt correcto y lo cargue en el panel.",
-      "blocks": [],
-      "blocked_by": [
-        "26",
-        "29",
-        "30"
-      ],
-      "comments": [
-        "Debemos implementar un sistema de validación previo para asegurar que no enviamos prompts vacíos que consuman tokens innecesariamente."
-      ],
-      "images": [],
-      "rama2": null,
-      "ver": true,
-      "fecha": "2026-06-04",
-      "apoyo": null,
-      "limite": null,
-      "comentario": "",
-      "change_log": [
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-04T08:51:21.137Z",
-          "field": "id",
-          "old_value": null,
-          "new_value": "Created"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-04T08:51:46.719Z",
-          "field": "blocked_by",
-          "old_value": "[]",
-          "new_value": "[\"26\"]"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-04T09:38:19.327Z",
-          "field": "milestone",
-          "old_value": "M1",
-          "new_value": "M2"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-06T09:58:00.973Z",
-          "field": "descripcion",
-          "old_value": "Añadir un botón con icono de robot en cada tarjeta del Kanban que estructure y envíe toda la información de la tarea al panel de Jules. El sistema debe validar que el prompt sea completo antes de enviarlo (avisando de campos vacíos o imágenes referenciadas, ya que Jules API no acepta imágenes). Además, cada tarea debe poder mostrar si ya tiene una sesión Jules activa asociada, quién la inició y en qué estado se encuentra (planificando, ejecutando, PR abierto, fallida). Se deja arquitectura abierta para integrar Claude API como capa conversacional que gestione la interacción con Jules de forma desatendida.",
-          "new_value": "Añadir un botón con icono de robot en cada tarjeta del Kanban que estructure y envíe toda la información de la tarea al panel de Jules. El sistema debe validar que el prompt sea completo antes de enviarlo, podría ser interceptado por claude chat (avisando de campos vacíos o imágenes referenciadas, ya que Jules API no acepta imágenes; Podemos programar nuestro propio sistema de reconocimiento). Además, cada tarea debe poder mostrar si ya tiene una sesión Jules activa asociada, quién la inició y en qué estado se encuentra (planificando, ejecutando, PR abierto, fallida). Se deja arquitectura abierta para integrar Claude API/Ollama como capa conversacional que gestione la interacción con Jules de forma desatendida."
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-06T10:09:01.672Z",
-          "field": "blocked_by",
-          "old_value": "[\"26\"]",
-          "new_value": "[\"26\",\"30\"]"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-06T10:10:56.145Z",
-          "field": "blocked_by",
-          "old_value": "[\"26\",\"30\"]",
-          "new_value": "[\"26\",\"29\",\"30\"]"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-08T18:44:36.016Z",
-          "field": "estado",
-          "old_value": "Working",
-          "new_value": "In Review"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-08T18:44:36.016Z",
-          "field": "completitud",
-          "old_value": 0,
-          "new_value": 0.5
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-15T17:08:53.948Z",
-          "field": "estado",
-          "old_value": "In Review",
-          "new_value": "OK"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-16T13:07:39.015Z",
-          "field": "estado",
-          "old_value": "OK",
-          "new_value": "In Review"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T12:46:38.981Z",
-          "field": "seccion",
-          "new_value": "Dashboard"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T22:53:16.126Z",
-          "field": "estado",
-          "old_value": "In Review",
-          "new_value": "OK"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-22T00:03:24.025Z",
-          "field": "estado",
-          "old_value": "OK",
-          "new_value": "Fixed"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-22T00:07:00.320Z",
-          "field": "estado",
-          "old_value": "Fixed",
-          "new_value": "OK"
-        }
-      ],
-      "id": 27,
-      "seccion": "Dashboard",
       "jules_session": null,
       "branch": "Programación (PRO)"
     },
@@ -3465,6 +3279,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: archivar tarea #27",
+      "user": "Axlfc",
+      "timestamp": "2026-07-23T10:42:37.769Z"
+    },
     {
       "action": "chore: archivar tarea #12",
       "user": "Axlfc",
