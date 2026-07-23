@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-07-23T10:42:40.394Z",
+  "last_updated": "2026-07-23T10:43:05.215Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -4732,9 +4732,119 @@
       "seccion": "Dashboard",
       "jules_session": null,
       "branch": "Programación (PRO)"
+    },
+    {
+      "title": "Falta nombre del repo (o alias) en las cards en dashboard de Jules Neural Operations",
+      "descripcion": "Mostrar claramente el nombre o alias del repositorio en las tarjetas del dashboard. Evita confusiones al trabajar en múltiples proyectos.",
+      "rama": "feature/kanban-repo-names",
+      "task_type": "feature",
+      "tema_principal": "Tools / Automation",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Minor",
+      "milestone": "M2",
+      "estado": "OK",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc",
+        "topperh4rley"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-06-07",
+      "due_date": "2026-06-14",
+      "estimated_hours": 2,
+      "story_points": 2,
+      "tags": [
+        "feature",
+        "frontend",
+        "ux"
+      ],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "Cada tarjeta identifique su repositorio de origen de forma minimalista.",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [
+        "Usaremos los alias definidos en la configuración para que los nombres no ocupen demasiado espacio y sigan siendo legibles."
+      ],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-07",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:27:25.713Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:29:50.368Z",
+          "field": "title",
+          "old_value": "Falta nombre del repo (o alias) en las Jules Neural Operations",
+          "new_value": "Falta nombre del repo (o alias) en las cards en dashboard de Jules Neural Operations"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:33:27.111Z",
+          "field": "descripcion",
+          "old_value": "Tambien un boton que lleve el boton para ir a la sesión asociada de Claude-Chat",
+          "new_value": "Tambien un boton que lleve el boton para ir a la sesión asociada de Claude-Chat en cada card y el estado de esa sesión de Jules"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:17:32.838Z",
+          "field": "descripcion",
+          "old_value": "Tambien un boton que lleve el boton para ir a la sesión asociada de Claude-Chat en cada card y el estado de esa sesión de Jules",
+          "new_value": "Tambien un boton que lleve el boton para ir a la sesión asociada de Claude-Chat en cada card y el estado de esa sesión de Jules estilo minimalista"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-11T09:38:49.235Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:05:25.384Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:45:33.169Z",
+          "field": "seccion",
+          "new_value": "Dashboard, Jules Panel"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-28T13:45:53.205Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "OK"
+        }
+      ],
+      "id": 42,
+      "seccion": "Dashboard, Jules Panel",
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: tarea #42 movida al archivo",
+      "user": "Axlfc",
+      "timestamp": "2026-07-23T10:43:05.215Z"
+    },
     {
       "action": "chore: tarea #27 movida al archivo",
       "user": "Axlfc",
