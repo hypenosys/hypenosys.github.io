@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-07-23T10:41:55.714Z",
+  "last_updated": "2026-07-23T10:42:08.149Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -391,216 +391,6 @@
       "subtasks": [],
       "comments": [],
       "change_log": [],
-      "jules_session": null,
-      "branch": "Programación (PRO)"
-    },
-    {
-      "rama": "chore/upgrade-ue-5.7.4",
-      "descripcion": "Actualizar el repositorio 'app' a la v5.8 de Unreal Engine y sincronizar con SVN. Necesario para mantener la compatibilidad con las últimas herramientas.",
-      "tema_principal": "Tools / Automation",
-      "prioridad": "ToDo",
-      "milestone": "M1",
-      "estado": "OK",
-      "completitud": 0.9,
-      "resuelto_por": "Axel",
-      "detectado_por": "Axel",
-      "asignados": [
-        "axlfc",
-        "topperh4rley"
-      ],
-      "rama2": null,
-      "ver": true,
-      "fecha": "2026-05-26",
-      "apoyo": null,
-      "limite": null,
-      "comentario": "Sincronización técnica entre el repositorio de scripts procedurales y el proyecto principal en la versión 5.7.4 para asegurar compatibilidad.",
-      "id": 11,
-      "email_responsable": "alex@hypenosys.com",
-      "emails_asignados": [
-        "axel@hypenosys.com",
-        "alex@hypenosys.com"
-      ],
-      "images": [],
-      "title": "upgrade 'app' to Unreal 5.8",
-      "task_type": "chore",
-      "start_date": "2026-06-01",
-      "due_date": "2026-06-30",
-      "estimated_hours": 2,
-      "story_points": 1,
-      "tags": [
-        "chore",
-        "devops",
-        "git"
-      ],
-      "external_links": [],
-      "subtasks": [
-        {
-          "id": 1780675597610,
-          "text": "clonar repo hypenosys/app",
-          "done": false
-        },
-        {
-          "id": 1780675637546,
-          "text": "ponerla al día a la versión",
-          "done": false
-        }
-      ],
-      "acceptance_criteria": "El proyecto compile y se abra sin errores en la v5.7.4.",
-      "blocks": [],
-      "blocked_by": [],
-      "comments": [
-        "Cuidado con las dependencias de los plugins al actualizar, a veces rompen al saltar de subversión."
-      ],
-      "change_log": [
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-01T09:22:52.373Z",
-          "field": "due_date",
-          "old_value": null,
-          "new_value": "2026-06-30"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-03T07:34:10.481Z",
-          "field": "repository",
-          "old_value": null,
-          "new_value": "hypenosys/app"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-05T16:02:46.750Z",
-          "field": "title",
-          "old_value": "Merge SVN Content/Scripts with upgraded github repo 'app'",
-          "new_value": "Content/Scripts github sync repo 'app' which is Unreal upgraded to 5.7.4"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-05T16:02:46.750Z",
-          "field": "prioridad",
-          "old_value": "Minor",
-          "new_value": "Major"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-05T16:02:46.750Z",
-          "field": "milestone",
-          "old_value": "M1",
-          "new_value": "M3"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-05T16:02:46.750Z",
-          "field": "task_type",
-          "old_value": "feature",
-          "new_value": "chore"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-05T16:08:34.339Z",
-          "field": "descripcion",
-          "old_value": "Merge SVN Content/Scripts with upgraded github repo 'app' 5.7.4",
-          "new_value": "Merge SVN Content/Scripts SVN folder syncing with upgraded an upgraded github repo 'app' to 5.7.4"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-05T16:08:34.339Z",
-          "field": "tags",
-          "old_value": "[]",
-          "new_value": "[\"git\"]"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-06T15:21:19.422Z",
-          "field": "prioridad",
-          "old_value": "Major",
-          "new_value": "ToDo"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-07T19:37:13.662Z",
-          "field": "title",
-          "old_value": "Content/Scripts github sync repo 'app' which is Unreal upgraded to 5.7.4",
-          "new_value": "upgrade repo 'app' which is Unreal upgraded to 5.7.4"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-07T19:37:13.662Z",
-          "field": "milestone",
-          "old_value": "M3",
-          "new_value": "M1"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-07T20:09:02.758Z",
-          "field": "title",
-          "old_value": "upgrade repo 'app' which is Unreal upgraded to 5.7.4",
-          "new_value": "upgrade repo 'app' to Unreal 5.7.4"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-07T20:09:02.758Z",
-          "field": "descripcion",
-          "old_value": "Merge SVN Content/Scripts SVN folder syncing with upgraded an upgraded github repo 'app' to 5.7.4",
-          "new_value": "Merge to SVN Content/Scripts git folder syncing with github repo 'app' sync to 5.7.4"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-07T20:09:21.058Z",
-          "field": "title",
-          "old_value": "upgrade repo 'app' to Unreal 5.7.4",
-          "new_value": "upgrade 'app' to Unreal 5.7.4"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-11T09:37:31.532Z",
-          "field": "estado",
-          "old_value": "Pending",
-          "new_value": "Working"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-15T19:07:52.551Z",
-          "field": "estado",
-          "old_value": "Working",
-          "new_value": "In Review"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-15T19:07:52.551Z",
-          "field": "completitud",
-          "old_value": 0.75,
-          "new_value": 0.9
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T10:34:44.435Z",
-          "field": "title",
-          "old_value": "upgrade 'app' to Unreal 5.7.4",
-          "new_value": "upgrade 'app' to Unreal 5.8"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T12:43:56.450Z",
-          "field": "seccion",
-          "new_value": "App"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T14:48:53.562Z",
-          "field": "descripcion",
-          "old_value": "Actualizar el repositorio 'app' a la v5.7.4 de Unreal Engine y sincronizar con SVN. Necesario para mantener la compatibilidad con las últimas herramientas.",
-          "new_value": "Actualizar el repositorio 'app' a la v5.8 de Unreal Engine y sincronizar con SVN. Necesario para mantener la compatibilidad con las últimas herramientas."
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-18T11:38:55.650Z",
-          "field": "estado",
-          "old_value": "Pending",
-          "new_value": "OK"
-        }
-      ],
-      "repository": "hypenosys/app",
-      "seccion": "App",
       "jules_session": null,
       "branch": "Programación (PRO)"
     },
@@ -3781,6 +3571,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: archivar tarea #11",
+      "user": "Axlfc",
+      "timestamp": "2026-07-23T10:42:08.149Z"
+    },
     {
       "action": "chore: actualizar tarea #85",
       "user": "Axlfc",
