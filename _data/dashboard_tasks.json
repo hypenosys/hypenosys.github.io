@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-07-23T10:41:32.556Z",
+  "last_updated": "2026-07-23T10:41:42.024Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3665,7 +3665,7 @@
       "id": 84
     },
     {
-      "title": "Crear Qdrant server en Zimaboard2",
+      "title": "Crear Qdrant server en Oracle",
       "descripcion": "Para RAG/Vector search",
       "rama": "master",
       "task_type": "feature",
@@ -3706,6 +3706,13 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-23T10:41:41.232Z",
+          "field": "title",
+          "old_value": "Crear Qdrant server en Zimaboard2",
+          "new_value": "Crear Qdrant server en Oracle"
         }
       ],
       "id": 85
@@ -3767,6 +3774,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #85",
+      "user": "Axlfc",
+      "timestamp": "2026-07-23T10:41:42.024Z"
+    },
     {
       "action": "chore: actualizar tarea #73",
       "user": "Axlfc",
