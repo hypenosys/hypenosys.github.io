@@ -1,15 +1,15 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-07-23T10:41:44.498Z",
+  "computed_at": "2026-07-23T10:41:58.758Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 33,
-    "total_ok": 9,
+    "total_ok": 10,
     "total_ko": 0,
     "total_uncertain": 4,
     "total_obsolete": 9,
-    "fixed_found_ratio": 0.225,
-    "verified_ratio": 0.2143
+    "fixed_found_ratio": 0.25,
+    "verified_ratio": 0.2381
   },
   "group": {
     "velocity_trend": {
@@ -22,7 +22,7 @@
       "2026-W29": 0,
       "2026-W30": 0
     },
-    "bug_rate": 0.125,
+    "bug_rate": 0.1304,
     "blocker_health": 1,
     "tag_heatmap": {
       "brainstorm": 1,
@@ -33,7 +33,7 @@
       "testing": 1,
       "devops": 3,
       "api": 3,
-      "feature": 13,
+      "feature": 12,
       "infraestructura": 1,
       "jules-panel": 1,
       "neural-chat": 1,
@@ -43,7 +43,7 @@
       "Infraestructura": 1,
       "chat": 1,
       "matrix": 1,
-      "master": 16,
+      "master": 15,
       "Art": 1,
       "logo": 1
     },
@@ -142,7 +142,7 @@
     "axlfc": {
       "member_name": "Axel",
       "completed": {
-        "all_time": 40,
+        "all_time": 41,
         "milestone": 28,
         "week": 0
       },
@@ -153,12 +153,12 @@
         "2026-W26": 3,
         "2026-W27": 6,
         "2026-W28": 7,
-        "2026-W29": 0,
+        "2026-W29": 2,
         "2026-W30": 0
       },
       "type_breakdown": {
         "chore": 7,
-        "feature": 26,
+        "feature": 27,
         "bug": 5,
         "research": 2
       },
@@ -167,7 +167,7 @@
         "feature/kanban-jules-link": 1,
         "feature/kanban-repo-names": 1,
         "feature/ollama-proxy-relay": 1,
-        "master": 13,
+        "master": 14,
         "PRO": 15,
         "feature/mobile-github-ops": 1,
         "feature/dashboard-tag-filter": 1,
@@ -213,8 +213,8 @@
         "reprioritizations": 31
       },
       "workload": {
-        "active_tasks": 15,
-        "story_points": 42
+        "active_tasks": 14,
+        "story_points": 40
       }
     },
     "topperh4rley": {
@@ -542,7 +542,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-07-23T10:41:45.502Z"
+      "timestamp": "2026-07-23T10:41:59.510Z"
     }
   ]
 }
