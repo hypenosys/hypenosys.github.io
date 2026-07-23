@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-07-23T10:44:23.216Z",
+  "last_updated": "2026-07-23T10:44:41.787Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2484,12 +2484,14 @@
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Major",
       "milestone": "M1",
-      "estado": "Pending",
+      "estado": "Working",
       "completitud": 0,
-      "resuelto_por": null,
+      "resuelto_por": "Axel",
       "detectado_por": "Axel",
-      "asignados": [],
-      "email_responsable": null,
+      "asignados": [
+        "axlfc"
+      ],
+      "email_responsable": "axel@hypenosys.com",
       "emails_asignados": [],
       "start_date": null,
       "due_date": null,
@@ -2530,6 +2532,20 @@
           "field": "descripcion",
           "old_value": "Ejemplo:\n\nTenemos dos modelos locales de embeddings en ollama.",
           "new_value": "Ejemplo:\n\nTenemos dos modelos locales de embeddings en ollama. (nomic-embed-text por ejemplo)"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-23T10:44:41.261Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-23T10:44:41.261Z",
+          "field": "asignados",
+          "old_value": "[]",
+          "new_value": "[\"axlfc\"]"
         }
       ],
       "id": 74,
@@ -3119,6 +3135,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #74",
+      "user": "Axlfc",
+      "timestamp": "2026-07-23T10:44:41.787Z"
+    },
     {
       "action": "chore: actualizar tarea #86",
       "user": "Axlfc",
