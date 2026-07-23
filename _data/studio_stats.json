@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-07-23T10:43:15.416Z",
+  "computed_at": "2026-07-23T10:43:29.731Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 29,
@@ -22,7 +22,7 @@
       "2026-W29": 0,
       "2026-W30": 0
     },
-    "bug_rate": 0.1304,
+    "bug_rate": 0.1739,
     "blocker_health": 1,
     "tag_heatmap": {
       "brainstorm": 1,
@@ -33,12 +33,12 @@
       "testing": 1,
       "devops": 3,
       "api": 3,
-      "feature": 12,
+      "feature": 11,
       "infraestructura": 1,
       "jules-panel": 1,
       "neural-chat": 1,
       "svn": 1,
-      "bug": 3,
+      "bug": 4,
       "security": 2,
       "Infraestructura": 1,
       "chat": 1,
@@ -542,7 +542,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-07-23T10:43:16.390Z"
+      "timestamp": "2026-07-23T10:43:30.555Z"
     }
   ]
 }
