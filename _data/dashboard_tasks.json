@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-07-23T10:43:12.565Z",
+  "last_updated": "2026-07-23T10:43:26.913Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2377,7 +2377,7 @@
       "title": "Fix: Img-Gen txt2image - ComfyUI usa CPU en lugar de GPU",
       "descripcion": "Hemos vaciado la memoria de la GPU del modelo al generar la imagen, pero hay como un bug que sigue tirando de CPU en lugar de usar la GPU",
       "rama": "master",
-      "task_type": "feature",
+      "task_type": "bug",
       "tema_principal": "Programación / Engine",
       "seccion": "n8n",
       "repository": "hypenosys/hypenosys.github.io",
@@ -2452,6 +2452,13 @@
           "field": "asignados",
           "old_value": "[]",
           "new_value": "[\"axlfc\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-23T10:43:26.306Z",
+          "field": "task_type",
+          "old_value": "feature",
+          "new_value": "bug"
         }
       ],
       "id": 72,
@@ -3181,6 +3188,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #72",
+      "user": "Axlfc",
+      "timestamp": "2026-07-23T10:43:26.913Z"
+    },
     {
       "action": "chore: actualizar tarea #35",
       "user": "Axlfc",
