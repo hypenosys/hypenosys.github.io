@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-07-23T10:26:44.225Z",
+  "last_updated": "2026-07-23T10:41:14.310Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -3059,13 +3059,13 @@
       "branch": "Programación (PRO)"
     },
     {
-      "title": "Crear matrix server en Zimaboard2",
+      "title": "Crear matrix server en Oracle",
       "descripcion": "Para los pipes de comunicación, pudiendo crear rooms y foros indexados con creación de wiki continua además del CHANGELOG.md",
       "rama": "master",
       "task_type": "feature",
       "tema_principal": "Programación / Engine",
       "seccion": "Matrix-Server-Docker",
-      "repository": "hypenosys/Minecraft-Server-Docker",
+      "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Major",
       "milestone": "M2",
       "estado": "Working",
@@ -3116,6 +3116,20 @@
           "field": "completitud",
           "old_value": 0,
           "new_value": 0.3
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-23T10:41:13.729Z",
+          "field": "title",
+          "old_value": "Crear matrix server en Zimaboard2",
+          "new_value": "Crear matrix server en Oracle"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-23T10:41:13.729Z",
+          "field": "repository",
+          "old_value": "hypenosys/Minecraft-Server-Docker",
+          "new_value": "hypenosys/hypenosys.github.io"
         }
       ],
       "id": 73,
@@ -3746,6 +3760,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #73",
+      "user": "Axlfc",
+      "timestamp": "2026-07-23T10:41:14.310Z"
+    },
     {
       "action": "chore: actualizar tarea #70",
       "user": "Axlfc",
