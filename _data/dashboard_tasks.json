@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-07-23T10:45:43.314Z",
+  "last_updated": "2026-07-23T12:03:11.723Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2863,7 +2863,7 @@
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Medium",
       "milestone": "M2",
-      "estado": "Pending",
+      "estado": "Working",
       "completitud": 0,
       "resuelto_por": "Axel",
       "detectado_por": "Axel",
@@ -2871,7 +2871,9 @@
         "axlfc"
       ],
       "email_responsable": "axel@hypenosys.com",
-      "emails_asignados": [],
+      "emails_asignados": [
+        "alex@hypenosys.com"
+      ],
       "start_date": "2026-07-17",
       "due_date": "2026-07-26",
       "estimated_hours": 4,
@@ -2911,6 +2913,13 @@
           "field": "descripcion",
           "old_value": "Añadir al dashboard Organizaciones (aparte de hypenosys, poder crear otras organizaciones) así como un kanban personal por usuario (independiente de organizaciones, solo personal y solo accesible en la web al estar loggeado)",
           "new_value": "Añadir al dashboard Organizaciones (aparte de hypenosys, poder crear otras organizaciones) así como un kanban personal local only (localStorage) por usuario (independiente de organizaciones, solo personal y solo accesible en la web al estar loggeado y almacenado en localStorage y con herramientas de Importación/exportación)"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-23T12:03:11.089Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
         }
       ],
       "id": 82
@@ -3149,6 +3158,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #82",
+      "user": "Axlfc",
+      "timestamp": "2026-07-23T12:03:11.723Z"
+    },
     {
       "action": "chore: actualizar tarea #57",
       "user": "Axlfc",
