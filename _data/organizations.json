@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0.0",
+  "organizations": [
+    {
+      "id": "hypenosys",
+      "name": "Hypenosys",
+      "path_prefix": "",
+      "members": [
+        "Axlfc",
+        "TopperH4rley",
+        "javi26031994-a11y",
+        "dkdidac-design",
+        "mitxel2022",
+        "silmaril464",
+        "lachicadelaboina",
+        "spongebob3bray"
+      ]
+    },
+    {
+      "id": "empty-space-videogames",
+      "name": "Empty Space Videogames",
+      "path_prefix": "_data/orgs/empty-space-videogames/",
+      "members": [
+        "Axlfc",
+        "TopperH4rley"
+      ]
+    }
+  ]
+}

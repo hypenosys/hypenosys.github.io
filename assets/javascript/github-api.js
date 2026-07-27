@@ -99,13 +99,66 @@ class AtomicWriteNonRetryableError extends Error {
 }
 
 /**
+ * Helper to dynamically resolve the path according to active workspace / organization.
+ */
+function resolveWorkspacePath(filePath) {
+    const ws = localStorage.getItem('hy_active_workspace') || 'hypenosys';
+    if (ws === 'hypenosys' || ws === 'personal') {
+        return filePath;
+    }
+    if (filePath.includes('/orgs/')) {
+        return filePath;
+    }
+    if (filePath.startsWith('_data/')) {
+        const file = filePath.substring(6);
+        return `_data/orgs/${ws}/${file}`;
+    }
+    return filePath;
+}
+
+/**
  * Recupera un archivo del repositorio con su SHA actual.
  * @param {string} filePath Ruta del archivo en el repositorio.
  * @param {string} contentType 'json' o 'text'
  * @returns {Promise<Object>} { content: Object|string|null, sha: string|null }.
  */
 async function fetchFileWithSha(filePath, contentType = 'json') {
-    const url = `${GITHUB_API_BASE}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filePath}?ref=${DATA_BRANCH}&t=${Date.now()}`;
+    const ws = localStorage.getItem('hy_active_workspace') || 'hypenosys';
+    if (ws === 'personal') {
+        const keyMap = {
+            '_data/dashboard_tasks.json': 'hy_personal_tasks',
+            '_data/dashboard_tasks_archive.json': 'hy_personal_archive',
+            '_data/studio_stats.json': 'hy_personal_stats',
+            '_data/studio_budget.json': 'hy_personal_budget'
+        };
+        const localKey = keyMap[filePath];
+        if (localKey) {
+            const dataStr = localStorage.getItem(localKey);
+            if (dataStr) {
+                try {
+                    const content = contentType === 'json' ? JSON.parse(dataStr) : dataStr;
+                    return { content, sha: 'local-personal-sha' };
+                } catch (e) {
+                    console.error('[LOCAL-PERSONAL] Failed to parse JSON:', e);
+                }
+            }
+            // Retornar estructuras por defecto para el espacio personal
+            let defaultContent = null;
+            if (contentType === 'json') {
+                if (filePath.endsWith('dashboard_tasks.json') || filePath.endsWith('dashboard_tasks_archive.json')) {
+                    defaultContent = { tasks: [], _audit_log: [], schema_version: '1.2.0' };
+                } else if (filePath.endsWith('studio_stats.json')) {
+                    defaultContent = { schema_version: '1.1.0', computed_at: '', global: {}, members: {}, group: {} };
+                } else if (filePath.endsWith('studio_budget.json')) {
+                    defaultContent = { monthly_records: [], burnout: { current_milestone: 'M1', milestones: [{ id: 'M1', date_start: '2025-01-01', date_end: '2025-02-15' }] } };
+                }
+            }
+            return { content: defaultContent, sha: 'local-personal-sha' };
+        }
+    }
+
+    const resolvedPath = resolveWorkspacePath(filePath);
+    const url = `${GITHUB_API_BASE}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${resolvedPath}?ref=${DATA_BRANCH}&t=${Date.now()}`;
     const response = await fetch(url, {
         headers: getHeaders()
     });
@@ -142,7 +195,8 @@ async function fetchFileWithSha(filePath, contentType = 'json') {
  * @returns {Promise<Object>} Datos crudos del archivo.
  */
 async function getFile(filePath) {
-    const url = `${GITHUB_API_BASE}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filePath}?ref=${DATA_BRANCH}&t=${Date.now()}`;
+    const resolvedPath = resolveWorkspacePath(filePath);
+    const url = `${GITHUB_API_BASE}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${resolvedPath}?ref=${DATA_BRANCH}&t=${Date.now()}`;
     const response = await fetch(url, {
         headers: getHeaders()
     });
@@ -165,7 +219,29 @@ async function getFile(filePath) {
  * @returns {Promise<Object>} Resultado de la operación { ok: boolean, status: number, data: Object, retryAfter: number|null }.
  */
 async function putFileContent(filePath, sha, newContent, commitMessage, contentType = 'json') {
-    const url = `${GITHUB_API_BASE}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filePath}`;
+    const ws = localStorage.getItem('hy_active_workspace') || 'hypenosys';
+    if (ws === 'personal') {
+        const keyMap = {
+            '_data/dashboard_tasks.json': 'hy_personal_tasks',
+            '_data/dashboard_tasks_archive.json': 'hy_personal_archive',
+            '_data/studio_stats.json': 'hy_personal_stats',
+            '_data/studio_budget.json': 'hy_personal_budget'
+        };
+        const localKey = keyMap[filePath];
+        if (localKey) {
+            const dataStr = contentType === 'json' ? JSON.stringify(newContent, null, 2) : String(newContent);
+            localStorage.setItem(localKey, dataStr);
+            return {
+                ok: true,
+                status: 200,
+                data: { message: "Saved locally" },
+                retryAfter: null
+            };
+        }
+    }
+
+    const resolvedPath = resolveWorkspacePath(filePath);
+    const url = `${GITHUB_API_BASE}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${resolvedPath}`;
 
     let contentString;
     if (contentType === 'json') {
@@ -225,7 +301,8 @@ async function putFileContent(filePath, sha, newContent, commitMessage, contentT
  * Actualiza un archivo directamente (sin wrapper atómico).
  */
 async function updateFile(filePath, contentString, commitMessage, sha) {
-    const url = `${GITHUB_API_BASE}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filePath}`;
+    const resolvedPath = resolveWorkspacePath(filePath);
+    const url = `${GITHUB_API_BASE}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${resolvedPath}`;
     const body = JSON.stringify({
         message: commitMessage,
         content: btoa(unescape(encodeURIComponent(contentString))),
@@ -254,7 +331,8 @@ async function updateFile(filePath, contentString, commitMessage, sha) {
  * @param {string} commitMessage Mensaje del commit.
  */
 async function deleteFile(filePath, sha, commitMessage) {
-    const url = `${GITHUB_API_BASE}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filePath}`;
+    const resolvedPath = resolveWorkspacePath(filePath);
+    const url = `${GITHUB_API_BASE}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${resolvedPath}`;
     const body = JSON.stringify({
         message: commitMessage,
         sha: sha,
@@ -386,13 +464,13 @@ async function atomicWrite(filePath, mutatorFn, commitMessage, optionsOrMergeStr
 
     // default file setup for specific files
     if (options.initialContent === null) {
-        if (filePath === '_data/dashboard_tasks.json' || filePath === '_data/dashboard_tasks_archive.json') {
+        if (filePath.endsWith('dashboard_tasks.json') || filePath.endsWith('dashboard_tasks_archive.json')) {
             options.createIfMissing = true;
             options.initialContent = { tasks: [], _audit_log: [], schema_version: '1.2.0' };
-        } else if (filePath === '_data/studio_stats.json') {
+        } else if (filePath.endsWith('studio_stats.json')) {
             options.createIfMissing = true;
             options.initialContent = { schema_version: '1.1.0', computed_at: '', global: {}, members: {}, group: {} };
-        } else if (filePath === '_data/jules_panel_state.json') {
+        } else if (filePath.endsWith('jules_panel_state.json')) {
             options.createIfMissing = true;
             options.initialContent = { archive: {}, last_updated: '' };
         }
@@ -569,7 +647,7 @@ async function atomicWrite(filePath, mutatorFn, commitMessage, optionsOrMergeStr
  * @param {Object} tasksData Objeto de datos de tareas.
  */
 async function recomputeAndSaveStats(tasksData) {
-    const activeTasks = tasksData.tasks || [];
+    const activeTasks = (tasksData && tasksData.tasks) || [];
     let archivedTasks = [];
     try {
         const archiveRes = await window.githubApi.fetchFileWithSha('_data/dashboard_tasks_archive.json');
@@ -1225,6 +1303,17 @@ window.githubApi = Object.assign(window.githubApi, {
     // Métodos de compatibilidad legacy
     getFile,
     updateFile,
+
+    // Workspace Management
+    getActiveWorkspace() {
+        return localStorage.getItem('hy_active_workspace') || 'hypenosys';
+    },
+
+    setActiveWorkspace(ws) {
+        localStorage.setItem('hy_active_workspace', ws);
+        window.dispatchEvent(new Event('workspaceChanged'));
+        broadcastUpdate('_data/dashboard_tasks.json');
+    },
 
     // Core API
     validateToken: validateTokenAndStore,
