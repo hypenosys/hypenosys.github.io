@@ -793,7 +793,7 @@ window.handleDashboardLogin = function() {
     } else {
         const rememberMe = document.getElementById('chk-remember-me-dashboard')?.checked || false;
         sessionStorage.setItem('auth_remember_me', rememberMe);
-        const clientId = window.authManager?.clientId || 'Ov23liAVwbXNtvhkHJQe';
+        const clientId = (window.authManager && window.authManager.clientId) || window.HY_OAUTH_CONFIG.clientId;
         const scope = 'repo';
         window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=${scope}`;
     }
