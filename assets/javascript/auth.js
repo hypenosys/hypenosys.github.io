@@ -4,7 +4,7 @@
 
 class AuthManager {
     constructor() {
-        this.clientId = 'Ov23liAVwbXNtvhkHJQe';
+        this.clientId = window.HY_OAUTH_CONFIG.clientId;
         this.init();
     }
 
