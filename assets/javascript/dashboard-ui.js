@@ -10,6 +10,8 @@
 function renderDashboard() {
   const eb = window.ErrorBoundary;
 
+  eb.safeInvoke('header-status-slot', 'Workspace Selector', renderWorkspaceSelector);
+  eb.safeInvoke('local-kanban-actions', 'Local Actions', renderLocalWorkspaceActions);
   eb.safeInvoke('member-filters', 'Member Toggles', renderMemberToggles);
   eb.safeInvoke('kanban-filter-bar', 'Kanban Filters', renderKanbanFilters);
   eb.safeInvoke('jules-dashboard-sessions', 'Jules Badges', updateJulesBadges);
@@ -1009,3 +1011,242 @@ function renderKanbanFilters() {
 
     container.appendChild(lastRowWrapper);
 }
+
+let __workspaces__ = [];
+
+async function renderWorkspaceSelector() {
+    const slot = document.getElementById('header-status-slot');
+    if (!slot) return;
+
+    const currentWs = window.githubApi.getActiveWorkspace();
+
+    if (__workspaces__.length === 0) {
+        try {
+            const orgsRes = await window.githubApi.fetchFileWithSha('_data/organizations.json');
+            if (orgsRes && orgsRes.content && orgsRes.content.organizations) {
+                __workspaces__ = orgsRes.content.organizations;
+            } else {
+                __workspaces__ = [{ id: 'hypenosys', name: 'Hypenosys', path_prefix: '' }];
+            }
+        } catch (e) {
+            console.error('[WORKSPACE] Failed to load organizations, using fallback:', e);
+            __workspaces__ = [{ id: 'hypenosys', name: 'Hypenosys', path_prefix: '' }];
+        }
+    }
+
+    let currentWsName = 'Hypenosys';
+    if (currentWs === 'personal') {
+        currentWsName = 'Kanban Personal';
+    } else {
+        const found = __workspaces__.find(w => w.id === currentWs);
+        if (found) currentWsName = found.name;
+    }
+
+    let itemsHtml = '';
+
+    // Organizations Section
+    itemsHtml += `<div class="px-3 py-1 text-[9px] font-bold text-slate-500 uppercase tracking-widest border-b border-slate-900">Organizaciones</div>`;
+    __workspaces__.forEach(w => {
+        const activeClass = currentWs === w.id ? 'text-indigo-400 font-bold bg-slate-900' : 'text-slate-300';
+        itemsHtml += `
+            <button onclick="switchWorkspace('${w.id}')" class="flex items-center w-full px-4 py-2 text-xs text-left hover:bg-slate-800 transition-colors ${activeClass}">
+                <i class="fa-solid fa-building mr-2 text-[10px] opacity-70"></i> ${w.name}
+            </button>
+        `;
+    });
+
+    // Personal Section
+    itemsHtml += `<div class="px-3 py-1 text-[9px] font-bold text-slate-500 uppercase tracking-widest border-t border-b border-slate-900 mt-1">Personal</div>`;
+    const personalActive = currentWs === 'personal' ? 'text-indigo-400 font-bold bg-slate-900' : 'text-slate-300';
+    itemsHtml += `
+        <button onclick="switchWorkspace('personal')" class="flex items-center w-full px-4 py-2 text-xs text-left hover:bg-slate-800 transition-colors ${personalActive}">
+            <i class="fa-solid fa-user mr-2 text-[10px] opacity-70"></i> Kanban Personal
+        </button>
+    `;
+
+    // Actions Section
+    itemsHtml += `<div class="border-t border-slate-900 my-1"></div>`;
+    itemsHtml += `
+        <button onclick="promptCreateOrganization()" class="flex items-center w-full px-4 py-2 text-xs text-left text-emerald-400 hover:bg-slate-800 transition-colors font-bold">
+            <i class="fa-solid fa-plus mr-2 text-[10px]"></i> Nueva Organización
+        </button>
+    `;
+
+    slot.innerHTML = `
+        <div class="relative inline-block text-left" id="workspace-selector-container" style="z-index: 4000;">
+            <button type="button" class="flex items-center gap-2 px-3 py-1.5 bg-slate-900/60 border border-slate-800 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:border-slate-700 transition-all focus:outline-none" id="workspace-menu-button">
+                <i class="fa-solid ${currentWs === 'personal' ? 'fa-user' : 'fa-building'} text-indigo-400"></i>
+                <span>${currentWsName}</span>
+                <i class="fa-solid fa-chevron-down text-slate-500 text-[10px]"></i>
+            </button>
+
+            <div id="workspace-menu" class="hidden absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-xl bg-slate-950 border border-slate-800 shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none overflow-hidden" role="menu">
+                <div class="py-1" role="none">
+                    ${itemsHtml}
+                </div>
+            </div>
+        </div>
+    `;
+
+    const btn = document.getElementById('workspace-menu-button');
+    const menu = document.getElementById('workspace-menu');
+    if (btn && menu) {
+        btn.onclick = (e) => {
+            e.stopPropagation();
+            menu.classList.toggle('hidden');
+        };
+        document.addEventListener('click', (e) => {
+            if (!btn.contains(e.target) && !menu.contains(e.target)) {
+                menu.classList.add('hidden');
+            }
+        });
+    }
+}
+
+window.switchWorkspace = (ws) => {
+    window.githubApi.setActiveWorkspace(ws);
+    window.location.reload();
+};
+
+window.promptCreateOrganization = async () => {
+    const orgName = prompt('Introduce el nombre de la nueva organización:');
+    if (!orgName || !orgName.trim()) return;
+
+    const orgId = orgName.toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '');
+
+    if (!orgId) {
+        alert('Nombre de organización inválido.');
+        return;
+    }
+
+    if (orgId === 'hypenosys' || orgId === 'personal') {
+        alert('Ese ID de organización está reservado.');
+        return;
+    }
+
+    if (__workspaces__.some(w => w.id === orgId)) {
+        alert('La organización ya existe.');
+        return;
+    }
+
+    if (window.hypeToast) {
+        window.hypeToast('Creando organización en GitHub...', 'info');
+    }
+
+    try {
+        await window.githubApi.atomicWrite('_data/organizations.json', (db) => {
+            if (!db.organizations) db.organizations = [];
+            db.organizations.push({
+                id: orgId,
+                name: orgName.trim(),
+                path_prefix: `_data/orgs/${orgId}/`
+            });
+            return db;
+        }, `feat: nueva organización ${orgName.trim()} añadida`);
+
+        if (window.hypeToast) {
+            window.hypeToast('Organización creada correctamente ✓', 'success');
+        }
+
+        window.switchWorkspace(orgId);
+    } catch (e) {
+        console.error('[WORKSPACE] Failed to create organization:', e);
+        alert('Fallo al crear la organización: ' + e.message);
+    }
+};
+
+function renderLocalWorkspaceActions() {
+    const container = document.getElementById('local-kanban-actions');
+    if (!container) return;
+
+    const currentWs = window.githubApi.getActiveWorkspace();
+    if (currentWs !== 'personal') {
+        container.innerHTML = '';
+        return;
+    }
+
+    container.innerHTML = `
+        <button onclick="exportPersonalKanban()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded-lg text-sm transition-all flex items-center gap-1.5" title="Exportar tareas locales como JSON">
+            <i class="fa-solid fa-file-export"></i> <span class="hidden md:inline">Exportar</span>
+        </button>
+        <button onclick="triggerImportPersonalKanban()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded-lg text-sm transition-all flex items-center gap-1.5" title="Importar tareas locales desde JSON">
+            <i class="fa-solid fa-file-import"></i> <span class="hidden md:inline">Importar</span>
+        </button>
+        <input type="file" id="import-personal-file" class="hidden" accept=".json" onchange="importPersonalKanban(event)">
+    `;
+}
+
+window.exportPersonalKanban = () => {
+    const tasksData = localStorage.getItem('hy_personal_tasks');
+    const archiveData = localStorage.getItem('hy_personal_archive');
+
+    const exportPayload = {
+        schema_version: "1.2.0",
+        exported_at: new Date().toISOString(),
+        tasks: tasksData ? JSON.parse(tasksData).tasks : [],
+        archive: archiveData ? JSON.parse(archiveData).tasks : []
+    };
+
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportPayload, null, 2));
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", `kanban_personal_${new Date().toISOString().slice(0,10)}.json`);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+
+    if (window.hypeToast) {
+        window.hypeToast("Exportación completada ✓", "success");
+    }
+};
+
+window.triggerImportPersonalKanban = () => {
+    document.getElementById('import-personal-file')?.click();
+};
+
+window.importPersonalKanban = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+        try {
+            const data = JSON.parse(e.target.result);
+            if (!data || !Array.isArray(data.tasks)) {
+                throw new Error("El archivo JSON no tiene un formato válido (debe contener un array 'tasks').");
+            }
+
+            // Save tasks
+            const tasksPayload = {
+                schema_version: data.schema_version || "1.2.0",
+                last_updated: new Date().toISOString(),
+                last_updated_by: "Importador",
+                tasks: data.tasks
+            };
+            localStorage.setItem('hy_personal_tasks', JSON.stringify(tasksPayload));
+
+            // Save archive
+            const archivePayload = {
+                schema_version: data.schema_version || "1.2.0",
+                last_updated: new Date().toISOString(),
+                last_updated_by: "Importador",
+                tasks: data.archive || []
+            };
+            localStorage.setItem('hy_personal_archive', JSON.stringify(archivePayload));
+
+            if (window.hypeToast) {
+                window.hypeToast("Importación completada ✓", "success");
+            } else {
+                alert("Importación completada con éxito.");
+            }
+
+            window.location.reload();
+        } catch (err) {
+            console.error('[IMPORT] Failed:', err);
+            alert("Error al importar el archivo: " + err.message);
+        }
+    };
+    reader.readAsText(file);
+};

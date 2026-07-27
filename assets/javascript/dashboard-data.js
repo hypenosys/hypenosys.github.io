@@ -1,5 +1,52 @@
 /* HYPENOSYS — DATA MODULE */
 
+const ORIGINAL_MEMBERS = ['Axel', 'Alex', 'Dídac', 'Javi', 'Mitxel', 'silmaril464', 'lachicadelaboina', 'spongebob3bray'];
+const ORIGINAL_MEMBER_MAPPING = {
+    'axlfc': 'Axel',
+    'topperh4rley': 'Alex',
+    'javi26031994-a11y': 'Javi',
+    'dkdidac-design': 'Dídac',
+    'mitxel2022': 'Mitxel',
+    'silmaril464': 'Alex',
+    'lachicadelaboina': 'Laura',
+    'spongebob3bray': 'Bray'
+};
+
+function loadWorkspaceMembers() {
+    const ws = window.githubApi.getActiveWorkspace();
+    if (ws === 'personal') {
+        const username = window.currentUser || 'usuario';
+        const displayName = window.currentUser ? (window.currentUser.charAt(0).toUpperCase() + window.currentUser.slice(1)) : 'Usuario';
+
+        MEMBERS.length = 0;
+        MEMBERS.push(displayName);
+
+        for (const key in MEMBER_MAPPING) delete MEMBER_MAPPING[key];
+        MEMBER_MAPPING[username] = displayName;
+    } else {
+        const org = (typeof __workspaces__ !== 'undefined' ? __workspaces__ : []).find(w => w.id === ws);
+        if (org && org.members && Array.isArray(org.members)) {
+            MEMBERS.length = 0;
+            for (const key in MEMBER_MAPPING) delete MEMBER_MAPPING[key];
+
+            const lowerMembers = org.members.map(m => m.toLowerCase());
+            for (const username in ORIGINAL_MEMBER_MAPPING) {
+                if (lowerMembers.includes(username.toLowerCase())) {
+                    const disp = ORIGINAL_MEMBER_MAPPING[username];
+                    MEMBERS.push(disp);
+                    MEMBER_MAPPING[username] = disp;
+                }
+            }
+        } else {
+            MEMBERS.length = 0;
+            ORIGINAL_MEMBERS.forEach(m => MEMBERS.push(m));
+
+            for (const key in MEMBER_MAPPING) delete MEMBER_MAPPING[key];
+            for (const key in ORIGINAL_MEMBER_MAPPING) MEMBER_MAPPING[key] = ORIGINAL_MEMBER_MAPPING[key];
+        }
+    }
+}
+
 async function initDashboard() {
   if (window._dashboardInitialized) {
       console.warn('[DASHBOARD] initDashboard called twice — ignoring.');
@@ -34,6 +81,7 @@ async function initDashboard() {
     document.getElementById('login-overlay').classList.add('hidden');
     window.currentUser = user.login.toLowerCase();
 
+    loadWorkspaceMembers();
     await refreshDashboardData();
 
     const memberMatch = MEMBERS.find(m => m.toLowerCase() === window.currentUser ||
@@ -235,17 +283,19 @@ async function migrateTasks(data, filePath) {
  * Loads data from localStorage if available to provide immediate feedback (Stale-While-Revalidate).
  */
 function loadCachedData() {
+    loadWorkspaceMembers();
+    const ws = window.githubApi.getActiveWorkspace();
     try {
-        const cachedTasks = localStorage.getItem('hy_cache_tasks');
-        const cachedArchive = localStorage.getItem('hy_cache_archive');
-        const cachedStats = localStorage.getItem('hy_cache_stats');
-        const cachedBudget = localStorage.getItem('hy_cache_budget');
-        const cachedProfiles = localStorage.getItem('hy_cache_profiles');
+        const cachedTasks = localStorage.getItem(`hy_cache_tasks_${ws}`);
+        const cachedArchive = localStorage.getItem(`hy_cache_archive_${ws}`);
+        const cachedStats = localStorage.getItem(`hy_cache_stats_${ws}`);
+        const cachedBudget = localStorage.getItem(`hy_cache_budget_${ws}`);
+        const cachedProfiles = localStorage.getItem(`hy_cache_profiles_${ws}`);
 
-        if (cachedTasks) currentTasks = JSON.parse(cachedTasks);
-        if (cachedArchive) archivedTasks = JSON.parse(cachedArchive);
-        if (cachedStats) currentStats = JSON.parse(cachedStats);
-        if (cachedBudget) currentBudget = JSON.parse(cachedBudget);
+        if (cachedTasks) currentTasks = JSON.parse(cachedTasks) || [];
+        if (cachedArchive) archivedTasks = JSON.parse(cachedArchive) || [];
+        if (cachedStats) currentStats = JSON.parse(cachedStats) || { schema_version: '1.1.0', computed_at: '', global: {}, members: {}, group: {} };
+        if (cachedBudget) currentBudget = JSON.parse(cachedBudget) || { monthly_records: [], burnout: { current_milestone: 'M1', milestones: [{ id: 'M1', date_start: '2025-01-01', date_end: '2025-02-15' }] } };
         if (cachedProfiles) currentProfiles = JSON.parse(cachedProfiles);
 
         if (cachedTasks || cachedArchive || cachedStats || cachedBudget || cachedProfiles) {
@@ -258,6 +308,8 @@ function loadCachedData() {
 }
 
 async function refreshDashboardData() {
+  loadWorkspaceMembers();
+  const ws = window.githubApi.getActiveWorkspace();
   try {
     // Initial cache load for first run
     if (currentTasks.length === 0 && !window._cacheLoaded) {
@@ -276,10 +328,10 @@ async function refreshDashboardData() {
     const migratedTasksData = await migrateTasks(tasksRes.content, '_data/dashboard_tasks.json');
     const migratedArchiveData = await migrateTasks(archiveRes.content, '_data/dashboard_tasks_archive.json');
 
-    const newTasks = migratedTasksData.tasks || [];
-    const newArchive = migratedArchiveData.tasks || [];
-    const newStats = statsRes.content;
-    const newBudget = budgetRes.content;
+    const newTasks = (migratedTasksData && migratedTasksData.tasks) || [];
+    const newArchive = (migratedArchiveData && migratedArchiveData.tasks) || [];
+    const newStats = statsRes.content || { schema_version: '1.1.0', computed_at: '', global: {}, members: {}, group: {} };
+    const newBudget = budgetRes.content || { monthly_records: [], burnout: { current_milestone: 'M1', milestones: [{ id: 'M1', date_start: '2025-01-01', date_end: '2025-02-15' }] } };
     const newProfiles = profilesRes.content;
 
     // Check if data actually changed to avoid redundant renders
@@ -297,11 +349,11 @@ async function refreshDashboardData() {
     currentProfiles = newProfiles;
 
     // Persist to cache
-    localStorage.setItem('hy_cache_tasks', JSON.stringify(currentTasks));
-    localStorage.setItem('hy_cache_archive', JSON.stringify(archivedTasks));
-    localStorage.setItem('hy_cache_stats', JSON.stringify(currentStats));
-    localStorage.setItem('hy_cache_budget', JSON.stringify(currentBudget));
-    localStorage.setItem('hy_cache_profiles', JSON.stringify(currentProfiles));
+    localStorage.setItem(`hy_cache_tasks_${ws}`, JSON.stringify(currentTasks));
+    localStorage.setItem(`hy_cache_archive_${ws}`, JSON.stringify(archivedTasks));
+    localStorage.setItem(`hy_cache_stats_${ws}`, JSON.stringify(currentStats));
+    localStorage.setItem(`hy_cache_budget_${ws}`, JSON.stringify(currentBudget));
+    localStorage.setItem(`hy_cache_profiles_${ws}`, JSON.stringify(currentProfiles));
 
     const isStatsEmpty = !currentStats || !currentStats.computed_at || Object.keys(currentStats.members || {}).length === 0;
     if (currentStats && (currentStats.schema_version !== "1.1.0" || isStatsEmpty)) {
