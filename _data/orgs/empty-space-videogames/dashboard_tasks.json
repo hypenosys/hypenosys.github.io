@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.2.0",
+  "last_updated": "2026-07-27T12:00:00.000Z",
+  "last_updated_by": "Sistema",
+  "tasks": [
+    {
+      "id": 1,
+      "title": "test task",
+      "descripcion": "Tarea de prueba en Empty Space Videogames",
+      "estado": "Pending",
+      "prioridad": "Medium",
+      "milestone": "M1",
+      "tema_principal": "Concepto / GDD",
+      "asignados": ["axlfc", "topperh4rley"]
+    }
+  ]
+}
