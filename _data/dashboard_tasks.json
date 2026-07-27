@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-07-23T22:06:52.090Z",
+  "last_updated": "2026-07-27T10:49:05.593Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2870,7 +2870,7 @@
     {
       "title": "Añadir Organizaciones y Kanban Personal (Local Only)",
       "descripcion": "Añadir al dashboard Organizaciones (aparte de hypenosys, poder crear otras organizaciones) así como un kanban personal local only (localStorage) por usuario (independiente de organizaciones, solo personal y solo accesible en la web al estar loggeado y almacenado en localStorage y con herramientas de Importación/exportación)",
-      "rama": "master",
+      "rama": "develop",
       "task_type": "feature",
       "tema_principal": "Programación / Engine",
       "seccion": "Dashboard",
@@ -3172,6 +3172,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #82",
+      "user": "Axlfc",
+      "timestamp": "2026-07-27T10:49:05.593Z"
+    },
     {
       "action": "chore: actualizar tarea #70",
       "user": "Axlfc",
