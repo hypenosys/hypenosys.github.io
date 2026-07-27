@@ -1192,7 +1192,10 @@ window.githubApi = Object.assign(window.githubApi, {
             const response = await fetch('https://hypenosys-gatekeeper-v2.axlffcc.workers.dev', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ code })
+                body: JSON.stringify({
+                    code: code,
+                    client_id: window.HY_OAUTH_CONFIG.clientId
+                })
             });
             const data = await response.json();
 
