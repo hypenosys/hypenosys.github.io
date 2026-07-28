@@ -8,7 +8,7 @@
 const GITHUB_API_BASE = 'https://api.github.com';
 const REPO_OWNER = 'hypenosys';
 const REPO_NAME = 'hypenosys.github.io';
-const DATA_BRANCH = 'master';
+const DATA_BRANCH = (window.HY_OAUTH_CONFIG && window.HY_OAUTH_CONFIG.dataBranch) || 'master';
 
 /**
  * Recupera el token de OAuth de GitHub desde sessionStorage o localStorage.
