@@ -209,9 +209,6 @@ async function handleCreateTask() {
 
   if (!title && !desc) return showToast('El título o la descripción son obligatorios', 'warning');
 
-  const activeWs = window.githubApi.getActiveWorkspace();
-  const orgIdToUse = taskId ? (currentTasks.find(t => String(t.id) === String(taskId))?.organizationId || activeWs) : activeWs;
-
   const taskData = {
     title,
     descripcion: desc,
@@ -240,8 +237,7 @@ async function handleCreateTask() {
     blocks: blocks,
     blocked_by: blockedBy,
     comments: modalComments,
-    images: currentTaskImages,
-    organizationId: orgIdToUse
+    images: currentTaskImages
   };
 
   showToast(UI_STRINGS.saving, 'info');

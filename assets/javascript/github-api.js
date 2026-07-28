@@ -99,6 +99,24 @@ class AtomicWriteNonRetryableError extends Error {
 }
 
 /**
+ * Helper to dynamically resolve the path according to active workspace / organization.
+ */
+function resolveWorkspacePath(filePath) {
+    const ws = localStorage.getItem('hy_active_workspace') || 'hypenosys';
+    if (ws === 'hypenosys' || ws === 'personal') {
+        return filePath;
+    }
+    if (filePath.includes('/orgs/')) {
+        return filePath;
+    }
+    if (filePath.startsWith('_data/')) {
+        const file = filePath.substring(6);
+        return `_data/orgs/${ws}/${file}`;
+    }
+    return filePath;
+}
+
+/**
  * Recupera un archivo del repositorio con su SHA actual.
  * @param {string} filePath Ruta del archivo en el repositorio.
  * @param {string} contentType 'json' o 'text'
@@ -107,12 +125,11 @@ class AtomicWriteNonRetryableError extends Error {
 async function fetchFileWithSha(filePath, contentType = 'json') {
     const ws = localStorage.getItem('hy_active_workspace') || 'hypenosys';
     if (ws === 'personal') {
-        const username = (_currentUser && _currentUser.login && _currentUser.login.toLowerCase()) || window.currentUser || 'guest';
         const keyMap = {
-            '_data/dashboard_tasks.json': `hypenosys_personal_kanban_tasks_${username}`,
-            '_data/dashboard_tasks_archive.json': `hypenosys_personal_kanban_archive_${username}`,
-            '_data/studio_stats.json': `hypenosys_personal_kanban_stats_${username}`,
-            '_data/studio_budget.json': `hypenosys_personal_kanban_budget_${username}`
+            '_data/dashboard_tasks.json': 'hy_personal_tasks',
+            '_data/dashboard_tasks_archive.json': 'hy_personal_archive',
+            '_data/studio_stats.json': 'hy_personal_stats',
+            '_data/studio_budget.json': 'hy_personal_budget'
         };
         const localKey = keyMap[filePath];
         if (localKey) {
@@ -140,7 +157,8 @@ async function fetchFileWithSha(filePath, contentType = 'json') {
         }
     }
 
-    const url = `${GITHUB_API_BASE}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filePath}?ref=${DATA_BRANCH}&t=${Date.now()}`;
+    const resolvedPath = resolveWorkspacePath(filePath);
+    const url = `${GITHUB_API_BASE}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${resolvedPath}?ref=${DATA_BRANCH}&t=${Date.now()}`;
     const response = await fetch(url, {
         headers: getHeaders()
     });
@@ -177,7 +195,8 @@ async function fetchFileWithSha(filePath, contentType = 'json') {
  * @returns {Promise<Object>} Datos crudos del archivo.
  */
 async function getFile(filePath) {
-    const url = `${GITHUB_API_BASE}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filePath}?ref=${DATA_BRANCH}&t=${Date.now()}`;
+    const resolvedPath = resolveWorkspacePath(filePath);
+    const url = `${GITHUB_API_BASE}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${resolvedPath}?ref=${DATA_BRANCH}&t=${Date.now()}`;
     const response = await fetch(url, {
         headers: getHeaders()
     });
@@ -202,12 +221,11 @@ async function getFile(filePath) {
 async function putFileContent(filePath, sha, newContent, commitMessage, contentType = 'json') {
     const ws = localStorage.getItem('hy_active_workspace') || 'hypenosys';
     if (ws === 'personal') {
-        const username = (_currentUser && _currentUser.login && _currentUser.login.toLowerCase()) || window.currentUser || 'guest';
         const keyMap = {
-            '_data/dashboard_tasks.json': `hypenosys_personal_kanban_tasks_${username}`,
-            '_data/dashboard_tasks_archive.json': `hypenosys_personal_kanban_archive_${username}`,
-            '_data/studio_stats.json': `hypenosys_personal_kanban_stats_${username}`,
-            '_data/studio_budget.json': `hypenosys_personal_kanban_budget_${username}`
+            '_data/dashboard_tasks.json': 'hy_personal_tasks',
+            '_data/dashboard_tasks_archive.json': 'hy_personal_archive',
+            '_data/studio_stats.json': 'hy_personal_stats',
+            '_data/studio_budget.json': 'hy_personal_budget'
         };
         const localKey = keyMap[filePath];
         if (localKey) {
@@ -222,7 +240,8 @@ async function putFileContent(filePath, sha, newContent, commitMessage, contentT
         }
     }
 
-    const url = `${GITHUB_API_BASE}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filePath}`;
+    const resolvedPath = resolveWorkspacePath(filePath);
+    const url = `${GITHUB_API_BASE}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${resolvedPath}`;
 
     let contentString;
     if (contentType === 'json') {
@@ -282,7 +301,8 @@ async function putFileContent(filePath, sha, newContent, commitMessage, contentT
  * Actualiza un archivo directamente (sin wrapper atómico).
  */
 async function updateFile(filePath, contentString, commitMessage, sha) {
-    const url = `${GITHUB_API_BASE}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filePath}`;
+    const resolvedPath = resolveWorkspacePath(filePath);
+    const url = `${GITHUB_API_BASE}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${resolvedPath}`;
     const body = JSON.stringify({
         message: commitMessage,
         content: btoa(unescape(encodeURIComponent(contentString))),
@@ -311,7 +331,8 @@ async function updateFile(filePath, contentString, commitMessage, sha) {
  * @param {string} commitMessage Mensaje del commit.
  */
 async function deleteFile(filePath, sha, commitMessage) {
-    const url = `${GITHUB_API_BASE}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filePath}`;
+    const resolvedPath = resolveWorkspacePath(filePath);
+    const url = `${GITHUB_API_BASE}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${resolvedPath}`;
     const body = JSON.stringify({
         message: commitMessage,
         sha: sha,
