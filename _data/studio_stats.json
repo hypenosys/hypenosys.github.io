@@ -1,14 +1,14 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-07-28T06:59:04.234Z",
+  "computed_at": "2026-07-28T06:59:15.128Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 50,
-    "total_ok": 50,
+    "total_tasks": 51,
+    "total_ok": 51,
     "total_ko": 0,
     "total_uncertain": 0,
     "total_obsolete": 0,
-    "fixed_found_ratio": 1.1628,
+    "fixed_found_ratio": 1.1591,
     "verified_ratio": 1
   },
   "group": {
@@ -120,22 +120,22 @@
     "axlfc": {
       "member_name": "Axel",
       "completed": {
-        "all_time": 73,
+        "all_time": 76,
         "milestone": 56,
         "week": 0
       },
       "weekly_velocity": {
-        "2026-W24": 11,
+        "2026-W24": 12,
         "2026-W25": 12,
         "2026-W26": 6,
-        "2026-W27": 0,
+        "2026-W27": 12,
         "2026-W28": 14,
         "2026-W29": 0,
         "2026-W30": 0,
         "2026-W31": 0
       },
       "type_breakdown": {
-        "feature": 47,
+        "feature": 50,
         "chore": 12,
         "bug": 10,
         "research": 4
@@ -144,7 +144,7 @@
         "PRO": 30,
         "feature/mobile-github-ops": 2,
         "feature/dashboard-tag-filter": 2,
-        "master": 20,
+        "master": 22,
         "feature/n8n-providers-nim-agent": 2,
         "chore/scripts-svn-sync": 2,
         "feature/dashboard-chat-icon": 2,
@@ -154,7 +154,7 @@
         "chore/upgrade-ue-5.7.4": 2,
         "feature/kanban-jules-link": 2,
         "feature/kanban-repo-names": 2,
-        "feature/ollama-proxy-relay": 1
+        "feature/ollama-proxy-relay": 2
       },
       "tag_frequency": {
         "jules": 4,
@@ -162,7 +162,7 @@
         "UX/UI": 2,
         "bug": 4,
         "hard": 2,
-        "api": 11,
+        "api": 12,
         "feature": 12,
         "frontend": 10,
         "ux": 14,
@@ -177,8 +177,8 @@
         "ux/ui": 2,
         "git": 2,
         "Infraestructura": 2,
-        "backend": 1,
-        "security": 1
+        "backend": 2,
+        "security": 2
       },
       "avg_completion_speed": {
         "days": 0.5,
@@ -376,7 +376,7 @@
     "mitxel2022": {
       "member_name": "Mitxel",
       "completed": {
-        "all_time": 4,
+        "all_time": 6,
         "milestone": 4,
         "week": 0
       },
@@ -384,19 +384,20 @@
         "2026-W24": 0,
         "2026-W25": 0,
         "2026-W26": 0,
-        "2026-W27": 0,
+        "2026-W27": 12,
         "2026-W28": 0,
         "2026-W29": 0,
         "2026-W30": 0,
         "2026-W31": 0
       },
       "type_breakdown": {
-        "feature": 2,
+        "feature": 4,
         "chore": 2
       },
       "rama_breakdown": {
         "feature/dashboard-core-setup": 2,
-        "PRO": 2
+        "PRO": 2,
+        "master": 2
       },
       "tag_frequency": {
         "devops": 2,
@@ -519,7 +520,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-07-28T06:59:04.997Z"
+      "timestamp": "2026-07-28T06:59:15.860Z"
     }
   ]
 }
