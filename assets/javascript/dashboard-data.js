@@ -93,6 +93,16 @@ async function initDashboard() {
     setupEventListeners();
     renderDashboard();
 
+    const pendingScroll = localStorage.getItem('hy_scroll_to_after_reload');
+    if (pendingScroll) {
+        localStorage.removeItem('hy_scroll_to_after_reload');
+        setTimeout(() => {
+            if (typeof scrollToTask === 'function') {
+                scrollToTask(pendingScroll);
+            }
+        }, 500);
+    }
+
     window.githubApi.getOrgRepos().then(repos => {
         window.userReposCache = repos;
         console.log('[DASHBOARD] Org repos cached:', repos.length);

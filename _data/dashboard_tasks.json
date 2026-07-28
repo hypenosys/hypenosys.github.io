@@ -136,7 +136,8 @@
       "repository": "hypenosys/docs",
       "seccion": "Videojuego",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "rama": "research/ue5-fundamentals",
@@ -225,7 +226,8 @@
       ],
       "repository": "hypenosys/app",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "rama": "PRO",
@@ -270,7 +272,8 @@
       "comments": [],
       "change_log": [],
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "rama": "chore/dev-env-setup",
@@ -349,7 +352,8 @@
       "repository": "hypenosys/app",
       "seccion": "",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "rama": "PRO",
@@ -392,7 +396,8 @@
       "comments": [],
       "change_log": [],
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "rama": "PRO",
@@ -467,7 +472,8 @@
       ],
       "repository": "hypenosys/hypenosys.github.io",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "rama": "PRO",
@@ -506,7 +512,8 @@
       "comments": [],
       "change_log": [],
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "1234",
@@ -568,7 +575,8 @@
       "id": 25,
       "repository": null,
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Integración SVN en Claude Neural Chat y Jules Panel (orquestación repositorios app, scripts y docs)",
@@ -800,7 +808,8 @@
       "id": 35,
       "seccion": "SVN Admin Panel",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "EDITAR ALIAS / CONFIG Arreglar edit aliases Lightbox en panel de Jules ",
@@ -866,7 +875,8 @@
       ],
       "id": 37,
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "protección nsfw en las subidas a Tumblr y filtro is Cloudflare on por si peta la subida imágenes",
@@ -1098,7 +1108,8 @@
       "id": 40,
       "seccion": "Dashboard",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Cognito-Agent en Claude Neural API desde n8n con ingestión en Qdrant + Kavita (UOC) + PSQL + Python and JavaScript runners (n8n)",
@@ -1224,7 +1235,8 @@
       "id": 44,
       "seccion": "Backend n8n",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "id": 45,
@@ -1308,7 +1320,8 @@
       ],
       "seccion": "Backend n8n",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Install Penpot and Hermes Agent in ZimaBoard",
@@ -1369,7 +1382,8 @@
       ],
       "id": 50,
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Análisis de representación conceptual y visual: Dashboard",
@@ -1526,7 +1540,8 @@
       "id": 51,
       "seccion": "Dashboard",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Map local repositories as Obsidian Markdown Files Knowledge mocking a Vector Database in SVN  so AI just can recover the needed text and giving visual proof",
@@ -1716,7 +1731,8 @@
       "id": 52,
       "seccion": "Documentación Web",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Arreglar subida a Tumblr de audios, video, image para music-gen y image y anim studio",
@@ -1791,7 +1807,8 @@
       "id": 53,
       "seccion": "Music Gen, Image Gen, Backend n8n",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "tarea de prueba",
@@ -1861,7 +1878,8 @@
       "id": 54,
       "seccion": "",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Nos podemos asegurar que la conexión en Claude chat con la documentación es real?",
@@ -1950,7 +1968,8 @@
       "id": 55,
       "seccion": "Chat Neural",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "sync python scripts with docs in /app",
@@ -2023,7 +2042,8 @@
       "id": 56,
       "seccion": "App",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Añadir terminal física en 'comandos' cuando están logueados en github y SVN en repo-admin",
@@ -2119,7 +2139,8 @@
       "id": 57,
       "seccion": "SVN Admin Panel, Comandos",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Arreglar sesiones jules panel",
@@ -2166,7 +2187,8 @@
       ],
       "id": 64,
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Improve hypenosys logo y crear favicon",
@@ -2275,7 +2297,8 @@
       ],
       "id": 70,
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Arreglo de jjules panel descripcion de repo y branch",
@@ -2323,7 +2346,8 @@
       ],
       "id": 71,
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Fix: Img-Gen txt2image - ComfyUI usa CPU en lugar de GPU",
@@ -2415,7 +2439,8 @@
       ],
       "id": 72,
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Crear matrix server en Oracle",
@@ -2500,7 +2525,8 @@
       ],
       "id": 73,
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Cargar embeddings locales (opcional) en menú de configuración de IA",
@@ -2578,7 +2604,8 @@
       ],
       "id": 74,
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Creación de favicon.ico de hypenosys",
@@ -2635,7 +2662,8 @@
       ],
       "id": 77,
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "2.0: estabilizar master y sacar el build y guardarlo en CopyParty",
@@ -2692,7 +2720,8 @@
       ],
       "id": 78,
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Crear página \"3DGen\" ",
@@ -2752,7 +2781,8 @@
       ],
       "id": 79,
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Superposición de títulos de sección del menú con Neural Session Activa, y hay superposición",
@@ -2817,7 +2847,8 @@
       ],
       "id": 80,
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Sesiones neural",
@@ -2865,7 +2896,8 @@
           "new_value": "Created"
         }
       ],
-      "id": 81
+      "id": 81,
+      "organizationId": "hypenosys"
     },
     {
       "title": "Añadir Organizaciones y Kanban Personal (Local Only)",
@@ -2936,7 +2968,8 @@
           "new_value": "Working"
         }
       ],
-      "id": 82
+      "id": 82,
+      "organizationId": "hypenosys"
     },
     {
       "title": "Crear página VideoGen",
@@ -2991,7 +3024,8 @@
           "new_value": "ToDo"
         }
       ],
-      "id": 83
+      "id": 83,
+      "organizationId": "hypenosys"
     },
     {
       "title": "Crear Forjejo (Git) en ZimaBoard2",
@@ -3046,7 +3080,8 @@
           "new_value": "Crear Forjejo (Git) en ZimaBoard2"
         }
       ],
-      "id": 84
+      "id": 84,
+      "organizationId": "hypenosys"
     },
     {
       "title": "Crear Qdrant server en Oracle",
@@ -3106,7 +3141,8 @@
           "new_value": "OK"
         }
       ],
-      "id": 85
+      "id": 85,
+      "organizationId": "hypenosys"
     },
     {
       "title": "Crear Redis server en Oracle",
@@ -3168,7 +3204,49 @@
           "new_value": "ToDo"
         }
       ],
-      "id": 86
+      "id": 86,
+      "organizationId": "hypenosys"
+    },
+    {
+      "id": 1,
+      "title": "test task",
+      "descripcion": "Tarea de prueba en Empty Space Videogames",
+      "estado": "Pending",
+      "prioridad": "Medium",
+      "milestone": "M1",
+      "tema_principal": "Concepto / GDD",
+      "asignados": [
+        "axlfc",
+        "topperh4rley"
+      ],
+      "organizationId": "empty-space-videogames",
+      "rama": "develop",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-07-27",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "task_type": "feature",
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "change_log": [],
+      "repository": "hypenosys/hypenosys.github.io",
+      "seccion": "General",
+      "jules_session": null,
+      "branch": "develop"
     }
   ],
   "_audit_log": [

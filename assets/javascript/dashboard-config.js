@@ -116,6 +116,11 @@ function isTaskMinimized(taskId) {
 function getFilteredTasks(tasks) {
   let filtered = tasks;
 
+  const ws = window.githubApi.getActiveWorkspace();
+  if (ws !== 'personal') {
+      filtered = filtered.filter(t => t.organizationId === ws);
+  }
+
   // Legacy Filter (Header toggles)
   if (activeFilter) {
     const activeHandle = Object.keys(MEMBER_MAPPING).find(key => MEMBER_MAPPING[key] === activeFilter);

@@ -278,6 +278,13 @@ function toggleAlertsPanel() {
  * @param {string|number} id ID de la tarea.
  */
 function scrollToTask(id) {
+  const task = currentTasks.find(t => String(t.id) === String(id));
+  if (task && task.organizationId && task.organizationId !== window.githubApi.getActiveWorkspace()) {
+      localStorage.setItem('hy_scroll_to_after_reload', String(id));
+      window.switchWorkspace(task.organizationId);
+      return;
+  }
+
   // 1. Limpiar filtros globales para asegurar que la tarea se renderice
   activeFilter = null;
   activeStageFilter = null;
@@ -323,10 +330,13 @@ function renderTaskArchive() {
     const countEl = document.getElementById('archive-count');
     if (!grid || !countEl) return;
 
-    countEl.textContent = `${archivedTasks.length} Tareas`;
+    const ws = window.githubApi.getActiveWorkspace();
+    const filteredArchive = ws === 'personal' ? archivedTasks : archivedTasks.filter(t => t.organizationId === ws);
+
+    countEl.textContent = `${filteredArchive.length} Tareas`;
     grid.innerHTML = '';
 
-    archivedTasks.sort((a, b) => b.id - a.id).forEach(task => {
+    filteredArchive.sort((a, b) => b.id - a.id).forEach(task => {
         const card = document.createElement('div');
         card.className = 'bg-slate-950/50 p-4 rounded-xl border border-slate-800 flex flex-col gap-2 group hover:border-slate-700 transition-all';
 
@@ -1136,24 +1146,33 @@ window.promptCreateOrganization = async () => {
     }
 
     try {
+        const creator = (window.githubApi && window.githubApi.user && window.githubApi.user.login) || 'Sistema';
         await window.githubApi.atomicWrite('_data/organizations.json', (db) => {
             if (!db.organizations) db.organizations = [];
             db.organizations.push({
                 id: orgId,
                 name: orgName.trim(),
-                path_prefix: `_data/orgs/${orgId}/`
+                createdBy: creator,
+                createdAt: new Date().toISOString(),
+                isDefault: false
             });
             return db;
         }, `feat: nueva organización ${orgName.trim()} añadida`);
 
         if (window.hypeToast) {
             window.hypeToast('Organización creada correctamente ✓', 'success');
+        } else if (typeof showToast === 'function') {
+            showToast('Organización creada correctamente ✓', 'success');
         }
 
         window.switchWorkspace(orgId);
     } catch (e) {
         console.error('[WORKSPACE] Failed to create organization:', e);
-        alert('Fallo al crear la organización: ' + e.message);
+        if (typeof showToast === 'function') {
+            showToast('Fallo al crear la organización: ' + e.message, 'error');
+        } else {
+            alert('Fallo al crear la organización: ' + e.message);
+        }
     }
 };
 
@@ -1179,8 +1198,9 @@ function renderLocalWorkspaceActions() {
 }
 
 window.exportPersonalKanban = () => {
-    const tasksData = localStorage.getItem('hy_personal_tasks');
-    const archiveData = localStorage.getItem('hy_personal_archive');
+    const username = (window.githubApi && window.githubApi.user && window.githubApi.user.login && window.githubApi.user.login.toLowerCase()) || window.currentUser || 'guest';
+    const tasksData = localStorage.getItem(`hypenosys_personal_kanban_tasks_${username}`);
+    const archiveData = localStorage.getItem(`hypenosys_personal_kanban_archive_${username}`);
 
     const exportPayload = {
         schema_version: "1.2.0",
@@ -1218,6 +1238,8 @@ window.importPersonalKanban = (event) => {
                 throw new Error("El archivo JSON no tiene un formato válido (debe contener un array 'tasks').");
             }
 
+            const username = (window.githubApi && window.githubApi.user && window.githubApi.user.login && window.githubApi.user.login.toLowerCase()) || window.currentUser || 'guest';
+
             // Save tasks
             const tasksPayload = {
                 schema_version: data.schema_version || "1.2.0",
@@ -1225,7 +1247,7 @@ window.importPersonalKanban = (event) => {
                 last_updated_by: "Importador",
                 tasks: data.tasks
             };
-            localStorage.setItem('hy_personal_tasks', JSON.stringify(tasksPayload));
+            localStorage.setItem(`hypenosys_personal_kanban_tasks_${username}`, JSON.stringify(tasksPayload));
 
             // Save archive
             const archivePayload = {
@@ -1234,7 +1256,7 @@ window.importPersonalKanban = (event) => {
                 last_updated_by: "Importador",
                 tasks: data.archive || []
             };
-            localStorage.setItem('hy_personal_archive', JSON.stringify(archivePayload));
+            localStorage.setItem(`hypenosys_personal_kanban_archive_${username}`, JSON.stringify(archivePayload));
 
             if (window.hypeToast) {
                 window.hypeToast("Importación completada ✓", "success");
