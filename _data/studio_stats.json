@@ -1,14 +1,14 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-07-28T06:59:15.128Z",
+  "computed_at": "2026-07-28T06:59:21.702Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 51,
-    "total_ok": 51,
+    "total_tasks": 52,
+    "total_ok": 52,
     "total_ko": 0,
     "total_uncertain": 0,
     "total_obsolete": 0,
-    "fixed_found_ratio": 1.1591,
+    "fixed_found_ratio": 1.1556,
     "verified_ratio": 1
   },
   "group": {
@@ -76,7 +76,7 @@
       },
       "topperh4rley": {
         "member_name": "Alex",
-        "mvp_points": 11.200000000000001,
+        "mvp_points": 11.2,
         "bugs_solved": 6,
         "unblocked_count": 16,
         "velocity": 3.6666666666666665,
@@ -120,7 +120,7 @@
     "axlfc": {
       "member_name": "Axel",
       "completed": {
-        "all_time": 76,
+        "all_time": 78,
         "milestone": 56,
         "week": 0
       },
@@ -130,55 +130,55 @@
         "2026-W26": 6,
         "2026-W27": 12,
         "2026-W28": 14,
-        "2026-W29": 0,
+        "2026-W29": 4,
         "2026-W30": 0,
         "2026-W31": 0
       },
       "type_breakdown": {
-        "feature": 50,
+        "feature": 52,
         "chore": 12,
         "bug": 10,
         "research": 4
       },
       "rama_breakdown": {
         "PRO": 30,
+        "chore/upgrade-ue-5.7.4": 2,
+        "feature/kanban-jules-link": 2,
         "feature/mobile-github-ops": 2,
         "feature/dashboard-tag-filter": 2,
-        "master": 22,
+        "master": 24,
         "feature/n8n-providers-nim-agent": 2,
         "chore/scripts-svn-sync": 2,
         "feature/dashboard-chat-icon": 2,
+        "feature/kanban-repo-names": 2,
+        "feature/ollama-proxy-relay": 2,
         "chore/consolidate-scripts": 2,
         "chore/decommission-old-panels": 2,
-        "feature/dashboard-error-boundaries": 2,
-        "chore/upgrade-ue-5.7.4": 2,
-        "feature/kanban-jules-link": 2,
-        "feature/kanban-repo-names": 2,
-        "feature/ollama-proxy-relay": 2
+        "feature/dashboard-error-boundaries": 2
       },
       "tag_frequency": {
+        "chore": 10,
+        "devops": 6,
+        "git": 2,
         "jules": 4,
         "infraestructura": 2,
         "UX/UI": 2,
         "bug": 4,
         "hard": 2,
+        "Infraestructura": 2,
         "api": 12,
         "feature": 12,
-        "frontend": 10,
         "ux": 14,
-        "chore": 10,
+        "frontend": 10,
         "docs": 4,
-        "devops": 6,
         "research": 2,
         "n8n": 2,
+        "backend": 2,
+        "security": 2,
         "refactor": 4,
         "stability": 2,
         "menú": 2,
-        "ux/ui": 2,
-        "git": 2,
-        "Infraestructura": 2,
-        "backend": 2,
-        "security": 2
+        "ux/ui": 2
       },
       "avg_completion_speed": {
         "days": 0.5,
@@ -214,13 +214,15 @@
       },
       "type_breakdown": {
         "feature": 46,
-        "bug": 6,
         "chore": 8,
+        "bug": 6,
         "research": 4
       },
       "rama_breakdown": {
         "PRO": 32,
+        "chore/upgrade-ue-5.7.4": 2,
         "feature/repo-labels-ui": 2,
+        "feature/kanban-jules-link": 2,
         "feature/mobile-github-ops": 2,
         "fix/jules-neural-mobile-markdown": 2,
         "feature/dashboard-tag-filter": 2,
@@ -228,12 +230,14 @@
         "feature/n8n-providers-nim-agent": 2,
         "chore/scripts-svn-sync": 2,
         "feature/dashboard-chat-icon": 2,
-        "feature/dashboard-error-boundaries": 2,
-        "chore/upgrade-ue-5.7.4": 2,
-        "feature/kanban-jules-link": 2,
-        "feature/kanban-repo-names": 2
+        "feature/kanban-repo-names": 2,
+        "feature/dashboard-error-boundaries": 2
       },
       "tag_frequency": {
+        "chore": 8,
+        "devops": 6,
+        "git": 2,
+        "onboarding": 2,
         "jules": 4,
         "UX/UI": 6,
         "feature": 14,
@@ -241,16 +245,12 @@
         "ux": 18,
         "bug": 6,
         "hard": 2,
+        "Infraestructura": 2,
         "api": 10,
-        "chore": 8,
         "docs": 4,
-        "devops": 6,
         "research": 2,
         "n8n": 2,
-        "stability": 2,
-        "git": 2,
-        "onboarding": 2,
-        "Infraestructura": 2
+        "stability": 2
       },
       "avg_completion_speed": {
         "days": 0.5,
@@ -286,8 +286,8 @@
       },
       "type_breakdown": {
         "feature": 8,
-        "bug": 6,
-        "chore": 4
+        "chore": 4,
+        "bug": 6
       },
       "rama_breakdown": {
         "feature/dashboard-core-setup": 2,
@@ -299,14 +299,14 @@
         "devops": 2,
         "feature": 4,
         "frontend": 4,
+        "chore": 4,
+        "onboarding": 2,
         "UX/UI": 2,
         "bug": 4,
         "ux": 4,
-        "chore": 4,
         "docs": 2,
         "api": 2,
-        "n8n": 2,
-        "onboarding": 2
+        "n8n": 2
       },
       "avg_completion_speed": {
         "days": 0.5,
@@ -355,8 +355,8 @@
         "feature": 2,
         "frontend": 2,
         "chore": 4,
-        "docs": 4,
-        "onboarding": 2
+        "onboarding": 2,
+        "docs": 4
       },
       "avg_completion_speed": {
         "days": 0.5,
@@ -474,7 +474,7 @@
         },
         "topperh4rley": {
           "member_name": "Alex",
-          "mvp_points": 11.200000000000001,
+          "mvp_points": 11.2,
           "bugs_solved": 6,
           "unblocked_count": 16,
           "velocity": 3.6666666666666665,
@@ -520,7 +520,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-07-28T06:59:15.860Z"
+      "timestamp": "2026-07-28T06:59:22.495Z"
     }
   ]
 }
