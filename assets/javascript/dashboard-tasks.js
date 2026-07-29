@@ -247,17 +247,20 @@ async function handleCreateTask() {
     await uploadPendingImages();
 
     document.getElementById('create-task-modal').classList.add('hidden');
+    const ws = window.githubApi.getActiveWorkspace();
     if (taskId) {
         const oldTask = currentTasks.find(t => String(t.id) === String(taskId));
         const changes = diffTasks(oldTask, taskData);
         if (changes.length > 0) {
             taskData.change_log = (oldTask.change_log || []).concat(changes);
         }
+        taskData.organizationId = oldTask.organizationId || ws;
         await window.githubApi.updateTask(taskId, taskData);
         showToast(`Tarea #${taskId} actualizada`, 'success');
     } else {
         const newTask = {
             ...taskData,
+            organizationId: ws,
             rama2: null,
             ver: true,
             fecha: new Date().toISOString().split('T')[0],

@@ -1026,11 +1026,11 @@ async function renderWorkspaceSelector() {
             if (orgsRes && orgsRes.content && orgsRes.content.organizations) {
                 __workspaces__ = orgsRes.content.organizations;
             } else {
-                __workspaces__ = [{ id: 'hypenosys', name: 'Hypenosys', path_prefix: '' }];
+                __workspaces__ = [{ id: 'hypenosys', name: 'Hypenosys', createdBy: 'Axlfc', createdAt: '2025-01-01T00:00:00.000Z', isDefault: true }];
             }
         } catch (e) {
             console.error('[WORKSPACE] Failed to load organizations, using fallback:', e);
-            __workspaces__ = [{ id: 'hypenosys', name: 'Hypenosys', path_prefix: '' }];
+            __workspaces__ = [{ id: 'hypenosys', name: 'Hypenosys', createdBy: 'Axlfc', createdAt: '2025-01-01T00:00:00.000Z', isDefault: true }];
         }
     }
 
@@ -1141,7 +1141,9 @@ window.promptCreateOrganization = async () => {
             db.organizations.push({
                 id: orgId,
                 name: orgName.trim(),
-                path_prefix: `_data/orgs/${orgId}/`
+                createdBy: (window.githubApi.user && window.githubApi.user.login) ? window.githubApi.user.login : 'Axlfc',
+                createdAt: new Date().toISOString(),
+                isDefault: false
             });
             return db;
         }, `feat: nueva organización ${orgName.trim()} añadida`);
@@ -1179,8 +1181,9 @@ function renderLocalWorkspaceActions() {
 }
 
 window.exportPersonalKanban = () => {
-    const tasksData = localStorage.getItem('hy_personal_tasks');
-    const archiveData = localStorage.getItem('hy_personal_archive');
+    const username = (window.githubApi.user && window.githubApi.user.login) ? window.githubApi.user.login.toLowerCase() : 'guest';
+    const tasksData = localStorage.getItem(`hypenosys_personal_kanban_tasks_${username}`);
+    const archiveData = localStorage.getItem(`hypenosys_personal_kanban_archive_${username}`);
 
     const exportPayload = {
         schema_version: "1.2.0",
@@ -1218,6 +1221,8 @@ window.importPersonalKanban = (event) => {
                 throw new Error("El archivo JSON no tiene un formato válido (debe contener un array 'tasks').");
             }
 
+            const username = (window.githubApi.user && window.githubApi.user.login) ? window.githubApi.user.login.toLowerCase() : 'guest';
+
             // Save tasks
             const tasksPayload = {
                 schema_version: data.schema_version || "1.2.0",
@@ -1225,7 +1230,7 @@ window.importPersonalKanban = (event) => {
                 last_updated_by: "Importador",
                 tasks: data.tasks
             };
-            localStorage.setItem('hy_personal_tasks', JSON.stringify(tasksPayload));
+            localStorage.setItem(`hypenosys_personal_kanban_tasks_${username}`, JSON.stringify(tasksPayload));
 
             // Save archive
             const archivePayload = {
@@ -1234,7 +1239,7 @@ window.importPersonalKanban = (event) => {
                 last_updated_by: "Importador",
                 tasks: data.archive || []
             };
-            localStorage.setItem('hy_personal_archive', JSON.stringify(archivePayload));
+            localStorage.setItem(`hypenosys_personal_kanban_archive_${username}`, JSON.stringify(archivePayload));
 
             if (window.hypeToast) {
                 window.hypeToast("Importación completada ✓", "success");
