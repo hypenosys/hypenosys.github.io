@@ -334,16 +334,23 @@ async function refreshDashboardData() {
     const newBudget = budgetRes.content || { monthly_records: [], burnout: { current_milestone: 'M1', milestones: [{ id: 'M1', date_start: '2025-01-01', date_end: '2025-02-15' }] } };
     const newProfiles = profilesRes.content;
 
+    let filteredTasks = newTasks;
+    let filteredArchive = newArchive;
+    if (ws !== 'personal') {
+        filteredTasks = newTasks.filter(t => t.organizationId === ws);
+        filteredArchive = newArchive.filter(t => t.organizationId === ws);
+    }
+
     // Check if data actually changed to avoid redundant renders
-    const dataString = JSON.stringify({ newTasks, newArchive, newStats, newBudget, newProfiles });
+    const dataString = JSON.stringify({ filteredTasks, filteredArchive, newStats, newBudget, newProfiles });
     if (window._lastDataString === dataString) {
         console.log('[DASHBOARD] Data unchanged, skipping render.');
         return;
     }
     window._lastDataString = dataString;
 
-    currentTasks    = newTasks;
-    archivedTasks   = newArchive;
+    currentTasks    = filteredTasks;
+    archivedTasks   = filteredArchive;
     currentStats    = newStats;
     currentBudget   = newBudget;
     currentProfiles = newProfiles;
