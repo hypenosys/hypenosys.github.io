@@ -335,6 +335,15 @@
                 'BLOCKED': 'CRITICAL'
             }[task.estado || task.status] || (task.estado || task.status || 'TODO').toUpperCase();
 
+            const getOrgBadgeHtml = (t) => {
+                const orgId = t.organizationId || 'personal';
+                if (orgId === 'personal') {
+                    return `<span class="badge bg-slate-800 text-slate-400 border border-slate-700/50 text-[8px] font-bold px-1.5 py-0.5 rounded uppercase">Personal</span>`;
+                }
+                const orgName = orgId.replace(/-/g, ' ').toUpperCase();
+                return `<span class="badge bg-indigo-950/60 text-indigo-300 border border-indigo-700/50 text-[8px] font-bold px-1.5 py-0.5 rounded uppercase">${orgName}</span>`;
+            };
+
             if (!isExpanded) {
                 // COLLAPSED CARD
                 return `
@@ -359,6 +368,7 @@
                                     ` : ''}
                                 </div>
                                 <span class="badge ${statusColor}">${displayStatus}</span>
+                                ${getOrgBadgeHtml(task)}
                             </div>
                             <i class="fas fa-chevron-down text-slate-600 text-[10px]"></i>
                         </div>
@@ -402,6 +412,7 @@
                                 </div>
                                 <span class="badge ${statusColor}">${displayStatus}</span>
                                 <span class="badge ${priorityColor} text-[8px] px-1.5 py-0.5 rounded uppercase font-bold">${task.prioridad}</span>
+                                ${getOrgBadgeHtml(task)}
                             </div>
                             <i class="fas fa-chevron-up text-slate-600 text-[10px]"></i>
                         </div>

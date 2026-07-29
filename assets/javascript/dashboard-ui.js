@@ -814,7 +814,7 @@ function renderKanbanFilters() {
     const badge = document.getElementById('active-filters-count');
 
     const totalActive = kanbanFilters.tags.length + kanbanFilters.members.length + kanbanFilters.repos.length + kanbanFilters.states.length +
-                        kanbanFilters.milestones.length + kanbanFilters.themes.length + kanbanFilters.priorities.length;
+                        kanbanFilters.milestones.length + kanbanFilters.themes.length + kanbanFilters.priorities.length + (kanbanFilters.orgs ? kanbanFilters.orgs.length : 0);
     const isCollapsed = filterContainer.style.maxHeight === '0px' || filterContainer.classList.contains('max-h-0');
 
     if (!filterContainer.dataset.initialized) {
@@ -842,6 +842,7 @@ function renderKanbanFilters() {
     const allThemes = new Set();
     const allPriorities = new Set();
     const allSections = new Set();
+    const allOrgs = new Set();
 
     currentTasks.forEach(t => {
         if (t.tags) t.tags.forEach(tag => allTags.add(tag));
@@ -853,6 +854,9 @@ function renderKanbanFilters() {
 
         const sections = (t.seccion || 'Sin Sección').split(',').map(s => s.trim()).filter(s => s);
         sections.forEach(s => allSections.add(s));
+
+        const orgId = t.organizationId || 'personal';
+        allOrgs.add(orgId);
     });
 
     const sortedTags = Array.from(allTags).sort();
@@ -983,6 +987,24 @@ function renderKanbanFilters() {
     });
     container.appendChild(sectionsRow.row);
 
+    // Fila 7.5: Organizaciones de origen (SÓLO en el Kanban Personal)
+    const ws = window.githubApi.getActiveWorkspace();
+    if (ws === 'personal' && allOrgs.size > 0) {
+        const orgsRow = createRow('Orgs', 'fa-solid fa-building');
+        Array.from(allOrgs).sort().forEach(orgId => {
+            const active = kanbanFilters.orgs && kanbanFilters.orgs.includes(orgId);
+            const displayLabel = orgId === 'personal' ? 'PERSONAL' : orgId.replace(/-/g, ' ').toUpperCase();
+            const pill = createPill(displayLabel, active, () => {
+                if (!kanbanFilters.orgs) kanbanFilters.orgs = [];
+                if (active) kanbanFilters.orgs = kanbanFilters.orgs.filter(o => o !== orgId);
+                else kanbanFilters.orgs.push(orgId);
+                renderDashboard();
+            });
+            orgsRow.content.appendChild(pill);
+        });
+        container.appendChild(orgsRow.row);
+    }
+
     // Fila 8: Estados y Botón Limpiar
     const lastRowWrapper = document.createElement('div');
     lastRowWrapper.className = 'flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pt-2 border-t border-slate-800/50';
@@ -1004,7 +1026,7 @@ function renderKanbanFilters() {
     clearBtn.className = 'text-[10px] font-black text-slate-500 hover:text-red-400 uppercase tracking-widest transition-all flex items-center gap-2 px-3 py-2 bg-slate-950 rounded-lg border border-slate-800 hover:border-red-900/50';
     clearBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i> Limpiar todo';
     clearBtn.onclick = () => {
-        kanbanFilters = { tags: [], members: [], repos: [], states: [], milestones: [], themes: [], priorities: [], sections: [] };
+        kanbanFilters = { tags: [], members: [], repos: [], states: [], milestones: [], themes: [], priorities: [], sections: [], orgs: [] };
         renderDashboard();
     };
     lastRowWrapper.appendChild(clearBtn);
@@ -1046,7 +1068,12 @@ async function renderWorkspaceSelector() {
 
     // Organizations Section
     itemsHtml += `<div class="px-3 py-1 text-[9px] font-bold text-slate-500 uppercase tracking-widest border-b border-slate-900">Organizaciones</div>`;
-    __workspaces__.forEach(w => {
+    const userHandle = (window.currentUser || (window.githubApi && window.githubApi.user && window.githubApi.user.login) || '').toLowerCase();
+    const filteredWorkspaces = __workspaces__.filter(w => {
+        if (!w.members || !Array.isArray(w.members)) return false;
+        return w.members.some(m => m.toLowerCase() === userHandle);
+    });
+    filteredWorkspaces.forEach(w => {
         const activeClass = currentWs === w.id ? 'text-indigo-400 font-bold bg-slate-900' : 'text-slate-300';
         itemsHtml += `
             <div class="flex items-center justify-between w-full hover:bg-slate-800/80 transition-colors" style="padding-right: 0.5rem;">
@@ -1121,7 +1148,8 @@ window.switchWorkspace = async (ws) => {
         milestones: [],
         themes: [],
         priorities: [],
-        sections: []
+        sections: [],
+        orgs: []
     };
 
     // Clear last sync data string to force a full re-render of the new workspace dataset
