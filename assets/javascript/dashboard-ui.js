@@ -1049,9 +1049,14 @@ async function renderWorkspaceSelector() {
     __workspaces__.forEach(w => {
         const activeClass = currentWs === w.id ? 'text-indigo-400 font-bold bg-slate-900' : 'text-slate-300';
         itemsHtml += `
-            <button onclick="switchWorkspace('${w.id}')" class="flex items-center w-full px-4 py-2 text-xs text-left hover:bg-slate-800 transition-colors ${activeClass}">
-                <i class="fa-solid fa-building mr-2 text-[10px] opacity-70"></i> ${w.name}
-            </button>
+            <div class="flex items-center justify-between w-full hover:bg-slate-800/80 transition-colors" style="padding-right: 0.5rem;">
+                <button onclick="switchWorkspace('${w.id}')" class="flex items-center flex-grow px-4 py-2 text-xs text-left ${activeClass}" style="border: none; background: transparent; outline: none;">
+                    <i class="fa-solid fa-building mr-2 text-[10px] opacity-70"></i> ${w.name}
+                </button>
+                <button onclick="event.stopPropagation(); openManageMembersModal('${w.id}')" class="p-1.5 text-slate-500 hover:text-indigo-400 transition-colors" style="border: none; background: transparent; outline: none;" title="Gestionar miembros">
+                    <i class="fa-solid fa-cog text-[11px]"></i>
+                </button>
+            </div>
         `;
     });
 
@@ -1103,9 +1108,30 @@ async function renderWorkspaceSelector() {
     }
 }
 
-window.switchWorkspace = (ws) => {
+window.switchWorkspace = async (ws) => {
     window.githubApi.setActiveWorkspace(ws);
-    window.location.reload();
+    // Reset active filters to prevent filtering issues on workspace change
+    activeFilter = null;
+    activeStageFilter = null;
+    kanbanFilters = {
+        tags: [],
+        members: [],
+        repos: [],
+        states: [],
+        milestones: [],
+        themes: [],
+        priorities: [],
+        sections: []
+    };
+
+    // Clear last sync data string to force a full re-render of the new workspace dataset
+    window._lastDataString = null;
+
+    try {
+        await refreshDashboardData();
+    } catch (err) {
+        console.error('[WORKSPACE] Failed to refresh workspace data:', err);
+    }
 };
 
 window.promptCreateOrganization = async () => {
@@ -1254,4 +1280,162 @@ window.importPersonalKanban = (event) => {
         }
     };
     reader.readAsText(file);
+};
+
+// --- GESTIÓN DE MIEMBROS POR ORGANIZACIÓN (MODAL) ---
+
+let activeManageOrgId = null;
+
+window.openManageMembersModal = (orgId) => {
+    activeManageOrgId = orgId;
+    const org = __workspaces__.find(w => w.id === orgId);
+    if (!org) return;
+
+    document.getElementById('manage-members-title').textContent = `Gestionar Miembros`;
+    document.getElementById('manage-members-subtitle').textContent = `Organización: ${org.name}`;
+    document.getElementById('add-member-input').value = '';
+    document.getElementById('add-member-error').classList.add('hidden');
+
+    renderManageMembersList(org);
+
+    document.getElementById('manage-members-modal').classList.remove('hidden');
+};
+
+window.closeManageMembersModal = () => {
+    document.getElementById('manage-members-modal').classList.add('hidden');
+    activeManageOrgId = null;
+};
+
+function renderManageMembersList(org) {
+    const listContainer = document.getElementById('manage-members-list');
+    if (!listContainer) return;
+    listContainer.innerHTML = '';
+
+    const members = org.members || [];
+    if (members.length === 0) {
+        listContainer.innerHTML = `<div class="text-xs text-slate-500 italic py-2 text-center">No hay miembros en esta organización.</div>`;
+        return;
+    }
+
+    members.forEach(member => {
+        const div = document.createElement('div');
+        div.className = 'flex justify-between items-center bg-slate-900/60 p-2 rounded border border-slate-800/80 mb-2';
+
+        const display = MEMBER_MAPPING[member.toLowerCase()] || member;
+
+        div.innerHTML = `
+            <span class="text-xs font-bold text-slate-200">${display} <span class="text-[10px] text-slate-500 font-mono">(${member})</span></span>
+            <button onclick="handleRemoveOrgMember('${member}')" class="text-slate-500 hover:text-red-400 transition-colors p-1 border-0 bg-transparent outline-none" title="Eliminar miembro">
+                <i class="fa-solid fa-trash-can text-xs"></i>
+            </button>
+        `;
+        listContainer.appendChild(div);
+    });
+}
+
+window.handleAddOrgMember = async () => {
+    const input = document.getElementById('add-member-input');
+    const errEl = document.getElementById('add-member-error');
+    if (!input || !errEl || !activeManageOrgId) return;
+
+    errEl.classList.add('hidden');
+    const username = input.value.trim();
+
+    if (!username) {
+        errEl.textContent = 'El nombre de usuario no puede estar vacío.';
+        errEl.classList.remove('hidden');
+        return;
+    }
+
+    const org = __workspaces__.find(w => w.id === activeManageOrgId);
+    if (!org) return;
+
+    const members = org.members || [];
+    if (members.some(m => m.toLowerCase() === username.toLowerCase())) {
+        errEl.textContent = 'El usuario ya pertenece a esta organización.';
+        errEl.classList.remove('hidden');
+        return;
+    }
+
+    if (window.hypeToast) {
+        window.hypeToast('Guardando miembro en GitHub...', 'info');
+    }
+
+    try {
+        const result = await window.githubApi.atomicWrite('_data/organizations.json', (db) => {
+            const orgInDb = db.organizations.find(w => w.id === activeManageOrgId);
+            if (orgInDb) {
+                if (!orgInDb.members) orgInDb.members = [];
+                orgInDb.members.push(username);
+            }
+            return db;
+        }, `chore: añadir miembro ${username} a la organización ${org.name}`);
+
+        if (result.success) {
+            if (window.hypeToast) {
+                window.hypeToast('Miembro añadido correctamente ✓', 'success');
+            }
+            __workspaces__ = result.content.organizations;
+            window.__workspaces__ = __workspaces__;
+
+            const updatedOrg = __workspaces__.find(w => w.id === activeManageOrgId);
+            renderManageMembersList(updatedOrg);
+
+            loadWorkspaceMembers();
+            renderDashboard();
+            input.value = '';
+        } else {
+            throw new Error('No se pudo guardar la organización.');
+        }
+    } catch (e) {
+        console.error('[MEMBER] Failed to add member:', e);
+        errEl.textContent = 'Fallo al guardar: ' + e.message;
+        errEl.classList.remove('hidden');
+        if (window.hypeToast) {
+            window.hypeToast('Error guardando en GitHub: ' + e.message, 'error');
+        }
+    }
+};
+
+window.handleRemoveOrgMember = async (username) => {
+    if (!activeManageOrgId) return;
+    const org = __workspaces__.find(w => w.id === activeManageOrgId);
+    if (!org) return;
+
+    if (!confirm(`¿Estás seguro de que deseas eliminar a ${username} de ${org.name}?`)) return;
+
+    if (window.hypeToast) {
+        window.hypeToast('Eliminando miembro en GitHub...', 'info');
+    }
+
+    try {
+        const result = await window.githubApi.atomicWrite('_data/organizations.json', (db) => {
+            const orgInDb = db.organizations.find(w => w.id === activeManageOrgId);
+            if (orgInDb && orgInDb.members) {
+                orgInDb.members = orgInDb.members.filter(m => m.toLowerCase() !== username.toLowerCase());
+            }
+            return db;
+        }, `chore: eliminar miembro ${username} de la organización ${org.name}`);
+
+        if (result.success) {
+            if (window.hypeToast) {
+                window.hypeToast('Miembro eliminado ✓', 'success');
+            }
+            __workspaces__ = result.content.organizations;
+            window.__workspaces__ = __workspaces__;
+
+            const updatedOrg = __workspaces__.find(w => w.id === activeManageOrgId);
+            renderManageMembersList(updatedOrg);
+
+            loadWorkspaceMembers();
+            renderDashboard();
+        } else {
+            throw new Error('No se pudo guardar la organización.');
+        }
+    } catch (e) {
+        console.error('[MEMBER] Failed to remove member:', e);
+        if (window.hypeToast) {
+            window.hypeToast('Error guardando en GitHub: ' + e.message, 'error');
+        }
+    }
 };

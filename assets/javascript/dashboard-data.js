@@ -12,6 +12,37 @@ const ORIGINAL_MEMBER_MAPPING = {
     'spongebob3bray': 'Bray'
 };
 
+const FALLBACK_ORGANIZATIONS = [
+    {
+      "id": "hypenosys",
+      "name": "Hypenosys",
+      "createdBy": "Axlfc",
+      "createdAt": "2025-01-01T00:00:00.000Z",
+      "isDefault": true,
+      "members": [
+        "axlfc",
+        "topperh4rley",
+        "javi26031994-a11y",
+        "dkdidac-design",
+        "mitxel2022",
+        "silmaril464",
+        "lachicadelaboina",
+        "spongebob3bray"
+      ]
+    },
+    {
+      "id": "empty-space-videogames",
+      "name": "Empty Space Videogames",
+      "createdBy": "Axlfc",
+      "createdAt": "2025-01-01T00:00:00.000Z",
+      "isDefault": false,
+      "members": [
+        "Axlfc",
+        "TopperH4rley"
+      ]
+    }
+];
+
 function loadWorkspaceMembers() {
     const ws = window.githubApi.getActiveWorkspace();
     if (ws === 'personal') {
@@ -93,10 +124,17 @@ async function initDashboard() {
     setupEventListeners();
     renderDashboard();
 
-    window.githubApi.getOrgRepos().then(repos => {
-        window.userReposCache = repos;
-        console.log('[DASHBOARD] Org repos cached:', repos.length);
-    });
+    const ws = window.githubApi.getActiveWorkspace();
+    if (ws !== 'personal') {
+        window.githubApi.getOrgRepos().then(repos => {
+            window.userReposCache = repos;
+            console.log('[DASHBOARD] Org repos cached:', repos.length);
+        }).catch(err => {
+            console.warn('[DASHBOARD] Failed to cache org repos:', err);
+        });
+    } else {
+        window.userReposCache = [];
+    }
 
   } catch (err) {
     console.error('[DASHBOARD] Init error:', err);
@@ -307,9 +345,13 @@ function loadCachedData() {
     }
 }
 
+window.addEventListener('beforeunload', () => {
+    window.isUnloading = true;
+});
+
 async function refreshDashboardData() {
-  loadWorkspaceMembers();
   const ws = window.githubApi.getActiveWorkspace();
+  loadWorkspaceMembers();
   try {
     // Initial cache load for first run
     if (currentTasks.length === 0 && !window._cacheLoaded) {
@@ -317,16 +359,31 @@ async function refreshDashboardData() {
         window._cacheLoaded = true;
     }
 
-    const [tasksRes, archiveRes, statsRes, budgetRes, profilesRes] = await Promise.all([
+    const [tasksRes, archiveRes, statsRes, budgetRes, profilesRes, orgsRes] = await Promise.all([
       window.githubApi.fetchFileWithSha('_data/dashboard_tasks.json'),
       window.githubApi.fetchFileWithSha('_data/dashboard_tasks_archive.json'),
       window.githubApi.fetchFileWithSha('_data/studio_stats.json'),
       window.githubApi.fetchFileWithSha('_data/studio_budget.json'),
-      fetch('/assets/data/team_profiles.json').then(res => res.json().then(data => ({ content: data })))
+      fetch('/assets/data/team_profiles.json').then(res => res.json().then(data => ({ content: data }))),
+      window.githubApi.fetchFileWithSha('_data/organizations.json').catch(err => {
+          if (ws === 'personal') {
+              console.log('[DASHBOARD] Silent fallback for organizations.json in personal workspace.');
+              return { content: { organizations: FALLBACK_ORGANIZATIONS } };
+          } else {
+              throw err;
+          }
+      })
     ]);
 
     const migratedTasksData = await migrateTasks(tasksRes.content, '_data/dashboard_tasks.json');
     const migratedArchiveData = await migrateTasks(archiveRes.content, '_data/dashboard_tasks_archive.json');
+
+    const newOrgs = (orgsRes && orgsRes.content && orgsRes.content.organizations) || FALLBACK_ORGANIZATIONS;
+    window.__workspaces__ = newOrgs;
+    if (typeof __workspaces__ !== 'undefined') {
+        __workspaces__ = newOrgs;
+    }
+    loadWorkspaceMembers();
 
     const newTasks = (migratedTasksData && migratedTasksData.tasks) || [];
     const newArchive = (migratedArchiveData && migratedArchiveData.tasks) || [];
@@ -377,6 +434,10 @@ async function refreshDashboardData() {
     if (tsEl) tsEl.textContent = `Última sincronización: ${new Date().toLocaleTimeString('es-ES')}`;
 
   } catch (err) {
+    if (window.isUnloading) {
+        console.log('[DASHBOARD] Fetch aborted due to page unload/navigation — ignoring.');
+        return;
+    }
     let msg = `Error de sincronización: ${err.message}`;
     if (err.message.includes('401')) msg = "Token inválido o expirado. Por favor, vuelve a iniciar sesión.";
     if (err.message.includes('403')) msg = "Sin permisos de escritura en el repositorio.";
