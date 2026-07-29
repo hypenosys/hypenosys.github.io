@@ -1,7 +1,7 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-07-27T10:53:56.678Z",
-  "last_updated_by": "Sistema",
+  "last_updated": "2026-07-29T12:22:10.490Z",
+  "last_updated_by": "Axel",
   "tasks": [
     {
       "rama": "docs/brainstorming-ideation",
@@ -3247,9 +3247,61 @@
       "seccion": "General",
       "jules_session": null,
       "branch": "develop"
+    },
+    {
+      "title": "Tarea de prueba",
+      "descripcion": "asdasd",
+      "rama": "",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "seccion": "",
+      "repository": null,
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-07-29",
+      "due_date": "2026-08-02",
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "organizationId": "hypenosys",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-07-29",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-29T12:22:09.894Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 87
     }
   ],
   "_audit_log": [
+    {
+      "action": "feat: nueva tarea #1785327729894 añadida",
+      "user": "Axlfc",
+      "timestamp": "2026-07-29T12:22:10.490Z"
+    },
     {
       "action": "chore: actualizar estado tarea #82 → Working",
       "user": "Axlfc",
