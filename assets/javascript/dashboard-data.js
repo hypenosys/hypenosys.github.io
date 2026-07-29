@@ -375,6 +375,25 @@ async function refreshDashboardData() {
       })
     ]);
 
+    let remoteTasksRes = null;
+    let remoteArchiveRes = null;
+    let remoteOrgsRes = null;
+
+    if (ws === 'personal') {
+        try {
+            const [rTasks, rArchive, rOrgs] = await Promise.all([
+              window.githubApi.fetchFileWithSha('_data/dashboard_tasks.json', 'json', true),
+              window.githubApi.fetchFileWithSha('_data/dashboard_tasks_archive.json', 'json', true),
+              window.githubApi.fetchFileWithSha('_data/organizations.json', 'json', true)
+            ]);
+            remoteTasksRes = rTasks;
+            remoteArchiveRes = rArchive;
+            remoteOrgsRes = rOrgs;
+        } catch (err) {
+            console.warn('[DASHBOARD] Failed to load remote tasks/orgs for personal workspace, falling back to local only:', err);
+        }
+    }
+
     const migratedTasksData = await migrateTasks(tasksRes.content, '_data/dashboard_tasks.json');
     const migratedArchiveData = await migrateTasks(archiveRes.content, '_data/dashboard_tasks_archive.json');
 
@@ -396,6 +415,46 @@ async function refreshDashboardData() {
     if (ws !== 'personal') {
         filteredTasks = newTasks.filter(t => t.organizationId === ws);
         filteredArchive = newArchive.filter(t => t.organizationId === ws);
+    } else {
+        // Personal Workspace: Auto-populate with remote assigned tasks
+        const userHandle = (window.currentUser || (window.githubApi && window.githubApi.user && window.githubApi.user.login) || '').toLowerCase();
+        const remoteOrgs = (remoteOrgsRes && remoteOrgsRes.content && remoteOrgsRes.content.organizations) || __workspaces__ || FALLBACK_ORGANIZATIONS;
+        const userOrgs = remoteOrgs.filter(w => {
+            if (!w.members || !Array.isArray(w.members)) return false;
+            return w.members.some(m => m.toLowerCase() === userHandle);
+        }).map(w => w.id);
+
+        let assignedRemoteTasks = [];
+        let assignedRemoteArchive = [];
+
+        if (remoteTasksRes && remoteTasksRes.content && Array.isArray(remoteTasksRes.content.tasks)) {
+            assignedRemoteTasks = remoteTasksRes.content.tasks.filter(t => {
+                const inOrg = userOrgs.includes(t.organizationId);
+                const isAssigned = Array.isArray(t.asignados) && t.asignados.some(m => m.toLowerCase() === userHandle);
+                return inOrg && isAssigned;
+            }).map(t => {
+                const cloned = JSON.parse(JSON.stringify(t));
+                cloned.id = 'remote-' + t.id;
+                cloned.isRemote = true;
+                return cloned;
+            });
+        }
+
+        if (remoteArchiveRes && remoteArchiveRes.content && Array.isArray(remoteArchiveRes.content.tasks)) {
+            assignedRemoteArchive = remoteArchiveRes.content.tasks.filter(t => {
+                const inOrg = userOrgs.includes(t.organizationId);
+                const isAssigned = Array.isArray(t.asignados) && t.asignados.some(m => m.toLowerCase() === userHandle);
+                return inOrg && isAssigned;
+            }).map(t => {
+                const cloned = JSON.parse(JSON.stringify(t));
+                cloned.id = 'remote-' + t.id;
+                cloned.isRemote = true;
+                return cloned;
+            });
+        }
+
+        filteredTasks = [...newTasks, ...assignedRemoteTasks];
+        filteredArchive = [...newArchive, ...assignedRemoteArchive];
     }
 
     // Check if data actually changed to avoid redundant renders

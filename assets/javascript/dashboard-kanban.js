@@ -1,5 +1,27 @@
 /* HYPENOSYS — KANBAN MODULE */
 
+function getActiveKanbanColumns() {
+  const ws = window.githubApi.getActiveWorkspace();
+
+  let targetOrgId = ws;
+  if (ws === 'personal') {
+      if (kanbanFilters.orgs && kanbanFilters.orgs.length === 1) {
+          targetOrgId = kanbanFilters.orgs[0];
+      } else {
+          return KANBAN_COLUMNS; // Normalized agnostic 4 columns
+      }
+  }
+
+  if (typeof __workspaces__ !== 'undefined' && __workspaces__) {
+      const org = __workspaces__.find(w => w.id === targetOrgId);
+      if (org && org.kanbanColumns && Array.isArray(org.kanbanColumns) && org.kanbanColumns.length > 0) {
+          return org.kanbanColumns;
+      }
+  }
+
+  return KANBAN_COLUMNS; // Default fallback
+}
+
 function renderKanbanBoard() {
   const tasks = getFilteredTasks(currentTasks.filter(t => t.estado !== 'Obsolete'));
 
@@ -13,9 +35,30 @@ function renderKanbanBoard() {
     }
   }
 
+  const boardEl = document.getElementById('kanban-board');
+  const cols = getActiveKanbanColumns();
+  if (boardEl) {
+      boardEl.className = `grid grid-cols-1 md:grid-cols-2 lg:grid-cols-${cols.length} gap-6`;
+      boardEl.innerHTML = cols.map(col => {
+          let borderClass = 'border-slate-500';
+          if (col.id === 'working') borderClass = 'border-amber-400';
+          if (col.id === 'qa') borderClass = 'border-indigo-400';
+          if (col.id === 'done') borderClass = 'border-emerald-400';
+          return `
+            <div id="kanban-col-${col.id}" class="kanban-column flex flex-col gap-4">
+                <div class="flex justify-between items-center px-2 py-1 border-l-4 ${borderClass}">
+                    <span class="text-xs font-bold uppercase text-slate-400">${col.icon || '📋'} ${col.label}</span>
+                    <span class="col-count text-[10px] bg-slate-800 px-2 py-0.5 rounded text-slate-400">0</span>
+                </div>
+                <div class="kanban-cards flex-grow space-y-4 custom-scrollbar" style="min-height: 200px;"></div>
+            </div>
+          `;
+      }).join('');
+  }
+
   // Use requestAnimationFrame to batch rendering and keep UI responsive
   requestAnimationFrame(() => {
-    for (const col of KANBAN_COLUMNS) {
+    for (const col of cols) {
         const colEl = document.getElementById(`kanban-col-${col.id}`);
         if (!colEl) continue;
         const cardsEl = colEl.querySelector('.kanban-cards');
@@ -47,12 +90,16 @@ function renderKanbanBoard() {
 }
 
 function getTaskColumn(task) {
+  const cols = getActiveKanbanColumns();
   const estado = task.estado === '?' ? 'In Review' : task.estado;
-  if (['Pending','ToDo'].includes(estado) || estado === null) return 'backlog';
-  if (['Working','KO'].includes(estado)) return 'working';
-  if (estado === 'Fixed' || estado === 'In Review') return 'qa';
-  if (['OK','Closed'].includes(estado)) return 'done';
-  return 'backlog';
+
+  for (const col of cols) {
+    if (col.states && col.states.includes(estado)) {
+      return col.id;
+    }
+  }
+
+  return cols[0] ? cols[0].id : 'backlog';
 }
 
 function buildTaskCard(task) {
@@ -128,8 +175,11 @@ function toggleCardImages(taskId) {
 }
 
 async function handleCardDrop(taskId, targetColumnId) {
-  const stateMap = { backlog: 'Pending', working: 'Working', qa: 'Fixed', done: 'OK' };
-  const newEstado = stateMap[targetColumnId];
+  const cols = getActiveKanbanColumns();
+  const col = cols.find(c => c.id === targetColumnId);
+  if (!col) return;
+
+  const newEstado = col.states.find(s => s !== null && s !== undefined) || 'Pending';
 
   let resolverHandle = null;
   let testerHandle   = null;
@@ -197,13 +247,14 @@ async function handleMoveCard(taskId, direction) {
     const task = currentTasks.find(t => String(t.id) === String(taskId));
     if (!task) return;
 
+    const cols = getActiveKanbanColumns();
     const currentColId = getTaskColumn(task);
-    const currentIndex = KANBAN_COLUMNS.findIndex(c => c.id === currentColId);
+    const currentIndex = cols.findIndex(c => c.id === currentColId);
     const nextIndex = currentIndex + direction;
 
-    if (nextIndex < 0 || nextIndex >= KANBAN_COLUMNS.length) return;
+    if (nextIndex < 0 || nextIndex >= cols.length) return;
 
-    const targetCol = KANBAN_COLUMNS[nextIndex];
+    const targetCol = cols[nextIndex];
     await handleCardDrop(taskId, targetCol.id);
 }
 
