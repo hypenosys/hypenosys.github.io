@@ -14,8 +14,7 @@
         "dkdidac-design",
         "mitxel2022",
         "silmaril464",
-        "lachicadelaboina",
-        "spongebob3bray"
+        "lachicadelaboina"
       ]
     },
     {
@@ -28,6 +27,13 @@
         "Axlfc",
         "TopperH4rley"
       ]
+    }
+  ],
+  "_audit_log": [
+    {
+      "action": "chore: eliminar miembro spongebob3bray de la organización Hypenosys",
+      "user": "Axlfc",
+      "timestamp": "2026-07-29T12:21:29.894Z"
     }
   ]
 }
