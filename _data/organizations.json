@@ -4,26 +4,16 @@
     {
       "id": "hypenosys",
       "name": "Hypenosys",
-      "path_prefix": "",
-      "members": [
-        "Axlfc",
-        "TopperH4rley",
-        "javi26031994-a11y",
-        "dkdidac-design",
-        "mitxel2022",
-        "silmaril464",
-        "lachicadelaboina",
-        "spongebob3bray"
-      ]
+      "createdBy": "Axlfc",
+      "createdAt": "2025-01-01T00:00:00.000Z",
+      "isDefault": true
     },
     {
       "id": "empty-space-videogames",
       "name": "Empty Space Videogames",
-      "path_prefix": "_data/orgs/empty-space-videogames/",
-      "members": [
-        "Axlfc",
-        "TopperH4rley"
-      ]
+      "createdBy": "Axlfc",
+      "createdAt": "2025-01-01T00:00:00.000Z",
+      "isDefault": false
     }
   ]
 }

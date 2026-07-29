@@ -100,7 +100,8 @@
       ],
       "seccion": "",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "rama": "PRO",
@@ -141,7 +142,8 @@
       "change_log": [],
       "jules_session": null,
       "repository": "",
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "rama": "PRO",
@@ -181,7 +183,8 @@
       "change_log": [],
       "jules_session": null,
       "repository": "",
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "rama": "PRO",
@@ -220,7 +223,8 @@
       "change_log": [],
       "jules_session": null,
       "repository": "",
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "rama": "PRO",
@@ -261,7 +265,8 @@
       "change_log": [],
       "jules_session": null,
       "repository": "",
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "rama": "PRO",
@@ -345,7 +350,8 @@
       ],
       "repository": "hypenosys/hypenosys.github.io",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "rama": "PRO",
@@ -402,7 +408,8 @@
       ],
       "jules_session": null,
       "repository": "",
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "rama": "feature/repo-labels-ui",
@@ -594,7 +601,8 @@
       "repository": "hypenosys/hypenosys.github.io",
       "seccion": "",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "rama": "PRO",
@@ -635,7 +643,8 @@
       "comments": [],
       "change_log": [],
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "rama": "PRO",
@@ -764,7 +773,8 @@
       ],
       "jules_session": null,
       "repository": "",
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "rama": "PRO",
@@ -869,7 +879,8 @@
       ],
       "jules_session": null,
       "repository": "",
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Arreglar previsualización de fotos fuera del edit",
@@ -994,7 +1005,8 @@
       "id": 21,
       "repository": "hypenosys/hypenosys.github.io",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Adoptar prácticas mobile first",
@@ -1087,7 +1099,8 @@
       "id": 22,
       "repository": "hypenosys/hypenosys.github.io",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Añadir campo repositorio a las tasks",
@@ -1160,7 +1173,8 @@
       "id": 23,
       "repository": "hypenosys/hypenosys.github.io",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Particularizar y extraer en funciones del dashboard.js en ficheros más pequeños",
@@ -1240,7 +1254,8 @@
       "id": 24,
       "jules_session": null,
       "repository": "",
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Implementar editor de perfiles de equipo en el Dashboard",
@@ -1315,7 +1330,8 @@
       ],
       "id": 26,
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Mobile first: Jules Panel - \"GitHub (Team) Ops\" — Hub completo de gestión de repositorios, conectado con Tasks Kanban y Claude",
@@ -1466,7 +1482,8 @@
       "id": 28,
       "seccion": "Jules Panel",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Nueva página \"Claude Neural Chat\" — Interfaz de chat privado con Claude API / local AI ollama support",
@@ -1596,7 +1613,8 @@
       ],
       "id": 29,
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "La API de Neural Chat si seleccionamos ollama tiene que ser ollama, no Anthropic",
@@ -1695,7 +1713,8 @@
       ],
       "id": 30,
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "BUG VISUAL: Jules Neural Operation en dashboard en móvil ",
@@ -1869,7 +1888,8 @@
       ],
       "id": 31,
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Filtrar tareas por tag en /dashboard",
@@ -2017,7 +2037,8 @@
       "id": 32,
       "seccion": "Dashboard",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Crear README.md de hypenosys.github.io (Web)",
@@ -2158,7 +2179,8 @@
       "id": 33,
       "seccion": "Web",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Se ha roto la carga de las branches de los repositorios en el panel de jules.",
@@ -2248,7 +2270,8 @@
       ],
       "id": 34,
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "n8n: Añadir NIM y cognito-agent como providers en la configuración de Claude Neural Chat",
@@ -2404,7 +2427,8 @@
       "id": 36,
       "seccion": "Chat Neural",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "New page pages/image-gen to generate image or text context and flux dev or kontext up to 2 images and text ",
@@ -2569,7 +2593,8 @@
       "id": 38,
       "seccion": "Image Gen",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Añadir hypenosys/scripts a SVN",
@@ -2681,7 +2706,8 @@
       "id": 39,
       "seccion": "SVN Admin Panel, App",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Añadir icono de neural-chat al lado del robot en el menú del dashboard",
@@ -2765,7 +2791,8 @@
       "id": 41,
       "seccion": "Dashboard",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Claude Neural: llamadas a apis js y python en n8n-runners",
@@ -2846,7 +2873,8 @@
       "id": 43,
       "seccion": "Chat Neural, Backend n8n",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "id": 46,
@@ -2929,7 +2957,8 @@
       ],
       "seccion": "Web",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "id": 47,
@@ -2998,7 +3027,8 @@
       ],
       "seccion": "Jules Panel, Web",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "id": 48,
@@ -3090,7 +3120,8 @@
       ],
       "seccion": "Dashboard",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Local AI Backend Docs: ComfyUI, Redis, PostgreSQL, Forgejo, Matrix, Qdrant, n8n, n8n-runner, ollama setup",
@@ -3175,7 +3206,8 @@
       "id": 49,
       "seccion": "Documentación",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "arreglar jules panel kanban",
@@ -3243,7 +3275,8 @@
       "id": 58,
       "seccion": "",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Quitar sección vacía entre FILTRAR MIEMBROS y ALERTAS DE RUTA CRÍTICAS ACTIVAS",
@@ -3333,7 +3366,8 @@
       "id": 59,
       "seccion": "Dashboard",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Subida de imágenes al GUARDAR TAREA, no al subir la imagen",
@@ -3409,7 +3443,8 @@
       "id": 60,
       "seccion": "Dashboard",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Al expandir la card del kanban, si hay imagenes, debería mostrarlas ahi y poder previsualizarlas flawlessly",
@@ -3477,7 +3512,8 @@
       "id": 61,
       "seccion": "Dashboard",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Unificar menús en todas las páginas de la plataforma",
@@ -3598,7 +3634,8 @@
       "id": 62,
       "seccion": "Jules Panel, Chat Neural",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "/chat/neural/:  Arreglar desbordamiento en modelo ON",
@@ -3674,7 +3711,8 @@
       "id": 63,
       "seccion": "Chat Neural",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Añadir botón de archivar en cards de columna COMPLETADO para mandar al archivo (cementerio de tareas)",
@@ -3736,7 +3774,8 @@
       ],
       "id": 66,
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Reducir latencia y tiempos de carga",
@@ -3870,7 +3909,8 @@
       ],
       "id": 67,
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Partir /jules-panel y /chat/neural en ficheros más pequeños específicos",
@@ -3954,7 +3994,8 @@
       ],
       "id": 68,
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Return images with n8n workflow when generating them",
@@ -4030,7 +4071,8 @@
       ],
       "id": 69,
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Todas las cabeceras de la web son diferente.",
@@ -4137,7 +4179,8 @@
       ],
       "id": 75,
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "No funciona el boton ver tarea",
@@ -4229,7 +4272,8 @@
       ],
       "id": 76,
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "rama": "chore/upgrade-ue-5.7.4",
@@ -4439,7 +4483,8 @@
       "repository": "hypenosys/app",
       "seccion": "App",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "rama": "PRO",
@@ -4545,7 +4590,8 @@
       "repository": "hypenosys/hypenosys.github.io",
       "seccion": "Dashboard",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Botón \"🤖 Enviar a Jules\" en tarjetas Kanban con estado de sesión Neural Operations",
@@ -4731,7 +4777,8 @@
       "id": 27,
       "seccion": "Dashboard",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Falta nombre del repo (o alias) en las cards en dashboard de Jules Neural Operations",
@@ -4836,7 +4883,8 @@
       "id": 42,
       "seccion": "Dashboard, Jules Panel",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "/chat/neural/:  Arreglar display de borrar/archivar sesiones",
@@ -4912,7 +4960,8 @@
       "id": 65,
       "seccion": "Chat Neural",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     }
   ],
   "_audit_log": [
