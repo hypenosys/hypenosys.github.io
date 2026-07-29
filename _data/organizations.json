@@ -6,14 +6,28 @@
       "name": "Hypenosys",
       "createdBy": "Axlfc",
       "createdAt": "2025-01-01T00:00:00.000Z",
-      "isDefault": true
+      "isDefault": true,
+      "members": [
+        "axlfc",
+        "topperh4rley",
+        "javi26031994-a11y",
+        "dkdidac-design",
+        "mitxel2022",
+        "silmaril464",
+        "lachicadelaboina",
+        "spongebob3bray"
+      ]
     },
     {
       "id": "empty-space-videogames",
       "name": "Empty Space Videogames",
       "createdBy": "Axlfc",
       "createdAt": "2025-01-01T00:00:00.000Z",
-      "isDefault": false
+      "isDefault": false,
+      "members": [
+        "Axlfc",
+        "TopperH4rley"
+      ]
     }
   ]
 }
