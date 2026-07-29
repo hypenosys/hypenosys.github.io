@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-07-23T10:43:40.023Z",
+  "last_updated": "2026-07-28T06:59:17.182Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -269,6 +269,323 @@
       "organizationId": "hypenosys"
     },
     {
+      "rama": "chore/upgrade-ue-5.7.4",
+      "descripcion": "Actualizar el repositorio 'app' a la v5.8 de Unreal Engine y sincronizar con SVN. Necesario para mantener la compatibilidad con las últimas herramientas.",
+      "tema_principal": "Tools / Automation",
+      "prioridad": "ToDo",
+      "milestone": "M1",
+      "estado": "OK",
+      "completitud": 0.9,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc",
+        "topperh4rley"
+      ],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-05-26",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "Sincronización técnica entre el repositorio de scripts procedurales y el proyecto principal en la versión 5.7.4 para asegurar compatibilidad.",
+      "id": 11,
+      "email_responsable": "alex@hypenosys.com",
+      "emails_asignados": [
+        "axel@hypenosys.com",
+        "alex@hypenosys.com"
+      ],
+      "images": [],
+      "title": "upgrade 'app' to Unreal 5.8",
+      "task_type": "chore",
+      "start_date": "2026-06-01",
+      "due_date": "2026-06-30",
+      "estimated_hours": 2,
+      "story_points": 1,
+      "tags": [
+        "chore",
+        "devops",
+        "git"
+      ],
+      "external_links": [],
+      "subtasks": [
+        {
+          "id": 1780675597610,
+          "text": "clonar repo hypenosys/app",
+          "done": false
+        },
+        {
+          "id": 1780675637546,
+          "text": "ponerla al día a la versión",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "El proyecto compile y se abra sin errores en la v5.7.4.",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [
+        "Cuidado con las dependencias de los plugins al actualizar, a veces rompen al saltar de subversión."
+      ],
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:22:52.373Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-06-30"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-03T07:34:10.481Z",
+          "field": "repository",
+          "old_value": null,
+          "new_value": "hypenosys/app"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-05T16:02:46.750Z",
+          "field": "title",
+          "old_value": "Merge SVN Content/Scripts with upgraded github repo 'app'",
+          "new_value": "Content/Scripts github sync repo 'app' which is Unreal upgraded to 5.7.4"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-05T16:02:46.750Z",
+          "field": "prioridad",
+          "old_value": "Minor",
+          "new_value": "Major"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-05T16:02:46.750Z",
+          "field": "milestone",
+          "old_value": "M1",
+          "new_value": "M3"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-05T16:02:46.750Z",
+          "field": "task_type",
+          "old_value": "feature",
+          "new_value": "chore"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-05T16:08:34.339Z",
+          "field": "descripcion",
+          "old_value": "Merge SVN Content/Scripts with upgraded github repo 'app' 5.7.4",
+          "new_value": "Merge SVN Content/Scripts SVN folder syncing with upgraded an upgraded github repo 'app' to 5.7.4"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-05T16:08:34.339Z",
+          "field": "tags",
+          "old_value": "[]",
+          "new_value": "[\"git\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T15:21:19.422Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "ToDo"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:37:13.662Z",
+          "field": "title",
+          "old_value": "Content/Scripts github sync repo 'app' which is Unreal upgraded to 5.7.4",
+          "new_value": "upgrade repo 'app' which is Unreal upgraded to 5.7.4"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:37:13.662Z",
+          "field": "milestone",
+          "old_value": "M3",
+          "new_value": "M1"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T20:09:02.758Z",
+          "field": "title",
+          "old_value": "upgrade repo 'app' which is Unreal upgraded to 5.7.4",
+          "new_value": "upgrade repo 'app' to Unreal 5.7.4"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T20:09:02.758Z",
+          "field": "descripcion",
+          "old_value": "Merge SVN Content/Scripts SVN folder syncing with upgraded an upgraded github repo 'app' to 5.7.4",
+          "new_value": "Merge to SVN Content/Scripts git folder syncing with github repo 'app' sync to 5.7.4"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T20:09:21.058Z",
+          "field": "title",
+          "old_value": "upgrade repo 'app' to Unreal 5.7.4",
+          "new_value": "upgrade 'app' to Unreal 5.7.4"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-11T09:37:31.532Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-15T19:07:52.551Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-15T19:07:52.551Z",
+          "field": "completitud",
+          "old_value": 0.75,
+          "new_value": 0.9
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T10:34:44.435Z",
+          "field": "title",
+          "old_value": "upgrade 'app' to Unreal 5.7.4",
+          "new_value": "upgrade 'app' to Unreal 5.8"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:43:56.450Z",
+          "field": "seccion",
+          "new_value": "App"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T14:48:53.562Z",
+          "field": "descripcion",
+          "old_value": "Actualizar el repositorio 'app' a la v5.7.4 de Unreal Engine y sincronizar con SVN. Necesario para mantener la compatibilidad con las últimas herramientas.",
+          "new_value": "Actualizar el repositorio 'app' a la v5.8 de Unreal Engine y sincronizar con SVN. Necesario para mantener la compatibilidad con las últimas herramientas."
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-18T11:38:55.650Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "OK"
+        }
+      ],
+      "repository": "hypenosys/app",
+      "seccion": "App",
+      "jules_session": null,
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
+    },
+    {
+      "rama": "PRO",
+      "descripcion": "Finalizar el proceso de alta de los miembros en la plataforma. Permite una correcta asignación de tareas y visibilidad del equipo.",
+      "tema_principal": "Concepto / GDD",
+      "prioridad": "Minor",
+      "milestone": "M1",
+      "estado": "OK",
+      "completitud": 0.2,
+      "resuelto_por": "Alex",
+      "detectado_por": "Unassigned",
+      "asignados": [
+        "dkdidac-design",
+        "javi26031994-a11y",
+        "mitxel2022",
+        "topperh4rley"
+      ],
+      "email_responsable": "mitxel@hypenosys.com",
+      "emails_asignados": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-05-26",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "id": 12,
+      "images": [],
+      "title": "Completar onboarding y rellenar perfil dashboard",
+      "task_type": "chore",
+      "start_date": "2026-06-01",
+      "due_date": "2026-06-15",
+      "estimated_hours": 1,
+      "story_points": 1,
+      "tags": [
+        "chore",
+        "onboarding"
+      ],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "Todos los perfiles tengan sus datos y avatares correctos.",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [
+        "Faltan algunos correos electrónicos en los perfiles actuales; deberíamos normalizarlos para las notificaciones automáticas."
+      ],
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T06:55:05.856Z",
+          "field": "tags",
+          "old_value": "[]",
+          "new_value": "[\"onboarding\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T06:57:48.868Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Medium"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T07:10:42.298Z",
+          "field": "task_type",
+          "old_value": "feature",
+          "new_value": "chore"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:14:17.201Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-06-15"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-03T07:33:40.123Z",
+          "field": "repository",
+          "old_value": null,
+          "new_value": "hypenosys/hypenosys.github.io"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-05T16:44:56.586Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T11:39:15.880Z",
+          "field": "prioridad",
+          "old_value": "Medium",
+          "new_value": "Minor"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:49:34.826Z",
+          "field": "seccion",
+          "new_value": "Dashboard"
+        }
+      ],
+      "repository": "hypenosys/hypenosys.github.io",
+      "seccion": "Dashboard",
+      "jules_session": null,
+      "branch": "Programación (PRO)"
+    },
+    {
       "rama": "PRO",
       "descripcion": "programar botones en jules botones para archivar y eliminar sesiones inconcluyentes, y que estas sesiones sean sincronizadas con jules",
       "tema_principal": "Programación / Engine",
@@ -350,8 +667,7 @@
       ],
       "repository": "hypenosys/hypenosys.github.io",
       "jules_session": null,
-      "branch": "Programación (PRO)",
-      "organizationId": "hypenosys"
+      "branch": "Programación (PRO)"
     },
     {
       "rama": "PRO",
@@ -1332,6 +1648,192 @@
       "jules_session": null,
       "branch": "Programación (PRO)",
       "organizationId": "hypenosys"
+    },
+    {
+      "title": "Botón \"🤖 Enviar a Jules\" en tarjetas Kanban con estado de sesión Neural Operations",
+      "descripcion": "Integrar un botón para enviar tareas directamente a Jules desde el Kanban. Automatiza la creación de prompts y mejora la eficiencia de la IA.",
+      "rama": "feature/kanban-jules-link",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Major",
+      "milestone": "M2",
+      "estado": "OK",
+      "completitud": 0.5,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc",
+        "topperh4rley"
+      ],
+      "email_responsable": "axel@hypenosys.com",
+      "emails_asignados": [
+        "alex@hypenosys.com"
+      ],
+      "start_date": "2026-06-04",
+      "due_date": "2026-06-07",
+      "estimated_hours": 8,
+      "story_points": 4,
+      "tags": [
+        "Infraestructura",
+        "api",
+        "feature",
+        "jules",
+        "ux"
+      ],
+      "external_links": [],
+      "subtasks": [
+        {
+          "id": 1780563025064,
+          "text": "Añadir botón 🤖 y lógica de construcción de prompt en ui-components.js",
+          "done": false
+        },
+        {
+          "id": 1780563033138,
+          "text": "Crear validador de prompt (campos faltantes + filtro de imágenes)",
+          "done": false
+        },
+        {
+          "id": 1780563041180,
+          "text": "Añadir campo jules_session al schema de dashboard_tasks.json",
+          "done": false
+        },
+        {
+          "id": 1780563049548,
+          "text": "Renderizar badge de estado Jules en tarjetas Kanban",
+          "done": false
+        },
+        {
+          "id": 1780563057273,
+          "text": "Vincular tarjeta ↔ sesión Jules por ID en jules-panel.html",
+          "done": false
+        },
+        {
+          "id": 1780936990388,
+          "text": "BUG: Botón robot no pre-rellena contexto en Neural Chat (tags: frontend, ux, bug)",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "El botón genere el prompt correcto y lo cargue en el panel.",
+      "blocks": [],
+      "blocked_by": [
+        "26",
+        "29",
+        "30"
+      ],
+      "comments": [
+        "Debemos implementar un sistema de validación previo para asegurar que no enviamos prompts vacíos que consuman tokens innecesariamente."
+      ],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-04",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-04T08:51:21.137Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-04T08:51:46.719Z",
+          "field": "blocked_by",
+          "old_value": "[]",
+          "new_value": "[\"26\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-04T09:38:19.327Z",
+          "field": "milestone",
+          "old_value": "M1",
+          "new_value": "M2"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T09:58:00.973Z",
+          "field": "descripcion",
+          "old_value": "Añadir un botón con icono de robot en cada tarjeta del Kanban que estructure y envíe toda la información de la tarea al panel de Jules. El sistema debe validar que el prompt sea completo antes de enviarlo (avisando de campos vacíos o imágenes referenciadas, ya que Jules API no acepta imágenes). Además, cada tarea debe poder mostrar si ya tiene una sesión Jules activa asociada, quién la inició y en qué estado se encuentra (planificando, ejecutando, PR abierto, fallida). Se deja arquitectura abierta para integrar Claude API como capa conversacional que gestione la interacción con Jules de forma desatendida.",
+          "new_value": "Añadir un botón con icono de robot en cada tarjeta del Kanban que estructure y envíe toda la información de la tarea al panel de Jules. El sistema debe validar que el prompt sea completo antes de enviarlo, podría ser interceptado por claude chat (avisando de campos vacíos o imágenes referenciadas, ya que Jules API no acepta imágenes; Podemos programar nuestro propio sistema de reconocimiento). Además, cada tarea debe poder mostrar si ya tiene una sesión Jules activa asociada, quién la inició y en qué estado se encuentra (planificando, ejecutando, PR abierto, fallida). Se deja arquitectura abierta para integrar Claude API/Ollama como capa conversacional que gestione la interacción con Jules de forma desatendida."
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T10:09:01.672Z",
+          "field": "blocked_by",
+          "old_value": "[\"26\"]",
+          "new_value": "[\"26\",\"30\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T10:10:56.145Z",
+          "field": "blocked_by",
+          "old_value": "[\"26\",\"30\"]",
+          "new_value": "[\"26\",\"29\",\"30\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T18:44:36.016Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T18:44:36.016Z",
+          "field": "completitud",
+          "old_value": 0,
+          "new_value": 0.5
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-15T17:08:53.948Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "OK"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-16T13:07:39.015Z",
+          "field": "estado",
+          "old_value": "OK",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:46:38.981Z",
+          "field": "seccion",
+          "new_value": "Dashboard"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T22:53:16.126Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "OK"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-22T00:03:24.025Z",
+          "field": "estado",
+          "old_value": "OK",
+          "new_value": "Fixed"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-22T00:07:00.320Z",
+          "field": "estado",
+          "old_value": "Fixed",
+          "new_value": "OK"
+        }
+      ],
+      "id": 27,
+      "seccion": "Dashboard",
+      "jules_session": null,
+      "branch": "Programación (PRO)"
     },
     {
       "title": "Mobile first: Jules Panel - \"GitHub (Team) Ops\" — Hub completo de gestión de repositorios, conectado con Tasks Kanban y Claude",
@@ -2795,6 +3297,111 @@
       "organizationId": "hypenosys"
     },
     {
+      "title": "Falta nombre del repo (o alias) en las cards en dashboard de Jules Neural Operations",
+      "descripcion": "Mostrar claramente el nombre o alias del repositorio en las tarjetas del dashboard. Evita confusiones al trabajar en múltiples proyectos.",
+      "rama": "feature/kanban-repo-names",
+      "task_type": "feature",
+      "tema_principal": "Tools / Automation",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Minor",
+      "milestone": "M2",
+      "estado": "OK",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc",
+        "topperh4rley"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-06-07",
+      "due_date": "2026-06-14",
+      "estimated_hours": 2,
+      "story_points": 2,
+      "tags": [
+        "feature",
+        "frontend",
+        "ux"
+      ],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "Cada tarjeta identifique su repositorio de origen de forma minimalista.",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [
+        "Usaremos los alias definidos en la configuración para que los nombres no ocupen demasiado espacio y sigan siendo legibles."
+      ],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-07",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:27:25.713Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:29:50.368Z",
+          "field": "title",
+          "old_value": "Falta nombre del repo (o alias) en las Jules Neural Operations",
+          "new_value": "Falta nombre del repo (o alias) en las cards en dashboard de Jules Neural Operations"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:33:27.111Z",
+          "field": "descripcion",
+          "old_value": "Tambien un boton que lleve el boton para ir a la sesión asociada de Claude-Chat",
+          "new_value": "Tambien un boton que lleve el boton para ir a la sesión asociada de Claude-Chat en cada card y el estado de esa sesión de Jules"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:17:32.838Z",
+          "field": "descripcion",
+          "old_value": "Tambien un boton que lleve el boton para ir a la sesión asociada de Claude-Chat en cada card y el estado de esa sesión de Jules",
+          "new_value": "Tambien un boton que lleve el boton para ir a la sesión asociada de Claude-Chat en cada card y el estado de esa sesión de Jules estilo minimalista"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-11T09:38:49.235Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:05:25.384Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:45:33.169Z",
+          "field": "seccion",
+          "new_value": "Dashboard, Jules Panel"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-28T13:45:53.205Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "OK"
+        }
+      ],
+      "id": 42,
+      "seccion": "Dashboard, Jules Panel",
+      "jules_session": null,
+      "branch": "Programación (PRO)"
+    },
+    {
       "title": "Claude Neural: llamadas a apis js y python en n8n-runners",
       "descripcion": "Habilitar la ejecución de scripts Python y JavaScript desde el chat neural mediante n8n. Proporciona un entorno flexible para automatización.",
       "rama": "feature/n8n-python-js-runners",
@@ -2872,6 +3479,90 @@
       ],
       "id": 43,
       "seccion": "Chat Neural, Backend n8n",
+      "jules_session": null,
+      "branch": "Programación (PRO)"
+    },
+    {
+      "id": 45,
+      "title": "Proxy Relay para Ollama (Bypass Mixed Content)",
+      "descripcion": "Crear un proxy relay para solucionar el bloqueo de peticiones HTTP (Ollama local) desde HTTPS. Actualmente el navegador bloquea estas peticiones obligando a configuraciones manuales de flags. **Hecho cuando:** Las peticiones a Ollama funcionen de forma nativa desde el dashboard en HTTPS.",
+      "tags": [
+        "api",
+        "backend",
+        "security"
+      ],
+      "prioridad": "Medium",
+      "estado": "OK",
+      "estimated_hours": 6,
+      "comments": [
+        "He notado que este es el principal bloqueador para nuevos usuarios de Ollama; el relay debería ser ligero, preferiblemente un worker o un pequeño servicio node."
+      ],
+      "rama": "feature/ollama-proxy-relay",
+      "task_type": "feature",
+      "tema_principal": "Concepto / GDD",
+      "milestone": "M2",
+      "fecha": "2026-06-08",
+      "asignados": [
+        "axlfc"
+      ],
+      "acceptance_criteria": "El relay permite comunicación bidireccional sin errores de Mixed Content.",
+      "subtasks": [],
+      "repository": "hypenosys/docs",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Unassigned",
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-06-13",
+      "due_date": "2026-06-21",
+      "story_points": null,
+      "external_links": [],
+      "blocks": [],
+      "blocked_by": [],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:12:10.528Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-06-21"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:12:10.528Z",
+          "field": "completitud",
+          "new_value": 0
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:12:10.528Z",
+          "field": "repository",
+          "old_value": "",
+          "new_value": null
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:35:35.301Z",
+          "field": "repository",
+          "old_value": null,
+          "new_value": "hypenosys/docs"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:43:42.289Z",
+          "field": "seccion",
+          "new_value": "Backend n8n"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-03T19:36:13.268Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "OK"
+        }
+      ],
+      "seccion": "Backend n8n",
       "jules_session": null,
       "branch": "Programación (PRO)",
       "organizationId": "hypenosys"
@@ -3715,6 +4406,82 @@
       "organizationId": "hypenosys"
     },
     {
+      "title": "/chat/neural/:  Arreglar display de borrar/archivar sesiones",
+      "descripcion": "Actualmente es poco intuitivo, poner iconos emoji directamente con click. ",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Cosmetic",
+      "milestone": "M1",
+      "estado": "OK",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Axel",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-06-21",
+      "due_date": "2026-06-28",
+      "estimated_hours": 2,
+      "story_points": 2,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [
+        {
+          "url": "https://64.media.tumblr.com/c9b495cd9bae8183b8f503348a89c8fb/307dec7b5bcf13cc-5a/s1280x1920/9389d8f5c887f30553f4bf6884c0b0564ef7279d.png",
+          "type": "url",
+          "tumblr_post_id": "820029962349330432",
+          "filename": "8677.png",
+          "uploaded_at": "2026-06-21T11:31:53.720Z"
+        }
+      ],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-21",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T11:32:56.778Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:41:37.108Z",
+          "field": "seccion",
+          "new_value": "Chat Neural"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T14:42:35.162Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-28T13:45:43.397Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "OK"
+        }
+      ],
+      "id": 65,
+      "seccion": "Chat Neural",
+      "jules_session": null,
+      "branch": "Programación (PRO)"
+    },
+    {
       "title": "Añadir botón de archivar en cards de columna COMPLETADO para mandar al archivo (cementerio de tareas)",
       "descripcion": "Ha desaparecido el botón de archivar (mandar al cementerio) las tasks en COMPLETADO",
       "rama": "master",
@@ -4454,456 +5221,420 @@
         },
         {
           "author_login": "axlfc",
-          "timestamp": "2026-06-21T10:34:44.435Z",
-          "field": "title",
-          "old_value": "upgrade 'app' to Unreal 5.7.4",
-          "new_value": "upgrade 'app' to Unreal 5.8"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T12:43:56.450Z",
-          "field": "seccion",
-          "new_value": "App"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T14:48:53.562Z",
-          "field": "descripcion",
-          "old_value": "Actualizar el repositorio 'app' a la v5.7.4 de Unreal Engine y sincronizar con SVN. Necesario para mantener la compatibilidad con las últimas herramientas.",
-          "new_value": "Actualizar el repositorio 'app' a la v5.8 de Unreal Engine y sincronizar con SVN. Necesario para mantener la compatibilidad con las últimas herramientas."
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-18T11:38:55.650Z",
-          "field": "estado",
-          "old_value": "Pending",
-          "new_value": "OK"
-        }
-      ],
-      "repository": "hypenosys/app",
-      "seccion": "App",
-      "jules_session": null,
-      "branch": "Programación (PRO)",
-      "organizationId": "hypenosys"
-    },
-    {
-      "rama": "PRO",
-      "descripcion": "Finalizar el proceso de alta de los miembros en la plataforma. Permite una correcta asignación de tareas y visibilidad del equipo.",
-      "tema_principal": "Concepto / GDD",
-      "prioridad": "Minor",
-      "milestone": "M1",
-      "estado": "OK",
-      "completitud": 0.2,
-      "resuelto_por": "Alex",
-      "detectado_por": "Unassigned",
-      "asignados": [
-        "dkdidac-design",
-        "javi26031994-a11y",
-        "mitxel2022",
-        "topperh4rley"
-      ],
-      "email_responsable": "mitxel@hypenosys.com",
-      "emails_asignados": [],
-      "rama2": null,
-      "ver": true,
-      "fecha": "2026-05-26",
-      "apoyo": null,
-      "limite": null,
-      "comentario": "",
-      "id": 12,
-      "images": [],
-      "title": "Completar onboarding y rellenar perfil dashboard",
-      "task_type": "chore",
-      "start_date": "2026-06-01",
-      "due_date": "2026-06-15",
-      "estimated_hours": 1,
-      "story_points": 1,
-      "tags": [
-        "chore",
-        "onboarding"
-      ],
-      "external_links": [],
-      "subtasks": [],
-      "acceptance_criteria": "Todos los perfiles tengan sus datos y avatares correctos.",
-      "blocks": [],
-      "blocked_by": [],
-      "comments": [
-        "Faltan algunos correos electrónicos en los perfiles actuales; deberíamos normalizarlos para las notificaciones automáticas."
-      ],
-      "change_log": [
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-01T06:55:05.856Z",
-          "field": "tags",
-          "old_value": "[]",
-          "new_value": "[\"onboarding\"]"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-01T06:57:48.868Z",
-          "field": "prioridad",
-          "old_value": "Major",
-          "new_value": "Medium"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-01T07:10:42.298Z",
-          "field": "task_type",
-          "old_value": "feature",
-          "new_value": "chore"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-01T09:14:17.201Z",
-          "field": "due_date",
-          "old_value": null,
-          "new_value": "2026-06-15"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-03T07:33:40.123Z",
-          "field": "repository",
-          "old_value": null,
-          "new_value": "hypenosys/hypenosys.github.io"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-05T16:44:56.586Z",
-          "field": "estado",
-          "old_value": "Working",
-          "new_value": "In Review"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-06T11:39:15.880Z",
-          "field": "prioridad",
-          "old_value": "Medium",
-          "new_value": "Minor"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T12:49:34.826Z",
-          "field": "seccion",
-          "new_value": "Dashboard"
-        }
-      ],
-      "repository": "hypenosys/hypenosys.github.io",
-      "seccion": "Dashboard",
-      "jules_session": null,
-      "branch": "Programación (PRO)",
-      "organizationId": "hypenosys"
-    },
-    {
-      "title": "Botón \"🤖 Enviar a Jules\" en tarjetas Kanban con estado de sesión Neural Operations",
-      "descripcion": "Integrar un botón para enviar tareas directamente a Jules desde el Kanban. Automatiza la creación de prompts y mejora la eficiencia de la IA.",
-      "rama": "feature/kanban-jules-link",
-      "task_type": "feature",
-      "tema_principal": "Programación / Engine",
-      "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Major",
-      "milestone": "M2",
-      "estado": "OK",
-      "completitud": 0.5,
-      "resuelto_por": "Axel",
-      "detectado_por": "Axel",
-      "asignados": [
-        "axlfc",
-        "topperh4rley"
-      ],
-      "email_responsable": "axel@hypenosys.com",
-      "emails_asignados": [
-        "alex@hypenosys.com"
-      ],
-      "start_date": "2026-06-04",
-      "due_date": "2026-06-07",
-      "estimated_hours": 8,
-      "story_points": 4,
-      "tags": [
-        "Infraestructura",
-        "api",
-        "feature",
-        "jules",
-        "ux"
-      ],
-      "external_links": [],
-      "subtasks": [
-        {
-          "id": 1780563025064,
-          "text": "Añadir botón 🤖 y lógica de construcción de prompt en ui-components.js",
-          "done": false
-        },
-        {
-          "id": 1780563033138,
-          "text": "Crear validador de prompt (campos faltantes + filtro de imágenes)",
-          "done": false
-        },
-        {
-          "id": 1780563041180,
-          "text": "Añadir campo jules_session al schema de dashboard_tasks.json",
-          "done": false
-        },
-        {
-          "id": 1780563049548,
-          "text": "Renderizar badge de estado Jules en tarjetas Kanban",
-          "done": false
-        },
-        {
-          "id": 1780563057273,
-          "text": "Vincular tarjeta ↔ sesión Jules por ID en jules-panel.html",
-          "done": false
-        },
-        {
-          "id": 1780936990388,
-          "text": "BUG: Botón robot no pre-rellena contexto en Neural Chat (tags: frontend, ux, bug)",
-          "done": false
-        }
-      ],
-      "acceptance_criteria": "El botón genere el prompt correcto y lo cargue en el panel.",
-      "blocks": [],
-      "blocked_by": [
-        "26",
-        "29",
-        "30"
-      ],
-      "comments": [
-        "Debemos implementar un sistema de validación previo para asegurar que no enviamos prompts vacíos que consuman tokens innecesariamente."
-      ],
-      "images": [],
-      "rama2": null,
-      "ver": true,
-      "fecha": "2026-06-04",
-      "apoyo": null,
-      "limite": null,
-      "comentario": "",
-      "change_log": [
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-04T08:51:21.137Z",
-          "field": "id",
-          "old_value": null,
-          "new_value": "Created"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-04T08:51:46.719Z",
-          "field": "blocked_by",
-          "old_value": "[]",
-          "new_value": "[\"26\"]"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-04T09:38:19.327Z",
-          "field": "milestone",
-          "old_value": "M1",
-          "new_value": "M2"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-06T09:58:00.973Z",
-          "field": "descripcion",
-          "old_value": "Añadir un botón con icono de robot en cada tarjeta del Kanban que estructure y envíe toda la información de la tarea al panel de Jules. El sistema debe validar que el prompt sea completo antes de enviarlo (avisando de campos vacíos o imágenes referenciadas, ya que Jules API no acepta imágenes). Además, cada tarea debe poder mostrar si ya tiene una sesión Jules activa asociada, quién la inició y en qué estado se encuentra (planificando, ejecutando, PR abierto, fallida). Se deja arquitectura abierta para integrar Claude API como capa conversacional que gestione la interacción con Jules de forma desatendida.",
-          "new_value": "Añadir un botón con icono de robot en cada tarjeta del Kanban que estructure y envíe toda la información de la tarea al panel de Jules. El sistema debe validar que el prompt sea completo antes de enviarlo, podría ser interceptado por claude chat (avisando de campos vacíos o imágenes referenciadas, ya que Jules API no acepta imágenes; Podemos programar nuestro propio sistema de reconocimiento). Además, cada tarea debe poder mostrar si ya tiene una sesión Jules activa asociada, quién la inició y en qué estado se encuentra (planificando, ejecutando, PR abierto, fallida). Se deja arquitectura abierta para integrar Claude API/Ollama como capa conversacional que gestione la interacción con Jules de forma desatendida."
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-06T10:09:01.672Z",
-          "field": "blocked_by",
-          "old_value": "[\"26\"]",
-          "new_value": "[\"26\",\"30\"]"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-06T10:10:56.145Z",
-          "field": "blocked_by",
-          "old_value": "[\"26\",\"30\"]",
-          "new_value": "[\"26\",\"29\",\"30\"]"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-08T18:44:36.016Z",
-          "field": "estado",
-          "old_value": "Working",
-          "new_value": "In Review"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-08T18:44:36.016Z",
-          "field": "completitud",
-          "old_value": 0,
-          "new_value": 0.5
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-15T17:08:53.948Z",
-          "field": "estado",
-          "old_value": "In Review",
-          "new_value": "OK"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-16T13:07:39.015Z",
-          "field": "estado",
-          "old_value": "OK",
-          "new_value": "In Review"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T12:46:38.981Z",
-          "field": "seccion",
-          "new_value": "Dashboard"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T22:53:16.126Z",
-          "field": "estado",
-          "old_value": "In Review",
-          "new_value": "OK"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-22T00:03:24.025Z",
-          "field": "estado",
-          "old_value": "OK",
-          "new_value": "Fixed"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-22T00:07:00.320Z",
-          "field": "estado",
-          "old_value": "Fixed",
-          "new_value": "OK"
-        }
-      ],
-      "id": 27,
-      "seccion": "Dashboard",
-      "jules_session": null,
-      "branch": "Programación (PRO)",
-      "organizationId": "hypenosys"
-    },
-    {
-      "title": "Falta nombre del repo (o alias) en las cards en dashboard de Jules Neural Operations",
-      "descripcion": "Mostrar claramente el nombre o alias del repositorio en las tarjetas del dashboard. Evita confusiones al trabajar en múltiples proyectos.",
-      "rama": "feature/kanban-repo-names",
-      "task_type": "feature",
-      "tema_principal": "Tools / Automation",
-      "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Minor",
-      "milestone": "M2",
-      "estado": "OK",
-      "completitud": 0,
-      "resuelto_por": null,
-      "detectado_por": "Axel",
-      "asignados": [
-        "axlfc",
-        "topperh4rley"
-      ],
-      "email_responsable": null,
-      "emails_asignados": [],
-      "start_date": "2026-06-07",
-      "due_date": "2026-06-14",
-      "estimated_hours": 2,
-      "story_points": 2,
-      "tags": [
-        "feature",
-        "frontend",
-        "ux"
-      ],
-      "external_links": [],
-      "subtasks": [],
-      "acceptance_criteria": "Cada tarjeta identifique su repositorio de origen de forma minimalista.",
-      "blocks": [],
-      "blocked_by": [],
-      "comments": [
-        "Usaremos los alias definidos en la configuración para que los nombres no ocupen demasiado espacio y sigan siendo legibles."
-      ],
-      "images": [],
-      "rama2": null,
-      "ver": true,
-      "fecha": "2026-06-07",
-      "apoyo": null,
-      "limite": null,
-      "comentario": "",
-      "change_log": [
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-07T19:27:25.713Z",
-          "field": "id",
-          "old_value": null,
-          "new_value": "Created"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-07T19:29:50.368Z",
-          "field": "title",
-          "old_value": "Falta nombre del repo (o alias) en las Jules Neural Operations",
-          "new_value": "Falta nombre del repo (o alias) en las cards en dashboard de Jules Neural Operations"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-07T19:33:27.111Z",
-          "field": "descripcion",
-          "old_value": "Tambien un boton que lleve el boton para ir a la sesión asociada de Claude-Chat",
-          "new_value": "Tambien un boton que lleve el boton para ir a la sesión asociada de Claude-Chat en cada card y el estado de esa sesión de Jules"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-08T10:17:32.838Z",
-          "field": "descripcion",
-          "old_value": "Tambien un boton que lleve el boton para ir a la sesión asociada de Claude-Chat en cada card y el estado de esa sesión de Jules",
-          "new_value": "Tambien un boton que lleve el boton para ir a la sesión asociada de Claude-Chat en cada card y el estado de esa sesión de Jules estilo minimalista"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-11T09:38:49.235Z",
+          "timestamp": "2026-06-21T18:31:02.697Z",
           "field": "estado",
           "old_value": "Pending",
           "new_value": "Working"
         },
         {
           "author_login": "axlfc",
-          "timestamp": "2026-06-13T09:05:25.384Z",
+          "timestamp": "2026-06-21T22:47:14.017Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Critical"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-22T10:14:05.711Z",
           "field": "estado",
           "old_value": "Working",
           "new_value": "In Review"
         },
         {
           "author_login": "axlfc",
-          "timestamp": "2026-06-21T12:45:33.169Z",
-          "field": "seccion",
-          "new_value": "Dashboard, Jules Panel"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-28T13:45:53.205Z",
+          "timestamp": "2026-06-28T13:45:35.266Z",
           "field": "estado",
           "old_value": "In Review",
           "new_value": "OK"
         }
       ],
-      "id": 42,
-      "seccion": "Dashboard, Jules Panel",
+      "id": 68,
       "jules_session": null,
       "branch": "Programación (PRO)",
       "organizationId": "hypenosys"
     },
     {
-      "title": "/chat/neural/:  Arreglar display de borrar/archivar sesiones",
-      "descripcion": "Actualmente es poco intuitivo, poner iconos emoji directamente con click. ",
+      "title": "Return images with n8n workflow when generating them",
+      "descripcion": "actualmente no devolvemos la imagen en el workflow de vuelta a la web",
       "rama": "master",
       "task_type": "feature",
       "tema_principal": "Programación / Engine",
+      "seccion": "",
       "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Cosmetic",
+      "prioridad": "Major",
       "milestone": "M1",
       "estado": "OK",
       "completitud": 0,
-      "resuelto_por": null,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [],
+      "email_responsable": "axel@hypenosys.com",
+      "emails_asignados": [],
+      "start_date": "2026-06-28",
+      "due_date": "2026-06-28",
+      "estimated_hours": 2,
+      "story_points": 3,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-23",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-23T20:11:20.958Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-27T17:34:11.043Z",
+          "field": "descripcion",
+          "old_value": "",
+          "new_value": "actualmente no devolvemos la imagen en el workflow de vuelta a la web"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-27T17:34:11.043Z",
+          "field": "repository",
+          "old_value": null,
+          "new_value": "hypenosys/hypenosys.github.io"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-28T13:42:56.691Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "OK"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-28T13:42:56.691Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-06-28"
+        }
+      ],
+      "id": 69,
+      "jules_session": null,
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
+    },
+    {
+      "title": "Crear matrix server en Oracle",
+      "descripcion": "Para los pipes de comunicación, pudiendo crear rooms y foros indexados con creación de wiki continua además del CHANGELOG.md",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Matrix-Server-Docker",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Major",
+      "milestone": "M2",
+      "estado": "OK",
+      "completitud": 0.3,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [
+        "mitxel2022"
+      ],
+      "email_responsable": "axel@hypenosys.com",
+      "emails_asignados": [],
+      "start_date": "2026-07-03",
+      "due_date": "2026-07-19",
+      "estimated_hours": 6,
+      "story_points": 6,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "Basándome en la configuración existente del repo (servicios `matrix-postgres`, `matrix-synapse`, `Dockerfile.matrix`, `.config/matrix/homeserver.yaml` y `scripts/matrix-entrypoint.sh`), aquí tienes un stack **standalone** extraído y adaptado para ZimaBoard 2 (Intel N100, x86_64, sin GPU):\n\n---\n\n## Estructura de ficheros\n\n```\nmatrix-zimaboard/\n├── docker-compose.yml\n├── .env\n├── secrets/\n│   ├── matrix_db_password.txt\n│   └── redis_password.txt\n├── config/\n│   └── homeserver.yaml\n├── scripts/\n│   └── matrix-entrypoint.sh\n└── data/\n    ├── matrix-postgres/\n    ├── matrix-synapse/\n    └── redis/\n```\n\n---\n\n## `docker-compose.yml`\n\nBasado en los servicios `matrix-postgres` y `matrix-synapse` del compose principal: [1](#0-0) \n\n```yaml\n# ============================================================\n# Matrix Stack para ZimaBoard 2 (Intel N100, x86_64)\n# Servicios: Synapse + PostgreSQL + Redis + Element Web\n# ============================================================\n\nvolumes:\n  matrix_data:\n  matrix_postgres_data:\n  redis_data:\n\nnetworks:\n  matrix_net:\n    driver: bridge\n    ipam:\n      config:\n        - subnet: 172.30.0.0/24\n\nsecrets:\n  matrix_db_password:\n    file: ./secrets/matrix_db_password.txt\n  redis_password:\n    file: ./secrets/redis_password.txt\n\nservices:\n\n  # ──────────────────────────────────────────\n  # PostgreSQL dedicado para Synapse\n  # ──────────────────────────────────────────\n  matrix-postgres:\n    image: postgres:16-alpine\n    hostname: matrix-postgres\n    container_name: matrix-postgres\n    networks:\n      - matrix_net\n    restart: unless-stopped\n    secrets:\n      - matrix_db_password\n    environment:\n      POSTGRES_USER: matrix_user\n      POSTGRES_PASSWORD_FILE: /run/secrets/matrix_db_password\n      POSTGRES_DB: matrix_synapse\n      # Synapse requiere UTF8 + locale C\n      POSTGRES_INITDB_ARGS: \"--encoding=UTF8 --locale=C --auth-host=scram-sha-256\"\n      PGDATA: /var/lib/postgresql/data/pgdata\n    command:\n      - \"postgres\"\n      - \"-c\"\n      - \"max_connections=100\"\n      - \"-c\"\n      - \"shared_buffers=128MB\"\n    volumes:\n      - ./data/matrix-postgres:/var/lib/postgresql/data\n    healthcheck:\n      test: [\"CMD-SHELL\", \"pg_isready -U matrix_user -d matrix_synapse\"]\n      interval: 10s\n      timeout: 5s\n      retries: 5\n      start_period: 30s\n    security_opt:\n      - no-new-privileges:true\n    cap_drop:\n      - ALL\n    cap_add:\n      - CHOWN\n      - SETUID\n      - SETGID\n      - DAC_OVERRIDE\n    deploy:\n      resources:\n        limits:\n          cpus: '1.0'\n          memory: 512M\n        reservations:\n          memory: 128M\n    logging:\n      driver: \"json-file\"\n      options:\n        max-size: \"10m\"\n        max-file: \"3\"\n\n  # ──────────────────────────────────────────\n  # Redis — cache de sesiones y presencia\n  # ──────────────────────────────────────────\n  redis:\n    image: redis:7.2-alpine\n    hostname: redis\n    container_name: matrix-redis\n    networks:\n      - matrix_net\n    restart: unless-stopped\n    secrets:\n      - redis_password\n    # Lee la contraseña del secret y arranca con requirepass\n    command: >\n      sh -c \"redis-server --requirepass $$(cat /run/secrets/redis_password)\n             --maxmemory 128mb\n             --maxmemory-policy allkeys-lru\"\n    volumes:\n      - redis_data:/data\n    healthcheck:\n      test:\n        - \"CMD-SHELL\"\n        - \"redis-cli -a $$(cat /run/secrets/redis_password) ping | grep PONG\"\n      interval: 10s\n      timeout: 3s\n      retries: 5\n      start_period: 10s\n    security_opt:\n      - no-new-privileges:true\n    cap_drop:\n      - ALL\n    deploy:\n      resources:\n        limits:\n          cpus: '0.5'\n          memory: 256M\n        reservations:\n          memory: 64M\n    logging:\n      driver: \"json-file\"\n      options:\n        max-size: \"5m\"\n        max-file: \"3\"\n\n  # ──────────────────────────────────────────\n  # Matrix Synapse — homeserver\n  # ──────────────────────────────────────────\n  matrix-synapse:\n    image: matrixdotorg/synapse:v1.104.0\n    hostname: matrix\n    container_name: matrix-synapse\n    networks:\n      - matrix_net\n    restart: unless-stopped\n    ports:\n      # Acceso desde la LAN del ZimaBoard\n      - \"8008:8008\"   # Client API + Federation\n      - \"8448:8448\"   # Federation (puerto estándar)\n    secrets:\n      - matrix_db_password\n      - redis_password\n    environment:\n      SYNAPSE_SERVER_NAME: \"${MATRIX_SERVER_NAME:-matrix.local}\"\n      SYNAPSE_REPORT_STATS: \"no\"\n      # Usados por el entrypoint para sustituir en homeserver.yaml\n      POSTGRES_HOST: matrix-postgres\n      POSTGRES_PORT: \"5432\"\n      POSTGRES_DB: matrix_synapse\n      POSTGRES_USER: matrix_user\n      REDIS_HOST: redis\n      REDIS_PORT: \"6379\"\n      REDIS_DBID: \"0\"\n      ENABLE_REGISTRATION: \"${ENABLE_REGISTRATION:-true}\"\n    volumes:\n      - matrix_data:/data\n      - ./config/homeserver.yaml:/data/homeserver.yaml:ro\n      - ./scripts/matrix-entrypoint.sh:/usr/local/bin/matrix-entrypoint.sh:ro\n      - ./data/matrix-synapse/logs:/data/logs\n      - ./data/matrix-synapse/media:/data/media_store\n    entrypoint: [\"/usr/local/bin/matrix-entrypoint.sh\"]\n    depends_on:\n      matrix-postgres:\n        condition: service_healthy\n      redis:\n        condition: service_healthy\n    healthcheck:\n      test: [\"CMD-SHELL\", \"curl -fsSL http://localhost:8008/health || exit 1\"]\n      interval: 30s\n      timeout: 10s\n      retries: 5\n      start_period: 90s\n    security_opt:\n      - no-new-privileges:true\n    cap_drop:\n      - ALL\n    cap_add:\n      - CHOWN\n      - SETUID\n      - SETGID\n      - NET_BIND_SERVICE\n    deploy:\n      resources:\n        limits:\n          # N100 tiene 4 cores — dejamos 2 para el resto del sistema\n          cpus: '2.0'\n          memory: 1G\n        reservations:\n          memory: 256M\n    logging:\n      driver: \"json-file\"\n      options:\n        max-size: \"20m\"\n        max-file: \"5\"\n\n  # ──────────────────────────────────────────\n  # Element Web — cliente Matrix en el navegador\n  # Acceso: http://<IP-ZIMABOARD>:8080\n  # ──────────────────────────────────────────\n  element-web:\n    image: vectorim/element-web:latest\n    hostname: element-web\n    container_name: element-web\n    networks:\n      - matrix_net\n    restart: unless-stopped\n    ports:\n      - \"8080:80\"\n    volumes:\n      - ./config/element-config.json:/app/config.json:ro\n    depends_on:\n      matrix-synapse:\n        condition: service_healthy\n    deploy:\n      resources:\n        limits:\n          cpus: '0.5'\n          memory: 128M\n    logging:\n      driver: \"json-file\"\n      options:\n        max-size: \"5m\"\n        max-file: \"3\"\n```\n\n---\n\n## `config/homeserver.yaml`\n\nBasado en `.config/matrix/homeserver.yaml` del repo, adaptado para testing local: [2](#0-1) \n\n```yaml\nserver_name: \"matrix.local\"\npid_file: /data/homeserver.pid\n\n# Para testing local sin TLS\npublic_baseurl: \"http://matrix.local:8008/\"\n\npresence:\n  enabled: true\n\nlisteners:\n  - port: 8008\n    tls: false\n    type: http\n    x_forwarded: true\n    bind_addresses: ['0.0.0.0']\n    resources:\n      - names: [client, federation]\n        compress: false\n\n  - port: 8448\n    tls: false\n    type: http\n    x_forwarded: true\n    bind_addresses: ['0.0.0.0']\n    resources:\n      - names: [federation]\n        compress: false\n\ndatabase:\n  name: psycopg2\n  args:\n    user: matrix_user\n    password: \"REPLACE_WITH_DB_SECRET\"   # sustituido por entrypoint\n    database: matrix_synapse\n    host: matrix-postgres\n    port: 5432\n    cp_min: 5\n    cp_max: 10\n\nredis:\n  enabled: true\n  host: redis\n  port: 6379\n  password: \"REPLACE_WITH_REDIS_SECRET\"  # sustituido por entrypoint\n  dbid: 0\n\nlog_config: \"/data/logs/homeserver.log.config\"\n\nmedia_store_path: /data/media_store\nmax_upload_size: 50M\nmax_image_pixels: 32M\ndynamic_thumbnails: true\n\n# Para testing: registro abierto con shared secret\nenable_registration: true\nenable_registration_without_verification: true\nregistration_shared_secret: \"CHANGE_THIS_SHARED_SECRET_IN_ENV\"\n\n# Seguridad mínima para testing\nmacaroon_secret_key: \"CHANGE_THIS_MACAROON_KEY_IN_ENV\"\nform_secret: \"CHANGE_THIS_FORM_SECRET_IN_ENV\"\n\nsigning_key_path: \"/data/matrix.local.signing.key\"\n\ntrusted_key_servers:\n  - server_name: \"matrix.org\"\n\n# Historial y persistencia\nretention:\n  enabled: false\n\n# Cifrado desactivado por defecto para facilitar testing\nencryption_enabled_by_default_for_room_type: off\n\n# Directorio de usuarios\nuser_directory:\n  enabled: true\n  search_all_users: true\n\n# Salas públicas\nallow_public_rooms_without_auth: true\nallow_public_rooms_over_federation: false\n\n# Rate limiting relajado para testing\nrc_message:\n  per_second: 10\n  burst_count: 50\n\nrc_registration:\n  per_second: 1\n  burst_count: 10\n\nrc_login:\n  address:\n    per_second: 1\n    burst_count: 10\n  account:\n    per_second: 1\n    burst_count: 10\n  failed_attempts:\n    per_second: 1\n    burst_count: 10\n\nurl_preview_enabled: true\nurl_preview_ip_range_blacklist:\n  - '127.0.0.0/8'\n  - '10.0.0.0/8'\n  - '172.16.0.0/12'\n  - '192.168.0.0/16'\n\npassword_config:\n  enabled: true\n\nreport_stats: false\nenable_metrics: false\n\ndefault_room_version: \"10\"\n\nforgotten_room_retention_period: 7d\n\nadmin_contact: 'mailto:admin@matrix.local'\n```\n\n---\n\n## `scripts/matrix-entrypoint.sh`\n\nBasado en el script existente del repo: [3](#0-2) \n\n```bash\n#!/bin/sh\nset -e\n\nCONFIG_FILE=/data/homeserver.yaml\n\necho \"==> Inyectando secretos en homeserver.yaml...\"\n\n# Copiar la config (es read-only) a un temporal editable\ncp /data/homeserver.yaml /tmp/homeserver.yaml\n\nif [ -f /run/secrets/matrix_db_password ]; then\n  DB_PASSWORD=$(cat /run/secrets/matrix_db_password)\n  sed -i \"s/REPLACE_WITH_DB_SECRET/${DB_PASSWORD}/g\" /tmp/homeserver.yaml\nelse\n  echo \"ERROR: Secret matrix_db_password no encontrado\"\n  exit 1\nfi\n\nif [ -f /run/secrets/redis_password ]; then\n  REDIS_PASSWORD=$(cat /run/secrets/redis_password)\n  sed -i \"s/REPLACE_WITH_REDIS_SECRET/${REDIS_PASSWORD}/g\" /tmp/homeserver.yaml\nelse\n  echo \"ERROR: Secret redis_password no encontrado\"\n  exit 1\nfi\n\n# Generar signing key si no existe\nif [ ! -f /data/matrix.local.signing.key ]; then\n  echo \"==> Generando signing key...\"\n  python3 -m synapse.app.homeserver \\\n    --server-name=\"matrix.local\" \\\n    --config-path=/tmp/homeserver.yaml \\\n    --generate-keys\nfi\n\n# Generar log config si no existe\nif [ ! -f /data/logs/homeserver.log.config ]; then\n  mkdir -p /data/logs\n  cat > /data/logs/homeserver.log.config << 'EOF'\nversion: 1\nformatters:\n  precise:\n    format: '%(asctime)s - %(name)s - %(lineno)d - %(levelname)s - %(message)s'\nhandlers:\n  file:\n    class: logging.handlers.RotatingFileHandler\n    formatter: precise\n    filename: /data/logs/homeserver.log\n    maxBytes: 52428800\n    backupCount: 3\n    encoding: utf8\n  console:\n    class: logging.StreamHandler\n    formatter: precise\nloggers:\n  synapse.storage.SQL:\n    level: WARNING\nroot:\n  level: INFO\n  handlers: [file, console]\ndisable_existing_loggers: false\nEOF\nfi\n\necho \"==> Arrancando Matrix Synapse...\"\nexec python3 -m synapse.app.homeserver \\\n  --server-name=\"matrix.local\" \\\n  --config-path=/tmp/homeserver.yaml\n```\n\n---\n\n## `config/element-config.json`\n\n```json\n{\n  \"default_server_config\": {\n    \"m.homeserver\": {\n      \"base_url\": \"http://<IP-ZIMABOARD>:8008\",\n      \"server_name\": \"matrix.local\"\n    }\n  },\n  \"brand\": \"Element\",\n  \"disable_custom_urls\": false,\n  \"disable_guests\": true,\n  \"disable_login_language_selector\": false,\n  \"disable_3pid_login\": false,\n  \"default_theme\": \"dark\",\n  \"room_directory\": {\n    \"servers\": [\"matrix.local\"]\n  },\n  \"features\": {\n    \"feature_spotlight\": true\n  },\n  \"show_labs_settings\": true\n}\n```\n\n> **Importante:** Sustituye `<IP-ZIMABOARD>` por la IP real de tu ZimaBoard (ej. `192.168.1.50`).\n\n---\n\n## `.env`\n\n```env\nMATRIX_SERVER_NAME=matrix.local\nENABLE_REGISTRATION=true\n```\n\n---\n\n## Setup inicial\n\n```bash\n# 1. Crear estructura\nmkdir -p matrix-zimaboard/{secrets,config,scripts,data/{matrix-postgres,matrix-synapse/{logs,media},redis}}\ncd matrix-zimaboard\n\n# 2. Generar contraseñas\nopenssl rand -hex 32 > secrets/matrix_db_password.txt\nopenssl rand -hex 32 > secrets/redis_password.txt\nchmod 600 secrets/*.txt\n\n# 3. Copiar los ficheros de arriba a sus rutas\n\n# 4. Hacer ejecutable el entrypoint\nchmod +x scripts/matrix-entrypoint.sh\n\n# 5. Arrancar\ndocker compose up -d\n\n# 6. Crear usuario admin (tras ~60s de arranque)\ndocker exec -it matrix-synapse register_new_matrix_user \\\n  -c /tmp/homeserver.yaml \\\n  -u admin \\\n  -p TuPasswordSegura123! \\\n  --admin \\\n  http://localhost:8008\n```\n\n---\n\n## Acceso\n\n| Servicio | URL |\n|---|---|\n| Element Web | `http://<IP-ZIMABOARD>:8080` |\n| Synapse API | `http://<IP-ZIMABOARD>:8008` |\n| Admin API | `http://<IP-ZIMABOARD>:8008/_synapse/admin/v1/` |\n\n**Compatibilidad con connect-core:** el stack usa exactamente los mismos nombres de imagen, puertos y estructura de secretos que el `docker-compose.yml` principal del repo, por lo que puedes integrarlo directamente añadiendo los servicios al compose principal o conectando ambos stacks via una red Docker externa compartida. [4](#0-3) [5](#0-4)\n\n### Citations\n\n**File:** docker-compose.yml (L14-16)\n```yaml\n  matrix_data:\n  matrix_postgres:\n  certs:\n```\n\n**File:** docker-compose.yml (L849-978)\n```yaml\n  matrix-postgres:\n    image: postgres:16-alpine\n    hostname: matrix-postgres\n    container_name: matrix-postgres\n    networks: \n      - backend\n    restart: unless-stopped\n    ports:\n      - \"127.0.0.1:5433:5432\"\n    secrets:\n      - matrix_db_password\n    environment:\n      - POSTGRES_USER=matrix_user\n      - POSTGRES_PASSWORD_FILE=/run/secrets/matrix_db_password\n      - POSTGRES_DB=matrix_synapse\n      - POSTGRES_INITDB_ARGS=--encoding=UTF8 --locale=C --auth-host=scram-sha-256\n      - PGDATA=/var/lib/postgresql/data/pgdata\n    command: \n      - \"postgres\"\n      - \"-c\"\n      - \"max_connections=100\"\n    volumes:\n      - ./data/matrix-postgres:/var/lib/postgresql/data\n    healthcheck:\n      test: [\"CMD-SHELL\", \"pg_isready -U matrix_user -d matrix_synapse\"]\n      interval: 10s\n      timeout: 5s\n      retries: 5\n      start_period: 60s\n    security_opt:\n      - no-new-privileges:true\n      - apparmor=docker-default\n    cap_drop:\n      - ALL\n    cap_add:\n      - CHOWN\n      - SETUID\n      - SETGID\n      - DAC_OVERRIDE\n    deploy:\n      resources:\n        limits:\n          cpus: '2.0'\n          memory: 2G\n        reservations:\n          memory: 512M\n    logging:\n      driver: \"json-file\"\n      options:\n        max-size: \"10m\"\n        max-file: \"5\"\n\n  matrix-synapse:\n    build:\n      context: .\n      dockerfile: Dockerfile.matrix\n    image: local/matrix-synapse:custom\n    hostname: matrix\n    container_name: matrix-synapse\n    networks: \n      - frontend\n      - backend\n    restart: unless-stopped\n    ports:\n      - \"127.0.0.1:8008:8008\"\n      - \"127.0.0.1:8448:8448\"\n    secrets:\n      - matrix_db_password\n      - redis_password\n    environment:\n      - SYNAPSE_SERVER_NAME=${MATRIX_DOMAIN:-matrix.cognito.local}\n      - SYNAPSE_REPORT_STATS=no\n      - POSTGRES_HOST=matrix-postgres\n      - POSTGRES_PORT=5432\n      - POSTGRES_DB=matrix_synapse\n      - POSTGRES_USER=matrix_user\n      - POSTGRES_PASSWORD_FILE=/run/secrets/matrix_db_password\n      - REDIS_HOST=redis\n      - REDIS_PORT=6379\n      - REDIS_PASSWORD_FILE=/run/secrets/redis_password\n      - REDIS_DBID=1\n      - POSTGRES_PASSWORD_DEFAULT=${POSTGRES_PASSWORD_DEFAULT:-change_me_in_env}\n      - REDIS_PASSWORD_DEFAULT=${REDIS_PASSWORD_DEFAULT:-change_me_in_env}\n      - ENABLE_REGISTRATION=false\n      - ENABLE_REGISTRATION_WITHOUT_VERIFICATION=false\n      - VIRTUAL_HOST=${MATRIX_DOMAIN:-matrix.cognito.local}\n      - VIRTUAL_PORT=8008\n    \n    labels:\n      - com.github.jrcs.letsencrypt_nginx_proxy_companion.enable=true\n    \n    command: [\"/usr/local/bin/matrix-entrypoint.sh\"]\n    volumes:\n      - matrix_data:/data\n      - ./config/matrix/homeserver.yaml:/data/homeserver.yaml\n      - ./scripts/matrix-entrypoint.sh:/usr/local/bin/matrix-entrypoint.sh\n      - ./logs/matrix-synapse:/data/logs\n    depends_on:\n      matrix-postgres:\n        condition: service_healthy\n      redis:\n        condition: service_healthy\n    healthcheck:\n      test: [\"CMD-SHELL\", \"curl -f http://localhost:8008/health || exit 1\"]\n      interval: 30s\n      timeout: 10s\n      retries: 3\n      start_period: 60s\n    security_opt:\n      - no-new-privileges:true\n      - apparmor=docker-default\n    cap_drop:\n      - ALL\n    cap_add:\n      - CHOWN\n      - SETUID\n      - SETGID\n      - NET_BIND_SERVICE\n    deploy:\n      resources:\n        limits:\n          cpus: '2.0'\n          memory: 2G\n        reservations:\n          memory: 512M\n    logging:\n      driver: \"json-file\"\n      options:\n        max-size: \"10m\"\n        max-file: \"5\"\n```\n\n**File:** .config/matrix/homeserver.yaml (L1-60)\n```yaml\n# Matrix Synapse Configuration\n# Place this file in: ./config/matrix/homeserver.yaml\n\n## Server ##\nserver_name: \"matrix.localhost\"  # Change to your domain\npid_file: /data/homeserver.pid\nweb_client_location: https://app.element.io/\n\n# Public baseurl for when a client needs to access the server from outside the docker network\npublic_baseurl: https://matrix.localhost/  # Change to your domain\n\n# Set the soft limit on the number of file descriptors synapse can use\n# Zero is used to indicate synapse should set the soft limit to the hard limit\nsoft_file_limit: 0\n\n# Presence tracking allows users to see the state (e.g online/offline) of other users\npresence:\n  enabled: true\n\n## Listeners ##\nlisteners:\n  # Main HTTPS listener\n  # For when matrix traffic is sent directly to synapse\n  - port: 8008\n    tls: false\n    type: http\n    x_forwarded: true\n    bind_addresses: ['0.0.0.0']\n    \n    resources:\n      - names: [client, federation]\n        compress: false\n\n  # Federation listener\n  - port: 8448\n    tls: false\n    type: http\n    x_forwarded: true\n    bind_addresses: ['0.0.0.0']\n    \n    resources:\n      - names: [federation]\n\n## Database ##\ndatabase:\n  name: psycopg2\n  args:\n    user: matrix_user\n    password: \"REPLACE_WITH_SECRET\"  # This will be replaced by entrypoint script\n    database: matrix_synapse\n    host: matrix-postgres\n    port: 5432\n    cp_min: 5\n    cp_max: 10\n\n## Logging ##\nlog_config: \"/data/matrix-synapse.log.config\"\n\n## Media Store ##\nmedia_store_path: /data/media_store\n```\n\n**File:** scripts/matrix-entrypoint.sh (L1-26)\n```shellscript\n#!/bin/sh\nset -e\n\n# Path to the homeserver.yaml\nCONFIG_FILE=/data/homeserver.yaml\n\n# Check if the database password secret exists\nif [ -f /run/secrets/matrix_db_password ]; then\n  DB_PASSWORD=$(cat /run/secrets/matrix_db_password)\n  sed -i \"s/password: \\\"REPLACE_WITH_DB_SECRET\\\"/password: \\\"$DB_PASSWORD\\\"/\" $CONFIG_FILE\nelse\n  echo \"ERROR: Matrix DB password secret not found\"\n  exit 1\nfi\n\n# Check if the Redis password secret exists\nif [ -f /run/secrets/redis_password ]; then\n  REDIS_PASSWORD=$(cat /run/secrets/redis_password)\n  sed -i \"s/password: \\\"REPLACE_WITH_REDIS_SECRET\\\"/password: \\\"$REDIS_PASSWORD\\\"/\" $CONFIG_FILE\nelse\n  echo \"ERROR: Redis password secret not found\"\n  exit 1\nfi\n\n# Execute the original Synapse entrypoint\nexec /start.py start\n```\n\n**File:** Dockerfile.matrix (L1-26)\n```text\nFROM matrixdotorg/synapse:v1.104.0\n\n# Metadata\nLABEL maintainer=\"Your Name\"\nLABEL description=\"Matrix Synapse with auto-configuration\"\nLABEL version=\"1.0\"\n\n# Switch to root for setup\nUSER root\n\n# Install additional tools (Synapse uses Debian-based image)\nRUN apt-get update && \\\n    apt-get install -y --no-install-recommends \\\n    bash \\\n    curl \\\n    jq \\\n    openssl \\\n    postgresql-client \\\n    gosu \\\n    gettext-base \\\n    redis-tools \\\n    && rm -rf /var/lib/apt/lists/*\n\n# Create necessary directories\nRUN mkdir -p /data /scripts /config-templates && \\\n    chown -R 991:991 /data /scripts /config-templates\n```\n",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-07-03",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-03T09:32:43.263Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-03T19:42:45.702Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-03T19:42:45.702Z",
+          "field": "completitud",
+          "old_value": 0,
+          "new_value": 0.3
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-23T10:41:13.729Z",
+          "field": "title",
+          "old_value": "Crear matrix server en Zimaboard2",
+          "new_value": "Crear matrix server en Oracle"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-23T10:41:13.729Z",
+          "field": "repository",
+          "old_value": "hypenosys/Minecraft-Server-Docker",
+          "new_value": "hypenosys/hypenosys.github.io"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-23T10:41:31.977Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "OK"
+        }
+      ],
+      "id": 73,
+      "jules_session": null,
+      "branch": "Programación (PRO)"
+    },
+    {
+      "title": "Todas las cabeceras de la web son diferente.",
+      "descripcion": "Es neccesario decidir una interfaz unificada para todas las seccion, igualar colores, interfaz, boton de retorno al inicio en todas las pagina ",
+      "rama": "master",
+      "task_type": "bug",
+      "tema_principal": "Programación / Engine",
+      "seccion": "",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Critical",
+      "milestone": "M1",
+      "estado": "OK",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Dídac",
+      "asignados": [
+        "axlfc",
+        "dkdidac-design"
+      ],
+      "email_responsable": "didac@hypenosys.com",
+      "emails_asignados": [],
+      "start_date": "2026-07-08",
+      "due_date": "2026-07-08",
+      "estimated_hours": 4,
+      "story_points": 4,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-07-07",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "dkdidac-design",
+          "timestamp": "2026-07-07T19:33:21.205Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-08T07:02:56.123Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-07-08"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-08T08:41:18.359Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-08T23:48:28.875Z",
+          "field": "asignados",
+          "old_value": "[]",
+          "new_value": "[\"axlfc\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-09T10:31:43.601Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-09T10:31:43.601Z",
+          "field": "asignados",
+          "old_value": "[\"axlfc\"]",
+          "new_value": "[\"axlfc\",\"dkdidac-design\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-09T10:31:43.601Z",
+          "field": "repository",
+          "old_value": "hypenosys/app",
+          "new_value": "hypenosys/hypenosys.github.io"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-16T07:18:30.069Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "OK"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-18T13:39:11.866Z",
+          "field": "title",
+          "old_value": "Todas las cabezeras de la web son diferente.",
+          "new_value": "Todas las cabeceras de la web son diferente."
+        }
+      ],
+      "id": 75,
+      "jules_session": null,
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
+    },
+    {
+      "title": "No funciona el boton ver tarea",
+      "descripcion": "el boton de ver tarea del banner rojo del dashboard no te redirige a la tarea",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Dashboard",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Minor",
+      "milestone": "M1",
+      "estado": "OK",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Dídac",
+      "asignados": [
+        "axlfc"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-07-09",
+      "due_date": "2026-07-10",
+      "estimated_hours": 16,
+      "story_points": 3,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "El botón de VER TAREA debe navegar y resaltar en el kanban la tarea correspondiente ",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-07-07",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "dkdidac-design",
+          "timestamp": "2026-07-07T19:35:46.292Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-09T00:02:47.847Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Minor"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-09T00:02:47.847Z",
+          "field": "repository",
+          "old_value": null,
+          "new_value": "hypenosys/hypenosys.github.io"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-09T00:02:47.847Z",
+          "field": "seccion",
+          "old_value": "",
+          "new_value": "Dashboard"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-09T09:16:47.239Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "OK"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-09T09:16:47.239Z",
+          "field": "asignados",
+          "old_value": "[]",
+          "new_value": "[\"axlfc\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-09T09:16:47.239Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-07-10"
+        }
+      ],
+      "id": 76,
+      "jules_session": null,
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
+    },
+    {
+      "title": "Crear Qdrant server en Oracle",
+      "descripcion": "Para RAG/Vector search",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Tools / Automation",
+      "seccion": "",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Major",
+      "milestone": "M2",
+      "estado": "OK",
+      "completitud": 0,
+      "resuelto_por": "Axel",
       "detectado_por": "Axel",
       "asignados": [],
       "email_responsable": null,
       "emails_asignados": [],
-      "start_date": "2026-06-21",
-      "due_date": "2026-06-28",
+      "start_date": "2026-07-18",
+      "due_date": "2026-07-26",
       "estimated_hours": 2,
       "story_points": 2,
       "tags": [],
@@ -4913,47 +5644,33 @@
       "blocks": [],
       "blocked_by": [],
       "comments": [],
-      "images": [
-        {
-          "url": "https://64.media.tumblr.com/c9b495cd9bae8183b8f503348a89c8fb/307dec7b5bcf13cc-5a/s1280x1920/9389d8f5c887f30553f4bf6884c0b0564ef7279d.png",
-          "type": "url",
-          "tumblr_post_id": "820029962349330432",
-          "filename": "8677.png",
-          "uploaded_at": "2026-06-21T11:31:53.720Z"
-        }
-      ],
+      "images": [],
       "rama2": null,
       "ver": true,
-      "fecha": "2026-06-21",
+      "fecha": "2026-07-18",
       "apoyo": null,
       "limite": null,
       "comentario": "",
       "change_log": [
         {
           "author_login": "axlfc",
-          "timestamp": "2026-06-21T11:32:56.778Z",
+          "timestamp": "2026-07-18T12:01:10.171Z",
           "field": "id",
           "old_value": null,
           "new_value": "Created"
         },
         {
           "author_login": "axlfc",
-          "timestamp": "2026-06-21T12:41:37.108Z",
-          "field": "seccion",
-          "new_value": "Chat Neural"
+          "timestamp": "2026-07-23T10:41:41.232Z",
+          "field": "title",
+          "old_value": "Crear Qdrant server en Zimaboard2",
+          "new_value": "Crear Qdrant server en Oracle"
         },
         {
           "author_login": "axlfc",
-          "timestamp": "2026-06-21T14:42:35.162Z",
+          "timestamp": "2026-07-23T10:41:55.139Z",
           "field": "estado",
-          "old_value": "Pending",
-          "new_value": "In Review"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-28T13:45:43.397Z",
-          "field": "estado",
-          "old_value": "In Review",
+          "old_value": "Working",
           "new_value": "OK"
         }
       ],
@@ -4965,6 +5682,21 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: tarea #85 movida al archivo",
+      "user": "Axlfc",
+      "timestamp": "2026-07-28T06:59:17.182Z"
+    },
+    {
+      "action": "chore: tarea #73 movida al archivo",
+      "user": "Axlfc",
+      "timestamp": "2026-07-28T06:59:12.748Z"
+    },
+    {
+      "action": "chore: tarea #45 movida al archivo",
+      "user": "Axlfc",
+      "timestamp": "2026-07-28T06:59:01.898Z"
+    },
     {
       "action": "chore: tarea #65 movida al archivo",
       "user": "Axlfc",
