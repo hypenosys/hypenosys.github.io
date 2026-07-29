@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-07-29T12:22:10.490Z",
+  "last_updated": "2026-07-29T12:22:39.232Z",
   "last_updated_by": "Axel",
   "tasks": [
     {
@@ -3294,9 +3294,63 @@
         }
       ],
       "id": 87
+    },
+    {
+      "title": "Tarea de prueba 2",
+      "descripcion": "dasdasd",
+      "rama": "",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "seccion": "",
+      "repository": null,
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-07-29",
+      "due_date": "2026-08-02",
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "organizationId": "empty-space-videogames",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-07-29",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-29T12:22:38.363Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 88
     }
   ],
   "_audit_log": [
+    {
+      "action": "feat: nueva tarea #1785327758363 añadida",
+      "user": "Axlfc",
+      "timestamp": "2026-07-29T12:22:39.233Z"
+    },
     {
       "action": "feat: nueva tarea #1785327729894 añadida",
       "user": "Axlfc",
