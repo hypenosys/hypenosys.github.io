@@ -8,7 +8,7 @@
 const GITHUB_API_BASE = 'https://api.github.com';
 const REPO_OWNER = 'hypenosys';
 const REPO_NAME = 'hypenosys.github.io';
-const DATA_BRANCH = 'master';
+const DATA_BRANCH = (window.HY_OAUTH_CONFIG && window.HY_OAUTH_CONFIG.dataBranch) || 'master';
 
 /**
  * Recupera el token de OAuth de GitHub desde sessionStorage o localStorage.
@@ -104,7 +104,42 @@ class AtomicWriteNonRetryableError extends Error {
  * @param {string} contentType 'json' o 'text'
  * @returns {Promise<Object>} { content: Object|string|null, sha: string|null }.
  */
-async function fetchFileWithSha(filePath, contentType = 'json') {
+async function fetchFileWithSha(filePath, contentType = 'json', forceRemote = false) {
+    const ws = localStorage.getItem('hy_active_workspace') || 'hypenosys';
+    if (ws === 'personal' && !forceRemote) {
+        const username = (_currentUser && _currentUser.login) ? _currentUser.login.toLowerCase() : 'guest';
+        const keyMap = {
+            '_data/dashboard_tasks.json': `hypenosys_personal_kanban_tasks_${username}`,
+            '_data/dashboard_tasks_archive.json': `hypenosys_personal_kanban_archive_${username}`,
+            '_data/studio_stats.json': `hypenosys_personal_kanban_stats_${username}`,
+            '_data/studio_budget.json': `hypenosys_personal_kanban_budget_${username}`
+        };
+        const localKey = keyMap[filePath];
+        if (localKey) {
+            const dataStr = localStorage.getItem(localKey);
+            if (dataStr) {
+                try {
+                    const content = contentType === 'json' ? JSON.parse(dataStr) : dataStr;
+                    return { content, sha: 'local-personal-sha' };
+                } catch (e) {
+                    console.error('[LOCAL-PERSONAL] Failed to parse JSON:', e);
+                }
+            }
+            // Retornar estructuras por defecto para el espacio personal
+            let defaultContent = null;
+            if (contentType === 'json') {
+                if (filePath.endsWith('dashboard_tasks.json') || filePath.endsWith('dashboard_tasks_archive.json')) {
+                    defaultContent = { tasks: [], _audit_log: [], schema_version: '1.2.0' };
+                } else if (filePath.endsWith('studio_stats.json')) {
+                    defaultContent = { schema_version: '1.1.0', computed_at: '', global: {}, members: {}, group: {} };
+                } else if (filePath.endsWith('studio_budget.json')) {
+                    defaultContent = { monthly_records: [], burnout: { current_milestone: 'M1', milestones: [{ id: 'M1', date_start: '2025-01-01', date_end: '2025-02-15' }] } };
+                }
+            }
+            return { content: defaultContent, sha: 'local-personal-sha' };
+        }
+    }
+
     const url = `${GITHUB_API_BASE}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filePath}?ref=${DATA_BRANCH}&t=${Date.now()}`;
     const response = await fetch(url, {
         headers: getHeaders()
@@ -164,7 +199,29 @@ async function getFile(filePath) {
  * @param {string} contentType 'json' o 'text'
  * @returns {Promise<Object>} Resultado de la operación { ok: boolean, status: number, data: Object, retryAfter: number|null }.
  */
-async function putFileContent(filePath, sha, newContent, commitMessage, contentType = 'json') {
+async function putFileContent(filePath, sha, newContent, commitMessage, contentType = 'json', forceRemote = false) {
+    const ws = localStorage.getItem('hy_active_workspace') || 'hypenosys';
+    if (ws === 'personal' && !forceRemote) {
+        const username = (_currentUser && _currentUser.login) ? _currentUser.login.toLowerCase() : 'guest';
+        const keyMap = {
+            '_data/dashboard_tasks.json': `hypenosys_personal_kanban_tasks_${username}`,
+            '_data/dashboard_tasks_archive.json': `hypenosys_personal_kanban_archive_${username}`,
+            '_data/studio_stats.json': `hypenosys_personal_kanban_stats_${username}`,
+            '_data/studio_budget.json': `hypenosys_personal_kanban_budget_${username}`
+        };
+        const localKey = keyMap[filePath];
+        if (localKey) {
+            const dataStr = contentType === 'json' ? JSON.stringify(newContent, null, 2) : String(newContent);
+            localStorage.setItem(localKey, dataStr);
+            return {
+                ok: true,
+                status: 200,
+                data: { message: "Saved locally" },
+                retryAfter: null
+            };
+        }
+    }
+
     const url = `${GITHUB_API_BASE}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filePath}`;
 
     let contentString;
@@ -178,12 +235,16 @@ async function putFileContent(filePath, sha, newContent, commitMessage, contentT
         contentString = String(newContent);
     }
 
-    const body = JSON.stringify({
+    const payloadObj = {
         message: commitMessage,
         content: btoa(unescape(encodeURIComponent(contentString))),
-        sha: sha,
         branch: DATA_BRANCH
-    });
+    };
+    if (sha !== null && sha !== undefined) {
+        payloadObj.sha = sha;
+    }
+
+    const body = JSON.stringify(payloadObj);
     const response = await fetch(url, {
         method: 'PUT',
         headers: {
@@ -226,12 +287,16 @@ async function putFileContent(filePath, sha, newContent, commitMessage, contentT
  */
 async function updateFile(filePath, contentString, commitMessage, sha) {
     const url = `${GITHUB_API_BASE}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filePath}`;
-    const body = JSON.stringify({
+    const payloadObj = {
         message: commitMessage,
         content: btoa(unescape(encodeURIComponent(contentString))),
-        sha: sha,
         branch: DATA_BRANCH
-    });
+    };
+    if (sha !== null && sha !== undefined) {
+        payloadObj.sha = sha;
+    }
+
+    const body = JSON.stringify(payloadObj);
     const response = await fetch(url, {
         method: 'PUT',
         headers: {
@@ -255,11 +320,15 @@ async function updateFile(filePath, contentString, commitMessage, sha) {
  */
 async function deleteFile(filePath, sha, commitMessage) {
     const url = `${GITHUB_API_BASE}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filePath}`;
-    const body = JSON.stringify({
+    const payloadObj = {
         message: commitMessage,
-        sha: sha,
         branch: DATA_BRANCH
-    });
+    };
+    if (sha !== null && sha !== undefined) {
+        payloadObj.sha = sha;
+    }
+
+    const body = JSON.stringify(payloadObj);
     const response = await fetch(url, {
         method: 'DELETE',
         headers: {
@@ -369,7 +438,8 @@ async function atomicWrite(filePath, mutatorFn, commitMessage, optionsOrMergeStr
         contentType: 'json',
         audit: true,
         createIfMissing: false,
-        initialContent: null
+        initialContent: null,
+        forceRemote: false
     };
 
     if (typeof optionsOrMergeStrategy === 'function') {
@@ -386,13 +456,13 @@ async function atomicWrite(filePath, mutatorFn, commitMessage, optionsOrMergeStr
 
     // default file setup for specific files
     if (options.initialContent === null) {
-        if (filePath === '_data/dashboard_tasks.json' || filePath === '_data/dashboard_tasks_archive.json') {
+        if (filePath.endsWith('dashboard_tasks.json') || filePath.endsWith('dashboard_tasks_archive.json')) {
             options.createIfMissing = true;
             options.initialContent = { tasks: [], _audit_log: [], schema_version: '1.2.0' };
-        } else if (filePath === '_data/studio_stats.json') {
+        } else if (filePath.endsWith('studio_stats.json')) {
             options.createIfMissing = true;
             options.initialContent = { schema_version: '1.1.0', computed_at: '', global: {}, members: {}, group: {} };
-        } else if (filePath === '_data/jules_panel_state.json') {
+        } else if (filePath.endsWith('jules_panel_state.json')) {
             options.createIfMissing = true;
             options.initialContent = { archive: {}, last_updated: '' };
         }
@@ -405,7 +475,7 @@ async function atomicWrite(filePath, mutatorFn, commitMessage, optionsOrMergeStr
         attempt++;
         try {
             // Leer el archivo de GitHub con el tipo de contenido indicado
-            let { content: remoteContent, sha: remoteSha } = await fetchFileWithSha(filePath, options.contentType);
+            let { content: remoteContent, sha: remoteSha } = await fetchFileWithSha(filePath, options.contentType, options.forceRemote);
 
             // Manejo de archivo inexistente
             if (remoteContent === null) {
@@ -474,7 +544,7 @@ async function atomicWrite(filePath, mutatorFn, commitMessage, optionsOrMergeStr
             }
 
             // Realizar escritura
-            const result = await putFileContent(filePath, remoteSha, newContent, commitMessage, options.contentType);
+            const result = await putFileContent(filePath, remoteSha, newContent, commitMessage, options.contentType, options.forceRemote);
 
             if (result.ok) {
                 // Ejecutar efectos secundarios explícitamente solicitados
@@ -492,7 +562,7 @@ async function atomicWrite(filePath, mutatorFn, commitMessage, optionsOrMergeStr
             if (result.status === 409) {
                 console.warn(`[AtomicWrite] Conflicto detectado en ${filePath} (intento ${attempt}/${MAX_RETRIES}). Re-intentando con fresh remote...`);
                 // En conflictos 409, volvemos a leer freshRemote y freshSha
-                const { content: freshRemote, sha: freshSha } = await fetchFileWithSha(filePath, options.contentType);
+                const { content: freshRemote, sha: freshSha } = await fetchFileWithSha(filePath, options.contentType, options.forceRemote);
 
                 let merged;
                 if (options.mergeStrategy) {
@@ -523,7 +593,7 @@ async function atomicWrite(filePath, mutatorFn, commitMessage, optionsOrMergeStr
                 }
 
                 // Escribir el merged content usando freshSha
-                const retryResult = await putFileContent(filePath, freshSha, merged, `${commitMessage} [merge-retry-${attempt}]`, options.contentType);
+                const retryResult = await putFileContent(filePath, freshSha, merged, `${commitMessage} [merge-retry-${attempt}]`, options.contentType, options.forceRemote);
                 if (retryResult.ok) {
                     if (options.recomputeStats) {
                         await recomputeAndSaveStats(merged);
@@ -569,7 +639,7 @@ async function atomicWrite(filePath, mutatorFn, commitMessage, optionsOrMergeStr
  * @param {Object} tasksData Objeto de datos de tareas.
  */
 async function recomputeAndSaveStats(tasksData) {
-    const activeTasks = tasksData.tasks || [];
+    const activeTasks = (tasksData && tasksData.tasks) || [];
     let archivedTasks = [];
     try {
         const archiveRes = await window.githubApi.fetchFileWithSha('_data/dashboard_tasks_archive.json');
@@ -766,18 +836,22 @@ async function createTask(taskObject) {
  * Actualiza una tarea existente.
  */
 async function updateTask(taskId, taskDelta) {
+    const isRemote = String(taskId).startsWith('remote-');
+    const cleanId = isRemote ? taskId.substring(7) : taskId;
+
     return atomicWrite('_data/dashboard_tasks.json', (db) => {
-        const taskIndex = db.tasks.findIndex(t => String(t.id) === String(taskId));
-        if (taskIndex === -1) throw new Error(`Tarea #${taskId} no encontrada.`);
+        const taskIndex = db.tasks.findIndex(t => String(t.id) === String(cleanId));
+        if (taskIndex === -1) throw new Error(`Tarea #${cleanId} no encontrada.`);
         db.tasks[taskIndex] = { ...db.tasks[taskIndex], ...taskDelta };
         db.last_updated_by = _currentUser?.login || 'Sistema';
         return db;
-    }, `chore: actualizar tarea #${taskId}`, {
+    }, `chore: actualizar tarea #${cleanId}`, {
         mergeStrategy: (local, remote) => {
             local.tasks = mergeTaskArrays(local.tasks, remote.tasks);
             return local;
         },
-        recomputeStats: true
+        recomputeStats: true,
+        forceRemote: isRemote
     });
 }
 
@@ -785,20 +859,24 @@ async function updateTask(taskId, taskDelta) {
  * Actualiza el estado de una tarea.
  */
 async function updateTaskStatus(taskId, newEstado, resolverHandle, testerHandle) {
+    const isRemote = String(taskId).startsWith('remote-');
+    const cleanId = isRemote ? taskId.substring(7) : taskId;
+
     return atomicWrite('_data/dashboard_tasks.json', (db) => {
-        const task = db.tasks.find(t => String(t.id) === String(taskId));
-        if (!task) throw new Error(`Tarea #${taskId} no encontrada en la base de datos.`);
+        const task = db.tasks.find(t => String(t.id) === String(cleanId));
+        if (!task) throw new Error(`Tarea #${cleanId} no encontrada en la base de datos.`);
         task.estado = newEstado;
         if (resolverHandle) task.resuelto_por = resolverHandle;
         if (testerHandle) task.detectado_por = testerHandle;
         db.last_updated_by = resolverHandle || testerHandle || 'Sistema';
         return db;
-    }, `chore: actualizar estado tarea #${taskId} → ${newEstado}`, {
+    }, `chore: actualizar estado tarea #${cleanId} → ${newEstado}`, {
         mergeStrategy: (local, remote) => {
             local.tasks = mergeTaskArrays(local.tasks, remote.tasks);
             return local;
         },
-        recomputeStats: true
+        recomputeStats: true,
+        forceRemote: isRemote
     });
 }
 
@@ -806,35 +884,39 @@ async function updateTaskStatus(taskId, newEstado, resolverHandle, testerHandle)
  * Archiva una tarea (la mueve de activos a archivo).
  */
 async function archiveTask(taskId) {
+    const isRemote = String(taskId).startsWith('remote-');
+    const cleanId = isRemote ? taskId.substring(7) : taskId;
     let taskToArchive = null;
 
     // Primer paso: Eliminar de activos sin recomputar estadísticas aún (recomputeStats: false)
     await atomicWrite('_data/dashboard_tasks.json', (db) => {
-        const idx = db.tasks.findIndex(t => String(t.id) === String(taskId));
-        if (idx === -1) throw new Error(`Tarea #${taskId} no encontrada en activos.`);
+        const idx = db.tasks.findIndex(t => String(t.id) === String(cleanId));
+        if (idx === -1) throw new Error(`Tarea #${cleanId} no encontrada en activos.`);
         taskToArchive = db.tasks.splice(idx, 1)[0];
         db.last_updated_by = _currentUser?.login || 'Sistema';
         return db;
-    }, `chore: archivar tarea #${taskId}`, {
+    }, `chore: archivar tarea #${cleanId}`, {
         mergeStrategy: (local) => local,
-        recomputeStats: false
+        recomputeStats: false,
+        forceRemote: isRemote
     });
 
     if (!taskToArchive) return;
 
     // Segundo paso: Añadir al archivo y recomputar estadísticas una sola vez al final (recomputeStats: true)
     await atomicWrite('_data/dashboard_tasks_archive.json', (db) => {
-        if (!db.tasks.find(t => String(t.id) === String(taskId))) {
+        if (!db.tasks.find(t => String(t.id) === String(cleanId))) {
             db.tasks.push(taskToArchive);
         }
         db.last_updated_by = _currentUser?.login || 'Sistema';
         return db;
-    }, `chore: tarea #${taskId} movida al archivo`, {
+    }, `chore: tarea #${cleanId} movida al archivo`, {
         mergeStrategy: (local, remote) => {
             local.tasks = mergeTaskArrays(local.tasks, remote.tasks);
             return local;
         },
-        recomputeStats: true
+        recomputeStats: true,
+        forceRemote: isRemote
     });
 }
 
@@ -842,35 +924,39 @@ async function archiveTask(taskId) {
  * Restaura una tarea desde el archivo a activos.
  */
 async function restoreTask(taskId) {
+    const isRemote = String(taskId).startsWith('remote-');
+    const cleanId = isRemote ? taskId.substring(7) : taskId;
     let taskToRestore = null;
 
     // Primer paso: Eliminar del archivo sin recomputar estadísticas aún (recomputeStats: false)
     await atomicWrite('_data/dashboard_tasks_archive.json', (db) => {
-        const idx = db.tasks.findIndex(t => String(t.id) === String(taskId));
-        if (idx === -1) throw new Error(`Tarea #${taskId} no encontrada en el archivo.`);
+        const idx = db.tasks.findIndex(t => String(t.id) === String(cleanId));
+        if (idx === -1) throw new Error(`Tarea #${cleanId} no encontrada en el archivo.`);
         taskToRestore = db.tasks.splice(idx, 1)[0];
         db.last_updated_by = _currentUser?.login || 'Sistema';
         return db;
-    }, `chore: desarchivar tarea #${taskId}`, {
+    }, `chore: desarchivar tarea #${cleanId}`, {
         mergeStrategy: (local) => local,
-        recomputeStats: false
+        recomputeStats: false,
+        forceRemote: isRemote
     });
 
     if (!taskToRestore) return;
 
     // Segundo paso: Añadir a activos y recomputar estadísticas una sola vez al final (recomputeStats: true)
     await atomicWrite('_data/dashboard_tasks.json', (db) => {
-        if (!db.tasks.find(t => String(t.id) === String(taskId))) {
+        if (!db.tasks.find(t => String(t.id) === String(cleanId))) {
             db.tasks.push(taskToRestore);
         }
         db.last_updated_by = _currentUser?.login || 'Sistema';
         return db;
-    }, `chore: tarea #${taskId} restaurada desde el archivo`, {
+    }, `chore: tarea #${cleanId} restaurada desde el archivo`, {
         mergeStrategy: (local, remote) => {
             local.tasks = mergeTaskArrays(local.tasks, remote.tasks);
             return local;
         },
-        recomputeStats: true
+        recomputeStats: true,
+        forceRemote: isRemote
     });
 }
 
@@ -1228,6 +1314,17 @@ window.githubApi = Object.assign(window.githubApi, {
     // Métodos de compatibilidad legacy
     getFile,
     updateFile,
+
+    // Workspace Management
+    getActiveWorkspace() {
+        return localStorage.getItem('hy_active_workspace') || 'hypenosys';
+    },
+
+    setActiveWorkspace(ws) {
+        localStorage.setItem('hy_active_workspace', ws);
+        window.dispatchEvent(new Event('workspaceChanged'));
+        broadcastUpdate('_data/dashboard_tasks.json');
+    },
 
     // Core API
     validateToken: validateTokenAndStore,

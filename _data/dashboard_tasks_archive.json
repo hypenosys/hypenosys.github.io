@@ -100,7 +100,8 @@
       ],
       "seccion": "",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "rama": "PRO",
@@ -141,7 +142,8 @@
       "change_log": [],
       "jules_session": null,
       "repository": "",
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "rama": "PRO",
@@ -181,7 +183,8 @@
       "change_log": [],
       "jules_session": null,
       "repository": "",
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "rama": "PRO",
@@ -220,7 +223,8 @@
       "change_log": [],
       "jules_session": null,
       "repository": "",
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "rama": "PRO",
@@ -261,7 +265,8 @@
       "change_log": [],
       "jules_session": null,
       "repository": "",
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "rama": "chore/upgrade-ue-5.7.4",
@@ -471,7 +476,8 @@
       "repository": "hypenosys/app",
       "seccion": "App",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "rama": "PRO",
@@ -718,7 +724,8 @@
       ],
       "jules_session": null,
       "repository": "",
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "rama": "feature/repo-labels-ui",
@@ -910,7 +917,8 @@
       "repository": "hypenosys/hypenosys.github.io",
       "seccion": "",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "rama": "PRO",
@@ -951,7 +959,8 @@
       "comments": [],
       "change_log": [],
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "rama": "PRO",
@@ -1080,7 +1089,8 @@
       ],
       "jules_session": null,
       "repository": "",
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "rama": "PRO",
@@ -1185,7 +1195,8 @@
       ],
       "jules_session": null,
       "repository": "",
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Arreglar previsualización de fotos fuera del edit",
@@ -1310,7 +1321,8 @@
       "id": 21,
       "repository": "hypenosys/hypenosys.github.io",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Adoptar prácticas mobile first",
@@ -1403,7 +1415,8 @@
       "id": 22,
       "repository": "hypenosys/hypenosys.github.io",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Añadir campo repositorio a las tasks",
@@ -1476,7 +1489,8 @@
       "id": 23,
       "repository": "hypenosys/hypenosys.github.io",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Particularizar y extraer en funciones del dashboard.js en ficheros más pequeños",
@@ -1556,7 +1570,8 @@
       "id": 24,
       "jules_session": null,
       "repository": "",
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Implementar editor de perfiles de equipo en el Dashboard",
@@ -1631,7 +1646,8 @@
       ],
       "id": 26,
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Botón \"🤖 Enviar a Jules\" en tarjetas Kanban con estado de sesión Neural Operations",
@@ -1968,7 +1984,8 @@
       "id": 28,
       "seccion": "Jules Panel",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Nueva página \"Claude Neural Chat\" — Interfaz de chat privado con Claude API / local AI ollama support",
@@ -2098,7 +2115,8 @@
       ],
       "id": 29,
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "La API de Neural Chat si seleccionamos ollama tiene que ser ollama, no Anthropic",
@@ -2197,7 +2215,8 @@
       ],
       "id": 30,
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "BUG VISUAL: Jules Neural Operation en dashboard en móvil ",
@@ -2371,7 +2390,8 @@
       ],
       "id": 31,
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Filtrar tareas por tag en /dashboard",
@@ -2519,7 +2539,8 @@
       "id": 32,
       "seccion": "Dashboard",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Crear README.md de hypenosys.github.io (Web)",
@@ -2660,7 +2681,8 @@
       "id": 33,
       "seccion": "Web",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Se ha roto la carga de las branches de los repositorios en el panel de jules.",
@@ -2750,7 +2772,8 @@
       ],
       "id": 34,
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "n8n: Añadir NIM y cognito-agent como providers en la configuración de Claude Neural Chat",
@@ -2906,7 +2929,8 @@
       "id": 36,
       "seccion": "Chat Neural",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "New page pages/image-gen to generate image or text context and flux dev or kontext up to 2 images and text ",
@@ -3071,7 +3095,8 @@
       "id": 38,
       "seccion": "Image Gen",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Añadir hypenosys/scripts a SVN",
@@ -3183,7 +3208,8 @@
       "id": 39,
       "seccion": "SVN Admin Panel, App",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Añadir icono de neural-chat al lado del robot en el menú del dashboard",
@@ -3267,7 +3293,8 @@
       "id": 41,
       "seccion": "Dashboard",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Falta nombre del repo (o alias) en las cards en dashboard de Jules Neural Operations",
@@ -3537,7 +3564,8 @@
       ],
       "seccion": "Backend n8n",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "id": 46,
@@ -3620,7 +3648,8 @@
       ],
       "seccion": "Web",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "id": 47,
@@ -3689,7 +3718,8 @@
       ],
       "seccion": "Jules Panel, Web",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "id": 48,
@@ -3781,7 +3811,8 @@
       ],
       "seccion": "Dashboard",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Local AI Backend Docs: ComfyUI, Redis, PostgreSQL, Forgejo, Matrix, Qdrant, n8n, n8n-runner, ollama setup",
@@ -3866,7 +3897,8 @@
       "id": 49,
       "seccion": "Documentación",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "arreglar jules panel kanban",
@@ -3934,7 +3966,8 @@
       "id": 58,
       "seccion": "",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Quitar sección vacía entre FILTRAR MIEMBROS y ALERTAS DE RUTA CRÍTICAS ACTIVAS",
@@ -4024,7 +4057,8 @@
       "id": 59,
       "seccion": "Dashboard",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Subida de imágenes al GUARDAR TAREA, no al subir la imagen",
@@ -4100,7 +4134,8 @@
       "id": 60,
       "seccion": "Dashboard",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Al expandir la card del kanban, si hay imagenes, debería mostrarlas ahi y poder previsualizarlas flawlessly",
@@ -4168,7 +4203,8 @@
       "id": 61,
       "seccion": "Dashboard",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Unificar menús en todas las páginas de la plataforma",
@@ -4289,7 +4325,8 @@
       "id": 62,
       "seccion": "Jules Panel, Chat Neural",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "/chat/neural/:  Arreglar desbordamiento en modelo ON",
@@ -4365,7 +4402,8 @@
       "id": 63,
       "seccion": "Chat Neural",
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "/chat/neural/:  Arreglar display de borrar/archivar sesiones",
@@ -4503,7 +4541,8 @@
       ],
       "id": 66,
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Reducir latencia y tiempos de carga",
@@ -4637,7 +4676,8 @@
       ],
       "id": 67,
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Partir /jules-panel y /chat/neural en ficheros más pequeños específicos",
@@ -4721,7 +4761,8 @@
       ],
       "id": 68,
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Return images with n8n workflow when generating them",
@@ -4797,7 +4838,497 @@
       ],
       "id": 69,
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
+    },
+    {
+      "title": "Todas las cabeceras de la web son diferente.",
+      "descripcion": "Es neccesario decidir una interfaz unificada para todas las seccion, igualar colores, interfaz, boton de retorno al inicio en todas las pagina ",
+      "rama": "master",
+      "task_type": "bug",
+      "tema_principal": "Programación / Engine",
+      "seccion": "",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Critical",
+      "milestone": "M1",
+      "estado": "OK",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Dídac",
+      "asignados": [
+        "axlfc",
+        "dkdidac-design"
+      ],
+      "email_responsable": "didac@hypenosys.com",
+      "emails_asignados": [],
+      "start_date": "2026-07-08",
+      "due_date": "2026-07-08",
+      "estimated_hours": 4,
+      "story_points": 4,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-07-07",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "dkdidac-design",
+          "timestamp": "2026-07-07T19:33:21.205Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-08T07:02:56.123Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-07-08"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-08T08:41:18.359Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-08T23:48:28.875Z",
+          "field": "asignados",
+          "old_value": "[]",
+          "new_value": "[\"axlfc\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-09T10:31:43.601Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-09T10:31:43.601Z",
+          "field": "asignados",
+          "old_value": "[\"axlfc\"]",
+          "new_value": "[\"axlfc\",\"dkdidac-design\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-09T10:31:43.601Z",
+          "field": "repository",
+          "old_value": "hypenosys/app",
+          "new_value": "hypenosys/hypenosys.github.io"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-16T07:18:30.069Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "OK"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-18T13:39:11.866Z",
+          "field": "title",
+          "old_value": "Todas las cabezeras de la web son diferente.",
+          "new_value": "Todas las cabeceras de la web son diferente."
+        }
+      ],
+      "id": 75,
+      "jules_session": null,
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
+    },
+    {
+      "title": "No funciona el boton ver tarea",
+      "descripcion": "el boton de ver tarea del banner rojo del dashboard no te redirige a la tarea",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Dashboard",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Minor",
+      "milestone": "M1",
+      "estado": "OK",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Dídac",
+      "asignados": [
+        "axlfc"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-07-09",
+      "due_date": "2026-07-10",
+      "estimated_hours": 16,
+      "story_points": 3,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "El botón de VER TAREA debe navegar y resaltar en el kanban la tarea correspondiente ",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-07-07",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "dkdidac-design",
+          "timestamp": "2026-07-07T19:35:46.292Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-09T00:02:47.847Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Minor"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-09T00:02:47.847Z",
+          "field": "repository",
+          "old_value": null,
+          "new_value": "hypenosys/hypenosys.github.io"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-09T00:02:47.847Z",
+          "field": "seccion",
+          "old_value": "",
+          "new_value": "Dashboard"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-09T09:16:47.239Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "OK"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-09T09:16:47.239Z",
+          "field": "asignados",
+          "old_value": "[]",
+          "new_value": "[\"axlfc\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-09T09:16:47.239Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-07-10"
+        }
+      ],
+      "id": 76,
+      "jules_session": null,
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
+    },
+    {
+      "rama": "chore/upgrade-ue-5.7.4",
+      "descripcion": "Actualizar el repositorio 'app' a la v5.8 de Unreal Engine y sincronizar con SVN. Necesario para mantener la compatibilidad con las últimas herramientas.",
+      "tema_principal": "Tools / Automation",
+      "prioridad": "ToDo",
+      "milestone": "M1",
+      "estado": "OK",
+      "completitud": 0.9,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc",
+        "topperh4rley"
+      ],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-05-26",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "Sincronización técnica entre el repositorio de scripts procedurales y el proyecto principal en la versión 5.7.4 para asegurar compatibilidad.",
+      "id": 11,
+      "email_responsable": "alex@hypenosys.com",
+      "emails_asignados": [
+        "axel@hypenosys.com",
+        "alex@hypenosys.com"
+      ],
+      "images": [],
+      "title": "upgrade 'app' to Unreal 5.8",
+      "task_type": "chore",
+      "start_date": "2026-06-01",
+      "due_date": "2026-06-30",
+      "estimated_hours": 2,
+      "story_points": 1,
+      "tags": [
+        "chore",
+        "devops",
+        "git"
+      ],
+      "external_links": [],
+      "subtasks": [
+        {
+          "id": 1780675597610,
+          "text": "clonar repo hypenosys/app",
+          "done": false
+        },
+        {
+          "id": 1780675637546,
+          "text": "ponerla al día a la versión",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "El proyecto compile y se abra sin errores en la v5.7.4.",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [
+        "Cuidado con las dependencias de los plugins al actualizar, a veces rompen al saltar de subversión."
+      ],
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:22:52.373Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-06-30"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-03T07:34:10.481Z",
+          "field": "repository",
+          "old_value": null,
+          "new_value": "hypenosys/app"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-05T16:02:46.750Z",
+          "field": "title",
+          "old_value": "Merge SVN Content/Scripts with upgraded github repo 'app'",
+          "new_value": "Content/Scripts github sync repo 'app' which is Unreal upgraded to 5.7.4"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-05T16:02:46.750Z",
+          "field": "prioridad",
+          "old_value": "Minor",
+          "new_value": "Major"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-05T16:02:46.750Z",
+          "field": "milestone",
+          "old_value": "M1",
+          "new_value": "M3"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-05T16:02:46.750Z",
+          "field": "task_type",
+          "old_value": "feature",
+          "new_value": "chore"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-05T16:08:34.339Z",
+          "field": "descripcion",
+          "old_value": "Merge SVN Content/Scripts with upgraded github repo 'app' 5.7.4",
+          "new_value": "Merge SVN Content/Scripts SVN folder syncing with upgraded an upgraded github repo 'app' to 5.7.4"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-05T16:08:34.339Z",
+          "field": "tags",
+          "old_value": "[]",
+          "new_value": "[\"git\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T15:21:19.422Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "ToDo"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:37:13.662Z",
+          "field": "title",
+          "old_value": "Content/Scripts github sync repo 'app' which is Unreal upgraded to 5.7.4",
+          "new_value": "upgrade repo 'app' which is Unreal upgraded to 5.7.4"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:37:13.662Z",
+          "field": "milestone",
+          "old_value": "M3",
+          "new_value": "M1"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T20:09:02.758Z",
+          "field": "title",
+          "old_value": "upgrade repo 'app' which is Unreal upgraded to 5.7.4",
+          "new_value": "upgrade repo 'app' to Unreal 5.7.4"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T20:09:02.758Z",
+          "field": "descripcion",
+          "old_value": "Merge SVN Content/Scripts SVN folder syncing with upgraded an upgraded github repo 'app' to 5.7.4",
+          "new_value": "Merge to SVN Content/Scripts git folder syncing with github repo 'app' sync to 5.7.4"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T20:09:21.058Z",
+          "field": "title",
+          "old_value": "upgrade repo 'app' to Unreal 5.7.4",
+          "new_value": "upgrade 'app' to Unreal 5.7.4"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-11T09:37:31.532Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-15T19:07:52.551Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-15T19:07:52.551Z",
+          "field": "completitud",
+          "old_value": 0.75,
+          "new_value": 0.9
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T18:31:02.697Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T22:47:14.017Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Critical"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-22T10:14:05.711Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-28T13:45:35.266Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "OK"
+        }
+      ],
+      "id": 68,
+      "jules_session": null,
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
+    },
+    {
+      "title": "Return images with n8n workflow when generating them",
+      "descripcion": "actualmente no devolvemos la imagen en el workflow de vuelta a la web",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "seccion": "",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "OK",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [],
+      "email_responsable": "axel@hypenosys.com",
+      "emails_asignados": [],
+      "start_date": "2026-06-28",
+      "due_date": "2026-06-28",
+      "estimated_hours": 2,
+      "story_points": 3,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-23",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-23T20:11:20.958Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-27T17:34:11.043Z",
+          "field": "descripcion",
+          "old_value": "",
+          "new_value": "actualmente no devolvemos la imagen en el workflow de vuelta a la web"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-27T17:34:11.043Z",
+          "field": "repository",
+          "old_value": null,
+          "new_value": "hypenosys/hypenosys.github.io"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-28T13:42:56.691Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "OK"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-28T13:42:56.691Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-06-28"
+        }
+      ],
+      "id": 69,
+      "jules_session": null,
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Crear matrix server en Oracle",
@@ -4989,7 +5520,8 @@
       ],
       "id": 75,
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "No funciona el boton ver tarea",
@@ -5081,7 +5613,8 @@
       ],
       "id": 76,
       "jules_session": null,
-      "branch": "Programación (PRO)"
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     },
     {
       "title": "Crear Qdrant server en Oracle",
@@ -5141,7 +5674,11 @@
           "new_value": "OK"
         }
       ],
-      "id": 85
+      "id": 65,
+      "seccion": "Chat Neural",
+      "jules_session": null,
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
     }
   ],
   "_audit_log": [

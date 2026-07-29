@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.0.0",
+  "organizations": [
+    {
+      "id": "hypenosys",
+      "name": "Hypenosys",
+      "createdBy": "Axlfc",
+      "createdAt": "2025-01-01T00:00:00.000Z",
+      "isDefault": true,
+      "members": [
+        "axlfc",
+        "topperh4rley",
+        "javi26031994-a11y",
+        "dkdidac-design",
+        "mitxel2022",
+        "silmaril464",
+        "lachicadelaboina"
+      ]
+    },
+    {
+      "id": "empty-space-videogames",
+      "name": "Empty Space Videogames",
+      "createdBy": "Axlfc",
+      "createdAt": "2025-01-01T00:00:00.000Z",
+      "isDefault": false,
+      "members": [
+        "Axlfc"
+      ]
+    }
+  ],
+  "_audit_log": [
+    {
+      "action": "chore: eliminar miembro TopperH4rley de la organización Empty Space Videogames",
+      "user": "Axlfc",
+      "timestamp": "2026-07-29T19:41:38.654Z"
+    },
+    {
+      "action": "chore: eliminar miembro spongebob3bray de la organización Hypenosys",
+      "user": "Axlfc",
+      "timestamp": "2026-07-29T12:21:29.894Z"
+    }
+  ]
+}

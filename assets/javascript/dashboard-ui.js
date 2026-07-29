@@ -10,6 +10,8 @@
 function renderDashboard() {
   const eb = window.ErrorBoundary;
 
+  eb.safeInvoke('header-status-slot', 'Workspace Selector', renderWorkspaceSelector);
+  eb.safeInvoke('local-kanban-actions', 'Local Actions', renderLocalWorkspaceActions);
   eb.safeInvoke('member-filters', 'Member Toggles', renderMemberToggles);
   eb.safeInvoke('kanban-filter-bar', 'Kanban Filters', renderKanbanFilters);
   eb.safeInvoke('jules-dashboard-sessions', 'Jules Badges', updateJulesBadges);
@@ -812,7 +814,7 @@ function renderKanbanFilters() {
     const badge = document.getElementById('active-filters-count');
 
     const totalActive = kanbanFilters.tags.length + kanbanFilters.members.length + kanbanFilters.repos.length + kanbanFilters.states.length +
-                        kanbanFilters.milestones.length + kanbanFilters.themes.length + kanbanFilters.priorities.length;
+                        kanbanFilters.milestones.length + kanbanFilters.themes.length + kanbanFilters.priorities.length + (kanbanFilters.orgs ? kanbanFilters.orgs.length : 0);
     const isCollapsed = filterContainer.style.maxHeight === '0px' || filterContainer.classList.contains('max-h-0');
 
     if (!filterContainer.dataset.initialized) {
@@ -840,6 +842,7 @@ function renderKanbanFilters() {
     const allThemes = new Set();
     const allPriorities = new Set();
     const allSections = new Set();
+    const allOrgs = new Set();
 
     currentTasks.forEach(t => {
         if (t.tags) t.tags.forEach(tag => allTags.add(tag));
@@ -851,6 +854,9 @@ function renderKanbanFilters() {
 
         const sections = (t.seccion || 'Sin Sección').split(',').map(s => s.trim()).filter(s => s);
         sections.forEach(s => allSections.add(s));
+
+        const orgId = t.organizationId || 'personal';
+        allOrgs.add(orgId);
     });
 
     const sortedTags = Array.from(allTags).sort();
@@ -981,6 +987,24 @@ function renderKanbanFilters() {
     });
     container.appendChild(sectionsRow.row);
 
+    // Fila 7.5: Organizaciones de origen (SÓLO en el Kanban Personal)
+    const ws = window.githubApi.getActiveWorkspace();
+    if (ws === 'personal' && allOrgs.size > 0) {
+        const orgsRow = createRow('Orgs', 'fa-solid fa-building');
+        Array.from(allOrgs).sort().forEach(orgId => {
+            const active = kanbanFilters.orgs && kanbanFilters.orgs.includes(orgId);
+            const displayLabel = orgId === 'personal' ? 'PERSONAL' : orgId.replace(/-/g, ' ').toUpperCase();
+            const pill = createPill(displayLabel, active, () => {
+                if (!kanbanFilters.orgs) kanbanFilters.orgs = [];
+                if (active) kanbanFilters.orgs = kanbanFilters.orgs.filter(o => o !== orgId);
+                else kanbanFilters.orgs.push(orgId);
+                renderDashboard();
+            });
+            orgsRow.content.appendChild(pill);
+        });
+        container.appendChild(orgsRow.row);
+    }
+
     // Fila 8: Estados y Botón Limpiar
     const lastRowWrapper = document.createElement('div');
     lastRowWrapper.className = 'flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pt-2 border-t border-slate-800/50';
@@ -1002,10 +1026,444 @@ function renderKanbanFilters() {
     clearBtn.className = 'text-[10px] font-black text-slate-500 hover:text-red-400 uppercase tracking-widest transition-all flex items-center gap-2 px-3 py-2 bg-slate-950 rounded-lg border border-slate-800 hover:border-red-900/50';
     clearBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i> Limpiar todo';
     clearBtn.onclick = () => {
-        kanbanFilters = { tags: [], members: [], repos: [], states: [], milestones: [], themes: [], priorities: [], sections: [] };
+        kanbanFilters = { tags: [], members: [], repos: [], states: [], milestones: [], themes: [], priorities: [], sections: [], orgs: [] };
         renderDashboard();
     };
     lastRowWrapper.appendChild(clearBtn);
 
     container.appendChild(lastRowWrapper);
 }
+
+let __workspaces__ = [];
+
+async function renderWorkspaceSelector() {
+    const slot = document.getElementById('header-status-slot');
+    if (!slot) return;
+
+    const currentWs = window.githubApi.getActiveWorkspace();
+
+    if (__workspaces__.length === 0) {
+        try {
+            const orgsRes = await window.githubApi.fetchFileWithSha('_data/organizations.json');
+            if (orgsRes && orgsRes.content && orgsRes.content.organizations) {
+                __workspaces__ = orgsRes.content.organizations;
+            } else {
+                __workspaces__ = [{ id: 'hypenosys', name: 'Hypenosys', createdBy: 'Axlfc', createdAt: '2025-01-01T00:00:00.000Z', isDefault: true }];
+            }
+        } catch (e) {
+            console.error('[WORKSPACE] Failed to load organizations, using fallback:', e);
+            __workspaces__ = [{ id: 'hypenosys', name: 'Hypenosys', createdBy: 'Axlfc', createdAt: '2025-01-01T00:00:00.000Z', isDefault: true }];
+        }
+    }
+
+    let currentWsName = 'Hypenosys';
+    if (currentWs === 'personal') {
+        currentWsName = 'Kanban Personal';
+    } else {
+        const found = __workspaces__.find(w => w.id === currentWs);
+        if (found) currentWsName = found.name;
+    }
+
+    let itemsHtml = '';
+
+    // Organizations Section
+    itemsHtml += `<div class="px-3 py-1 text-[9px] font-bold text-slate-500 uppercase tracking-widest border-b border-slate-900">Organizaciones</div>`;
+    const userHandle = (window.currentUser || (window.githubApi && window.githubApi.user && window.githubApi.user.login) || '').toLowerCase();
+    const filteredWorkspaces = __workspaces__.filter(w => {
+        if (!w.members || !Array.isArray(w.members)) return false;
+        return w.members.some(m => m.toLowerCase() === userHandle);
+    });
+    filteredWorkspaces.forEach(w => {
+        const activeClass = currentWs === w.id ? 'text-indigo-400 font-bold bg-slate-900' : 'text-slate-300';
+        itemsHtml += `
+            <div class="flex items-center justify-between w-full hover:bg-slate-800/80 transition-colors" style="padding-right: 0.5rem;">
+                <button onclick="switchWorkspace('${w.id}')" class="flex items-center flex-grow px-4 py-2 text-xs text-left ${activeClass}" style="border: none; background: transparent; outline: none;">
+                    <i class="fa-solid fa-building mr-2 text-[10px] opacity-70"></i> ${w.name}
+                </button>
+                <button onclick="event.stopPropagation(); openManageMembersModal('${w.id}')" class="p-1.5 text-slate-500 hover:text-indigo-400 transition-colors" style="border: none; background: transparent; outline: none;" title="Gestionar miembros">
+                    <i class="fa-solid fa-cog text-[11px]"></i>
+                </button>
+            </div>
+        `;
+    });
+
+    // Personal Section
+    itemsHtml += `<div class="px-3 py-1 text-[9px] font-bold text-slate-500 uppercase tracking-widest border-t border-b border-slate-900 mt-1">Personal</div>`;
+    const personalActive = currentWs === 'personal' ? 'text-indigo-400 font-bold bg-slate-900' : 'text-slate-300';
+    itemsHtml += `
+        <button onclick="switchWorkspace('personal')" class="flex items-center w-full px-4 py-2 text-xs text-left hover:bg-slate-800 transition-colors ${personalActive}">
+            <i class="fa-solid fa-user mr-2 text-[10px] opacity-70"></i> Kanban Personal
+        </button>
+    `;
+
+    // Actions Section
+    itemsHtml += `<div class="border-t border-slate-900 my-1"></div>`;
+    itemsHtml += `
+        <button onclick="promptCreateOrganization()" class="flex items-center w-full px-4 py-2 text-xs text-left text-emerald-400 hover:bg-slate-800 transition-colors font-bold">
+            <i class="fa-solid fa-plus mr-2 text-[10px]"></i> Nueva Organización
+        </button>
+    `;
+
+    slot.innerHTML = `
+        <div class="relative inline-block text-left" id="workspace-selector-container" style="z-index: 4000;">
+            <button type="button" class="flex items-center gap-2 px-3 py-1.5 bg-slate-900/60 border border-slate-800 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:border-slate-700 transition-all focus:outline-none" id="workspace-menu-button">
+                <i class="fa-solid ${currentWs === 'personal' ? 'fa-user' : 'fa-building'} text-indigo-400"></i>
+                <span>${currentWsName}</span>
+                <i class="fa-solid fa-chevron-down text-slate-500 text-[10px]"></i>
+            </button>
+
+            <div id="workspace-menu" class="hidden absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-xl bg-slate-950 border border-slate-800 shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none overflow-hidden" role="menu">
+                <div class="py-1" role="none">
+                    ${itemsHtml}
+                </div>
+            </div>
+        </div>
+    `;
+
+    const btn = document.getElementById('workspace-menu-button');
+    const menu = document.getElementById('workspace-menu');
+    if (btn && menu) {
+        btn.onclick = (e) => {
+            e.stopPropagation();
+            menu.classList.toggle('hidden');
+        };
+        document.addEventListener('click', (e) => {
+            if (!btn.contains(e.target) && !menu.contains(e.target)) {
+                menu.classList.add('hidden');
+            }
+        });
+    }
+}
+
+window.switchWorkspace = async (ws) => {
+    window.githubApi.setActiveWorkspace(ws);
+    // Reset active filters to prevent filtering issues on workspace change
+    activeFilter = null;
+    activeStageFilter = null;
+    kanbanFilters = {
+        tags: [],
+        members: [],
+        repos: [],
+        states: [],
+        milestones: [],
+        themes: [],
+        priorities: [],
+        sections: [],
+        orgs: []
+    };
+
+    // Clear last sync data string to force a full re-render of the new workspace dataset
+    window._lastDataString = null;
+
+    try {
+        await refreshDashboardData();
+    } catch (err) {
+        console.error('[WORKSPACE] Failed to refresh workspace data:', err);
+    }
+};
+
+window.promptCreateOrganization = async () => {
+    const orgName = prompt('Introduce el nombre de la nueva organización:');
+    if (!orgName || !orgName.trim()) return;
+
+    const orgId = orgName.toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '');
+
+    if (!orgId) {
+        alert('Nombre de organización inválido.');
+        return;
+    }
+
+    if (orgId === 'hypenosys' || orgId === 'personal') {
+        alert('Ese ID de organización está reservado.');
+        return;
+    }
+
+    if (__workspaces__.some(w => w.id === orgId)) {
+        alert('La organización ya existe.');
+        return;
+    }
+
+    if (window.hypeToast) {
+        window.hypeToast('Creando organización en GitHub...', 'info');
+    }
+
+    try {
+        await window.githubApi.atomicWrite('_data/organizations.json', (db) => {
+            if (!db.organizations) db.organizations = [];
+            db.organizations.push({
+                id: orgId,
+                name: orgName.trim(),
+                createdBy: (window.githubApi.user && window.githubApi.user.login) ? window.githubApi.user.login : 'Axlfc',
+                createdAt: new Date().toISOString(),
+                isDefault: false
+            });
+            return db;
+        }, `feat: nueva organización ${orgName.trim()} añadida`);
+
+        if (window.hypeToast) {
+            window.hypeToast('Organización creada correctamente ✓', 'success');
+        }
+
+        window.switchWorkspace(orgId);
+    } catch (e) {
+        console.error('[WORKSPACE] Failed to create organization:', e);
+        alert('Fallo al crear la organización: ' + e.message);
+    }
+};
+
+function renderLocalWorkspaceActions() {
+    const container = document.getElementById('local-kanban-actions');
+    if (!container) return;
+
+    const currentWs = window.githubApi.getActiveWorkspace();
+    if (currentWs !== 'personal') {
+        container.innerHTML = '';
+        return;
+    }
+
+    container.innerHTML = `
+        <button onclick="exportPersonalKanban()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded-lg text-sm transition-all flex items-center gap-1.5" title="Exportar tareas locales como JSON">
+            <i class="fa-solid fa-file-export"></i> <span class="hidden md:inline">Exportar</span>
+        </button>
+        <button onclick="triggerImportPersonalKanban()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded-lg text-sm transition-all flex items-center gap-1.5" title="Importar tareas locales desde JSON">
+            <i class="fa-solid fa-file-import"></i> <span class="hidden md:inline">Importar</span>
+        </button>
+        <input type="file" id="import-personal-file" class="hidden" accept=".json" onchange="importPersonalKanban(event)">
+    `;
+}
+
+window.exportPersonalKanban = () => {
+    const username = (window.githubApi.user && window.githubApi.user.login) ? window.githubApi.user.login.toLowerCase() : 'guest';
+    const tasksData = localStorage.getItem(`hypenosys_personal_kanban_tasks_${username}`);
+    const archiveData = localStorage.getItem(`hypenosys_personal_kanban_archive_${username}`);
+
+    const exportPayload = {
+        schema_version: "1.2.0",
+        exported_at: new Date().toISOString(),
+        tasks: tasksData ? JSON.parse(tasksData).tasks : [],
+        archive: archiveData ? JSON.parse(archiveData).tasks : []
+    };
+
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportPayload, null, 2));
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", `kanban_personal_${new Date().toISOString().slice(0,10)}.json`);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+
+    if (window.hypeToast) {
+        window.hypeToast("Exportación completada ✓", "success");
+    }
+};
+
+window.triggerImportPersonalKanban = () => {
+    document.getElementById('import-personal-file')?.click();
+};
+
+window.importPersonalKanban = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+        try {
+            const data = JSON.parse(e.target.result);
+            if (!data || !Array.isArray(data.tasks)) {
+                throw new Error("El archivo JSON no tiene un formato válido (debe contener un array 'tasks').");
+            }
+
+            const username = (window.githubApi.user && window.githubApi.user.login) ? window.githubApi.user.login.toLowerCase() : 'guest';
+
+            // Save tasks
+            const tasksPayload = {
+                schema_version: data.schema_version || "1.2.0",
+                last_updated: new Date().toISOString(),
+                last_updated_by: "Importador",
+                tasks: data.tasks
+            };
+            localStorage.setItem(`hypenosys_personal_kanban_tasks_${username}`, JSON.stringify(tasksPayload));
+
+            // Save archive
+            const archivePayload = {
+                schema_version: data.schema_version || "1.2.0",
+                last_updated: new Date().toISOString(),
+                last_updated_by: "Importador",
+                tasks: data.archive || []
+            };
+            localStorage.setItem(`hypenosys_personal_kanban_archive_${username}`, JSON.stringify(archivePayload));
+
+            if (window.hypeToast) {
+                window.hypeToast("Importación completada ✓", "success");
+            } else {
+                alert("Importación completada con éxito.");
+            }
+
+            window.location.reload();
+        } catch (err) {
+            console.error('[IMPORT] Failed:', err);
+            alert("Error al importar el archivo: " + err.message);
+        }
+    };
+    reader.readAsText(file);
+};
+
+// --- GESTIÓN DE MIEMBROS POR ORGANIZACIÓN (MODAL) ---
+
+let activeManageOrgId = null;
+
+window.openManageMembersModal = (orgId) => {
+    activeManageOrgId = orgId;
+    const org = __workspaces__.find(w => w.id === orgId);
+    if (!org) return;
+
+    document.getElementById('manage-members-title').textContent = `Gestionar Miembros`;
+    document.getElementById('manage-members-subtitle').textContent = `Organización: ${org.name}`;
+    document.getElementById('add-member-input').value = '';
+    document.getElementById('add-member-error').classList.add('hidden');
+
+    renderManageMembersList(org);
+
+    document.getElementById('manage-members-modal').classList.remove('hidden');
+};
+
+window.closeManageMembersModal = () => {
+    document.getElementById('manage-members-modal').classList.add('hidden');
+    activeManageOrgId = null;
+};
+
+function renderManageMembersList(org) {
+    const listContainer = document.getElementById('manage-members-list');
+    if (!listContainer) return;
+    listContainer.innerHTML = '';
+
+    const members = org.members || [];
+    if (members.length === 0) {
+        listContainer.innerHTML = `<div class="text-xs text-slate-500 italic py-2 text-center">No hay miembros en esta organización.</div>`;
+        return;
+    }
+
+    members.forEach(member => {
+        const div = document.createElement('div');
+        div.className = 'flex justify-between items-center bg-slate-900/60 p-2 rounded border border-slate-800/80 mb-2';
+
+        const display = MEMBER_MAPPING[member.toLowerCase()] || member;
+
+        div.innerHTML = `
+            <span class="text-xs font-bold text-slate-200">${display} <span class="text-[10px] text-slate-500 font-mono">(${member})</span></span>
+            <button onclick="handleRemoveOrgMember('${member}')" class="text-slate-500 hover:text-red-400 transition-colors p-1 border-0 bg-transparent outline-none" title="Eliminar miembro">
+                <i class="fa-solid fa-trash-can text-xs"></i>
+            </button>
+        `;
+        listContainer.appendChild(div);
+    });
+}
+
+window.handleAddOrgMember = async () => {
+    const input = document.getElementById('add-member-input');
+    const errEl = document.getElementById('add-member-error');
+    if (!input || !errEl || !activeManageOrgId) return;
+
+    errEl.classList.add('hidden');
+    const username = input.value.trim();
+
+    if (!username) {
+        errEl.textContent = 'El nombre de usuario no puede estar vacío.';
+        errEl.classList.remove('hidden');
+        return;
+    }
+
+    const org = __workspaces__.find(w => w.id === activeManageOrgId);
+    if (!org) return;
+
+    const members = org.members || [];
+    if (members.some(m => m.toLowerCase() === username.toLowerCase())) {
+        errEl.textContent = 'El usuario ya pertenece a esta organización.';
+        errEl.classList.remove('hidden');
+        return;
+    }
+
+    if (window.hypeToast) {
+        window.hypeToast('Guardando miembro en GitHub...', 'info');
+    }
+
+    try {
+        const result = await window.githubApi.atomicWrite('_data/organizations.json', (db) => {
+            const orgInDb = db.organizations.find(w => w.id === activeManageOrgId);
+            if (orgInDb) {
+                if (!orgInDb.members) orgInDb.members = [];
+                orgInDb.members.push(username);
+            }
+            return db;
+        }, `chore: añadir miembro ${username} a la organización ${org.name}`);
+
+        if (result.success) {
+            if (window.hypeToast) {
+                window.hypeToast('Miembro añadido correctamente ✓', 'success');
+            }
+            __workspaces__ = result.content.organizations;
+            window.__workspaces__ = __workspaces__;
+
+            const updatedOrg = __workspaces__.find(w => w.id === activeManageOrgId);
+            renderManageMembersList(updatedOrg);
+
+            loadWorkspaceMembers();
+            renderDashboard();
+            input.value = '';
+        } else {
+            throw new Error('No se pudo guardar la organización.');
+        }
+    } catch (e) {
+        console.error('[MEMBER] Failed to add member:', e);
+        errEl.textContent = 'Fallo al guardar: ' + e.message;
+        errEl.classList.remove('hidden');
+        if (window.hypeToast) {
+            window.hypeToast('Error guardando en GitHub: ' + e.message, 'error');
+        }
+    }
+};
+
+window.handleRemoveOrgMember = async (username) => {
+    if (!activeManageOrgId) return;
+    const org = __workspaces__.find(w => w.id === activeManageOrgId);
+    if (!org) return;
+
+    if (!confirm(`¿Estás seguro de que deseas eliminar a ${username} de ${org.name}?`)) return;
+
+    if (window.hypeToast) {
+        window.hypeToast('Eliminando miembro en GitHub...', 'info');
+    }
+
+    try {
+        const result = await window.githubApi.atomicWrite('_data/organizations.json', (db) => {
+            const orgInDb = db.organizations.find(w => w.id === activeManageOrgId);
+            if (orgInDb && orgInDb.members) {
+                orgInDb.members = orgInDb.members.filter(m => m.toLowerCase() !== username.toLowerCase());
+            }
+            return db;
+        }, `chore: eliminar miembro ${username} de la organización ${org.name}`);
+
+        if (result.success) {
+            if (window.hypeToast) {
+                window.hypeToast('Miembro eliminado ✓', 'success');
+            }
+            __workspaces__ = result.content.organizations;
+            window.__workspaces__ = __workspaces__;
+
+            const updatedOrg = __workspaces__.find(w => w.id === activeManageOrgId);
+            renderManageMembersList(updatedOrg);
+
+            loadWorkspaceMembers();
+            renderDashboard();
+        } else {
+            throw new Error('No se pudo guardar la organización.');
+        }
+    } catch (e) {
+        console.error('[MEMBER] Failed to remove member:', e);
+        if (window.hypeToast) {
+            window.hypeToast('Error guardando en GitHub: ' + e.message, 'error');
+        }
+    }
+};

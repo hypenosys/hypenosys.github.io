@@ -1,15 +1,15 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-07-28T06:59:21.702Z",
+  "computed_at": "2026-07-29T12:22:41.979Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 52,
-    "total_ok": 52,
+    "total_tasks": 31,
+    "total_ok": 5,
     "total_ko": 0,
-    "total_uncertain": 0,
-    "total_obsolete": 0,
-    "fixed_found_ratio": 1.1556,
-    "verified_ratio": 1
+    "total_uncertain": 5,
+    "total_obsolete": 9,
+    "fixed_found_ratio": 0.1282,
+    "verified_ratio": 0.125
   },
   "group": {
     "velocity_trend": {
@@ -22,10 +22,33 @@
       "2026-W30": 0,
       "2026-W31": 0
     },
-    "bug_rate": 0,
-    "blocker_health": 0,
-    "tag_heatmap": {},
-    "milestone_tasks_remaining": 0,
+    "bug_rate": 0.1538,
+    "blocker_health": 1,
+    "tag_heatmap": {
+      "brainstorm": 1,
+      "chore": 6,
+      "design": 1,
+      "docs": 2,
+      "topper": 1,
+      "testing": 1,
+      "devops": 3,
+      "api": 3,
+      "feature": 14,
+      "infraestructura": 1,
+      "jules-panel": 1,
+      "neural-chat": 1,
+      "svn": 1,
+      "bug": 4,
+      "security": 2,
+      "Infraestructura": 1,
+      "chat": 1,
+      "matrix": 1,
+      "master": 14,
+      "Art": 1,
+      "logo": 1,
+      "develop": 2
+    },
+    "milestone_tasks_remaining": 14,
     "hall_of_fame_winners": {
       "mvp": {
         "handle": "axlfc",
@@ -191,8 +214,8 @@
         "reprioritizations": 46
       },
       "workload": {
-        "active_tasks": 0,
-        "story_points": 0
+        "active_tasks": 18,
+        "story_points": 40
       }
     },
     "topperh4rley": {
@@ -263,8 +286,8 @@
         "reprioritizations": 46
       },
       "workload": {
-        "active_tasks": 0,
-        "story_points": 0
+        "active_tasks": 8,
+        "story_points": 13
       }
     },
     "dkdidac-design": {
@@ -520,7 +543,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-07-28T06:59:22.495Z"
+      "timestamp": "2026-07-29T12:22:42.789Z"
     }
   ]
 }
