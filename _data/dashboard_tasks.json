@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-08-03T07:46:08.568Z",
+  "last_updated": "2026-08-03T07:46:24.593Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1233,91 +1233,6 @@
         }
       ],
       "id": 44,
-      "seccion": "Backend n8n",
-      "jules_session": null,
-      "branch": "Programación (PRO)",
-      "organizationId": "hypenosys"
-    },
-    {
-      "id": 45,
-      "title": "Proxy Relay para Ollama (Bypass Mixed Content)",
-      "descripcion": "Crear un proxy relay para solucionar el bloqueo de peticiones HTTP (Ollama local) desde HTTPS. Actualmente el navegador bloquea estas peticiones obligando a configuraciones manuales de flags. **Hecho cuando:** Las peticiones a Ollama funcionen de forma nativa desde el dashboard en HTTPS.",
-      "tags": [
-        "api",
-        "backend",
-        "security"
-      ],
-      "prioridad": "Medium",
-      "estado": "OK",
-      "estimated_hours": 6,
-      "comments": [
-        "He notado que este es el principal bloqueador para nuevos usuarios de Ollama; el relay debería ser ligero, preferiblemente un worker o un pequeño servicio node."
-      ],
-      "rama": "feature/ollama-proxy-relay",
-      "task_type": "feature",
-      "tema_principal": "Concepto / GDD",
-      "milestone": "M2",
-      "fecha": "2026-06-08",
-      "asignados": [
-        "axlfc"
-      ],
-      "acceptance_criteria": "El relay permite comunicación bidireccional sin errores de Mixed Content.",
-      "subtasks": [],
-      "repository": "hypenosys/docs",
-      "completitud": 0,
-      "resuelto_por": "Axel",
-      "detectado_por": "Unassigned",
-      "email_responsable": null,
-      "emails_asignados": [],
-      "start_date": "2026-06-13",
-      "due_date": "2026-06-21",
-      "story_points": null,
-      "external_links": [],
-      "blocks": [],
-      "blocked_by": [],
-      "images": [],
-      "change_log": [
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-13T09:12:10.528Z",
-          "field": "due_date",
-          "old_value": null,
-          "new_value": "2026-06-21"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-13T09:12:10.528Z",
-          "field": "completitud",
-          "new_value": 0
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-13T09:12:10.528Z",
-          "field": "repository",
-          "old_value": "",
-          "new_value": null
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-13T09:35:35.301Z",
-          "field": "repository",
-          "old_value": null,
-          "new_value": "hypenosys/docs"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T12:43:42.289Z",
-          "field": "seccion",
-          "new_value": "Backend n8n"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-03T19:36:13.268Z",
-          "field": "estado",
-          "old_value": "Pending",
-          "new_value": "OK"
-        }
-      ],
       "seccion": "Backend n8n",
       "jules_session": null,
       "branch": "Programación (PRO)",
@@ -3088,6 +3003,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: archivar tarea #45",
+      "user": "Axlfc",
+      "timestamp": "2026-08-03T07:46:24.594Z"
+    },
     {
       "action": "chore: archivar tarea #77",
       "user": "Axlfc",
