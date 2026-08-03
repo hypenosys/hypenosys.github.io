@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-08-03T07:45:10.791Z",
+  "last_updated": "2026-08-03T07:45:34.838Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -5751,9 +5751,75 @@
       "jules_session": null,
       "branch": "Programación (PRO)",
       "organizationId": "hypenosys"
+    },
+    {
+      "title": "Crear Qdrant server en Oracle",
+      "descripcion": "Para RAG/Vector search",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Tools / Automation",
+      "seccion": "",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Major",
+      "milestone": "M2",
+      "estado": "OK",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-07-18",
+      "due_date": "2026-07-26",
+      "estimated_hours": 2,
+      "story_points": 2,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-07-18",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-18T12:01:10.171Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-23T10:41:41.232Z",
+          "field": "title",
+          "old_value": "Crear Qdrant server en Zimaboard2",
+          "new_value": "Crear Qdrant server en Oracle"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-23T10:41:55.139Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "OK"
+        }
+      ],
+      "id": 85,
+      "organizationId": "hypenosys"
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: tarea #85 movida al archivo",
+      "user": "Axlfc",
+      "timestamp": "2026-08-03T07:45:34.838Z"
+    },
     {
       "action": "chore: tarea #56 movida al archivo",
       "user": "Axlfc",
