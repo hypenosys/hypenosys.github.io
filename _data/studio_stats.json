@@ -1,14 +1,14 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-08-03T07:45:56.123Z",
+  "computed_at": "2026-08-03T07:46:14.741Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 59,
-    "total_ok": 59,
+    "total_tasks": 60,
+    "total_ok": 60,
     "total_ko": 0,
     "total_uncertain": 0,
     "total_obsolete": 0,
-    "fixed_found_ratio": 1.1346,
+    "fixed_found_ratio": 1.1321,
     "verified_ratio": 1
   },
   "group": {
@@ -271,7 +271,7 @@
     "dkdidac-design": {
       "member_name": "Dídac",
       "completed": {
-        "all_time": 20,
+        "all_time": 22,
         "milestone": 16,
         "week": 0
       },
@@ -279,7 +279,7 @@
         "2026-W25": 0,
         "2026-W26": 0,
         "2026-W27": 0,
-        "2026-W28": 16,
+        "2026-W28": 24,
         "2026-W29": 0,
         "2026-W30": 0,
         "2026-W31": 0,
@@ -287,14 +287,14 @@
       },
       "type_breakdown": {
         "feature": 8,
-        "chore": 4,
+        "chore": 6,
         "bug": 8
       },
       "rama_breakdown": {
         "feature/dashboard-core-setup": 2,
         "PRO": 8,
         "fix/jules-neural-mobile-markdown": 2,
-        "master": 8
+        "master": 10
       },
       "tag_frequency": {
         "devops": 2,
@@ -521,7 +521,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-08-03T07:45:57.939Z"
+      "timestamp": "2026-08-03T07:46:17.200Z"
     }
   ]
 }
