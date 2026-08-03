@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-08-03T07:14:32.990Z",
+  "last_updated": "2026-08-03T07:16:52.492Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2801,7 +2801,7 @@
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Medium",
       "milestone": "M2",
-      "estado": "Working",
+      "estado": "ToDo",
       "completitud": 0,
       "resuelto_por": "Axel",
       "detectado_por": "Axel",
@@ -2850,6 +2850,13 @@
           "field": "title",
           "old_value": "BUG Visual: Superposición de títulos de sección del menú con Neural Session Activa, y hay superposición",
           "new_value": "Superposición de títulos de sección del menú con Neural Session Activa, y hay superposición"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-08-03T07:16:51.873Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "ToDo"
         }
       ],
       "id": 80,
@@ -3360,6 +3367,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #80",
+      "user": "Axlfc",
+      "timestamp": "2026-08-03T07:16:52.492Z"
+    },
     {
       "action": "chore: actualizar tarea #82",
       "user": "Axlfc",
