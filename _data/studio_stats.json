@@ -1,15 +1,15 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-08-03T07:14:21.061Z",
+  "computed_at": "2026-08-03T07:14:39.459Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 31,
-    "total_ok": 6,
+    "total_ok": 7,
     "total_ko": 0,
     "total_uncertain": 5,
     "total_obsolete": 9,
-    "fixed_found_ratio": 0.1538,
-    "verified_ratio": 0.15
+    "fixed_found_ratio": 0.1795,
+    "verified_ratio": 0.175
   },
   "group": {
     "velocity_trend": {
@@ -22,7 +22,7 @@
       "2026-W31": 0,
       "2026-W32": 0
     },
-    "bug_rate": 0.16,
+    "bug_rate": 0.1667,
     "blocker_health": 1,
     "tag_heatmap": {
       "brainstorm": 1,
@@ -33,7 +33,7 @@
       "testing": 1,
       "devops": 3,
       "api": 3,
-      "feature": 14,
+      "feature": 13,
       "infraestructura": 1,
       "jules-panel": 1,
       "neural-chat": 1,
@@ -46,7 +46,7 @@
       "master": 13,
       "Art": 1,
       "logo": 1,
-      "develop": 2
+      "develop": 1
     },
     "milestone_tasks_remaining": 14,
     "hall_of_fame_winners": {
@@ -143,7 +143,7 @@
     "axlfc": {
       "member_name": "Axel",
       "completed": {
-        "all_time": 48,
+        "all_time": 49,
         "milestone": 32,
         "week": 0
       },
@@ -152,13 +152,13 @@
         "2026-W26": 6,
         "2026-W27": 12,
         "2026-W28": 14,
-        "2026-W29": 4,
+        "2026-W29": 8,
         "2026-W30": 0,
         "2026-W31": 0,
         "2026-W32": 0
       },
       "type_breakdown": {
-        "feature": 32,
+        "feature": 33,
         "chore": 8,
         "bug": 6,
         "research": 2
@@ -166,6 +166,7 @@
       "rama_breakdown": {
         "feature/ollama-proxy-relay": 2,
         "master": 19,
+        "develop": 1,
         "PRO": 15,
         "chore/upgrade-ue-5.7.4": 2,
         "feature/kanban-jules-link": 1,
@@ -214,8 +215,8 @@
         "reprioritizations": 35
       },
       "workload": {
-        "active_tasks": 18,
-        "story_points": 40
+        "active_tasks": 17,
+        "story_points": 36
       }
     },
     "topperh4rley": {
@@ -543,7 +544,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-08-03T07:14:21.862Z"
+      "timestamp": "2026-08-03T07:14:42.424Z"
     }
   ]
 }
