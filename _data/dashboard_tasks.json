@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-08-03T07:16:52.492Z",
+  "last_updated": "2026-08-03T07:45:08.109Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -1972,80 +1972,6 @@
       "organizationId": "hypenosys"
     },
     {
-      "title": "sync python scripts with docs in /app",
-      "descripcion": "we need to manually port app, scripts Git repositories in the folders in the SVN and sync it. we are able to scrape successfully from scripts folders to read from /docs and construct the algorythmic logic",
-      "rama": "master",
-      "task_type": "chore",
-      "tema_principal": "Programación / Engine",
-      "repository": "hypenosys/scripts",
-      "prioridad": "Major",
-      "milestone": "M2",
-      "estado": "OK",
-      "completitud": 0.3,
-      "resuelto_por": "Alex",
-      "detectado_por": "Axel",
-      "asignados": [
-        "axlfc",
-        "topperh4rley"
-      ],
-      "email_responsable": "axel@hypenosys.com",
-      "emails_asignados": [
-        "alex@hypenosys.com"
-      ],
-      "start_date": "2026-06-16",
-      "due_date": "2026-06-28",
-      "estimated_hours": 6,
-      "story_points": 6,
-      "tags": [],
-      "external_links": [],
-      "subtasks": [],
-      "acceptance_criteria": "",
-      "blocks": [],
-      "blocked_by": [],
-      "comments": [],
-      "images": [],
-      "rama2": null,
-      "ver": true,
-      "fecha": "2026-06-16",
-      "apoyo": null,
-      "limite": null,
-      "comentario": "",
-      "change_log": [
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-16T11:52:44.802Z",
-          "field": "id",
-          "old_value": null,
-          "new_value": "Created"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-16T13:07:23.322Z",
-          "field": "title",
-          "old_value": "sync python scripts with docs",
-          "new_value": "sync python scripts with docs in /app"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T12:45:05.529Z",
-          "field": "seccion",
-          "new_value": "App"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T15:12:39.247Z",
-          "field": "estado",
-          "old_value": "Working",
-          "new_value": "OK"
-        }
-      ],
-      "id": 56,
-      "seccion": "App",
-      "jules_session": null,
-      "branch": "Programación (PRO)",
-      "organizationId": "hypenosys"
-    },
-    {
       "title": "Añadir terminal física en 'comandos' cuando están logueados en github y SVN en repo-admin",
       "descripcion": "habilitar sistma operativo de edición y mantenimiento de cambios y merges inteligentes",
       "rama": "master",
@@ -3367,6 +3293,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: archivar tarea #56",
+      "user": "Axlfc",
+      "timestamp": "2026-08-03T07:45:08.109Z"
+    },
     {
       "action": "chore: actualizar tarea #80",
       "user": "Axlfc",
