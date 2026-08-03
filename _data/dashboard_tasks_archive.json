@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-08-03T07:45:34.838Z",
+  "last_updated": "2026-08-03T07:45:53.137Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -5812,9 +5812,93 @@
       ],
       "id": 85,
       "organizationId": "hypenosys"
+    },
+    {
+      "title": "Añadir Organizaciones y Kanban Personal (Local Only)",
+      "descripcion": "Añadir al dashboard Organizaciones (aparte de hypenosys, poder crear otras organizaciones) así como un kanban personal local only (localStorage) por usuario (independiente de organizaciones, solo personal y solo accesible en la web al estar loggeado y almacenado en localStorage y con herramientas de Importación/exportación)",
+      "rama": "develop",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Dashboard",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Medium",
+      "milestone": "M2",
+      "estado": "OK",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc"
+      ],
+      "email_responsable": "axel@hypenosys.com",
+      "emails_asignados": [
+        "alex@hypenosys.com"
+      ],
+      "start_date": "2026-07-17",
+      "due_date": "2026-07-26",
+      "estimated_hours": 4,
+      "story_points": 4,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-07-17",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-17T10:28:04.480Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-20T20:12:10.912Z",
+          "field": "title",
+          "old_value": "Añadir Organizaciones y Kanban Personal ",
+          "new_value": "Añadir Organizaciones y Kanban Personal (Local Only)"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-20T20:12:10.912Z",
+          "field": "descripcion",
+          "old_value": "Añadir al dashboard Organizaciones (aparte de hypenosys, poder crear otras organizaciones) así como un kanban personal por usuario (independiente de organizaciones, solo personal y solo accesible en la web al estar loggeado)",
+          "new_value": "Añadir al dashboard Organizaciones (aparte de hypenosys, poder crear otras organizaciones) así como un kanban personal local only (localStorage) por usuario (independiente de organizaciones, solo personal y solo accesible en la web al estar loggeado y almacenado en localStorage y con herramientas de Importación/exportación)"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-23T12:03:11.089Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-08-03T07:14:31.883Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "OK"
+        }
+      ],
+      "id": 82,
+      "organizationId": "hypenosys"
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: tarea #82 movida al archivo",
+      "user": "Axlfc",
+      "timestamp": "2026-08-03T07:45:53.137Z"
+    },
     {
       "action": "chore: tarea #85 movida al archivo",
       "user": "Axlfc",
