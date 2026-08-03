@@ -1,14 +1,14 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-08-03T07:45:37.474Z",
+  "computed_at": "2026-08-03T07:45:56.123Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 58,
-    "total_ok": 58,
+    "total_tasks": 59,
+    "total_ok": 59,
     "total_ko": 0,
     "total_uncertain": 0,
     "total_obsolete": 0,
-    "fixed_found_ratio": 1.1373,
+    "fixed_found_ratio": 1.1346,
     "verified_ratio": 1
   },
   "group": {
@@ -120,7 +120,7 @@
     "axlfc": {
       "member_name": "Axel",
       "completed": {
-        "all_time": 89,
+        "all_time": 92,
         "milestone": 64,
         "week": 0
       },
@@ -129,13 +129,13 @@
         "2026-W26": 12,
         "2026-W27": 12,
         "2026-W28": 28,
-        "2026-W29": 6,
+        "2026-W29": 16,
         "2026-W30": 0,
         "2026-W31": 0,
         "2026-W32": 0
       },
       "type_breakdown": {
-        "feature": 57,
+        "feature": 60,
         "chore": 16,
         "bug": 12,
         "research": 4
@@ -146,7 +146,7 @@
         "feature/kanban-jules-link": 2,
         "feature/mobile-github-ops": 2,
         "feature/dashboard-tag-filter": 2,
-        "master": 33,
+        "master": 34,
         "feature/n8n-providers-nim-agent": 2,
         "chore/scripts-svn-sync": 2,
         "feature/dashboard-chat-icon": 2,
@@ -154,7 +154,8 @@
         "feature/ollama-proxy-relay": 2,
         "chore/consolidate-scripts": 2,
         "chore/decommission-old-panels": 2,
-        "feature/dashboard-error-boundaries": 2
+        "feature/dashboard-error-boundaries": 2,
+        "develop": 2
       },
       "tag_frequency": {
         "chore": 12,
@@ -520,7 +521,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "Axlfc",
-      "timestamp": "2026-08-03T07:45:38.791Z"
+      "timestamp": "2026-08-03T07:45:57.939Z"
     }
   ]
 }
