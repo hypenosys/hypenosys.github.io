@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-08-03T07:45:49.566Z",
+  "last_updated": "2026-08-03T07:46:08.568Z",
   "last_updated_by": "Axlfc",
   "tasks": [
     {
@@ -2534,71 +2534,6 @@
       "organizationId": "hypenosys"
     },
     {
-      "title": "Creación de favicon.ico de hypenosys",
-      "descripcion": "Crear el favicon de la web de hypenosys. Luego ya lo asociaremos, se momento solo crear el icono en pequeño.",
-      "rama": "master",
-      "task_type": "chore",
-      "tema_principal": "Programación / Engine",
-      "seccion": "logo",
-      "repository": "hypenosys/hypenosys-logo",
-      "prioridad": "Medium",
-      "milestone": "M2",
-      "estado": "OK",
-      "completitud": 0,
-      "resuelto_por": "Dídac",
-      "detectado_por": "Axel",
-      "asignados": [
-        "dkdidac-design"
-      ],
-      "email_responsable": "didac@hypenosys.com",
-      "emails_asignados": [],
-      "start_date": "2026-07-08",
-      "due_date": "2026-07-22",
-      "estimated_hours": 4,
-      "story_points": 4,
-      "tags": [],
-      "external_links": [],
-      "subtasks": [],
-      "acceptance_criteria": "",
-      "blocks": [],
-      "blocked_by": [],
-      "comments": [],
-      "images": [],
-      "rama2": null,
-      "ver": true,
-      "fecha": "2026-07-08",
-      "apoyo": null,
-      "limite": null,
-      "comentario": "",
-      "change_log": [
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-08T11:24:23.574Z",
-          "field": "id",
-          "old_value": null,
-          "new_value": "Created"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-08T23:48:12.921Z",
-          "field": "asignados",
-          "old_value": "[]",
-          "new_value": "[\"dkdidac-design\"]"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-08-03T07:14:14.530Z",
-          "field": "estado",
-          "old_value": "Working",
-          "new_value": "OK"
-        }
-      ],
-      "id": 77,
-      "jules_session": null,
-      "branch": "Programación (PRO)",
-      "organizationId": "hypenosys"
-    },
-    {
       "title": "2.0: estabilizar master y sacar el build y guardarlo en CopyParty",
       "descripcion": "Cuando esté estable, sacamos build e iniciamos volcado de cambios en 'develop' branch",
       "rama": "master",
@@ -3153,6 +3088,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: archivar tarea #77",
+      "user": "Axlfc",
+      "timestamp": "2026-08-03T07:46:08.568Z"
+    },
     {
       "action": "chore: archivar tarea #82",
       "user": "Axlfc",
