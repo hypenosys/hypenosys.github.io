@@ -7,7 +7,7 @@ const ORIGINAL_MEMBER_MAPPING = {
     'javi26031994-a11y': 'Javi',
     'dkdidac-design': 'Dídac',
     'mitxel2022': 'Mitxel',
-    'silmaril464': 'Alex',
+    'silmaril464': 'silmaril464',
     'lachicadelaboina': 'Laura',
     'spongebob3bray': 'Bray'
 };

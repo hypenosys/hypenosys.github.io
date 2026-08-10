@@ -13,6 +13,7 @@ function renderDashboard() {
   eb.safeInvoke('header-status-slot', 'Workspace Selector', renderWorkspaceSelector);
   eb.safeInvoke('local-kanban-actions', 'Local Actions', renderLocalWorkspaceActions);
   eb.safeInvoke('member-filters', 'Member Toggles', renderMemberToggles);
+  eb.safeInvoke('member-filters-toggle', 'Member Filters Toggle', initMemberFiltersToggle);
   eb.safeInvoke('kanban-filter-bar', 'Kanban Filters', renderKanbanFilters);
   eb.safeInvoke('jules-dashboard-sessions', 'Jules Badges', updateJulesBadges);
   eb.safeInvoke('jules-dashboard-sessions', 'Jules Sessions', renderJulesSessions);
@@ -74,12 +75,29 @@ function renderMemberToggles() {
   });
   container.appendChild(allBtn);
 
+  const renderedUsernames = new Set();
+
   for (const member of MEMBERS) {
+    // Buscar el username/handle de GitHub de este miembro
+    const handle = Object.keys(MEMBER_MAPPING).find(key => MEMBER_MAPPING[key] === member) || member.toLowerCase();
+
+    // Si ya renderizamos este colaborador (según su id/username único de GitHub), lo omitimos (Defensa en profundidad)
+    if (renderedUsernames.has(handle)) {
+      continue;
+    }
+    renderedUsernames.add(handle);
+
     const btn = document.createElement('button');
     btn.textContent = member;
     btn.className = activeFilter === member
       ? `${baseClasses} ${mobileClasses} ${desktopClasses} bg-emerald-500 text-slate-950`
       : `${baseClasses} ${mobileClasses} ${desktopClasses} text-slate-400 hover:text-white hover:bg-slate-800`;
+
+    // Tooltip nativo utilizando el atributo title en desktop
+    if (window.matchMedia('(hover: hover)').matches) {
+      const isExternal = ['silmaril464', 'lachicadelaboina', 'spongebob3bray'].includes(handle);
+      btn.title = `${handle} — ${isExternal ? 'colaborador externo' : 'miembro del equipo'}`;
+    }
 
     btn.addEventListener('click', () => {
       activeFilter = (activeFilter === member) ? null : member;
@@ -87,6 +105,37 @@ function renderMemberToggles() {
     });
     container.appendChild(btn);
   }
+}
+
+/**
+ * Inicializa y gestiona el colapso del menú de colaboradores utilizando localStorage.
+ */
+function initMemberFiltersToggle() {
+  const toggleBtn = document.getElementById('member-filters-toggle');
+  const filtersContainer = document.getElementById('member-filters');
+  const icon = document.getElementById('member-filters-toggle-icon');
+
+  if (!toggleBtn || !filtersContainer || !icon) return;
+
+  const updateUI = (collapsed) => {
+    if (collapsed) {
+      filtersContainer.classList.add('collapsed');
+      icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+    } else {
+      filtersContainer.classList.remove('collapsed');
+      icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+    }
+  };
+
+  // Cargar estado inicial (por defecto expandido, es decir, collapsed = false)
+  let isCollapsed = localStorage.getItem('member_filters_collapsed') === 'true';
+  updateUI(isCollapsed);
+
+  toggleBtn.addEventListener('click', () => {
+    isCollapsed = !isCollapsed;
+    localStorage.setItem('member_filters_collapsed', isCollapsed);
+    updateUI(isCollapsed);
+  });
 }
 
 /**
