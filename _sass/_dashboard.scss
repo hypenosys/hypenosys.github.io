@@ -13,6 +13,23 @@ $dashboard-danger: #ff5555;  // Dracula Red
     margin-top: 2rem;
 }
 
+// Member Filters Bar custom styling
+.member-filters-bar {
+    position: relative;
+
+    #member-filters {
+        &.collapsed {
+            max-height: 0 !important;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+            opacity: 0;
+            pointer-events: none;
+        }
+    }
+}
+
 // Kanban View
 .kanban-board {
     display: flex;
