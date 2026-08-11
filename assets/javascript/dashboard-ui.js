@@ -111,25 +111,31 @@ function renderMemberToggles() {
  * Inicializa y gestiona el colapso del menú de colaboradores utilizando localStorage.
  */
 function initMemberFiltersToggle() {
-  const toggleBtn = document.getElementById('member-filters-toggle');
+  const toggleBtns = document.querySelectorAll('.member-filters-toggle-btn');
   const filtersContainer = document.getElementById('member-filters');
   const bar = document.getElementById('member-filters-bar');
-  const icon = document.getElementById('member-filters-toggle-icon');
+  const icons = document.querySelectorAll('.member-filters-toggle-icon');
 
-  if (!toggleBtn || !filtersContainer || !icon) return;
+  if (toggleBtns.length === 0 || !filtersContainer) return;
 
-  // Unhide the toggle button specifically for the dashboard since it is injected into the global header.
-  toggleBtn.style.display = 'flex';
+  // Unhide all toggle buttons specifically for the dashboard since they are injected into the global header.
+  toggleBtns.forEach(btn => {
+    btn.style.display = 'flex';
+  });
 
   const updateUI = (collapsed) => {
     if (collapsed) {
       filtersContainer.classList.add('collapsed');
       if (bar) bar.classList.add('collapsed');
-      icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+      icons.forEach(icon => {
+        icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+      });
     } else {
       filtersContainer.classList.remove('collapsed');
       if (bar) bar.classList.remove('collapsed');
-      icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+      icons.forEach(icon => {
+        icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+      });
     }
   };
 
@@ -138,17 +144,18 @@ function initMemberFiltersToggle() {
   updateUI(isCollapsed);
 
   // Evitar añadir múltiples listeners de evento si renderDashboard se vuelve a llamar.
-  if (toggleBtn.dataset.listenerInitialized) {
-    return;
-  }
-  toggleBtn.dataset.listenerInitialized = "true";
+  toggleBtns.forEach(btn => {
+    if (btn.dataset.listenerInitialized) {
+      return;
+    }
+    btn.dataset.listenerInitialized = "true";
 
-  // Use a cleaner modern listener instead of onclick
-  toggleBtn.addEventListener('click', () => {
-    isCollapsed = localStorage.getItem('member_filters_collapsed') === 'true';
-    isCollapsed = !isCollapsed;
-    localStorage.setItem('member_filters_collapsed', isCollapsed);
-    updateUI(isCollapsed);
+    btn.addEventListener('click', () => {
+      isCollapsed = localStorage.getItem('member_filters_collapsed') === 'true';
+      isCollapsed = !isCollapsed;
+      localStorage.setItem('member_filters_collapsed', isCollapsed);
+      updateUI(isCollapsed);
+    });
   });
 }
 

@@ -35,6 +35,39 @@ $dashboard-danger: #ff5555;  // Dracula Red
     & > div {
         min-height: 0;
     }
+
+    @media (max-width: 768px) {
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+        padding-top: 0.35rem !important;
+        padding-bottom: 0.35rem !important;
+
+        &.collapsed {
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+        }
+
+        #member-filters {
+            flex-wrap: nowrap !important;
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch;
+            gap: 0.5rem !important;
+            width: 100%;
+            scrollbar-width: none; // Firefox
+            -ms-overflow-style: none; // IE/Edge
+
+            &::-webkit-scrollbar {
+                display: none; // Chrome/Safari/Webkit
+            }
+
+            button {
+                padding: 0.25rem 0.65rem !important;
+                font-size: 11px !important;
+                line-height: 1.2 !important;
+                flex: 0 0 auto; // Prevent shrinking
+            }
+        }
+    }
 }
 
 // Kanban View
