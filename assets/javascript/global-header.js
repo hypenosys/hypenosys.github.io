@@ -161,6 +161,26 @@ class GlobalHeader {
                 align-items: center;
             }
 
+            #member-filters-toggle {
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid var(--gh-border);
+                color: var(--gh-text-dim);
+                padding: 0.4rem 0.6rem;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 11px;
+                display: flex;
+                align-items: center;
+                gap: 0.4rem;
+                transition: all 0.2s;
+                height: 28px;
+            }
+
+            #member-filters-toggle:hover {
+                color: var(--gh-text);
+                background: rgba(255, 255, 255, 0.1);
+            }
+
             .gh-auth-section {
                 display: flex;
                 align-items: center;
@@ -272,6 +292,10 @@ class GlobalHeader {
                     </div>
 
                     <div class="gh-status-badge-slot" id="header-status-slot"></div>
+
+                    <button id="member-filters-toggle" style="display: none;">
+                        <i id="member-filters-toggle-icon" class="fa-solid fa-chevron-up"></i>
+                    </button>
 
                     <div class="gh-auth-section">
                         <ul id="auth-nav-container-left" style="list-style:none; margin:0; padding:0; display:flex; align-items:center;"></ul>
