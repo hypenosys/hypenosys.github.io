@@ -162,28 +162,23 @@ class GlobalHeader {
             }
 
             #member-filters-toggle {
-                color: var(--gh-text-dim);
                 background: rgba(255, 255, 255, 0.05);
                 border: 1px solid var(--gh-border);
+                color: var(--gh-text-dim);
+                padding: 0.4rem 0.6rem;
                 border-radius: 6px;
-                padding: 0.5rem;
                 cursor: pointer;
-                transition: all 0.2s;
+                font-size: 11px;
                 display: flex;
                 align-items: center;
-                justify-content: center;
-                height: 32px;
-                width: 32px;
+                gap: 0.4rem;
+                transition: all 0.2s;
+                height: 28px;
             }
 
             #member-filters-toggle:hover {
                 color: var(--gh-text);
                 background: rgba(255, 255, 255, 0.1);
-                border-color: var(--gh-accent);
-            }
-
-            #member-filters-toggle.hidden {
-                display: none !important;
             }
 
             .gh-auth-section {
@@ -298,7 +293,7 @@ class GlobalHeader {
 
                     <div class="gh-status-badge-slot" id="header-status-slot"></div>
 
-                    <button id="member-filters-toggle" class="hidden" title="Colapsar/Expandir colaboradores">
+                    <button id="member-filters-toggle" style="display: none;">
                         <i id="member-filters-toggle-icon" class="fa-solid fa-chevron-up"></i>
                     </button>
 

@@ -113,19 +113,22 @@ function renderMemberToggles() {
 function initMemberFiltersToggle() {
   const toggleBtn = document.getElementById('member-filters-toggle');
   const filtersContainer = document.getElementById('member-filters');
+  const bar = document.getElementById('member-filters-bar');
   const icon = document.getElementById('member-filters-toggle-icon');
 
   if (!toggleBtn || !filtersContainer || !icon) return;
 
-  // Hacer visible el botón de colapso en el dashboard
-  toggleBtn.classList.remove('hidden');
+  // Unhide the toggle button specifically for the dashboard since it is injected into the global header.
+  toggleBtn.style.display = 'flex';
 
   const updateUI = (collapsed) => {
     if (collapsed) {
       filtersContainer.classList.add('collapsed');
+      if (bar) bar.classList.add('collapsed');
       icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
     } else {
       filtersContainer.classList.remove('collapsed');
+      if (bar) bar.classList.remove('collapsed');
       icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
     }
   };
@@ -134,7 +137,15 @@ function initMemberFiltersToggle() {
   let isCollapsed = localStorage.getItem('member_filters_collapsed') === 'true';
   updateUI(isCollapsed);
 
+  // Evitar añadir múltiples listeners de evento si renderDashboard se vuelve a llamar.
+  if (toggleBtn.dataset.listenerInitialized) {
+    return;
+  }
+  toggleBtn.dataset.listenerInitialized = "true";
+
+  // Use a cleaner modern listener instead of onclick
   toggleBtn.addEventListener('click', () => {
+    isCollapsed = localStorage.getItem('member_filters_collapsed') === 'true';
     isCollapsed = !isCollapsed;
     localStorage.setItem('member_filters_collapsed', isCollapsed);
     updateUI(isCollapsed);
