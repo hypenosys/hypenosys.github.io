@@ -161,6 +161,32 @@ class GlobalHeader {
                 align-items: center;
             }
 
+            .member-filters-toggle-btn {
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid var(--gh-border);
+                color: var(--gh-text-dim);
+                padding: 0.4rem 0.6rem;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 11px;
+                display: flex;
+                align-items: center;
+                gap: 0.4rem;
+                transition: all 0.2s;
+                height: 28px;
+            }
+
+            .member-filters-toggle-btn:hover {
+                color: var(--gh-text);
+                background: rgba(255, 255, 255, 0.1);
+            }
+
+            .gh-mobile-actions {
+                display: none;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
             .gh-auth-section {
                 display: flex;
                 align-items: center;
@@ -190,6 +216,7 @@ class GlobalHeader {
 
             @media (max-width: 750px) {
                 .gh-mobile-toggle { display: block; }
+                .gh-mobile-actions { display: flex; }
                 .gh-nav-content {
                     display: none;
                     position: absolute;
@@ -238,9 +265,15 @@ class GlobalHeader {
                     <img src="https://raw.githubusercontent.com/hypenosys/hypenosys-logo/master/logo_simple.svg" alt="Hypenosys">
                 </a>
 
-                <button class="gh-mobile-toggle" id="gh-mobile-toggle">
-                    <i class="fas fa-bars"></i>
-                </button>
+                <div class="gh-mobile-actions">
+                    <button id="member-filters-toggle-mobile" class="member-filters-toggle-btn" style="display: none;">
+                        <i class="member-filters-toggle-icon fa-solid fa-chevron-up"></i>
+                    </button>
+
+                    <button class="gh-mobile-toggle" id="gh-mobile-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
 
                 <div class="gh-nav-content" id="gh-nav-content">
                     <div class="gh-nav-groups">
@@ -272,6 +305,10 @@ class GlobalHeader {
                     </div>
 
                     <div class="gh-status-badge-slot" id="header-status-slot"></div>
+
+                    <button id="member-filters-toggle" class="member-filters-toggle-btn" style="display: none;">
+                        <i id="member-filters-toggle-icon" class="member-filters-toggle-icon fa-solid fa-chevron-up"></i>
+                    </button>
 
                     <div class="gh-auth-section">
                         <ul id="auth-nav-container-left" style="list-style:none; margin:0; padding:0; display:flex; align-items:center;"></ul>
