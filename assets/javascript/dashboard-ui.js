@@ -117,6 +117,9 @@ function initMemberFiltersToggle() {
 
   if (!toggleBtn || !filtersContainer || !icon) return;
 
+  // Hacer visible el botón de colapso en el dashboard
+  toggleBtn.classList.remove('hidden');
+
   const updateUI = (collapsed) => {
     if (collapsed) {
       filtersContainer.classList.add('collapsed');
