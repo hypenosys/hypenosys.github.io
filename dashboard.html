@@ -116,8 +116,11 @@ layout: null
     </style>
 </head>
 <body class="h-full text-slate-100 flex flex-col">
-    <div id="member-filters-bar" class="bg-slate-900 border-b border-slate-800 px-6 py-2 sticky top-[64px] z-30"><div id="member-filters" class="flex flex-wrap items-center gap-2"></div></div>
-
+    <div id="member-filters-bar" class="member-filters-bar bg-slate-900 border-b border-slate-800 px-6 py-2">
+        <div class="max-w-[1600px] mx-auto w-full flex items-center justify-between gap-4">
+            <div id="member-filters" class="flex flex-wrap items-center gap-2 transition-all duration-300 max-h-[1000px] overflow-hidden"></div>
+        </div>
+    </div>
 
     <main class="flex-grow p-6 space-y-8 max-w-[1600px] mx-auto w-full">
         
