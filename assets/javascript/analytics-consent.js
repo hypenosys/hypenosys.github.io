@@ -7,19 +7,39 @@
     'use strict';
 
     // Centralized Matomo configuration
-    // Note: Master and develop currently share Site ID 1.
-    // To configure a separate Site ID for dev.hypenosys.com in the future,
-    // update MATOMO_CONFIG.siteId below.
-    const MATOMO_CONFIG = {
+    // Site IDs are resolved dynamically based on runtime hostname (same code shared across master & develop).
+    const MATOMO_CONFIG = Object.freeze({
         url: 'https://matomo.hypenosys.com/',
-        siteId: '1'
-    };
+        sites: Object.freeze({
+            'hypenosys.com': '1',
+            'www.hypenosys.com': '1',
+            'dev.hypenosys.com': '2'
+        })
+    });
 
     const STORAGE_KEY = 'hypenosys_consent_v1';
     const CONSENT_VERSION = 1;
 
     let matomoInitialized = false;
     let previousActiveElement = null;
+
+    /**
+     * Resolve Matomo Site ID based on explicit hostname allowlist.
+     * Returns null for unknown hostnames, localhost, hypenosys.github.io, etc.
+     */
+    function resolveMatomoSiteId() {
+        try {
+            const hostname = (window.location.hostname || '')
+                .toLowerCase()
+                .replace(/\.$/, '');
+            return MATOMO_CONFIG.sites[hostname] || null;
+        } catch (e) {
+            console.warn('[Hypenosys Consent] Failed to resolve hostname:', e);
+            return null;
+        }
+    }
+
+    const MATOMO_SITE_ID = resolveMatomoSiteId();
 
     /**
      * Get saved consent preference object from localStorage.
@@ -58,8 +78,14 @@
 
     /**
      * Initialize Matomo queue and load matomo.js dynamically ONCE.
+     * Fail-closed: strict guard requires MATOMO_SITE_ID !== null.
      */
     function enableMatomoTracking() {
+        // Strict Fail-Closed Check: Never initialize tracking on unlisted hostnames
+        if (!MATOMO_SITE_ID) {
+            return;
+        }
+
         window._paq = window._paq || [];
 
         if (!matomoInitialized) {
@@ -68,7 +94,7 @@
             _paq.push(['requireConsent']);
             _paq.push(['setConsentGiven']);
             _paq.push(['setTrackerUrl', MATOMO_CONFIG.url + 'matomo.php']);
-            _paq.push(['setSiteId', MATOMO_CONFIG.siteId]);
+            _paq.push(['setSiteId', MATOMO_SITE_ID]);
             _paq.push(['trackPageView']);
             _paq.push(['enableLinkTracking']);
 
@@ -416,7 +442,8 @@
         rejectAnalytics: handleReject,
         openPreferences: openModal,
         closePreferences: closeModal,
-        getMatomoConfig: () => ({ ...MATOMO_CONFIG })
+        getMatomoConfig: () => ({ ...MATOMO_CONFIG }),
+        getResolvedSiteId: () => MATOMO_SITE_ID
     };
 
 })();
