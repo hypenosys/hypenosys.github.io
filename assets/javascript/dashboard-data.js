@@ -55,11 +55,30 @@ function loadWorkspaceMembers() {
         for (const key in MEMBER_MAPPING) delete MEMBER_MAPPING[key];
         MEMBER_MAPPING[username] = displayName;
     } else {
+        const profiles = (currentProfiles && currentProfiles.members) ? currentProfiles.members : null;
         const org = (typeof __workspaces__ !== 'undefined' ? __workspaces__ : []).find(w => w.id === ws);
-        if (org && org.members && Array.isArray(org.members)) {
-            MEMBERS.length = 0;
-            for (const key in MEMBER_MAPPING) delete MEMBER_MAPPING[key];
 
+        MEMBERS.length = 0;
+        for (const key in MEMBER_MAPPING) delete MEMBER_MAPPING[key];
+
+        if (profiles) {
+            const orgMembersLower = (org && org.members && Array.isArray(org.members))
+                ? org.members.map(m => m.toLowerCase())
+                : null;
+
+            for (const name in profiles) {
+                const prof = profiles[name];
+                const handle = (prof.github_username || prof.github_login || name).toLowerCase();
+                const disp = name;
+
+                if (!orgMembersLower || orgMembersLower.includes(handle)) {
+                    if (!MEMBERS.includes(disp)) {
+                        MEMBERS.push(disp);
+                    }
+                    MEMBER_MAPPING[handle] = disp;
+                }
+            }
+        } else if (org && org.members && Array.isArray(org.members)) {
             const lowerMembers = org.members.map(m => m.toLowerCase());
             for (const username in ORIGINAL_MEMBER_MAPPING) {
                 if (lowerMembers.includes(username.toLowerCase())) {
@@ -69,10 +88,7 @@ function loadWorkspaceMembers() {
                 }
             }
         } else {
-            MEMBERS.length = 0;
             ORIGINAL_MEMBERS.forEach(m => MEMBERS.push(m));
-
-            for (const key in MEMBER_MAPPING) delete MEMBER_MAPPING[key];
             for (const key in ORIGINAL_MEMBER_MAPPING) MEMBER_MAPPING[key] = ORIGINAL_MEMBER_MAPPING[key];
         }
     }
