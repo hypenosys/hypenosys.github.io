@@ -124,7 +124,7 @@ test.describe('Hypenosys Matomo & Analytics Consent System', () => {
     });
 
     test('Case 6: Privacy page renders factual info and interactive trigger', async ({ page }) => {
-        await page.goto('http://localhost:4000/privacidad.html');
+        await page.goto('http://localhost:4000/privacidad/index.html');
 
         const heading = page.locator('h1');
         await expect(heading).toContainText('Privacidad');
