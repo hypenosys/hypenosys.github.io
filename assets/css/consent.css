@@ -1,0 +1,398 @@
+/* ==========================================================================
+   Hypenosys Privacy & Analytics Consent Banner & Modal Styles
+   ========================================================================== */
+
+:root {
+    --hy-consent-bg: #0f172a;
+    --hy-consent-card-bg: #111118;
+    --hy-consent-border: #1e293b;
+    --hy-consent-border-accent: rgba(189, 147, 249, 0.3);
+    --hy-consent-text: #f8fafc;
+    --hy-consent-text-muted: #94a3b8;
+    --hy-consent-purple: #bd93f9;
+    --hy-consent-purple-hover: #a370f7;
+    --hy-consent-purple-bg: rgba(189, 147, 249, 0.1);
+    --hy-consent-emerald: #10b981;
+}
+
+/* Common hidden state */
+.hy-consent-hidden {
+    display: none !important;
+}
+
+/* Banner Container */
+.hy-consent-banner {
+    position: fixed;
+    bottom: 1.25rem;
+    left: 1.25rem;
+    right: 1.25rem;
+    max-width: 960px;
+    margin: 0 auto;
+    background: var(--hy-consent-card-bg);
+    border: 1px solid var(--hy-consent-border-accent);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), 0 0 20px rgba(189, 147, 249, 0.1);
+    z-index: 99990;
+    color: var(--hy-consent-text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    animation: hyConsentSlideUp 0.3s ease-out;
+}
+
+@keyframes hyConsentSlideUp {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.hy-consent-banner-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+@media (min-width: 768px) {
+    .hy-consent-banner-content {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+}
+
+.hy-consent-banner-text {
+    flex: 1;
+}
+
+.hy-consent-banner-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--hy-consent-purple);
+    margin: 0 0 0.35rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.hy-consent-banner-desc {
+    font-size: 0.875rem;
+    color: var(--hy-consent-text-muted);
+    margin: 0;
+    line-height: 1.45;
+}
+
+.hy-consent-banner-desc a {
+    color: var(--hy-consent-purple);
+    text-decoration: underline;
+    transition: color 0.2s;
+}
+
+.hy-consent-banner-desc a:hover,
+.hy-consent-banner-desc a:focus {
+    color: var(--hy-consent-text);
+}
+
+.hy-consent-banner-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+    flex-shrink: 0;
+}
+
+/* Consent Buttons */
+.hy-consent-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.55rem 1rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+    font-family: inherit;
+    line-height: 1.25;
+    background: transparent;
+    color: var(--hy-consent-text);
+}
+
+.hy-consent-btn:focus-visible {
+    outline: 2px solid var(--hy-consent-purple);
+    outline-offset: 2px;
+}
+
+.hy-consent-btn-accept {
+    background: var(--hy-consent-purple);
+    color: #09090d;
+    border-color: var(--hy-consent-purple);
+}
+
+.hy-consent-btn-accept:hover {
+    background: var(--hy-consent-purple-hover);
+    border-color: var(--hy-consent-purple-hover);
+}
+
+.hy-consent-btn-reject {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--hy-consent-border);
+    color: var(--hy-consent-text);
+}
+
+.hy-consent-btn-reject:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--hy-consent-text-muted);
+}
+
+.hy-consent-btn-settings {
+    background: transparent;
+    border-color: rgba(189, 147, 249, 0.3);
+    color: var(--hy-consent-purple);
+}
+
+.hy-consent-btn-settings:hover {
+    background: var(--hy-consent-purple-bg);
+    border-color: var(--hy-consent-purple);
+}
+
+/* Modal Overlay & Dialog */
+.hy-consent-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(4px);
+    z-index: 99995;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    animation: hyConsentFadeIn 0.2s ease-out;
+}
+
+@keyframes hyConsentFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.hy-consent-modal {
+    background: #111118 !important;
+    border: 1px solid var(--hy-consent-border-accent);
+    border-radius: 12px;
+    width: 100%;
+    max-width: 580px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 30px rgba(189, 147, 249, 0.15);
+    color: var(--hy-consent-text);
+    overflow: hidden;
+    animation: hyConsentPopIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes hyConsentPopIn {
+    from {
+        transform: scale(0.95);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.hy-consent-modal-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--hy-consent-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.hy-consent-modal-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--hy-consent-purple);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.hy-consent-modal-close {
+    background: transparent;
+    border: none;
+    color: var(--hy-consent-text-muted);
+    font-size: 1.25rem;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    transition: color 0.2s, background 0.2s;
+}
+
+.hy-consent-modal-close:hover {
+    color: var(--hy-consent-text);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.hy-consent-modal-body {
+    padding: 1.5rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.hy-consent-option-card {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid var(--hy-consent-border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+}
+
+.hy-consent-option-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.hy-consent-option-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--hy-consent-text);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.hy-consent-badge-always {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--hy-consent-emerald);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+}
+
+.hy-consent-option-desc {
+    font-size: 0.825rem;
+    color: var(--hy-consent-text-muted);
+    margin: 0;
+    line-height: 1.45;
+}
+
+/* Custom Accessible Toggle Switch */
+.hy-consent-switch-label {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    cursor: pointer;
+    margin: 0;
+}
+
+.hy-consent-switch-label input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.hy-consent-slider {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #334155;
+    transition: 0.25s;
+    border-radius: 24px;
+    border: 1px solid var(--hy-consent-border);
+}
+
+.hy-consent-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    transition: 0.25s;
+    border-radius: 50%;
+}
+
+.hy-consent-switch-label input:checked + .hy-consent-slider {
+    background-color: var(--hy-consent-purple);
+}
+
+.hy-consent-switch-label input:focus-visible + .hy-consent-slider {
+    outline: 2px solid var(--hy-consent-purple);
+    outline-offset: 2px;
+}
+
+.hy-consent-switch-label input:checked + .hy-consent-slider:before {
+    transform: translateX(20px);
+    background-color: #09090d;
+}
+
+.hy-consent-modal-footer {
+    padding: 1.25rem 1.5rem;
+    border-top: 1px solid var(--hy-consent-border);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.6rem;
+    background: rgba(10, 10, 15, 0.5);
+}
+
+/* Fallback/Floating Trigger Control */
+.hy-consent-floating-trigger {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    z-index: 99900;
+    background: var(--hy-consent-card-bg);
+    border: 1px solid var(--hy-consent-border-accent);
+    color: var(--hy-consent-purple);
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.hy-consent-floating-trigger:hover,
+.hy-consent-floating-trigger:focus-visible {
+    background: var(--hy-consent-purple-bg);
+    border-color: var(--hy-consent-purple);
+    transform: translateY(-2px);
+}
+
+/* Footer link styling helper */
+.hy-consent-trigger-link {
+    color: var(--hy-consent-text-muted) !important;
+    text-decoration: underline !important;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.hy-consent-trigger-link:hover,
+.hy-consent-trigger-link:focus-visible {
+    color: var(--hy-consent-purple) !important;
+}

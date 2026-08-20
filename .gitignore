@@ -1,8 +1,8 @@
-_site
-.sass-cache
+_site/
+.jekyll-cache/
 .jekyll-metadata
-node_modules
-Gemfile.lock
-jekyll.log
-jekyll_output.log
+vendor/
+node_modules/
+server.log
 test-results/
+playwright-report/

@@ -436,6 +436,7 @@ body.cc-ready #cc-app { display: block; }
   .cc-hero { flex-direction: column; align-items: flex-start; }
 }
 </style>
+    <script src="/assets/javascript/global-header.js"></script>
 </head>
 <body>
 
@@ -473,6 +474,7 @@ body.cc-ready #cc-app { display: block; }
       </div>
       <div class="cc-topbar-right">
         <a href="{{ '/' | relative_url }}" class="cc-home-link"><i class="fa-solid fa-house"></i> Home</a>
+        <a href="{{ '/privacidad/' | relative_url }}" class="cc-home-link" data-hy-consent-trigger><i class="fa-solid fa-user-shield"></i> Privacidad</a>
         <span class="cc-role-chip" id="cc-role-chip"><i class="fa-solid fa-circle"></i> <span id="cc-role-label">—</span></span>
         <div class="cc-user">
           <img id="cc-user-avatar" class="cc-team-avatar" style="width:30px;height:30px;" src="" alt="">

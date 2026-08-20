@@ -11,9 +11,19 @@ class GlobalHeader {
     init() {
         console.log('[GlobalHeader] Initializing unified navigation...');
         this.injectStyles();
+        this.ensureConsentManager();
         this.render();
         this.bindEvents();
         this.dispatchReady();
+    }
+
+    ensureConsentManager() {
+        if (!window.HypenosysConsent && !document.getElementById('hy-consent-script')) {
+            const script = document.createElement('script');
+            script.id = 'hy-consent-script';
+            script.src = '/assets/javascript/analytics-consent.js';
+            document.head.appendChild(script);
+        }
     }
 
     injectStyles() {

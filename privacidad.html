@@ -1,0 +1,89 @@
+---
+layout: default
+title: "Política de Privacidad y Protección de Datos"
+permalink: /privacidad/
+---
+
+
+<div class="row">
+  <div class="col-lg-10 mx-auto py-4">
+    <div class="card p-4 p-md-5 bg-dark border-purple shadow-lg">
+      <h1 class="display-5 font-weight-bold text-purple mb-3">
+        <i class="fas fa-user-shield mr-2"></i> Privacidad y Protección de Datos
+      </h1>
+      <p class="lead text-white-50 border-bottom border-purple pb-3 mb-4">
+        Transparencia técnica sobre las mediciones analíticas y el almacenamiento local en Hypenosys Indie Studio.
+      </p>
+
+      <div class="mb-5">
+        <h3 class="text-purple h4 font-weight-bold mb-3">1. Principios de Privacidad</h3>
+        <p class="text-white">
+          En Hypenosys valoramos la privacidad y la autonomía de nuestras visitantes y colaboradores. Nuestra infraestructura de analítica web opera bajo una arquitectura <strong>privacy-first (fail-closed)</strong>:
+        </p>
+        <ul class="text-white-50">
+          <li>No se realiza ningún seguimiento analítico ni se envían datos antes de obtener tu consentimiento explícito.</li>
+          <li>No compartimos, vendemos ni transferimos datos a proveedores externos ni grandes redes publicitarias.</li>
+          <li>Toda la medición estadística es procesada de forma interna en nuestros propios servidores.</li>
+        </ul>
+      </div>
+
+      <div class="mb-5">
+        <h3 class="text-purple h4 font-weight-bold mb-3">2. Infraestructura Analítica (Matomo Self-Hosted)</h3>
+        <p class="text-white">
+          Para comprender el uso de la plataforma y mejorar continuamente nuestras herramientas, utilizamos <strong>Matomo Analytics</strong> en modalidad <em>self-hosted</em>.
+        </p>
+        <div class="card p-3 bg-black border-secondary mb-3 text-white-50">
+          <ul class="mb-0">
+            <li><strong>Servidor propio:</strong> <code>matomo.hypenosys.com</code> (operado directamente por Hypenosys detrás de cifrado HTTPS).</li>
+            <li><strong>Anonimización de IP:</strong> Las direcciones IP de los visitantes son anonimizadas a nivel de servidor antes de guardarse en base de datos.</li>
+            <li><strong>Sin cookies de terceros:</strong> No se utilizan galletas o rastreadores entre distintos sitios web.</li>
+            <li><strong>Retención limitada:</strong> Los registros estadísticos se conservan con períodos de retención estrictos y depurado automático.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mb-5">
+        <h3 class="text-purple h4 font-weight-bold mb-3">3. Almacenamiento Local Necesario</h3>
+        <p class="text-white">
+          Para garantizar el funcionamiento de la plataforma y recordar tus elecciones, utilizamos el almacenamiento local del navegador (<code>localStorage</code>):
+        </p>
+        <div class="table-responsive">
+          <table class="table table-dark table-bordered border-secondary">
+            <thead class="bg-purple text-dark font-weight-bold">
+              <tr>
+                <th>Clave (Storage)</th>
+                <th>Finalidad</th>
+                <th>Carácter</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>hypenosys_consent_v1</code></td>
+                <td>Guarda tu elección sobre el uso de analítica (aceptado / rechazado y fecha de actualización).</td>
+                <td>Estrictamente Necesario</td>
+              </tr>
+              <tr>
+                <td><code>_pk_id.*</code> / <code>_pk_ses.*</code></td>
+                <td>Galletas first-party de Matomo generadas <strong>únicamente</strong> si aceptas analíticas.</td>
+                <td>Analítica (Opcional)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <h3 class="text-purple h4 font-weight-bold mb-3">4. Gestión y Revocación de Preferencias</h3>
+        <p class="text-white">
+          Puedes cambiar o revocar tu consentimiento en cualquier momento. Al desactivar la analítica, se eliminan inmediatamente las cookies de sesión creadas y se detiene todo seguimiento futuro.
+        </p>
+        <div class="mt-4">
+          <button type="button" class="btn btn-purple font-weight-bold" data-hy-consent-trigger>
+            <i class="fas fa-sliders-h mr-2"></i> Abrir Preferencias de Privacidad
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
