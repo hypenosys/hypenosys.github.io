@@ -51,59 +51,226 @@ function renderStatsSummary() {
 }
 
 /**
+ * Global member pagination state
+ */
+window._memberPaginationState = {
+  currentPage: 0,
+  totalPages: 1,
+  pages: []
+};
+
+/**
+ * Calcula dinámicamente las páginas de miembros basadas en la suma real de anchos
+ * de cada píldora y el ancho disponible en el contenedor #member-filters.
+ */
+function computeMemberPagination(containerWidth, todosWidth, memberItems) {
+  const gap = 6; // gap de 6px para optimizar espacio táctil
+  const arrowWidth = 30; // Ancho del botón compacto de flecha (< o >)
+  const availableWidth = containerWidth - todosWidth - gap;
+
+  if (availableWidth <= 0 || memberItems.length === 0) {
+    return { isOverflow: false, pages: [memberItems] };
+  }
+
+  // 1. Probar si todos los miembros caben sin necesidad de paginación
+  let totalWidthNoNav = 0;
+  for (let i = 0; i < memberItems.length; i++) {
+    totalWidthNoNav += memberItems[i].width + (i > 0 ? gap : 0);
+  }
+
+  if (totalWidthNoNav <= availableWidth) {
+    return { isOverflow: false, pages: [memberItems] };
+  }
+
+  // 2. Hay overflow: Se requiere paginación por bloques
+  const pages = [];
+  let currentIndex = 0;
+
+  while (currentIndex < memberItems.length) {
+    const isFirstPage = (pages.length === 0);
+
+    // Calcular cuántos elementos faltan por empaquetar
+    const remainingItems = memberItems.slice(currentIndex);
+    let remainingWidth = 0;
+    for (let i = 0; i < remainingItems.length; i++) {
+      remainingWidth += remainingItems[i].width + (i > 0 ? gap : 0);
+    }
+
+    // Si los elementos restantes caben en lo que queda con solo la flecha izquierda '<'
+    const leftArrowSpace = arrowWidth + gap;
+    if (!isFirstPage && remainingWidth <= (availableWidth - leftArrowSpace)) {
+      pages.push(remainingItems);
+      break;
+    }
+
+    // De lo contrario, se necesita espacio para flechas:
+    // Primera página: solo flecha '>' a la derecha
+    // Páginas intermedias: flechas '<' y '>'
+    const arrowSpace = isFirstPage ? (arrowWidth + gap) : ((arrowWidth * 2) + (gap * 2));
+    const maxPageWidth = Math.max(availableWidth - arrowSpace, 40);
+
+    let pageItems = [];
+    let currentWidth = 0;
+
+    while (currentIndex < memberItems.length) {
+      const item = memberItems[currentIndex];
+      const itemWidthWithGap = item.width + (pageItems.length > 0 ? gap : 0);
+
+      if (pageItems.length > 0 && (currentWidth + itemWidthWithGap > maxPageWidth)) {
+        break; // La píldora actual no cabe en la página actual
+      }
+
+      pageItems.push(item);
+      currentWidth += itemWidthWithGap;
+      currentIndex++;
+    }
+
+    // Garantizar que al menos un elemento entra por página para evitar bucles infinitos
+    if (pageItems.length === 0 && currentIndex < memberItems.length) {
+      pageItems.push(memberItems[currentIndex]);
+      currentIndex++;
+    }
+
+    pages.push(pageItems);
+  }
+
+  return { isOverflow: true, pages };
+}
+
+/**
  * Renderiza los selectores de filtrado por miembro del equipo.
  */
 function renderMemberToggles() {
   const container = document.getElementById('member-filters');
   if (!container) return;
-  container.innerHTML = '';
 
-  const baseClasses = "font-bold rounded-md transition-all whitespace-nowrap";
-  const mobileClasses = "px-2 py-1 text-xs";
-  const desktopClasses = "lg:px-3 lg:py-1 lg:text-sm";
+  const baseClasses = "font-bold rounded-md transition-all whitespace-nowrap flex items-center justify-center min-h-[44px]";
+  const mobileClasses = "px-3 py-2 text-xs";
+  const desktopClasses = "lg:px-3.5 lg:py-2 lg:text-sm";
+
+  // Crear elementos en un fragmento o contenedor de medición invisible si es necesario
+  const renderedUsernames = new Set();
+  const membersList = [];
+
+  for (const member of MEMBERS) {
+    const handle = Object.keys(MEMBER_MAPPING).find(key => MEMBER_MAPPING[key] === member) || member.toLowerCase();
+    if (renderedUsernames.has(handle)) continue;
+    renderedUsernames.add(handle);
+    membersList.push({ member, handle });
+  }
+
+  // Render temporal para medir anchos reales en el DOM
+  container.innerHTML = '';
 
   const allBtn = document.createElement('button');
   allBtn.textContent = '👥 Todos';
   allBtn.className = (activeFilter === null && activeStageFilter === null)
     ? `${baseClasses} ${mobileClasses} ${desktopClasses} bg-emerald-500 text-slate-950`
     : `${baseClasses} ${mobileClasses} ${desktopClasses} text-slate-400 hover:text-white hover:bg-slate-800`;
+  container.appendChild(allBtn);
 
+  const todosWidth = allBtn.getBoundingClientRect().width || 78;
+
+  const measuredMembers = [];
+  for (const item of membersList) {
+    const btn = document.createElement('button');
+    btn.textContent = item.member;
+    btn.className = `${baseClasses} ${mobileClasses} ${desktopClasses}`;
+    container.appendChild(btn);
+    const width = btn.getBoundingClientRect().width || 60;
+    measuredMembers.push({ ...item, width });
+  }
+
+  const parentContainer = document.getElementById('member-filters-bar');
+  const barPadding = 24; // Padding horizontal de #member-filters-bar (0.75rem x 2 en móvil)
+  const availableContainerWidth = (parentContainer ? parentContainer.clientWidth - barPadding : container.clientWidth) || 350;
+
+  const result = computeMemberPagination(availableContainerWidth, todosWidth, measuredMembers);
+
+  window._memberPaginationState.pages = result.pages;
+  window._memberPaginationState.totalPages = result.pages.length;
+  if (window._memberPaginationState.currentPage >= result.pages.length) {
+    window._memberPaginationState.currentPage = 0;
+  }
+
+  console.log(`[MEMBER-PAGINATION] AvailableWidth: ${availableContainerWidth}px, TodosWidth: ${todosWidth}px, Overflow: ${result.isOverflow}, TotalPages: ${result.pages.length}`);
+  result.pages.forEach((page, idx) => {
+    console.log(`  Page ${idx + 1}/${result.pages.length}:`, page.map(p => `${p.member} (${Math.round(p.width)}px)`).join(', '));
+  });
+
+  // Renderizado definitivo Fase 3:
+  // 1. Botón "Todos" fijo a la izquierda
   allBtn.addEventListener('click', () => {
     activeFilter = null;
     activeStageFilter = null;
     renderDashboard();
   });
+
+  container.innerHTML = '';
   container.appendChild(allBtn);
 
-  const renderedUsernames = new Set();
+  const currentPageIndex = window._memberPaginationState.currentPage;
+  const totalPages = window._memberPaginationState.totalPages;
+  const isOverflow = result.isOverflow;
 
-  for (const member of MEMBERS) {
-    // Buscar el username/handle de GitHub de este miembro
-    const handle = Object.keys(MEMBER_MAPPING).find(key => MEMBER_MAPPING[key] === member) || member.toLowerCase();
+  // 2. Botón de flecha izquierda '<' (solo si isOverflow && currentPageIndex > 0)
+  if (isOverflow && currentPageIndex > 0) {
+    const prevBtn = document.createElement('button');
+    prevBtn.innerHTML = '‹';
+    prevBtn.title = 'Página anterior';
+    prevBtn.className = `${baseClasses} ${mobileClasses} ${desktopClasses} bg-slate-800 text-indigo-400 hover:bg-indigo-600 hover:text-white font-black text-sm px-2.5`;
+    prevBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      window._memberPaginationState.currentPage--;
+      renderMemberToggles();
+    });
+    container.appendChild(prevBtn);
+  }
 
-    // Si ya renderizamos este colaborador (según su id/username único de GitHub), lo omitimos (Defensa en profundidad)
-    if (renderedUsernames.has(handle)) {
-      continue;
-    }
-    renderedUsernames.add(handle);
-
+  // 3. Píldoras de integrantes de la página actual
+  const currentItems = window._memberPaginationState.pages[currentPageIndex] || [];
+  for (const item of currentItems) {
     const btn = document.createElement('button');
-    btn.textContent = member;
-    btn.className = activeFilter === member
+    btn.textContent = item.member;
+    btn.className = activeFilter === item.member
       ? `${baseClasses} ${mobileClasses} ${desktopClasses} bg-emerald-500 text-slate-950`
       : `${baseClasses} ${mobileClasses} ${desktopClasses} text-slate-400 hover:text-white hover:bg-slate-800`;
 
-    // Tooltip nativo utilizando el atributo title en desktop
     if (window.matchMedia('(hover: hover)').matches) {
-      const isExternal = ['silmaril464', 'lachicadelaboina', 'spongebob3bray'].includes(handle);
-      btn.title = `${handle} — ${isExternal ? 'colaborador externo' : 'miembro del equipo'}`;
+      const isExternal = ['silmaril464', 'lachicadelaboina', 'spongebob3bray'].includes(item.handle);
+      btn.title = `${item.handle} — ${isExternal ? 'colaborador externo' : 'miembro del equipo'}`;
     }
 
     btn.addEventListener('click', () => {
-      activeFilter = (activeFilter === member) ? null : member;
+      activeFilter = (activeFilter === item.member) ? null : item.member;
       renderDashboard();
     });
     container.appendChild(btn);
+  }
+
+  // 4. Botón de flecha derecha '>' (solo si isOverflow && currentPageIndex < totalPages - 1)
+  if (isOverflow && currentPageIndex < totalPages - 1) {
+    const nextBtn = document.createElement('button');
+    nextBtn.innerHTML = '›';
+    nextBtn.title = 'Página siguiente';
+    nextBtn.className = `${baseClasses} ${mobileClasses} ${desktopClasses} bg-slate-800 text-indigo-400 hover:bg-indigo-600 hover:text-white font-black text-sm px-2.5`;
+    nextBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      window._memberPaginationState.currentPage++;
+      renderMemberToggles();
+    });
+    container.appendChild(nextBtn);
+  }
+
+  // Registrar listener de resize para recalcular paginación dinámicamente si cambia la ventana
+  if (!window._memberResizeListenerAttached) {
+    window.addEventListener('resize', () => {
+      if (window._memberResizeTimeout) clearTimeout(window._memberResizeTimeout);
+      window._memberResizeTimeout = setTimeout(() => {
+        renderMemberToggles();
+      }, 150);
+    });
+    window._memberResizeListenerAttached = true;
   }
 }
 
