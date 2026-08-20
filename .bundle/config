@@ -1,2 +1,2 @@
 ---
-BUNDLE_PATH: "/tmp/vendor/bundle"
+BUNDLE_PATH: "vendor/bundle"

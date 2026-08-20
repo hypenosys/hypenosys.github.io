@@ -1,0 +1,30 @@
+127.0.0.1 - - [20/Aug/2026 04:59:35] "GET /index.html HTTP/1.1" 200 -
+127.0.0.1 - - [20/Aug/2026 04:59:35] code 404, message File not found
+127.0.0.1 - - [20/Aug/2026 04:59:35] "GET /assets/main.css HTTP/1.1" 404 -
+127.0.0.1 - - [20/Aug/2026 04:59:35] "GET /assets/javascript/bootstrap/bootstrap.bundle.min.js HTTP/1.1" 200 -
+127.0.0.1 - - [20/Aug/2026 04:59:35] "GET /assets/javascript/ui-components.js HTTP/1.1" 200 -
+127.0.0.1 - - [20/Aug/2026 04:59:35] "GET /assets/javascript/bootstrap/jquery.min.js HTTP/1.1" 200 -
+127.0.0.1 - - [20/Aug/2026 04:59:35] "GET /assets/javascript/analytics-consent.js HTTP/1.1" 200 -
+127.0.0.1 - - [20/Aug/2026 04:59:35] "GET /assets/javascript/global-header.js HTTP/1.1" 200 -
+127.0.0.1 - - [20/Aug/2026 04:59:35] "GET /assets/javascript/auth-config.js HTTP/1.1" 200 -
+127.0.0.1 - - [20/Aug/2026 04:59:35] "GET /assets/javascript/github-api.js HTTP/1.1" 200 -
+127.0.0.1 - - [20/Aug/2026 04:59:35] "GET /assets/javascript/auth.js HTTP/1.1" 200 -
+127.0.0.1 - - [20/Aug/2026 04:59:36] "GET /assets/css/consent.css HTTP/1.1" 200 -
+127.0.0.1 - - [20/Aug/2026 04:59:37] "GET /privacidad.html HTTP/1.1" 200 -
+127.0.0.1 - - [20/Aug/2026 04:59:37] "GET /assets/javascript/analytics-consent.js HTTP/1.1" 200 -
+127.0.0.1 - - [20/Aug/2026 04:59:37] "GET /assets/css/consent.css HTTP/1.1" 200 -
+127.0.0.1 - - [20/Aug/2026 05:00:23] "GET /index.html HTTP/1.1" 200 -
+127.0.0.1 - - [20/Aug/2026 05:00:23] "GET /assets/javascript/bootstrap/jquery.min.js HTTP/1.1" 200 -
+127.0.0.1 - - [20/Aug/2026 05:00:23] "GET /assets/javascript/ui-components.js HTTP/1.1" 200 -
+127.0.0.1 - - [20/Aug/2026 05:00:23] "GET /assets/javascript/bootstrap/bootstrap.bundle.min.js HTTP/1.1" 200 -
+127.0.0.1 - - [20/Aug/2026 05:00:23] "GET /assets/javascript/global-header.js HTTP/1.1" 200 -
+127.0.0.1 - - [20/Aug/2026 05:00:23] code 404, message File not found
+127.0.0.1 - - [20/Aug/2026 05:00:23] "GET /assets/main.css HTTP/1.1" 404 -
+127.0.0.1 - - [20/Aug/2026 05:00:23] "GET /assets/javascript/analytics-consent.js HTTP/1.1" 200 -
+127.0.0.1 - - [20/Aug/2026 05:00:23] "GET /assets/javascript/auth-config.js HTTP/1.1" 200 -
+127.0.0.1 - - [20/Aug/2026 05:00:23] "GET /assets/javascript/github-api.js HTTP/1.1" 200 -
+127.0.0.1 - - [20/Aug/2026 05:00:23] "GET /assets/javascript/auth.js HTTP/1.1" 200 -
+127.0.0.1 - - [20/Aug/2026 05:00:23] "GET /assets/css/consent.css HTTP/1.1" 200 -
+127.0.0.1 - - [20/Aug/2026 05:00:24] "GET /privacidad.html HTTP/1.1" 200 -
+127.0.0.1 - - [20/Aug/2026 05:00:24] "GET /assets/javascript/analytics-consent.js HTTP/1.1" 200 -
+127.0.0.1 - - [20/Aug/2026 05:00:24] "GET /assets/css/consent.css HTTP/1.1" 200 -

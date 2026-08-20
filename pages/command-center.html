@@ -20,6 +20,7 @@ permalink: /command-center/
 <script src="{{ '/assets/javascript/bootstrap/jquery.min.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/bootstrap/bootstrap.bundle.min.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/ui-components.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/analytics-consent.js' | relative_url }}"></script>
 
 <style>
 :root {
@@ -473,6 +474,7 @@ body.cc-ready #cc-app { display: block; }
       </div>
       <div class="cc-topbar-right">
         <a href="{{ '/' | relative_url }}" class="cc-home-link"><i class="fa-solid fa-house"></i> Home</a>
+        <a href="{{ '/privacidad/' | relative_url }}" class="cc-home-link" data-hy-consent-trigger><i class="fa-solid fa-user-shield"></i> Privacidad</a>
         <span class="cc-role-chip" id="cc-role-chip"><i class="fa-solid fa-circle"></i> <span id="cc-role-label">—</span></span>
         <div class="cc-user">
           <img id="cc-user-avatar" class="cc-team-avatar" style="width:30px;height:30px;" src="" alt="">
