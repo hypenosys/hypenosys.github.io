@@ -787,15 +787,15 @@ body.cc-ready #cc-app { display: block; }
         El acceso al Command Center y al resto de paneles protegidos se valida en dos capas:
       </p>
       <div class="cc-field">
-        <label>1. Whitelist binaria (quién entra)</label>
+        <label>1. Fuente de verdad (quién entra y roles)</label>
         <p style="font-size: 11.5px; color: var(--cc-text3); margin:0;">
-          Lista fija de logins de GitHub autorizados, definida en <code>assets/javascript/github-api.js</code> (función <code>validateToken</code>). Para añadir o quitar a alguien del estudio, hay que editar esa lista y hacer commit.
+          Los miembros del equipo y sus permisos se definen centralizadamente en <code>assets/data/team_profiles.json</code>. Cualquier adición o actualización de perfil se propaga automáticamente a todo el panel y valida el acceso en <code>validateToken</code>.
         </p>
       </div>
       <div class="cc-field">
-        <label>2. Rol (qué puede hacer)</label>
+        <label>2. Privilegios de Administrador</label>
         <p style="font-size: 11.5px; color: var(--cc-text3); margin:0;">
-          Una vez dentro, el campo <code>is_admin</code> de cada miembro en <code>assets/data/team_profiles.json</code> determina si ve secciones de administración (esta incluida). Solo Axel tiene <code>is_admin: true</code> actualmente.
+          El campo <code>is_admin</code> de cada miembro en <code>assets/data/team_profiles.json</code> habilita la visibilidad de opciones y configuraciones administrativas avanzadas en el Command Center.
         </p>
       </div>
       <div class="cc-field-hint">Este panel es de solo lectura — los cambios de whitelist/roles se hacen editando esos archivos directamente en el repositorio.</div>
@@ -960,12 +960,18 @@ body.cc-ready #cc-app { display: block; }
 
   async function resolveRole(user) {
     try {
-      const res = await fetch(TEAM_PROFILES_URL, { cache: 'no-store' });
+      const res = await fetch(TEAM_PROFILES_URL + '?v=' + Date.now(), { cache: 'no-store' });
       if (!res.ok) throw new Error('No se pudo cargar team_profiles.json');
       const data = await res.json();
-      const entry = Object.entries(data.members || {}).find(([, v]) =>
-        (v.github_username || '').toLowerCase() === user.login.toLowerCase()
-      );
+      const userLogin = (user.login || '').toLowerCase();
+      const entry = Object.entries(data.members || {}).find(([key, v]) => {
+        const handles = [
+          key,
+          v.github_username,
+          v.github_login
+        ].filter(Boolean).map(h => h.toLowerCase());
+        return handles.includes(userLogin);
+      });
       if (entry) {
         currentMember = { key: entry[0], ...entry[1] };
         isAdmin = !!currentMember.is_admin;
@@ -1106,13 +1112,20 @@ body.cc-ready #cc-app { display: block; }
   async function renderTeam() {
     const grid = $('cc-team-grid');
     try {
-      const res = await fetch(TEAM_PROFILES_URL, { cache: 'no-store' });
+      const res = await fetch(TEAM_PROFILES_URL + '?v=' + Date.now(), { cache: 'no-store' });
       if (!res.ok) throw new Error('No se pudo cargar team_profiles.json');
       const data = await res.json();
       const members = Object.entries(data.members || {});
 
       grid.innerHTML = members.map(function ([key, m]) {
-        const isYou = currentUser && (m.github_username || '').toLowerCase() === currentUser.login.toLowerCase();
+        const userLogin = currentUser ? (currentUser.login || '').toLowerCase() : '';
+        const handles = [
+          key,
+          m.github_username,
+          m.github_login
+        ].filter(Boolean).map(h => h.toLowerCase());
+        const isYou = userLogin && handles.includes(userLogin);
+
         return (
           '<div class="cc-team-card">' +
             '<img class="cc-team-avatar" src="' + (m.avatar_url || '') + '" alt="' + key + '" onerror="this.style.visibility=\'hidden\'">' +

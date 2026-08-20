@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Fixed
+- **Command Center Access Control**: Centralized team access validation (`validateToken`) and role resolution (`isAdmin`) dynamically from `assets/data/team_profiles.json`, eliminating hardcoded whitelist arrays and allowing instant propagation of member role changes across the platform.
+
 ### Added
 - **Multi-tenant Organizations**: Added support to dynamically select, switch, and create multiple organizations saved on GitHub under custom directory structures `_data/orgs/{orgId}/`.
 - **Personal Kanban (Local Only)**: Integrated a completely separate personal workspace backed strictly by browser `localStorage` (`hy_personal_tasks`, `hy_personal_archive`, etc.) with identical field options, restricted user context mapping, and standalone fallback support.

@@ -66,11 +66,41 @@ async function validateToken() {
             return { valid: false, user: null };
         }
 
-        // Capa de permisos: Lista de usuarios autorizados del equipo
-        const ALLOWED = ['axlfc', 'mitxel2022', 'topperh4rley', 'dkdidac-design', 'javi26031994-a11y'];
-        user.isTeamMember = ALLOWED.includes(user.login.toLowerCase());
+        // Capa de permisos: Cargar fuente de verdad desde team_profiles.json
+        let isTeamMember = false;
+        let isAdmin = false;
+        const userLogin = user.login.toLowerCase();
 
-        console.log(`[GITHUB-API] Authenticated as ${user.login} (Team: ${user.isTeamMember})`);
+        try {
+            const teamRes = await fetch('/assets/data/team_profiles.json', { cache: 'no-store' });
+            if (teamRes.ok) {
+                const teamData = await teamRes.json();
+                const members = teamData.members || {};
+                for (const [key, m] of Object.entries(members)) {
+                    const usernames = [
+                        key,
+                        m.github_username,
+                        m.github_login
+                    ].filter(Boolean).map(u => u.toLowerCase());
+
+                    if (usernames.includes(userLogin)) {
+                        isTeamMember = true;
+                        isAdmin = !!m.is_admin;
+                        break;
+                    }
+                }
+            }
+        } catch (tpErr) {
+            console.warn('[GITHUB-API] Fallback al verificar team_profiles.json:', tpErr);
+            const FALLBACK_ALLOWED = ['axlfc', 'mitxel2022', 'topperh4rley', 'dkdidac-design', 'javi26031994-a11y', 'silmaril464', 'lachicadelaboina', 'spongebob3bray'];
+            isTeamMember = FALLBACK_ALLOWED.includes(userLogin);
+            isAdmin = (userLogin === 'axlfc');
+        }
+
+        user.isTeamMember = isTeamMember;
+        user.isAdmin = isAdmin;
+
+        console.log(`[GITHUB-API] Authenticated as ${user.login} (Team: ${user.isTeamMember}, Admin: ${user.isAdmin})`);
         return { valid: true, user };
     } catch (err) {
         console.error('[GITHUB-API] Validation error:', err);
