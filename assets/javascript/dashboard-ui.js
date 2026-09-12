@@ -1395,6 +1395,13 @@ window.switchWorkspace = async (ws) => {
     }
 };
 
+function getOrgWritePermissionErrorMessage(e) {
+    if (e && (e.status === 404 || e.status === 403)) {
+        return "No tienes permisos de escritura en el repositorio de GitHub (hypenosys/hypenosys.github.io). Pide a un administrador (ej. Axlfc) que te añada como colaborador con permiso 'Write'.";
+    }
+    return null;
+}
+
 window.promptCreateOrganization = async () => {
     const orgName = prompt('Introduce el nombre de la nueva organización:');
     if (!orgName || !orgName.trim()) return;
@@ -1442,7 +1449,8 @@ window.promptCreateOrganization = async () => {
         window.switchWorkspace(orgId);
     } catch (e) {
         console.error('[WORKSPACE] Failed to create organization:', e);
-        alert('Fallo al crear la organización: ' + e.message);
+        const permErrorMsg = getOrgWritePermissionErrorMessage(e);
+        alert('Fallo al crear la organización: ' + (permErrorMsg || e.message));
     }
 };
 
@@ -1777,10 +1785,12 @@ window.handleAddOrgMember = async () => {
         }
     } catch (e) {
         console.error('[MEMBER] Failed to add member:', e);
-        errEl.textContent = 'Fallo al guardar: ' + e.message;
+        const permErrorMsg = getOrgWritePermissionErrorMessage(e);
+        const displayMsg = permErrorMsg || e.message;
+        errEl.textContent = 'Fallo al guardar: ' + displayMsg;
         errEl.classList.remove('hidden');
         if (window.hypeToast) {
-            window.hypeToast('Error guardando en GitHub: ' + e.message, 'error');
+            window.hypeToast('Error guardando en GitHub: ' + displayMsg, 'error');
         }
     }
 };
@@ -1822,8 +1832,10 @@ window.handleRemoveOrgMember = async (username) => {
         }
     } catch (e) {
         console.error('[MEMBER] Failed to remove member:', e);
+        const permErrorMsg = getOrgWritePermissionErrorMessage(e);
+        const displayMsg = permErrorMsg || e.message;
         if (window.hypeToast) {
-            window.hypeToast('Error guardando en GitHub: ' + e.message, 'error');
+            window.hypeToast('Error guardando en GitHub: ' + displayMsg, 'error');
         }
     }
 };
