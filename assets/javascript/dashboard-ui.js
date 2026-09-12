@@ -1402,56 +1402,150 @@ function getOrgWritePermissionErrorMessage(e) {
     return null;
 }
 
-window.promptCreateOrganization = async () => {
-    const orgName = prompt('Introduce el nombre de la nueva organización:');
-    if (!orgName || !orgName.trim()) return;
-
-    const orgId = orgName.toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)/g, '');
-
-    if (!orgId) {
-        alert('Nombre de organización inválido.');
-        return;
+window.promptCreateOrganization = () => {
+    let modal = document.getElementById('create-org-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'create-org-modal';
+        modal.className = 'fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden';
+        document.body.appendChild(modal);
     }
 
-    if (orgId === 'hypenosys' || orgId === 'personal') {
-        alert('Ese ID de organización está reservado.');
-        return;
-    }
+    modal.innerHTML = `
+        <div class="bg-slate-950 border border-purple-500/30 rounded-2xl p-6 max-w-md w-full shadow-2xl relative space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 class="text-base font-bold text-slate-100 flex items-center gap-2">
+                    <i class="fa-solid fa-plus text-emerald-400"></i> Crear organización
+                </h3>
+                <button id="close-create-org-modal-top" type="button" class="text-slate-400 hover:text-white p-1 transition-colors">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
 
-    if (__workspaces__.some(w => w.id === orgId)) {
-        alert('La organización ya existe.');
-        return;
-    }
+            <p class="text-xs text-slate-300 leading-relaxed">
+                Introduce el nombre de la nueva organización para crear un nuevo espacio de trabajo compartido.
+            </p>
 
-    if (window.hypeToast) {
-        window.hypeToast('Creando organización en GitHub...', 'info');
-    }
+            <div id="create-org-error" class="hidden text-xs text-rose-400 bg-rose-950/50 border border-rose-800/50 p-2.5 rounded-lg leading-relaxed"></div>
 
-    try {
-        await window.githubApi.atomicWrite('_data/organizations.json', (db) => {
-            if (!db.organizations) db.organizations = [];
-            db.organizations.push({
-                id: orgId,
-                name: orgName.trim(),
-                createdBy: (window.githubApi.user && window.githubApi.user.login) ? window.githubApi.user.login : 'Axlfc',
-                createdAt: new Date().toISOString(),
-                isDefault: false
-            });
-            return db;
-        }, `feat: nueva organización ${orgName.trim()} añadida`);
+            <div class="space-y-1.5">
+                <label for="create-org-input" class="block text-xs font-semibold text-slate-300">Nombre de la organización</label>
+                <input type="text" id="create-org-input" placeholder="Ej. Mi Proyecto / Startup" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-purple-500 transition-colors">
+            </div>
 
-        if (window.hypeToast) {
-            window.hypeToast('Organización creada correctamente ✓', 'success');
+            <div class="pt-2 flex justify-end gap-2 border-t border-slate-800">
+                <button id="close-create-org-modal-bottom" type="button" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-lg transition-colors">
+                    Cancelar
+                </button>
+                <button id="btn-submit-create-org" type="button" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-bold text-xs rounded-lg transition-colors flex items-center gap-1.5">
+                    <i class="fa-solid fa-plus text-[10px]"></i> <span id="btn-submit-create-org-text">Crear</span>
+                </button>
+            </div>
+        </div>
+    `;
+
+    const input = document.getElementById('create-org-input');
+    const errEl = document.getElementById('create-org-error');
+    const submitBtn = document.getElementById('btn-submit-create-org');
+    const submitBtnText = document.getElementById('btn-submit-create-org-text');
+    const closeBtnTop = document.getElementById('close-create-org-modal-top');
+    const closeBtnBottom = document.getElementById('close-create-org-modal-bottom');
+
+    input.value = '';
+    errEl.classList.add('hidden');
+    errEl.textContent = '';
+    submitBtn.disabled = false;
+    submitBtnText.textContent = 'Crear';
+
+    modal.classList.remove('hidden');
+    setTimeout(() => input.focus(), 50);
+
+    const closeModal = () => modal.classList.add('hidden');
+
+    if (closeBtnTop) closeBtnTop.addEventListener('click', closeModal);
+    if (closeBtnBottom) closeBtnBottom.addEventListener('click', closeModal);
+
+    modal.onclick = (e) => {
+        if (e.target === modal) closeModal();
+    };
+
+    const handleCreate = async () => {
+        errEl.classList.add('hidden');
+        errEl.textContent = '';
+
+        const orgName = input.value.trim();
+        if (!orgName) {
+            errEl.textContent = 'El nombre de la organización no puede estar vacío.';
+            errEl.classList.remove('hidden');
+            return;
         }
 
-        window.switchWorkspace(orgId);
-    } catch (e) {
-        console.error('[WORKSPACE] Failed to create organization:', e);
-        const permErrorMsg = getOrgWritePermissionErrorMessage(e);
-        alert('Fallo al crear la organización: ' + (permErrorMsg || e.message));
-    }
+        const orgId = orgName.toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/(^-|-$)/g, '');
+
+        if (!orgId) {
+            errEl.textContent = 'Nombre de organización inválido.';
+            errEl.classList.remove('hidden');
+            return;
+        }
+
+        if (orgId === 'hypenosys' || orgId === 'personal') {
+            errEl.textContent = 'Ese ID de organización está reservado.';
+            errEl.classList.remove('hidden');
+            return;
+        }
+
+        const workspaces = __workspaces__ || [];
+        if (workspaces.some(w => w.id === orgId)) {
+            errEl.textContent = 'La organización ya existe.';
+            errEl.classList.remove('hidden');
+            return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtnText.textContent = 'Creando...';
+
+        if (window.hypeToast) {
+            window.hypeToast('Creando organización en GitHub...', 'info');
+        }
+
+        try {
+            await window.githubApi.atomicWrite('_data/organizations.json', (db) => {
+                if (!db.organizations) db.organizations = [];
+                db.organizations.push({
+                    id: orgId,
+                    name: orgName,
+                    createdBy: (window.githubApi.user && window.githubApi.user.login) ? window.githubApi.user.login : 'Axlfc',
+                    createdAt: new Date().toISOString(),
+                    isDefault: false
+                });
+                return db;
+            }, `feat: nueva organización ${orgName} añadida`);
+
+            if (window.hypeToast) {
+                window.hypeToast('Organización creada correctamente ✓', 'success');
+            }
+
+            closeModal();
+            window.switchWorkspace(orgId);
+        } catch (e) {
+            console.error('[WORKSPACE] Failed to create organization:', e);
+            const permErrorMsg = getOrgWritePermissionErrorMessage(e);
+            errEl.textContent = 'Fallo al crear la organización: ' + (permErrorMsg || e.message);
+            errEl.classList.remove('hidden');
+            submitBtn.disabled = false;
+            submitBtnText.textContent = 'Crear';
+        }
+    };
+
+    submitBtn.addEventListener('click', handleCreate);
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            handleCreate();
+        }
+    });
 };
 
 function renderLocalWorkspaceActions() {
