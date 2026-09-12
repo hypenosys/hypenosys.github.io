@@ -1054,7 +1054,8 @@ body.cc-ready #cc-app { display: block; }
   async function loadTaskStats() {
     try {
       if (!window.githubApi.getAuthToken()) return;
-      const res = await window.githubApi.fetchFileWithSha('_data/dashboard_tasks.json');
+      const activeWs = window.githubApi.getActiveWorkspace ? window.githubApi.getActiveWorkspace() : 'hypenosys';
+      const res = await window.githubApi.fetchTasksWithDualRead(activeWs, false);
       const tasks = (res && res.content && res.content.tasks) || [];
       const active = tasks.filter(function (t) {
         return t.estado && !['OK', 'Closed', 'Obsolete'].includes(t.estado);

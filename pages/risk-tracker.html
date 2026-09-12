@@ -187,7 +187,8 @@ a { color: var(--rt-accent); text-decoration: none; }
       if (!token) {
         throw new Error('Sin sesión de GitHub activa.');
       }
-      const res = await window.githubApi.fetchFileWithSha('_data/dashboard_tasks.json');
+      const activeWs = window.githubApi.getActiveWorkspace ? window.githubApi.getActiveWorkspace() : 'hypenosys';
+      const res = await window.githubApi.fetchTasksWithDualRead(activeWs, false);
       allTasks = (res && res.content && res.content.tasks) || [];
       render();
     } catch (e) {

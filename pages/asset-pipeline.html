@@ -161,7 +161,8 @@ a { color: var(--ap-accent); text-decoration: none; }
     try {
       const token = window.githubApi.getAuthToken();
       if (!token) throw new Error('Sin sesión de GitHub activa.');
-      const res = await window.githubApi.fetchFileWithSha('_data/dashboard_tasks.json');
+      const activeWs = window.githubApi.getActiveWorkspace ? window.githubApi.getActiveWorkspace() : 'hypenosys';
+      const res = await window.githubApi.fetchTasksWithDualRead(activeWs, false);
       allTasks = (res && res.content && res.content.tasks) || [];
       artTasks = allTasks.filter(t => t.tema_principal === ART_THEME);
       render();

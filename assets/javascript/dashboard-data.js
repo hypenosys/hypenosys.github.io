@@ -49,7 +49,10 @@ function getUserOrganizations(workspaces, userHandle) {
     if (!handle) return [];
     return workspaces.filter(w => {
         if (!w.members || !Array.isArray(w.members)) return false;
-        return w.members.some(m => m.toLowerCase() === handle);
+        return w.members.some(m => {
+            const memberHandle = (typeof m === 'string' ? m : (m && m.handle) || '').toLowerCase();
+            return memberHandle === handle;
+        });
     });
 }
 window.getUserOrganizations = getUserOrganizations;
@@ -74,7 +77,7 @@ function loadWorkspaceMembers() {
 
         if (profiles) {
             const orgMembersLower = (org && org.members && Array.isArray(org.members))
-                ? org.members.map(m => m.toLowerCase())
+                ? org.members.map(m => (typeof m === 'string' ? m : (m && m.handle) || '').toLowerCase())
                 : null;
 
             for (const name in profiles) {
@@ -90,7 +93,7 @@ function loadWorkspaceMembers() {
                 }
             }
         } else if (org && org.members && Array.isArray(org.members)) {
-            const lowerMembers = org.members.map(m => m.toLowerCase());
+            const lowerMembers = org.members.map(m => (typeof m === 'string' ? m : (m && m.handle) || '').toLowerCase());
             for (const username in ORIGINAL_MEMBER_MAPPING) {
                 if (lowerMembers.includes(username.toLowerCase())) {
                     const disp = ORIGINAL_MEMBER_MAPPING[username];
@@ -387,8 +390,8 @@ async function refreshDashboardData() {
     }
 
     const [tasksRes, archiveRes, statsRes, budgetRes, profilesRes, orgsRes] = await Promise.all([
-      window.githubApi.fetchFileWithSha('_data/dashboard_tasks.json'),
-      window.githubApi.fetchFileWithSha('_data/dashboard_tasks_archive.json'),
+      window.githubApi.fetchTasksWithDualRead(ws, false),
+      window.githubApi.fetchTasksWithDualRead(ws, true),
       window.githubApi.fetchFileWithSha('_data/studio_stats.json'),
       window.githubApi.fetchFileWithSha('_data/studio_budget.json'),
       fetch('/assets/data/team_profiles.json').then(res => res.json().then(data => ({ content: data }))),
@@ -409,8 +412,8 @@ async function refreshDashboardData() {
     if (ws === 'personal') {
         try {
             const [rTasks, rArchive, rOrgs] = await Promise.all([
-              window.githubApi.fetchFileWithSha('_data/dashboard_tasks.json', 'json', true),
-              window.githubApi.fetchFileWithSha('_data/dashboard_tasks_archive.json', 'json', true),
+              window.githubApi.fetchTasksWithDualRead('hypenosys', false, true),
+              window.githubApi.fetchTasksWithDualRead('hypenosys', true, true),
               window.githubApi.fetchFileWithSha('_data/organizations.json', 'json', true)
             ]);
             remoteTasksRes = rTasks;
