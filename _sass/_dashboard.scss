@@ -625,3 +625,42 @@ $dashboard-danger: #ff5555;  // Dracula Red
   z-index: 9999; animation: fadeInOut 3s ease forwards;
 }
 @keyframes fadeInOut { 0%{opacity:0;transform:translateX(-50%) translateY(10px)} 15%{opacity:1;transform:translateX(-50%) translateY(0)} 85%{opacity:1} 100%{opacity:0} }
+
+// CTA Banner for Users Without Organization (Dracula Theme)
+.no-org-cta-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.35rem 0.75rem;
+  background: rgba($gray-900, 0.85);
+  border: 1px solid rgba($purple, 0.3);
+  border-radius: 0.5rem;
+
+  .cta-text {
+    color: #f8f8f2;
+  }
+
+  .btn-cta-join {
+    background: rgba($purple, 0.15);
+    border-color: rgba($purple, 0.4);
+    color: #bd93f9;
+
+    &:hover {
+      background: rgba($purple, 0.3);
+      border-color: $purple;
+      color: #ffffff;
+    }
+  }
+
+  .btn-cta-create {
+    background: rgba($dashboard-success, 0.15);
+    border-color: rgba($dashboard-success, 0.4);
+    color: $dashboard-success;
+
+    &:hover {
+      background: rgba($dashboard-success, 0.3);
+      border-color: $dashboard-success;
+      color: #ffffff;
+    }
+  }
+}
