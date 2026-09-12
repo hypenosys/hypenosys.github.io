@@ -43,6 +43,17 @@ const FALLBACK_ORGANIZATIONS = [
     }
 ];
 
+function getUserOrganizations(workspaces, userHandle) {
+    if (!workspaces || !Array.isArray(workspaces)) return [];
+    const handle = (userHandle || window.currentUser || (window.githubApi && window.githubApi.user && window.githubApi.user.login) || '').toLowerCase();
+    if (!handle) return [];
+    return workspaces.filter(w => {
+        if (!w.members || !Array.isArray(w.members)) return false;
+        return w.members.some(m => m.toLowerCase() === handle);
+    });
+}
+window.getUserOrganizations = getUserOrganizations;
+
 function loadWorkspaceMembers() {
     const ws = window.githubApi.getActiveWorkspace();
     if (ws === 'personal') {
@@ -366,7 +377,7 @@ window.addEventListener('beforeunload', () => {
 });
 
 async function refreshDashboardData() {
-  const ws = window.githubApi.getActiveWorkspace();
+  let ws = window.githubApi.getActiveWorkspace();
   loadWorkspaceMembers();
   try {
     // Initial cache load for first run
@@ -420,6 +431,12 @@ async function refreshDashboardData() {
     }
     loadWorkspaceMembers();
 
+    const myOrgs = getUserOrganizations(newOrgs);
+    if (myOrgs.length === 0) {
+        window.githubApi.setActiveWorkspace('personal');
+        ws = 'personal';
+    }
+
     const newTasks = (migratedTasksData && migratedTasksData.tasks) || [];
     const newArchive = (migratedArchiveData && migratedArchiveData.tasks) || [];
     const newStats = statsRes.content || { schema_version: '1.1.0', computed_at: '', global: {}, members: {}, group: {} };
@@ -435,17 +452,14 @@ async function refreshDashboardData() {
         // Personal Workspace: Auto-populate with remote assigned tasks
         const userHandle = (window.currentUser || (window.githubApi && window.githubApi.user && window.githubApi.user.login) || '').toLowerCase();
         const remoteOrgs = (remoteOrgsRes && remoteOrgsRes.content && remoteOrgsRes.content.organizations) || __workspaces__ || FALLBACK_ORGANIZATIONS;
-        const userOrgs = remoteOrgs.filter(w => {
-            if (!w.members || !Array.isArray(w.members)) return false;
-            return w.members.some(m => m.toLowerCase() === userHandle);
-        }).map(w => w.id);
+        const userOrgIds = getUserOrganizations(remoteOrgs, userHandle).map(w => w.id);
 
         let assignedRemoteTasks = [];
         let assignedRemoteArchive = [];
 
         if (remoteTasksRes && remoteTasksRes.content && Array.isArray(remoteTasksRes.content.tasks)) {
             assignedRemoteTasks = remoteTasksRes.content.tasks.filter(t => {
-                const inOrg = userOrgs.includes(t.organizationId);
+                const inOrg = userOrgIds.includes(t.organizationId);
                 const isAssigned = Array.isArray(t.asignados) && t.asignados.some(m => m.toLowerCase() === userHandle);
                 return inOrg && isAssigned;
             }).map(t => {
@@ -458,7 +472,7 @@ async function refreshDashboardData() {
 
         if (remoteArchiveRes && remoteArchiveRes.content && Array.isArray(remoteArchiveRes.content.tasks)) {
             assignedRemoteArchive = remoteArchiveRes.content.tasks.filter(t => {
-                const inOrg = userOrgs.includes(t.organizationId);
+                const inOrg = userOrgIds.includes(t.organizationId);
                 const isAssigned = Array.isArray(t.asignados) && t.asignados.some(m => m.toLowerCase() === userHandle);
                 return inOrg && isAssigned;
             }).map(t => {

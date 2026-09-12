@@ -1305,11 +1305,7 @@ async function renderWorkspaceSelector() {
 
     // Organizations Section
     itemsHtml += `<div class="px-3 py-1 text-[9px] font-bold text-slate-500 uppercase tracking-widest border-b border-slate-900">Organizaciones</div>`;
-    const userHandle = (window.currentUser || (window.githubApi && window.githubApi.user && window.githubApi.user.login) || '').toLowerCase();
-    const filteredWorkspaces = __workspaces__.filter(w => {
-        if (!w.members || !Array.isArray(w.members)) return false;
-        return w.members.some(m => m.toLowerCase() === userHandle);
-    });
+    const filteredWorkspaces = window.getUserOrganizations ? window.getUserOrganizations(__workspaces__) : [];
     filteredWorkspaces.forEach(w => {
         const activeClass = currentWs === w.id ? 'text-indigo-400 font-bold bg-slate-900' : 'text-slate-300';
         itemsHtml += `
@@ -1460,16 +1456,143 @@ function renderLocalWorkspaceActions() {
         return;
     }
 
+    const userOrgs = window.getUserOrganizations ? window.getUserOrganizations(__workspaces__) : [];
+    let ctaHtml = '';
+
+    if (userOrgs.length === 0) {
+        ctaHtml = `
+            <div class="no-org-cta-banner">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-users text-indigo-400"></i>
+                    <span class="cta-text text-xs text-slate-300 font-medium hidden sm:inline">No perteneces a ninguna organización.</span>
+                </div>
+                <div class="cta-actions flex items-center gap-2">
+                    <button id="btn-join-org" type="button" class="btn-cta-join text-xs font-bold px-3 py-1.5 rounded-lg border border-purple-500/40 bg-purple-500/10 text-purple-300 hover:bg-purple-500/20 transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-user-plus text-[10px]"></i> Unirse a una organización
+                    </button>
+                    <button id="btn-create-org" type="button" class="btn-cta-create text-xs font-bold px-3 py-1.5 rounded-lg border border-emerald-500/40 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-plus text-[10px]"></i> Crear organización
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
     container.innerHTML = `
-        <button onclick="exportPersonalKanban()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded-lg text-sm transition-all flex items-center gap-1.5" title="Exportar tareas locales como JSON">
+        ${ctaHtml}
+        <button id="btn-export-personal" type="button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded-lg text-sm transition-all flex items-center gap-1.5" title="Exportar tareas locales como JSON">
             <i class="fa-solid fa-file-export"></i> <span class="hidden md:inline">Exportar</span>
         </button>
-        <button onclick="triggerImportPersonalKanban()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded-lg text-sm transition-all flex items-center gap-1.5" title="Importar tareas locales desde JSON">
+        <button id="btn-import-personal" type="button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded-lg text-sm transition-all flex items-center gap-1.5" title="Importar tareas locales desde JSON">
             <i class="fa-solid fa-file-import"></i> <span class="hidden md:inline">Importar</span>
         </button>
-        <input type="file" id="import-personal-file" class="hidden" accept=".json" onchange="importPersonalKanban(event)">
+        <input type="file" id="import-personal-file" class="hidden" accept=".json">
     `;
+
+    const joinBtn = document.getElementById('btn-join-org');
+    if (joinBtn) {
+        joinBtn.addEventListener('click', () => {
+            window.openJoinOrganizationModal();
+        });
+    }
+
+    const createBtn = document.getElementById('btn-create-org');
+    if (createBtn) {
+        createBtn.addEventListener('click', () => {
+            if (window.promptCreateOrganization) window.promptCreateOrganization();
+        });
+    }
+
+    const exportBtn = document.getElementById('btn-export-personal');
+    if (exportBtn) {
+        exportBtn.addEventListener('click', () => {
+            if (window.exportPersonalKanban) window.exportPersonalKanban();
+        });
+    }
+
+    const importBtn = document.getElementById('btn-import-personal');
+    const importInput = document.getElementById('import-personal-file');
+    if (importBtn && importInput) {
+        importBtn.addEventListener('click', () => {
+            importInput.click();
+        });
+        importInput.addEventListener('change', (e) => {
+            if (window.importPersonalKanban) window.importPersonalKanban(e);
+        });
+    }
 }
+
+window.openJoinOrganizationModal = () => {
+    let modal = document.getElementById('join-org-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'join-org-modal';
+        modal.className = 'fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden';
+        document.body.appendChild(modal);
+    }
+
+    const orgs = __workspaces__ || [];
+    let listHtml = '';
+
+    if (orgs.length === 0) {
+        listHtml = `<p class="text-xs text-slate-400 py-4 text-center">No hay organizaciones disponibles actualmente.</p>`;
+    } else {
+        listHtml = orgs.map(org => `
+            <div class="p-3 bg-slate-900 border border-slate-800 rounded-lg flex items-center justify-between gap-3">
+                <div>
+                    <div class="font-bold text-slate-200 text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-building text-indigo-400 text-xs"></i>
+                        <span>${org.name}</span>
+                    </div>
+                    <div class="text-xs text-slate-400 mt-0.5">
+                        Creada por <span class="text-purple-400 font-semibold">${org.createdBy || 'un administrador'}</span>
+                    </div>
+                </div>
+                <div class="text-[11px] text-emerald-400 bg-emerald-950/60 border border-emerald-800/50 px-2.5 py-1 rounded-md font-semibold text-right">
+                    Pide a <span class="underline">${org.createdBy || 'un admin'}</span> que te añada desde "Gestionar miembros"
+                </div>
+            </div>
+        `).join('');
+    }
+
+    modal.innerHTML = `
+        <div class="bg-slate-950 border border-purple-500/30 rounded-2xl p-6 max-w-md w-full shadow-2xl relative space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 class="text-base font-bold text-slate-100 flex items-center gap-2">
+                    <i class="fa-solid fa-user-plus text-purple-400"></i> Unirse a una organización
+                </h3>
+                <button id="close-join-org-modal" type="button" class="text-slate-400 hover:text-white p-1 transition-colors">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <p class="text-xs text-slate-300 leading-relaxed">
+                Para unirte a una organización existente, solicítaselo a su creador o administrador. Ellos pueden añadirte utilizando la opción <strong>"Gestionar miembros"</strong> (<i class="fa-solid fa-cog text-[10px]"></i>) en el selector de organizaciones.
+            </p>
+            <div class="space-y-2.5 max-h-60 overflow-y-auto pr-1 custom-scrollbar">
+                ${listHtml}
+            </div>
+            <div class="pt-2 text-right border-t border-slate-800">
+                <button id="btn-close-join-modal-bottom" type="button" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-lg transition-colors">
+                    Entendido
+                </button>
+            </div>
+        </div>
+    `;
+
+    modal.classList.remove('hidden');
+
+    const closeModal = () => modal.classList.add('hidden');
+
+    const closeBtnTop = document.getElementById('close-join-org-modal');
+    const closeBtnBottom = document.getElementById('btn-close-join-modal-bottom');
+
+    if (closeBtnTop) closeBtnTop.addEventListener('click', closeModal);
+    if (closeBtnBottom) closeBtnBottom.addEventListener('click', closeModal);
+
+    modal.onclick = (e) => {
+        if (e.target === modal) closeModal();
+    };
+};
 
 window.exportPersonalKanban = () => {
     const username = (window.githubApi.user && window.githubApi.user.login) ? window.githubApi.user.login.toLowerCase() : 'guest';

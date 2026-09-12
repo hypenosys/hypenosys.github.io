@@ -72,6 +72,14 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-success">Added</h5>
             <ul>
+                <li><strong>Kanban Personal por Defecto para Usuarios Sin Organización & Banner CTA Dracula:</strong>
+                    <ul>
+                        <li>Implementada detección automática de membresía en <code>assets/javascript/dashboard-data.js</code> mediante la función <code>getUserOrganizations()</code>.</li>
+                        <li>Si el usuario autenticado no pertenece a ninguna organización en <code>_data/organizations.json</code>, el dashboard activa por defecto el Kanban Personal en lugar de Hypenosys.</li>
+                        <li>Renderizado de una tarjeta/banner CTA no bloqueante con paleta Dracula en <code>#local-kanban-actions</code> que ofrece acciones para "Unirse a una organización" (modal informativo con lista de orgs y creadores) y "Crear organización" (reutilizando el flujo modal interactivo existente).</li>
+                        <li>Comportamiento dinámico: la tarjeta CTA se oculta automáticamente si un miembro con organizaciones cambia manualmente a la vista Personal.</li>
+                    </ul>
+                </li>
                 <li><strong>Sistema de Consentimiento de Analítica/Cookies Privacy-First (Matomo) & Multi-Entorno:</strong>
                     <ul>
                         <li>Implementación de gestor de consentimiento propio sin dependencias ni CMPs externas (<code>assets/javascript/analytics-consent.js</code> y <code>assets/css/consent.css</code>).</li>
