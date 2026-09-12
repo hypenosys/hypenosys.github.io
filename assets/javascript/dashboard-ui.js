@@ -1811,11 +1811,12 @@ function renderManageMembersList(org) {
         const div = document.createElement('div');
         div.className = 'flex justify-between items-center bg-slate-900/60 p-2 rounded border border-slate-800/80 mb-2';
 
-        const display = MEMBER_MAPPING[member.toLowerCase()] || member;
+        const memberHandle = typeof member === 'string' ? member : (member && member.handle) || '';
+        const display = MEMBER_MAPPING[memberHandle.toLowerCase()] || memberHandle;
 
         div.innerHTML = `
-            <span class="text-xs font-bold text-slate-200">${display} <span class="text-[10px] text-slate-500 font-mono">(${member})</span></span>
-            <button onclick="handleRemoveOrgMember('${member}')" class="text-slate-500 hover:text-red-400 transition-colors p-1 border-0 bg-transparent outline-none" title="Eliminar miembro">
+            <span class="text-xs font-bold text-slate-200">${display} <span class="text-[10px] text-slate-500 font-mono">(${memberHandle})</span></span>
+            <button onclick="handleRemoveOrgMember('${memberHandle}')" class="text-slate-500 hover:text-red-400 transition-colors p-1 border-0 bg-transparent outline-none" title="Eliminar miembro">
                 <i class="fa-solid fa-trash-can text-xs"></i>
             </button>
         `;
@@ -1841,7 +1842,10 @@ window.handleAddOrgMember = async () => {
     if (!org) return;
 
     const members = org.members || [];
-    if (members.some(m => m.toLowerCase() === username.toLowerCase())) {
+    if (members.some(m => {
+        const memberHandle = (typeof m === 'string' ? m : (m && m.handle) || '').toLowerCase();
+        return memberHandle === username.toLowerCase();
+    })) {
         errEl.textContent = 'El usuario ya pertenece a esta organización.';
         errEl.classList.remove('hidden');
         return;
@@ -1904,7 +1908,10 @@ window.handleRemoveOrgMember = async (username) => {
         const result = await window.githubApi.atomicWrite('_data/organizations.json', (db) => {
             const orgInDb = db.organizations.find(w => w.id === activeManageOrgId);
             if (orgInDb && orgInDb.members) {
-                orgInDb.members = orgInDb.members.filter(m => m.toLowerCase() !== username.toLowerCase());
+                orgInDb.members = orgInDb.members.filter(m => {
+                    const memberHandle = (typeof m === 'string' ? m : (m && m.handle) || '').toLowerCase();
+                    return memberHandle !== username.toLowerCase();
+                });
             }
             return db;
         }, `chore: eliminar miembro ${username} de la organización ${org.name}`);
