@@ -1,0 +1,15 @@
+{
+  "id": "empty-space-videogames",
+  "name": "Empty Space Videogames",
+  "createdBy": "Axlfc",
+  "createdAt": "2025-01-01T00:00:00.000Z",
+  "isDefault": false,
+  "members": [
+    {
+      "handle": "Axlfc",
+      "teams": [],
+      "roles": []
+    }
+  ],
+  "schema_version": "1.0.0"
+}
