@@ -15,12 +15,15 @@
       "createdBy": "Axlfc",
       "createdAt": "2025-01-01T00:00:00.000Z",
       "isDefault": false,
-      "members": [
-        "Axlfc"
-      ]
+      "isSharded": true
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore(sharding): marcar org empty-space-videogames como isSharded: true",
+      "user": "Sistema",
+      "timestamp": "2026-09-13T06:26:32.449Z"
+    },
     {
       "action": "chore(sharding): marcar org hypenosys como isSharded: true",
       "user": "Sistema",
