@@ -1,0 +1,2950 @@
+{
+  "schema_version": "1.2.0",
+  "last_updated": "2026-09-13T06:26:21.846Z",
+  "organizationId": "hypenosys",
+  "tasks": [
+    {
+      "rama": "docs/brainstorming-ideation",
+      "descripcion": "Documentar la sesión de ideación creativa sobre mecánicas e historia. Esto define el rumbo creativo del proyecto y evita desviaciones futuras.",
+      "tema_principal": "Concepto / GDD",
+      "prioridad": "Critical",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0.2,
+      "resuelto_por": "Javi",
+      "detectado_por": "Dídac",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-05-24",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "Sesión de ideación creativa para definir el núcleo mecánico del proyecto. Documentación de resultados en el GDD inicial.",
+      "id": 4,
+      "asignados": [
+        "axlfc",
+        "javi26031994-a11y",
+        "mitxel2022",
+        "topperh4rley"
+      ],
+      "email_responsable": "javi@hypenosys.com",
+      "emails_asignados": [
+        "axel@hypenosys.com",
+        "alex@hypenosys.com",
+        "javi@hypenosys.com",
+        "mitxel@hypenosys.com"
+      ],
+      "images": [],
+      "title": "Brainstorming",
+      "task_type": "chore",
+      "start_date": "2026-06-01",
+      "due_date": "2026-06-30",
+      "estimated_hours": 12,
+      "story_points": 5,
+      "tags": [
+        "brainstorm",
+        "chore",
+        "design",
+        "docs",
+        "topper"
+      ],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "El GDD inicial contenga los conceptos clave acordados.",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [
+        "Sugiero usar Obsidian para centralizar estas notas antes de pasarlas al GDD definitivo para facilitar la vinculación de conceptos."
+      ],
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T06:54:48.121Z",
+          "field": "descripcion",
+          "old_value": "BrainStorm",
+          "new_value": "Lluvia de ideas locas sobre mecánicas, historia, modos de juego, todo vale."
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T06:54:48.121Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-06-30"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T06:54:48.121Z",
+          "field": "task_type",
+          "old_value": "feature",
+          "new_value": "chore"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T06:54:48.121Z",
+          "field": "tags",
+          "old_value": "[]",
+          "new_value": "[\"brainstorm\",\"design\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:30:01.956Z",
+          "field": "title",
+          "old_value": "BrainStorm",
+          "new_value": "Brainstorming"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:30:01.956Z",
+          "field": "descripcion",
+          "old_value": "Lluvia de ideas locas sobre mecánicas, historia, modos de juego, todo vale.",
+          "new_value": "Lluvia de ideas locas sobre mecánicas, historia, modos de juego, todo vale. Va al repositorio de /docs"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-03T07:33:29.024Z",
+          "field": "repository",
+          "old_value": null,
+          "new_value": "hypenosys/app"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-03T10:07:04.082Z",
+          "field": "repository",
+          "old_value": "hypenosys/app",
+          "new_value": "hypenosys/docs"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-03T10:08:16.278Z",
+          "field": "descripcion",
+          "old_value": "Lluvia de ideas locas sobre mecánicas, historia, modos de juego, todo vale. Va al repositorio de /docs",
+          "new_value": "Lluvia de ideas locas sobre mecánicas, historia, modos de juego, todo vale."
+        },
+        {
+          "author_login": "topperh4rley",
+          "timestamp": "2026-06-14T14:12:34.897Z",
+          "field": "tags",
+          "old_value": "[\"brainstorm\",\"chore\",\"design\",\"docs\"]",
+          "new_value": "[\"brainstorm\",\"chore\",\"design\",\"docs\",\"topper\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:44:05.264Z",
+          "field": "seccion",
+          "new_value": "Videojuego"
+        }
+      ],
+      "repository": "hypenosys/docs",
+      "seccion": "Videojuego",
+      "jules_session": null,
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
+    },
+    {
+      "rama": "research/ue5-fundamentals",
+      "descripcion": "Completar la capacitación del equipo en conceptos fundamentales de UE5. Es vital para que todos los miembros puedan gestionar assets sin bloqueos técnicos.",
+      "tema_principal": "Pre-producción",
+      "prioridad": "ToDo",
+      "milestone": "M1",
+      "estado": "In Review",
+      "completitud": 0.2,
+      "resuelto_por": "Alex",
+      "detectado_por": "Alex",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-05-24",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "Capacitación del equipo en la navegación del motor, gestión de assets y flujo de trabajo con Blueprints.",
+      "id": 5,
+      "asignados": [
+        "dkdidac-design",
+        "mitxel2022",
+        "topperh4rley"
+      ],
+      "email_responsable": "alex@hypenosys.com",
+      "emails_asignados": [
+        "alex@hypenosys.com",
+        "didac@hypenosys.com",
+        "mitxel@hypenosys.com"
+      ],
+      "images": [],
+      "title": "Tutorial Unreal Engine conceptos basicos",
+      "task_type": "research",
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": 100,
+      "story_points": null,
+      "tags": [
+        "chore",
+        "docs",
+        "testing"
+      ],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "El equipo demuestre autonomía básica en el motor y Blueprints.",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [
+        "Podríamos preparar una pequeña escena de prueba para validar que los conceptos de gestión de assets se han entendido correctamente."
+      ],
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T07:10:55.955Z",
+          "field": "task_type",
+          "old_value": "feature",
+          "new_value": "chore"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T07:11:09.748Z",
+          "field": "task_type",
+          "old_value": "chore",
+          "new_value": "research"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-04T17:04:15.430Z",
+          "field": "repository",
+          "old_value": null,
+          "new_value": "hypenosys/app"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:19:44.750Z",
+          "field": "asignados",
+          "old_value": "[\"dkdidac-design\",\"javi26031994-a11y\",\"mitxel2022\",\"topperh4rley\"]",
+          "new_value": "[\"dkdidac-design\",\"mitxel2022\",\"topperh4rley\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:19:44.750Z",
+          "field": "completitud",
+          "old_value": 0.8,
+          "new_value": 0.2
+        }
+      ],
+      "repository": "hypenosys/app",
+      "jules_session": null,
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
+    },
+    {
+      "rama": "PRO",
+      "descripcion": "Engatusar a Dídac y Mitxel para que se unan al Tailscale",
+      "tema_principal": "Tools / Automation",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Obsolete",
+      "completitud": 0.5,
+      "resuelto_por": "Mitxel",
+      "detectado_por": "Dídac",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-05-24",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "Configuración de la red privada virtual (VPN Mesh) para permitir la conexión directa con el servidor SVN y colaboración segura.",
+      "id": 6,
+      "asignados": [
+        "dkdidac-design",
+        "mitxel2022"
+      ],
+      "email_responsable": "mitxel@hypenosys.com",
+      "emails_asignados": [
+        "didac@hypenosys.com",
+        "mitxel@hypenosys.com"
+      ],
+      "images": [],
+      "repository": null,
+      "title": "Engatusar a Dídac y Mitxel para que se unan al Tailscale",
+      "due_date": null,
+      "start_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "task_type": "feature",
+      "tags": [],
+      "blocks": [],
+      "blocked_by": [],
+      "acceptance_criteria": "",
+      "external_links": [],
+      "subtasks": [],
+      "comments": [],
+      "change_log": [],
+      "jules_session": null,
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
+    },
+    {
+      "rama": "chore/dev-env-setup",
+      "descripcion": "Configurar el entorno de desarrollo local incluyendo control de versiones y el motor. Sin esto, el equipo no puede colaborar ni sincronizar assets binarios.",
+      "tema_principal": "Tools / Automation",
+      "prioridad": "Critical",
+      "milestone": "M1",
+      "estado": "In Review",
+      "completitud": 0.25,
+      "resuelto_por": "Dídac",
+      "detectado_por": "Unassigned",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-05-24",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "Preparación del entorno de desarrollo local con el cliente de control de versiones para assets binarios y la versión específica del motor.",
+      "id": 8,
+      "asignados": [
+        "dkdidac-design",
+        "mitxel2022"
+      ],
+      "email_responsable": "didac@hypenosys.com",
+      "emails_asignados": [
+        "didac@hypenosys.com",
+        "mitxel@hypenosys.com"
+      ],
+      "images": [],
+      "title": "Instalar Git, TortoiseSVN(add to path) + Unreal Engine 5.8",
+      "task_type": "chore",
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": 4,
+      "story_points": null,
+      "tags": [
+        "chore",
+        "devops"
+      ],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "Todas las herramientas estén instaladas y configuradas en el PATH.",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [
+        "Es crítico verificar que TortoiseSVN esté correctamente en el PATH para que los scripts de automatización funcionen."
+      ],
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T07:11:04.400Z",
+          "field": "task_type",
+          "old_value": "feature",
+          "new_value": "chore"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-04T17:04:27.566Z",
+          "field": "repository",
+          "old_value": null,
+          "new_value": "hypenosys/app"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-22T00:00:21.906Z",
+          "field": "seccion",
+          "new_value": ""
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-22T00:35:31.900Z",
+          "field": "title",
+          "old_value": "Instalar Git, TortoiseSVN(add to path) + Unreal Engine 5.7.4",
+          "new_value": "Instalar Git, TortoiseSVN(add to path) + Unreal Engine 5.8"
+        }
+      ],
+      "repository": "hypenosys/app",
+      "seccion": "",
+      "jules_session": null,
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
+    },
+    {
+      "rama": "PRO",
+      "descripcion": "Instalar Tailscale + TortoiseSVN + Unreal Engine 5.7.4",
+      "tema_principal": "Pre-producción",
+      "prioridad": "Medium",
+      "milestone": "M1",
+      "estado": "Obsolete",
+      "completitud": 0,
+      "resuelto_por": "Mitxel",
+      "detectado_por": "Axel",
+      "asignados": [
+        "mitxel2022"
+      ],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-05-24",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "Setup completo de infraestructura de red y software de desarrollo para nuevos integrantes.",
+      "id": 10,
+      "email_responsable": "mitxel@hypenosys.com",
+      "emails_asignados": [
+        "mitxel@hypenosys.com"
+      ],
+      "images": [],
+      "repository": null,
+      "title": "Instalar Tailscale + TortoiseSVN + Unreal Engine 5.7.4",
+      "due_date": null,
+      "start_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "task_type": "feature",
+      "tags": [],
+      "blocks": [],
+      "blocked_by": [],
+      "acceptance_criteria": "",
+      "external_links": [],
+      "subtasks": [],
+      "comments": [],
+      "change_log": [],
+      "jules_session": null,
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
+    },
+    {
+      "rama": "PRO",
+      "descripcion": "copiar en la plataforma lo que jules diga!",
+      "tema_principal": "Programación / Engine",
+      "prioridad": "Medium",
+      "milestone": "M1",
+      "estado": "Obsolete",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Alex",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-05-31",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "id": 15,
+      "images": [],
+      "title": "copiar en la plataforma lo que jules diga!",
+      "task_type": "feature",
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:20:42.958Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-06-05"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:21:00.180Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Medium"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-01T09:21:00.180Z",
+          "field": "due_date",
+          "old_value": "2026-06-05",
+          "new_value": null
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-04T17:04:43.698Z",
+          "field": "repository",
+          "old_value": null,
+          "new_value": "hypenosys/hypenosys.github.io"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-05T16:12:10.895Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Obsolete"
+        }
+      ],
+      "repository": "hypenosys/hypenosys.github.io",
+      "jules_session": null,
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
+    },
+    {
+      "rama": "PRO",
+      "descripcion": "prueba",
+      "tema_principal": "Programación / Engine",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Obsolete",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Alex",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-05-31",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "id": 20,
+      "repository": null,
+      "title": "prueba",
+      "due_date": null,
+      "start_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "task_type": "feature",
+      "tags": [],
+      "blocks": [],
+      "blocked_by": [],
+      "acceptance_criteria": "",
+      "external_links": [],
+      "subtasks": [],
+      "comments": [],
+      "change_log": [],
+      "jules_session": null,
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
+    },
+    {
+      "title": "1234",
+      "descripcion": "",
+      "rama": "PRO",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Obsolete",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Alex",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [
+        {
+          "url": "https://64.media.tumblr.com/20630edd0a25aa9e7594ac22c0a793b3/14856a6474ec03dc-f7/s500x750/53274535dcf2e196565558b58a8e666eea0883cc.png",
+          "type": "url",
+          "tumblr_post_id": "818246041737510912",
+          "filename": "farming susha12.png",
+          "uploaded_at": "2026-06-01T18:57:15.150Z"
+        }
+      ],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-01",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "topperh4rley",
+          "timestamp": "2026-06-01T18:57:23.741Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "topperh4rley",
+          "timestamp": "2026-06-01T18:58:04.738Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Obsolete"
+        }
+      ],
+      "id": 25,
+      "repository": null,
+      "jules_session": null,
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
+    },
+    {
+      "title": "Integración SVN en Claude Neural Chat y Jules Panel (orquestación repositorios app, scripts y docs)",
+      "descripcion": "Permitir que las herramientas de IA realicen acciones directamente sobre el SVN usando los runners de python. Automatiza tareas de gestión de assets y sincronización técnica similarmente a como se hace con la documentación. Así la IA tiene acceso a los assets del SVN y tal, espero que me entiendas.",
+      "rama": "feature/svn-ai-integration",
+      "task_type": "feature",
+      "tema_principal": "Tools / Automation",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "In Review",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc",
+        "silmaril464",
+        "topperh4rley"
+      ],
+      "email_responsable": "axel@hypenosys.com",
+      "emails_asignados": [],
+      "start_date": "2026-06-06",
+      "due_date": "2026-07-14",
+      "estimated_hours": 2,
+      "story_points": 2,
+      "tags": [
+        "api",
+        "devops",
+        "feature",
+        "infraestructura",
+        "jules-panel",
+        "neural-chat",
+        "svn"
+      ],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "Claude Chat pueda leer y y ejecutar los runners de n8n y hacer consultar en el SVN tras validar las credenciales.",
+      "blocks": [],
+      "blocked_by": [
+        "39"
+      ],
+      "comments": [
+        "Esta integración es compleja por el manejo de bloqueos binarios; sugiero empezar con operaciones de solo lectura para evitar conflictos."
+      ],
+      "images": [
+        {
+          "url": "https://64.media.tumblr.com/af51b67bf080845730ad7d05aec889dd/95d25a3a4b4c6746-da/s1280x1920/21be8c0a27312212f9c74a67bfbcb4ad213b2274.jpg",
+          "type": "url",
+          "tumblr_post_id": "818685262217560064",
+          "filename": "capture_temp.jpg",
+          "uploaded_at": "2026-06-06T15:18:28.171Z"
+        }
+      ],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T15:18:52.906Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T15:21:43.306Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "ToDo"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-06T22:06:01.076Z",
+          "field": "title",
+          "old_value": "Integración SVN en Neural Chat y Jules Panel",
+          "new_value": "Integración SVN en Claude Neural Chat y Jules Panel"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T11:22:18.670Z",
+          "field": "milestone",
+          "old_value": "M2",
+          "new_value": "M3"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:13:15.375Z",
+          "field": "repository",
+          "old_value": "hypenosys/hypenosys.github.io",
+          "new_value": "hypenosys/app"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:14:53.440Z",
+          "field": "blocked_by",
+          "old_value": "[]",
+          "new_value": "[\"39\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:38:16.102Z",
+          "field": "descripcion",
+          "old_value": "El Neural Chat (God Mode) y el Jules Panel deben poder efectuar acciones sobre el repositorio SVN de Hypenosys.\nActualmente las credenciales SVN no están introducidas en la plataforma. Esta tarea cubre la integración completa.",
+          "new_value": "El Neural Chat (God Mode) y el Jules Panel deben poder efectuar acciones sobre el repositorio SVN de Hypenosys.\nActualmente las credenciales SVN no están introducidas en la plataforma. Esta tarea cubre la integración completa. Esto sucederá cuando esté el agente cognito montado en el SVN "
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:38:16.102Z",
+          "field": "milestone",
+          "old_value": "M3",
+          "new_value": "M1"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:40:16.753Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:23:53.858Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:23:53.858Z",
+          "field": "prioridad",
+          "old_value": "ToDo",
+          "new_value": "Major"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-15T17:10:40.409Z",
+          "field": "title",
+          "old_value": "Integración SVN en Claude Neural Chat y Jules Panel",
+          "new_value": "Integración SVN en Claude Neural Chat y Jules Panel (orquestación repositorios app, scripts y docs)"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-15T19:19:43.651Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T10:49:11.414Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "OK"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:50:30.208Z",
+          "field": "seccion",
+          "new_value": "SVN Admin Panel"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-22T00:06:30.576Z",
+          "field": "estado",
+          "old_value": "OK",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-03T11:07:42.217Z",
+          "field": "descripcion",
+          "old_value": "Permitir que las herramientas de IA realicen acciones directamente sobre el SVN. Automatiza tareas de gestión de assets y sincronización técnica.",
+          "new_value": "Permitir que las herramientas de IA realicen acciones directamente sobre el SVN usando los runners de python. Automatiza tareas de gestión de assets y sincronización técnica similarmente a como se hace con la documentación."
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-03T11:07:42.217Z",
+          "field": "due_date",
+          "old_value": "2026-06-14",
+          "new_value": "2026-07-14"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-03T11:07:42.217Z",
+          "field": "repository",
+          "old_value": "hypenosys/app",
+          "new_value": "hypenosys/hypenosys.github.io"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-03T11:09:12.879Z",
+          "field": "descripcion",
+          "old_value": "Permitir que las herramientas de IA realicen acciones directamente sobre el SVN usando los runners de python. Automatiza tareas de gestión de assets y sincronización técnica similarmente a como se hace con la documentación.",
+          "new_value": "Permitir que las herramientas de IA realicen acciones directamente sobre el SVN usando los runners de python. Automatiza tareas de gestión de assets y sincronización técnica similarmente a como se hace con la documentación. Así la IA tiene acceso a los assets del SVN y tal, espero que me entiendas."
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-08T23:49:08.895Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-08T23:49:08.895Z",
+          "field": "asignados",
+          "old_value": "[\"axlfc\",\"topperh4rley\"]",
+          "new_value": "[\"axlfc\",\"silmaril464\",\"topperh4rley\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-18T13:37:47.066Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-23T10:43:11.751Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
+        }
+      ],
+      "id": 35,
+      "seccion": "SVN Admin Panel",
+      "jules_session": null,
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
+    },
+    {
+      "title": "EDITAR ALIAS / CONFIG Arreglar edit aliases Lightbox en panel de Jules ",
+      "descripcion": "Corregir el Lightbox de edición de alias de repositorios que dejó de funcionar. Es necesario para personalizar la visualización de los proyectos.",
+      "rama": "fix/edit-alias-config",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Cosmetic",
+      "milestone": "M1",
+      "estado": "Obsolete",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Axel",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": 2,
+      "story_points": null,
+      "tags": [
+        "bug",
+        "frontend"
+      ],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "Al pulsar el botón, se abra el modal y permita guardar cambios.",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [
+        "Parece un conflicto con la carga dinámica de componentes; revisaré el orden de inicialización en el DOM tras el último refactor."
+      ],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-07",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T11:26:48.195Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:21:06.644Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Cosmetic"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-11T09:38:16.968Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Obsolete"
+        }
+      ],
+      "id": 37,
+      "jules_session": null,
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
+    },
+    {
+      "title": "protección nsfw en las subidas a Tumblr y filtro is Cloudflare on por si peta la subida imágenes",
+      "descripcion": "Implementar filtros de seguridad y validaciones para las subidas de imágenes. Evita fallos si Cloudflare está caído y asegura contenido permitido.",
+      "rama": "bug/tumblr-nsfw-cloudflare",
+      "task_type": "bug",
+      "tema_principal": "Tools / Automation",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Minor",
+      "milestone": "M3",
+      "estado": "ToDo",
+      "completitud": 1,
+      "resuelto_por": "Mitxel",
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc",
+        "mitxel2022"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-06-07",
+      "due_date": "2026-06-14",
+      "estimated_hours": 4,
+      "story_points": 1,
+      "tags": [
+        "api",
+        "bug",
+        "security"
+      ],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "estaria bien hacher un check de cloudflare si hay problemas para evitar fallos de subida de imágenes",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [
+        "El webhook de n8n para detección NSFW ya está listo, solo falta la integración final en el frontend de subida de tareas."
+      ],
+      "images": [
+        {
+          "url": "https://64.media.tumblr.com/bf452d867339cd09c256bda21f1ce0f8/083fd4f80c7ebbf5-13/s1280x1920/f984d48241f051d079c8ce8a4cede1e997dd564e.jpg",
+          "type": "url",
+          "tumblr_post_id": "818847550169841664",
+          "filename": "7598.jpg",
+          "uploaded_at": "2026-06-08T10:17:58.371Z"
+        },
+        {
+          "url": "https://64.media.tumblr.com/64ec33bd09cced9bb711c6b9a7096e4d/84757efe98ef2157-fe/s1280x1920/58e07c2a0e5a6db433aeb7b21427587ed9c1fdc5.png",
+          "type": "url",
+          "tumblr_post_id": "818847600116711424",
+          "filename": "1000052877.png",
+          "uploaded_at": "2026-06-08T10:18:45.188Z"
+        }
+      ],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-07",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:01:36.842Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:02:13.802Z",
+          "field": "asignados",
+          "old_value": "[]",
+          "new_value": "[\"axlfc\",\"topperh4rley\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:02:13.802Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-06-14"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:16:49.812Z",
+          "field": "title",
+          "old_value": "Fallo tumblr subida extra ",
+          "new_value": "Movil: Fallo tumblr subida imágenes"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:16:49.812Z",
+          "field": "repository",
+          "old_value": null,
+          "new_value": "hypenosys/hypenosys.github.io"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-07T19:17:08.861Z",
+          "field": "task_type",
+          "old_value": "feature",
+          "new_value": "bug"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:19:21.486Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "OK"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:19:21.486Z",
+          "field": "completitud",
+          "old_value": 0,
+          "new_value": 1
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:20:43.388Z",
+          "field": "estado",
+          "old_value": "OK",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:22:32.289Z",
+          "field": "title",
+          "old_value": "Movil: Fallo tumblr subida imágenes",
+          "new_value": "Protección Cloudflare: Fallo tumblr subida imágenes"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:22:32.289Z",
+          "field": "descripcion",
+          "old_value": "Arreglar subida de imagenes en las tasks mobil",
+          "new_value": "Arreglar subida de imagenes en las tasks mobil, si no hay disponibilidad de cloudflare no se puede, mostrar aviso"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:30:44.047Z",
+          "field": "title",
+          "old_value": "Protección Cloudflare: Fallo tumblr subida imágenes",
+          "new_value": "Cloudflare: Protección en las subidas a Tumblr por si peta la subida imágenes"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:30:44.047Z",
+          "field": "descripcion",
+          "old_value": "Arreglar subida de imagenes en las tasks mobil, si no hay disponibilidad de cloudflare no se puede, mostrar aviso",
+          "new_value": "Arreglar subida de imagenes en las tasks mobil, si no hay disponibilidad de cloudflare no se puede, mostrar aviso. añadir webhook de n8n para identificar imágenes NO permitidas."
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:34:26.741Z",
+          "field": "descripcion",
+          "old_value": "Arreglar subida de imagenes en las tasks mobil, si no hay disponibilidad de cloudflare no se puede, mostrar aviso. añadir webhook de n8n para identificar imágenes NO permitidas.",
+          "new_value": "Implementar filtro de subida de imagenes en las tasks mobil, si no hay disponibilidad de cloudflare no se puede, mostrar aviso para ambos casos añadir webhook de n8n para identificar imágenes NO permitidas. workflow de n8n de reconocimiento de nsfw"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:34:26.741Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:35:24.249Z",
+          "field": "title",
+          "old_value": "Cloudflare: Protección en las subidas a Tumblr por si peta la subida imágenes",
+          "new_value": "protección nsfw en las subidas a Tumblr y filtro is Cloudflare on por si peta la subida imágenes"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T10:35:24.249Z",
+          "field": "descripcion",
+          "old_value": "Implementar filtro de subida de imagenes en las tasks mobil, si no hay disponibilidad de cloudflare no se puede, mostrar aviso para ambos casos añadir webhook de n8n para identificar imágenes NO permitidas. workflow de n8n de reconocimiento de nsfw",
+          "new_value": "Implementar filtro de subida de imagenes en las tasks, si no hay disponibilidad de cloudflare no se puede, mostrar aviso para ambos casos añadir webhook de n8n para identificar imágenes NO permitidas. workflow de n8n de reconocimiento de nsfw"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:05:59.882Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:24:12.864Z",
+          "field": "asignados",
+          "old_value": "[\"axlfc\",\"topperh4rley\"]",
+          "new_value": "[\"axlfc\",\"mitxel2022\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:25:45.854Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-15T17:09:23.130Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Minor"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-15T20:03:17.870Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "ToDo"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:43:50.322Z",
+          "field": "seccion",
+          "new_value": "Dashboard"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T14:56:43.397Z",
+          "field": "milestone",
+          "old_value": "M1",
+          "new_value": "M3"
+        }
+      ],
+      "id": 40,
+      "seccion": "Dashboard",
+      "jules_session": null,
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
+    },
+    {
+      "title": "Cognito-Agent en Claude Neural API desde n8n con ingestión en Qdrant + Kavita (UOC) + PSQL + Python and JavaScript runners (n8n)",
+      "descripcion": "orquestar workflows de forma segura y escalable. Incluye citation",
+      "rama": "chore/n8n-api-worker",
+      "task_type": "chore",
+      "tema_principal": "Tools / Automation",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Medium",
+      "milestone": "M3",
+      "estado": "In Review",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [
+        "mitxel2022"
+      ],
+      "email_responsable": "axel@hypenosys.com",
+      "emails_asignados": [],
+      "start_date": "2026-06-08",
+      "due_date": "2026-06-14",
+      "estimated_hours": 4,
+      "story_points": 1,
+      "tags": [
+        "api",
+        "chore",
+        "devops",
+        "security"
+      ],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "El worker gestione correctamente los tokens y la comunicación.",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [
+        "La seguridad del token en el worker es prioritaria; usaremos variables de entorno cifradas (secrets) para proteger el acceso a n8n."
+      ],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-08",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-08T13:51:40.884Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:11:22.389Z",
+          "field": "title",
+          "old_value": "Controlar con Claude Neural API de n8n",
+          "new_value": "Cognito-Agent: Controlar con Claude Neural API de n8n"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:11:34.629Z",
+          "field": "title",
+          "old_value": "Cognito-Agent: Controlar con Claude Neural API de n8n",
+          "new_value": "Controlar con Claude Neural API de n8n"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:13:44.937Z",
+          "field": "asignados",
+          "old_value": "[\"mitxel2022\",\"topperh4rley\"]",
+          "new_value": "[\"mitxel2022\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:21:52.007Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-16T13:06:34.162Z",
+          "field": "title",
+          "old_value": "Controlar con Claude Neural API de n8n",
+          "new_value": "Cognito-Agent en Claude Neural API desde n8n con ingestión en Qdrant + Kavita (UOC) + PSQL"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-16T13:06:34.162Z",
+          "field": "descripcion",
+          "old_value": "Integrar la API de n8n en el flujo de trabajo de la IA mediante Cloudflare Workers. Permite orquestar workflows de forma segura y escalable.",
+          "new_value": "orquestar workflows de forma segura y escalable. Incluye citation"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-16T13:06:34.162Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Medium"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:44:24.899Z",
+          "field": "seccion",
+          "new_value": "Backend n8n"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-23T12:41:15.392Z",
+          "field": "title",
+          "old_value": "Cognito-Agent en Claude Neural API desde n8n con ingestión en Qdrant + Kavita (UOC) + PSQL",
+          "new_value": "Cognito-Agent en Claude Neural API desde n8n con ingestión en Qdrant + Kavita (UOC) + PSQL + Python and JavaScript runners (n8n)"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-16T07:18:59.596Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
+        }
+      ],
+      "id": 44,
+      "seccion": "Backend n8n",
+      "jules_session": null,
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
+    },
+    {
+      "title": "Install Penpot and Hermes Agent in ZimaBoard",
+      "descripcion": "",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Concepto / GDD",
+      "repository": "hypenosys/docs",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Obsolete",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-11",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-11T19:14:45.685Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:35:14.968Z",
+          "field": "repository",
+          "old_value": null,
+          "new_value": "hypenosys/docs"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T10:45:23.375Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Obsolete"
+        }
+      ],
+      "id": 50,
+      "jules_session": null,
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
+    },
+    {
+      "title": "Análisis de representación conceptual y visual: Dashboard",
+      "descripcion": "Observar y listar todas las features presentes o deficientes y si se visualizan y monitorizan correctamente en el harness y si hace falta o no escribir los test (consultar team programación) \n\nusad el excalidraw con las capturas y flechitas para enriquecer la imagen con el stiches o que se yo xD\n\nTodas estas historias van en informes al obsidian (repositorio hypenosys/docs)",
+      "rama": "master",
+      "task_type": "chore",
+      "tema_principal": "Concepto / GDD",
+      "repository": "hypenosys/docs",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Obsolete",
+      "completitud": 0.3,
+      "resuelto_por": "Javi",
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc",
+        "dkdidac-design",
+        "javi26031994-a11y",
+        "topperh4rley"
+      ],
+      "email_responsable": "javi@hypenosys.com",
+      "emails_asignados": [
+        "alex@hypenosys.com",
+        "didac@hypenosys.com",
+        "mitxel@hypenosys.com"
+      ],
+      "start_date": "2026-06-13",
+      "due_date": "2026-06-28",
+      "estimated_hours": 6,
+      "story_points": 8,
+      "tags": [
+        "UX/UI"
+      ],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "Shortcut mini favoritos (actualmente en https://hypenosys.github.io/tech-stack/ ) ",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [
+        {
+          "url": "https://64.media.tumblr.com/7568dc327e51e3a5715c975cb9de5090/7572980993b0ec54-76/s1280x1920/398a5f43976457ee34ce9e6c0b95508e2851fb8d.png",
+          "type": "url",
+          "tumblr_post_id": "819295507763560448",
+          "filename": "7826.png",
+          "uploaded_at": "2026-06-13T08:58:03.818Z"
+        }
+      ],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-13",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:04:00.586Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:15:33.974Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:15:33.974Z",
+          "field": "asignados",
+          "old_value": "[\"dkdidac-design\",\"javi26031994-a11y\",\"topperh4rley\"]",
+          "new_value": "[\"javi26031994-a11y\",\"topperh4rley\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:19:08.736Z",
+          "field": "descripcion",
+          "old_value": "Listar todas las features y si se visualiza correctamente el harness si hace falta escribir los test",
+          "new_value": "Observar y listar todas las features presentes o deficientes y si se visualizan y monitorizan correctamente en el harness y si hace falta o no escribir los test (consultar team programación)\n\nusad el excalidraw con las capturas y flechitas para enriquecer la imagen con el stiches o que se yo xD\n\nTodas estas historias van al obsidian"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:19:08.736Z",
+          "field": "prioridad",
+          "old_value": "Cosmetic",
+          "new_value": "Major"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:19:08.736Z",
+          "field": "asignados",
+          "old_value": "[\"javi26031994-a11y\",\"topperh4rley\"]",
+          "new_value": "[\"axlfc\",\"dkdidac-design\",\"javi26031994-a11y\",\"topperh4rley\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:19:08.736Z",
+          "field": "completitud",
+          "old_value": 0,
+          "new_value": 0.3
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:19:08.736Z",
+          "field": "repository",
+          "old_value": "hypenosys/hypenosys.github.io",
+          "new_value": "hypenosys/docs"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:29:03.812Z",
+          "field": "title",
+          "old_value": "Refactor visual: Dashboard",
+          "new_value": "Análisis de representación conceptual y visual: Dashboard"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:29:03.812Z",
+          "field": "descripcion",
+          "old_value": "Observar y listar todas las features presentes o deficientes y si se visualizan y monitorizan correctamente en el harness y si hace falta o no escribir los test (consultar team programación)\n\nusad el excalidraw con las capturas y flechitas para enriquecer la imagen con el stiches o que se yo xD\n\nTodas estas historias van al obsidian",
+          "new_value": "Observar y listar todas las features presentes o deficientes y si se visualizan y monitorizan correctamente en el harness y si hace falta o no escribir los test (consultar team programación) \n\nusad el excalidraw con las capturas y flechitas para enriquecer la imagen con el stiches o que se yo xD\n\nTodas estas historias van en informes al obsidian (repositorio hypenosys/docs)"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-13T09:29:03.812Z",
+          "field": "milestone",
+          "old_value": "M2",
+          "new_value": "M1"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-16T13:06:51.345Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:45:42.822Z",
+          "field": "seccion",
+          "new_value": "Dashboard"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-22T00:25:01.442Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "Obsolete"
+        }
+      ],
+      "id": 51,
+      "seccion": "Dashboard",
+      "jules_session": null,
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
+    },
+    {
+      "title": "Map local repositories as Obsidian Markdown Files Knowledge mocking a Vector Database in SVN  so AI just can recover the needed text and giving visual proof",
+      "descripcion": "Use Three Folders and a File in SVN.\n\nConnect Python (beta) and Javascript willing to be run code automated with the runners in n8n. Create mocks of shared Templates structures and RAG retrieval with critique\n\nTools for the AI to call with SVN python virtual environments and so on.\n\nEnsure /docs is properly readable by Neural Chat before starting this. WE HAVE IT!! But the needed of mock could let us troubleshoot all repositories and so on.",
+      "rama": "master",
+      "task_type": "chore",
+      "tema_principal": "Tools / Automation",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Major",
+      "milestone": "M2",
+      "estado": "In Review",
+      "completitud": 0.3,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc"
+      ],
+      "email_responsable": "axel@hypenosys.github.io",
+      "emails_asignados": [
+        "axel@hypenosys.com"
+      ],
+      "start_date": "2026-06-14",
+      "due_date": "2026-06-21",
+      "estimated_hours": 24,
+      "story_points": 7,
+      "tags": [
+        "Infraestructura",
+        "chat",
+        "matrix"
+      ],
+      "external_links": [],
+      "subtasks": [
+        {
+          "id": 1783071463048,
+          "text": "Instalar server de matrix en ZimaBoard",
+          "done": false
+        },
+        {
+          "id": 1783071714380,
+          "text": "Crear UX/UI en una nueva página creada parecida a claude chat, pero grupal y utilizamos el backend de matrix para gestionar las comunicaciones",
+          "done": false
+        },
+        {
+          "id": 1783071763769,
+          "text": "Asegurar que backend responde al uso acorde al sistema de login con seguridad y encriptamiento end to end",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-14",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-14T09:02:17.899Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-15T17:12:50.714Z",
+          "field": "title",
+          "old_value": "Connect and Sync Obsidian with Vector Database",
+          "new_value": "Map local Obsidian Markdown Files Knowledge mocking a Vector Database so AI just can recover the needed text"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-15T17:12:50.714Z",
+          "field": "descripcion",
+          "old_value": "",
+          "new_value": "Use Three Folders and a File."
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-15T17:12:50.714Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Medium"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-15T17:12:50.714Z",
+          "field": "milestone",
+          "old_value": "M1",
+          "new_value": "M2"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-15T22:19:12.900Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:44:48.668Z",
+          "field": "seccion",
+          "new_value": "Documentación Web"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-22T00:11:01.230Z",
+          "field": "title",
+          "old_value": "Map local Obsidian Markdown Files Knowledge mocking a Vector Database so AI just can recover the needed text",
+          "new_value": "Map local Obsidian Markdown Files Knowledge mocking a Vector Databasein SVN  so AI just can recover the needed text"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-22T00:11:01.230Z",
+          "field": "descripcion",
+          "old_value": "Use Three Folders and a File.",
+          "new_value": "Use Three Folders and a File in SVN.\n\nConnect Python (beta) and Javascript willing to be run code automated with the runners in n8n.\n\nTools for the AI to call with SVN python virtual environments and so on.\n\nEnsure /docs is properly readable by Neural Chat before starting this"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-22T00:11:01.230Z",
+          "field": "prioridad",
+          "old_value": "Medium",
+          "new_value": "Major"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-22T00:11:01.230Z",
+          "field": "repository",
+          "old_value": "hypenosys/docs",
+          "new_value": "hypenosys/hypenosys.github.io"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-27T17:30:54.029Z",
+          "field": "title",
+          "old_value": "Map local Obsidian Markdown Files Knowledge mocking a Vector Databasein SVN  so AI just can recover the needed text",
+          "new_value": "Map local Obsidian Markdown Files Knowledge mocking a Vector Database in SVN  so AI just can recover the needed text"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-03T09:46:15.007Z",
+          "field": "title",
+          "old_value": "Map local Obsidian Markdown Files Knowledge mocking a Vector Database in SVN  so AI just can recover the needed text",
+          "new_value": "Map local repositories as Obsidian Markdown Files Knowledge mocking a Vector Database in SVN  so AI just can recover the needed text and giving visual proof"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-03T09:46:15.007Z",
+          "field": "descripcion",
+          "old_value": "Use Three Folders and a File in SVN.\n\nConnect Python (beta) and Javascript willing to be run code automated with the runners in n8n.\n\nTools for the AI to call with SVN python virtual environments and so on.\n\nEnsure /docs is properly readable by Neural Chat before starting this",
+          "new_value": "Use Three Folders and a File in SVN.\n\nConnect Python (beta) and Javascript willing to be run code automated with the runners in n8n. Create mocks of shared Templates structures and RAG retrieval with critique\n\nTools for the AI to call with SVN python virtual environments and so on.\n\nEnsure /docs is properly readable by Neural Chat before starting this. WE HAVE IT!! But the needed of mock could let us troubleshoot all repositories and so on."
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-03T09:46:15.007Z",
+          "field": "asignados",
+          "old_value": "[]",
+          "new_value": "[\"axlfc\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-03T09:46:15.007Z",
+          "field": "tags",
+          "old_value": "[]",
+          "new_value": "[\"Infraestructura\",\"chat\",\"matrix\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-03T09:46:15.007Z",
+          "field": "completitud",
+          "old_value": 0,
+          "new_value": 0.3
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-16T07:19:07.518Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
+        }
+      ],
+      "id": 52,
+      "seccion": "Documentación Web",
+      "jules_session": null,
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
+    },
+    {
+      "title": "Arreglar subida a Tumblr de audios, video, image para music-gen y image y anim studio",
+      "descripcion": "Habrá que crear unos workflows en n8n que de alguna manera, retornen las imágenes y los sonidos que saca ComfyUI de vuelta otra vez a la plataforma, y que estas se suban a Tumblr.\n\nEsta tarea está bloqueada por los filtros NSFW.",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Axel",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-14",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-14T10:06:12.817Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-15T19:04:04.896Z",
+          "field": "title",
+          "old_value": "Arreglar subida a Tumblr de audios para music-gen",
+          "new_value": "Arreglar subida a Tumblr de audios, video, image para music-gen y image y anim studio"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:43:23.618Z",
+          "field": "seccion",
+          "new_value": "Music Gen, Image Gen"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:54:50.257Z",
+          "field": "seccion",
+          "old_value": "Music Gen, Image Gen",
+          "new_value": "Music Gen, Image Gen, Backend n8n"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-22T00:12:15.482Z",
+          "field": "descripcion",
+          "old_value": "",
+          "new_value": "Habrá que crear unos workflows en n8n que de alguna manera, retornen las imágenes y los sonidos que saca ComfyUI de vuelta otra vez a la plataforma, y que estas se suban a Tumblr.\n\nEsta tarea está bloqueada por los filtros NSFW."
+        }
+      ],
+      "id": 53,
+      "seccion": "Music Gen, Image Gen, Backend n8n",
+      "jules_session": null,
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
+    },
+    {
+      "title": "tarea de prueba",
+      "descripcion": "dile al jules que es una prueba",
+      "rama": "",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "repository": null,
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Obsolete",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Alex",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "test"
+      ],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-15",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "topperh4rley",
+          "timestamp": "2026-06-15T10:02:56.848Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "topperh4rley",
+          "timestamp": "2026-06-15T10:03:27.312Z",
+          "field": "tags",
+          "old_value": "[]",
+          "new_value": "[\"test\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-22T00:05:36.053Z",
+          "field": "estado",
+          "old_value": "OK",
+          "new_value": "Obsolete"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-22T00:05:36.053Z",
+          "field": "seccion",
+          "new_value": ""
+        }
+      ],
+      "id": 54,
+      "seccion": "",
+      "jules_session": null,
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
+    },
+    {
+      "title": "Nos podemos asegurar que la conexión en Claude chat con la documentación es real?",
+      "descripcion": "sin malgastar un token, puro Markdown",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Major",
+      "milestone": "M2",
+      "estado": "OK",
+      "completitud": 0.5,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [],
+      "email_responsable": "axel@hypenosys.com",
+      "emails_asignados": [],
+      "start_date": "2026-07-03",
+      "due_date": "2026-07-03",
+      "estimated_hours": 2,
+      "story_points": 2,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-15",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-15T19:21:12.201Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-15T22:19:01.472Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:44:58.553Z",
+          "field": "seccion",
+          "new_value": "Chat Neural"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-02T23:02:21.205Z",
+          "field": "due_date",
+          "old_value": null,
+          "new_value": "2026-07-03"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-03T09:47:35.862Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-03T09:47:35.862Z",
+          "field": "completitud",
+          "old_value": 0,
+          "new_value": 0.5
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-16T07:17:38.717Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "OK"
+        }
+      ],
+      "id": 55,
+      "seccion": "Chat Neural",
+      "jules_session": null,
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
+    },
+    {
+      "title": "Añadir terminal física en 'comandos' cuando están logueados en github y SVN en repo-admin",
+      "descripcion": "habilitar sistma operativo de edición y mantenimiento de cambios y merges inteligentes",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Medium",
+      "milestone": "M2",
+      "estado": "ToDo",
+      "completitud": 0.5,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": 4,
+      "story_points": 4,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-17",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-17T14:22:09.289Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:43:04.693Z",
+          "field": "seccion",
+          "new_value": "SVN Admin Panel"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T12:55:18.397Z",
+          "field": "seccion",
+          "old_value": "SVN Admin Panel",
+          "new_value": "SVN Admin Panel, Comandos"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-21T14:56:53.250Z",
+          "field": "milestone",
+          "old_value": "M1",
+          "new_value": "M2"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-03T19:37:32.805Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-09T12:34:18.393Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Medium"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-09T12:34:18.393Z",
+          "field": "completitud",
+          "old_value": 0,
+          "new_value": 0.5
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-23T10:45:42.634Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "ToDo"
+        }
+      ],
+      "id": 57,
+      "seccion": "SVN Admin Panel, Comandos",
+      "jules_session": null,
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
+    },
+    {
+      "title": "Arreglar sesiones jules panel",
+      "descripcion": "Se tendria que poder crear una sesion con nombre cuando haces click al boton de nueva sesion, independientem,ente de que envies por kanban",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Medium",
+      "milestone": "M1",
+      "estado": "Fixed",
+      "completitud": 0,
+      "resuelto_por": "Alex",
+      "detectado_por": "Alex",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-21",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "topperh4rley",
+          "timestamp": "2026-06-21T11:30:15.418Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 64,
+      "jules_session": null,
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
+    },
+    {
+      "title": "Improve hypenosys logo y crear favicon",
+      "descripcion": "Usar sesiones de Jules para sacar versiones y variaciones del logo,\n\nCrear logo proporción cuadrado ",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Arte / Assets",
+      "seccion": "Logo",
+      "repository": "hypenosys/hypenosys-logo",
+      "prioridad": "Critical",
+      "milestone": "M1",
+      "estado": "In Review",
+      "completitud": 0,
+      "resuelto_por": "Dídac",
+      "detectado_por": "Axel",
+      "asignados": [
+        "topperh4rley"
+      ],
+      "email_responsable": "didac@hypenosys.com",
+      "emails_asignados": [],
+      "start_date": "2026-06-23",
+      "due_date": "2026-07-26",
+      "estimated_hours": 4,
+      "story_points": 4,
+      "tags": [
+        "Art",
+        "logo"
+      ],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-23",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-23T21:03:24.367Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-02T23:02:57.924Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-03T19:37:05.881Z",
+          "field": "descripcion",
+          "old_value": "",
+          "new_value": "Usar sesiones de Jules para sacar versiones y variaciones del logo"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-03T19:37:05.881Z",
+          "field": "prioridad",
+          "old_value": "Major",
+          "new_value": "Cosmetic"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-23T10:26:43.538Z",
+          "field": "descripcion",
+          "old_value": "Usar sesiones de Jules para sacar versiones y variaciones del logo",
+          "new_value": "Usar sesiones de Jules para sacar versiones y variaciones del logo,\n\nCrear logo cuadrado pequeño"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-23T10:26:43.538Z",
+          "field": "due_date",
+          "old_value": "2026-06-28",
+          "new_value": "2026-07-26"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-23T10:45:28.711Z",
+          "field": "prioridad",
+          "old_value": "Cosmetic",
+          "new_value": "Critical"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-23T22:06:51.607Z",
+          "field": "title",
+          "old_value": "Improve hypenosys logo",
+          "new_value": "Improve hypenosys logo y crear favicon"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-23T22:06:51.607Z",
+          "field": "descripcion",
+          "old_value": "Usar sesiones de Jules para sacar versiones y variaciones del logo,\n\nCrear logo cuadrado pequeño",
+          "new_value": "Usar sesiones de Jules para sacar versiones y variaciones del logo,\n\nCrear logo proporción cuadrado "
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-08-26T21:07:06.204Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
+        }
+      ],
+      "id": 70,
+      "jules_session": null,
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
+    },
+    {
+      "title": "Arreglo de jjules panel descripcion de repo y branch",
+      "descripcion": "arreglar en jules panel respetando el estilo de la web",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "seccion": "",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Alex",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-24",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "topperh4rley",
+          "timestamp": "2026-06-24T17:46:08.958Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 71,
+      "jules_session": null,
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
+    },
+    {
+      "title": "Fix: Img-Gen txt2image - ComfyUI usa CPU en lugar de GPU",
+      "descripcion": "Hemos vaciado la memoria de la GPU del modelo al generar la imagen, pero hay como un bug que sigue tirando de CPU en lugar de usar la GPU",
+      "rama": "master",
+      "task_type": "bug",
+      "tema_principal": "Programación / Engine",
+      "seccion": "n8n",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Major",
+      "milestone": "M2",
+      "estado": "In Review",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc"
+      ],
+      "email_responsable": "axel@hypenosys.com",
+      "emails_asignados": [],
+      "start_date": "2026-06-28",
+      "due_date": "2026-07-05",
+      "estimated_hours": 3,
+      "story_points": 3,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-06-28",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-28T10:09:46.784Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-28T13:43:29.712Z",
+          "field": "descripcion",
+          "old_value": "",
+          "new_value": "Hemos vaciado la memoria de la GPU del modelo al generar la imagen"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-06-28T13:43:29.712Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "In Review"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-16T07:18:22.664Z",
+          "field": "descripcion",
+          "old_value": "Hemos vaciado la memoria de la GPU del modelo al generar la imagen",
+          "new_value": "Hemos vaciado la memoria de la GPU del modelo al generar la imagen, pero hay como un bug que sigue tirando de CPU en lugar de usar la GPU"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-16T07:18:22.664Z",
+          "field": "estado",
+          "old_value": "In Review",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-16T07:18:22.664Z",
+          "field": "asignados",
+          "old_value": "[]",
+          "new_value": "[\"axlfc\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-23T10:43:26.306Z",
+          "field": "task_type",
+          "old_value": "feature",
+          "new_value": "bug"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-08-26T21:00:30.872Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
+        }
+      ],
+      "id": 72,
+      "jules_session": null,
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
+    },
+    {
+      "title": "Crear matrix server en Oracle",
+      "descripcion": "Para los pipes de comunicación, pudiendo crear rooms y foros indexados con creación de wiki continua además del CHANGELOG.md",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Matrix-Server-Docker",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Major",
+      "milestone": "M2",
+      "estado": "OK",
+      "completitud": 0.3,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [
+        "mitxel2022"
+      ],
+      "email_responsable": "axel@hypenosys.com",
+      "emails_asignados": [],
+      "start_date": "2026-07-03",
+      "due_date": "2026-07-19",
+      "estimated_hours": 6,
+      "story_points": 6,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "Basándome en la configuración existente del repo (servicios `matrix-postgres`, `matrix-synapse`, `Dockerfile.matrix`, `.config/matrix/homeserver.yaml` y `scripts/matrix-entrypoint.sh`), aquí tienes un stack **standalone** extraído y adaptado para ZimaBoard 2 (Intel N100, x86_64, sin GPU):\n\n---\n\n## Estructura de ficheros\n\n```\nmatrix-zimaboard/\n├── docker-compose.yml\n├── .env\n├── secrets/\n│   ├── matrix_db_password.txt\n│   └── redis_password.txt\n├── config/\n│   └── homeserver.yaml\n├── scripts/\n│   └── matrix-entrypoint.sh\n└── data/\n    ├── matrix-postgres/\n    ├── matrix-synapse/\n    └── redis/\n```\n\n---\n\n## `docker-compose.yml`\n\nBasado en los servicios `matrix-postgres` y `matrix-synapse` del compose principal: [1](#0-0) \n\n```yaml\n# ============================================================\n# Matrix Stack para ZimaBoard 2 (Intel N100, x86_64)\n# Servicios: Synapse + PostgreSQL + Redis + Element Web\n# ============================================================\n\nvolumes:\n  matrix_data:\n  matrix_postgres_data:\n  redis_data:\n\nnetworks:\n  matrix_net:\n    driver: bridge\n    ipam:\n      config:\n        - subnet: 172.30.0.0/24\n\nsecrets:\n  matrix_db_password:\n    file: ./secrets/matrix_db_password.txt\n  redis_password:\n    file: ./secrets/redis_password.txt\n\nservices:\n\n  # ──────────────────────────────────────────\n  # PostgreSQL dedicado para Synapse\n  # ──────────────────────────────────────────\n  matrix-postgres:\n    image: postgres:16-alpine\n    hostname: matrix-postgres\n    container_name: matrix-postgres\n    networks:\n      - matrix_net\n    restart: unless-stopped\n    secrets:\n      - matrix_db_password\n    environment:\n      POSTGRES_USER: matrix_user\n      POSTGRES_PASSWORD_FILE: /run/secrets/matrix_db_password\n      POSTGRES_DB: matrix_synapse\n      # Synapse requiere UTF8 + locale C\n      POSTGRES_INITDB_ARGS: \"--encoding=UTF8 --locale=C --auth-host=scram-sha-256\"\n      PGDATA: /var/lib/postgresql/data/pgdata\n    command:\n      - \"postgres\"\n      - \"-c\"\n      - \"max_connections=100\"\n      - \"-c\"\n      - \"shared_buffers=128MB\"\n    volumes:\n      - ./data/matrix-postgres:/var/lib/postgresql/data\n    healthcheck:\n      test: [\"CMD-SHELL\", \"pg_isready -U matrix_user -d matrix_synapse\"]\n      interval: 10s\n      timeout: 5s\n      retries: 5\n      start_period: 30s\n    security_opt:\n      - no-new-privileges:true\n    cap_drop:\n      - ALL\n    cap_add:\n      - CHOWN\n      - SETUID\n      - SETGID\n      - DAC_OVERRIDE\n    deploy:\n      resources:\n        limits:\n          cpus: '1.0'\n          memory: 512M\n        reservations:\n          memory: 128M\n    logging:\n      driver: \"json-file\"\n      options:\n        max-size: \"10m\"\n        max-file: \"3\"\n\n  # ──────────────────────────────────────────\n  # Redis — cache de sesiones y presencia\n  # ──────────────────────────────────────────\n  redis:\n    image: redis:7.2-alpine\n    hostname: redis\n    container_name: matrix-redis\n    networks:\n      - matrix_net\n    restart: unless-stopped\n    secrets:\n      - redis_password\n    # Lee la contraseña del secret y arranca con requirepass\n    command: >\n      sh -c \"redis-server --requirepass $$(cat /run/secrets/redis_password)\n             --maxmemory 128mb\n             --maxmemory-policy allkeys-lru\"\n    volumes:\n      - redis_data:/data\n    healthcheck:\n      test:\n        - \"CMD-SHELL\"\n        - \"redis-cli -a $$(cat /run/secrets/redis_password) ping | grep PONG\"\n      interval: 10s\n      timeout: 3s\n      retries: 5\n      start_period: 10s\n    security_opt:\n      - no-new-privileges:true\n    cap_drop:\n      - ALL\n    deploy:\n      resources:\n        limits:\n          cpus: '0.5'\n          memory: 256M\n        reservations:\n          memory: 64M\n    logging:\n      driver: \"json-file\"\n      options:\n        max-size: \"5m\"\n        max-file: \"3\"\n\n  # ──────────────────────────────────────────\n  # Matrix Synapse — homeserver\n  # ──────────────────────────────────────────\n  matrix-synapse:\n    image: matrixdotorg/synapse:v1.104.0\n    hostname: matrix\n    container_name: matrix-synapse\n    networks:\n      - matrix_net\n    restart: unless-stopped\n    ports:\n      # Acceso desde la LAN del ZimaBoard\n      - \"8008:8008\"   # Client API + Federation\n      - \"8448:8448\"   # Federation (puerto estándar)\n    secrets:\n      - matrix_db_password\n      - redis_password\n    environment:\n      SYNAPSE_SERVER_NAME: \"${MATRIX_SERVER_NAME:-matrix.local}\"\n      SYNAPSE_REPORT_STATS: \"no\"\n      # Usados por el entrypoint para sustituir en homeserver.yaml\n      POSTGRES_HOST: matrix-postgres\n      POSTGRES_PORT: \"5432\"\n      POSTGRES_DB: matrix_synapse\n      POSTGRES_USER: matrix_user\n      REDIS_HOST: redis\n      REDIS_PORT: \"6379\"\n      REDIS_DBID: \"0\"\n      ENABLE_REGISTRATION: \"${ENABLE_REGISTRATION:-true}\"\n    volumes:\n      - matrix_data:/data\n      - ./config/homeserver.yaml:/data/homeserver.yaml:ro\n      - ./scripts/matrix-entrypoint.sh:/usr/local/bin/matrix-entrypoint.sh:ro\n      - ./data/matrix-synapse/logs:/data/logs\n      - ./data/matrix-synapse/media:/data/media_store\n    entrypoint: [\"/usr/local/bin/matrix-entrypoint.sh\"]\n    depends_on:\n      matrix-postgres:\n        condition: service_healthy\n      redis:\n        condition: service_healthy\n    healthcheck:\n      test: [\"CMD-SHELL\", \"curl -fsSL http://localhost:8008/health || exit 1\"]\n      interval: 30s\n      timeout: 10s\n      retries: 5\n      start_period: 90s\n    security_opt:\n      - no-new-privileges:true\n    cap_drop:\n      - ALL\n    cap_add:\n      - CHOWN\n      - SETUID\n      - SETGID\n      - NET_BIND_SERVICE\n    deploy:\n      resources:\n        limits:\n          # N100 tiene 4 cores — dejamos 2 para el resto del sistema\n          cpus: '2.0'\n          memory: 1G\n        reservations:\n          memory: 256M\n    logging:\n      driver: \"json-file\"\n      options:\n        max-size: \"20m\"\n        max-file: \"5\"\n\n  # ──────────────────────────────────────────\n  # Element Web — cliente Matrix en el navegador\n  # Acceso: http://<IP-ZIMABOARD>:8080\n  # ──────────────────────────────────────────\n  element-web:\n    image: vectorim/element-web:latest\n    hostname: element-web\n    container_name: element-web\n    networks:\n      - matrix_net\n    restart: unless-stopped\n    ports:\n      - \"8080:80\"\n    volumes:\n      - ./config/element-config.json:/app/config.json:ro\n    depends_on:\n      matrix-synapse:\n        condition: service_healthy\n    deploy:\n      resources:\n        limits:\n          cpus: '0.5'\n          memory: 128M\n    logging:\n      driver: \"json-file\"\n      options:\n        max-size: \"5m\"\n        max-file: \"3\"\n```\n\n---\n\n## `config/homeserver.yaml`\n\nBasado en `.config/matrix/homeserver.yaml` del repo, adaptado para testing local: [2](#0-1) \n\n```yaml\nserver_name: \"matrix.local\"\npid_file: /data/homeserver.pid\n\n# Para testing local sin TLS\npublic_baseurl: \"http://matrix.local:8008/\"\n\npresence:\n  enabled: true\n\nlisteners:\n  - port: 8008\n    tls: false\n    type: http\n    x_forwarded: true\n    bind_addresses: ['0.0.0.0']\n    resources:\n      - names: [client, federation]\n        compress: false\n\n  - port: 8448\n    tls: false\n    type: http\n    x_forwarded: true\n    bind_addresses: ['0.0.0.0']\n    resources:\n      - names: [federation]\n        compress: false\n\ndatabase:\n  name: psycopg2\n  args:\n    user: matrix_user\n    password: \"REPLACE_WITH_DB_SECRET\"   # sustituido por entrypoint\n    database: matrix_synapse\n    host: matrix-postgres\n    port: 5432\n    cp_min: 5\n    cp_max: 10\n\nredis:\n  enabled: true\n  host: redis\n  port: 6379\n  password: \"REPLACE_WITH_REDIS_SECRET\"  # sustituido por entrypoint\n  dbid: 0\n\nlog_config: \"/data/logs/homeserver.log.config\"\n\nmedia_store_path: /data/media_store\nmax_upload_size: 50M\nmax_image_pixels: 32M\ndynamic_thumbnails: true\n\n# Para testing: registro abierto con shared secret\nenable_registration: true\nenable_registration_without_verification: true\nregistration_shared_secret: \"CHANGE_THIS_SHARED_SECRET_IN_ENV\"\n\n# Seguridad mínima para testing\nmacaroon_secret_key: \"CHANGE_THIS_MACAROON_KEY_IN_ENV\"\nform_secret: \"CHANGE_THIS_FORM_SECRET_IN_ENV\"\n\nsigning_key_path: \"/data/matrix.local.signing.key\"\n\ntrusted_key_servers:\n  - server_name: \"matrix.org\"\n\n# Historial y persistencia\nretention:\n  enabled: false\n\n# Cifrado desactivado por defecto para facilitar testing\nencryption_enabled_by_default_for_room_type: off\n\n# Directorio de usuarios\nuser_directory:\n  enabled: true\n  search_all_users: true\n\n# Salas públicas\nallow_public_rooms_without_auth: true\nallow_public_rooms_over_federation: false\n\n# Rate limiting relajado para testing\nrc_message:\n  per_second: 10\n  burst_count: 50\n\nrc_registration:\n  per_second: 1\n  burst_count: 10\n\nrc_login:\n  address:\n    per_second: 1\n    burst_count: 10\n  account:\n    per_second: 1\n    burst_count: 10\n  failed_attempts:\n    per_second: 1\n    burst_count: 10\n\nurl_preview_enabled: true\nurl_preview_ip_range_blacklist:\n  - '127.0.0.0/8'\n  - '10.0.0.0/8'\n  - '172.16.0.0/12'\n  - '192.168.0.0/16'\n\npassword_config:\n  enabled: true\n\nreport_stats: false\nenable_metrics: false\n\ndefault_room_version: \"10\"\n\nforgotten_room_retention_period: 7d\n\nadmin_contact: 'mailto:admin@matrix.local'\n```\n\n---\n\n## `scripts/matrix-entrypoint.sh`\n\nBasado en el script existente del repo: [3](#0-2) \n\n```bash\n#!/bin/sh\nset -e\n\nCONFIG_FILE=/data/homeserver.yaml\n\necho \"==> Inyectando secretos en homeserver.yaml...\"\n\n# Copiar la config (es read-only) a un temporal editable\ncp /data/homeserver.yaml /tmp/homeserver.yaml\n\nif [ -f /run/secrets/matrix_db_password ]; then\n  DB_PASSWORD=$(cat /run/secrets/matrix_db_password)\n  sed -i \"s/REPLACE_WITH_DB_SECRET/${DB_PASSWORD}/g\" /tmp/homeserver.yaml\nelse\n  echo \"ERROR: Secret matrix_db_password no encontrado\"\n  exit 1\nfi\n\nif [ -f /run/secrets/redis_password ]; then\n  REDIS_PASSWORD=$(cat /run/secrets/redis_password)\n  sed -i \"s/REPLACE_WITH_REDIS_SECRET/${REDIS_PASSWORD}/g\" /tmp/homeserver.yaml\nelse\n  echo \"ERROR: Secret redis_password no encontrado\"\n  exit 1\nfi\n\n# Generar signing key si no existe\nif [ ! -f /data/matrix.local.signing.key ]; then\n  echo \"==> Generando signing key...\"\n  python3 -m synapse.app.homeserver \\\n    --server-name=\"matrix.local\" \\\n    --config-path=/tmp/homeserver.yaml \\\n    --generate-keys\nfi\n\n# Generar log config si no existe\nif [ ! -f /data/logs/homeserver.log.config ]; then\n  mkdir -p /data/logs\n  cat > /data/logs/homeserver.log.config << 'EOF'\nversion: 1\nformatters:\n  precise:\n    format: '%(asctime)s - %(name)s - %(lineno)d - %(levelname)s - %(message)s'\nhandlers:\n  file:\n    class: logging.handlers.RotatingFileHandler\n    formatter: precise\n    filename: /data/logs/homeserver.log\n    maxBytes: 52428800\n    backupCount: 3\n    encoding: utf8\n  console:\n    class: logging.StreamHandler\n    formatter: precise\nloggers:\n  synapse.storage.SQL:\n    level: WARNING\nroot:\n  level: INFO\n  handlers: [file, console]\ndisable_existing_loggers: false\nEOF\nfi\n\necho \"==> Arrancando Matrix Synapse...\"\nexec python3 -m synapse.app.homeserver \\\n  --server-name=\"matrix.local\" \\\n  --config-path=/tmp/homeserver.yaml\n```\n\n---\n\n## `config/element-config.json`\n\n```json\n{\n  \"default_server_config\": {\n    \"m.homeserver\": {\n      \"base_url\": \"http://<IP-ZIMABOARD>:8008\",\n      \"server_name\": \"matrix.local\"\n    }\n  },\n  \"brand\": \"Element\",\n  \"disable_custom_urls\": false,\n  \"disable_guests\": true,\n  \"disable_login_language_selector\": false,\n  \"disable_3pid_login\": false,\n  \"default_theme\": \"dark\",\n  \"room_directory\": {\n    \"servers\": [\"matrix.local\"]\n  },\n  \"features\": {\n    \"feature_spotlight\": true\n  },\n  \"show_labs_settings\": true\n}\n```\n\n> **Importante:** Sustituye `<IP-ZIMABOARD>` por la IP real de tu ZimaBoard (ej. `192.168.1.50`).\n\n---\n\n## `.env`\n\n```env\nMATRIX_SERVER_NAME=matrix.local\nENABLE_REGISTRATION=true\n```\n\n---\n\n## Setup inicial\n\n```bash\n# 1. Crear estructura\nmkdir -p matrix-zimaboard/{secrets,config,scripts,data/{matrix-postgres,matrix-synapse/{logs,media},redis}}\ncd matrix-zimaboard\n\n# 2. Generar contraseñas\nopenssl rand -hex 32 > secrets/matrix_db_password.txt\nopenssl rand -hex 32 > secrets/redis_password.txt\nchmod 600 secrets/*.txt\n\n# 3. Copiar los ficheros de arriba a sus rutas\n\n# 4. Hacer ejecutable el entrypoint\nchmod +x scripts/matrix-entrypoint.sh\n\n# 5. Arrancar\ndocker compose up -d\n\n# 6. Crear usuario admin (tras ~60s de arranque)\ndocker exec -it matrix-synapse register_new_matrix_user \\\n  -c /tmp/homeserver.yaml \\\n  -u admin \\\n  -p TuPasswordSegura123! \\\n  --admin \\\n  http://localhost:8008\n```\n\n---\n\n## Acceso\n\n| Servicio | URL |\n|---|---|\n| Element Web | `http://<IP-ZIMABOARD>:8080` |\n| Synapse API | `http://<IP-ZIMABOARD>:8008` |\n| Admin API | `http://<IP-ZIMABOARD>:8008/_synapse/admin/v1/` |\n\n**Compatibilidad con connect-core:** el stack usa exactamente los mismos nombres de imagen, puertos y estructura de secretos que el `docker-compose.yml` principal del repo, por lo que puedes integrarlo directamente añadiendo los servicios al compose principal o conectando ambos stacks via una red Docker externa compartida. [4](#0-3) [5](#0-4)\n\n### Citations\n\n**File:** docker-compose.yml (L14-16)\n```yaml\n  matrix_data:\n  matrix_postgres:\n  certs:\n```\n\n**File:** docker-compose.yml (L849-978)\n```yaml\n  matrix-postgres:\n    image: postgres:16-alpine\n    hostname: matrix-postgres\n    container_name: matrix-postgres\n    networks: \n      - backend\n    restart: unless-stopped\n    ports:\n      - \"127.0.0.1:5433:5432\"\n    secrets:\n      - matrix_db_password\n    environment:\n      - POSTGRES_USER=matrix_user\n      - POSTGRES_PASSWORD_FILE=/run/secrets/matrix_db_password\n      - POSTGRES_DB=matrix_synapse\n      - POSTGRES_INITDB_ARGS=--encoding=UTF8 --locale=C --auth-host=scram-sha-256\n      - PGDATA=/var/lib/postgresql/data/pgdata\n    command: \n      - \"postgres\"\n      - \"-c\"\n      - \"max_connections=100\"\n    volumes:\n      - ./data/matrix-postgres:/var/lib/postgresql/data\n    healthcheck:\n      test: [\"CMD-SHELL\", \"pg_isready -U matrix_user -d matrix_synapse\"]\n      interval: 10s\n      timeout: 5s\n      retries: 5\n      start_period: 60s\n    security_opt:\n      - no-new-privileges:true\n      - apparmor=docker-default\n    cap_drop:\n      - ALL\n    cap_add:\n      - CHOWN\n      - SETUID\n      - SETGID\n      - DAC_OVERRIDE\n    deploy:\n      resources:\n        limits:\n          cpus: '2.0'\n          memory: 2G\n        reservations:\n          memory: 512M\n    logging:\n      driver: \"json-file\"\n      options:\n        max-size: \"10m\"\n        max-file: \"5\"\n\n  matrix-synapse:\n    build:\n      context: .\n      dockerfile: Dockerfile.matrix\n    image: local/matrix-synapse:custom\n    hostname: matrix\n    container_name: matrix-synapse\n    networks: \n      - frontend\n      - backend\n    restart: unless-stopped\n    ports:\n      - \"127.0.0.1:8008:8008\"\n      - \"127.0.0.1:8448:8448\"\n    secrets:\n      - matrix_db_password\n      - redis_password\n    environment:\n      - SYNAPSE_SERVER_NAME=${MATRIX_DOMAIN:-matrix.cognito.local}\n      - SYNAPSE_REPORT_STATS=no\n      - POSTGRES_HOST=matrix-postgres\n      - POSTGRES_PORT=5432\n      - POSTGRES_DB=matrix_synapse\n      - POSTGRES_USER=matrix_user\n      - POSTGRES_PASSWORD_FILE=/run/secrets/matrix_db_password\n      - REDIS_HOST=redis\n      - REDIS_PORT=6379\n      - REDIS_PASSWORD_FILE=/run/secrets/redis_password\n      - REDIS_DBID=1\n      - POSTGRES_PASSWORD_DEFAULT=${POSTGRES_PASSWORD_DEFAULT:-change_me_in_env}\n      - REDIS_PASSWORD_DEFAULT=${REDIS_PASSWORD_DEFAULT:-change_me_in_env}\n      - ENABLE_REGISTRATION=false\n      - ENABLE_REGISTRATION_WITHOUT_VERIFICATION=false\n      - VIRTUAL_HOST=${MATRIX_DOMAIN:-matrix.cognito.local}\n      - VIRTUAL_PORT=8008\n    \n    labels:\n      - com.github.jrcs.letsencrypt_nginx_proxy_companion.enable=true\n    \n    command: [\"/usr/local/bin/matrix-entrypoint.sh\"]\n    volumes:\n      - matrix_data:/data\n      - ./config/matrix/homeserver.yaml:/data/homeserver.yaml\n      - ./scripts/matrix-entrypoint.sh:/usr/local/bin/matrix-entrypoint.sh\n      - ./logs/matrix-synapse:/data/logs\n    depends_on:\n      matrix-postgres:\n        condition: service_healthy\n      redis:\n        condition: service_healthy\n    healthcheck:\n      test: [\"CMD-SHELL\", \"curl -f http://localhost:8008/health || exit 1\"]\n      interval: 30s\n      timeout: 10s\n      retries: 3\n      start_period: 60s\n    security_opt:\n      - no-new-privileges:true\n      - apparmor=docker-default\n    cap_drop:\n      - ALL\n    cap_add:\n      - CHOWN\n      - SETUID\n      - SETGID\n      - NET_BIND_SERVICE\n    deploy:\n      resources:\n        limits:\n          cpus: '2.0'\n          memory: 2G\n        reservations:\n          memory: 512M\n    logging:\n      driver: \"json-file\"\n      options:\n        max-size: \"10m\"\n        max-file: \"5\"\n```\n\n**File:** .config/matrix/homeserver.yaml (L1-60)\n```yaml\n# Matrix Synapse Configuration\n# Place this file in: ./config/matrix/homeserver.yaml\n\n## Server ##\nserver_name: \"matrix.localhost\"  # Change to your domain\npid_file: /data/homeserver.pid\nweb_client_location: https://app.element.io/\n\n# Public baseurl for when a client needs to access the server from outside the docker network\npublic_baseurl: https://matrix.localhost/  # Change to your domain\n\n# Set the soft limit on the number of file descriptors synapse can use\n# Zero is used to indicate synapse should set the soft limit to the hard limit\nsoft_file_limit: 0\n\n# Presence tracking allows users to see the state (e.g online/offline) of other users\npresence:\n  enabled: true\n\n## Listeners ##\nlisteners:\n  # Main HTTPS listener\n  # For when matrix traffic is sent directly to synapse\n  - port: 8008\n    tls: false\n    type: http\n    x_forwarded: true\n    bind_addresses: ['0.0.0.0']\n    \n    resources:\n      - names: [client, federation]\n        compress: false\n\n  # Federation listener\n  - port: 8448\n    tls: false\n    type: http\n    x_forwarded: true\n    bind_addresses: ['0.0.0.0']\n    \n    resources:\n      - names: [federation]\n\n## Database ##\ndatabase:\n  name: psycopg2\n  args:\n    user: matrix_user\n    password: \"REPLACE_WITH_SECRET\"  # This will be replaced by entrypoint script\n    database: matrix_synapse\n    host: matrix-postgres\n    port: 5432\n    cp_min: 5\n    cp_max: 10\n\n## Logging ##\nlog_config: \"/data/matrix-synapse.log.config\"\n\n## Media Store ##\nmedia_store_path: /data/media_store\n```\n\n**File:** scripts/matrix-entrypoint.sh (L1-26)\n```shellscript\n#!/bin/sh\nset -e\n\n# Path to the homeserver.yaml\nCONFIG_FILE=/data/homeserver.yaml\n\n# Check if the database password secret exists\nif [ -f /run/secrets/matrix_db_password ]; then\n  DB_PASSWORD=$(cat /run/secrets/matrix_db_password)\n  sed -i \"s/password: \\\"REPLACE_WITH_DB_SECRET\\\"/password: \\\"$DB_PASSWORD\\\"/\" $CONFIG_FILE\nelse\n  echo \"ERROR: Matrix DB password secret not found\"\n  exit 1\nfi\n\n# Check if the Redis password secret exists\nif [ -f /run/secrets/redis_password ]; then\n  REDIS_PASSWORD=$(cat /run/secrets/redis_password)\n  sed -i \"s/password: \\\"REPLACE_WITH_REDIS_SECRET\\\"/password: \\\"$REDIS_PASSWORD\\\"/\" $CONFIG_FILE\nelse\n  echo \"ERROR: Redis password secret not found\"\n  exit 1\nfi\n\n# Execute the original Synapse entrypoint\nexec /start.py start\n```\n\n**File:** Dockerfile.matrix (L1-26)\n```text\nFROM matrixdotorg/synapse:v1.104.0\n\n# Metadata\nLABEL maintainer=\"Your Name\"\nLABEL description=\"Matrix Synapse with auto-configuration\"\nLABEL version=\"1.0\"\n\n# Switch to root for setup\nUSER root\n\n# Install additional tools (Synapse uses Debian-based image)\nRUN apt-get update && \\\n    apt-get install -y --no-install-recommends \\\n    bash \\\n    curl \\\n    jq \\\n    openssl \\\n    postgresql-client \\\n    gosu \\\n    gettext-base \\\n    redis-tools \\\n    && rm -rf /var/lib/apt/lists/*\n\n# Create necessary directories\nRUN mkdir -p /data /scripts /config-templates && \\\n    chown -R 991:991 /data /scripts /config-templates\n```\n",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-07-03",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-03T09:32:43.263Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-03T19:42:45.702Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-03T19:42:45.702Z",
+          "field": "completitud",
+          "old_value": 0,
+          "new_value": 0.3
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-23T10:41:13.729Z",
+          "field": "title",
+          "old_value": "Crear matrix server en Zimaboard2",
+          "new_value": "Crear matrix server en Oracle"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-23T10:41:13.729Z",
+          "field": "repository",
+          "old_value": "hypenosys/Minecraft-Server-Docker",
+          "new_value": "hypenosys/hypenosys.github.io"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-23T10:41:31.977Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "OK"
+        }
+      ],
+      "id": 73,
+      "jules_session": null,
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
+    },
+    {
+      "title": "Cargar embeddings locales (opcional) en menú de configuración de IA",
+      "descripcion": "Ejemplo:\n\nTenemos dos modelos locales de embeddings en ollama. (nomic-embed-text por ejemplo)",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Chat Neural",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Working",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc"
+      ],
+      "email_responsable": "axel@hypenosys.com",
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-07-03",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-03T20:05:28.097Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-03T20:06:53.726Z",
+          "field": "descripcion",
+          "old_value": "",
+          "new_value": "Ejemplo:\n\nTenemos dos modelos locales de embeddings en ollama."
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-17T11:45:14.323Z",
+          "field": "descripcion",
+          "old_value": "Ejemplo:\n\nTenemos dos modelos locales de embeddings en ollama.",
+          "new_value": "Ejemplo:\n\nTenemos dos modelos locales de embeddings en ollama. (nomic-embed-text por ejemplo)"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-23T10:44:41.261Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Working"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-23T10:44:41.261Z",
+          "field": "asignados",
+          "old_value": "[]",
+          "new_value": "[\"axlfc\"]"
+        }
+      ],
+      "id": 74,
+      "jules_session": null,
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
+    },
+    {
+      "title": "2.0: estabilizar master y sacar el build y guardarlo en CopyParty",
+      "descripcion": "Cuando esté estable, sacamos build e iniciamos volcado de cambios en 'develop' branch",
+      "rama": "master",
+      "task_type": "chore",
+      "tema_principal": "Programación / Engine",
+      "seccion": "",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Critical",
+      "milestone": "M3",
+      "estado": "Working",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-07-09",
+      "due_date": "2026-07-19",
+      "estimated_hours": 8,
+      "story_points": 5,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-07-08",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-08T23:51:25.714Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-16T08:07:00.835Z",
+          "field": "descripcion",
+          "old_value": "",
+          "new_value": "Cuando esté estable, sacamos build e iniciamos volcado de cambios en 'develop' branch"
+        }
+      ],
+      "id": 78,
+      "jules_session": null,
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
+    },
+    {
+      "title": "Crear página \"3DGen\" ",
+      "descripcion": "Pillar workflows de plantillas del comfyui de tripo3d 3.0, exportar como API y ponerlo automatizado en n8n usando el nodo de comfyui",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Tools / Automation",
+      "seccion": "3DGen",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "ToDo",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc",
+        "topperh4rley"
+      ],
+      "email_responsable": "axel@hypenosys.com",
+      "emails_asignados": [
+        "alex@hypenosys.com"
+      ],
+      "start_date": "2026-07-09",
+      "due_date": "2026-07-16",
+      "estimated_hours": 4,
+      "story_points": 2,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-07-09",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-09T00:02:19.759Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-16T07:19:23.552Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "ToDo"
+        }
+      ],
+      "id": 79,
+      "jules_session": null,
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
+    },
+    {
+      "title": "Superposición de títulos de sección del menú con Neural Session Activa, y hay superposición",
+      "descripcion": "Reproducción:\nDesde el kanban: le doy a Ver Neural, me lleva a una conversación random (?) y si actualizo y vuelvo a Kanban de nuevo sale esa mierda visual como superpuesta",
+      "rama": "master",
+      "task_type": "bug",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Jules Panel",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Medium",
+      "milestone": "M2",
+      "estado": "ToDo",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc"
+      ],
+      "email_responsable": "axel@hypenosys.com",
+      "emails_asignados": [],
+      "start_date": "2026-07-12",
+      "due_date": "2026-07-19",
+      "estimated_hours": 4,
+      "story_points": 4,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [
+        {
+          "url": "https://64.media.tumblr.com/2f6ef9fecbfff9e1ba6b533aec5bc604/03de27673296d808-d4/s1280x1920/667d567c52ae139f908b154ff8997e5906466b53.png",
+          "type": "url",
+          "tumblr_post_id": "821924620357763072",
+          "filename": "image.png",
+          "uploaded_at": "2026-07-12T09:26:41.127Z"
+        }
+      ],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-07-12",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-12T09:26:41.129Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-12T10:02:50.212Z",
+          "field": "title",
+          "old_value": "BUG Visual: Superposición de títulos de sección del menú con Neural Session Activa, y hay superposición",
+          "new_value": "Superposición de títulos de sección del menú con Neural Session Activa, y hay superposición"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-08-03T07:16:51.873Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "ToDo"
+        }
+      ],
+      "id": 80,
+      "jules_session": null,
+      "branch": "Programación (PRO)",
+      "organizationId": "hypenosys"
+    },
+    {
+      "title": "Sesiones neural",
+      "descripcion": "Cuando envias una nueva sesion al neural chat del jules panel, no te genera una sesion nueva, directamente te coge la ya abierta, corregir este error para que genere una sesion",
+      "rama": "master",
+      "task_type": "bug",
+      "tema_principal": "Programación / Engine",
+      "seccion": "jules panel",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": "Alex",
+      "detectado_por": "Alex",
+      "asignados": [
+        "topperh4rley"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-07-12",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "topperh4rley",
+          "timestamp": "2026-07-12T10:45:21.116Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 81,
+      "organizationId": "hypenosys"
+    },
+    {
+      "title": "Crear página VideoGen",
+      "descripcion": "",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Tools / Automation",
+      "seccion": "VideoGen",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Medium",
+      "milestone": "M2",
+      "estado": "Working",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-07-18",
+      "due_date": "2026-07-26",
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-07-18",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-18T11:39:51.955Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-20T20:12:32.900Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "ToDo"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-08-26T21:00:56.001Z",
+          "field": "estado",
+          "old_value": "ToDo",
+          "new_value": "Working"
+        }
+      ],
+      "id": 83,
+      "organizationId": "hypenosys"
+    },
+    {
+      "title": "Crear Forjejo (Git) en ZimaBoard2",
+      "descripcion": "Para los pipes de Git en development local, pudiendo crear repos, ficheros, wikis...",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Tools / Automation",
+      "seccion": "",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Medium",
+      "milestone": "M2",
+      "estado": "Working",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-07-18",
+      "due_date": "2026-07-26",
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-07-18",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-18T11:58:45.390Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-18T12:03:28.707Z",
+          "field": "title",
+          "old_value": "Creat Forjejo (Git) en ZimaBoard2",
+          "new_value": "Crear Forjejo (Git) en ZimaBoard2"
+        }
+      ],
+      "id": 84,
+      "organizationId": "hypenosys"
+    },
+    {
+      "title": "Crear Redis server en Oracle",
+      "descripcion": "",
+      "rama": "master",
+      "task_type": "feature",
+      "tema_principal": "Tools / Automation",
+      "seccion": "",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Major",
+      "milestone": "M2",
+      "estado": "ToDo",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-07-18",
+      "due_date": "2026-07-26",
+      "estimated_hours": 2,
+      "story_points": 2,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-07-18",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-18T12:03:12.523Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-20T20:12:58.942Z",
+          "field": "title",
+          "old_value": "Crear Redis server",
+          "new_value": "Crear Redis server en Oracle"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-23T10:44:22.674Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "ToDo"
+        }
+      ],
+      "id": 86,
+      "organizationId": "hypenosys"
+    },
+    {
+      "title": "Tarea de prueba",
+      "descripcion": "asdasd",
+      "rama": "",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "seccion": "",
+      "repository": null,
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Obsolete",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-07-29",
+      "due_date": "2026-08-02",
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "organizationId": "hypenosys",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-07-29",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-29T12:22:09.894Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-08-26T21:01:06.116Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Obsolete"
+        }
+      ],
+      "id": 87
+    }
+  ],
+  "_audit_log": [
+    {
+      "action": "chore(sharding): migrar tasks.json para org hypenosys",
+      "user": "Sistema",
+      "timestamp": "2026-09-13T06:26:21.846Z"
+    }
+  ]
+}
