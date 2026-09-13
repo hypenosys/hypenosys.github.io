@@ -1,0 +1,104 @@
+{
+  "schema_version": "1.2.0",
+  "last_updated": "2026-09-13T06:26:28.953Z",
+  "organizationId": "empty-space-videogames",
+  "tasks": [
+    {
+      "id": 1,
+      "title": "test task",
+      "descripcion": "Tarea de prueba en Empty Space Videogames",
+      "estado": "Pending",
+      "prioridad": "Medium",
+      "milestone": "M1",
+      "tema_principal": "Concepto / GDD",
+      "asignados": [
+        "axlfc",
+        "topperh4rley"
+      ],
+      "organizationId": "empty-space-videogames",
+      "rama": "develop",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-07-27",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "task_type": "feature",
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "change_log": [],
+      "repository": "hypenosys/hypenosys.github.io",
+      "seccion": "General",
+      "jules_session": null,
+      "branch": "develop"
+    },
+    {
+      "title": "Tarea de prueba 2",
+      "descripcion": "dasdasd",
+      "rama": "",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "seccion": "",
+      "repository": null,
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": "Axel",
+      "detectado_por": "Axel",
+      "asignados": [
+        "axlfc"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": "2026-07-29",
+      "due_date": "2026-08-02",
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "organizationId": "empty-space-videogames",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-07-29",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-07-29T12:22:38.363Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 88
+    }
+  ],
+  "_audit_log": [
+    {
+      "action": "chore(sharding): migrar tasks.json para org empty-space-videogames",
+      "user": "Sistema",
+      "timestamp": "2026-09-13T06:26:28.953Z"
+    }
+  ]
+}
