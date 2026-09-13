@@ -108,6 +108,163 @@ async function validateToken() {
     }
 }
 
+// ─── SHARDING Y WORKSPACE HELPERS ──────────────────────────────
+
+const _shardedWorkspaceCache = new Set();
+
+/**
+ * Obtiene el workspace activo.
+ * @returns {string} ID del workspace activo (default 'hypenosys').
+ */
+function getActiveWorkspace() {
+    return localStorage.getItem('hy_active_workspace') || 'hypenosys';
+}
+
+/**
+ * Obtiene la ruta shardeada de tareas para un workspace.
+ * @param {string} workspaceId
+ * @param {boolean} [isArchive=false]
+ * @returns {string} Ruta del archivo de tareas.
+ */
+function getTasksPathForWorkspace(workspaceId, isArchive = false) {
+    if (workspaceId === 'personal') {
+        return isArchive ? '_data/dashboard_tasks_archive.json' : '_data/dashboard_tasks.json';
+    }
+    return `_data/orgs/${workspaceId}/${isArchive ? 'tasks_archive.json' : 'tasks.json'}`;
+}
+
+/**
+ * Obtiene la ruta de meta.json de una organización.
+ * @param {string} orgId
+ * @returns {string}
+ */
+function getOrgMetaPath(orgId) {
+    return `_data/orgs/${orgId}/meta.json`;
+}
+
+/**
+ * Resuelve la ruta adecuada para escritura de tareas.
+ * Si la ruta shardeada ya existe (content !== null), la devuelve y cachea.
+ * En caso contrario, cae a la ruta legacy.
+ * @param {string} workspaceId
+ * @param {boolean} [isArchive=false]
+ * @returns {Promise<string>} Ruta final donde escribir.
+ */
+async function resolveTasksPathForWrite(workspaceId, isArchive = false) {
+    if (workspaceId === 'personal') {
+        return isArchive ? '_data/dashboard_tasks_archive.json' : '_data/dashboard_tasks.json';
+    }
+    const cacheKey = `${workspaceId}:${isArchive ? 'archive' : 'active'}`;
+    if (_shardedWorkspaceCache.has(cacheKey)) {
+        return getTasksPathForWorkspace(workspaceId, isArchive);
+    }
+
+    const shardedPath = getTasksPathForWorkspace(workspaceId, isArchive);
+    try {
+        const res = await fetchFileWithSha(shardedPath, 'json', false);
+        if (res.content !== null) {
+            _shardedWorkspaceCache.add(cacheKey);
+            return shardedPath;
+        }
+    } catch (e) {
+        console.warn(`[SHARDING] Error checking write path for ${shardedPath}:`, e);
+    }
+    return isArchive ? '_data/dashboard_tasks_archive.json' : '_data/dashboard_tasks.json';
+}
+
+/**
+ * Lectura dual de tareas con fallback al monolito legacy.
+ * @param {string} workspaceId
+ * @param {boolean} [isArchive=false]
+ * @param {boolean} [forceRemote=false]
+ * @returns {Promise<Object>} { content, sha }
+ */
+async function fetchTasksWithDualRead(workspaceId = getActiveWorkspace(), isArchive = false, forceRemote = false) {
+    if (workspaceId === 'personal') {
+        const legacyPath = isArchive ? '_data/dashboard_tasks_archive.json' : '_data/dashboard_tasks.json';
+        return await fetchFileWithSha(legacyPath, 'json', forceRemote);
+    }
+
+    const shardedPath = getTasksPathForWorkspace(workspaceId, isArchive);
+    try {
+        const shardedRes = await fetchFileWithSha(shardedPath, 'json', forceRemote);
+        if (shardedRes.content !== null) {
+            _shardedWorkspaceCache.add(`${workspaceId}:${isArchive ? 'archive' : 'active'}`);
+            return shardedRes;
+        }
+    } catch (e) {
+        console.warn(`[SHARDING] Dual read fallback for ${workspaceId} (${shardedPath}):`, e);
+    }
+
+    // Fallback al monolito legacy y filtrado por organizationId
+    const legacyPath = isArchive ? '_data/dashboard_tasks_archive.json' : '_data/dashboard_tasks.json';
+    const legacyRes = await fetchFileWithSha(legacyPath, 'json', forceRemote);
+    if (legacyRes.content && Array.isArray(legacyRes.content.tasks)) {
+        const filteredTasks = legacyRes.content.tasks.filter(t => {
+            const taskOrg = t.organizationId || 'hypenosys';
+            return taskOrg === workspaceId;
+        });
+        return {
+            ...legacyRes,
+            content: {
+                ...legacyRes.content,
+                tasks: filteredTasks
+            }
+        };
+    }
+    return legacyRes;
+}
+
+/**
+ * Lectura dual de metadatos de organización con fallback a organizations.json.
+ * @param {string} orgId
+ * @returns {Promise<Object>} { content, sha }
+ */
+async function fetchOrgMetaWithDualRead(orgId) {
+    if (!orgId || orgId === 'personal') {
+        return { content: null, sha: null };
+    }
+    const metaPath = getOrgMetaPath(orgId);
+    try {
+        const metaRes = await fetchFileWithSha(metaPath, 'json', false);
+        if (metaRes.content !== null) {
+            return metaRes;
+        }
+    } catch (e) {
+        console.warn(`[SHARDING] Dual read fallback for meta ${orgId}:`, e);
+    }
+
+    // Fallback a _data/organizations.json
+    try {
+        const orgsRes = await fetchFileWithSha('_data/organizations.json', 'json', false);
+        if (orgsRes.content && Array.isArray(orgsRes.content.organizations)) {
+            const org = orgsRes.content.organizations.find(o => o.id === orgId);
+            if (org) {
+                const members = (org.members || []).map(m => {
+                    if (typeof m === 'string') {
+                        return { handle: m, teams: [], roles: [] };
+                    }
+                    return m;
+                });
+                return {
+                    content: {
+                        id: org.id,
+                        name: org.name,
+                        createdBy: org.createdBy,
+                        createdAt: org.createdAt,
+                        isDefault: !!org.isDefault,
+                        members: members
+                    },
+                    sha: null
+                };
+            }
+        }
+    } catch (e) {
+        console.error(`[SHARDING] Failed to construct org meta for ${orgId}:`, e);
+    }
+    return { content: null, sha: null };
+}
+
 // ─── OPERACIONES DE LECTURA ─────────────────────────────────────
 
 /**
@@ -847,15 +1004,23 @@ function salesNeededBreakEven(totalCost, productPrice) {
  * Crea una nueva tarea en el sistema.
  */
 async function createTask(taskObject) {
-    return atomicWrite('_data/dashboard_tasks.json', (db) => {
-        const maxId = db.tasks.reduce((m, t) => Math.max(m, t.id), 0);
+    const activeWs = getActiveWorkspace();
+    const targetOrg = taskObject.organizationId || activeWs;
+    if (!taskObject.organizationId) {
+        taskObject.organizationId = targetOrg;
+    }
+    const writePath = await resolveTasksPathForWrite(targetOrg, false);
+
+    return atomicWrite(writePath, (db) => {
+        const maxId = (db.tasks || []).reduce((m, t) => Math.max(m, t.id || 0), 0);
         taskObject.id = maxId + 1;
+        if (!db.tasks) db.tasks = [];
         db.tasks.push(taskObject);
         db.last_updated_by = taskObject.detectado_por || 'Sistema';
         return db;
     }, `feat: nueva tarea #${Date.now()} añadida`, {
         mergeStrategy: (local, remote) => {
-            local.tasks = mergeTaskArrays(local.tasks, remote.tasks);
+            local.tasks = mergeTaskArrays(local.tasks || [], remote.tasks || []);
             return local;
         },
         recomputeStats: true
@@ -868,16 +1033,19 @@ async function createTask(taskObject) {
 async function updateTask(taskId, taskDelta) {
     const isRemote = String(taskId).startsWith('remote-');
     const cleanId = isRemote ? taskId.substring(7) : taskId;
+    const activeWs = getActiveWorkspace();
+    const writePath = await resolveTasksPathForWrite(activeWs, false);
 
-    return atomicWrite('_data/dashboard_tasks.json', (db) => {
-        const taskIndex = db.tasks.findIndex(t => String(t.id) === String(cleanId));
+    return atomicWrite(writePath, (db) => {
+        const tasks = db.tasks || [];
+        const taskIndex = tasks.findIndex(t => String(t.id) === String(cleanId));
         if (taskIndex === -1) throw new Error(`Tarea #${cleanId} no encontrada.`);
-        db.tasks[taskIndex] = { ...db.tasks[taskIndex], ...taskDelta };
+        tasks[taskIndex] = { ...tasks[taskIndex], ...taskDelta };
         db.last_updated_by = _currentUser?.login || 'Sistema';
         return db;
     }, `chore: actualizar tarea #${cleanId}`, {
         mergeStrategy: (local, remote) => {
-            local.tasks = mergeTaskArrays(local.tasks, remote.tasks);
+            local.tasks = mergeTaskArrays(local.tasks || [], remote.tasks || []);
             return local;
         },
         recomputeStats: true,
@@ -891,9 +1059,12 @@ async function updateTask(taskId, taskDelta) {
 async function updateTaskStatus(taskId, newEstado, resolverHandle, testerHandle) {
     const isRemote = String(taskId).startsWith('remote-');
     const cleanId = isRemote ? taskId.substring(7) : taskId;
+    const activeWs = getActiveWorkspace();
+    const writePath = await resolveTasksPathForWrite(activeWs, false);
 
-    return atomicWrite('_data/dashboard_tasks.json', (db) => {
-        const task = db.tasks.find(t => String(t.id) === String(cleanId));
+    return atomicWrite(writePath, (db) => {
+        const tasks = db.tasks || [];
+        const task = tasks.find(t => String(t.id) === String(cleanId));
         if (!task) throw new Error(`Tarea #${cleanId} no encontrada en la base de datos.`);
         task.estado = newEstado;
         if (resolverHandle) task.resuelto_por = resolverHandle;
@@ -902,7 +1073,7 @@ async function updateTaskStatus(taskId, newEstado, resolverHandle, testerHandle)
         return db;
     }, `chore: actualizar estado tarea #${cleanId} → ${newEstado}`, {
         mergeStrategy: (local, remote) => {
-            local.tasks = mergeTaskArrays(local.tasks, remote.tasks);
+            local.tasks = mergeTaskArrays(local.tasks || [], remote.tasks || []);
             return local;
         },
         recomputeStats: true,
@@ -916,13 +1087,17 @@ async function updateTaskStatus(taskId, newEstado, resolverHandle, testerHandle)
 async function archiveTask(taskId) {
     const isRemote = String(taskId).startsWith('remote-');
     const cleanId = isRemote ? taskId.substring(7) : taskId;
+    const activeWs = getActiveWorkspace();
+    const activeWritePath = await resolveTasksPathForWrite(activeWs, false);
+    const archiveWritePath = await resolveTasksPathForWrite(activeWs, true);
     let taskToArchive = null;
 
     // Primer paso: Eliminar de activos sin recomputar estadísticas aún (recomputeStats: false)
-    await atomicWrite('_data/dashboard_tasks.json', (db) => {
-        const idx = db.tasks.findIndex(t => String(t.id) === String(cleanId));
+    await atomicWrite(activeWritePath, (db) => {
+        const tasks = db.tasks || [];
+        const idx = tasks.findIndex(t => String(t.id) === String(cleanId));
         if (idx === -1) throw new Error(`Tarea #${cleanId} no encontrada en activos.`);
-        taskToArchive = db.tasks.splice(idx, 1)[0];
+        taskToArchive = tasks.splice(idx, 1)[0];
         db.last_updated_by = _currentUser?.login || 'Sistema';
         return db;
     }, `chore: archivar tarea #${cleanId}`, {
@@ -934,7 +1109,8 @@ async function archiveTask(taskId) {
     if (!taskToArchive) return;
 
     // Segundo paso: Añadir al archivo y recomputar estadísticas una sola vez al final (recomputeStats: true)
-    await atomicWrite('_data/dashboard_tasks_archive.json', (db) => {
+    await atomicWrite(archiveWritePath, (db) => {
+        if (!db.tasks) db.tasks = [];
         if (!db.tasks.find(t => String(t.id) === String(cleanId))) {
             db.tasks.push(taskToArchive);
         }
@@ -942,7 +1118,7 @@ async function archiveTask(taskId) {
         return db;
     }, `chore: tarea #${cleanId} movida al archivo`, {
         mergeStrategy: (local, remote) => {
-            local.tasks = mergeTaskArrays(local.tasks, remote.tasks);
+            local.tasks = mergeTaskArrays(local.tasks || [], remote.tasks || []);
             return local;
         },
         recomputeStats: true,
@@ -956,13 +1132,17 @@ async function archiveTask(taskId) {
 async function restoreTask(taskId) {
     const isRemote = String(taskId).startsWith('remote-');
     const cleanId = isRemote ? taskId.substring(7) : taskId;
+    const activeWs = getActiveWorkspace();
+    const activeWritePath = await resolveTasksPathForWrite(activeWs, false);
+    const archiveWritePath = await resolveTasksPathForWrite(activeWs, true);
     let taskToRestore = null;
 
     // Primer paso: Eliminar del archivo sin recomputar estadísticas aún (recomputeStats: false)
-    await atomicWrite('_data/dashboard_tasks_archive.json', (db) => {
-        const idx = db.tasks.findIndex(t => String(t.id) === String(cleanId));
+    await atomicWrite(archiveWritePath, (db) => {
+        const tasks = db.tasks || [];
+        const idx = tasks.findIndex(t => String(t.id) === String(cleanId));
         if (idx === -1) throw new Error(`Tarea #${cleanId} no encontrada en el archivo.`);
-        taskToRestore = db.tasks.splice(idx, 1)[0];
+        taskToRestore = tasks.splice(idx, 1)[0];
         db.last_updated_by = _currentUser?.login || 'Sistema';
         return db;
     }, `chore: desarchivar tarea #${cleanId}`, {
@@ -974,7 +1154,8 @@ async function restoreTask(taskId) {
     if (!taskToRestore) return;
 
     // Segundo paso: Añadir a activos y recomputar estadísticas una sola vez al final (recomputeStats: true)
-    await atomicWrite('_data/dashboard_tasks.json', (db) => {
+    await atomicWrite(activeWritePath, (db) => {
+        if (!db.tasks) db.tasks = [];
         if (!db.tasks.find(t => String(t.id) === String(cleanId))) {
             db.tasks.push(taskToRestore);
         }
@@ -982,7 +1163,7 @@ async function restoreTask(taskId) {
         return db;
     }, `chore: tarea #${cleanId} restaurada desde el archivo`, {
         mergeStrategy: (local, remote) => {
-            local.tasks = mergeTaskArrays(local.tasks, remote.tasks);
+            local.tasks = mergeTaskArrays(local.tasks || [], remote.tasks || []);
             return local;
         },
         recomputeStats: true,
@@ -1184,7 +1365,9 @@ const taskOps = {
      * Crea una tarea con metadatos adicionales y estado de loop de Jules.
      */
     createTask: async (task) => {
-        return await atomicWrite(taskOps.FILE_PATH, (db) => {
+        const activeWs = getActiveWorkspace();
+        const writePath = await resolveTasksPathForWrite(activeWs, false);
+        return await atomicWrite(writePath, (db) => {
             const now = new Date().toISOString();
             const newTask = {
                 ...task,
@@ -1204,8 +1387,10 @@ const taskOps = {
      * Actualiza una tarea con soporte para deltas.
      */
     updateTask: async (taskId, delta) => {
-        return await atomicWrite(taskOps.FILE_PATH, (db) => {
-            const idx = db.tasks.findIndex(t => t.id === taskId);
+        const activeWs = getActiveWorkspace();
+        const writePath = await resolveTasksPathForWrite(activeWs, false);
+        return await atomicWrite(writePath, (db) => {
+            const idx = (db.tasks || []).findIndex(t => t.id === taskId);
             if (idx === -1) throw new Error(`Tarea ${taskId} no encontrada`);
 
             db.tasks[idx] = {
@@ -1222,8 +1407,9 @@ const taskOps = {
      * Obtiene todas las tareas actuales.
      */
     getAllTasks: async () => {
-        const { content } = await fetchFileWithSha(taskOps.FILE_PATH);
-        return content.tasks || [];
+        const activeWs = getActiveWorkspace();
+        const { content } = await fetchTasksWithDualRead(activeWs, false);
+        return (content && content.tasks) || [];
     }
 };
 
@@ -1271,9 +1457,13 @@ try {
     console.warn('[SYNC] BroadcastChannel not supported or failed:', e);
 }
 
-function broadcastUpdate(filePath) {
+function broadcastUpdate(filePathOrOptions) {
     if (_syncChannel) {
-        _syncChannel.postMessage({ type: 'data-updated', filePath });
+        if (typeof filePathOrOptions === 'string') {
+            _syncChannel.postMessage({ type: 'data-updated', filePath: filePathOrOptions });
+        } else if (isPlainObject(filePathOrOptions)) {
+            _syncChannel.postMessage({ type: 'data-updated', ...filePathOrOptions });
+        }
     }
 }
 
@@ -1346,14 +1536,19 @@ window.githubApi = Object.assign(window.githubApi, {
     updateFile,
 
     // Workspace Management
-    getActiveWorkspace() {
-        return localStorage.getItem('hy_active_workspace') || 'hypenosys';
-    },
+    getActiveWorkspace,
+    getTasksPathForWorkspace,
+    getOrgMetaPath,
+    resolveTasksPathForWrite,
+    fetchTasksWithDualRead,
+    fetchOrgMetaWithDualRead,
 
-    setActiveWorkspace(ws) {
+    async setActiveWorkspace(ws) {
         localStorage.setItem('hy_active_workspace', ws);
         window.dispatchEvent(new Event('workspaceChanged'));
-        broadcastUpdate('_data/dashboard_tasks.json');
+        const tasksPath = await resolveTasksPathForWrite(ws, false);
+        const archivePath = await resolveTasksPathForWrite(ws, true);
+        broadcastUpdate({ filePath: tasksPath, tasksPath, archivePath });
     },
 
     // Core API

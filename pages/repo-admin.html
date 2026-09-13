@@ -339,6 +339,14 @@ permalink: /repo-admin/
         <input type="password" id="cfgSvnPass" class="ra-input" placeholder="••••••••" autocomplete="current-password">
       </div>
       <button class="ra-action-btn" style="width:100%;margin-top:16px" onclick="saveSettings()">Save</button>
+
+      <div class="ra-field-group" style="margin-top:24px; padding-top:16px; border-top:1px solid var(--c-border)">
+        <label class="ra-label" style="color:var(--c-accent)">Sharding Migration</label>
+        <button class="ra-action-btn" style="width:100%; margin-top:8px; background:var(--c-accent); color:#000; font-weight:bold;" onclick="handleTriggerShardingMigration()">
+          Ejecutar Migración Sharding
+        </button>
+        <div id="shardingMigrationLog" style="margin-top:10px; padding:8px; background:rgba(0,0,0,0.5); border:1px solid var(--c-border); border-radius:4px; font-family:var(--f-mono); font-size:10px; max-height:150px; overflow-y:auto; color:var(--c-text-dim); display:none;"></div>
+      </div>
       <div class="ra-field-group" style="margin-top:20px">
         <label class="ra-label" style="color:var(--c-accent)">Copy n8n Workflows JSON</label>
         <button class="ra-mini-btn" style="width:100%;margin-top:4px" onclick="copyWorkflows('svn-list')">SVN List workflow</button>
@@ -359,6 +367,44 @@ permalink: /repo-admin/
 <script src="{{ '/assets/javascript/repo-admin-ui.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/repo-admin-svn.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/repo-admin-git.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/sharding-migration.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/github-api.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/repo-admin-workflows.js' | relative_url }}"></script>
+<script>
+async function handleTriggerShardingMigration() {
+  if (!confirm('¿Estás seguro de que deseas ejecutar la migración sharding por organización?')) {
+    return;
+  }
+  const logEl = document.getElementById('shardingMigrationLog');
+  if (logEl) {
+    logEl.style.display = 'block';
+    logEl.innerHTML = '<div>Iniciando migración...</div>';
+  }
+  try {
+    const report = await window.runShardingMigration((msg) => {
+      if (logEl) {
+        const line = document.createElement('div');
+        line.textContent = msg;
+        logEl.appendChild(line);
+        logEl.scrollTop = logEl.scrollHeight;
+      }
+    });
+    if (logEl) {
+      const summaryLine = document.createElement('div');
+      summaryLine.style.fontWeight = 'bold';
+      summaryLine.style.color = report.success ? '#50fa7b' : '#ff5555';
+      summaryLine.textContent = `\nResultado final: ${report.success ? 'ÉXITO' : 'CON ERRORES'} | Exitosas: ${report.summary.succeeded}/${report.summary.total}`;
+      logEl.appendChild(summaryLine);
+    }
+  } catch (err) {
+    if (logEl) {
+      const errLine = document.createElement('div');
+      errLine.style.color = '#ff5555';
+      errLine.textContent = `Error crítico: ${err.message}`;
+      logEl.appendChild(errLine);
+    }
+  }
+}
+</script>
 </body>
 </html>

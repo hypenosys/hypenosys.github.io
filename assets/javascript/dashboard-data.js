@@ -43,6 +43,20 @@ const FALLBACK_ORGANIZATIONS = [
     }
 ];
 
+function getUserOrganizations(workspaces, userHandle) {
+    if (!workspaces || !Array.isArray(workspaces)) return [];
+    const handle = (userHandle || window.currentUser || (window.githubApi && window.githubApi.user && window.githubApi.user.login) || '').toLowerCase();
+    if (!handle) return [];
+    return workspaces.filter(w => {
+        if (!w.members || !Array.isArray(w.members)) return false;
+        return w.members.some(m => {
+            const memberHandle = (typeof m === 'string' ? m : (m && m.handle) || '').toLowerCase();
+            return memberHandle === handle;
+        });
+    });
+}
+window.getUserOrganizations = getUserOrganizations;
+
 function loadWorkspaceMembers() {
     const ws = window.githubApi.getActiveWorkspace();
     if (ws === 'personal') {
@@ -63,7 +77,7 @@ function loadWorkspaceMembers() {
 
         if (profiles) {
             const orgMembersLower = (org && org.members && Array.isArray(org.members))
-                ? org.members.map(m => m.toLowerCase())
+                ? org.members.map(m => (typeof m === 'string' ? m : (m && m.handle) || '').toLowerCase())
                 : null;
 
             for (const name in profiles) {
@@ -79,7 +93,7 @@ function loadWorkspaceMembers() {
                 }
             }
         } else if (org && org.members && Array.isArray(org.members)) {
-            const lowerMembers = org.members.map(m => m.toLowerCase());
+            const lowerMembers = org.members.map(m => (typeof m === 'string' ? m : (m && m.handle) || '').toLowerCase());
             for (const username in ORIGINAL_MEMBER_MAPPING) {
                 if (lowerMembers.includes(username.toLowerCase())) {
                     const disp = ORIGINAL_MEMBER_MAPPING[username];
@@ -366,7 +380,7 @@ window.addEventListener('beforeunload', () => {
 });
 
 async function refreshDashboardData() {
-  const ws = window.githubApi.getActiveWorkspace();
+  let ws = window.githubApi.getActiveWorkspace();
   loadWorkspaceMembers();
   try {
     // Initial cache load for first run
@@ -376,8 +390,8 @@ async function refreshDashboardData() {
     }
 
     const [tasksRes, archiveRes, statsRes, budgetRes, profilesRes, orgsRes] = await Promise.all([
-      window.githubApi.fetchFileWithSha('_data/dashboard_tasks.json'),
-      window.githubApi.fetchFileWithSha('_data/dashboard_tasks_archive.json'),
+      window.githubApi.fetchTasksWithDualRead(ws, false),
+      window.githubApi.fetchTasksWithDualRead(ws, true),
       window.githubApi.fetchFileWithSha('_data/studio_stats.json'),
       window.githubApi.fetchFileWithSha('_data/studio_budget.json'),
       fetch('/assets/data/team_profiles.json').then(res => res.json().then(data => ({ content: data }))),
@@ -398,8 +412,8 @@ async function refreshDashboardData() {
     if (ws === 'personal') {
         try {
             const [rTasks, rArchive, rOrgs] = await Promise.all([
-              window.githubApi.fetchFileWithSha('_data/dashboard_tasks.json', 'json', true),
-              window.githubApi.fetchFileWithSha('_data/dashboard_tasks_archive.json', 'json', true),
+              window.githubApi.fetchTasksWithDualRead('hypenosys', false, true),
+              window.githubApi.fetchTasksWithDualRead('hypenosys', true, true),
               window.githubApi.fetchFileWithSha('_data/organizations.json', 'json', true)
             ]);
             remoteTasksRes = rTasks;
@@ -420,6 +434,12 @@ async function refreshDashboardData() {
     }
     loadWorkspaceMembers();
 
+    const myOrgs = getUserOrganizations(newOrgs);
+    if (myOrgs.length === 0) {
+        window.githubApi.setActiveWorkspace('personal');
+        ws = 'personal';
+    }
+
     const newTasks = (migratedTasksData && migratedTasksData.tasks) || [];
     const newArchive = (migratedArchiveData && migratedArchiveData.tasks) || [];
     const newStats = statsRes.content || { schema_version: '1.1.0', computed_at: '', global: {}, members: {}, group: {} };
@@ -435,17 +455,14 @@ async function refreshDashboardData() {
         // Personal Workspace: Auto-populate with remote assigned tasks
         const userHandle = (window.currentUser || (window.githubApi && window.githubApi.user && window.githubApi.user.login) || '').toLowerCase();
         const remoteOrgs = (remoteOrgsRes && remoteOrgsRes.content && remoteOrgsRes.content.organizations) || __workspaces__ || FALLBACK_ORGANIZATIONS;
-        const userOrgs = remoteOrgs.filter(w => {
-            if (!w.members || !Array.isArray(w.members)) return false;
-            return w.members.some(m => m.toLowerCase() === userHandle);
-        }).map(w => w.id);
+        const userOrgIds = getUserOrganizations(remoteOrgs, userHandle).map(w => w.id);
 
         let assignedRemoteTasks = [];
         let assignedRemoteArchive = [];
 
         if (remoteTasksRes && remoteTasksRes.content && Array.isArray(remoteTasksRes.content.tasks)) {
             assignedRemoteTasks = remoteTasksRes.content.tasks.filter(t => {
-                const inOrg = userOrgs.includes(t.organizationId);
+                const inOrg = userOrgIds.includes(t.organizationId);
                 const isAssigned = Array.isArray(t.asignados) && t.asignados.some(m => m.toLowerCase() === userHandle);
                 return inOrg && isAssigned;
             }).map(t => {
@@ -458,7 +475,7 @@ async function refreshDashboardData() {
 
         if (remoteArchiveRes && remoteArchiveRes.content && Array.isArray(remoteArchiveRes.content.tasks)) {
             assignedRemoteArchive = remoteArchiveRes.content.tasks.filter(t => {
-                const inOrg = userOrgs.includes(t.organizationId);
+                const inOrg = userOrgIds.includes(t.organizationId);
                 const isAssigned = Array.isArray(t.asignados) && t.asignados.some(m => m.toLowerCase() === userHandle);
                 return inOrg && isAssigned;
             }).map(t => {
