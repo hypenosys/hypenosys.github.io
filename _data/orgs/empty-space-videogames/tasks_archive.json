@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.2.0",
+  "last_updated": "2026-09-13T06:26:30.527Z",
+  "organizationId": "empty-space-videogames",
+  "tasks": [],
+  "_audit_log": [
+    {
+      "action": "chore(sharding): migrar tasks_archive.json para org empty-space-videogames",
+      "user": "Sistema",
+      "timestamp": "2026-09-13T06:26:30.527Z"
+    }
+  ]
+}
