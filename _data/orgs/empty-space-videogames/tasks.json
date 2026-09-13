@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-09-13T06:26:28.953Z",
+  "last_updated": "2026-09-13T10:11:48.299Z",
   "organizationId": "empty-space-videogames",
   "tasks": [
     {
@@ -92,13 +92,66 @@
         }
       ],
       "id": 88
+    },
+    {
+      "title": "Test task #3",
+      "descripcion": "debería escribir en el shard",
+      "rama": "",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "seccion": "",
+      "repository": null,
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Unassigned",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "organizationId": "empty-space-videogames",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-09-13",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-09-13T10:11:47.914Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 89
     }
   ],
   "_audit_log": [
+    {
+      "action": "feat: nueva tarea #1789294307916 añadida",
+      "user": "Axlfc",
+      "timestamp": "2026-09-13T10:11:48.299Z"
+    },
     {
       "action": "chore(sharding): migrar tasks.json para org empty-space-videogames",
       "user": "Sistema",
       "timestamp": "2026-09-13T06:26:28.953Z"
     }
-  ]
+  ],
+  "last_updated_by": "Unassigned"
 }
