@@ -7,15 +7,7 @@
       "createdBy": "Axlfc",
       "createdAt": "2025-01-01T00:00:00.000Z",
       "isDefault": true,
-      "members": [
-        "axlfc",
-        "topperh4rley",
-        "javi26031994-a11y",
-        "dkdidac-design",
-        "mitxel2022",
-        "silmaril464",
-        "lachicadelaboina"
-      ]
+      "isSharded": true
     },
     {
       "id": "empty-space-videogames",
@@ -29,6 +21,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore(sharding): marcar org hypenosys como isSharded: true",
+      "user": "Sistema",
+      "timestamp": "2026-09-13T08:50:08.686Z"
+    },
     {
       "action": "chore: eliminar miembro TopperH4rley de la organización Empty Space Videogames",
       "user": "Axlfc",
