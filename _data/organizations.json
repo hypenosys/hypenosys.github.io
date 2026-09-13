@@ -24,6 +24,11 @@
     {
       "action": "chore(sharding): marcar org hypenosys como isSharded: true",
       "user": "Sistema",
+      "timestamp": "2026-09-13T08:51:44.482Z"
+    },
+    {
+      "action": "chore(sharding): marcar org hypenosys como isSharded: true",
+      "user": "Sistema",
       "timestamp": "2026-09-13T08:50:08.686Z"
     },
     {
