@@ -1,0 +1,45 @@
+{
+  "id": "hypenosys",
+  "name": "Hypenosys",
+  "createdBy": "Axlfc",
+  "createdAt": "2025-01-01T00:00:00.000Z",
+  "isDefault": true,
+  "members": [
+    {
+      "handle": "axlfc",
+      "teams": [],
+      "roles": []
+    },
+    {
+      "handle": "topperh4rley",
+      "teams": [],
+      "roles": []
+    },
+    {
+      "handle": "javi26031994-a11y",
+      "teams": [],
+      "roles": []
+    },
+    {
+      "handle": "dkdidac-design",
+      "teams": [],
+      "roles": []
+    },
+    {
+      "handle": "mitxel2022",
+      "teams": [],
+      "roles": []
+    },
+    {
+      "handle": "silmaril464",
+      "teams": [],
+      "roles": []
+    },
+    {
+      "handle": "lachicadelaboina",
+      "teams": [],
+      "roles": []
+    }
+  ],
+  "schema_version": "1.0.0"
+}
