@@ -13,6 +13,7 @@ class GlobalHeader {
         this.injectStyles();
         this.ensureConsentManager();
         this.render();
+        this.renderDataBranchBadge();
         this.bindEvents();
         this.dispatchReady();
     }
@@ -171,6 +172,32 @@ class GlobalHeader {
                 align-items: center;
             }
 
+            .gh-data-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.35rem;
+                padding: 0.2rem 0.55rem;
+                border-radius: 9999px;
+                font-size: 10px;
+                font-weight: 700;
+                letter-spacing: 0.05em;
+                text-transform: uppercase;
+                white-space: nowrap;
+                user-select: none;
+            }
+
+            .gh-data-badge--develop {
+                background: rgba(189, 147, 249, 0.15);
+                color: #bd93f9;
+                border: 1px solid rgba(189, 147, 249, 0.35);
+            }
+
+            .gh-data-badge--master {
+                background: rgba(255, 85, 85, 0.15);
+                color: #ff5555;
+                border: 1px solid rgba(255, 85, 85, 0.45);
+            }
+
             .member-filters-toggle-btn {
                 background: rgba(255, 255, 255, 0.05);
                 border: 1px solid var(--gh-border);
@@ -247,6 +274,23 @@ class GlobalHeader {
             }
         `;
         document.head.appendChild(style);
+    }
+
+    renderDataBranchBadge() {
+        const slot = document.getElementById('header-status-slot');
+        if (!slot) return;
+
+        const branch = (window.HY_OAUTH_CONFIG && window.HY_OAUTH_CONFIG.dataBranch) || 'develop';
+        const isMaster = branch === 'master';
+        const badgeClass = isMaster ? 'gh-data-badge--master' : 'gh-data-badge--develop';
+        const iconClass = isMaster ? 'fa-solid fa-triangle-exclamation' : 'fa-solid fa-code-branch';
+
+        slot.innerHTML = `
+            <span class="gh-data-badge ${badgeClass}" title="Rama de datos activa: ${branch}">
+                <i class="${iconClass}"></i>
+                DATA: ${branch}
+            </span>
+        `;
     }
 
     render() {
