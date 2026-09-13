@@ -16,11 +16,17 @@
       "createdAt": "2025-01-01T00:00:00.000Z",
       "isDefault": false,
       "members": [
-        "Axlfc"
+        "Axlfc",
+        "axljuega"
       ]
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: añadir miembro axljuega a la organización Empty Space Videogames",
+      "user": "Axlfc",
+      "timestamp": "2026-09-13T11:50:31.558Z"
+    },
     {
       "action": "chore(sharding): marcar org hypenosys como isSharded: true",
       "user": "Sistema",
