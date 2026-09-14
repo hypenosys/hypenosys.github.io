@@ -280,7 +280,11 @@ async function handleCreateTask() {
     }
     await refreshDashboardData();
   } catch (err) {
-    showToast(`Error: ${err.message}`, 'error');
+    if (window.isWritePermissionError && window.isWritePermissionError(err) && window.showWritePermissionModal) {
+      window.showWritePermissionModal();
+    } else {
+      showToast(`Error: ${err.message}`, 'error');
+    }
   }
 }
 
@@ -325,7 +329,11 @@ async function handleArchiveTask(taskId) {
         showToast(`Tarea #${taskId} enviada al Cementerio`, 'success');
         await refreshDashboardData();
     } catch (err) {
-        showToast(`Error: ${err.message}`, 'error');
+        if (window.isWritePermissionError && window.isWritePermissionError(err) && window.showWritePermissionModal) {
+            window.showWritePermissionModal();
+        } else {
+            showToast(`Error: ${err.message}`, 'error');
+        }
     }
 }
 
@@ -340,7 +348,11 @@ async function handleRestoreTask(taskId) {
         showToast(`Tarea #${taskId} resucitada del Cementerio`, 'success');
         await refreshDashboardData();
     } catch (err) {
-        showToast(`Error: ${err.message}`, 'error');
+        if (window.isWritePermissionError && window.isWritePermissionError(err) && window.showWritePermissionModal) {
+            window.showWritePermissionModal();
+        } else {
+            showToast(`Error: ${err.message}`, 'error');
+        }
     }
 }
 
