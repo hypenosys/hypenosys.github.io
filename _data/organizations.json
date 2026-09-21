@@ -7,7 +7,17 @@
       "createdBy": "Axlfc",
       "createdAt": "2025-01-01T00:00:00.000Z",
       "isDefault": true,
-      "isSharded": true
+      "isSharded": true,
+      "members": [
+        "Axlfc",
+        "axlfc",
+        "topperh4rley",
+        "javi26031994-a11y",
+        "dkdidac-design",
+        "mitxel2022",
+        "silmaril464",
+        "lachicadelaboina"
+      ]
     },
     {
       "id": "empty-space-videogames",
@@ -17,11 +27,18 @@
       "isDefault": false,
       "members": [
         "Axlfc",
-        "axljuega"
+        "axljuega",
+        "boraaj",
+        "MarcoBr100"
       ]
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar miembros en Hypenosys y Empty Space Videogames (Axlfc, axljuega, boraaj, MarcoBr100)",
+      "user": "Axlfc",
+      "timestamp": "2026-09-21T21:00:00.000Z"
+    },
     {
       "action": "chore: añadir miembro axljuega a la organización Empty Space Videogames",
       "user": "Axlfc",
