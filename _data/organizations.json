@@ -18,11 +18,17 @@
       "members": [
         "Axlfc",
         "axljuega",
-        "boraaj"
+        "boraaj",
+        "MarcoBr100"
       ]
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: añadir miembro MarcoBr100 a la organización Empty Space Videogames",
+      "user": "Axlfc",
+      "timestamp": "2026-09-21T20:47:06.186Z"
+    },
     {
       "action": "chore: añadir miembro boraaj a la organización Empty Space Videogames",
       "user": "Axlfc",
