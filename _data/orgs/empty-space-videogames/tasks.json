@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-09-13T10:11:48.299Z",
+  "last_updated": "2026-09-22T15:39:42.443Z",
   "organizationId": "empty-space-videogames",
   "tasks": [
     {
@@ -12,8 +12,7 @@
       "milestone": "M1",
       "tema_principal": "Concepto / GDD",
       "asignados": [
-        "axlfc",
-        "topperh4rley"
+        "axlfc"
       ],
       "organizationId": "empty-space-videogames",
       "rama": "develop",
@@ -38,11 +37,35 @@
       "blocks": [],
       "blocked_by": [],
       "comments": [],
-      "change_log": [],
-      "repository": "hypenosys/hypenosys.github.io",
+      "change_log": [
+        {
+          "author_login": "marcobr100",
+          "timestamp": "2026-09-22T15:39:42.134Z",
+          "field": "asignados",
+          "old_value": "[\"axlfc\",\"topperh4rley\"]",
+          "new_value": "[\"axlfc\"]"
+        },
+        {
+          "author_login": "marcobr100",
+          "timestamp": "2026-09-22T15:39:42.134Z",
+          "field": "completitud",
+          "new_value": 0
+        },
+        {
+          "author_login": "marcobr100",
+          "timestamp": "2026-09-22T15:39:42.134Z",
+          "field": "repository",
+          "old_value": "hypenosys/hypenosys.github.io",
+          "new_value": null
+        }
+      ],
+      "repository": null,
       "seccion": "General",
       "jules_session": null,
-      "branch": "develop"
+      "branch": "develop",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Unassigned"
     },
     {
       "title": "Tarea de prueba 2",
@@ -143,6 +166,11 @@
   ],
   "_audit_log": [
     {
+      "action": "chore: actualizar tarea #1",
+      "user": "MarcoBr100",
+      "timestamp": "2026-09-22T15:39:42.443Z"
+    },
+    {
       "action": "feat: nueva tarea #1789294307916 añadida",
       "user": "Axlfc",
       "timestamp": "2026-09-13T10:11:48.299Z"
@@ -153,5 +181,5 @@
       "timestamp": "2026-09-13T06:26:28.953Z"
     }
   ],
-  "last_updated_by": "Unassigned"
+  "last_updated_by": "MarcoBr100"
 }
