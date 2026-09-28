@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-09-28T15:59:04.185Z",
+  "last_updated": "2026-09-28T15:59:33.809Z",
   "organizationId": "hypenosys",
   "tasks": [
     {
@@ -2200,7 +2200,7 @@
       "repository": "hypenosys/hypenosys-logo",
       "prioridad": "Critical",
       "milestone": "M1",
-      "estado": "Working",
+      "estado": "In Review",
       "completitud": 0,
       "resuelto_por": "Dídac",
       "detectado_por": "Axel",
@@ -2293,6 +2293,13 @@
           "field": "descripcion",
           "old_value": "Usar sesiones de Jules para sacar versiones y variaciones del logo,\n\nCrear logo cuadrado pequeño",
           "new_value": "Usar sesiones de Jules para sacar versiones y variaciones del logo,\n\nCrear logo proporción cuadrado "
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-09-28T15:59:33.199Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
         }
       ],
       "id": 70,
@@ -3317,6 +3324,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #70",
+      "user": "Axlfc",
+      "timestamp": "2026-09-28T15:59:33.809Z"
+    },
     {
       "action": "chore: actualizar tarea #77",
       "user": "Axlfc",
