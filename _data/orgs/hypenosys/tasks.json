@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-09-28T16:02:11.513Z",
+  "last_updated": "2026-09-28T16:02:32.935Z",
   "organizationId": "hypenosys",
   "tasks": [
     {
@@ -147,7 +147,7 @@
       "milestone": "M1",
       "estado": "In Review",
       "completitud": 0.2,
-      "resuelto_por": "Alex",
+      "resuelto_por": "Mitxel",
       "detectado_por": "Alex",
       "rama2": null,
       "ver": true,
@@ -158,8 +158,7 @@
       "id": 5,
       "asignados": [
         "dkdidac-design",
-        "mitxel2022",
-        "topperh4rley"
+        "mitxel2022"
       ],
       "email_responsable": "alex@hypenosys.com",
       "emails_asignados": [
@@ -222,12 +221,26 @@
           "field": "completitud",
           "old_value": 0.8,
           "new_value": 0.2
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-09-28T16:02:32.152Z",
+          "field": "asignados",
+          "old_value": "[\"dkdidac-design\",\"mitxel2022\",\"topperh4rley\"]",
+          "new_value": "[\"dkdidac-design\",\"mitxel2022\"]"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-09-28T16:02:32.152Z",
+          "field": "seccion",
+          "new_value": ""
         }
       ],
       "repository": "hypenosys/app",
       "jules_session": null,
       "branch": "Programación (PRO)",
-      "organizationId": "hypenosys"
+      "organizationId": "hypenosys",
+      "seccion": ""
     },
     {
       "rama": "PRO",
@@ -3192,6 +3205,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #5",
+      "user": "Axlfc",
+      "timestamp": "2026-09-28T16:02:32.935Z"
+    },
     {
       "action": "chore: actualizar tarea #82",
       "user": "Axlfc",
