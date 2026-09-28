@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-09-13T08:54:19.657Z",
+  "last_updated": "2026-09-28T15:58:42.030Z",
   "organizationId": "hypenosys",
   "tasks": [
     {
@@ -3253,13 +3253,66 @@
         }
       ],
       "id": 87
+    },
+    {
+      "title": "Studio Group stats/group member show",
+      "descripcion": "In other organizations, we keep still seeing th group of hypenosys, instead it should show the organization member card (and if they change anything of their profile)",
+      "rama": "develop",
+      "task_type": "feature",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Dashboard",
+      "repository": "hypenosys/hypenosys.github.io",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "resuelto_por": null,
+      "detectado_por": "Unassigned",
+      "asignados": [],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [],
+      "external_links": [],
+      "subtasks": [],
+      "acceptance_criteria": "",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "images": [],
+      "organizationId": "hypenosys",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-09-28",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "change_log": [
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-09-28T15:58:40.844Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "id": 88
     }
   ],
   "_audit_log": [
+    {
+      "action": "feat: nueva tarea #1790611120859 añadida",
+      "user": "Axlfc",
+      "timestamp": "2026-09-28T15:58:42.030Z"
+    },
     {
       "action": "chore(sharding): migrar tasks.json para org hypenosys",
       "user": "Sistema",
       "timestamp": "2026-09-13T08:54:19.657Z"
     }
-  ]
+  ],
+  "last_updated_by": "Unassigned"
 }
