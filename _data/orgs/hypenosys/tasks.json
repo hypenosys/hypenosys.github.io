@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-09-28T15:58:42.030Z",
+  "last_updated": "2026-09-28T15:58:55.966Z",
   "organizationId": "hypenosys",
   "tasks": [
     {
@@ -2359,7 +2359,7 @@
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Major",
       "milestone": "M2",
-      "estado": "Working",
+      "estado": "In Review",
       "completitud": 0,
       "resuelto_por": "Axel",
       "detectado_por": "Axel",
@@ -2435,6 +2435,13 @@
           "field": "task_type",
           "old_value": "feature",
           "new_value": "bug"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-09-28T15:58:55.159Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
         }
       ],
       "id": 72,
@@ -3304,6 +3311,11 @@
   ],
   "_audit_log": [
     {
+      "action": "chore: actualizar tarea #72",
+      "user": "Axlfc",
+      "timestamp": "2026-09-28T15:58:55.966Z"
+    },
+    {
       "action": "feat: nueva tarea #1790611120859 añadida",
       "user": "Axlfc",
       "timestamp": "2026-09-28T15:58:42.030Z"
@@ -3314,5 +3326,5 @@
       "timestamp": "2026-09-13T08:54:19.657Z"
     }
   ],
-  "last_updated_by": "Unassigned"
+  "last_updated_by": "Axlfc"
 }
