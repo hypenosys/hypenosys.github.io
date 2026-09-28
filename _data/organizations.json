@@ -15,7 +15,8 @@
         "dkdidac-design",
         "mitxel2022",
         "silmaril464",
-        "lachicadelaboina"
+        "lachicadelaboina",
+        "topperh4rley"
       ]
     },
     {
@@ -33,6 +34,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: añadir miembro topperh4rley a la organización Hypenosys",
+      "user": "Axlfc",
+      "timestamp": "2026-09-28T15:54:52.639Z"
+    },
     {
       "action": "chore: eliminar miembro topperh4rley de la organización Hypenosys",
       "user": "Axlfc",
