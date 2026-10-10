@@ -267,8 +267,15 @@ class AuthManager {
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Conectando...';
 
+        // Do not destroy an established OAuth session when a mistyped PAT fails.
+        const previousToken = window.githubApi.getAuthToken();
+        const persisted = !!localStorage.getItem('gh_access_token');
+        let replacedToken = false;
         try {
-            if (token) window.githubApi.setToken(token);
+            if (token && token !== previousToken) {
+                window.githubApi.setToken(token, persisted);
+                replacedToken = true;
+            }
             if (repo) window.githubApi.setRepo(repo);
             const validation = await window.githubApi.validateToken();
             if (!validation?.valid || !validation.user?.login) {
@@ -320,6 +327,19 @@ class AuthManager {
                 }
             }
         } catch (e) {
+            if (replacedToken) {
+                try {
+                    if (previousToken) {
+                        window.githubApi.setToken(previousToken, persisted);
+                        const restored = await window.githubApi.validateToken();
+                        if (restored?.valid) this.updateHeaderUI(restored.user);
+                    } else {
+                        window.githubApi.clearAuth();
+                    }
+                } catch (restoreError) {
+                    console.error('[AUTH] Failed to restore the previous GitHub session:', restoreError);
+                }
+            }
             console.error("Save settings failed:", e);
             this.showToast('Error de Conexión', e.message, 'error');
         } finally {
