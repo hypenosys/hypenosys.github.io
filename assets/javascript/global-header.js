@@ -42,6 +42,23 @@ class GlobalHeader {
                 --gh-h: 64px;
             }
 
+            /* Bootstrap modals/backdrops must cover the sticky global header. */
+            body.modal-open .gh-navbar { z-index: 1020; }
+            #create-org-modal, #join-org-modal, #write-permission-modal,
+            #manage-members-modal, #member-deep-dive-modal {
+                z-index: 3200 !important;
+                max-height: 100dvh;
+                overflow-y: auto;
+                overscroll-behavior: contain;
+                -webkit-overflow-scrolling: touch;
+            }
+            #create-org-modal > *, #join-org-modal > *, #write-permission-modal > *,
+            #manage-members-modal > *, #member-deep-dive-modal > * {
+                max-height: calc(100dvh - 1rem);
+                overflow-y: auto;
+                overscroll-behavior: contain;
+            }
+
             .gh-navbar {
                 height: var(--gh-h);
                 background: var(--gh-bg);

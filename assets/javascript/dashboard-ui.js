@@ -1600,24 +1600,40 @@ window.promptCreateOrganization = () => {
         }
 
         try {
-            await window.githubApi.atomicWrite('_data/organizations.json', (db) => {
-                if (!db.organizations) db.organizations = [];
+            const creator = window.githubApi?.user?.login;
+            if (!creator) throw new Error('Inicia sesión con GitHub para crear una organización.');
+            const now = new Date().toISOString();
+            const creatorMember = { handle: creator.toLowerCase(), teams: [], roles: [] };
+            const metadata = {
+                id: orgId, name: orgName, createdBy: creator,
+                createdAt: now, isDefault: false, members: [creatorMember],
+                schema_version: '1.0.0'
+            };
+            // First create authoritative membership metadata. Index remains
+            // non-sharded for task storage until an explicit tasks migration.
+            await window.githubApi.atomicWrite(
+                `_data/orgs/${orgId}/meta.json`,
+                () => metadata,
+                `feat: crear metadata para ${orgName}`,
+                { createIfMissing: true, initialContent: metadata }
+            );
+            const indexResult = await window.githubApi.atomicWrite('_data/organizations.json', db => {
+                if (!Array.isArray(db.organizations)) db.organizations = [];
+                if (db.organizations.some(w => w.id === orgId)) throw new Error('La organización ya existe.');
                 db.organizations.push({
-                    id: orgId,
-                    name: orgName,
-                    createdBy: (window.githubApi.user && window.githubApi.user.login) ? window.githubApi.user.login : 'Axlfc',
-                    createdAt: new Date().toISOString(),
-                    isDefault: false
+                    id: orgId, name: orgName, createdBy: creator,
+                    createdAt: now, isDefault: false, isSharded: false,
+                    members: [creatorMember]
                 });
                 return db;
             }, `feat: nueva organización ${orgName} añadida`);
 
-            if (window.hypeToast) {
-                window.hypeToast('Organización creada correctamente ✓', 'success');
-            }
-
+            const newOrg = { ...metadata, isSharded: false };
+            __workspaces__ = [...__workspaces__.filter(org => org.id !== orgId), newOrg];
+            window.__workspaces__ = __workspaces__;
+            if (window.hypeToast) window.hypeToast('Organización creada correctamente ✓', 'success');
             closeModal();
-            window.switchWorkspace(orgId);
+            await window.switchWorkspace(orgId);
         } catch (e) {
             console.error('[WORKSPACE] Failed to create organization:', e);
             if (isWritePermissionError(e)) {
@@ -1888,151 +1904,127 @@ window.closeManageMembersModal = () => {
     activeManageOrgId = null;
 };
 
+function canManageOrganizationMembers(org) {
+    const signedIn = String(window.githubApi?.user?.login || '').toLowerCase();
+    return !!signedIn && signedIn === String(org?.createdBy || '').toLowerCase();
+}
+
 function renderManageMembersList(org) {
-    const listContainer = document.getElementById('manage-members-list');
-    if (!listContainer) return;
-    listContainer.innerHTML = '';
-
-    const members = org.members || [];
-    if (members.length === 0) {
-        listContainer.innerHTML = `<div class="text-xs text-slate-500 italic py-2 text-center">No hay miembros en esta organización.</div>`;
-        return;
+    const container = document.getElementById('manage-members-list');
+    if (!container || !org) return;
+    container.replaceChildren();
+    const canEdit = canManageOrganizationMembers(org);
+    const addButton = document.getElementById('add-member-btn');
+    if (addButton) addButton.disabled = !canEdit;
+    const members = Array.isArray(org.members) ? org.members : [];
+    if (!members.length) {
+        const empty = document.createElement('p');
+        empty.className = 'text-xs text-slate-400 py-2';
+        empty.textContent = 'Esta organización aún no tiene miembros.';
+        container.appendChild(empty);
     }
+    for (const member of members) {
+        const handle = String(typeof member === 'string' ? member : member?.handle || '').trim();
+        if (!handle) continue;
+        const row = document.createElement('div');
+        row.className = 'flex justify-between items-center bg-slate-900/60 p-2 rounded border border-slate-800/80 mb-2';
+        const label = document.createElement('span');
+        label.className = 'text-xs font-bold text-slate-200';
+        label.textContent = (MEMBER_MAPPING[handle.toLowerCase()] || handle) + ' (' + handle + ')';
+        row.appendChild(label);
+        if (canEdit && handle.toLowerCase() !== String(org.createdBy || '').toLowerCase()) {
+            const remove = document.createElement('button');
+            remove.type = 'button';
+            remove.className = 'text-slate-500 hover:text-red-400 p-2';
+            remove.textContent = 'Eliminar';
+            remove.setAttribute('aria-label', 'Eliminar a ' + handle);
+            remove.addEventListener('click', () => window.handleRemoveOrgMember(handle));
+            row.appendChild(remove);
+        }
+        container.appendChild(row);
+    }
+}
 
-    members.forEach(member => {
-        const div = document.createElement('div');
-        div.className = 'flex justify-between items-center bg-slate-900/60 p-2 rounded border border-slate-800/80 mb-2';
-
-        const memberHandle = typeof member === 'string' ? member : (member && member.handle) || '';
-        const display = MEMBER_MAPPING[memberHandle.toLowerCase()] || memberHandle;
-
-        div.innerHTML = `
-            <span class="text-xs font-bold text-slate-200">${display} <span class="text-[10px] text-slate-500 font-mono">(${memberHandle})</span></span>
-            <button onclick="handleRemoveOrgMember('${memberHandle}')" class="text-slate-500 hover:text-red-400 transition-colors p-1 border-0 bg-transparent outline-none" title="Eliminar miembro">
-                <i class="fa-solid fa-trash-can text-xs"></i>
-            </button>
-        `;
-        listContainer.appendChild(div);
-    });
+function applyOrganizationMembers(orgId, metadata) {
+    __workspaces__ = __workspaces__.map(org => org.id === orgId
+        ? { ...org, ...metadata, members: metadata.members || [] }
+        : org);
+    window.__workspaces__ = __workspaces__;
+    const updated = __workspaces__.find(org => org.id === orgId);
+    renderManageMembersList(updated);
+    loadWorkspaceMembers();
+    renderDashboard();
 }
 
 window.handleAddOrgMember = async () => {
     const input = document.getElementById('add-member-input');
-    const errEl = document.getElementById('add-member-error');
-    if (!input || !errEl || !activeManageOrgId) return;
-
-    errEl.classList.add('hidden');
-    const username = input.value.trim();
-
-    if (!username) {
-        errEl.textContent = 'El nombre de usuario no puede estar vacío.';
-        errEl.classList.remove('hidden');
+    const error = document.getElementById('add-member-error');
+    const org = __workspaces__.find(item => item.id === activeManageOrgId);
+    if (!input || !error || !org) return;
+    error.classList.add('hidden');
+    const handle = input.value.trim().toLowerCase();
+    if (!canManageOrganizationMembers(org)) {
+        error.textContent = 'Solo la persona creadora puede gestionar miembros.';
+        error.classList.remove('hidden');
         return;
     }
-
-    const org = __workspaces__.find(w => w.id === activeManageOrgId);
-    if (!org) return;
-
-    const members = org.members || [];
-    if (members.some(m => {
-        const memberHandle = (typeof m === 'string' ? m : (m && m.handle) || '').toLowerCase();
-        return memberHandle === username.toLowerCase();
-    })) {
-        errEl.textContent = 'El usuario ya pertenece a esta organización.';
-        errEl.classList.remove('hidden');
+    if (!/^[a-z0-9](?:[a-z0-9-]{0,37}[a-z0-9])?$/.test(handle)) {
+        error.textContent = 'Introduce un nombre de usuario de GitHub válido.';
+        error.classList.remove('hidden');
         return;
     }
-
-    if (window.hypeToast) {
-        window.hypeToast('Guardando miembro en GitHub...', 'info');
+    if ((org.members || []).some(item => String(typeof item === 'string' ? item : item?.handle || '').toLowerCase() === handle)) {
+        error.textContent = 'El usuario ya pertenece a esta organización.';
+        error.classList.remove('hidden');
+        return;
     }
-
     try {
-        const result = await window.githubApi.atomicWrite('_data/organizations.json', (db) => {
-            const orgInDb = db.organizations.find(w => w.id === activeManageOrgId);
-            if (orgInDb) {
-                if (!orgInDb.members) orgInDb.members = [];
-                orgInDb.members.push(username);
-            }
+        const path = `_data/orgs/${org.id}/meta.json`;
+        const result = await window.githubApi.atomicWrite(path, db => {
+            db.members = Array.isArray(db.members) ? db.members : [];
+            if (db.members.some(item => String(typeof item === 'string' ? item : item?.handle || '').toLowerCase() === handle))
+                return { content: db, changed: false };
+            db.members.push({ handle, teams: [], roles: [] });
             return db;
-        }, `chore: añadir miembro ${username} a la organización ${org.name}`);
-
-        if (result.success) {
-            if (window.hypeToast) {
-                window.hypeToast('Miembro añadido correctamente ✓', 'success');
-            }
-            __workspaces__ = result.content.organizations;
-            window.__workspaces__ = __workspaces__;
-
-            const updatedOrg = __workspaces__.find(w => w.id === activeManageOrgId);
-            renderManageMembersList(updatedOrg);
-
-            loadWorkspaceMembers();
-            renderDashboard();
-            input.value = '';
-        } else {
-            throw new Error('No se pudo guardar la organización.');
-        }
-    } catch (e) {
-        console.error('[MEMBER] Failed to add member:', e);
-        if (isWritePermissionError(e)) {
-            showWritePermissionModal();
-        } else {
-            errEl.textContent = 'Fallo al guardar: ' + e.message;
-            errEl.classList.remove('hidden');
-            if (window.hypeToast) {
-                window.hypeToast('Error guardando en GitHub: ' + e.message, 'error');
-            }
-        }
+        }, `chore: añadir miembro ${handle} a ${org.name}`, {
+            createIfMissing: true,
+            initialContent: { id: org.id, name: org.name, createdBy: org.createdBy, members: org.members || [], schema_version: '1.0.0' }
+        });
+        if (!result.success) throw new Error('GitHub no confirmó la operación.');
+        applyOrganizationMembers(org.id, result.content);
+        input.value = '';
+        window.hypeToast?.('Miembro añadido correctamente ✓', 'success');
+    } catch (err) {
+        console.error('[MEMBER] Failed to add member', err);
+        error.textContent = 'Fallo al guardar: ' + err.message;
+        error.classList.remove('hidden');
+        if (typeof isWritePermissionError === 'function' && isWritePermissionError(err)) showWritePermissionModal();
     }
 };
 
-window.handleRemoveOrgMember = async (username) => {
-    if (!activeManageOrgId) return;
-    const org = __workspaces__.find(w => w.id === activeManageOrgId);
-    if (!org) return;
-
-    if (!confirm(`¿Estás seguro de que deseas eliminar a ${username} de ${org.name}?`)) return;
-
-    if (window.hypeToast) {
-        window.hypeToast('Eliminando miembro en GitHub...', 'info');
+window.handleRemoveOrgMember = async username => {
+    const org = __workspaces__.find(item => item.id === activeManageOrgId);
+    if (!org || !canManageOrganizationMembers(org)) return;
+    const handle = String(username || '').toLowerCase();
+    if (handle === String(org.createdBy || '').toLowerCase()) {
+        window.hypeToast?.('No puedes eliminar a la persona creadora.', 'warning');
+        return;
     }
-
+    if (!confirm(`¿Eliminar a ${handle} de ${org.name}?`)) return;
     try {
-        const result = await window.githubApi.atomicWrite('_data/organizations.json', (db) => {
-            const orgInDb = db.organizations.find(w => w.id === activeManageOrgId);
-            if (orgInDb && orgInDb.members) {
-                orgInDb.members = orgInDb.members.filter(m => {
-                    const memberHandle = (typeof m === 'string' ? m : (m && m.handle) || '').toLowerCase();
-                    return memberHandle !== username.toLowerCase();
-                });
-            }
+        const path = `_data/orgs/${org.id}/meta.json`;
+        const result = await window.githubApi.atomicWrite(path, db => {
+            db.members = (db.members || []).filter(item =>
+                String(typeof item === 'string' ? item : item?.handle || '').toLowerCase() !== handle
+            );
             return db;
-        }, `chore: eliminar miembro ${username} de la organización ${org.name}`);
-
-        if (result.success) {
-            if (window.hypeToast) {
-                window.hypeToast('Miembro eliminado ✓', 'success');
-            }
-            __workspaces__ = result.content.organizations;
-            window.__workspaces__ = __workspaces__;
-
-            const updatedOrg = __workspaces__.find(w => w.id === activeManageOrgId);
-            renderManageMembersList(updatedOrg);
-
-            loadWorkspaceMembers();
-            renderDashboard();
-        } else {
-            throw new Error('No se pudo guardar la organización.');
-        }
-    } catch (e) {
-        console.error('[MEMBER] Failed to remove member:', e);
-        if (isWritePermissionError(e)) {
-            showWritePermissionModal();
-        } else if (window.hypeToast) {
-            window.hypeToast('Error guardando en GitHub: ' + e.message, 'error');
-        } else {
-            alert('Error al eliminar miembro: ' + e.message);
-        }
+        }, `chore: eliminar miembro ${handle} de ${org.name}`);
+        if (!result.success) throw new Error('GitHub no confirmó la operación.');
+        applyOrganizationMembers(org.id, result.content);
+        window.hypeToast?.('Miembro eliminado ✓', 'success');
+    } catch (err) {
+        console.error('[MEMBER] Failed to remove member', err);
+        window.hypeToast?.('Error guardando en GitHub: ' + err.message, 'error');
+        if (typeof isWritePermissionError === 'function' && isWritePermissionError(err)) showWritePermissionModal();
     }
 };

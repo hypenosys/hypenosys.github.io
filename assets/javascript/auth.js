@@ -267,11 +267,22 @@ class AuthManager {
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Conectando...';
 
+        // Do not destroy an established OAuth session when a mistyped PAT fails.
+        const previousToken = window.githubApi.getAuthToken();
+        const persisted = !!localStorage.getItem('gh_access_token');
+        let replacedToken = false;
         try {
-            if (token) window.githubApi.setToken(token);
+            if (token && token !== previousToken) {
+                window.githubApi.setToken(token, persisted);
+                replacedToken = true;
+            }
             if (repo) window.githubApi.setRepo(repo);
-            const user = await window.githubApi.validateToken();
-            this.updateHeaderUI(user);
+            const validation = await window.githubApi.validateToken();
+            if (!validation?.valid || !validation.user?.login) {
+                throw new Error('El token de GitHub no es válido o no tiene acceso.');
+            }
+            this.updateHeaderUI(validation.user);
+            document.dispatchEvent(new CustomEvent('authReady', { detail: { user: validation.user } }));
 
             if (julesKey) {
                 // Save and verify locally first
@@ -303,7 +314,7 @@ class AuthManager {
             }
 
             if (window.jQuery) window.jQuery('#settingsModal').modal('hide');
-            this.showToast('Éxito', 'Conexión establecida con GitHub y Jules.', 'success');
+            this.showToast('Éxito', 'Configuración guardada y sesión GitHub verificada.', 'success');
 
             // Dispatch events
             document.dispatchEvent(new CustomEvent('settingsSaved'));
@@ -316,6 +327,19 @@ class AuthManager {
                 }
             }
         } catch (e) {
+            if (replacedToken) {
+                try {
+                    if (previousToken) {
+                        window.githubApi.setToken(previousToken, persisted);
+                        const restored = await window.githubApi.validateToken();
+                        if (restored?.valid) this.updateHeaderUI(restored.user);
+                    } else {
+                        window.githubApi.clearAuth();
+                    }
+                } catch (restoreError) {
+                    console.error('[AUTH] Failed to restore the previous GitHub session:', restoreError);
+                }
+            }
             console.error("Save settings failed:", e);
             this.showToast('Error de Conexión', e.message, 'error');
         } finally {
