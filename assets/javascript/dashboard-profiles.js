@@ -125,8 +125,13 @@ function scrollToProfile(memberName) {
 let currentDeepDiveMember = null;
 
 function openDeepDiveModal(memberName) {
-    const profile = currentProfiles?.members[memberName];
-    if (!profile) return;
+    let profile = currentProfiles?.members?.[memberName];
+    if (!profile) {
+        const org = (window.__workspaces__ || []).find(item => item.id === window.githubApi?.getActiveWorkspace?.());
+        const member = (org?.members || []).find(item => String(typeof item === 'string' ? item : item?.handle || '').toLowerCase() === String(memberName).toLowerCase());
+        if (!member) return;
+        profile = { github_username: memberName, display_name: memberName, role: 'Miembro', bio: '', skills: [] };
+    }
     currentDeepDiveMember = memberName;
 
     const ghUser = (profile.github_username || profile.handle || '').toLowerCase();
@@ -136,7 +141,12 @@ function openDeepDiveModal(memberName) {
     // Header
     document.getElementById('deep-dive-name').textContent = profile.display_name;
     document.getElementById('deep-dive-role').textContent = profile.role || 'Sin Rol';
-    document.getElementById('deep-dive-avatar').innerHTML = `<img src="${avatarUrl}" class="w-full h-full object-cover">`;
+    const avatarHolder = document.getElementById('deep-dive-avatar');
+    const image = document.createElement('img');
+    image.src = /^https:\/\//i.test(avatarUrl || '') ? avatarUrl : '/assets/images/upload_soul.svg';
+    image.alt = '';
+    image.className = 'w-full h-full object-cover';
+    avatarHolder.replaceChildren(image);
 
     // Tab: Profile
     document.getElementById('deep-dive-bio').textContent = profile.bio || 'Sin biografía disponible.';
@@ -151,10 +161,25 @@ function openDeepDiveModal(memberName) {
     });
 
     const linksContainer = document.getElementById('deep-dive-links');
-    linksContainer.innerHTML = '';
-    if (profile.links.github) linksContainer.innerHTML += `<a href="${profile.links.github}" target="_blank" class="hover:text-white transition-colors"><i class="fa-brands fa-github"></i></a>`;
-    if (profile.links.twitter) linksContainer.innerHTML += `<a href="${profile.links.twitter}" target="_blank" class="hover:text-white transition-colors"><i class="fa-brands fa-twitter"></i></a>`;
-    if (profile.links.itch) linksContainer.innerHTML += `<a href="${profile.links.itch}" target="_blank" class="hover:text-white transition-colors"><i class="fa-brands fa-itch-io"></i></a>`;
+    linksContainer.replaceChildren();
+    const safeLinks = [
+        profile.links?.github || (profile.github_username ? 'https://github.com/' + encodeURIComponent(profile.github_username) : ''),
+        profile.portfolio_url || profile.portfolio || '',
+        ...(profile.extra_links || []).map(link => link.url)
+    ];
+    for (const value of safeLinks) {
+        try {
+            const url = new URL(value);
+            if (!['https:', 'http:'].includes(url.protocol)) continue;
+            const anchor = document.createElement('a');
+            anchor.href = url.href;
+            anchor.target = '_blank';
+            anchor.rel = 'noopener noreferrer';
+            anchor.textContent = url.hostname;
+            anchor.className = 'text-purple-400 hover:text-white mr-2 text-sm';
+            linksContainer.appendChild(anchor);
+        } catch (_) { /* Ignore malformed or unsupported profile links. */ }
+    }
 
     // Tab: Performance
     if (stats) {
