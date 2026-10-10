@@ -207,9 +207,9 @@ async function initDashboard() {
     loadWorkspaceMembers();
     await refreshDashboardData();
 
-    const memberMatch = MEMBERS.find(m => m.toLowerCase() === window.currentUser ||
-                                          (currentProfiles && currentProfiles.members[m] && currentProfiles.members[m].github_username.toLowerCase() === window.currentUser));
-    if (memberMatch) activeFilter = memberMatch;
+    // Show the entire active organization by default. Users can filter
+    // their own assignments explicitly using the member controls.
+    activeFilter = null;
 
     startAutoRefresh();
     renderUserStatus(user);
@@ -468,22 +468,21 @@ async function refreshDashboardData() {
         window.githubApi.fetchFileWithSha('assets/data/team_profiles.json', 'json', true)
     ]);
 
-    let remoteTasksRes = null;
-    let remoteArchiveRes = null;
-    let remoteOrgsRes = null;
-
+    // Personal workspace includes assignments from every organization
+    // the signed-in user actually belongs to, not just Hypenosys.
+    const remoteWorkspaceData = [];
     if (ws === 'personal') {
-        try {
-            const [rTasks, rArchive, rOrgs] = await Promise.all([
-              window.githubApi.fetchTasksWithDualRead('hypenosys', false, true),
-              window.githubApi.fetchTasksWithDualRead('hypenosys', true, true),
-              window.githubApi.fetchFileWithSha('_data/organizations.json', 'json', true)
+        const orgIds = memberships.map(org => org.id);
+        const results = await Promise.allSettled(orgIds.map(async orgId => {
+            const [active, archive] = await Promise.all([
+                window.githubApi.fetchTasksWithDualRead(orgId, false, true),
+                window.githubApi.fetchTasksWithDualRead(orgId, true, true)
             ]);
-            remoteTasksRes = rTasks;
-            remoteArchiveRes = rArchive;
-            remoteOrgsRes = rOrgs;
-        } catch (err) {
-            console.warn('[DASHBOARD] Failed to load remote tasks/orgs for personal workspace, falling back to local only:', err);
+            return { orgId, active: active?.content?.tasks || [], archive: archive?.content?.tasks || [] };
+        }));
+        for (const result of results) {
+            if (result.status === 'fulfilled') remoteWorkspaceData.push(result.value);
+            else console.warn('[WORKSPACE] Unable to load assigned org tasks:', result.reason);
         }
     }
 
@@ -505,34 +504,16 @@ async function refreshDashboardData() {
         const userHandle = (window.currentUser || (window.githubApi && window.githubApi.user && window.githubApi.user.login) || '').toLowerCase();
         const userOrgIds = getUserOrganizations(newOrgs, userHandle).map(w => w.id);
 
-        let assignedRemoteTasks = [];
-        let assignedRemoteArchive = [];
-
-        if (remoteTasksRes && remoteTasksRes.content && Array.isArray(remoteTasksRes.content.tasks)) {
-            assignedRemoteTasks = remoteTasksRes.content.tasks.filter(t => {
-                const inOrg = userOrgIds.includes(t.organizationId);
-                const isAssigned = Array.isArray(t.asignados) && t.asignados.some(m => m.toLowerCase() === userHandle);
-                return inOrg && isAssigned;
-            }).map(t => {
-                const cloned = JSON.parse(JSON.stringify(t));
-                cloned.id = 'remote-' + t.id;
-                cloned.isRemote = true;
-                return cloned;
-            });
-        }
-
-        if (remoteArchiveRes && remoteArchiveRes.content && Array.isArray(remoteArchiveRes.content.tasks)) {
-            assignedRemoteArchive = remoteArchiveRes.content.tasks.filter(t => {
-                const inOrg = userOrgIds.includes(t.organizationId);
-                const isAssigned = Array.isArray(t.asignados) && t.asignados.some(m => m.toLowerCase() === userHandle);
-                return inOrg && isAssigned;
-            }).map(t => {
-                const cloned = JSON.parse(JSON.stringify(t));
-                cloned.id = 'remote-' + t.id;
-                cloned.isRemote = true;
-                return cloned;
-            });
-        }
+        const assigned = (items, orgId) => items
+            .filter(task => task.organizationId === orgId
+                && (task.asignados || []).some(handle => String(handle).toLowerCase() === userHandle))
+            .map(task => ({
+                ...task,
+                id: 'remote-' + orgId + '-' + task.id,
+                isRemote: true
+            }));
+        const assignedRemoteTasks = remoteWorkspaceData.flatMap(org => assigned(org.active, org.orgId));
+        const assignedRemoteArchive = remoteWorkspaceData.flatMap(org => assigned(org.archive, org.orgId));
 
         filteredTasks = [...newTasks, ...assignedRemoteTasks];
         filteredArchive = [...newArchive, ...assignedRemoteArchive];
@@ -563,7 +544,9 @@ async function refreshDashboardData() {
     localStorage.setItem(`hy_cache_budget_${ws}`, JSON.stringify(currentBudget));
     localStorage.setItem(`hy_cache_profiles_${ws}`, JSON.stringify(currentProfiles));
 
-    // Stats are scoped in memory. Do not write tenant metrics to global stats.\n\n    renderDashboard();
+    // Stats are scoped in memory. Do not write tenant metrics to global stats.
+
+    renderDashboard();
 
     const tsEl = document.getElementById('last-sync-timestamp');
     if (tsEl) tsEl.textContent = `Última sincronización: ${new Date().toLocaleTimeString('es-ES')}`;
