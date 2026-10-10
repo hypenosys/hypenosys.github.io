@@ -270,8 +270,12 @@ class AuthManager {
         try {
             if (token) window.githubApi.setToken(token);
             if (repo) window.githubApi.setRepo(repo);
-            const user = await window.githubApi.validateToken();
-            this.updateHeaderUI(user);
+            const validation = await window.githubApi.validateToken();
+            if (!validation?.valid || !validation.user?.login) {
+                throw new Error('El token de GitHub no es válido o no tiene acceso.');
+            }
+            this.updateHeaderUI(validation.user);
+            document.dispatchEvent(new CustomEvent('authReady', { detail: { user: validation.user } }));
 
             if (julesKey) {
                 // Save and verify locally first
@@ -303,7 +307,7 @@ class AuthManager {
             }
 
             if (window.jQuery) window.jQuery('#settingsModal').modal('hide');
-            this.showToast('Éxito', 'Conexión establecida con GitHub y Jules.', 'success');
+            this.showToast('Éxito', 'Configuración guardada y sesión GitHub verificada.', 'success');
 
             // Dispatch events
             document.dispatchEvent(new CustomEvent('settingsSaved'));
