@@ -544,7 +544,8 @@ async function refreshDashboardData() {
     const newStats = buildWorkspaceStats(filteredTasks, filteredArchive, ws, newOrgs, newProfiles, newBudget);
 
     // Check if data actually changed to avoid redundant renders
-    const dataString = JSON.stringify({ ws, newOrgs, filteredTasks, filteredArchive, newStats, newBudget, newProfiles });
+    const dataString = JSON.stringify({ ws, newOrgs, filteredTasks, filteredArchive,
+        newStats: { ...newStats, computed_at: null }, newBudget, newProfiles });
     if (window._lastDataString === dataString) {
         console.log('[DASHBOARD] Data unchanged, skipping render.');
         return;
