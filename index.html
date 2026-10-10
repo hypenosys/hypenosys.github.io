@@ -54,6 +54,31 @@ permalink: /
         .hy-footnote { margin-top: 4rem; padding: 1.6rem 0 2rem; border-top: 1px solid #47475c; font-size: .92rem; }
         @media (max-width: 767px) { .hy-grid, .hy-link-grid { grid-template-columns: 1fr; } .hy-hero { padding: 2rem 1.35rem; } .hy-action { width: 100%; } }
         @media (prefers-reduced-motion: no-preference) { .hy-action, .hy-resource { transition: background-color .15s ease, border-color .15s ease; } }
+        /* Bootstrap-based styling for the shared profile editor on the standalone homepage. */
+        #modalEditProfile .modal-content { background: #202330; border: 1px solid #665087; color: #f8f8f2; }
+        #modalEditProfile .modal-header, #modalEditProfile .modal-footer { padding: 1rem 1.3rem; border-color: #47475c; }
+        #modalEditProfile .modal-body { min-height: 0; }
+        #modalEditProfile .tab-content { padding: 1.25rem; max-height: 58dvh; overflow-y: auto; }
+        #modalEditProfile .nav-tabs { display: flex; padding: 0.5rem; border-color: #47475c; }
+        #modalEditProfile .nav-link { color: #c8c7d2; border: none; }
+        #modalEditProfile .nav-link.active { color: #bd93f9; background: #252636; }
+        #modalEditProfile .modal-content .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        #modalEditProfile .modal-content .space-y-6 > * + * { margin-top: 1.2rem; }
+        #modalEditProfile label { display: block; font-size: 0.85rem; margin-bottom: 0.35rem; color: #c8c7d2; }
+        #modalEditProfile input, #modalEditProfile textarea, #modalEditProfile select {
+            display: block; width: 100%; max-width: 100%; background: #171a27; color: #f8f8f2;
+            border: 1px solid #665087; border-radius: 0.65rem; padding: 0.7rem;
+        }
+        #modalEditProfile #prof-avatar-preview { width: 48px; height: 48px; object-fit: cover; }
+        #modalEditProfile .modal-footer button { flex: 1; min-height: 44px; padding: .6rem; border-radius: .6rem; }
+        #modalEditProfile #btn-save-profile-editor { background: #50fa7b; color: #171a27; }
+        #modalEditProfile .modal-footer [data-dismiss="modal"] { background: #303142; color: #fff; }
+        #modalEditProfile #container-ai-base-url.hidden { display: none; }
+        @media (max-width: 750px) {
+            #modalEditProfile .modal-content .grid { grid-template-columns: 1fr; }
+            #modalEditProfile .modal-header, #modalEditProfile .modal-footer { padding: .75rem; }
+            #modalEditProfile .tab-content { max-height: none; }
+        }
     </style>
 </head>
 <body class="bg-slate-950 text-white">
@@ -142,5 +167,6 @@ permalink: /
 <script src="/assets/javascript/auth-config.js"></script>
 <script src="/assets/javascript/github-api.js"></script>
 <script src="/assets/javascript/auth.js"></script>
+<script src="/assets/javascript/profile-editor.js"></script>
 </body>
 </html>
