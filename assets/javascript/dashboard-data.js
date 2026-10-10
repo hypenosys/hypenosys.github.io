@@ -465,10 +465,7 @@ async function refreshDashboardData() {
         window.githubApi.fetchTasksWithDualRead(ws, false),
         window.githubApi.fetchTasksWithDualRead(ws, true),
         window.githubApi.fetchFileWithSha('_data/studio_budget.json'),
-        fetch('/assets/data/team_profiles.json').then(async response => {
-            if (!response.ok) throw new Error('No se pudo cargar team_profiles.json');
-            return { content: await response.json() };
-        })
+        window.githubApi.fetchFileWithSha('assets/data/team_profiles.json', 'json', true)
     ]);
 
     let remoteTasksRes = null;
