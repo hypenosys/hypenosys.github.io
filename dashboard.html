@@ -961,7 +961,7 @@ layout: null
                 <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Añadir Nuevo Miembro</label>
                 <div class="flex gap-2">
                     <input type="text" id="add-member-input" class="flex-grow bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-slate-100 outline-none focus:border-indigo-500" placeholder="Username de GitHub (ej. axlfc)">
-                    <button onclick="handleAddOrgMember()" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold px-4 py-2 rounded-lg text-sm transition-all">Añadir</button>
+                    <button id="add-member-btn" type="button" onclick="handleAddOrgMember()" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold px-4 py-2 rounded-lg text-sm transition-all disabled:opacity-50">Añadir</button>
                 </div>
                 <div id="add-member-error" class="text-xs text-red-400 hidden"></div>
             </div>
