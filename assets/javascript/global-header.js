@@ -262,6 +262,7 @@ class GlobalHeader {
                 box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
             }
             .gh-mobile-account-menu[hidden] { display: none !important; }
+            .gh-mobile-account-menu { max-height: min(65dvh, 420px); overflow-y: auto; overscroll-behavior: contain; }
             .gh-mobile-account-name {
                 display: block;
                 overflow-wrap: anywhere;
@@ -341,10 +342,21 @@ class GlobalHeader {
                     gap: 1.5rem;
                     align-items: flex-start;
                 }
-                .gh-nav-content.open { display: flex; }
+                .gh-nav-content.open { display: flex; max-height: calc(100dvh - var(--gh-h)); overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
                 .gh-nav-groups { flex-direction: column; width: 100%; }
                 .gh-dropdown-content { position: static; box-shadow: none; border: none; display: block; padding-left: 1rem; }
                 .gh-auth-section { border-left: none; padding-left: 0; width: 100%; justify-content: flex-start; }
+            }
+            @media (max-width: 750px) {
+                #settingsModal .modal-dialog, #modalApiConfig .modal-dialog,
+                #modalEditProfile .modal-dialog { margin: 0.5rem; max-width: calc(100vw - 1rem); }
+                #settingsModal .modal-content, #modalApiConfig .modal-content,
+                #modalEditProfile .modal-content { max-height: calc(100dvh - 1rem); display: flex; flex-direction: column; }
+                #settingsModal .modal-body, #modalApiConfig .modal-body,
+                #modalEditProfile .tab-content { min-height: 0; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+                #modalEditProfile .modal-header, #modalEditProfile .modal-footer { flex-shrink: 0; }
+                #modalEditProfile .modal-footer { padding: 0.75rem; }
+                #modalEditProfile .nav-tabs { flex-wrap: nowrap; }
             }
             @media (max-width: 400px) {
                 .gh-mobile-login-full { display: none; }
