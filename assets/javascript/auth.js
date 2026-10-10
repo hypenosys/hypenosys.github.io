@@ -29,6 +29,7 @@ class AuthManager {
                 if (result && result.valid) {
                     console.log('[AUTH] OAuth exchange successful via AuthManager');
                     this.dispatchAuthReady(result.user);
+                    this.openRequestedAccountPanel(result.user);
                     return;
                 }
             } catch (e) {
@@ -39,12 +40,25 @@ class AuthManager {
             console.log('[AUTH] No OAuth code or exchange completed. Checking existing session...');
             const user = await this.checkAuthState();
             this.dispatchAuthReady(user);
+            this.openRequestedAccountPanel(user);
             return;
         }
 
         await this.handleOAuthCallback();
         const user = await this.checkAuthState();
         this.dispatchAuthReady(user);
+        this.openRequestedAccountPanel(user);
+    }
+
+    openRequestedAccountPanel(user) {
+        const requested = new URLSearchParams(window.location.search).get('account');
+        if (!user || !['profile', 'settings', 'api'].includes(requested)) return;
+        const url = new URL(window.location.href);
+        url.searchParams.delete('account');
+        window.history.replaceState({}, '', url.pathname + url.search + url.hash);
+        if (requested === 'profile') this.showProfileModal();
+        if (requested === 'settings') this.showSettingsModal();
+        if (requested === 'api') this.showApiConfigModal();
     }
 
     dispatchAuthReady(user) {
@@ -106,7 +120,7 @@ class AuthManager {
             if (e.target.closest('#btn-sign-in, #btn-sign-in-mobile')) this.handleLogin();
             if (e.target.closest('#btn-logout, #btn-logout-mobile')) this.handleLogout();
             if (e.target.closest('#btn-open-settings, #btn-open-settings-mobile')) {
-                if (window.jQuery) window.jQuery('#settingsModal').modal('show');
+                this.showSettingsModal();
             }
             if (e.target.closest('#btn-open-profile, #btn-open-profile-mobile')) this.showProfileModal();
             if (e.target.closest('#btn-open-api-config, #btn-open-api-config-mobile')) this.showApiConfigModal();
@@ -313,6 +327,11 @@ class AuthManager {
     }
 
     showSettingsModal() {
+        this.closeAccountMenus();
+        if (!document.getElementById('settingsModal')) {
+            window.location.assign('/dashboard.html?account=settings');
+            return;
+        }
         if (window.jQuery) window.jQuery('#settingsModal').modal('show');
     }
 
@@ -451,50 +470,29 @@ class AuthManager {
     }
 
     async showProfileModal() {
-        if (!window.githubApi.user) return;
-        const login = window.githubApi.user.login;
-        this.showToast('Cargando...', 'Obteniendo datos del equipo...', 'info');
-        try {
-            const response = await fetch('/assets/data/team.json');
-            if (!response.ok) throw new Error('No se pudo cargar team.json');
-            const team = await response.json();
-            const member = team.find(m => m.github && m.github.toLowerCase().includes(login.toLowerCase()));
-            if (!member) {
-                this.showToast('Aviso', 'No se encontró tu perfil en el archivo team.json.', 'warning');
-                return;
-            }
-
-            const editProfileName = document.getElementById('edit-profile-name');
-            const editProfileRole = document.getElementById('edit-profile-role');
-            const editProfileDesc = document.getElementById('edit-profile-desc');
-            const editProfilePortfolio = document.getElementById('edit-profile-portfolio');
-            const inputJulesKey = document.getElementById('input-jules-key');
-
-            if (editProfileName) editProfileName.value = member.name || '';
-            if (editProfileRole) editProfileRole.value = member.role || '';
-            if (editProfileDesc) editProfileDesc.value = member.description || '';
-            if (editProfilePortfolio) editProfilePortfolio.value = member.portfolio || '';
-
-            if (inputJulesKey) {
-                const storedKey = typeof window.getJulesApiKey === 'function' ? window.getJulesApiKey() : '';
-                if (storedKey.startsWith('nvapi-') || storedKey.startsWith('sk-')) {
-                    inputJulesKey.value = '';
-                    inputJulesKey.placeholder = 'Re-enter real Jules API key';
-                } else {
-                    inputJulesKey.value = storedKey;
-                }
-            }
-
-            this.currentTeamData = team;
-            this.currentFileSha = fileData.sha;
-            this.currentMemberIndex = team.indexOf(member);
-
-            if (window.jQuery) window.jQuery('#profileModal').modal('show');
-        } catch (e) {
-            this.showToast('Error', 'No se pudo cargar el perfil para editar.', 'error');
+        // Single editable profile source: assets/data/team_profiles.json.
+        // The legacy path read team.json and referenced an undefined fileData.
+        this.closeAccountMenus();
+        if (window.profileEditor && typeof window.profileEditor.openModal === 'function') {
+            return window.profileEditor.openModal();
         }
+        this.showToast('Perfil no disponible', 'El editor de perfil no se ha cargado. Recarga la página.', 'error');
     }
 
+    closeAccountMenus() {
+        const accountMenu = document.getElementById('gh-mobile-account-menu');
+        const accountButton = document.getElementById('gh-mobile-account-toggle');
+        if (accountMenu) accountMenu.hidden = true;
+        if (accountButton) accountButton.setAttribute('aria-expanded', 'false');
+        const nav = document.getElementById('gh-nav-content');
+        nav?.classList.remove('open');
+        const navToggle = document.getElementById('gh-mobile-toggle');
+        if (navToggle) {
+            navToggle.setAttribute('aria-expanded', 'false');
+            navToggle.setAttribute('aria-label', 'Abrir menú');
+        }
+        document.querySelectorAll('[id^="user-menu-"]').forEach(menu => menu.classList.add('hidden'));
+    }
 
     async handleSaveProfile() {
         const name = document.getElementById('edit-profile-name')?.value.trim() || '';
@@ -572,6 +570,11 @@ class AuthManager {
     }
 
     async showApiConfigModal() {
+        this.closeAccountMenus();
+        if (!document.getElementById('modalApiConfig')) {
+            window.location.assign('/dashboard.html?account=api');
+            return;
+        }
         const user = window.githubApi.user;
         if (!user) {
             this.showToast('Error', 'Debes estar autenticado para configurar la API.', 'error');
