@@ -7,17 +7,7 @@
       "createdBy": "Axlfc",
       "createdAt": "2025-01-01T00:00:00.000Z",
       "isDefault": true,
-      "isSharded": true,
-      "members": [
-        "Axlfc",
-        "axlfc",
-        "javi26031994-a11y",
-        "dkdidac-design",
-        "mitxel2022",
-        "silmaril464",
-        "lachicadelaboina",
-        "topperh4rley"
-      ]
+      "isSharded": true
     },
     {
       "id": "empty-space-videogames",
@@ -25,44 +15,19 @@
       "createdBy": "Axlfc",
       "createdAt": "2025-01-01T00:00:00.000Z",
       "isDefault": false,
-      "members": [
-        "Axlfc",
-        "axljuega",
-        "boraaj",
-        "MarcoBr100"
-      ]
+      "isSharded": true
     }
   ],
   "_audit_log": [
     {
-      "action": "chore: añadir miembro topperh4rley a la organización Hypenosys",
-      "user": "Axlfc",
-      "timestamp": "2026-09-28T15:54:52.639Z"
-    },
-    {
-      "action": "chore: eliminar miembro topperh4rley de la organización Hypenosys",
-      "user": "Axlfc",
-      "timestamp": "2026-09-28T15:54:46.368Z"
-    },
-    {
-      "action": "chore: actualizar miembros en Hypenosys y Empty Space Videogames (Axlfc, axljuega, boraaj, MarcoBr100)",
-      "user": "Axlfc",
-      "timestamp": "2026-09-21T21:00:00.000Z"
-    },
-    {
-      "action": "chore: añadir miembro axljuega a la organización Empty Space Videogames",
-      "user": "Axlfc",
-      "timestamp": "2026-09-13T11:50:31.558Z"
+      "action": "chore(sharding): marcar org empty-space-videogames como isSharded: true",
+      "user": "Sistema",
+      "timestamp": "2026-09-13T06:26:32.449Z"
     },
     {
       "action": "chore(sharding): marcar org hypenosys como isSharded: true",
       "user": "Sistema",
-      "timestamp": "2026-09-13T08:51:44.482Z"
-    },
-    {
-      "action": "chore(sharding): marcar org hypenosys como isSharded: true",
-      "user": "Sistema",
-      "timestamp": "2026-09-13T08:50:08.686Z"
+      "timestamp": "2026-09-13T06:26:26.199Z"
     },
     {
       "action": "chore: eliminar miembro TopperH4rley de la organización Empty Space Videogames",

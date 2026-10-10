@@ -1,7 +1,7 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-09-13T07:47:00.689Z",
-  "last_updated_by": "Unassigned",
+  "last_updated": "2026-08-26T21:07:06.982Z",
+  "last_updated_by": "Axlfc",
   "tasks": [
     {
       "rama": "docs/brainstorming-ideation",
@@ -284,7 +284,7 @@
       "estado": "In Review",
       "completitud": 0.25,
       "resuelto_por": "Dídac",
-      "detectado_por": "Axel",
+      "detectado_por": "Unassigned",
       "rama2": null,
       "ver": true,
       "fecha": "2026-05-24",
@@ -1239,91 +1239,6 @@
       "organizationId": "hypenosys"
     },
     {
-      "id": 45,
-      "title": "Proxy Relay para Ollama (Bypass Mixed Content)",
-      "descripcion": "Crear un proxy relay para solucionar el bloqueo de peticiones HTTP (Ollama local) desde HTTPS. Actualmente el navegador bloquea estas peticiones obligando a configuraciones manuales de flags. **Hecho cuando:** Las peticiones a Ollama funcionen de forma nativa desde el dashboard en HTTPS.",
-      "tags": [
-        "api",
-        "backend",
-        "security"
-      ],
-      "prioridad": "Medium",
-      "estado": "OK",
-      "estimated_hours": 6,
-      "comments": [
-        "He notado que este es el principal bloqueador para nuevos usuarios de Ollama; el relay debería ser ligero, preferiblemente un worker o un pequeño servicio node."
-      ],
-      "rama": "feature/ollama-proxy-relay",
-      "task_type": "feature",
-      "tema_principal": "Concepto / GDD",
-      "milestone": "M2",
-      "fecha": "2026-06-08",
-      "asignados": [
-        "axlfc"
-      ],
-      "acceptance_criteria": "El relay permite comunicación bidireccional sin errores de Mixed Content.",
-      "subtasks": [],
-      "repository": "hypenosys/docs",
-      "completitud": 0,
-      "resuelto_por": "Axel",
-      "detectado_por": "Unassigned",
-      "email_responsable": null,
-      "emails_asignados": [],
-      "start_date": "2026-06-13",
-      "due_date": "2026-06-21",
-      "story_points": null,
-      "external_links": [],
-      "blocks": [],
-      "blocked_by": [],
-      "images": [],
-      "change_log": [
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-13T09:12:10.528Z",
-          "field": "due_date",
-          "old_value": null,
-          "new_value": "2026-06-21"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-13T09:12:10.528Z",
-          "field": "completitud",
-          "new_value": 0
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-13T09:12:10.528Z",
-          "field": "repository",
-          "old_value": "",
-          "new_value": null
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-13T09:35:35.301Z",
-          "field": "repository",
-          "old_value": null,
-          "new_value": "hypenosys/docs"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T12:43:42.289Z",
-          "field": "seccion",
-          "new_value": "Backend n8n"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-03T19:36:13.268Z",
-          "field": "estado",
-          "old_value": "Pending",
-          "new_value": "OK"
-        }
-      ],
-      "seccion": "Backend n8n",
-      "jules_session": null,
-      "branch": "Programación (PRO)",
-      "organizationId": "hypenosys"
-    },
-    {
       "title": "Install Penpot and Hermes Agent in ZimaBoard",
       "descripcion": "",
       "rama": "master",
@@ -1972,80 +1887,6 @@
       "organizationId": "hypenosys"
     },
     {
-      "title": "sync python scripts with docs in /app",
-      "descripcion": "we need to manually port app, scripts Git repositories in the folders in the SVN and sync it. we are able to scrape successfully from scripts folders to read from /docs and construct the algorythmic logic",
-      "rama": "master",
-      "task_type": "chore",
-      "tema_principal": "Programación / Engine",
-      "repository": "hypenosys/scripts",
-      "prioridad": "Major",
-      "milestone": "M2",
-      "estado": "OK",
-      "completitud": 0.3,
-      "resuelto_por": "Alex",
-      "detectado_por": "Axel",
-      "asignados": [
-        "axlfc",
-        "topperh4rley"
-      ],
-      "email_responsable": "axel@hypenosys.com",
-      "emails_asignados": [
-        "alex@hypenosys.com"
-      ],
-      "start_date": "2026-06-16",
-      "due_date": "2026-06-28",
-      "estimated_hours": 6,
-      "story_points": 6,
-      "tags": [],
-      "external_links": [],
-      "subtasks": [],
-      "acceptance_criteria": "",
-      "blocks": [],
-      "blocked_by": [],
-      "comments": [],
-      "images": [],
-      "rama2": null,
-      "ver": true,
-      "fecha": "2026-06-16",
-      "apoyo": null,
-      "limite": null,
-      "comentario": "",
-      "change_log": [
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-16T11:52:44.802Z",
-          "field": "id",
-          "old_value": null,
-          "new_value": "Created"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-16T13:07:23.322Z",
-          "field": "title",
-          "old_value": "sync python scripts with docs",
-          "new_value": "sync python scripts with docs in /app"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T12:45:05.529Z",
-          "field": "seccion",
-          "new_value": "App"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T15:12:39.247Z",
-          "field": "estado",
-          "old_value": "Working",
-          "new_value": "OK"
-        }
-      ],
-      "id": 56,
-      "seccion": "App",
-      "jules_session": null,
-      "branch": "Programación (PRO)",
-      "organizationId": "hypenosys"
-    },
-    {
       "title": "Añadir terminal física en 'comandos' cuando están logueados en github y SVN en repo-admin",
       "descripcion": "habilitar sistma operativo de edición y mantenimiento de cambios y merges inteligentes",
       "rama": "master",
@@ -2200,7 +2041,7 @@
       "repository": "hypenosys/hypenosys-logo",
       "prioridad": "Critical",
       "milestone": "M1",
-      "estado": "Working",
+      "estado": "In Review",
       "completitud": 0,
       "resuelto_por": "Dídac",
       "detectado_por": "Axel",
@@ -2293,6 +2134,13 @@
           "field": "descripcion",
           "old_value": "Usar sesiones de Jules para sacar versiones y variaciones del logo,\n\nCrear logo cuadrado pequeño",
           "new_value": "Usar sesiones de Jules para sacar versiones y variaciones del logo,\n\nCrear logo proporción cuadrado "
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-08-26T21:07:06.204Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
         }
       ],
       "id": 70,
@@ -2359,7 +2207,7 @@
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Major",
       "milestone": "M2",
-      "estado": "Working",
+      "estado": "In Review",
       "completitud": 0,
       "resuelto_por": "Axel",
       "detectado_por": "Axel",
@@ -2435,6 +2283,13 @@
           "field": "task_type",
           "old_value": "feature",
           "new_value": "bug"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-08-26T21:00:30.872Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "In Review"
         }
       ],
       "id": 72,
@@ -2608,64 +2463,6 @@
       "organizationId": "hypenosys"
     },
     {
-      "title": "Creación de favicon.ico de hypenosys",
-      "descripcion": "Crear el favicon de la web de hypenosys. Luego ya lo asociaremos, se momento solo crear el icono en pequeño.",
-      "rama": "master",
-      "task_type": "chore",
-      "tema_principal": "Programación / Engine",
-      "seccion": "logo",
-      "repository": "hypenosys/hypenosys-logo",
-      "prioridad": "Medium",
-      "milestone": "M2",
-      "estado": "Working",
-      "completitud": 0,
-      "resuelto_por": "Dídac",
-      "detectado_por": "Axel",
-      "asignados": [
-        "dkdidac-design"
-      ],
-      "email_responsable": "didac@hypenosys.com",
-      "emails_asignados": [],
-      "start_date": "2026-07-08",
-      "due_date": "2026-07-22",
-      "estimated_hours": 4,
-      "story_points": 4,
-      "tags": [],
-      "external_links": [],
-      "subtasks": [],
-      "acceptance_criteria": "",
-      "blocks": [],
-      "blocked_by": [],
-      "comments": [],
-      "images": [],
-      "rama2": null,
-      "ver": true,
-      "fecha": "2026-07-08",
-      "apoyo": null,
-      "limite": null,
-      "comentario": "",
-      "change_log": [
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-08T11:24:23.574Z",
-          "field": "id",
-          "old_value": null,
-          "new_value": "Created"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-08T23:48:12.921Z",
-          "field": "asignados",
-          "old_value": "[]",
-          "new_value": "[\"dkdidac-design\"]"
-        }
-      ],
-      "id": 77,
-      "jules_session": null,
-      "branch": "Programación (PRO)",
-      "organizationId": "hypenosys"
-    },
-    {
       "title": "2.0: estabilizar master y sacar el build y guardarlo en CopyParty",
       "descripcion": "Cuando esté estable, sacamos build e iniciamos volcado de cambios en 'develop' branch",
       "rama": "master",
@@ -2794,7 +2591,7 @@
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Medium",
       "milestone": "M2",
-      "estado": "Working",
+      "estado": "ToDo",
       "completitud": 0,
       "resuelto_por": "Axel",
       "detectado_por": "Axel",
@@ -2843,6 +2640,13 @@
           "field": "title",
           "old_value": "BUG Visual: Superposición de títulos de sección del menú con Neural Session Activa, y hay superposición",
           "new_value": "Superposición de títulos de sección del menú con Neural Session Activa, y hay superposición"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-08-03T07:16:51.873Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "ToDo"
         }
       ],
       "id": 80,
@@ -2900,78 +2704,6 @@
       "organizationId": "hypenosys"
     },
     {
-      "title": "Añadir Organizaciones y Kanban Personal (Local Only)",
-      "descripcion": "Añadir al dashboard Organizaciones (aparte de hypenosys, poder crear otras organizaciones) así como un kanban personal local only (localStorage) por usuario (independiente de organizaciones, solo personal y solo accesible en la web al estar loggeado y almacenado en localStorage y con herramientas de Importación/exportación)",
-      "rama": "develop",
-      "task_type": "feature",
-      "tema_principal": "Programación / Engine",
-      "seccion": "Dashboard",
-      "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Medium",
-      "milestone": "M2",
-      "estado": "Working",
-      "completitud": 0,
-      "resuelto_por": "Axel",
-      "detectado_por": "Axel",
-      "asignados": [
-        "axlfc"
-      ],
-      "email_responsable": "axel@hypenosys.com",
-      "emails_asignados": [
-        "alex@hypenosys.com"
-      ],
-      "start_date": "2026-07-17",
-      "due_date": "2026-07-26",
-      "estimated_hours": 4,
-      "story_points": 4,
-      "tags": [],
-      "external_links": [],
-      "subtasks": [],
-      "acceptance_criteria": "",
-      "blocks": [],
-      "blocked_by": [],
-      "comments": [],
-      "images": [],
-      "rama2": null,
-      "ver": true,
-      "fecha": "2026-07-17",
-      "apoyo": null,
-      "limite": null,
-      "comentario": "",
-      "change_log": [
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-17T10:28:04.480Z",
-          "field": "id",
-          "old_value": null,
-          "new_value": "Created"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-20T20:12:10.912Z",
-          "field": "title",
-          "old_value": "Añadir Organizaciones y Kanban Personal ",
-          "new_value": "Añadir Organizaciones y Kanban Personal (Local Only)"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-20T20:12:10.912Z",
-          "field": "descripcion",
-          "old_value": "Añadir al dashboard Organizaciones (aparte de hypenosys, poder crear otras organizaciones) así como un kanban personal por usuario (independiente de organizaciones, solo personal y solo accesible en la web al estar loggeado)",
-          "new_value": "Añadir al dashboard Organizaciones (aparte de hypenosys, poder crear otras organizaciones) así como un kanban personal local only (localStorage) por usuario (independiente de organizaciones, solo personal y solo accesible en la web al estar loggeado y almacenado en localStorage y con herramientas de Importación/exportación)"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-23T12:03:11.089Z",
-          "field": "estado",
-          "old_value": "Pending",
-          "new_value": "Working"
-        }
-      ],
-      "id": 82,
-      "organizationId": "hypenosys"
-    },
-    {
       "title": "Crear página VideoGen",
       "descripcion": "",
       "rama": "master",
@@ -2981,7 +2713,7 @@
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Medium",
       "milestone": "M2",
-      "estado": "ToDo",
+      "estado": "Working",
       "completitud": 0,
       "resuelto_por": "Axel",
       "detectado_por": "Axel",
@@ -3022,6 +2754,13 @@
           "field": "estado",
           "old_value": "Working",
           "new_value": "ToDo"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-08-26T21:00:56.001Z",
+          "field": "estado",
+          "old_value": "ToDo",
+          "new_value": "Working"
         }
       ],
       "id": 83,
@@ -3081,67 +2820,6 @@
         }
       ],
       "id": 84,
-      "organizationId": "hypenosys"
-    },
-    {
-      "title": "Crear Qdrant server en Oracle",
-      "descripcion": "Para RAG/Vector search",
-      "rama": "master",
-      "task_type": "feature",
-      "tema_principal": "Tools / Automation",
-      "seccion": "",
-      "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Major",
-      "milestone": "M2",
-      "estado": "OK",
-      "completitud": 0,
-      "resuelto_por": "Axel",
-      "detectado_por": "Axel",
-      "asignados": [],
-      "email_responsable": null,
-      "emails_asignados": [],
-      "start_date": "2026-07-18",
-      "due_date": "2026-07-26",
-      "estimated_hours": 2,
-      "story_points": 2,
-      "tags": [],
-      "external_links": [],
-      "subtasks": [],
-      "acceptance_criteria": "",
-      "blocks": [],
-      "blocked_by": [],
-      "comments": [],
-      "images": [],
-      "rama2": null,
-      "ver": true,
-      "fecha": "2026-07-18",
-      "apoyo": null,
-      "limite": null,
-      "comentario": "",
-      "change_log": [
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-18T12:01:10.171Z",
-          "field": "id",
-          "old_value": null,
-          "new_value": "Created"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-23T10:41:41.232Z",
-          "field": "title",
-          "old_value": "Crear Qdrant server en Zimaboard2",
-          "new_value": "Crear Qdrant server en Oracle"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-23T10:41:55.139Z",
-          "field": "estado",
-          "old_value": "Working",
-          "new_value": "OK"
-        }
-      ],
-      "id": 85,
       "organizationId": "hypenosys"
     },
     {
@@ -3258,7 +2936,7 @@
       "repository": null,
       "prioridad": "Major",
       "milestone": "M1",
-      "estado": "Pending",
+      "estado": "Obsolete",
       "completitud": 0,
       "resuelto_por": "Axel",
       "detectado_por": "Axel",
@@ -3291,6 +2969,13 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "axlfc",
+          "timestamp": "2026-08-26T21:01:06.116Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "Obsolete"
         }
       ],
       "id": 87
@@ -3394,9 +3079,69 @@
   ],
   "_audit_log": [
     {
-      "action": "feat: nueva tarea #1789285619959 añadida",
+      "action": "chore: actualizar tarea #70",
       "user": "Axlfc",
-      "timestamp": "2026-09-13T07:47:00.689Z"
+      "timestamp": "2026-08-26T21:07:06.982Z"
+    },
+    {
+      "action": "chore: actualizar tarea #87",
+      "user": "Axlfc",
+      "timestamp": "2026-08-26T21:01:06.692Z"
+    },
+    {
+      "action": "chore: actualizar tarea #83",
+      "user": "Axlfc",
+      "timestamp": "2026-08-26T21:00:56.753Z"
+    },
+    {
+      "action": "chore: actualizar tarea #72",
+      "user": "Axlfc",
+      "timestamp": "2026-08-26T21:00:31.643Z"
+    },
+    {
+      "action": "chore: actualizar tarea #8",
+      "user": "Axlfc",
+      "timestamp": "2026-08-04T08:15:02.421Z"
+    },
+    {
+      "action": "chore: archivar tarea #45",
+      "user": "Axlfc",
+      "timestamp": "2026-08-03T07:46:24.594Z"
+    },
+    {
+      "action": "chore: archivar tarea #77",
+      "user": "Axlfc",
+      "timestamp": "2026-08-03T07:46:08.568Z"
+    },
+    {
+      "action": "chore: archivar tarea #82",
+      "user": "Axlfc",
+      "timestamp": "2026-08-03T07:45:49.566Z"
+    },
+    {
+      "action": "chore: archivar tarea #85",
+      "user": "Axlfc",
+      "timestamp": "2026-08-03T07:45:32.616Z"
+    },
+    {
+      "action": "chore: archivar tarea #56",
+      "user": "Axlfc",
+      "timestamp": "2026-08-03T07:45:08.109Z"
+    },
+    {
+      "action": "chore: actualizar tarea #80",
+      "user": "Axlfc",
+      "timestamp": "2026-08-03T07:16:52.492Z"
+    },
+    {
+      "action": "chore: actualizar tarea #82",
+      "user": "Axlfc",
+      "timestamp": "2026-08-03T07:14:32.990Z"
+    },
+    {
+      "action": "chore: actualizar tarea #77",
+      "user": "Axlfc",
+      "timestamp": "2026-08-03T07:14:16.397Z"
     },
     {
       "action": "feat: nueva tarea #1785327758363 añadida",

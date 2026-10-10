@@ -8,7 +8,7 @@ permalink: /CHANGELOG.html
   <div class="col-12 mb-4">
     <div class="jumbotron">
       <h1 class="display-4 text-purple">Changelog de Hypenosys 🚀</h1>
-      <p class="lead">Aquí listamos los avances del estudio. ¡Mantened esto actualizado!</p>
+      <p class="lead">Aquí documentamos los avances del proyecto. ¡Mantened esto actualizado!</p>
     </div>
   </div>
 </div>
@@ -76,6 +76,7 @@ permalink: /CHANGELOG.html
             </ul>
             <h5 class="text-success">Added</h5>
             <ul>
+                <li><strong>Portada pública de Hypenosys:</strong> Actualizada la página de inicio para presentar el proyecto independiente sin actividad empresarial, clarificar qué código está publicado y enlazar al repositorio, la documentación y las pautas de contribución. Ajustados metadatos del sitio y diseño responsive con identidad Dracula.</li>
                 <li><strong>Sharding de Persistencia por Organización:</strong> Implementado sharding por organización para tareas y metadatos en <code>_data/orgs/${orgId}/tasks.json</code>, <code>tasks_archive.json</code> y <code>meta.json</code>. Añadidas funciones helper en <code>github-api.js</code> (<code>fetchTasksWithDualRead</code>, <code>resolveTasksPathForWrite</code>, <code>fetchOrgMetaWithDualRead</code>, etc.) con fallback dual a monolito. Módulo de migración atómica en <code>assets/javascript/sharding-migration.js</code>, disparador manual en <code>pages/repo-admin.html</code> y suite de tests Playwright en <code>tests/verify_sharding_migration.spec.js</code>.</li>
                 <li><strong>Kanban Personal por Defecto para Usuarios Sin Organización & Banner CTA Dracula:</strong>
                     <ul>
