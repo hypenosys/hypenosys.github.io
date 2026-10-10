@@ -221,7 +221,72 @@ class GlobalHeader {
             .gh-mobile-actions {
                 display: none;
                 align-items: center;
-                gap: 0.5rem;
+                gap: 0.4rem;
+                flex: 0 0 auto;
+            }
+
+            .gh-mobile-auth { position: relative; flex: 0 0 auto; }
+            .gh-mobile-login, .gh-mobile-account-toggle {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 44px;
+                border: 1px solid rgba(189, 147, 249, 0.65);
+                border-radius: 7px;
+                color: var(--gh-text);
+                background: rgba(189, 147, 249, 0.10);
+                font-weight: 700;
+                font-size: 12px;
+                white-space: nowrap;
+                cursor: pointer;
+            }
+            .gh-mobile-login { padding: 0 0.7rem; }
+            .gh-mobile-login:hover, .gh-mobile-account-toggle:hover {
+                background: rgba(189, 147, 249, 0.22);
+                color: white;
+            }
+            .gh-mobile-login-short { display: none; }
+            .gh-mobile-account-toggle { width: 44px; padding: 3px; }
+            .gh-mobile-account-toggle img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+            .gh-mobile-account-initials { font-weight: 800; color: #bd93f9; }
+            .gh-mobile-account-menu {
+                position: absolute;
+                right: 0;
+                top: calc(100% + 7px);
+                z-index: 3100;
+                width: min(80vw, 250px);
+                border: 1px solid var(--gh-border);
+                border-radius: 9px;
+                background: var(--gh-bg);
+                padding: 0.5rem;
+                box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+            }
+            .gh-mobile-account-menu[hidden] { display: none !important; }
+            .gh-mobile-account-name {
+                display: block;
+                overflow-wrap: anywhere;
+                color: var(--gh-text);
+                padding: 0.55rem 0.7rem;
+                font-size: 12px;
+                font-weight: 700;
+            }
+            .gh-mobile-account-menu button {
+                display: block;
+                width: 100%;
+                min-height: 44px;
+                text-align: left;
+                border: 0;
+                border-radius: 5px;
+                padding: 0.55rem 0.7rem;
+                color: var(--gh-text);
+                background: transparent;
+                cursor: pointer;
+            }
+            .gh-mobile-account-menu button:hover,
+            .gh-mobile-account-menu button:focus-visible { background: rgba(189,147,249,0.16); }
+            .gh-mobile-login:focus-visible, .gh-mobile-account-toggle:focus-visible, .gh-mobile-toggle:focus-visible {
+                outline: 2px solid #8be9fd;
+                outline-offset: 2px;
             }
 
             .gh-auth-section {
@@ -237,12 +302,18 @@ class GlobalHeader {
             /* Global Header Responsive Hamburger */
             .gh-mobile-toggle {
                 display: none;
+                align-items: center;
+                justify-content: center;
+                flex: 0 0 44px;
+                width: 44px;
+                min-height: 44px;
                 background: none;
                 border: 1px solid var(--gh-border);
                 color: var(--gh-text);
-                padding: 0.5rem;
                 border-radius: 6px;
                 cursor: pointer;
+                font-size: 22px;
+                line-height: 1;
             }
 
             @media (max-width: 900px) {
@@ -252,7 +323,10 @@ class GlobalHeader {
             }
 
             @media (max-width: 750px) {
-                .gh-mobile-toggle { display: block; }
+                .gh-container { min-width: 0; }
+                .gh-logo { min-width: 0; }
+                .gh-logo img { width: auto; max-width: min(30vw, 130px); height: auto; max-height: 32px; }
+                .gh-mobile-toggle { display: inline-flex; }
                 .gh-mobile-actions { display: flex; }
                 .gh-nav-content {
                     display: none;
@@ -271,6 +345,13 @@ class GlobalHeader {
                 .gh-nav-groups { flex-direction: column; width: 100%; }
                 .gh-dropdown-content { position: static; box-shadow: none; border: none; display: block; padding-left: 1rem; }
                 .gh-auth-section { border-left: none; padding-left: 0; width: 100%; justify-content: flex-start; }
+            }
+            @media (max-width: 400px) {
+                .gh-mobile-login-full { display: none; }
+                .gh-mobile-login-short { display: inline; }
+                .gh-mobile-login { padding: 0 0.55rem; }
+                .gh-container { gap: 0.4rem; }
+                .gh-mobile-actions { gap: 0.3rem; }
             }
         `;
         document.head.appendChild(style);
@@ -320,12 +401,13 @@ class GlobalHeader {
                 </a>
 
                 <div class="gh-mobile-actions">
+                    <div class="gh-mobile-auth" id="gh-mobile-auth" aria-label="Acceso con GitHub"></div>
                     <button id="member-filters-toggle-mobile" class="member-filters-toggle-btn" style="display: none;">
                         <i class="member-filters-toggle-icon fa-solid fa-chevron-up"></i>
                     </button>
 
-                    <button class="gh-mobile-toggle" id="gh-mobile-toggle">
-                        <i class="fas fa-bars"></i>
+                    <button type="button" class="gh-mobile-toggle" id="gh-mobile-toggle" aria-label="Abrir menú" aria-controls="gh-nav-content" aria-expanded="false">
+                        <span aria-hidden="true">&#9776;</span>
                     </button>
                 </div>
 
@@ -372,17 +454,117 @@ class GlobalHeader {
             </div>
         `;
         document.body.prepend(header);
+        this.updateMobileAuth(null);
+    }
+
+    updateMobileAuth(user) {
+        const slot = document.getElementById('gh-mobile-auth');
+        if (!slot) return;
+        slot.replaceChildren();
+
+        if (!user || !user.login) {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.id = 'btn-sign-in-mobile';
+            button.className = 'gh-mobile-login';
+            button.setAttribute('aria-label', 'Log in with GitHub');
+            const full = document.createElement('span');
+            full.className = 'gh-mobile-login-full';
+            full.textContent = 'Log in with GitHub';
+            const short = document.createElement('span');
+            short.className = 'gh-mobile-login-short';
+            short.textContent = 'Login GitHub';
+            button.append(full, short);
+            slot.appendChild(button);
+            return;
+        }
+
+        const toggle = document.createElement('button');
+        toggle.type = 'button';
+        toggle.id = 'gh-mobile-account-toggle';
+        toggle.className = 'gh-mobile-account-toggle';
+        toggle.setAttribute('aria-label', 'Cuenta GitHub: ' + user.login);
+        toggle.setAttribute('aria-controls', 'gh-mobile-account-menu');
+        toggle.setAttribute('aria-expanded', 'false');
+        if (user.avatar_url) {
+            const avatar = document.createElement('img');
+            avatar.src = user.avatar_url;
+            avatar.alt = '';
+            avatar.width = 32;
+            avatar.height = 32;
+            toggle.appendChild(avatar);
+        } else {
+            const initials = document.createElement('span');
+            initials.className = 'gh-mobile-account-initials';
+            initials.textContent = user.login.slice(0, 2).toUpperCase();
+            toggle.appendChild(initials);
+        }
+
+        const menu = document.createElement('div');
+        menu.id = 'gh-mobile-account-menu';
+        menu.className = 'gh-mobile-account-menu';
+        menu.setAttribute('aria-label', 'Opciones de cuenta');
+        menu.hidden = true;
+
+        const name = document.createElement('span');
+        name.className = 'gh-mobile-account-name';
+        name.textContent = user.login;
+        menu.appendChild(name);
+        const actions = [
+            ['btn-open-profile-mobile', 'Mi perfil'],
+            ['btn-open-api-config-mobile', 'Configuración API'],
+            ['btn-open-settings-mobile', 'Ajustes avanzados'],
+            ['btn-logout-mobile', 'Cerrar sesión']
+        ];
+        for (const [id, label] of actions) {
+            const item = document.createElement('button');
+            item.type = 'button';
+            item.id = id;
+            item.textContent = label;
+            menu.appendChild(item);
+        }
+        slot.append(toggle, menu);
     }
 
     bindEvents() {
         const toggle = document.getElementById('gh-mobile-toggle');
         const content = document.getElementById('gh-nav-content');
         if (toggle && content) {
-            toggle.addEventListener('click', () => content.classList.toggle('open'));
+            toggle.addEventListener('click', () => {
+                const isOpen = content.classList.toggle('open');
+                toggle.setAttribute('aria-expanded', String(isOpen));
+                toggle.setAttribute('aria-label', isOpen ? 'Cerrar menú' : 'Abrir menú');
+            });
         }
+
+        document.addEventListener('click', (event) => {
+            const account = document.getElementById('gh-mobile-auth');
+            const menu = document.getElementById('gh-mobile-account-menu');
+            const accountToggle = document.getElementById('gh-mobile-account-toggle');
+            if (!account || !menu || !accountToggle) return;
+            if (event.target.closest('#gh-mobile-account-toggle')) {
+                menu.hidden = !menu.hidden;
+                accountToggle.setAttribute('aria-expanded', String(!menu.hidden));
+            } else if (!account.contains(event.target) || event.target.closest('.gh-mobile-account-menu button')) {
+                menu.hidden = true;
+                accountToggle.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key !== 'Escape') return;
+            const menu = document.getElementById('gh-mobile-account-menu');
+            const accountToggle = document.getElementById('gh-mobile-account-toggle');
+            if (menu && !menu.hidden) {
+                menu.hidden = true;
+                accountToggle?.setAttribute('aria-expanded', 'false');
+                accountToggle?.focus();
+            }
+        });
 
         // Auth status update when ready
         document.addEventListener('authReady', (e) => {
+            this.updateMobileAuth(e.detail?.user || null);
             if (window.authManager && window.githubApi) {
                 // Ensure we only read token via getAuthToken() as requested
                 const token = window.githubApi.getAuthToken();

@@ -103,13 +103,13 @@ class AuthManager {
         document.getElementById('btn-save-api-config')?.addEventListener('click', () => this.handleSaveApiConfig());
 
         document.addEventListener('click', (e) => {
-            if (e.target.closest('#btn-sign-in')) this.handleLogin();
-            if (e.target.closest('#btn-logout')) this.handleLogout();
-            if (e.target.closest('#btn-open-settings')) {
+            if (e.target.closest('#btn-sign-in, #btn-sign-in-mobile')) this.handleLogin();
+            if (e.target.closest('#btn-logout, #btn-logout-mobile')) this.handleLogout();
+            if (e.target.closest('#btn-open-settings, #btn-open-settings-mobile')) {
                 if (window.jQuery) window.jQuery('#settingsModal').modal('show');
             }
-            if (e.target.closest('#btn-open-profile')) this.showProfileModal();
-            if (e.target.closest('#btn-open-api-config')) this.showApiConfigModal();
+            if (e.target.closest('#btn-open-profile, #btn-open-profile-mobile')) this.showProfileModal();
+            if (e.target.closest('#btn-open-api-config, #btn-open-api-config-mobile')) this.showApiConfigModal();
         });
 
         if (window.jQuery) {
