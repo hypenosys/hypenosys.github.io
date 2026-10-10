@@ -18,94 +18,92 @@ function resolveAvatarUrl(profile) {
 
 function renderTeamProfiles() {
   const grid = document.getElementById('team-profiles-grid');
-  if (!grid || !currentProfiles || !currentProfiles.members) return;
-  grid.innerHTML = '';
+  if (!grid || !currentProfiles?.members) return;
+  const workspace = window.githubApi?.getActiveWorkspace?.() || 'hypenosys';
+  const org = (window.__workspaces__ || []).find(o => o.id === workspace);
+  const self = String(window.currentUser || window.githubApi?.user?.login || '').toLowerCase();
+  const handles = workspace === 'personal' ? [self].filter(Boolean)
+    : (org?.members || []).map(m => String(typeof m === 'string' ? m : m?.handle || '').toLowerCase()).filter(Boolean);
+  const profiles = Object.entries(currentProfiles.members);
+  const escapeHtml = value => String(value == null ? '' : value)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  const members = [...new Set(handles)].map(handle => {
+    const match = profiles.find(([_, p]) =>
+      String(p.github_username || p.github_login || '').toLowerCase() === handle);
+    return match || [handle, { github_username: handle, display_name: handle, role: 'Miembro', bio: '' }];
+  });
+  grid.replaceChildren();
+  if (!members.length) {
+    grid.innerHTML = '<p class="text-sm text-slate-400 p-4">Sin miembros visibles en este espacio de trabajo.</p>';
+    return;
+  }
 
-  const membersData = currentStats?.members || {};
-
-  // Setup event delegation for the grid if not already done
+  // Delegation survives every redraw; profile names and descriptions come from
+  // team_profiles.json, never the GitHub session display name.
   if (!grid._hasProfileListeners) {
-    grid.addEventListener('click', (e) => {
-        const editBtn = e.target.closest('[data-action="edit-profile"]');
-        if (editBtn) {
-            e.stopPropagation();
-            if (window.profileEditor) window.profileEditor.openModal();
-            else if (window.authManager) window.authManager.showProfileModal();
-            return;
-        }
-
-        const statsBtn = e.target.closest('[data-action="view-stats"]');
-        if (statsBtn) {
-            e.stopPropagation();
-            const memberName = statsBtn.dataset.member;
-            if (memberName) openDeepDiveModal(memberName);
-            return;
-        }
+    grid.addEventListener('click', event => {
+      const edit = event.target.closest('[data-action="edit-profile"]');
+      if (edit) {
+        event.stopPropagation();
+        window.authManager?.showProfileModal();
+        return;
+      }
+      const stats = event.target.closest('[data-action="view-stats"]');
+      if (stats) {
+        event.stopPropagation();
+        if (stats.dataset.member) openDeepDiveModal(stats.dataset.member);
+      }
     });
     grid._hasProfileListeners = true;
   }
 
-  Object.entries(currentProfiles.members).forEach(([name, profile]) => {
-    const ghUser = (profile.github_username || '').toLowerCase();
-    const isSelf = (window.currentUser && ghUser) ? window.currentUser === ghUser : false;
-    const stats = membersData[ghUser] || membersData[name] || null;
-    const avatarUrl = resolveAvatarUrl(profile);
-
+  for (const [key, profile] of members) {
+    const ghUser = String(profile.github_username || profile.github_login || key).toLowerCase();
+    const stats = currentStats?.members?.[ghUser] || null;
+    const avatar = resolveAvatarUrl(profile);
+    const avatarUrl = /^https:\/\//i.test(avatar || '') ? avatar : '/assets/images/upload_soul.svg';
+    const accent = /^#[0-9a-f]{6}$/i.test(profile.color_accent || '') ? profile.color_accent : '#bd93f9';
+    const name = escapeHtml(profile.display_name || key);
+    const role = escapeHtml(profile.role || 'Sin rol');
+    const leadRole = escapeHtml(profile.lead_role || '');
+    const bio = escapeHtml(profile.bio || 'Sin biografía disponible.');
+    const memberKey = escapeHtml(key);
+    const done = stats?.completed?.all_time ?? 0;
+    const velocity = stats?.avg_completion_speed?.days ?? 0;
+    const impact = stats?.dependency_impact ?? 0;
+    const reopens = stats?.volatility?.reopens ?? 0;
     const card = document.createElement('div');
-    if (!name) {
-        console.warn('[PROFILES] Found member without name, skipping card ID assignment.');
-    } else {
-        card.id = `profile-card-${name.toLowerCase()}`;
-    }
-    card.className = `bg-slate-900 border ${isSelf ? 'border-emerald-500 ring-1 ring-emerald-500 pulse-emerald' : 'border-slate-800'} rounded-2xl overflow-hidden relative group transition-all`;
-    card.dataset.member = name;
-
-    const completedAllTime = (stats && stats.completed) ? stats.completed.all_time || 0 : 0;
-    const velocityDays = (stats && stats.avg_completion_speed) ? stats.avg_completion_speed.days || 0 : 0;
-    const dependencyImpact = stats ? stats.dependency_impact || 0 : 0;
-    const volatilityReopens = (stats && stats.volatility) ? stats.volatility.reopens || 0 : 0;
-
+    card.id = 'profile-card-' + key.toLowerCase();
+    card.dataset.member = key;
+    card.className = 'bg-slate-900 border ' + (self === ghUser ? 'border-emerald-500' : 'border-slate-800')
+      + ' rounded-2xl overflow-hidden relative group transition-all';
     card.innerHTML = `
-      <div class="h-2" style="background-color: ${profile.color_accent}"></div>
-      <div class="p-6">
+      <div class="h-2" style="background-color:${accent}"></div>
+      <div class="p-5">
         <div class="flex justify-between items-start mb-4">
-          <div class="relative">
-            <img src="${avatarUrl}" class="w-16 h-16 rounded-2xl border-2 border-slate-800 shadow-xl bg-slate-800 cursor-pointer hover:scale-105 transition-transform" onclick="event.stopPropagation(); openDeepDiveModal('${name}')">
-            <div class="absolute -bottom-1 -right-1 bg-slate-900 rounded-full p-1 border border-slate-800">
-                <div class="w-3 h-3 rounded-full bg-emerald-500 pulse-emerald"></div>
-            </div>
-          </div>
+          <button type="button" data-action="view-stats" data-member="${memberKey}" aria-label="Ver estadísticas de ${name}">
+            <img src="${escapeHtml(avatarUrl)}" alt="" class="w-16 h-16 rounded-2xl border-2 border-slate-800 bg-slate-800" loading="lazy">
+          </button>
           <div class="flex gap-2">
-              <button data-action="view-stats" data-member="${name}" class="p-2 bg-slate-950 rounded-lg text-indigo-400 hover:text-white border border-slate-800 transition-all text-xs font-bold flex items-center gap-2" title="Deep Dive">
-                <i class="fa-solid fa-chart-line"></i>
-              </button>
-              ${isSelf ? `<button data-action="edit-profile" class="p-2 text-slate-500 hover:text-white transition-colors" title="Editar Mi Perfil"><i class="fa-solid fa-pencil"></i></button>` : ''}
+            <button type="button" data-action="view-stats" data-member="${memberKey}" class="p-2 text-indigo-400" aria-label="Ver estadísticas de ${name}">Stats</button>
+            ${self === ghUser ? '<button type="button" data-action="edit-profile" class="p-2 text-emerald-400" aria-label="Editar mi perfil">Editar</button>' : ''}
           </div>
         </div>
-        <h3 class="text-xl font-bold mb-1 text-white">${profile.display_name}</h3>
-        <div class="text-[10px] text-emerald-400 font-bold uppercase tracking-wider mb-0">${profile.role || 'Sin Rol'}</div>
-        <div class="text-[9px] text-purple-400 font-bold uppercase tracking-widest mb-3" style="font-size: 0.65rem;">${profile.lead_role || ''}</div>
-        <p class="text-sm text-slate-400 leading-relaxed mb-4 h-12 overflow-hidden">${profile.bio || 'Sin biografía disponible.'}</p>
-
-        ${stats ? `
+        <h3 class="text-xl font-bold mb-1 text-white">${name}</h3>
+        <div class="text-[10px] text-emerald-400 font-bold uppercase tracking-wider mb-1">${role}</div>
+        <div class="text-[10px] text-purple-400 font-bold uppercase mb-3">${leadRole}</div>
+        <p class="text-sm text-slate-400 leading-relaxed mb-4">${bio}</p>
         <div class="grid grid-cols-2 gap-2 mb-4 bg-slate-950/50 p-3 rounded-xl border border-slate-800 text-[10px] font-mono">
-          <div class="text-slate-500">COMPLETADAS: <span class="text-emerald-400">${completedAllTime}</span></div>
-          <div class="text-slate-500">VELOCITY: <span class="text-amber-400">${velocityDays}d</span></div>
-          <div class="text-slate-500">IMPACTO: <span class="text-indigo-400">${dependencyImpact}</span></div>
-          <div class="text-slate-500">VOLATILIDAD: <span class="text-red-400">${volatilityReopens}</span></div>
+          <div>Completadas: <strong class="text-emerald-400">${done}</strong></div>
+          <div>Tiempo medio: <strong class="text-amber-400">${velocity}d</strong></div>
+          <div>Impacto: <strong class="text-indigo-400">${impact}</strong></div>
+          <div>Reaperturas: <strong class="text-red-400">${reopens}</strong></div>
         </div>
-        ` : ''}
-
-        <div class="flex gap-3 text-slate-500">
-          <a href="https://github.com/${profile.github_username}" target="_blank" onclick="event.stopPropagation()" class="hover:text-white"><i class="fa-brands fa-github"></i></a>
-          ${profile.social?.twitter ? `<a href="https://twitter.com/${profile.social.twitter}" target="_blank" onclick="event.stopPropagation()" class="hover:text-white"><i class="fa-brands fa-twitter"></i></a>` : ''}
-          ${profile.social?.itchio ? `<a href="https://itch.io/profile/${profile.social.itchio}" target="_blank" onclick="event.stopPropagation()" class="hover:text-white"><i class="fa-brands fa-itch-io"></i></a>` : ''}
-          <button data-action="view-stats" data-member="${name}" class="ml-auto text-[10px] font-black text-indigo-400 hover:text-indigo-300 uppercase tracking-widest">VER STATS →</button>
-        </div>
-      </div>
-    `;
+        <a class="text-purple-400 text-sm" target="_blank" rel="noopener noreferrer" href="https://github.com/${encodeURIComponent(ghUser)}">GitHub: ${escapeHtml(ghUser)}</a>
+      </div>`;
     grid.appendChild(card);
-  });
+  }
 }
 
 // Attach to window for global access (used in auth.js handleSaveProfile)
