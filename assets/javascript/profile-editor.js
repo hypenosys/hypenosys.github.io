@@ -221,9 +221,8 @@
 
             // Populate fields FIRST to avoid flashing empty modal
             try {
-                const response = await fetch('/assets/data/team_profiles.json');
-                if (!response.ok) throw new Error('No se pudo cargar team_profiles.json');
-                const profilesRes = await response.json();
+                const { content: profilesRes } = await window.githubApi.fetchFileWithSha('assets/data/team_profiles.json', 'json', true);
+                if (!profilesRes?.members) throw new Error('No se pudo cargar team_profiles.json');
                 const profiles = profilesRes.members || {};
                 console.log('[ProfileEditor] Fetched profiles:', profiles);
 
