@@ -65,6 +65,7 @@ permalink: /CHANGELOG.html
           <div class="card-body">
             <h5 class="text-warning">Fixed</h5>
             <ul>
+                <li><strong>Dashboard multi-organización:</strong> Reconciliadas las membresías con <code>_data/orgs/*/meta.json</code>; cada workspace filtra sus miembros y recalcula estadísticas con <code>computeLayerA/B</code> sobre sus tareas. Los perfiles editados y miembros sin biografía también se representan, con enlaces saneados. No se sobrescribe <code>studio_stats.json</code> global.</li>
                 <li><strong>Cuenta y perfil (móvil/index/dashboard):</strong> Unificado el acceso a Mi Perfil con el editor actual, corregida la ruta antigua rota, habilitada la edición desde la portada, añadida navegación a configuraciones en Dashboard y mejorado el scroll y cierre de menús/modales en pantallas pequeñas.</li>
                 <li><strong>Cabecera móvil y acceso GitHub:</strong> Corregido el botón de menú sin icono y añadido acceso visible de GitHub en la barra superior en pantallas móviles. Ajustado el ancho del logo, el diseño responsive y el menú de sesión iniciada, reutilizando el flujo OAuth existente sin cambiar sus permisos.</li>
                 <li><strong>Despliegue Cloudflare Pages (develop):</strong> Sustituida la acción obsoleta <code>cloudflare/pages-action@v1</code> por <code>cloudflare/wrangler-action@v4</code> para desplegar <code>./_site</code> en el proyecto <code>hypenosys-dev</code> con la rama <code>develop</code>, sin cambiar los secretos ni publicar en producción.</li>
