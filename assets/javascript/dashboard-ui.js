@@ -1283,7 +1283,7 @@ async function renderWorkspaceSelector() {
         try {
             const orgsRes = await window.githubApi.fetchFileWithSha('_data/organizations.json');
             if (orgsRes && orgsRes.content && orgsRes.content.organizations) {
-                __workspaces__ = orgsRes.content.organizations;
+                __workspaces__ = await window.hydrateWorkspaceOrganizations(orgsRes.content.organizations);
             } else {
                 __workspaces__ = [{ id: 'hypenosys', name: 'Hypenosys', createdBy: 'Axlfc', createdAt: '2025-01-01T00:00:00.000Z', isDefault: true }];
             }
@@ -1338,14 +1338,14 @@ async function renderWorkspaceSelector() {
     `;
 
     slot.innerHTML = `
-        <div class="relative inline-block text-left" id="workspace-selector-container" style="z-index: 4000;">
+        <div class="relative inline-block text-left" id="workspace-selector-container" style="z-index: 4000; max-width: min(100%, 90vw);">
             <button type="button" class="flex items-center gap-2 px-3 py-1.5 bg-slate-900/60 border border-slate-800 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:border-slate-700 transition-all focus:outline-none" id="workspace-menu-button">
                 <i class="fa-solid ${currentWs === 'personal' ? 'fa-user' : 'fa-building'} text-indigo-400"></i>
                 <span>${currentWsName}</span>
                 <i class="fa-solid fa-chevron-down text-slate-500 text-[10px]"></i>
             </button>
 
-            <div id="workspace-menu" class="hidden absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-xl bg-slate-950 border border-slate-800 shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none overflow-hidden" role="menu">
+            <div id="workspace-menu" class="hidden absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-xl bg-slate-950 border border-slate-800 shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none overflow-y-auto" style="max-width:min(90vw,19rem); max-height:min(65dvh,420px); overscroll-behavior:contain;" role="menu">
                 <div class="py-1" role="none">
                     ${itemsHtml}
                 </div>
@@ -1360,16 +1360,25 @@ async function renderWorkspaceSelector() {
             e.stopPropagation();
             menu.classList.toggle('hidden');
         };
-        document.addEventListener('click', (e) => {
-            if (!btn.contains(e.target) && !menu.contains(e.target)) {
-                menu.classList.add('hidden');
-            }
-        });
+        if (!window._workspaceMenuOutsideListener) {
+            document.addEventListener('click', event => {
+                const currentButton = document.getElementById('workspace-menu-button');
+                const currentMenu = document.getElementById('workspace-menu');
+                if (currentButton && currentMenu && !currentButton.contains(event.target) && !currentMenu.contains(event.target)) {
+                    currentMenu.classList.add('hidden');
+                }
+            });
+            window._workspaceMenuOutsideListener = true;
+        }
     }
 }
 
 window.switchWorkspace = async (ws) => {
-    window.githubApi.setActiveWorkspace(ws);
+    if (ws !== 'personal' && !getUserOrganizations(__workspaces__).some(item => item.id === ws)) {
+        showToast('No perteneces a esta organización', 'warning');
+        return;
+    }
+    await window.githubApi.setActiveWorkspace(ws);
     // Reset active filters to prevent filtering issues on workspace change
     activeFilter = null;
     activeStageFilter = null;

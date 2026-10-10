@@ -57,6 +57,68 @@ function getUserOrganizations(workspaces, userHandle) {
 }
 window.getUserOrganizations = getUserOrganizations;
 
+// The organizations index omits memberships after sharding.
+// Resolve members from the authoritative per-organization metadata.
+async function hydrateWorkspaceOrganizations(organizations) {
+    return Promise.all((organizations || []).map(async org => {
+        if (!org?.id || !/^[a-z0-9-]+$/.test(org.id)) return null;
+        try {
+            const response = await window.githubApi.fetchOrgMetaWithDualRead(org.id);
+            const meta = response?.content;
+            if (!Array.isArray(meta?.members)) throw new Error('No members in metadata');
+            return { ...org, ...meta, id: org.id, name: org.name, members: meta.members };
+        } catch (error) {
+            console.warn('[WORKSPACE] Membership fetch failed:', org.id, error);
+            const prior = (window.__workspaces__ || []).find(item => item.id === org.id);
+            return { ...org, members: prior?.members || org.members || [], membershipUnavailable: true };
+        }
+    })).then(results => results.filter(Boolean));
+}
+window.hydrateWorkspaceOrganizations = hydrateWorkspaceOrganizations;
+
+// Calculate local workspace metrics; never overwrite global studio_stats.json.
+function buildWorkspaceStats(tasks, archived, workspaceId, organizations, profiles, budget) {
+    const allTasks = [...(tasks || []), ...(archived || [])];
+    const org = (organizations || []).find(item => item.id === workspaceId);
+    const handles = workspaceId === 'personal'
+        ? [(window.currentUser || window.githubApi?.user?.login || '').toLowerCase()].filter(Boolean)
+        : (org?.members || []).map(m => String(typeof m === 'string' ? m : m?.handle || '').toLowerCase()).filter(Boolean);
+    const mapping = {};
+    for (const handle of new Set(handles)) {
+        const member = Object.entries(profiles?.members || {}).find(([_, p]) =>
+            String(p.github_username || p.github_login || '').toLowerCase() === handle
+        );
+        mapping[handle] = member ? member[0] : handle;
+    }
+    const names = Object.values(mapping);
+    const milestone = budget?.burnout?.current_milestone || 'M1';
+    const layerA = window.githubApi.computeLayerA(allTasks, names, mapping, milestone);
+    const layerB = window.githubApi.computeLayerB(allTasks, names, mapping, milestone);
+    const active = tasks || [];
+    const completed = active.filter(t => t.estado === 'OK').length;
+    return {
+        schema_version: '1.1.0',
+        workspace_id: workspaceId,
+        computed_at: new Date().toISOString(),
+        last_computed_milestone: milestone,
+        global: {
+            total_tasks: active.filter(t => t.estado !== 'Obsolete').length,
+            total_ok: completed,
+            total_ko: active.filter(t => t.estado === 'KO').length,
+            total_uncertain: active.filter(t => ['?', 'In Review'].includes(t.estado)).length,
+            total_obsolete: active.filter(t => t.estado === 'Obsolete').length,
+            fixed_found_ratio: window.githubApi.computeFixedFoundRatio(active),
+            verified_ratio: active.length ? completed / active.length : 0
+        },
+        members: layerA, group: layerB,
+        hall_of_fame: {
+            current_milestone: { winners: layerB.hall_of_fame_winners, leaderboard: layerB.leaderboard },
+            archive: []
+        }
+    };
+}
+window.buildWorkspaceStats = buildWorkspaceStats;
+
 function loadWorkspaceMembers() {
     const ws = window.githubApi.getActiveWorkspace();
     if (ws === 'personal') {
@@ -145,9 +207,9 @@ async function initDashboard() {
     loadWorkspaceMembers();
     await refreshDashboardData();
 
-    const memberMatch = MEMBERS.find(m => m.toLowerCase() === window.currentUser ||
-                                          (currentProfiles && currentProfiles.members[m] && currentProfiles.members[m].github_username.toLowerCase() === window.currentUser));
-    if (memberMatch) activeFilter = memberMatch;
+    // Show the entire active organization by default. Users can filter
+    // their own assignments explicitly using the member controls.
+    activeFilter = null;
 
     startAutoRefresh();
     renderUserStatus(user);
@@ -362,7 +424,7 @@ function loadCachedData() {
 
         if (cachedTasks) currentTasks = JSON.parse(cachedTasks) || [];
         if (cachedArchive) archivedTasks = JSON.parse(cachedArchive) || [];
-        if (cachedStats) currentStats = JSON.parse(cachedStats) || { schema_version: '1.1.0', computed_at: '', global: {}, members: {}, group: {} };
+        if (cachedStats) { const parsed = JSON.parse(cachedStats); if (parsed?.workspace_id === ws) currentStats = parsed; }
         if (cachedBudget) currentBudget = JSON.parse(cachedBudget) || { monthly_records: [], burnout: { current_milestone: 'M1', milestones: [{ id: 'M1', date_start: '2025-01-01', date_end: '2025-02-15' }] } };
         if (cachedProfiles) currentProfiles = JSON.parse(cachedProfiles);
 
@@ -389,60 +451,46 @@ async function refreshDashboardData() {
         window._cacheLoaded = true;
     }
 
-    const [tasksRes, archiveRes, statsRes, budgetRes, profilesRes, orgsRes] = await Promise.all([
-      window.githubApi.fetchTasksWithDualRead(ws, false),
-      window.githubApi.fetchTasksWithDualRead(ws, true),
-      window.githubApi.fetchFileWithSha('_data/studio_stats.json'),
-      window.githubApi.fetchFileWithSha('_data/studio_budget.json'),
-      fetch('/assets/data/team_profiles.json').then(res => res.json().then(data => ({ content: data }))),
-      window.githubApi.fetchFileWithSha('_data/organizations.json').catch(err => {
-          if (ws === 'personal') {
-              console.log('[DASHBOARD] Silent fallback for organizations.json in personal workspace.');
-              return { content: { organizations: FALLBACK_ORGANIZATIONS } };
-          } else {
-              throw err;
-          }
-      })
+    const orgList = await window.githubApi.fetchFileWithSha('_data/organizations.json');
+    const newOrgs = await hydrateWorkspaceOrganizations(orgList?.content?.organizations || FALLBACK_ORGANIZATIONS);
+    window.__workspaces__ = newOrgs;
+    if (typeof __workspaces__ !== 'undefined') __workspaces__ = newOrgs;
+    const memberships = getUserOrganizations(newOrgs);
+    if (ws !== 'personal' && !memberships.some(w => w.id === ws) && !newOrgs.some(w => w.membershipUnavailable)) {
+        await window.githubApi.setActiveWorkspace('personal');
+        ws = 'personal';
+    }
+
+    const [tasksRes, archiveRes, budgetRes, profilesRes] = await Promise.all([
+        window.githubApi.fetchTasksWithDualRead(ws, false),
+        window.githubApi.fetchTasksWithDualRead(ws, true),
+        window.githubApi.fetchFileWithSha('_data/studio_budget.json'),
+        window.githubApi.fetchFileWithSha('assets/data/team_profiles.json', 'json', true)
     ]);
 
-    let remoteTasksRes = null;
-    let remoteArchiveRes = null;
-    let remoteOrgsRes = null;
-
+    // Personal workspace includes assignments from every organization
+    // the signed-in user actually belongs to, not just Hypenosys.
+    const remoteWorkspaceData = [];
     if (ws === 'personal') {
-        try {
-            const [rTasks, rArchive, rOrgs] = await Promise.all([
-              window.githubApi.fetchTasksWithDualRead('hypenosys', false, true),
-              window.githubApi.fetchTasksWithDualRead('hypenosys', true, true),
-              window.githubApi.fetchFileWithSha('_data/organizations.json', 'json', true)
+        const orgIds = memberships.map(org => org.id);
+        const results = await Promise.allSettled(orgIds.map(async orgId => {
+            const [active, archive] = await Promise.all([
+                window.githubApi.fetchTasksWithDualRead(orgId, false, true),
+                window.githubApi.fetchTasksWithDualRead(orgId, true, true)
             ]);
-            remoteTasksRes = rTasks;
-            remoteArchiveRes = rArchive;
-            remoteOrgsRes = rOrgs;
-        } catch (err) {
-            console.warn('[DASHBOARD] Failed to load remote tasks/orgs for personal workspace, falling back to local only:', err);
+            return { orgId, active: active?.content?.tasks || [], archive: archive?.content?.tasks || [] };
+        }));
+        for (const result of results) {
+            if (result.status === 'fulfilled') remoteWorkspaceData.push(result.value);
+            else console.warn('[WORKSPACE] Unable to load assigned org tasks:', result.reason);
         }
     }
 
     const migratedTasksData = await migrateTasks(tasksRes.content, '_data/dashboard_tasks.json');
     const migratedArchiveData = await migrateTasks(archiveRes.content, '_data/dashboard_tasks_archive.json');
 
-    const newOrgs = (orgsRes && orgsRes.content && orgsRes.content.organizations) || FALLBACK_ORGANIZATIONS;
-    window.__workspaces__ = newOrgs;
-    if (typeof __workspaces__ !== 'undefined') {
-        __workspaces__ = newOrgs;
-    }
-    loadWorkspaceMembers();
-
-    const myOrgs = getUserOrganizations(newOrgs);
-    if (myOrgs.length === 0) {
-        window.githubApi.setActiveWorkspace('personal');
-        ws = 'personal';
-    }
-
     const newTasks = (migratedTasksData && migratedTasksData.tasks) || [];
     const newArchive = (migratedArchiveData && migratedArchiveData.tasks) || [];
-    const newStats = statsRes.content || { schema_version: '1.1.0', computed_at: '', global: {}, members: {}, group: {} };
     const newBudget = budgetRes.content || { monthly_records: [], burnout: { current_milestone: 'M1', milestones: [{ id: 'M1', date_start: '2025-01-01', date_end: '2025-02-15' }] } };
     const newProfiles = profilesRes.content;
 
@@ -454,44 +502,28 @@ async function refreshDashboardData() {
     } else {
         // Personal Workspace: Auto-populate with remote assigned tasks
         const userHandle = (window.currentUser || (window.githubApi && window.githubApi.user && window.githubApi.user.login) || '').toLowerCase();
-        const remoteOrgs = (remoteOrgsRes && remoteOrgsRes.content && remoteOrgsRes.content.organizations) || __workspaces__ || FALLBACK_ORGANIZATIONS;
-        const userOrgIds = getUserOrganizations(remoteOrgs, userHandle).map(w => w.id);
+        const userOrgIds = getUserOrganizations(newOrgs, userHandle).map(w => w.id);
 
-        let assignedRemoteTasks = [];
-        let assignedRemoteArchive = [];
-
-        if (remoteTasksRes && remoteTasksRes.content && Array.isArray(remoteTasksRes.content.tasks)) {
-            assignedRemoteTasks = remoteTasksRes.content.tasks.filter(t => {
-                const inOrg = userOrgIds.includes(t.organizationId);
-                const isAssigned = Array.isArray(t.asignados) && t.asignados.some(m => m.toLowerCase() === userHandle);
-                return inOrg && isAssigned;
-            }).map(t => {
-                const cloned = JSON.parse(JSON.stringify(t));
-                cloned.id = 'remote-' + t.id;
-                cloned.isRemote = true;
-                return cloned;
-            });
-        }
-
-        if (remoteArchiveRes && remoteArchiveRes.content && Array.isArray(remoteArchiveRes.content.tasks)) {
-            assignedRemoteArchive = remoteArchiveRes.content.tasks.filter(t => {
-                const inOrg = userOrgIds.includes(t.organizationId);
-                const isAssigned = Array.isArray(t.asignados) && t.asignados.some(m => m.toLowerCase() === userHandle);
-                return inOrg && isAssigned;
-            }).map(t => {
-                const cloned = JSON.parse(JSON.stringify(t));
-                cloned.id = 'remote-' + t.id;
-                cloned.isRemote = true;
-                return cloned;
-            });
-        }
+        const assigned = (items, orgId) => items
+            .filter(task => task.organizationId === orgId
+                && (task.asignados || []).some(handle => String(handle).toLowerCase() === userHandle))
+            .map(task => ({
+                ...task,
+                id: 'remote-' + orgId + '-' + task.id,
+                isRemote: true
+            }));
+        const assignedRemoteTasks = remoteWorkspaceData.flatMap(org => assigned(org.active, org.orgId));
+        const assignedRemoteArchive = remoteWorkspaceData.flatMap(org => assigned(org.archive, org.orgId));
 
         filteredTasks = [...newTasks, ...assignedRemoteTasks];
         filteredArchive = [...newArchive, ...assignedRemoteArchive];
     }
 
+    const newStats = buildWorkspaceStats(filteredTasks, filteredArchive, ws, newOrgs, newProfiles, newBudget);
+
     // Check if data actually changed to avoid redundant renders
-    const dataString = JSON.stringify({ filteredTasks, filteredArchive, newStats, newBudget, newProfiles });
+    const dataString = JSON.stringify({ ws, newOrgs, filteredTasks, filteredArchive,
+        newStats: { ...newStats, computed_at: null }, newBudget, newProfiles });
     if (window._lastDataString === dataString) {
         console.log('[DASHBOARD] Data unchanged, skipping render.');
         return;
@@ -503,6 +535,7 @@ async function refreshDashboardData() {
     currentStats    = newStats;
     currentBudget   = newBudget;
     currentProfiles = newProfiles;
+    loadWorkspaceMembers();
 
     // Persist to cache
     localStorage.setItem(`hy_cache_tasks_${ws}`, JSON.stringify(currentTasks));
@@ -511,14 +544,7 @@ async function refreshDashboardData() {
     localStorage.setItem(`hy_cache_budget_${ws}`, JSON.stringify(currentBudget));
     localStorage.setItem(`hy_cache_profiles_${ws}`, JSON.stringify(currentProfiles));
 
-    const isStatsEmpty = !currentStats || !currentStats.computed_at || Object.keys(currentStats.members || {}).length === 0;
-    if (currentStats && (currentStats.schema_version !== "1.1.0" || isStatsEmpty)) {
-        console.log(`[MIGRATION] studio_stats.json needs update. Triggering recompute...`);
-        await window.githubApi.recomputeAndSaveStats(migratedTasksData);
-        const freshStats = await window.githubApi.fetchFileWithSha('_data/studio_stats.json');
-        currentStats = freshStats.content;
-        localStorage.setItem('hy_cache_stats', JSON.stringify(currentStats));
-    }
+    // Stats are scoped in memory. Do not write tenant metrics to global stats.
 
     renderDashboard();
 
