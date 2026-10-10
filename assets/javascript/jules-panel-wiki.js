@@ -186,7 +186,11 @@ window.JulesWikiModule = (function() {
             return { success: true };
         } catch (err) {
             console.error("[WikiModule] Commit failed:", err);
-            if (window.showToast) window.showToast("Error al guardar cambios: " + err.message, "red");
+            if (window.isWritePermissionError && window.isWritePermissionError(err) && window.showWritePermissionModal) {
+                window.showWritePermissionModal();
+            } else if (window.showToast) {
+                window.showToast("Error al guardar cambios: " + err.message, "red");
+            }
             throw err;
         }
     }

@@ -419,7 +419,11 @@
 
             } catch (err) {
                 console.error('[ProfileEditor] Save failed:', err);
-                window.hypeToast('Error al guardar. Inténtalo de nuevo.', 'error');
+                if (window.isWritePermissionError && window.isWritePermissionError(err) && window.showWritePermissionModal) {
+                    window.showWritePermissionModal();
+                } else {
+                    window.hypeToast('Error al guardar. Inténtalo de nuevo.', 'error');
+                }
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = originalHtml;

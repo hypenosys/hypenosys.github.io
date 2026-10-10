@@ -1395,12 +1395,92 @@ window.switchWorkspace = async (ws) => {
     }
 };
 
+function getActiveOrgCreator() {
+    const ws = (window.githubApi && window.githubApi.getActiveWorkspace) ? window.githubApi.getActiveWorkspace() : 'hypenosys';
+    if (ws === 'personal') return null;
+    const workspaces = window.__workspaces__ || (typeof __workspaces__ !== 'undefined' ? __workspaces__ : []);
+    const org = Array.isArray(workspaces) ? workspaces.find(w => w && w.id === ws) : null;
+    return (org && org.createdBy) ? org.createdBy : null;
+}
+
+function isWritePermissionError(e) {
+    if (!e) return false;
+    // Guard: Si el workspace activo es 'personal', las escrituras van a localStorage (no GitHub API)
+    const activeWs = (window.githubApi && window.githubApi.getActiveWorkspace) ? window.githubApi.getActiveWorkspace() : null;
+    if (activeWs === 'personal') {
+        return false;
+    }
+
+    const isStatus403Or404 = e.status === 403 || e.status === 404;
+
+    const hasToken = (window.githubApi && typeof window.githubApi.getAuthToken === 'function' && !!window.githubApi.getAuthToken()) ||
+                     (window.githubApi && !!window.githubApi.token) ||
+                     !!sessionStorage.getItem('gh_access_token') ||
+                     !!localStorage.getItem('gh_access_token') ||
+                     !!localStorage.getItem('github_token');
+
+    return isStatus403Or404 && hasToken;
+}
+
 function getOrgWritePermissionErrorMessage(e) {
-    if (e && (e.status === 404 || e.status === 403)) {
-        return "No tienes permisos de escritura en el repositorio de GitHub (hypenosys/hypenosys.github.io). Pide a un administrador (ej. Axlfc) que te añada como colaborador con permiso 'Write'.";
+    if (isWritePermissionError(e)) {
+        const creator = getActiveOrgCreator();
+        if (creator) {
+            return `No tienes permisos de escritura en el repositorio de GitHub (hypenosys/hypenosys.github.io). Pide a ${creator} (creador/admin) que te añada como colaborador con permiso 'Write'.`;
+        }
+        return "No tienes permisos de escritura en el repositorio de GitHub (hypenosys/hypenosys.github.io). Contacta con un administrador de la organización para solicitar acceso.";
     }
     return null;
 }
+
+function showWritePermissionModal(createdByParam) {
+    const creatorName = createdByParam || getActiveOrgCreator();
+
+    let modal = document.getElementById('write-permission-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'write-permission-modal';
+        modal.className = 'fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden';
+        document.body.appendChild(modal);
+    }
+
+    const adminMessage = creatorName
+        ? `Contacta con <span class="font-semibold text-purple-400">${creatorName}</span> para solicitar acceso.`
+        : `Contacta con un administrador de la organización para solicitar acceso.`;
+
+    modal.innerHTML = `
+        <div class="bg-slate-950 border border-amber-500/30 rounded-2xl p-6 max-w-md w-full shadow-2xl relative space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 class="text-base font-bold text-slate-100 flex items-center gap-2">
+                    <i class="fa-solid fa-lock text-amber-400"></i> Permisos Insuficientes
+                </h3>
+                <button id="close-write-perm-modal-top" type="button" class="text-slate-400 hover:text-white p-1 transition-colors">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <p class="text-sm text-slate-300 leading-relaxed">
+                No tienes permisos de escritura en este repositorio. ${adminMessage}
+            </p>
+
+            <div class="pt-2 flex justify-end">
+                <button id="close-write-perm-modal-btn" type="button" class="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white font-medium text-xs rounded-xl transition-all shadow-lg shadow-purple-900/30">
+                    Entendido
+                </button>
+            </div>
+        </div>
+    `;
+
+    modal.classList.remove('hidden');
+
+    const closeModal = () => modal.classList.add('hidden');
+    document.getElementById('close-write-perm-modal-top').onclick = closeModal;
+    document.getElementById('close-write-perm-modal-btn').onclick = closeModal;
+}
+
+window.isWritePermissionError = isWritePermissionError;
+window.showWritePermissionModal = showWritePermissionModal;
+window.getOrgWritePermissionErrorMessage = getOrgWritePermissionErrorMessage;
 
 window.promptCreateOrganization = () => {
     let modal = document.getElementById('create-org-modal');
@@ -1531,9 +1611,12 @@ window.promptCreateOrganization = () => {
             window.switchWorkspace(orgId);
         } catch (e) {
             console.error('[WORKSPACE] Failed to create organization:', e);
-            const permErrorMsg = getOrgWritePermissionErrorMessage(e);
-            errEl.textContent = 'Fallo al crear la organización: ' + (permErrorMsg || e.message);
-            errEl.classList.remove('hidden');
+            if (isWritePermissionError(e)) {
+                showWritePermissionModal();
+            } else {
+                errEl.textContent = 'Fallo al crear la organización: ' + e.message;
+                errEl.classList.remove('hidden');
+            }
             submitBtn.disabled = false;
             submitBtnText.textContent = 'Crear';
         }
@@ -1883,12 +1966,14 @@ window.handleAddOrgMember = async () => {
         }
     } catch (e) {
         console.error('[MEMBER] Failed to add member:', e);
-        const permErrorMsg = getOrgWritePermissionErrorMessage(e);
-        const displayMsg = permErrorMsg || e.message;
-        errEl.textContent = 'Fallo al guardar: ' + displayMsg;
-        errEl.classList.remove('hidden');
-        if (window.hypeToast) {
-            window.hypeToast('Error guardando en GitHub: ' + displayMsg, 'error');
+        if (isWritePermissionError(e)) {
+            showWritePermissionModal();
+        } else {
+            errEl.textContent = 'Fallo al guardar: ' + e.message;
+            errEl.classList.remove('hidden');
+            if (window.hypeToast) {
+                window.hypeToast('Error guardando en GitHub: ' + e.message, 'error');
+            }
         }
     }
 };
@@ -1933,10 +2018,12 @@ window.handleRemoveOrgMember = async (username) => {
         }
     } catch (e) {
         console.error('[MEMBER] Failed to remove member:', e);
-        const permErrorMsg = getOrgWritePermissionErrorMessage(e);
-        const displayMsg = permErrorMsg || e.message;
-        if (window.hypeToast) {
-            window.hypeToast('Error guardando en GitHub: ' + displayMsg, 'error');
+        if (isWritePermissionError(e)) {
+            showWritePermissionModal();
+        } else if (window.hypeToast) {
+            window.hypeToast('Error guardando en GitHub: ' + e.message, 'error');
+        } else {
+            alert('Error al eliminar miembro: ' + e.message);
         }
     }
 };

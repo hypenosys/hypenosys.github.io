@@ -197,7 +197,11 @@ async function handleCardDrop(taskId, targetColumnId) {
     showToast(UI_STRINGS.taskMoved(taskId, targetColumnId), 'success');
     await refreshDashboardData();
   } catch (err) {
-    showToast(`Error: ${err.message}`, 'error');
+    if (window.isWritePermissionError && window.isWritePermissionError(err) && window.showWritePermissionModal) {
+      window.showWritePermissionModal();
+    } else {
+      showToast(`Error: ${err.message}`, 'error');
+    }
   }
 }
 
@@ -239,7 +243,11 @@ async function handleQuickStageUpdate(taskId, newStage) {
         showToast(`Tarea #${taskId} movida a ${newStage}`, 'success');
         await refreshDashboardData();
     } catch (err) {
-        showToast(`Error: ${err.message}`, 'error');
+        if (window.isWritePermissionError && window.isWritePermissionError(err) && window.showWritePermissionModal) {
+            window.showWritePermissionModal();
+        } else {
+            showToast(`Error: ${err.message}`, 'error');
+        }
     }
 }
 
