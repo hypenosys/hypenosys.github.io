@@ -6,3 +6,5 @@ node_modules/
 server.log
 test-results/
 playwright-report/
+jules-export-*/
+jules-export-*.zip
