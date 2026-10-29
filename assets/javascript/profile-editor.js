@@ -373,11 +373,7 @@
                         role,
                         bio,
                         avatar_url,
-                        contact_email,
-                        ai_config: {
-                            provider: ai_provider,
-                            model: ai_model
-                        }
+                        contact_email
                     };
 
                     return db;
