@@ -109,6 +109,11 @@ window.loadSession = async function(id) {
     // Refresh session list to update active state
     renderSessionList();
 
+    // Render attachment chips for the loaded session
+    if (window.renderRagFileChips) {
+        window.renderRagFileChips(id);
+    }
+
     // Background processing for God Mode context
     if (window.godModeTools) {
         (async () => {

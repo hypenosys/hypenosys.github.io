@@ -203,6 +203,9 @@ permalink: /chat/neural/
                     </button>
                 </div>
 
+                <!-- RAG Attachment Chips -->
+                <div id="rag-file-chips-container" class="hidden"></div>
+
                 <div id="chat-input-container" class="bg-[#1e1f29] border border-[#44475a] rounded-2xl p-3 flex flex-col gap-2 focus-within:border-[#bd93f9]/50 focus-within:shadow-[0_0_20px_rgba(189,147,249,0.1)] transition-all duration-500">
                     <div class="flex items-center gap-3">
                         <div class="relative">
@@ -733,13 +736,20 @@ permalink: /chat/neural/
                                 fileDocInput.value = '';
                                 if (!file) return;
 
-                                if (file.size > window.NeuralChatRAG.MAX_FILE_SIZE_BYTES) {
-                                    appendSystemMessage(`El archivo supera el tamaño máximo permitido de 2 MB (${(file.size / (1024 * 1024)).toFixed(2)} MB).`, 'error');
-                                    return;
-                                }
-
                                 if (!window.currentSessionId) {
                                     createNewSession();
+                                }
+
+                                if (file.size > window.NeuralChatRAG.MAX_FILE_SIZE_BYTES) {
+                                    if (window.renderRagFileChips) {
+                                        window.renderRagFileChips.addErrorChip({
+                                            fileId: 'file_err_' + Date.now(),
+                                            fileName: file.name,
+                                            fileSize: file.size,
+                                            errorMessage: `El archivo supera el tamaño máximo permitido de 2 MB (${(file.size / (1024 * 1024)).toFixed(2)} MB).`
+                                        });
+                                    }
+                                    return;
                                 }
 
                                 const reader = new FileReader();
@@ -747,31 +757,25 @@ permalink: /chat/neural/
                                     const content = ev.target.result;
                                     const fileId = 'file_' + Date.now();
 
-                                    window.thinkingIndicator.classList.remove('hidden');
-                                    window.thinkingIndicator.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Indexando archivo...';
-
-                                    try {
-                                        const result = await window.NeuralChatRAG.ingestFile({
+                                    if (window.handleFileIngestionWithChip) {
+                                        await window.handleFileIngestionWithChip({
                                             sessionId: window.currentSessionId,
                                             fileId: fileId,
                                             fileName: file.name,
-                                            fileContent: content,
-                                            onProgress: (p) => {
-                                                window.thinkingIndicator.innerHTML = `<i class="fas fa-spinner fa-spin mr-1"></i> Indexando ${file.name} (${p.processedChunks}/${p.totalChunks} chunks)...`;
-                                            }
+                                            fileSize: file.size,
+                                            fileContent: content
                                         });
-
-                                        showToast(`Archivo "${file.name}" indexado con éxito (${result.chunksCount} fragmentos)`);
-                                        appendSystemMessage(`Archivo "${file.name}" indexado y listo para RAG (${result.chunksCount} fragmentos).`, 'info');
-                                    } catch (err) {
-                                        console.error('Error al indexar archivo RAG:', err);
-                                        appendSystemMessage(`Error al indexar "${file.name}": ${err.message}`, 'error');
-                                    } finally {
-                                        window.thinkingIndicator.classList.add('hidden');
                                     }
                                 };
                                 reader.onerror = (err) => {
-                                    appendSystemMessage(`Error al leer archivo "${file.name}".`, 'error');
+                                    if (window.renderRagFileChips) {
+                                        window.renderRagFileChips.addErrorChip({
+                                            fileId: 'file_err_' + Date.now(),
+                                            fileName: file.name,
+                                            fileSize: file.size,
+                                            errorMessage: `Error al leer archivo "${file.name}".`
+                                        });
+                                    }
                                 };
                                 reader.readAsText(file);
                             };

@@ -433,6 +433,218 @@ window.removeAttachedImage = function() {
     document.getElementById('image-input').value = '';
 }
 
+/* ════════════════════════════════════════
+   RAG ATTACHMENT CHIPS UI ENGINE
+   ════════════════════════════════════════ */
+
+window.ragActiveIngestControllers = {};
+window.ragMemoryErrorChips = {};
+
+window.renderRagFileChips = async function(targetSessionId) {
+    const sessionId = targetSessionId || window.currentSessionId;
+    const container = document.getElementById('rag-file-chips-container');
+    if (!container) return;
+
+    if (!sessionId) {
+        container.innerHTML = '';
+        container.classList.add('hidden');
+        return;
+    }
+
+    // 1. Fetch persistent chunks for current session
+    let readyFiles = [];
+    try {
+        const chunks = await window.aiStorage.getRagChunksBySession(sessionId);
+        const fileMap = new Map();
+        chunks.forEach(c => {
+            if (!fileMap.has(c.fileId)) {
+                fileMap.set(c.fileId, {
+                    fileId: c.fileId,
+                    fileName: c.fileName || 'archivo.txt',
+                    fileSize: c.fileSize || 0,
+                    modelId: c.modelId,
+                    chunkCount: 0
+                });
+            }
+            fileMap.get(c.fileId).chunkCount++;
+        });
+        readyFiles = Array.from(fileMap.values());
+    } catch (e) {
+        console.error('Error fetching RAG chunks for chips:', e);
+    }
+
+    // 2. Active indexing chips for current session
+    const activeIndexing = Object.entries(window.ragActiveIngestControllers)
+        .filter(([_, item]) => item.sessionId === sessionId)
+        .map(([fId, item]) => ({
+            fileId: fId,
+            fileName: item.fileName,
+            fileSize: item.fileSize,
+            progress: item.progress || '0/0',
+            state: 'indexing'
+        }));
+
+    // 3. Memory error chips for current session
+    const memoryErrors = window.ragMemoryErrorChips[sessionId] || [];
+
+    // Current embedding model check
+    const embedConfig = window.getEmbeddingsConfig ? window.getEmbeddingsConfig() : {};
+    const currentModel = embedConfig.model;
+
+    const totalChips = activeIndexing.length + readyFiles.length + memoryErrors.length;
+    if (totalChips === 0) {
+        container.innerHTML = '';
+        container.classList.add('hidden');
+        return;
+    }
+
+    container.classList.remove('hidden');
+
+    let html = '';
+
+    // Render indexing chips
+    activeIndexing.forEach(file => {
+        html += `
+            <div class="rag-chip indexing" id="rag-chip-${file.fileId}">
+                <i class="fas fa-spinner fa-spin text-xs"></i>
+                <span class="rag-chip-name" title="${escapeHtml(file.fileName)}">${escapeHtml(file.fileName)}</span>
+                <span class="rag-chip-size">${file.progress}</span>
+                <button type="button" class="rag-chip-remove" aria-label="Quitar ${escapeHtml(file.fileName)} del contexto" onclick="removeRagChip('${file.fileId}', 'indexing')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        `;
+    });
+
+    // Render ready files chips
+    readyFiles.forEach(file => {
+        const isMismatch = file.modelId && currentModel && file.modelId !== currentModel;
+        const formattedSize = window.NeuralChatRAG?.formatFileSize ? window.NeuralChatRAG.formatFileSize(file.fileSize) : `${file.fileSize} B`;
+
+        html += `
+            <div class="rag-chip ready" id="rag-chip-${file.fileId}">
+                <i class="fas fa-file-lines rag-chip-icon text-xs"></i>
+                <span class="rag-chip-name" title="${escapeHtml(file.fileName)}">${escapeHtml(file.fileName)}</span>
+                <span class="rag-chip-size">${formattedSize}</span>
+                ${isMismatch ? `<span class="rag-chip-badge reindex" title="Modelo de embeddings cambiado (${file.modelId} → ${currentModel})">reindexar</span>` : ''}
+                <button type="button" class="rag-chip-remove" aria-label="Quitar ${escapeHtml(file.fileName)} del contexto" onclick="removeRagChip('${file.fileId}', 'ready')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        `;
+    });
+
+    // Render error chips
+    memoryErrors.forEach(file => {
+        const formattedSize = window.NeuralChatRAG?.formatFileSize ? window.NeuralChatRAG.formatFileSize(file.fileSize) : `${file.fileSize} B`;
+        html += `
+            <div class="rag-chip error" id="rag-chip-${file.fileId}" title="${escapeHtml(file.errorMessage)}">
+                <i class="fas fa-exclamation-triangle text-xs"></i>
+                <span class="rag-chip-name" title="${escapeHtml(file.fileName)}">${escapeHtml(file.fileName)}</span>
+                <span class="rag-chip-size">${formattedSize} · Error</span>
+                <button type="button" class="rag-chip-remove" aria-label="Quitar ${escapeHtml(file.fileName)} del contexto" onclick="removeRagChip('${file.fileId}', 'error')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        `;
+    });
+
+    container.innerHTML = html;
+};
+
+window.renderRagFileChips.addErrorChip = function({ fileId, fileName, fileSize, errorMessage }) {
+    const sessionId = window.currentSessionId;
+    if (!sessionId) return;
+
+    if (!window.ragMemoryErrorChips[sessionId]) {
+        window.ragMemoryErrorChips[sessionId] = [];
+    }
+    // Remove existing error chip for same file if present
+    window.ragMemoryErrorChips[sessionId] = window.ragMemoryErrorChips[sessionId].filter(c => c.fileId !== fileId);
+    window.ragMemoryErrorChips[sessionId].push({
+        fileId,
+        fileName,
+        fileSize,
+        errorMessage,
+        state: 'error'
+    });
+
+    window.renderRagFileChips(sessionId);
+};
+
+window.removeRagChip = async function(fileId, state) {
+    const sessionId = window.currentSessionId;
+    if (!sessionId) return;
+
+    if (state === 'indexing') {
+        const active = window.ragActiveIngestControllers[fileId];
+        if (active && active.controller) {
+            active.controller.abort();
+        }
+        delete window.ragActiveIngestControllers[fileId];
+    } else if (state === 'ready') {
+        await window.aiStorage.deleteRagChunksByFile(sessionId, fileId);
+    } else if (state === 'error') {
+        if (window.ragMemoryErrorChips[sessionId]) {
+            window.ragMemoryErrorChips[sessionId] = window.ragMemoryErrorChips[sessionId].filter(c => c.fileId !== fileId);
+        }
+    }
+
+    await window.renderRagFileChips(sessionId);
+};
+
+window.handleFileIngestionWithChip = async function({ sessionId, fileId, fileName, fileSize, fileContent }) {
+    const controller = new AbortController();
+
+    window.ragActiveIngestControllers[fileId] = {
+        sessionId,
+        controller,
+        fileName,
+        fileSize,
+        progress: '0/0',
+        state: 'indexing'
+    };
+
+    await window.renderRagFileChips(sessionId);
+
+    try {
+        await window.NeuralChatRAG.ingestFile({
+            sessionId,
+            fileId,
+            fileName,
+            fileSize,
+            fileContent,
+            signal: controller.signal,
+            onProgress: (p) => {
+                if (window.ragActiveIngestControllers[fileId]) {
+                    window.ragActiveIngestControllers[fileId].progress = `${p.processedChunks}/${p.totalChunks}`;
+                    window.renderRagFileChips(sessionId);
+                }
+            }
+        });
+
+        delete window.ragActiveIngestControllers[fileId];
+        await window.renderRagFileChips(sessionId);
+
+    } catch (err) {
+        delete window.ragActiveIngestControllers[fileId];
+
+        if (err.name === 'AbortError') {
+            // User cancelled indexing via X button; no chunks were saved
+            await window.renderRagFileChips(sessionId);
+            return;
+        }
+
+        // Display error state chip in memory
+        window.renderRagFileChips.addErrorChip({
+            fileId,
+            fileName,
+            fileSize,
+            errorMessage: err.message || 'Error al indexar archivo'
+        });
+    }
+};
+
 window.sendAudioTranscription = async function(blob) {
     const config = getActiveConfig();
     const baseUrl = (config.base_url || '').trim().replace(/\/+$/, '');

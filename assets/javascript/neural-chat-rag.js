@@ -83,9 +83,19 @@ window.NeuralChatRAG = (function() {
     }
 
     /**
-     * Requests embedding vector for a single input text or array of texts.
+     * Formats bytes into human-readable string (B, KB, MB with 1 decimal).
      */
-    async function fetchEmbeddingVector(input, isQuery = false) {
+    function formatFileSize(bytes) {
+        if (!bytes || isNaN(bytes) || bytes <= 0) return '0 B';
+        if (bytes < 1024) return `${bytes} B`;
+        if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+        return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+    }
+
+    /**
+     * Requests embedding vector for a single input text or array of texts with abort signal & retry logic.
+     */
+    async function fetchEmbeddingVector(input, isQuery = false, signal = null) {
         const embedConfig = window.getEmbeddingsConfig ? window.getEmbeddingsConfig() : {};
         if (!embedConfig.baseUrl || !embedConfig.model) {
             throw new Error('Configuración de embeddings incompleta (falta Base URL o Modelo).');
@@ -118,44 +128,94 @@ window.NeuralChatRAG = (function() {
             headers['Authorization'] = `Bearer ${embedConfig.apiKey}`;
         }
 
-        const response = await fetch(endpoint, {
-            method: 'POST',
-            headers: headers,
-            body: JSON.stringify(payload)
-        });
+        const maxRetries = 2;
+        let attempt = 0;
 
-        if (!response.ok) {
-            const errText = await response.text().catch(() => '');
-            if (response.status === 401 || response.status === 403) {
-                throw new Error(`Error ${response.status}: API Key de embeddings no válida.`);
+        while (true) {
+            if (signal && signal.aborted) {
+                const abortErr = new Error('Operación cancelada por el usuario.');
+                abortErr.name = 'AbortError';
+                throw abortErr;
             }
-            if (response.status === 404) {
-                throw new Error(`Error 404: Endpoint o modelo de embeddings no encontrado.`);
+
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify(payload),
+                    signal: signal || undefined
+                });
+
+                if (!response.ok) {
+                    const errText = await response.text().catch(() => '');
+                    const status = response.status;
+                    const err = new Error();
+                    err.status = status;
+
+                    if (status === 401 || status === 403) {
+                        err.message = `Error ${status}: API Key de embeddings no válida.`;
+                        throw err; // Do not retry
+                    }
+                    if (status === 404) {
+                        err.message = `Error 404: Endpoint o modelo de embeddings no encontrado.`;
+                        throw err; // Do not retry
+                    }
+                    if (status === 429) {
+                        err.message = `Error 429: Límite de cuota o peticiones excedido.`;
+                    } else {
+                        err.message = `Error HTTP ${status}: ${errText.substring(0, 150)}`;
+                    }
+
+                    // Retry for 429 and 5xx if attempt < maxRetries
+                    if ((status === 429 || status >= 500) && attempt < maxRetries) {
+                        attempt++;
+                        const delay = attempt * 300;
+                        await new Promise((resolve) => setTimeout(resolve, delay));
+                        continue;
+                    }
+
+                    throw err;
+                }
+
+                const data = await response.json();
+
+                if (data.data && Array.isArray(data.data)) {
+                    if (isArray) {
+                        return data.data.map(d => d.embedding);
+                    }
+                    return data.data[0]?.embedding || null;
+                } else if (data.embedding && Array.isArray(data.embedding)) {
+                    return data.embedding;
+                }
+
+                throw new Error('La respuesta del servicio de embeddings no contiene un vector válido.');
+
+            } catch (err) {
+                if (err.name === 'AbortError' || (signal && signal.aborted)) {
+                    const abortErr = new Error('Operación cancelada por el usuario.');
+                    abortErr.name = 'AbortError';
+                    throw abortErr;
+                }
+                // Do not retry 401, 403, 404
+                if (err.status === 401 || err.status === 403 || err.status === 404) {
+                    throw err;
+                }
+                // Retry network errors (e.g. fetch TypeError)
+                if (!err.status && attempt < maxRetries) {
+                    attempt++;
+                    const delay = attempt * 300;
+                    await new Promise((resolve) => setTimeout(resolve, delay));
+                    continue;
+                }
+                throw err;
             }
-            if (response.status === 429) {
-                throw new Error(`Error 429: Límite de cuota o peticiones excedido.`);
-            }
-            throw new Error(`Error HTTP ${response.status}: ${errText.substring(0, 150)}`);
         }
-
-        const data = await response.json();
-
-        if (data.data && Array.isArray(data.data)) {
-            if (isArray) {
-                return data.data.map(d => d.embedding);
-            }
-            return data.data[0]?.embedding || null;
-        } else if (data.embedding && Array.isArray(data.embedding)) {
-            return data.embedding;
-        }
-
-        throw new Error('La respuesta del servicio de embeddings no contiene un vector válido.');
     }
 
     /**
      * Ingests a text file content into IndexedDB for a given session.
      */
-    async function ingestFile({ sessionId, fileId, fileName, fileContent, onProgress }) {
+    async function ingestFile({ sessionId, fileId, fileName, fileSize = 0, fileContent, signal, onProgress }) {
         if (!fileContent || !sessionId || !fileId) {
             throw new Error('Parámetros de ingesta inválidos.');
         }
@@ -185,6 +245,12 @@ window.NeuralChatRAG = (function() {
         const processedObjects = [];
 
         for (let i = 0; i < rawChunks.length; i += BATCH_SIZE) {
+            if (signal && signal.aborted) {
+                const abortErr = new Error('Operación cancelada por el usuario.');
+                abortErr.name = 'AbortError';
+                throw abortErr;
+            }
+
             const batchTexts = rawChunks.slice(i, i + BATCH_SIZE);
             const currentBatchIndex = Math.floor(i / BATCH_SIZE) + 1;
 
@@ -198,23 +264,15 @@ window.NeuralChatRAG = (function() {
             }
 
             let embeddings = [];
-            const getEmbedVec = (txt, isQ) => (window.NeuralChatRAG?.fetchEmbeddingVector || fetchEmbeddingVector)(txt, isQ);
-            try {
-                embeddings = await getEmbedVec(batchTexts, false);
-                if (!Array.isArray(embeddings) || embeddings.length === 0) {
-                    throw new Error('Respuesta de embeddings no es un array');
-                }
-                // Handle single vector return if API doesn't list array
-                if (!Array.isArray(embeddings[0])) {
-                    embeddings = [embeddings];
-                }
-            } catch (err) {
-                // Fallback to sequential calls if batching failed
-                embeddings = [];
-                for (const text of batchTexts) {
-                    const vec = await getEmbedVec(text, false);
-                    embeddings.push(vec);
-                }
+            const getEmbedVec = (txt, isQ) => (window.NeuralChatRAG?.fetchEmbeddingVector || fetchEmbeddingVector)(txt, isQ, signal);
+
+            embeddings = await getEmbedVec(batchTexts, false);
+            if (!Array.isArray(embeddings) || embeddings.length === 0) {
+                throw new Error('Respuesta de embeddings no es un array válido');
+            }
+            // Handle single vector return if API doesn't list array
+            if (!Array.isArray(embeddings[0])) {
+                embeddings = [embeddings];
             }
 
             batchTexts.forEach((text, idx) => {
@@ -227,6 +285,7 @@ window.NeuralChatRAG = (function() {
                     sessionId: sessionId,
                     fileId: fileId,
                     fileName: fileName,
+                    fileSize: fileSize,
                     chunkIndex: chunkIndex,
                     content: neutralizedContent,
                     vector: vector,
@@ -240,7 +299,8 @@ window.NeuralChatRAG = (function() {
         await window.aiStorage.saveRagChunks(processedObjects);
         return {
             chunksCount: processedObjects.length,
-            fileName: fileName
+            fileName: fileName,
+            fileSize: fileSize
         };
     }
 
@@ -323,6 +383,7 @@ window.NeuralChatRAG = (function() {
     }
 
     return {
+        formatFileSize,
         neutralizeTags,
         chunkText,
         cosineSimilarity,
