@@ -224,6 +224,7 @@ window.adaptUI = function(config) {
     const imgRes = document.getElementById('image-resolution');
     const audioRec = document.getElementById('audio-record-container');
     const attachBtn = document.getElementById('attach-btn');
+    const fileAttachBtn = document.getElementById('file-attach-btn');
     const toggleInput = document.getElementById('toggle-input-mode');
 
     if (imgRes) imgRes.classList.add('hidden');
@@ -231,6 +232,14 @@ window.adaptUI = function(config) {
     if (window.chatInput) window.chatInput.classList.remove('hidden');
     if (attachBtn) attachBtn.classList.add('hidden');
     if (toggleInput) toggleInput.classList.add('hidden');
+
+    if (fileAttachBtn) {
+        if (window.NeuralChatRAG && window.NeuralChatRAG.isEmbeddingsReady()) {
+            fileAttachBtn.classList.remove('hidden');
+        } else {
+            fileAttachBtn.classList.add('hidden');
+        }
+    }
 
     if (type === 'image-gen' && imgRes) {
         imgRes.classList.remove('hidden');

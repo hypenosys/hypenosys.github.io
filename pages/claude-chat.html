@@ -251,6 +251,11 @@ permalink: /chat/neural/
                             </button>
                             <input type="file" id="image-input" class="hidden" accept="image/*" />
 
+                            <button id="file-attach-btn" title="Adjuntar archivo para RAG local" class="hidden text-[#6272a4] hover:text-[#50fa7b] transition-colors">
+                                <i class="fas fa-file-lines text-xs"></i>
+                            </button>
+                            <input type="file" id="file-doc-input" class="hidden" accept=".txt,.md,.json,.csv,.js,.py,.cpp,.c,.h,.hpp,.cs,.html,.css,.xml,.yaml,.yml,.log" />
+
                             <button id="toggle-input-mode" title="Cambiar a teclado" class="hidden text-[#6272a4] hover:text-[#50fa7b] transition-colors">
                                 <i class="fas fa-keyboard text-xs"></i>
                             </button>
@@ -363,31 +368,33 @@ permalink: /chat/neural/
     };
     marked.setOptions({ renderer });
 </script>
-<script src="{{ '/assets/javascript/auth-config.js' | relative_url }}"></script>
-<script src="{{ '/assets/javascript/github-api.js' | relative_url }}"></script>
-<script src="{{ '/assets/javascript/auth.js' | relative_url }}?v=nim-relay-v1"></script>
-<script src="{{ '/assets/javascript/jules-api.js' | relative_url }}"></script>
-<script src="{{ '/assets/javascript/github-context.js' | relative_url }}"></script>
-<script src="{{ '/assets/javascript/task-engine.js' | relative_url }}"></script>
-<script src="{{ '/assets/javascript/god-mode-tools.js' | relative_url }}"></script>
-<script src="{{ '/assets/javascript/ollama-discovery.js' | relative_url }}"></script>
-<script src="{{ '/assets/javascript/ai-config.js' | relative_url }}?v=nim-relay-v1"></script>
-<script src="{{ '/assets/javascript/neural-chat-core.js' | relative_url }}"></script>
-<script src="{{ '/assets/javascript/neural-provider-client.js' | relative_url }}?v=nim-relay-v1"></script>
+<script src="/assets/javascript/auth-config.js"></script>
+<script src="/assets/javascript/github-api.js"></script>
+<script src="/assets/javascript/auth.js?v=nim-relay-v1"></script>
+<script src="/assets/javascript/jules-api.js"></script>
+<script src="/assets/javascript/github-context.js"></script>
+<script src="/assets/javascript/task-engine.js"></script>
+<script src="/assets/javascript/god-mode-tools.js"></script>
+<script src="/assets/javascript/ollama-discovery.js"></script>
+<script src="/assets/javascript/ai-config.js?v=nim-relay-v1"></script>
+<script src="/assets/javascript/storage-db.js"></script>
+<script src="/assets/javascript/neural-chat-rag.js"></script>
+<script src="/assets/javascript/neural-chat-core.js"></script>
+<script src="/assets/javascript/neural-provider-client.js?v=nim-relay-v1"></script>
 
-<script src="{{ '/assets/javascript/neural-chat-catalogs.js' | relative_url }}?v=nim-relay-v1"></script>
-<script src="{{ '/assets/javascript/hypenosys-docs-client.js' | relative_url }}"></script>
-<script src="{{ '/assets/javascript/obsidian-markdown-renderer.js' | relative_url }}"></script>
-<script src="{{ '/assets/javascript/hypenosys-docs-index.js' | relative_url }}"></script>
-<script src="{{ '/assets/javascript/jules-docs-bridge.js' | relative_url }}"></script>
-<script src="{{ '/assets/javascript/jules-svn-bridge.js' | relative_url }}"></script>
-<script src="{{ '/assets/javascript/jules-exec-bridge.js' | relative_url }}"></script>
-<script src="{{ '/assets/javascript/neural-chat-ui.js' | relative_url }}"></script>
-<script src="{{ '/assets/javascript/neural-chat-sessions.js' | relative_url }}"></script>
-<script src="{{ '/assets/javascript/neural-chat-profiles.js' | relative_url }}?v=nim-relay-v1"></script>
-<script src="{{ '/assets/javascript/neural-chat-jules.js' | relative_url }}"></script>
-<script src="{{ '/assets/javascript/neural-chat-send.js' | relative_url }}?v=nim-direct-v1"></script>
-<script src="{{ '/assets/javascript/neural-chat-activity.js' | relative_url }}"></script>
+<script src="/assets/javascript/neural-chat-catalogs.js?v=nim-relay-v1"></script>
+<script src="/assets/javascript/hypenosys-docs-client.js"></script>
+<script src="/assets/javascript/obsidian-markdown-renderer.js"></script>
+<script src="/assets/javascript/hypenosys-docs-index.js"></script>
+<script src="/assets/javascript/jules-docs-bridge.js"></script>
+<script src="/assets/javascript/jules-svn-bridge.js"></script>
+<script src="/assets/javascript/jules-exec-bridge.js"></script>
+<script src="/assets/javascript/neural-chat-ui.js"></script>
+<script src="/assets/javascript/neural-chat-sessions.js"></script>
+<script src="/assets/javascript/neural-chat-profiles.js?v=nim-relay-v1"></script>
+<script src="/assets/javascript/neural-chat-jules.js"></script>
+<script src="/assets/javascript/neural-chat-send.js?v=nim-direct-v1"></script>
+<script src="/assets/javascript/neural-chat-activity.js"></script>
 
 <script>
     function escapeHtml(str) {
@@ -699,6 +706,76 @@ permalink: /chat/neural/
                             };
                             reader.readAsDataURL(file);
                         };
+
+                        const fileAttachBtn = document.getElementById('file-attach-btn');
+                        const fileDocInput = document.getElementById('file-doc-input');
+
+                        if (fileAttachBtn && fileDocInput) {
+                            fileAttachBtn.onclick = () => {
+                                if (!window.NeuralChatRAG || !window.NeuralChatRAG.isEmbeddingsReady()) {
+                                    alert('Configura un modelo de embeddings en API CONFIG para habilitar adjuntos de archivos.');
+                                    return;
+                                }
+
+                                const accepted = localStorage.getItem('hy_rag_privacy_accepted') === 'true';
+                                if (!accepted) {
+                                    const privacyNotice = "Los fragmentos del archivo se enviarán al proveedor configurado para generar sus embeddings vectoriales.";
+                                    const confirmNotice = confirm(privacyNotice + "\n\n¿Deseas continuar?");
+                                    if (!confirmNotice) return;
+                                    localStorage.setItem('hy_rag_privacy_accepted', 'true');
+                                }
+
+                                fileDocInput.click();
+                            };
+
+                            fileDocInput.onchange = async (e) => {
+                                const file = e.target.files[0];
+                                fileDocInput.value = '';
+                                if (!file) return;
+
+                                if (file.size > window.NeuralChatRAG.MAX_FILE_SIZE_BYTES) {
+                                    appendSystemMessage(`El archivo supera el tamaño máximo permitido de 2 MB (${(file.size / (1024 * 1024)).toFixed(2)} MB).`, 'error');
+                                    return;
+                                }
+
+                                if (!window.currentSessionId) {
+                                    createNewSession();
+                                }
+
+                                const reader = new FileReader();
+                                reader.onload = async (ev) => {
+                                    const content = ev.target.result;
+                                    const fileId = 'file_' + Date.now();
+
+                                    window.thinkingIndicator.classList.remove('hidden');
+                                    window.thinkingIndicator.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Indexando archivo...';
+
+                                    try {
+                                        const result = await window.NeuralChatRAG.ingestFile({
+                                            sessionId: window.currentSessionId,
+                                            fileId: fileId,
+                                            fileName: file.name,
+                                            fileContent: content,
+                                            onProgress: (p) => {
+                                                window.thinkingIndicator.innerHTML = `<i class="fas fa-spinner fa-spin mr-1"></i> Indexando ${file.name} (${p.processedChunks}/${p.totalChunks} chunks)...`;
+                                            }
+                                        });
+
+                                        showToast(`Archivo "${file.name}" indexado con éxito (${result.chunksCount} fragmentos)`);
+                                        appendSystemMessage(`Archivo "${file.name}" indexado y listo para RAG (${result.chunksCount} fragmentos).`, 'info');
+                                    } catch (err) {
+                                        console.error('Error al indexar archivo RAG:', err);
+                                        appendSystemMessage(`Error al indexar "${file.name}": ${err.message}`, 'error');
+                                    } finally {
+                                        window.thinkingIndicator.classList.add('hidden');
+                                    }
+                                };
+                                reader.onerror = (err) => {
+                                    appendSystemMessage(`Error al leer archivo "${file.name}".`, 'error');
+                                };
+                                reader.readAsText(file);
+                            };
+                        }
                         document.getElementById('toggle-input-mode').onclick = () => {
                             const config = getActiveConfig();
                             config.useTextInAudioMode = !config.useTextInAudioMode;
