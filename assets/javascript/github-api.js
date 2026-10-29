@@ -1221,21 +1221,11 @@ async function updateMemberProfile(memberName, profileDelta) {
 
 /**
  * Actualiza la configuración de IA de un miembro.
+ * @deprecated AI config is now managed locally in localStorage ('hy_ai_config').
  */
 async function updateMemberAiConfig(memberName, aiConfig) {
-    const { provider, model } = aiConfig;
-    return atomicWrite('assets/data/team_profiles.json', (db) => {
-        if (!db.members[memberName]) throw new Error(`Miembro ${memberName} no encontrado en team_profiles.json.`);
-        db.members[memberName].ai_config = { provider, model };
-        db.last_updated = new Date().toISOString();
-        return db;
-    }, `chore: actualizar config AI de ${memberName}`, (local, remote) => {
-        const merged = { ...remote };
-        if (merged.members[memberName]) {
-            merged.members[memberName].ai_config = local.members[memberName].ai_config;
-        }
-        return merged;
-    });
+    console.warn('[GITHUB-API] updateMemberAiConfig is deprecated and no longer commits to repository.');
+    return { success: true, changed: false };
 }
 
 /**

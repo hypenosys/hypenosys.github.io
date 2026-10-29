@@ -704,16 +704,6 @@ class AuthManager {
             };
             localStorage.setItem('hy_ai_config', JSON.stringify(localConfig));
 
-            const response = await fetch('/assets/data/team_profiles.json');
-            if (!response.ok) throw new Error('No se pudo cargar team_profiles.json');
-            const profilesRes = await response.json();
-            const memberEntry = Object.entries(profilesRes.members).find(([k, v]) => v.github_username.toLowerCase() === login.toLowerCase());
-
-            if (memberEntry) {
-                const memberName = memberEntry[0];
-                if (window.githubApi) await window.githubApi.updateMemberAiConfig(memberName, { provider, model });
-            }
-
             if (window.hypeToast) {
                 window.hypeToast('Configuración API guardada ✓', 'success');
             } else {
