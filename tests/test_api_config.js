@@ -27,12 +27,15 @@ require('../assets/javascript/ai-config.js');
 
 console.log('--- RUNNING API CONFIG TESTS ---');
 
-// 1. Test PROVIDER_DEFAULTS
-assert.strictEqual(window.PROVIDER_DEFAULTS.nvidia_nim.baseUrl, 'https://integrate.api.nvidia.com/v1');
+// 1. Test GATEKEEPER_BASE_URL & PROVIDER_DEFAULTS
+assert.strictEqual(window.GATEKEEPER_BASE_URL, 'https://hypenosys-gatekeeper-v2.axlffcc.workers.dev/v1');
+assert.strictEqual(window.PROVIDER_DEFAULTS.nvidia_nim.baseUrl, window.GATEKEEPER_BASE_URL);
+assert.strictEqual(window.PROVIDER_DEFAULTS.nvidia_nim.upstreamUrl, 'https://integrate.api.nvidia.com/v1');
+assert.strictEqual(window.PROVIDER_DEFAULTS.nvidia_nim.viaRelay, true);
 assert.strictEqual(window.PROVIDER_DEFAULTS.ollama.baseUrl, 'http://localhost:11434/v1');
 assert.strictEqual(window.PROVIDER_DEFAULTS.anthropic.baseUrl, 'https://api.anthropic.com/v1');
 assert.strictEqual(window.PROVIDER_DEFAULTS.gemini.baseUrl, 'https://generativelanguage.googleapis.com');
-console.log('✓ PROVIDER_DEFAULTS check passed');
+console.log('✓ PROVIDER_DEFAULTS & GATEKEEPER_BASE_URL check passed');
 
 // 2. Test isLocalUrl
 assert.strictEqual(window.isLocalUrl('http://localhost:11434/v1'), true);
@@ -40,6 +43,7 @@ assert.strictEqual(window.isLocalUrl('http://127.0.0.1:11434'), true);
 assert.strictEqual(window.isLocalUrl('http://192.168.1.50:8000'), true);
 assert.strictEqual(window.isLocalUrl('http://10.0.0.1/v1'), true);
 assert.strictEqual(window.isLocalUrl('http://172.16.0.1/v1'), true);
+assert.strictEqual(window.isLocalUrl('https://hypenosys-gatekeeper-v2.axlffcc.workers.dev/v1'), false);
 assert.strictEqual(window.isLocalUrl('https://integrate.api.nvidia.com/v1'), false);
 assert.strictEqual(window.isLocalUrl('https://api.openai.com/v1'), false);
 console.log('✓ isLocalUrl check passed');
@@ -58,14 +62,14 @@ console.log('✓ classifyModel check passed');
 // 4. Test getEmbeddingsConfig with same_as_main fallback
 localStorage.setItem('hy_ai_config', JSON.stringify({
     provider: 'nvidia_nim',
-    base_url: 'https://integrate.api.nvidia.com/v1',
+    base_url: window.GATEKEEPER_BASE_URL,
     api_key: 'nvapi-123',
     embedding_model: 'nv-embed-qa-4'
 }));
 
 let embedCfg = window.getEmbeddingsConfig();
 assert.strictEqual(embedCfg.provider, 'nvidia_nim');
-assert.strictEqual(embedCfg.baseUrl, 'https://integrate.api.nvidia.com/v1');
+assert.strictEqual(embedCfg.baseUrl, window.GATEKEEPER_BASE_URL);
 assert.strictEqual(embedCfg.apiKey, 'nvapi-123');
 assert.strictEqual(embedCfg.model, 'nv-embed-qa-4');
 console.log('✓ getEmbeddingsConfig (same_as_main fallback) check passed');
@@ -73,7 +77,7 @@ console.log('✓ getEmbeddingsConfig (same_as_main fallback) check passed');
 // 5. Test getEmbeddingsConfig with decoupled embeddings config
 localStorage.setItem('hy_ai_config', JSON.stringify({
     provider: 'nvidia_nim',
-    base_url: 'https://integrate.api.nvidia.com/v1',
+    base_url: window.GATEKEEPER_BASE_URL,
     api_key: 'nvapi-123',
     embed_provider: 'ollama',
     embed_base_url: 'http://localhost:11434/v1',

@@ -16,6 +16,19 @@
                     Tu API key se guarda solo en este navegador. Nunca se sube a GitHub.
                 </div>
 
+                <!-- Banner de migración NVIDIA NIM Gatekeeper -->
+                <div id="nim-migration-banner" class="alert alert-info bg-black border-info text-info small mb-4 d-none">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <i class="fas fa-route mr-2"></i>
+                            <strong>Optimización NVIDIA NIM:</strong> Tienes guardada la URL directa oficial. Se recomienda usar el Gatekeeper Relay para evitar bloqueos CORS.
+                        </div>
+                        <button type="button" class="btn btn-xs btn-outline-info ml-2 flex-shrink-0" onclick="window.authManager.migrateToGatekeeper()">
+                            Cambiar a Gatekeeper
+                        </button>
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <label for="ai_provider" class="text-gray-400 small font-weight-bold uppercase">Proveedor de IA (Chat / Completion)</label>
                     <select id="ai_provider" class="form-control bg-dark text-white border-purple" onchange="window.ollamaUI.handleProviderChange()">
@@ -85,6 +98,9 @@
                             </button>
                         </div>
                     </div>
+                    <div id="nim-direct-warning" class="small mt-1 text-warning d-none">
+                        <i class="fas fa-exclamation-triangle mr-1"></i> NVIDIA no admite llamadas directas desde el navegador; usa el Gatekeeper.
+                    </div>
                     <div id="ollama-scan-status" class="small mt-1 text-gray-500" style="display: none;"></div>
                 </div>
 
@@ -153,13 +169,13 @@
                         </div>
                         <div id="nim-help-content" class="collapse">
                             <div class="card-body p-2 font-mono text-[10px]">
+                                <p class="mb-2 font-weight-bold text-white font-mono">MODO RELAY GATEKEEPER (Por defecto):</p>
+                                <p class="mb-2">Base URL: <code>https://hypenosys-gatekeeper-v2.axlffcc.workers.dev/v1</code></p>
+                                <p class="mb-2">Evita bloqueos CORS de navegador. Usa tu propia NVIDIA API Key.</p>
+                                <hr class="border-warning opacity-20">
                                 <p class="mb-2 font-weight-bold text-white">MODO DIRECTO:</p>
                                 <p class="mb-2">Base URL: <code>https://integrate.api.nvidia.com/v1</code></p>
-                                <p class="mb-2">Suele fallar por <strong>CORS/Preflight</strong> desde GitHub Pages.</p>
-                                <hr class="border-warning opacity-20">
-                                <p class="mb-2 font-weight-bold text-white">MODO RELAY (Recomendado):</p>
-                                <p class="mb-2">Base URL: <code>https://hypenosys-gatekeeper-v2.axlffcc.workers.dev/v1</code></p>
-                                <p class="mb-2">Evita bloqueos de navegador. Sigue usando tu propia API Key. El Worker no almacena secretos.</p>
+                                <p class="mb-2 font-weight-bold text-danger">Suele fallar por CORS desde el navegador.</p>
                                 <p>Usa <strong>TEST NIM DIRECT</strong> para diagnosticar la conectividad.</p>
                             </div>
                         </div>
@@ -197,7 +213,7 @@
 
                     <div id="group-embed-base-url" class="form-group" style="display: none;">
                         <label for="ai_embed_base_url" class="text-gray-400 small font-weight-bold uppercase">Base URL / Endpoint Embeddings</label>
-                        <input type="text" id="ai_embed_base_url" class="form-control bg-dark text-white border-purple" placeholder="https://integrate.api.nvidia.com/v1 o http://localhost:11434/v1">
+                        <input type="text" id="ai_embed_base_url" class="form-control bg-dark text-white border-purple" placeholder="https://hypenosys-gatekeeper-v2.axlffcc.workers.dev/v1 o http://localhost:11434/v1">
                     </div>
 
                     <div id="group-embed-api-key" class="form-group" style="display: none;">

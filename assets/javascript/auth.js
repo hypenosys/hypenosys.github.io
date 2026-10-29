@@ -561,6 +561,19 @@ class AuthManager {
         }
     }
 
+    migrateToGatekeeper() {
+        const aiBaseUrl = document.getElementById('ai_base_url');
+        const nimBanner = document.getElementById('nim-migration-banner');
+        if (aiBaseUrl && window.GATEKEEPER_BASE_URL) {
+            aiBaseUrl.value = window.GATEKEEPER_BASE_URL;
+            if (window.ollamaUI) {
+                window.ollamaUI.checkNIMDirectWarning();
+            }
+            if (nimBanner) nimBanner.classList.add('d-none');
+            this.showToast('Migración realizada', 'Base URL actualizada al Gatekeeper Relay.', 'info');
+        }
+    }
+
     async showApiConfigModal() {
         this.closeAccountMenus();
         if (!document.getElementById('modalApiConfig')) {
@@ -598,6 +611,22 @@ class AuthManager {
         const aiApiKey = document.getElementById('ai_api_key');
         const aiBaseUrl = document.getElementById('ai_base_url');
         const aiLocalNetwork = document.getElementById('ai_local_network');
+        const nimBanner = document.getElementById('nim-migration-banner');
+
+        // Check migration banner requirement
+        if (nimBanner) {
+            if (config.provider === 'nvidia_nim' && config.base_url && config.base_url.includes('integrate.api.nvidia.com')) {
+                nimBanner.classList.remove('d-none');
+            } else {
+                nimBanner.classList.add('d-none');
+            }
+        }
+
+        // Embeddings fields
+        const aiEmbedProvider = document.getElementById('ai_embed_provider');
+        const aiEmbedBaseUrl = document.getElementById('ai_embed_base_url');
+        const aiEmbedApiKey = document.getElementById('ai_embed_api_key');
+        const aiEmbeddingModel = document.getElementById('ai_embedding_model');
 
         // Embeddings fields
         const aiEmbedProvider = document.getElementById('ai_embed_provider');

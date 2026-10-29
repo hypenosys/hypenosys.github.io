@@ -2,8 +2,17 @@
  * Ollama UI Management Module & AI Provider Configuration Helpers
  */
 
+const GATEKEEPER_BASE_URL = 'https://hypenosys-gatekeeper-v2.axlffcc.workers.dev/v1';
+
 const PROVIDER_DEFAULTS = {
-    nvidia_nim: { baseUrl: 'https://integrate.api.nvidia.com/v1', embeddingsBaseUrl: 'https://integrate.api.nvidia.com/v1', supportsEmbeddings: true },
+    nvidia_nim: {
+        baseUrl: GATEKEEPER_BASE_URL,
+        embeddingsBaseUrl: GATEKEEPER_BASE_URL,
+        supportsEmbeddings: true,
+        upstreamUrl: 'https://integrate.api.nvidia.com/v1',
+        browserDirect: false,
+        viaRelay: true
+    },
     ollama:     { baseUrl: 'http://localhost:11434/v1', embeddingsBaseUrl: 'http://localhost:11434/v1', supportsEmbeddings: true },
     openai:     { baseUrl: 'https://api.openai.com/v1', embeddingsBaseUrl: 'https://api.openai.com/v1', supportsEmbeddings: true },
     openrouter: { baseUrl: 'https://openrouter.ai/api/v1', embeddingsBaseUrl: 'https://openrouter.ai/api/v1', supportsEmbeddings: true },
@@ -15,6 +24,7 @@ const PROVIDER_DEFAULTS = {
 };
 
 if (typeof window !== 'undefined') {
+    window.GATEKEEPER_BASE_URL = GATEKEEPER_BASE_URL;
     window.PROVIDER_DEFAULTS = PROVIDER_DEFAULTS;
 }
 
@@ -133,6 +143,9 @@ async function discoverModels({ provider, baseUrl, apiKey }) {
                         kind: classifyModel(m.id)
                     }));
                 } else {
+                    if (res.status === 404 && cleanBaseUrl.includes('workers.dev')) {
+                        throw new Error(`Error 404: Ruta /models no soportada por el Gatekeeper.`);
+                    }
                     throw new Error(`NIM API ${res.status}`);
                 }
             } catch (nimErr) {
@@ -220,6 +233,12 @@ async function testEmbeddingEndpoint({ provider, baseUrl, apiKey, model }) {
 
     if (!res.ok) {
         const text = await res.text().catch(() => '');
+        if (res.status === 404 && cleanBaseUrl.includes('workers.dev')) {
+            throw new Error('Error 404: Ruta de embeddings no soportada por el Gatekeeper.');
+        }
+        if (res.status === 401 || res.status === 403) {
+            throw new Error(`Error ${res.status}: API key missing or invalid.`);
+        }
         throw new Error(`Error ${res.status}: ${text.substring(0, 150)}`);
     }
 
@@ -266,14 +285,33 @@ class OllamaUI {
         const baseUrlInput = document.getElementById('ai_base_url');
         const localNetworkChk = document.getElementById('ai_local_network');
 
+        // Clear discovered models dropdown when switching providers
+        const customModelsSelect = document.getElementById('custom-models-select');
+        const customModelsGroup = document.getElementById('group-custom-models');
+        if (customModelsSelect) customModelsSelect.innerHTML = '<option value="">Carga modelos primero...</option>';
+        if (customModelsGroup) customModelsGroup.style.display = 'none';
+
+        // Clear model input if switching provider and model doesn't belong to new provider
+        if (modelInput && this.previousProvider !== provider && this.previousProvider !== 'none') {
+            const currentModel = modelInput.value.trim();
+            if (provider === 'nvidia_nim' && !currentModel.startsWith('nvidia/')) {
+                modelInput.value = '';
+            } else if (provider === 'ollama' && currentModel.startsWith('nvidia/')) {
+                modelInput.value = '';
+            }
+        }
+
         // Autocomplete Base URL if empty or matching previous default
         const prevDefault = PROVIDER_DEFAULTS[this.previousProvider]?.baseUrl || '';
         const currentVal = baseUrlInput.value.trim();
 
-        if (!currentVal || currentVal === prevDefault) {
+        if (!currentVal || currentVal === prevDefault || (this.previousProvider === 'nvidia_nim' && currentVal === 'https://integrate.api.nvidia.com/v1')) {
             const newDefault = PROVIDER_DEFAULTS[provider]?.baseUrl || '';
             baseUrlInput.value = newDefault;
         }
+
+        // Check if direct NVIDIA URL warning is needed
+        this.checkNIMDirectWarning();
 
         // Uncheck local network checkbox if new URL is non-local HTTPS
         const newUrl = baseUrlInput.value.trim();
@@ -354,11 +392,24 @@ class OllamaUI {
         this.previousProvider = provider;
     }
 
+    checkNIMDirectWarning() {
+        const provider = document.getElementById('ai_provider')?.value;
+        const baseUrl = document.getElementById('ai_base_url')?.value || '';
+        const warningDiv = document.getElementById('nim-direct-warning');
+
+        if (!warningDiv) return;
+
+        if (provider === 'nvidia_nim' && baseUrl.includes('integrate.api.nvidia.com')) {
+            warningDiv.classList.remove('d-none');
+        } else {
+            warningDiv.classList.add('d-none');
+        }
+    }
+
     handleEmbedProviderChange() {
         const embedProviderEl = document.getElementById('ai_embed_provider');
         if (!embedProviderEl) return;
         const embedProvider = embedProviderEl.value;
-        const mainProvider = document.getElementById('ai_provider')?.value || 'none';
         const embedBaseUrlGroup = document.getElementById('group-embed-base-url');
         const embedApiKeyGroup = document.getElementById('group-embed-api-key');
         const embedBaseUrlInput = document.getElementById('ai_embed_base_url');
@@ -374,7 +425,7 @@ class OllamaUI {
             const prevDefault = PROVIDER_DEFAULTS[this.previousEmbeddingsProvider]?.embeddingsBaseUrl || '';
             const currentVal = embedBaseUrlInput ? embedBaseUrlInput.value.trim() : '';
 
-            if (embedBaseUrlInput && (!currentVal || currentVal === prevDefault)) {
+            if (embedBaseUrlInput && (!currentVal || currentVal === prevDefault || (this.previousEmbeddingsProvider === 'nvidia_nim' && currentVal === 'https://integrate.api.nvidia.com/v1'))) {
                 embedBaseUrlInput.value = PROVIDER_DEFAULTS[embedProvider]?.embeddingsBaseUrl || '';
             }
         }
@@ -781,10 +832,8 @@ class OllamaUI {
             const duration = Date.now() - startTime;
 
             let detectedMode = "Custom compatible endpoint";
-            if (selectedProvider === 'nvidia_nim' && baseUrl.includes('integrate.api.nvidia.com')) {
-                detectedMode = "NVIDIA NIM (oficial)";
-            } else if (baseUrl.includes('hypenosys-gatekeeper-v2.axlffcc.workers.dev')) {
-                detectedMode = "Hypenosys Gatekeeper Relay";
+            if (selectedProvider === 'nvidia_nim' || baseUrl.includes('hypenosys-gatekeeper-v2.axlffcc.workers.dev')) {
+                detectedMode = "NVIDIA NIM (vía Gatekeeper)";
             } else if (baseUrl.includes('integrate.api.nvidia.com')) {
                 detectedMode = "Direct NVIDIA Cloud";
             }
@@ -806,18 +855,22 @@ class OllamaUI {
                 resultHtml += `<div class="mt-1 text-gray-400" style="border-left: 2px solid #28a745; padding-left: 5px;">Response: "${content}"</div>`;
             } else {
                 const errorText = await response.text().catch(() => "No error body");
-                resultHtml += `<div class="text-danger font-weight-bold">FAILURE: Request reached NVIDIA but returned an error.</div>`;
+                resultHtml += `<div class="text-danger font-weight-bold">FAILURE: Request reached server but returned an error.</div>`;
 
                 let classification = "";
                 switch(response.status) {
                     case 401: classification = "API key missing or invalid."; break;
                     case 403: classification = "Forbidden or entitlement issue for this NVIDIA account/model."; break;
-                    case 404: classification = "Model not found. Check the model ID."; break;
+                    case 404:
+                        classification = baseUrl.includes('workers.dev') ?
+                            "Ruta no soportada por el Gatekeeper." :
+                            "Model or endpoint not found. Check the model ID.";
+                        break;
                     case 410: classification = "This NVIDIA NIM model is no longer available or has reached end-of-life (EOL)."; break;
                     case 429: classification = "Rate limit or quota exceeded."; break;
                     case 500:
                     case 502:
-                    case 503: classification = "NVIDIA upstream server error."; break;
+                    case 503: classification = "Relay or upstream server error."; break;
                     default: classification = `Unhandled error (${response.status}).`;
                 }
                 resultHtml += `<div class="text-warning mt-1 font-weight-bold">${classification}</div>`;
@@ -828,10 +881,8 @@ class OllamaUI {
 
         } catch (e) {
             let detectedMode = "Custom compatible endpoint";
-            if (selectedProvider === 'nvidia_nim' && baseUrl.includes('integrate.api.nvidia.com')) {
-                detectedMode = "NVIDIA NIM (oficial)";
-            } else if (baseUrl.includes('hypenosys-gatekeeper-v2.axlffcc.workers.dev')) {
-                detectedMode = "Hypenosys Gatekeeper Relay";
+            if (selectedProvider === 'nvidia_nim' || baseUrl.includes('hypenosys-gatekeeper-v2.axlffcc.workers.dev')) {
+                detectedMode = "NVIDIA NIM (vía Gatekeeper)";
             } else if (baseUrl.includes('integrate.api.nvidia.com')) {
                 detectedMode = "Direct NVIDIA Cloud";
             }
@@ -844,12 +895,12 @@ class OllamaUI {
             resultHtml += `<div class="text-danger font-weight-bold mt-2">FAILURE: Browser fetch failed before reaching the server.</div>`;
 
             let classification = "";
-            if (detectedMode === "NVIDIA NIM (oficial)" || detectedMode === "Direct NVIDIA Cloud") {
-                classification = "This is likely a CORS/preflight block from GitHub Pages. NVIDIA direct API often blocks browser requests. Use the Hypenosys Gatekeeper Relay for stable usage.";
-            } else if (detectedMode === "Hypenosys Gatekeeper Relay") {
-                classification = "Relay endpoint could not be reached. Check the relay Base URL, CORS configuration, or Worker availability.";
+            if (detectedMode === "Direct NVIDIA Cloud") {
+                classification = "This is likely a CORS/preflight block from GitHub Pages. NVIDIA direct API does not allow browser requests. Use the Gatekeeper Relay for stable usage.";
+            } else if (detectedMode === "NVIDIA NIM (vía Gatekeeper)") {
+                classification = "Relay endpoint could not be reached. Check network connection or Worker status.";
             } else {
-                classification = "Possible causes: CORS/preflight block, mixed content (HTTP on HTTPS), or the endpoint is offline.";
+                classification = "Possible causes: CORS/preflight block, mixed content (HTTP on HTTPS), or endpoint offline.";
             }
 
             if (baseUrl.startsWith('http://') && window.location.protocol === 'https:') {
@@ -886,6 +937,14 @@ if (typeof document !== 'undefined') {
             if (window.ollamaUI) {
                 window.ollamaUI.setActiveTypeUI(btn.dataset.type);
                 window.ollamaUI.renderFilteredModels(btn.dataset.type);
+            }
+        }
+    });
+
+    document.addEventListener('input', (e) => {
+        if (e.target && e.target.id === 'ai_base_url') {
+            if (window.ollamaUI) {
+                window.ollamaUI.checkNIMDirectWarning();
             }
         }
     });
