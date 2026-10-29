@@ -11,7 +11,6 @@ class AuthManager {
     async init() {
         this.bindEvents();
 
-        // Cargar equipo en la home si el contenedor existe
         if (document.getElementById('dream-team-container')) {
             this.renderDreamTeamComponent();
         }
@@ -34,7 +33,6 @@ class AuthManager {
                 }
             } catch (e) {
                 console.error('[AUTH] OAuth exchange failed in init:', e);
-                // Continue to check existing state as fallback
             }
 
             console.log('[AUTH] No OAuth code or exchange completed. Checking existing session...');
@@ -62,7 +60,6 @@ class AuthManager {
     }
 
     dispatchAuthReady(user) {
-        // Ensure DOM is fully loaded and a tiny delay for other scripts to initialize
         const trigger = () => {
             console.log('[AUTH] Dispatching authReady event for user:', user?.login || 'guest');
             document.dispatchEvent(new CustomEvent('authReady', {
@@ -77,20 +74,14 @@ class AuthManager {
         }
     }
 
-    /**
-     * Fallback validation for Jules API Key to avoid dependency on jules-api.js
-     * and handle key separation/contamination.
-     */
     async validateJulesKey(key) {
         if (!key) return false;
 
-        // Detect and reject AI provider keys in Jules slot
         if (key.startsWith('nvapi-') || key.startsWith('sk-')) {
             throw new Error("A provider API key (NVIDIA/OpenAI) was detected. Please enter your real Jules API key.");
         }
 
         try {
-            // Direct fetch to Jules API
             const endpoint = 'https://jules.googleapis.com/v1alpha/sources?pageSize=1';
             const response = await fetch(endpoint, {
                 method: 'GET',
@@ -139,7 +130,6 @@ class AuthManager {
 
                     if (inputJulesKey) {
                         const storedKey = typeof window.getJulesApiKey === 'function' ? window.getJulesApiKey() : '';
-                        // Clean existing contamination from UI and Storage
                         if (storedKey.startsWith('nvapi-') || storedKey.startsWith('sk-')) {
                             inputJulesKey.value = '';
                             inputJulesKey.placeholder = 'Enter real Jules API key (AI key detected)';
@@ -158,12 +148,6 @@ class AuthManager {
         document.getElementById('btn-save-profile')?.addEventListener('click', () => this.handleSaveProfile());
     }
 
-    /**
-     * FIX: Se implementó un bloqueo global (window._oauthExchanging) y limpieza inmediata
-     * de la URL para prevenir bucles de redirección infinitos. El guard de las páginas
-     * protegidas ahora detecta el parámetro 'code' y espera a que este proceso termine
-     * antes de rebotar al index.
-     */
     async handleOAuthCallback() {
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get('code');
@@ -175,7 +159,6 @@ class AuthManager {
             window._oauthExchanging = true;
 
             console.log('[AUTH] Consuming OAuth code...');
-            // Limpiar la URL inmediatamente para evitar re-procesamientos
             window.history.replaceState({}, document.title, window.location.pathname);
 
             this.showToast('Autenticando...', 'Intercambiando código con el gatekeeper...', 'info');
@@ -198,7 +181,6 @@ class AuthManager {
                 console.error('[AUTH] Exchange failed:', e);
                 this.showToast('Error', 'Fallo en la autenticación OAuth: ' + (e.message || 'Error desconocido'), 'error');
 
-                // Clear auth and notify
                 window.githubApi.clearAuth();
                 this.dispatchAuthReady(null);
                 throw e;
@@ -267,7 +249,6 @@ class AuthManager {
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Conectando...';
 
-        // Do not destroy an established OAuth session when a mistyped PAT fails.
         const previousToken = window.githubApi.getAuthToken();
         const persisted = !!localStorage.getItem('gh_access_token');
         let replacedToken = false;
@@ -285,7 +266,6 @@ class AuthManager {
             document.dispatchEvent(new CustomEvent('authReady', { detail: { user: validation.user } }));
 
             if (julesKey) {
-                // Save and verify locally first
                 if (typeof window.saveJulesApiKey === 'function') {
                     window.saveJulesApiKey(julesKey);
                 } else {
@@ -293,11 +273,9 @@ class AuthManager {
                 }
 
                 try {
-                    // Use local validation to avoid "window.julesApiCall is not a function"
                     await this.validateJulesKey(julesKey);
                 } catch (julesErr) {
                     console.error("Jules validation failed:", julesErr);
-                    // Keep the key stored! Change state to unauthorized
                     window.julesApiAuthState = 'unauthorized';
                     if (typeof window.updateJulesApiKeyStateIndicator === 'function') {
                         window.updateJulesApiKeyStateIndicator('unauthorized');
@@ -305,7 +283,6 @@ class AuthManager {
                     throw new Error("Jules API Key inválida o error de conexión (la clave se ha guardado localmente): " + julesErr.message);
                 }
             } else {
-                // Allow clearing the key
                 if (typeof window.removeJulesApiKey === 'function') {
                     window.removeJulesApiKey();
                 } else {
@@ -316,11 +293,9 @@ class AuthManager {
             if (window.jQuery) window.jQuery('#settingsModal').modal('hide');
             this.showToast('Éxito', 'Configuración guardada y sesión GitHub verificada.', 'success');
 
-            // Dispatch events
             document.dispatchEvent(new CustomEvent('settingsSaved'));
             window.dispatchEvent(new Event('tokenUpdated'));
 
-            // No reload, surgical update instead
             if (window.location.pathname.includes('jules-panel')) {
                 if (typeof window.initializeRepoSelector === 'function') {
                     window.initializeRepoSelector();
@@ -366,8 +341,6 @@ class AuthManager {
         }
 
         if (e.status === 403 && e.type === 'ACL_DENIED') {
-            // Keep the user authenticated but show restricted access if needed
-            // This is now handled at a layer above (e.g., showing a warning instead of locking)
             this.showToast('Acceso Restringido', 'Estás autenticado pero no tienes permisos de equipo para ciertas operaciones de escritura.', 'warning');
 
             const dashUnauthorized = document.getElementById('unauthorized-overlay');
@@ -391,7 +364,6 @@ class AuthManager {
     }
 
     updateHeaderUI(user) {
-        // Compatibility with new Dashboard header
         if (typeof window.renderUserStatus === 'function' && (document.getElementById('user-status') || document.getElementById('user-status-mobile'))) {
             window.renderUserStatus(user);
             return;
@@ -402,7 +374,7 @@ class AuthManager {
         const chkHeader = document.getElementById('chk-remember-me');
 
         if (chkHeader && chkHeader.parentElement) {
-            chkHeader.parentElement.remove(); // Remove legacy checkbox UI
+            chkHeader.parentElement.remove();
         }
 
         if (!container) return;
@@ -494,8 +466,6 @@ class AuthManager {
     }
 
     async showProfileModal() {
-        // Single editable profile source: assets/data/team_profiles.json.
-        // The legacy path read team.json and referenced an undefined fileData.
         this.closeAccountMenus();
         if (window.profileEditor && typeof window.profileEditor.openModal === 'function') {
             return window.profileEditor.openModal();
@@ -526,7 +496,6 @@ class AuthManager {
         const julesKey = document.getElementById('input-jules-key')?.value.trim() || '';
 
         if (julesKey) {
-            // Separation: never save AI provider keys here
             if (!julesKey.startsWith('nvapi-') && !julesKey.startsWith('sk-')) {
                 if (typeof window.saveJulesApiKey === 'function') {
                     try {
@@ -566,13 +535,12 @@ class AuthManager {
             const profileDelta = { display_name: name, role, bio: desc, portfolio };
             await window.githubApi.updateMemberProfile(memberName, profileDelta);
 
-            // Propagate changes to dashboard if present
             if (window.currentProfiles && window.currentProfiles.members[memberName]) {
                 window.currentProfiles.members[memberName] = {
                     ...window.currentProfiles.members[memberName],
                     ...profileDelta,
-                    display_name: name, // map display_name to display_name
-                    bio: desc           // map bio to bio
+                    display_name: name,
+                    bio: desc
                 };
                 if (typeof window.renderTeamProfiles === 'function') {
                     window.renderTeamProfiles();
@@ -608,7 +576,6 @@ class AuthManager {
         const login = user.login;
         let config = JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
 
-        // Fallback to team_profiles.json if localStorage is empty for provider/model
         if (!config.provider || !config.model) {
             try {
                 const response = await fetch('/assets/data/team_profiles.json');
@@ -632,6 +599,12 @@ class AuthManager {
         const aiBaseUrl = document.getElementById('ai_base_url');
         const aiLocalNetwork = document.getElementById('ai_local_network');
 
+        // Embeddings fields
+        const aiEmbedProvider = document.getElementById('ai_embed_provider');
+        const aiEmbedBaseUrl = document.getElementById('ai_embed_base_url');
+        const aiEmbedApiKey = document.getElementById('ai_embed_api_key');
+        const aiEmbeddingModel = document.getElementById('ai_embedding_model');
+
         if (aiProfileName) aiProfileName.value = config.name || '';
         if (aiProvider) aiProvider.value = config.provider || 'none';
         if (aiModel) aiModel.value = config.model || '';
@@ -639,16 +612,24 @@ class AuthManager {
         if (aiBaseUrl) aiBaseUrl.value = config.base_url || '';
         if (aiLocalNetwork) aiLocalNetwork.checked = !!(config.local_network || config.localNetwork);
 
+        // Populate decoupled embeddings fields with legacy migration fallback
+        if (aiEmbedProvider) aiEmbedProvider.value = config.embed_provider || config.ai_embed_provider || 'same_as_main';
+        if (aiEmbedBaseUrl) aiEmbedBaseUrl.value = config.embed_base_url || '';
+        if (aiEmbedApiKey) aiEmbedApiKey.value = config.embed_api_key || '';
+        if (aiEmbeddingModel) aiEmbeddingModel.value = config.embedding_model || config.embed_model || '';
+
+        // Initialize state tracking variables in OllamaUI
         if (window.ollamaUI) {
+            window.ollamaUI.previousProvider = config.provider || 'none';
+            window.ollamaUI.previousEmbeddingsProvider = config.embed_provider || config.ai_embed_provider || 'same_as_main';
             window.ollamaUI.handleProviderChange();
+            window.ollamaUI.handleEmbedProviderChange();
         }
 
-        // Hydrate Jules API Key Section
         if (typeof window.hydrateJulesApiKeyModal === 'function') {
             window.hydrateJulesApiKeyModal();
         }
 
-        // Ensure listeners are initialized
         if (typeof window.initJulesApiKeyModalListeners === 'function') {
             window.initJulesApiKeyModalListeners();
         }
@@ -667,6 +648,12 @@ class AuthManager {
         const baseUrl = document.getElementById('ai_base_url')?.value.trim() || '';
         const localNetwork = document.getElementById('ai_local_network')?.checked || false;
 
+        // Decoupled embeddings fields
+        const embedProvider = document.getElementById('ai_embed_provider')?.value || 'same_as_main';
+        const embedBaseUrl = document.getElementById('ai_embed_base_url')?.value.trim() || '';
+        const embedApiKey = document.getElementById('ai_embed_api_key')?.value.trim() || '';
+        const embeddingModel = document.getElementById('ai_embedding_model')?.value.trim() || '';
+
         const btn = document.getElementById('btn-save-api-config');
         const originalHtml = btn ? btn.innerHTML : 'Guardar Configuración';
 
@@ -676,14 +663,21 @@ class AuthManager {
         }
 
         try {
-            // Save sensitive + all to localStorage
-            const localConfig = { name, provider, model, api_key: apiKey, base_url: baseUrl, local_network: localNetwork };
+            const localConfig = {
+                name,
+                provider,
+                model,
+                api_key: apiKey,
+                base_url: baseUrl,
+                local_network: localNetwork,
+                embed_provider: embedProvider,
+                embed_base_url: embedBaseUrl,
+                embed_api_key: embedApiKey,
+                embedding_model: embeddingModel,
+                embed_model: embeddingModel
+            };
             localStorage.setItem('hy_ai_config', JSON.stringify(localConfig));
 
-            // jules_api_key is separate and should not be overwritten by AI provider key
-            // The existing unification logic was causing issues.
-
-            // Sync non-sensitive to team_profiles.json via safe public wrapper
             const response = await fetch('/assets/data/team_profiles.json');
             if (!response.ok) throw new Error('No se pudo cargar team_profiles.json');
             const profilesRes = await response.json();
@@ -812,21 +806,17 @@ window.initJulesApiKeyModalListeners = function() {
 
             try {
                 if (typeof window.handleJulesApiKeyChanged === 'function') {
-                    // Jules Panel Flow: Let handleJulesApiKeyChanged manage sync & polling
                     await window.handleJulesApiKeyChanged(val);
                 } else {
-                    // Dashboard Flow
                     window.saveJulesApiKey(val);
                     window.julesApiAuthState = 'configured';
                     window.updateJulesApiKeyStateIndicator('configured');
 
-                    // If renderJulesSessions exists on the Dashboard, run it once
                     if (typeof window.renderJulesSessions === 'function') {
                         window.renderJulesSessions();
                     }
                 }
 
-                // Temporary success state on the button
                 saveBtn.innerHTML = 'Guardada ✓';
                 setTimeout(() => {
                     saveBtn.disabled = false;

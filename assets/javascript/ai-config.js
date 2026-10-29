@@ -1,23 +1,294 @@
 /**
- * Ollama UI Management Module
+ * Ollama UI Management Module & AI Provider Configuration Helpers
  */
+
+const PROVIDER_DEFAULTS = {
+    nvidia_nim: { baseUrl: 'https://integrate.api.nvidia.com/v1', embeddingsBaseUrl: 'https://integrate.api.nvidia.com/v1', supportsEmbeddings: true },
+    ollama:     { baseUrl: 'http://localhost:11434/v1', embeddingsBaseUrl: 'http://localhost:11434/v1', supportsEmbeddings: true },
+    openai:     { baseUrl: 'https://api.openai.com/v1', embeddingsBaseUrl: 'https://api.openai.com/v1', supportsEmbeddings: true },
+    openrouter: { baseUrl: 'https://openrouter.ai/api/v1', embeddingsBaseUrl: 'https://openrouter.ai/api/v1', supportsEmbeddings: true },
+    anthropic:  { baseUrl: 'https://api.anthropic.com/v1', embeddingsBaseUrl: 'https://api.anthropic.com/v1', supportsEmbeddings: false },
+    gemini:     { baseUrl: 'https://generativelanguage.googleapis.com', embeddingsBaseUrl: 'https://generativelanguage.googleapis.com', supportsEmbeddings: true },
+    mistral:    { baseUrl: 'https://api.mistral.ai/v1', embeddingsBaseUrl: 'https://api.mistral.ai/v1', supportsEmbeddings: true },
+    custom:     { baseUrl: '', embeddingsBaseUrl: '', supportsEmbeddings: true },
+    none:       { baseUrl: '', embeddingsBaseUrl: '', supportsEmbeddings: false }
+};
+
+if (typeof window !== 'undefined') {
+    window.PROVIDER_DEFAULTS = PROVIDER_DEFAULTS;
+}
+
+function isLocalUrl(url) {
+    if (!url) return false;
+    try {
+        const cleanUrl = url.trim();
+        const hostname = new URL(cleanUrl.includes('://') ? cleanUrl : `http://${cleanUrl}`).hostname;
+        return hostname === 'localhost' ||
+            hostname === '127.0.0.1' ||
+            hostname === '::1' ||
+            /^10\./.test(hostname) ||
+            /^192\.168\./.test(hostname) ||
+            /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(hostname);
+    } catch (e) {
+        return false;
+    }
+}
+
+function classifyModel(id, meta = null) {
+    if (!id) return 'unknown';
+    const m = id.toLowerCase();
+
+    if (meta && meta.capabilities && Array.isArray(meta.capabilities) && meta.capabilities.includes('embedding')) {
+        return 'embedding';
+    }
+
+    if (m.includes('rerank')) {
+        return 'rerank';
+    }
+
+    if (/embed|embedding|bge|e5|gte|minilm|mxbai|nomic|arctic-embed|retriever/.test(m)) {
+        return 'embedding';
+    }
+
+    return 'chat';
+}
+
+function getEmbeddingsConfig() {
+    let aiConfig = {};
+    try {
+        aiConfig = JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
+    } catch (e) {
+        console.warn('[AIConfig] Error reading hy_ai_config:', e);
+    }
+
+    const embedProvider = aiConfig.embed_provider || aiConfig.ai_embed_provider || 'same_as_main';
+
+    if (embedProvider === 'same_as_main' || !embedProvider) {
+        const mainProvider = aiConfig.provider || 'none';
+        const defaultBase = PROVIDER_DEFAULTS[mainProvider]?.embeddingsBaseUrl || PROVIDER_DEFAULTS[mainProvider]?.baseUrl || '';
+        return {
+            provider: mainProvider,
+            baseUrl: aiConfig.base_url || defaultBase,
+            apiKey: aiConfig.api_key || '',
+            model: aiConfig.embedding_model || aiConfig.embed_model || ''
+        };
+    }
+
+    const defaultEmbedBase = PROVIDER_DEFAULTS[embedProvider]?.embeddingsBaseUrl || PROVIDER_DEFAULTS[embedProvider]?.baseUrl || '';
+    return {
+        provider: embedProvider,
+        baseUrl: aiConfig.embed_base_url || defaultEmbedBase,
+        apiKey: aiConfig.embed_api_key || '',
+        model: aiConfig.embed_model || aiConfig.embedding_model || ''
+    };
+}
+
+async function discoverModels({ provider, baseUrl, apiKey }) {
+    if (!baseUrl && provider !== 'none') {
+        throw new Error('Base URL no provista.');
+    }
+
+    let rawModels = [];
+    const cleanBaseUrl = (baseUrl || '').replace(/\/+$/, '');
+
+    try {
+        if (provider === 'ollama') {
+            const host = cleanBaseUrl.replace(/\/v1$/, '');
+            const res = await fetch(`${host}/api/tags`);
+            if (!res.ok) {
+                throw new Error(`Ollama API error ${res.status}: ${res.statusText}`);
+            }
+            const data = await res.json();
+            const modelsList = data.models || [];
+
+            for (const m of modelsList) {
+                let meta = null;
+                try {
+                    const showRes = await fetch(`${host}/api/show`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name: m.name })
+                    });
+                    if (showRes.ok) {
+                        meta = await showRes.json();
+                    }
+                } catch (showErr) {
+                    // Fallback to heuristic
+                }
+                rawModels.push({
+                    id: m.name,
+                    kind: classifyModel(m.name, meta)
+                });
+            }
+        } else if (provider === 'nvidia_nim') {
+            try {
+                const res = await fetch(`${cleanBaseUrl}/models`, {
+                    headers: apiKey ? { 'Authorization': `Bearer ${apiKey}` } : {}
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    const list = data.data || [];
+                    rawModels = list.map(m => ({
+                        id: m.id,
+                        kind: classifyModel(m.id)
+                    }));
+                } else {
+                    throw new Error(`NIM API ${res.status}`);
+                }
+            } catch (nimErr) {
+                if (window.NVIDIA_NIM_CATALOG) {
+                    const catalog = window.NVIDIA_NIM_CATALOG;
+                    const staticList = [
+                        ...catalog.chat,
+                        ...catalog.vision,
+                        ...catalog.speech,
+                        ...catalog.embeddings
+                    ];
+                    rawModels = staticList.map(m => ({
+                        id: m.id,
+                        kind: classifyModel(m.id)
+                    }));
+                } else {
+                    throw nimErr;
+                }
+            }
+        } else {
+            const res = await fetch(`${cleanBaseUrl}/models`, {
+                headers: apiKey ? { 'Authorization': `Bearer ${apiKey}` } : {}
+            });
+            if (!res.ok) {
+                throw new Error(`API error ${res.status}: ${res.statusText}`);
+            }
+            const data = await res.json();
+            const list = data.data || [];
+            rawModels = list.map(m => ({
+                id: m.id,
+                kind: classifyModel(m.id)
+            }));
+        }
+    } catch (err) {
+        if (err.name === 'TypeError' || err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
+            let msg = 'Error de conexión o red (Posible CORS o Mixed Content).';
+            if (cleanBaseUrl.startsWith('http://') && typeof window !== 'undefined' && window.location?.protocol === 'https:') {
+                msg += ' Estás accediendo vía HTTPS e intentando llamar a un endpoint HTTP.';
+            }
+            if (provider === 'ollama') {
+                msg += ' Asegúrate de que Ollama está ejecutándose con OLLAMA_ORIGINS=*';
+            }
+            throw new Error(msg);
+        }
+        throw err;
+    }
+
+    return rawModels;
+}
+
+async function testEmbeddingEndpoint({ provider, baseUrl, apiKey, model }) {
+    if (!baseUrl) throw new Error('Base URL requerida.');
+    if (!model) throw new Error('Modelo de embedding requerido.');
+
+    const cleanBaseUrl = baseUrl.replace(/\/+$/, '');
+    let endpoint = `${cleanBaseUrl}/embeddings`;
+
+    let payload = {
+        model: model,
+        input: "Test embedding generation"
+    };
+
+    if (provider === 'nvidia_nim') {
+        payload.input_type = "query";
+    }
+
+    if (provider === 'ollama' && !cleanBaseUrl.endsWith('/v1')) {
+        endpoint = `${cleanBaseUrl}/api/embeddings`;
+        payload = {
+            model: model,
+            prompt: "Test embedding generation"
+        };
+    }
+
+    const headers = { 'Content-Type': 'application/json' };
+    if (apiKey) {
+        headers['Authorization'] = `Bearer ${apiKey}`;
+    }
+
+    const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) {
+        const text = await res.text().catch(() => '');
+        throw new Error(`Error ${res.status}: ${text.substring(0, 150)}`);
+    }
+
+    const data = await res.json();
+    let embeddingVector = null;
+
+    if (data.data && Array.isArray(data.data) && data.data[0]?.embedding) {
+        embeddingVector = data.data[0].embedding;
+    } else if (data.embedding && Array.isArray(data.embedding)) {
+        embeddingVector = data.embedding;
+    }
+
+    if (!embeddingVector || !Array.isArray(embeddingVector)) {
+        throw new Error('La respuesta no contiene un vector de embedding válido.');
+    }
+
+    return {
+        dimension: embeddingVector.length,
+        success: true
+    };
+}
+
+if (typeof window !== 'undefined') {
+    window.isLocalUrl = isLocalUrl;
+    window.classifyModel = classifyModel;
+    window.getEmbeddingsConfig = getEmbeddingsConfig;
+    window.discoverModels = discoverModels;
+    window.testEmbeddingEndpoint = testEmbeddingEndpoint;
+}
 
 class OllamaUI {
     constructor() {
         this.discovery = window.ollamaDiscovery;
+        this.previousProvider = 'none';
+        this.previousEmbeddingsProvider = 'same_as_main';
     }
 
     handleProviderChange() {
-        const provider = document.getElementById('ai_provider').value;
+        const providerEl = document.getElementById('ai_provider');
+        if (!providerEl) return;
+        const provider = providerEl.value;
         const modelInput = document.getElementById('ai_model');
         const baseUrlGroup = document.getElementById('group-base-url');
         const baseUrlInput = document.getElementById('ai_base_url');
+        const localNetworkChk = document.getElementById('ai_local_network');
 
-        // Ollama UI groups
-        const ollamaScanBtnGroup = document.getElementById('ollama-scan-btn-group');
-        const ollamaDiscoveryGroup = document.getElementById('group-ollama-discovery');
-        const ollamaModelsGroup = document.getElementById('group-ollama-models');
+        // Autocomplete Base URL if empty or matching previous default
+        const prevDefault = PROVIDER_DEFAULTS[this.previousProvider]?.baseUrl || '';
+        const currentVal = baseUrlInput.value.trim();
 
+        if (!currentVal || currentVal === prevDefault) {
+            const newDefault = PROVIDER_DEFAULTS[provider]?.baseUrl || '';
+            baseUrlInput.value = newDefault;
+        }
+
+        // Uncheck local network checkbox if new URL is non-local HTTPS
+        const newUrl = baseUrlInput.value.trim();
+        if (newUrl.startsWith('https://') && !isLocalUrl(newUrl) && localNetworkChk) {
+            localNetworkChk.checked = false;
+        }
+
+        // Clear and hide NIM diagnostic output
+        const resultsDiv = document.getElementById('nim-diagnostic-results');
+        if (resultsDiv) {
+            resultsDiv.classList.add('d-none');
+            resultsDiv.innerHTML = '';
+        }
+
+        // Suggestions
         const suggestions = {
             'anthropic': 'claude-sonnet-4-6-20260217',
             'openai': 'gpt-5',
@@ -30,53 +301,85 @@ class OllamaUI {
             'custom': ''
         };
 
-        if (suggestions[provider] !== undefined) {
+        if (suggestions[provider] !== undefined && modelInput) {
             modelInput.placeholder = suggestions[provider] || (provider === 'custom' ? '' : 'Selecciona un proveedor');
         }
 
         if (provider === 'ollama' || provider === 'custom' || provider === 'nvidia_nim') {
-            baseUrlGroup.style.display = 'block';
-            if (!baseUrlInput.value) {
-                if (provider === 'ollama') baseUrlInput.value = 'http://localhost:11434/v1';
-                if (provider === 'nvidia_nim') baseUrlInput.value = 'https://integrate.api.nvidia.com/v1';
-            }
+            if (baseUrlGroup) baseUrlGroup.style.display = 'block';
         } else {
-            baseUrlGroup.style.display = 'none';
+            if (baseUrlGroup) baseUrlGroup.style.display = 'none';
         }
 
+        const ollamaScanBtnGroup = document.getElementById('ollama-scan-btn-group');
+        const ollamaDiscoveryGroup = document.getElementById('group-ollama-discovery');
+        const ollamaModelsGroup = document.getElementById('group-ollama-models');
         const ollamaHelpBlock = document.getElementById('ollama-help-block');
         const nimHelpBlock = document.getElementById('nim-help-block');
         const discoverGroup = document.getElementById('group-discover-models');
 
         if (provider === 'ollama') {
-            ollamaScanBtnGroup.style.display = 'block';
-            ollamaDiscoveryGroup.style.display = 'block';
-            ollamaModelsGroup.style.display = 'block';
+            if (ollamaScanBtnGroup) ollamaScanBtnGroup.style.display = 'block';
+            if (ollamaDiscoveryGroup) ollamaDiscoveryGroup.style.display = 'block';
+            if (ollamaModelsGroup) ollamaModelsGroup.style.display = 'block';
             if (ollamaHelpBlock) ollamaHelpBlock.classList.remove('d-none');
             if (nimHelpBlock) nimHelpBlock.classList.add('d-none');
             if (discoverGroup) discoverGroup.style.display = 'block';
         } else if (provider === 'nvidia_nim') {
-            ollamaScanBtnGroup.style.display = 'none';
-            ollamaDiscoveryGroup.style.display = 'none';
-            ollamaModelsGroup.style.display = 'none';
+            if (ollamaScanBtnGroup) ollamaScanBtnGroup.style.display = 'none';
+            if (ollamaDiscoveryGroup) ollamaDiscoveryGroup.style.display = 'none';
+            if (ollamaModelsGroup) ollamaModelsGroup.style.display = 'none';
             if (ollamaHelpBlock) ollamaHelpBlock.classList.add('d-none');
             if (nimHelpBlock) nimHelpBlock.classList.remove('d-none');
             if (discoverGroup) discoverGroup.style.display = 'block';
         } else if (provider === 'custom' || provider === 'openrouter' || provider === 'openai') {
-            ollamaScanBtnGroup.style.display = 'none';
-            ollamaDiscoveryGroup.style.display = 'none';
-            ollamaModelsGroup.style.display = 'none';
+            if (ollamaScanBtnGroup) ollamaScanBtnGroup.style.display = 'none';
+            if (ollamaDiscoveryGroup) ollamaDiscoveryGroup.style.display = 'none';
+            if (ollamaModelsGroup) ollamaModelsGroup.style.display = 'none';
             if (ollamaHelpBlock) ollamaHelpBlock.classList.add('d-none');
             if (nimHelpBlock) nimHelpBlock.classList.add('d-none');
             if (discoverGroup) discoverGroup.style.display = 'block';
         } else {
-            ollamaScanBtnGroup.style.display = 'none';
-            ollamaDiscoveryGroup.style.display = 'none';
-            ollamaModelsGroup.style.display = 'none';
+            if (ollamaScanBtnGroup) ollamaScanBtnGroup.style.display = 'none';
+            if (ollamaDiscoveryGroup) ollamaDiscoveryGroup.style.display = 'none';
+            if (ollamaModelsGroup) ollamaModelsGroup.style.display = 'none';
             if (ollamaHelpBlock) ollamaHelpBlock.classList.add('d-none');
             if (nimHelpBlock) nimHelpBlock.classList.add('d-none');
             if (discoverGroup) discoverGroup.style.display = 'none';
         }
+
+        // If embeddings provider is "same_as_main", sync UI if needed
+        this.handleEmbedProviderChange();
+
+        this.previousProvider = provider;
+    }
+
+    handleEmbedProviderChange() {
+        const embedProviderEl = document.getElementById('ai_embed_provider');
+        if (!embedProviderEl) return;
+        const embedProvider = embedProviderEl.value;
+        const mainProvider = document.getElementById('ai_provider')?.value || 'none';
+        const embedBaseUrlGroup = document.getElementById('group-embed-base-url');
+        const embedApiKeyGroup = document.getElementById('group-embed-api-key');
+        const embedBaseUrlInput = document.getElementById('ai_embed_base_url');
+
+        if (embedProvider === 'same_as_main') {
+            if (embedBaseUrlGroup) embedBaseUrlGroup.style.display = 'none';
+            if (embedApiKeyGroup) embedApiKeyGroup.style.display = 'none';
+        } else {
+            if (embedBaseUrlGroup) embedBaseUrlGroup.style.display = 'block';
+            if (embedApiKeyGroup) embedApiKeyGroup.style.display = 'block';
+
+            // Autocomplete embedding Base URL if empty or matching previous default
+            const prevDefault = PROVIDER_DEFAULTS[this.previousEmbeddingsProvider]?.embeddingsBaseUrl || '';
+            const currentVal = embedBaseUrlInput ? embedBaseUrlInput.value.trim() : '';
+
+            if (embedBaseUrlInput && (!currentVal || currentVal === prevDefault)) {
+                embedBaseUrlInput.value = PROVIDER_DEFAULTS[embedProvider]?.embeddingsBaseUrl || '';
+            }
+        }
+
+        this.previousEmbeddingsProvider = embedProvider;
     }
 
     async startScan() {
@@ -160,12 +463,9 @@ class OllamaUI {
             select.appendChild(noneOpt);
             select.disabled = true;
 
-            // Focus the manual model input
             modelInput.focus();
 
-            // If it was a mixed content error, show the detailed alert
             if (errorMsg.includes('Mixed Content')) {
-                // Check if we should use hypeToast or standard alert
                 if (window.authManager && window.authManager.showToast) {
                     window.authManager.showToast('Error de Conexión', errorMsg, 'error');
                 } else {
@@ -196,14 +496,12 @@ class OllamaUI {
                 select.appendChild(opt);
             });
 
-            // If model input is empty, pick the first one
             if (!modelInput.value) {
                 modelInput.value = models[0].name;
                 select.value = models[0].name;
             } else if (models.some(m => m.name === modelInput.value)) {
                 select.value = modelInput.value;
             } else {
-                // Current model not in list, add it as an option but keep it selected
                 const opt = document.createElement('option');
                 opt.value = modelInput.value;
                 opt.textContent = `${modelInput.value} (Actual)`;
@@ -233,60 +531,100 @@ class OllamaUI {
         select.innerHTML = '<option>Descubriendo modelos...</option>';
 
         try {
-            let models = [];
-            if (provider === 'ollama') {
-                // Ollama native
-                const res = await fetch(`${baseUrl.replace(/\/v1$/, '')}/api/tags`);
-                const data = await res.json();
-                models = data.models.map(m => ({ id: m.name }));
-            } else if (provider === 'nvidia_nim') {
-                // Try live discovery for NIM
-                try {
-                    const res = await fetch(`${baseUrl.replace(/\/+$/, '')}/models`, {
-                        headers: apiKey ? { 'Authorization': `Bearer ${apiKey}` } : {}
-                    });
-                    if (res.ok) {
-                        const data = await res.json();
-                        models = data.data || [];
-                    } else {
-                        const errText = await res.text().catch(() => "Unknown error");
-                        throw new Error(`NIM API error ${res.status}: ${errText}`);
-                    }
-                } catch (nimErr) {
-                    console.warn('[NIM] Live discovery failed, using static catalog:', nimErr.message);
-
-                    // Show a toast if possible to inform the user why fallback occurred
-                    if (window.authManager && window.authManager.showToast) {
-                        window.authManager.showToast('NIM Discovery', 'Usando catálogo estático (Fallo en endpoint/CORS)', 'info');
-                    }
-
-                    // Use static catalog from neural-chat-catalogs.js
-                    if (window.NVIDIA_NIM_CATALOG) {
-                        const catalog = window.NVIDIA_NIM_CATALOG;
-                        models = [
-                            ...catalog.chat,
-                            ...catalog.vision,
-                            ...catalog.speech,
-                            ...catalog.embeddings
-                        ];
-                    }
-                }
-            } else {
-                // Standard OpenAI /models
-                const res = await fetch(`${baseUrl.replace(/\/+$/, '')}/models`, {
-                    headers: { 'Authorization': `Bearer ${apiKey}` }
-                });
-                const data = await res.json();
-                models = data.data || [];
-            }
-
+            const models = await discoverModels({ provider, baseUrl, apiKey });
             this.allDiscoveredModels = models;
             this.renderFilteredModels('chat');
             document.getElementById('group-model-type').style.display = 'block';
 
         } catch (e) {
             console.error('Model discovery failed:', e);
-            select.innerHTML = '<option>Error al cargar modelos</option>';
+            select.innerHTML = `<option>Error: ${e.message || 'Fallo al cargar modelos'}</option>`;
+        }
+    }
+
+    async discoverEmbeddingModels() {
+        const embedProvider = document.getElementById('ai_embed_provider').value;
+        let provider = embedProvider;
+        let baseUrl = document.getElementById('ai_embed_base_url').value;
+        let apiKey = document.getElementById('ai_embed_api_key').value;
+
+        if (embedProvider === 'same_as_main') {
+            provider = document.getElementById('ai_provider').value;
+            baseUrl = document.getElementById('ai_base_url').value;
+            apiKey = document.getElementById('ai_api_key').value;
+        }
+
+        const select = document.getElementById('embed-models-select');
+        const group = document.getElementById('group-embed-discovered-models');
+
+        if (!baseUrl && provider !== 'none') {
+            alert('Por favor, indica la Base URL para el proveedor de embeddings.');
+            return;
+        }
+
+        if (group) group.style.display = 'block';
+        if (select) select.innerHTML = '<option>Descubriendo modelos de embedding...</option>';
+
+        try {
+            const models = await discoverModels({ provider, baseUrl, apiKey });
+            // Filter to kind === 'embedding' or 'unknown'
+            const filtered = models.filter(m => m.kind === 'embedding' || m.kind === 'unknown');
+
+            if (select) {
+                if (filtered.length > 0) {
+                    select.innerHTML = filtered.map(m => `<option value="${m.id}">${m.id}</option>`).join('');
+                    const embedInput = document.getElementById('ai_embedding_model');
+                    if (embedInput && !embedInput.value) {
+                        embedInput.value = filtered[0].id;
+                    }
+                } else {
+                    select.innerHTML = '<option value="">No se encontraron modelos de embedding</option>';
+                }
+            }
+        } catch (e) {
+            console.error('Embedding discovery failed:', e);
+            if (select) select.innerHTML = `<option>Error: ${e.message || 'Fallo al cargar modelos'}</option>`;
+        }
+    }
+
+    async verifySelectedEmbedding() {
+        const embedProvider = document.getElementById('ai_embed_provider').value;
+        let provider = embedProvider;
+        let baseUrl = document.getElementById('ai_embed_base_url').value;
+        let apiKey = document.getElementById('ai_embed_api_key').value;
+        const model = document.getElementById('ai_embedding_model').value.trim();
+
+        if (embedProvider === 'same_as_main') {
+            provider = document.getElementById('ai_provider').value;
+            baseUrl = document.getElementById('ai_base_url').value;
+            apiKey = document.getElementById('ai_api_key').value;
+        }
+
+        const btn = document.getElementById('btn-verify-embedding');
+        const statusDiv = document.getElementById('embed-verification-status');
+
+        if (!model) {
+            alert('Por favor, introduce o selecciona un modelo de embedding.');
+            return;
+        }
+
+        if (btn) btn.disabled = true;
+        if (statusDiv) {
+            statusDiv.classList.remove('d-none');
+            statusDiv.innerHTML = '<span class="text-warning"><i class="fas fa-spinner fa-spin mr-1"></i> Verificando embedding...</span>';
+        }
+
+        try {
+            const res = await testEmbeddingEndpoint({ provider, baseUrl, apiKey, model });
+            if (statusDiv) {
+                statusDiv.innerHTML = `<span class="text-success font-weight-bold"><i class="fas fa-check-circle mr-1"></i> Embedding OK - Dimensión: ${res.dimension}d</span>`;
+            }
+        } catch (e) {
+            if (statusDiv) {
+                statusDiv.innerHTML = `<span class="text-danger font-weight-bold"><i class="fas fa-times-circle mr-1"></i> Error: ${e.message}</span>`;
+            }
+        } finally {
+            if (btn) btn.disabled = false;
         }
     }
 
@@ -296,7 +634,7 @@ class OllamaUI {
 
         const filtered = models.filter(m => {
             if (type === 'all') return true;
-            return this.detectModelType(m.id) === type;
+            return (m.kind || this.detectModelType(m.id)) === type;
         }).sort((a, b) => a.id.localeCompare(b.id));
 
         select.innerHTML = filtered.map(m => `<option value="${m.id}">${m.id}</option>`).join('');
@@ -308,17 +646,7 @@ class OllamaUI {
     }
 
     detectModelType(modelId) {
-        const m = modelId.toLowerCase();
-        if (/vl|vision|visual|llava|pixtral|intern-vl/.test(m)) return 'vision';
-        if (/embed|e5-|nv-embed|retrieval/.test(m)) return 'embedding';
-        if (/rerank/.test(m)) return 'reranking';
-        if (/asr|tts|whisper|canary|parakeet|fastpitch/.test(m)) return 'audio';
-        if (/stable-diffusion|flux|sdxl|imagen|dall/.test(m)) return 'image-gen';
-        if (/cosmos|video|wan/.test(m)) return 'video';
-        if (/code|starcoder|deepseek-coder|qwen-coder/.test(m)) return 'code';
-        if (/thinking|r1|o1|qwq/.test(m)) return 'reasoning';
-        if (/guard|shield|llama-guard|nemo-guard/.test(m)) return 'safety';
-        return 'chat';
+        return classifyModel(modelId);
     }
 
     selectCustomModel(id) {
@@ -354,7 +682,6 @@ class OllamaUI {
         let profiles = JSON.parse(localStorage.getItem('ai_profiles') || '{}');
         const normalizedName = name.toLowerCase();
 
-        // Find if a profile with the same name already exists
         const existingProfileId = Object.keys(profiles).find(id =>
             profiles[id].name && profiles[id].name.trim().toLowerCase() === normalizedName
         );
@@ -373,6 +700,10 @@ class OllamaUI {
             embedding_model: document.getElementById('ai_embedding_model').value,
             api_key: document.getElementById('ai_api_key').value,
             base_url: document.getElementById('ai_base_url').value,
+            embed_provider: document.getElementById('ai_embed_provider')?.value || 'same_as_main',
+            embed_base_url: document.getElementById('ai_embed_base_url')?.value || '',
+            embed_api_key: document.getElementById('ai_embed_api_key')?.value || '',
+            embed_model: document.getElementById('ai_embedding_model')?.value || '',
             modelType: this.currentModelType || 'chat',
             local_network: document.getElementById('ai_local_network').checked
         };
@@ -380,7 +711,6 @@ class OllamaUI {
         profiles[config.id] = config;
         localStorage.setItem('ai_profiles', JSON.stringify(profiles));
 
-        // Set as active profile immediately
         localStorage.setItem('activeProfile', config.id);
         localStorage.setItem('hy_ai_config', JSON.stringify(config));
 
@@ -394,7 +724,6 @@ class OllamaUI {
             alert(`Perfil "${name}" guardado.`);
         }
 
-        // Refresh dropdowns and lists everywhere
         if (typeof window.renderProfileManagerList === 'function') window.renderProfileManagerList();
         if (typeof window.renderProfileDropdown === 'function') window.renderProfileDropdown();
         if (typeof window.loadProfiles === 'function') window.loadProfiles();
@@ -403,6 +732,7 @@ class OllamaUI {
     async testNIMDirect() {
         const baseUrl = document.getElementById('ai_base_url').value.trim();
         const apiKey = document.getElementById('ai_api_key').value.trim();
+        const selectedProvider = document.getElementById('ai_provider')?.value || 'nvidia_nim';
         const resultsDiv = document.getElementById('nim-diagnostic-results');
         const btn = document.getElementById('btn-test-nim');
 
@@ -451,11 +781,16 @@ class OllamaUI {
             const duration = Date.now() - startTime;
 
             let detectedMode = "Custom compatible endpoint";
-            if (baseUrl.includes('integrate.api.nvidia.com')) detectedMode = "Direct NVIDIA Cloud";
-            else if (baseUrl.includes('hypenosys-gatekeeper-v2.axlffcc.workers.dev')) detectedMode = "Hypenosys Gatekeeper Relay";
+            if (selectedProvider === 'nvidia_nim' && baseUrl.includes('integrate.api.nvidia.com')) {
+                detectedMode = "NVIDIA NIM (oficial)";
+            } else if (baseUrl.includes('hypenosys-gatekeeper-v2.axlffcc.workers.dev')) {
+                detectedMode = "Hypenosys Gatekeeper Relay";
+            } else if (baseUrl.includes('integrate.api.nvidia.com')) {
+                detectedMode = "Direct NVIDIA Cloud";
+            }
 
             let resultHtml = `<div class="text-info mb-1 font-weight-bold">[NVIDIA NIM DIAGNOSTIC REPORT]</div>`;
-            resultHtml += `<div>• Provider: nvidia_nim</div>`;
+            resultHtml += `<div>• Provider: ${selectedProvider}</div>`;
             resultHtml += `<div>• Detected Mode: <span class="text-accent2">${detectedMode}</span></div>`;
             resultHtml += `<div>• Endpoint: <span class="text-gray-400">${endpoint}</span></div>`;
             resultHtml += `<div>• Model: <span class="text-gray-400">${diagnosticModel}</span></div>`;
@@ -493,18 +828,23 @@ class OllamaUI {
 
         } catch (e) {
             let detectedMode = "Custom compatible endpoint";
-            if (baseUrl.includes('integrate.api.nvidia.com')) detectedMode = "Direct NVIDIA Cloud";
-            else if (baseUrl.includes('hypenosys-gatekeeper-v2.axlffcc.workers.dev')) detectedMode = "Hypenosys Gatekeeper Relay";
+            if (selectedProvider === 'nvidia_nim' && baseUrl.includes('integrate.api.nvidia.com')) {
+                detectedMode = "NVIDIA NIM (oficial)";
+            } else if (baseUrl.includes('hypenosys-gatekeeper-v2.axlffcc.workers.dev')) {
+                detectedMode = "Hypenosys Gatekeeper Relay";
+            } else if (baseUrl.includes('integrate.api.nvidia.com')) {
+                detectedMode = "Direct NVIDIA Cloud";
+            }
 
             let resultHtml = `<div class="text-info mb-1 font-weight-bold">[NVIDIA NIM DIAGNOSTIC REPORT]</div>`;
-            resultHtml += `<div>• Provider: nvidia_nim</div>`;
+            resultHtml += `<div>• Provider: ${selectedProvider}</div>`;
             resultHtml += `<div>• Detected Mode: <span class="text-accent2">${detectedMode}</span></div>`;
             resultHtml += `<div>• Endpoint: <span class="text-gray-400">${endpoint}</span></div>`;
             resultHtml += `<div>• HTTP Status Received: <span class="text-danger">NO</span></div>`;
             resultHtml += `<div class="text-danger font-weight-bold mt-2">FAILURE: Browser fetch failed before reaching the server.</div>`;
 
             let classification = "";
-            if (detectedMode === "Direct NVIDIA Cloud") {
+            if (detectedMode === "NVIDIA NIM (oficial)" || detectedMode === "Direct NVIDIA Cloud") {
                 classification = "This is likely a CORS/preflight block from GitHub Pages. NVIDIA direct API often blocks browser requests. Use the Hypenosys Gatekeeper Relay for stable usage.";
             } else if (detectedMode === "Hypenosys Gatekeeper Relay") {
                 classification = "Relay endpoint could not be reached. Check the relay Base URL, CORS configuration, or Worker availability.";
@@ -512,17 +852,15 @@ class OllamaUI {
                 classification = "Possible causes: CORS/preflight block, mixed content (HTTP on HTTPS), or the endpoint is offline.";
             }
 
-            // Provider-aware checks for common failures
             if (baseUrl.startsWith('http://') && window.location.protocol === 'https:') {
                 classification += "<br><span class='text-danger'>• Mixed Content detected: requesting HTTP from an HTTPS page. Use HTTPS for the endpoint.</span>";
             }
-            if (/(^127\.)|(^192\.168\.)|(^10\.)|(^172\.(1[6-9]|2[0-9]|3[0-1])\.)|(^localhost)/.test(baseUrl.replace(/^https?:\/\//, ''))) {
+            if (isLocalUrl(baseUrl)) {
                 classification += "<br>• Endpoint appears to be a local or private IP. Check VPN/Network connectivity.";
             }
 
             resultHtml += `<div class="text-warning mt-1" style="font-size: 10px;">${classification}</div>`;
 
-            // Sanitize error message to prevent API key leakage
             let safeErrorMessage = e.message || "Unknown error";
             if (apiKey) {
                 const escapedKey = apiKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -537,13 +875,18 @@ class OllamaUI {
     }
 }
 
-window.ollamaUI = new OllamaUI();
+if (typeof window !== 'undefined') {
+    window.ollamaUI = new OllamaUI();
+}
 
-// Event listeners for model type selector
-document.addEventListener('click', (e) => {
-    if (e.target.closest('#model-type-selector button')) {
-        const btn = e.target.closest('#model-type-selector button');
-        window.ollamaUI.setActiveTypeUI(btn.dataset.type);
-        window.ollamaUI.renderFilteredModels(btn.dataset.type);
-    }
-});
+if (typeof document !== 'undefined') {
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('#model-type-selector button')) {
+            const btn = e.target.closest('#model-type-selector button');
+            if (window.ollamaUI) {
+                window.ollamaUI.setActiveTypeUI(btn.dataset.type);
+                window.ollamaUI.renderFilteredModels(btn.dataset.type);
+            }
+        }
+    });
+}
