@@ -4,7 +4,7 @@
 
 class AuthManager {
     constructor() {
-        this.clientId = window.HY_OAUTH_CONFIG.clientId;
+        this.clientId = window.HY_OAUTH_CONFIG ? window.HY_OAUTH_CONFIG.clientId : '';
         this.init();
     }
 
@@ -149,6 +149,7 @@ class AuthManager {
     }
 
     async handleOAuthCallback() {
+        if (!window.githubApi) return null;
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get('code');
         if (code) {
@@ -164,13 +165,13 @@ class AuthManager {
             this.showToast('Autenticando...', 'Intercambiando código con el gatekeeper...', 'info');
             try {
                 const result = await window.githubApi.exchangeCodeForToken(code);
-                if (result.valid) {
+                if (result && result.valid) {
                     this.updateHeaderUI(result.user);
                     this.showToast('Éxito', 'Sesión iniciada correctamente.', 'success');
                     return result;
                 } else {
                     const err = {
-                        status: result.status || 401,
+                        status: result?.status || 401,
                         type: 'INVALID',
                         message: 'Fallo en la validación del token tras el intercambio.'
                     };
@@ -181,7 +182,7 @@ class AuthManager {
                 console.error('[AUTH] Exchange failed:', e);
                 this.showToast('Error', 'Fallo en la autenticación OAuth: ' + (e.message || 'Error desconocido'), 'error');
 
-                window.githubApi.clearAuth();
+                if (window.githubApi) window.githubApi.clearAuth();
                 this.dispatchAuthReady(null);
                 throw e;
             }
@@ -190,6 +191,7 @@ class AuthManager {
     }
 
     async checkAuthState() {
+        if (!window.githubApi) return null;
         const token = window.githubApi.getAuthToken();
         if (!token) {
             this.updateHeaderUI(null);
@@ -206,12 +208,12 @@ class AuthManager {
 
         try {
             const result = await window.githubApi.validateToken();
-            if (result.valid) {
+            if (result && result.valid) {
                 this.updateHeaderUI(result.user);
                 return result.user;
             } else {
                 this.handleAuthError({
-                    status: result.status || 401,
+                    status: result?.status || 401,
                     type: 'INVALID'
                 });
                 return null;
@@ -234,7 +236,8 @@ class AuthManager {
         sessionStorage.setItem('auth_remember_me', rememberMe);
 
         const scope = 'repo';
-        window.location.href = `https://github.com/login/oauth/authorize?client_id=${this.clientId}&scope=${scope}`;
+        const clientId = this.clientId || (window.HY_OAUTH_CONFIG ? window.HY_OAUTH_CONFIG.clientId : '');
+        window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=${scope}`;
     }
 
     async handleSaveSettings() {
@@ -249,16 +252,16 @@ class AuthManager {
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Conectando...';
 
-        const previousToken = window.githubApi.getAuthToken();
+        const previousToken = window.githubApi ? window.githubApi.getAuthToken() : '';
         const persisted = !!localStorage.getItem('gh_access_token');
         let replacedToken = false;
         try {
-            if (token && token !== previousToken) {
+            if (token && token !== previousToken && window.githubApi) {
                 window.githubApi.setToken(token, persisted);
                 replacedToken = true;
             }
-            if (repo) window.githubApi.setRepo(repo);
-            const validation = await window.githubApi.validateToken();
+            if (repo && window.githubApi) window.githubApi.setRepo(repo);
+            const validation = window.githubApi ? await window.githubApi.validateToken() : null;
             if (!validation?.valid || !validation.user?.login) {
                 throw new Error('El token de GitHub no es válido o no tiene acceso.');
             }
@@ -302,7 +305,7 @@ class AuthManager {
                 }
             }
         } catch (e) {
-            if (replacedToken) {
+            if (replacedToken && window.githubApi) {
                 try {
                     if (previousToken) {
                         window.githubApi.setToken(previousToken, persisted);
@@ -335,22 +338,22 @@ class AuthManager {
     }
 
     handleAuthError(e) {
-        if (e.status === 401 || e.type === 'INVALID') {
-            window.githubApi.clearAuth();
+        if (e && (e.status === 401 || e.type === 'INVALID')) {
+            if (window.githubApi) window.githubApi.clearAuth();
             this.updateHeaderUI(null);
         }
 
-        if (e.status === 403 && e.type === 'ACL_DENIED') {
+        if (e && e.status === 403 && e.type === 'ACL_DENIED') {
             this.showToast('Acceso Restringido', 'Estás autenticado pero no tienes permisos de equipo para ciertas operaciones de escritura.', 'warning');
 
             const dashUnauthorized = document.getElementById('unauthorized-overlay');
             if (dashUnauthorized) dashUnauthorized.classList.remove('hidden');
-        } else if (e.status === 401 || e.type === 'INVALID') {
+        } else if (e && (e.status === 401 || e.type === 'INVALID')) {
             this.showToast('Sesión Expirada', 'Tu token es inválido o ha caducado. Por favor, vuelve a iniciar sesión.', 'error');
             const loginOverlay = document.getElementById('login-overlay');
             if (loginOverlay) loginOverlay.classList.remove('hidden');
         } else {
-            this.showToast('Error', e.message || 'Ocurrió un error inesperado.', 'error');
+            this.showToast('Error', e?.message || 'Ocurrió un error inesperado.', 'error');
         }
     }
 
@@ -359,7 +362,7 @@ class AuthManager {
     }
 
     handleLogout() {
-        window.githubApi.clearAuth();
+        if (window.githubApi) window.githubApi.clearAuth();
         window.location.reload();
     }
 
@@ -386,12 +389,16 @@ class AuthManager {
 
         if (user) {
             if (leftContainer) leftContainer.innerHTML = '';
+            const avatarHtml = window.HypenosysUI && typeof window.HypenosysUI.renderAvatar === 'function' ?
+                window.HypenosysUI.renderAvatar(user) :
+                `<img src="${user.avatar_url || ''}" class="rounded-circle" width="32" height="32" alt="${user.login}">`;
+
             container.innerHTML = `
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span class="mr-2 d-none d-lg-inline text-gray-400 small font-weight-mono">${user.login}</span>
                         <div class="position-relative">
-                            ${window.HypenosysUI.renderAvatar(user)}
+                            ${avatarHtml}
                             <span class="connectivity-dot"></span>
                         </div>
                     </a>
@@ -523,7 +530,8 @@ class AuthManager {
         }
 
         try {
-            const login = window.githubApi.user.login;
+            const login = window.githubApi ? window.githubApi.user?.login : null;
+            if (!login) throw new Error("Usuario no autenticado");
             const response = await fetch('/assets/data/team_profiles.json');
             if (!response.ok) throw new Error('No se pudo cargar team_profiles.json');
             const profilesRes = await response.json();
@@ -533,7 +541,7 @@ class AuthManager {
 
             const memberName = memberEntry[0];
             const profileDelta = { display_name: name, role, bio: desc, portfolio };
-            await window.githubApi.updateMemberProfile(memberName, profileDelta);
+            if (window.githubApi) await window.githubApi.updateMemberProfile(memberName, profileDelta);
 
             if (window.currentProfiles && window.currentProfiles.members[memberName]) {
                 window.currentProfiles.members[memberName] = {
@@ -580,7 +588,7 @@ class AuthManager {
             window.location.assign('/dashboard.html?account=api');
             return;
         }
-        const user = window.githubApi.user;
+        const user = window.githubApi ? window.githubApi.user : null;
         if (!user) {
             this.showToast('Error', 'Debes estar autenticado para configurar la API.', 'error');
             return;
@@ -613,7 +621,6 @@ class AuthManager {
         const aiLocalNetwork = document.getElementById('ai_local_network');
         const nimBanner = document.getElementById('nim-migration-banner');
 
-        // Check migration banner requirement
         if (nimBanner) {
             if (config.provider === 'nvidia_nim' && config.base_url && config.base_url.includes('integrate.api.nvidia.com')) {
                 nimBanner.classList.remove('d-none');
@@ -622,13 +629,6 @@ class AuthManager {
             }
         }
 
-        // Embeddings fields
-        const aiEmbedProvider = document.getElementById('ai_embed_provider');
-        const aiEmbedBaseUrl = document.getElementById('ai_embed_base_url');
-        const aiEmbedApiKey = document.getElementById('ai_embed_api_key');
-        const aiEmbeddingModel = document.getElementById('ai_embedding_model');
-
-        // Embeddings fields
         const aiEmbedProvider = document.getElementById('ai_embed_provider');
         const aiEmbedBaseUrl = document.getElementById('ai_embed_base_url');
         const aiEmbedApiKey = document.getElementById('ai_embed_api_key');
@@ -641,13 +641,11 @@ class AuthManager {
         if (aiBaseUrl) aiBaseUrl.value = config.base_url || '';
         if (aiLocalNetwork) aiLocalNetwork.checked = !!(config.local_network || config.localNetwork);
 
-        // Populate decoupled embeddings fields with legacy migration fallback
         if (aiEmbedProvider) aiEmbedProvider.value = config.embed_provider || config.ai_embed_provider || 'same_as_main';
         if (aiEmbedBaseUrl) aiEmbedBaseUrl.value = config.embed_base_url || '';
         if (aiEmbedApiKey) aiEmbedApiKey.value = config.embed_api_key || '';
         if (aiEmbeddingModel) aiEmbeddingModel.value = config.embedding_model || config.embed_model || '';
 
-        // Initialize state tracking variables in OllamaUI
         if (window.ollamaUI) {
             window.ollamaUI.previousProvider = config.provider || 'none';
             window.ollamaUI.previousEmbeddingsProvider = config.embed_provider || config.ai_embed_provider || 'same_as_main';
@@ -667,7 +665,7 @@ class AuthManager {
     }
 
     async handleSaveApiConfig() {
-        if (!window.githubApi.user) return;
+        if (!window.githubApi || !window.githubApi.user) return;
         const login = window.githubApi.user.login;
 
         const name = document.getElementById('ai_profile_name')?.value.trim() || '';
@@ -677,7 +675,6 @@ class AuthManager {
         const baseUrl = document.getElementById('ai_base_url')?.value.trim() || '';
         const localNetwork = document.getElementById('ai_local_network')?.checked || false;
 
-        // Decoupled embeddings fields
         const embedProvider = document.getElementById('ai_embed_provider')?.value || 'same_as_main';
         const embedBaseUrl = document.getElementById('ai_embed_base_url')?.value.trim() || '';
         const embedApiKey = document.getElementById('ai_embed_api_key')?.value.trim() || '';
@@ -714,7 +711,7 @@ class AuthManager {
 
             if (memberEntry) {
                 const memberName = memberEntry[0];
-                await window.githubApi.updateMemberAiConfig(memberName, { provider, model });
+                if (window.githubApi) await window.githubApi.updateMemberAiConfig(memberName, { provider, model });
             }
 
             if (window.hypeToast) {
@@ -837,9 +834,11 @@ window.initJulesApiKeyModalListeners = function() {
                 if (typeof window.handleJulesApiKeyChanged === 'function') {
                     await window.handleJulesApiKeyChanged(val);
                 } else {
-                    window.saveJulesApiKey(val);
+                    if (typeof window.saveJulesApiKey === 'function') window.saveJulesApiKey(val);
                     window.julesApiAuthState = 'configured';
-                    window.updateJulesApiKeyStateIndicator('configured');
+                    if (typeof window.updateJulesApiKeyStateIndicator === 'function') {
+                        window.updateJulesApiKeyStateIndicator('configured');
+                    }
 
                     if (typeof window.renderJulesSessions === 'function') {
                         window.renderJulesSessions();
@@ -875,12 +874,14 @@ window.initJulesApiKeyModalListeners = function() {
                 if (typeof window.handleJulesApiKeyChanged === 'function') {
                     await window.handleJulesApiKeyChanged('');
                 } else {
-                    window.removeJulesApiKey();
+                    if (typeof window.removeJulesApiKey === 'function') window.removeJulesApiKey();
                     if (input) {
                         input.value = '';
                     }
                     window.julesApiAuthState = 'none';
-                    window.updateJulesApiKeyStateIndicator('none');
+                    if (typeof window.updateJulesApiKeyStateIndicator === 'function') {
+                        window.updateJulesApiKeyStateIndicator('none');
+                    }
 
                     if (typeof window.renderJulesSessions === 'function') {
                         window.renderJulesSessions();
@@ -917,12 +918,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function togglePasswordVisibility(id) {
     const input = document.getElementById(id);
-    const btn = input.nextElementSibling.querySelector('i');
+    if (!input) return;
+    const btn = input.nextElementSibling ? input.nextElementSibling.querySelector('i') : null;
     if (input.type === 'password') {
         input.type = 'text';
-        btn.classList.replace('fa-eye', 'fa-eye-slash');
+        if (btn) btn.classList.replace('fa-eye', 'fa-eye-slash');
     } else {
         input.type = 'password';
-        btn.classList.replace('fa-eye-slash', 'fa-eye');
+        if (btn) btn.classList.replace('fa-eye-slash', 'fa-eye');
     }
 }
