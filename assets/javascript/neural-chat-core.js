@@ -91,6 +91,7 @@ window.NeuralChatCore = (function() {
         session,
         userMessage,
         systemPrompt,
+        options,
         onToken,
         onDone,
         onError,
@@ -128,11 +129,28 @@ window.NeuralChatCore = (function() {
         const assistantIdx = session.messages.length - 1;
 
         try {
+            // Read active provider & model configuration for raw matching
+            let activeProvider = '';
+            let activeModel = '';
+            try {
+                const config = JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
+                activeProvider = config.provider || '';
+                activeModel = config.model || '';
+            } catch (e) {}
+
             // Filter out empty messages and format for API
             const apiMessages = session.messages
                 .slice(0, -1)
-                .filter(m => m.content)
-                .map(m => ({ role: m.role, content: m.content }));
+                .filter(m => m.content || m.raw)
+                .map(m => {
+                    const msgObj = { role: m.role, content: m.content || '' };
+                    // Condition 1 & 3: Send m.raw ONLY if provider and model match active request
+                    if (m.raw && m.raw_provider === activeProvider && m.raw_model === activeModel) {
+                        msgObj.raw = m.raw;
+                    }
+                    // m.thinking is NEVER sent in apiMessages
+                    return msgObj;
+                });
 
             // Final sync of linkedJulesTaskId to legacy hy_neural_session_id for real-time polling compatibility
             if (session.metadata && session.metadata.linkedJulesTaskId) {
@@ -148,17 +166,28 @@ window.NeuralChatCore = (function() {
             await window.NeuralProviderClient.sendMessage({
                 messages: apiMessages,
                 systemPrompt: systemPrompt || session.systemPrompt,
-                onToken: (token, fullContent) => {
+                options: options,
+                onToken: (token, fullContent, meta) => {
                     if (session.messages[assistantIdx]) {
                         session.messages[assistantIdx].content = fullContent;
+                        if (meta && meta.thinkingDelta) {
+                            session.messages[assistantIdx].thinking = (session.messages[assistantIdx].thinking || '') + meta.thinkingDelta;
+                        }
                     }
-                    if (onToken) onToken(token, fullContent);
+                    if (onToken) onToken(token, fullContent, meta);
                 },
-                onDone: (fullContent) => {
+                onDone: (fullContent, meta) => {
                     if (session.messages[assistantIdx]) {
                         session.messages[assistantIdx].content = fullContent;
                         session.messages[assistantIdx].timestamp = Date.now();
                         session.updatedAt = new Date().toISOString();
+
+                        // Store m.raw for providers requiring structured persistence (e.g. Mistral, OpenRouter)
+                        if (meta && meta.raw) {
+                            session.messages[assistantIdx].raw = meta.raw;
+                            session.messages[assistantIdx].raw_provider = activeProvider;
+                            session.messages[assistantIdx].raw_model = activeModel;
+                        }
                     }
                     if (saveCallback) saveCallback();
                     if (onDone) onDone(fullContent);
