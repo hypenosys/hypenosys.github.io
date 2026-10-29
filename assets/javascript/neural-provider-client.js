@@ -37,7 +37,7 @@ window.NeuralProviderClient = (function() {
         return normalized;
     }
 
-    async function sendMessage({ messages, systemPrompt, onToken, onDone, onError }) {
+    async function sendMessage({ messages, systemPrompt, options, onToken, onDone, onError }) {
         const config = getConfig();
         const provider = config.provider || 'none';
 
@@ -80,20 +80,51 @@ window.NeuralProviderClient = (function() {
 
             const useStream = provider !== 'nvidia_nim';
 
-            const payload = {
+            let requestEndpoint = endpoint;
+            let requestHeaders = headers;
+            let payload = {
                 model: model,
                 messages: fullMessages,
                 stream: useStream
             };
+
+            const isThinkingEnabled = !!(options && options.isThinkingEnabled);
+            const cap = window.NeuralThinkingCapabilities ?
+                window.NeuralThinkingCapabilities.resolveCapability(provider, model, options) :
+                { supportsThinking: false };
+
+            if (((isThinkingEnabled && cap.supportsThinking) || cap.defaultOn) && window.NeuralThinkingAdapters) {
+                const adapter = window.NeuralThinkingAdapters.getAdapter(provider);
+                if (adapter) {
+                    const reqObj = adapter.buildRequest({
+                        model,
+                        messages,
+                        systemPrompt,
+                        isThinkingEnabled,
+                        budgetTokens: options?.budgetTokens,
+                        effort: options?.effort,
+                        apiKey,
+                        baseUrl,
+                        options
+                    });
+                    requestEndpoint = reqObj.url;
+                    requestHeaders = reqObj.headers;
+                    payload = reqObj.body;
+
+                    if (reqObj.mode === 'native_anthropic' && isThinkingEnabled && options?.hadTemperature && typeof window.showToast === 'function') {
+                        window.showToast("Se ha omitido la temperatura por el modo Extended Thinking.");
+                    }
+                }
+            }
 
             if (window.HYPENOSYS_NEURAL_DEBUG) {
                 console.log("[Claude Neural] sending to provider");
                 console.log("[Claude Neural] provider request payload:", payload);
             }
 
-            const response = await fetch(endpoint, {
+            const response = await fetch(requestEndpoint, {
                 method: 'POST',
-                headers: headers,
+                headers: requestHeaders,
                 body: JSON.stringify(payload),
                 mode: 'cors',
                 credentials: 'omit'
@@ -101,6 +132,27 @@ window.NeuralProviderClient = (function() {
 
             if (!response.ok) {
                 const errText = await response.text().catch(() => 'Unknown error');
+                const is400 = response.status === 400 || errText.includes('Status: 400');
+                const mentionsThinking = /thinking|reasoning|budget_tokens|thinking_config/i.test(errText);
+
+                // Auto-retry fallback on 400 error mentioning thinking parameters
+                if (is400 && mentionsThinking && isThinkingEnabled && !options?._isRetry) {
+                    if (window.NeuralThinkingCapabilities) {
+                        window.NeuralThinkingCapabilities.markModelUnsupported(provider, model, errText);
+                    }
+                    if (typeof window.showToast === 'function') {
+                        window.showToast("Parámetros de pensamiento no soportados por la API. Reintentando sin Extended Thinking...");
+                    }
+                    return await sendMessage({
+                        messages,
+                        systemPrompt,
+                        options: { ...options, isThinkingEnabled: false, _isRetry: true },
+                        onToken,
+                        onDone,
+                        onError
+                    });
+                }
+
                 throw new Error(`AI request failed for provider ${provider} at ${baseUrl}. Status: ${response.status}. ${errText}`);
             }
 
@@ -111,6 +163,8 @@ window.NeuralProviderClient = (function() {
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder();
                 let buffer = '';
+
+                const parseState = window.NeuralThinkingParser ? window.NeuralThinkingParser.createParseState() : null;
 
                 if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] provider response received");
 
@@ -128,14 +182,29 @@ window.NeuralProviderClient = (function() {
                         if (!trimmedLine || !trimmedLine.startsWith('data: ')) continue;
 
                         const dataStr = trimmedLine.substring(6);
-                        if (dataStr === '[DONE]') break;
+                        if (dataStr === '[DONE]') {
+                            if (window.NeuralThinkingParser && parseState) {
+                                window.NeuralThinkingParser.flushEof(parseState);
+                            }
+                            break;
+                        }
 
                         try {
                             const data = JSON.parse(dataStr);
-                            const delta = data.choices?.[0]?.delta?.content || '';
-                            if (delta) {
-                                aiContent += delta;
-                                if (onToken) onToken(delta, aiContent);
+                            let contentDelta = '';
+                            let thinkingDelta = '';
+
+                            if (window.NeuralThinkingParser && parseState) {
+                                const parsed = window.NeuralThinkingParser.parseChunk(provider, data, parseState);
+                                thinkingDelta = parsed.thinkingDelta;
+                                contentDelta = parsed.contentDelta;
+                            } else {
+                                contentDelta = data.choices?.[0]?.delta?.content || '';
+                            }
+
+                            if (contentDelta || thinkingDelta) {
+                                aiContent += contentDelta;
+                                if (onToken) onToken(contentDelta, aiContent, { thinkingDelta });
                             }
                         } catch (e) {
                             console.warn('[NeuralProviderClient] JSON parse error in stream:', e);

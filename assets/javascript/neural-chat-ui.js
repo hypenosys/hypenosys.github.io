@@ -187,7 +187,16 @@ window.renderMessages = function() {
                     </div>
                 </div>
                 ${safetyBadge}
-                ${m.thinking ? `<div class="thinking-block">${escapeHtml(m.thinking)}</div>` : ''}
+                ${m.thinking ? `
+                    <details class="mb-3 border-l-2 border-[#8be9fd] bg-[#8be9fd]/10 rounded-r-lg overflow-hidden thinking-block" open>
+                        <summary class="p-2 text-[10px] font-bold text-[#8be9fd] cursor-pointer hover:bg-[#8be9fd]/10 transition-all uppercase tracking-widest flex items-center gap-2">
+                            <i class="fas fa-brain"></i> Razonamiento extendido
+                        </summary>
+                        <div class="p-3 text-xs text-[#f8f8f2]/90 font-mono bg-black/30 whitespace-pre-wrap">
+                            ${escapeHtml(m.thinking)}
+                        </div>
+                    </details>
+                ` : ''}
                 ${reasoningHtml}
                 <div class="prose prose-invert text-sm prose-pre:bg-[#1e1f29] prose-pre:border prose-pre:border-[#44475a] selection:bg-[#bd93f9]/30">
                     ${content ? marked.parse(content) : ''}

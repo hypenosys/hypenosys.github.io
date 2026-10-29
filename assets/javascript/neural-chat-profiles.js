@@ -133,6 +133,9 @@ window.selectProfile = function(id) {
     updateActiveProfileUI(config);
     adaptUI(config);
     checkConnection(config.provider, config);
+    if (typeof window.updateThinkingToggleUI === 'function') {
+        window.updateThinkingToggleUI();
+    }
 
     const dropdown = document.getElementById('profile-dropdown');
     if (dropdown) dropdown.classList.add('hidden');
@@ -153,6 +156,9 @@ window.selectModelFromProfile = function(profileId, model) {
     updateActiveProfileUI(config);
     adaptUI(config);
     checkConnection(config.provider, config);
+    if (typeof window.updateThinkingToggleUI === 'function') {
+        window.updateThinkingToggleUI();
+    }
     document.getElementById('profile-dropdown').classList.add('hidden');
 }
 

@@ -320,6 +320,9 @@ window.sendMessage = async function() {
                 session: currentSession,
                 userMessage: content,
                 systemPrompt: dynamicSystemPrompt,
+                options: {
+                    isThinkingEnabled: window.isThinkingEnabled
+                },
                 saveCallback: () => {
                     saveSessions(false, 'core-save-callback');
                     renderSessionList();

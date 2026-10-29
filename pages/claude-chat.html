@@ -252,6 +252,9 @@ permalink: /chat/neural/
                             <button id="toggle-thinking" title="Toggle Extended Thinking" class="text-[#6272a4] hover:text-[#8be9fd] transition-colors">
                                 <i class="fas fa-brain text-xs"></i>
                             </button>
+                            <span id="thinking-mandatory-badge" class="hidden text-[8px] font-bold text-[#bd93f9] bg-[#bd93f9]/10 border border-[#bd93f9]/30 px-1.5 py-0.5 rounded tracking-widest uppercase" title="Razonamiento siempre activo por el modelo">
+                                <i class="fas fa-lock text-[7px] mr-1"></i>SIEMPRE ACTIVO
+                            </span>
 
                             <div id="runners-lang-selector" class="hidden flex items-center gap-1 bg-[#44475a]/30 rounded-lg p-1 border border-[#50fa7b]/20">
                                 <button onclick="setRunnersLang('auto')" id="r-lang-auto" class="px-2 py-0.5 rounded text-[8px] font-black tracking-tighter transition-all bg-[#50fa7b] text-[#282a36]">AUTO</button>
@@ -368,6 +371,9 @@ permalink: /chat/neural/
 <script src="/assets/javascript/ai-config.js?v=nim-relay-v1"></script>
 <script src="/assets/javascript/storage-db.js"></script>
 <script src="/assets/javascript/neural-chat-rag.js"></script>
+<script src="/assets/javascript/neural-thinking-capabilities.js"></script>
+<script src="/assets/javascript/neural-thinking-adapters.js"></script>
+<script src="/assets/javascript/neural-thinking-parser.js"></script>
 <script src="/assets/javascript/neural-chat-core.js"></script>
 <script src="/assets/javascript/neural-provider-client.js?v=nim-relay-v1"></script>
 

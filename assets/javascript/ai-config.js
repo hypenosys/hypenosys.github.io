@@ -390,6 +390,10 @@ class OllamaUI {
         this.handleEmbedProviderChange();
 
         this.previousProvider = provider;
+
+        if (typeof window.updateThinkingToggleUI === 'function') {
+            window.updateThinkingToggleUI();
+        }
     }
 
     checkNIMDirectWarning() {
@@ -743,6 +747,8 @@ class OllamaUI {
         }
 
         const configId = existingProfileId || 'profile-' + Date.now();
+        const userThinkingOverride = document.getElementById('ai_user_thinking_override')?.checked;
+
         const config = {
             id: configId,
             name: name,
@@ -756,7 +762,8 @@ class OllamaUI {
             embed_api_key: document.getElementById('ai_embed_api_key')?.value || '',
             embed_model: document.getElementById('ai_embedding_model')?.value || '',
             modelType: this.currentModelType || 'chat',
-            local_network: document.getElementById('ai_local_network').checked
+            local_network: document.getElementById('ai_local_network').checked,
+            user_thinking_override: userThinkingOverride
         };
 
         profiles[config.id] = config;
