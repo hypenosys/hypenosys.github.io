@@ -270,6 +270,27 @@ window.sendMessage = async function() {
                 }
             }
 
+            // RAG LOCAL ATTACHMENTS CONTEXT INJECTION
+            let ragContext = "";
+            let ragSources = [];
+            let ragThreshold = 0.35;
+
+            if (window.NeuralChatRAG && window.NeuralChatRAG.isEmbeddingsReady()) {
+                try {
+                    const ragResult = await window.NeuralChatRAG.searchRelevantChunks(currentSession.id, content);
+                    if (ragResult.mismatch) {
+                        appendSystemMessage("El modelo o dimensión de embeddings ha cambiado desde que se indexaron los archivos. Se recomienda volver a adjuntar e indexar los documentos.", "warn");
+                    }
+                    if (ragResult.items && ragResult.items.length > 0) {
+                        ragSources = ragResult.items;
+                        ragThreshold = ragResult.activeThreshold;
+                        ragContext = window.NeuralChatRAG.formatContextPrompt(ragResult.items);
+                    }
+                } catch (ragErr) {
+                    console.warn('[RAG] Error recuperando fragmentos:', ragErr);
+                }
+            }
+
             // Optimistic UI: Add user message and render immediately
             const userMsg = { role: 'user', content: content, timestamp: Date.now() };
             currentSession.messages.push(userMsg);
@@ -291,7 +312,7 @@ window.sendMessage = async function() {
             const currentSources = window._lastDocsMetadata || [];
             window._lastDocsMetadata = null;
 
-            const dynamicSystemPrompt = baseSystemPrompt + (docsContext || "") + (svnContext || "");
+            const dynamicSystemPrompt = baseSystemPrompt + (docsContext || "") + (svnContext || "") + ragContext;
 
             if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] sending to provider");
 
@@ -310,6 +331,10 @@ window.sendMessage = async function() {
                     const lastMsg = currentSession.messages[currentSession.messages.length - 1];
                     if (lastMsg && lastMsg.role === 'assistant') {
                         lastMsg.sources = currentSources;
+                        if (ragSources && ragSources.length > 0) {
+                            lastMsg.ragSources = ragSources;
+                            lastMsg.ragThreshold = ragThreshold;
+                        }
                     }
                     renderMessages();
                     // Periodic save during streaming to prevent loss if refresh occurs
@@ -321,6 +346,13 @@ window.sendMessage = async function() {
                     if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] provider response received");
                     window.thinkingIndicator.classList.add('hidden');
                     if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] assistant rendered");
+                    const lastMsg = currentSession.messages[currentSession.messages.length - 1];
+                    if (lastMsg && lastMsg.role === 'assistant') {
+                        if (ragSources && ragSources.length > 0) {
+                            lastMsg.ragSources = ragSources;
+                            lastMsg.ragThreshold = ragThreshold;
+                        }
+                    }
                     renderMessages();
                     renderSessionList();
                     saveSessions(false, 'assistant-done');

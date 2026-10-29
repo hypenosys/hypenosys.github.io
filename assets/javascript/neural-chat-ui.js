@@ -111,15 +111,15 @@ window.renderMessages = function() {
             safetyBadge = `<div class="mb-2 px-2 py-1 rounded bg-red-500/20 border border-red-500/50 text-red-400 text-[9px] font-bold uppercase tracking-widest">⚠️ SAFETY ALERT: FLAG DETECTED</div>`;
         }
 
-        // Handle Consulted Sources (Docs Bridge)
+        // Handle Consulted Sources (Docs Bridge & Local File RAG)
         let docsSourcesHtml = '';
-        if (m.role === 'assistant' && m.sources && m.sources.length > 0) {
-            const readStatusCount = m.sources.filter(s => s.readStatus === 'completo' || s.readStatus === 'truncado').length;
-            const contextLabel = readStatusCount > 0 ? `Docs Context · ${readStatusCount} documentos leídos` : `Docs Context · ${m.sources.length} fragmentos`;
-
-            docsSourcesHtml = `
-                <div class="mt-4 border-t border-[#44475a]/30 pt-3">
-                    <details class="docs-sources-details">
+        if (m.role === 'assistant' && ((m.sources && m.sources.length > 0) || (m.ragSources && m.ragSources.length > 0))) {
+            let docsPart = '';
+            if (m.sources && m.sources.length > 0) {
+                const readStatusCount = m.sources.filter(s => s.readStatus === 'completo' || s.readStatus === 'truncado').length;
+                const contextLabel = readStatusCount > 0 ? `Docs Context · ${readStatusCount} documentos leídos` : `Docs Context · ${m.sources.length} fragmentos`;
+                docsPart = `
+                    <details class="docs-sources-details mb-2">
                         <summary class="text-[10px] font-bold text-[#6272a4] cursor-pointer hover:text-[#bd93f9] transition-all flex items-center gap-2 uppercase tracking-widest">
                             <i class="fas fa-book-open"></i> ${contextLabel}
                         </summary>
@@ -141,6 +141,36 @@ window.renderMessages = function() {
                             }).join('')}
                         </div>
                     </details>
+                `;
+            }
+
+            let ragPart = '';
+            if (m.ragSources && m.ragSources.length > 0) {
+                const threshold = m.ragThreshold !== undefined ? m.ragThreshold : 0.35;
+                ragPart = `
+                    <details class="rag-sources-details">
+                        <summary class="text-[10px] font-bold text-[#50fa7b] cursor-pointer hover:text-white transition-all flex items-center gap-2 uppercase tracking-widest">
+                            <i class="fas fa-file-code"></i> RAG Adjuntos (${m.ragSources.length} fragmentos, umbral: ${threshold})
+                        </summary>
+                        <div class="mt-2 space-y-2">
+                            ${m.ragSources.map((rs, rIdx) => `
+                                <div class="p-2 bg-[#1e1f29] rounded border border-[#50fa7b]/30">
+                                    <div class="flex justify-between items-center mb-1">
+                                        <span class="text-[10px] font-bold text-[#50fa7b] truncate">[${rIdx + 1}] ${escapeHtml(rs.fileName)}</span>
+                                        <span class="text-[9px] font-mono text-[#8be9fd]">Similitud: ${(rs.score || 0).toFixed(2)}</span>
+                                    </div>
+                                    <div class="text-[8px] text-[#6272a4] font-mono truncate">Chunk ${rs.chunkIndex + 1}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </details>
+                `;
+            }
+
+            docsSourcesHtml = `
+                <div class="mt-4 border-t border-[#44475a]/30 pt-3">
+                    ${docsPart}
+                    ${ragPart}
                 </div>
             `;
         }
