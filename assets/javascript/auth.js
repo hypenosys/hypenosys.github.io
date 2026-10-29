@@ -628,6 +628,12 @@ class AuthManager {
         const aiEmbedApiKey = document.getElementById('ai_embed_api_key');
         const aiEmbeddingModel = document.getElementById('ai_embedding_model');
 
+        // Embeddings fields
+        const aiEmbedProvider = document.getElementById('ai_embed_provider');
+        const aiEmbedBaseUrl = document.getElementById('ai_embed_base_url');
+        const aiEmbedApiKey = document.getElementById('ai_embed_api_key');
+        const aiEmbeddingModel = document.getElementById('ai_embedding_model');
+
         if (aiProfileName) aiProfileName.value = config.name || '';
         if (aiProvider) aiProvider.value = config.provider || 'none';
         if (aiModel) aiModel.value = config.model || '';
