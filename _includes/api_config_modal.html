@@ -123,7 +123,7 @@
                             <option value="">Carga modelos primero...</option>
                         </select>
                         <div class="input-group-append">
-                            <button class="btn btn-outline-purple" type="button" onclick="window.ollamaUI.refreshModels()">
+                            <button class="btn btn-outline-purple" type="button" aria-label="Refrescar modelos" onclick="window.ollamaUI.refreshModels()">
                                 <i class="fas fa-sync-alt"></i>
                             </button>
                         </div>
@@ -161,7 +161,7 @@
                                 <p class="mb-1">En macOS/Linux:</p>
                                 <div class="bg-dark p-1 rounded mb-2 flex justify-between items-center">
                                     <code>OLLAMA_ORIGINS=* ollama serve</code>
-                                    <button onclick="navigator.clipboard.writeText('OLLAMA_ORIGINS=* ollama serve'); window.authManager.showToast('Copiado', 'Comando copiado', 'info')" class="btn btn-xs btn-link text-info"><i class="fas fa-copy"></i></button>
+                                    <button onclick="navigator.clipboard.writeText('OLLAMA_ORIGINS=* ollama serve'); window.authManager.showToast('Copiado', 'Comando copiado', 'info')" class="btn btn-xs btn-link text-info" aria-label="Copiar comando"><i class="fas fa-copy"></i></button>
                                 </div>
                                 <p>En Windows: Establece la variable de entorno del sistema <code>OLLAMA_ORIGINS</code> a <code>*</code> y reinicia Ollama.</p>
                             </div>
