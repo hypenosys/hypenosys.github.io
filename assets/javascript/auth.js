@@ -82,7 +82,8 @@ class AuthManager {
         }
 
         try {
-            const endpoint = 'https://jules.googleapis.com/v1alpha/sources?pageSize=1';
+            const baseUrl = typeof window.getJulesBase === 'function' ? window.getJulesBase() : 'https://jules.googleapis.com/v1alpha';
+            const endpoint = `${baseUrl}/sources?pageSize=1`;
             const response = await fetch(endpoint, {
                 method: 'GET',
                 headers: {

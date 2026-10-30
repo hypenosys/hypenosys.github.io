@@ -28,7 +28,8 @@ const JulesActivitiesModule = (() => {
   async function _fetchActivities() {
     if (!_sessionId || !_apiKey) return;
     try {
-      const res = await fetch(`${API_BASE}/sessions/${_sessionId}/activities?pageSize=100`, {
+      const baseUrl = typeof window.getJulesBase === 'function' ? window.getJulesBase() : API_BASE;
+      const res = await fetch(`${baseUrl}/sessions/${_sessionId}/activities?pageSize=100`, {
         headers: { 'x-goog-api-key': _apiKey }
       });
       if (!res.ok) { console.warn('[JulesActivities] fetch error', res.status); return; }
@@ -232,7 +233,8 @@ const JulesActivitiesModule = (() => {
       return false;
     }
     try {
-      const res = await fetch(`${API_BASE}/sessions/${_sessionId}:sendMessage`, {
+      const baseUrl = typeof window.getJulesBase === 'function' ? window.getJulesBase() : API_BASE;
+      const res = await fetch(`${baseUrl}/sessions/${_sessionId}:sendMessage`, {
         method: 'POST',
         headers: {
           'x-goog-api-key': _apiKey,

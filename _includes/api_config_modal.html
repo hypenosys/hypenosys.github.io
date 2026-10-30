@@ -290,6 +290,14 @@
                             </div>
                         </div>
                     </div>
+                    <div class="form-group mb-3">
+                        <div class="d-flex align-items-center justify-content-between mb-1">
+                            <label class="text-gray-400 small font-weight-bold uppercase mb-0" for="jules-panel-api-url-input">URL Base de la API Jules (Opcional / Avanzado)</label>
+                            <span id="jules-custom-url-badge" class="badge badge-info d-none" style="font-size: 9px;">API personalizada activa</span>
+                        </div>
+                        <input type="text" id="jules-panel-api-url-input" class="form-control bg-dark text-white border-purple mb-1" placeholder="https://jules.googleapis.com/v1alpha" aria-label="URL Base de la API Jules">
+                        <small class="form-text text-muted" style="font-size: 10.5px; line-height: 1.4;">Incluye la ruta de versión (ej.: https://api.example.com/v1alpha). Las barras finales se normalizan. Déjalo vacío y guarda para volver a Google.</small>
+                    </div>
                     <div class="d-flex" style="gap: 8px;">
                         <button type="button" class="btn btn-purple btn-sm flex-fill" id="btn-save-jules-api-key">
                             <i class="fas fa-save mr-2"></i> Guardar Key
