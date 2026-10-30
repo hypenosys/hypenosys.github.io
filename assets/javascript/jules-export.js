@@ -1,8 +1,27 @@
 /**
  * Jules Export Module for Hypenosys Panel
- * Genera un archivo ZIP con el historial completo de Jules (fuentes, sesiones, actividades, patches y resúmenes).
+ * Genera un archivo ZIP (o conjunto de partes ZIP) con el historial completo de Jules
+ * (fuentes, sesiones, actividades, patches y resúmenes).
  * Módulo autocontenido en Vanilla JS sin dependencias externas.
+ *
+ * Referencias a diagnósticos del código previo:
+ * - Guarda de paginación con Set de ids vistos y nextPageToken repetido (líneas previas 388, 406, 483).
+ * - ZipWriter libera bytes uncomprimidos en memoria conservando únicamente bytes comprimidos (líneas previas 63-107).
+ * - Deduplicación de patches derivados por SHA-256 en lugar de guardado doble acumulativo (líneas previas 498-508).
+ * - Soporte de compresión DEFLATE (ZIP método 8) mediante CompressionStream('deflate-raw') con fallback a Store (método 0).
  */
+
+// ─── Simple Mutex / AsyncLock Helper ───
+class AsyncLock {
+    constructor() {
+        this.promise = Promise.resolve();
+    }
+    async run(fn) {
+        const next = this.promise.then(() => fn());
+        this.promise = next.catch(() => {});
+        return next;
+    }
+}
 
 // ─── CRC32 Implementation ───
 const CRC32_TABLE = (function() {
@@ -24,8 +43,10 @@ function crc32(data) {
         buf = new TextEncoder().encode(data);
     } else if (data instanceof Uint8Array) {
         buf = data;
-    } else {
+    } else if (data instanceof ArrayBuffer) {
         buf = new Uint8Array(data);
+    } else {
+        buf = new Uint8Array(0);
     }
     let crc = 0xFFFFFFFF;
     for (let i = 0; i < buf.length; i++) {
@@ -56,16 +77,56 @@ function sanitizePathSegment(segment) {
     return segment.replace(/[^a-zA-Z0-9._-]/g, '_');
 }
 
-// ─── ZipStoreWriter (Store / Uncompressed ZIP Generator) ───
-class ZipStoreWriter {
-    constructor() {
-        this.entries = [];
-        this.totalSizeEstimate = 0;
+// ─── SHA-256 Digest Helper ───
+async function getSha256(data, cryptoImpl) {
+    const cryptoObj = cryptoImpl !== undefined
+        ? cryptoImpl
+        : ((typeof globalThis !== 'undefined' && globalThis.crypto) || (typeof window !== 'undefined' && window.crypto) || null);
+
+    let subtle = cryptoObj ? cryptoObj.subtle : null;
+
+    if (!subtle && typeof require === 'function') {
+        try {
+            const reqCrypto = require('crypto');
+            if (reqCrypto && reqCrypto.webcrypto) subtle = reqCrypto.webcrypto.subtle;
+        } catch (e) {
+            // Defensive check
+        }
     }
 
-    addFile(path, data) {
-        if (this.entries.length >= 65535) {
-            throw new Error('ZIP_ENTRY_LIMIT_EXCEEDED: Se ha superado el límite de 65,535 entradas del formato ZIP clásico.');
+    if (!subtle) {
+        throw new Error('CRYPTO_SUBTLE_UNAVAILABLE: crypto.subtle no está disponible para calcular SHA-256.');
+    }
+
+    let bytes;
+    if (typeof data === 'string') {
+        bytes = new TextEncoder().encode(data);
+    } else if (data instanceof Uint8Array) {
+        bytes = data;
+    } else if (data instanceof ArrayBuffer) {
+        bytes = new Uint8Array(data);
+    } else {
+        bytes = new Uint8Array(0);
+    }
+
+    const hashBuffer = await subtle.digest('SHA-256', bytes);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// ─── ZipWriter (DEFLATE / Store ZIP Generator) ───
+class ZipWriter {
+    constructor(options = {}) {
+        this.entries = [];
+        this.totalCompressedSizeEstimate = 0;
+        this.CompressionStreamImpl = options.CompressionStreamImpl !== undefined
+            ? options.CompressionStreamImpl
+            : (typeof globalThis !== 'undefined' && globalThis.CompressionStream ? globalThis.CompressionStream : null);
+    }
+
+    async addFile(path, data) {
+        if (this.entries.length >= 60000) {
+            throw new Error('ZIP_ENTRY_LIMIT_EXCEEDED: Se ha superado el límite de 60.000 entradas por archivo ZIP.');
         }
 
         let bytes;
@@ -79,24 +140,63 @@ class ZipStoreWriter {
             bytes = new Uint8Array(0);
         }
 
-        if (bytes.length > 4294967295) {
+        const uncompressedSize = bytes.length;
+        if (uncompressedSize > 4294967295) {
             throw new Error(`ZIP_SIZE_LIMIT_EXCEEDED: El archivo ${path} supera el límite de 4 GB del formato ZIP clásico.`);
         }
 
         const pathBytes = new TextEncoder().encode(path);
         const checksum = crc32(bytes);
+        let compressedBytes = null;
+        let method = 0; // Store
+
+        if (this.CompressionStreamImpl) {
+            try {
+                const cs = new this.CompressionStreamImpl('deflate-raw');
+                const writer = cs.writable.getWriter();
+                writer.write(bytes);
+                writer.close();
+                const reader = cs.readable.getReader();
+                const chunks = [];
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    chunks.push(value);
+                }
+                let totalLen = 0;
+                for (let i = 0; i < chunks.length; i++) totalLen += chunks[i].length;
+                compressedBytes = new Uint8Array(totalLen);
+                let offset = 0;
+                for (let i = 0; i < chunks.length; i++) {
+                    compressedBytes.set(chunks[i], offset);
+                    offset += chunks[i].length;
+                }
+                method = 8; // Deflate
+            } catch (e) {
+                compressedBytes = null;
+            }
+        }
+
+        if (!compressedBytes) {
+            compressedBytes = bytes;
+            method = 0; // Store fallback
+        }
+
         const entry = {
             path,
             pathBytes,
-            data: bytes,
+            data: compressedBytes, // Store only compressed bytes to free memory
             crc32: checksum,
-            uncompressedSize: bytes.length,
+            uncompressedSize: uncompressedSize,
+            compressedSize: compressedBytes.length,
+            method: method,
             dosDateTime: getDosDateTime()
         };
 
         this.entries.push(entry);
-        this.totalSizeEstimate += bytes.length + pathBytes.length + 100;
-        if (this.totalSizeEstimate > 4294967295) {
+        this.totalCompressedSizeEstimate += compressedBytes.length + pathBytes.length + 100;
+
+        if (this.totalCompressedSizeEstimate > 4294967295) {
             throw new Error('ZIP_TOTAL_SIZE_EXCEEDED: El archivo ZIP total superaría el límite de 4 GB.');
         }
     }
@@ -110,21 +210,21 @@ class ZipStoreWriter {
             const entry = this.entries[i];
             const localHeaderOffset = currentOffset;
 
-            // Local File Header
+            // Local File Header (30 bytes + path length)
             const localHeader = new Uint8Array(30 + entry.pathBytes.length);
             const view = new DataView(localHeader.buffer);
 
             view.setUint32(0, 0x04034b50, true); // Local header signature
-            view.setUint16(4, 20, true);         // Version needed to extract (2.0)
-            view.setUint16(6, 0x0800, true);     // General purpose bit flag (Bit 11 set for UTF-8)
-            view.setUint16(8, 0, true);          // Compression method (0 = Store)
+            view.setUint16(4, 20, true);         // Version needed (2.0)
+            view.setUint16(6, 0x0800, true);     // General purpose bit flag (UTF-8)
+            view.setUint16(8, entry.method, true);// Compression method (8 = Deflate, 0 = Store)
             view.setUint16(10, entry.dosDateTime.time, true);
             view.setUint16(12, entry.dosDateTime.date, true);
             view.setUint32(14, entry.crc32, true);
-            view.setUint32(18, entry.uncompressedSize, true); // Compressed size
-            view.setUint32(22, entry.uncompressedSize, true); // Uncompressed size
+            view.setUint32(18, entry.compressedSize, true);
+            view.setUint32(22, entry.uncompressedSize, true);
             view.setUint16(26, entry.pathBytes.length, true);
-            view.setUint16(28, 0, true);                       // Extra field length
+            view.setUint16(28, 0, true);         // Extra field length
 
             localHeader.set(entry.pathBytes, 30);
 
@@ -133,19 +233,19 @@ class ZipStoreWriter {
 
             currentOffset += localHeader.length + entry.data.length;
 
-            // Central Directory Header
+            // Central Directory Header (46 bytes + path length)
             const cdHeader = new Uint8Array(46 + entry.pathBytes.length);
             const cdView = new DataView(cdHeader.buffer);
 
             cdView.setUint32(0, 0x02014b50, true); // Central directory signature
-            cdView.setUint16(4, 20, true);         // Version made by (2.0)
-            cdView.setUint16(6, 20, true);         // Version needed (2.0)
+            cdView.setUint16(4, 20, true);         // Version made by
+            cdView.setUint16(6, 20, true);         // Version needed
             cdView.setUint16(8, 0x0800, true);     // UTF-8 flag
-            cdView.setUint16(10, 0, true);         // Compression method (0 = Store)
+            cdView.setUint16(10, entry.method, true);// Compression method
             cdView.setUint16(12, entry.dosDateTime.time, true);
             cdView.setUint16(14, entry.dosDateTime.date, true);
             cdView.setUint32(16, entry.crc32, true);
-            cdView.setUint32(20, entry.uncompressedSize, true);
+            cdView.setUint32(20, entry.compressedSize, true);
             cdView.setUint32(24, entry.uncompressedSize, true);
             cdView.setUint16(28, entry.pathBytes.length, true);
             cdView.setUint16(30, 0, true);         // Extra field length
@@ -166,17 +266,17 @@ class ZipStoreWriter {
             cdSize += centralDirectoryParts[i].length;
         }
 
-        // End of Central Directory Record (EOCD)
+        // End of Central Directory Record (22 bytes)
         const eocd = new Uint8Array(22);
         const eocdView = new DataView(eocd.buffer);
 
         eocdView.setUint32(0, 0x06054b50, true); // EOCD signature
-        eocdView.setUint16(4, 0, true);          // Number of this disk
-        eocdView.setUint16(6, 0, true);          // Disk where central directory starts
-        eocdView.setUint16(8, this.entries.length, true);  // Count of central directory records on this disk
-        eocdView.setUint16(10, this.entries.length, true); // Total count of central directory records
-        eocdView.setUint32(12, cdSize, true);               // Size of central directory
-        eocdView.setUint32(16, cdStartOffset, true);        // Offset of start of central directory
+        eocdView.setUint16(4, 0, true);          // Disk number
+        eocdView.setUint16(6, 0, true);          // Disk start
+        eocdView.setUint16(8, this.entries.length, true);  // Disk CD count
+        eocdView.setUint16(10, this.entries.length, true); // Total CD count
+        eocdView.setUint32(12, cdSize, true);               // Size of CD
+        eocdView.setUint32(16, cdStartOffset, true);        // Offset of CD start
         eocdView.setUint16(20, 0, true);                    // Comment length
 
         parts.push(eocd);
@@ -185,8 +285,11 @@ class ZipStoreWriter {
     }
 }
 
+// ─── ZipStoreWriter Alias for Backwards Compatibility ───
+const ZipStoreWriter = ZipWriter;
+
 // ─── Patch Extraction Helper ───
-function extractPatchesRecursive(obj, activityIdx, activityId) {
+function extractPatchesRecursive(obj, jsonPathPrefix = '') {
     const patches = [];
     if (!obj || typeof obj !== 'object') return patches;
 
@@ -195,37 +298,34 @@ function extractPatchesRecursive(obj, activityIdx, activityId) {
         return val.includes('diff --git') || val.startsWith('--- ') || val.startsWith('@@');
     }
 
-    function traverse(node) {
+    function traverse(node, currentPath) {
         if (!node || typeof node !== 'object') return;
 
         if (Array.isArray(node)) {
             for (let i = 0; i < node.length; i++) {
-                traverse(node[i]);
+                traverse(node[i], `${currentPath}[${i}]`);
             }
             return;
         }
 
         for (const key of Object.keys(node)) {
             const val = node[key];
+            const propPath = currentPath ? `${currentPath}.${key}` : key;
             if (/unidiff|patch|diff/i.test(key) && isDiffString(val)) {
-                patches.push(val);
+                patches.push({ content: val, jsonPath: propPath });
             } else if (val && typeof val === 'object') {
-                traverse(val);
+                traverse(val, propPath);
             }
         }
     }
 
     try {
-        traverse(obj);
+        traverse(obj, jsonPathPrefix);
     } catch (e) {
         // Defensive: derivations must never break export
     }
 
-    return patches.map((content, idx) => {
-        const suffix = idx > 0 ? `-${idx + 1}` : '';
-        const name = `patch-${activityIdx}-${sanitizePathSegment(activityId)}${suffix}.diff`;
-        return { name, content };
-    });
+    return patches;
 }
 
 // ─── Summary Markdown Generator ───
@@ -351,6 +451,113 @@ async function fetchWithRetry(endpoint, options = {}, abortSignal = null) {
     }
 }
 
+// ─── Paginated Fetch Helper with Set Guards & Stop Reason ───
+async function fetchPaginatedResource({
+    resourceType,
+    endpointBase,
+    itemKey,
+    callFn,
+    errors,
+    abortSignal
+}) {
+    const seenIds = new Set();
+    const seenTokens = new Set();
+    let pageToken = null;
+    let items = [];
+    let stopReason = 'COMPLETED';
+    let duplicatesDiscarded = 0;
+    let pageCount = 0;
+
+    do {
+        if (abortSignal && abortSignal.aborted) {
+            const err = new Error('REQUEST_ABORTED');
+            err.name = 'AbortError';
+            throw err;
+        }
+
+        pageCount++;
+        if (pageCount > 200) {
+            stopReason = 'MAX_PAGES_REACHED';
+            errors.push({
+                id: resourceType,
+                endpoint: endpointBase,
+                code: 400,
+                message: `Límite duro de 200 páginas alcanzado para ${resourceType}.`
+            });
+            break;
+        }
+
+        const separator = endpointBase.includes('?') ? '&' : '?';
+        const url = `${endpointBase}${separator}pageSize=100${pageToken ? `&pageToken=${encodeURIComponent(pageToken)}` : ''}`;
+        let res;
+        try {
+            res = await fetchWithRetry(url, { callFn }, abortSignal);
+        } catch (err) {
+            stopReason = 'ERROR';
+            errors.push({
+                id: resourceType,
+                endpoint: url,
+                code: err.httpStatus || 500,
+                message: err.message || `Error al obtener ${resourceType}`
+            });
+            break;
+        }
+
+        const nextPageToken = res ? res.nextPageToken : null;
+        const rawList = (res && res[itemKey]) ? res[itemKey] : [];
+
+        if (nextPageToken) {
+            if (seenTokens.has(nextPageToken)) {
+                stopReason = 'SAME_PAGE_TOKEN';
+                errors.push({
+                    id: resourceType,
+                    endpoint: url,
+                    code: 400,
+                    message: `pageToken repetido '${nextPageToken}' detectado en página ${pageCount} de ${resourceType}.`
+                });
+                break;
+            }
+            seenTokens.add(nextPageToken);
+        }
+
+        let newItemsInPage = 0;
+        let pageDuplicates = 0;
+
+        for (let i = 0; i < rawList.length; i++) {
+            const item = rawList[i];
+            const id = item ? (item.name || item.id) : null;
+            if (id && seenIds.has(id)) {
+                pageDuplicates++;
+                duplicatesDiscarded++;
+            } else {
+                if (id) seenIds.add(id);
+                items.push(item);
+                newItemsInPage++;
+            }
+        }
+
+        if (rawList.length > 0 && newItemsInPage === 0) {
+            stopReason = 'DUPLICATE_PAGE_DETECTED';
+            errors.push({
+                id: resourceType,
+                endpoint: url,
+                code: 400,
+                message: `Página ${pageCount} de ${resourceType} no aportó ningún ID nuevo (${pageDuplicates} duplicados descartados).`
+            });
+            break;
+        }
+
+        pageToken = nextPageToken;
+    } while (pageToken);
+
+    return {
+        items,
+        stopReason,
+        duplicatesDiscarded,
+        uniqueCount: seenIds.size
+    };
+}
+
 // ─── Parallel Concurrency Pool ───
 async function mapConcurrent(items, concurrency, fn, abortSignal) {
     const results = [];
@@ -373,17 +580,46 @@ async function mapConcurrent(items, concurrency, fn, abortSignal) {
     return results;
 }
 
+// ─── Default Download Handler ───
+async function defaultDownloadFn(blob, fileName) {
+    if (typeof document === 'undefined') return;
+    const blobUrl = URL.createObjectURL(blob);
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.href = blobUrl;
+    downloadAnchor.download = fileName;
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    document.body.removeChild(downloadAnchor);
+
+    setTimeout(() => {
+        URL.revokeObjectURL(blobUrl);
+    }, 60000);
+}
+
 // ─── Main Export Orchestrator ───
 let isExportRunning = false;
 let currentExportAbortController = null;
 
-async function triggerJulesExport() {
+async function triggerJulesExport(options = {}) {
     if (isExportRunning) {
         console.warn('[JULES-EXPORT] Export already in progress.');
         return;
     }
 
-    const apiKey = typeof window !== 'undefined' && typeof window.getJulesApiKey === 'function' ? window.getJulesApiKey() : '';
+    const callFn = options.callFn || (typeof window !== 'undefined' && window.julesApiCall);
+    const downloadFn = options.downloadFn || defaultDownloadFn;
+    const cryptoImpl = options.cryptoImpl;
+    const CompressionStreamImpl = options.CompressionStreamImpl !== undefined
+        ? options.CompressionStreamImpl
+        : (typeof globalThis !== 'undefined' && globalThis.CompressionStream ? globalThis.CompressionStream : null);
+
+    const hasCompressionStream = !!CompressionStreamImpl;
+    const maxPartCompressedBytes = options.maxPartCompressedBytes !== undefined
+        ? options.maxPartCompressedBytes
+        : (hasCompressionStream ? 400 * 1024 * 1024 : 300 * 1024 * 1024);
+    const maxPartEntries = options.maxPartEntries !== undefined ? options.maxPartEntries : 60000;
+
+    const apiKey = typeof window !== 'undefined' && typeof window.getJulesApiKey === 'function' ? window.getJulesApiKey() : 'key_present';
     if (!apiKey) {
         if (typeof alert !== 'undefined') {
             alert('⚠️ No hay API Key de Jules configurada. Por favor, configúrala usando el botón "API Key" del panel.');
@@ -391,20 +627,27 @@ async function triggerJulesExport() {
         return;
     }
 
-    const confirmed = typeof confirm !== 'undefined' ? confirm(
-        'El ZIP resultante puede contener código fuente, conversaciones y salidas de terminal privadas.\n\n' +
-        'Asegúrate de guardarlo de forma segura fuera de cualquier repositorio público.\n\n' +
-        '¿Deseas iniciar la exportación del historial completo?'
-    ) : true;
+    if (options.skipConfirm !== true) {
+        const confirmMsg =
+            'El ZIP resultante puede contener código fuente, conversaciones y salidas de terminal privadas.\n\n' +
+            'Asegúrate de guardarlo de forma segura fuera de cualquier repositorio público.\n\n' +
+            'Se descargarán varios ficheros ZIP; permite las descargas múltiples en el navegador.\n\n' +
+            '¿Deseas iniciar la exportación del historial completo?';
 
-    if (!confirmed) return;
+        const confirmed = typeof confirm !== 'undefined' ? confirm(confirmMsg) : true;
+        if (!confirmed) return;
+    }
+
+    if (!hasCompressionStream && typeof alert !== 'undefined' && options.skipConfirm !== true) {
+        alert('⚠️ CompressionStream no está disponible en este navegador. Se usará el método de almacenamiento "store" y las partes se limitarán a 300 MB.');
+    }
 
     isExportRunning = true;
-    currentExportAbortController = new AbortController();
-    const abortSignal = currentExportAbortController.signal;
+    currentExportAbortController = options.abortController || new AbortController();
+    const abortSignal = options.abortSignal || currentExportAbortController.signal;
 
-    const btn = document.getElementById('hdr-export-btn');
-    const textSpan = document.getElementById('hdr-export-text');
+    const btn = typeof document !== 'undefined' ? document.getElementById('hdr-export-btn') : null;
+    const textSpan = typeof document !== 'undefined' ? document.getElementById('hdr-export-text') : null;
     const originalText = textSpan ? textSpan.textContent : 'Exportar';
 
     function updateProgress(msg) {
@@ -413,70 +656,107 @@ async function triggerJulesExport() {
 
     if (btn) btn.disabled = true;
 
-    const zip = new ZipStoreWriter();
-    const errors = [];
     const dateStr = new Date().toISOString().split('T')[0];
     const rootDir = `jules-export-${dateStr}`;
+    const errors = [];
 
-    // Read current sessions count displayed on dashboard
+    // Dashboard count at export
     let dashboardCountAtExport = 0;
     try {
-        const countEl = document.getElementById('m-total') || document.getElementById('m-active');
-        if (countEl && countEl.textContent) {
-            const parsed = parseInt(countEl.textContent, 10);
-            if (!isNaN(parsed)) dashboardCountAtExport = parsed;
+        if (typeof document !== 'undefined') {
+            const countEl = document.getElementById('m-total') || document.getElementById('m-active');
+            if (countEl && countEl.textContent) {
+                const parsed = parseInt(countEl.textContent, 10);
+                if (!isNaN(parsed)) dashboardCountAtExport = parsed;
+            }
         }
     } catch (e) {
         dashboardCountAtExport = 0;
     }
 
+    // State for parts and execution
+    let partIndex = 1;
+    let currentPartWriter = new ZipWriter({ CompressionStreamImpl });
+    let currentPartSessions = [];
+    const partsManifest = [];
+    const sessionsByPart = {};
+    let downloadedPartsCount = 0;
+
+    let isFatalError = false;
+    let fatalErrorMessage = '';
+
+    const zipLock = new AsyncLock();
+
+    async function closeAndDownloadCurrentPart() {
+        if (currentPartSessions.length === 0 && currentPartWriter.entries.length === 0) return;
+
+        if (partIndex > 99) {
+            throw new Error('MAX_PARTS_EXCEEDED: Se ha superado el número máximo de 99 partes.');
+        }
+
+        const partNumStr = String(partIndex).padStart(2, '0');
+        const partFileName = `jules-export-${dateStr}-part${partNumStr}.zip`;
+
+        // Add parts/partNN-sessions.json (compact)
+        const partSessionsJson = JSON.stringify({
+            part: `part${partNumStr}`,
+            sessions: currentPartSessions,
+            sessions_count: currentPartSessions.length
+        });
+        await currentPartWriter.addFile(`${rootDir}/parts/part${partNumStr}-sessions.json`, partSessionsJson);
+
+        const blob = currentPartWriter.buildBlob();
+        const compressedBytes = blob.size;
+        const entriesCount = currentPartWriter.entries.length;
+
+        partsManifest.push({
+            file: partFileName,
+            sessions: [...currentPartSessions],
+            entries: entriesCount,
+            compressed_bytes: compressedBytes
+        });
+        sessionsByPart[`part${partNumStr}`] = [...currentPartSessions];
+
+        await downloadFn(blob, partFileName);
+        downloadedPartsCount++;
+
+        partIndex++;
+        currentPartWriter = new ZipWriter({ CompressionStreamImpl });
+        currentPartSessions = [];
+
+        // Pause 1 second between downloads
+        await new Promise(r => setTimeout(r, 1000));
+    }
+
     try {
         updateProgress('Obteniendo fuentes...');
 
-        // 1. Fetch Sources (paginated)
-        let sources = [];
-        let sourcesPageToken = null;
-        let sourcesNextPageExhausted = true;
+        // 1. Fetch Sources
+        const sourcesResult = await fetchPaginatedResource({
+            resourceType: 'sources',
+            endpointBase: '/sources',
+            itemKey: 'sources',
+            callFn,
+            errors,
+            abortSignal
+        });
+        const sources = sourcesResult.items;
 
-        do {
-            if (abortSignal.aborted) throw new Error('REQUEST_ABORTED');
-            const endpoint = `/sources?pageSize=100${sourcesPageToken ? `&pageToken=${encodeURIComponent(sourcesPageToken)}` : ''}`;
-            try {
-                const res = await fetchWithRetry(endpoint, {}, abortSignal);
-                if (res && res.sources) sources = sources.concat(res.sources);
-                sourcesPageToken = res ? res.nextPageToken : null;
-            } catch (err) {
-                sourcesNextPageExhausted = false;
-                errors.push({ id: 'sources', endpoint, code: err.httpStatus || 500, message: err.message || 'Error fetching sources' });
-                break;
-            }
-        } while (sourcesPageToken);
-
-        zip.addFile(`${rootDir}/sources.json`, JSON.stringify(sources, null, 2));
-
-        // 2. Fetch Sessions List (paginated)
+        // 2. Fetch Sessions List
         updateProgress('Listando sesiones...');
-        let rawSessions = [];
-        let sessionsPageToken = null;
-        let sessionsNextPageExhausted = true;
+        const sessionsResult = await fetchPaginatedResource({
+            resourceType: 'sessions',
+            endpointBase: '/sessions',
+            itemKey: 'sessions',
+            callFn,
+            errors,
+            abortSignal
+        });
+        const rawSessions = sessionsResult.items;
 
-        do {
-            if (abortSignal.aborted) throw new Error('REQUEST_ABORTED');
-            const endpoint = `/sessions?pageSize=100${sessionsPageToken ? `&pageToken=${encodeURIComponent(sessionsPageToken)}` : ''}`;
-            try {
-                const res = await fetchWithRetry(endpoint, {}, abortSignal);
-                if (res && res.sessions) rawSessions = rawSessions.concat(res.sessions);
-                sessionsPageToken = res ? res.nextPageToken : null;
-            } catch (err) {
-                sessionsNextPageExhausted = false;
-                errors.push({ id: 'sessions_list', endpoint, code: err.httpStatus || 500, message: err.message || 'Error listing sessions' });
-                break;
-            }
-        } while (sessionsPageToken);
+        let totalDuplicatesDiscarded = sourcesResult.duplicatesDiscarded + sessionsResult.duplicatesDiscarded;
 
-        zip.addFile(`${rootDir}/sessions.json`, JSON.stringify(rawSessions, null, 2));
-
-        // Sanitize Session IDs and track collisions
+        // Sanitize Session IDs and track collisions for DISTINCT raw IDs
         const sanitizedIdMap = new Map();
         const processedSessions = rawSessions.map((s, index) => {
             const rawId = s.name ? s.name.replace(/^sessions\//, '') : `session_${index}`;
@@ -495,17 +775,18 @@ async function triggerJulesExport() {
             } else {
                 sanitizedIdMap.set(sanitized, 1);
             }
-            return { rawSession: s, sanitizedId: sanitized };
+            return { rawSession: s, sanitizedId: sanitized, rawId: rawId };
         });
 
-        // 3. Process each session details and activities with max 3 parallel workers
+        // 3. Process sessions details and activities
         let processedCount = 0;
         let totalActivitiesCount = 0;
         let totalPatchesCount = 0;
         const csvSummaryItems = [];
         const activitiesBreakdownBySession = {};
+        const activitiesStopReasonMap = {};
 
-        await mapConcurrent(processedSessions, 3, async (item, itemIdx) => {
+        await mapConcurrent(processedSessions, 3, async (item) => {
             if (abortSignal.aborted) return;
             const { rawSession, sanitizedId } = item;
             const sName = rawSession.name || `sessions/${sanitizedId}`;
@@ -513,9 +794,12 @@ async function triggerJulesExport() {
             let detail = rawSession;
             // Fetch fresh session detail
             try {
-                const freshDetail = await fetchWithRetry(`/${sName.replace(/^\//, '')}`, {}, abortSignal);
+                const freshDetail = await fetchWithRetry(`/${sName.replace(/^\//, '')}`, { callFn }, abortSignal);
                 if (freshDetail && freshDetail.name) detail = freshDetail;
             } catch (err) {
+                const isUnauthorized = err.message === 'API_KEY_INVALID' || err.httpStatus === 401 || err.httpStatus === 403;
+                if (isUnauthorized) throw err; // Fatal error
+
                 errors.push({
                     id: sanitizedId,
                     endpoint: `/${sName}`,
@@ -524,144 +808,200 @@ async function triggerJulesExport() {
                 });
             }
 
-            // Fetch all activities for this session
-            let activities = [];
-            let actPageToken = null;
-            do {
-                if (abortSignal.aborted) break;
-                const actEndpoint = `/${sName.replace(/^\//, '')}/activities?pageSize=100${actPageToken ? `&pageToken=${encodeURIComponent(actPageToken)}` : ''}`;
-                try {
-                    const actRes = await fetchWithRetry(actEndpoint, {}, abortSignal);
-                    if (actRes && actRes.activities) activities = activities.concat(actRes.activities);
-                    actPageToken = actRes ? actRes.nextPageToken : null;
-                } catch (err) {
-                    errors.push({
-                        id: sanitizedId,
-                        endpoint: actEndpoint,
-                        code: err.httpStatus || 500,
-                        message: `Error fetching activities: ${err.message}`
-                    });
-                    break;
-                }
-            } while (actPageToken);
+            // Fetch activities with pagination guards
+            const actEndpoint = `/${sName.replace(/^\//, '')}/activities`;
+            const actResult = await fetchPaginatedResource({
+                resourceType: `activities_${sanitizedId}`,
+                endpointBase: actEndpoint,
+                itemKey: 'activities',
+                callFn,
+                errors,
+                abortSignal
+            });
+
+            const activities = actResult.items;
+
+            if (actResult.stopReason !== 'COMPLETED') {
+                activitiesStopReasonMap[sanitizedId] = actResult.stopReason;
+            }
 
             // Extract patches recursively from activities and detail
-            let sessionPatches = [];
+            const allExtractedPatches = [];
             activities.forEach((act, actIdx) => {
-                const actPatches = extractPatchesRecursive(act, actIdx + 1, act.name || act.id || `act_${actIdx}`);
-                sessionPatches = sessionPatches.concat(actPatches);
+                const patches = extractPatchesRecursive(act, `activities[${actIdx}]`);
+                allExtractedPatches.push(...patches);
             });
-            const detailPatches = extractPatchesRecursive(detail, 0, 'detail');
-            sessionPatches = sessionPatches.concat(detailPatches);
+            const detailPatches = extractPatchesRecursive(detail, 'detail');
+            allExtractedPatches.push(...detailPatches);
 
-            // Generate session summary markdown
-            const summaryMd = generateSummaryMd(detail, activities, sessionPatches.length);
+            // SHA-256 Deduplication of patches per session
+            const sessionPatchesMap = new Map(); // sha256 -> fileName
+            const sessionSha12Map = new Map();   // sha12 -> count
+            const patchesIndex = [];
+            const uniquePatchFiles = [];
 
-            // Add files directly to ZIP store and release references
+            for (const patch of allExtractedPatches) {
+                const sha256Hex = await getSha256(patch.content, cryptoImpl);
+                const sha12Base = sha256Hex.slice(0, 12);
+                let fileName;
+
+                if (sessionPatchesMap.has(sha256Hex)) {
+                    fileName = sessionPatchesMap.get(sha256Hex);
+                } else {
+                    let count = sessionSha12Map.get(sha12Base) || 0;
+                    count++;
+                    sessionSha12Map.set(sha12Base, count);
+                    fileName = count > 1 ? `patch-${sha12Base}-${count}.diff` : `patch-${sha12Base}.diff`;
+                    sessionPatchesMap.set(sha256Hex, fileName);
+                    uniquePatchFiles.push({ fileName, content: patch.content });
+                }
+
+                patchesIndex.push({
+                    sha256: sha256Hex,
+                    sha12: sha12Base,
+                    file: fileName,
+                    jsonPath: patch.jsonPath
+                });
+            }
+
+            // Session Summary MD
+            const summaryMd = generateSummaryMd(detail, activities, uniquePatchFiles.length);
+
+            // Session files collection
             const sessionFolder = `${rootDir}/sessions/${sanitizedId}`;
-            zip.addFile(`${sessionFolder}/session.json`, JSON.stringify(detail, null, 2));
-            zip.addFile(`${sessionFolder}/activities.json`, JSON.stringify(activities, null, 2));
-            zip.addFile(`${sessionFolder}/summary.md`, summaryMd);
+            const sessionFiles = [
+                { path: `${sessionFolder}/session.json`, data: JSON.stringify(detail, null, 2) }, // indented
+                { path: `${sessionFolder}/activities.json`, data: JSON.stringify(activities) }, // compact
+                { path: `${sessionFolder}/summary.md`, data: summaryMd },
+                { path: `${sessionFolder}/patches-index.json`, data: JSON.stringify(patchesIndex, null, 2) } // indented
+            ];
 
-            sessionPatches.forEach(p => {
-                zip.addFile(`${sessionFolder}/${p.name}`, p.content);
+            uniquePatchFiles.forEach(pf => {
+                sessionFiles.push({ path: `${sessionFolder}/${pf.fileName}`, data: pf.content });
             });
 
-            // CSV Row Data
-            csvSummaryItems.push({
-                id: sanitizedId,
-                title: detail.title || detail.name || 'Sin Título',
-                repo: (detail.sourceContext && detail.sourceContext.source) || 'N/A',
-                state: detail.state || 'N/A',
-                createTime: detail.createTime || 'N/A',
-                updateTime: detail.updateTime || 'N/A',
-                prUrl: (detail.sourceContext && detail.sourceContext.pullRequest && detail.sourceContext.pullRequest.url) || '',
-                activityCount: activities.length,
-                patchCount: sessionPatches.length
+            // Calculate size estimate for part threshold
+            let sessionBytesEstimate = 0;
+            for (const sf of sessionFiles) {
+                if (typeof sf.data === 'string') sessionBytesEstimate += sf.data.length * 2;
+                else if (sf.data instanceof Uint8Array) sessionBytesEstimate += sf.data.length;
+            }
+
+            // Thread-safe ZIP writer append and part boundary check
+            await zipLock.run(async () => {
+                totalDuplicatesDiscarded += actResult.duplicatesDiscarded;
+
+                if (currentPartSessions.length > 0 &&
+                    (currentPartWriter.totalCompressedSizeEstimate + sessionBytesEstimate > maxPartCompressedBytes ||
+                     currentPartWriter.entries.length + sessionFiles.length > maxPartEntries)) {
+                    await closeAndDownloadCurrentPart();
+                }
+
+                for (const sf of sessionFiles) {
+                    await currentPartWriter.addFile(sf.path, sf.data);
+                }
+                currentPartSessions.push(sanitizedId);
+
+                if (currentPartWriter.totalCompressedSizeEstimate >= maxPartCompressedBytes ||
+                    currentPartWriter.entries.length >= maxPartEntries) {
+                    await closeAndDownloadCurrentPart();
+                }
+
+                // CSV Summary Row
+                csvSummaryItems.push({
+                    id: sanitizedId,
+                    title: detail.title || detail.name || 'Sin Título',
+                    repo: (detail.sourceContext && detail.sourceContext.source) || 'N/A',
+                    state: detail.state || 'N/A',
+                    createTime: detail.createTime || 'N/A',
+                    updateTime: detail.updateTime || 'N/A',
+                    prUrl: (detail.sourceContext && detail.sourceContext.pullRequest && detail.sourceContext.pullRequest.url) || '',
+                    activityCount: activities.length,
+                    patchCount: uniquePatchFiles.length
+                });
+
+                processedCount++;
+                totalActivitiesCount += activities.length;
+                totalPatchesCount += uniquePatchFiles.length;
+                activitiesBreakdownBySession[sanitizedId] = activities.length;
+
+                const partNumStr = String(partIndex).padStart(2, '0');
+                const retainedMb = (currentPartWriter.totalCompressedSizeEstimate / (1024 * 1024)).toFixed(1);
+                updateProgress(`Sesiones ${processedCount}/${processedSessions.length} · actividades ${totalActivitiesCount} · parte ${partNumStr} · ${retainedMb} MB retenidos`);
             });
-
-            processedCount++;
-            totalActivitiesCount += activities.length;
-            totalPatchesCount += sessionPatches.length;
-            activitiesBreakdownBySession[sanitizedId] = activities.length;
-
-            updateProgress(`Sesiones ${processedCount}/${processedSessions.length} · actividades ${totalActivitiesCount}`);
         }, abortSignal);
 
         if (abortSignal.aborted) throw new Error('REQUEST_ABORTED');
 
-        // 4. Generate Root Files
+        // Close last part if it contains remaining sessions
+        await zipLock.run(async () => {
+            if (currentPartSessions.length > 0) {
+                await closeAndDownloadCurrentPart();
+            }
+        });
+
+        // Generate Root Index ZIP
+        updateProgress('Generando archivo de índice...');
+        const rootIndexWriter = new ZipWriter({ CompressionStreamImpl });
+
         const csvContent = generateSessionsCsv(csvSummaryItems);
-        zip.addFile(`${rootDir}/sessions-index.csv`, csvContent);
+        await rootIndexWriter.addFile(`${rootDir}/sessions-index.csv`, csvContent);
 
         const manifest = {
             export_date: new Date().toISOString(),
-            exporter_version: "1.0.0",
+            exporter_version: "2.0.0",
+            complete: true,
+            incomplete_reason: null,
             sources_count: sources.length,
+            sources_unique: sourcesResult.uniqueCount,
             sessions_listed: rawSessions.length,
+            sessions_unique: sessionsResult.uniqueCount,
+            duplicates_discarded: totalDuplicatesDiscarded,
             sessions_processed: processedSessions.length,
             total_activities: totalActivitiesCount,
             total_patches: totalPatchesCount,
             count_in_dashboard_at_export: dashboardCountAtExport,
-            nextPageToken_exhausted: {
-                sources: sourcesNextPageExhausted,
-                sessions: sessionsNextPageExhausted
+            pagination_stop_reason: {
+                sources: sourcesResult.stopReason,
+                sessions: sessionsResult.stopReason
             },
+            activities_stop_reason: activitiesStopReasonMap,
+            parts: partsManifest,
+            sessions_by_part: sessionsByPart,
             activities_per_session: activitiesBreakdownBySession,
             errors_count: errors.length,
             errors: errors,
-            note: "Este paquete ha sido generado a través de la API pública de Jules. La API pública puede omitir sesiones antiguas o de proyectos archivados. El export oficial interno de Google Jules es el complemento requerido para ajustes, variables de entorno y ejecuciones del sandbox."
+            note: "Este paquete ha sido generado a través de la API pública de Jules. La API pública puede omitir sesiones antiguas o de proyectos archivados."
         };
 
-        zip.addFile(`${rootDir}/manifest.json`, JSON.stringify(manifest, null, 2));
-        zip.addFile(`${rootDir}/errors.json`, JSON.stringify(errors, null, 2));
+        await rootIndexWriter.addFile(`${rootDir}/manifest.json`, JSON.stringify(manifest, null, 2)); // indented
+        await rootIndexWriter.addFile(`${rootDir}/errors.json`, JSON.stringify(errors, null, 2));     // indented
+        await rootIndexWriter.addFile(`${rootDir}/sources.json`, JSON.stringify(sources, null, 2));   // indented
+        await rootIndexWriter.addFile(`${rootDir}/sessions.json`, JSON.stringify(rawSessions));      // compact
 
         const readmeContent = `# Jules Agent Export — HYPENOSYS
 
 Fecha de Exportación: ${manifest.export_date}
 Versión del Exporter: ${manifest.exporter_version}
 
-## Contenido del Paquete
+## Contenido del Paquete de Índice
 
-- \`manifest.json\`: Metadatos de la exportación, resúmenes de conteo y errores registrados.
+- \`manifest.json\`: Metadatos de la exportación, resúmenes de conteo, estado de partes y errores registrados.
 - \`README.md\`: Este archivo de documentación.
 - \`sources.json\`: Listado completo de repositorios y fuentes conectadas.
 - \`sessions-index.csv\`: Índice en CSV con el resumen de todas las sesiones.
 - \`sessions.json\`: Listado en JSON crudo de todas las sesiones accesibles.
 - \`errors.json\`: Registro estructurado de errores y colisiones ocurridos durante el proceso.
-- \`sessions/<id>/\`: Directorio individual por cada sesión exportada conteniendo:
-  - \`session.json\`: Detalle en JSON crudo de la sesión.
-  - \`activities.json\`: Historial completo de actividades en JSON crudo.
-  - \`summary.md\`: Resumen ejecutivo formateado en Markdown.
-  - \`patch-*.diff\`: Archivos de parche Unidiff extraídos de la sesión.
 
-## Limitaciones e Información de la API
-
-Este paquete ha sido generado consumiendo la API pública de Jules.
-Tener en cuenta que:
-- Variables de entorno, secretos y configuraciones avanzadas no forman parte de este export.
-- Memorias internas y scripts de setup del sandbox no están expuestos vía la API pública.
-- Si requieres un respaldo exhaustivo de la infraestructura interna de Jules antes de su apagado, debes solicitar el export oficial interno.
+## Partes Descargadas
+${partsManifest.map(p => `- \`${p.file}\`: ${p.sessions.length} sesiones, ${p.entries} archivos, ${p.compressed_bytes} bytes`).join('\n')}
 `;
-        zip.addFile(`${rootDir}/README.md`, readmeContent);
+        await rootIndexWriter.addFile(`${rootDir}/README.md`, readmeContent);
 
-        // 5. Build ZIP Blob and Trigger Download
-        updateProgress('Generando archivo ZIP...');
-        const blob = zip.buildBlob();
-        const blobUrl = URL.createObjectURL(blob);
+        const indexBlob = rootIndexWriter.buildBlob();
+        await downloadFn(indexBlob, `${rootDir}-index.zip`);
 
-        const downloadAnchor = document.createElement('a');
-        downloadAnchor.href = blobUrl;
-        downloadAnchor.download = `${rootDir}.zip`;
-        document.body.appendChild(downloadAnchor);
-        downloadAnchor.click();
-        document.body.removeChild(downloadAnchor);
-
-        setTimeout(() => {
-            URL.revokeObjectURL(blobUrl);
-        }, 10000);
-
-        if (typeof alert !== 'undefined') {
+        if (typeof alert !== 'undefined' && options.skipConfirm !== true) {
             alert(
                 `✅ Exportación completada con éxito.\n\n` +
                 `📦 Resumen del respaldo:\n` +
@@ -669,17 +1009,56 @@ Tener en cuenta que:
                 `- Sesiones procesadas: ${processedSessions.length}\n` +
                 `- Total de actividades: ${totalActivitiesCount}\n` +
                 `- Patches extraídos: ${totalPatchesCount}\n` +
+                `- Partes generadas: ${partsManifest.length}\n` +
                 `- Errores parciales: ${errors.length}`
             );
         }
 
     } catch (err) {
-        if (err.message === 'REQUEST_ABORTED' || (abortSignal && abortSignal.aborted)) {
+        const isAbort = err.message === 'REQUEST_ABORTED' || (abortSignal && abortSignal.aborted) || err.name === 'AbortError';
+
+        if (isAbort) {
             console.log('[JULES-EXPORT] Exportación cancelada por el usuario.');
-            if (typeof alert !== 'undefined') alert('🚫 Exportación cancelada. Se ha descartado la descarga.');
+            const cancelMsg = `Exportación cancelada: ${downloadedPartsCount} partes descargadas, sin índice. Cada parte incluye parts/partNN-sessions.json con su listado.`;
+            if (typeof alert !== 'undefined' && options.skipConfirm !== true) {
+                alert(`🚫 ${cancelMsg}`);
+            }
         } else {
             console.error('[JULES-EXPORT] Error crítico durante la exportación:', err);
-            if (typeof alert !== 'undefined') alert(`⚠️ Error en la exportación: ${err.message}`);
+            isFatalError = true;
+            fatalErrorMessage = err.message || 'Error desconocido';
+
+            // On fatal error: close & download active part if it has sessions, then generate index with complete=false
+            try {
+                await zipLock.run(async () => {
+                    if (currentPartSessions.length > 0) {
+                        await closeAndDownloadCurrentPart();
+                    }
+                });
+
+                const rootIndexWriter = new ZipWriter({ CompressionStreamImpl });
+                const manifest = {
+                    export_date: new Date().toISOString(),
+                    exporter_version: "2.0.0",
+                    complete: false,
+                    incomplete_reason: fatalErrorMessage,
+                    parts: partsManifest,
+                    sessions_by_part: sessionsByPart,
+                    errors_count: errors.length,
+                    errors: errors
+                };
+
+                await rootIndexWriter.addFile(`${rootDir}/manifest.json`, JSON.stringify(manifest, null, 2));
+                await rootIndexWriter.addFile(`${rootDir}/errors.json`, JSON.stringify(errors, null, 2));
+                const indexBlob = rootIndexWriter.buildBlob();
+                await downloadFn(indexBlob, `${rootDir}-index.zip`);
+            } catch (e) {
+                console.error('[JULES-EXPORT] Error al generar índice incompleto:', e);
+            }
+
+            if (typeof alert !== 'undefined' && options.skipConfirm !== true) {
+                alert(`⚠️ Error en la exportación: ${fatalErrorMessage}`);
+            }
         }
     } finally {
         isExportRunning = false;
@@ -700,11 +1079,14 @@ if (typeof module !== 'undefined' && module.exports) {
         crc32,
         getDosDateTime,
         sanitizePathSegment,
+        getSha256,
+        ZipWriter,
         ZipStoreWriter,
         extractPatchesRecursive,
         generateSummaryMd,
         generateSessionsCsv,
         fetchWithRetry,
+        fetchPaginatedResource,
         mapConcurrent,
         triggerJulesExport
     };
