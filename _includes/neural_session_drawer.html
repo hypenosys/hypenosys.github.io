@@ -7,7 +7,7 @@
             <span class="text-[10px] font-bold text-[#bd93f9] uppercase tracking-widest">Neural Session</span>
             <h3 id="nd-task-title" class="text-lg font-bold text-white truncate">Cargando tarea...</h3>
         </div>
-        <button onclick="window.neuralSession?.close()" class="text-slate-400 hover:text-white transition-all text-xl">&times;</button>
+        <button onclick="window.neuralSession?.close()" aria-label="Cerrar" class="text-slate-400 hover:text-white transition-all text-xl">&times;</button>
     </div>
 
     <!-- Metadata Bar -->
@@ -71,7 +71,7 @@
             <div class="relative">
                 <textarea id="nd-chat-input" rows="1" placeholder="Pregunta a Claude sobre esta tarea..."
                           class="w-full bg-[#282a36] border border-[#44475a] rounded-xl py-3 pl-4 pr-12 text-sm text-white focus:border-[#bd93f9] outline-none transition-all resize-none custom-scrollbar"></textarea>
-                <button id="nd-chat-send" onclick="window.neuralSession?.handleChatSend()"
+                <button id="nd-chat-send" onclick="window.neuralSession?.handleChatSend()" aria-label="Enviar mensaje"
                         class="absolute right-2 top-2 w-8 h-8 rounded-lg bg-[#bd93f9] text-[#282a36] flex items-center justify-center hover:opacity-90 transition-all">
                     <i class="fas fa-paper-plane text-xs"></i>
                 </button>
