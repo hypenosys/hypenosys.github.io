@@ -211,7 +211,7 @@ permalink: /documentacion/
                 </div>
                 <div class="relative">
                     <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
-                    <input type="text" id="doc-search" placeholder="Buscar documento..."
+                    <input type="text" id="doc-search" placeholder="Buscar documento..." aria-label="Buscar documento..."
                            class="w-full bg-slate-950 border border-slate-800 rounded-lg py-2 pl-9 pr-3 text-xs text-slate-300 focus:outline-none focus:border-indigo-500">
                     <div id="search-results" class="absolute top-full left-0 w-full mt-2 bg-slate-900 border border-slate-800 rounded-lg shadow-2xl z-50 hidden max-h-64 overflow-y-auto custom-scrollbar">
                         <!-- Results go here -->
@@ -247,17 +247,17 @@ permalink: /documentacion/
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div class="bg-slate-900 p-6 rounded-xl border border-slate-800 hover:border-indigo-500/50 transition-all cursor-pointer group" onclick="findAndLoad('GDD')">
+                        <div class="bg-slate-900 p-6 rounded-xl border border-slate-800 hover:border-indigo-500/50 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all cursor-pointer group" role="button" tabindex="0" aria-label="Abrir sección GDD y Lore" onclick="findAndLoad('GDD')" onkeydown="if(event.key==='Enter'||event.key===' '){findAndLoad('GDD');event.preventDefault();}">
                             <i class="fa-solid fa-scroll text-2xl text-amber-400 mb-4 group-hover:scale-110 transition-transform"></i>
                             <h3 class="font-bold text-white mb-2">GDD & Lore</h3>
                             <p class="text-xs text-slate-500">Diseño de niveles, narrativa y mecánicas principales del juego.</p>
                         </div>
-                        <div class="bg-slate-900 p-6 rounded-xl border border-slate-800 hover:border-emerald-500/50 transition-all cursor-pointer group" onclick="findAndLoad('Tech')">
+                        <div class="bg-slate-900 p-6 rounded-xl border border-slate-800 hover:border-emerald-500/50 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all cursor-pointer group" role="button" tabindex="0" aria-label="Abrir sección Technical Docs" onclick="findAndLoad('Tech')" onkeydown="if(event.key==='Enter'||event.key===' '){findAndLoad('Tech');event.preventDefault();}">
                             <i class="fa-solid fa-code text-2xl text-emerald-400 mb-4 group-hover:scale-110 transition-transform"></i>
                             <h3 class="font-bold text-white mb-2">Technical Docs</h3>
                             <p class="text-xs text-slate-500">Estándares de código, arquitectura de Unreal y automatización.</p>
                         </div>
-                        <div class="bg-slate-900 p-6 rounded-xl border border-slate-800 hover:border-pink-500/50 transition-all cursor-pointer group" onclick="findAndLoad('Art')">
+                        <div class="bg-slate-900 p-6 rounded-xl border border-slate-800 hover:border-pink-500/50 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-all cursor-pointer group" role="button" tabindex="0" aria-label="Abrir sección Art Bible" onclick="findAndLoad('Art')" onkeydown="if(event.key==='Enter'||event.key===' '){findAndLoad('Art');event.preventDefault();}">
                             <i class="fa-solid fa-palette text-2xl text-pink-400 mb-4 group-hover:scale-110 transition-transform"></i>
                             <h3 class="font-bold text-white mb-2">Art Bible</h3>
                             <p class="text-xs text-slate-500">Guías visuales, pipelines de assets y referencias estéticas.</p>
@@ -311,7 +311,7 @@ permalink: /documentacion/
     </div>
 
     <!-- Mobile Navigation Toggle -->
-    <button id="mobile-toggle" onclick="toggleSidebar()" class="md:hidden fixed bottom-6 right-6 w-14 h-14 bg-indigo-600 text-white rounded-full shadow-2xl flex items-center justify-center z-50">
+    <button id="mobile-toggle" onclick="toggleSidebar()" aria-label="Abrir menú de navegación" class="md:hidden fixed bottom-6 right-6 w-14 h-14 bg-indigo-600 text-white rounded-full shadow-2xl flex items-center justify-center z-50">
         <i id="mobile-toggle-icon" class="fa-solid fa-list-ul text-xl"></i>
     </button>
 
