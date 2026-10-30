@@ -437,10 +437,13 @@ lastFetchCall = null;
         assert.ok(fs.existsSync(fullPath), `El archivo requerido ${fileRelPath} debe existir en el repositorio.`);
         let content = fs.readFileSync(fullPath, 'utf8');
 
-        // Excepción de placeholders preexistentes en Ollama SOLO para _includes/api_config_modal.html y pages/command-center.html
+        // Excepción de placeholders preexistentes y definiciones de patrones en el archivo de test
         if (fileRelPath === '_includes/api_config_modal.html' || fileRelPath === 'pages/command-center.html') {
             content = content.replace(/192\.168\.1\.0\/24/g, '[placeholder-ollama-ignorado]')
                              .replace(/http:\/\/localhost:11434/g, '[placeholder-ollama-ignorado]');
+        }
+        if (fileRelPath === '_tests/test_jules_base.js') {
+            content = content.replace(/forbiddenPatterns\s*=\s*\[[\s\S]*?\];/g, '[forbidden-patterns-ignorado]');
         }
 
         // Check pattern rules
