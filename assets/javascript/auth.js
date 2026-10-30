@@ -910,12 +910,21 @@ document.addEventListener('DOMContentLoaded', () => {
 function togglePasswordVisibility(id) {
     const input = document.getElementById(id);
     if (!input) return;
-    const btn = input.nextElementSibling ? input.nextElementSibling.querySelector('i') : null;
+    const button = input.nextElementSibling ? input.nextElementSibling.querySelector('button') : null;
+    const btnIcon = input.nextElementSibling ? input.nextElementSibling.querySelector('i') : null;
     if (input.type === 'password') {
         input.type = 'text';
-        if (btn) btn.classList.replace('fa-eye', 'fa-eye-slash');
+        if (btnIcon) btnIcon.classList.replace('fa-eye', 'fa-eye-slash');
+        if (button) {
+            button.setAttribute('aria-label', 'Ocultar contraseña');
+            button.setAttribute('aria-pressed', 'true');
+        }
     } else {
         input.type = 'password';
-        if (btn) btn.classList.replace('fa-eye-slash', 'fa-eye');
+        if (btnIcon) btnIcon.classList.replace('fa-eye-slash', 'fa-eye');
+        if (button) {
+            button.setAttribute('aria-label', 'Mostrar contraseña');
+            button.setAttribute('aria-pressed', 'false');
+        }
     }
 }

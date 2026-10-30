@@ -49,7 +49,7 @@
                         <div class="input-group">
                             <input type="password" class="form-control bg-dark text-white border-purple" id="input-pat" placeholder="ghp_xxxxxxxxxxxx">
                             <div class="input-group-append">
-                                <button class="btn btn-outline-purple" type="button" onclick="togglePasswordVisibility('input-pat')">
+                                <button class="btn btn-outline-purple" type="button" aria-label="Mostrar contraseña" aria-pressed="false" onclick="togglePasswordVisibility('input-pat')">
                                     <i class="fas fa-eye"></i>
                                 </button>
                             </div>
@@ -72,7 +72,7 @@
                         <div class="input-group">
                             <input type="password" class="form-control bg-dark text-white border-purple" id="input-jules-key-modal" placeholder="AIza...">
                             <div class="input-group-append">
-                                <button class="btn btn-outline-purple" type="button" onclick="togglePasswordVisibility('input-jules-key-modal')">
+                                <button class="btn btn-outline-purple" type="button" aria-label="Mostrar contraseña" aria-pressed="false" onclick="togglePasswordVisibility('input-jules-key-modal')">
                                     <i class="fas fa-eye"></i>
                                 </button>
                             </div>
@@ -92,13 +92,23 @@
 <script>
 function togglePasswordVisibility(id) {
     const input = document.getElementById(id);
-    const btn = input.nextElementSibling.querySelector('i');
+    if (!input) return;
+    const button = input.nextElementSibling ? input.nextElementSibling.querySelector('button') : null;
+    const btnIcon = input.nextElementSibling ? input.nextElementSibling.querySelector('i') : null;
     if (input.type === 'password') {
         input.type = 'text';
-        btn.classList.replace('fa-eye', 'fa-eye-slash');
+        if (btnIcon) btnIcon.classList.replace('fa-eye', 'fa-eye-slash');
+        if (button) {
+            button.setAttribute('aria-label', 'Ocultar contraseña');
+            button.setAttribute('aria-pressed', 'true');
+        }
     } else {
         input.type = 'password';
-        btn.classList.replace('fa-eye-slash', 'fa-eye');
+        if (btnIcon) btnIcon.classList.replace('fa-eye-slash', 'fa-eye');
+        if (button) {
+            button.setAttribute('aria-label', 'Mostrar contraseña');
+            button.setAttribute('aria-pressed', 'false');
+        }
     }
 }
 </script>
