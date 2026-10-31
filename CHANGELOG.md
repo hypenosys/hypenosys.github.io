@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Added
+- **HAIS-001 pilot bootstrap**: Added a 24-task dependency backlog, a PAPER-only validation script, CI contract checks and an onboarding runbook. No production secrets or trading permissions are enabled.
+
 ### Fixed
 - **Command Center Access Control**: Centralized team access validation (`validateToken`) and role resolution (`isAdmin`) dynamically from `assets/data/team_profiles.json`, eliminating hardcoded whitelist arrays and allowing instant propagation of member role changes across the platform.
 
