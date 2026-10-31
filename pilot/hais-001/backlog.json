@@ -2,7 +2,7 @@
   "schema_version": 1,
   "pilot_id": "HAIS-001",
   "workspace": "hais",
-  "repository": "hypenosys/hais",
+  "repository": "hypenosys/HAIS",
   "mode": "PAPER",
   "live_trading_enabled": false,
   "budget_eur": {
@@ -45,7 +45,7 @@
     },
     {
       "id": "H003",
-      "title": "Crear repositorio privado hypenosys/hais",
+      "title": "Crear repositorio privado hypenosys/HAIS",
       "deps": [
         "H001"
       ],
