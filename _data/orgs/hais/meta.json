@@ -9,10 +9,20 @@
       "handle": "haopengwang123",
       "teams": [],
       "roles": []
+    },
+    {
+      "handle": "axlfc",
+      "teams": [],
+      "roles": []
     }
   ],
   "schema_version": "1.0.0",
   "_audit_log": [
+    {
+      "action": "chore: añadir miembro axlfc a HAIS",
+      "user": "haopengwang123",
+      "timestamp": "2026-10-31T21:19:32.777Z"
+    },
     {
       "action": "feat: crear metadata para HAIS",
       "user": "haopengwang123",
