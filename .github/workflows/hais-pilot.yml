@@ -20,4 +20,6 @@ jobs:
         with:
           python-version: '3.12'
       - name: Validate HAIS pilot dependency graph and live-trading gate
-        run: python pilot/hais-001/validate.py
+        run: |
+          python pilot/hais-001/validate.py
+          python -m unittest discover -s pilot/hais-001 -p 'test_*.py' -v
