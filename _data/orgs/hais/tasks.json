@@ -1,0 +1,711 @@
+{
+  "schema_version": "1.2.0",
+  "organizationId": "hais",
+  "tasks": [
+    {
+      "id": 900001,
+      "pilot_task_id": "HAIS-001-H001",
+      "pilot_id": "HAIS-001",
+      "organizationId": "hais",
+      "repository": "hypenosys/HAIS",
+      "title": "Verificar permisos y autenticar Haopeng",
+      "descripcion": "Verificar permisos y autenticar Haopeng",
+      "tema_principal": "HAIS-001 / identity",
+      "prioridad": "Critical",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "chore",
+      "resuelto_por": "",
+      "asignados": [],
+      "tags": [
+        "hais-001",
+        "identity"
+      ],
+      "blocked_by": [],
+      "acceptance_criteria": "GitHub MFA activo\nacceso limitado comprobado",
+      "executor_proposed": "human",
+      "subtasks": [],
+      "external_links": [],
+      "comments": [],
+      "change_log": []
+    },
+    {
+      "id": 900002,
+      "pilot_task_id": "HAIS-001-H002",
+      "pilot_id": "HAIS-001",
+      "organizationId": "hais",
+      "repository": "hypenosys/HAIS",
+      "title": "Crear workspace HAIS en Hypenosys",
+      "descripcion": "Crear workspace HAIS en Hypenosys",
+      "tema_principal": "HAIS-001 / identity",
+      "prioridad": "Critical",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "chore",
+      "resuelto_por": "",
+      "asignados": [],
+      "tags": [
+        "hais-001",
+        "identity"
+      ],
+      "blocked_by": [
+        900001
+      ],
+      "acceptance_criteria": "workspace aislado verificado",
+      "executor_proposed": "human",
+      "subtasks": [],
+      "external_links": [],
+      "comments": [],
+      "change_log": []
+    },
+    {
+      "id": 900003,
+      "pilot_task_id": "HAIS-001-H003",
+      "pilot_id": "HAIS-001",
+      "organizationId": "hais",
+      "repository": "hypenosys/HAIS",
+      "title": "Crear repositorio privado hypenosys/HAIS",
+      "descripcion": "Crear repositorio privado hypenosys/HAIS",
+      "tema_principal": "HAIS-001 / identity",
+      "prioridad": "Critical",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "chore",
+      "resuelto_por": "",
+      "asignados": [],
+      "tags": [
+        "hais-001",
+        "identity"
+      ],
+      "blocked_by": [
+        900001
+      ],
+      "acceptance_criteria": "repositorio privado y ramas protegidas",
+      "executor_proposed": "human",
+      "subtasks": [],
+      "external_links": [],
+      "comments": [],
+      "change_log": []
+    },
+    {
+      "id": 900004,
+      "pilot_task_id": "HAIS-001-H004",
+      "pilot_id": "HAIS-001",
+      "organizationId": "hais",
+      "repository": "hypenosys/HAIS",
+      "title": "Vincular GitHub, Jules y proveedores BYOK",
+      "descripcion": "Vincular GitHub, Jules y proveedores BYOK",
+      "tema_principal": "HAIS-001 / identity",
+      "prioridad": "Critical",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "chore",
+      "resuelto_por": "",
+      "asignados": [],
+      "tags": [
+        "hais-001",
+        "identity"
+      ],
+      "blocked_by": [
+        900002,
+        900003
+      ],
+      "acceptance_criteria": "sin claves expuestas en navegador ni logs\npermisos mínimos",
+      "executor_proposed": "human",
+      "subtasks": [],
+      "external_links": [],
+      "comments": [],
+      "change_log": []
+    },
+    {
+      "id": 900005,
+      "pilot_task_id": "HAIS-001-H005",
+      "pilot_id": "HAIS-001",
+      "organizationId": "hais",
+      "repository": "hypenosys/HAIS",
+      "title": "Prueba de autenticación y autorización multitenant",
+      "descripcion": "Prueba de autenticación y autorización multitenant",
+      "tema_principal": "HAIS-001 / platform",
+      "prioridad": "High",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "chore",
+      "resuelto_por": "",
+      "asignados": [],
+      "tags": [
+        "hais-001",
+        "platform"
+      ],
+      "blocked_by": [
+        900002
+      ],
+      "acceptance_criteria": "pruebas negativas de acceso cruzado",
+      "executor_proposed": "jules",
+      "subtasks": [],
+      "external_links": [],
+      "comments": [],
+      "change_log": []
+    },
+    {
+      "id": 900006,
+      "pilot_task_id": "HAIS-001-H006",
+      "pilot_id": "HAIS-001",
+      "organizationId": "hais",
+      "repository": "hypenosys/HAIS",
+      "title": "Verificar creación y persistencia de tareas",
+      "descripcion": "Verificar creación y persistencia de tareas",
+      "tema_principal": "HAIS-001 / platform",
+      "prioridad": "High",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "chore",
+      "resuelto_por": "",
+      "asignados": [],
+      "tags": [
+        "hais-001",
+        "platform"
+      ],
+      "blocked_by": [
+        900002
+      ],
+      "acceptance_criteria": "lectura tras reinicio",
+      "executor_proposed": "jules",
+      "subtasks": [],
+      "external_links": [],
+      "comments": [],
+      "change_log": []
+    },
+    {
+      "id": 900007,
+      "pilot_task_id": "HAIS-001-H007",
+      "pilot_id": "HAIS-001",
+      "organizationId": "hais",
+      "repository": "hypenosys/HAIS",
+      "title": "Verificar bloqueos y dependencias",
+      "descripcion": "Verificar bloqueos y dependencias",
+      "tema_principal": "HAIS-001 / platform",
+      "prioridad": "High",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "chore",
+      "resuelto_por": "",
+      "asignados": [],
+      "tags": [
+        "hais-001",
+        "platform"
+      ],
+      "blocked_by": [
+        900006
+      ],
+      "acceptance_criteria": "no despachar tareas bloqueadas",
+      "executor_proposed": "jules",
+      "subtasks": [],
+      "external_links": [],
+      "comments": [],
+      "change_log": []
+    },
+    {
+      "id": 900008,
+      "pilot_task_id": "HAIS-001-H008",
+      "pilot_id": "HAIS-001",
+      "organizationId": "hais",
+      "repository": "hypenosys/HAIS",
+      "title": "Ejecución Jules de tarea real",
+      "descripcion": "Ejecución Jules de tarea real",
+      "tema_principal": "HAIS-001 / platform",
+      "prioridad": "High",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "chore",
+      "resuelto_por": "",
+      "asignados": [],
+      "tags": [
+        "hais-001",
+        "platform"
+      ],
+      "blocked_by": [
+        900004,
+        900007
+      ],
+      "acceptance_criteria": "evidencia de sesión y commit",
+      "executor_proposed": "jules",
+      "subtasks": [],
+      "external_links": [],
+      "comments": [],
+      "change_log": []
+    },
+    {
+      "id": 900009,
+      "pilot_task_id": "HAIS-001-H009",
+      "pilot_id": "HAIS-001",
+      "organizationId": "hais",
+      "repository": "hypenosys/HAIS",
+      "title": "Sincronizar PR, CI y estado de tarea",
+      "descripcion": "Sincronizar PR, CI y estado de tarea",
+      "tema_principal": "HAIS-001 / platform",
+      "prioridad": "High",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "chore",
+      "resuelto_por": "",
+      "asignados": [],
+      "tags": [
+        "hais-001",
+        "platform"
+      ],
+      "blocked_by": [
+        900008
+      ],
+      "acceptance_criteria": "transiciones verificadas sin marcar DONE anticipadamente",
+      "executor_proposed": "jules",
+      "subtasks": [],
+      "external_links": [],
+      "comments": [],
+      "change_log": []
+    },
+    {
+      "id": 900010,
+      "pilot_task_id": "HAIS-001-H010",
+      "pilot_id": "HAIS-001",
+      "organizationId": "hais",
+      "repository": "hypenosys/HAIS",
+      "title": "Esqueleto del servicio HAIS",
+      "descripcion": "Esqueleto del servicio HAIS",
+      "tema_principal": "HAIS-001 / product",
+      "prioridad": "High",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "chore",
+      "resuelto_por": "",
+      "asignados": [],
+      "tags": [
+        "hais-001",
+        "product"
+      ],
+      "blocked_by": [
+        900003
+      ],
+      "acceptance_criteria": "FastAPI levanta health check",
+      "executor_proposed": "jules",
+      "subtasks": [],
+      "external_links": [],
+      "comments": [],
+      "change_log": []
+    },
+    {
+      "id": 900011,
+      "pilot_task_id": "HAIS-001-H011",
+      "pilot_id": "HAIS-001",
+      "organizationId": "hais",
+      "repository": "hypenosys/HAIS",
+      "title": "Esquemas tipados de decisiones",
+      "descripcion": "Esquemas tipados de decisiones",
+      "tema_principal": "HAIS-001 / product",
+      "prioridad": "High",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "chore",
+      "resuelto_por": "",
+      "asignados": [],
+      "tags": [
+        "hais-001",
+        "product"
+      ],
+      "blocked_by": [
+        900010
+      ],
+      "acceptance_criteria": "validación Pydantic y tests",
+      "executor_proposed": "jules",
+      "subtasks": [],
+      "external_links": [],
+      "comments": [],
+      "change_log": []
+    },
+    {
+      "id": 900012,
+      "pilot_task_id": "HAIS-001-H012",
+      "pilot_id": "HAIS-001",
+      "organizationId": "hais",
+      "repository": "hypenosys/HAIS",
+      "title": "PostgreSQL y migraciones",
+      "descripcion": "PostgreSQL y migraciones",
+      "tema_principal": "HAIS-001 / product",
+      "prioridad": "High",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "chore",
+      "resuelto_por": "",
+      "asignados": [],
+      "tags": [
+        "hais-001",
+        "product"
+      ],
+      "blocked_by": [
+        900010
+      ],
+      "acceptance_criteria": "migración reversible probada",
+      "executor_proposed": "jules",
+      "subtasks": [],
+      "external_links": [],
+      "comments": [],
+      "change_log": []
+    },
+    {
+      "id": 900013,
+      "pilot_task_id": "HAIS-001-H013",
+      "pilot_id": "HAIS-001",
+      "organizationId": "hais",
+      "repository": "hypenosys/HAIS",
+      "title": "Gateway OpenAI y OpenRouter seguro",
+      "descripcion": "Gateway OpenAI y OpenRouter seguro",
+      "tema_principal": "HAIS-001 / product",
+      "prioridad": "High",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "chore",
+      "resuelto_por": "",
+      "asignados": [],
+      "tags": [
+        "hais-001",
+        "product"
+      ],
+      "blocked_by": [
+        900010,
+        900004
+      ],
+      "acceptance_criteria": "BYOK server-side y presupuestos\ntests con proveedor simulado",
+      "executor_proposed": "jules",
+      "subtasks": [],
+      "external_links": [],
+      "comments": [],
+      "change_log": []
+    },
+    {
+      "id": 900014,
+      "pilot_task_id": "HAIS-001-H014",
+      "pilot_id": "HAIS-001",
+      "organizationId": "hais",
+      "repository": "hypenosys/HAIS",
+      "title": "Ingesta sintética de datos financieros",
+      "descripcion": "Ingesta sintética de datos financieros",
+      "tema_principal": "HAIS-001 / product",
+      "prioridad": "High",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "chore",
+      "resuelto_por": "",
+      "asignados": [],
+      "tags": [
+        "hais-001",
+        "product"
+      ],
+      "blocked_by": [
+        900011
+      ],
+      "acceptance_criteria": "fuente marcada SYNTHETIC y sin órdenes reales",
+      "executor_proposed": "jules",
+      "subtasks": [],
+      "external_links": [],
+      "comments": [],
+      "change_log": []
+    },
+    {
+      "id": 900015,
+      "pilot_task_id": "HAIS-001-H015",
+      "pilot_id": "HAIS-001",
+      "organizationId": "hais",
+      "repository": "hypenosys/HAIS",
+      "title": "Configurar CI del repositorio HAIS",
+      "descripcion": "Configurar CI del repositorio HAIS",
+      "tema_principal": "HAIS-001 / quality",
+      "prioridad": "High",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "chore",
+      "resuelto_por": "",
+      "asignados": [],
+      "tags": [
+        "hais-001",
+        "quality"
+      ],
+      "blocked_by": [
+        900003
+      ],
+      "acceptance_criteria": "checks obligatorios y permisos mínimos",
+      "executor_proposed": "jules",
+      "subtasks": [],
+      "external_links": [],
+      "comments": [],
+      "change_log": []
+    },
+    {
+      "id": 900016,
+      "pilot_task_id": "HAIS-001-H016",
+      "pilot_id": "HAIS-001",
+      "organizationId": "hais",
+      "repository": "hypenosys/HAIS",
+      "title": "Comprobar workflow de creación de PR",
+      "descripcion": "Comprobar workflow de creación de PR",
+      "tema_principal": "HAIS-001 / quality",
+      "prioridad": "High",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "chore",
+      "resuelto_por": "",
+      "asignados": [],
+      "tags": [
+        "hais-001",
+        "quality"
+      ],
+      "blocked_by": [
+        900008,
+        900015
+      ],
+      "acceptance_criteria": "PR vinculada a tarea",
+      "executor_proposed": "jules",
+      "subtasks": [],
+      "external_links": [],
+      "comments": [],
+      "change_log": []
+    },
+    {
+      "id": 900017,
+      "pilot_task_id": "HAIS-001-H017",
+      "pilot_id": "HAIS-001",
+      "organizationId": "hais",
+      "repository": "hypenosys/HAIS",
+      "title": "Probar dos ejecuciones independientes en paralelo",
+      "descripcion": "Probar dos ejecuciones independientes en paralelo",
+      "tema_principal": "HAIS-001 / quality",
+      "prioridad": "High",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "chore",
+      "resuelto_por": "",
+      "asignados": [],
+      "tags": [
+        "hais-001",
+        "quality"
+      ],
+      "blocked_by": [
+        900009,
+        900016
+      ],
+      "acceptance_criteria": "sin conflictos de ficheros ni tareas duplicadas",
+      "executor_proposed": "jules",
+      "subtasks": [],
+      "external_links": [],
+      "comments": [],
+      "change_log": []
+    },
+    {
+      "id": 900018,
+      "pilot_task_id": "HAIS-001-H018",
+      "pilot_id": "HAIS-001",
+      "organizationId": "hais",
+      "repository": "hypenosys/HAIS",
+      "title": "Eventos auditables e idempotencia",
+      "descripcion": "Eventos auditables e idempotencia",
+      "tema_principal": "HAIS-001 / quality",
+      "prioridad": "High",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "chore",
+      "resuelto_por": "",
+      "asignados": [],
+      "tags": [
+        "hais-001",
+        "quality"
+      ],
+      "blocked_by": [
+        900011,
+        900012
+      ],
+      "acceptance_criteria": "event_id único y replay seguro",
+      "executor_proposed": "jules",
+      "subtasks": [],
+      "external_links": [],
+      "comments": [],
+      "change_log": []
+    },
+    {
+      "id": 900019,
+      "pilot_task_id": "HAIS-001-H019",
+      "pilot_id": "HAIS-001",
+      "organizationId": "hais",
+      "repository": "hypenosys/HAIS",
+      "title": "Cognito sandbox smoke test",
+      "descripcion": "Cognito sandbox smoke test",
+      "tema_principal": "HAIS-001 / quality",
+      "prioridad": "High",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "chore",
+      "resuelto_por": "",
+      "asignados": [],
+      "tags": [
+        "hais-001",
+        "quality"
+      ],
+      "blocked_by": [
+        900003
+      ],
+      "acceptance_criteria": "sin acceso a secretos ni producción\nfallo controlado",
+      "executor_proposed": "cognito",
+      "subtasks": [],
+      "external_links": [],
+      "comments": [],
+      "change_log": []
+    },
+    {
+      "id": 900020,
+      "pilot_task_id": "HAIS-001-H020",
+      "pilot_id": "HAIS-001",
+      "organizationId": "hais",
+      "repository": "hypenosys/HAIS",
+      "title": "Diseñar infraestructura y gestión de secretos",
+      "descripcion": "Diseñar infraestructura y gestión de secretos",
+      "tema_principal": "HAIS-001 / deployment",
+      "prioridad": "High",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "chore",
+      "resuelto_por": "",
+      "asignados": [],
+      "tags": [
+        "hais-001",
+        "deployment"
+      ],
+      "blocked_by": [
+        900010
+      ],
+      "acceptance_criteria": "sin claves en repositorio ni navegador",
+      "executor_proposed": "jules",
+      "subtasks": [],
+      "external_links": [],
+      "comments": [],
+      "change_log": []
+    },
+    {
+      "id": 900021,
+      "pilot_task_id": "HAIS-001-H021",
+      "pilot_id": "HAIS-001",
+      "organizationId": "hais",
+      "repository": "hypenosys/HAIS",
+      "title": "Desplegar staging con health checks",
+      "descripcion": "Desplegar staging con health checks",
+      "tema_principal": "HAIS-001 / deployment",
+      "prioridad": "High",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "chore",
+      "resuelto_por": "",
+      "asignados": [],
+      "tags": [
+        "hais-001",
+        "deployment"
+      ],
+      "blocked_by": [
+        900013,
+        900014,
+        900015,
+        900020
+      ],
+      "acceptance_criteria": "acceso privado y health check real",
+      "executor_proposed": "jules",
+      "subtasks": [],
+      "external_links": [],
+      "comments": [],
+      "change_log": []
+    },
+    {
+      "id": 900022,
+      "pilot_task_id": "HAIS-001-H022",
+      "pilot_id": "HAIS-001",
+      "organizationId": "hais",
+      "repository": "hypenosys/HAIS",
+      "title": "Verificar backups y rollback",
+      "descripcion": "Verificar backups y rollback",
+      "tema_principal": "HAIS-001 / deployment",
+      "prioridad": "High",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "chore",
+      "resuelto_por": "",
+      "asignados": [],
+      "tags": [
+        "hais-001",
+        "deployment"
+      ],
+      "blocked_by": [
+        900021
+      ],
+      "acceptance_criteria": "restauración ensayada",
+      "executor_proposed": "jules",
+      "subtasks": [],
+      "external_links": [],
+      "comments": [],
+      "change_log": []
+    },
+    {
+      "id": 900023,
+      "pilot_task_id": "HAIS-001-H023",
+      "pilot_id": "HAIS-001",
+      "organizationId": "hais",
+      "repository": "hypenosys/HAIS",
+      "title": "Desplegar piloto limitado sin LIVE",
+      "descripcion": "Desplegar piloto limitado sin LIVE",
+      "tema_principal": "HAIS-001 / deployment",
+      "prioridad": "High",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "chore",
+      "resuelto_por": "",
+      "asignados": [],
+      "tags": [
+        "hais-001",
+        "deployment"
+      ],
+      "blocked_by": [
+        900017,
+        900018,
+        900022
+      ],
+      "acceptance_criteria": "autorización explícita de despliegue\nLIVE deshabilitado",
+      "executor_proposed": "human",
+      "subtasks": [],
+      "external_links": [],
+      "comments": [],
+      "change_log": []
+    },
+    {
+      "id": 900024,
+      "pilot_task_id": "HAIS-001-H024",
+      "pilot_id": "HAIS-001",
+      "organizationId": "hais",
+      "repository": "hypenosys/HAIS",
+      "title": "Pruebas E2E y dictamen GO/NO-GO",
+      "descripcion": "Pruebas E2E y dictamen GO/NO-GO",
+      "tema_principal": "HAIS-001 / deployment",
+      "prioridad": "High",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "chore",
+      "resuelto_por": "",
+      "asignados": [],
+      "tags": [
+        "hais-001",
+        "deployment"
+      ],
+      "blocked_by": [
+        900023
+      ],
+      "acceptance_criteria": "pruebas de permisos, BYOK, tareas, PR y rollback",
+      "executor_proposed": "jules",
+      "subtasks": [],
+      "external_links": [],
+      "comments": [],
+      "change_log": []
+    }
+  ]
+}
