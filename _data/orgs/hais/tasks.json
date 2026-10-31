@@ -26,15 +26,23 @@
       "executor_proposed": "human",
       "subtasks": [
         {
-          "title": "Implementación / comprobación",
+          "id": 900001001,
+          "text": "Verificar acceso OAuth de haopengwang123 y axlfc en dev.hypenosys.com",
           "done": false
         },
         {
-          "title": "Pruebas automatizadas y negativas",
+          "id": 900001002,
+          "text": "Comprobar MFA y permisos efectivos sobre el repo privado hypenosys/HAIS",
           "done": false
         },
         {
-          "title": "Evidencias y revisión",
+          "id": 900001003,
+          "text": "Probar cierre de sesión, token revocado y acceso no autorizado",
+          "done": false
+        },
+        {
+          "id": 900001004,
+          "text": "Adjuntar evidencias saneadas de los permisos por usuario",
           "done": false
         }
       ],
@@ -94,15 +102,23 @@
       "executor_proposed": "human",
       "subtasks": [
         {
-          "title": "Implementación / comprobación",
+          "id": 900001011,
+          "text": "Comparar entrada HAIS en organizations.json con meta.json y miembros",
           "done": false
         },
         {
-          "title": "Pruebas automatizadas y negativas",
+          "id": 900001012,
+          "text": "Comprobar isSharded y la ubicación exclusiva de tasks.json",
           "done": false
         },
         {
-          "title": "Evidencias y revisión",
+          "id": 900001013,
+          "text": "Crear y releer una tarea de prueba sin contaminar otra organización",
+          "done": false
+        },
+        {
+          "id": 900001014,
+          "text": "Documentar resultado y corregir inconsistencias del shard",
           "done": false
         }
       ],
@@ -162,15 +178,23 @@
       "executor_proposed": "human",
       "subtasks": [
         {
-          "title": "Implementación / comprobación",
+          "id": 900001021,
+          "text": "Comprobar privacidad y permisos efectivos de hypenosys/HAIS",
           "done": false
         },
         {
-          "title": "Pruebas automatizadas y negativas",
+          "id": 900001022,
+          "text": "Verificar ramas develop/master y reglas de protección de develop",
           "done": false
         },
         {
-          "title": "Evidencias y revisión",
+          "id": 900001023,
+          "text": "Revisar PR #1 y resultados CI sin darla por fusionada",
+          "done": false
+        },
+        {
+          "id": 900001024,
+          "text": "Registrar enlaces y permisos faltantes sin conceder privilegios globales",
           "done": false
         }
       ],
@@ -231,15 +255,23 @@
       "executor_proposed": "human",
       "subtasks": [
         {
-          "title": "Implementación / comprobación",
+          "id": 900001031,
+          "text": "Auditar almacenamiento de claves en navegador, servidor y logs antes de usarlas",
           "done": false
         },
         {
-          "title": "Pruebas automatizadas y negativas",
+          "id": 900001032,
+          "text": "Probar Jules y un proveedor BYOK con credencial efímera de cuota mínima",
           "done": false
         },
         {
-          "title": "Evidencias y revisión",
+          "id": 900001033,
+          "text": "Verificar límites de consumo, error 401/429 y revocación",
+          "done": false
+        },
+        {
+          "id": 900001034,
+          "text": "Redactar evidencia sin exponer tokens ni secretos",
           "done": false
         }
       ],
@@ -299,15 +331,23 @@
       "executor_proposed": "jules",
       "subtasks": [
         {
-          "title": "Implementación / comprobación",
+          "id": 900001041,
+          "text": "Mapear endpoints de organizaciones, tareas y sesiones en Hub y tc",
           "done": false
         },
         {
-          "title": "Pruebas automatizadas y negativas",
+          "id": 900001042,
+          "text": "Probar lectura y escritura cruzada entre HAIS y otra organización",
           "done": false
         },
         {
-          "title": "Evidencias y revisión",
+          "id": 900001043,
+          "text": "Probar IDOR y falsificación de roles o identificadores de usuario",
+          "done": false
+        },
+        {
+          "id": 900001044,
+          "text": "Corregir fallos y registrar pruebas 401/403 reproducibles",
           "done": false
         }
       ],
@@ -367,15 +407,23 @@
       "executor_proposed": "jules",
       "subtasks": [
         {
-          "title": "Implementación / comprobación",
+          "id": 900001051,
+          "text": "Inspeccionar contrato de tasks.json y editor del Kanban HAIS",
           "done": false
         },
         {
-          "title": "Pruebas automatizadas y negativas",
+          "id": 900001052,
+          "text": "Crear y editar tarea conservando ID, criterios, dependencias y subtareas",
           "done": false
         },
         {
-          "title": "Evidencias y revisión",
+          "id": 900001053,
+          "text": "Forzar dos escrituras concurrentes y comprobar tratamiento de conflicto 409",
+          "done": false
+        },
+        {
+          "id": 900001054,
+          "text": "Recargar y comprobar que no hubo escritura en shard ajeno o legacy",
           "done": false
         }
       ],
@@ -435,15 +483,23 @@
       "executor_proposed": "jules",
       "subtasks": [
         {
-          "title": "Implementación / comprobación",
+          "id": 900001061,
+          "text": "Normalizar blocked_by como referencias a ID numérico de tarea",
           "done": false
         },
         {
-          "title": "Pruebas automatizadas y negativas",
+          "id": 900001062,
+          "text": "Bloquear despacho cuando una dependencia está Pending o Failed",
           "done": false
         },
         {
-          "title": "Evidencias y revisión",
+          "id": 900001063,
+          "text": "Probar DAG con ciclo, dependencia ausente y completitud tardía",
+          "done": false
+        },
+        {
+          "id": 900001064,
+          "text": "Registrar decisiones de desbloqueo y evitar doble ejecución",
           "done": false
         }
       ],
@@ -504,15 +560,23 @@
       "executor_proposed": "jules",
       "subtasks": [
         {
-          "title": "Implementación / comprobación",
+          "id": 900001071,
+          "text": "Seleccionar una tarea inocua PAPER del repositorio HAIS",
           "done": false
         },
         {
-          "title": "Pruebas automatizadas y negativas",
+          "id": 900001072,
+          "text": "Despachar sesión Jules con branch aislada y permisos mínimos",
           "done": false
         },
         {
-          "title": "Evidencias y revisión",
+          "id": 900001073,
+          "text": "Registrar session_id, cambios, commit y coste de la ejecución",
+          "done": false
+        },
+        {
+          "id": 900001074,
+          "text": "Revisar resultado y fallo controlado sin merge automático",
           "done": false
         }
       ],
@@ -572,15 +636,23 @@
       "executor_proposed": "jules",
       "subtasks": [
         {
-          "title": "Implementación / comprobación",
+          "id": 900001081,
+          "text": "Correlacionar task_id, Jules session_id, branch y PR de GitHub",
           "done": false
         },
         {
-          "title": "Pruebas automatizadas y negativas",
+          "id": 900001082,
+          "text": "Consultar CI y revisión para actualizar el estado del Kanban",
           "done": false
         },
         {
-          "title": "Evidencias y revisión",
+          "id": 900001083,
+          "text": "Probar PR cerrada sin merge, timeout y eventos duplicados",
+          "done": false
+        },
+        {
+          "id": 900001084,
+          "text": "Demostrar que Completed requiere evidencia y no solo una PR abierta",
           "done": false
         }
       ],
@@ -640,15 +712,23 @@
       "executor_proposed": "jules",
       "subtasks": [
         {
-          "title": "Implementación / comprobación",
+          "id": 900001091,
+          "text": "Revisar la implementación de la PR #1 del backend HAIS",
           "done": false
         },
         {
-          "title": "Pruebas automatizadas y negativas",
+          "id": 900001092,
+          "text": "Levantar FastAPI en contenedor y consultar /health",
           "done": false
         },
         {
-          "title": "Evidencias y revisión",
+          "id": 900001093,
+          "text": "Comprobar capabilities y /v1/paper/estimate sin colocación de órdenes",
+          "done": false
+        },
+        {
+          "id": 900001094,
+          "text": "Documentar ejecución local y defectos encontrados con enlaces a CI",
           "done": false
         }
       ],
@@ -708,15 +788,23 @@
       "executor_proposed": "jules",
       "subtasks": [
         {
-          "title": "Implementación / comprobación",
+          "id": 900001101,
+          "text": "Definir modelos tipados MarketBar, Signal, Thesis y DecisionTrace",
           "done": false
         },
         {
-          "title": "Pruebas automatizadas y negativas",
+          "id": 900001102,
+          "text": "Definir RiskAssessment, PaperOrder y PaperFill con UTC y precision decimal",
           "done": false
         },
         {
-          "title": "Evidencias y revisión",
+          "id": 900001103,
+          "text": "Rechazar datos inválidos y órdenes de modo LIVE mediante validación",
+          "done": false
+        },
+        {
+          "id": 900001104,
+          "text": "Publicar JSON Schema y pruebas de serialización y compatibilidad",
           "done": false
         }
       ],
@@ -776,15 +864,23 @@
       "executor_proposed": "jules",
       "subtasks": [
         {
-          "title": "Implementación / comprobación",
+          "id": 900001111,
+          "text": "Diseñar tablas con tenant_id para mercados, estrategias y decisiones",
           "done": false
         },
         {
-          "title": "Pruebas automatizadas y negativas",
+          "id": 900001112,
+          "text": "Crear migraciones Alembic para órdenes, fills y posiciones PAPER",
           "done": false
         },
         {
-          "title": "Evidencias y revisión",
+          "id": 900001113,
+          "text": "Añadir índices e idempotency_key únicos por organización",
+          "done": false
+        },
+        {
+          "id": 900001114,
+          "text": "Probar upgrade/downgrade y aislamiento usando base efímera",
           "done": false
         }
       ],
@@ -845,15 +941,23 @@
       "executor_proposed": "jules",
       "subtasks": [
         {
-          "title": "Implementación / comprobación",
+          "id": 900001121,
+          "text": "Definir interfaz provider para OpenAI, OpenRouter y mock",
           "done": false
         },
         {
-          "title": "Pruebas automatizadas y negativas",
+          "id": 900001122,
+          "text": "Guardar claves solo server-side con segregación por organización",
           "done": false
         },
         {
-          "title": "Evidencias y revisión",
+          "id": 900001123,
+          "text": "Implementar cuotas, timeout, backoff y medición de uso/coste",
+          "done": false
+        },
+        {
+          "id": 900001124,
+          "text": "Probar 401, 429, secretos revocados y redacción completa de logs",
           "done": false
         }
       ],
@@ -913,15 +1017,23 @@
       "executor_proposed": "jules",
       "subtasks": [
         {
-          "title": "Implementación / comprobación",
+          "id": 900001131,
+          "text": "Generar fixtures OHLCV con semilla fija y timestamps UTC",
           "done": false
         },
         {
-          "title": "Pruebas automatizadas y negativas",
+          "id": 900001132,
+          "text": "Validar precios/volúmenes y ausencia de datos futuros en backtest",
           "done": false
         },
         {
-          "title": "Evidencias y revisión",
+          "id": 900001133,
+          "text": "Propagar etiqueta SYNTHETIC hasta API, DB y reportes",
+          "done": false
+        },
+        {
+          "id": 900001134,
+          "text": "Repetir ejecución y comprobar resultados deterministas sin órdenes LIVE",
           "done": false
         }
       ],
@@ -981,15 +1093,23 @@
       "executor_proposed": "jules",
       "subtasks": [
         {
-          "title": "Implementación / comprobación",
+          "id": 900001141,
+          "text": "Ejecutar pytest y validaciones estáticas en develop/PR",
           "done": false
         },
         {
-          "title": "Pruebas automatizadas y negativas",
+          "id": 900001142,
+          "text": "Construir imagen Docker y comprobar usuario no privilegiado",
           "done": false
         },
         {
-          "title": "Evidencias y revisión",
+          "id": 900001143,
+          "text": "Añadir pruebas negativas que prohíban LIVE y broker externo",
+          "done": false
+        },
+        {
+          "id": 900001144,
+          "text": "Verificar permisos mínimos del workflow y publicar estado CI",
           "done": false
         }
       ],
@@ -1050,15 +1170,23 @@
       "executor_proposed": "jules",
       "subtasks": [
         {
-          "title": "Implementación / comprobación",
+          "id": 900001151,
+          "text": "Abrir PR desde branch de tarea con identificador HAIS visible",
           "done": false
         },
         {
-          "title": "Pruebas automatizadas y negativas",
+          "id": 900001152,
+          "text": "Vincular PR a task_id y comprobar checks automáticos",
           "done": false
         },
         {
-          "title": "Evidencias y revisión",
+          "id": 900001153,
+          "text": "Simular revisión solicitada y PR descartada o cerrada",
+          "done": false
+        },
+        {
+          "id": 900001154,
+          "text": "Impedir marcado Completed y merge automático sin revisión",
           "done": false
         }
       ],
@@ -1119,15 +1247,23 @@
       "executor_proposed": "jules",
       "subtasks": [
         {
-          "title": "Implementación / comprobación",
+          "id": 900001161,
+          "text": "Elegir dos tickets sin dependencias mutuas y ramas distintas",
           "done": false
         },
         {
-          "title": "Pruebas automatizadas y negativas",
+          "id": 900001162,
+          "text": "Lanzar como máximo dos sesiones Jules en paralelo",
           "done": false
         },
         {
-          "title": "Evidencias y revisión",
+          "id": 900001163,
+          "text": "Simular colisiones, timeout, retry y reentrega de evento",
+          "done": false
+        },
+        {
+          "id": 900001164,
+          "text": "Verificar trazabilidad de ambas sin commits perdidos ni duplicados",
           "done": false
         }
       ],
@@ -1188,15 +1324,23 @@
       "executor_proposed": "jules",
       "subtasks": [
         {
-          "title": "Implementación / comprobación",
+          "id": 900001171,
+          "text": "Definir eventos con event_id, run_id, tenant_id y source_version",
           "done": false
         },
         {
-          "title": "Pruebas automatizadas y negativas",
+          "id": 900001172,
+          "text": "Registrar decisiones PAPER y costes con saneamiento de secretos",
           "done": false
         },
         {
-          "title": "Evidencias y revisión",
+          "id": 900001173,
+          "text": "Reprocesar eventos para demostrar idempotencia de escritura",
+          "done": false
+        },
+        {
+          "id": 900001174,
+          "text": "Exportar línea temporal verificable sin datos sensibles",
           "done": false
         }
       ],
@@ -1256,15 +1400,23 @@
       "executor_proposed": "cognito",
       "subtasks": [
         {
-          "title": "Implementación / comprobación",
+          "id": 900001181,
+          "text": "Preparar sandbox Cognito con repo HAIS sin secretos y solo lectura",
           "done": false
         },
         {
-          "title": "Pruebas automatizadas y negativas",
+          "id": 900001182,
+          "text": "Ejecutar ticket de smoke test con límites de CPU, red y tiempo",
           "done": false
         },
         {
-          "title": "Evidencias y revisión",
+          "id": 900001183,
+          "text": "Comparar evidencias y resultados con ejecución Jules equivalente",
+          "done": false
+        },
+        {
+          "id": 900001184,
+          "text": "Verificar salida controlada y ausencia de escrituras de producción",
           "done": false
         }
       ],
@@ -1324,15 +1476,23 @@
       "executor_proposed": "jules",
       "subtasks": [
         {
-          "title": "Implementación / comprobación",
+          "id": 900001191,
+          "text": "Dibujar red entre Hub, tc, HAIS y PostgreSQL privado",
           "done": false
         },
         {
-          "title": "Pruebas automatizadas y negativas",
+          "id": 900001192,
+          "text": "Definir inyección de secretos, rotación, roles y políticas de acceso",
           "done": false
         },
         {
-          "title": "Evidencias y revisión",
+          "id": 900001193,
+          "text": "Fijar recursos, backups, observabilidad y separación dev/staging",
+          "done": false
+        },
+        {
+          "id": 900001194,
+          "text": "Revisar threat model y prohibir endpoints de trading públicos",
           "done": false
         }
       ],
@@ -1395,15 +1555,23 @@
       "executor_proposed": "jules",
       "subtasks": [
         {
-          "title": "Implementación / comprobación",
+          "id": 900001201,
+          "text": "Construir imagen HAIS reproducible y ejecutar staging PAPER",
           "done": false
         },
         {
-          "title": "Pruebas automatizadas y negativas",
+          "id": 900001202,
+          "text": "Configurar proxy autenticado y conectividad privada con tc",
           "done": false
         },
         {
-          "title": "Evidencias y revisión",
+          "id": 900001203,
+          "text": "Probar health, readiness, errores y logs estructurados",
+          "done": false
+        },
+        {
+          "id": 900001204,
+          "text": "Verificar denegación de acceso anónimo y ausencia de broker LIVE",
           "done": false
         }
       ],
@@ -1463,15 +1631,23 @@
       "executor_proposed": "jules",
       "subtasks": [
         {
-          "title": "Implementación / comprobación",
+          "id": 900001211,
+          "text": "Crear backup reproducible de PostgreSQL en staging",
           "done": false
         },
         {
-          "title": "Pruebas automatizadas y negativas",
+          "id": 900001212,
+          "text": "Restaurar backup en instalación aislada y comparar checksums",
           "done": false
         },
         {
-          "title": "Evidencias y revisión",
+          "id": 900001213,
+          "text": "Ensayar rollback de esquema e imagen ante fallo simulado",
+          "done": false
+        },
+        {
+          "id": 900001214,
+          "text": "Documentar RPO/RTO observados y pasos de recuperación",
           "done": false
         }
       ],
@@ -1533,15 +1709,23 @@
       "executor_proposed": "human",
       "subtasks": [
         {
-          "title": "Implementación / comprobación",
+          "id": 900001221,
+          "text": "Revisar presupuesto aprobado, límites por proveedor y alertas",
           "done": false
         },
         {
-          "title": "Pruebas automatizadas y negativas",
+          "id": 900001222,
+          "text": "Verificar kill switch lógico y ausencia de capacidades LIVE",
           "done": false
         },
         {
-          "title": "Evidencias y revisión",
+          "id": 900001223,
+          "text": "Solicitar aprobación explícita humana para habilitar staging PAPER",
+          "done": false
+        },
+        {
+          "id": 900001224,
+          "text": "Registrar comprobaciones de costes, parada y responsables",
           "done": false
         }
       ],
@@ -1601,15 +1785,23 @@
       "executor_proposed": "jules",
       "subtasks": [
         {
-          "title": "Implementación / comprobación",
+          "id": 900001231,
+          "text": "Ejecutar login y cambio de organización con Haopeng y Axlfc",
           "done": false
         },
         {
-          "title": "Pruebas automatizadas y negativas",
+          "id": 900001232,
+          "text": "Completar tarea→Jules→PR→CI→Kanban con evidencia trazable",
           "done": false
         },
         {
-          "title": "Evidencias y revisión",
+          "id": 900001233,
+          "text": "Ejecutar cálculo PAPER y pruebas negativas BYOK/tenant/rollback",
+          "done": false
+        },
+        {
+          "id": 900001234,
+          "text": "Emitir informe GO/NO-GO firmado con bloqueos y URLs de evidencia",
           "done": false
         }
       ],
