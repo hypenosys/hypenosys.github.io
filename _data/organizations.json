@@ -16,9 +16,29 @@
       "createdAt": "2025-01-01T00:00:00.000Z",
       "isDefault": false,
       "isSharded": true
+    },
+    {
+      "id": "hais",
+      "name": "HAIS",
+      "createdBy": "haopengwang123",
+      "createdAt": "2026-10-31T21:19:12.590Z",
+      "isDefault": false,
+      "isSharded": false,
+      "members": [
+        {
+          "handle": "haopengwang123",
+          "teams": [],
+          "roles": []
+        }
+      ]
     }
   ],
   "_audit_log": [
+    {
+      "action": "feat: nueva organización HAIS añadida",
+      "user": "haopengwang123",
+      "timestamp": "2026-10-31T21:19:14.539Z"
+    },
     {
       "action": "chore(sharding): marcar org empty-space-videogames como isSharded: true",
       "user": "Sistema",
