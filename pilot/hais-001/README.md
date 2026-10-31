@@ -27,7 +27,7 @@ La segunda importación debe añadir cero tareas. El planificador rechaza worksp
 ## Orden de activación
 
 1. Haopeng crea personalmente su cuenta GitHub y habilita MFA. Un propietario existente verifica y concede únicamente los permisos necesarios.
-2. Crear el workspace HAIS en Hypenosys y el repositorio privado `hypenosys/hais`, verificando primero la implementación real de organizaciones y permisos.
+2. Crear el workspace HAIS en Hypenosys y el repositorio privado `hypenosys/HAIS`, verificando primero la implementación real de organizaciones y permisos.
 3. Conectar Jules y las APIs BYOK con **almacenamiento server-side** y cuotas. No usar `localStorage` para secretos de producción.
 4. Ejecutar una tarea inocua para verificar el ciclo de sesión, cambios, PR, CI y sincronización.
 5. Habilitar dos tareas de código independientes en paralelo solo tras demostrar bloqueo por dependencias y aislamiento de ramas.
