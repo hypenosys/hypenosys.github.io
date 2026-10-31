@@ -19,7 +19,11 @@
       "asignados": [],
       "tags": [
         "hais-001",
-        "identity"
+        "identity",
+        "oauth",
+        "rbac",
+        "github",
+        "onboarding"
       ],
       "blocked_by": [],
       "acceptance_criteria": "GitHub MFA activo\nacceso limitado comprobado\nSesión real de ambos usuarios registrada sin tokens; prueba de acceso denegado a recurso no autorizado; evidencia de rol y alcance GitHub",
@@ -50,6 +54,14 @@
         {
           "url": "https://github.com/hypenosys/HAIS",
           "label": "Repositorio HAIS"
+        },
+        {
+          "label": "GitHub OAuth",
+          "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps"
+        },
+        {
+          "label": "Permissions",
+          "url": "https://docs.github.com/en/rest/authentication/permissions-required-for-fine-grained-personal-access-tokens"
         }
       ],
       "comments": [],
@@ -93,7 +105,10 @@
       "asignados": [],
       "tags": [
         "hais-001",
-        "identity"
+        "identity",
+        "tenancy",
+        "organization",
+        "sharding"
       ],
       "blocked_by": [
         900001
@@ -126,6 +141,14 @@
         {
           "url": "https://github.com/hypenosys/HAIS",
           "label": "Repositorio HAIS"
+        },
+        {
+          "label": "GitHub Contents API",
+          "url": "https://docs.github.com/en/rest/repos/contents"
+        },
+        {
+          "label": "OWASP Access Control",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html"
         }
       ],
       "comments": [],
@@ -169,7 +192,10 @@
       "asignados": [],
       "tags": [
         "hais-001",
-        "identity"
+        "identity",
+        "repository",
+        "branch-protection",
+        "ci"
       ],
       "blocked_by": [
         900001
@@ -202,6 +228,14 @@
         {
           "url": "https://github.com/hypenosys/HAIS",
           "label": "Repositorio HAIS"
+        },
+        {
+          "label": "Protected branches",
+          "url": "https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches"
+        },
+        {
+          "label": "Rulesets",
+          "url": "https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets"
         }
       ],
       "comments": [],
@@ -245,7 +279,11 @@
       "asignados": [],
       "tags": [
         "hais-001",
-        "identity"
+        "identity",
+        "byok",
+        "oauth",
+        "secrets",
+        "jules"
       ],
       "blocked_by": [
         900002,
@@ -279,6 +317,18 @@
         {
           "url": "https://github.com/hypenosys/HAIS",
           "label": "Repositorio HAIS"
+        },
+        {
+          "label": "OWASP Secrets Management",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html"
+        },
+        {
+          "label": "OpenAI API Reference",
+          "url": "https://developers.openai.com/api/reference/overview"
+        },
+        {
+          "label": "OpenRouter API",
+          "url": "https://openrouter.ai/docs/api-reference/overview"
         }
       ],
       "comments": [],
@@ -322,7 +372,11 @@
       "asignados": [],
       "tags": [
         "hais-001",
-        "platform"
+        "platform",
+        "security",
+        "rbac",
+        "multi-tenant",
+        "idor"
       ],
       "blocked_by": [
         900002
@@ -355,6 +409,14 @@
         {
           "url": "https://github.com/hypenosys/HAIS",
           "label": "Repositorio HAIS"
+        },
+        {
+          "label": "OWASP Authorization",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html"
+        },
+        {
+          "label": "OWASP IDOR",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Insecure_Direct_Object_Reference_Prevention_Cheat_Sheet.html"
         }
       ],
       "comments": [],
@@ -398,7 +460,11 @@
       "asignados": [],
       "tags": [
         "hais-001",
-        "platform"
+        "platform",
+        "kanban",
+        "persistence",
+        "github-api",
+        "concurrency"
       ],
       "blocked_by": [
         900002
@@ -431,6 +497,14 @@
         {
           "url": "https://github.com/hypenosys/HAIS",
           "label": "Repositorio HAIS"
+        },
+        {
+          "label": "GitHub Contents API",
+          "url": "https://docs.github.com/en/rest/repos/contents"
+        },
+        {
+          "label": "GitHub REST best practices",
+          "url": "https://docs.github.com/en/rest/using-the-rest-api/best-practices-for-using-the-rest-api"
         }
       ],
       "comments": [],
@@ -474,7 +548,10 @@
       "asignados": [],
       "tags": [
         "hais-001",
-        "platform"
+        "platform",
+        "scheduler",
+        "dag",
+        "idempotency"
       ],
       "blocked_by": [
         900006
@@ -507,6 +584,14 @@
         {
           "url": "https://github.com/hypenosys/HAIS",
           "label": "Repositorio HAIS"
+        },
+        {
+          "label": "Python graphlib",
+          "url": "https://docs.python.org/3/library/graphlib.html"
+        },
+        {
+          "label": "Temporal workflow execution",
+          "url": "https://docs.temporal.io/workflow-execution"
         }
       ],
       "comments": [],
@@ -550,7 +635,11 @@
       "asignados": [],
       "tags": [
         "hais-001",
-        "platform"
+        "platform",
+        "jules",
+        "agent",
+        "github",
+        "execution"
       ],
       "blocked_by": [
         900004,
@@ -584,6 +673,14 @@
         {
           "url": "https://github.com/hypenosys/HAIS",
           "label": "Repositorio HAIS"
+        },
+        {
+          "label": "GitHub Pull Requests",
+          "url": "https://docs.github.com/en/rest/pulls/pulls"
+        },
+        {
+          "label": "GitHub commits API",
+          "url": "https://docs.github.com/en/rest/commits/commits"
         }
       ],
       "comments": [],
@@ -627,7 +724,11 @@
       "asignados": [],
       "tags": [
         "hais-001",
-        "platform"
+        "platform",
+        "jules",
+        "github-actions",
+        "webhooks",
+        "sync"
       ],
       "blocked_by": [
         900008
@@ -660,6 +761,14 @@
         {
           "url": "https://github.com/hypenosys/HAIS",
           "label": "Repositorio HAIS"
+        },
+        {
+          "label": "GitHub Webhook events",
+          "url": "https://docs.github.com/en/webhooks/webhook-events-and-payloads"
+        },
+        {
+          "label": "GitHub workflow runs",
+          "url": "https://docs.github.com/en/rest/actions/workflow-runs"
         }
       ],
       "comments": [],
@@ -703,7 +812,10 @@
       "asignados": [],
       "tags": [
         "hais-001",
-        "product"
+        "product",
+        "fastapi",
+        "docker",
+        "paper"
       ],
       "blocked_by": [
         900003
@@ -736,6 +848,14 @@
         {
           "url": "https://github.com/hypenosys/HAIS",
           "label": "Repositorio HAIS"
+        },
+        {
+          "label": "FastAPI deployment",
+          "url": "https://fastapi.tiangolo.com/deployment/"
+        },
+        {
+          "label": "FastAPI testing",
+          "url": "https://fastapi.tiangolo.com/tutorial/testing/"
         }
       ],
       "comments": [],
@@ -779,7 +899,10 @@
       "asignados": [],
       "tags": [
         "hais-001",
-        "product"
+        "product",
+        "pydantic",
+        "schema",
+        "paper-trading"
       ],
       "blocked_by": [
         900010
@@ -812,6 +935,14 @@
         {
           "url": "https://github.com/hypenosys/HAIS",
           "label": "Repositorio HAIS"
+        },
+        {
+          "label": "Pydantic Models",
+          "url": "https://docs.pydantic.dev/latest/concepts/models/"
+        },
+        {
+          "label": "JSON Schema",
+          "url": "https://json-schema.org/understanding-json-schema/"
         }
       ],
       "comments": [],
@@ -855,7 +986,10 @@
       "asignados": [],
       "tags": [
         "hais-001",
-        "product"
+        "product",
+        "postgresql",
+        "alembic",
+        "tenant-isolation"
       ],
       "blocked_by": [
         900010
@@ -888,6 +1022,14 @@
         {
           "url": "https://github.com/hypenosys/HAIS",
           "label": "Repositorio HAIS"
+        },
+        {
+          "label": "PostgreSQL Row Security",
+          "url": "https://www.postgresql.org/docs/current/ddl-rowsecurity.html"
+        },
+        {
+          "label": "Alembic",
+          "url": "https://alembic.sqlalchemy.org/en/latest/"
         }
       ],
       "comments": [],
@@ -931,7 +1073,11 @@
       "asignados": [],
       "tags": [
         "hais-001",
-        "product"
+        "product",
+        "openai",
+        "openrouter",
+        "byok",
+        "cost-control"
       ],
       "blocked_by": [
         900010,
@@ -965,6 +1111,18 @@
         {
           "url": "https://github.com/hypenosys/HAIS",
           "label": "Repositorio HAIS"
+        },
+        {
+          "label": "OpenAI Rate Limits",
+          "url": "https://developers.openai.com/api/docs/guides/rate-limits"
+        },
+        {
+          "label": "OpenRouter API",
+          "url": "https://openrouter.ai/docs/api-reference/overview"
+        },
+        {
+          "label": "OWASP Secrets",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html"
         }
       ],
       "comments": [],
@@ -1008,7 +1166,11 @@
       "asignados": [],
       "tags": [
         "hais-001",
-        "product"
+        "product",
+        "market-data",
+        "ohlcv",
+        "backtesting",
+        "synthetic"
       ],
       "blocked_by": [
         900011
@@ -1041,6 +1203,14 @@
         {
           "url": "https://github.com/hypenosys/HAIS",
           "label": "Repositorio HAIS"
+        },
+        {
+          "label": "pandas time series",
+          "url": "https://pandas.pydata.org/docs/user_guide/timeseries.html"
+        },
+        {
+          "label": "NumPy random generation",
+          "url": "https://numpy.org/doc/stable/reference/random/index.html"
         }
       ],
       "comments": [],
@@ -1084,7 +1254,11 @@
       "asignados": [],
       "tags": [
         "hais-001",
-        "quality"
+        "quality",
+        "ci",
+        "pytest",
+        "supply-chain",
+        "docker"
       ],
       "blocked_by": [
         900003
@@ -1117,6 +1291,18 @@
         {
           "url": "https://github.com/hypenosys/HAIS",
           "label": "Repositorio HAIS"
+        },
+        {
+          "label": "GitHub Actions security",
+          "url": "https://docs.github.com/en/actions/security-for-github-actions/security-guides/security-hardening-for-github-actions"
+        },
+        {
+          "label": "Pytest",
+          "url": "https://docs.pytest.org/en/stable/"
+        },
+        {
+          "label": "Docker build",
+          "url": "https://docs.docker.com/build/"
         }
       ],
       "comments": [],
@@ -1160,7 +1346,11 @@
       "asignados": [],
       "tags": [
         "hais-001",
-        "quality"
+        "quality",
+        "pull-requests",
+        "jules",
+        "ci",
+        "review"
       ],
       "blocked_by": [
         900008,
@@ -1194,6 +1384,14 @@
         {
           "url": "https://github.com/hypenosys/HAIS",
           "label": "Repositorio HAIS"
+        },
+        {
+          "label": "GitHub Pull Requests",
+          "url": "https://docs.github.com/en/rest/pulls/pulls"
+        },
+        {
+          "label": "GitHub branch protection",
+          "url": "https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches"
         }
       ],
       "comments": [],
@@ -1237,7 +1435,11 @@
       "asignados": [],
       "tags": [
         "hais-001",
-        "quality"
+        "quality",
+        "concurrency",
+        "jules",
+        "workers",
+        "retry"
       ],
       "blocked_by": [
         900009,
@@ -1271,6 +1473,14 @@
         {
           "url": "https://github.com/hypenosys/HAIS",
           "label": "Repositorio HAIS"
+        },
+        {
+          "label": "GitHub Actions concurrency",
+          "url": "https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency"
+        },
+        {
+          "label": "GitHub REST best practices",
+          "url": "https://docs.github.com/en/rest/using-the-rest-api/best-practices-for-using-the-rest-api"
         }
       ],
       "comments": [],
@@ -1314,7 +1524,11 @@
       "asignados": [],
       "tags": [
         "hais-001",
-        "quality"
+        "quality",
+        "audit",
+        "event-sourcing",
+        "idempotency",
+        "paper"
       ],
       "blocked_by": [
         900011,
@@ -1348,6 +1562,14 @@
         {
           "url": "https://github.com/hypenosys/HAIS",
           "label": "Repositorio HAIS"
+        },
+        {
+          "label": "OpenTelemetry concepts",
+          "url": "https://opentelemetry.io/docs/concepts/"
+        },
+        {
+          "label": "PostgreSQL transactions",
+          "url": "https://www.postgresql.org/docs/current/tutorial-transactions.html"
         }
       ],
       "comments": [],
@@ -1391,7 +1613,10 @@
       "asignados": [],
       "tags": [
         "hais-001",
-        "quality"
+        "quality",
+        "cognito",
+        "sandbox",
+        "agent-security"
       ],
       "blocked_by": [
         900003
@@ -1424,6 +1649,14 @@
         {
           "url": "https://github.com/hypenosys/HAIS",
           "label": "Repositorio HAIS"
+        },
+        {
+          "label": "OWASP Docker Security",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html"
+        },
+        {
+          "label": "Docker security",
+          "url": "https://docs.docker.com/engine/security/"
         }
       ],
       "comments": [],
@@ -1467,7 +1700,10 @@
       "asignados": [],
       "tags": [
         "hais-001",
-        "deployment"
+        "deployment",
+        "infrastructure",
+        "secrets",
+        "threat-model"
       ],
       "blocked_by": [
         900010
@@ -1500,6 +1736,18 @@
         {
           "url": "https://github.com/hypenosys/HAIS",
           "label": "Repositorio HAIS"
+        },
+        {
+          "label": "OWASP Threat Modeling",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Threat_Modeling_Cheat_Sheet.html"
+        },
+        {
+          "label": "Docker Compose",
+          "url": "https://docs.docker.com/compose/"
+        },
+        {
+          "label": "OWASP Secrets Management",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html"
         }
       ],
       "comments": [],
@@ -1543,7 +1791,11 @@
       "asignados": [],
       "tags": [
         "hais-001",
-        "deployment"
+        "deployment",
+        "staging",
+        "health-check",
+        "docker",
+        "paper"
       ],
       "blocked_by": [
         900013,
@@ -1579,6 +1831,14 @@
         {
           "url": "https://github.com/hypenosys/HAIS",
           "label": "Repositorio HAIS"
+        },
+        {
+          "label": "Docker healthcheck",
+          "url": "https://docs.docker.com/reference/dockerfile/#healthcheck"
+        },
+        {
+          "label": "FastAPI deployment",
+          "url": "https://fastapi.tiangolo.com/deployment/"
         }
       ],
       "comments": [],
@@ -1622,7 +1882,10 @@
       "asignados": [],
       "tags": [
         "hais-001",
-        "deployment"
+        "deployment",
+        "backup",
+        "rollback",
+        "postgresql"
       ],
       "blocked_by": [
         900021
@@ -1655,6 +1918,14 @@
         {
           "url": "https://github.com/hypenosys/HAIS",
           "label": "Repositorio HAIS"
+        },
+        {
+          "label": "PostgreSQL Backup",
+          "url": "https://www.postgresql.org/docs/current/backup.html"
+        },
+        {
+          "label": "Alembic migrations",
+          "url": "https://alembic.sqlalchemy.org/en/latest/"
         }
       ],
       "comments": [],
@@ -1698,7 +1969,11 @@
       "asignados": [],
       "tags": [
         "hais-001",
-        "deployment"
+        "deployment",
+        "paper-trading",
+        "risk",
+        "budget",
+        "kill-switch"
       ],
       "blocked_by": [
         900017,
@@ -1733,6 +2008,14 @@
         {
           "url": "https://github.com/hypenosys/HAIS",
           "label": "Repositorio HAIS"
+        },
+        {
+          "label": "OpenAI rate and spend limits",
+          "url": "https://developers.openai.com/api/docs/guides/rate-limits"
+        },
+        {
+          "label": "OWASP Secrets Management",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html"
         }
       ],
       "comments": [],
@@ -1776,7 +2059,11 @@
       "asignados": [],
       "tags": [
         "hais-001",
-        "deployment"
+        "deployment",
+        "e2e",
+        "validation",
+        "go-no-go",
+        "multi-tenant"
       ],
       "blocked_by": [
         900023
@@ -1809,6 +2096,18 @@
         {
           "url": "https://github.com/hypenosys/HAIS",
           "label": "Repositorio HAIS"
+        },
+        {
+          "label": "Playwright",
+          "url": "https://playwright.dev/docs/intro"
+        },
+        {
+          "label": "FastAPI testing",
+          "url": "https://fastapi.tiangolo.com/tutorial/testing/"
+        },
+        {
+          "label": "OWASP Authorization",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html"
         }
       ],
       "comments": [],
