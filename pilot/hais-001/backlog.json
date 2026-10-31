@@ -1,0 +1,326 @@
+{
+  "schema_version": 1,
+  "pilot_id": "HAIS-001",
+  "workspace": "hais",
+  "repository": "hypenosys/hais",
+  "mode": "PAPER",
+  "live_trading_enabled": false,
+  "budget_eur": {
+    "target": 100,
+    "absolute_ceiling": 150
+  },
+  "accounts": {
+    "github_user": "haopeng",
+    "invite_required": true,
+    "oauth_required": true
+  },
+  "executors": {
+    "primary": "jules",
+    "experimental": "cognito",
+    "max_parallel_code_tasks": 2
+  },
+  "tasks": [
+    {
+      "id": "H001",
+      "title": "Verificar permisos y autenticar Haopeng",
+      "deps": [],
+      "lane": "identity",
+      "executor": "human",
+      "acceptance": [
+        "GitHub MFA activo",
+        "acceso limitado comprobado"
+      ]
+    },
+    {
+      "id": "H002",
+      "title": "Crear workspace HAIS en Hypenosys",
+      "deps": [
+        "H001"
+      ],
+      "lane": "identity",
+      "executor": "human",
+      "acceptance": [
+        "workspace aislado verificado"
+      ]
+    },
+    {
+      "id": "H003",
+      "title": "Crear repositorio privado hypenosys/hais",
+      "deps": [
+        "H001"
+      ],
+      "lane": "identity",
+      "executor": "human",
+      "acceptance": [
+        "repositorio privado y ramas protegidas"
+      ]
+    },
+    {
+      "id": "H004",
+      "title": "Vincular GitHub, Jules y proveedores BYOK",
+      "deps": [
+        "H002",
+        "H003"
+      ],
+      "lane": "identity",
+      "executor": "human",
+      "acceptance": [
+        "sin claves expuestas en navegador ni logs",
+        "permisos mínimos"
+      ]
+    },
+    {
+      "id": "H005",
+      "title": "Prueba de autenticación y autorización multitenant",
+      "deps": [
+        "H002"
+      ],
+      "lane": "platform",
+      "executor": "jules",
+      "acceptance": [
+        "pruebas negativas de acceso cruzado"
+      ]
+    },
+    {
+      "id": "H006",
+      "title": "Verificar creación y persistencia de tareas",
+      "deps": [
+        "H002"
+      ],
+      "lane": "platform",
+      "executor": "jules",
+      "acceptance": [
+        "lectura tras reinicio"
+      ]
+    },
+    {
+      "id": "H007",
+      "title": "Verificar bloqueos y dependencias",
+      "deps": [
+        "H006"
+      ],
+      "lane": "platform",
+      "executor": "jules",
+      "acceptance": [
+        "no despachar tareas bloqueadas"
+      ]
+    },
+    {
+      "id": "H008",
+      "title": "Ejecución Jules de tarea real",
+      "deps": [
+        "H004",
+        "H007"
+      ],
+      "lane": "platform",
+      "executor": "jules",
+      "acceptance": [
+        "evidencia de sesión y commit"
+      ]
+    },
+    {
+      "id": "H009",
+      "title": "Sincronizar PR, CI y estado de tarea",
+      "deps": [
+        "H008"
+      ],
+      "lane": "platform",
+      "executor": "jules",
+      "acceptance": [
+        "transiciones verificadas sin marcar DONE anticipadamente"
+      ]
+    },
+    {
+      "id": "H010",
+      "title": "Esqueleto del servicio HAIS",
+      "deps": [
+        "H003"
+      ],
+      "lane": "product",
+      "executor": "jules",
+      "acceptance": [
+        "FastAPI levanta health check"
+      ]
+    },
+    {
+      "id": "H011",
+      "title": "Esquemas tipados de decisiones",
+      "deps": [
+        "H010"
+      ],
+      "lane": "product",
+      "executor": "jules",
+      "acceptance": [
+        "validación Pydantic y tests"
+      ]
+    },
+    {
+      "id": "H012",
+      "title": "PostgreSQL y migraciones",
+      "deps": [
+        "H010"
+      ],
+      "lane": "product",
+      "executor": "jules",
+      "acceptance": [
+        "migración reversible probada"
+      ]
+    },
+    {
+      "id": "H013",
+      "title": "Gateway OpenAI y OpenRouter seguro",
+      "deps": [
+        "H010",
+        "H004"
+      ],
+      "lane": "product",
+      "executor": "jules",
+      "acceptance": [
+        "BYOK server-side y presupuestos",
+        "tests con proveedor simulado"
+      ]
+    },
+    {
+      "id": "H014",
+      "title": "Ingesta sintética de datos financieros",
+      "deps": [
+        "H011"
+      ],
+      "lane": "product",
+      "executor": "jules",
+      "acceptance": [
+        "fuente marcada SYNTHETIC y sin órdenes reales"
+      ]
+    },
+    {
+      "id": "H015",
+      "title": "Configurar CI del repositorio HAIS",
+      "deps": [
+        "H003"
+      ],
+      "lane": "quality",
+      "executor": "jules",
+      "acceptance": [
+        "checks obligatorios y permisos mínimos"
+      ]
+    },
+    {
+      "id": "H016",
+      "title": "Comprobar workflow de creación de PR",
+      "deps": [
+        "H008",
+        "H015"
+      ],
+      "lane": "quality",
+      "executor": "jules",
+      "acceptance": [
+        "PR vinculada a tarea"
+      ]
+    },
+    {
+      "id": "H017",
+      "title": "Probar dos ejecuciones independientes en paralelo",
+      "deps": [
+        "H009",
+        "H016"
+      ],
+      "lane": "quality",
+      "executor": "jules",
+      "acceptance": [
+        "sin conflictos de ficheros ni tareas duplicadas"
+      ]
+    },
+    {
+      "id": "H018",
+      "title": "Eventos auditables e idempotencia",
+      "deps": [
+        "H011",
+        "H012"
+      ],
+      "lane": "quality",
+      "executor": "jules",
+      "acceptance": [
+        "event_id único y replay seguro"
+      ]
+    },
+    {
+      "id": "H019",
+      "title": "Cognito sandbox smoke test",
+      "deps": [
+        "H003"
+      ],
+      "lane": "quality",
+      "executor": "cognito",
+      "acceptance": [
+        "sin acceso a secretos ni producción",
+        "fallo controlado"
+      ]
+    },
+    {
+      "id": "H020",
+      "title": "Diseñar infraestructura y gestión de secretos",
+      "deps": [
+        "H010"
+      ],
+      "lane": "deployment",
+      "executor": "jules",
+      "acceptance": [
+        "sin claves en repositorio ni navegador"
+      ]
+    },
+    {
+      "id": "H021",
+      "title": "Desplegar staging con health checks",
+      "deps": [
+        "H013",
+        "H014",
+        "H015",
+        "H020"
+      ],
+      "lane": "deployment",
+      "executor": "jules",
+      "acceptance": [
+        "acceso privado y health check real"
+      ]
+    },
+    {
+      "id": "H022",
+      "title": "Verificar backups y rollback",
+      "deps": [
+        "H021"
+      ],
+      "lane": "deployment",
+      "executor": "jules",
+      "acceptance": [
+        "restauración ensayada"
+      ]
+    },
+    {
+      "id": "H023",
+      "title": "Desplegar piloto limitado sin LIVE",
+      "deps": [
+        "H017",
+        "H018",
+        "H022"
+      ],
+      "lane": "deployment",
+      "executor": "human",
+      "acceptance": [
+        "autorización explícita de despliegue",
+        "LIVE deshabilitado"
+      ]
+    },
+    {
+      "id": "H024",
+      "title": "Pruebas E2E y dictamen GO/NO-GO",
+      "deps": [
+        "H023"
+      ],
+      "lane": "deployment",
+      "executor": "jules",
+      "acceptance": [
+        "pruebas de permisos, BYOK, tareas, PR y rollback"
+      ]
+    }
+  ]
+}
