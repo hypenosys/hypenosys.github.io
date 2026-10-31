@@ -9,12 +9,12 @@
       "organizationId": "hais",
       "repository": "hypenosys/HAIS",
       "title": "Verificar permisos y autenticar Haopeng",
-      "descripcion": "Verificar permisos y autenticar Haopeng",
+      "descripcion": "Comprobar OAuth GitHub de haopengwang123 y axlfc en dev.hypenosys.com; validar MFA, repositorios visibles, revocación de sesión y permisos mínimos sobre hypenosys/HAIS. No asumir que ser miembro del workspace implica acceso al repo privado.",
       "tema_principal": "HAIS-001 / identity",
       "prioridad": "Critical",
       "estado": "OK",
       "completitud": 0,
-      "task_type": "chore",
+      "task_type": "research",
       "resuelto_por": "",
       "asignados": [],
       "tags": [
@@ -22,12 +22,51 @@
         "identity"
       ],
       "blocked_by": [],
-      "acceptance_criteria": "GitHub MFA activo\nacceso limitado comprobado",
+      "acceptance_criteria": "GitHub MFA activo\nacceso limitado comprobado\nSesión real de ambos usuarios registrada sin tokens; prueba de acceso denegado a recurso no autorizado; evidencia de rol y alcance GitHub",
       "executor_proposed": "human",
-      "subtasks": [],
-      "external_links": [],
+      "subtasks": [
+        {
+          "title": "Implementación / comprobación",
+          "done": false
+        },
+        {
+          "title": "Pruebas automatizadas y negativas",
+          "done": false
+        },
+        {
+          "title": "Evidencias y revisión",
+          "done": false
+        }
+      ],
+      "external_links": [
+        {
+          "url": "https://github.com/hypenosys/HAIS",
+          "label": "Repositorio HAIS"
+        }
+      ],
       "comments": [],
-      "change_log": []
+      "change_log": [],
+      "comentario": "Evidencia requerida: Sesión real de ambos usuarios registrada sin tokens; prueba de acceso denegado a recurso no autorizado; evidencia de rol y alcance GitHub",
+      "estimated_hours": 3,
+      "story_points": 2,
+      "milestone": "M0 — Acceso y aislamiento",
+      "seccion": "HAIS · identity",
+      "rama": "feature/hais-001",
+      "rama2": null,
+      "branch": "Desarrollo (develop)",
+      "fecha": null,
+      "start_date": null,
+      "due_date": null,
+      "limite": null,
+      "ver": true,
+      "detectado_por": "HAIS-001",
+      "apoyo": null,
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "blocks": [],
+      "jules_session": null,
+      "assignee_proposed": "human"
     },
     {
       "id": 900002,
@@ -36,12 +75,12 @@
       "organizationId": "hais",
       "repository": "hypenosys/HAIS",
       "title": "Crear workspace HAIS en Hypenosys",
-      "descripcion": "Crear workspace HAIS en Hypenosys",
+      "descripcion": "Verificar registro HAIS en _data/organizations.json y _data/orgs/hais/meta.json, membresía, aislamiento del shard y compatibilidad con Kanban; no marcar completado solo porque exista el nombre.",
       "tema_principal": "HAIS-001 / identity",
       "prioridad": "Critical",
       "estado": "OK",
       "completitud": 0,
-      "task_type": "chore",
+      "task_type": "test",
       "resuelto_por": "",
       "asignados": [],
       "tags": [
@@ -51,12 +90,51 @@
       "blocked_by": [
         900001
       ],
-      "acceptance_criteria": "workspace aislado verificado",
+      "acceptance_criteria": "workspace aislado verificado\nLectura y escritura aisladas en org hais; ninguna tarea de hypenosys/empty-space-videogames aparece; checklist de consistencia isSharded",
       "executor_proposed": "human",
-      "subtasks": [],
-      "external_links": [],
+      "subtasks": [
+        {
+          "title": "Implementación / comprobación",
+          "done": false
+        },
+        {
+          "title": "Pruebas automatizadas y negativas",
+          "done": false
+        },
+        {
+          "title": "Evidencias y revisión",
+          "done": false
+        }
+      ],
+      "external_links": [
+        {
+          "url": "https://github.com/hypenosys/HAIS",
+          "label": "Repositorio HAIS"
+        }
+      ],
       "comments": [],
-      "change_log": []
+      "change_log": [],
+      "comentario": "Evidencia requerida: Lectura y escritura aisladas en org hais; ninguna tarea de hypenosys/empty-space-videogames aparece; checklist de consistencia isSharded",
+      "estimated_hours": 4,
+      "story_points": 3,
+      "milestone": "M0 — Acceso y aislamiento",
+      "seccion": "HAIS · identity",
+      "rama": "feature/hais-002",
+      "rama2": null,
+      "branch": "Desarrollo (develop)",
+      "fecha": null,
+      "start_date": null,
+      "due_date": null,
+      "limite": null,
+      "ver": true,
+      "detectado_por": "HAIS-001",
+      "apoyo": null,
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "blocks": [],
+      "jules_session": null,
+      "assignee_proposed": "human"
     },
     {
       "id": 900003,
@@ -65,7 +143,7 @@
       "organizationId": "hais",
       "repository": "hypenosys/HAIS",
       "title": "Crear repositorio privado hypenosys/HAIS",
-      "descripcion": "Crear repositorio privado hypenosys/HAIS",
+      "descripcion": "Verificar repo privado hypenosys/HAIS, ramas master/develop, protección de develop, PR #1, checks CI y privilegios reales de los colaboradores.",
       "tema_principal": "HAIS-001 / identity",
       "prioridad": "Critical",
       "estado": "OK",
@@ -80,12 +158,51 @@
       "blocked_by": [
         900001
       ],
-      "acceptance_criteria": "repositorio privado y ramas protegidas",
+      "acceptance_criteria": "repositorio privado y ramas protegidas\nPR #1 referenciada; ruleset/branch protection comprobado; ningún colaborador sin autorización puede escribir directamente",
       "executor_proposed": "human",
-      "subtasks": [],
-      "external_links": [],
+      "subtasks": [
+        {
+          "title": "Implementación / comprobación",
+          "done": false
+        },
+        {
+          "title": "Pruebas automatizadas y negativas",
+          "done": false
+        },
+        {
+          "title": "Evidencias y revisión",
+          "done": false
+        }
+      ],
+      "external_links": [
+        {
+          "url": "https://github.com/hypenosys/HAIS",
+          "label": "Repositorio HAIS"
+        }
+      ],
       "comments": [],
-      "change_log": []
+      "change_log": [],
+      "comentario": "Evidencia requerida: PR #1 referenciada; ruleset/branch protection comprobado; ningún colaborador sin autorización puede escribir directamente",
+      "estimated_hours": 3,
+      "story_points": 2,
+      "milestone": "M0 — Acceso y aislamiento",
+      "seccion": "HAIS · identity",
+      "rama": "feature/hais-003",
+      "rama2": null,
+      "branch": "Desarrollo (develop)",
+      "fecha": null,
+      "start_date": null,
+      "due_date": null,
+      "limite": null,
+      "ver": true,
+      "detectado_por": "HAIS-001",
+      "apoyo": null,
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "blocks": [],
+      "jules_session": null,
+      "assignee_proposed": "human"
     },
     {
       "id": 900004,
@@ -94,12 +211,12 @@
       "organizationId": "hais",
       "repository": "hypenosys/HAIS",
       "title": "Vincular GitHub, Jules y proveedores BYOK",
-      "descripcion": "Vincular GitHub, Jules y proveedores BYOK",
+      "descripcion": "Probar configuración BYOK OpenAI/OpenRouter y Jules desde dev.hypenosys.com contra dev.tc.hypenosys.com con claves de prueba y cuotas mínimas; auditar exposición en localStorage, network, logs y errores. No cargar secretos de pago sin vault validado.",
       "tema_principal": "HAIS-001 / identity",
       "prioridad": "Critical",
       "estado": "Pending",
       "completitud": 0,
-      "task_type": "chore",
+      "task_type": "security",
       "resuelto_por": "",
       "asignados": [],
       "tags": [
@@ -110,12 +227,51 @@
         900002,
         900003
       ],
-      "acceptance_criteria": "sin claves expuestas en navegador ni logs\npermisos mínimos",
+      "acceptance_criteria": "sin claves expuestas en navegador ni logs\npermisos mínimos\nProveedor y modelo identificables; llamada de coste mínimo; clave nunca devuelta en API/logs/HTML; revocación y límite de gasto demostrados",
       "executor_proposed": "human",
-      "subtasks": [],
-      "external_links": [],
+      "subtasks": [
+        {
+          "title": "Implementación / comprobación",
+          "done": false
+        },
+        {
+          "title": "Pruebas automatizadas y negativas",
+          "done": false
+        },
+        {
+          "title": "Evidencias y revisión",
+          "done": false
+        }
+      ],
+      "external_links": [
+        {
+          "url": "https://github.com/hypenosys/HAIS",
+          "label": "Repositorio HAIS"
+        }
+      ],
       "comments": [],
-      "change_log": []
+      "change_log": [],
+      "comentario": "Evidencia requerida: Proveedor y modelo identificables; llamada de coste mínimo; clave nunca devuelta en API/logs/HTML; revocación y límite de gasto demostrados",
+      "estimated_hours": 8,
+      "story_points": 5,
+      "milestone": "M0 — Acceso y aislamiento",
+      "seccion": "HAIS · identity",
+      "rama": "feature/hais-004",
+      "rama2": null,
+      "branch": "Desarrollo (develop)",
+      "fecha": null,
+      "start_date": null,
+      "due_date": null,
+      "limite": null,
+      "ver": true,
+      "detectado_por": "HAIS-001",
+      "apoyo": null,
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "blocks": [],
+      "jules_session": null,
+      "assignee_proposed": "human"
     },
     {
       "id": 900005,
@@ -124,12 +280,12 @@
       "organizationId": "hais",
       "repository": "hypenosys/HAIS",
       "title": "Prueba de autenticación y autorización multitenant",
-      "descripcion": "Prueba de autenticación y autorización multitenant",
+      "descripcion": "Ejecutar pruebas de autorización entre usuarios y organizaciones en Hypenosys y tc; cubrir lectura, escritura, invitaciones y cambios de rol; incluir pruebas de IDOR, fallback legacy y acceso a tareas privadas.",
       "tema_principal": "HAIS-001 / platform",
       "prioridad": "High",
       "estado": "Pending",
       "completitud": 0,
-      "task_type": "chore",
+      "task_type": "security",
       "resuelto_por": "",
       "asignados": [],
       "tags": [
@@ -139,12 +295,51 @@
       "blocked_by": [
         900002
       ],
-      "acceptance_criteria": "pruebas negativas de acceso cruzado",
+      "acceptance_criteria": "pruebas negativas de acceso cruzado\nSuite con escenarios 401/403 y cross-tenant; pruebas negativas pasan; rutas vulnerables documentadas y bloqueadas",
       "executor_proposed": "jules",
-      "subtasks": [],
-      "external_links": [],
+      "subtasks": [
+        {
+          "title": "Implementación / comprobación",
+          "done": false
+        },
+        {
+          "title": "Pruebas automatizadas y negativas",
+          "done": false
+        },
+        {
+          "title": "Evidencias y revisión",
+          "done": false
+        }
+      ],
+      "external_links": [
+        {
+          "url": "https://github.com/hypenosys/HAIS",
+          "label": "Repositorio HAIS"
+        }
+      ],
       "comments": [],
-      "change_log": []
+      "change_log": [],
+      "comentario": "Evidencia requerida: Suite con escenarios 401/403 y cross-tenant; pruebas negativas pasan; rutas vulnerables documentadas y bloqueadas",
+      "estimated_hours": 12,
+      "story_points": 8,
+      "milestone": "M1 — Orquestación E2E",
+      "seccion": "HAIS · platform",
+      "rama": "feature/hais-005",
+      "rama2": null,
+      "branch": "Desarrollo (develop)",
+      "fecha": null,
+      "start_date": null,
+      "due_date": null,
+      "limite": null,
+      "ver": true,
+      "detectado_por": "HAIS-001",
+      "apoyo": null,
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "blocks": [],
+      "jules_session": null,
+      "assignee_proposed": "jules"
     },
     {
       "id": 900006,
@@ -153,12 +348,12 @@
       "organizationId": "hais",
       "repository": "hypenosys/HAIS",
       "title": "Verificar creación y persistencia de tareas",
-      "descripcion": "Verificar creación y persistencia de tareas",
+      "descripcion": "Verificar que crear/editar/reabrir tarea HAIS conserva ID numérico, pilot_task_id, subtareas, etiquetas, criterios y dependencias; validar persistencia tras recarga y conflicto de edición SHA 409.",
       "tema_principal": "HAIS-001 / platform",
       "prioridad": "High",
       "estado": "Pending",
       "completitud": 0,
-      "task_type": "chore",
+      "task_type": "test",
       "resuelto_por": "",
       "asignados": [],
       "tags": [
@@ -168,12 +363,51 @@
       "blocked_by": [
         900002
       ],
-      "acceptance_criteria": "lectura tras reinicio",
+      "acceptance_criteria": "lectura tras reinicio\nRound-trip de datos sin pérdida; escritura a _data/orgs/hais/tasks.json; no fallback a dashboard_tasks.json ni corrupción de otros shards",
       "executor_proposed": "jules",
-      "subtasks": [],
-      "external_links": [],
+      "subtasks": [
+        {
+          "title": "Implementación / comprobación",
+          "done": false
+        },
+        {
+          "title": "Pruebas automatizadas y negativas",
+          "done": false
+        },
+        {
+          "title": "Evidencias y revisión",
+          "done": false
+        }
+      ],
+      "external_links": [
+        {
+          "url": "https://github.com/hypenosys/HAIS",
+          "label": "Repositorio HAIS"
+        }
+      ],
       "comments": [],
-      "change_log": []
+      "change_log": [],
+      "comentario": "Evidencia requerida: Round-trip de datos sin pérdida; escritura a _data/orgs/hais/tasks.json; no fallback a dashboard_tasks.json ni corrupción de otros shards",
+      "estimated_hours": 8,
+      "story_points": 5,
+      "milestone": "M1 — Orquestación E2E",
+      "seccion": "HAIS · platform",
+      "rama": "feature/hais-006",
+      "rama2": null,
+      "branch": "Desarrollo (develop)",
+      "fecha": null,
+      "start_date": null,
+      "due_date": null,
+      "limite": null,
+      "ver": true,
+      "detectado_por": "HAIS-001",
+      "apoyo": null,
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "blocks": [],
+      "jules_session": null,
+      "assignee_proposed": "jules"
     },
     {
       "id": 900007,
@@ -182,12 +416,12 @@
       "organizationId": "hais",
       "repository": "hypenosys/HAIS",
       "title": "Verificar bloqueos y dependencias",
-      "descripcion": "Verificar bloqueos y dependencias",
+      "descripcion": "Implementar o demostrar scheduler de DAG: blocked_by usa IDs numéricos 900001–900024; bloquear tareas con dependencias Pending/Failed y permitir solo tras Completed validado. Tratar ciclos, duplicados y reintentos.",
       "tema_principal": "HAIS-001 / platform",
       "prioridad": "High",
       "estado": "Pending",
       "completitud": 0,
-      "task_type": "chore",
+      "task_type": "feature",
       "resuelto_por": "",
       "asignados": [],
       "tags": [
@@ -197,12 +431,51 @@
       "blocked_by": [
         900006
       ],
-      "acceptance_criteria": "no despachar tareas bloqueadas",
+      "acceptance_criteria": "no despachar tareas bloqueadas\nTarea dependiente no se despacha antes de gate; casos de ciclos, fallo y retry automatizados; registro de decisiones del scheduler",
       "executor_proposed": "jules",
-      "subtasks": [],
-      "external_links": [],
+      "subtasks": [
+        {
+          "title": "Implementación / comprobación",
+          "done": false
+        },
+        {
+          "title": "Pruebas automatizadas y negativas",
+          "done": false
+        },
+        {
+          "title": "Evidencias y revisión",
+          "done": false
+        }
+      ],
+      "external_links": [
+        {
+          "url": "https://github.com/hypenosys/HAIS",
+          "label": "Repositorio HAIS"
+        }
+      ],
       "comments": [],
-      "change_log": []
+      "change_log": [],
+      "comentario": "Evidencia requerida: Tarea dependiente no se despacha antes de gate; casos de ciclos, fallo y retry automatizados; registro de decisiones del scheduler",
+      "estimated_hours": 12,
+      "story_points": 8,
+      "milestone": "M1 — Orquestación E2E",
+      "seccion": "HAIS · platform",
+      "rama": "feature/hais-007",
+      "rama2": null,
+      "branch": "Desarrollo (develop)",
+      "fecha": null,
+      "start_date": null,
+      "due_date": null,
+      "limite": null,
+      "ver": true,
+      "detectado_por": "HAIS-001",
+      "apoyo": null,
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "blocks": [],
+      "jules_session": null,
+      "assignee_proposed": "jules"
     },
     {
       "id": 900008,
@@ -211,12 +484,12 @@
       "organizationId": "hais",
       "repository": "hypenosys/HAIS",
       "title": "Ejecución Jules de tarea real",
-      "descripcion": "Ejecución Jules de tarea real",
+      "descripcion": "Desde el Kanban HAIS lanzar una tarea inocua a Jules contra hypenosys/HAIS en rama feature; registrar session_id, branch, commit, coste y resultado sin permitir merge automático ni secretos de producción.",
       "tema_principal": "HAIS-001 / platform",
       "prioridad": "High",
       "estado": "Pending",
       "completitud": 0,
-      "task_type": "chore",
+      "task_type": "integration",
       "resuelto_por": "",
       "asignados": [],
       "tags": [
@@ -227,12 +500,51 @@
         900004,
         900007
       ],
-      "acceptance_criteria": "evidencia de sesión y commit",
+      "acceptance_criteria": "evidencia de sesión y commit\nSession ID real y enlace GitHub; al menos un commit verificable; error visible y recuperable; revisión humana antes de merge",
       "executor_proposed": "jules",
-      "subtasks": [],
-      "external_links": [],
+      "subtasks": [
+        {
+          "title": "Implementación / comprobación",
+          "done": false
+        },
+        {
+          "title": "Pruebas automatizadas y negativas",
+          "done": false
+        },
+        {
+          "title": "Evidencias y revisión",
+          "done": false
+        }
+      ],
+      "external_links": [
+        {
+          "url": "https://github.com/hypenosys/HAIS",
+          "label": "Repositorio HAIS"
+        }
+      ],
       "comments": [],
-      "change_log": []
+      "change_log": [],
+      "comentario": "Evidencia requerida: Session ID real y enlace GitHub; al menos un commit verificable; error visible y recuperable; revisión humana antes de merge",
+      "estimated_hours": 10,
+      "story_points": 5,
+      "milestone": "M1 — Orquestación E2E",
+      "seccion": "HAIS · platform",
+      "rama": "feature/hais-008",
+      "rama2": null,
+      "branch": "Desarrollo (develop)",
+      "fecha": null,
+      "start_date": null,
+      "due_date": null,
+      "limite": null,
+      "ver": true,
+      "detectado_por": "HAIS-001",
+      "apoyo": null,
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "blocks": [],
+      "jules_session": null,
+      "assignee_proposed": "jules"
     },
     {
       "id": 900009,
@@ -241,12 +553,12 @@
       "organizationId": "hais",
       "repository": "hypenosys/HAIS",
       "title": "Sincronizar PR, CI y estado de tarea",
-      "descripcion": "Sincronizar PR, CI y estado de tarea",
+      "descripcion": "Sincronizar sesión Jules, commits, PR y checks GitHub con estado Kanban; reconciliar webhooks/polling, cambios concurrentes y PR cerradas sin merge. No marcar Completed por simple apertura de PR.",
       "tema_principal": "HAIS-001 / platform",
       "prioridad": "High",
       "estado": "Pending",
       "completitud": 0,
-      "task_type": "chore",
+      "task_type": "integration",
       "resuelto_por": "",
       "asignados": [],
       "tags": [
@@ -256,12 +568,51 @@
       "blocked_by": [
         900008
       ],
-      "acceptance_criteria": "transiciones verificadas sin marcar DONE anticipadamente",
+      "acceptance_criteria": "transiciones verificadas sin marcar DONE anticipadamente\nEstados Pending/In Progress/In Review/Completed coherentes; reintento idempotente; referencias PR y CI persistidas",
       "executor_proposed": "jules",
-      "subtasks": [],
-      "external_links": [],
+      "subtasks": [
+        {
+          "title": "Implementación / comprobación",
+          "done": false
+        },
+        {
+          "title": "Pruebas automatizadas y negativas",
+          "done": false
+        },
+        {
+          "title": "Evidencias y revisión",
+          "done": false
+        }
+      ],
+      "external_links": [
+        {
+          "url": "https://github.com/hypenosys/HAIS",
+          "label": "Repositorio HAIS"
+        }
+      ],
       "comments": [],
-      "change_log": []
+      "change_log": [],
+      "comentario": "Evidencia requerida: Estados Pending/In Progress/In Review/Completed coherentes; reintento idempotente; referencias PR y CI persistidas",
+      "estimated_hours": 14,
+      "story_points": 8,
+      "milestone": "M1 — Orquestación E2E",
+      "seccion": "HAIS · platform",
+      "rama": "feature/hais-009",
+      "rama2": null,
+      "branch": "Desarrollo (develop)",
+      "fecha": null,
+      "start_date": null,
+      "due_date": null,
+      "limite": null,
+      "ver": true,
+      "detectado_por": "HAIS-001",
+      "apoyo": null,
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "blocks": [],
+      "jules_session": null,
+      "assignee_proposed": "jules"
     },
     {
       "id": 900010,
@@ -270,12 +621,12 @@
       "organizationId": "hais",
       "repository": "hypenosys/HAIS",
       "title": "Esqueleto del servicio HAIS",
-      "descripcion": "Esqueleto del servicio HAIS",
+      "descripcion": "Auditar y consolidar bootstrap FastAPI de HAIS ya preparado en PR #1; ejecutar health, capabilities y paper/estimate en Docker; documentar configuración local sin pretender motor de trading real.",
       "tema_principal": "HAIS-001 / product",
       "prioridad": "High",
       "estado": "Pending",
       "completitud": 0,
-      "task_type": "chore",
+      "task_type": "test",
       "resuelto_por": "",
       "asignados": [],
       "tags": [
@@ -285,12 +636,51 @@
       "blocked_by": [
         900003
       ],
-      "acceptance_criteria": "FastAPI levanta health check",
+      "acceptance_criteria": "FastAPI levanta health check\ndocker compose up y endpoints comprobados; /v1/capabilities devuelve live_trading_enabled=false; pruebas CI verdes",
       "executor_proposed": "jules",
-      "subtasks": [],
-      "external_links": [],
+      "subtasks": [
+        {
+          "title": "Implementación / comprobación",
+          "done": false
+        },
+        {
+          "title": "Pruebas automatizadas y negativas",
+          "done": false
+        },
+        {
+          "title": "Evidencias y revisión",
+          "done": false
+        }
+      ],
+      "external_links": [
+        {
+          "url": "https://github.com/hypenosys/HAIS",
+          "label": "Repositorio HAIS"
+        }
+      ],
       "comments": [],
-      "change_log": []
+      "change_log": [],
+      "comentario": "Evidencia requerida: docker compose up y endpoints comprobados; /v1/capabilities devuelve live_trading_enabled=false; pruebas CI verdes",
+      "estimated_hours": 6,
+      "story_points": 3,
+      "milestone": "M2 — Núcleo PAPER",
+      "seccion": "HAIS · product",
+      "rama": "feature/hais-010",
+      "rama2": null,
+      "branch": "Desarrollo (develop)",
+      "fecha": null,
+      "start_date": null,
+      "due_date": null,
+      "limite": null,
+      "ver": true,
+      "detectado_por": "HAIS-001",
+      "apoyo": null,
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "blocks": [],
+      "jules_session": null,
+      "assignee_proposed": "jules"
     },
     {
       "id": 900011,
@@ -299,12 +689,12 @@
       "organizationId": "hais",
       "repository": "hypenosys/HAIS",
       "title": "Esquemas tipados de decisiones",
-      "descripcion": "Esquemas tipados de decisiones",
+      "descripcion": "Definir modelos Pydantic versionados para MarketBar, Signal, Thesis, RiskAssessment, PaperOrder, PaperFill y DecisionTrace; incluir timestamps UTC, source, currency, precision, idempotency_key y validación de instrumentos.",
       "tema_principal": "HAIS-001 / product",
       "prioridad": "High",
       "estado": "Pending",
       "completitud": 0,
-      "task_type": "chore",
+      "task_type": "feature",
       "resuelto_por": "",
       "asignados": [],
       "tags": [
@@ -314,12 +704,51 @@
       "blocked_by": [
         900010
       ],
-      "acceptance_criteria": "validación Pydantic y tests",
+      "acceptance_criteria": "validación Pydantic y tests\nJSON Schema versionado; invalidación de precios negativos, timestamps ambiguos y campos LIVE; unit tests y muestras serializables",
       "executor_proposed": "jules",
-      "subtasks": [],
-      "external_links": [],
+      "subtasks": [
+        {
+          "title": "Implementación / comprobación",
+          "done": false
+        },
+        {
+          "title": "Pruebas automatizadas y negativas",
+          "done": false
+        },
+        {
+          "title": "Evidencias y revisión",
+          "done": false
+        }
+      ],
+      "external_links": [
+        {
+          "url": "https://github.com/hypenosys/HAIS",
+          "label": "Repositorio HAIS"
+        }
+      ],
       "comments": [],
-      "change_log": []
+      "change_log": [],
+      "comentario": "Evidencia requerida: JSON Schema versionado; invalidación de precios negativos, timestamps ambiguos y campos LIVE; unit tests y muestras serializables",
+      "estimated_hours": 14,
+      "story_points": 8,
+      "milestone": "M2 — Núcleo PAPER",
+      "seccion": "HAIS · product",
+      "rama": "feature/hais-011",
+      "rama2": null,
+      "branch": "Desarrollo (develop)",
+      "fecha": null,
+      "start_date": null,
+      "due_date": null,
+      "limite": null,
+      "ver": true,
+      "detectado_por": "HAIS-001",
+      "apoyo": null,
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "blocks": [],
+      "jules_session": null,
+      "assignee_proposed": "jules"
     },
     {
       "id": 900012,
@@ -328,12 +757,12 @@
       "organizationId": "hais",
       "repository": "hypenosys/HAIS",
       "title": "PostgreSQL y migraciones",
-      "descripcion": "PostgreSQL y migraciones",
+      "descripcion": "Implementar PostgreSQL de simulación para series, estrategias, órdenes PAPER, fills, posiciones y auditoría; migraciones Alembic adelante/atrás y constraints tenant_id/idempotency_key.",
       "tema_principal": "HAIS-001 / product",
       "prioridad": "High",
       "estado": "Pending",
       "completitud": 0,
-      "task_type": "chore",
+      "task_type": "feature",
       "resuelto_por": "",
       "asignados": [],
       "tags": [
@@ -343,12 +772,51 @@
       "blocked_by": [
         900010
       ],
-      "acceptance_criteria": "migración reversible probada",
+      "acceptance_criteria": "migración reversible probada\nMigraciones reproducibles en DB efímera; rollback y backup probados; aislamiento por tenant y unique constraints verificadas",
       "executor_proposed": "jules",
-      "subtasks": [],
-      "external_links": [],
+      "subtasks": [
+        {
+          "title": "Implementación / comprobación",
+          "done": false
+        },
+        {
+          "title": "Pruebas automatizadas y negativas",
+          "done": false
+        },
+        {
+          "title": "Evidencias y revisión",
+          "done": false
+        }
+      ],
+      "external_links": [
+        {
+          "url": "https://github.com/hypenosys/HAIS",
+          "label": "Repositorio HAIS"
+        }
+      ],
       "comments": [],
-      "change_log": []
+      "change_log": [],
+      "comentario": "Evidencia requerida: Migraciones reproducibles en DB efímera; rollback y backup probados; aislamiento por tenant y unique constraints verificadas",
+      "estimated_hours": 16,
+      "story_points": 8,
+      "milestone": "M2 — Núcleo PAPER",
+      "seccion": "HAIS · product",
+      "rama": "feature/hais-012",
+      "rama2": null,
+      "branch": "Desarrollo (develop)",
+      "fecha": null,
+      "start_date": null,
+      "due_date": null,
+      "limite": null,
+      "ver": true,
+      "detectado_por": "HAIS-001",
+      "apoyo": null,
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "blocks": [],
+      "jules_session": null,
+      "assignee_proposed": "jules"
     },
     {
       "id": 900013,
@@ -357,12 +825,12 @@
       "organizationId": "hais",
       "repository": "hypenosys/HAIS",
       "title": "Gateway OpenAI y OpenRouter seguro",
-      "descripcion": "Gateway OpenAI y OpenRouter seguro",
+      "descripcion": "Crear gateway server-side para OpenAI/OpenRouter con secretos por organización, redacción de logs, timeout, retry con backoff, presupuestos en EUR y medición de tokens; proveedor mock para CI.",
       "tema_principal": "HAIS-001 / product",
       "prioridad": "High",
       "estado": "Pending",
       "completitud": 0,
-      "task_type": "chore",
+      "task_type": "feature",
       "resuelto_por": "",
       "asignados": [],
       "tags": [
@@ -373,12 +841,51 @@
         900010,
         900004
       ],
-      "acceptance_criteria": "BYOK server-side y presupuestos\ntests con proveedor simulado",
+      "acceptance_criteria": "BYOK server-side y presupuestos\ntests con proveedor simulado\nSin claves en navegador ni Git; rate limit/budget antes de solicitar; tests timeout/429/revocación y atribución por tenant",
       "executor_proposed": "jules",
-      "subtasks": [],
-      "external_links": [],
+      "subtasks": [
+        {
+          "title": "Implementación / comprobación",
+          "done": false
+        },
+        {
+          "title": "Pruebas automatizadas y negativas",
+          "done": false
+        },
+        {
+          "title": "Evidencias y revisión",
+          "done": false
+        }
+      ],
+      "external_links": [
+        {
+          "url": "https://github.com/hypenosys/HAIS",
+          "label": "Repositorio HAIS"
+        }
+      ],
       "comments": [],
-      "change_log": []
+      "change_log": [],
+      "comentario": "Evidencia requerida: Sin claves en navegador ni Git; rate limit/budget antes de solicitar; tests timeout/429/revocación y atribución por tenant",
+      "estimated_hours": 16,
+      "story_points": 8,
+      "milestone": "M2 — Núcleo PAPER",
+      "seccion": "HAIS · product",
+      "rama": "feature/hais-013",
+      "rama2": null,
+      "branch": "Desarrollo (develop)",
+      "fecha": null,
+      "start_date": null,
+      "due_date": null,
+      "limite": null,
+      "ver": true,
+      "detectado_por": "HAIS-001",
+      "apoyo": null,
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "blocks": [],
+      "jules_session": null,
+      "assignee_proposed": "jules"
     },
     {
       "id": 900014,
@@ -387,12 +894,12 @@
       "organizationId": "hais",
       "repository": "hypenosys/HAIS",
       "title": "Ingesta sintética de datos financieros",
-      "descripcion": "Ingesta sintética de datos financieros",
+      "descripcion": "Crear adaptador de feeds SYNTHETIC deterministas para OHLCV y eventos de mercado con reloj reproducible; etiquetar origen e impedir mezclar datasets sintéticos con precios de ejecución reales.",
       "tema_principal": "HAIS-001 / product",
       "prioridad": "High",
       "estado": "Pending",
       "completitud": 0,
-      "task_type": "chore",
+      "task_type": "feature",
       "resuelto_por": "",
       "asignados": [],
       "tags": [
@@ -402,12 +909,51 @@
       "blocked_by": [
         900011
       ],
-      "acceptance_criteria": "fuente marcada SYNTHETIC y sin órdenes reales",
+      "acceptance_criteria": "fuente marcada SYNTHETIC y sin órdenes reales\nFixtures con seed estable; timestamps ordenados, sin look-ahead; etiquetado SYNTHETIC visible en API, DB y reportes",
       "executor_proposed": "jules",
-      "subtasks": [],
-      "external_links": [],
+      "subtasks": [
+        {
+          "title": "Implementación / comprobación",
+          "done": false
+        },
+        {
+          "title": "Pruebas automatizadas y negativas",
+          "done": false
+        },
+        {
+          "title": "Evidencias y revisión",
+          "done": false
+        }
+      ],
+      "external_links": [
+        {
+          "url": "https://github.com/hypenosys/HAIS",
+          "label": "Repositorio HAIS"
+        }
+      ],
       "comments": [],
-      "change_log": []
+      "change_log": [],
+      "comentario": "Evidencia requerida: Fixtures con seed estable; timestamps ordenados, sin look-ahead; etiquetado SYNTHETIC visible en API, DB y reportes",
+      "estimated_hours": 12,
+      "story_points": 5,
+      "milestone": "M2 — Núcleo PAPER",
+      "seccion": "HAIS · product",
+      "rama": "feature/hais-014",
+      "rama2": null,
+      "branch": "Desarrollo (develop)",
+      "fecha": null,
+      "start_date": null,
+      "due_date": null,
+      "limite": null,
+      "ver": true,
+      "detectado_por": "HAIS-001",
+      "apoyo": null,
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "blocks": [],
+      "jules_session": null,
+      "assignee_proposed": "jules"
     },
     {
       "id": 900015,
@@ -416,7 +962,7 @@
       "organizationId": "hais",
       "repository": "hypenosys/HAIS",
       "title": "Configurar CI del repositorio HAIS",
-      "descripcion": "Configurar CI del repositorio HAIS",
+      "descripcion": "Endurecer CI de hypenosys/HAIS: pytest, type/lint o checks equivalentes, seguridad de dependencias, build Docker, pruebas de prohibición LIVE y permisos mínimos de GITHUB_TOKEN.",
       "tema_principal": "HAIS-001 / quality",
       "prioridad": "High",
       "estado": "Pending",
@@ -431,12 +977,51 @@
       "blocked_by": [
         900003
       ],
-      "acceptance_criteria": "checks obligatorios y permisos mínimos",
+      "acceptance_criteria": "checks obligatorios y permisos mínimos\nWorkflow verde en PR; tests negativos de LIVE y build repetible; sin secretos persistidos en artefactos",
       "executor_proposed": "jules",
-      "subtasks": [],
-      "external_links": [],
+      "subtasks": [
+        {
+          "title": "Implementación / comprobación",
+          "done": false
+        },
+        {
+          "title": "Pruebas automatizadas y negativas",
+          "done": false
+        },
+        {
+          "title": "Evidencias y revisión",
+          "done": false
+        }
+      ],
+      "external_links": [
+        {
+          "url": "https://github.com/hypenosys/HAIS",
+          "label": "Repositorio HAIS"
+        }
+      ],
       "comments": [],
-      "change_log": []
+      "change_log": [],
+      "comentario": "Evidencia requerida: Workflow verde en PR; tests negativos de LIVE y build repetible; sin secretos persistidos en artefactos",
+      "estimated_hours": 8,
+      "story_points": 5,
+      "milestone": "M3 — Calidad y trazabilidad",
+      "seccion": "HAIS · quality",
+      "rama": "feature/hais-015",
+      "rama2": null,
+      "branch": "Desarrollo (develop)",
+      "fecha": null,
+      "start_date": null,
+      "due_date": null,
+      "limite": null,
+      "ver": true,
+      "detectado_por": "HAIS-001",
+      "apoyo": null,
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "blocks": [],
+      "jules_session": null,
+      "assignee_proposed": "jules"
     },
     {
       "id": 900016,
@@ -445,12 +1030,12 @@
       "organizationId": "hais",
       "repository": "hypenosys/HAIS",
       "title": "Comprobar workflow de creación de PR",
-      "descripcion": "Comprobar workflow de creación de PR",
+      "descripcion": "Probar creación de PR HAIS desde Jules, vínculo con tarea Kanban y feedback de CI, revisión y merge controlado; registrar correctamente PR descartadas y ramas huérfanas.",
       "tema_principal": "HAIS-001 / quality",
       "prioridad": "High",
       "estado": "Pending",
       "completitud": 0,
-      "task_type": "chore",
+      "task_type": "test",
       "resuelto_por": "",
       "asignados": [],
       "tags": [
@@ -461,12 +1046,51 @@
         900008,
         900015
       ],
-      "acceptance_criteria": "PR vinculada a tarea",
+      "acceptance_criteria": "PR vinculada a tarea\nTarea/PR/commit correlacionados; tests CI visibles; no hay merge sin autorización humana",
       "executor_proposed": "jules",
-      "subtasks": [],
-      "external_links": [],
+      "subtasks": [
+        {
+          "title": "Implementación / comprobación",
+          "done": false
+        },
+        {
+          "title": "Pruebas automatizadas y negativas",
+          "done": false
+        },
+        {
+          "title": "Evidencias y revisión",
+          "done": false
+        }
+      ],
+      "external_links": [
+        {
+          "url": "https://github.com/hypenosys/HAIS",
+          "label": "Repositorio HAIS"
+        }
+      ],
       "comments": [],
-      "change_log": []
+      "change_log": [],
+      "comentario": "Evidencia requerida: Tarea/PR/commit correlacionados; tests CI visibles; no hay merge sin autorización humana",
+      "estimated_hours": 8,
+      "story_points": 5,
+      "milestone": "M3 — Calidad y trazabilidad",
+      "seccion": "HAIS · quality",
+      "rama": "feature/hais-016",
+      "rama2": null,
+      "branch": "Desarrollo (develop)",
+      "fecha": null,
+      "start_date": null,
+      "due_date": null,
+      "limite": null,
+      "ver": true,
+      "detectado_por": "HAIS-001",
+      "apoyo": null,
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "blocks": [],
+      "jules_session": null,
+      "assignee_proposed": "jules"
     },
     {
       "id": 900017,
@@ -475,12 +1099,12 @@
       "organizationId": "hais",
       "repository": "hypenosys/HAIS",
       "title": "Probar dos ejecuciones independientes en paralelo",
-      "descripcion": "Probar dos ejecuciones independientes en paralelo",
+      "descripcion": "Ejecutar dos tareas independientes con Jules usando ramas separadas y máximo dos workers; simular escrituras simultáneas, timeout y reintentos sin duplicados.",
       "tema_principal": "HAIS-001 / quality",
       "prioridad": "High",
       "estado": "Pending",
       "completitud": 0,
-      "task_type": "chore",
+      "task_type": "test",
       "resuelto_por": "",
       "asignados": [],
       "tags": [
@@ -491,12 +1115,51 @@
         900009,
         900016
       ],
-      "acceptance_criteria": "sin conflictos de ficheros ni tareas duplicadas",
+      "acceptance_criteria": "sin conflictos de ficheros ni tareas duplicadas\nDos ejecuciones trazables y separadas; límite de concurrencia respetado; sin pérdida de progreso ni corrupción",
       "executor_proposed": "jules",
-      "subtasks": [],
-      "external_links": [],
+      "subtasks": [
+        {
+          "title": "Implementación / comprobación",
+          "done": false
+        },
+        {
+          "title": "Pruebas automatizadas y negativas",
+          "done": false
+        },
+        {
+          "title": "Evidencias y revisión",
+          "done": false
+        }
+      ],
+      "external_links": [
+        {
+          "url": "https://github.com/hypenosys/HAIS",
+          "label": "Repositorio HAIS"
+        }
+      ],
       "comments": [],
-      "change_log": []
+      "change_log": [],
+      "comentario": "Evidencia requerida: Dos ejecuciones trazables y separadas; límite de concurrencia respetado; sin pérdida de progreso ni corrupción",
+      "estimated_hours": 12,
+      "story_points": 8,
+      "milestone": "M3 — Calidad y trazabilidad",
+      "seccion": "HAIS · quality",
+      "rama": "feature/hais-017",
+      "rama2": null,
+      "branch": "Desarrollo (develop)",
+      "fecha": null,
+      "start_date": null,
+      "due_date": null,
+      "limite": null,
+      "ver": true,
+      "detectado_por": "HAIS-001",
+      "apoyo": null,
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "blocks": [],
+      "jules_session": null,
+      "assignee_proposed": "jules"
     },
     {
       "id": 900018,
@@ -505,12 +1168,12 @@
       "organizationId": "hais",
       "repository": "hypenosys/HAIS",
       "title": "Eventos auditables e idempotencia",
-      "descripcion": "Eventos auditables e idempotencia",
+      "descripcion": "Agregar ledger de eventos para decision_id, run_id, source_version, model/provider, prompts saneados, coste estimado y resultados PAPER; replay idempotente y sin exponer contenido secreto.",
       "tema_principal": "HAIS-001 / quality",
       "prioridad": "High",
       "estado": "Pending",
       "completitud": 0,
-      "task_type": "chore",
+      "task_type": "feature",
       "resuelto_por": "",
       "asignados": [],
       "tags": [
@@ -521,12 +1184,51 @@
         900011,
         900012
       ],
-      "acceptance_criteria": "event_id único y replay seguro",
+      "acceptance_criteria": "event_id único y replay seguro\nReplay no duplica órdenes PAPER; orden causal comprobado; logs exportables sin tokens ni PII innecesaria",
       "executor_proposed": "jules",
-      "subtasks": [],
-      "external_links": [],
+      "subtasks": [
+        {
+          "title": "Implementación / comprobación",
+          "done": false
+        },
+        {
+          "title": "Pruebas automatizadas y negativas",
+          "done": false
+        },
+        {
+          "title": "Evidencias y revisión",
+          "done": false
+        }
+      ],
+      "external_links": [
+        {
+          "url": "https://github.com/hypenosys/HAIS",
+          "label": "Repositorio HAIS"
+        }
+      ],
       "comments": [],
-      "change_log": []
+      "change_log": [],
+      "comentario": "Evidencia requerida: Replay no duplica órdenes PAPER; orden causal comprobado; logs exportables sin tokens ni PII innecesaria",
+      "estimated_hours": 14,
+      "story_points": 8,
+      "milestone": "M3 — Calidad y trazabilidad",
+      "seccion": "HAIS · quality",
+      "rama": "feature/hais-018",
+      "rama2": null,
+      "branch": "Desarrollo (develop)",
+      "fecha": null,
+      "start_date": null,
+      "due_date": null,
+      "limite": null,
+      "ver": true,
+      "detectado_por": "HAIS-001",
+      "apoyo": null,
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "blocks": [],
+      "jules_session": null,
+      "assignee_proposed": "jules"
     },
     {
       "id": 900019,
@@ -535,12 +1237,12 @@
       "organizationId": "hais",
       "repository": "hypenosys/HAIS",
       "title": "Cognito sandbox smoke test",
-      "descripcion": "Cognito sandbox smoke test",
+      "descripcion": "Probar Cognito desde Axlfc/connect-core en sandbox de solo lectura sobre HAIS, con red/FS limitados, timeout, cuota y sin acceso a claves; comparar con Jules usando el mismo ticket.",
       "tema_principal": "HAIS-001 / quality",
       "prioridad": "High",
       "estado": "Pending",
       "completitud": 0,
-      "task_type": "chore",
+      "task_type": "test",
       "resuelto_por": "",
       "asignados": [],
       "tags": [
@@ -550,12 +1252,51 @@
       "blocked_by": [
         900003
       ],
-      "acceptance_criteria": "sin acceso a secretos ni producción\nfallo controlado",
+      "acceptance_criteria": "sin acceso a secretos ni producción\nfallo controlado\nInforme comparable de resultados; sandbox aislado; salida controlada si worker falla; cero escrituras productivas",
       "executor_proposed": "cognito",
-      "subtasks": [],
-      "external_links": [],
+      "subtasks": [
+        {
+          "title": "Implementación / comprobación",
+          "done": false
+        },
+        {
+          "title": "Pruebas automatizadas y negativas",
+          "done": false
+        },
+        {
+          "title": "Evidencias y revisión",
+          "done": false
+        }
+      ],
+      "external_links": [
+        {
+          "url": "https://github.com/hypenosys/HAIS",
+          "label": "Repositorio HAIS"
+        }
+      ],
       "comments": [],
-      "change_log": []
+      "change_log": [],
+      "comentario": "Evidencia requerida: Informe comparable de resultados; sandbox aislado; salida controlada si worker falla; cero escrituras productivas",
+      "estimated_hours": 10,
+      "story_points": 5,
+      "milestone": "M3 — Calidad y trazabilidad",
+      "seccion": "HAIS · quality",
+      "rama": "feature/hais-019",
+      "rama2": null,
+      "branch": "Desarrollo (develop)",
+      "fecha": null,
+      "start_date": null,
+      "due_date": null,
+      "limite": null,
+      "ver": true,
+      "detectado_por": "HAIS-001",
+      "apoyo": null,
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "blocks": [],
+      "jules_session": null,
+      "assignee_proposed": "cognito"
     },
     {
       "id": 900020,
@@ -564,12 +1305,12 @@
       "organizationId": "hais",
       "repository": "hypenosys/HAIS",
       "title": "Diseñar infraestructura y gestión de secretos",
-      "descripcion": "Diseñar infraestructura y gestión de secretos",
+      "descripcion": "Diseñar despliegue aislado HAIS: red privada entre servicios, reverse proxy autenticado, variables secretas inyectadas, Postgres persistente, límites CPU/RAM y política de backup. Entornos dev/staging separados.",
       "tema_principal": "HAIS-001 / deployment",
       "prioridad": "High",
       "estado": "Pending",
       "completitud": 0,
-      "task_type": "chore",
+      "task_type": "design",
       "resuelto_por": "",
       "asignados": [],
       "tags": [
@@ -579,12 +1320,51 @@
       "blocked_by": [
         900010
       ],
-      "acceptance_criteria": "sin claves en repositorio ni navegador",
+      "acceptance_criteria": "sin claves en repositorio ni navegador\nDiagrama y threat model revisados; no acceso público sin autenticación; matriz de secretos y permisos con responsables",
       "executor_proposed": "jules",
-      "subtasks": [],
-      "external_links": [],
+      "subtasks": [
+        {
+          "title": "Implementación / comprobación",
+          "done": false
+        },
+        {
+          "title": "Pruebas automatizadas y negativas",
+          "done": false
+        },
+        {
+          "title": "Evidencias y revisión",
+          "done": false
+        }
+      ],
+      "external_links": [
+        {
+          "url": "https://github.com/hypenosys/HAIS",
+          "label": "Repositorio HAIS"
+        }
+      ],
       "comments": [],
-      "change_log": []
+      "change_log": [],
+      "comentario": "Evidencia requerida: Diagrama y threat model revisados; no acceso público sin autenticación; matriz de secretos y permisos con responsables",
+      "estimated_hours": 12,
+      "story_points": 8,
+      "milestone": "M4 — Staging y GO/NO-GO",
+      "seccion": "HAIS · deployment",
+      "rama": "feature/hais-020",
+      "rama2": null,
+      "branch": "Desarrollo (develop)",
+      "fecha": null,
+      "start_date": null,
+      "due_date": null,
+      "limite": null,
+      "ver": true,
+      "detectado_por": "HAIS-001",
+      "apoyo": null,
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "blocks": [],
+      "jules_session": null,
+      "assignee_proposed": "jules"
     },
     {
       "id": 900021,
@@ -593,7 +1373,7 @@
       "organizationId": "hais",
       "repository": "hypenosys/HAIS",
       "title": "Desplegar staging con health checks",
-      "descripcion": "Desplegar staging con health checks",
+      "descripcion": "Desplegar staging PAPER con compose/imagen fijada por digest, health/readiness, logs estructurados, red privada y acceso desde tc vía contrato autenticado; test sin órdenes reales.",
       "tema_principal": "HAIS-001 / deployment",
       "prioridad": "High",
       "estado": "Pending",
@@ -611,12 +1391,51 @@
         900015,
         900020
       ],
-      "acceptance_criteria": "acceso privado y health check real",
+      "acceptance_criteria": "acceso privado y health check real\nHealth real registrado; endpoints no accesibles anónimamente; imágenes y versión reproducibles; alertas mínimas",
       "executor_proposed": "jules",
-      "subtasks": [],
-      "external_links": [],
+      "subtasks": [
+        {
+          "title": "Implementación / comprobación",
+          "done": false
+        },
+        {
+          "title": "Pruebas automatizadas y negativas",
+          "done": false
+        },
+        {
+          "title": "Evidencias y revisión",
+          "done": false
+        }
+      ],
+      "external_links": [
+        {
+          "url": "https://github.com/hypenosys/HAIS",
+          "label": "Repositorio HAIS"
+        }
+      ],
       "comments": [],
-      "change_log": []
+      "change_log": [],
+      "comentario": "Evidencia requerida: Health real registrado; endpoints no accesibles anónimamente; imágenes y versión reproducibles; alertas mínimas",
+      "estimated_hours": 14,
+      "story_points": 8,
+      "milestone": "M4 — Staging y GO/NO-GO",
+      "seccion": "HAIS · deployment",
+      "rama": "feature/hais-021",
+      "rama2": null,
+      "branch": "Desarrollo (develop)",
+      "fecha": null,
+      "start_date": null,
+      "due_date": null,
+      "limite": null,
+      "ver": true,
+      "detectado_por": "HAIS-001",
+      "apoyo": null,
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "blocks": [],
+      "jules_session": null,
+      "assignee_proposed": "jules"
     },
     {
       "id": 900022,
@@ -625,12 +1444,12 @@
       "organizationId": "hais",
       "repository": "hypenosys/HAIS",
       "title": "Verificar backups y rollback",
-      "descripcion": "Verificar backups y rollback",
+      "descripcion": "Ejecutar backup y restauración en entorno de staging, rollback de migración e imagen; medir RPO/RTO y documentar comandos y evidencias sin tocar producción.",
       "tema_principal": "HAIS-001 / deployment",
       "prioridad": "High",
       "estado": "Pending",
       "completitud": 0,
-      "task_type": "chore",
+      "task_type": "test",
       "resuelto_por": "",
       "asignados": [],
       "tags": [
@@ -640,12 +1459,51 @@
       "blocked_by": [
         900021
       ],
-      "acceptance_criteria": "restauración ensayada",
+      "acceptance_criteria": "restauración ensayada\nRestauración verificada mediante checksums/conteos; rollback ensayado; RPO/RTO anotados",
       "executor_proposed": "jules",
-      "subtasks": [],
-      "external_links": [],
+      "subtasks": [
+        {
+          "title": "Implementación / comprobación",
+          "done": false
+        },
+        {
+          "title": "Pruebas automatizadas y negativas",
+          "done": false
+        },
+        {
+          "title": "Evidencias y revisión",
+          "done": false
+        }
+      ],
+      "external_links": [
+        {
+          "url": "https://github.com/hypenosys/HAIS",
+          "label": "Repositorio HAIS"
+        }
+      ],
       "comments": [],
-      "change_log": []
+      "change_log": [],
+      "comentario": "Evidencia requerida: Restauración verificada mediante checksums/conteos; rollback ensayado; RPO/RTO anotados",
+      "estimated_hours": 10,
+      "story_points": 5,
+      "milestone": "M4 — Staging y GO/NO-GO",
+      "seccion": "HAIS · deployment",
+      "rama": "feature/hais-022",
+      "rama2": null,
+      "branch": "Desarrollo (develop)",
+      "fecha": null,
+      "start_date": null,
+      "due_date": null,
+      "limite": null,
+      "ver": true,
+      "detectado_por": "HAIS-001",
+      "apoyo": null,
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "blocks": [],
+      "jules_session": null,
+      "assignee_proposed": "jules"
     },
     {
       "id": 900023,
@@ -654,7 +1512,7 @@
       "organizationId": "hais",
       "repository": "hypenosys/HAIS",
       "title": "Desplegar piloto limitado sin LIVE",
-      "descripcion": "Desplegar piloto limitado sin LIVE",
+      "descripcion": "Solicitar aprobación humana explícita del piloto PAPER con presupuesto objetivo 100 EUR/techo 150 EUR para servicios; verificar límites en proveedores, telemetría de coste y kill switch lógico. NO habilitar LIVE.",
       "tema_principal": "HAIS-001 / deployment",
       "prioridad": "High",
       "estado": "Pending",
@@ -671,12 +1529,51 @@
         900018,
         900022
       ],
-      "acceptance_criteria": "autorización explícita de despliegue\nLIVE deshabilitado",
+      "acceptance_criteria": "autorización explícita de despliegue\nLIVE deshabilitado\nAutorización registrada; gasto bajo techo; trading LIVE imposible; runbook de parada e incidentes probado",
       "executor_proposed": "human",
-      "subtasks": [],
-      "external_links": [],
+      "subtasks": [
+        {
+          "title": "Implementación / comprobación",
+          "done": false
+        },
+        {
+          "title": "Pruebas automatizadas y negativas",
+          "done": false
+        },
+        {
+          "title": "Evidencias y revisión",
+          "done": false
+        }
+      ],
+      "external_links": [
+        {
+          "url": "https://github.com/hypenosys/HAIS",
+          "label": "Repositorio HAIS"
+        }
+      ],
       "comments": [],
-      "change_log": []
+      "change_log": [],
+      "comentario": "Evidencia requerida: Autorización registrada; gasto bajo techo; trading LIVE imposible; runbook de parada e incidentes probado",
+      "estimated_hours": 6,
+      "story_points": 5,
+      "milestone": "M4 — Staging y GO/NO-GO",
+      "seccion": "HAIS · deployment",
+      "rama": "feature/hais-023",
+      "rama2": null,
+      "branch": "Desarrollo (develop)",
+      "fecha": null,
+      "start_date": null,
+      "due_date": null,
+      "limite": null,
+      "ver": true,
+      "detectado_por": "HAIS-001",
+      "apoyo": null,
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "blocks": [],
+      "jules_session": null,
+      "assignee_proposed": "human"
     },
     {
       "id": 900024,
@@ -685,12 +1582,12 @@
       "organizationId": "hais",
       "repository": "hypenosys/HAIS",
       "title": "Pruebas E2E y dictamen GO/NO-GO",
-      "descripcion": "Pruebas E2E y dictamen GO/NO-GO",
+      "descripcion": "Realizar E2E con haopengwang123 y axlfc: login, org, BYOK mínimo, tarea→Jules→PR→CI→Kanban, ejecución HAIS PAPER, audit trail, backup/rollback y prueba negativa cross-tenant. Emitir dictamen GO/NO-GO por evidencia.",
       "tema_principal": "HAIS-001 / deployment",
       "prioridad": "High",
       "estado": "Pending",
       "completitud": 0,
-      "task_type": "chore",
+      "task_type": "test",
       "resuelto_por": "",
       "asignados": [],
       "tags": [
@@ -700,12 +1597,51 @@
       "blocked_by": [
         900023
       ],
-      "acceptance_criteria": "pruebas de permisos, BYOK, tareas, PR y rollback",
+      "acceptance_criteria": "pruebas de permisos, BYOK, tareas, PR y rollback\nMatriz de escenarios con URL/capturas/logs saneados; todas las puertas de seguridad pasan o dictamen NO-GO motivado",
       "executor_proposed": "jules",
-      "subtasks": [],
-      "external_links": [],
+      "subtasks": [
+        {
+          "title": "Implementación / comprobación",
+          "done": false
+        },
+        {
+          "title": "Pruebas automatizadas y negativas",
+          "done": false
+        },
+        {
+          "title": "Evidencias y revisión",
+          "done": false
+        }
+      ],
+      "external_links": [
+        {
+          "url": "https://github.com/hypenosys/HAIS",
+          "label": "Repositorio HAIS"
+        }
+      ],
       "comments": [],
-      "change_log": []
+      "change_log": [],
+      "comentario": "Evidencia requerida: Matriz de escenarios con URL/capturas/logs saneados; todas las puertas de seguridad pasan o dictamen NO-GO motivado",
+      "estimated_hours": 16,
+      "story_points": 8,
+      "milestone": "M4 — Staging y GO/NO-GO",
+      "seccion": "HAIS · deployment",
+      "rama": "feature/hais-024",
+      "rama2": null,
+      "branch": "Desarrollo (develop)",
+      "fecha": null,
+      "start_date": null,
+      "due_date": null,
+      "limite": null,
+      "ver": true,
+      "detectado_por": "HAIS-001",
+      "apoyo": null,
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "blocks": [],
+      "jules_session": null,
+      "assignee_proposed": "jules"
     }
   ],
   "last_updated_by": "Sistema",
