@@ -12,6 +12,18 @@ python3 pilot/hais-001/validate.py
 
 El validador rechaza IDs repetidos, dependencias inexistentes, ciclos, tareas sin criterios, ejecutores desconocidos y cualquier configuración distinta de `PAPER` con `live_trading_enabled=false`. GitHub Actions ejecuta la misma comprobación al modificar este piloto.
 
+## Planificador de importación offline
+
+El adaptador `plan_import.py` transforma el manifiesto al esquema de tareas visto en `_data/orgs/hypenosys/tasks.json`, sin escribir nada en GitHub:
+
+```bash
+python3 pilot/hais-001/plan_import.py --output /tmp/hais-tasks-candidate.json
+python3 pilot/hais-001/plan_import.py --existing /tmp/hais-tasks-candidate.json --output /tmp/hais-tasks-again.json
+python3 -m unittest discover -s pilot/hais-001 -p 'test_*.py' -v
+```
+
+La segunda importación debe añadir cero tareas. El planificador rechaza workspaces que no sean `hais`, conserva tareas preexistentes y asigna identificadores estables. **No subir directamente el JSON generado**: primero verificar permisos, modelo de tareas y mecanismo de escritura autorizada. `blocked_by` está representado pero el scheduler actual todavía no ha demostrado que lo respete.
+
 ## Orden de activación
 
 1. Haopeng crea personalmente su cuenta GitHub y habilita MFA. Un propietario existente verifica y concede únicamente los permisos necesarios.
