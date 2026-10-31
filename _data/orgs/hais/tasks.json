@@ -12,7 +12,7 @@
       "descripcion": "Comprobar OAuth GitHub de haopengwang123 y axlfc en dev.hypenosys.com; validar MFA, repositorios visibles, revocación de sesión y permisos mínimos sobre hypenosys/HAIS. No asumir que ser miembro del workspace implica acceso al repo privado.",
       "tema_principal": "HAIS-001 / identity",
       "prioridad": "Critical",
-      "estado": "OK",
+      "estado": "Pending",
       "completitud": 0,
       "task_type": "research",
       "resuelto_por": "",
@@ -65,7 +65,15 @@
         }
       ],
       "comments": [],
-      "change_log": [],
+      "change_log": [
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-10-31T23:51:27Z",
+          "field": "estado",
+          "old_value": "OK",
+          "new_value": "Pending"
+        }
+      ],
       "comentario": "Evidencia requerida: Sesión real de ambos usuarios registrada sin tokens; prueba de acceso denegado a recurso no autorizado; evidencia de rol y alcance GitHub",
       "estimated_hours": 3,
       "story_points": 2,
@@ -98,7 +106,7 @@
       "descripcion": "Verificar registro HAIS en _data/organizations.json y _data/orgs/hais/meta.json, membresía, aislamiento del shard y compatibilidad con Kanban; no marcar completado solo porque exista el nombre.",
       "tema_principal": "HAIS-001 / identity",
       "prioridad": "Critical",
-      "estado": "OK",
+      "estado": "Pending",
       "completitud": 0,
       "task_type": "test",
       "resuelto_por": "",
@@ -152,7 +160,15 @@
         }
       ],
       "comments": [],
-      "change_log": [],
+      "change_log": [
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-10-31T23:51:27Z",
+          "field": "estado",
+          "old_value": "OK",
+          "new_value": "Pending"
+        }
+      ],
       "comentario": "Evidencia requerida: Lectura y escritura aisladas en org hais; ninguna tarea de hypenosys/empty-space-videogames aparece; checklist de consistencia isSharded",
       "estimated_hours": 4,
       "story_points": 3,
@@ -185,7 +201,7 @@
       "descripcion": "Verificar repo privado hypenosys/HAIS, ramas master/develop, protección de develop, PR #1, checks CI y privilegios reales de los colaboradores.",
       "tema_principal": "HAIS-001 / identity",
       "prioridad": "Critical",
-      "estado": "OK",
+      "estado": "Pending",
       "completitud": 0,
       "task_type": "chore",
       "resuelto_por": "",
@@ -239,7 +255,15 @@
         }
       ],
       "comments": [],
-      "change_log": [],
+      "change_log": [
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-10-31T23:51:27Z",
+          "field": "estado",
+          "old_value": "OK",
+          "new_value": "Pending"
+        }
+      ],
       "comentario": "Evidencia requerida: PR #1 referenciada; ruleset/branch protection comprobado; ningún colaborador sin autorización puede escribir directamente",
       "estimated_hours": 3,
       "story_points": 2,
@@ -2121,10 +2145,836 @@
       "blocks": [],
       "jules_session": null,
       "assignee_proposed": "jules"
+    },
+    {
+      "id": 900025,
+      "organizationId": "hais",
+      "repository": "hypenosys/HAIS",
+      "title": "Definir las reglas de la estrategia de inversión PAPER",
+      "descripcion": "Concretar con el usuario la compra tras una señal de Investing y la venta después de una subida cuando se agote el impulso o aparezca presión bajista. El README vigente limita HAIS a simulación; cualquier ampliación requiere una decisión y un cambio de alcance explícitos.",
+      "tema_principal": "Concepto / GDD",
+      "prioridad": "Critical",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "research",
+      "resuelto_por": "",
+      "asignados": [],
+      "tags": [
+        "hais",
+        "paper",
+        "estrategia",
+        "requisitos"
+      ],
+      "blocked_by": [],
+      "acceptance_criteria": "- Quedan registradas la fuente exacta y la forma de recibir señales, los mercados y acciones, la frecuencia de precios y la modalidad automática o con aprobación.\n- Se definen con ejemplos de precios las condiciones de compra y venta, cómo medir velocidad y presión bajista, el intervalo y los parámetros ajustables; no se inventan umbrales.\n- Se acuerdan capital, tamaño y límites de riesgo, incluidas las pérdidas antes de una subida y el comportamiento ante datos caducados o mercado cerrado.\n- Las dudas pendientes y las decisiones aprobadas quedan diferenciadas y el alcance inicial sigue siendo PAPER.",
+      "subtasks": [
+        {
+          "id": 900025001,
+          "text": "Confirmar fuente, modo de ejecución y mercados con el usuario",
+          "done": false
+        },
+        {
+          "id": 900025002,
+          "text": "Definir las reglas de entrada y salida mediante ejemplos",
+          "done": false
+        },
+        {
+          "id": 900025003,
+          "text": "Acordar capital y límites de riesgo simulados",
+          "done": false
+        },
+        {
+          "id": 900025004,
+          "text": "Registrar decisiones y dudas pendientes",
+          "done": false
+        }
+      ],
+      "external_links": [],
+      "comments": [],
+      "change_log": [
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-10-31T23:51:27Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "comentario": "Alcance PAPER; los parámetros y decisiones del usuario pendientes no deben darse por aprobados.",
+      "estimated_hours": null,
+      "story_points": null,
+      "milestone": "M1",
+      "seccion": "HAIS · estrategia PAPER",
+      "rama": "",
+      "rama2": null,
+      "branch": "Desarrollo (develop)",
+      "fecha": "2026-11-01",
+      "start_date": null,
+      "due_date": null,
+      "limite": null,
+      "ver": true,
+      "detectado_por": "Codex",
+      "apoyo": null,
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "blocks": [],
+      "jules_session": null
+    },
+    {
+      "id": 900026,
+      "organizationId": "hais",
+      "repository": "hypenosys/HAIS",
+      "title": "Investigar la recepción autorizada de señales de Investing",
+      "descripcion": "Confirmar si la fuente mencionada es Investing.com y determinar cómo recibir sus señales con un método disponible y autorizado. No asumir que exista una API o que los datos se puedan usar sin restricciones.",
+      "tema_principal": "Pre-producción",
+      "prioridad": "Major",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "research",
+      "resuelto_por": "",
+      "asignados": [],
+      "tags": [
+        "hais",
+        "paper",
+        "estrategia",
+        "investing",
+        "senales"
+      ],
+      "blocked_by": [],
+      "acceptance_criteria": "- La fuente, método de recepción, campos, frecuencia, cobertura y retraso quedan identificados y validados con el usuario.\n- Se comprueban permisos de uso y disponibilidad; las limitaciones o credenciales necesarias se registran sin guardar valores secretos.\n- Se documenta un ejemplo de señal con instrumento, sentido, hora y origen, o el bloqueo concreto si el proveedor no los facilita.",
+      "subtasks": [
+        {
+          "id": 900026001,
+          "text": "Confirmar proveedor y canal con el usuario",
+          "done": false
+        },
+        {
+          "id": 900026002,
+          "text": "Comprobar disponibilidad, permisos y datos de una señal",
+          "done": false
+        },
+        {
+          "id": 900026003,
+          "text": "Documentar contrato y limitaciones sin secretos",
+          "done": false
+        }
+      ],
+      "external_links": [],
+      "comments": [],
+      "change_log": [
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-10-31T23:51:27Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "comentario": "Alcance PAPER; los parámetros y decisiones del usuario pendientes no deben darse por aprobados.",
+      "estimated_hours": null,
+      "story_points": null,
+      "milestone": "M1",
+      "seccion": "HAIS · estrategia PAPER",
+      "rama": "",
+      "rama2": null,
+      "branch": "Desarrollo (develop)",
+      "fecha": "2026-11-01",
+      "start_date": null,
+      "due_date": null,
+      "limite": null,
+      "ver": true,
+      "detectado_por": "Codex",
+      "apoyo": null,
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "blocks": [],
+      "jules_session": null
+    },
+    {
+      "id": 900027,
+      "organizationId": "hais",
+      "repository": "hypenosys/HAIS",
+      "title": "Recibir y validar señales de entrada",
+      "descripcion": "Implementar una entrada de señales PAPER desacoplada del proveedor confirmado, con un adaptador real solo cuando esté disponible y autorizado. Permitir fixtures identificadas como simuladas durante el desarrollo.",
+      "tema_principal": "Programación / Engine",
+      "prioridad": "Major",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "asignados": [],
+      "tags": [
+        "hais",
+        "paper",
+        "estrategia",
+        "investing",
+        "senales"
+      ],
+      "blocked_by": [
+        "900011",
+        "900026"
+      ],
+      "acceptance_criteria": "- Una señal aceptada conserva instrumento, sentido, origen, hora y un identificador reproducible.\n- Se rechazan o registran señales duplicadas, incompletas y caducadas según la política acordada, sin iniciar una compra.\n- Los tests ejercitan señales válidas y rechazadas; si se usa un fixture se identifica como simulado y no se presenta como integración real.",
+      "subtasks": [
+        {
+          "id": 900027001,
+          "text": "Definir y validar el contrato de señal",
+          "done": false
+        },
+        {
+          "id": 900027002,
+          "text": "Gestionar duplicados, antigüedad y errores",
+          "done": false
+        },
+        {
+          "id": 900027003,
+          "text": "Probar datos válidos e inválidos con fixtures",
+          "done": false
+        },
+        {
+          "id": 900027004,
+          "text": "Conectar el proveedor confirmado cuando sea posible",
+          "done": false
+        }
+      ],
+      "external_links": [],
+      "comments": [],
+      "change_log": [
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-10-31T23:51:27Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "comentario": "Alcance PAPER; los parámetros y decisiones del usuario pendientes no deben darse por aprobados.",
+      "estimated_hours": null,
+      "story_points": null,
+      "milestone": "M1",
+      "seccion": "HAIS · estrategia PAPER",
+      "rama": "",
+      "rama2": null,
+      "branch": "Desarrollo (develop)",
+      "fecha": "2026-11-01",
+      "start_date": null,
+      "due_date": null,
+      "limite": null,
+      "ver": true,
+      "detectado_por": "Codex",
+      "apoyo": null,
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "blocks": [],
+      "jules_session": null
+    },
+    {
+      "id": 900028,
+      "organizationId": "hais",
+      "repository": "hypenosys/HAIS",
+      "title": "Obtener y validar precios para las posiciones PAPER",
+      "descripcion": "Elegir y conectar una fuente de precios adecuada para las acciones del alcance acordado; puede ser distinta de la fuente de señales. Registrar las limitaciones de retraso y cobertura.",
+      "tema_principal": "Programación / Engine",
+      "prioridad": "Major",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "asignados": [],
+      "tags": [
+        "hais",
+        "paper",
+        "estrategia",
+        "precios",
+        "datos"
+      ],
+      "blocked_by": [
+        "900011",
+        "900025"
+      ],
+      "acceptance_criteria": "- Cada observación identifica instrumento, precio, fuente y hora; la cobertura y la latencia de la fuente se documentan.\n- Precios ausentes, inválidos, atrasados o fuera de orden se detectan y se tratan según la regla acordada, sin usarlos como datos actuales.\n- Las pruebas cubren disponibilidad, huecos y recuperación; los precios de prueba están identificados como sintéticos.",
+      "subtasks": [
+        {
+          "id": 900028001,
+          "text": "Seleccionar una fuente y comprobar su cobertura y retraso",
+          "done": false
+        },
+        {
+          "id": 900028002,
+          "text": "Normalizar y validar precios con hora y origen",
+          "done": false
+        },
+        {
+          "id": 900028003,
+          "text": "Probar precios inválidos y recuperación",
+          "done": false
+        }
+      ],
+      "external_links": [],
+      "comments": [],
+      "change_log": [
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-10-31T23:51:27Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "comentario": "Alcance PAPER; los parámetros y decisiones del usuario pendientes no deben darse por aprobados.",
+      "estimated_hours": null,
+      "story_points": null,
+      "milestone": "M1",
+      "seccion": "HAIS · estrategia PAPER",
+      "rama": "",
+      "rama2": null,
+      "branch": "Desarrollo (develop)",
+      "fecha": "2026-11-01",
+      "start_date": null,
+      "due_date": null,
+      "limite": null,
+      "ver": true,
+      "detectado_por": "Codex",
+      "apoyo": null,
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "blocks": [],
+      "jules_session": null
+    },
+    {
+      "id": 900029,
+      "organizationId": "hais",
+      "repository": "hypenosys/HAIS",
+      "title": "Medir velocidad de subida y pérdida de impulso",
+      "descripcion": "Calcular sobre series temporales la velocidad de cambio y la pérdida de impulso que alimentarán la regla de salida acordada; los indicadores y sus umbrales quedan sujetos a la definición de estrategia.",
+      "tema_principal": "Programación / Engine",
+      "prioridad": "Major",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "asignados": [],
+      "tags": [
+        "hais",
+        "paper",
+        "estrategia",
+        "impulso",
+        "precios"
+      ],
+      "blocked_by": [
+        "900014",
+        "900025"
+      ],
+      "acceptance_criteria": "- La fórmula, unidades, intervalo y parámetros configurables están documentados y se basan solo en datos disponibles en ese momento.\n- Las pruebas incluyen subida sostenida, subida que se frena, lateralidad, presión bajista y huecos de datos.\n- Cada evaluación permite reconstruir precio, periodo, parámetros y resultado sin confundir precios sintéticos con reales.",
+      "subtasks": [
+        {
+          "id": 900029001,
+          "text": "Definir las métricas y parámetros con ejemplos",
+          "done": false
+        },
+        {
+          "id": 900029002,
+          "text": "Calcular el impulso sin usar datos futuros",
+          "done": false
+        },
+        {
+          "id": 900029003,
+          "text": "Cubrir escenarios de subida, meseta, caída y datos incompletos",
+          "done": false
+        }
+      ],
+      "external_links": [],
+      "comments": [],
+      "change_log": [
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-10-31T23:51:27Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "comentario": "Alcance PAPER; los parámetros y decisiones del usuario pendientes no deben darse por aprobados.",
+      "estimated_hours": null,
+      "story_points": null,
+      "milestone": "M1",
+      "seccion": "HAIS · estrategia PAPER",
+      "rama": "",
+      "rama2": null,
+      "branch": "Desarrollo (develop)",
+      "fecha": "2026-11-01",
+      "start_date": null,
+      "due_date": null,
+      "limite": null,
+      "ver": true,
+      "detectado_por": "Codex",
+      "apoyo": null,
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "blocks": [],
+      "jules_session": null
+    },
+    {
+      "id": 900030,
+      "organizationId": "hais",
+      "repository": "hypenosys/HAIS",
+      "title": "Aplicar límites de riesgo y parada en PAPER",
+      "descripcion": "Proteger el capital simulado con los límites que el usuario acuerde antes de permitir compras. La forma de gestionar posiciones abiertas y posibles pérdidas previas al beneficio queda por decidir.",
+      "tema_principal": "Programación / Engine",
+      "prioridad": "Critical",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "asignados": [],
+      "tags": [
+        "hais",
+        "paper",
+        "estrategia",
+        "riesgo"
+      ],
+      "blocked_by": [
+        "900011",
+        "900025"
+      ],
+      "acceptance_criteria": "- Capital inicial, tamaño máximo de posición, exposición y límites de pérdida son configurables y no se inventan valores aprobados.\n- Una compra que rebasa límites o saldo se rechaza con motivo; se prueba también el comportamiento ante datos caducados.\n- Una parada manual impide nuevas compras; el tratamiento de posiciones abiertas y salidas de protección sigue la regla aprobada.\n- No existe una ruta de órdenes LIVE en este alcance.",
+      "subtasks": [
+        {
+          "id": 900030001,
+          "text": "Acordar y documentar límites y salidas de protección",
+          "done": false
+        },
+        {
+          "id": 900030002,
+          "text": "Validar saldo y límites antes de comprar",
+          "done": false
+        },
+        {
+          "id": 900030003,
+          "text": "Probar la parada manual y los rechazos",
+          "done": false
+        }
+      ],
+      "external_links": [],
+      "comments": [],
+      "change_log": [
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-10-31T23:51:27Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "comentario": "Alcance PAPER; los parámetros y decisiones del usuario pendientes no deben darse por aprobados.",
+      "estimated_hours": null,
+      "story_points": null,
+      "milestone": "M1",
+      "seccion": "HAIS · estrategia PAPER",
+      "rama": "",
+      "rama2": null,
+      "branch": "Desarrollo (develop)",
+      "fecha": "2026-11-01",
+      "start_date": null,
+      "due_date": null,
+      "limite": null,
+      "ver": true,
+      "detectado_por": "Codex",
+      "apoyo": null,
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "blocks": [],
+      "jules_session": null
+    },
+    {
+      "id": 900031,
+      "organizationId": "hais",
+      "repository": "hypenosys/HAIS",
+      "title": "Comprar en simulación ante una señal válida",
+      "descripcion": "Implementar la decisión de entrada y una compra exclusivamente PAPER usando el contrato de señales y las reglas aprobadas; el motor debe poder probarse con señales sintéticas antes de conectar un proveedor.",
+      "tema_principal": "Programación / Engine",
+      "prioridad": "Major",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "asignados": [],
+      "tags": [
+        "hais",
+        "paper",
+        "estrategia",
+        "compra",
+        "simulacion"
+      ],
+      "blocked_by": [
+        "900011",
+        "900025",
+        "900030"
+      ],
+      "acceptance_criteria": "- Una señal válida del instrumento acordado produce como máximo una compra simulada cuando se cumplen las reglas y límites.\n- Se verifican saldo, riesgo, frescura, estado de mercado y cualquier aprobación humana requerida antes de la compra.\n- Se registran señal, hora, precio, cantidad y motivo; los reintentos no duplican operaciones y no se envía ninguna orden real.",
+      "subtasks": [
+        {
+          "id": 900031001,
+          "text": "Evaluar la señal y los requisitos de entrada",
+          "done": false
+        },
+        {
+          "id": 900031002,
+          "text": "Ejecutar la compra PAPER con idempotencia",
+          "done": false
+        },
+        {
+          "id": 900031003,
+          "text": "Registrar la decisión y probar rechazos",
+          "done": false
+        }
+      ],
+      "external_links": [],
+      "comments": [],
+      "change_log": [
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-10-31T23:51:27Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "comentario": "Alcance PAPER; los parámetros y decisiones del usuario pendientes no deben darse por aprobados.",
+      "estimated_hours": null,
+      "story_points": null,
+      "milestone": "M1",
+      "seccion": "HAIS · estrategia PAPER",
+      "rama": "",
+      "rama2": null,
+      "branch": "Desarrollo (develop)",
+      "fecha": "2026-11-01",
+      "start_date": null,
+      "due_date": null,
+      "limite": null,
+      "ver": true,
+      "detectado_por": "Codex",
+      "apoyo": null,
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "blocks": [],
+      "jules_session": null
+    },
+    {
+      "id": 900032,
+      "organizationId": "hais",
+      "repository": "hypenosys/HAIS",
+      "title": "Vender en simulación al cumplirse la regla de salida",
+      "descripcion": "Seguir cada posición PAPER y decidir la venta tras la subida y el agotamiento del impulso o la presión bajista, según la definición que confirme el usuario. Considerar por separado las salidas de protección acordadas.",
+      "tema_principal": "Programación / Engine",
+      "prioridad": "Major",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "asignados": [],
+      "tags": [
+        "hais",
+        "paper",
+        "estrategia",
+        "venta",
+        "impulso"
+      ],
+      "blocked_by": [
+        "900025",
+        "900029",
+        "900030"
+      ],
+      "acceptance_criteria": "- Se prueba la secuencia subida, pérdida de impulso y presión bajista con el resultado acordado y parámetros configurables.\n- También se prueban subida continuada, movimiento lateral, caída antes del beneficio y datos no válidos según las reglas aprobadas.\n- Cada posición se cierra como máximo una vez y la venta registra datos y motivo; no se envía ninguna orden real.",
+      "subtasks": [
+        {
+          "id": 900032001,
+          "text": "Modelar las condiciones y estados de salida acordados",
+          "done": false
+        },
+        {
+          "id": 900032002,
+          "text": "Vender la posición PAPER sin duplicados",
+          "done": false
+        },
+        {
+          "id": 900032003,
+          "text": "Probar escenarios favorables, adversos y datos incompletos",
+          "done": false
+        }
+      ],
+      "external_links": [],
+      "comments": [],
+      "change_log": [
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-10-31T23:51:27Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "comentario": "Alcance PAPER; los parámetros y decisiones del usuario pendientes no deben darse por aprobados.",
+      "estimated_hours": null,
+      "story_points": null,
+      "milestone": "M1",
+      "seccion": "HAIS · estrategia PAPER",
+      "rama": "",
+      "rama2": null,
+      "branch": "Desarrollo (develop)",
+      "fecha": "2026-11-01",
+      "start_date": null,
+      "due_date": null,
+      "limite": null,
+      "ver": true,
+      "detectado_por": "Codex",
+      "apoyo": null,
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "blocks": [],
+      "jules_session": null
+    },
+    {
+      "id": 900033,
+      "organizationId": "hais",
+      "repository": "hypenosys/HAIS",
+      "title": "Mantener cartera y resultados de operaciones PAPER",
+      "descripcion": "Usar las tareas existentes de base de datos y auditoría para conservar saldo, posiciones y operaciones simuladas, incluidos costes y trazabilidad de cada decisión.",
+      "tema_principal": "Programación / Engine",
+      "prioridad": "Major",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "asignados": [],
+      "tags": [
+        "hais",
+        "paper",
+        "estrategia",
+        "cartera",
+        "auditoria"
+      ],
+      "blocked_by": [
+        "900012",
+        "900018"
+      ],
+      "acceptance_criteria": "- Se pueden consultar saldo, posiciones abiertas y cerradas, y beneficio o pérdida realizado y no realizado.\n- Cada compra o venta conserva señal o motivo, horas de decisión y ejecución, precio, cantidad y costes simulados documentados.\n- Tras reiniciar se reconstruye el estado sin duplicar operaciones; las fuentes sintéticas se distinguen en el registro.",
+      "subtasks": [
+        {
+          "id": 900033001,
+          "text": "Guardar compras, ventas y posiciones simuladas",
+          "done": false
+        },
+        {
+          "id": 900033002,
+          "text": "Calcular saldos y resultados con costes",
+          "done": false
+        },
+        {
+          "id": 900033003,
+          "text": "Probar recuperación e idempotencia",
+          "done": false
+        }
+      ],
+      "external_links": [],
+      "comments": [],
+      "change_log": [
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-10-31T23:51:27Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "comentario": "Alcance PAPER; los parámetros y decisiones del usuario pendientes no deben darse por aprobados.",
+      "estimated_hours": null,
+      "story_points": null,
+      "milestone": "M1",
+      "seccion": "HAIS · estrategia PAPER",
+      "rama": "",
+      "rama2": null,
+      "branch": "Desarrollo (develop)",
+      "fecha": "2026-11-01",
+      "start_date": null,
+      "due_date": null,
+      "limite": null,
+      "ver": true,
+      "detectado_por": "Codex",
+      "apoyo": null,
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "blocks": [],
+      "jules_session": null
+    },
+    {
+      "id": 900034,
+      "organizationId": "hais",
+      "repository": "hypenosys/HAIS",
+      "title": "Evaluar la estrategia con reproducción histórica",
+      "descripcion": "Preparar una evaluación reproducible de la estrategia PAPER con datos y señales históricos disponibles, indicando expresamente cuándo las señales son sintéticas.",
+      "tema_principal": "QA / Testing",
+      "prioridad": "Medium",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "research",
+      "resuelto_por": "",
+      "asignados": [],
+      "tags": [
+        "hais",
+        "paper",
+        "estrategia",
+        "backtest"
+      ],
+      "blocked_by": [
+        "900014",
+        "900029",
+        "900031",
+        "900032",
+        "900033"
+      ],
+      "acceptance_criteria": "- La evaluación usa solo datos disponibles en cada instante y es reproducible con los mismos datos y parámetros.\n- Incluye supuestos de comisiones, diferencial, deslizamiento y latencia; reporta rentabilidad, caída máxima y número de operaciones.\n- Distingue los datos usados para ajustar de los usados para evaluar y documenta la cobertura y limitaciones de precios y señales históricas.",
+      "subtasks": [
+        {
+          "id": 900034001,
+          "text": "Preparar datos y señales históricos o fixtures identificados",
+          "done": false
+        },
+        {
+          "id": 900034002,
+          "text": "Ejecutar reproducción sin mirar datos futuros",
+          "done": false
+        },
+        {
+          "id": 900034003,
+          "text": "Reportar resultados, costes y limitaciones",
+          "done": false
+        }
+      ],
+      "external_links": [],
+      "comments": [],
+      "change_log": [
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-10-31T23:51:27Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "comentario": "Alcance PAPER; los parámetros y decisiones del usuario pendientes no deben darse por aprobados.",
+      "estimated_hours": null,
+      "story_points": null,
+      "milestone": "M1",
+      "seccion": "HAIS · estrategia PAPER",
+      "rama": "",
+      "rama2": null,
+      "branch": "Desarrollo (develop)",
+      "fecha": "2026-11-01",
+      "start_date": null,
+      "due_date": null,
+      "limite": null,
+      "ver": true,
+      "detectado_por": "Codex",
+      "apoyo": null,
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "blocks": [],
+      "jules_session": null
+    },
+    {
+      "id": 900035,
+      "organizationId": "hais",
+      "repository": "hypenosys/HAIS",
+      "title": "Probar el recorrido completo de compra y venta PAPER",
+      "descripcion": "Validar de extremo a extremo la estrategia en simulación con una señal y precios controlados; complementar el E2E general del piloto existente sin dar por probada una integración externa simulada.",
+      "tema_principal": "QA / Testing",
+      "prioridad": "Major",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "asignados": [],
+      "tags": [
+        "hais",
+        "paper",
+        "estrategia",
+        "e2e",
+        "calidad"
+      ],
+      "blocked_by": [
+        "900031",
+        "900032",
+        "900033"
+      ],
+      "acceptance_criteria": "- Un caso automatizado recorre señal válida → compra PAPER → subida → pérdida de impulso y presión bajista → venta PAPER conforme a las reglas aprobadas.\n- Se prueban señal duplicada o antigua, precios inválidos, límites de riesgo, reintentos y ausencia de doble venta.\n- Se comprueban el saldo y la posición final, los motivos y el historial; se identifica si el proveedor usado es real o simulado y no hay órdenes LIVE.",
+      "subtasks": [
+        {
+          "id": 900035001,
+          "text": "Preparar una señal y serie temporal deterministas",
+          "done": false
+        },
+        {
+          "id": 900035002,
+          "text": "Verificar compra, seguimiento y venta PAPER",
+          "done": false
+        },
+        {
+          "id": 900035003,
+          "text": "Cubrir errores, límites y trazabilidad del resultado",
+          "done": false
+        }
+      ],
+      "external_links": [],
+      "comments": [],
+      "change_log": [
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-10-31T23:51:27Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "comentario": "Alcance PAPER; los parámetros y decisiones del usuario pendientes no deben darse por aprobados.",
+      "estimated_hours": null,
+      "story_points": null,
+      "milestone": "M1",
+      "seccion": "HAIS · estrategia PAPER",
+      "rama": "",
+      "rama2": null,
+      "branch": "Desarrollo (develop)",
+      "fecha": "2026-11-01",
+      "start_date": null,
+      "due_date": null,
+      "limite": null,
+      "ver": true,
+      "detectado_por": "Codex",
+      "apoyo": null,
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "blocks": [],
+      "jules_session": null
     }
   ],
-  "last_updated_by": "Sistema",
+  "last_updated_by": "Codex",
   "_audit_log": [
+    {
+      "action": "chore(HAIS): reabrir verificaciones pendientes y preparar tareas de estrategia PAPER",
+      "user": "Codex",
+      "timestamp": "2026-10-31T23:51:27Z"
+    },
     {
       "action": "chore: actualizar estado tarea #900003 → OK",
       "user": "haopengwang123",
