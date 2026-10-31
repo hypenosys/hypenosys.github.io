@@ -52,16 +52,16 @@
       ],
       "external_links": [
         {
-          "url": "https://github.com/hypenosys/HAIS",
-          "label": "Repositorio HAIS"
+          "label": "Registro HAIS y sus miembros",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/_data/organizations.json"
         },
         {
-          "label": "GitHub OAuth",
+          "label": "Metadatos del workspace",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/_data/orgs/hais/meta.json"
+        },
+        {
+          "label": "GitHub OAuth Apps",
           "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps"
-        },
-        {
-          "label": "Permissions",
-          "url": "https://docs.github.com/en/rest/authentication/permissions-required-for-fine-grained-personal-access-tokens"
         }
       ],
       "comments": [],
@@ -139,16 +139,16 @@
       ],
       "external_links": [
         {
-          "url": "https://github.com/hypenosys/HAIS",
-          "label": "Repositorio HAIS"
+          "label": "Organización HAIS — registro",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/_data/organizations.json"
         },
         {
-          "label": "GitHub Contents API",
-          "url": "https://docs.github.com/en/rest/repos/contents"
+          "label": "Workspace HAIS — tareas",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/_data/orgs/hais/tasks.json"
         },
         {
-          "label": "OWASP Access Control",
-          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html"
+          "label": "Workspace HAIS — metadata",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/_data/orgs/hais/meta.json"
         }
       ],
       "comments": [],
@@ -226,16 +226,16 @@
       ],
       "external_links": [
         {
-          "url": "https://github.com/hypenosys/HAIS",
-          "label": "Repositorio HAIS"
+          "label": "HAIS — PR inicial",
+          "url": "https://github.com/hypenosys/HAIS/pull/1"
         },
         {
-          "label": "Protected branches",
+          "label": "HAIS — ramas",
+          "url": "https://github.com/hypenosys/HAIS/branches"
+        },
+        {
+          "label": "Protección de ramas",
           "url": "https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches"
-        },
-        {
-          "label": "Rulesets",
-          "url": "https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets"
         }
       ],
       "comments": [],
@@ -315,19 +315,19 @@
       ],
       "external_links": [
         {
-          "url": "https://github.com/hypenosys/HAIS",
-          "label": "Repositorio HAIS"
+          "label": "Hypenosys — gestión de claves",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/assets/javascript/auth.js"
         },
         {
-          "label": "OWASP Secrets Management",
-          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html"
+          "label": "Hypenosys — integración GitHub",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/assets/javascript/github-api.js"
         },
         {
-          "label": "OpenAI API Reference",
-          "url": "https://developers.openai.com/api/reference/overview"
+          "label": "OpenAI — autenticación",
+          "url": "https://platform.openai.com/docs/api-reference/authentication"
         },
         {
-          "label": "OpenRouter API",
+          "label": "OpenRouter — referencia API",
           "url": "https://openrouter.ai/docs/api-reference/overview"
         }
       ],
@@ -407,16 +407,16 @@
       ],
       "external_links": [
         {
-          "url": "https://github.com/hypenosys/HAIS",
-          "label": "Repositorio HAIS"
+          "label": "Hypenosys — autenticación",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/assets/javascript/auth.js"
         },
         {
-          "label": "OWASP Authorization",
+          "label": "tc — código fuente",
+          "url": "https://github.com/Axlfc/tc/tree/develop/src"
+        },
+        {
+          "label": "OWASP — control de acceso",
           "url": "https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html"
-        },
-        {
-          "label": "OWASP IDOR",
-          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Insecure_Direct_Object_Reference_Prevention_Cheat_Sheet.html"
         }
       ],
       "comments": [],
@@ -495,16 +495,16 @@
       ],
       "external_links": [
         {
-          "url": "https://github.com/hypenosys/HAIS",
-          "label": "Repositorio HAIS"
+          "label": "HAIS — tareas de la organización",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/_data/orgs/hais/tasks.json"
         },
         {
-          "label": "GitHub Contents API",
+          "label": "Hypenosys — GitHub Contents API",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/assets/javascript/github-api.js"
+        },
+        {
+          "label": "GitHub Contents — lectura y escritura",
           "url": "https://docs.github.com/en/rest/repos/contents"
-        },
-        {
-          "label": "GitHub REST best practices",
-          "url": "https://docs.github.com/en/rest/using-the-rest-api/best-practices-for-using-the-rest-api"
         }
       ],
       "comments": [],
@@ -582,16 +582,16 @@
       ],
       "external_links": [
         {
-          "url": "https://github.com/hypenosys/HAIS",
-          "label": "Repositorio HAIS"
+          "label": "HAIS — DAG y dependencias",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/pilot/hais-001/backlog.json"
         },
         {
-          "label": "Python graphlib",
+          "label": "HAIS — validador DAG",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/pilot/hais-001/validate.py"
+        },
+        {
+          "label": "Python — ordenación topológica",
           "url": "https://docs.python.org/3/library/graphlib.html"
-        },
-        {
-          "label": "Temporal workflow execution",
-          "url": "https://docs.temporal.io/workflow-execution"
         }
       ],
       "comments": [],
@@ -671,16 +671,16 @@
       ],
       "external_links": [
         {
-          "url": "https://github.com/hypenosys/HAIS",
-          "label": "Repositorio HAIS"
+          "label": "HAIS — tickets ejecutables",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/_data/orgs/hais/tasks.json"
         },
         {
-          "label": "GitHub Pull Requests",
+          "label": "HAIS — PR de ejemplo",
+          "url": "https://github.com/hypenosys/HAIS/pull/1"
+        },
+        {
+          "label": "GitHub — Pull Request API",
           "url": "https://docs.github.com/en/rest/pulls/pulls"
-        },
-        {
-          "label": "GitHub commits API",
-          "url": "https://docs.github.com/en/rest/commits/commits"
         }
       ],
       "comments": [],
@@ -759,15 +759,15 @@
       ],
       "external_links": [
         {
-          "url": "https://github.com/hypenosys/HAIS",
-          "label": "Repositorio HAIS"
+          "label": "Hypenosys — integración GitHub",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/assets/javascript/github-api.js"
         },
         {
-          "label": "GitHub Webhook events",
-          "url": "https://docs.github.com/en/webhooks/webhook-events-and-payloads"
+          "label": "HAIS — PRs",
+          "url": "https://github.com/hypenosys/HAIS/pulls"
         },
         {
-          "label": "GitHub workflow runs",
+          "label": "GitHub — workflow runs API",
           "url": "https://docs.github.com/en/rest/actions/workflow-runs"
         }
       ],
@@ -846,15 +846,15 @@
       ],
       "external_links": [
         {
-          "url": "https://github.com/hypenosys/HAIS",
-          "label": "Repositorio HAIS"
+          "label": "HAIS — implementación FastAPI",
+          "url": "https://github.com/hypenosys/HAIS/blob/feature/paper-foundation/src/hais/app.py"
         },
         {
-          "label": "FastAPI deployment",
-          "url": "https://fastapi.tiangolo.com/deployment/"
+          "label": "HAIS — contenedor",
+          "url": "https://github.com/hypenosys/HAIS/blob/feature/paper-foundation/Dockerfile"
         },
         {
-          "label": "FastAPI testing",
+          "label": "FastAPI — pruebas",
           "url": "https://fastapi.tiangolo.com/tutorial/testing/"
         }
       ],
@@ -933,16 +933,16 @@
       ],
       "external_links": [
         {
-          "url": "https://github.com/hypenosys/HAIS",
-          "label": "Repositorio HAIS"
+          "label": "HAIS — aplicación FastAPI",
+          "url": "https://github.com/hypenosys/HAIS/blob/feature/paper-foundation/src/hais/app.py"
         },
         {
-          "label": "Pydantic Models",
+          "label": "HAIS — pruebas existentes",
+          "url": "https://github.com/hypenosys/HAIS/blob/feature/paper-foundation/tests/test_app.py"
+        },
+        {
+          "label": "Pydantic — modelos",
           "url": "https://docs.pydantic.dev/latest/concepts/models/"
-        },
-        {
-          "label": "JSON Schema",
-          "url": "https://json-schema.org/understanding-json-schema/"
         }
       ],
       "comments": [],
@@ -1020,15 +1020,15 @@
       ],
       "external_links": [
         {
-          "url": "https://github.com/hypenosys/HAIS",
-          "label": "Repositorio HAIS"
+          "label": "HAIS — dependencias Python",
+          "url": "https://github.com/hypenosys/HAIS/blob/feature/paper-foundation/pyproject.toml"
         },
         {
-          "label": "PostgreSQL Row Security",
+          "label": "PostgreSQL — Row Security",
           "url": "https://www.postgresql.org/docs/current/ddl-rowsecurity.html"
         },
         {
-          "label": "Alembic",
+          "label": "Alembic — migraciones",
           "url": "https://alembic.sqlalchemy.org/en/latest/"
         }
       ],
@@ -1109,20 +1109,16 @@
       ],
       "external_links": [
         {
-          "url": "https://github.com/hypenosys/HAIS",
-          "label": "Repositorio HAIS"
+          "label": "Hypenosys — configuración IA",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/assets/javascript/auth.js"
         },
         {
-          "label": "OpenAI Rate Limits",
-          "url": "https://developers.openai.com/api/docs/guides/rate-limits"
+          "label": "HAIS — contrato de integración",
+          "url": "https://github.com/hypenosys/HAIS/blob/feature/paper-foundation/docs/INTEGRATION.md"
         },
         {
-          "label": "OpenRouter API",
+          "label": "OpenRouter — referencia",
           "url": "https://openrouter.ai/docs/api-reference/overview"
-        },
-        {
-          "label": "OWASP Secrets",
-          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html"
         }
       ],
       "comments": [],
@@ -1201,15 +1197,15 @@
       ],
       "external_links": [
         {
-          "url": "https://github.com/hypenosys/HAIS",
-          "label": "Repositorio HAIS"
+          "label": "HAIS — pruebas del servicio",
+          "url": "https://github.com/hypenosys/HAIS/blob/feature/paper-foundation/tests/test_app.py"
         },
         {
-          "label": "pandas time series",
+          "label": "pandas — series temporales",
           "url": "https://pandas.pydata.org/docs/user_guide/timeseries.html"
         },
         {
-          "label": "NumPy random generation",
+          "label": "NumPy — generadores reproducibles",
           "url": "https://numpy.org/doc/stable/reference/random/index.html"
         }
       ],
@@ -1289,20 +1285,16 @@
       ],
       "external_links": [
         {
-          "url": "https://github.com/hypenosys/HAIS",
-          "label": "Repositorio HAIS"
+          "label": "HAIS — CI existente",
+          "url": "https://github.com/hypenosys/HAIS/blob/feature/paper-foundation/.github/workflows/ci.yml"
         },
         {
-          "label": "GitHub Actions security",
+          "label": "HAIS — acciones CI",
+          "url": "https://github.com/hypenosys/HAIS/actions"
+        },
+        {
+          "label": "GitHub Actions — seguridad",
           "url": "https://docs.github.com/en/actions/security-for-github-actions/security-guides/security-hardening-for-github-actions"
-        },
-        {
-          "label": "Pytest",
-          "url": "https://docs.pytest.org/en/stable/"
-        },
-        {
-          "label": "Docker build",
-          "url": "https://docs.docker.com/build/"
         }
       ],
       "comments": [],
@@ -1382,16 +1374,16 @@
       ],
       "external_links": [
         {
-          "url": "https://github.com/hypenosys/HAIS",
-          "label": "Repositorio HAIS"
+          "label": "HAIS — PRs de desarrollo",
+          "url": "https://github.com/hypenosys/HAIS/pulls"
         },
         {
-          "label": "GitHub Pull Requests",
+          "label": "HAIS — checks Actions",
+          "url": "https://github.com/hypenosys/HAIS/actions"
+        },
+        {
+          "label": "GitHub — estado de PR",
           "url": "https://docs.github.com/en/rest/pulls/pulls"
-        },
-        {
-          "label": "GitHub branch protection",
-          "url": "https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches"
         }
       ],
       "comments": [],
@@ -1471,16 +1463,16 @@
       ],
       "external_links": [
         {
-          "url": "https://github.com/hypenosys/HAIS",
-          "label": "Repositorio HAIS"
+          "label": "Hypenosys — tareas y bloqueos",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/_data/orgs/hais/tasks.json"
         },
         {
-          "label": "GitHub Actions concurrency",
+          "label": "GitHub Actions — concurrency",
           "url": "https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency"
         },
         {
-          "label": "GitHub REST best practices",
-          "url": "https://docs.github.com/en/rest/using-the-rest-api/best-practices-for-using-the-rest-api"
+          "label": "HAIS — ramas de trabajo",
+          "url": "https://github.com/hypenosys/HAIS/branches"
         }
       ],
       "comments": [],
@@ -1560,15 +1552,15 @@
       ],
       "external_links": [
         {
-          "url": "https://github.com/hypenosys/HAIS",
-          "label": "Repositorio HAIS"
+          "label": "HAIS — contrato PAPER",
+          "url": "https://github.com/hypenosys/HAIS/blob/feature/paper-foundation/docs/INTEGRATION.md"
         },
         {
-          "label": "OpenTelemetry concepts",
+          "label": "OpenTelemetry — trazas",
           "url": "https://opentelemetry.io/docs/concepts/"
         },
         {
-          "label": "PostgreSQL transactions",
+          "label": "PostgreSQL — transacciones",
           "url": "https://www.postgresql.org/docs/current/tutorial-transactions.html"
         }
       ],
@@ -1647,15 +1639,15 @@
       ],
       "external_links": [
         {
-          "url": "https://github.com/hypenosys/HAIS",
-          "label": "Repositorio HAIS"
+          "label": "Cognito — agente experimental",
+          "url": "https://github.com/Axlfc/connect-core"
         },
         {
-          "label": "OWASP Docker Security",
-          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html"
+          "label": "HAIS — alcance de sandbox",
+          "url": "https://github.com/hypenosys/HAIS/blob/feature/paper-foundation/docs/INTEGRATION.md"
         },
         {
-          "label": "Docker security",
+          "label": "Docker — seguridad",
           "url": "https://docs.docker.com/engine/security/"
         }
       ],
@@ -1734,20 +1726,16 @@
       ],
       "external_links": [
         {
-          "url": "https://github.com/hypenosys/HAIS",
-          "label": "Repositorio HAIS"
+          "label": "HAIS — Compose de desarrollo",
+          "url": "https://github.com/hypenosys/HAIS/blob/feature/paper-foundation/compose.yaml"
         },
         {
-          "label": "OWASP Threat Modeling",
+          "label": "HAIS — Dockerfile",
+          "url": "https://github.com/hypenosys/HAIS/blob/feature/paper-foundation/Dockerfile"
+        },
+        {
+          "label": "OWASP — modelado de amenazas",
           "url": "https://cheatsheetseries.owasp.org/cheatsheets/Threat_Modeling_Cheat_Sheet.html"
-        },
-        {
-          "label": "Docker Compose",
-          "url": "https://docs.docker.com/compose/"
-        },
-        {
-          "label": "OWASP Secrets Management",
-          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html"
         }
       ],
       "comments": [],
@@ -1829,16 +1817,16 @@
       ],
       "external_links": [
         {
-          "url": "https://github.com/hypenosys/HAIS",
-          "label": "Repositorio HAIS"
+          "label": "HAIS — Docker Compose",
+          "url": "https://github.com/hypenosys/HAIS/blob/feature/paper-foundation/compose.yaml"
         },
         {
-          "label": "Docker healthcheck",
+          "label": "HAIS — health endpoint",
+          "url": "https://github.com/hypenosys/HAIS/blob/feature/paper-foundation/src/hais/app.py"
+        },
+        {
+          "label": "Dockerfile — healthcheck",
           "url": "https://docs.docker.com/reference/dockerfile/#healthcheck"
-        },
-        {
-          "label": "FastAPI deployment",
-          "url": "https://fastapi.tiangolo.com/deployment/"
         }
       ],
       "comments": [],
@@ -1916,15 +1904,15 @@
       ],
       "external_links": [
         {
-          "url": "https://github.com/hypenosys/HAIS",
-          "label": "Repositorio HAIS"
+          "label": "HAIS — despliegue Docker",
+          "url": "https://github.com/hypenosys/HAIS/blob/feature/paper-foundation/compose.yaml"
         },
         {
-          "label": "PostgreSQL Backup",
+          "label": "PostgreSQL — backups",
           "url": "https://www.postgresql.org/docs/current/backup.html"
         },
         {
-          "label": "Alembic migrations",
+          "label": "Alembic — reversión",
           "url": "https://alembic.sqlalchemy.org/en/latest/"
         }
       ],
@@ -2006,16 +1994,16 @@
       ],
       "external_links": [
         {
-          "url": "https://github.com/hypenosys/HAIS",
-          "label": "Repositorio HAIS"
+          "label": "HAIS — política PAPER",
+          "url": "https://github.com/hypenosys/HAIS/blob/feature/paper-foundation/docs/INTEGRATION.md"
         },
         {
-          "label": "OpenAI rate and spend limits",
-          "url": "https://developers.openai.com/api/docs/guides/rate-limits"
+          "label": "HAIS — capacidad LIVE deshabilitada",
+          "url": "https://github.com/hypenosys/HAIS/blob/feature/paper-foundation/src/hais/app.py"
         },
         {
-          "label": "OWASP Secrets Management",
-          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html"
+          "label": "Hypenosys — backlog de gates",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/pilot/hais-001/backlog.json"
         }
       ],
       "comments": [],
@@ -2094,20 +2082,20 @@
       ],
       "external_links": [
         {
-          "url": "https://github.com/hypenosys/HAIS",
-          "label": "Repositorio HAIS"
+          "label": "Hypenosys — tareas de verificación",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/_data/orgs/hais/tasks.json"
         },
         {
-          "label": "Playwright",
+          "label": "HAIS — pruebas API",
+          "url": "https://github.com/hypenosys/HAIS/blob/feature/paper-foundation/tests/test_app.py"
+        },
+        {
+          "label": "HAIS — CI",
+          "url": "https://github.com/hypenosys/HAIS/actions"
+        },
+        {
+          "label": "Playwright — pruebas E2E",
           "url": "https://playwright.dev/docs/intro"
-        },
-        {
-          "label": "FastAPI testing",
-          "url": "https://fastapi.tiangolo.com/tutorial/testing/"
-        },
-        {
-          "label": "OWASP Authorization",
-          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html"
         }
       ],
       "comments": [],
