@@ -109,6 +109,49 @@
     } catch (error) { message('Supervisor: ' + error.message); }
   }
 
-  window.JulesTaskSupervisor = { review, applyStatus, editTask, archive };
+  async function applySuggestedLifecycle() {
+    if (busy) return;
+    busy = true;
+    try {
+      const {task,workspace} = await loadTask();
+      const sid = String(window.NeuralWorkspaceState?.activeJulesSessionId || task.jules_session?.session_id || '').replace(/^sessions\//, '');
+      if (!sid) throw new Error('La tarea no tiene una sesión Jules vinculada.');
+      const remote = await window.julesApi.getSession('sessions/' + sid);
+      if (!remote || String(remote.name || '').replace(/^sessions\//,'') !== sid) {
+        throw new Error('No se pudo confirmar la sesión Jules original.');
+      }
+      const next = ({
+        QUEUED:'WORKING', PLANNING:'WORKING', IN_PROGRESS:'WORKING',
+        AWAITING_PLAN_APPROVAL:'BLOCKED', AWAITING_USER_FEEDBACK:'BLOCKED',
+        PAUSED:'BLOCKED', FAILED:'BLOCKED', COMPLETED:'REVIEW'
+      })[remote.state];
+      if (!next) throw new Error('Estado Jules no reconocido: ' + String(remote.state));
+      const dependencies = Array.isArray(task.blocked_by) ? task.blocked_by : [];
+      if (next === 'WORKING' && dependencies.length) {
+        const tasks = await window.taskOps.getAllTasks();
+        const outstanding = dependencies.filter(id => {
+          const dep = (tasks || []).find(item => String(item.id) === String(id));
+          return !dep || String(dep.estado || dep.status || '').toUpperCase() !== 'DONE';
+        });
+        if (outstanding.length) throw new Error('Bloqueada por tareas ' + outstanding.join(', ') + '. No se puede mover a WORKING.');
+      }
+      if (String(task.estado || task.status || '').toUpperCase() === next) {
+        message('La tarea #' + task.id + ' ya está en ' + next + '.');
+        return;
+      }
+      if (!window.confirm('Jules #' + sid + ' está ' + remote.state + '. ¿Mover tarea #' + task.id + ' a ' + next + ' en ' + workspace + '? No se modifica código ni se aprueba un plan.')) return;
+      await window.taskOps.updateTask(task.id,{
+        estado:next,
+        jules_session:{ ...(task.jules_session || {}),session_id:sid,
+          status:remote.state,updated_at:new Date().toISOString()}
+      });
+      message('Tarea #' + task.id + ': ' + (task.estado || 'SIN ESTADO') + ' → ' + next +
+        ' (Jules: ' + remote.state + ').');
+      if (window.refreshDashboard) await window.refreshDashboard();
+    } catch(error) { message('No se modificó ninguna tarea: ' + error.message); }
+    finally { busy = false; }
+  }
+
+  window.JulesTaskSupervisor = { review, applyStatus, applySuggestedLifecycle, editTask, archive };
   message('Supervisor de tareas: cambios solo bajo confirmación explícita.');
 })();
