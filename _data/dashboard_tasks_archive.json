@@ -1,7 +1,7 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-08-03T07:46:28.268Z",
-  "last_updated_by": "Axlfc",
+  "last_updated": "2026-11-01T09:10:18.302Z",
+  "last_updated_by": "haopengwang123",
   "tasks": [
     {
       "id": 1,
@@ -5956,9 +5956,108 @@
       "jules_session": null,
       "branch": "Programación (PRO)",
       "organizationId": "hypenosys"
+    },
+    {
+      "id": 900001,
+      "pilot_task_id": "HAIS-001-H001",
+      "pilot_id": "HAIS-001",
+      "organizationId": "hais",
+      "repository": "hypenosys/HAIS",
+      "title": "Verificar permisos y autenticar Haopeng",
+      "descripcion": "Comprobar OAuth GitHub de haopengwang123 y axlfc en dev.hypenosys.com; validar MFA, repositorios visibles, revocación de sesión y permisos mínimos sobre hypenosys/HAIS. No asumir que ser miembro del workspace implica acceso al repo privado.",
+      "tema_principal": "HAIS-001 / identity",
+      "prioridad": "Critical",
+      "estado": "OK",
+      "completitud": 0,
+      "task_type": "research",
+      "resuelto_por": "",
+      "asignados": [],
+      "tags": [
+        "hais-001",
+        "identity",
+        "oauth",
+        "rbac",
+        "github",
+        "onboarding"
+      ],
+      "blocked_by": [],
+      "acceptance_criteria": "GitHub MFA activo\nacceso limitado comprobado\nSesión real de ambos usuarios registrada sin tokens; prueba de acceso denegado a recurso no autorizado; evidencia de rol y alcance GitHub",
+      "executor_proposed": "human",
+      "subtasks": [
+        {
+          "id": 900001001,
+          "text": "Verificar acceso OAuth de haopengwang123 y axlfc en dev.hypenosys.com",
+          "done": false
+        },
+        {
+          "id": 900001002,
+          "text": "Comprobar MFA y permisos efectivos sobre el repo privado hypenosys/HAIS",
+          "done": false
+        },
+        {
+          "id": 900001003,
+          "text": "Probar cierre de sesión, token revocado y acceso no autorizado",
+          "done": false
+        },
+        {
+          "id": 900001004,
+          "text": "Adjuntar evidencias saneadas de los permisos por usuario",
+          "done": false
+        }
+      ],
+      "external_links": [
+        {
+          "label": "Registro HAIS y sus miembros",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/_data/organizations.json"
+        },
+        {
+          "label": "Metadatos del workspace",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/_data/orgs/hais/meta.json"
+        },
+        {
+          "label": "GitHub OAuth Apps",
+          "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps"
+        }
+      ],
+      "comments": [],
+      "change_log": [
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-10-31T23:51:27Z",
+          "field": "estado",
+          "old_value": "OK",
+          "new_value": "Pending"
+        }
+      ],
+      "comentario": "Evidencia requerida: Sesión real de ambos usuarios registrada sin tokens; prueba de acceso denegado a recurso no autorizado; evidencia de rol y alcance GitHub",
+      "estimated_hours": 3,
+      "story_points": 2,
+      "milestone": "M0 — Acceso y aislamiento",
+      "seccion": "HAIS · identity",
+      "rama": "feature/hais-001",
+      "rama2": null,
+      "branch": "Desarrollo (develop)",
+      "fecha": null,
+      "start_date": null,
+      "due_date": null,
+      "limite": null,
+      "ver": true,
+      "detectado_por": "HAIS-001",
+      "apoyo": null,
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "blocks": [],
+      "jules_session": null,
+      "assignee_proposed": "human"
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: tarea #900001 movida al archivo",
+      "user": "haopengwang123",
+      "timestamp": "2026-11-01T09:10:18.302Z"
+    },
     {
       "action": "chore: tarea #45 movida al archivo",
       "user": "Axlfc",
