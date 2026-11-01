@@ -56,6 +56,20 @@
                     </div>
                 </div>
 
+                <div id="group-anthropic-test" class="form-group" style="display: none;">
+                    <button id="btn-test-anthropic" type="button" class="btn btn-outline-info btn-sm"
+                            onclick="window.ollamaUI.verifyAnthropicConnection()">
+                        <i class="fas fa-vial mr-1"></i> PROBAR API KEY + CLAUDE
+                    </button>
+                    <div id="anthropic-test-status" class="small mt-2 text-info" role="status" aria-live="polite">
+                        Comprueba la API key, descubre modelos y solicita una respuesta real. Puede generar un coste mínimo.
+                    </div>
+                    <div class="small text-warning mt-1">
+                        BYOK desde el navegador: la clave queda accesible al JavaScript de esta web.
+                        No uses una clave compartida de producción. Con Anthropic ZDR se requiere proxy backend.
+                    </div>
+                </div>
+
                 <div id="group-model-type" class="form-group" style="display: none;">
                     <label class="text-gray-400 small font-weight-bold uppercase">Tipo de Modelo</label>
                     <div id="model-type-selector" class="d-flex flex-wrap gap-1">
