@@ -47,7 +47,7 @@ window.NeuralProviderClient = (function() {
             return;
         }
 
-        const baseUrl = normalizeBaseUrl(config.base_url, provider);
+        const baseUrl = normalizeBaseUrl(config.base_url || (provider === 'anthropic' ? 'https://api.anthropic.com/v1' : ''), provider);
         const model = config.model || (provider === 'ollama' ? 'llama3' : 'gpt-3.5-turbo');
         const apiKey = config.api_key || '';
 
@@ -93,7 +93,9 @@ window.NeuralProviderClient = (function() {
                 window.NeuralThinkingCapabilities.resolveCapability(provider, model, options) :
                 { supportsThinking: false };
 
-            if (((isThinkingEnabled && cap.supportsThinking) || cap.defaultOn) && window.NeuralThinkingAdapters) {
+            // Anthropic ALWAYS requires the native /v1/messages schema (even with thinking off).
+            // Do not send its API key to an OpenAI-compatible /chat/completions endpoint.
+            if ((provider === 'anthropic' || ((isThinkingEnabled && cap.supportsThinking) || cap.defaultOn)) && window.NeuralThinkingAdapters) {
                 const adapter = window.NeuralThinkingAdapters.getAdapter(provider);
                 if (adapter) {
                     const reqObj = adapter.buildRequest({
@@ -189,8 +191,18 @@ window.NeuralProviderClient = (function() {
                             break;
                         }
 
+                        let data;
                         try {
-                            const data = JSON.parse(dataStr);
+                            data = JSON.parse(dataStr);
+                        } catch (parseError) {
+                            console.warn('[NeuralProviderClient] Ignoring malformed SSE event');
+                            continue;
+                        }
+                        // Stream errors are real failures; do not silently treat them as end-of-message.
+                        if (data.type === 'error') {
+                            throw new Error(`Anthropic streaming error: ${data.error?.type || 'unknown'}`);
+                        }
+                        try {
                             let contentDelta = '';
                             let thinkingDelta = '';
 
@@ -242,6 +254,23 @@ window.NeuralProviderClient = (function() {
                 const isNvidiaCloud = provider === 'nvidia_nim' && baseUrl.includes('integrate.api.nvidia.com');
                 const isNvidiaRelay = provider === 'nvidia_nim' && baseUrl.includes('hypenosys-gatekeeper-v2.axlffcc.workers.dev');
                 const isOllama = provider === 'ollama';
+
+                if (provider === 'anthropic' && isNetworkFailure) {
+                    onError(new Error('No se recibió respuesta HTTP de Anthropic. Comprueba conexión y políticas del navegador (posible bloqueo CORS). Las organizaciones Anthropic con ZDR requieren un proxy backend; la API key por sí sola no evita esa restricción.'));
+                    return;
+                }
+                if (provider === 'anthropic' && !isNetworkFailure) {
+                    let troubleshootingAnthropic = '';
+                    if (safeMessage.includes('Status: 401')) troubleshootingAnthropic = 'API key inválida o caducada';
+                    else if (safeMessage.includes('Status: 403')) troubleshootingAnthropic = 'Sin permisos de acceso para esta clave o workspace';
+                    else if (safeMessage.includes('Status: 404')) troubleshootingAnthropic = 'Modelo no disponible; pulsa DESCUBRIR';
+                    else if (safeMessage.includes('Status: 429')) troubleshootingAnthropic = 'Límite de peticiones o crédito agotado';
+                    else troubleshootingAnthropic = '';
+                    if (troubleshootingAnthropic) {
+                        onError(new Error(`Anthropic: ${troubleshootingAnthropic}. HTTP ${safeMessage.match(/Status: (\\d+)/)?.[1] || 'error'}.`));
+                        return;
+                    }
+                }
 
                 // Specific case: NVIDIA Cloud direct browser failure (CORS/Preflight)
                 if (isNvidiaCloud && isNetworkFailure) {
