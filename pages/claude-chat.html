@@ -749,29 +749,50 @@ permalink: /chat/neural/
                         window.sendBtn.onclick = sendMessage;
 
                         // Complete Dashboard -> Claude handoff once initialization
-                        // is fully ready. Mark the dedicated session first so auth
-                        // retries or duplicate init events cannot double-submit.
+                        // is fully ready. The session is marked immediately before
+                        // the actual send, never before readiness checks, so a busy
+                        // button cannot silently consume the one-shot handoff.
                         const pendingAutoSend = window._pendingDashboardClaudeAutoSend;
                         if (pendingAutoSend &&
                             pendingAutoSend.sessionId === window.currentSessionId &&
                             window.chatInput.value.trim() === pendingAutoSend.prompt.trim()) {
-                            const dedicated = window.sessions.find(s => s.id === pendingAutoSend.sessionId);
-                            if (dedicated) {
-                                dedicated.metadata = {
-                                    ...(dedicated.metadata || {}),
-                                    dashboardAutoSentTaskId: pendingAutoSend.taskId,
-                                    dashboardAutoSentAt: new Date().toISOString()
-                                };
-                                saveSessions(false, 'dashboard-claude-autosend-mark');
-                            }
                             window._pendingDashboardClaudeAutoSend = null;
-                            setTimeout(() => {
-                                if (!window.sendBtn.disabled &&
-                                    window.currentSendMode === 'claude' &&
-                                    window.chatInput.value.trim()) {
-                                    window.sendMessage();
+                            let autoSendAttempts = 0;
+
+                            const triggerDashboardAutoSend = () => {
+                                autoSendAttempts += 1;
+                                const dedicated = window.sessions.find(s => s.id === pendingAutoSend.sessionId);
+                                const sameSession = window.currentSessionId === pendingAutoSend.sessionId;
+                                const samePrompt = window.chatInput.value.trim() === pendingAutoSend.prompt.trim();
+                                const alreadySent = dedicated?.metadata?.dashboardAutoSentTaskId === pendingAutoSend.taskId;
+
+                                if (alreadySent) return;
+
+                                if (sameSession && samePrompt &&
+                                    !window.sendBtn.disabled &&
+                                    !window._neuralSendInFlight &&
+                                    window.currentSendMode === 'claude') {
+                                    dedicated.metadata = {
+                                        ...(dedicated.metadata || {}),
+                                        dashboardAutoSentTaskId: pendingAutoSend.taskId,
+                                        dashboardAutoSentAt: new Date().toISOString()
+                                    };
+                                    saveSessions(false, 'dashboard-claude-autosend-mark');
+                                    void window.sendMessage();
+                                    return;
                                 }
-                            }, 0);
+
+                                // Initialization can briefly leave controls busy.
+                                // Retry only while the exact same handoff is still
+                                // visible; never switch sessions or send stale text.
+                                if (sameSession && samePrompt && autoSendAttempts < 10) {
+                                    setTimeout(triggerDashboardAutoSend, 50);
+                                } else if (window.HYPENOSYS_NEURAL_DEBUG) {
+                                    console.warn('[Claude Neural] Dashboard auto-send cancelled because the handoff changed or never became ready.');
+                                }
+                            };
+
+                            setTimeout(triggerDashboardAutoSend, 0);
                         }
 
                         window.chatInput.onkeydown = (e) => {
