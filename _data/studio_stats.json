@@ -1,9 +1,9 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-11-01T19:44:28.151Z",
+  "computed_at": "2026-11-01T19:52:25.705Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 38,
+    "total_tasks": 39,
     "total_ok": 0,
     "total_ko": 0,
     "total_uncertain": 3,
@@ -44,7 +44,7 @@
       "product": 5,
       "fastapi": 1,
       "docker": 3,
-      "paper": 22,
+      "paper": 23,
       "pydantic": 1,
       "schema": 1,
       "paper-trading": 2,
@@ -86,7 +86,7 @@
       "validation": 1,
       "go-no-go": 1,
       "multi-tenant": 1,
-      "hais": 19,
+      "hais": 20,
       "estrategia": 11,
       "requisitos": 1,
       "investing": 2,
@@ -111,10 +111,13 @@
       "portfolio": 1,
       "qa": 1,
       "deploy": 1,
-      "real-data": 5,
-      "read-only": 5
+      "real-data": 6,
+      "read-only": 5,
+      "cfd": 1,
+      "plus500": 1,
+      "minimum-mocks": 1
     },
-    "milestone_tasks_remaining": 20,
+    "milestone_tasks_remaining": 21,
     "hall_of_fame_winners": {
       "mvp": {
         "handle": "axlfc",
@@ -281,7 +284,7 @@
         "reprioritizations": 27
       },
       "workload": {
-        "active_tasks": 23,
+        "active_tasks": 24,
         "story_points": 86
       }
     },
@@ -610,7 +613,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "haopengwang123",
-      "timestamp": "2026-11-01T19:44:29.012Z"
+      "timestamp": "2026-11-01T19:52:26.475Z"
     }
   ]
 }
