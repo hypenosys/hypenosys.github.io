@@ -1,7 +1,7 @@
 ---
 layout: hais
 title: HAIS — Estado del proyecto
-permalink: /hais/
+permalink: /hais/estado/
 ---
 {% assign active_tasks = site.data.orgs.hais.tasks.tasks %}
 {% assign shard_archive = site.data.orgs.hais.tasks_archive.tasks %}
@@ -34,7 +34,7 @@ permalink: /hais/
       <p class="eyebrow"><span class="pulse" aria-hidden="true"></span> INVESTIGACIÓN · PAPER</p>
       <h1 id="hero-title">De la señal<br><span>a la evidencia.</span></h1>
       <p class="hero-text">Un espacio para seguir el desarrollo de HAIS: qué está planificado, qué espera revisión y qué evidencia tenemos hoy.</p>
-      <div class="hero-actions"><a class="button primary" href="#tareas">Explorar tareas <span aria-hidden="true">↓</span></a><a class="button secondary" href="https://github.com/hypenosys/HAIS">Repositorio HAIS <span aria-hidden="true">></span></a></div>
+      <div class="hero-actions"><a class="button primary" href="{{ '/hais/' | relative_url }}">Abrir terminal PAPER <span aria-hidden="true">></span></a><a class="button secondary" href="#tareas">Explorar tareas <span aria-hidden="true">↓</span></a><a class="button secondary" href="https://github.com/hypenosys/HAIS">Repositorio HAIS <span aria-hidden="true">></span></a></div>
     </div>
     <div class="hero-aside" aria-label="Alcance del proyecto">
       <div class="aside-top"><span>ALCANCE ACTUAL</span><span class="mono">01 / PAPER</span></div>
