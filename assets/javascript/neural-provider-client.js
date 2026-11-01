@@ -93,6 +93,10 @@ window.NeuralProviderClient = (function() {
                 window.NeuralThinkingCapabilities.resolveCapability(provider, model, options) :
                 { supportsThinking: false };
 
+            if (provider === 'anthropic' && !window.NeuralThinkingAdapters) {
+                throw new Error('Anthropic adapter no disponible. Recarga Neural Chat.');
+            }
+
             // Anthropic ALWAYS requires the native /v1/messages schema (even with thinking off).
             // Do not send its API key to an OpenAI-compatible /chat/completions endpoint.
             if ((provider === 'anthropic' || ((isThinkingEnabled && cap.supportsThinking) || cap.defaultOn)) && window.NeuralThinkingAdapters) {
@@ -247,9 +251,9 @@ window.NeuralProviderClient = (function() {
             if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] provider call failed:", safeMessage);
 
             if (onError) {
-                const isNetworkFailure = safeMessage.includes('Failed to fetch') ||
-                                       safeMessage.includes('NetworkError') ||
-                                       !safeMessage.includes('Status:');
+                const isNetworkFailure = e instanceof TypeError ||
+                                       safeMessage.includes('Failed to fetch') ||
+                                       safeMessage.includes('NetworkError');
 
                 const isNvidiaCloud = provider === 'nvidia_nim' && baseUrl.includes('integrate.api.nvidia.com');
                 const isNvidiaRelay = provider === 'nvidia_nim' && baseUrl.includes('hypenosys-gatekeeper-v2.axlffcc.workers.dev');
