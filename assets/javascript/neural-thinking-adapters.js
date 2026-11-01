@@ -27,7 +27,11 @@ window.NeuralThinkingAdapters = (function() {
                 headers['Authorization'] = `Bearer ${apiKey.trim()}`;
             }
             if (workspaceId && workspaceId.trim()) {
-                headers['anthropic-workspace-id'] = workspaceId.trim();
+                const selectedWorkspace = workspaceId.trim();
+                if (!/^wrkspc_[A-Za-z0-9_-]{4,128}$/.test(selectedWorkspace)) {
+                    throw new Error('Workspace ID de Anthropic inválido. Borra el campo en API Config o introduce un ID wrkspc_... válido.');
+                }
+                headers['anthropic-workspace-id'] = selectedWorkspace;
             }
 
             const body = {
