@@ -1078,8 +1078,8 @@ permalink: /jules-panel/
 <script src="{{ '/assets/javascript/ai-config.js' | relative_url }}?v=anthropic-relay-20261101-v2"></script>
 
 <script src="{{ '/assets/javascript/jules-panel-ui.js' | relative_url }}"></script>
-<script src="{{ '/assets/javascript/jules-panel-repo.js' | relative_url }}?v=hais-jules-branch-20261101-v6"></script>
-<script src="{{ '/assets/javascript/jules-panel-sessions.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/jules-panel-repo.js' | relative_url }}?v=jules-supervision-ready-20261101-v1"></script>
+<script src="{{ '/assets/javascript/jules-panel-sessions.js' | relative_url }}?v=jules-supervision-ready-20261101-v1"></script>
 <script src="{{ '/assets/javascript/jules-panel-metrics.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/jules-panel-kanban.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/jules-panel-hub.js' | relative_url }}"></script>
@@ -1102,7 +1102,7 @@ permalink: /jules-panel/
 <script src="{{ '/assets/javascript/jules-claude-bridge.js' | relative_url }}?v=claude-jules-bridge-v1"></script>
 <script src="{{ '/assets/javascript/hypenosys-task-orchestrator.js' | relative_url }}?v=task-orchestrator-20261101-v1"></script>
 <script src="{{ '/assets/javascript/jules-task-supervisor.js' | relative_url }}?v=hais-jules-lifecycle-20261101-v3"></script>
-<script src="{{ '/assets/javascript/jules-panel-auth.js' | relative_url }}?v=hais-jules-branch-20261101-v6"></script>
+<script src="{{ '/assets/javascript/jules-panel-auth.js' | relative_url }}?v=jules-supervision-ready-20261101-v1"></script>
 <script src="{{ '/assets/javascript/jules-export.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/neural-panel-workspace.js' | relative_url }}?v=20261101-v1"></script>
 
@@ -1169,6 +1169,13 @@ permalink: /jules-panel/
             pill.onclick = () => {
                 if (['opt-auto', 'opt-review', 'opt-supervised', 'opt-claude-supervised'].includes(pill.id)) {
                     ['opt-auto', 'opt-review', 'opt-supervised', 'opt-claude-supervised'].forEach(id => $(id)?.classList.toggle('active', id === pill.id));
+                    const mode = pill.id === 'opt-claude-supervised' ? 'claude'
+                        : pill.id === 'opt-supervised' ? 'human'
+                        : pill.id === 'opt-auto' ? 'auto' : 'review';
+                    localStorage.setItem('hy_jules_pending_supervision_mode', mode);
+                    if (mode === 'claude') {
+                        showToast('Supervisión por Claude seleccionada: Claude revisará y responderá a Jules.', 'green');
+                    }
                 } else {
                     pill.classList.toggle('active');
                 }
