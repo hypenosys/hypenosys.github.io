@@ -639,6 +639,8 @@ class AuthManager {
         if (aiProvider) aiProvider.value = config.provider || 'none';
         if (aiModel) aiModel.value = config.model || '';
         if (aiApiKey) aiApiKey.value = config.api_key || '';
+        const anthropicWorkspaceInput = document.getElementById('ai_anthropic_workspace_id');
+        if (anthropicWorkspaceInput) anthropicWorkspaceInput.value = config.anthropic_workspace_id || '';
         if (aiBaseUrl) aiBaseUrl.value = config.base_url || '';
         if (aiLocalNetwork) aiLocalNetwork.checked = !!(config.local_network || config.localNetwork);
 
@@ -673,6 +675,7 @@ class AuthManager {
         const provider = document.getElementById('ai_provider')?.value || 'none';
         const model = document.getElementById('ai_model')?.value.trim() || '';
         const apiKey = document.getElementById('ai_api_key')?.value.trim() || '';
+        const anthropicWorkspaceId = document.getElementById('ai_anthropic_workspace_id')?.value.trim() || '';
         const baseUrl = document.getElementById('ai_base_url')?.value.trim() || '';
         const localNetwork = document.getElementById('ai_local_network')?.checked || false;
 
@@ -695,6 +698,7 @@ class AuthManager {
                 provider,
                 model,
                 api_key: apiKey,
+                anthropic_workspace_id: provider === 'anthropic' ? anthropicWorkspaceId : '',
                 base_url: baseUrl,
                 local_network: localNetwork,
                 embed_provider: embedProvider,
