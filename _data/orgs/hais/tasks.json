@@ -2490,7 +2490,7 @@
       "descripcion": "Proteger el capital simulado con los límites que el usuario acuerde antes de permitir compras. La forma de gestionar posiciones abiertas y posibles pérdidas previas al beneficio queda por decidir.",
       "tema_principal": "Programación / Engine",
       "prioridad": "Critical",
-      "estado": "Working",
+      "estado": "OK",
       "completitud": 0,
       "task_type": "feature",
       "resuelto_por": "",
@@ -3893,6 +3893,11 @@
   "last_updated_by": "Sistema",
   "_audit_log": [
     {
+      "action": "chore: actualizar estado tarea #900030 → OK",
+      "user": "haopengwang123",
+      "timestamp": "2026-11-01T20:09:55.232Z"
+    },
+    {
       "action": "chore: actualizar tarea 900030",
       "user": "haopengwang123",
       "timestamp": "2026-11-01T20:00:55.815Z"
@@ -4128,5 +4133,5 @@
       ]
     }
   ],
-  "last_updated": "2026-11-01T20:00:55.815Z"
+  "last_updated": "2026-11-01T20:09:55.232Z"
 }
