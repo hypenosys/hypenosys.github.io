@@ -78,6 +78,11 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-01T09:26:07.863Z",
           "body": "[HAIS · PLAN 2026-11-01] Conservar Fixed tal como está. Revisar evidencias BYOK: límites de consumo, revocación, 401/429, clave ausente de navegador y logs. Axel valida seguridad con Haopeng antes de abrir uso real del gateway. Responsable(s): axlfc. Estado Fixed conservado; subtareas y criterios existentes sin alterar."
+        },
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-11-01T19:32:20.498Z",
+          "body": "Revisión de coherencia: estado Fixed conservado conforme al trabajo declarado por el usuario. El 0 % y las subtareas pendientes no se cambian sin evidencias específicas; conciliar checklist y progreso con sesión/commit/CI existentes antes de usarlos como aceptación verificada."
         }
       ],
       "change_log": [
@@ -320,6 +325,11 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-01T09:26:07.863Z",
           "body": "[HAIS · PLAN 2026-11-01] Conservar Fixed, sin asumir que la ejecución ya está validada. Haopeng recopila enlaces session_id/commit/coste y resultados; Axel revisa permisos, cambios y ausencia de merge automático. No reabrir sin motivo documentado. Responsable(s): haopengwang123. Estado Fixed conservado; subtareas y criterios existentes sin alterar."
+        },
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-11-01T19:32:20.498Z",
+          "body": "Revisión de coherencia: estado Fixed conservado conforme al trabajo declarado por el usuario. El 0 % y las subtareas pendientes no se cambian sin evidencias específicas; conciliar checklist y progreso con sesión/commit/CI existentes antes de usarlos como aceptación verificada."
         }
       ],
       "change_log": [],
@@ -931,8 +941,8 @@
       "pilot_id": "HAIS-001",
       "organizationId": "hais",
       "repository": "hypenosys/HAIS",
-      "title": "Ingesta sintética de datos financieros",
-      "descripcion": "Crear adaptador de feeds SYNTHETIC deterministas para OHLCV y eventos de mercado con reloj reproducible; etiquetar origen e impedir mezclar datasets sintéticos con precios de ejecución reales.",
+      "title": "Fixtures financieras mínimas para pruebas reproducibles",
+      "descripcion": "Mantener únicamente fixtures SYNTHETIC pequeñas y deterministas para CI, validación y fallos difíciles de reproducir. Reutilizar muestras reales saneadas cuando sean suficientes; no construir un feed sintético como fuente habitual de la aplicación.",
       "tema_principal": "HAIS-001 / product",
       "prioridad": "High",
       "estado": "Pending",
@@ -953,7 +963,7 @@
       "blocked_by": [
         900011
       ],
-      "acceptance_criteria": "fuente marcada SYNTHETIC y sin órdenes reales\nFixtures con seed estable; timestamps ordenados, sin look-ahead; etiquetado SYNTHETIC visible en API, DB y reportes",
+      "acceptance_criteria": "fuente marcada SYNTHETIC y sin órdenes reales\nFixtures con seed estable; timestamps ordenados, sin look-ahead; etiquetado SYNTHETIC visible en API, DB y reportes\n- Cada fixture tiene un caso de prueba justificado; se reutilizan muestras y se evita duplicar datasets.\n- Una indisponibilidad externa produce estado no disponible, nunca un fallback numérico sintético.",
       "executor_proposed": "jules",
       "subtasks": [
         {
@@ -996,9 +1006,36 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-01T09:26:07.863Z",
           "body": "[HAIS · PLAN 2026-11-01] Haopeng prepara OHLCV sintético determinista, reloj reproducible y etiqueta SYNTHETIC; no mezclar nunca con cotizaciones reales. Adjuntar fixtures para pruebas sin gasto de APIs. Responsable(s): haopengwang123. Estado Pending conservado; subtareas y criterios existentes sin alterar."
+        },
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-11-01T19:32:20.498Z",
+          "body": "Priorizar datos reales de una fuente disponible y autorizada, con origen, hora y retraso visibles. Limitar mocks/fixtures a CI reproducible y escenarios de error; nunca sustituir una caída del proveedor por precios inventados ni presentar una prueba offline como integración real."
         }
       ],
-      "change_log": [],
+      "change_log": [
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-11-01T19:32:20.498Z",
+          "field": "title",
+          "old_value": "Ingesta sintética de datos financieros",
+          "new_value": "Fixtures financieras mínimas para pruebas reproducibles"
+        },
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-11-01T19:32:20.498Z",
+          "field": "descripcion",
+          "old_value": "Crear adaptador de feeds SYNTHETIC deterministas para OHLCV y eventos de mercado con reloj reproducible; etiquetar origen e impedir mezclar datasets sintéticos con precios de ejecución reales.",
+          "new_value": "Mantener únicamente fixtures SYNTHETIC pequeñas y deterministas para CI, validación y fallos difíciles de reproducir. Reutilizar muestras reales saneadas cuando sean suficientes; no construir un feed sintético como fuente habitual de la aplicación."
+        },
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-11-01T19:32:20.498Z",
+          "field": "acceptance_criteria",
+          "old_value": "fuente marcada SYNTHETIC y sin órdenes reales\nFixtures con seed estable; timestamps ordenados, sin look-ahead; etiquetado SYNTHETIC visible en API, DB y reportes",
+          "new_value": "fuente marcada SYNTHETIC y sin órdenes reales\nFixtures con seed estable; timestamps ordenados, sin look-ahead; etiquetado SYNTHETIC visible en API, DB y reportes\n- Cada fixture tiene un caso de prueba justificado; se reutilizan muestras y se evita duplicar datasets.\n- Una indisponibilidad externa produce estado no disponible, nunca un fallback numérico sintético."
+        }
+      ],
       "comentario": "Evidencia requerida: Fixtures con seed estable; timestamps ordenados, sin look-ahead; etiquetado SYNTHETIC visible en API, DB y reportes",
       "estimated_hours": 12,
       "story_points": 5,
@@ -1092,6 +1129,11 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-01T09:26:07.863Z",
           "body": "[HAIS · PLAN 2026-11-01] Conservar Fixed y verificar evidencia: CI verde, build Docker, pytest, permisos mínimos, test negativo LIVE. Axel comprueba que el workflow actual soporta las PR creadas por Jules. Responsable(s): axlfc. Estado Fixed conservado; subtareas y criterios existentes sin alterar."
+        },
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-11-01T19:32:20.498Z",
+          "body": "Revisión de coherencia: estado Fixed conservado conforme al trabajo declarado por el usuario. El 0 % y las subtareas pendientes no se cambian sin evidencias específicas; conciliar checklist y progreso con sesión/commit/CI existentes antes de usarlos como aceptación verificada."
         }
       ],
       "change_log": [],
@@ -2185,7 +2227,7 @@
         "900011",
         "900026"
       ],
-      "acceptance_criteria": "- Una señal aceptada conserva instrumento, sentido, origen, hora y un identificador reproducible.\n- Se rechazan o registran señales duplicadas, incompletas y caducadas según la política acordada, sin iniciar una compra.\n- Los tests ejercitan señales válidas y rechazadas; si se usa un fixture se identifica como simulado y no se presenta como integración real.",
+      "acceptance_criteria": "- Una señal aceptada conserva instrumento, sentido, origen, hora y un identificador reproducible.\n- Se rechazan o registran señales duplicadas, incompletas y caducadas según la política acordada, sin iniciar una compra.\n- Los tests ejercitan señales válidas y rechazadas; si se usa un fixture se identifica como simulado y no se presenta como integración real.\n- Priorizar datos reales de una fuente disponible y autorizada, con origen, hora y retraso visibles. Limitar mocks/fixtures a CI reproducible y escenarios de error; nunca sustituir una caída del proveedor por precios inventados ni presentar una prueba offline como integración real.",
       "subtasks": [
         {
           "id": 900027001,
@@ -2214,6 +2256,11 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-01T09:26:07.863Z",
           "body": "[HAIS · PLAN 2026-11-01] Haopeng desarrolla contrato de ingestión de señales, deduplicación y validación de antigüedad; mock/fixtures primero. Adaptador externo solo tras verificar licencia y disponibilidad. Responsable(s): haopengwang123. Estado Pending conservado; subtareas y criterios existentes sin alterar."
+        },
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-11-01T19:32:20.498Z",
+          "body": "Instrucción del usuario: proceder con el mínimo de datos mock necesarios. Esta actualización prevalece sobre comentarios anteriores que proponían mocks primero."
         }
       ],
       "change_log": [
@@ -2223,6 +2270,13 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-11-01T19:32:20.498Z",
+          "field": "acceptance_criteria",
+          "old_value": "- Una señal aceptada conserva instrumento, sentido, origen, hora y un identificador reproducible.\n- Se rechazan o registran señales duplicadas, incompletas y caducadas según la política acordada, sin iniciar una compra.\n- Los tests ejercitan señales válidas y rechazadas; si se usa un fixture se identifica como simulado y no se presenta como integración real.",
+          "new_value": "- Una señal aceptada conserva instrumento, sentido, origen, hora y un identificador reproducible.\n- Se rechazan o registran señales duplicadas, incompletas y caducadas según la política acordada, sin iniciar una compra.\n- Los tests ejercitan señales válidas y rechazadas; si se usa un fixture se identifica como simulado y no se presenta como integración real.\n- Priorizar datos reales de una fuente disponible y autorizada, con origen, hora y retraso visibles. Limitar mocks/fixtures a CI reproducible y escenarios de error; nunca sustituir una caída del proveedor por precios inventados ni presentar una prueba offline como integración real."
         }
       ],
       "comentario": "Alcance PAPER; los parámetros y decisiones del usuario pendientes no deben darse por aprobados.",
@@ -2272,7 +2326,7 @@
         "900011",
         "900025"
       ],
-      "acceptance_criteria": "- Cada observación identifica instrumento, precio, fuente y hora; la cobertura y la latencia de la fuente se documentan.\n- Precios ausentes, inválidos, atrasados o fuera de orden se detectan y se tratan según la regla acordada, sin usarlos como datos actuales.\n- Las pruebas cubren disponibilidad, huecos y recuperación; los precios de prueba están identificados como sintéticos.",
+      "acceptance_criteria": "- Cada observación identifica instrumento, precio, fuente y hora; la cobertura y la latencia de la fuente se documentan.\n- Precios ausentes, inválidos, atrasados o fuera de orden se detectan y se tratan según la regla acordada, sin usarlos como datos actuales.\n- Las pruebas cubren disponibilidad, huecos y recuperación; los precios de prueba están identificados como sintéticos.\n- Priorizar datos reales de una fuente disponible y autorizada, con origen, hora y retraso visibles. Limitar mocks/fixtures a CI reproducible y escenarios de error; nunca sustituir una caída del proveedor por precios inventados ni presentar una prueba offline como integración real.",
       "subtasks": [
         {
           "id": 900028001,
@@ -2296,6 +2350,11 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-01T09:26:07.863Z",
           "body": "[HAIS · PLAN 2026-11-01] Haopeng evalúa proveedor de precios apropiado para PAPER: cobertura, latencia, licencia y datos ausentes; usar mocks sin presentar precios sintéticos como reales. Responsable(s): haopengwang123. Estado Pending conservado; subtareas y criterios existentes sin alterar."
+        },
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-11-01T19:32:20.498Z",
+          "body": "Instrucción del usuario: proceder con el mínimo de datos mock necesarios. Esta actualización prevalece sobre comentarios anteriores que proponían mocks primero."
         }
       ],
       "change_log": [
@@ -2305,6 +2364,13 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-11-01T19:32:20.498Z",
+          "field": "acceptance_criteria",
+          "old_value": "- Cada observación identifica instrumento, precio, fuente y hora; la cobertura y la latencia de la fuente se documentan.\n- Precios ausentes, inválidos, atrasados o fuera de orden se detectan y se tratan según la regla acordada, sin usarlos como datos actuales.\n- Las pruebas cubren disponibilidad, huecos y recuperación; los precios de prueba están identificados como sintéticos.",
+          "new_value": "- Cada observación identifica instrumento, precio, fuente y hora; la cobertura y la latencia de la fuente se documentan.\n- Precios ausentes, inválidos, atrasados o fuera de orden se detectan y se tratan según la regla acordada, sin usarlos como datos actuales.\n- Las pruebas cubren disponibilidad, huecos y recuperación; los precios de prueba están identificados como sintéticos.\n- Priorizar datos reales de una fuente disponible y autorizada, con origen, hora y retraso visibles. Limitar mocks/fixtures a CI reproducible y escenarios de error; nunca sustituir una caída del proveedor por precios inventados ni presentar una prueba offline como integración real."
         }
       ],
       "comentario": "Alcance PAPER; los parámetros y decisiones del usuario pendientes no deben darse por aprobados.",
@@ -2516,6 +2582,8 @@
       "blocked_by": [
         "900011",
         "900025",
+        "900027",
+        "900028",
         "900030"
       ],
       "acceptance_criteria": "- Una señal válida del instrumento acordado produce como máximo una compra simulada cuando se cumplen las reglas y límites.\n- Se verifican saldo, riesgo, frescura, estado de mercado y cualquier aprobación humana requerida antes de la compra.\n- Se registran señal, hora, precio, cantidad y motivo; los reintentos no duplican operaciones y no se envía ninguna orden real.",
@@ -2542,6 +2610,11 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-01T09:26:07.863Z",
           "body": "[HAIS · PLAN 2026-11-01] Haopeng implementa compra exclusivamente PAPER con reglas aprobadas y pruebas deterministas; requiere #900011, #900025, #900030. Garantizar idempotencia ante señal duplicada. Responsable(s): haopengwang123. Estado Pending conservado; subtareas y criterios existentes sin alterar."
+        },
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-11-01T19:32:20.498Z",
+          "body": "Añadidas las dependencias de recepción de señales y precios validados. Las pruebas unitarias aisladas pueden usar fixtures mínimas; la integración requiere las fuentes validadas."
         }
       ],
       "change_log": [
@@ -2551,6 +2624,23 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-11-01T19:32:20.498Z",
+          "field": "blocked_by",
+          "old_value": [
+            "900011",
+            "900025",
+            "900030"
+          ],
+          "new_value": [
+            "900011",
+            "900025",
+            "900027",
+            "900028",
+            "900030"
+          ]
         }
       ],
       "comentario": "Alcance PAPER; los parámetros y decisiones del usuario pendientes no deben darse por aprobados.",
@@ -2598,8 +2688,10 @@
       ],
       "blocked_by": [
         "900025",
+        "900028",
         "900029",
-        "900030"
+        "900030",
+        "900031"
       ],
       "acceptance_criteria": "- Se prueba la secuencia subida, pérdida de impulso y presión bajista con el resultado acordado y parámetros configurables.\n- También se prueban subida continuada, movimiento lateral, caída antes del beneficio y datos no válidos según las reglas aprobadas.\n- Cada posición se cierra como máximo una vez y la venta registra datos y motivo; no se envía ninguna orden real.",
       "subtasks": [
@@ -2625,6 +2717,11 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-01T09:26:07.863Z",
           "body": "[HAIS · PLAN 2026-11-01] Haopeng implementa seguimiento y venta PAPER según regla aprobada, con salida protectora diferenciada. Exigir evidencias reproducibles, sin usar capital real. Responsable(s): haopengwang123. Estado Pending conservado; subtareas y criterios existentes sin alterar."
+        },
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-11-01T19:32:20.498Z",
+          "body": "La salida integrada requiere precios validados y una posición PAPER creada; mantener pruebas unitarias aisladas con fixtures mínimas."
         }
       ],
       "change_log": [
@@ -2634,6 +2731,23 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-11-01T19:32:20.498Z",
+          "field": "blocked_by",
+          "old_value": [
+            "900025",
+            "900029",
+            "900030"
+          ],
+          "new_value": [
+            "900025",
+            "900028",
+            "900029",
+            "900030",
+            "900031"
+          ]
         }
       ],
       "comentario": "Alcance PAPER; los parámetros y decisiones del usuario pendientes no deben darse por aprobados.",
@@ -2767,7 +2881,7 @@
         "900032",
         "900033"
       ],
-      "acceptance_criteria": "- La evaluación usa solo datos disponibles en cada instante y es reproducible con los mismos datos y parámetros.\n- Incluye supuestos de comisiones, diferencial, deslizamiento y latencia; reporta rentabilidad, caída máxima y número de operaciones.\n- Distingue los datos usados para ajustar de los usados para evaluar y documenta la cobertura y limitaciones de precios y señales históricas.",
+      "acceptance_criteria": "- La evaluación usa solo datos disponibles en cada instante y es reproducible con los mismos datos y parámetros.\n- Incluye supuestos de comisiones, diferencial, deslizamiento y latencia; reporta rentabilidad, caída máxima y número de operaciones.\n- Distingue los datos usados para ajustar de los usados para evaluar y documenta la cobertura y limitaciones de precios y señales históricas.\n- Priorizar datos reales de una fuente disponible y autorizada, con origen, hora y retraso visibles. Limitar mocks/fixtures a CI reproducible y escenarios de error; nunca sustituir una caída del proveedor por precios inventados ni presentar una prueba offline como integración real.",
       "subtasks": [
         {
           "id": 900034001,
@@ -2791,6 +2905,11 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-01T09:26:07.863Z",
           "body": "[HAIS · PLAN 2026-11-01] Haopeng prepara backtest reproducible de estrategia PAPER, especificando fuentes de datos, sesgos, cobertura y señales sintéticas. No presentar como rendimiento real. Responsable(s): haopengwang123. Estado Pending conservado; subtareas y criterios existentes sin alterar."
+        },
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-11-01T19:32:20.498Z",
+          "body": "Instrucción del usuario: proceder con el mínimo de datos mock necesarios. Esta actualización prevalece sobre comentarios anteriores que proponían mocks primero."
         }
       ],
       "change_log": [
@@ -2800,6 +2919,13 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-11-01T19:32:20.498Z",
+          "field": "acceptance_criteria",
+          "old_value": "- La evaluación usa solo datos disponibles en cada instante y es reproducible con los mismos datos y parámetros.\n- Incluye supuestos de comisiones, diferencial, deslizamiento y latencia; reporta rentabilidad, caída máxima y número de operaciones.\n- Distingue los datos usados para ajustar de los usados para evaluar y documenta la cobertura y limitaciones de precios y señales históricas.",
+          "new_value": "- La evaluación usa solo datos disponibles en cada instante y es reproducible con los mismos datos y parámetros.\n- Incluye supuestos de comisiones, diferencial, deslizamiento y latencia; reporta rentabilidad, caída máxima y número de operaciones.\n- Distingue los datos usados para ajustar de los usados para evaluar y documenta la cobertura y limitaciones de precios y señales históricas.\n- Priorizar datos reales de una fuente disponible y autorizada, con origen, hora y retraso visibles. Limitar mocks/fixtures a CI reproducible y escenarios de error; nunca sustituir una caída del proveedor por precios inventados ni presentar una prueba offline como integración real."
         }
       ],
       "comentario": "Alcance PAPER; los parámetros y decisiones del usuario pendientes no deben darse por aprobados.",
@@ -2851,7 +2977,7 @@
         "900032",
         "900033"
       ],
-      "acceptance_criteria": "- Un caso automatizado recorre señal válida → compra PAPER → subida → pérdida de impulso y presión bajista → venta PAPER conforme a las reglas aprobadas.\n- Se prueban señal duplicada o antigua, precios inválidos, límites de riesgo, reintentos y ausencia de doble venta.\n- Se comprueban el saldo y la posición final, los motivos y el historial; se identifica si el proveedor usado es real o simulado y no hay órdenes LIVE.",
+      "acceptance_criteria": "- Un caso automatizado recorre señal válida → compra PAPER → subida → pérdida de impulso y presión bajista → venta PAPER conforme a las reglas aprobadas.\n- Se prueban señal duplicada o antigua, precios inválidos, límites de riesgo, reintentos y ausencia de doble venta.\n- Se comprueban el saldo y la posición final, los motivos y el historial; se identifica si el proveedor usado es real o simulado y no hay órdenes LIVE.\n- Priorizar datos reales de una fuente disponible y autorizada, con origen, hora y retraso visibles. Limitar mocks/fixtures a CI reproducible y escenarios de error; nunca sustituir una caída del proveedor por precios inventados ni presentar una prueba offline como integración real.",
       "subtasks": [
         {
           "id": 900035001,
@@ -2875,6 +3001,11 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-01T09:26:07.863Z",
           "body": "[HAIS · PLAN 2026-11-01] E2E CONJUNTO Axel + Haopeng: recorrer señal→compra PAPER→seguimiento→venta PAPER, comprobar saldo/posición, fallos, logs y prohibición LIVE. Distinguir fixtures sintéticos de integración externa. Responsable(s): axlfc, haopengwang123. Estado Pending conservado; subtareas y criterios existentes sin alterar."
+        },
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-11-01T19:32:20.498Z",
+          "body": "Instrucción del usuario: proceder con el mínimo de datos mock necesarios. Esta actualización prevalece sobre comentarios anteriores que proponían mocks primero."
         }
       ],
       "change_log": [
@@ -2884,6 +3015,13 @@
           "field": "id",
           "old_value": null,
           "new_value": "Created"
+        },
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-11-01T19:32:20.498Z",
+          "field": "acceptance_criteria",
+          "old_value": "- Un caso automatizado recorre señal válida → compra PAPER → subida → pérdida de impulso y presión bajista → venta PAPER conforme a las reglas aprobadas.\n- Se prueban señal duplicada o antigua, precios inválidos, límites de riesgo, reintentos y ausencia de doble venta.\n- Se comprueban el saldo y la posición final, los motivos y el historial; se identifica si el proveedor usado es real o simulado y no hay órdenes LIVE.",
+          "new_value": "- Un caso automatizado recorre señal válida → compra PAPER → subida → pérdida de impulso y presión bajista → venta PAPER conforme a las reglas aprobadas.\n- Se prueban señal duplicada o antigua, precios inválidos, límites de riesgo, reintentos y ausencia de doble venta.\n- Se comprueban el saldo y la posición final, los motivos y el historial; se identifica si el proveedor usado es real o simulado y no hay órdenes LIVE.\n- Priorizar datos reales de una fuente disponible y autorizada, con origen, hora y retraso visibles. Limitar mocks/fixtures a CI reproducible y escenarios de error; nunca sustituir una caída del proveedor por precios inventados ni presentar una prueba offline como integración real."
         }
       ],
       "comentario": "Alcance PAPER; los parámetros y decisiones del usuario pendientes no deben darse por aprobados.",
@@ -2959,7 +3097,13 @@
           "url": "https://github.com/hypenosys/hypenosys.github.io/commit/205f88fd82272cb167e0f4189d1194da6d178235"
         }
       ],
-      "comments": [],
+      "comments": [
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-11-01T19:32:20.498Z",
+          "body": "Aplicar mínimo mock: los precios editables actuales siguen siendo SYNTHETIC y locales. Priorizar integración con precios reales mediante #900028 y #900037 cuando esté disponible; mostrar no disponible ante fallo externo. Este comentario no declara implementada esa integración."
+        }
+      ],
       "change_log": [],
       "comentario": "PAPER exclusivamente: no hay órdenes reales ni cartera persistida en HAIS API.",
       "estimated_hours": null,
@@ -3161,7 +3305,7 @@
         "paper"
       ],
       "blocked_by": [],
-      "acceptance_criteria": "- Portada /hais/ sin datos sintéticos; fallback sin número si falla proveedor; título y ficha de fuente del activo.\n- S&P 500, NASDAQ Composite/100, CSI 300, IBEX35, deuda USA/DE/ES/CN, oro/plata/WTI/Brent, BTC/ETH/SOL y FX visibles.\n- Mostrar demora, atribución, licencias y limitaciones; no decir tiempo real garantizado.\n- Jekyll build y Playwright verificados, navegador desktop/mobile y proveedor externo smoke test antes de Done.\n- APE (ApeCoin, `COINBASE:APEUSD`) figura en la selección, watchlist y tabla de criptomonedas sin precios simulados.",
+      "acceptance_criteria": "- Portada /hais/ sin datos sintéticos; fallback sin número si falla proveedor; título y ficha de fuente del activo.\n- S&P 500, NASDAQ Composite/100, CSI 300, IBEX35, deuda USA/DE/ES/CN, oro/plata/WTI/Brent, BTC/ETH/SOL y FX visibles.\n- Mostrar demora, atribución, licencias y limitaciones; no decir tiempo real garantizado.\n- Jekyll build y Playwright verificados, navegador desktop/mobile y proveedor externo smoke test antes de Done.\n- APE (ApeCoin, `COINBASE:APEUSD`) figura en la selección, watchlist y tabla de criptomonedas sin precios simulados.\n- Priorizar datos reales de una fuente disponible y autorizada, con origen, hora y retraso visibles. Limitar mocks/fixtures a CI reproducible y escenarios de error; nunca sustituir una caída del proveedor por precios inventados ni presentar una prueba offline como integración real.",
       "subtasks": [
         {
           "id": 900039001,
@@ -3208,9 +3352,22 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-01T12:32:40Z",
           "body": "Implementación APE, ficha y prueba Playwright de APE incluidas en develop. Build Jekyll Cloudflare exitoso en 41307153274. Falta smoke público y Playwright ejecutado, no marcar OK."
+        },
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-11-01T19:32:20.498Z",
+          "body": "Instrucción del usuario: proceder con el mínimo de datos mock necesarios. Esta actualización prevalece sobre comentarios anteriores que proponían mocks primero."
         }
       ],
-      "change_log": [],
+      "change_log": [
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-11-01T19:32:20.498Z",
+          "field": "acceptance_criteria",
+          "old_value": "- Portada /hais/ sin datos sintéticos; fallback sin número si falla proveedor; título y ficha de fuente del activo.\n- S&P 500, NASDAQ Composite/100, CSI 300, IBEX35, deuda USA/DE/ES/CN, oro/plata/WTI/Brent, BTC/ETH/SOL y FX visibles.\n- Mostrar demora, atribución, licencias y limitaciones; no decir tiempo real garantizado.\n- Jekyll build y Playwright verificados, navegador desktop/mobile y proveedor externo smoke test antes de Done.\n- APE (ApeCoin, `COINBASE:APEUSD`) figura en la selección, watchlist y tabla de criptomonedas sin precios simulados.",
+          "new_value": "- Portada /hais/ sin datos sintéticos; fallback sin número si falla proveedor; título y ficha de fuente del activo.\n- S&P 500, NASDAQ Composite/100, CSI 300, IBEX35, deuda USA/DE/ES/CN, oro/plata/WTI/Brent, BTC/ETH/SOL y FX visibles.\n- Mostrar demora, atribución, licencias y limitaciones; no decir tiempo real garantizado.\n- Jekyll build y Playwright verificados, navegador desktop/mobile y proveedor externo smoke test antes de Done.\n- APE (ApeCoin, `COINBASE:APEUSD`) figura en la selección, watchlist y tabla de criptomonedas sin precios simulados.\n- Priorizar datos reales de una fuente disponible y autorizada, con origen, hora y retraso visibles. Limitar mocks/fixtures a CI reproducible y escenarios de error; nunca sustituir una caída del proveedor por precios inventados ni presentar una prueba offline como integración real."
+        }
+      ],
       "comentario": "No afirmar despliegue ni ingestión autorizada sin prueba del proveedor, permisos y producción.",
       "estimated_hours": null,
       "story_points": null,
@@ -3256,7 +3413,7 @@
         "paper"
       ],
       "blocked_by": [],
-      "acceptance_criteria": "- CI incluye test offline de CoinGecko y FRED con casos inválidos; migración a develop sin activar LIVE.\n- CoinGecko BTC/ETH/SOL incluye valor USD, cambio 24h, hora observada y límite de edad; FRED DGS2/DGS10 indica porcentaje de yield y cambio en pb.\n- Datos no disponibles producen 503 y no fallback inventado; no hay proxy URL arbitrario.\n- Prueba E2E en staging contra fuente real y autenticación antes de cerrar.\n- La API y el catálogo incluyen ApeCoin APE (CoinGecko ID apecoin), con timestamp y validación de antigüedad, incluidas las pruebas.",
+      "acceptance_criteria": "- CI incluye test offline de CoinGecko y FRED con casos inválidos; migración a develop sin activar LIVE.\n- CoinGecko BTC/ETH/SOL incluye valor USD, cambio 24h, hora observada y límite de edad; FRED DGS2/DGS10 indica porcentaje de yield y cambio en pb.\n- Datos no disponibles producen 503 y no fallback inventado; no hay proxy URL arbitrario.\n- Prueba E2E en staging contra fuente real y autenticación antes de cerrar.\n- La API y el catálogo incluyen ApeCoin APE (CoinGecko ID apecoin), con timestamp y validación de antigüedad, incluidas las pruebas.\n- Priorizar datos reales de una fuente disponible y autorizada, con origen, hora y retraso visibles. Limitar mocks/fixtures a CI reproducible y escenarios de error; nunca sustituir una caída del proveedor por precios inventados ni presentar una prueba offline como integración real.",
       "subtasks": [
         {
           "id": 900040001,
@@ -3307,9 +3464,22 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-01T12:32:40Z",
           "body": "CI backend actual con ApeCoin y tests de catálogo/cotizaciones: SUCCESS en 41307208369. Gateway y verificación upstream en staging siguen pendientes."
+        },
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-11-01T19:32:20.498Z",
+          "body": "Instrucción del usuario: proceder con el mínimo de datos mock necesarios. Esta actualización prevalece sobre comentarios anteriores que proponían mocks primero."
         }
       ],
-      "change_log": [],
+      "change_log": [
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-11-01T19:32:20.498Z",
+          "field": "acceptance_criteria",
+          "old_value": "- CI incluye test offline de CoinGecko y FRED con casos inválidos; migración a develop sin activar LIVE.\n- CoinGecko BTC/ETH/SOL incluye valor USD, cambio 24h, hora observada y límite de edad; FRED DGS2/DGS10 indica porcentaje de yield y cambio en pb.\n- Datos no disponibles producen 503 y no fallback inventado; no hay proxy URL arbitrario.\n- Prueba E2E en staging contra fuente real y autenticación antes de cerrar.\n- La API y el catálogo incluyen ApeCoin APE (CoinGecko ID apecoin), con timestamp y validación de antigüedad, incluidas las pruebas.",
+          "new_value": "- CI incluye test offline de CoinGecko y FRED con casos inválidos; migración a develop sin activar LIVE.\n- CoinGecko BTC/ETH/SOL incluye valor USD, cambio 24h, hora observada y límite de edad; FRED DGS2/DGS10 indica porcentaje de yield y cambio en pb.\n- Datos no disponibles producen 503 y no fallback inventado; no hay proxy URL arbitrario.\n- Prueba E2E en staging contra fuente real y autenticación antes de cerrar.\n- La API y el catálogo incluyen ApeCoin APE (CoinGecko ID apecoin), con timestamp y validación de antigüedad, incluidas las pruebas.\n- Priorizar datos reales de una fuente disponible y autorizada, con origen, hora y retraso visibles. Limitar mocks/fixtures a CI reproducible y escenarios de error; nunca sustituir una caída del proveedor por precios inventados ni presentar una prueba offline como integración real."
+        }
+      ],
       "comentario": "No afirmar despliegue ni ingestión autorizada sin prueba del proveedor, permisos y producción.",
       "estimated_hours": null,
       "story_points": null,
@@ -3355,7 +3525,7 @@
         "paper"
       ],
       "blocked_by": [],
-      "acceptance_criteria": "- Documento por instrumento con ticker exacto, bolsa/fuente, monedas/unidades, frecuencia, zona horaria, horario, retraso y coste/licencia.\n- Permiso explícito para ingestión, almacenaje y uso algorítmico; rechazo de feeds no licenciados.\n- API server-side con claves en secret manager; tests de cuotas, datos obsoletos y desviaciones.\n- No derivar operaciones PAPER de widgets TradingView.",
+      "acceptance_criteria": "- Documento por instrumento con ticker exacto, bolsa/fuente, monedas/unidades, frecuencia, zona horaria, horario, retraso y coste/licencia.\n- Permiso explícito para ingestión, almacenaje y uso algorítmico; rechazo de feeds no licenciados.\n- API server-side con claves en secret manager; tests de cuotas, datos obsoletos y desviaciones.\n- No derivar operaciones PAPER de widgets TradingView.\n- Priorizar datos reales de una fuente disponible y autorizada, con origen, hora y retraso visibles. Limitar mocks/fixtures a CI reproducible y escenarios de error; nunca sustituir una caída del proveedor por precios inventados ni presentar una prueba offline como integración real.",
       "subtasks": [
         {
           "id": 900041001,
@@ -3384,9 +3554,22 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-01T12:21:47.698Z",
           "body": "Alcance acordado: leer mercado real con proveedor/latencia explícitos. No confundir widget con datos ingeridos para decisiones o trading; LIVE prohibido."
+        },
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-11-01T19:32:20.498Z",
+          "body": "Instrucción del usuario: proceder con el mínimo de datos mock necesarios. Esta actualización prevalece sobre comentarios anteriores que proponían mocks primero."
         }
       ],
-      "change_log": [],
+      "change_log": [
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-11-01T19:32:20.498Z",
+          "field": "acceptance_criteria",
+          "old_value": "- Documento por instrumento con ticker exacto, bolsa/fuente, monedas/unidades, frecuencia, zona horaria, horario, retraso y coste/licencia.\n- Permiso explícito para ingestión, almacenaje y uso algorítmico; rechazo de feeds no licenciados.\n- API server-side con claves en secret manager; tests de cuotas, datos obsoletos y desviaciones.\n- No derivar operaciones PAPER de widgets TradingView.",
+          "new_value": "- Documento por instrumento con ticker exacto, bolsa/fuente, monedas/unidades, frecuencia, zona horaria, horario, retraso y coste/licencia.\n- Permiso explícito para ingestión, almacenaje y uso algorítmico; rechazo de feeds no licenciados.\n- API server-side con claves en secret manager; tests de cuotas, datos obsoletos y desviaciones.\n- No derivar operaciones PAPER de widgets TradingView.\n- Priorizar datos reales de una fuente disponible y autorizada, con origen, hora y retraso visibles. Limitar mocks/fixtures a CI reproducible y escenarios de error; nunca sustituir una caída del proveedor por precios inventados ni presentar una prueba offline como integración real."
+        }
+      ],
       "comentario": "No afirmar despliegue ni ingestión autorizada sin prueba del proveedor, permisos y producción.",
       "estimated_hours": null,
       "story_points": null,
@@ -3436,7 +3619,7 @@
         "900021",
         "900040"
       ],
-      "acceptance_criteria": "- Auth, tenant, CORS same-origin y rate limit confirmados en staging; ningún secreto en JS.\n- /hais/ muestra origen HAIS / CoinGecko cuando responde API y no oculta caídas.\n- GET market/treasury devuelve DGS2/DGS10 con observación de fecha, 503 si no hay upstream; ningún valor fingido.\n- Smoke HTTPS de dev con captura/logs saneados y test real de origen.",
+      "acceptance_criteria": "- Auth, tenant, CORS same-origin y rate limit confirmados en staging; ningún secreto en JS.\n- /hais/ muestra origen HAIS / CoinGecko cuando responde API y no oculta caídas.\n- GET market/treasury devuelve DGS2/DGS10 con observación de fecha, 503 si no hay upstream; ningún valor fingido.\n- Smoke HTTPS de dev con captura/logs saneados y test real de origen.\n- Priorizar datos reales de una fuente disponible y autorizada, con origen, hora y retraso visibles. Limitar mocks/fixtures a CI reproducible y escenarios de error; nunca sustituir una caída del proveedor por precios inventados ni presentar una prueba offline como integración real.",
       "subtasks": [
         {
           "id": 900042001,
@@ -3465,9 +3648,22 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-01T12:21:47.698Z",
           "body": "Alcance acordado: leer mercado real con proveedor/latencia explícitos. No confundir widget con datos ingeridos para decisiones o trading; LIVE prohibido."
+        },
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-11-01T19:32:20.498Z",
+          "body": "Instrucción del usuario: proceder con el mínimo de datos mock necesarios. Esta actualización prevalece sobre comentarios anteriores que proponían mocks primero."
         }
       ],
-      "change_log": [],
+      "change_log": [
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-11-01T19:32:20.498Z",
+          "field": "acceptance_criteria",
+          "old_value": "- Auth, tenant, CORS same-origin y rate limit confirmados en staging; ningún secreto en JS.\n- /hais/ muestra origen HAIS / CoinGecko cuando responde API y no oculta caídas.\n- GET market/treasury devuelve DGS2/DGS10 con observación de fecha, 503 si no hay upstream; ningún valor fingido.\n- Smoke HTTPS de dev con captura/logs saneados y test real de origen.",
+          "new_value": "- Auth, tenant, CORS same-origin y rate limit confirmados en staging; ningún secreto en JS.\n- /hais/ muestra origen HAIS / CoinGecko cuando responde API y no oculta caídas.\n- GET market/treasury devuelve DGS2/DGS10 con observación de fecha, 503 si no hay upstream; ningún valor fingido.\n- Smoke HTTPS de dev con captura/logs saneados y test real de origen.\n- Priorizar datos reales de una fuente disponible y autorizada, con origen, hora y retraso visibles. Limitar mocks/fixtures a CI reproducible y escenarios de error; nunca sustituir una caída del proveedor por precios inventados ni presentar una prueba offline como integración real."
+        }
+      ],
       "comentario": "No afirmar despliegue ni ingestión autorizada sin prueba del proveedor, permisos y producción.",
       "estimated_hours": null,
       "story_points": null,
@@ -3570,7 +3766,7 @@
       "jules_session": null
     }
   ],
-  "last_updated_by": "HAIS ApeCoin CI evidence",
+  "last_updated_by": "Codex",
   "_audit_log": [
     {
       "action": "chore: actualizar tarea 900025",
@@ -3741,7 +3937,29 @@
       "action": "chore: actualizar estado tarea #900001 → OK",
       "user": "haopengwang123",
       "timestamp": "2026-10-31T21:42:30.736Z"
+    },
+    {
+      "action": "Revisión autorizada: dependencias PAPER y mínimo de mocks; conservar estados Fixed sin inventar evidencia",
+      "user": "Codex",
+      "timestamp": "2026-11-01T19:32:20.498Z",
+      "task_ids": [
+        900014,
+        900027,
+        900028,
+        900034,
+        900035,
+        900039,
+        900040,
+        900041,
+        900042,
+        900031,
+        900032,
+        900004,
+        900008,
+        900015,
+        900036
+      ]
     }
   ],
-  "last_updated": "2026-11-01T19:18:50.631Z"
+  "last_updated": "2026-11-01T19:32:20.498Z"
 }
