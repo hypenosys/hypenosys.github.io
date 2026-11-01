@@ -291,27 +291,27 @@
       "pilot_task_id": "HAIS-001-H004",
       "pilot_id": "HAIS-001",
       "organizationId": "hais",
-      "repository": "hypenosys/HAIS",
+      "repository": null,
       "title": "Vincular GitHub, Jules y proveedores BYOK",
       "descripcion": "Probar configuración BYOK OpenAI/OpenRouter y Jules desde dev.hypenosys.com contra dev.tc.hypenosys.com con claves de prueba y cuotas mínimas; auditar exposición en localStorage, network, logs y errores. No cargar secretos de pago sin vault validado.",
-      "tema_principal": "HAIS-001 / identity",
+      "tema_principal": "",
       "prioridad": "Critical",
       "estado": "Pending",
       "completitud": 0,
-      "task_type": "security",
-      "resuelto_por": "",
+      "task_type": "",
+      "resuelto_por": null,
       "asignados": [],
       "tags": [
+        "byok",
         "hais-001",
         "identity",
-        "byok",
+        "jules",
         "oauth",
-        "secrets",
-        "jules"
+        "secrets"
       ],
       "blocked_by": [
-        900002,
-        900003
+        "900002",
+        "900003"
       ],
       "acceptance_criteria": "sin claves expuestas en navegador ni logs\npermisos mínimos\nProveedor y modelo identificables; llamada de coste mínimo; clave nunca devuelta en API/logs/HTML; revocación y límite de gasto demostrados",
       "executor_proposed": "human",
@@ -356,11 +356,40 @@
         }
       ],
       "comments": [],
-      "change_log": [],
+      "change_log": [
+        {
+          "author_login": "haopengwang123",
+          "timestamp": "2026-11-01T08:56:21.560Z",
+          "field": "milestone",
+          "old_value": "M0 — Acceso y aislamiento",
+          "new_value": ""
+        },
+        {
+          "author_login": "haopengwang123",
+          "timestamp": "2026-11-01T08:56:21.560Z",
+          "field": "blocked_by",
+          "old_value": "[900002,900003]",
+          "new_value": "[\"900002\",\"900003\"]"
+        },
+        {
+          "author_login": "haopengwang123",
+          "timestamp": "2026-11-01T08:56:21.560Z",
+          "field": "task_type",
+          "old_value": "security",
+          "new_value": ""
+        },
+        {
+          "author_login": "haopengwang123",
+          "timestamp": "2026-11-01T08:56:21.560Z",
+          "field": "repository",
+          "old_value": "hypenosys/HAIS",
+          "new_value": null
+        }
+      ],
       "comentario": "Evidencia requerida: Proveedor y modelo identificables; llamada de coste mínimo; clave nunca devuelta en API/logs/HTML; revocación y límite de gasto demostrados",
       "estimated_hours": 8,
       "story_points": 5,
-      "milestone": "M0 — Acceso y aislamiento",
+      "milestone": "",
       "seccion": "HAIS · identity",
       "rama": "feature/hais-004",
       "rama2": null,
@@ -370,7 +399,7 @@
       "due_date": null,
       "limite": null,
       "ver": true,
-      "detectado_por": "HAIS-001",
+      "detectado_por": "Unassigned",
       "apoyo": null,
       "email_responsable": null,
       "emails_asignados": [],
@@ -2968,8 +2997,13 @@
       "jules_session": null
     }
   ],
-  "last_updated_by": "Codex",
+  "last_updated_by": "haopengwang123",
   "_audit_log": [
+    {
+      "action": "chore: actualizar tarea #900004",
+      "user": "haopengwang123",
+      "timestamp": "2026-11-01T08:56:22.348Z"
+    },
     {
       "action": "chore(HAIS): reabrir verificaciones pendientes y preparar tareas de estrategia PAPER",
       "user": "Codex",
