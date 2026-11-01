@@ -108,14 +108,14 @@ async function run() {
     assert.match(authError, /401/);
     assert.doesNotMatch(authError, /CORS|TEST-KEY/);
 
-    // Only actual fetch/network failures should produce the CORS diagnostic.
+    // With the same-origin relay, network failures must name the relay, not CORS at Anthropic.
     const networkClient = clientWithFetch(async () => { throw new TypeError('Failed to fetch'); });
     let networkError = '';
     await networkClient.sendMessage({
         messages: [{ role: 'user', content: 'test' }], options: {},
         onError: error => { networkError = error.message; }
     });
-    assert.match(networkError, /CORS/);
+    assert.match(networkError, /relay de Hypenosys/);
     assert.doesNotMatch(networkError, /TEST-KEY/);
 
     const errorClient = clientWithFetch(async () => streamingResponse([
