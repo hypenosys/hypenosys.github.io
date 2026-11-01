@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-11-01T09:10:32.267Z",
+  "last_updated": "2026-11-01T09:15:33.004Z",
   "last_updated_by": "haopengwang123",
   "tasks": [
     {
@@ -6240,9 +6240,102 @@
       "blocks": [],
       "jules_session": null,
       "assignee_proposed": "human"
+    },
+    {
+      "id": 900005,
+      "pilot_task_id": "HAIS-001-H005",
+      "pilot_id": "HAIS-001",
+      "organizationId": "hais",
+      "repository": "hypenosys/HAIS",
+      "title": "Prueba de autenticación y autorización multitenant",
+      "descripcion": "Ejecutar pruebas de autorización entre usuarios y organizaciones en Hypenosys y tc; cubrir lectura, escritura, invitaciones y cambios de rol; incluir pruebas de IDOR, fallback legacy y acceso a tareas privadas.",
+      "tema_principal": "HAIS-001 / platform",
+      "prioridad": "High",
+      "estado": "OK",
+      "completitud": 0,
+      "task_type": "security",
+      "resuelto_por": "",
+      "asignados": [],
+      "tags": [
+        "hais-001",
+        "platform",
+        "security",
+        "rbac",
+        "multi-tenant",
+        "idor"
+      ],
+      "blocked_by": [
+        900002
+      ],
+      "acceptance_criteria": "pruebas negativas de acceso cruzado\nSuite con escenarios 401/403 y cross-tenant; pruebas negativas pasan; rutas vulnerables documentadas y bloqueadas",
+      "executor_proposed": "jules",
+      "subtasks": [
+        {
+          "id": 900001041,
+          "text": "Mapear endpoints de organizaciones, tareas y sesiones en Hub y tc",
+          "done": false
+        },
+        {
+          "id": 900001042,
+          "text": "Probar lectura y escritura cruzada entre HAIS y otra organización",
+          "done": false
+        },
+        {
+          "id": 900001043,
+          "text": "Probar IDOR y falsificación de roles o identificadores de usuario",
+          "done": false
+        },
+        {
+          "id": 900001044,
+          "text": "Corregir fallos y registrar pruebas 401/403 reproducibles",
+          "done": false
+        }
+      ],
+      "external_links": [
+        {
+          "label": "Hypenosys — autenticación",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/assets/javascript/auth.js"
+        },
+        {
+          "label": "tc — código fuente",
+          "url": "https://github.com/Axlfc/tc/tree/develop/src"
+        },
+        {
+          "label": "OWASP — control de acceso",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html"
+        }
+      ],
+      "comments": [],
+      "change_log": [],
+      "comentario": "Evidencia requerida: Suite con escenarios 401/403 y cross-tenant; pruebas negativas pasan; rutas vulnerables documentadas y bloqueadas",
+      "estimated_hours": 12,
+      "story_points": 8,
+      "milestone": "M1 — Orquestación E2E",
+      "seccion": "HAIS · platform",
+      "rama": "feature/hais-005",
+      "rama2": null,
+      "branch": "Desarrollo (develop)",
+      "fecha": null,
+      "start_date": null,
+      "due_date": null,
+      "limite": null,
+      "ver": true,
+      "detectado_por": "HAIS-001",
+      "apoyo": null,
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "blocks": [],
+      "jules_session": null,
+      "assignee_proposed": "jules"
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: tarea #900005 movida al archivo",
+      "user": "haopengwang123",
+      "timestamp": "2026-11-01T09:15:33.004Z"
+    },
     {
       "action": "chore: tarea #900003 movida al archivo",
       "user": "haopengwang123",
