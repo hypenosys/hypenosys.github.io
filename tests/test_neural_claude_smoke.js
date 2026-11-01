@@ -84,7 +84,7 @@ async function run() {
     assert.equal(failure, null);
     assert.equal(completed, 'HOLA');
     assert.equal(calls.length, 1);
-    assert.equal(calls[0].url, 'https://api.anthropic.com/v1/messages');
+    assert.equal(calls[0].url, '/api/ai/anthropic/messages');
     assert.equal(calls[0].options.headers.Authorization, 'Bearer TEST-KEY');
     assert.equal(calls[0].options.headers['anthropic-version'], '2026-10-21');
     assert.equal(calls[0].options.headers['x-api-key'], undefined);
