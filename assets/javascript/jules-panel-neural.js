@@ -1720,7 +1720,8 @@ window.sendNeuralMessage = async function() {
         const canonical = window.getCanonicalRepoName?.(repo);
         if (!repo || !branch || !selected || selected.disabled ||
             selected.dataset.repo !== canonical || selected.value !== branch ||
-            window.JulesPanelState?._handoffBranchBlocked) {
+            (window.JulesPanelState?._handoffBranchBlocked ||
+             window.JulesPanelState?._handoffRepoUnconfirmed)) {
             const setup = $('session-prompt');
             if (setup) {
                 setup.value = msg;
