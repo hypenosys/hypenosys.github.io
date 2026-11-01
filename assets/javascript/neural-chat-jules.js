@@ -161,83 +161,55 @@ window.closeJulesDrawer = function() {
     document.getElementById('jules-drawer-overlay').classList.remove('active');
 }
 
-window.confirmSendToJules = function() {
-    const userNote = document.getElementById('jules-user-note').value.trim();
-    const currentSession = window.sessions.find(s => s.id === window.currentSessionId);
-    const task = window._activeTaskContext;
-
-    // Build session context summary string (last 3 messages)
-    let sessionContext = `Session: ${currentSession?.title || window.currentSessionId || 'N/A'}\n`;
-    if (currentSession && currentSession.messages.length > 0) {
-        const recent = currentSession.messages.slice(-3);
-        recent.forEach(m => {
-            sessionContext += `- ${m.role.toUpperCase()}: ${m.content.substring(0, 150)}${m.content.length > 150 ? '...' : ''}\n`;
-        });
-    }
-
+// A single handoff format for the drawer and individual Claude messages.
+// It never sends automatically: Jules receives an editable draft on navigation.
+window.handoffClaudeToJules = function(text, note = '', sourceTask = null, conversation = null) {
+    const currentSession = conversation || (window.sessions || []).find(s => s.id === window.currentSessionId);
+    const task = sourceTask || window._activeTaskContext || null;
+    const linked = currentSession?.metadata?.linkedJulesTaskId
+        || currentSession?.metadata?.linkedJulesSessionId
+        || (currentSession?.id ? localStorage.getItem('hy_neural_session_id_' + currentSession.id) : null);
+    const recent = (currentSession?.messages || []).slice(-3);
+    const context = 'Sesión Claude: ' + (currentSession?.title || 'Sin título') + '\n' +
+        recent.map(m => (m.source === 'jules' ? 'Jules' : m.role) + ': ' + String(m.content || '').slice(0, 180)).join('\n');
     const payload = {
-        claude_response: window._pendingJulesText,
-        user_note: userNote,
-        session_context: sessionContext,
-        source_task: task || null,
-        rama: task ? (task.rama || task.branch) : null,
-        timestamp: new Date().toISOString()
+        claude_response: String(text || '').slice(0, 20000),
+        user_note: String(note || '').slice(0, 3000),
+        session_context: context.slice(0, 1200),
+        claude_conversation_id: currentSession?.id || null,
+        linked_jules_session_id: linked || null,
+        source_task: task,
+        rama: task?.rama || task?.branch || null,
+        timestamp: Date.now()
     };
-
-    // Save to localStorage
+    if (!payload.claude_response.trim()) return false;
     localStorage.setItem('jules_task_payload', JSON.stringify(payload));
+    localStorage.removeItem('hy_neural_new_task_sent');
+    localStorage.setItem('hy_jules_handoff', JSON.stringify({
+        source: 'claude-chat',
+        intent: linked ? 'continue-session' : 'new-task',
+        task,
+        claude_conversation_id: currentSession?.id || null,
+        linked_jules_session_id: linked || null,
+        timestamp: Date.now()
+    }));
+    window.location.assign('/jules-panel/');
+    return true;
+};
 
-    // Fallbacks for backward compatibility
-    localStorage.setItem('jules_clipboard', window._pendingJulesText);
-    if (window._activeTaskContext) {
-        localStorage.setItem('jules_linked_task_id', window._activeTaskContext.id);
-    }
-
-    showToast('Neural Link establecido. Redirigiendo...');
-
-    if (task) {
-        localStorage.setItem('hy_jules_handoff', JSON.stringify({
-            task: task,
-            timestamp: Date.now(),
-            source: 'claude-chat'
-        }));
-    }
-
-    setTimeout(() => window.location.href = '/jules-panel/', 1000);
-}
+window.confirmSendToJules = function() {
+    const note = document.getElementById('jules-user-note')?.value.trim() || '';
+    const conversation = (window.sessions || []).find(s => s.id === window.currentSessionId);
+    window.handoffClaudeToJules(window._pendingJulesText, note, window._activeTaskContext, conversation);
+};
 
 window.sendToJulesByIndex = async function(idx) {
-    const currentSession = window.sessions.find(s => s.id === window.currentSessionId);
-    if (currentSession && currentSession.messages[idx]) {
-        const text = currentSession.messages[idx].content;
-
-        // Build handoff data
-        const taskContext = localStorage.getItem('hy_neural_task_context');
-        let task = null;
-        if (taskContext) {
-            try { task = JSON.parse(taskContext); } catch(e){}
-        }
-
-        const payload = {
-            claude_response: text,
-            user_note: "",
-            session_context: `Claude Index Message #${idx}`,
-            source_task: task || null,
-            rama: task ? (task.rama || task.branch) : null,
-            timestamp: new Date().toISOString()
-        };
-
-        localStorage.setItem('jules_task_payload', JSON.stringify(payload));
-
-        if (task) {
-            localStorage.setItem('hy_jules_handoff', JSON.stringify({
-                task: task,
-                timestamp: Date.now(),
-                source: 'claude-chat'
-            }));
-        }
-
-        showToast('Redirigiendo a Jules Panel...');
-        setTimeout(() => window.location.href = '/jules-panel/', 800);
+    const conversation = (window.sessions || []).find(s => s.id === window.currentSessionId);
+    const message = conversation?.messages?.[idx];
+    if (!message || !String(message.content || '').trim()) return;
+    let task = window._activeTaskContext || null;
+    if (!task) {
+        try { task = JSON.parse(localStorage.getItem('hy_neural_task_context') || 'null'); } catch {}
     }
-}
+    window.handoffClaudeToJules(message.content, '', task, conversation);
+};
