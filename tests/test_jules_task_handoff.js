@@ -127,6 +127,13 @@ function makeContext(withLinkedSession) {
     assert.equal(labeled.select.value,'develop','human label must resolve to GitHub branch');
     assert.equal(labeled.launch.disabled,false);
 
+    const withoutRepo=makeContext(false);
+    withoutRepo.storage.set('jules_task_payload',JSON.stringify({claude_response:'Primera consulta',timestamp:Date.now()}));
+    await withoutRepo.context.prefillTaskFromHandoff(null,{source:'claude-chat'});
+    assert.equal(withoutRepo.context.JulesPanelState._handoffRepoUnconfirmed,true,
+        'no-task Claude handoffs cannot silently reuse another repository');
+    assert.equal(withoutRepo.calls.sends,0);
+
     const noLink=makeContext(false);
     noLink.storage.set('hy_neural_session_id','stale-global-session');
     await noLink.context.prefillTaskFromHandoff(noLink.task,{source:'dashboard',intent:'new-task'});
