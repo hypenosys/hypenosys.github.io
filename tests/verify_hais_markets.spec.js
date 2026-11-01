@@ -14,6 +14,7 @@ test('market overview exposes actual provider instruments, no manufactured quote
   await expect(page.getByRole('heading', { name: 'Cobertura del observatorio' })).toBeVisible();
   await expect(page.locator('a[data-pick="SSE:000300"]')).toContainText('CSI 300');
   await expect(page.locator('a[data-pick="BME:IBC"]')).toContainText('IBEX 35');
+  await expect(page.getByRole('button', { name: 'APE / USD' })).toBeVisible();
   await expect(page.locator('#crypto-status')).toContainText('Sin cotización comprobada');
   await expect(page.locator('#crypto-body')).toContainText('Datos no disponibles');
   await expect(page.getByRole('link', { name: 'Operativa PAPER' })).toHaveAttribute('href', /\/hais\/operar\//);
@@ -27,6 +28,9 @@ test('selected market updates provider link and instrument title', async ({ page
   await expect(page.locator('#provider-link')).toHaveAttribute('href', 'https://www.tradingview.com/symbols/BME-IBC/');
   await page.getByRole('button', { name: 'US 10Y' }).click();
   await expect(page.locator('#selected-detail')).toContainText('TIR bonos soberanos');
+  await page.getByRole('button', { name: 'APE / USD' }).click();
+  await expect(page.locator('#selected-name')).toHaveText('ApeCoin / USD');
+  await expect(page.locator('#provider-link')).toHaveAttribute('href', 'https://www.tradingview.com/symbols/COINBASE-APEUSD/');
 });
 
 test('CoinGecko actual-shaped provider response is attributed and time-stamped', async ({ page }) => {
@@ -36,7 +40,8 @@ test('CoinGecko actual-shaped provider response is attributed and time-stamped',
     body: JSON.stringify({
       bitcoin: { usd: 50234.52, usd_24h_change: -1.25, last_updated_at: now },
       ethereum: { usd: 3210.25, usd_24h_change: 2.5, last_updated_at: now },
-      solana: { usd: 120.45, usd_24h_change: 0.54, last_updated_at: now }
+      solana: { usd: 120.45, usd_24h_change: 0.54, last_updated_at: now },
+      apecoin: { usd: 0.113625, usd_24h_change: -1.27, last_updated_at: now }
     })
   }));
   await page.goto(base);
@@ -44,6 +49,8 @@ test('CoinGecko actual-shaped provider response is attributed and time-stamped',
   await expect(page.locator('#crypto-body')).toContainText('Bitcoin');
   await expect(page.locator('#crypto-body')).toContainText('Ethereum');
   await expect(page.locator('#crypto-body')).toContainText('Solana');
+  await expect(page.locator('#crypto-body')).toContainText('ApeCoin');
+  await expect(page.locator('#crypto-body')).toContainText('0,113625');
 });
 
 test('Stale provider quote is rejected instead of shown as current', async ({ page }) => {
@@ -53,7 +60,8 @@ test('Stale provider quote is rejected instead of shown as current', async ({ pa
     body: JSON.stringify({
       bitcoin: { usd: 1, usd_24h_change: 1, last_updated_at: old },
       ethereum: { usd: 1, usd_24h_change: 1, last_updated_at: old },
-      solana: { usd: 1, usd_24h_change: 1, last_updated_at: old }
+      solana: { usd: 1, usd_24h_change: 1, last_updated_at: old },
+      apecoin: { usd: 0.1, usd_24h_change: 1, last_updated_at: old }
     })
   }));
   await page.goto(base);
