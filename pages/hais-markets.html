@@ -51,7 +51,7 @@ a{color:var(--sky)}a:hover{color:#dcf3ff}button{font:inherit;cursor:pointer}butt
 <a class="card" href="#explorar" data-pick="BME:IBC"><small>España · Índice</small><strong>IBEX 35</strong><span>BME:IBC</span><p>Renta variable española</p></a>
 <a class="card" href="#explorar" data-pick="TVC:US10Y"><small>Deuda soberana</small><strong>Bonos 10 años</strong><span>EE. UU. · Alemania · España</span><p>Rendimiento (yield), no precio del bono</p></a>
 <a class="card" href="#explorar" data-pick="TVC:GOLD"><small>Materias primas</small><strong>Oro y energía</strong><span>Oro · Plata · WTI</span><p>Precios de referencia; algunos son derivados TVC</p></a>
-<a class="card" href="#explorar" data-pick="COINBASE:BTCUSD"><small>Criptomonedas</small><strong>Bitcoin y Ethereum</strong><span>BTC · ETH · SOL</span><p>Mercados 24/7 y proveedor CoinGecko adicional</p></a>
+<a class="card" href="#explorar" data-pick="COINBASE:BTCUSD"><small>Criptomonedas</small><strong>Bitcoin, Ethereum y APE</strong><span>BTC · ETH · SOL · APE</span><p>Mercados 24/7 y proveedor CoinGecko adicional</p></a>
 <a class="card" href="#explorar" data-pick="FX:EURUSD"><small>Divisas</small><strong>EUR / USD</strong><span>FX:EURUSD</span><p>Tipo de cambio de referencia</p></a>
 </div></section>
 <section class="section" id="explorar" aria-labelledby="explore-title"><div class="sectionhead"><h2 id="explore-title">Explorador de cotizaciones</h2><span class="badge">TRADINGVIEW · PROVEEDOR EXTERNO</span></div>
@@ -72,6 +72,7 @@ a{color:var(--sky)}a:hover{color:#dcf3ff}button{font:inherit;cursor:pointer}butt
 <button class="chip" type="button" data-symbol="COINBASE:BTCUSD" aria-pressed="false">BTC / USD</button>
 <button class="chip" type="button" data-symbol="COINBASE:ETHUSD" aria-pressed="false">ETH / USD</button>
 <button class="chip" type="button" data-symbol="BINANCE:SOLUSDT" aria-pressed="false">SOL / USDT</button>
+<button class="chip" type="button" data-symbol="COINBASE:APEUSD" aria-pressed="false">APE / USD</button>
 <button class="chip" type="button" data-symbol="FX:EURUSD" aria-pressed="false">EUR / USD</button></div>
 <div class="chartbox"><div class="tvslot" id="chart-slot"><div class="sub">Cargando gráfico del proveedor TradingView… Si está bloqueado, usa la ficha original.</div></div></div><p class="fallback">El gráfico y su precio pertenecen al proveedor externo. HAIS no recibe por esta integración una cotización validada para ejecutar órdenes. Si el widget falla o muestra un símbolo restringido, consulta la ficha del activo.</p></div>
 <div class="stacks"><div class="panel"><div class="sectionhead"><h2>Vista global por familias</h2><span class="badge dim">WATCHLIST</span></div><div class="marketbox"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/markets/" rel="noopener nofollow noreferrer" target="_blank">Mercados mundiales</a> por TradingView</div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
@@ -81,7 +82,7 @@ a{color:var(--sky)}a:hover{color:#dcf3ff}button{font:inherit;cursor:pointer}butt
   {"title":"Índices","symbols":[{"s":"SP:SPX","d":"S&P 500"},{"s":"NASDAQ:IXIC","d":"NASDAQ Composite"},{"s":"NASDAQ:NDX","d":"NASDAQ 100"},{"s":"SSE:000300","d":"CSI 300 China"},{"s":"BME:IBC","d":"IBEX 35"}]},
   {"title":"Bonos (TIR)","symbols":[{"s":"TVC:US10Y","d":"EE. UU. 10Y"},{"s":"TVC:DE10Y","d":"Alemania 10Y"},{"s":"TVC:ES10Y","d":"España 10Y"},{"s":"TVC:CN10Y","d":"China 10Y"}]},
   {"title":"Materias primas","symbols":[{"s":"TVC:GOLD","d":"Oro"},{"s":"TVC:SILVER","d":"Plata"},{"s":"TVC:USOIL","d":"WTI"},{"s":"TVC:UKOIL","d":"Brent"}]},
-  {"title":"Cripto","symbols":[{"s":"COINBASE:BTCUSD","d":"Bitcoin"},{"s":"COINBASE:ETHUSD","d":"Ethereum"},{"s":"BINANCE:SOLUSDT","d":"Solana"}]},
+  {"title":"Cripto","symbols":[{"s":"COINBASE:BTCUSD","d":"Bitcoin"},{"s":"COINBASE:ETHUSD","d":"Ethereum"},{"s":"BINANCE:SOLUSDT","d":"Solana"},{"s":"COINBASE:APEUSD","d":"ApeCoin"}]},
   {"title":"Divisas","symbols":[{"s":"FX:EURUSD","d":"EUR/USD"},{"s":"FX:USDJPY","d":"USD/JPY"}]}
  ],
  "width":"100%","height":"100%","showSymbolLogo":false,"showChart":true
@@ -110,6 +111,7 @@ const SYMBOLS={
  'COINBASE:BTCUSD':['Bitcoin / USD','Spot · Coinbase'],
  'COINBASE:ETHUSD':['Ethereum / USD','Spot · Coinbase'],
  'BINANCE:SOLUSDT':['Solana / USDT','Spot · Binance · denominación USDT'],
+ 'COINBASE:APEUSD':['ApeCoin / USD','Spot · Coinbase · token APE'], 
  'FX:EURUSD':['EUR / USD','Tipo de cambio · proveedor FX']
 };
 const pick=key=>{
@@ -141,9 +143,9 @@ document.querySelectorAll('[data-symbol]').forEach(b=>b.addEventListener('click'
 document.querySelectorAll('[data-pick]').forEach(a=>a.addEventListener('click',()=>pick(a.dataset.pick)));
 pick('SP:SPX');
 const body=document.getElementById('crypto-body'),status=document.getElementById('crypto-status'),button=document.getElementById('refresh-crypto');
-const fmt=new Intl.NumberFormat('es-ES',{style:'currency',currency:'USD',maximumFractionDigits:2});
+const fmt=new Intl.NumberFormat('es-ES',{style:'currency',currency:'USD',minimumFractionDigits:2,maximumFractionDigits:6});
 const pct=new Intl.NumberFormat('es-ES',{style:'percent',minimumFractionDigits:2,maximumFractionDigits:2});
-const coins=[['bitcoin','Bitcoin','BTC'],['ethereum','Ethereum','ETH'],['solana','Solana','SOL']];
+const coins=[['bitcoin','Bitcoin','BTC'],['ethereum','Ethereum','ETH'],['solana','Solana','SOL'],['apecoin','ApeCoin','APE']];
 let busy=false,lastAttempt=0;
 function textCell(tr,text){const td=document.createElement('td');td.textContent=text;tr.append(td);return td;}
 async function updateCrypto(){
@@ -159,10 +161,10 @@ async function updateCrypto(){
     const response=await fetch('/api/hais/v1/market/crypto',{signal:controller.signal,cache:'no-store',credentials:'same-origin',headers:{Accept:'application/json'}});
     if(!response.ok)throw Error('HAIS API not configured');
     const snapshot=await response.json();
-    if(snapshot.mode!=='OBSERVE'||snapshot.source!=='CoinGecko'||!Array.isArray(snapshot.quotes)||snapshot.quotes.length!==3)throw Error('Invalid HAIS market contract');
+    if(snapshot.mode!=='OBSERVE'||snapshot.source!=='CoinGecko'||!Array.isArray(snapshot.quotes)||snapshot.quotes.length!==4)throw Error('Invalid HAIS market contract');
     payload={};
     for(const q of snapshot.quotes) {
-     const id={BTC:'bitcoin',ETH:'ethereum',SOL:'solana'}[q.symbol];
+     const id={BTC:'bitcoin',ETH:'ethereum',SOL:'solana',APE:'apecoin'}[q.symbol];
      if(!id||typeof q.observed_at!=='string')throw Error('Unrecognized HAIS coin');
      payload[id]={usd:q.value,usd_24h_change:q.change_24h_pct,last_updated_at:Date.parse(q.observed_at)/1000};
     }
@@ -171,7 +173,7 @@ async function updateCrypto(){
   }catch(_error){
    const ctrl=new AbortController(),timeout=setTimeout(()=>ctrl.abort(),10000);
    try {
-    const res=await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin%2Cethereum%2Csolana&vs_currencies=usd&include_24hr_change=true&include_last_updated_at=true',{signal:ctrl.signal,cache:'no-store',headers:{Accept:'application/json'}});
+    const res=await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin%2Cethereum%2Csolana%2Capecoin&vs_currencies=usd&include_24hr_change=true&include_last_updated_at=true',{signal:ctrl.signal,cache:'no-store',headers:{Accept:'application/json'}});
     if(!res.ok)throw Error('CoinGecko HTTP '+res.status);
     payload=await res.json();
    }finally{clearTimeout(timeout)}
