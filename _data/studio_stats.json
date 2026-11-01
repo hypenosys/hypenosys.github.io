@@ -1,15 +1,15 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-11-01T20:00:58.251Z",
+  "computed_at": "2026-11-01T20:09:57.799Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 39,
-    "total_ok": 1,
+    "total_ok": 2,
     "total_ko": 0,
     "total_uncertain": 3,
     "total_obsolete": 0,
-    "fixed_found_ratio": 0.0256,
-    "verified_ratio": 0.0256
+    "fixed_found_ratio": 0.0513,
+    "verified_ratio": 0.0513
   },
   "group": {
     "velocity_trend": {
@@ -20,10 +20,10 @@
       "2026-W41": 0,
       "2026-W42": 0,
       "2026-W43": 0,
-      "2026-W44": 1
+      "2026-W44": 2
     },
     "bug_rate": 0,
-    "blocker_health": 32,
+    "blocker_health": 31,
     "tag_heatmap": {
       "byok": 2,
       "hais-001": 19,
@@ -44,7 +44,7 @@
       "product": 5,
       "fastapi": 1,
       "docker": 3,
-      "paper": 22,
+      "paper": 21,
       "pydantic": 1,
       "schema": 1,
       "paper-trading": 2,
@@ -86,14 +86,13 @@
       "validation": 1,
       "go-no-go": 1,
       "multi-tenant": 1,
-      "hais": 19,
-      "estrategia": 10,
+      "hais": 18,
+      "estrategia": 9,
       "investing": 2,
       "senales": 2,
       "precios": 2,
       "datos": 1,
       "impulso": 2,
-      "riesgo": 1,
       "compra": 1,
       "simulacion": 1,
       "venta": 1,
@@ -116,7 +115,7 @@
       "plus500": 1,
       "minimum-mocks": 1
     },
-    "milestone_tasks_remaining": 20,
+    "milestone_tasks_remaining": 19,
     "hall_of_fame_winners": {
       "mvp": {
         "handle": "axlfc",
@@ -129,9 +128,9 @@
         "value": 6
       },
       "unblocker": {
-        "handle": "topperh4rley",
-        "name": "Alex",
-        "value": 4
+        "handle": "axlfc",
+        "name": "Axel",
+        "value": 6
       },
       "velocity_king": {
         "handle": "dkdidac-design",
@@ -159,8 +158,8 @@
         "member_name": "Axel",
         "mvp_points": 6.800000000000001,
         "bugs_solved": 6,
-        "unblocked_count": 3,
-        "velocity": 3.5625,
+        "unblocked_count": 6,
+        "velocity": 3.515151515151515,
         "research_solved": 1,
         "art_tasks": 0,
         "comments_left": 1
@@ -211,9 +210,9 @@
     "axlfc": {
       "member_name": "Axel",
       "completed": {
-        "all_time": 46,
-        "milestone": 32,
-        "week": 0
+        "all_time": 47,
+        "milestone": 33,
+        "week": 1
       },
       "weekly_velocity": {
         "2026-W37": 0,
@@ -223,15 +222,16 @@
         "2026-W41": 0,
         "2026-W42": 0,
         "2026-W43": 0,
-        "2026-W44": 0
+        "2026-W44": 1
       },
       "type_breakdown": {
-        "feature": 30,
+        "feature": 31,
         "chore": 8,
         "bug": 6,
         "research": 2
       },
       "rama_breakdown": {
+        "": 1,
         "PRO": 15,
         "chore/upgrade-ue-5.7.4": 2,
         "feature/kanban-jules-link": 1,
@@ -249,6 +249,10 @@
         "develop": 1
       },
       "tag_frequency": {
+        "hais": 1,
+        "paper": 1,
+        "estrategia": 1,
+        "riesgo": 1,
         "chore": 6,
         "devops": 4,
         "git": 2,
@@ -276,14 +280,14 @@
         "days": 0.5,
         "estimated_start": true
       },
-      "dependency_impact": 5,
+      "dependency_impact": 8,
       "comment_activity": 1,
       "volatility": {
         "reopens": 3,
         "reprioritizations": 27
       },
       "workload": {
-        "active_tasks": 24,
+        "active_tasks": 23,
         "story_points": 86
       }
     },
@@ -528,9 +532,9 @@
           "value": 6
         },
         "unblocker": {
-          "handle": "topperh4rley",
-          "name": "Alex",
-          "value": 4
+          "handle": "axlfc",
+          "name": "Axel",
+          "value": 6
         },
         "velocity_king": {
           "handle": "dkdidac-design",
@@ -558,8 +562,8 @@
           "member_name": "Axel",
           "mvp_points": 6.800000000000001,
           "bugs_solved": 6,
-          "unblocked_count": 3,
-          "velocity": 3.5625,
+          "unblocked_count": 6,
+          "velocity": 3.515151515151515,
           "research_solved": 1,
           "art_tasks": 0,
           "comments_left": 1
@@ -612,7 +616,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "haopengwang123",
-      "timestamp": "2026-11-01T20:00:59.055Z"
+      "timestamp": "2026-11-01T20:09:58.562Z"
     }
   ]
 }
