@@ -80,7 +80,9 @@
                             if (found) taskData = found;
                         }
 
-                        if (typeof window._openTaskInClaude === 'function') {
+                        if (typeof window._openTaskInJules === 'function') {
+                            window._openTaskInJules(taskData);
+                        } else if (typeof window._openTaskInClaude === 'function') {
                             window._openTaskInClaude(taskData);
                         }
                     } else if (action === 'move') {
