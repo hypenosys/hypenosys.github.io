@@ -546,8 +546,8 @@
       "descripcion": "Definir modelos Pydantic versionados para MarketBar, Signal, Thesis, RiskAssessment, PaperOrder, PaperFill y DecisionTrace; incluir timestamps UTC, source, currency, precision, idempotency_key y validación de instrumentos.",
       "tema_principal": "HAIS-001 / product",
       "prioridad": "High",
-      "estado": "Working",
-      "completitud": 0,
+      "estado": "Fixed",
+      "completitud": 1,
       "task_type": "feature",
       "resuelto_por": "",
       "asignados": [
@@ -569,36 +569,52 @@
         {
           "id": 900001101,
           "text": "Definir modelos tipados MarketBar, Signal, Thesis y DecisionTrace",
-          "done": false
+          "done": true
         },
         {
           "id": 900001102,
           "text": "Definir RiskAssessment, PaperOrder y PaperFill con UTC y precision decimal",
-          "done": false
+          "done": true
         },
         {
           "id": 900001103,
           "text": "Rechazar datos inválidos y órdenes de modo LIVE mediante validación",
-          "done": false
+          "done": true
         },
         {
           "id": 900001104,
           "text": "Publicar JSON Schema y pruebas de serialización y compatibilidad",
-          "done": false
+          "done": true
         }
       ],
       "external_links": [
         {
           "label": "HAIS — aplicación FastAPI",
-          "url": "https://github.com/hypenosys/HAIS/blob/feature/paper-foundation/src/hais/app.py"
+          "url": "https://github.com/hypenosys/HAIS/blob/feature/hais-011-decision-contracts/src/hais/app.py"
         },
         {
           "label": "HAIS — pruebas existentes",
-          "url": "https://github.com/hypenosys/HAIS/blob/feature/paper-foundation/tests/test_app.py"
+          "url": "https://github.com/hypenosys/HAIS/blob/feature/hais-011-decision-contracts/tests/test_app.py"
         },
         {
           "label": "Pydantic — modelos",
           "url": "https://docs.pydantic.dev/latest/concepts/models/"
+        },
+        {
+          "label": "Implementación de contratos PAPER — commit",
+          "url": "https://github.com/hypenosys/HAIS/commit/11a0f6f"
+        },
+        {
+          "label": "Contratos y límites de la entrega",
+          "url": "https://github.com/hypenosys/HAIS/blob/feature/hais-011-decision-contracts/docs/DATA_CONTRACTS.md"
+        },
+        {
+          "label": "JSON Schema v1",
+          "url": "https://github.com/hypenosys/HAIS/tree/feature/hais-011-decision-contracts/schemas/v1"
+        },
+        {
+          "label": "Preparar PR hacia master — aún no creada",
+          "url": "https://github.com/hypenosys/HAIS/compare/master...feature/hais-011-decision-contracts?expand=1"
         }
       ],
       "comments": [
@@ -606,15 +622,91 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-01T09:26:07.863Z",
           "body": "[HAIS · PLAN 2026-11-01] Haopeng define modelos Pydantic versionados, validador y tests de señales/decisiones PAPER. Preparar contratos compatibles con Provider y la persistencia sin inventar parámetros de trading. Responsable(s): haopengwang123. Estado Working conservado; subtareas y criterios existentes sin alterar."
+        },
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-11-01T10:05:20Z",
+          "body": "Implementados siete modelos Pydantic PAPER, UTC, Decimal, procedencia, validación y JSON Schema v1. Rama feature/hais-011-decision-contracts; commit 11a0f6f. Suite local: 60 pruebas pasan (55 nuevas y 5 existentes). Fixed significa listo para QA en la rama: no integrado en master, sin PR creada ni CI remota verificada. La API de GitHub está bloqueada por la red del entorno. La dependencia #900010 conserva sus comprobaciones pendientes; esta preparación no la cierra ni autoriza despachar tareas dependientes. No se ejecutan órdenes ni se conecta un proveedor externo."
         }
       ],
-      "change_log": [],
+      "change_log": [
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-11-01T10:05:20Z",
+          "field": "estado",
+          "old_value": "Working",
+          "new_value": "Fixed"
+        },
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-11-01T10:05:20Z",
+          "field": "completitud",
+          "old_value": 0,
+          "new_value": 1
+        },
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-11-01T10:05:20Z",
+          "field": "rama",
+          "old_value": "feature/hais-011",
+          "new_value": "feature/hais-011-decision-contracts"
+        },
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-11-01T10:05:20Z",
+          "field": "subtasks",
+          "old_value": [
+            {
+              "id": 900001101,
+              "text": "Definir modelos tipados MarketBar, Signal, Thesis y DecisionTrace",
+              "done": false
+            },
+            {
+              "id": 900001102,
+              "text": "Definir RiskAssessment, PaperOrder y PaperFill con UTC y precision decimal",
+              "done": false
+            },
+            {
+              "id": 900001103,
+              "text": "Rechazar datos inválidos y órdenes de modo LIVE mediante validación",
+              "done": false
+            },
+            {
+              "id": 900001104,
+              "text": "Publicar JSON Schema y pruebas de serialización y compatibilidad",
+              "done": false
+            }
+          ],
+          "new_value": [
+            {
+              "id": 900001101,
+              "text": "Definir modelos tipados MarketBar, Signal, Thesis y DecisionTrace",
+              "done": true
+            },
+            {
+              "id": 900001102,
+              "text": "Definir RiskAssessment, PaperOrder y PaperFill con UTC y precision decimal",
+              "done": true
+            },
+            {
+              "id": 900001103,
+              "text": "Rechazar datos inválidos y órdenes de modo LIVE mediante validación",
+              "done": true
+            },
+            {
+              "id": 900001104,
+              "text": "Publicar JSON Schema y pruebas de serialización y compatibilidad",
+              "done": true
+            }
+          ]
+        }
+      ],
       "comentario": "Evidencia requerida: JSON Schema versionado; invalidación de precios negativos, timestamps ambiguos y campos LIVE; unit tests y muestras serializables",
       "estimated_hours": 14,
       "story_points": 8,
       "milestone": "M2 — Núcleo PAPER",
       "seccion": "HAIS · product",
-      "rama": "feature/hais-011",
+      "rama": "feature/hais-011-decision-contracts",
       "rama2": null,
       "branch": "Desarrollo (develop)",
       "fecha": null,
@@ -2800,8 +2892,13 @@
       "jules_session": null
     }
   ],
-  "last_updated_by": "ChatGPT (conexión GitHub haopengwang123)",
+  "last_updated_by": "Codex",
   "_audit_log": [
+    {
+      "action": "chore(HAIS): tarea #900011 lista para QA en rama, con pruebas locales y revisión pendiente",
+      "user": "Codex",
+      "timestamp": "2026-11-01T10:05:20Z"
+    },
     {
       "action": "plan(HAIS): asignar 30 tareas a Axel y Haopeng; añadir comentarios operativos y priorizar Jules 11/11 sin cambiar estados",
       "user": "ChatGPT (conexión haopengwang123)",
