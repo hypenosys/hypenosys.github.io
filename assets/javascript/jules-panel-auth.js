@@ -355,14 +355,9 @@ window.prefillTaskFromHandoff = async function(task, handoff = {}) {
                 supervisionMode
             });
             if (createdSid) {
+                // launchSession starts the Claude supervisor itself when selected,
+                // after the Claude↔Jules link has been made canonical.
                 orchestrator.setPhase('jules-running');
-                if (supervisionMode === 'claude') {
-                    setTimeout(() => {
-                        window.JulesClaudeBridge?.start?.({
-                            orchestrator: true, skipConfirm: true, supervisorMode: 'claude'
-                        });
-                    }, 300);
-                }
             } else {
                 orchestrator.patch({ phase: 'error', lastError: 'No se pudo crear la sesión Jules.' });
             }
