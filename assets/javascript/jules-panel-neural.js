@@ -1240,8 +1240,8 @@ window.renderChatV2Messages = function() {
     const welcomeHTML = welcome ? welcome.outerHTML : '';
     container.innerHTML = welcomeHTML;
 
-    // Al renderizar historial, nos aseguramos que el indicador esté oculto
-    setNeuralProcessingState(false);
+    // Rendering may happen on every streaming token; only onDone/onError resets
+    // the processing flag. Otherwise a second submit can race with Claude.
 
     const githubUser = window.githubApi ? window.githubApi.user : null;
 
