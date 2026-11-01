@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-11-01T11:26:29Z",
+  "last_updated": "2026-11-01T11:42:38Z",
   "last_updated_by": "HAIS planning",
   "tasks": [
     {
@@ -3109,8 +3109,12 @@
       "images": [],
       "external_links": [
         {
-          "title": "Código prototipo",
-          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/feature/hais-interactive-prototype/pages/hais-prototype.html"
+          "title": "Prototipo HAIS (código)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/pages/hais-prototype.html"
+        },
+        {
+          "title": "Guía de despliegue",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/HAIS_DEPLOYMENT.md"
         }
       ],
       "subtasks": [],
@@ -3123,14 +3127,14 @@
     {
       "id": 91,
       "title": "HAIS · Integración visual y navegación en dashboard",
-      "descripcion": "Integrar acceso a /hais/ desde la navegación Jekyll; armonizar layout, accesibilidad y responsive.",
+      "descripcion": "Integrar acceso a /hais/ desde la navegación Jekyll; armonizar layout, accesibilidad y responsive. Enlaces de portada y dashboard implementados; falta validar compilación y accesibilidad pública.",
       "tema_principal": "HAIS / Plataforma IA",
       "rama": "feature/hais-interactive-prototype",
       "rama2": null,
       "prioridad": "High",
       "milestone": "M1",
-      "estado": "Pending",
-      "completitud": 0,
+      "estado": "Working",
+      "completitud": 0.8,
       "task_type": "feature",
       "tags": [
         "hais",
@@ -3153,8 +3157,12 @@
       "images": [],
       "external_links": [
         {
-          "title": "Código prototipo",
-          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/feature/hais-interactive-prototype/pages/hais-prototype.html"
+          "title": "Prototipo HAIS (código)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/pages/hais-prototype.html"
+        },
+        {
+          "title": "Guía de despliegue",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/HAIS_DEPLOYMENT.md"
         }
       ],
       "subtasks": [],
@@ -3197,8 +3205,12 @@
       "images": [],
       "external_links": [
         {
-          "title": "Código prototipo",
-          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/feature/hais-interactive-prototype/pages/hais-prototype.html"
+          "title": "Prototipo HAIS (código)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/pages/hais-prototype.html"
+        },
+        {
+          "title": "Guía de despliegue",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/HAIS_DEPLOYMENT.md"
         }
       ],
       "subtasks": [],
@@ -3241,8 +3253,12 @@
       "images": [],
       "external_links": [
         {
-          "title": "Código prototipo",
-          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/feature/hais-interactive-prototype/pages/hais-prototype.html"
+          "title": "Prototipo HAIS (código)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/pages/hais-prototype.html"
+        },
+        {
+          "title": "Guía de despliegue",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/HAIS_DEPLOYMENT.md"
         }
       ],
       "subtasks": [],
@@ -3285,8 +3301,12 @@
       "images": [],
       "external_links": [
         {
-          "title": "Código prototipo",
-          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/feature/hais-interactive-prototype/pages/hais-prototype.html"
+          "title": "Prototipo HAIS (código)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/pages/hais-prototype.html"
+        },
+        {
+          "title": "Guía de despliegue",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/HAIS_DEPLOYMENT.md"
         }
       ],
       "subtasks": [],
@@ -3329,8 +3349,12 @@
       "images": [],
       "external_links": [
         {
-          "title": "Código prototipo",
-          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/feature/hais-interactive-prototype/pages/hais-prototype.html"
+          "title": "Prototipo HAIS (código)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/pages/hais-prototype.html"
+        },
+        {
+          "title": "Guía de despliegue",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/HAIS_DEPLOYMENT.md"
         }
       ],
       "subtasks": [],
@@ -3373,12 +3397,61 @@
       "images": [],
       "external_links": [
         {
-          "title": "Código prototipo",
-          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/feature/hais-interactive-prototype/pages/hais-prototype.html"
+          "title": "Prototipo HAIS (código)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/pages/hais-prototype.html"
+        },
+        {
+          "title": "Guía de despliegue",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/HAIS_DEPLOYMENT.md"
         }
       ],
       "subtasks": [],
       "acceptance_criteria": "Implementación funcional validada con pruebas y revisión de seguridad antes de producción.",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [],
+      "change_log": []
+    },
+    {
+      "id": 97,
+      "title": "HAIS · Verificar publicación en dev.hypenosys.com",
+      "descripcion": "Verificar DNS, HTTPS, pipeline de despliegue de develop y acceso real a /hais/, /dashboard.html y /; ejecutar smoke test. No modificar CNAME de producción.",
+      "tema_principal": "HAIS / Plataforma IA",
+      "rama": "feature/hais-domain-navigation",
+      "rama2": null,
+      "prioridad": "Critical",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "chore",
+      "tags": [
+        "hais",
+        "deployment",
+        "dns",
+        "dev"
+      ],
+      "ver": true,
+      "fecha": "2026-11-01",
+      "start_date": "2026-11-01",
+      "due_date": null,
+      "estimated_hours": 4,
+      "story_points": 3,
+      "asignados": [],
+      "emails_asignados": [],
+      "resuelto_por": null,
+      "detectado_por": "HAIS planning",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "Dominio dev no accesible desde verificación externa; distinguir merge de despliegue real.",
+      "images": [],
+      "external_links": [
+        {
+          "title": "Guía",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/HAIS_DEPLOYMENT.md"
+        }
+      ],
+      "subtasks": [],
+      "acceptance_criteria": "Los tres endpoints dev devuelven HTTPS 200, la ruta /hais/ muestra los 12 módulos y el dashboard enlaza al prototipo.",
       "blocks": [],
       "blocked_by": [],
       "comments": [],
