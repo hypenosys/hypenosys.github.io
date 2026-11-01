@@ -230,6 +230,17 @@ async function selectRepo(repoFullName, onlyUI = false) {
     }
 }
 
+// Task data can store a human label such as "Desarrollo (develop)".
+ // Prefer an exact branch name from GitHub; only then interpret a terminal "(branch)" label.
+window.resolveJulesTaskBranch = function(hint, branchNames) {
+    const raw = String(hint || '').trim().replace(/^refs\/heads\//, '');
+    if (!raw) return '';
+    if (branchNames.includes(raw)) return raw;
+    const label = raw.match(/\(([^()]+)\)\s*$/);
+    const candidate = label ? label[1].trim().replace(/^refs\/heads\//, '') : '';
+    return candidate && branchNames.includes(candidate) ? candidate : '';
+};
+
 window._loadBranchesRequestId = window._loadBranchesRequestId || 0;
 
 async function loadBranches(repoFullName) {
@@ -276,8 +287,9 @@ async function loadBranches(repoFullName) {
         }).join('');
 
         // Task handoff takes precedence over the browser's previous/default branch.
-        const requested = window.JulesPanelState?.handoffTargetRepo === requestedCanonical
+        const requestedRaw = window.JulesPanelState?.handoffTargetRepo === requestedCanonical
             ? String(window.JulesPanelState.handoffTargetBranch || '') : '';
+        const requested = window.resolveJulesTaskBranch(requestedRaw, branches.map(b => b.name));
         const persistedBranch = localStorage.getItem('hy_active_branch_' + repoFullName);
         let branchToSelect = "";
 
@@ -308,11 +320,11 @@ async function loadBranches(repoFullName) {
         // Success assignment!
         branchSelect.dataset.repo = requestedCanonical;
         window._loadedRepoContext = requestedCanonical;
-        if (requested && !branchExists(requested)) {
+        if (requestedRaw && !requested) {
             window.JulesPanelState._handoffBranchBlocked = true;
             const launch = $('launch-btn');
             if (launch) { launch.disabled = true; launch.title = 'Rama esperada no disponible: selecciona una válida.'; }
-            showToast('La rama ' + requested + ' no está disponible en ' + repoFullName + '. Selecciona otra antes de ejecutar.', 'amber');
+            showToast('La rama ' + requestedRaw + ' no está disponible en ' + repoFullName + '. Selecciona otra antes de ejecutar.', 'amber');
         } else if (requested) {
             window.JulesPanelState._handoffBranchBlocked = false;
         }
