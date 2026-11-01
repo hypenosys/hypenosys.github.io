@@ -40,7 +40,7 @@
 
   async function applyStatus(status) {
     if (busy) return;
-    if (!['WORKING','BLOCKED','REVIEW','DONE','TODO'].includes(status)) throw new Error('Estado no permitido.');
+    if (!['WORKING','BLOCKED','REVIEW','DONE','OK','TODO'].includes(status)) throw new Error('Estado no permitido.');
     busy = true;
     try {
       const {task, workspace} = await loadTask();
@@ -99,7 +99,7 @@
       if (!sid) { message('Tarea #' + task.id + ' vinculada. Sin sesión Jules para recomendar un estado.'); return; }
       const session = await window.julesApi.getSession('sessions/' + sid);
       const state = session?.state || 'desconocido';
-      const suggestion = state === 'COMPLETED' ? 'REVIEW' :
+      const suggestion = state === 'COMPLETED' ? 'OK' :
         state === 'FAILED' ? 'BLOCKED' :
         ['PLANNING','IN_PROGRESS'].includes(state) ? 'WORKING' : null;
       message('Tarea #' + task.id + ' · Jules: ' + state +
@@ -123,7 +123,7 @@
       const next = ({
         QUEUED:'WORKING', PLANNING:'WORKING', IN_PROGRESS:'WORKING',
         AWAITING_PLAN_APPROVAL:'BLOCKED', AWAITING_USER_FEEDBACK:'BLOCKED',
-        PAUSED:'BLOCKED', FAILED:'BLOCKED', COMPLETED:'REVIEW'
+        PAUSED:'BLOCKED', FAILED:'BLOCKED', COMPLETED:'OK'
       })[remote.state];
       if (!next) throw new Error('Estado Jules no reconocido: ' + String(remote.state));
       const dependencies = Array.isArray(task.blocked_by) ? task.blocked_by : [];
@@ -154,6 +154,67 @@
     finally { busy = false; }
   }
 
-  window.JulesTaskSupervisor = { review, applyStatus, applySuggestedLifecycle, editTask, archive };
+  async function syncCompletedFromJules(sessionId, remoteSession = null) {
+    if (busy) return false;
+    const sid = String(sessionId || '').replace(/^sessions\//, '');
+    if (!sid) return false;
+
+    const syncKey = 'hy_jules_task_synced_completed_' + sid;
+    if (localStorage.getItem(syncKey) === 'true') return true;
+
+    busy = true;
+    try {
+      const {task} = await loadTask();
+      const associated = String(task.jules_session?.session_id || '').replace(/^sessions\//, '');
+      if (associated && associated !== sid) return false;
+
+      const remote = remoteSession || await window.julesApi.getSession('sessions/' + sid);
+      if (!remote || String(remote.state || '').toUpperCase() !== 'COMPLETED') return false;
+
+      const current = String(task.estado || task.status || '').trim().toUpperCase();
+      if (['OK','DONE','COMPLETED','CLOSED','RESOLVED'].includes(current)) {
+        localStorage.setItem(syncKey, 'true');
+        return true;
+      }
+
+      await window.taskOps.updateTask(task.id, {
+        estado: 'OK',
+        jules_session: {
+          ...(task.jules_session || {}),
+          session_id: sid,
+          status: 'COMPLETED',
+          updated_at: new Date().toISOString()
+        },
+        updated_by_agent_supervisor: true
+      });
+
+      const context = taskContext();
+      if (sameTask(context, task)) {
+        localStorage.setItem('hy_neural_task_context', JSON.stringify({
+          ...context,
+          estado: 'OK',
+          jules_session: {
+            ...(context.jules_session || task.jules_session || {}),
+            session_id: sid,
+            status: 'COMPLETED',
+            updated_at: new Date().toISOString()
+          }
+        }));
+      }
+
+      localStorage.setItem(syncKey, 'true');
+      window.taskEngine?.notifyUpdate?.();
+      message('Tarea #' + task.id + ' completada por Jules → OK (Kanban).');
+      if (window.refreshDashboard) await window.refreshDashboard();
+      return true;
+    } catch (error) {
+      message('No se pudo sincronizar la finalización: ' + error.message);
+      return false;
+    } finally {
+      busy = false;
+    }
+  }
+
+  window.JulesTaskSupervisor = { review, applyStatus, applySuggestedLifecycle, syncCompletedFromJules, editTask, archive };
   message('Supervisor de tareas: cambios solo bajo confirmación explícita.');
 })();
