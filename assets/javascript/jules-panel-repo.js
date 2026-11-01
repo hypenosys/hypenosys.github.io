@@ -254,13 +254,17 @@ async function loadBranches(repoFullName) {
             return '<option value="' + b.name + '">' + cleanName + (isDefault ? ' ★' : '') + '</option>';
         }).join('');
 
-        // Priority logic for branch selection
+        // Task handoff takes precedence over the browser's previous/default branch.
+        const requested = window.JulesPanelState?.handoffTargetRepo === requestedCanonical
+            ? String(window.JulesPanelState.handoffTargetBranch || '') : '';
         const persistedBranch = localStorage.getItem('hy_active_branch_' + repoFullName);
         let branchToSelect = "";
 
         const branchExists = (name) => branches.some(b => b.name === name);
 
-        if (persistedBranch && branchExists(persistedBranch)) {
+        if (requested && branchExists(requested)) {
+            branchToSelect = requested;
+        } else if (persistedBranch && branchExists(persistedBranch)) {
             branchToSelect = persistedBranch;
         } else if (defaultBranch && branchExists(defaultBranch)) {
             branchToSelect = defaultBranch;
@@ -283,12 +287,22 @@ async function loadBranches(repoFullName) {
         // Success assignment!
         branchSelect.dataset.repo = requestedCanonical;
         window._loadedRepoContext = requestedCanonical;
+        if (requested && !branchExists(requested)) {
+            window.JulesPanelState._handoffBranchBlocked = true;
+            const launch = $('launch-btn');
+            if (launch) { launch.disabled = true; launch.title = 'Rama esperada no disponible: selecciona una válida.'; }
+            showToast('La rama ' + requested + ' no está disponible en ' + repoFullName + '. Selecciona otra antes de ejecutar.', 'amber');
+        } else if (requested) {
+            window.JulesPanelState._handoffBranchBlocked = false;
+        }
 
         branchSelect.onchange = (e) => {
             const val = e.target.value;
             if (!val) return;
             window.JulesPanelState.activeBranch = val;
             window.JulesPanelState._handoffBranchBlocked = false;
+            window.JulesPanelState.handoffTargetBranch = val;
+            window.JulesPanelState.handoffTargetRepo = requestedCanonical;
             const launch = $('launch-btn');
             if (launch) {
                 launch.disabled = false;
