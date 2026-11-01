@@ -127,6 +127,8 @@ window.selectProfile = function(id) {
     const embeddingInput = document.getElementById('ai_embedding_model');
     if (embeddingInput) embeddingInput.value = config.embedding_model || '';
     if (keyInput) keyInput.value = config.api_key || '';
+    const workspaceInput = document.getElementById('ai_anthropic_workspace_id');
+    if (workspaceInput) workspaceInput.value = config.anthropic_workspace_id || '';
     if (urlInput) urlInput.value = config.base_url || '';
     if (localNetInput) localNetInput.checked = !!(config.local_network || config.localNetwork);
 
