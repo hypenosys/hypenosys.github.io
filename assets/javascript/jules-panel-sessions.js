@@ -430,7 +430,7 @@ async function performDashboardRefresh() {
 
             if (needsSelection) {
                 console.log("[JULES-REPO] Selecting and restoring active repository context: " + activeRepo);
-                window.selectRepo(activeRepo);
+                await window.selectRepo(activeRepo);
             } else {
                 // Ensure only visual selection state is highlighted, without re-loading branches or configuration side-effects
                 window.selectRepo(activeRepo, true);
