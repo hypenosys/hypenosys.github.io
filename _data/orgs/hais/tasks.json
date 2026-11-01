@@ -1034,7 +1034,7 @@
       "descripcion": "Ejecutar dos tareas independientes con Jules usando ramas separadas y máximo dos workers; simular escrituras simultáneas, timeout y reintentos sin duplicados.",
       "tema_principal": "HAIS-001 / quality",
       "prioridad": "High",
-      "estado": "Pending",
+      "estado": "Working",
       "completitud": 0,
       "task_type": "test",
       "resuelto_por": "",
@@ -2558,8 +2558,13 @@
       "jules_session": null
     }
   ],
-  "last_updated_by": "Axel",
+  "last_updated_by": "Sistema",
   "_audit_log": [
+    {
+      "action": "chore: actualizar estado tarea #900017 → Working",
+      "user": "haopengwang123",
+      "timestamp": "2026-11-01T09:17:20.048Z"
+    },
     {
       "action": "chore: actualizar estado tarea #900015 → Fixed",
       "user": "haopengwang123",
