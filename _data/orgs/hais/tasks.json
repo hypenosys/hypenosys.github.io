@@ -146,94 +146,6 @@
       "assignee_proposed": "human"
     },
     {
-      "id": 900006,
-      "pilot_task_id": "HAIS-001-H006",
-      "pilot_id": "HAIS-001",
-      "organizationId": "hais",
-      "repository": "hypenosys/HAIS",
-      "title": "Verificar creación y persistencia de tareas",
-      "descripcion": "Verificar que crear/editar/reabrir tarea HAIS conserva ID numérico, pilot_task_id, subtareas, etiquetas, criterios y dependencias; validar persistencia tras recarga y conflicto de edición SHA 409.",
-      "tema_principal": "HAIS-001 / platform",
-      "prioridad": "High",
-      "estado": "OK",
-      "completitud": 0,
-      "task_type": "test",
-      "resuelto_por": "",
-      "asignados": [],
-      "tags": [
-        "hais-001",
-        "platform",
-        "kanban",
-        "persistence",
-        "github-api",
-        "concurrency"
-      ],
-      "blocked_by": [
-        900002
-      ],
-      "acceptance_criteria": "lectura tras reinicio\nRound-trip de datos sin pérdida; escritura a _data/orgs/hais/tasks.json; no fallback a dashboard_tasks.json ni corrupción de otros shards",
-      "executor_proposed": "jules",
-      "subtasks": [
-        {
-          "id": 900001051,
-          "text": "Inspeccionar contrato de tasks.json y editor del Kanban HAIS",
-          "done": false
-        },
-        {
-          "id": 900001052,
-          "text": "Crear y editar tarea conservando ID, criterios, dependencias y subtareas",
-          "done": false
-        },
-        {
-          "id": 900001053,
-          "text": "Forzar dos escrituras concurrentes y comprobar tratamiento de conflicto 409",
-          "done": false
-        },
-        {
-          "id": 900001054,
-          "text": "Recargar y comprobar que no hubo escritura en shard ajeno o legacy",
-          "done": false
-        }
-      ],
-      "external_links": [
-        {
-          "label": "HAIS — tareas de la organización",
-          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/_data/orgs/hais/tasks.json"
-        },
-        {
-          "label": "Hypenosys — GitHub Contents API",
-          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/assets/javascript/github-api.js"
-        },
-        {
-          "label": "GitHub Contents — lectura y escritura",
-          "url": "https://docs.github.com/en/rest/repos/contents"
-        }
-      ],
-      "comments": [],
-      "change_log": [],
-      "comentario": "Evidencia requerida: Round-trip de datos sin pérdida; escritura a _data/orgs/hais/tasks.json; no fallback a dashboard_tasks.json ni corrupción de otros shards",
-      "estimated_hours": 8,
-      "story_points": 5,
-      "milestone": "M1 — Orquestación E2E",
-      "seccion": "HAIS · platform",
-      "rama": "feature/hais-006",
-      "rama2": null,
-      "branch": "Desarrollo (develop)",
-      "fecha": null,
-      "start_date": null,
-      "due_date": null,
-      "limite": null,
-      "ver": true,
-      "detectado_por": "HAIS-001",
-      "apoyo": null,
-      "email_responsable": null,
-      "emails_asignados": [],
-      "images": [],
-      "blocks": [],
-      "jules_session": null,
-      "assignee_proposed": "jules"
-    },
-    {
       "id": 900007,
       "pilot_task_id": "HAIS-001-H007",
       "pilot_id": "HAIS-001",
@@ -2648,6 +2560,11 @@
   ],
   "last_updated_by": "haopengwang123",
   "_audit_log": [
+    {
+      "action": "chore: archivar tarea #900006",
+      "user": "haopengwang123",
+      "timestamp": "2026-11-01T09:15:42.035Z"
+    },
     {
       "action": "chore: archivar tarea #900005",
       "user": "haopengwang123",
