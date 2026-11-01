@@ -665,8 +665,18 @@ class OllamaUI {
             document.getElementById('group-model-type').style.display = 'block';
 
         } catch (e) {
-            console.error('Model discovery failed:', e);
-            select.innerHTML = `<option>Error: ${e.message || 'Fallo al cargar modelos'}</option>`;
+            // A long network/CORS error must never overflow the dropdown or become HTML.
+            select.replaceChildren(new Option('No se pudieron cargar los modelos', ''));
+            if (provider === 'anthropic') {
+                const status = document.getElementById('anthropic-test-status');
+                if (status) {
+                    const safeMessage = String(e.message || 'Error de conexión').replaceAll(apiKey || '\0', '[REDACTED]');
+                    status.textContent = '✗ Descubrimiento fallido: ' + safeMessage;
+                    status.style.overflowWrap = 'anywhere';
+                }
+            } else {
+                console.warn('Model discovery failed:', e.message);
+            }
         }
     }
 
