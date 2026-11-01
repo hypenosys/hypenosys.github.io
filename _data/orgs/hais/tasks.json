@@ -1744,7 +1744,7 @@
       "descripcion": "Concretar con el usuario la compra tras una señal de Investing y la venta después de una subida cuando se agote el impulso o aparezca presión bajista. El README vigente limita HAIS a simulación; cualquier ampliación requiere una decisión y un cambio de alcance explícitos.",
       "tema_principal": "Concepto / GDD",
       "prioridad": "Critical",
-      "estado": "Pending",
+      "estado": "Working",
       "completitud": 0,
       "task_type": "research",
       "resuelto_por": "",
@@ -2560,6 +2560,11 @@
   ],
   "last_updated_by": "Sistema",
   "_audit_log": [
+    {
+      "action": "chore: actualizar estado tarea #900025 → Working",
+      "user": "haopengwang123",
+      "timestamp": "2026-11-01T09:18:24.569Z"
+    },
     {
       "action": "chore: actualizar estado tarea #900017 → Working",
       "user": "haopengwang123",
