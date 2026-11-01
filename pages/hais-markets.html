@@ -89,6 +89,7 @@ a{color:var(--sky)}a:hover{color:#dcf3ff}button{font:inherit;cursor:pointer}butt
 </script></div></div></div></div>
 </section>
 <section class="section" id="cripto" aria-labelledby="crypto-title"><div class="sectionhead"><div><h2 id="crypto-title">Criptomonedas · lectura directa</h2><p>Datos numéricos desde la API pública de CoinGecko (USD), separados de TradingView</p></div><button class="action" id="refresh-crypto" type="button">Actualizar cotizaciones</button></div><div class="panel"><table class="crypto"><thead><tr><th>Activo</th><th>Precio (USD)</th><th>Variación 24 h</th></tr></thead><tbody id="crypto-body"><tr><td colspan="3" class="sub">Consultando CoinGecko…</td></tr></tbody></table><p id="crypto-status" role="status" aria-live="polite" class="status">No se ha recibido aún un precio del proveedor.</p><p class="sub">Fuente: <a href="https://www.coingecko.com/en/api" target="_blank" rel="noopener noreferrer">CoinGecko</a>. Las actualizaciones están sujetas a límites de peticiones y pueden demorarse. Si la API falla, no usamos valores ficticios ni presentamos el último dato como actual.</p></div></section>
+<section class="section" id="treasury" aria-labelledby="treasury-title"><div class="sectionhead"><div><h2 id="treasury-title">Bonos del Tesoro de EE. UU. · API HAIS</h2><p>Rendimientos diarios DGS2 y DGS10 de FRED (porcentaje anual, variación en puntos básicos)</p></div><button class="action" id="refresh-treasury" type="button">Consultar HAIS</button></div><div class="panel"><table class="crypto"><thead><tr><th>Serie</th><th>Rendimiento</th><th>Cambio anterior</th></tr></thead><tbody id="treasury-body"><tr><td colspan="3" class="sub">Sin consulta confirmada.</td></tr></tbody></table><p class="status" role="status" aria-live="polite" id="treasury-status">El proxy autenticado /api/hais/ no está confirmado. También puedes consultar los gráficos de deuda soberana de TradingView arriba.</p><p class="sub">Fuente: <a href="https://fred.stlouisfed.org/" target="_blank" rel="noopener noreferrer">Federal Reserve Economic Data</a>. Estos valores son <strong>rentabilidades (yield)</strong>, no precios de bonos ni ofertas ejecutables. Sin proxy funcional, no se presenta una cifra.</p></div></section>
 <footer class="footer"><span>HAIS · Observación de mercados · No constituye asesoramiento de inversión</span><span>Índices y bonos pueden ir diferidos · PAPER sin bróker · <a href="{{ '/hais/operar/' | relative_url }}">Simular operaciones</a></span></footer>
 </div>
 <script>
@@ -149,10 +150,33 @@ async function updateCrypto(){
  if(busy||Date.now()-lastAttempt<30000)return;
  lastAttempt=Date.now();busy=true;button.disabled=true;status.textContent='Solicitando cotizaciones a CoinGecko…';
  try{
-  const ctrl=new AbortController(),timeout=setTimeout(()=>ctrl.abort(),10000);
-  let res;try{res=await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin%2Cethereum%2Csolana&vs_currencies=usd&include_24hr_change=true&include_last_updated_at=true',{signal:ctrl.signal,cache:'no-store',headers:{Accept:'application/json'}})}finally{clearTimeout(timeout)}
-  if(!res.ok)throw Error('HTTP '+res.status);
-  const payload=await res.json(),rows=[];
+  let payload,provider='CoinGecko';
+  // Prefer HAIS when the authenticated same-origin gateway is deployed.
+  // If absent, use CoinGecko's public browser API, never a cached mock.
+  try {
+   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),3000);
+   try {
+    const response=await fetch('/api/hais/v1/market/crypto',{signal:controller.signal,cache:'no-store',credentials:'same-origin',headers:{Accept:'application/json'}});
+    if(!response.ok)throw Error('HAIS API not configured');
+    const snapshot=await response.json();
+    if(snapshot.mode!=='OBSERVE'||snapshot.source!=='CoinGecko'||!Array.isArray(snapshot.quotes)||snapshot.quotes.length!==3)throw Error('Invalid HAIS market contract');
+    payload={};
+    for(const q of snapshot.quotes) {
+     const id={BTC:'bitcoin',ETH:'ethereum',SOL:'solana'}[q.symbol];
+     if(!id||typeof q.observed_at!=='string')throw Error('Unrecognized HAIS coin');
+     payload[id]={usd:q.value,usd_24h_change:q.change_24h_pct,last_updated_at:Date.parse(q.observed_at)/1000};
+    }
+    provider='HAIS / CoinGecko';
+   }finally{clearTimeout(timer)}
+  }catch(_error){
+   const ctrl=new AbortController(),timeout=setTimeout(()=>ctrl.abort(),10000);
+   try {
+    const res=await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin%2Cethereum%2Csolana&vs_currencies=usd&include_24hr_change=true&include_last_updated_at=true',{signal:ctrl.signal,cache:'no-store',headers:{Accept:'application/json'}});
+    if(!res.ok)throw Error('CoinGecko HTTP '+res.status);
+    payload=await res.json();
+   }finally{clearTimeout(timeout)}
+  }
+  const rows=[];
   for(const [id,name,ticker] of coins){
    const item=payload[id];
    if(!item||typeof item.usd!=='number'||!Number.isFinite(item.usd)||item.usd<=0||typeof item.usd_24h_change!=='number'||!Number.isFinite(item.usd_24h_change)||!Number.isFinite(item.last_updated_at))throw Error('Respuesta incompleta');
@@ -163,13 +187,40 @@ async function updateCrypto(){
   body.replaceChildren();
   rows.forEach(item=>{const tr=document.createElement('tr');textCell(tr,item.name+' · '+item.ticker);textCell(tr,fmt.format(item.price));const change=textCell(tr,pct.format(item.change/100));change.className=item.change>=0?'positive':'negative';body.append(tr)});
   const oldest=Math.min(...rows.map(r=>r.updated));
-  status.textContent='Datos reales recibidos de CoinGecko · observación más antigua '+new Date(oldest*1000).toLocaleString('es-ES')+' · horario de la fuente';
+  status.textContent='Datos reales recibidos de '+provider+' · observación más antigua '+new Date(oldest*1000).toLocaleString('es-ES')+' · horario de la fuente';
  }catch(err){
   body.replaceChildren();const tr=document.createElement('tr');textCell(tr,'Datos no disponibles · revisa CoinGecko o inténtalo de nuevo').colSpan=3;body.append(tr);
   status.textContent='Sin cotización comprobada: '+(err.name==='AbortError'?'tiempo de espera excedido':err.message)+'. No se muestran datos de ejemplo.';
  }finally{busy=false;button.disabled=false;}
 }
 button.addEventListener('click',updateCrypto);updateCrypto();
+const ratesBody=document.getElementById('treasury-body'),ratesStatus=document.getElementById('treasury-status'),ratesButton=document.getElementById('refresh-treasury');
+async function updateTreasury(){
+ ratesButton.disabled=true;ratesStatus.textContent='Consultando HAIS / FRED…';
+ try {
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),6000);
+  let result;
+  try {
+   const response=await fetch('/api/hais/v1/market/treasury',{signal:controller.signal,credentials:'same-origin',cache:'no-store',headers:{Accept:'application/json'}});
+   if(!response.ok)throw Error('No disponible · HTTP '+response.status);
+   result=await response.json();
+  }finally{clearTimeout(timer)}
+  if(result.mode!=='OBSERVE'||result.source!=='FRED'||!Array.isArray(result.quotes)||result.quotes.length!==2)throw Error('Contrato FRED no válido');
+  const symbols=new Set();
+  for(const q of result.quotes){
+   if(!['DGS2','DGS10'].includes(q.symbol)||symbols.has(q.symbol)||q.unit!=='percent_yield'||q.source!=='FRED / US Treasury'||!Number.isFinite(q.value)||!Number.isFinite(q.change_previous_bps)||!/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(q.observation_date))throw Error('Observación FRED inválida');
+   if(Math.abs(Date.now()-Date.parse(q.observation_date+'T00:00:00Z'))>11*86400000)throw Error('Dato FRED caducado');
+   symbols.add(q.symbol);
+  }
+  ratesBody.replaceChildren();
+  result.quotes.forEach(q=>{const tr=document.createElement('tr');textCell(tr,q.symbol+' · '+q.observation_date);textCell(tr,q.value.toFixed(3)+' %');const change=textCell(tr,(q.change_previous_bps>=0?'+':'')+q.change_previous_bps.toFixed(2)+' pb');change.className=q.change_previous_bps>=0?'positive':'negative';ratesBody.append(tr)});
+  ratesStatus.textContent='Dato validado de HAIS / FRED · lectura diaria, no tiempo real.';
+ }catch(err){
+  ratesBody.replaceChildren();const tr=document.createElement('tr');textCell(tr,'Sin lectura FRED disponible en la API HAIS').colSpan=3;ratesBody.append(tr);
+  ratesStatus.textContent='Gateway no conectado o fuente no disponible. '+err.message+'. No hay valores alternativos inventados.';
+ }finally{ratesButton.disabled=false}
+}
+ratesButton.addEventListener('click',updateTreasury);updateTreasury();
 })();
 </script>
 </body>
