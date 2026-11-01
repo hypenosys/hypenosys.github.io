@@ -59,6 +59,7 @@ window.NeuralProviderClient = (function() {
 
         console.log(`[NeuralProviderClient] Request started. Provider: ${provider}, Model: ${model}, BaseURL: ${baseUrl}`);
 
+        let requestTimeout = null;
         try {
             const fullMessages = [];
             if (systemPrompt) {
@@ -134,7 +135,7 @@ window.NeuralProviderClient = (function() {
             }
 
             const requestController = new AbortController();
-            const requestTimeout = setTimeout(() => requestController.abort(), 180000);
+            requestTimeout = setTimeout(() => requestController.abort(), 120000);
             let response;
             try {
                 response = await fetch(requestEndpoint, {
@@ -147,7 +148,7 @@ window.NeuralProviderClient = (function() {
                 });
             } catch (fetchError) {
                 if (fetchError?.name === 'AbortError') {
-                    throw new Error('Provider timeout: la petición no terminó en 180 segundos.');
+                    throw new Error('Provider timeout: la petición no terminó en 120 segundos.');
                 }
                 throw fetchError;
             }
@@ -257,8 +258,7 @@ window.NeuralProviderClient = (function() {
             if (onDone) onDone(aiContent);
 
         } catch (e) {
-            // requestTimeout may not exist if request construction failed before fetch.
-            try { clearTimeout(requestTimeout); } catch (_) {}
+            if (requestTimeout) clearTimeout(requestTimeout);
             // Sanitize error message to prevent API key leakage
             let safeMessage = e.message || "Unknown error";
             if (apiKey) {
