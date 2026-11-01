@@ -15,7 +15,7 @@ window.NeuralThinkingAdapters = (function() {
 
     // ─── ADAPTADOR ANTHROPIC ───
     const AnthropicAdapter = {
-        buildRequest({ model, messages, systemPrompt, isThinkingEnabled, budgetTokens, effort, apiKey, options = {} }) {
+        buildRequest({ model, messages, systemPrompt, isThinkingEnabled, budgetTokens, effort, apiKey, workspaceId, options = {} }) {
             const cap = Capabilities ? Capabilities.resolveCapability('anthropic', model, options) : {};
             const family = cap.family || 'adaptive';
 
@@ -25,6 +25,9 @@ window.NeuralThinkingAdapters = (function() {
             };
             if (apiKey && apiKey.trim()) {
                 headers['Authorization'] = `Bearer ${apiKey.trim()}`;
+            }
+            if (workspaceId && workspaceId.trim()) {
+                headers['anthropic-workspace-id'] = workspaceId.trim();
             }
 
             const body = {
