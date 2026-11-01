@@ -1,15 +1,15 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-11-01T08:56:25.084Z",
+  "computed_at": "2026-11-01T09:09:46.851Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 35,
-    "total_ok": 0,
+    "total_ok": 1,
     "total_ko": 0,
     "total_uncertain": 0,
     "total_obsolete": 0,
-    "fixed_found_ratio": 0,
-    "verified_ratio": 0
+    "fixed_found_ratio": 0.0294,
+    "verified_ratio": 0.0286
   },
   "group": {
     "velocity_trend": {
@@ -25,12 +25,8 @@
     "bug_rate": 0,
     "blocker_health": 32,
     "tag_heatmap": {
-      "hais-001": 24,
-      "identity": 4,
-      "oauth": 2,
-      "rbac": 2,
-      "github": 2,
-      "onboarding": 1,
+      "hais-001": 23,
+      "identity": 3,
       "tenancy": 1,
       "organization": 1,
       "sharding": 1,
@@ -39,9 +35,11 @@
       "ci": 3,
       "byok": 2,
       "jules": 5,
+      "oauth": 1,
       "secrets": 2,
       "platform": 5,
       "security": 1,
+      "rbac": 1,
       "multi-tenant": 2,
       "idor": 1,
       "kanban": 1,
@@ -52,6 +50,7 @@
       "dag": 1,
       "idempotency": 2,
       "agent": 1,
+      "github": 1,
       "execution": 1,
       "github-actions": 1,
       "webhooks": 1,
@@ -611,7 +610,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "haopengwang123",
-      "timestamp": "2026-11-01T08:56:25.928Z"
+      "timestamp": "2026-11-01T09:09:47.635Z"
     }
   ]
 }
