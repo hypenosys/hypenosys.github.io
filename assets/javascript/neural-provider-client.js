@@ -264,7 +264,7 @@ window.NeuralProviderClient = (function() {
                 const isOllama = provider === 'ollama';
 
                 if (provider === 'anthropic' && isNetworkFailure) {
-                    onError(new Error('No se recibió respuesta HTTP de Anthropic. Comprueba conexión y políticas del navegador (posible bloqueo CORS). Las organizaciones Anthropic con ZDR requieren un proxy backend; la API key por sí sola no evita esa restricción.'));
+                    onError(new Error('No se pudo conectar con el relay de Hypenosys. Comprueba Cloudflare Pages Functions y la red.'));
                     return;
                 }
                 if (provider === 'anthropic' && !isNetworkFailure) {
