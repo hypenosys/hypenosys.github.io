@@ -327,9 +327,13 @@ permalink: /jules-panel/
           </div>
           <textarea class="prompt-area" id="session-prompt" rows="8" style="resize:vertical;min-height:240px;max-height:420px;overflow-y:auto" placeholder="¿Qué debe hacer Jules?&#10;&#10;Ej: Refactoriza el componente Header para que sea responsive, usa variables HSL en index.css y añade un menú hamburguesa con animación suave..."></textarea>
           <div class="opts-grid">
-            <div class="opt-pill active" id="opt-supervised" title="Jules prepara un plan y espera aprobación humana antes de editar.">
+            <div class="opt-pill active" id="opt-supervised" title="Jules prepara un plan y espera aprobación humana de Axel o Haopeng antes de editar.">
               <i class="fas fa-user-shield"></i>
-              Supervisado
+              Supervisado humano
+            </div>
+            <div class="opt-pill" id="opt-claude-supervised" title="Jules prepara un plan; Claude lo revisa, da feedback o lo aprueba si es seguro. Si hay riesgo o ambigüedad, pausa y pregunta al usuario.">
+              <i class="fas fa-robot"></i>
+              Supervisado por Claude
             </div>
             <div class="opt-pill" id="opt-auto">
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
@@ -1163,8 +1167,8 @@ permalink: /jules-panel/
 
         document.querySelectorAll('.opt-pill').forEach(pill => {
             pill.onclick = () => {
-                if (['opt-auto', 'opt-review', 'opt-supervised'].includes(pill.id)) {
-                    ['opt-auto', 'opt-review', 'opt-supervised'].forEach(id => $(id)?.classList.toggle('active', id === pill.id));
+                if (['opt-auto', 'opt-review', 'opt-supervised', 'opt-claude-supervised'].includes(pill.id)) {
+                    ['opt-auto', 'opt-review', 'opt-supervised', 'opt-claude-supervised'].forEach(id => $(id)?.classList.toggle('active', id === pill.id));
                 } else {
                     pill.classList.toggle('active');
                 }

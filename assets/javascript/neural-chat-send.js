@@ -4,6 +4,9 @@
 
 window.isThinkingEnabled = false;
 window.attachedImage = null;
+// Cross-trigger lock: click, Enter, dashboard auto-send and auth/init retries
+// must all converge on one in-flight send.
+window._neuralSendInFlight = false;
 
 const timeoutPromise = (ms) => new Promise((_, reject) =>
     setTimeout(() => reject(new Error('timeout')), ms)
@@ -52,7 +55,8 @@ window.toggleModeDropdown = function() {
 
 window.sendMessage = async function() {
     const content = window.chatInput.value.trim();
-    if ((!content && !window.attachedImage) || window.sendBtn.disabled) return;
+    if ((!content && !window.attachedImage) || window.sendBtn.disabled || window._neuralSendInFlight) return;
+    window._neuralSendInFlight = true;
 
     // Auto-create session if none exists
     if (!window.currentSessionId) {
@@ -68,6 +72,7 @@ window.sendMessage = async function() {
         const provider = config.provider || 'none';
         if (provider === 'none') {
             alert('Configura un proveedor de IA para usar el modo Runners.');
+            window._neuralSendInFlight = false;
             return;
         }
 
@@ -141,6 +146,7 @@ window.sendMessage = async function() {
             setTimeout(() => {
                 window.location.href = '/jules-panel/';
             }, 1000);
+            window._neuralSendInFlight = false;
             return;
         }
 
@@ -184,6 +190,7 @@ window.sendMessage = async function() {
     if (content.startsWith('/')) {
         handleSlashCommand(content);
         window.chatInput.value = '';
+        window._neuralSendInFlight = false;
         return;
     }
 
@@ -193,6 +200,7 @@ window.sendMessage = async function() {
     if (provider === 'none') {
         alert('Por favor, configura un proveedor de IA en API CONFIG.');
         openSettings();
+        window._neuralSendInFlight = false;
         return;
     }
 
@@ -413,6 +421,7 @@ window.sendMessage = async function() {
         window.thinkingIndicator.classList.add('hidden');
         window.sendBtn.disabled = false;
         window.chatInput.disabled = false;
+        window._neuralSendInFlight = false;
         window.chatInput.focus();
         window.chatMessages.scrollTop = window.chatMessages.scrollHeight;
     }

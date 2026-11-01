@@ -39,6 +39,16 @@
                 const id = el.dataset.id;
 
                 const handler = (e) => {
+                    // Touch browsers usually emit a synthetic click after touchend.
+                    // Ignore that second event so a single tap can never launch the
+                    // same task twice.
+                    const now = Date.now();
+                    if (e.type === 'touchend') {
+                        el._lastKanbanTouchEndAt = now;
+                    } else if (e.type === 'click' && el._lastKanbanTouchEndAt && now - el._lastKanbanTouchEndAt < 800) {
+                        return;
+                    }
+
                     // Prevent default and stop propagation to avoid multiple triggers
                     // and to prevent the card toggle if we clicked a button inside it
                     e.preventDefault();
@@ -59,6 +69,13 @@
                             handleArchiveTask(id);
                         }
                     } else if (action === 'claude') {
+                        const launchKey = String(id);
+                        const previousLaunch = window._dashboardClaudeLaunchGuard;
+                        if (previousLaunch?.taskId === launchKey && now - previousLaunch.at < 1500) {
+                            return;
+                        }
+                        window._dashboardClaudeLaunchGuard = { taskId: launchKey, at: now };
+
                         let taskData = { id };
 
                         // Primary: try window.currentTasks
@@ -90,10 +107,16 @@
                         } else {
                             console.warn('[KANBAN] Claude entry route not initialized; routing directly.');
                             if (!taskData?.id || !(taskData.title || taskData.titulo)) return;
+                            localStorage.removeItem('hy_jules_handoff');
+                            localStorage.removeItem('jules_task_payload');
+                            localStorage.removeItem('hy_pending_claude_handoff_id');
+                            localStorage.removeItem('hy_handoff_autolink');
+                            localStorage.removeItem('hy_neural_pending_prompt');
+                            localStorage.removeItem('hy_neural_thread');
                             localStorage.setItem('hy_neural_task_context', JSON.stringify(taskData));
                             localStorage.setItem('hy_neural_active', 'true');
                             localStorage.setItem('hy_neural_new_task_sent', 'true');
-                            localStorage.removeItem('hy_jules_handoff');
+                            localStorage.setItem('hy_neural_entry_point', 'dashboard-claude');
                             window.location.assign('/chat/neural/?from=dashboard');
                         }
                     } else if (action === 'move') {
@@ -313,7 +336,10 @@
                     }
                     localStorage.removeItem('hy_jules_handoff');
                     localStorage.removeItem('jules_task_payload');
+                    localStorage.removeItem('hy_pending_claude_handoff_id');
                     localStorage.removeItem('hy_handoff_autolink');
+                    localStorage.removeItem('hy_neural_pending_prompt');
+                    localStorage.removeItem('hy_neural_thread');
                     localStorage.setItem('hy_neural_task_context', JSON.stringify(task));
                     localStorage.setItem('hy_neural_active', 'true');
                     localStorage.setItem('hy_neural_new_task_sent', 'true');

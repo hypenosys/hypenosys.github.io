@@ -419,14 +419,27 @@ permalink: /chat/neural/
         const urlParams = new URLSearchParams(window.location.search);
         const taskDataRaw = urlParams.get('task_data');
         const isNewTaskSent = localStorage.getItem('hy_neural_new_task_sent') === 'true';
-        const fromDashboard = urlParams.get('from') === 'dashboard'
-            && localStorage.getItem('hy_neural_entry_point') === 'dashboard-claude'
-            && isNewTaskSent;
+        const requestedFromDashboard = urlParams.get('from') === 'dashboard';
+        const dashboardEntryPoint = localStorage.getItem('hy_neural_entry_point');
+        // The URL + one-shot flag are the authoritative handoff. Older dashboard
+        // code did not always write hy_neural_entry_point, which incorrectly made
+        // a genuine robot launch look like a normal session restore.
+        const fromDashboard = requestedFromDashboard && isNewTaskSent;
         const fromOrchestrator = urlParams.get('from') === 'orchestrator'
             && window.HypenosysTaskOrchestrator?.isEnabled?.()
             && isNewTaskSent;
+        const isFreshTaskHandoff = Boolean(taskDataRaw || isNewTaskSent);
+
+        if (fromDashboard && dashboardEntryPoint !== 'dashboard-claude') {
+            console.warn('[NEURAL] Normalizing legacy dashboard handoff without canonical entry marker.');
+        }
+
         if (fromDashboard || fromOrchestrator) {
             localStorage.removeItem('hy_neural_entry_point');
+            // A fresh dashboard/orchestrator task is isolated from the previous
+            // task's transient Claude/Jules thread and pending prompt.
+            localStorage.removeItem('hy_neural_thread');
+            localStorage.removeItem('hy_neural_pending_prompt');
             // Guard against an old Jules-mode selection, without triggering any API call.
             window.currentSendMode = 'claude';
         }
@@ -453,16 +466,21 @@ permalink: /chat/neural/
             }
         }
 
-        // 3. Load initial session (this will also render the banner if task exists)
-        if (window.sessions.length > 0) {
+        // 3. A fresh task always gets a dedicated conversation before any
+        // previous session is loaded. This prevents transient old-session state,
+        // Jules links, or messages from leaking into the new task.
+        if (isFreshTaskHandoff && task) {
+            createNewSession();
+        } else if (window.sessions.length > 0) {
             loadSession(window.sessions[0].id);
         }
 
         if (task && localStorage.getItem('hy_neural_active') === 'true') {
             window._activeTaskContext = task;
 
-            // Sync with Neural Thread if active
-            if (localStorage.getItem('hy_neural_active') === 'true' && !fromDashboard) {
+            // Sync an existing linked thread only when restoring an existing
+            // conversation. Never hydrate a fresh task with another task's thread.
+            if (localStorage.getItem('hy_neural_active') === 'true' && !isFreshTaskHandoff && !fromDashboard && !fromOrchestrator) {
                 const thread = JSON.parse(localStorage.getItem('hy_neural_thread') || '[]');
                 const currentSession = window.sessions.find(s => s.id === window.currentSessionId);
 
@@ -489,7 +507,7 @@ permalink: /chat/neural/
                     localStorage.removeItem('hy_neural_new_task_sent');
                 }
                 const currentSession = window.sessions.find(s => s.id === window.currentSessionId);
-                if (fromDashboard || fromOrchestrator || (currentSession && currentSession.messages.length > 0) || !window.currentSessionId) {
+                if (!isFreshTaskHandoff && ((currentSession && currentSession.messages.length > 0) || !window.currentSessionId)) {
                     createNewSession();
                 }
 
@@ -731,29 +749,50 @@ permalink: /chat/neural/
                         window.sendBtn.onclick = sendMessage;
 
                         // Complete Dashboard -> Claude handoff once initialization
-                        // is fully ready. Mark the dedicated session first so auth
-                        // retries or duplicate init events cannot double-submit.
+                        // is fully ready. The session is marked immediately before
+                        // the actual send, never before readiness checks, so a busy
+                        // button cannot silently consume the one-shot handoff.
                         const pendingAutoSend = window._pendingDashboardClaudeAutoSend;
                         if (pendingAutoSend &&
                             pendingAutoSend.sessionId === window.currentSessionId &&
                             window.chatInput.value.trim() === pendingAutoSend.prompt.trim()) {
-                            const dedicated = window.sessions.find(s => s.id === pendingAutoSend.sessionId);
-                            if (dedicated) {
-                                dedicated.metadata = {
-                                    ...(dedicated.metadata || {}),
-                                    dashboardAutoSentTaskId: pendingAutoSend.taskId,
-                                    dashboardAutoSentAt: new Date().toISOString()
-                                };
-                                saveSessions(false, 'dashboard-claude-autosend-mark');
-                            }
                             window._pendingDashboardClaudeAutoSend = null;
-                            setTimeout(() => {
-                                if (!window.sendBtn.disabled &&
-                                    window.currentSendMode === 'claude' &&
-                                    window.chatInput.value.trim()) {
-                                    window.sendMessage();
+                            let autoSendAttempts = 0;
+
+                            const triggerDashboardAutoSend = () => {
+                                autoSendAttempts += 1;
+                                const dedicated = window.sessions.find(s => s.id === pendingAutoSend.sessionId);
+                                const sameSession = window.currentSessionId === pendingAutoSend.sessionId;
+                                const samePrompt = window.chatInput.value.trim() === pendingAutoSend.prompt.trim();
+                                const alreadySent = dedicated?.metadata?.dashboardAutoSentTaskId === pendingAutoSend.taskId;
+
+                                if (alreadySent) return;
+
+                                if (sameSession && samePrompt &&
+                                    !window.sendBtn.disabled &&
+                                    !window._neuralSendInFlight &&
+                                    window.currentSendMode === 'claude') {
+                                    dedicated.metadata = {
+                                        ...(dedicated.metadata || {}),
+                                        dashboardAutoSentTaskId: pendingAutoSend.taskId,
+                                        dashboardAutoSentAt: new Date().toISOString()
+                                    };
+                                    saveSessions(false, 'dashboard-claude-autosend-mark');
+                                    void window.sendMessage();
+                                    return;
                                 }
-                            }, 0);
+
+                                // Initialization can briefly leave controls busy.
+                                // Retry only while the exact same handoff is still
+                                // visible; never switch sessions or send stale text.
+                                if (sameSession && samePrompt && autoSendAttempts < 10) {
+                                    setTimeout(triggerDashboardAutoSend, 50);
+                                } else if (window.HYPENOSYS_NEURAL_DEBUG) {
+                                    console.warn('[Claude Neural] Dashboard auto-send cancelled because the handoff changed or never became ready.');
+                                }
+                            };
+
+                            setTimeout(triggerDashboardAutoSend, 0);
                         }
 
                         window.chatInput.onkeydown = (e) => {

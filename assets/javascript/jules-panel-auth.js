@@ -267,6 +267,7 @@ window.prefillTaskFromHandoff = async function(task, handoff = {}) {
         // New work must start from an existing GitHub branch. Never assume main.
         switchView('neural');
         if ($('opt-supervised')) $('opt-supervised').classList.add('active');
+        if ($('opt-claude-supervised')) $('opt-claude-supervised').classList.remove('active');
         if ($('opt-review')) $('opt-review').classList.remove('active');
         if ($('opt-auto')) $('opt-auto').classList.remove('active');
 
@@ -340,20 +341,23 @@ window.prefillTaskFromHandoff = async function(task, handoff = {}) {
 
         if (isOrchestratedTask && canonicalRepo && branchReady && !sourceSelectionFailed &&
             !window.JulesPanelState._handoffBranchBlocked && !window.JulesPanelState._handoffRepoUnconfirmed) {
-            if ($('opt-auto')) $('opt-auto').classList.add('active');
-            if ($('opt-supervised')) $('opt-supervised').classList.remove('active');
-            if ($('opt-review')) $('opt-review').classList.remove('active');
+            const supervisionMode = orchestratorState.supervisionMode || 'auto';
+            ['opt-auto','opt-supervised','opt-claude-supervised','opt-review'].forEach(id => $(id)?.classList.remove('active'));
+            if (supervisionMode === 'human') $('opt-supervised')?.classList.add('active');
+            else if (supervisionMode === 'claude') $('opt-claude-supervised')?.classList.add('active');
+            else $('opt-auto')?.classList.add('active');
+
             orchestrator.setPhase('jules-launch');
             const createdSid = await window.launchSession({
                 promptOverride: formattedPrompt,
                 fromChat: true,
-                orchestrator: true
+                orchestrator: true,
+                supervisionMode
             });
             if (createdSid) {
+                // launchSession starts the Claude supervisor itself when selected,
+                // after the Claude↔Jules link has been made canonical.
                 orchestrator.setPhase('jules-running');
-                setTimeout(() => {
-                    window.JulesClaudeBridge?.start?.({ orchestrator: true, skipConfirm: true });
-                }, 300);
             } else {
                 orchestrator.patch({ phase: 'error', lastError: 'No se pudo crear la sesión Jules.' });
             }
@@ -650,15 +654,19 @@ window.launchSession = async function(options = {}) {
     const isAuto = $('opt-auto').classList.contains('active');
     const isReview = $('opt-review').classList.contains('active');
     const isSupervised = !!$('opt-supervised')?.classList.contains('active');
+    const isClaudeSupervised = !!$('opt-claude-supervised')?.classList.contains('active');
 
-    if (!isAuto && !isReview && !isSupervised) {
+    if (!isAuto && !isReview && !isSupervised && !isClaudeSupervised) {
         showToast("Selecciona un modo de ejecución para iniciar la sesión.", "red");
         return;
     }
 
     // Append mode-specific instructions to prompt
     if (isSupervised) {
-        prompt += "\n\n[MODO SUPERVISADO] Prepara un plan con cambios, validación y riesgos; espera aprobación humana antes de modificar código. No hagas merge ni despliegues.";
+        prompt += "\n\n[MODO SUPERVISADO HUMANO] Prepara un plan con cambios, validación y riesgos; espera aprobación explícita de Axel o Haopeng antes de modificar código. No hagas merge ni despliegues.";
+    }
+    if (isClaudeSupervised) {
+        prompt += "\n\n[MODO SUPERVISADO POR CLAUDE] Prepara un plan verificable antes de editar. Claude actuará como supervisor: puede pedir ajustes o aprobar el plan si permanece dentro del alcance y es reversible. Si hay ambigüedad, cambio de alcance, permisos, secretos, producción, datos destructivos, migraciones sensibles o una decisión de producto, detente y solicita decisión humana. No hagas merge ni despliegues sin una política explícita que lo autorice.";
     }
     if (isReview) {
         prompt += "\n\n[MODO REVISIÓN ACTIVADO]\nInstrucciones obligatorias:\n1. Revisa exclusivamente los cambios actuales en la rama.\n2. NO modifiques ningún archivo.\n3. NO realices commits ni crees PRs.\n4. Devuelve tus hallazgos y sugerencias ordenados por severidad.";
@@ -730,7 +738,7 @@ window.launchSession = async function(options = {}) {
         const body = {
             prompt,
             sourceContext: { source, githubRepoContext: { startingBranch: branch } },
-            requirePlanApproval: isReview || isSupervised // Supervised mode blocks execution until human approval
+            requirePlanApproval: isReview || isSupervised || isClaudeSupervised // Human/Claude supervision both gate the plan
         };
 
         if (isAuto) {
@@ -740,7 +748,7 @@ window.launchSession = async function(options = {}) {
 
         // Defensive Logging (internal UI state + final API body)
         const logPayload = {
-            ui_mode: isAuto ? "auto" : isSupervised ? "supervised" : "review",
+            ui_mode: isAuto ? "auto" : isClaudeSupervised ? "claude-supervised" : isSupervised ? "human-supervised" : "review",
             api_body: {
                 requirePlanApproval: body.requirePlanApproval,
                 automationMode: body.automationMode || "NONE",
@@ -748,13 +756,16 @@ window.launchSession = async function(options = {}) {
                 branch: branch
             }
         };
-        console.log("[Jules Launch] UI State:", {isAuto, isReview}, "API Body:", body);
+        console.log("[Jules Launch] UI State:", {isAuto, isReview, isSupervised, isClaudeSupervised}, "API Body:", body);
         addTel("SYSTEM", "Iniciando (UI:" + logPayload.ui_mode + ") - API Payload: " + JSON.stringify(logPayload.api_body), "info");
 
         const res = await window.julesApi.createSession(body);
         if (!res?.name || !/^sessions\/[^/]+$/.test(res.name)) throw new Error('Jules respondió sin un ID de sesión válido.');
         const sid = res.name.split('/').pop();
         window._lastCreatedJulesSessionId = sid;
+        const supervisionMode = options.supervisionMode
+            || (isClaudeSupervised ? 'claude' : isSupervised ? 'human' : isAuto ? 'auto' : 'review');
+        localStorage.setItem('hy_jules_supervision_mode_' + sid, supervisionMode);
         showToast("Sesión iniciada correctamente", "green");
         addTel("JULES", "Sesión iniciada: " + sid, "success");
 
@@ -823,6 +834,7 @@ window.launchSession = async function(options = {}) {
             branch: branch,
             start: now,
             status: 'active',
+            supervision: supervisionMode,
             messages: []
         });
         localStorage.setItem('hy_neural_sessions', JSON.stringify(sessions));
@@ -835,6 +847,7 @@ window.launchSession = async function(options = {}) {
                 jules_session: {
                     session_id: sid,
                     initiated_by: (currentUser && currentUser.login) || 'Invitado',
+                    supervision: supervisionMode,
                     status: 'QUEUED',
                     updated_at: new Date().toISOString()
                 },
@@ -862,6 +875,17 @@ window.launchSession = async function(options = {}) {
         // look like a failed create (which could cause a duplicate retry).
         try { await refreshDashboard(); }
         catch (refreshError) { console.warn('[Jules] Session created; dashboard refresh failed', refreshError); }
+
+        if (supervisionMode === 'claude') {
+            setTimeout(() => {
+                window.JulesClaudeBridge?.start?.({
+                    orchestrator: !!options.orchestrator,
+                    skipConfirm: !!options.orchestrator,
+                    explicitLaunch: true,
+                    supervisorMode: 'claude'
+                });
+            }, 350);
+        }
         return sid;
     } catch (e) {
         console.error("[Jules Debug] Error en createSession:", e);

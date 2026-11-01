@@ -1804,10 +1804,17 @@ window.sendNeuralMessage = async function() {
 
 window.approvePlan = async function(sessionId) {
     try {
+        const login = String(window.githubApi?.user?.login || window.user?.login || '').toLowerCase();
+        const authorizedHumanApprovers = new Set(['axlfc', 'haopengwang123']);
+        if (!authorizedHumanApprovers.has(login)) {
+            throw new Error('La aprobación humana de planes está restringida a Axel (Axlfc) o Haopeng.');
+        }
         const sid = sessionId.startsWith('sessions/') ? sessionId : 'sessions/' + sessionId;
         await window.julesApi.approvePlan(sid);
-        showToast("Plan aprobado. Jules comenzará la ejecución.", "green");
-        addTel("USER", "Plan aprobado", "success");
+        showToast("Plan aprobado por " + login + ". Jules comenzará la ejecución.", "green");
+        addTel("USER", "Plan aprobado por " + login, "success");
+        window.HypenosysTaskOrchestrator?.clearHumanQuestion?.();
+        window.HypenosysTaskOrchestrator?.setPhase?.('jules-running');
         refreshActivities(sessionId);
     } catch (e) {
         showToast("Error al aprobar plan: " + e.message, "red");
