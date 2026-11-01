@@ -879,6 +879,16 @@ window.launchSession = async function(options = {}) {
         // look like a failed create (which could cause a duplicate retry).
         try { await refreshDashboard(); }
         catch (refreshError) { console.warn('[Jules] Session created; dashboard refresh failed', refreshError); }
+
+        if (supervisionMode === 'claude') {
+            setTimeout(() => {
+                window.JulesClaudeBridge?.start?.({
+                    orchestrator: !!options.orchestrator,
+                    skipConfirm: !!options.orchestrator,
+                    supervisorMode: 'claude'
+                });
+            }, 350);
+        }
         return sid;
     } catch (e) {
         console.error("[Jules Debug] Error en createSession:", e);
