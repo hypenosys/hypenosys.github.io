@@ -664,6 +664,7 @@ permalink: /jules-panel/
         <div id="jules-task-supervisor" style="display:flex;align-items:center;flex-wrap:wrap;gap:7px;padding:8px 18px;border-bottom:1px solid rgba(189,147,249,.12);background:rgba(12,12,22,.8);">
             <strong style="font-size:10px;color:#bd93f9">SUPERVISIÓN DE TAREA</strong>
             <button type="button" class="btn btn-ghost btn-sm" onclick="window.JulesTaskSupervisor.review()">Revisar estado</button>
+            <button type="button" class="btn btn-primary btn-sm" onclick="window.JulesTaskSupervisor.applySuggestedLifecycle()" title="Consulta el estado actual de Jules y solicita confirmación antes de mover la tarea en Kanban">Sincronizar estado → Kanban</button>
             <button type="button" class="btn btn-ghost btn-sm" onclick="window.JulesTaskSupervisor.applyStatus('WORKING')">En curso</button>
             <button type="button" class="btn btn-ghost btn-sm" onclick="window.JulesTaskSupervisor.applyStatus('BLOCKED')">Bloqueada</button>
             <button type="button" class="btn btn-ghost btn-sm" onclick="window.JulesTaskSupervisor.applyStatus('REVIEW')">En revisión</button>
@@ -1064,7 +1065,7 @@ permalink: /jules-panel/
 <script src="{{ '/assets/javascript/jules-activities.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/jules-panel-neural.js' | relative_url }}?v=jules-context-20261101"></script>
 <script src="{{ '/assets/javascript/jules-claude-bridge.js' | relative_url }}?v=claude-jules-bridge-v1"></script>
-<script src="{{ '/assets/javascript/jules-task-supervisor.js' | relative_url }}?v=hais-task-supervisor-v1"></script>
+<script src="{{ '/assets/javascript/jules-task-supervisor.js' | relative_url }}?v=hais-jules-lifecycle-20261101"></script>
 <script src="{{ '/assets/javascript/jules-panel-auth.js' | relative_url }}?v=jules-handoff-v3"></script>
 <script src="{{ '/assets/javascript/jules-export.js' | relative_url }}"></script>
 
