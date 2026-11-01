@@ -14,7 +14,7 @@ const scripts = [
     'neural-provider-client.js'
 ];
 
-function clientWithFetch(fetch) {
+function clientWithFetch(fetch, workspaceId = 'wrkspc_12345678') {
     const context = {
         console, fetch, URL, TextDecoder,
         location: { protocol: 'https:' },
@@ -25,7 +25,8 @@ function clientWithFetch(fetch) {
                         provider: 'anthropic',
                         model: 'claude-test-model',
                         base_url: 'https://api.anthropic.com/v1',
-                        api_key: 'TEST-KEY'
+                        api_key: 'TEST-KEY',
+                        anthropic_workspace_id: workspaceId
                     })
                     : null;
             },
@@ -87,6 +88,7 @@ async function run() {
     assert.equal(calls[0].url, '/api/ai/anthropic/messages');
     assert.equal(calls[0].options.headers.Authorization, 'Bearer TEST-KEY');
     assert.equal(calls[0].options.headers['anthropic-version'], '2026-10-21');
+    assert.equal(calls[0].options.headers['anthropic-workspace-id'], 'wrkspc_12345678');
     assert.equal(calls[0].options.headers['x-api-key'], undefined);
     const payload = JSON.parse(calls[0].options.body);
     assert.equal(payload.stream, true);
@@ -95,6 +97,18 @@ async function run() {
     assert.equal(payload.messages[0].role, 'user');
     assert.equal(payload.messages[0].content, 'hola');
     assert.equal(payload.max_tokens, 4096);
+
+    // Workspace-specific key: omit the optional header rather than sending an empty ID.
+    const withoutWorkspaceCalls = [];
+    const noWorkspaceClient = clientWithFetch(async (url, options) => {
+        withoutWorkspaceCalls.push({url, options});
+        return streamingResponse(['data: {"type":"content_block_delta","delta":{"type":"text_delta","text":"OK"}}\\n\\n']);
+    }, '');
+    await noWorkspaceClient.sendMessage({
+        messages: [{ role: 'user', content: 'test' }],
+        options: { isThinkingEnabled: false }
+    });
+    assert.equal(withoutWorkspaceCalls[0].options.headers['anthropic-workspace-id'], undefined);
 
     // 401 is an authentication problem, not a CORS diagnosis.
     const badClient = clientWithFetch(async () => ({
