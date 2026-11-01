@@ -40,6 +40,7 @@ jobs:
           node tests/test_jules_claude_bridge.js
           node tests/test_jules_task_handoff.js
           node tests/test_jules_first_message.js
+          node tests/test_jules_launch_lifecycle.js
           node tests/test_jules_context_actions.js
           node tests/test_jules_task_supervisor.js
           node --check assets/javascript/jules-task-supervisor.js
