@@ -10,12 +10,20 @@
   const PRIORITY_RANK = { CRITICAL:0, MAJOR:1, HIGH:1, MEDIUM:2, MINOR:3, LOW:3, COSMETIC:4, TODO:5 };
   let busy = false;
 
-  const defaults = () => ({ enabled:false, queue:[], currentTaskId:null, phase:'idle', lastError:'', updatedAt:new Date().toISOString() });
+  const SUPERVISION_MODES = new Set(['auto','human','claude']);
+  const defaults = () => ({
+    enabled:false, queue:[], currentTaskId:null, phase:'idle', lastError:'',
+    supervisionMode:'auto', humanQuestion:'', updatedAt:new Date().toISOString()
+  });
   const load = () => {
     try {
       const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
       return parsed && typeof parsed === 'object'
-        ? { ...defaults(), ...parsed, queue:Array.isArray(parsed.queue) ? parsed.queue.map(String) : [] }
+        ? {
+            ...defaults(), ...parsed,
+            queue:Array.isArray(parsed.queue) ? parsed.queue.map(String) : [],
+            supervisionMode:SUPERVISION_MODES.has(parsed.supervisionMode) ? parsed.supervisionMode : 'auto'
+          }
         : defaults();
     } catch { return defaults(); }
   };
@@ -100,7 +108,7 @@
       }
       if (!selected) { patch({ lastError:'No hay tareas desbloqueadas en la cola.' }); return false; }
 
-      save({ ...load(), currentTaskId:selectedId, phase:'claude', lastError:'' });
+      save({ ...load(), currentTaskId:selectedId, phase:'claude', lastError:'', humanQuestion:'' });
       if (taskState(selected) !== 'WORKING') {
         await window.taskOps.updateTask(selected.id,{ estado:'Working', orchestrator:{ active:true, started_at:new Date().toISOString() } });
         selected.estado='Working';
@@ -127,6 +135,26 @@
     if (wasCurrent && state.enabled) setTimeout(() => { void startNext(); },1200);
   }
   const setPhase = phase => patch({ phase });
+  const setSupervisionMode = mode => {
+    if (!SUPERVISION_MODES.has(mode)) throw new Error('Modo de supervisión no válido.');
+    return patch({ supervisionMode:mode, humanQuestion:'' });
+  };
+  const pauseForHuman = question => patch({
+    phase:'awaiting-human',
+    humanQuestion:String(question || 'Claude necesita una decisión humana antes de continuar.').slice(0,1200)
+  });
+  const clearHumanQuestion = () => patch({ humanQuestion:'' });
+  const resumeCurrent = () => {
+    const state=load();
+    if (!state.currentTaskId) return startNext();
+    const next=save({ ...state, phase:'jules-running', humanQuestion:'', lastError:'' });
+    if (state.supervisionMode === 'claude') {
+      setTimeout(() => window.JulesClaudeBridge?.start?.({
+        orchestrator:true, skipConfirm:true, supervisorMode:'claude'
+      }), 50);
+    }
+    return next;
+  };
   const enable = () => { const state=load(); save({ ...state, enabled:true,lastError:'' }); setTimeout(() => void startNext(),250); };
   const disable = () => { const state=load(); save({ ...state, enabled:false, phase:state.currentTaskId?state.phase:'idle' }); };
 
@@ -143,21 +171,32 @@
           +'<button class="btn btn-ghost btn-xs" data-orch-remove="'+id+'" title="Quitar de la cola">×</button>'
           +'</div>').join('')
       : '<div style="color:#77718b">Cola vacía</div>';
+    const modeLabel = state.supervisionMode === 'claude' ? '🤖 Claude supervisor'
+      : state.supervisionMode === 'human' ? '👤 Humano' : '⚡ Auto';
     root.innerHTML='<div style="display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:8px">'
       +'<strong style="font-size:11px;color:#bd93f9">ORQUESTADOR</strong>'
       +'<span style="font-size:10px;color:'+(state.enabled?'#50fa7b':'#aaa1bd')+'">'+(state.enabled?'ACTIVO':'PAUSADO')+'</span></div>'
       +'<div style="font-size:11px;color:#d7d1e5;line-height:1.45;margin-bottom:8px">'
       +'<div>Actual: <strong>'+(state.currentTaskId?'#'+state.currentTaskId:'—')+'</strong> · fase: <strong>'+state.phase+'</strong></div>'
+      +'<div style="margin-top:3px">Supervisión: <strong>'+modeLabel+'</strong></div>'
+      +(state.humanQuestion?'<div style="margin-top:7px;padding:7px;border:1px solid rgba(255,184,108,.45);border-radius:7px;background:rgba(255,184,108,.08);color:#ffb86c"><strong>ESPERANDO HUMANO:</strong> '+String(state.humanQuestion).replace(/[<>]/g,'')+'</div>':'')
       +'<div style="margin-top:6px">'+queueRows+'</div>'
       +(state.lastError?'<div style="color:#ffb86c;margin-top:4px">'+String(state.lastError).replace(/[<>]/g,'')+'</div>':'')+'</div>'
+      +'<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:7px" role="group" aria-label="Modo de supervisión">'
+      +'<button class="btn '+(state.supervisionMode==='human'?'btn-primary':'btn-ghost')+' btn-xs" data-orch-mode="human">👤 Humano</button>'
+      +'<button class="btn '+(state.supervisionMode==='claude'?'btn-primary':'btn-ghost')+' btn-xs" data-orch-mode="claude">🤖 Claude</button>'
+      +'<button class="btn '+(state.supervisionMode==='auto'?'btn-primary':'btn-ghost')+' btn-xs" data-orch-mode="auto">⚡ Auto</button></div>'
       +'<div style="display:flex;flex-wrap:wrap;gap:6px">'
       +'<button class="btn btn-primary btn-xs" id="orchestrator-toggle">'+(state.enabled?'Pausar':'Activar')+'</button>'
+      +(state.phase==='awaiting-human'?'<button class="btn btn-primary btn-xs" id="orchestrator-resume">Reanudar tras decisión</button>':'')
       +'<button class="btn btn-ghost btn-xs" id="orchestrator-enqueue-current">Encolar actual</button>'
       +'<button class="btn btn-ghost btn-xs" id="orchestrator-enqueue-ready">Encolar desbloqueadas</button></div>';
     document.getElementById('orchestrator-toggle')?.addEventListener('click',()=>{
       if (load().enabled) disable();
       else if (window.confirm('¿Activar ejecución secuencial desatendida de la cola Hypenosys?')) enable();
     });
+    root.querySelectorAll('[data-orch-mode]').forEach(btn => btn.addEventListener('click',()=>setSupervisionMode(btn.dataset.orchMode)));
+    document.getElementById('orchestrator-resume')?.addEventListener('click',()=>resumeCurrent());
     document.getElementById('orchestrator-enqueue-current')?.addEventListener('click',()=>enqueueCurrent().catch(e=>patch({lastError:e.message})));
     document.getElementById('orchestrator-enqueue-ready')?.addEventListener('click',()=>enqueueReady().catch(e=>patch({lastError:e.message})));
     root.querySelectorAll('[data-orch-up]').forEach(btn => btn.addEventListener('click',()=>move(btn.dataset.orchUp,-1)));
@@ -165,7 +204,11 @@
     root.querySelectorAll('[data-orch-remove]').forEach(btn => btn.addEventListener('click',()=>remove(btn.dataset.orchRemove)));
   }
 
-  window.HypenosysTaskOrchestrator={ load,save,patch,enable,disable,enqueueTask,enqueueCurrent,enqueueReady,remove,move,startNext,handleTaskCompleted,setPhase,depsResolved,render,isEnabled:()=>!!load().enabled };
+  window.HypenosysTaskOrchestrator={
+    load,save,patch,enable,disable,enqueueTask,enqueueCurrent,enqueueReady,remove,move,startNext,
+    handleTaskCompleted,setPhase,setSupervisionMode,pauseForHuman,clearHumanQuestion,resumeCurrent,
+    depsResolved,render,isEnabled:()=>!!load().enabled
+  };
   document.addEventListener('DOMContentLoaded',render);
   window.addEventListener('storage',e=>{
     if(e.key===STORAGE_KEY) render();
