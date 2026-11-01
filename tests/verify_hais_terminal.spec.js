@@ -1,6 +1,6 @@
 const { test, expect } = require('@playwright/test');
 
-const base = process.env.HAIS_TEST_URL || 'http://localhost:4000/hais/';
+const base = process.env.HAIS_TEST_URL || 'http://localhost:4000/hais/operar/';
 
 test.beforeEach(async ({ page }) => {
   await page.route('**/api/hais/**', route => route.fulfill({
