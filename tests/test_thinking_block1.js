@@ -70,7 +70,8 @@ const reqManual = anthropicAdapter.buildRequest({
     apiKey: 'sk-ant-test'
 });
 assert.strictEqual(reqManual.url, 'https://api.anthropic.com/v1/messages');
-assert.strictEqual(reqManual.headers['anthropic-dangerous-direct-browser-access'], 'true');
+assert.strictEqual(reqManual.headers.Authorization, 'Bearer sk-ant-test');
+assert.strictEqual(reqManual.headers['anthropic-version'], '2026-10-21');
 assert.strictEqual(reqManual.body.thinking.type, 'enabled');
 assert.strictEqual(reqManual.body.thinking.budget_tokens, 2048);
 assert.strictEqual(reqManual.body.max_tokens, 4096);
