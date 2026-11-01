@@ -45,13 +45,18 @@ window.getCanonicalRepoName = function(fullName) {
     return ('hypenosys/' + clean).toLowerCase();
 };
 
-function initializeRepoSelector() {
+window.setJulesLaunchReadyState = function(ready, reason = '') {
     const btn = $('launch-btn');
-    if (btn) {
-        btn.disabled = true;
-        btn.innerText = 'Cargando fuentes...';
-    }
-    // We trigger source fetching from auth.js but we ensure this exists
+    if (!btn || window._julesLaunchInFlight) return;
+    btn.disabled = !ready;
+    btn.title = reason || '';
+    btn.innerHTML = '<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Iniciar Ejecución';
+};
+
+function initializeRepoSelector() {
+    // Source loading must never own the CTA label. Keep the action stable and
+    // disabled only until repository + branch readiness is known.
+    window.setJulesLaunchReadyState(false, 'Preparando repositorio y rama…');
 }
 
 function loadCachedRepos() {
@@ -193,8 +198,7 @@ async function selectRepo(repoFullName, onlyUI = false) {
     if (!sourceName) {
         window.JulesPanelState.activeRepo = null;
         window.JulesPanelState._handoffBranchBlocked = true;
-        const launch = $('launch-btn');
-        if (launch) { launch.disabled = true; launch.title = 'Conecta este repositorio en Jules antes de iniciar una tarea.'; }
+        window.setJulesLaunchReadyState?.(false, 'Conecta este repositorio en Jules antes de iniciar una tarea.');
         if (typeof showToast === 'function') showToast('El repositorio ' + repoFullName + ' no está conectado a Jules. Instala la integración de GitHub.', 'amber');
         return;
     }
@@ -327,11 +331,14 @@ async function loadBranches(repoFullName) {
         window._loadedRepoContext = requestedCanonical;
         if (requestedRaw && !requested) {
             window.JulesPanelState._handoffBranchBlocked = true;
-            const launch = $('launch-btn');
-            if (launch) { launch.disabled = true; launch.title = 'Rama esperada no disponible: selecciona una válida.'; }
+            window.setJulesLaunchReadyState?.(false, 'Rama esperada no disponible: selecciona una válida.');
             showToast('La rama ' + requestedRaw + ' no está disponible en ' + repoFullName + '. Selecciona otra antes de ejecutar.', 'amber');
         } else if (requested) {
             window.JulesPanelState._handoffBranchBlocked = false;
+        }
+
+        if (!window.JulesPanelState._handoffBranchBlocked) {
+            window.setJulesLaunchReadyState?.(true);
         }
 
         branchSelect.onchange = (e) => {
@@ -341,11 +348,7 @@ async function loadBranches(repoFullName) {
             window.JulesPanelState._handoffBranchBlocked = false;
             window.JulesPanelState.handoffTargetBranch = val;
             window.JulesPanelState.handoffTargetRepo = requestedCanonical;
-            const launch = $('launch-btn');
-            if (launch) {
-                launch.disabled = false;
-                launch.title = '';
-            }
+            window.setJulesLaunchReadyState?.(true);
             localStorage.setItem('hypenosys_active_branch', val);
             localStorage.setItem('hy_active_branch_' + repoFullName, val);
 
@@ -390,6 +393,7 @@ async function loadBranches(repoFullName) {
             if (branchMeta) {
                 branchMeta.innerHTML = '<span class="u-dot" style="background:var(--red)"></span><span style="color:var(--red)">Error de conexión con GitHub</span>';
             }
+            window.setJulesLaunchReadyState?.(false, 'No se pudieron cargar las ramas. Reintenta o selecciona otro repositorio.');
         } else {
             console.log("[JULES-REPO] Ignored loadBranches error for stale request.");
         }
