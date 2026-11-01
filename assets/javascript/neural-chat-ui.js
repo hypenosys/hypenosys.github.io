@@ -41,6 +41,43 @@ window.appendSystemMessage = function(msg, type = 'error') {
     window.chatMessages.scrollTop = window.chatMessages.scrollHeight;
 }
 
+window._selectedNeuralMessageKeys = window._selectedNeuralMessageKeys || new Set();
+
+window.toggleNeuralMessageSelection = function(index, checked) {
+    const session = (window.sessions || []).find(s => s.id === window.currentSessionId);
+    if (!session?.messages?.[index]) return;
+    const key = session.id + ':' + index;
+    if (checked) window._selectedNeuralMessageKeys.add(key);
+    else window._selectedNeuralMessageKeys.delete(key);
+    window.updateNeuralMessageSelectionCount();
+};
+
+window.updateNeuralMessageSelectionCount = function() {
+    const el = document.getElementById('neural-selected-message-count');
+    if (el) el.textContent = [...window._selectedNeuralMessageKeys].filter(x => x.startsWith(window.currentSessionId + ':')).length + ' mensajes seleccionados';
+};
+
+window.prepareSelectedNeuralMessagesForJules = function() {
+    const session = (window.sessions || []).find(s => s.id === window.currentSessionId);
+    if (!session) return;
+    const messages = (session.messages || []).map((msg, index) => ({msg,index}))
+        .filter(({index}) => window._selectedNeuralMessageKeys.has(session.id + ':' + index));
+    if (!messages.length) {
+        if (window.showToast) showToast('Selecciona antes al menos un mensaje.', 'error');
+        return;
+    }
+    const excerpt = messages.slice(-15).map(({msg}) => {
+        const role = msg.source === 'jules' ? 'JULES' : msg.role === 'assistant' ? 'CLAUDE' : 'USUARIO';
+        const content = String(msg.content || '')
+            .replace(/\b(sk-ant-[\w-]{10,}|gh[pousr]_[\w-]{15,}|github_pat_[\w-]{15,}|nvapi-[\w-]{12,})\b/g, '[REDACTED]');
+        return '[' + role + ']\n' + content.slice(0,2400);
+    }).join('\n\n').slice(0,20000);
+    let task = window._activeTaskContext || null;
+    if (!task) { try { task = JSON.parse(localStorage.getItem('hy_neural_task_context') || 'null'); } catch {} }
+    window._selectedNeuralMessageKeys.clear();
+    window.handoffClaudeToJules?.(excerpt, '', task, session);
+};
+
 window.renderMessages = function() {
     const currentSession = window.sessions.find(s => s.id === window.currentSessionId);
     if (!currentSession) {
@@ -199,26 +236,32 @@ window.renderMessages = function() {
                 ` : ''}
                 ${reasoningHtml}
                 <div class="prose prose-invert text-sm prose-pre:bg-[#1e1f29] prose-pre:border prose-pre:border-[#44475a] selection:bg-[#bd93f9]/30">
-                    ${content ? marked.parse(content) : ''}
+                    ${content ? (isJules ? escapeHtml(content).replace(/\n/g, '<span class="block"></span>') : marked.parse(content)) : ''}
                 </div>
 
                 ${docsSourcesHtml}
 
-                ${!isUser ? `
+                ${`
                 <div class="neural-message-actions absolute -bottom-3 right-4 flex gap-1.5 z-10">
+                    <label class="neural-action-mini" style="display:inline-flex;align-items:center;gap:4px;cursor:pointer">
+                        <input type="checkbox" aria-label="Seleccionar mensaje" onchange="window.toggleNeuralMessageSelection(${idx},this.checked)" ${window._selectedNeuralMessageKeys.has(currentSession.id + ':' + idx) ? 'checked' : ''}> Seleccionar
+                    </label>
+                    ${!isUser ? `
                     <button onclick="copyMessage(${idx})" class="neural-action-mini" title="Copiar respuesta">
                         <i class="fas fa-copy"></i> <span class="desktop-only">Copiar</span>
                     </button>
                     <button onclick="sendToJulesByIndex(${idx})" class="neural-action-mini" title="Enviar a Jules">
                         <i class="fas fa-bolt"></i> <span class="desktop-only">→ Jules</span>
                     </button>
+                    ` : ''}
                 </div>
-                ` : ''}
+                `}
             </div>
         </div>
         `;
     }).join('');
     window.chatMessages.scrollTop = window.chatMessages.scrollHeight;
+    window.updateNeuralMessageSelectionCount();
 }
 
 window.toggleMobileSidebar = function() {
