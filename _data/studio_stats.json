@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-11-01T09:12:57.942Z",
+  "computed_at": "2026-11-01T09:14:29.622Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 32,
@@ -103,7 +103,7 @@
       "backtest": 1,
       "calidad": 1
     },
-    "milestone_tasks_remaining": 11,
+    "milestone_tasks_remaining": 12,
     "hall_of_fame_winners": {
       "mvp": {
         "handle": "axlfc",
@@ -599,7 +599,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "haopengwang123",
-      "timestamp": "2026-11-01T09:12:58.702Z"
+      "timestamp": "2026-11-01T09:14:30.356Z"
     }
   ]
 }
