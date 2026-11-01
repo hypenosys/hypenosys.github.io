@@ -134,18 +134,25 @@ window.NeuralProviderClient = (function() {
                 console.log("[Claude Neural] provider request payload:", payload);
             }
 
-            const requestController = new AbortController();
-            requestTimeout = setTimeout(() => requestController.abort(), 120000);
+            const requestController = typeof AbortController !== 'undefined'
+                ? new AbortController()
+                : null;
+            if (requestController) {
+                requestTimeout = setTimeout(() => requestController.abort(), 120000);
+            }
             let response;
             try {
-                response = await fetch(requestEndpoint, {
+                const fetchOptions = {
                     method: 'POST',
                     headers: requestHeaders,
                     body: JSON.stringify(payload),
                     mode: 'cors',
-                    credentials: 'omit',
-                    signal: requestController.signal
-                });
+                    credentials: 'omit'
+                };
+                if (requestController) {
+                    fetchOptions.signal = requestController.signal;
+                }
+                response = await fetch(requestEndpoint, fetchOptions);
             } catch (fetchError) {
                 if (fetchError?.name === 'AbortError') {
                     throw new Error('Provider timeout: la petición no terminó en 120 segundos.');
