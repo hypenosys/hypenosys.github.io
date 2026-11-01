@@ -170,12 +170,11 @@ async function discoverModels({ provider, baseUrl, apiKey }) {
                 throw new Error('Introduce una API Key de Anthropic para descubrir modelos.');
             }
 
-            // Anthropic uses x-api-key and its own versioned Models API, not Bearer auth.
-            // Browser access requires an explicit opt-in header (use a server proxy in production).
+            // Current Claude API: Bearer authentication. Browser CORS is not supported
+            // for ZDR organizations, which must use an authenticated backend proxy.
             const headers = {
-                'x-api-key': apiKey.trim(),
-                'anthropic-version': '2023-06-01',
-                'anthropic-dangerous-direct-browser-access': 'true'
+                'Authorization': `Bearer ${apiKey.trim()}`,
+                'anthropic-version': '2026-10-21'
             };
             const cursors = new Set();
             let afterId = '';
@@ -203,8 +202,14 @@ async function discoverModels({ provider, baseUrl, apiKey }) {
                     throw new Error('Respuesta inválida de la API de modelos Anthropic.');
                 }
                 rawModels.push(...data.data
-                    .filter(m => typeof m.id === 'string' && m.id)
-                    .map(m => ({ id: m.id, kind: 'chat' })));
+                    .filter(m => typeof m.id === 'string' && m.id && m.lifecycle !== 'retired')
+                    .map(m => ({
+                        id: m.id,
+                        label: m.display_name || m.id,
+                        kind: 'chat',
+                        lifecycle: m.lifecycle || 'active',
+                        capabilities: m.capabilities || null
+                    })));
 
                 if (!data.has_more) break;
                 const nextCursor = data.last_id || data.data[data.data.length - 1]?.id;
@@ -233,7 +238,9 @@ async function discoverModels({ provider, baseUrl, apiKey }) {
         }
     } catch (err) {
         if (err.name === 'TypeError' || err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
-            let msg = 'Error de conexión o red (Posible CORS o Mixed Content).';
+            let msg = provider === 'anthropic'
+                ? 'Sin respuesta HTTP de Anthropic: posible bloqueo CORS, problema de red o política del navegador. Si tu organización usa ZDR, necesitas un proxy backend.'
+                : 'Error de conexión o red (Posible CORS o Mixed Content).';
             if (cleanBaseUrl.startsWith('http://') && typeof window !== 'undefined' && window.location?.protocol === 'https:') {
                 msg += ' Estás accediendo vía HTTPS e intentando llamar a un endpoint HTTP.';
             }
@@ -245,6 +252,10 @@ async function discoverModels({ provider, baseUrl, apiKey }) {
         throw err;
     }
 
+    if (provider === 'anthropic') {
+        // Keep the latest entry for an ID; do not show models retired from inference.
+        return [...new Map(rawModels.map(m => [m.id, m])).values()];
+    }
     return rawModels;
 }
 
@@ -437,6 +448,9 @@ class OllamaUI {
             if (nimHelpBlock) nimHelpBlock.classList.add('d-none');
             if (discoverGroup) discoverGroup.style.display = 'none';
         }
+
+        const anthropicTestGroup = document.getElementById('group-anthropic-test');
+        if (anthropicTestGroup) anthropicTestGroup.style.display = provider === 'anthropic' ? 'block' : 'none';
 
         // If embeddings provider is "same_as_main", sync UI if needed
         this.handleEmbedProviderChange();
@@ -650,6 +664,71 @@ class OllamaUI {
         }
     }
 
+    // Live smoke test: the exact key entered in API Config must discover models
+    // AND generate a real non-streaming response before we show success.
+    async verifyAnthropicConnection() {
+        const provider = document.getElementById('ai_provider')?.value;
+        if (provider !== 'anthropic') return;
+        const key = document.getElementById('ai_api_key')?.value.trim() || '';
+        const modelEl = document.getElementById('ai_model');
+        const status = document.getElementById('anthropic-test-status');
+        const button = document.getElementById('btn-test-anthropic');
+        if (!status || !button) return;
+
+        button.disabled = true;
+        status.textContent = '1/2 · Validando API key y descubriendo modelos...';
+        try {
+            const models = await discoverModels({
+                provider: 'anthropic',
+                baseUrl: PROVIDER_DEFAULTS.anthropic.baseUrl,
+                apiKey: key
+            });
+            if (!models.length) throw new Error('La clave ha respondido, pero no hay modelos disponibles.');
+            const selected = models.find(m => m.id === modelEl.value.trim())
+                || models.find(m => m.lifecycle === 'active')
+                || models[0];
+            modelEl.value = selected.id;
+            status.textContent = `1/2 · ${models.length} modelos. 2/2 · Probando respuesta de ${selected.id}...`;
+
+            const response = await fetch('https://api.anthropic.com/v1/messages', {
+                method: 'POST',
+                mode: 'cors',
+                credentials: 'omit',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${key}`,
+                    'anthropic-version': '2026-10-21'
+                },
+                body: JSON.stringify({
+                    model: selected.id,
+                    max_tokens: 32,
+                    stream: false,
+                    messages: [{ role: 'user', content: 'Responde exactamente OK.' }]
+                })
+            });
+            if (!response.ok) {
+                const reason = response.status === 401 ? 'API key inválida'
+                    : response.status === 403 ? 'Sin permisos de acceso'
+                    : response.status === 404 ? 'Modelo no disponible'
+                    : response.status === 429 ? 'Límite de peticiones o cuota'
+                    : 'Petición rechazada';
+                throw new Error(`HTTP ${response.status}: ${reason}.`);
+            }
+            const result = await response.json();
+            if (!Array.isArray(result.content) || !result.content.some(b => b.type === 'text' && b.text?.trim())) {
+                throw new Error('Anthropic no devolvió texto en la prueba.');
+            }
+            status.textContent = `✓ API key operativa. ${models.length} modelos detectados y respuesta recibida de ${selected.id}. Guarda la configuración para usar Neural Chat.`;
+        } catch (e) {
+            const network = e instanceof TypeError || /Failed to fetch|NetworkError/i.test(e.message || '');
+            status.textContent = network
+                ? '✗ Sin respuesta HTTP (red/CORS). Las organizaciones con ZDR necesitan un proxy backend.'
+                : `✗ ${String(e.message || 'Error de conexión').replaceAll(key || '\0', '[REDACTED]')}`;
+        } finally {
+            button.disabled = false;
+        }
+    }
+
     async discoverEmbeddingModels() {
         const embedProvider = document.getElementById('ai_embed_provider').value;
         let provider = embedProvider;
@@ -745,11 +824,17 @@ class OllamaUI {
             return (m.kind || this.detectModelType(m.id)) === type;
         }).sort((a, b) => a.id.localeCompare(b.id));
 
-        select.innerHTML = filtered.map(m => `<option value="${m.id}">${m.id}</option>`).join('');
+        select.replaceChildren();
         if (filtered.length === 0) {
-            select.innerHTML = '<option value="">No hay modelos de este tipo</option>';
+            select.add(new Option('No hay modelos de este tipo', ''));
         } else {
-            this.selectCustomModel(filtered[0].id);
+            filtered.forEach(m => select.add(new Option(
+                (m.label || m.id) + (m.lifecycle === 'deprecated' ? ' (deprecated)' : ''), m.id
+            )));
+            const current = document.getElementById('ai_model')?.value;
+            const selected = filtered.find(m => m.id === current) || filtered.find(m => m.lifecycle !== 'deprecated') || filtered[0];
+            select.value = selected.id;
+            this.selectCustomModel(selected.id);
         }
     }
 
