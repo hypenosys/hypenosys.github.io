@@ -1,0 +1,84 @@
+name: HAIS terminal Playwright
+
+# Runs the PAPER terminal spec against a deterministic local build of the site.
+# Scope: test-only. No deployment, no secrets, no real gateway: /api/hais/** is mocked inside the spec.
+on:
+  pull_request:
+    branches: [develop]
+    paths:
+      - 'pages/hais-terminal.html'
+      - 'assets/javascript/**'
+      - 'tests/verify_hais_terminal.spec.js'
+      - 'package.json'
+      - 'package-lock.json'
+      - '_config.yml'
+      - '.github/workflows/hais-terminal-playwright.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hais-terminal-playwright-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  terminal-e2e:
+    name: Playwright · HAIS terminal (PAPER)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      HAIS_TEST_URL: http://localhost:4000/hais/operar/
+      CI: "true"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+
+      - name: Build site with Jekyll (deterministic test build)
+        run: bundle exec jekyll build --source . --destination ./_site --baseurl ""
+        env:
+          JEKYLL_ENV: production
+
+      - name: Confirm terminal route was built
+        run: test -f _site/hais/operar/index.html
+
+      - name: Serve built site on localhost:4000
+        run: |
+          python3 -m http.server 4000 --bind 127.0.0.1 --directory _site > /tmp/site-server.log 2>&1 &
+          for i in $(seq 1 30); do
+            if curl -fsS http://localhost:4000/hais/operar/ > /dev/null; then exit 0; fi
+            sleep 1
+          done
+          echo "site server did not start"; cat /tmp/site-server.log; exit 1
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run terminal spec
+        run: npx playwright test tests/verify_hais_terminal.spec.js --reporter=list
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-hais-terminal
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 7
