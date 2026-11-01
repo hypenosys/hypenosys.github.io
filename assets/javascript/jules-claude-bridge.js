@@ -444,7 +444,8 @@
             const orchestratorAuthorized = options.orchestrator === true && options.skipConfirm === true &&
                 orchestratorState?.enabled && taskContext?.id &&
                 String(orchestratorState.currentTaskId || '') === String(taskContext.id);
-            if (!orchestratorAuthorized) {
+            const explicitClaudeLaunch = options.explicitLaunch === true && storedMode === 'claude';
+            if (!orchestratorAuthorized && !explicitClaudeLaunch) {
                 const prompt = mode === 'claude'
                     ? 'Activar SUPERVISOR CLAUDE para esta sesión? Claude podrá revisar y aprobar planes seguros o pedir ajustes. Ante riesgos/ambigüedad se detendrá y pedirá decisión humana. Nunca autoriza merge ni despliegue.'
                     : 'Activar colaboración Claude ↔ Jules para esta sesión (máximo 3 respuestas automáticas)? Solo feedback técnico, sin aprobación de planes, merge ni despliegues.';
