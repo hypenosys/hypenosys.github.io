@@ -661,6 +661,17 @@ permalink: /jules-panel/
           <span id="jules-claude-bridge-status" role="status" aria-live="polite" style="font-size:10px;color:#aaa1bd;overflow-wrap:anywhere;">Auto desactivado</span>
         </div>
 
+        <div id="jules-task-supervisor" style="display:flex;align-items:center;flex-wrap:wrap;gap:7px;padding:8px 18px;border-bottom:1px solid rgba(189,147,249,.12);background:rgba(12,12,22,.8);">
+            <strong style="font-size:10px;color:#bd93f9">SUPERVISIÓN DE TAREA</strong>
+            <button type="button" class="btn btn-ghost btn-sm" onclick="window.JulesTaskSupervisor.review()">Revisar estado</button>
+            <button type="button" class="btn btn-ghost btn-sm" onclick="window.JulesTaskSupervisor.applyStatus('WORKING')">En curso</button>
+            <button type="button" class="btn btn-ghost btn-sm" onclick="window.JulesTaskSupervisor.applyStatus('BLOCKED')">Bloqueada</button>
+            <button type="button" class="btn btn-ghost btn-sm" onclick="window.JulesTaskSupervisor.applyStatus('REVIEW')">En revisión</button>
+            <button type="button" class="btn btn-ghost btn-sm" onclick="window.JulesTaskSupervisor.editTask()">Editar tarea</button>
+            <button type="button" class="btn btn-ghost btn-sm" style="color:#ff7689" onclick="window.JulesTaskSupervisor.archive()">Cementerio</button>
+            <span id="jules-task-supervisor-status" role="status" aria-live="polite" style="font-size:10px;color:#aaa1bd;overflow-wrap:anywhere">Sin cambios automáticos</span>
+        </div>
+
         <!-- ─── CLAUDE WORKSPACE ─── -->
         <section id="neural-claude-workspace" role="tabpanel" aria-labelledby="neural-tab-claude" style="flex: 1; display: flex; flex-direction: column; overflow: hidden;">
             <!-- Claude Linking Status Bar -->
@@ -1049,6 +1060,7 @@ permalink: /jules-panel/
 <script src="{{ '/assets/javascript/jules-activities.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/jules-panel-neural.js' | relative_url }}?v=jules-handoff-v3"></script>
 <script src="{{ '/assets/javascript/jules-claude-bridge.js' | relative_url }}?v=claude-jules-bridge-v1"></script>
+<script src="{{ '/assets/javascript/jules-task-supervisor.js' | relative_url }}?v=hais-task-supervisor-v1"></script>
 <script src="{{ '/assets/javascript/jules-panel-auth.js' | relative_url }}?v=jules-handoff-v3"></script>
 <script src="{{ '/assets/javascript/jules-export.js' | relative_url }}"></script>
 
