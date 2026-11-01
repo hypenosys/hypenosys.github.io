@@ -86,7 +86,10 @@ async function test() {
     assert.equal(bridge.getState().enabled,false);
     assert.equal(sentToJules.length,0);
 
+    history[0].agentMessaged.agentMessage += ' Authorization: Bearer sk-ant-super-secret-test-value-1234567890';
     await bridge.analyzeLatest();
+    assert.doesNotMatch(requests[0].messages[0].content,/sk-ant-super-secret-test-value/);
+    assert.match(requests[0].messages[0].content,/REDACTED/);
     assert.equal(requests.length,1);
     assert.equal(sentToJules.length,0, 'manual analysis is read-only');
     assert.equal(conversation.messages.at(-1).source,'claude_bridge');
@@ -117,7 +120,7 @@ async function test() {
     // Changing active conversation must STOP without sending to another session.
     await bridge.start();
     assert.equal(bridge.getState().enabled,true);
-    const context = setup(); // independent check, leave previous context unchanged
+    // A stop must prevent further automatic feedback after this activation.
     bridge.stop();
     assert.equal(bridge.getState().enabled,false);
     assert.equal(sentToJules.length,3);
