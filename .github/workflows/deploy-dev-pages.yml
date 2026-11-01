@@ -67,3 +67,23 @@ jobs:
           echo 'Relay health check failed: expected HTTP 401 JSON from /api/ai/anthropic/models.'
           exit 1
 
+      - name: Verify live Cloudflare-to-Anthropic upstream with a dummy credential
+        run: |
+          # No real secret is used; a syntactically plausible but invalid key must
+          # reach Anthropic and return its authentication error, not a proxy 502.
+          # This specifically catches Cloudflare's unsupported redirect: error mode.
+          for i in {1..8}; do
+            status="$(curl --silent --show-error --max-time 12 \
+              -H 'Authorization: Bearer sk-ant-test-deliberately-invalid-000000000000' \
+              -o /tmp/anthropic-upstream-response.json -w '%{http_code}' \
+              'https://dev.hypenosys.com/api/ai/anthropic/models?limit=1' || true)"
+            if [ "$status" = "401" ] && grep -q 'authentication_error' /tmp/anthropic-upstream-response.json; then
+              echo 'Anthropic upstream reachable via Cloudflare (expected rejection of invalid test key).'
+              exit 0
+            fi
+            echo "Anthropic upstream probe did not get a 401 (HTTP ${status:-network_error}), attempt ${i}/8"
+            sleep 5
+          done
+          echo 'Claude relay upstream probe failed. No valid keys were used.'
+          exit 1
+
