@@ -64,11 +64,43 @@ vm.runInContext(script,context);
     approval=true;
     await context.JulesTaskSupervisor.applySuggestedLifecycle();
     assert.equal(log.length,3);
-    assert.equal(log[2][2].estado,'REVIEW','COMPLETED goes to REVIEW, never directly DONE');
+    assert.equal(log[2][2].estado,'OK','COMPLETED uses the canonical completed Kanban state');
     context.julesApi.getSession=async()=>({name:'sessions/js-123',state:'IN_PROGRESS'});
     savedTask.blocked_by=[88];
     await context.JulesTaskSupervisor.applySuggestedLifecycle();
     assert.equal(log.length,3,'unresolved blockers prevent moving to WORKING');
 
-    console.log('HAIS task supervisor approval, organization isolation and linked session checks passed');
+    // Automatic completion only applies to the exact task/session pair, once.
+    const supervisor=context.JulesTaskSupervisor;
+    const completed={name:'sessions/js-123',state:'COMPLETED'};
+    approval=false;
+    savedTask.blocked_by=[];
+    assert.equal(await supervisor.syncCompletedFromJules('js-123',{...completed,state:'IN_PROGRESS'}),false);
+    assert.equal(log.length,3,'unfinished sessions cannot complete tasks');
+    assert.equal(await supervisor.syncCompletedFromJules('other-session',{name:'sessions/other-session',state:'COMPLETED'}),false);
+    assert.equal(await supervisor.syncCompletedFromJules('js-123',{name:'sessions/other-session',state:'COMPLETED'}),false);
+    assert.equal(log.length,3,'mismatched requested or returned sessions cannot complete tasks');
+    const association=savedTask.jules_session;
+    savedTask.jules_session=null;
+    assert.equal(await supervisor.syncCompletedFromJules('js-123',completed),false);
+    assert.equal(log.length,3,'automatic completion cannot create a missing task/session association');
+    savedTask.jules_session=association;
+    activeWorkspace='otro-workspace';
+    assert.equal(await supervisor.syncCompletedFromJules('js-123',completed),false);
+    assert.equal(log.length,3,'automatic completion respects workspace isolation');
+    activeWorkspace='hypenosys';
+    assert.equal(await supervisor.syncCompletedFromJules('sessions/js-123',completed),true);
+    assert.equal(log.length,4);
+    assert.equal(log[3][2].estado,'OK');
+    assert.equal(log[3][2].jules_session.status,'COMPLETED');
+    assert.equal(JSON.parse(store.get('hy_neural_task_context')).estado,'OK');
+    assert.equal(await supervisor.syncCompletedFromJules('js-123',completed),true);
+    assert.equal(log.length,4,'repeated completion notifications are idempotent');
+    store.delete('hy_jules_task_synced_completed_js-123');
+    savedTask.estado='OK';
+    assert.equal(await supervisor.syncCompletedFromJules('js-123',completed),true);
+    assert.equal(log.length,4,'already-completed tasks are not rewritten');
+
+    console.log('HAIS supervisor: manual approval, canonical OK completion, session/workspace isolation and idempotence passed');
 })().catch(e=>{console.error(e);process.exitCode=1});
+
