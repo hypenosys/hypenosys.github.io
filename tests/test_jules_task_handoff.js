@@ -16,7 +16,9 @@ const standalone = read('assets/javascript/neural-chat-jules.js');
 const selectorSource = auth.slice(auth.indexOf('window.resizeJulesDraftTextarea ='),auth.indexOf('window.handleUrlParams ='));
 assert.ok(selectorSource.length > 2500);
 assert.match(dashboard, /window\._openTaskInJules/);
-assert.match(kanban, /window\._openTaskInJules\(taskData\)/);
+// The dashboard robot must enter Claude first, never create a Jules task.
+assert.match(kanban, /window\._openTaskInClaude\(taskData\)/);
+assert.doesNotMatch(kanban, /window\._openTaskInJules\(taskData\)/);
 assert.match(panel, /id="opt-supervised"/);
 assert.match(auth,/requirePlanApproval: isReview \|\| isSupervised/);
 assert.match(auth,/window\.JulesPanelState\._handoffBranchBlocked/);
