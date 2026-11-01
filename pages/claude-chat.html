@@ -772,14 +772,23 @@ permalink: /chat/neural/
                                     !window.sendBtn.disabled &&
                                     !window._neuralSendInFlight &&
                                     window.currentSendMode === 'claude') {
-                                    dedicated.metadata = {
-                                        ...(dedicated.metadata || {}),
-                                        dashboardAutoSentTaskId: pendingAutoSend.taskId,
-                                        dashboardAutoSentAt: new Date().toISOString()
-                                    };
-                                    saveSessions(false, 'dashboard-claude-autosend-mark');
+                                    // Start the send first. sendMessage() acquires
+                                    // _neuralSendInFlight synchronously; only persist
+                                    // the one-shot marker once we know the send was accepted.
                                     void window.sendMessage();
-                                    return;
+
+                                    if (window._neuralSendInFlight) {
+                                        dedicated.metadata = {
+                                            ...(dedicated.metadata || {}),
+                                            dashboardAutoSentTaskId: pendingAutoSend.taskId,
+                                            dashboardAutoSentAt: new Date().toISOString()
+                                        };
+                                        saveSessions(false, 'dashboard-claude-autosend-mark');
+                                        return;
+                                    }
+
+                                    // The send was not accepted (transient busy/race).
+                                    // Keep the handoff eligible for the bounded retry below.
                                 }
 
                                 // Initialization can briefly leave controls busy.
