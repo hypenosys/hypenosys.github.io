@@ -3056,7 +3056,7 @@
       "organizationId": "hais",
       "repository": "hypenosys/hypenosys.github.io",
       "title": "Terminal web PAPER con valores sintéticos y cartera local",
-      "descripcion": "Implementar en dev.hypenosys.com/hais/operar/ panel de cotizaciones sintéticas editables, gráficos, efectivo, cartera PAPER, compras/ventas simuladas, validaciones y registro local; mantener claramente separados valores ficticios de telemetría del backend.",
+      "descripcion": "Implementar en dev.hypenosys.com/hais/operar/ panel de cotizaciones sintéticas editables, gráficos, efectivo, cartera PAPER, compras/ventas simuladas, validaciones y registro local; mantener claramente separados valores ficticios de telemetría del backend. Integrar el mismo terminal en la portada /hais/ para operar y consultar saldo, posiciones e historial sin cambiar de página; conservar la cartera local existente del mismo origen.",
       "tema_principal": "HAIS · interfaz web",
       "prioridad": "Major",
       "estado": "In Review",
@@ -3075,7 +3075,7 @@
         "simulation"
       ],
       "blocked_by": [],
-      "acceptance_criteria": "- La ruta /hais/operar/ entrega el terminal PAPER, /hais/ muestra mercados reales, /hais/estado/ muestra el seguimiento y /hais/demo/ mantiene el prototipo general.\n- Los valores etiquetan su fuente sintética; no aparecen cifras como datos de mercado reales.\n- Compras, ventas, P/L, parada, persistencia local, exportación y reinicio funcionan, con aceptación explícita por operación.\n- No hay peticiones HTTP de compra/venta ni credenciales en cliente; no se anuncia operativa de servidor.\n- Test Playwright y build Jekyll ejecutados y verificados en CI antes de cerrar.",
+      "acceptance_criteria": "- La ruta /hais/operar/ entrega el terminal PAPER, /hais/ muestra mercados reales, /hais/estado/ muestra el seguimiento y /hais/demo/ mantiene el prototipo general.\n- Los valores etiquetan su fuente sintética; no aparecen cifras como datos de mercado reales.\n- Compras, ventas, P/L, parada, persistencia local, exportación y reinicio funcionan, con aceptación explícita por operación.\n- No hay peticiones HTTP de compra/venta ni credenciales en cliente; no se anuncia operativa de servidor.\n- Test Playwright y build Jekyll ejecutados y verificados en CI antes de cerrar.\n- /hais/ integra el terminal PAPER y conserva la misma cartera al recargar o abrir /hais/operar/ desde el mismo navegador; explica que no hay sincronización entre dispositivos ni modelo CFD.",
       "subtasks": [
         {
           "id": 900036001,
@@ -3090,6 +3090,11 @@
         {
           "id": 900036003,
           "text": "Ejecutar Playwright y build sobre despliegue develop",
+          "done": false
+        },
+        {
+          "id": 900036004,
+          "text": "Integrar terminal PAPER en /hais/ y verificar persistencia entre portada y terminal",
           "done": false
         }
       ],
@@ -3108,6 +3113,11 @@
           "author_login": "Codex",
           "timestamp": "2026-11-01T19:32:20.498Z",
           "body": "Aplicar mínimo mock: los precios editables actuales siguen siendo SYNTHETIC y locales. Priorizar integración con precios reales mediante #900028 y #900037 cuando esté disponible; mostrar no disponible ante fallo externo. Este comentario no declara implementada esa integración."
+        },
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-11-01T19:50:09.023Z",
+          "body": "Solicitud del usuario: simulación visible desde la portada HAIS. Integración embebida del terminal existente, sin dataset nuevo ni cartera compartida ficticia. Pendiente CI y verificación del despliegue."
         }
       ],
       "change_log": [],
@@ -3311,7 +3321,7 @@
         "paper"
       ],
       "blocked_by": [],
-      "acceptance_criteria": "- Portada /hais/ sin datos sintéticos; fallback sin número si falla proveedor; título y ficha de fuente del activo.\n- S&P 500, NASDAQ Composite/100, CSI 300, IBEX35, deuda USA/DE/ES/CN, oro/plata/WTI/Brent, BTC/ETH/SOL y FX visibles.\n- Mostrar demora, atribución, licencias y limitaciones; no decir tiempo real garantizado.\n- Jekyll build y Playwright verificados, navegador desktop/mobile y proveedor externo smoke test antes de Done.\n- APE (ApeCoin, `COINBASE:APEUSD`) figura en la selección, watchlist y tabla de criptomonedas sin precios simulados.\n- Priorizar datos reales de una fuente disponible y autorizada, con origen, hora y retraso visibles. Limitar mocks/fixtures a CI reproducible y escenarios de error; nunca sustituir una caída del proveedor por precios inventados ni presentar una prueba offline como integración real.",
+      "acceptance_criteria": "- Cotizaciones del observatorio /hais/ sin datos sintéticos; el terminal PAPER embebido se presenta como simulación separada y etiquetada; fallback sin número si falla proveedor; título y ficha de fuente del activo.\n- S&P 500, NASDAQ Composite/100, CSI 300, IBEX35, deuda USA/DE/ES/CN, oro/plata/WTI/Brent, BTC/ETH/SOL y FX visibles.\n- Mostrar demora, atribución, licencias y limitaciones; no decir tiempo real garantizado.\n- Jekyll build y Playwright verificados, navegador desktop/mobile y proveedor externo smoke test antes de Done.\n- APE (ApeCoin, `COINBASE:APEUSD`) figura en la selección, watchlist y tabla de criptomonedas sin precios simulados.\n- Priorizar datos reales de una fuente disponible y autorizada, con origen, hora y retraso visibles. Limitar mocks/fixtures a CI reproducible y escenarios de error; nunca sustituir una caída del proveedor por precios inventados ni presentar una prueba offline como integración real.",
       "subtasks": [
         {
           "id": 900039001,
@@ -3372,6 +3382,13 @@
           "field": "acceptance_criteria",
           "old_value": "- Portada /hais/ sin datos sintéticos; fallback sin número si falla proveedor; título y ficha de fuente del activo.\n- S&P 500, NASDAQ Composite/100, CSI 300, IBEX35, deuda USA/DE/ES/CN, oro/plata/WTI/Brent, BTC/ETH/SOL y FX visibles.\n- Mostrar demora, atribución, licencias y limitaciones; no decir tiempo real garantizado.\n- Jekyll build y Playwright verificados, navegador desktop/mobile y proveedor externo smoke test antes de Done.\n- APE (ApeCoin, `COINBASE:APEUSD`) figura en la selección, watchlist y tabla de criptomonedas sin precios simulados.",
           "new_value": "- Portada /hais/ sin datos sintéticos; fallback sin número si falla proveedor; título y ficha de fuente del activo.\n- S&P 500, NASDAQ Composite/100, CSI 300, IBEX35, deuda USA/DE/ES/CN, oro/plata/WTI/Brent, BTC/ETH/SOL y FX visibles.\n- Mostrar demora, atribución, licencias y limitaciones; no decir tiempo real garantizado.\n- Jekyll build y Playwright verificados, navegador desktop/mobile y proveedor externo smoke test antes de Done.\n- APE (ApeCoin, `COINBASE:APEUSD`) figura en la selección, watchlist y tabla de criptomonedas sin precios simulados.\n- Priorizar datos reales de una fuente disponible y autorizada, con origen, hora y retraso visibles. Limitar mocks/fixtures a CI reproducible y escenarios de error; nunca sustituir una caída del proveedor por precios inventados ni presentar una prueba offline como integración real."
+        },
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-11-01T19:50:09.023Z",
+          "field": "acceptance_criteria",
+          "old_value": "- Portada /hais/ sin datos sintéticos; fallback sin número si falla proveedor; título y ficha de fuente del activo.\n- S&P 500, NASDAQ Composite/100, CSI 300, IBEX35, deuda USA/DE/ES/CN, oro/plata/WTI/Brent, BTC/ETH/SOL y FX visibles.\n- Mostrar demora, atribución, licencias y limitaciones; no decir tiempo real garantizado.\n- Jekyll build y Playwright verificados, navegador desktop/mobile y proveedor externo smoke test antes de Done.\n- APE (ApeCoin, `COINBASE:APEUSD`) figura en la selección, watchlist y tabla de criptomonedas sin precios simulados.\n- Priorizar datos reales de una fuente disponible y autorizada, con origen, hora y retraso visibles. Limitar mocks/fixtures a CI reproducible y escenarios de error; nunca sustituir una caída del proveedor por precios inventados ni presentar una prueba offline como integración real.",
+          "new_value": "- Cotizaciones del observatorio /hais/ sin datos sintéticos; el terminal PAPER embebido se presenta como simulación separada y etiquetada; fallback sin número si falla proveedor; título y ficha de fuente del activo.\n- S&P 500, NASDAQ Composite/100, CSI 300, IBEX35, deuda USA/DE/ES/CN, oro/plata/WTI/Brent, BTC/ETH/SOL y FX visibles.\n- Mostrar demora, atribución, licencias y limitaciones; no decir tiempo real garantizado.\n- Jekyll build y Playwright verificados, navegador desktop/mobile y proveedor externo smoke test antes de Done.\n- APE (ApeCoin, `COINBASE:APEUSD`) figura en la selección, watchlist y tabla de criptomonedas sin precios simulados.\n- Priorizar datos reales de una fuente disponible y autorizada, con origen, hora y retraso visibles. Limitar mocks/fixtures a CI reproducible y escenarios de error; nunca sustituir una caída del proveedor por precios inventados ni presentar una prueba offline como integración real."
         }
       ],
       "comentario": "No afirmar despliegue ni ingestión autorizada sin prueba del proveedor, permisos y producción.",
@@ -4079,7 +4096,16 @@
         900025,
         900044
       ]
+    },
+    {
+      "action": "Integrar simulación PAPER en portada HAIS por solicitud del usuario",
+      "user": "Codex",
+      "timestamp": "2026-11-01T19:50:09.023Z",
+      "task_ids": [
+        900036,
+        900039
+      ]
     }
   ],
-  "last_updated": "2026-11-01T19:45:15.482Z"
+  "last_updated": "2026-11-01T19:50:09.023Z"
 }

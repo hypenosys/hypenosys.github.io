@@ -2,6 +2,28 @@ const { test, expect } = require('@playwright/test');
 
 const base = process.env.HAIS_TEST_URL || 'http://localhost:4000/hais/operar/';
 
+test('HAIS home embeds the same persistent PAPER portfolio without broker orders', async ({ page }) => {
+  await page.route('https://s3.tradingview.com/**', route => route.abort());
+  await page.route('https://api.coingecko.com/**', route => route.abort());
+  const writes = [];
+  page.on('request', request => {
+    if (request.method() !== 'GET') writes.push(request.url());
+  });
+  await page.goto(new URL('../', base).href);
+  await expect(page.getByRole('heading', { name: 'Tu simulación PAPER' })).toBeVisible();
+  const terminal = page.frameLocator('#paper-terminal');
+  await expect(terminal.locator('#position-count')).toHaveText('0 abiertas');
+  page.on('dialog', dialog => dialog.accept());
+  await terminal.getByRole('button', { name: 'Registrar compra PAPER' }).click();
+  await expect(terminal.locator('#positions-body')).toContainText('AAPL');
+  await expect(terminal.locator('#position-count')).toHaveText('1 abiertas');
+  await page.reload();
+  await expect(terminal.locator('#position-count')).toHaveText('1 abiertas');
+  await page.goto(base);
+  await expect(page.locator('#position-count')).toHaveText('1 abiertas');
+  expect(writes).toEqual([]);
+});
+
 test.beforeEach(async ({ page }) => {
   await page.route('**/api/hais/**', route => route.fulfill({
     status: 503,
