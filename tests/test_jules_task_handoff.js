@@ -28,6 +28,10 @@ assert.match(neural,/window\.setJulesComposerDraft/);
 assert.match(core,/fromJules \? 'user'/);
 assert.match(standalone,/claude_conversation_id/);
 assert.match(standalone,/linked_jules_session_id/);
+assert.match(auth,/const handoffClaudeId = options\.fromChat\s*\? window\.currentJulesPanelSessionId\s*:\s*pendingClaudeId/,
+    'chat launch must prefer the currently visible Claude conversation over stale pending handoff state');
+assert.match(neural,/if \(unique\.length === 0\)[\s\S]*setJulesHistoryState\('empty'\)/,
+    'a fresh Jules session with no activities must render a clean waiting state');
 
 function makeContext(withLinkedSession) {
     const storage=new Map();
