@@ -23,10 +23,9 @@ window.NeuralThinkingAdapters = (function() {
                 'Content-Type': 'application/json',
                 'anthropic-version': '2026-10-21'
             };
-            if (!apiKey || !apiKey.trim()) {
-                throw new Error('Introduce una API key de Anthropic en API Config.');
+            if (apiKey && apiKey.trim()) {
+                headers['Authorization'] = `Bearer ${apiKey.trim()}`;
             }
-            headers['Authorization'] = `Bearer ${apiKey.trim()}`;
 
             const body = {
                 model: model,
