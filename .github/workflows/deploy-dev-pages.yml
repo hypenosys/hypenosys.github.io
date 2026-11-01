@@ -27,6 +27,17 @@ jobs:
           ruby-version: '3.2'
           bundler-cache: true
 
+      - name: Setup Node for Neural Chat contract tests
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Verify Anthropic discovery, native Messages and Cloudflare relay
+        run: |
+          node tests/test_anthropic_model_discovery.js
+          node tests/test_neural_claude_smoke.js
+          node tests/test_anthropic_pages_proxy.js
+
       - name: Build with Jekyll
         run: bundle exec jekyll build --source . --destination ./_site --baseurl ""
         env:
@@ -38,3 +49,21 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy ./_site --project-name=hypenosys-dev --branch=develop
+
+      - name: Verify deployed Anthropic relay answers without a key
+        run: |
+          # Expected 401 from the Pages Function; HTML 200/404 means the function route is missing.
+          for i in {1..8}; do
+            status="$(curl --silent --show-error --max-time 10 \
+              -o /tmp/anthropic-relay-response.json -w '%{http_code}' \
+              'https://dev.hypenosys.com/api/ai/anthropic/models' || true)"
+            if [ "$status" = "401" ] && grep -q 'authentication_error' /tmp/anthropic-relay-response.json; then
+              echo 'Anthropic Cloudflare Pages relay is reachable (unauthenticated 401 as expected).'
+              exit 0
+            fi
+            echo "Relay not ready yet (HTTP ${status:-network_error}); retry ${i}/8"
+            sleep 5
+          done
+          echo 'Relay health check failed: expected HTTP 401 JSON from /api/ai/anthropic/models.'
+          exit 1
+
