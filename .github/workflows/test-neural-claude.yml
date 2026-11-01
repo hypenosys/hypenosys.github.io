@@ -12,6 +12,7 @@ on:
       - 'tests/test_neural_claude_smoke.js'
       - 'tests/test_jules_claude_bridge.js'
       - 'tests/test_jules_task_handoff.js'
+      - 'tests/test_jules_first_message.js'
       - 'tests/test_jules_context_actions.js'
       - '_includes/jules-panel-styles.html'
       - 'tests/test_jules_task_supervisor.js'
@@ -42,6 +43,7 @@ on:
       - 'tests/test_neural_claude_smoke.js'
       - 'tests/test_jules_claude_bridge.js'
       - 'tests/test_jules_task_handoff.js'
+      - 'tests/test_jules_first_message.js'
       - 'tests/test_jules_context_actions.js'
       - '_includes/jules-panel-styles.html'
       - 'tests/test_jules_task_supervisor.js'
@@ -84,6 +86,8 @@ jobs:
         run: node tests/test_jules_claude_bridge.js
       - name: Dashboard to Jules to Claude handoff contracts
         run: node tests/test_jules_task_handoff.js
+      - name: Jules first message and branch-resolution contracts
+        run: node tests/test_jules_first_message.js
       - name: HAIS task supervisor approval and organizational boundary tests
         run: node tests/test_jules_task_supervisor.js
       - name: Syntax checks for Neural, Jules and routing scripts
