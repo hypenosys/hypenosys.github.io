@@ -834,6 +834,7 @@ window.launchSession = async function(options = {}) {
             branch: branch,
             start: now,
             status: 'active',
+            supervision: supervisionMode,
             messages: []
         });
         localStorage.setItem('hy_neural_sessions', JSON.stringify(sessions));
