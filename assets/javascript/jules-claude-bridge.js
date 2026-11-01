@@ -263,13 +263,19 @@
         } finally { busy = false; }
     }
 
-    async function start() {
+    async function start(options = {}) {
         if (current || busy) return;
         try {
             requireClaude();
             const pair = getPair();
             if (!window.julesApi?.sendMessage) throw new Error('Jules no admite mensajes.');
-            if (!window.confirm('Activar colaboración Claude ↔ Jules para esta sesión (máximo 3 respuestas automáticas)? Solo feedback técnico, sin aprobación de planes, merge ni despliegues. Funciona mientras esta página esté abierta.')) return;
+            const orchestratorState = window.HypenosysTaskOrchestrator?.load?.();
+            const taskContext = JSON.parse(localStorage.getItem('hy_neural_task_context') || 'null');
+            const orchestratorAuthorized = options.orchestrator === true && options.skipConfirm === true &&
+                orchestratorState?.enabled && taskContext?.id &&
+                String(orchestratorState.currentTaskId || '') === String(taskContext.id);
+            if (!orchestratorAuthorized &&
+                !window.confirm('Activar colaboración Claude ↔ Jules para esta sesión (máximo 3 respuestas automáticas)? Solo feedback técnico, sin aprobación de planes, merge ni despliegues. Funciona mientras esta página esté abierta.')) return;
             const state = {
                 pair, seen: new Set(), rounds: 0,
                 leaseKey: 'hy_jules_claude_bridge_lock_' + pair.sessionName.split('/').pop()
