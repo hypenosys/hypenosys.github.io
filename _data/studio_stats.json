@@ -1,12 +1,12 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-11-01T09:18:26.938Z",
+  "computed_at": "2026-11-01T19:18:53.255Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 30,
+    "total_tasks": 38,
     "total_ok": 0,
     "total_ko": 0,
-    "total_uncertain": 0,
+    "total_uncertain": 3,
     "total_obsolete": 0,
     "fixed_found_ratio": 0,
     "verified_ratio": 0
@@ -23,7 +23,7 @@
       "2026-W44": 0
     },
     "bug_rate": 0,
-    "blocker_health": 28,
+    "blocker_health": 32,
     "tag_heatmap": {
       "byok": 2,
       "hais-001": 19,
@@ -44,7 +44,7 @@
       "product": 5,
       "fastapi": 1,
       "docker": 3,
-      "paper": 14,
+      "paper": 22,
       "pydantic": 1,
       "schema": 1,
       "paper-trading": 2,
@@ -54,7 +54,7 @@
       "openai": 1,
       "openrouter": 1,
       "cost-control": 1,
-      "market-data": 1,
+      "market-data": 6,
       "ohlcv": 1,
       "backtesting": 1,
       "synthetic": 1,
@@ -86,7 +86,7 @@
       "validation": 1,
       "go-no-go": 1,
       "multi-tenant": 1,
-      "hais": 11,
+      "hais": 19,
       "estrategia": 11,
       "requisitos": 1,
       "investing": 2,
@@ -101,9 +101,20 @@
       "cartera": 1,
       "auditoria": 1,
       "backtest": 1,
-      "calidad": 1
+      "calidad": 1,
+      "web": 2,
+      "frontend": 1,
+      "simulation": 1,
+      "api": 1,
+      "backend": 1,
+      "auth": 1,
+      "portfolio": 1,
+      "qa": 1,
+      "deploy": 1,
+      "real-data": 5,
+      "read-only": 5
     },
-    "milestone_tasks_remaining": 12,
+    "milestone_tasks_remaining": 20,
     "hall_of_fame_winners": {
       "mvp": {
         "handle": "axlfc",
@@ -270,8 +281,8 @@
         "reprioritizations": 27
       },
       "workload": {
-        "active_tasks": 2,
-        "story_points": 10
+        "active_tasks": 23,
+        "story_points": 86
       }
     },
     "topperh4rley": {
@@ -599,7 +610,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "haopengwang123",
-      "timestamp": "2026-11-01T09:18:27.819Z"
+      "timestamp": "2026-11-01T19:18:54.103Z"
     }
   ]
 }
