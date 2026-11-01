@@ -12,6 +12,8 @@ on:
       - 'tests/test_neural_claude_smoke.js'
       - 'tests/test_jules_claude_bridge.js'
       - 'tests/test_jules_task_handoff.js'
+      - 'tests/test_jules_context_actions.js'
+      - '_includes/jules-panel-styles.html'
       - 'tests/test_jules_task_supervisor.js'
       - 'assets/javascript/jules-task-supervisor.js'
       - 'assets/javascript/jules-panel-auth.js'
@@ -40,6 +42,8 @@ on:
       - 'tests/test_neural_claude_smoke.js'
       - 'tests/test_jules_claude_bridge.js'
       - 'tests/test_jules_task_handoff.js'
+      - 'tests/test_jules_context_actions.js'
+      - '_includes/jules-panel-styles.html'
       - 'tests/test_jules_task_supervisor.js'
       - 'assets/javascript/jules-task-supervisor.js'
       - 'assets/javascript/jules-panel-auth.js'
@@ -92,6 +96,8 @@ jobs:
           node --check assets/javascript/jules-claude-bridge.js
           node --check assets/javascript/jules-task-supervisor.js
           node --check assets/javascript/kanban-ui.js
+      - name: Jules panel contextual actions and partial quote safety
+        run: node tests/test_jules_context_actions.js
       - name: AI provider config
         run: node tests/test_api_config.js
       - name: Thinking adapter regressions
