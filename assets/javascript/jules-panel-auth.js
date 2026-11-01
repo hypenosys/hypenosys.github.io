@@ -275,11 +275,19 @@ window.prefillTaskFromHandoff = async function(task, handoff = {}) {
         if (window.JulesPanelState._handoffRepoUnconfirmed) {
             showToast('Selecciona explícitamente el repositorio para este primer mensaje a Jules.', 'amber');
         }
+        let sourceSelectionFailed = false;
         if (canonicalRepo && typeof window.selectRepo === 'function') {
             // Pin target before loading branches, including during background refresh.
             window.JulesPanelState.handoffTargetRepo = canonicalRepo;
             window.JulesPanelState.handoffTargetBranch = targetBranch;
-            await window.selectRepo(canonicalRepo);
+            try {
+                await window.selectRepo(canonicalRepo);
+                if (!window.JulesPanelState.activeRepo) sourceSelectionFailed = true;
+            } catch (error) {
+                sourceSelectionFailed = true;
+                showToast('No se pudo verificar el repositorio de Jules. El mensaje permanece como borrador.', 'amber');
+                console.warn('[Jules Handoff] Source selection unavailable', error.message);
+            }
         }
 
         const select = $('branch-sel');
@@ -297,7 +305,7 @@ window.prefillTaskFromHandoff = async function(task, handoff = {}) {
             }
         }
 
-        window.JulesPanelState._handoffBranchBlocked = !!(canonicalRepo && !branchReady);
+        window.JulesPanelState._handoffBranchBlocked = !!(canonicalRepo && (!branchReady || sourceSelectionFailed));
         if (launchBtn && branchReady) {
             launchBtn.disabled = false;
             launchBtn.title = '';
