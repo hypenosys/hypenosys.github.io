@@ -1324,18 +1324,27 @@ window.refreshActivities = async function(sessionId) {
 }
 
 window.getLinkedJulesSessionId = function() {
+    // In the Jules workspace the explicitly selected Jules session is canonical.
+    // Do not let a stale Claude linkage override the session the user is viewing.
+    if (window.NeuralWorkspaceState?.activeMode === 'jules') {
+        const activeJulesId = window.NeuralWorkspaceState?.activeJulesSessionId || localStorage.getItem('hy_neural_session_id');
+        if (activeJulesId) return activeJulesId.replace('sessions/', '');
+    }
+
     const claudeId = localStorage.getItem('hy_active_claude_session_id');
     if (claudeId) {
-        // First check in session metadata (new unified way)
-        const sessions = JSON.parse(localStorage.getItem('claude_chat_sessions') || '[]');
-        const current = sessions.find(s => s.id === claudeId);
+        const storedSessions = JSON.parse(localStorage.getItem('claude_chat_sessions') || '[]');
+        const current = storedSessions.find(s => s.id === claudeId);
         if (current) {
-            return window.resolveLinkedJulesId(current);
+            const linkedId = window.resolveLinkedJulesId(current);
+            if (linkedId) return linkedId.replace('sessions/', '');
         }
-        // Fallback to legacy mapping
-        return localStorage.getItem('hy_neural_session_id_' + claudeId) || localStorage.getItem('hy_neural_session_id');
+        const legacyId = localStorage.getItem('hy_neural_session_id_' + claudeId) || localStorage.getItem('hy_neural_session_id');
+        return legacyId ? legacyId.replace('sessions/', '') : null;
     }
-    return localStorage.getItem('hy_neural_session_id');
+
+    const fallbackId = localStorage.getItem('hy_neural_session_id');
+    return fallbackId ? fallbackId.replace('sessions/', '') : null;
 }
 
 window.exportSessionToMarkdown = function(session, activities) {

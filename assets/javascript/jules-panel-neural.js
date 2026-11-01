@@ -360,6 +360,7 @@ window.selectLinkedClaudeConversation = function(conversationId, options = {}) {
 window.selectLinkedJulesSession = function(julesSessionId, options = {}) {
     console.log("[Neural Workspace] Selecting Jules session:", julesSessionId);
     const cleanJulesId = julesSessionId ? julesSessionId.replace('sessions/', '') : null;
+    window.linkedHistoryLoadRevision++;
     window.NeuralWorkspaceState.activeJulesSessionId = cleanJulesId;
 
     window.persistNeuralWorkspaceState();
@@ -2178,6 +2179,35 @@ window.resolveLinkedJulesId = function(conversation) {
            localStorage.getItem('hy_neural_session_id_' + conversation.id);
 }
 
+window.extractJulesActivityText = function(value) {
+    if (value == null) return '';
+    if (typeof value === 'string') return window.decodeHtmlEntities(value);
+    if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+
+    if (Array.isArray(value)) {
+        return value.map(item => {
+            if (typeof item === 'string') return item;
+            if (!item || typeof item !== 'object') return '';
+            return item.text || item.content || item.message || item.value || '';
+        }).filter(Boolean).join('\n');
+    }
+
+    if (typeof value === 'object') {
+        return window.extractJulesActivityText(
+            value.text ??
+            value.content ??
+            value.message ??
+            value.agentMessage ??
+            value.userMessage ??
+            value.description ??
+            value.value ??
+            ''
+        );
+    }
+
+    return '';
+};
+
 window.normalizeJulesActivity = function(raw, sessionId) {
     if (!raw) return null;
 
@@ -2205,9 +2235,16 @@ window.normalizeJulesActivity = function(raw, sessionId) {
     }
     act.originator = originator;
 
-    // Ensure description / content mapping - DECODED & RAW (not escaped twice)
-    const contentText = act.description || act.content || act.text || '';
-    act.description = window.decodeHtmlEntities(contentText);
+    // Ensure description / content mapping across Jules API activity/message/event shapes.
+    const contentText =
+        act.description ??
+        act.content ??
+        act.text ??
+        act.message ??
+        act.agentMessage ??
+        act.userMessage ??
+        '';
+    act.description = window.extractJulesActivityText(contentText);
 
     // Normalize userMessaged / agentMessaged from generic message/role shapes
     if (originator === 'user' && !act.userMessaged) {
@@ -2215,8 +2252,8 @@ window.normalizeJulesActivity = function(raw, sessionId) {
     } else if (originator === 'agent' && !act.agentMessaged) {
         act.agentMessaged = { agentMessage: act.description };
     } else {
-        if (act.userMessaged) act.userMessaged.userMessage = window.decodeHtmlEntities(act.userMessaged.userMessage || '');
-        if (act.agentMessaged) act.agentMessaged.agentMessage = window.decodeHtmlEntities(act.agentMessaged.agentMessage || '');
+        if (act.userMessaged) act.userMessaged.userMessage = window.extractJulesActivityText(act.userMessaged.userMessage);
+        if (act.agentMessaged) act.agentMessaged.agentMessage = window.extractJulesActivityText(act.agentMessaged.agentMessage);
     }
 
     if (act.progressUpdated) {
@@ -2601,9 +2638,14 @@ window.loadAndRenderJulesSession = async function(sid, forceScroll = false) {
             return;
         }
 
-        const currentJulesSid = window.getLinkedJulesSessionId();
-        if (currentJulesSid !== cleanSid) {
-            console.log("[Jules History] Stale request discarded (active Jules ID changed)");
+        const currentJulesSid = (
+            window.NeuralWorkspaceState?.activeMode === 'jules'
+                ? window.NeuralWorkspaceState?.activeJulesSessionId
+                : window.getLinkedJulesSessionId()
+        );
+        const cleanCurrentJulesSid = currentJulesSid ? currentJulesSid.replace('sessions/', '') : '';
+        if (cleanCurrentJulesSid !== cleanSid) {
+            console.log("[Jules History] Stale request discarded (active Jules ID changed)", cleanCurrentJulesSid, cleanSid);
             return;
         }
 
