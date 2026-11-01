@@ -135,6 +135,11 @@ permalink: /chat/neural/
             </button>
         </div>
 
+        <!-- Selected multi-message handoff (explicit user action, never automatic send) -->
+        <div id="neural-selected-message-toolbar" class="px-4 py-2 flex flex-wrap items-center gap-3 border-b border-[#44475a]/30 bg-[#1e1f29]/70">
+            <span id="neural-selected-message-count" class="text-xs text-[#bd93f9]">0 mensajes seleccionados</span>
+            <button type="button" class="text-xs px-3 py-2 rounded-lg border border-[#bd93f9]/40 text-[#bd93f9]" onclick="window.prepareSelectedNeuralMessagesForJules()">Preparar selección en Jules</button>
+        </div>
         <!-- Chat History -->
         <div id="chat-messages" class="chat-container flex-grow p-6 space-y-6 scroll-smooth">
             <!-- Initial state -->
@@ -391,10 +396,10 @@ permalink: /chat/neural/
 <script src="/assets/javascript/jules-docs-bridge.js"></script>
 <script src="/assets/javascript/jules-svn-bridge.js"></script>
 <script src="/assets/javascript/jules-exec-bridge.js"></script>
-<script src="/assets/javascript/neural-chat-ui.js"></script>
+<script src="/assets/javascript/neural-chat-ui.js?v=jules-message-select-v1"></script>
 <script src="/assets/javascript/neural-chat-sessions.js"></script>
 <script src="/assets/javascript/neural-chat-profiles.js?v=anthropic-workspace-20261101-v1"></script>
-<script src="/assets/javascript/neural-chat-jules.js"></script>
+<script src="/assets/javascript/neural-chat-jules.js?v=jules-message-select-v1"></script>
 <script src="/assets/javascript/neural-chat-send.js?v=nim-direct-v1"></script>
 <script src="/assets/javascript/neural-chat-activity.js"></script>
 <script src="/assets/javascript/jules-claude-bridge.js?v=claude-jules-bridge-v1"></script>
