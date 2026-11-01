@@ -53,5 +53,22 @@ vm.runInContext(script,context);
     await context.JulesTaskSupervisor.archive();
     assert.equal(log.length,2);
     assert.deepEqual(log[1],['archive',72]);
+
+    // Lifecycle transitions require fresh Jules status and explicit approval.
+    store.set('hy_neural_task_context',JSON.stringify(savedTask));
+    context.NeuralWorkspaceState.activeJulesSessionId='js-123';
+    context.julesApi.getSession=async()=>({name:'sessions/js-123',state:'COMPLETED'});
+    approval=false;
+    await context.JulesTaskSupervisor.applySuggestedLifecycle();
+    assert.equal(log.length,2,'no change without lifecycle approval');
+    approval=true;
+    await context.JulesTaskSupervisor.applySuggestedLifecycle();
+    assert.equal(log.length,3);
+    assert.equal(log[2][2].estado,'REVIEW','COMPLETED goes to REVIEW, never directly DONE');
+    context.julesApi.getSession=async()=>({name:'sessions/js-123',state:'IN_PROGRESS'});
+    savedTask.blocked_by=[88];
+    await context.JulesTaskSupervisor.applySuggestedLifecycle();
+    assert.equal(log.length,3,'unresolved blockers prevent moving to WORKING');
+
     console.log('HAIS task supervisor approval, organization isolation and linked session checks passed');
 })().catch(e=>{console.error(e);process.exitCode=1});
