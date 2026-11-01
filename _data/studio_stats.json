@@ -1,14 +1,14 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-11-01T09:15:35.540Z",
+  "computed_at": "2026-11-01T09:15:46.195Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 64,
-    "total_ok": 64,
+    "total_tasks": 65,
+    "total_ok": 65,
     "total_ko": 0,
     "total_uncertain": 0,
     "total_obsolete": 0,
-    "fixed_found_ratio": 1.1228,
+    "fixed_found_ratio": 1.1207,
     "verified_ratio": 1
   },
   "group": {
@@ -521,7 +521,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "haopengwang123",
-      "timestamp": "2026-11-01T09:15:36.419Z"
+      "timestamp": "2026-11-01T09:15:46.967Z"
     }
   ]
 }
