@@ -38,6 +38,11 @@ jobs:
           node tests/test_neural_claude_smoke.js
           node tests/test_anthropic_pages_proxy.js
           node tests/test_jules_claude_bridge.js
+          node tests/test_jules_task_handoff.js
+          node --check assets/javascript/jules-panel-auth.js
+          node --check assets/javascript/jules-panel-neural.js
+          node --check assets/javascript/neural-chat-jules.js
+          node --check assets/javascript/neural-chat-ui.js
 
       - name: Build with Jekyll
         run: bundle exec jekyll build --source . --destination ./_site --baseurl ""
