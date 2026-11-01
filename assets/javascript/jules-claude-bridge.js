@@ -77,9 +77,9 @@
 
     function redactSensitive(input) {
         return String(input || '')
-            .replace(/\\b(?:sk-ant-[A-Za-z0-9_-]{12,}|gh[pousr]_[A-Za-z0-9_-]{20,}|github_pat_[A-Za-z0-9_-]{20,}|nvapi-[A-Za-z0-9_-]{12,}|AIza[A-Za-z0-9_-]{20,})\\b/g, '[REDACTED]')
-            .replace(/(Authorization\\s*:\\s*Bearer\\s+)\\S+/gi, '$1[REDACTED]')
-            .replace(/((?:api[_-]?key|access[_-]?token|client[_-]?secret|password)\\s*[:=]\\s*["']?)[A-Za-z0-9_./+-]{12,}/gi, '$1[REDACTED]');
+            .replace(/\b(?:sk-ant-[A-Za-z0-9_-]{12,}|gh[pousr]_[A-Za-z0-9_-]{20,}|github_pat_[A-Za-z0-9_-]{20,}|nvapi-[A-Za-z0-9_-]{12,}|AIza[A-Za-z0-9_-]{20,})\b/g, '[REDACTED]')
+            .replace(/(Authorization\s*:\s*Bearer\s+)\S+/gi, '$1[REDACTED]')
+            .replace(/((?:api[_-]?key|access[_-]?token|client[_-]?secret|password)\s*[:=]\s*["']?)[A-Za-z0-9_./+-]{12,}/gi, '$1[REDACTED]');
     }
 
     function activityText(a) {
