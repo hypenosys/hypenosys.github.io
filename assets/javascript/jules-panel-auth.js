@@ -881,6 +881,7 @@ window.launchSession = async function(options = {}) {
                 window.JulesClaudeBridge?.start?.({
                     orchestrator: !!options.orchestrator,
                     skipConfirm: !!options.orchestrator,
+                    explicitLaunch: true,
                     supervisorMode: 'claude'
                 });
             }, 350);
