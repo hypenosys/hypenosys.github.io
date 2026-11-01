@@ -1011,7 +1011,11 @@ permalink: /jules-panel/
 <script src="{{ '/assets/javascript/jules-panel-kanban.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/jules-panel-hub.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/jules-panel-wiki.js' | relative_url }}"></script>
-<script src="{{ '/assets/javascript/neural-provider-client.js' | relative_url }}?v=nim-relay-v1"></script>
+<!-- Claude native Messages API: capabilities and adapters must load before provider client. -->
+<script src="{{ '/assets/javascript/neural-thinking-capabilities.js' | relative_url }}?v=claude-jules-native-20261101"></script>
+<script src="{{ '/assets/javascript/neural-thinking-adapters.js' | relative_url }}?v=claude-jules-native-20261101"></script>
+<script src="{{ '/assets/javascript/neural-thinking-parser.js' | relative_url }}?v=claude-jules-native-20261101"></script>
+<script src="{{ '/assets/javascript/neural-provider-client.js' | relative_url }}?v=claude-jules-native-20261101"></script>
 <script src="{{ '/assets/javascript/neural-chat-core.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/neural-chat-catalogs.js' | relative_url }}?v=nim-relay-v1"></script>
 <script src="{{ '/assets/javascript/hypenosys-docs-client.js' | relative_url }}"></script>
