@@ -419,7 +419,7 @@
       "descripcion": "Auditar y consolidar bootstrap FastAPI de HAIS ya preparado en PR #1; ejecutar health, capabilities y paper/estimate en Docker; documentar configuración local sin pretender motor de trading real.",
       "tema_principal": "HAIS-001 / product",
       "prioridad": "High",
-      "estado": "Pending",
+      "estado": "Working",
       "completitud": 0,
       "task_type": "test",
       "resuelto_por": "",
@@ -2558,8 +2558,13 @@
       "jules_session": null
     }
   ],
-  "last_updated_by": "haopengwang123",
+  "last_updated_by": "Sistema",
   "_audit_log": [
+    {
+      "action": "chore: actualizar estado tarea #900010 → Working",
+      "user": "haopengwang123",
+      "timestamp": "2026-11-01T09:15:55.398Z"
+    },
     {
       "action": "chore: archivar tarea #900006",
       "user": "haopengwang123",
