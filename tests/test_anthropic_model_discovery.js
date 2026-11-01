@@ -30,7 +30,7 @@ async function main() {
     assert.deepEqual(Array.from(models, m => m.id), ['claude-sonnet-4-6', 'claude-opus-4-6']);
     assert.ok(models.every(m => m.kind === 'chat'));
     assert.equal(calls.length, 2);
-    assert.equal(calls[0].url.pathname, '/v1/models');
+    assert.equal(calls[0].url.pathname, '/api/ai/anthropic/models');
     assert.equal(calls[0].url.searchParams.get('limit'), '100');
     assert.equal(calls[1].url.searchParams.get('after_id'), 'claude-sonnet-4-6');
     assert.equal(calls[0].options.headers.Authorization, 'Bearer TEST-KEY');
