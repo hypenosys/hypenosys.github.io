@@ -402,6 +402,7 @@ permalink: /chat/neural/
 <script src="/assets/javascript/neural-chat-jules.js?v=jules-message-select-v1"></script>
 <script src="/assets/javascript/neural-chat-send.js?v=nim-direct-v1"></script>
 <script src="/assets/javascript/neural-chat-activity.js"></script>
+<script src="/assets/javascript/hypenosys-task-orchestrator.js?v=task-orchestrator-20261101-v1"></script>
 <script src="/assets/javascript/jules-claude-bridge.js?v=claude-jules-bridge-v1"></script>
 
 <script>
@@ -421,7 +422,10 @@ permalink: /chat/neural/
         const fromDashboard = urlParams.get('from') === 'dashboard'
             && localStorage.getItem('hy_neural_entry_point') === 'dashboard-claude'
             && isNewTaskSent;
-        if (fromDashboard) {
+        const fromOrchestrator = urlParams.get('from') === 'orchestrator'
+            && window.HypenosysTaskOrchestrator?.isEnabled?.()
+            && isNewTaskSent;
+        if (fromDashboard || fromOrchestrator) {
             localStorage.removeItem('hy_neural_entry_point');
             // Guard against an old Jules-mode selection, without triggering any API call.
             window.currentSendMode = 'claude';
@@ -485,16 +489,16 @@ permalink: /chat/neural/
                     localStorage.removeItem('hy_neural_new_task_sent');
                 }
                 const currentSession = window.sessions.find(s => s.id === window.currentSessionId);
-                if (fromDashboard || (currentSession && currentSession.messages.length > 0) || !window.currentSessionId) {
+                if (fromDashboard || fromOrchestrator || (currentSession && currentSession.messages.length > 0) || !window.currentSessionId) {
                     createNewSession();
                 }
 
-                if (fromDashboard) {
+                if (fromDashboard || fromOrchestrator) {
                     const dedicated = window.sessions.find(s => s.id === window.currentSessionId);
                     if (dedicated) {
                         dedicated.title = '#' + task.id + ' · ' + String(task.title || task.titulo || 'Tarea').slice(0, 90);
                         dedicated.task_ref = String(task.id);
-                        dedicated.metadata = { ...(dedicated.metadata || {}), origin: 'dashboard',
+                        dedicated.metadata = { ...(dedicated.metadata || {}), origin: fromOrchestrator ? 'orchestrator' : 'dashboard',
                             dashboardTaskId: String(task.id),
                             taskRepository: task.repository || task.repo || '',
                             taskBranch: task.rama || task.branch || '' };
@@ -576,7 +580,7 @@ permalink: /chat/neural/
 
                 // Dashboard robot is strictly a Claude analysis entry; Jules is
                 // only engaged by an explicit subsequent action.
-                if (fromDashboard || (pendingPrompt && pendingPrompt.includes('FRAGMENTO'))) {
+                if (fromDashboard || fromOrchestrator || (pendingPrompt && pendingPrompt.includes('FRAGMENTO'))) {
                     setSendMode('claude');
                 }
 
@@ -620,6 +624,17 @@ permalink: /chat/neural/
         adaptUI(config);
         setupProfileSelector();
         setupApiModalEnhancements();
+
+        if (fromOrchestrator && task?.id && window.HypenosysTaskOrchestrator?.isEnabled?.()) {
+            const orchestratedId = String(localStorage.getItem('hy_orchestrator_auto_task_id') || '');
+            const currentId = String(task.id);
+            const sentKey = 'hy_orchestrator_claude_sent_' + currentId;
+            if (orchestratedId === currentId && localStorage.getItem(sentKey) !== 'true' && window.chatInput?.value.trim()) {
+                localStorage.setItem(sentKey, 'true');
+                window.HypenosysTaskOrchestrator.setPhase('claude-running');
+                setTimeout(() => { void window.sendMessage(); }, 250);
+            }
+        }
 
         // Initialize Docs Toggle
         const docsBadge = document.getElementById('docs-status-badge');

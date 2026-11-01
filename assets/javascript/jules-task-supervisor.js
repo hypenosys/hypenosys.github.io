@@ -207,6 +207,7 @@
       window.taskEngine?.notifyUpdate?.();
       message('Tarea #' + task.id + ' completada por Jules → OK (Kanban).');
       if (window.refreshDashboard) await window.refreshDashboard();
+      await window.HypenosysTaskOrchestrator?.handleTaskCompleted?.(task.id);
       return true;
     } catch (error) {
       message('No se pudo sincronizar la finalización: ' + error.message);

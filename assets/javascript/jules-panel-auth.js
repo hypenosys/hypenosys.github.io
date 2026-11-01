@@ -331,6 +331,33 @@ window.prefillTaskFromHandoff = async function(task, handoff = {}) {
             }
         }
         showToast('Borrador listo en Nueva Tarea Jules (revisión supervisada).', 'green');
+
+        const orchestrator = window.HypenosysTaskOrchestrator;
+        const orchestratorState = orchestrator?.load?.();
+        const isOrchestratedTask = orchestratorState?.enabled && contextTask?.id &&
+            String(orchestratorState.currentTaskId || '') === String(contextTask.id) &&
+            orchestratorState.phase === 'handoff-jules';
+
+        if (isOrchestratedTask && canonicalRepo && branchReady && !sourceSelectionFailed &&
+            !window.JulesPanelState._handoffBranchBlocked && !window.JulesPanelState._handoffRepoUnconfirmed) {
+            if ($('opt-auto')) $('opt-auto').classList.add('active');
+            if ($('opt-supervised')) $('opt-supervised').classList.remove('active');
+            if ($('opt-review')) $('opt-review').classList.remove('active');
+            orchestrator.setPhase('jules-launch');
+            const createdSid = await window.launchSession({
+                promptOverride: formattedPrompt,
+                fromChat: true,
+                orchestrator: true
+            });
+            if (createdSid) {
+                orchestrator.setPhase('jules-running');
+                setTimeout(() => {
+                    window.JulesClaudeBridge?.start?.({ orchestrator: true, skipConfirm: true });
+                }, 300);
+            } else {
+                orchestrator.patch({ phase: 'error', lastError: 'No se pudo crear la sesión Jules.' });
+            }
+        }
     }
 
     // Consume a handoff once. Reloads must not send or duplicate a task.

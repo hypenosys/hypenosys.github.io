@@ -44,6 +44,8 @@ jobs:
           node tests/test_jules_context_actions.js
           node tests/test_jules_task_supervisor.js
           node tests/test_neural_panel_workspace.js
+          node tests/test_task_orchestrator.js
+          node --check assets/javascript/hypenosys-task-orchestrator.js
           node --check assets/javascript/neural-panel-workspace.js
           node --check assets/javascript/jules-task-supervisor.js
           node --check assets/javascript/jules-claude-bridge.js
