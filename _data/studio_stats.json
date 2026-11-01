@@ -1,15 +1,15 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-11-01T19:52:25.705Z",
+  "computed_at": "2026-11-01T19:54:30.608Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 39,
-    "total_ok": 0,
+    "total_ok": 1,
     "total_ko": 0,
     "total_uncertain": 3,
     "total_obsolete": 0,
-    "fixed_found_ratio": 0,
-    "verified_ratio": 0
+    "fixed_found_ratio": 0.0256,
+    "verified_ratio": 0.0256
   },
   "group": {
     "velocity_trend": {
@@ -20,7 +20,7 @@
       "2026-W41": 0,
       "2026-W42": 0,
       "2026-W43": 0,
-      "2026-W44": 0
+      "2026-W44": 1
     },
     "bug_rate": 0,
     "blocker_health": 32,
@@ -44,7 +44,7 @@
       "product": 5,
       "fastapi": 1,
       "docker": 3,
-      "paper": 23,
+      "paper": 22,
       "pydantic": 1,
       "schema": 1,
       "paper-trading": 2,
@@ -86,9 +86,8 @@
       "validation": 1,
       "go-no-go": 1,
       "multi-tenant": 1,
-      "hais": 20,
-      "estrategia": 11,
-      "requisitos": 1,
+      "hais": 19,
+      "estrategia": 10,
       "investing": 2,
       "senales": 2,
       "precios": 2,
@@ -117,7 +116,7 @@
       "plus500": 1,
       "minimum-mocks": 1
     },
-    "milestone_tasks_remaining": 21,
+    "milestone_tasks_remaining": 20,
     "hall_of_fame_winners": {
       "mvp": {
         "handle": "axlfc",
@@ -613,7 +612,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "haopengwang123",
-      "timestamp": "2026-11-01T19:52:26.475Z"
+      "timestamp": "2026-11-01T19:54:31.464Z"
     }
   ]
 }
