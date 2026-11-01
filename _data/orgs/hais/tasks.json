@@ -310,7 +310,7 @@
       "descripcion": "Implementar o demostrar scheduler de DAG: blocked_by usa IDs numéricos 900001–900024; bloquear tareas con dependencias Pending/Failed y permitir solo tras Completed validado. Tratar ciclos, duplicados y reintentos.",
       "tema_principal": "HAIS-001 / platform",
       "prioridad": "High",
-      "estado": "Pending",
+      "estado": "Working",
       "completitud": 0,
       "task_type": "feature",
       "resuelto_por": "",
@@ -2715,6 +2715,11 @@
   ],
   "last_updated_by": "Sistema",
   "_audit_log": [
+    {
+      "action": "chore: actualizar estado tarea #900007 → Working",
+      "user": "haopengwang123",
+      "timestamp": "2026-11-01T09:12:55.731Z"
+    },
     {
       "action": "chore: actualizar estado tarea #900006 → OK",
       "user": "haopengwang123",
