@@ -13,6 +13,7 @@ const kanban = read('assets/javascript/kanban-ui.js');
 const neural = read('assets/javascript/jules-panel-neural.js');
 const core = read('assets/javascript/neural-chat-core.js');
 const standalone = read('assets/javascript/neural-chat-jules.js');
+const claudePage = read('pages/claude-chat.html');
 const selectorSource = auth.slice(auth.indexOf('window.resizeJulesDraftTextarea ='),auth.indexOf('window.handleUrlParams ='));
 assert.ok(selectorSource.length > 2500);
 assert.match(dashboard, /window\._openTaskInJules/);
@@ -28,6 +29,12 @@ assert.match(neural,/window\.setJulesComposerDraft/);
 assert.match(core,/fromJules \? 'user'/);
 assert.match(standalone,/claude_conversation_id/);
 assert.match(standalone,/linked_jules_session_id/);
+assert.match(claudePage,/window\._pendingDashboardClaudeAutoSend/,
+    'dashboard robot handoff must schedule Claude analysis after initialization');
+assert.match(claudePage,/dashboardAutoSentTaskId/,
+    'dashboard auto-analysis must be idempotent per dedicated task session');
+assert.match(claudePage,/window\.sendMessage\(\)/,
+    'dashboard handoff must actually dispatch the prepared Claude prompt');
 assert.match(auth,/const handoffClaudeId = options\.fromChat\s*\? window\.currentJulesPanelSessionId\s*:\s*pendingClaudeId/,
     'chat launch must prefer the currently visible Claude conversation over stale pending handoff state');
 assert.match(neural,/if \(unique\.length === 0\)[\s\S]*setJulesHistoryState\('empty'\)/,
