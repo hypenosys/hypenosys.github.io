@@ -680,7 +680,7 @@
       "descripcion": "Crear gateway server-side para OpenAI/OpenRouter con secretos por organización, redacción de logs, timeout, retry con backoff, presupuestos en EUR y medición de tokens; proveedor mock para CI.",
       "tema_principal": "HAIS-001 / product",
       "prioridad": "High",
-      "estado": "Pending",
+      "estado": "Working",
       "completitud": 0,
       "task_type": "feature",
       "resuelto_por": "",
@@ -2560,6 +2560,11 @@
   ],
   "last_updated_by": "Sistema",
   "_audit_log": [
+    {
+      "action": "chore: actualizar estado tarea #900013 → Working",
+      "user": "haopengwang123",
+      "timestamp": "2026-11-01T09:16:50.730Z"
+    },
     {
       "action": "chore: actualizar estado tarea #900011 → Working",
       "user": "haopengwang123",
