@@ -21,12 +21,12 @@ window.NeuralThinkingAdapters = (function() {
 
             const headers = {
                 'Content-Type': 'application/json',
-                'anthropic-version': '2023-06-01',
-                'anthropic-dangerous-direct-browser-access': 'true'
+                'anthropic-version': '2026-10-21'
             };
-            if (apiKey) {
-                headers['x-api-key'] = apiKey;
+            if (!apiKey || !apiKey.trim()) {
+                throw new Error('Introduce una API key de Anthropic en API Config.');
             }
+            headers['Authorization'] = `Bearer ${apiKey.trim()}`;
 
             const body = {
                 model: model,
