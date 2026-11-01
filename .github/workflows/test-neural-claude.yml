@@ -10,6 +10,8 @@ on:
       - '_includes/api_config_modal.html'
       - 'tests/test_anthropic_model_discovery.js'
       - 'tests/test_neural_claude_smoke.js'
+      - 'tests/test_anthropic_pages_proxy.js'
+      - 'functions/api/ai/anthropic/**'
       - 'tests/test_thinking_block*.js'
       - '.github/workflows/test-neural-claude.yml'
   push:
@@ -21,6 +23,8 @@ on:
       - '_includes/api_config_modal.html'
       - 'tests/test_anthropic_model_discovery.js'
       - 'tests/test_neural_claude_smoke.js'
+      - 'tests/test_anthropic_pages_proxy.js'
+      - 'functions/api/ai/anthropic/**'
       - 'tests/test_thinking_block*.js'
       - '.github/workflows/test-neural-claude.yml'
   workflow_dispatch:
@@ -40,6 +44,8 @@ jobs:
         run: node tests/test_anthropic_model_discovery.js
       - name: Claude native Messages and SSE (mocked)
         run: node tests/test_neural_claude_smoke.js
+      - name: Cloudflare Anthropic relay contracts (mocked)
+        run: node tests/test_anthropic_pages_proxy.js
       - name: AI provider config
         run: node tests/test_api_config.js
       - name: Thinking adapter regressions
