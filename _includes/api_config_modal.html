@@ -56,6 +56,13 @@
                     </div>
                 </div>
 
+                <div id="group-anthropic-workspace" class="form-group" style="display: none;">
+                    <label for="ai_anthropic_workspace_id" class="text-gray-400 small font-weight-bold uppercase">Anthropic Workspace ID (opcional)</label>
+                    <input id="ai_anthropic_workspace_id" type="text" class="form-control bg-dark text-white border-purple"
+                           placeholder="wrkspc_... (solo para claves no vinculadas a un workspace)" autocomplete="off">
+                    <small class="text-gray-400">Indícalo si tu API key de Console no está vinculada a un workspace específico.</small>
+                </div>
+
                 <div id="group-anthropic-test" class="form-group" style="display: none;">
                     <button id="btn-test-anthropic" type="button" class="btn btn-outline-info btn-sm"
                             onclick="window.ollamaUI.verifyAnthropicConnection()">
@@ -65,8 +72,8 @@
                         Comprueba la API key, descubre modelos y solicita una respuesta real. Puede generar un coste mínimo.
                     </div>
                     <div class="small text-warning mt-1">
-                        BYOK desde el navegador: la clave queda accesible al JavaScript de esta web.
-                        No uses una clave compartida de producción. Con Anthropic ZDR se requiere proxy backend.
+                        BYOK: la clave sigue accesible al JavaScript de esta web y se envía al relay de Cloudflare
+                        solo para esta petición. No uses una clave compartida de producción.
                     </div>
                 </div>
 
