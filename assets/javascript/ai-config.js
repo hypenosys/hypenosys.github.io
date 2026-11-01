@@ -170,8 +170,8 @@ async function discoverModels({ provider, baseUrl, apiKey }) {
                 throw new Error('Introduce una API Key de Anthropic para descubrir modelos.');
             }
 
-            // Current Claude API: Bearer authentication. Browser CORS is not supported
-            // for ZDR organizations, which must use an authenticated backend proxy.
+            // BYOK relay runs on the same origin (Cloudflare Pages Function).
+            // The API key is sent only to our fixed Anthropic relay, not cross-origin by the browser.
             const headers = {
                 'Authorization': `Bearer ${apiKey.trim()}`,
                 'anthropic-version': '2026-10-21'
@@ -180,7 +180,7 @@ async function discoverModels({ provider, baseUrl, apiKey }) {
             let afterId = '';
 
             for (let page = 0; page < 50; page++) {
-                const url = new URL(`${cleanBaseUrl}/models`);
+                const url = new URL('/api/ai/anthropic/models', window.location?.origin || 'http://localhost');
                 url.searchParams.set('limit', '100');
                 if (afterId) url.searchParams.set('after_id', afterId);
 
@@ -193,6 +193,8 @@ async function discoverModels({ provider, baseUrl, apiKey }) {
                     const reason = res.status === 401 ? 'API key no válida.'
                         : res.status === 403 ? 'La API key no tiene permisos.'
                         : res.status === 429 ? 'Límite de peticiones alcanzado.'
+                        : res.status === 404 ? 'El relay de Cloudflare Pages no está desplegado (HTTP 404).'
+                        : res.status === 502 ? 'Cloudflare no pudo contactar con Anthropic.'
                         : 'No se pudo recuperar el catálogo.';
                     throw new Error(`Anthropic API error ${res.status}: ${reason}`);
                 }
@@ -239,7 +241,7 @@ async function discoverModels({ provider, baseUrl, apiKey }) {
     } catch (err) {
         if (err.name === 'TypeError' || err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
             let msg = provider === 'anthropic'
-                ? 'Sin respuesta HTTP de Anthropic: posible bloqueo CORS, problema de red o política del navegador. Si tu organización usa ZDR, necesitas un proxy backend.'
+                ? 'Sin respuesta del relay de Hypenosys: comprueba la conexión y que Cloudflare Pages Functions esté desplegado.'
                 : 'Error de conexión o red (Posible CORS o Mixed Content).';
             if (cleanBaseUrl.startsWith('http://') && typeof window !== 'undefined' && window.location?.protocol === 'https:') {
                 msg += ' Estás accediendo vía HTTPS e intentando llamar a un endpoint HTTP.';
@@ -690,7 +692,7 @@ class OllamaUI {
             modelEl.value = selected.id;
             status.textContent = `1/2 · ${models.length} modelos. 2/2 · Probando respuesta de ${selected.id}...`;
 
-            const response = await fetch('https://api.anthropic.com/v1/messages', {
+            const response = await fetch('/api/ai/anthropic/messages', {
                 method: 'POST',
                 mode: 'cors',
                 credentials: 'omit',
@@ -711,6 +713,8 @@ class OllamaUI {
                     : response.status === 403 ? 'Sin permisos de acceso'
                     : response.status === 404 ? 'Modelo no disponible'
                     : response.status === 429 ? 'Límite de peticiones o cuota'
+                    : response.status === 502 ? 'El relay no puede alcanzar Anthropic'
+                    : response.status === 404 ? 'Relay de Cloudflare no desplegado'
                     : 'Petición rechazada';
                 throw new Error(`HTTP ${response.status}: ${reason}.`);
             }
@@ -722,7 +726,7 @@ class OllamaUI {
         } catch (e) {
             const network = e instanceof TypeError || /Failed to fetch|NetworkError/i.test(e.message || '');
             status.textContent = network
-                ? '✗ Sin respuesta HTTP (red/CORS). Las organizaciones con ZDR necesitan un proxy backend.'
+                ? '✗ No se pudo contactar con el relay de Hypenosys. Comprueba la conexión y el despliegue Cloudflare Pages Functions.'
                 : `✗ ${String(e.message || 'Error de conexión').replaceAll(key || '\0', '[REDACTED]')}`;
         } finally {
             button.disabled = false;
