@@ -154,7 +154,8 @@ window.restoreNeuralWorkspaceState = function() {
     if (canonicalJulesId) {
         window.NeuralWorkspaceState.activeJulesSessionId = canonicalJulesId;
     } else {
-        window.NeuralWorkspaceState.activeJulesSessionId = savedJulesId || null;
+        // Never associate a new/unlinked Claude chat with a stale global Jules ID.
+        window.NeuralWorkspaceState.activeJulesSessionId = claudeSession ? null : (savedJulesId || null);
     }
 
     window.persistNeuralWorkspaceState();
@@ -534,6 +535,9 @@ window.createNewClaudeFromJulesSession = function(julesSessionId) {
     saveJulesPanelSessions();
 
     localStorage.setItem('hy_neural_session_id_' + newSession.id, cleanJulesId);
+    localStorage.setItem('hy_active_claude_session_id', newSession.id);
+    window.currentJulesPanelSessionId = newSession.id;
+    window.NeuralWorkspaceState.activeClaudeConversationId = newSession.id;
 
     window.selectLinkedJulesSession(cleanJulesId);
     showToast("Conversación Claude vinculada creada", "green");
@@ -1411,7 +1415,9 @@ window.renderChatV2Messages = function() {
                     : '') +
             '</div>';
 
-        const renderedContent = isAssistant && window.marked ? marked.parse(msg.content) : window.NeuralChatCore.escapeHtml(msg.content);
+        // Jules' output is externally supplied: do not interpret it as HTML or active Markdown.
+        const renderedContent = isAssistant && !isJules && window.marked
+            ? marked.parse(msg.content) : window.NeuralChatCore.escapeHtml(msg.content);
 
         div.innerHTML =
             '<span class="activity-icon">' + iconHTML + '</span>' +
@@ -2484,6 +2490,7 @@ window.loadAndRenderJulesSession = async function(sid, forceScroll = false) {
 }
 
 window.loadLinkedJulesHistoryForConversation = function(conversation) {
+    window._selectedJulesActivityKeys?.clear();
     window.linkedHistoryLoadRevision++;
     window.julesHistoryLimit = 50; // Reset pagination limit on conversation change
     window.unseenJulesActivitiesCount = 0; // Reset unseen activities count
