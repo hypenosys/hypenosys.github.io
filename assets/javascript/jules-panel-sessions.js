@@ -1315,6 +1315,10 @@ window.refreshActivities = async function(sessionId) {
             }
         });
 
+        if (String(session?.state || '').toUpperCase() === 'COMPLETED') {
+            await window.JulesTaskSupervisor?.syncCompletedFromJules?.(sessionId, session);
+        }
+
         // Broadcast for Neural Chat UI if open
         window.dispatchEvent(new CustomEvent('julesActivitiesUpdated', { detail: { sessionId, activities, session } }));
 
