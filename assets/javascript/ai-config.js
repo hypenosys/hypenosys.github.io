@@ -93,7 +93,7 @@ function getEmbeddingsConfig() {
     };
 }
 
-async function discoverModels({ provider, baseUrl, apiKey }) {
+async function discoverModels({ provider, baseUrl, apiKey, workspaceId = '' }) {
     if (!baseUrl && provider !== 'none') {
         throw new Error('Base URL no provista.');
     }
@@ -176,6 +176,7 @@ async function discoverModels({ provider, baseUrl, apiKey }) {
                 'Authorization': `Bearer ${apiKey.trim()}`,
                 'anthropic-version': '2026-10-21'
             };
+            if (workspaceId?.trim()) headers['anthropic-workspace-id'] = workspaceId.trim();
             const cursors = new Set();
             let afterId = '';
 
@@ -453,6 +454,8 @@ class OllamaUI {
 
         const anthropicTestGroup = document.getElementById('group-anthropic-test');
         if (anthropicTestGroup) anthropicTestGroup.style.display = provider === 'anthropic' ? 'block' : 'none';
+        const workspaceGroup = document.getElementById('group-anthropic-workspace');
+        if (workspaceGroup) workspaceGroup.style.display = provider === 'anthropic' ? 'block' : 'none';
 
         // If embeddings provider is "same_as_main", sync UI if needed
         this.handleEmbedProviderChange();
@@ -655,7 +658,8 @@ class OllamaUI {
         select.innerHTML = '<option>Descubriendo modelos...</option>';
 
         try {
-            const models = await discoverModels({ provider, baseUrl, apiKey });
+            const workspaceId = document.getElementById('ai_anthropic_workspace_id')?.value.trim() || '';
+            const models = await discoverModels({ provider, baseUrl, apiKey, workspaceId });
             this.allDiscoveredModels = models;
             this.renderFilteredModels('chat');
             document.getElementById('group-model-type').style.display = 'block';
@@ -672,6 +676,7 @@ class OllamaUI {
         const provider = document.getElementById('ai_provider')?.value;
         if (provider !== 'anthropic') return;
         const key = document.getElementById('ai_api_key')?.value.trim() || '';
+        const workspaceId = document.getElementById('ai_anthropic_workspace_id')?.value.trim() || '';
         const modelEl = document.getElementById('ai_model');
         const status = document.getElementById('anthropic-test-status');
         const button = document.getElementById('btn-test-anthropic');
@@ -683,7 +688,8 @@ class OllamaUI {
             const models = await discoverModels({
                 provider: 'anthropic',
                 baseUrl: PROVIDER_DEFAULTS.anthropic.baseUrl,
-                apiKey: key
+                apiKey: key,
+                workspaceId
             });
             if (!models.length) throw new Error('La clave ha respondido, pero no hay modelos disponibles.');
             const selected = models.find(m => m.id === modelEl.value.trim())
@@ -692,15 +698,17 @@ class OllamaUI {
             modelEl.value = selected.id;
             status.textContent = `1/2 · ${models.length} modelos. 2/2 · Probando respuesta de ${selected.id}...`;
 
+            const liveHeaders = {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${key}`,
+                'anthropic-version': '2026-10-21'
+            };
+            if (workspaceId) liveHeaders['anthropic-workspace-id'] = workspaceId;
             const response = await fetch('/api/ai/anthropic/messages', {
                 method: 'POST',
                 mode: 'cors',
                 credentials: 'omit',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${key}`,
-                    'anthropic-version': '2026-10-21'
-                },
+                headers: liveHeaders,
                 body: JSON.stringify({
                     model: selected.id,
                     max_tokens: 32,
@@ -898,6 +906,7 @@ class OllamaUI {
             model: document.getElementById('ai_model').value,
             embedding_model: document.getElementById('ai_embedding_model').value,
             api_key: document.getElementById('ai_api_key').value,
+            anthropic_workspace_id: document.getElementById('ai_anthropic_workspace_id')?.value.trim() || '',
             base_url: document.getElementById('ai_base_url').value,
             embed_provider: document.getElementById('ai_embed_provider')?.value || 'same_as_main',
             embed_base_url: document.getElementById('ai_embed_base_url')?.value || '',
