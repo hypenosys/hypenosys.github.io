@@ -1255,11 +1255,23 @@ layout: null
             if (!taskData || !taskData.id || !(taskData.title || taskData.titulo)) {
               throw new Error('No se ha podido recuperar el contenido completo de la tarea.');
             }
-            // Explicit Claude entry: never reuse an unrelated Jules handoff.
+
+            // Navigation itself is idempotent. This protects alternate callers
+            // in addition to the Kanban button's click/touch guard.
+            const launchKey = String(taskData.id);
+            const previousEntry = window._dashboardClaudeEntryGuard;
+            const now = Date.now();
+            if (previousEntry?.taskId === launchKey && now - previousEntry.at < 1500) return;
+            window._dashboardClaudeEntryGuard = { taskId: launchKey, at: now };
+
+            // Explicit Claude entry: never reuse an unrelated Jules handoff,
+            // pending prompt, or cross-task neural thread.
             localStorage.removeItem('hy_jules_handoff');
             localStorage.removeItem('jules_task_payload');
             localStorage.removeItem('hy_pending_claude_handoff_id');
             localStorage.removeItem('hy_handoff_autolink');
+            localStorage.removeItem('hy_neural_pending_prompt');
+            localStorage.removeItem('hy_neural_thread');
             localStorage.setItem('hy_neural_task_context', JSON.stringify(taskData));
             localStorage.setItem('hy_neural_active', 'true');
             localStorage.setItem('hy_neural_new_task_sent', 'true');
