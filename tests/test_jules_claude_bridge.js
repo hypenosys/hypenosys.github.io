@@ -125,6 +125,20 @@ async function test() {
     assert.equal(bridge.getState().enabled,false);
     assert.equal(sentToJules.length,3);
 
-    console.log('Jules ↔ Claude pilot: manual read-only, session matching, dedupe, 3-round limit and native adapter prerequisites verified');
+    const approval = setup();
+    let remoteState = 'AWAITING_PLAN_APPROVAL';
+    approval.context.julesApi.getSession = async () => ({ state: remoteState });
+    await approval.bridge.start();
+    approval.history.push({name:'sessions/123/activities/approval-pending',createTime:'2026-11-01T10:00:15Z',
+        agentMessaged:{agentMessage:'Approve this plan before editing'}});
+    await approval.bridge.pollOnce();
+    assert.equal(approval.sentToJules.length, 0, 'plan approvals must never be automated');
+    assert.equal(approval.requests.length, 0, 'plan approval must pause the model loop');
+    remoteState = 'AWAITING_USER_FEEDBACK';
+    await approval.bridge.pollOnce();
+    assert.equal(approval.sentToJules.length, 1, 'feedback may be sent only when Jules requests user input');
+    approval.bridge.stop();
+
+    console.log('Jules ↔ Claude pilot: manual review, dedupe, approval gate, feedback state and 3-round limit verified');
 }
 test().catch(error => { console.error(error); process.exitCode=1; });
