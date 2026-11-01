@@ -265,7 +265,8 @@ window.prefillTaskFromHandoff = async function(task, handoff = {}) {
     } else {
         // New work must start from an existing GitHub branch. Never assume main.
         switchView('neural');
-        if ($('opt-review')) $('opt-review').classList.add('active');
+        if ($('opt-supervised')) $('opt-supervised').classList.add('active');
+        if ($('opt-review')) $('opt-review').classList.remove('active');
         if ($('opt-auto')) $('opt-auto').classList.remove('active');
 
         if (canonicalRepo && typeof window.selectRepo === 'function') {
@@ -562,6 +563,13 @@ window.launchSession = async function() {
     // Ensure repo and branch are real and normalized
     const source = window.JulesPanelState.activeRepo;
     const branch = window.JulesPanelState.activeBranch;
+    const selectedRepo = localStorage.getItem('hypenosys_active_repo') || '';
+    const selectedBranch = $('branch-sel');
+    if (window.JulesPanelState._handoffBranchBlocked || !selectedBranch || selectedBranch.disabled ||
+        selectedBranch.value !== branch || selectedBranch.dataset.repo !== window.getCanonicalRepoName(selectedRepo)) {
+        showToast('Verifica y selecciona una rama existente de este repositorio antes de ejecutar.', 'red');
+        return;
+    }
 
     if (!source || source.includes("Cargando") || source === 'null') {
         showToast("Selecciona un repositorio válido", "red");
@@ -584,13 +592,17 @@ window.launchSession = async function() {
     // Capture current UI mode (frontend state)
     const isAuto = $('opt-auto').classList.contains('active');
     const isReview = $('opt-review').classList.contains('active');
+    const isSupervised = !!$('opt-supervised')?.classList.contains('active');
 
-    if (!isAuto && !isReview) {
+    if (!isAuto && !isReview && !isSupervised) {
         showToast("Selecciona un modo de ejecución para iniciar la sesión.", "red");
         return;
     }
 
     // Append mode-specific instructions to prompt
+    if (isSupervised) {
+        prompt += "\n\n[MODO SUPERVISADO] Prepara un plan con cambios, validación y riesgos; espera aprobación humana antes de modificar código. No hagas merge ni despliegues.";
+    }
     if (isReview) {
         prompt += "\n\n[MODO REVISIÓN ACTIVADO]\nInstrucciones obligatorias:\n1. Revisa exclusivamente los cambios actuales en la rama.\n2. NO modifiques ningún archivo.\n3. NO realices commits ni crees PRs.\n4. Devuelve tus hallazgos y sugerencias ordenados por severidad.";
     }
@@ -614,7 +626,7 @@ window.launchSession = async function() {
         const body = {
             prompt,
             sourceContext: { source, githubRepoContext: { startingBranch: branch } },
-            requirePlanApproval: isReview // Review mode requires plan approval as safety
+            requirePlanApproval: isReview || isSupervised // Supervised mode blocks execution until human approval
         };
 
         if (isAuto) {
@@ -624,7 +636,7 @@ window.launchSession = async function() {
 
         // Defensive Logging (internal UI state + final API body)
         const logPayload = {
-            ui_mode: isAuto ? "auto" : "review",
+            ui_mode: isAuto ? "auto" : isSupervised ? "supervised" : "review",
             api_body: {
                 requirePlanApproval: body.requirePlanApproval,
                 automationMode: body.automationMode || "NONE",
