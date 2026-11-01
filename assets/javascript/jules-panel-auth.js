@@ -245,6 +245,7 @@ window.prefillTaskFromHandoff = async function(task, handoff = {}) {
         window.JulesPanelState.linkedTaskId = null;
     }
     if (claudeId) localStorage.setItem('hy_pending_claude_handoff_id', claudeId);
+    if (!existing) localStorage.setItem('hy_handoff_autolink', 'true');
 
     if (existing) {
         if (claudeId && typeof window.linkClaudeToJulesTask === 'function') {
@@ -657,17 +658,30 @@ window.launchSession = async function() {
 
         startNeuralPolling(sid, true);
 
-        // Show the premium choice dialog to let the user select how they want to link this newly created session
-        if (window.showJulesCreationLinkingChoices) {
-            window.showJulesCreationLinkingChoices(sid, sessionName);
-        } else {
-            // Fallback for safety
-            const claudeId = localStorage.getItem('hy_active_claude_session_id');
-            if (claudeId) {
-                localStorage.setItem('hy_neural_session_id_' + claudeId, sid);
+        // When a task was explicitly handed off, link the newly created Jules
+        // session to the matching Claude conversation; never link to a stale session.
+        const shouldAutoLink = localStorage.getItem('hy_handoff_autolink') === 'true';
+        const handoffClaudeId = localStorage.getItem('hy_pending_claude_handoff_id');
+        if (shouldAutoLink && typeof window.linkClaudeToJulesTask === 'function') {
+            const knownClaude = handoffClaudeId && (window.julesPanelSessions || []).some(s => s.id === handoffClaudeId);
+            if (knownClaude) {
+                window.linkClaudeToJulesTask(handoffClaudeId, sid, sessionName);
+                window.loadJulesPanelSession?.(handoffClaudeId);
+            } else if (typeof window.createNewClaudeFromJulesSession === 'function') {
+                window.createNewClaudeFromJulesSession(sid);
             }
             localStorage.setItem('hy_neural_session_id', sid);
+            window.NeuralWorkspaceState.activeJulesSessionId = sid;
+            window.switchView?.('chat');
+            window.setNeuralWorkspaceMode?.('jules');
+            showToast('Sesión Jules y conversación Claude vinculadas.', 'green');
+        } else if (window.showJulesCreationLinkingChoices) {
+            window.showJulesCreationLinkingChoices(sid, sessionName);
+        } else {
+            localStorage.setItem('hy_neural_session_id', sid);
         }
+        localStorage.removeItem('hy_handoff_autolink');
+        localStorage.removeItem('hy_pending_claude_handoff_id');
         const now = new Date().toISOString();
 
         localStorage.setItem('hy_neural_active', 'true');
