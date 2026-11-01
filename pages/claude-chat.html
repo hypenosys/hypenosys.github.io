@@ -419,14 +419,27 @@ permalink: /chat/neural/
         const urlParams = new URLSearchParams(window.location.search);
         const taskDataRaw = urlParams.get('task_data');
         const isNewTaskSent = localStorage.getItem('hy_neural_new_task_sent') === 'true';
-        const fromDashboard = urlParams.get('from') === 'dashboard'
-            && localStorage.getItem('hy_neural_entry_point') === 'dashboard-claude'
-            && isNewTaskSent;
+        const requestedFromDashboard = urlParams.get('from') === 'dashboard';
+        const dashboardEntryPoint = localStorage.getItem('hy_neural_entry_point');
+        // The URL + one-shot flag are the authoritative handoff. Older dashboard
+        // code did not always write hy_neural_entry_point, which incorrectly made
+        // a genuine robot launch look like a normal session restore.
+        const fromDashboard = requestedFromDashboard && isNewTaskSent;
         const fromOrchestrator = urlParams.get('from') === 'orchestrator'
             && window.HypenosysTaskOrchestrator?.isEnabled?.()
             && isNewTaskSent;
+        const isFreshTaskHandoff = Boolean(taskDataRaw || isNewTaskSent);
+
+        if (fromDashboard && dashboardEntryPoint !== 'dashboard-claude') {
+            console.warn('[NEURAL] Normalizing legacy dashboard handoff without canonical entry marker.');
+        }
+
         if (fromDashboard || fromOrchestrator) {
             localStorage.removeItem('hy_neural_entry_point');
+            // A fresh dashboard/orchestrator task is isolated from the previous
+            // task's transient Claude/Jules thread and pending prompt.
+            localStorage.removeItem('hy_neural_thread');
+            localStorage.removeItem('hy_neural_pending_prompt');
             // Guard against an old Jules-mode selection, without triggering any API call.
             window.currentSendMode = 'claude';
         }
@@ -453,16 +466,21 @@ permalink: /chat/neural/
             }
         }
 
-        // 3. Load initial session (this will also render the banner if task exists)
-        if (window.sessions.length > 0) {
+        // 3. A fresh task always gets a dedicated conversation before any
+        // previous session is loaded. This prevents transient old-session state,
+        // Jules links, or messages from leaking into the new task.
+        if (isFreshTaskHandoff && task) {
+            createNewSession();
+        } else if (window.sessions.length > 0) {
             loadSession(window.sessions[0].id);
         }
 
         if (task && localStorage.getItem('hy_neural_active') === 'true') {
             window._activeTaskContext = task;
 
-            // Sync with Neural Thread if active
-            if (localStorage.getItem('hy_neural_active') === 'true' && !fromDashboard) {
+            // Sync an existing linked thread only when restoring an existing
+            // conversation. Never hydrate a fresh task with another task's thread.
+            if (localStorage.getItem('hy_neural_active') === 'true' && !isFreshTaskHandoff && !fromDashboard && !fromOrchestrator) {
                 const thread = JSON.parse(localStorage.getItem('hy_neural_thread') || '[]');
                 const currentSession = window.sessions.find(s => s.id === window.currentSessionId);
 
@@ -489,7 +507,7 @@ permalink: /chat/neural/
                     localStorage.removeItem('hy_neural_new_task_sent');
                 }
                 const currentSession = window.sessions.find(s => s.id === window.currentSessionId);
-                if (fromDashboard || fromOrchestrator || (currentSession && currentSession.messages.length > 0) || !window.currentSessionId) {
+                if (!isFreshTaskHandoff && ((currentSession && currentSession.messages.length > 0) || !window.currentSessionId)) {
                     createNewSession();
                 }
 
