@@ -66,7 +66,7 @@ window.NeuralThinkingAdapters = (function() {
             }
 
             return {
-                url: 'https://api.anthropic.com/v1/messages',
+                url: '/api/ai/anthropic/messages',
                 headers: headers,
                 body: body,
                 mode: 'native_anthropic'
