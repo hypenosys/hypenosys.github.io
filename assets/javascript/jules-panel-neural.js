@@ -282,8 +282,14 @@ window.setNeuralWorkspaceMode = function(mode, options = {}) {
             if (label) label.textContent = "JULES HISTORY";
         }
 
-        // Resolve active session based on priority list
-        const julesSessionId = window.resolveActiveJulesSessionId();
+        // Resolve the Jules session paired with the active Claude conversation first.
+        // Only fall back to the general resolver when there is no active Claude chat.
+        const activeClaude = (window.julesPanelSessions || [])
+            .find(s => s.id === window.currentJulesPanelSessionId);
+        const pairedJulesId = activeClaude ? window.resolveLinkedJulesId(activeClaude) : null;
+        const julesSessionId = pairedJulesId
+            ? String(pairedJulesId).replace(/^sessions\//, '')
+            : window.resolveActiveJulesSessionId();
         if (julesSessionId) {
             window.NeuralWorkspaceState.activeJulesSessionId = julesSessionId;
             localStorage.setItem('hy_neural_session_id', julesSessionId);
@@ -2686,7 +2692,14 @@ window.loadAndRenderJulesSession = async function(sid, forceScroll = false) {
         const unique = window.deduplicateActivities(normalized);
         const newSignatures = unique.map(act => window.generateActivitySignature(act)).join('|');
 
-        if (newSignatures !== renderedSignatures) {
+        if (unique.length === 0) {
+            // A newly created Jules session can legitimately have no activities
+            // for a short period. Show a clean waiting state rather than leaving
+            // stale/loading content from a previous session visible.
+            window.lastNormalizedList = [];
+            window.previousListLength = 0;
+            window.setJulesHistoryState('empty');
+        } else if (newSignatures !== renderedSignatures) {
             window.renderNormalizedActivities(unique, forceScroll);
         }
     } catch (err) {
