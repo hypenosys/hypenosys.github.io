@@ -69,7 +69,7 @@ const reqManual = anthropicAdapter.buildRequest({
     budgetTokens: 2048,
     apiKey: 'sk-ant-test'
 });
-assert.strictEqual(reqManual.url, 'https://api.anthropic.com/v1/messages');
+assert.strictEqual(reqManual.url, '/api/ai/anthropic/messages');
 assert.strictEqual(reqManual.headers.Authorization, 'Bearer sk-ant-test');
 assert.strictEqual(reqManual.headers['anthropic-version'], '2026-10-21');
 assert.strictEqual(reqManual.body.thinking.type, 'enabled');
