@@ -114,6 +114,7 @@ window.NeuralProviderClient = (function() {
                         budgetTokens: options?.budgetTokens,
                         effort: options?.effort,
                         apiKey,
+                        workspaceId: provider === 'anthropic' ? (config.anthropic_workspace_id || '') : '',
                         baseUrl,
                         options
                     });
