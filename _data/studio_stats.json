@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-11-01T09:14:29.622Z",
+  "computed_at": "2026-11-01T09:15:00.753Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 32,
@@ -599,7 +599,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "haopengwang123",
-      "timestamp": "2026-11-01T09:14:30.356Z"
+      "timestamp": "2026-11-01T09:15:01.651Z"
     }
   ]
 }
