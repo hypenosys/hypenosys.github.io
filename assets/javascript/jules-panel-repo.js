@@ -141,7 +141,12 @@ function renderRepos(repos) {
             item.innerHTML = (repo.is_installed ? '<i class="fas fa-check-circle text-success"></i>' : '<i class="fas fa-circle-notch"></i>') +
                              '<span>' + alias + '</span>';
 
-            item.onclick = () => selectRepo(repo.full_name);
+            item.onclick = () => {
+                // Only a deliberate user click can confirm a repository for
+                // a Claude handoff that has no attached task/repo.
+                window.JulesPanelState._handoffRepoUnconfirmed = false;
+                selectRepo(repo.full_name);
+            };
             content.appendChild(item);
         });
 
