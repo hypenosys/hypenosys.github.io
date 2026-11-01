@@ -1208,6 +1208,30 @@ layout: null
     <script>
     document.addEventListener('DOMContentLoaded', function() {
       setTimeout(function() {
+        // Robot action routes to Jules with a verified task context; Claude keeps
+        // its separate entry point so existing Neural Chat links still work.
+        window._openTaskInJules = function(taskDataOrId) {
+          const supplied = typeof taskDataOrId === 'object' && taskDataOrId
+            ? taskDataOrId : null;
+          const id = supplied?.id ?? taskDataOrId;
+          const task = (window.currentTasks || []).find(t => String(t.id) === String(id))
+            || (typeof currentTasks !== 'undefined' && Array.isArray(currentTasks)
+                ? currentTasks.find(t => String(t.id) === String(id)) : null)
+            || supplied;
+          if (!task || !task.id || !(task.title || task.titulo)) {
+            if (typeof window.hypeToast === 'function') window.hypeToast('No se pudo recuperar la tarea completa.', 'error');
+            else alert('No se pudo recuperar la tarea completa para Jules.');
+            return;
+          }
+          localStorage.setItem('hy_neural_task_context', JSON.stringify(task));
+          localStorage.removeItem('hy_neural_new_task_sent');
+          localStorage.setItem('hy_jules_handoff', JSON.stringify({
+            task, source: 'dashboard', intent: 'new-task',
+            supervision: 'review', timestamp: Date.now()
+          }));
+          window.location.assign((window.SITE_BASEURL || '') + '/jules-panel/');
+        };
+
         window._openTaskInClaude = function(taskDataOrId) {
           try {
             let taskData = null;
