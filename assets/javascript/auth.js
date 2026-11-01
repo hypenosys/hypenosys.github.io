@@ -684,6 +684,18 @@ class AuthManager {
         const embedApiKey = document.getElementById('ai_embed_api_key')?.value.trim() || '';
         const embeddingModel = document.getElementById('ai_embedding_model')?.value.trim() || '';
 
+        // Reject malformed workspaces before they are persisted: the relay would return HTTP 400.
+        if (provider === 'anthropic' && typeof window.validateAnthropicWorkspaceId === 'function') {
+            try {
+                window.validateAnthropicWorkspaceId(anthropicWorkspaceId);
+            } catch (error) {
+                const status = document.getElementById('anthropic-test-status');
+                if (status) status.textContent = '✗ ' + error.message;
+                document.getElementById('ai_anthropic_workspace_id')?.focus();
+                return;
+            }
+        }
+
         const btn = document.getElementById('btn-save-api-config');
         const originalHtml = btn ? btn.innerHTML : 'Guardar Configuración';
 
