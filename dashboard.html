@@ -1208,8 +1208,8 @@ layout: null
     <script>
     document.addEventListener('DOMContentLoaded', function() {
       setTimeout(function() {
-        // Robot action routes to Jules with a verified task context; Claude keeps
-        // its separate entry point so existing Neural Chat links still work.
+        // Dedicated Jules route: reserved for an EXPLICIT "Create with Jules" action.
+        // Dashboard robot clicks always use _openTaskInClaude below.
         window._openTaskInJules = function(taskDataOrId) {
           const supplied = typeof taskDataOrId === 'object' && taskDataOrId
             ? taskDataOrId : null;
@@ -1252,12 +1252,21 @@ layout: null
                       || { id: id };
             }
 
+            if (!taskData || !taskData.id || !(taskData.title || taskData.titulo)) {
+              throw new Error('No se ha podido recuperar el contenido completo de la tarea.');
+            }
+            // Explicit Claude entry: never reuse an unrelated Jules handoff.
+            localStorage.removeItem('hy_jules_handoff');
+            localStorage.removeItem('jules_task_payload');
+            localStorage.removeItem('hy_pending_claude_handoff_id');
+            localStorage.removeItem('hy_handoff_autolink');
             localStorage.setItem('hy_neural_task_context', JSON.stringify(taskData));
             localStorage.setItem('hy_neural_active', 'true');
             localStorage.setItem('hy_neural_new_task_sent', 'true');
+            localStorage.setItem('hy_neural_entry_point', 'dashboard-claude');
 
             const baseUrl = window.SITE_BASEURL || '';
-            window.location.href = baseUrl + '/chat/neural/';
+            window.location.href = baseUrl + '/chat/neural/?from=dashboard';
           } catch (e) {
             console.error('_openTaskInClaude error:', e, e.stack);
           }
