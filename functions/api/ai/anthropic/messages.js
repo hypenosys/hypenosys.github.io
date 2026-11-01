@@ -50,8 +50,13 @@ export async function onRequestPost({ request }) {
   }
   try {
     const upstream = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST', headers, body: JSON.stringify(body), redirect: 'error'
+      method: 'POST', headers, body: JSON.stringify(body), redirect: 'manual'
     });
+    // Fail closed on upstream redirects. Never forward the user's BYOK credential.
+    if (upstream.status >= 300 && upstream.status < 400) {
+      return Response.json({ error: { type: 'upstream_redirect', message: 'Redirección inesperada desde Anthropic.' } },
+        { status: 502, headers: { 'Cache-Control': 'no-store' } });
+    }
     const out = new Headers({
       'Content-Type': upstream.headers.get('content-type') || (body.stream ? 'text/event-stream' : 'application/json'),
       'Cache-Control': 'no-store',
