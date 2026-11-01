@@ -418,6 +418,14 @@ permalink: /chat/neural/
         const urlParams = new URLSearchParams(window.location.search);
         const taskDataRaw = urlParams.get('task_data');
         const isNewTaskSent = localStorage.getItem('hy_neural_new_task_sent') === 'true';
+        const fromDashboard = urlParams.get('from') === 'dashboard'
+            && localStorage.getItem('hy_neural_entry_point') === 'dashboard-claude'
+            && isNewTaskSent;
+        if (fromDashboard) {
+            localStorage.removeItem('hy_neural_entry_point');
+            // Guard against an old Jules-mode selection, without triggering any API call.
+            window.currentSendMode = 'claude';
+        }
 
         // 1. Initialize session UI first
         renderSessionList();
@@ -450,7 +458,7 @@ permalink: /chat/neural/
             window._activeTaskContext = task;
 
             // Sync with Neural Thread if active
-            if (localStorage.getItem('hy_neural_active') === 'true') {
+            if (localStorage.getItem('hy_neural_active') === 'true' && !fromDashboard) {
                 const thread = JSON.parse(localStorage.getItem('hy_neural_thread') || '[]');
                 const currentSession = window.sessions.find(s => s.id === window.currentSessionId);
 
@@ -477,10 +485,24 @@ permalink: /chat/neural/
                     localStorage.removeItem('hy_neural_new_task_sent');
                 }
                 const currentSession = window.sessions.find(s => s.id === window.currentSessionId);
-                if (currentSession && currentSession.messages.length > 0) {
+                if (fromDashboard || (currentSession && currentSession.messages.length > 0) || !window.currentSessionId) {
                     createNewSession();
-                } else if (!window.currentSessionId) {
-                    createNewSession();
+                }
+
+                if (fromDashboard) {
+                    const dedicated = window.sessions.find(s => s.id === window.currentSessionId);
+                    if (dedicated) {
+                        dedicated.title = '#' + task.id + ' · ' + String(task.title || task.titulo || 'Tarea').slice(0, 90);
+                        dedicated.task_ref = String(task.id);
+                        dedicated.metadata = { ...(dedicated.metadata || {}), origin: 'dashboard',
+                            dashboardTaskId: String(task.id),
+                            taskRepository: task.repository || task.repo || '',
+                            taskBranch: task.rama || task.branch || '' };
+                        saveSessions(false, 'dashboard-claude-entry');
+                        renderSessionList();
+                        const titleEl = document.getElementById('session-title');
+                        if (titleEl) titleEl.textContent = dedicated.title;
+                    }
                 }
 
                 let prompt = "";
@@ -552,8 +574,9 @@ permalink: /chat/neural/
                 window.chatInput.value = prompt;
                 window.chatInput.dispatchEvent(new Event('input'));
 
-                // If it was an analysis prompt from history, ensure we are in Claude mode
-                if (pendingPrompt && pendingPrompt.includes('FRAGMENTO')) {
+                // Dashboard robot is strictly a Claude analysis entry; Jules is
+                // only engaged by an explicit subsequent action.
+                if (fromDashboard || (pendingPrompt && pendingPrompt.includes('FRAGMENTO'))) {
                     setSendMode('claude');
                 }
 
