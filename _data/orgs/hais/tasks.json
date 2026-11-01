@@ -2084,6 +2084,11 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-01T09:26:07.863Z",
           "body": "[HAIS · PLAN 2026-11-01] Haopeng recoge y documenta decisiones de estrategia PAPER con Axel: señal Investing aún por confirmar, mercados, ventanas, entrada/salida y riesgo. Mantener preguntas sin responder como pendientes, sin inventar umbrales. Responsable(s): haopengwang123. Estado Working conservado; subtareas y criterios existentes sin alterar."
+        },
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-11-01T19:45:15.482Z",
+          "body": "Usuario confirma Plus500 CFD. La definición mínima específica y las decisiones pendientes se siguen en #900044. Mantener PAPER; no asumir propiedad de acciones ni órdenes automatizadas a Plus500. No se han aprobado instrumento, capital ni umbrales."
         }
       ],
       "change_log": [
@@ -3765,6 +3770,101 @@
       "images": [],
       "blocks": [],
       "jules_session": null
+    },
+    {
+      "id": 900044,
+      "organizationId": "hais",
+      "repository": "hypenosys/HAIS",
+      "title": "Definir simulación CFD comparable con la cuenta Plus500",
+      "descripcion": "Acuerdo del usuario: definir primero el mínimo de datos y reglas para simulación CFD, con ejecución manual en Plus500 y sin conexión de órdenes. La cuenta confirmada es Plus500 CFD. Obtener especificaciones del instrumento concreto antes de calcular margen o costes; no asumir que comprar CFD equivale a poseer acciones. Conservar el alcance exclusivamente PAPER.",
+      "tema_principal": "HAIS · estrategia CFD PAPER",
+      "prioridad": "Critical",
+      "estado": "Working",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "asignados": [
+        "axlfc",
+        "haopengwang123"
+      ],
+      "tags": [
+        "hais",
+        "cfd",
+        "plus500",
+        "paper",
+        "real-data",
+        "minimum-mocks"
+      ],
+      "blocked_by": [],
+      "acceptance_criteria": "- Identificar instrumento, dirección larga/corta, moneda de cotización y de cuenta, unidades por contrato, mínimo y paso de cantidad, horario y fecha de vigencia de sus especificaciones.\n- Registrar bid/ask, origen y timestamp. Entrada larga al ask y salida al bid; entrada corta al bid y cierre al ask. No sumar de nuevo un spread ya incluido en esos precios.\n- Definir tamaño y exposición nominal a partir de cantidad y multiplicador; margen inicial y mantenimiento conforme a especificaciones verificadas. No inventar apalancamiento ni reglas de cierre por margen.\n- Incluir conversión de divisa, comisiones aplicables y financiación solo cuando proceda según la tarifa y hora verificadas. Valores desconocidos se muestran pendientes, no como cero.\n- Distinguir cotizaciones reales del CFD de Plus500 de precios del subyacente procedentes de otra fuente. Si solo existe el subyacente, etiquetar la evaluación como aproximada y explicitar el modelo de spread; no presentar equivalencia de ejecución con Plus500.\n- Acordar con el usuario instrumento inicial, capital simulado, tamaño máximo, pérdida máxima y condiciones de entrada/salida antes de habilitar una estrategia automática en simulación. Ningún umbral se considera aprobado por defecto.\n- Sin datos vigentes o configuración obligatoria completa, no simular una nueva ejecución como válida. Ante fallo de fuente, mostrar no disponible; fixtures mínimas únicamente para CI y escenarios controlados, etiquetadas SYNTHETIC.\n- Definir casos verificables de beneficio/pérdida en largo y corto, spread, cambio de divisa, financiación aplicable, margen insuficiente y datos caducados. No se envían órdenes a Plus500 ni se automatiza su interfaz.",
+      "subtasks": [
+        {
+          "id": 900044001,
+          "text": "Confirmar instrumento inicial y recoger especificaciones vigentes de la cuenta CFD",
+          "done": false
+        },
+        {
+          "id": 900044002,
+          "text": "Confirmar fuente bid/ask disponible y distinguir CFD de precio del subyacente",
+          "done": false
+        },
+        {
+          "id": 900044003,
+          "text": "Acordar capital, tamaño y límites de riesgo; documentar entradas y salidas",
+          "done": false
+        },
+        {
+          "id": 900044004,
+          "text": "Definir cálculos de P/L, margen, divisa y costes con casos reproducibles mínimos",
+          "done": false
+        }
+      ],
+      "external_links": [
+        {
+          "label": "Plus500 · tasas y cargos CFD",
+          "url": "https://www.plus500.com/es-es/help/feescharges?productType=CFD"
+        },
+        {
+          "label": "Plus500 · restricciones de métodos de trading",
+          "url": "https://cdn-main.plus500.com/en/tradingacademy/faq/trading/arethererestrictionswithregardstotradingmethods"
+        }
+      ],
+      "comments": [
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-11-01T19:45:15.482Z",
+          "body": "El usuario confirma cuenta Plus500 CFD y acepta empezar por datos y reglas mínimas de simulación. Pendientes: instrumento, especificaciones aplicables, capital y límites. No se ha implementado un simulador CFD ni conectado una cuenta."
+        }
+      ],
+      "change_log": [
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-11-01T19:45:15.482Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created"
+        }
+      ],
+      "comentario": "Definición del alcance CFD PAPER; no implica API de Plus500 disponible ni ejecución real.",
+      "estimated_hours": null,
+      "story_points": null,
+      "milestone": "M1",
+      "seccion": "HAIS · estrategia CFD PAPER",
+      "rama": "",
+      "rama2": null,
+      "branch": "Desarrollo (develop)",
+      "fecha": "2026-11-01",
+      "start_date": null,
+      "due_date": null,
+      "limite": null,
+      "ver": true,
+      "detectado_por": "Codex",
+      "apoyo": null,
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "blocks": [],
+      "jules_session": null
     }
   ],
   "last_updated_by": "Codex",
@@ -3970,7 +4070,16 @@
         900015,
         900036
       ]
+    },
+    {
+      "action": "Definir mínimo CFD PAPER solicitado por el usuario y vincular estrategia #900025",
+      "user": "Codex",
+      "timestamp": "2026-11-01T19:45:15.482Z",
+      "task_ids": [
+        900025,
+        900044
+      ]
     }
   ],
-  "last_updated": "2026-11-01T19:44:25.881Z"
+  "last_updated": "2026-11-01T19:45:15.482Z"
 }
