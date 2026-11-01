@@ -166,10 +166,11 @@
     try {
       const {task} = await loadTask();
       const associated = String(task.jules_session?.session_id || '').replace(/^sessions\//, '');
-      if (associated && associated !== sid) return false;
+      if (associated !== sid) return false;
 
       const remote = remoteSession || await window.julesApi.getSession('sessions/' + sid);
-      if (!remote || String(remote.state || '').toUpperCase() !== 'COMPLETED') return false;
+      if (!remote || String(remote.name || '').replace(/^sessions\//, '') !== sid ||
+          String(remote.state || '').toUpperCase() !== 'COMPLETED') return false;
 
       const current = String(task.estado || task.status || '').trim().toUpperCase();
       if (['OK','DONE','COMPLETED','CLOSED','RESOLVED'].includes(current)) {
@@ -216,5 +217,6 @@
   }
 
   window.JulesTaskSupervisor = { review, applyStatus, applySuggestedLifecycle, syncCompletedFromJules, editTask, archive };
-  message('Supervisor de tareas: cambios solo bajo confirmación explícita.');
+  message('Finalizaciones Jules vinculadas → OK automáticamente; otros cambios requieren confirmación.');
 })();
+

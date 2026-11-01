@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Fixed
+- **Jules integration and dev deployment**: Updated completion contracts to use the canonical Kanban `OK` state, verify exact task/session association and idempotence, and run Claude/Jules workspace checks before deployment.
+
 ### Changed
 - **Neural workspaces**: Updated Claude and Jules with a purple segmented selector, development actions, a shared composer, task context and supervision cards. Jules now includes a session table with execution/history filters and an operational summary driven by existing session data.
 
@@ -25,4 +28,5 @@ Todas las actualizaciones notables de Hypenosys se documentarán en este archivo
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
+
 

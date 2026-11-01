@@ -43,6 +43,8 @@ jobs:
           node tests/test_jules_launch_lifecycle.js
           node tests/test_jules_context_actions.js
           node tests/test_jules_task_supervisor.js
+          node tests/test_neural_panel_workspace.js
+          node --check assets/javascript/neural-panel-workspace.js
           node --check assets/javascript/jules-task-supervisor.js
           node --check assets/javascript/jules-claude-bridge.js
           node --check assets/javascript/jules-panel-auth.js
@@ -98,4 +100,5 @@ jobs:
           done
           echo 'Claude relay upstream probe failed. No valid keys were used.'
           exit 1
+
 
