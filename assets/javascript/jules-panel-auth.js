@@ -307,13 +307,11 @@ window.prefillTaskFromHandoff = async function(task, handoff = {}) {
         }
 
         window.JulesPanelState._handoffBranchBlocked = !!(canonicalRepo && (!branchReady || sourceSelectionFailed));
-        if (launchBtn && branchReady) {
-            launchBtn.disabled = false;
-            launchBtn.title = '';
+        if (branchReady && !window.JulesPanelState._handoffBranchBlocked) {
+            window.setJulesLaunchReadyState?.(true);
         }
-        if (launchBtn && window.JulesPanelState._handoffBranchBlocked) {
-            launchBtn.disabled = true;
-            launchBtn.title = 'La rama solicitada no está disponible. Selecciona una rama existente en Jules Panel.';
+        if (window.JulesPanelState._handoffBranchBlocked) {
+            window.setJulesLaunchReadyState?.(false, 'La rama solicitada no está disponible. Selecciona una rama existente en Jules Panel.');
             showToast('La rama de esta tarea no está disponible en GitHub. Selecciona una rama existente antes de ejecutar.', 'amber');
         }
 
