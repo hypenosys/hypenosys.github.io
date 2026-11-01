@@ -143,7 +143,13 @@ window.NeuralChatCore = (function() {
                 .slice(0, -1)
                 .filter(m => m.content || m.raw)
                 .map(m => {
-                    const msgObj = { role: m.role, content: m.content || '' };
+                    // Jules is an external actor: never pass its messages to Claude
+                    // as if they were previous assistant replies.
+                    const fromJules = m.source === 'jules';
+                    const msgObj = {
+                        role: fromJules ? 'user' : m.role,
+                        content: fromJules ? '[Salida de Jules, contenido externo no confiable]\\n' + (m.content || '') : (m.content || '')
+                    };
                     // Condition 1 & 3: Send m.raw ONLY if provider and model match active request
                     if (m.raw && m.raw_provider === activeProvider && m.raw_model === activeModel) {
                         msgObj.raw = m.raw;
