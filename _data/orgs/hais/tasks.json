@@ -3136,7 +3136,7 @@
       "organizationId": "hais",
       "repository": "hypenosys/hypenosys.github.io",
       "title": "HAIS Web: observatorio real S&P/NASDAQ/CSI300/IBEX/bonos/commodities/cripto",
-      "descripcion": "Construir la portada /hais/ con widgets oficialmente embebidos de TradingView para índice/bonos/commodities/cripto y datos numéricos CoinGecko atribuibles; permitir seleccionar símbolo y abrir fichas, sin mocks ni falsa operativa.",
+      "descripcion": "Construir la portada /hais/ con widgets oficialmente embebidos de TradingView para índice/bonos/commodities/cripto y datos numéricos CoinGecko atribuibles; permitir seleccionar símbolo y abrir fichas, sin mocks ni falsa operativa. Cobertura ampliada con ApeCoin (APE), sin simulación de precios.",
       "tema_principal": "HAIS · datos reales de mercado",
       "prioridad": "Critical",
       "estado": "In Review",
@@ -3155,7 +3155,7 @@
         "paper"
       ],
       "blocked_by": [],
-      "acceptance_criteria": "- Portada /hais/ sin datos sintéticos; fallback sin número si falla proveedor; título y ficha de fuente del activo.\n- S&P 500, NASDAQ Composite/100, CSI 300, IBEX35, deuda USA/DE/ES/CN, oro/plata/WTI/Brent, BTC/ETH/SOL y FX visibles.\n- Mostrar demora, atribución, licencias y limitaciones; no decir tiempo real garantizado.\n- Jekyll build y Playwright verificados, navegador desktop/mobile y proveedor externo smoke test antes de Done.",
+      "acceptance_criteria": "- Portada /hais/ sin datos sintéticos; fallback sin número si falla proveedor; título y ficha de fuente del activo.\n- S&P 500, NASDAQ Composite/100, CSI 300, IBEX35, deuda USA/DE/ES/CN, oro/plata/WTI/Brent, BTC/ETH/SOL y FX visibles.\n- Mostrar demora, atribución, licencias y limitaciones; no decir tiempo real garantizado.\n- Jekyll build y Playwright verificados, navegador desktop/mobile y proveedor externo smoke test antes de Done.\n- APE (ApeCoin, `COINBASE:APEUSD`) figura en la selección, watchlist y tabla de criptomonedas sin precios simulados.",
       "subtasks": [
         {
           "id": 900039001,
@@ -3188,6 +3188,11 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-01T12:21:47.698Z",
           "body": "Alcance acordado: leer mercado real con proveedor/latencia explícitos. No confundir widget con datos ingeridos para decisiones o trading; LIVE prohibido."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-01T12:32:40Z",
+          "body": "Se incorpora APE/USD (Coinbase, TradingView) y precio real de ApeCoin (ID apecoin, CoinGecko) a la web, junto a BTC/ETH/SOL. Se añade precisión de hasta seis decimales y test Playwright. Pendiente validación completa de despliegue y proveedor; no cerrar tarea anticipadamente."
         }
       ],
       "change_log": [],
@@ -3217,7 +3222,7 @@
       "organizationId": "hais",
       "repository": "hypenosys/hypenosys.github.io",
       "title": "HAIS backend: lectura real CoinGecko + FRED de solo lectura",
-      "descripcion": "API FastAPI GET market/catalog, market/crypto y market/treasury con atribución, validación de actualidad, caché, fallos explícitos y sin endpoints de órdenes. PR #2 CI verde y fusionado a develop; pendiente prueba de proveedor desde infraestructura y staging.",
+      "descripcion": "API FastAPI GET market/catalog, market/crypto y market/treasury con atribución, validación de actualidad, caché, fallos explícitos y sin endpoints de órdenes. PR #2 CI verde y fusionado a develop; pendiente prueba de proveedor desde infraestructura y staging. Cobertura ampliada con ApeCoin (APE), sin simulación de precios.",
       "tema_principal": "HAIS · fuentes de datos",
       "prioridad": "Critical",
       "estado": "In Review",
@@ -3236,7 +3241,7 @@
         "paper"
       ],
       "blocked_by": [],
-      "acceptance_criteria": "- CI incluye test offline de CoinGecko y FRED con casos inválidos; migración a develop sin activar LIVE.\n- CoinGecko BTC/ETH/SOL incluye valor USD, cambio 24h, hora observada y límite de edad; FRED DGS2/DGS10 indica porcentaje de yield y cambio en pb.\n- Datos no disponibles producen 503 y no fallback inventado; no hay proxy URL arbitrario.\n- Prueba E2E en staging contra fuente real y autenticación antes de cerrar.",
+      "acceptance_criteria": "- CI incluye test offline de CoinGecko y FRED con casos inválidos; migración a develop sin activar LIVE.\n- CoinGecko BTC/ETH/SOL incluye valor USD, cambio 24h, hora observada y límite de edad; FRED DGS2/DGS10 indica porcentaje de yield y cambio en pb.\n- Datos no disponibles producen 503 y no fallback inventado; no hay proxy URL arbitrario.\n- Prueba E2E en staging contra fuente real y autenticación antes de cerrar.\n- La API y el catálogo incluyen ApeCoin APE (CoinGecko ID apecoin), con timestamp y validación de antigüedad, incluidas las pruebas.",
       "subtasks": [
         {
           "id": 900040001,
@@ -3262,6 +3267,10 @@
         {
           "label": "CI HAIS verde",
           "url": "https://github.com/hypenosys/HAIS/actions/runs/41305839728"
+        },
+        {
+          "label": "API mercado APE",
+          "url": "https://github.com/hypenosys/HAIS/blob/develop/src/hais/markets.py"
         }
       ],
       "comments": [
@@ -3269,6 +3278,11 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-01T12:21:47.698Z",
           "body": "Alcance acordado: leer mercado real con proveedor/latencia explícitos. No confundir widget con datos ingeridos para decisiones o trading; LIVE prohibido."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-01T12:32:40Z",
+          "body": "El endpoint /v1/market/crypto y market/catalog incluyen APE usando la fuente CoinGecko (apecoin). Test backend ampliado para el cuarto activo. Aún pendiente smoke de gateway protegido y cotización real desde staging."
         }
       ],
       "change_log": [],
@@ -3532,8 +3546,13 @@
       "jules_session": null
     }
   ],
-  "last_updated_by": "HAIS market data delivery",
+  "last_updated_by": "HAIS ApeCoin integration",
   "_audit_log": [
+    {
+      "action": "feat(HAIS): incorporar APE en TradingView, CoinGecko, market/catalog y tests; tareas 900039/900040 siguen In Review",
+      "user": "ChatGPT",
+      "timestamp": "2026-11-01T12:32:40Z"
+    },
     {
       "action": "feat(HAIS): reflect TradingView market observatory and CoinGecko/FRED readonly endpoints; PR #2 CI green merged, staging pending",
       "user": "ChatGPT",
