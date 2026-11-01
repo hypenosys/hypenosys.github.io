@@ -80,10 +80,21 @@
                             if (found) taskData = found;
                         }
 
-                        if (typeof window._openTaskInJules === 'function') {
-                            window._openTaskInJules(taskData);
-                        } else if (typeof window._openTaskInClaude === 'function') {
+                        // The robot on a dashboard task is the CLAUDE analysis entry.
+                        // Starting a Jules execution is a separate, explicit action
+                        // from Neural Chat and must never happen on this click.
+                        if (typeof window._openTaskInClaude === 'function') {
                             window._openTaskInClaude(taskData);
+                        } else if (typeof window._openTaskInClaudeWithContext === 'function') {
+                            window._openTaskInClaudeWithContext(taskData.id);
+                        } else {
+                            console.warn('[KANBAN] Claude entry route not initialized; routing directly.');
+                            if (!taskData?.id || !(taskData.title || taskData.titulo)) return;
+                            localStorage.setItem('hy_neural_task_context', JSON.stringify(taskData));
+                            localStorage.setItem('hy_neural_active', 'true');
+                            localStorage.setItem('hy_neural_new_task_sent', 'true');
+                            localStorage.removeItem('hy_jules_handoff');
+                            window.location.assign('/chat/neural/?from=dashboard');
                         }
                     } else if (action === 'move') {
                         const nextStatus = el.dataset.nextStatus;
@@ -286,7 +297,7 @@
             const branchUrl = (repoFullName && branchName) ? `https://github.com/${repoFullName}/tree/${branchName}` : '#';
             const displayRepo = (window.getRepoAlias ? window.getRepoAlias(repoFullName) : null) || repoFullName.split('/').pop() || '---';
 
-            // Robot button action
+            // Legacy robot fallback: also enters Claude, never Jules.
             if (!window._openTaskInClaude) {
                 window._openTaskInClaude = function(taskId) {
                     // Try different ways to find the task data
@@ -312,7 +323,7 @@
                                 localStorage.setItem('hy_neural_task_context', JSON.stringify(task));
                                 localStorage.setItem('hy_neural_active', 'true');
                                 localStorage.setItem('hy_neural_new_task_sent', 'true');
-                                const url = `/chat/neural/?from=jules-panel`;
+                                const url = `/chat/neural/?from=dashboard`;
                                 window.location.href = url;
                             }
                         }, 800);
