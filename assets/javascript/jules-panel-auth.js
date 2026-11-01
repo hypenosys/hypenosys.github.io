@@ -639,12 +639,29 @@ window.launchSession = async function(options = {}) {
     try {
         // This is a per-user safety cap, not a server-side global quota.
         // Remote list (rather than UI cache) keeps concurrent sessions visible.
-        const existingSessions = await window.julesApi.listSessions(100);
-        if (!Array.isArray(existingSessions)) throw new Error('No se pudo consultar el número de sesiones Jules.');
         const activeStates = new Set(['QUEUED','PLANNING','AWAITING_PLAN_APPROVAL','AWAITING_USER_FEEDBACK','IN_PROGRESS','PAUSED']);
-        const active = existingSessions.filter(item => activeStates.has(String(item.state || '').toUpperCase()));
-        if (active.length >= 3) {
-            throw new Error('Límite HAIS: ya hay ' + active.length + ' sesiones Jules activas o esperando intervención (máximo 3). Finaliza o resuelve una antes de iniciar otra.');
+        let activeCount = 0;
+        if (typeof window.julesApi.getSessions === 'function') {
+            let page = null;
+            let complete = false;
+            for (let i = 0; i < 10; i++) {
+                const batch = await window.julesApi.getSessions(100, page);
+                if (!Array.isArray(batch?.sessions)) throw new Error('No se pudo verificar el límite de sesiones Jules.');
+                activeCount += batch.sessions.filter(item => activeStates.has(String(item.state || '').toUpperCase())).length;
+                if (activeCount >= 3) break;
+                page = batch.nextPageToken || null;
+                if (!page) { complete = true; break; }
+            }
+            if (!complete && activeCount < 3) {
+                throw new Error('La lista Jules es demasiado extensa para verificar el límite de 3 sesiones.');
+            }
+        } else {
+            const existingSessions = await window.julesApi.listSessions(100);
+            if (!Array.isArray(existingSessions)) throw new Error('No se pudo consultar el número de sesiones Jules.');
+            activeCount = existingSessions.filter(item => activeStates.has(String(item.state || '').toUpperCase())).length;
+        }
+        if (activeCount >= 3) {
+            throw new Error('Límite HAIS: hay ' + activeCount + ' sesiones Jules activas o esperando intervención (máximo 3). Finaliza o resuelve una antes de iniciar otra.');
         }
 
         // Block actual unresolved dependencies, rather than relying solely
