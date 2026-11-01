@@ -222,7 +222,25 @@ test('Verify Jules Execution History loads and renders inside Neural Tab', async
   const chatMessages = page.locator('#v2-chat-messages');
   await expect(chatMessages).toBeVisible();
 
-  // 11. Save a verification screenshot
+  // 11. Verify Jules workspace selection overrides a stale Claude linkage
+  const selectedJulesId = await page.evaluate(() => {
+    window.NeuralWorkspaceState.activeMode = 'jules';
+    window.NeuralWorkspaceState.activeJulesSessionId = 'js_test_2';
+    localStorage.setItem('hy_neural_session_id', 'js_test_2');
+    return window.getLinkedJulesSessionId();
+  });
+  expect(selectedJulesId).toBe('js_test_2');
+
+  // 12. Verify structured Jules API content is normalized to readable text
+  const structuredText = await page.evaluate(() => {
+    return window.extractJulesActivityText([
+      { type: 'text', text: 'Contenido estructurado' },
+      { type: 'text', text: 'de Jules' }
+    ]);
+  });
+  expect(structuredText).toBe('Contenido estructurado\nde Jules');
+
+  // 13. Save a verification screenshot
   await page.screenshot({ path: 'verification/jules_history_neural_verified.png' });
   console.log('SUCCESS: Execution history rendering verified inside Neural tab.');
 });
