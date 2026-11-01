@@ -288,6 +288,12 @@ async function loadBranches(repoFullName) {
             const val = e.target.value;
             if (!val) return;
             window.JulesPanelState.activeBranch = val;
+            window.JulesPanelState._handoffBranchBlocked = false;
+            const launch = $('launch-btn');
+            if (launch) {
+                launch.disabled = false;
+                launch.title = '';
+            }
             localStorage.setItem('hypenosys_active_branch', val);
             localStorage.setItem('hy_active_branch_' + repoFullName, val);
 
