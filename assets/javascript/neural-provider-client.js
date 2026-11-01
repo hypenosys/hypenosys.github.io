@@ -97,6 +97,10 @@ window.NeuralProviderClient = (function() {
                 throw new Error('Anthropic adapter no disponible. Recarga Neural Chat.');
             }
 
+            if (provider === 'anthropic' && !apiKey.trim()) {
+                throw new Error('Introduce una API key de Anthropic en API Config.');
+            }
+
             // Anthropic ALWAYS requires the native /v1/messages schema (even with thinking off).
             // Do not send its API key to an OpenAI-compatible /chat/completions endpoint.
             if ((provider === 'anthropic' || ((isThinkingEnabled && cap.supportsThinking) || cap.defaultOn)) && window.NeuralThinkingAdapters) {
