@@ -7,6 +7,7 @@ on:
     branches: [develop]
     paths:
       - 'pages/hais-terminal.html'
+      - 'pages/hais-markets.html'
       - 'assets/javascript/**'
       - 'tests/verify_hais_terminal.spec.js'
       - 'package.json'

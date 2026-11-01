@@ -34,6 +34,7 @@ a{color:var(--sky)}a:hover{color:#dcf3ff}button{font:inherit;cursor:pointer}butt
 .crypto{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}.crypto th{text-align:left;color:var(--muted);font-size:11px;border-bottom:1px solid var(--line);padding:9px 7px}.crypto td{font-size:13px;padding:13px 7px;border-bottom:1px solid #2b4356}.crypto th:last-child,.crypto td:last-child{text-align:right}.crypto tr:last-child td{border:0}
 .positive{color:var(--aqua)}.negative{color:var(--red)}.sub{color:var(--muted);font-size:12px}.status{min-height:24px;color:var(--muted);font-size:12px;margin:10px 0}
 .action{background:#254e58;color:#dffbf5;border:1px solid #519c96;border-radius:8px;padding:8px 11px;font-weight:700;font-size:12px}.action:disabled{opacity:.5;cursor:not-allowed}
+.paper-home{border:1px solid #477365;border-radius:15px;padding:18px;background:#102733;scroll-margin-top:20px}.paper-home p{color:var(--muted);font-size:13px}.paper-frame{display:block;width:100%;height:1600px;border:0;border-radius:10px;background:#0b1421}.paper-home .sectionhead a{font-size:13px}
 .footer{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap;color:var(--muted);font-size:12px;border-top:1px solid var(--line);margin-top:28px;padding-top:16px}
 @media(max-width:1100px){.panels{grid-template-columns:1fr}.marketbox{height:590px}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:650px){.shell{padding:14px 11px 42px}.cards{grid-template-columns:1fr 1fr}.panel{padding:12px}.chartbox{height:410px}.marketbox{height:550px}.card{padding:11px}.card strong{font-size:15px}.hero{margin:24px 0}.nav a{padding:6px 8px}}
@@ -41,9 +42,16 @@ a{color:var(--sky)}a:hover{color:#dcf3ff}button{font:inherit;cursor:pointer}butt
 </head>
 <body>
 <div class="shell">
-<header class="header"><a class="brand" href="{{ '/' | relative_url }}"><span class="brandlogo">H</span><span><strong>HAIS</strong><small>HYPENOSYS · MARKET INTELLIGENCE</small></span></a><nav class="nav" aria-label="Navegación HAIS"><a class="current" href="{{ '/hais/' | relative_url }}">Mercados</a><a href="{{ '/hais/operar/' | relative_url }}">Operativa PAPER</a><a href="{{ '/hais/estado/' | relative_url }}">Proyecto y tareas</a><a href="{{ '/dashboard.html' | relative_url }}">Dashboard</a></nav></header>
-<div class="hero"><div><div class="eyebrow">Observatorio global · fuentes externas reales</div><h1>Lee el mercado.<br><span>Antes de operar.</span></h1><p>Sigue índices de EE. UU., China y España, rentabilidades de deuda soberana, materias primas y criptomonedas. Los datos aparecen directamente desde los proveedores, no desde una simulación.</p></div><div class="level"><strong>● MARKET DATA</strong><small>Cotizaciones externas · latencia según mercado</small></div></div>
+<header class="header"><a class="brand" href="{{ '/' | relative_url }}"><span class="brandlogo">H</span><span><strong>HAIS</strong><small>HYPENOSYS · MARKET INTELLIGENCE</small></span></a><nav class="nav" aria-label="Navegación HAIS"><a class="current" href="{{ '/hais/' | relative_url }}">Mercados</a><a href="#simulacion">Simular aquí</a><a href="{{ '/hais/operar/' | relative_url }}">Operativa PAPER</a><a href="{{ '/hais/estado/' | relative_url }}">Proyecto y tareas</a><a href="{{ '/dashboard.html' | relative_url }}">Dashboard</a></nav></header>
+<div class="hero"><div><div class="eyebrow">Observatorio global · fuentes externas reales</div><h1>Lee el mercado.<br><span>Antes de operar.</span></h1><p>Sigue índices de EE. UU., China y España, rentabilidades de deuda soberana, materias primas y criptomonedas. Las cotizaciones del observatorio proceden de proveedores externos. El terminal PAPER está separado e identifica sus precios de prueba.</p></div><div class="level"><strong>● MARKET DATA</strong><small>Cotizaciones externas · latencia según mercado</small></div></div>
 <div class="warning"><strong>Datos de terceros, no un feed de ejecución.</strong> Las bolsas pueden proporcionar cotizaciones diferidas, las operaciones están sujetas a horarios y los widgets pueden no admitir algún instrumento. No usamos precios de referencia inventados: si un proveedor no responde, la pantalla debe mostrar indisponibilidad, nunca cifras falsas. <a href="https://www.tradingview.com/widget-docs/faq/data/" target="_blank" rel="noopener noreferrer">Política de retrasos de TradingView</a>.</div>
+<section class="section paper-home" id="simulacion" aria-labelledby="paper-home-title">
+<div class="sectionhead"><div><h2 id="paper-home-title">Tu simulación PAPER</h2><span class="badge">DINERO FICTICIO · SOLO ESTE NAVEGADOR</span></div><a href="{{ '/hais/operar/' | relative_url }}">Abrir terminal a pantalla completa</a></div>
+<p>Compra y vende en simulación sin salir de HAIS. Aquí verás tu saldo, posiciones e historial; se conservan al volver desde este mismo navegador. Las operaciones de otro navegador o dispositivo no se comparten.</p>
+<p><strong>Precios sintéticos de prueba.</strong> Este terminal no utiliza las cotizaciones del observatorio ni reproduce todavía margen, apalancamiento o costes de Plus500 CFD. No envía órdenes reales.</p>
+<iframe id="paper-terminal" class="paper-frame" title="Terminal de simulación PAPER: cartera y compras y ventas locales" src="{{ '/hais/operar/' | relative_url }}?embedded=1"></iframe>
+<p>Si el terminal no carga, <a href="{{ '/hais/operar/' | relative_url }}">abre la simulación directamente</a>. La cartera sigue siendo local; no se sincroniza con una cuenta de bróker.</p>
+</section>
 <section class="section" aria-labelledby="categories-title"><div class="sectionhead"><h2 id="categories-title">Cobertura del observatorio</h2><p>Selecciona un mercado para abrir su gráfico</p></div><div class="cards">
 <a class="card" href="#explorar" data-pick="SP:SPX"><small>EE. UU. · Índice</small><strong>S&P 500</strong><span>SP:SPX</span><p>Bolsa estadounidense de gran capitalización</p></a>
 <a class="card" href="#explorar" data-pick="NASDAQ:IXIC"><small>EE. UU. · Índice</small><strong>NASDAQ Composite</strong><span>NASDAQ:IXIC</span><p>Acciones del mercado NASDAQ</p></a>
@@ -94,6 +102,13 @@ a{color:var(--sky)}a:hover{color:#dcf3ff}button{font:inherit;cursor:pointer}butt
 <footer class="footer"><span>HAIS · Observación de mercados · No constituye asesoramiento de inversión</span><span>Índices y bonos pueden ir diferidos · PAPER sin bróker · <a href="{{ '/hais/operar/' | relative_url }}">Simular operaciones</a></span></footer>
 </div>
 <script>
+// Accept layout updates only from this same-origin terminal, never from market widgets.
+window.addEventListener('message', event => {
+ const frame=document.getElementById('paper-terminal');
+ if(!frame || event.origin!==window.location.origin || event.source!==frame.contentWindow) return;
+ if(event.data?.type!=='hais-paper-height' || !Number.isFinite(event.data.height)) return;
+ frame.style.height=Math.max(600,Math.min(6000,event.data.height))+'px';
+});
 (function(){
 'use strict';
 const SYMBOLS={
