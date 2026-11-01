@@ -165,6 +165,58 @@ async function discoverModels({ provider, baseUrl, apiKey }) {
                     throw nimErr;
                 }
             }
+        } else if (provider === 'anthropic') {
+            if (!apiKey || !apiKey.trim()) {
+                throw new Error('Introduce una API Key de Anthropic para descubrir modelos.');
+            }
+
+            // Anthropic uses x-api-key and its own versioned Models API, not Bearer auth.
+            // Browser access requires an explicit opt-in header (use a server proxy in production).
+            const headers = {
+                'x-api-key': apiKey.trim(),
+                'anthropic-version': '2023-06-01',
+                'anthropic-dangerous-direct-browser-access': 'true'
+            };
+            const cursors = new Set();
+            let afterId = '';
+
+            for (let page = 0; page < 50; page++) {
+                const url = new URL(`${cleanBaseUrl}/models`);
+                url.searchParams.set('limit', '100');
+                if (afterId) url.searchParams.set('after_id', afterId);
+
+                const res = await fetch(url.toString(), {
+                    headers,
+                    mode: 'cors',
+                    credentials: 'omit'
+                });
+                if (!res.ok) {
+                    const reason = res.status === 401 ? 'API key no válida.'
+                        : res.status === 403 ? 'La API key no tiene permisos.'
+                        : res.status === 429 ? 'Límite de peticiones alcanzado.'
+                        : 'No se pudo recuperar el catálogo.';
+                    throw new Error(`Anthropic API error ${res.status}: ${reason}`);
+                }
+
+                const data = await res.json();
+                if (!Array.isArray(data.data)) {
+                    throw new Error('Respuesta inválida de la API de modelos Anthropic.');
+                }
+                rawModels.push(...data.data
+                    .filter(m => typeof m.id === 'string' && m.id)
+                    .map(m => ({ id: m.id, kind: 'chat' })));
+
+                if (!data.has_more) break;
+                const nextCursor = data.last_id || data.data[data.data.length - 1]?.id;
+                if (!nextCursor || cursors.has(nextCursor)) {
+                    throw new Error('Paginación inválida al descubrir modelos de Anthropic.');
+                }
+                if (page === 49) {
+                    throw new Error('Demasiadas páginas de modelos Anthropic.');
+                }
+                cursors.add(nextCursor);
+                afterId = nextCursor;
+            }
         } else {
             const res = await fetch(`${cleanBaseUrl}/models`, {
                 headers: apiKey ? { 'Authorization': `Bearer ${apiKey}` } : {}
@@ -305,7 +357,7 @@ class OllamaUI {
         const prevDefault = PROVIDER_DEFAULTS[this.previousProvider]?.baseUrl || '';
         const currentVal = baseUrlInput.value.trim();
 
-        if (!currentVal || currentVal === prevDefault || (this.previousProvider === 'nvidia_nim' && currentVal === 'https://integrate.api.nvidia.com/v1')) {
+        if (provider === 'anthropic' || !currentVal || currentVal === prevDefault || (this.previousProvider === 'nvidia_nim' && currentVal === 'https://integrate.api.nvidia.com/v1')) {
             const newDefault = PROVIDER_DEFAULTS[provider]?.baseUrl || '';
             baseUrlInput.value = newDefault;
         }
@@ -328,7 +380,7 @@ class OllamaUI {
 
         // Suggestions
         const suggestions = {
-            'anthropic': 'claude-sonnet-4-6-20260217',
+            'anthropic': 'claude-sonnet-4-6',
             'openai': 'gpt-5',
             'gemini': 'gemini-2.5-flash',
             'mistral': 'mistral-large-latest',
@@ -370,7 +422,7 @@ class OllamaUI {
             if (ollamaHelpBlock) ollamaHelpBlock.classList.add('d-none');
             if (nimHelpBlock) nimHelpBlock.classList.remove('d-none');
             if (discoverGroup) discoverGroup.style.display = 'block';
-        } else if (provider === 'custom' || provider === 'openrouter' || provider === 'openai') {
+        } else if (provider === 'custom' || provider === 'openrouter' || provider === 'openai' || provider === 'anthropic') {
             if (ollamaScanBtnGroup) ollamaScanBtnGroup.style.display = 'none';
             if (ollamaDiscoveryGroup) ollamaDiscoveryGroup.style.display = 'none';
             if (ollamaModelsGroup) ollamaModelsGroup.style.display = 'none';
@@ -571,11 +623,12 @@ class OllamaUI {
     }
 
     async discoverCustomModels() {
-        const baseUrl = document.getElementById('ai_base_url').value;
+        const provider = document.getElementById('ai_provider').value;
+        // Anthropic's URL is hidden in the modal: always use the native API endpoint.
+        const baseUrl = provider === 'anthropic' ? PROVIDER_DEFAULTS.anthropic.baseUrl : document.getElementById('ai_base_url').value;
         const apiKey = document.getElementById('ai_api_key').value;
         const select = document.getElementById('custom-models-select');
         const group = document.getElementById('group-custom-models');
-        const provider = document.getElementById('ai_provider').value;
 
         if (!baseUrl) {
             alert('Por favor, indica la Base URL.');
