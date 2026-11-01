@@ -41,7 +41,13 @@ export async function onRequestGet({ request }) {
   }
 
   try {
-    const upstream = await fetch(target, { method: 'GET', headers: upstreamHeaders, redirect: 'error' });
+    // Cloudflare Workers does not implement redirect: 'error'; it throws a TypeError.
+    // Use manual and reject redirects so credentials never follow a Location header.
+    const upstream = await fetch(target, { method: 'GET', headers: upstreamHeaders, redirect: 'manual' });
+    if (upstream.status >= 300 && upstream.status < 400) {
+      return Response.json({ error: { type: 'upstream_redirect', message: 'Redirección inesperada desde Anthropic.' } },
+        { status: 502, headers: { 'Cache-Control': 'no-store' } });
+    }
     const headers = new Headers({ 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
     for (const name of ['retry-after', 'request-id']) {
       if (upstream.headers.has(name)) headers.set(name, upstream.headers.get(name));
