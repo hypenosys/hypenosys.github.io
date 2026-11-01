@@ -11,6 +11,13 @@ on:
       - 'tests/test_anthropic_model_discovery.js'
       - 'tests/test_neural_claude_smoke.js'
       - 'tests/test_jules_claude_bridge.js'
+      - 'tests/test_jules_task_handoff.js'
+      - 'assets/javascript/jules-panel-auth.js'
+      - 'assets/javascript/jules-panel-repo.js'
+      - 'assets/javascript/neural-chat-jules.js'
+      - 'assets/javascript/neural-chat-ui.js'
+      - 'assets/javascript/kanban-ui.js'
+      - 'dashboard.html'
       - 'assets/javascript/jules-claude-bridge.js'
       - 'assets/javascript/jules-panel-neural.js'
       - 'assets/javascript/neural-chat-core.js'
@@ -30,6 +37,13 @@ on:
       - 'tests/test_anthropic_model_discovery.js'
       - 'tests/test_neural_claude_smoke.js'
       - 'tests/test_jules_claude_bridge.js'
+      - 'tests/test_jules_task_handoff.js'
+      - 'assets/javascript/jules-panel-auth.js'
+      - 'assets/javascript/jules-panel-repo.js'
+      - 'assets/javascript/neural-chat-jules.js'
+      - 'assets/javascript/neural-chat-ui.js'
+      - 'assets/javascript/kanban-ui.js'
+      - 'dashboard.html'
       - 'assets/javascript/jules-claude-bridge.js'
       - 'assets/javascript/jules-panel-neural.js'
       - 'assets/javascript/neural-chat-core.js'
@@ -60,6 +74,17 @@ jobs:
         run: node tests/test_anthropic_pages_proxy.js
       - name: Jules and Claude bridge guardrails
         run: node tests/test_jules_claude_bridge.js
+      - name: Dashboard to Jules to Claude handoff contracts
+        run: node tests/test_jules_task_handoff.js
+      - name: Syntax checks for Neural, Jules and routing scripts
+        run: |
+          node --check assets/javascript/jules-panel-auth.js
+          node --check assets/javascript/jules-panel-repo.js
+          node --check assets/javascript/jules-panel-neural.js
+          node --check assets/javascript/neural-chat-jules.js
+          node --check assets/javascript/neural-chat-ui.js
+          node --check assets/javascript/jules-claude-bridge.js
+          node --check assets/javascript/kanban-ui.js
       - name: AI provider config
         run: node tests/test_api_config.js
       - name: Thinking adapter regressions
