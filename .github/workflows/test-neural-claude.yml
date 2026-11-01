@@ -1,0 +1,47 @@
+name: Neural Claude API contract tests
+
+on:
+  pull_request:
+    branches: [develop]
+    paths:
+      - 'assets/javascript/ai-config.js'
+      - 'assets/javascript/neural-provider-client.js'
+      - 'assets/javascript/neural-thinking-*.js'
+      - '_includes/api_config_modal.html'
+      - 'tests/test_anthropic_model_discovery.js'
+      - 'tests/test_neural_claude_smoke.js'
+      - 'tests/test_thinking_block*.js'
+      - '.github/workflows/test-neural-claude.yml'
+  push:
+    branches: [develop]
+    paths:
+      - 'assets/javascript/ai-config.js'
+      - 'assets/javascript/neural-provider-client.js'
+      - 'assets/javascript/neural-thinking-*.js'
+      - '_includes/api_config_modal.html'
+      - 'tests/test_anthropic_model_discovery.js'
+      - 'tests/test_neural_claude_smoke.js'
+      - 'tests/test_thinking_block*.js'
+      - '.github/workflows/test-neural-claude.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Anthropic discovery (mocked)
+        run: node tests/test_anthropic_model_discovery.js
+      - name: Claude native Messages and SSE (mocked)
+        run: node tests/test_neural_claude_smoke.js
+      - name: AI provider config
+        run: node tests/test_api_config.js
+      - name: Thinking adapter regressions
+        run: |
+          for file in tests/test_thinking_block*.js; do node "$file"; done
