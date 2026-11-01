@@ -258,14 +258,14 @@ window.NeuralProviderClient = (function() {
                 if (onToken) onToken(aiContent, aiContent);
             }
 
-            clearTimeout(requestTimeout);
+            if (requestTimeout && typeof clearTimeout !== 'undefined') clearTimeout(requestTimeout);
 
             console.log('[NeuralProviderClient] Done');
             if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] provider response text:", aiContent);
             if (onDone) onDone(aiContent);
 
         } catch (e) {
-            if (requestTimeout) clearTimeout(requestTimeout);
+            if (requestTimeout && typeof clearTimeout !== 'undefined') clearTimeout(requestTimeout);
             // Sanitize error message to prevent API key leakage
             let safeMessage = e.message || "Unknown error";
             if (apiKey) {
