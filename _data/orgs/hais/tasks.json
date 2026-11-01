@@ -452,7 +452,7 @@
       "tema_principal": "HAIS-001 / product",
       "prioridad": "High",
       "estado": "Working",
-      "completitud": 0,
+      "completitud": 0.5,
       "task_type": "test",
       "resuelto_por": "",
       "asignados": [
@@ -479,12 +479,12 @@
         {
           "id": 900001092,
           "text": "Levantar FastAPI en contenedor y consultar /health",
-          "done": false
+          "done": true
         },
         {
           "id": 900001093,
           "text": "Comprobar capabilities y /v1/paper/estimate sin colocación de órdenes",
-          "done": false
+          "done": true
         },
         {
           "id": 900001094,
@@ -511,6 +511,11 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-01T09:26:07.863Z",
           "body": "[HAIS · PLAN 2026-11-01] Haopeng consolida FastAPI PAPER, endpoints /health, /v1/capabilities y /v1/paper/estimate; adjuntar salida pytest y Docker, sin afirmar que el motor trading existe. Responsable(s): haopengwang123. Estado Working conservado; subtareas y criterios existentes sin alterar."
+        },
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-11-01T10:11:45Z",
+          "body": "Validación local en contenedor Compose aislado: /health y /v1/capabilities respondieron 200, /v1/paper/estimate devolvió 7 para 2 × 3.5 sin ejecutar ni persistir, y modo LIVE devolvió 403. Para construir se usó un Dockerfile temporal equivalente con montaje del CA del proxy y puerto local efímero; no se verificó el Dockerfile sin adaptación en esta red. Servicio de prueba detenido. Las 60 pruebas locales corresponden a la rama de contratos, no a CI remota. Permanecen pendientes la revisión completa de PR #1 y la evidencia de CI verde; no cerrar la tarea."
         }
       ],
       "change_log": [],
@@ -627,6 +632,11 @@
           "author_login": "Codex",
           "timestamp": "2026-11-01T10:05:20Z",
           "body": "Implementados siete modelos Pydantic PAPER, UTC, Decimal, procedencia, validación y JSON Schema v1. Rama feature/hais-011-decision-contracts; commit 11a0f6f. Suite local: 60 pruebas pasan (55 nuevas y 5 existentes). Fixed significa listo para QA en la rama: no integrado en master, sin PR creada ni CI remota verificada. La API de GitHub está bloqueada por la red del entorno. La dependencia #900010 conserva sus comprobaciones pendientes; esta preparación no la cierra ni autoriza despachar tareas dependientes. No se ejecutan órdenes ni se conecta un proveedor externo."
+        },
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-11-01T10:11:45Z",
+          "body": "Revisión de reproducibilidad: rama feature/hais-011-decision-contracts actualizada al commit fc252b2 fijando Pydantic 2.14.2, versión usada para generar los JSON Schema; las 60 pruebas locales pasan. Sigue pendiente crear la PR, revisión y CI remota; no se ha integrado en master."
         }
       ],
       "change_log": [
@@ -2894,6 +2904,11 @@
   ],
   "last_updated_by": "Codex",
   "_audit_log": [
+    {
+      "action": "chore(HAIS): registrar validación local #900010 y reproducibilidad #900011",
+      "user": "Codex",
+      "timestamp": "2026-11-01T10:11:45Z"
+    },
     {
       "action": "chore(HAIS): tarea #900011 lista para QA en rama, con pruebas locales y revisión pendiente",
       "user": "Codex",
