@@ -275,7 +275,7 @@ window.NeuralProviderClient = (function() {
                     else if (safeMessage.includes('Status: 429')) troubleshootingAnthropic = 'Límite de peticiones o crédito agotado';
                     else troubleshootingAnthropic = '';
                     if (troubleshootingAnthropic) {
-                        onError(new Error(`Anthropic: ${troubleshootingAnthropic}. HTTP ${safeMessage.match(/Status: (\\d+)/)?.[1] || 'error'}.`));
+                        onError(new Error(`Anthropic: ${troubleshootingAnthropic}. HTTP ${safeMessage.split('Status: ')[1]?.split('.')[0] || 'error'}.`));
                         return;
                     }
                 }
