@@ -26,7 +26,7 @@ permalink: /hais/
 <a class="skip" href="#contenido">Saltar al contenido</a>
 <header class="topbar">
   <a class="brand" href="{{ '/' | relative_url }}"><span class="brand-mark" aria-hidden="true">H</span><span>HYPENOSYS <span class="brand-divider">/</span> HAIS</span></a>
-  <nav aria-label="Navegación principal"><a href="{{ '/dashboard.html' | relative_url }}">Ir al tablero <span aria-hidden="true">↗</span></a></nav>
+  <nav aria-label="Navegación principal"><a href="{{ '/dashboard.html' | relative_url }}">Ir al tablero <span aria-hidden="true">></span></a></nav>
 </header>
 <main id="contenido" class="shell">
   <section class="hero" aria-labelledby="hero-title">
@@ -34,7 +34,7 @@ permalink: /hais/
       <p class="eyebrow"><span class="pulse" aria-hidden="true"></span> INVESTIGACIÓN · PAPER</p>
       <h1 id="hero-title">De la señal<br><span>a la evidencia.</span></h1>
       <p class="hero-text">Un espacio para seguir el desarrollo de HAIS: qué está planificado, qué espera revisión y qué evidencia tenemos hoy.</p>
-      <div class="hero-actions"><a class="button primary" href="#tareas">Explorar tareas <span aria-hidden="true">↓</span></a><a class="button secondary" href="https://github.com/hypenosys/HAIS">Repositorio HAIS <span aria-hidden="true">↗</span></a></div>
+      <div class="hero-actions"><a class="button primary" href="#tareas">Explorar tareas <span aria-hidden="true">↓</span></a><a class="button secondary" href="https://github.com/hypenosys/HAIS">Repositorio HAIS <span aria-hidden="true">></span></a></div>
     </div>
     <div class="hero-aside" aria-label="Alcance del proyecto">
       <div class="aside-top"><span>ALCANCE ACTUAL</span><span class="mono">01 / PAPER</span></div>
@@ -53,15 +53,20 @@ permalink: /hais/
       <div class="metric accent"><span class="metric-label">EN QA / REVISIÓN</span><strong>{{ qa }}</strong><span>esperan validación</span></div>
       <div class="metric"><span class="metric-label">ARCHIVADAS</span><strong>{{ archived_count }}</strong><span>se muestran aparte</span></div>
     </div>
-    <p class="metric-note"><strong>Cómo leerlo:</strong> son estados declarados en el tablero, no un porcentaje de implementación ni una comprobación automática de que los criterios se hayan cumplido. Los cambios aparecerán tras reconstruir la web. <a href="https://github.com/hypenosys/hypenosys.github.io/blob/develop/_data/orgs/hais/tasks.json">Consultar la fuente en develop ↗</a></p>
+    {% assign other_count = active_count | minus: pending | minus: working | minus: qa %}
+    <div class="distribution" aria-label="Distribución de tareas activas: {{ pending }} pendientes, {{ working }} en curso, {{ qa }} en QA{% if other_count > 0 %}, {{ other_count }} en otros estados{% endif %}">
+      <span class="dist-pending" style="flex-grow: {{ pending }}" aria-hidden="true"></span><span class="dist-working" style="flex-grow: {{ working }}" aria-hidden="true"></span><span class="dist-qa" style="flex-grow: {{ qa }}" aria-hidden="true"></span>{% if other_count > 0 %}<span class="dist-other" style="flex-grow: {{ other_count }}" aria-hidden="true"></span>{% endif %}
+    </div>
+    <p class="distribution-caption">Distribución de tareas activas: <span class="legend-dot dist-pending" aria-hidden="true"></span> pendientes · <span class="legend-dot dist-working" aria-hidden="true"></span> en curso · <span class="legend-dot dist-qa" aria-hidden="true"></span> QA{% if other_count > 0 %} · <span class="legend-dot dist-other" aria-hidden="true"></span> otros{% endif %}.</p>
+    <p class="metric-note"><strong>Cómo leerlo:</strong> son estados declarados en el tablero, no un porcentaje de implementación ni una comprobación automática de que los criterios se hayan cumplido. Los cambios aparecerán tras reconstruir la web. <a href="https://github.com/hypenosys/hypenosys.github.io/blob/develop/_data/orgs/hais/tasks.json">Consultar la fuente en develop ></a></p>
   </section>
 
   <section class="evidence" aria-labelledby="evidence-title">
     <div class="section-title"><div><p class="eyebrow">02 / EVIDENCIA</p><h2 id="evidence-title">Código y validación</h2></div><p>Observación manual del 1 de noviembre de 2026. No se actualiza automáticamente al cambiar el repositorio.</p></div>
     <div class="evidence-grid">
-      <article class="evidence-card"><span class="card-number">01</span><span class="card-tag">MASTER · bf287d2</span><h3>Base del servicio</h3><p>FastAPI ofrece salud, capacidades y estimación teórica. La estimación no ejecuta órdenes ni guarda posiciones.</p><a href="https://github.com/hypenosys/HAIS/tree/bf287d2">Ver código observado <span aria-hidden="true">↗</span></a></article>
-      <article class="evidence-card"><span class="card-number">02</span><span class="card-tag">RAMA · fc252b2</span><h3>Contratos PAPER</h3><p>Modelos y esquemas con pruebas locales, preparados en una rama. Pendientes de PR, revisión, CI e integración.</p><a href="https://github.com/hypenosys/HAIS/commit/fc252b2">Ver commit observado <span aria-hidden="true">↗</span></a></article>
-      <article class="evidence-card"><span class="card-number">03</span><span class="card-tag">DEVELOP · a17c37b</span><h3>Rama de desarrollo</h3><p>En el momento de la observación contenía únicamente el README inicial. Las ramas pueden haber cambiado.</p><a href="https://github.com/hypenosys/HAIS/tree/a17c37b">Ver snapshot observado <span aria-hidden="true">↗</span></a></article>
+      <article class="evidence-card"><span class="card-number">01</span><span class="card-tag">MASTER · bf287d2</span><h3>Base del servicio</h3><p>FastAPI ofrece salud, capacidades y estimación teórica. La estimación no ejecuta órdenes ni guarda posiciones.</p><a href="https://github.com/hypenosys/HAIS/tree/bf287d2">Ver código observado <span aria-hidden="true">></span></a></article>
+      <article class="evidence-card"><span class="card-number">02</span><span class="card-tag">RAMA · fc252b2</span><h3>Contratos PAPER</h3><p>Modelos y esquemas con pruebas locales, preparados en una rama. Pendientes de PR, revisión, CI e integración.</p><a href="https://github.com/hypenosys/HAIS/commit/fc252b2">Ver commit observado <span aria-hidden="true">></span></a></article>
+      <article class="evidence-card"><span class="card-number">03</span><span class="card-tag">DEVELOP · a17c37b</span><h3>Rama de desarrollo</h3><p>En el momento de la observación contenía únicamente el README inicial. Las ramas pueden haber cambiado.</p><a href="https://github.com/hypenosys/HAIS/tree/a17c37b">Ver snapshot observado <span aria-hidden="true">></span></a></article>
     </div>
     <p class="metric-note">La recepción de señales, la cartera y el backtest figuran como tareas pendientes. Una estimación teórica no demuestra la efectividad financiera de una estrategia.</p>
   </section>
@@ -90,7 +95,7 @@ permalink: /hais/
             <div class="task-meta"><span><strong>Prioridad:</strong> {{ task.prioridad | default: 'Sin definir' | escape }}</span><span><strong>Asignación:</strong> {% if task.asignados.size > 0 %}{{ task.asignados | join: ', ' | escape }}{% else %}Sin asignar{% endif %}</span><span><strong>Dependencias:</strong> {% if task.blocked_by.size > 0 %}{{ task.blocked_by | join: ', ' | escape }}{% else %}Ninguna declarada{% endif %}</span></div>
             {% if task.acceptance_criteria and task.acceptance_criteria != empty %}<div class="criteria"><strong>Criterios de aceptación</strong><p>{{ task.acceptance_criteria | escape | newline_to_br }}</p></div>{% endif %}
             {% if task.subtasks.size > 0 %}<div class="subtasks"><strong>Subtareas</strong><ul>{% for subtask in task.subtasks %}<li><span aria-label="{% if subtask.done %}Completada{% else %}Pendiente{% endif %}">{% if subtask.done %}✓{% else %}○{% endif %}</span> {{ subtask.text | escape }}</li>{% endfor %}</ul></div>{% endif %}
-            {% if task.external_links.size > 0 %}<div class="references"><strong>Referencias</strong><ul>{% for link in task.external_links %}{% assign link_scheme = link.url | slice: 0, 8 | downcase %}{% if link_scheme == 'https://' %}<li><a href="{{ link.url | escape }}" rel="noopener noreferrer">{{ link.label | default: 'Referencia' | escape }} ↗</a></li>{% endif %}{% endfor %}</ul></div>{% endif %}
+            {% if task.external_links.size > 0 %}<div class="references"><strong>Referencias</strong><ul>{% for link in task.external_links %}{% assign link_scheme = link.url | slice: 0, 8 | downcase %}{% if link_scheme == 'https://' %}<li><a href="{{ link.url | escape }}" rel="noopener noreferrer">{{ link.label | default: 'Referencia' | escape }} ></a></li>{% endif %}{% endfor %}</ul></div>{% endif %}
             {% if task.tags.size > 0 %}<div class="tags" aria-label="Etiquetas">{% for tag in task.tags %}<span>{{ tag | escape }}</span>{% endfor %}</div>{% endif %}
           </div>
         </details>
@@ -99,5 +104,4 @@ permalink: /hais/
     <p id="no-results" class="empty" hidden>No hay tareas que coincidan con los filtros.</p>
   </section>
 </main>
-<footer class="footer"><span>HYPENOSYS / HAIS</span><span>Panel estático · datos del repositorio · sin proveedor de IA</span><a href="{{ '/dashboard.html' | relative_url }}">Abrir tablero ↗</a></footer>
-
+<footer class="footer"><span>HYPENOSYS / HAIS</span><span>Panel estático · datos del repositorio · sin proveedor de IA</span><a href="{{ '/dashboard.html' | relative_url }}">Abrir tablero ></a></footer>
