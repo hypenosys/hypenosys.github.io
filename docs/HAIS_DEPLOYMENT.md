@@ -1,43 +1,41 @@
-# HAIS — acceso desde dominios Hypenosys
+# HAIS — acceso web y límites de operativa
 
-## URLs de destino
+## URLs previstas en develop
 
-- Desarrollo: https://dev.hypenosys.com/hais/
-- Dashboard de desarrollo: https://dev.hypenosys.com/dashboard.html
-- Página de desarrollo: https://dev.hypenosys.com/
-- Producción (solo tras publicar explícitamente): https://hypenosys.com/hais/
+- **Terminal PAPER:** https://dev.hypenosys.com/hais/
+- **Estado del proyecto y Kanban:** https://dev.hypenosys.com/hais/estado/
+- **Demo genérica del AI Control Center:** https://dev.hypenosys.com/hais/demo/
+- **Dashboard Hypenosys:** https://dev.hypenosys.com/dashboard.html
 
-## Cómo se genera la ruta
+La rama `develop` incluye las páginas Jekyll: `pages/hais-terminal.html`, `pages/hais.md` y `pages/hais-prototype.html`. Cada una tiene un permalink único para evitar dos fuentes que intenten generar el mismo `/hais/index.html`.
 
-La página fuente `pages/hais-prototype.html` tiene front matter Jekyll con `permalink: /hais/`, por lo que la compilación genera la ruta `/hais/index.html`. Las páginas `index.html` y `dashboard.html` enlazan al destino mediante `{{ '/hais/' | relative_url }}`. El prototipo funciona de forma aislada: datos ficticios almacenados en localStorage.
+## Qué funciona en el terminal
 
-## Publicación de develop
+- Panel responsive con efectivo, posiciones, patrimonio y P/L en USD **ficticios**.
+- Precios de escenario AAPL/MSFT/NVDA sintetizados y editables manualmente; gráfico de historial local, sin feed de cotizaciones.
+- Compra y venta **PAPER locales** con confirmación y validaciones: saldo, cantidad, tenencia, límite conservador ilustrativo del 30% por activo, parada de compras.
+- Persistencia en `localStorage`, historial, eventos locales, exportación JSON y reinicio.
+- Comprobación optativa y de solo lectura de `GET /api/hais/health` y `GET /api/hais/v1/capabilities`, y cálculo teórico con `POST /api/hais/v1/paper/estimate` **si** se configura un gateway same-origin.
 
-El repositorio contiene un archivo `CNAME` que señala `hypenosys.com`, **no** `dev.hypenosys.com`. Fusionar en `develop` no constituye prueba de publicación del subdominio. La configuración de dominio y despliegue corresponde al proveedor/CDN y al workflow/servicio que publica la rama.
+**Importante:** ninguna compra o venta de la interfaz se manda al backend. El backend actual solo estima nominales y devuelve `executed=false` / `persisted=false`. No hay datos de mercado reales, cartera persistida en servidor, autorización de estrategia ni ejecución con dinero. Las reglas de la demo no implican aprobación de una política de riesgo. Un navegador o usuario diferente verá otra simulación.
 
-Para que el entorno dev funcione, comprobar:
+## Contrato seguro pendiente para operativa PAPER de backend
 
-1. Resolver DNS de `dev.hypenosys.com` y verificar HTTPS.
-2. Confirmar que el hosting asociado a `dev.hypenosys.com` compila y sirve la rama `develop` (por ejemplo, pipeline independiente o proxy, sin cambiar el `CNAME` de producción).
-3. Confirmar que la publicación sirve archivos de Jekyll, incluyendo `/hais/index.html`, no solo los archivos fuente.
-4. Comprobar manualmente con el navegador `/hais/`, `/dashboard.html` y `/`; seguir el enlace «Abrir HAIS».
-5. En `/hais/`, navegar por 12 módulos, ejecutar demo de agente, crear tarea y comprobar persistencia tras recargar; reiniciar datos con «Reiniciar demo».
-6. Ejecutar `bundle exec jekyll build` y las pruebas Playwright existentes antes de anunciar despliegue validado.
+La configuración de hosting **debe** disponer de un reverse proxy con autenticación / sesión y control de permisos para usar `/api/hais`. No publicar el servicio FastAPI anónimo, ni almacenar API keys, tokens de bróker o secretos en Jekyll/JS/localStorage. No habilitar LIVE.
 
-### Comandos de comprobación
+El siguiente hito exige diseñar `GET /v1/paper/portfolio`, `GET /v1/paper/quotes`, `GET /v1/paper/orders`, `POST /v1/paper/orders`, `POST /v1/paper/kill-switch` con autenticación, CSRF, multi-tenant, idempotencia, auditoría, validación de datos y persistencia. **No existen aún** en HAIS: el terminal no debe llamarlos ni simular que existen. Antes de desarrollar esas rutas se deben aprobar reglas de estrategia, fuentes de precios/señales y límites de riesgo.
+
+## Publicación y pruebas
+
+El CNAME del repositorio apunta a `hypenosys.com`. No cambiarlo al subdominio de desarrollo. El hosting de `dev.hypenosys.com` debe publicar explícitamente `develop`; el commit por sí solo no demuestra que el dominio esté actualizado.
 
 ```bash
-dig +short dev.hypenosys.com
-curl -IL --fail https://dev.hypenosys.com/hais/
-curl -IL --fail https://dev.hypenosys.com/dashboard.html
 bundle exec jekyll build
 test -f _site/hais/index.html
+test -f _site/hais/demo/index.html
+test -f _site/hais/estado/index.html
+npx playwright test tests/verify_hais_terminal.spec.js
+curl -IL --fail https://dev.hypenosys.com/hais/
 ```
 
-**No cambiar el `CNAME` de producción a `dev.hypenosys.com`**: eso podría romper `hypenosys.com`. Para dos dominios con ramas diferentes se necesita configuración de hosting separada o un proxy/CDN correctamente configurado.
-
-## Estado y límites
-
-- Código de prototipo y enlaces de navegación: incluidos en `develop` tras aprobar el PR.
-- Backend, conectores, autentificación y ejecución real de agentes: pendientes.
-- DNS, SSL, pipeline y accesibilidad pública de `dev.hypenosys.com`: deben confirmarse externamente.
+Comprobar sin backend que el indicador permanece desconectado y que la simulación opera solo en localStorage; con gateway autenticado, verificar el contrato PAPER antes de mostrar conexión. No declarar publicación en el dominio ni backend activo sin evidencia.
