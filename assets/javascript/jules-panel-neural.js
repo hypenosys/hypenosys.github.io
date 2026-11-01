@@ -1698,60 +1698,100 @@ window.sendToJulesFromLocal = function(idx) {
 };
 
 window.sendNeuralMessage = async function() {
+    if (window._julesSendInFlight || window._julesLaunchInFlight) return false;
     const input = $('v2-chat-input');
-    const msg = input.value.trim();
-    if (!msg) return;
+    const msg = String(input?.value || '').trim();
+    if (!msg) return false;
 
-    // Safety check: LINKED_SESSION_MISMATCH
-    const activeClaudeId = window.NeuralWorkspaceState?.activeClaudeConversationId;
-    if (activeClaudeId) {
-        const session = window.julesPanelSessions.find(s => s.id === activeClaudeId);
-        const expectedJulesId = window.resolveLinkedJulesId(session);
-        if (expectedJulesId) {
-            const cleanExpected = expectedJulesId.replace('sessions/', '');
-            const cleanActiveJules = window.NeuralWorkspaceState.activeJulesSessionId ? window.NeuralWorkspaceState.activeJulesSessionId.replace('sessions/', '') : '';
-            if (cleanExpected !== cleanActiveJules) {
-                // Reconcile and block
-                window.NeuralWorkspaceState.activeJulesSessionId = cleanExpected;
-                window.persistNeuralWorkspaceState();
-                showToast("Discrepancia detectada (LINKED_SESSION_MISMATCH). Workspace reconciliado. Reintente el envío.", "red");
-                window.setNeuralWorkspaceMode(window.NeuralWorkspaceState.activeMode);
-                throw new Error('LINKED_SESSION_MISMATCH');
-            }
-        }
-    }
+    const conversation = (window.julesPanelSessions || [])
+        .find(item => item.id === window.currentJulesPanelSessionId);
+    // Strong session identity: a global last-used Jules ID is never sufficient.
+    // Only this conversation's linked ID is eligible to receive a message.
+    const linked = conversation ? window.resolveLinkedJulesId(conversation) : null;
+    const sid = String(linked || '').replace(/^sessions\//, '');
 
-    const sid = getLinkedJulesSessionId();
     if (!sid) {
-        // Intercept and open linkers
-        window.handleJulesSendInterception(msg);
-        return;
-    }
-
-    const targetId = sid.startsWith('sessions/') ? sid : 'sessions/' + sid;
-
-    const session = window.julesPanelSessions.find(s => s.id === window.currentJulesPanelSessionId);
-    if (session) {
-        session.messages.push({ role: 'user', content: msg, timestamp: Date.now() });
-        saveJulesPanelSessions();
-        window.renderChatV2Messages();
-    }
-
-    try {
-        const ok = await window.julesApi.sendMessage(targetId, msg);
-        if (ok !== false) {
-            input.value = '';
-            window._julesNeuralDrafts.jules = '';
-            input.dispatchEvent(new Event('input', { bubbles: true }));
-            addTel("USER", "Mensaje enviado a Jules", "info");
-            refreshActivities(sid);
+        // First Jules turn: create exactly ONE session with this text as the
+        // initial prompt. A second :sendMessage would duplicate the instruction.
+        // If repo/branch is not established, retain draft and direct user to task setup.
+        const selected = $('branch-sel');
+        const repo = window.JulesPanelState?.activeRepo;
+        const branch = window.JulesPanelState?.activeBranch;
+        const canonical = window.getCanonicalRepoName?.(repo);
+        if (!repo || !branch || !selected || selected.disabled ||
+            selected.dataset.repo !== canonical || selected.value !== branch ||
+            window.JulesPanelState?._handoffBranchBlocked) {
+            const setup = $('session-prompt');
+            if (setup) {
+                setup.value = msg;
+                window.resizeJulesDraftTextarea?.(setup);
+            }
+            window.switchView?.('neural');
+            showToast('Primer mensaje preparado. Confirma el repositorio y la rama antes de iniciar Jules.', 'amber');
+            return false;
         }
-    } catch (e) {
-        // Keep the text editable if the external send fails.
-        if (!input.value.trim()) window.setJulesComposerDraft('jules', msg);
-        showToast("Error al enviar: " + e.message, "red");
+
+        window._julesSendInFlight = true;
+        try {
+            // The same supervised mode as the new-task panel is used.
+            // The user already chose "send" so no second send is required.
+            const createdId = await window.launchSession({ promptOverride: msg, fromChat: true });
+            if (!createdId) return false; // keep editable draft on failure
+            if (input.value.trim() === msg) {
+                input.value = '';
+                if (window._julesNeuralDrafts) window._julesNeuralDrafts.jules = '';
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+            addTel('USER', 'Sesión Jules creada con el primer mensaje (sin duplicarlo).', 'success');
+            return true;
+        } catch (error) {
+            showToast('No se creó la sesión Jules: ' + error.message, 'red');
+            return false;
+        } finally {
+            window._julesSendInFlight = false;
+        }
     }
-}
+
+    // Existing session: explicitly check the remote lifecycle before sending.
+    window._julesSendInFlight = true;
+    try {
+        const fullSid = 'sessions/' + sid;
+        const remote = await window.julesApi.getSession(fullSid);
+        if (!remote?.name || String(remote.name).replace(/^sessions\//, '') !== sid) {
+            throw new Error('No se pudo verificar el ID de la sesión Jules vinculada.');
+        }
+        if (['FAILED', 'COMPLETED', 'CANCELLED'].includes(remote.state)) {
+            throw new Error('Esta sesión Jules ha terminado (' + remote.state + '). Inicia una sesión nueva para continuar.');
+        }
+        const taskContext = JSON.parse(localStorage.getItem('hy_neural_task_context') || '{}');
+        const taskRepo = taskContext.repo || taskContext.repository || '';
+        const remoteRepo = remote.sourceContext?.source || '';
+        if (taskRepo && remoteRepo && window.getCanonicalRepoName(taskRepo) !== window.getCanonicalRepoName(remoteRepo)) {
+            throw new Error('La tarea pertenece a un repositorio diferente al de la sesión Jules.');
+        }
+        await window.julesApi.sendMessage(fullSid, msg);
+        if (conversation) {
+            conversation.messages ||= [];
+            conversation.messages.push({ role: 'user', source: 'human_to_jules', content: msg, timestamp: Date.now() });
+            saveJulesPanelSessions();
+            window.renderChatV2Messages();
+        }
+        if (input.value.trim() === msg) {
+            input.value = '';
+            if (window._julesNeuralDrafts) window._julesNeuralDrafts.jules = '';
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        addTel('USER', 'Mensaje enviado a Jules #' + sid, 'info');
+        await window.refreshActivities?.(sid);
+        return true;
+    } catch (error) {
+        // Keep the draft on every failure. Never add a false "sent" bubble.
+        showToast('No enviado a Jules: ' + error.message, 'red');
+        return false;
+    } finally {
+        window._julesSendInFlight = false;
+    }
+};
 
 window.approvePlan = async function(sessionId) {
     try {
