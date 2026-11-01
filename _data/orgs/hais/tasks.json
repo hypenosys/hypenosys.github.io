@@ -3181,6 +3181,10 @@
         {
           "label": "Código de página",
           "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/pages/hais-markets.html"
+        },
+        {
+          "label": "Build de develop con APE",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/actions/runs/41307153274"
         }
       ],
       "comments": [
@@ -3193,6 +3197,11 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-01T12:32:40Z",
           "body": "Se incorpora APE/USD (Coinbase, TradingView) y precio real de ApeCoin (ID apecoin, CoinGecko) a la web, junto a BTC/ETH/SOL. Se añade precisión de hasta seis decimales y test Playwright. Pendiente validación completa de despliegue y proveedor; no cerrar tarea anticipadamente."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-01T12:32:40Z",
+          "body": "Implementación APE, ficha y prueba Playwright de APE incluidas en develop. Build Jekyll Cloudflare exitoso en 41307153274. Falta smoke público y Playwright ejecutado, no marcar OK."
         }
       ],
       "change_log": [],
@@ -3271,6 +3280,10 @@
         {
           "label": "API mercado APE",
           "url": "https://github.com/hypenosys/HAIS/blob/develop/src/hais/markets.py"
+        },
+        {
+          "label": "CI backend APE",
+          "url": "https://github.com/hypenosys/HAIS/actions/runs/41307208369"
         }
       ],
       "comments": [
@@ -3283,6 +3296,11 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-01T12:32:40Z",
           "body": "El endpoint /v1/market/crypto y market/catalog incluyen APE usando la fuente CoinGecko (apecoin). Test backend ampliado para el cuarto activo. Aún pendiente smoke de gateway protegido y cotización real desde staging."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-01T12:32:40Z",
+          "body": "CI backend actual con ApeCoin y tests de catálogo/cotizaciones: SUCCESS en 41307208369. Gateway y verificación upstream en staging siguen pendientes."
         }
       ],
       "change_log": [],
@@ -3546,8 +3564,13 @@
       "jules_session": null
     }
   ],
-  "last_updated_by": "HAIS ApeCoin integration",
+  "last_updated_by": "HAIS ApeCoin CI evidence",
   "_audit_log": [
+    {
+      "action": "ci(HAIS): backend APE tests successful and website build successful, browser smoke and staging remain open",
+      "user": "ChatGPT",
+      "timestamp": "2026-11-01T12:32:40Z"
+    },
     {
       "action": "feat(HAIS): incorporar APE en TradingView, CoinGecko, market/catalog y tests; tareas 900039/900040 siguen In Review",
       "user": "ChatGPT",
