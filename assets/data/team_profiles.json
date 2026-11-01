@@ -278,6 +278,13 @@
         "impacto": 0,
         "volatilidad": 0
       }
+    },
+    "Haopeng": {
+      "github_username": "haopengwang123",
+      "display_name": "Haopeng Wang",
+      "role": "Miembro",
+      "avatar_url": "https://github.com/haopengwang123.png",
+      "is_admin": false
     }
   },
   "_audit_log": [
