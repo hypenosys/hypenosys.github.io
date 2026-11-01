@@ -10,6 +10,12 @@ on:
       - '_includes/api_config_modal.html'
       - 'tests/test_anthropic_model_discovery.js'
       - 'tests/test_neural_claude_smoke.js'
+      - 'tests/test_jules_claude_bridge.js'
+      - 'assets/javascript/jules-claude-bridge.js'
+      - 'assets/javascript/jules-panel-neural.js'
+      - 'assets/javascript/neural-chat-core.js'
+      - 'pages/jules-panel.html'
+      - 'pages/claude-chat.html'
       - 'tests/test_anthropic_pages_proxy.js'
       - 'functions/api/ai/anthropic/**'
       - 'tests/test_thinking_block*.js'
@@ -23,6 +29,12 @@ on:
       - '_includes/api_config_modal.html'
       - 'tests/test_anthropic_model_discovery.js'
       - 'tests/test_neural_claude_smoke.js'
+      - 'tests/test_jules_claude_bridge.js'
+      - 'assets/javascript/jules-claude-bridge.js'
+      - 'assets/javascript/jules-panel-neural.js'
+      - 'assets/javascript/neural-chat-core.js'
+      - 'pages/jules-panel.html'
+      - 'pages/claude-chat.html'
       - 'tests/test_anthropic_pages_proxy.js'
       - 'functions/api/ai/anthropic/**'
       - 'tests/test_thinking_block*.js'
@@ -46,6 +58,8 @@ jobs:
         run: node tests/test_neural_claude_smoke.js
       - name: Cloudflare Anthropic relay contracts (mocked)
         run: node tests/test_anthropic_pages_proxy.js
+      - name: Jules and Claude bridge guardrails
+        run: node tests/test_jules_claude_bridge.js
       - name: AI provider config
         run: node tests/test_api_config.js
       - name: Thinking adapter regressions
