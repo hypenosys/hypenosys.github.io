@@ -687,9 +687,11 @@ window.launchSession = async function(options = {}) {
         const blockedBy = Array.isArray(linkedContext.blocked_by) ? linkedContext.blocked_by : [];
         if (blockedBy.length && window.taskOps?.getAllTasks) {
             const allTasks = await window.taskOps.getAllTasks();
+            const dependencyDoneStates = new Set(['OK', 'DONE', 'COMPLETED', 'FIXED', 'CLOSED', 'RESOLVED']);
             const unresolved = blockedBy.filter(taskId => {
                 const dep = (allTasks || []).find(t => String(t.id) === String(taskId));
-                return !dep || !['DONE','Fixed','COMPLETED'].includes(String(dep.estado || dep.status));
+                const depState = String(dep?.estado || dep?.status || '').trim().toUpperCase();
+                return !dep || !dependencyDoneStates.has(depState);
             });
             if (unresolved.length) throw new Error('Tarea bloqueada por dependencias sin completar: ' + unresolved.join(', ') + '. Revisa el Kanban antes de ejecutar.');
         }
