@@ -153,6 +153,13 @@ permalink: /chat/neural/
 
         <!-- Activity Feed -->
         <div id="activity-feed" class="chat-container flex-grow p-6 space-y-4 hidden scroll-smooth">
+            <div class="flex flex-wrap items-center gap-2 p-3 rounded-lg border border-[#bd93f9]/30 bg-[#1e1f29]">
+                <strong class="text-xs text-[#bd93f9]">Claude ↔ Jules</strong>
+                <button type="button" class="px-3 py-2 rounded bg-[#44475a] text-xs" onclick="window.JulesClaudeBridge.analyzeLatest()">Analizar última salida</button>
+                <button type="button" class="px-3 py-2 rounded bg-[#6f43a8] text-xs" id="neural-activity-bridge-start" onclick="window.JulesClaudeBridge.start()">Iniciar auto (máx. 3)</button>
+                <button type="button" class="px-3 py-2 rounded bg-[#44475a] text-xs" id="neural-activity-bridge-stop" onclick="window.JulesClaudeBridge.stop()" disabled>Detener</button>
+                <span id="neural-activity-bridge-status" class="text-[10px] text-[#aaa1bd] break-all" role="status" aria-live="polite">Auto desactivado</span>
+            </div>
             <div id="activity-empty-state" class="h-full flex flex-col items-center justify-center text-center space-y-4 opacity-30">
                 <i class="fas fa-terminal text-6xl"></i>
                 <div>
@@ -390,6 +397,7 @@ permalink: /chat/neural/
 <script src="/assets/javascript/neural-chat-jules.js"></script>
 <script src="/assets/javascript/neural-chat-send.js?v=nim-direct-v1"></script>
 <script src="/assets/javascript/neural-chat-activity.js"></script>
+<script src="/assets/javascript/jules-claude-bridge.js?v=claude-jules-bridge-v1"></script>
 
 <script>
     function escapeHtml(str) {
