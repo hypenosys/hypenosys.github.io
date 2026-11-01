@@ -175,8 +175,16 @@ async function selectRepo(repoFullName, onlyUI = false) {
     const selectedItem = Array.from(items).find(i => window.getCanonicalRepoName(i.getAttribute('data-id')) === canonical);
     // Use Jules' verified resource name from listSources, never invent one when
     // the GitHub repo is visible but the Jules GitHub App isn't installed.
-    const sourceName = selectedItem?.getAttribute('data-jules') ||
+    let sourceName = selectedItem?.getAttribute('data-jules') ||
         (repoFullName.startsWith('sources/') ? repoFullName : '');
+    if (!sourceName && window.julesApi?.getSources) {
+        // A handoff may arrive before the sidebar's async repo render finishes.
+        // Fetch the authoritative Jules sources instead of manufacturing a URL.
+        const sources = Array.isArray(window.julesSourcesCache) && window.julesSourcesCache.length
+            ? window.julesSourcesCache : await window.julesApi.getSources();
+        window.julesSourcesCache = sources;
+        sourceName = sources.find(item => window.getCanonicalRepoName(item.name) === canonical)?.name || '';
+    }
     if (!sourceName) {
         window.JulesPanelState.activeRepo = null;
         window.JulesPanelState._handoffBranchBlocked = true;
