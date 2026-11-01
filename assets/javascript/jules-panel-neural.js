@@ -1284,8 +1284,7 @@ window.prepareSelectedJulesForClaude = async function(sendImmediately = false) {
     if (typeof window.switchView === 'function') window.switchView('chat');
     window.setNeuralWorkspaceMode('claude');
     window.setJulesComposerDraft('claude', prompt);
-    window._selectedJulesActivityKeys.clear();
-    if (document.getElementById('jules-selection-count')) document.getElementById('jules-selection-count').textContent = '0 actividades Jules seleccionadas';
+    window.clearPanelMessageSelection('jules');
     if (sendImmediately) await window.sendChatV2Msg();
 };
 
@@ -1346,9 +1345,7 @@ window.prepareSelectedClaudeForJules = function() {
             showToast('Selección preparada para Nueva Tarea Jules; selecciona repo y rama.', 'amber');
         }
     }
-    window._selectedClaudeMessageKeys.clear();
-    const count = document.getElementById('claude-selection-count');
-    if (count) count.textContent = '0 mensajes Claude seleccionados';
+    window.clearPanelMessageSelection('claude');
 };
 
 window.quoteJulesChatMessage = function(index) {
@@ -1559,6 +1556,7 @@ window.renderChatV2Messages = function() {
     });
 
     container.scrollTop = container.scrollHeight;
+    window.updateJulesSelectionBar('claude');
 }
 
 // "Revisar Cambios" Logic
