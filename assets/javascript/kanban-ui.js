@@ -297,37 +297,28 @@
             const branchUrl = (repoFullName && branchName) ? `https://github.com/${repoFullName}/tree/${branchName}` : '#';
             const displayRepo = (window.getRepoAlias ? window.getRepoAlias(repoFullName) : null) || repoFullName.split('/').pop() || '---';
 
-            // Legacy robot fallback: also enters Claude, never Jules.
+            // Initialize the Claude entry synchronously, before asynchronous dashboard
+            // setup. No modal, Jules execution, or delayed decision on this route.
             if (!window._openTaskInClaude) {
-                window._openTaskInClaude = function(taskId) {
-                    // Try different ways to find the task data
-                    const task = (window.taskOps?.getTaskSync ? window.taskOps.getTaskSync(taskId) : null)
-                                 || window._kanbanTasks?.find(t => String(t.id) === String(taskId))
-                                 || (window.JulesPanelState?.tasks?.find(t => String(t.id) === String(taskId)));
-
-                    if (!task) {
-                        console.warn('[KANBAN] Task not found:', taskId);
+                window._openTaskInClaude = function(taskDataOrId) {
+                    const supplied = typeof taskDataOrId === 'object' ? taskDataOrId : null;
+                    const taskId = supplied?.id ?? taskDataOrId;
+                    const task = (window.currentTasks || []).find(t => String(t.id) === String(taskId))
+                        || window._kanbanTasks?.find(t => String(t.id) === String(taskId))
+                        || window.JulesPanelState?.tasks?.find(t => String(t.id) === String(taskId))
+                        || supplied;
+                    if (!task?.id || !(task.title || task.titulo)) {
+                        console.warn('[KANBAN] No complete task found for Claude entry:', taskId);
                         return;
                     }
-
-                    if (window.neuralSession?.open) {
-                        window.neuralSession.open(task);
-                    } else {
-                        // Retry once after 800ms — covers late authReady initialization
-                        setTimeout(() => {
-                            if (window.neuralSession?.open) {
-                                window.neuralSession.open(task);
-                            } else {
-                                console.error('[KANBAN] NeuralSessionPanel not available');
-                                // Fallback to old behavior if everything fails
-                                localStorage.setItem('hy_neural_task_context', JSON.stringify(task));
-                                localStorage.setItem('hy_neural_active', 'true');
-                                localStorage.setItem('hy_neural_new_task_sent', 'true');
-                                const url = `/chat/neural/?from=dashboard`;
-                                window.location.href = url;
-                            }
-                        }, 800);
-                    }
+                    localStorage.removeItem('hy_jules_handoff');
+                    localStorage.removeItem('jules_task_payload');
+                    localStorage.removeItem('hy_handoff_autolink');
+                    localStorage.setItem('hy_neural_task_context', JSON.stringify(task));
+                    localStorage.setItem('hy_neural_active', 'true');
+                    localStorage.setItem('hy_neural_new_task_sent', 'true');
+                    localStorage.setItem('hy_neural_entry_point', 'dashboard-claude');
+                    window.location.assign('/chat/neural/?from=dashboard');
                 };
             }
 
