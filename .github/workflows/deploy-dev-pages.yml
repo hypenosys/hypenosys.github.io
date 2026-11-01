@@ -39,6 +39,9 @@ jobs:
           node tests/test_anthropic_pages_proxy.js
           node tests/test_jules_claude_bridge.js
           node tests/test_jules_task_handoff.js
+          node tests/test_jules_task_supervisor.js
+          node --check assets/javascript/jules-task-supervisor.js
+          node --check assets/javascript/jules-claude-bridge.js
           node --check assets/javascript/jules-panel-auth.js
           node --check assets/javascript/jules-panel-neural.js
           node --check assets/javascript/neural-chat-jules.js
