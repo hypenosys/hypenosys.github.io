@@ -23,6 +23,7 @@ include:
   - _headers
 
 exclude:
+  - functions
   - Gemfile
   - Gemfile.lock
   - node_modules
