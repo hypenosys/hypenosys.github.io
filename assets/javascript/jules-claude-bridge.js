@@ -75,6 +75,13 @@
         } catch { return false; }
     }
 
+    function redactSensitive(input) {
+        return String(input || '')
+            .replace(/\\b(?:sk-ant-[A-Za-z0-9_-]{12,}|gh[pousr]_[A-Za-z0-9_-]{20,}|github_pat_[A-Za-z0-9_-]{20,}|nvapi-[A-Za-z0-9_-]{12,}|AIza[A-Za-z0-9_-]{20,})\\b/g, '[REDACTED]')
+            .replace(/(Authorization\\s*:\\s*Bearer\\s+)\\S+/gi, '$1[REDACTED]')
+            .replace(/((?:api[_-]?key|access[_-]?token|client[_-]?secret|password)\\s*[:=]\\s*["']?)[A-Za-z0-9_./+-]{12,}/gi, '$1[REDACTED]');
+    }
+
     function activityText(a) {
         if (a.agentMessaged?.agentMessage) return 'Mensaje de Jules: ' + a.agentMessaged.agentMessage;
         if (a.planGenerated) return 'Plan generado: ' + (a.planGenerated.plan?.steps || []).map(s => s.title).join('; ');
@@ -88,7 +95,7 @@
             .map(a => ({
                 key: String(a.name || a.id || a.activityId || (a.createTime || '') + ':' + activityText(a).slice(0,120)),
                 time: a.createTime || '',
-                content: activityText(a).slice(0,2200),
+                content: redactSensitive(activityText(a)).slice(0,2200),
                 terminal: !!(a.sessionCompleted || a.sessionFailed)
             }))
             .filter(a => a.content && a.key)
