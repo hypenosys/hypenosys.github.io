@@ -16,7 +16,9 @@
       "completitud": 0,
       "task_type": "feature",
       "resuelto_por": "Axel",
-      "asignados": [],
+      "asignados": [
+        "axlfc"
+      ],
       "tags": [
         "byok",
         "hais-001",
@@ -71,7 +73,13 @@
           "url": "https://openrouter.ai/docs/api-reference/overview"
         }
       ],
-      "comments": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-01T09:26:07.863Z",
+          "body": "[HAIS · PLAN 2026-11-01] Conservar Fixed tal como está. Revisar evidencias BYOK: límites de consumo, revocación, 401/429, clave ausente de navegador y logs. Axel valida seguridad con Haopeng antes de abrir uso real del gateway. Responsable(s): axlfc. Estado Fixed conservado; subtareas y criterios existentes sin alterar."
+        }
+      ],
       "change_log": [
         {
           "author_login": "haopengwang123",
@@ -159,7 +167,9 @@
       "completitud": 0,
       "task_type": "feature",
       "resuelto_por": "",
-      "asignados": [],
+      "asignados": [
+        "axlfc"
+      ],
       "tags": [
         "hais-001",
         "platform",
@@ -208,7 +218,13 @@
           "url": "https://docs.python.org/3/library/graphlib.html"
         }
       ],
-      "comments": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-01T09:26:07.863Z",
+          "body": "[HAIS · PLAN 2026-11-01] Prioridad Jules antes del 11/11: documentar DAG, bloqueos por dependencias y casos de retry/ciclos. No despachar tareas cuyo blocked_by no esté validado. Evidencia: prueba automatizada y registro de ejecución. Responsable(s): axlfc. Estado Working conservado; subtareas y criterios existentes sin alterar."
+        }
+      ],
       "change_log": [],
       "comentario": "Evidencia requerida: Tarea dependiente no se despacha antes de gate; casos de ciclos, fallo y retry automatizados; registro de decisiones del scheduler",
       "estimated_hours": 12,
@@ -220,7 +236,7 @@
       "branch": "Desarrollo (develop)",
       "fecha": null,
       "start_date": null,
-      "due_date": null,
+      "due_date": "2026-11-10",
       "limite": null,
       "ver": true,
       "detectado_por": "HAIS-001",
@@ -246,7 +262,9 @@
       "completitud": 0,
       "task_type": "integration",
       "resuelto_por": "Haopeng",
-      "asignados": [],
+      "asignados": [
+        "haopengwang123"
+      ],
       "tags": [
         "hais-001",
         "platform",
@@ -297,7 +315,13 @@
           "url": "https://docs.github.com/en/rest/pulls/pulls"
         }
       ],
-      "comments": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-01T09:26:07.863Z",
+          "body": "[HAIS · PLAN 2026-11-01] Conservar Fixed, sin asumir que la ejecución ya está validada. Haopeng recopila enlaces session_id/commit/coste y resultados; Axel revisa permisos, cambios y ausencia de merge automático. No reabrir sin motivo documentado. Responsable(s): haopengwang123. Estado Fixed conservado; subtareas y criterios existentes sin alterar."
+        }
+      ],
       "change_log": [],
       "comentario": "Evidencia requerida: Session ID real y enlace GitHub; al menos un commit verificable; error visible y recuperable; revisión humana antes de merge",
       "estimated_hours": 10,
@@ -335,7 +359,9 @@
       "completitud": 0,
       "task_type": "integration",
       "resuelto_por": "",
-      "asignados": [],
+      "asignados": [
+        "axlfc"
+      ],
       "tags": [
         "hais-001",
         "platform",
@@ -385,7 +411,13 @@
           "url": "https://docs.github.com/en/rest/actions/workflow-runs"
         }
       ],
-      "comments": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-01T09:26:07.863Z",
+          "body": "[HAIS · PLAN 2026-11-01] Pista crítica Jules: correlacionar task_id, session_id, rama, PR y CI; verificar PR descartada y reintentos sin duplicación. Axel coordina; Haopeng contrasta ejecución y logs. Depende de evidencia #900008. Responsable(s): axlfc. Estado Working conservado; subtareas y criterios existentes sin alterar."
+        }
+      ],
       "change_log": [],
       "comentario": "Evidencia requerida: Estados Pending/In Progress/In Review/Completed coherentes; reintento idempotente; referencias PR y CI persistidas",
       "estimated_hours": 14,
@@ -397,7 +429,7 @@
       "branch": "Desarrollo (develop)",
       "fecha": null,
       "start_date": null,
-      "due_date": null,
+      "due_date": "2026-11-10",
       "limite": null,
       "ver": true,
       "detectado_por": "HAIS-001",
@@ -423,7 +455,9 @@
       "completitud": 0,
       "task_type": "test",
       "resuelto_por": "",
-      "asignados": [],
+      "asignados": [
+        "haopengwang123"
+      ],
       "tags": [
         "hais-001",
         "product",
@@ -472,7 +506,13 @@
           "url": "https://fastapi.tiangolo.com/tutorial/testing/"
         }
       ],
-      "comments": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-01T09:26:07.863Z",
+          "body": "[HAIS · PLAN 2026-11-01] Haopeng consolida FastAPI PAPER, endpoints /health, /v1/capabilities y /v1/paper/estimate; adjuntar salida pytest y Docker, sin afirmar que el motor trading existe. Responsable(s): haopengwang123. Estado Working conservado; subtareas y criterios existentes sin alterar."
+        }
+      ],
       "change_log": [],
       "comentario": "Evidencia requerida: docker compose up y endpoints comprobados; /v1/capabilities devuelve live_trading_enabled=false; pruebas CI verdes",
       "estimated_hours": 6,
@@ -510,7 +550,9 @@
       "completitud": 0,
       "task_type": "feature",
       "resuelto_por": "",
-      "asignados": [],
+      "asignados": [
+        "haopengwang123"
+      ],
       "tags": [
         "hais-001",
         "product",
@@ -559,7 +601,13 @@
           "url": "https://docs.pydantic.dev/latest/concepts/models/"
         }
       ],
-      "comments": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-01T09:26:07.863Z",
+          "body": "[HAIS · PLAN 2026-11-01] Haopeng define modelos Pydantic versionados, validador y tests de señales/decisiones PAPER. Preparar contratos compatibles con Provider y la persistencia sin inventar parámetros de trading. Responsable(s): haopengwang123. Estado Working conservado; subtareas y criterios existentes sin alterar."
+        }
+      ],
       "change_log": [],
       "comentario": "Evidencia requerida: JSON Schema versionado; invalidación de precios negativos, timestamps ambiguos y campos LIVE; unit tests y muestras serializables",
       "estimated_hours": 14,
@@ -597,7 +645,9 @@
       "completitud": 0,
       "task_type": "feature",
       "resuelto_por": "",
-      "asignados": [],
+      "asignados": [
+        "haopengwang123"
+      ],
       "tags": [
         "hais-001",
         "product",
@@ -646,7 +696,13 @@
           "url": "https://alembic.sqlalchemy.org/en/latest/"
         }
       ],
-      "comments": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-01T09:26:07.863Z",
+          "body": "[HAIS · PLAN 2026-11-01] Haopeng implementa migraciones PostgreSQL/Alembic, tenant_id, idempotency_key y rollback verificable. Coordinar con Axel seguridad y backups antes de staging. Responsable(s): haopengwang123. Estado Pending conservado; subtareas y criterios existentes sin alterar."
+        }
+      ],
       "change_log": [],
       "comentario": "Evidencia requerida: Migraciones reproducibles en DB efímera; rollback y backup probados; aislamiento por tenant y unique constraints verificadas",
       "estimated_hours": 16,
@@ -684,7 +740,9 @@
       "completitud": 0,
       "task_type": "feature",
       "resuelto_por": "",
-      "asignados": [],
+      "asignados": [
+        "haopengwang123"
+      ],
       "tags": [
         "hais-001",
         "product",
@@ -735,7 +793,13 @@
           "url": "https://openrouter.ai/docs/api-reference/overview"
         }
       ],
-      "comments": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-01T09:26:07.863Z",
+          "body": "[HAIS · PLAN 2026-11-01] PROVIDER HAIS — prioridad alta. Haopeng lidera gateway server-side OpenAI/OpenRouter con interfaz de proveedor y mock en CI; timeouts, reintentos 429, presupuestos y medición de tokens/costes, aislamiento por organización y logs saneados. Axel revisa threat model y secretos. No publicar claves ni dar por cerrada la integración sin pruebas; depende de #900010 y validación de #900004. Responsable(s): haopengwang123. Estado Working conservado; subtareas y criterios existentes sin alterar."
+        }
+      ],
       "change_log": [],
       "comentario": "Evidencia requerida: Sin claves en navegador ni Git; rate limit/budget antes de solicitar; tests timeout/429/revocación y atribución por tenant",
       "estimated_hours": 16,
@@ -773,7 +837,9 @@
       "completitud": 0,
       "task_type": "feature",
       "resuelto_por": "",
-      "asignados": [],
+      "asignados": [
+        "haopengwang123"
+      ],
       "tags": [
         "hais-001",
         "product",
@@ -823,7 +889,13 @@
           "url": "https://numpy.org/doc/stable/reference/random/index.html"
         }
       ],
-      "comments": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-01T09:26:07.863Z",
+          "body": "[HAIS · PLAN 2026-11-01] Haopeng prepara OHLCV sintético determinista, reloj reproducible y etiqueta SYNTHETIC; no mezclar nunca con cotizaciones reales. Adjuntar fixtures para pruebas sin gasto de APIs. Responsable(s): haopengwang123. Estado Pending conservado; subtareas y criterios existentes sin alterar."
+        }
+      ],
       "change_log": [],
       "comentario": "Evidencia requerida: Fixtures con seed estable; timestamps ordenados, sin look-ahead; etiquetado SYNTHETIC visible en API, DB y reportes",
       "estimated_hours": 12,
@@ -861,7 +933,9 @@
       "completitud": 0,
       "task_type": "chore",
       "resuelto_por": "Axel",
-      "asignados": [],
+      "asignados": [
+        "axlfc"
+      ],
       "tags": [
         "hais-001",
         "quality",
@@ -911,7 +985,13 @@
           "url": "https://docs.github.com/en/actions/security-for-github-actions/security-guides/security-hardening-for-github-actions"
         }
       ],
-      "comments": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-01T09:26:07.863Z",
+          "body": "[HAIS · PLAN 2026-11-01] Conservar Fixed y verificar evidencia: CI verde, build Docker, pytest, permisos mínimos, test negativo LIVE. Axel comprueba que el workflow actual soporta las PR creadas por Jules. Responsable(s): axlfc. Estado Fixed conservado; subtareas y criterios existentes sin alterar."
+        }
+      ],
       "change_log": [],
       "comentario": "Evidencia requerida: Workflow verde en PR; tests negativos de LIVE y build repetible; sin secretos persistidos en artefactos",
       "estimated_hours": 8,
@@ -949,7 +1029,9 @@
       "completitud": 0,
       "task_type": "test",
       "resuelto_por": "",
-      "asignados": [],
+      "asignados": [
+        "axlfc"
+      ],
       "tags": [
         "hais-001",
         "quality",
@@ -1000,7 +1082,13 @@
           "url": "https://docs.github.com/en/rest/pulls/pulls"
         }
       ],
-      "comments": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-01T09:26:07.863Z",
+          "body": "[HAIS · PLAN 2026-11-01] Prioridad antes del 11/11: Axel prueba PR desde Jules en rama aislada, vincula ticket y registra checks/review; no hacer merge automático. Depende de #900008 y CI #900015. Responsable(s): axlfc. Estado Pending conservado; subtareas y criterios existentes sin alterar."
+        }
+      ],
       "change_log": [],
       "comentario": "Evidencia requerida: Tarea/PR/commit correlacionados; tests CI visibles; no hay merge sin autorización humana",
       "estimated_hours": 8,
@@ -1012,7 +1100,7 @@
       "branch": "Desarrollo (develop)",
       "fecha": null,
       "start_date": null,
-      "due_date": null,
+      "due_date": "2026-11-10",
       "limite": null,
       "ver": true,
       "detectado_por": "HAIS-001",
@@ -1038,7 +1126,9 @@
       "completitud": 0,
       "task_type": "test",
       "resuelto_por": "",
-      "asignados": [],
+      "asignados": [
+        "axlfc"
+      ],
       "tags": [
         "hais-001",
         "quality",
@@ -1089,7 +1179,13 @@
           "url": "https://github.com/hypenosys/HAIS/branches"
         }
       ],
-      "comments": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-01T09:26:07.863Z",
+          "body": "[HAIS · PLAN 2026-11-01] EXPERIMENTO PRIORITARIO JULES: Axel coordina dos sesiones independientes, ramas distintas y máximo dos workers; Haopeng aporta tickets PAPER seguros. Lanzar solo con #900009 y #900016 validadas; capturar IDs, tiempo, coste, retry, colisiones y PR, sin secretos ni LIVE. Responsable(s): axlfc. Estado Working conservado; subtareas y criterios existentes sin alterar."
+        }
+      ],
       "change_log": [],
       "comentario": "Evidencia requerida: Dos ejecuciones trazables y separadas; límite de concurrencia respetado; sin pérdida de progreso ni corrupción",
       "estimated_hours": 12,
@@ -1101,7 +1197,7 @@
       "branch": "Desarrollo (develop)",
       "fecha": null,
       "start_date": null,
-      "due_date": null,
+      "due_date": "2026-11-10",
       "limite": null,
       "ver": true,
       "detectado_por": "HAIS-001",
@@ -1127,7 +1223,9 @@
       "completitud": 0,
       "task_type": "feature",
       "resuelto_por": "",
-      "asignados": [],
+      "asignados": [
+        "axlfc"
+      ],
       "tags": [
         "hais-001",
         "quality",
@@ -1178,7 +1276,13 @@
           "url": "https://www.postgresql.org/docs/current/tutorial-transactions.html"
         }
       ],
-      "comments": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-01T09:26:07.863Z",
+          "body": "[HAIS · PLAN 2026-11-01] Axel diseña ledger auditable: run_id, model/provider, coste, entradas saneadas, eventos repetidos y replay idempotente; coordina estructura con Haopeng. No registrar claves ni prompts confidenciales sin redacción. Responsable(s): axlfc. Estado Pending conservado; subtareas y criterios existentes sin alterar."
+        }
+      ],
       "change_log": [],
       "comentario": "Evidencia requerida: Replay no duplica órdenes PAPER; orden causal comprobado; logs exportables sin tokens ni PII innecesaria",
       "estimated_hours": 14,
@@ -1216,7 +1320,9 @@
       "completitud": 0,
       "task_type": "test",
       "resuelto_por": "",
-      "asignados": [],
+      "asignados": [
+        "axlfc"
+      ],
       "tags": [
         "hais-001",
         "quality",
@@ -1265,7 +1371,13 @@
           "url": "https://docs.docker.com/engine/security/"
         }
       ],
-      "comments": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-01T09:26:07.863Z",
+          "body": "[HAIS · PLAN 2026-11-01] Axel prueba Cognito en sandbox aislado, cuota y acceso de solo lectura; comparar el mismo ticket con Jules sin copiar credenciales. Experimento opcional tras las pruebas críticas de Jules. Responsable(s): axlfc. Estado Pending conservado; subtareas y criterios existentes sin alterar."
+        }
+      ],
       "change_log": [],
       "comentario": "Evidencia requerida: Informe comparable de resultados; sandbox aislado; salida controlada si worker falla; cero escrituras productivas",
       "estimated_hours": 10,
@@ -1277,7 +1389,7 @@
       "branch": "Desarrollo (develop)",
       "fecha": null,
       "start_date": null,
-      "due_date": null,
+      "due_date": "2026-11-10",
       "limite": null,
       "ver": true,
       "detectado_por": "HAIS-001",
@@ -1303,7 +1415,9 @@
       "completitud": 0,
       "task_type": "design",
       "resuelto_por": "",
-      "asignados": [],
+      "asignados": [
+        "axlfc"
+      ],
       "tags": [
         "hais-001",
         "deployment",
@@ -1352,7 +1466,13 @@
           "url": "https://cheatsheetseries.owasp.org/cheatsheets/Threat_Modeling_Cheat_Sheet.html"
         }
       ],
-      "comments": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-01T09:26:07.863Z",
+          "body": "[HAIS · PLAN 2026-11-01] Axel define staging aislado, reverse proxy autenticado, red privada, políticas de secretos, backup y límites CPU/RAM; entregar plan reproducible y esquema de amenazas para HAIS. Responsable(s): axlfc. Estado Pending conservado; subtareas y criterios existentes sin alterar."
+        }
+      ],
       "change_log": [],
       "comentario": "Evidencia requerida: Diagrama y threat model revisados; no acceso público sin autenticación; matriz de secretos y permisos con responsables",
       "estimated_hours": 12,
@@ -1390,7 +1510,9 @@
       "completitud": 0,
       "task_type": "chore",
       "resuelto_por": "",
-      "asignados": [],
+      "asignados": [
+        "axlfc"
+      ],
       "tags": [
         "hais-001",
         "deployment",
@@ -1443,7 +1565,13 @@
           "url": "https://docs.docker.com/reference/dockerfile/#healthcheck"
         }
       ],
-      "comments": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-01T09:26:07.863Z",
+          "body": "[HAIS · PLAN 2026-11-01] Axel prepara staging PAPER con health/readiness y observabilidad, no acceso a órdenes reales; depende de gateway, CI, feed sintético e infraestructura. No exponer endpoint sin autenticación. Responsable(s): axlfc. Estado Pending conservado; subtareas y criterios existentes sin alterar."
+        }
+      ],
       "change_log": [],
       "comentario": "Evidencia requerida: Health real registrado; endpoints no accesibles anónimamente; imágenes y versión reproducibles; alertas mínimas",
       "estimated_hours": 14,
@@ -1481,7 +1609,9 @@
       "completitud": 0,
       "task_type": "test",
       "resuelto_por": "",
-      "asignados": [],
+      "asignados": [
+        "axlfc"
+      ],
       "tags": [
         "hais-001",
         "deployment",
@@ -1530,7 +1660,13 @@
           "url": "https://alembic.sqlalchemy.org/en/latest/"
         }
       ],
-      "comments": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-01T09:26:07.863Z",
+          "body": "[HAIS · PLAN 2026-11-01] Axel realiza restore y rollback comprobables en staging: migración, imagen, RPO/RTO y logs saneados. No tocar datos de producción. Responsable(s): axlfc. Estado Pending conservado; subtareas y criterios existentes sin alterar."
+        }
+      ],
       "change_log": [],
       "comentario": "Evidencia requerida: Restauración verificada mediante checksums/conteos; rollback ensayado; RPO/RTO anotados",
       "estimated_hours": 10,
@@ -1568,7 +1704,9 @@
       "completitud": 0,
       "task_type": "chore",
       "resuelto_por": "",
-      "asignados": [],
+      "asignados": [
+        "axlfc"
+      ],
       "tags": [
         "hais-001",
         "deployment",
@@ -1620,7 +1758,13 @@
           "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/pilot/hais-001/backlog.json"
         }
       ],
-      "comments": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-01T09:26:07.863Z",
+          "body": "[HAIS · PLAN 2026-11-01] Axel coordina el piloto PAPER con aprobación humana explícita; controlar gasto de infraestructura/proveedores, techo, kill switch lógico y ausencia de LIVE. No interpretar esta asignación como autorización de gasto o despliegue. Responsable(s): axlfc. Estado Pending conservado; subtareas y criterios existentes sin alterar."
+        }
+      ],
       "change_log": [],
       "comentario": "Evidencia requerida: Autorización registrada; gasto bajo techo; trading LIVE imposible; runbook de parada e incidentes probado",
       "estimated_hours": 6,
@@ -1658,7 +1802,10 @@
       "completitud": 0,
       "task_type": "test",
       "resuelto_por": "",
-      "asignados": [],
+      "asignados": [
+        "axlfc",
+        "haopengwang123"
+      ],
       "tags": [
         "hais-001",
         "deployment",
@@ -1712,7 +1859,13 @@
           "url": "https://playwright.dev/docs/intro"
         }
       ],
-      "comments": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-01T09:26:07.863Z",
+          "body": "[HAIS · PLAN 2026-11-01] VALIDACIÓN CONJUNTA Axel + Haopeng. Preparar matriz E2E login, membresías, BYOK, tarea→Jules→PR→CI→Kanban, PAPER, rollback y cross-tenant. Dictamen GO/NO-GO basado en evidencias, no solo checks declarados. Responsable(s): axlfc, haopengwang123. Estado Pending conservado; subtareas y criterios existentes sin alterar."
+        }
+      ],
       "change_log": [],
       "comentario": "Evidencia requerida: Matriz de escenarios con URL/capturas/logs saneados; todas las puertas de seguridad pasan o dictamen NO-GO motivado",
       "estimated_hours": 16,
@@ -1748,7 +1901,9 @@
       "completitud": 0,
       "task_type": "research",
       "resuelto_por": "",
-      "asignados": [],
+      "asignados": [
+        "haopengwang123"
+      ],
       "tags": [
         "hais",
         "paper",
@@ -1780,7 +1935,13 @@
         }
       ],
       "external_links": [],
-      "comments": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-01T09:26:07.863Z",
+          "body": "[HAIS · PLAN 2026-11-01] Haopeng recoge y documenta decisiones de estrategia PAPER con Axel: señal Investing aún por confirmar, mercados, ventanas, entrada/salida y riesgo. Mantener preguntas sin responder como pendientes, sin inventar umbrales. Responsable(s): haopengwang123. Estado Working conservado; subtareas y criterios existentes sin alterar."
+        }
+      ],
       "change_log": [
         {
           "author_login": "Codex",
@@ -1823,7 +1984,9 @@
       "completitud": 0,
       "task_type": "research",
       "resuelto_por": "",
-      "asignados": [],
+      "asignados": [
+        "haopengwang123"
+      ],
       "tags": [
         "hais",
         "paper",
@@ -1851,7 +2014,13 @@
         }
       ],
       "external_links": [],
-      "comments": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-01T09:26:07.863Z",
+          "body": "[HAIS · PLAN 2026-11-01] Haopeng investiga una vía autorizada y sostenible de recibir señales de Investing; documentar condiciones de uso, alternativas y limitaciones. No asumir API pública ni scraping permitido. Responsable(s): haopengwang123. Estado Pending conservado; subtareas y criterios existentes sin alterar."
+        }
+      ],
       "change_log": [
         {
           "author_login": "Codex",
@@ -1894,7 +2063,9 @@
       "completitud": 0,
       "task_type": "feature",
       "resuelto_por": "",
-      "asignados": [],
+      "asignados": [
+        "haopengwang123"
+      ],
       "tags": [
         "hais",
         "paper",
@@ -1930,7 +2101,13 @@
         }
       ],
       "external_links": [],
-      "comments": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-01T09:26:07.863Z",
+          "body": "[HAIS · PLAN 2026-11-01] Haopeng desarrolla contrato de ingestión de señales, deduplicación y validación de antigüedad; mock/fixtures primero. Adaptador externo solo tras verificar licencia y disponibilidad. Responsable(s): haopengwang123. Estado Pending conservado; subtareas y criterios existentes sin alterar."
+        }
+      ],
       "change_log": [
         {
           "author_login": "Codex",
@@ -1973,7 +2150,9 @@
       "completitud": 0,
       "task_type": "feature",
       "resuelto_por": "",
-      "asignados": [],
+      "asignados": [
+        "haopengwang123"
+      ],
       "tags": [
         "hais",
         "paper",
@@ -2004,7 +2183,13 @@
         }
       ],
       "external_links": [],
-      "comments": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-01T09:26:07.863Z",
+          "body": "[HAIS · PLAN 2026-11-01] Haopeng evalúa proveedor de precios apropiado para PAPER: cobertura, latencia, licencia y datos ausentes; usar mocks sin presentar precios sintéticos como reales. Responsable(s): haopengwang123. Estado Pending conservado; subtareas y criterios existentes sin alterar."
+        }
+      ],
       "change_log": [
         {
           "author_login": "Codex",
@@ -2047,7 +2232,9 @@
       "completitud": 0,
       "task_type": "feature",
       "resuelto_por": "",
-      "asignados": [],
+      "asignados": [
+        "haopengwang123"
+      ],
       "tags": [
         "hais",
         "paper",
@@ -2078,7 +2265,13 @@
         }
       ],
       "external_links": [],
-      "comments": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-01T09:26:07.863Z",
+          "body": "[HAIS · PLAN 2026-11-01] Haopeng desarrolla medición reproducible de aceleración/agotamiento de impulso; valores umbral quedan pendientes de decisión de la estrategia. Incluir pruebas de series sintéticas. Responsable(s): haopengwang123. Estado Pending conservado; subtareas y criterios existentes sin alterar."
+        }
+      ],
       "change_log": [
         {
           "author_login": "Codex",
@@ -2121,7 +2314,9 @@
       "completitud": 0,
       "task_type": "feature",
       "resuelto_por": "",
-      "asignados": [],
+      "asignados": [
+        "axlfc"
+      ],
       "tags": [
         "hais",
         "paper",
@@ -2151,7 +2346,13 @@
         }
       ],
       "external_links": [],
-      "comments": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-01T09:26:07.863Z",
+          "body": "[HAIS · PLAN 2026-11-01] Axel revisa salvaguardas PAPER: límites configurables, rechazo por presupuesto/saldo, parada manual, fallo cerrado con datos caducados. No usar LIVE ni decidir umbrales sin aprobación. Responsable(s): axlfc. Estado Pending conservado; subtareas y criterios existentes sin alterar."
+        }
+      ],
       "change_log": [
         {
           "author_login": "Codex",
@@ -2194,7 +2395,9 @@
       "completitud": 0,
       "task_type": "feature",
       "resuelto_por": "",
-      "asignados": [],
+      "asignados": [
+        "haopengwang123"
+      ],
       "tags": [
         "hais",
         "paper",
@@ -2226,7 +2429,13 @@
         }
       ],
       "external_links": [],
-      "comments": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-01T09:26:07.863Z",
+          "body": "[HAIS · PLAN 2026-11-01] Haopeng implementa compra exclusivamente PAPER con reglas aprobadas y pruebas deterministas; requiere #900011, #900025, #900030. Garantizar idempotencia ante señal duplicada. Responsable(s): haopengwang123. Estado Pending conservado; subtareas y criterios existentes sin alterar."
+        }
+      ],
       "change_log": [
         {
           "author_login": "Codex",
@@ -2269,7 +2478,9 @@
       "completitud": 0,
       "task_type": "feature",
       "resuelto_por": "",
-      "asignados": [],
+      "asignados": [
+        "haopengwang123"
+      ],
       "tags": [
         "hais",
         "paper",
@@ -2301,7 +2512,13 @@
         }
       ],
       "external_links": [],
-      "comments": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-01T09:26:07.863Z",
+          "body": "[HAIS · PLAN 2026-11-01] Haopeng implementa seguimiento y venta PAPER según regla aprobada, con salida protectora diferenciada. Exigir evidencias reproducibles, sin usar capital real. Responsable(s): haopengwang123. Estado Pending conservado; subtareas y criterios existentes sin alterar."
+        }
+      ],
       "change_log": [
         {
           "author_login": "Codex",
@@ -2344,7 +2561,9 @@
       "completitud": 0,
       "task_type": "feature",
       "resuelto_por": "",
-      "asignados": [],
+      "asignados": [
+        "haopengwang123"
+      ],
       "tags": [
         "hais",
         "paper",
@@ -2375,7 +2594,13 @@
         }
       ],
       "external_links": [],
-      "comments": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-01T09:26:07.863Z",
+          "body": "[HAIS · PLAN 2026-11-01] Haopeng mantiene ledger de posiciones/saldo P&L simulados y costes; integra PostgreSQL y auditoría con pruebas de replay y aislamiento por tenant. Responsable(s): haopengwang123. Estado Pending conservado; subtareas y criterios existentes sin alterar."
+        }
+      ],
       "change_log": [
         {
           "author_login": "Codex",
@@ -2418,7 +2643,9 @@
       "completitud": 0,
       "task_type": "research",
       "resuelto_por": "",
-      "asignados": [],
+      "asignados": [
+        "haopengwang123"
+      ],
       "tags": [
         "hais",
         "paper",
@@ -2451,7 +2678,13 @@
         }
       ],
       "external_links": [],
-      "comments": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-01T09:26:07.863Z",
+          "body": "[HAIS · PLAN 2026-11-01] Haopeng prepara backtest reproducible de estrategia PAPER, especificando fuentes de datos, sesgos, cobertura y señales sintéticas. No presentar como rendimiento real. Responsable(s): haopengwang123. Estado Pending conservado; subtareas y criterios existentes sin alterar."
+        }
+      ],
       "change_log": [
         {
           "author_login": "Codex",
@@ -2494,7 +2727,10 @@
       "completitud": 0,
       "task_type": "feature",
       "resuelto_por": "",
-      "asignados": [],
+      "asignados": [
+        "axlfc",
+        "haopengwang123"
+      ],
       "tags": [
         "hais",
         "paper",
@@ -2526,7 +2762,13 @@
         }
       ],
       "external_links": [],
-      "comments": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-01T09:26:07.863Z",
+          "body": "[HAIS · PLAN 2026-11-01] E2E CONJUNTO Axel + Haopeng: recorrer señal→compra PAPER→seguimiento→venta PAPER, comprobar saldo/posición, fallos, logs y prohibición LIVE. Distinguir fixtures sintéticos de integración externa. Responsable(s): axlfc, haopengwang123. Estado Pending conservado; subtareas y criterios existentes sin alterar."
+        }
+      ],
       "change_log": [
         {
           "author_login": "Codex",
@@ -2558,8 +2800,13 @@
       "jules_session": null
     }
   ],
-  "last_updated_by": "Sistema",
+  "last_updated_by": "ChatGPT (conexión GitHub haopengwang123)",
   "_audit_log": [
+    {
+      "action": "plan(HAIS): asignar 30 tareas a Axel y Haopeng; añadir comentarios operativos y priorizar Jules 11/11 sin cambiar estados",
+      "user": "ChatGPT (conexión haopengwang123)",
+      "timestamp": "2026-11-01T09:26:07.863Z"
+    },
     {
       "action": "chore: actualizar estado tarea #900025 → Working",
       "user": "haopengwang123",
