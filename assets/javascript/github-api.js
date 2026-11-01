@@ -91,10 +91,10 @@ async function validateToken() {
                 }
             }
         } catch (tpErr) {
-            console.warn('[GITHUB-API] Fallback al verificar team_profiles.json:', tpErr);
-            const FALLBACK_ALLOWED = ['axlfc', 'mitxel2022', 'topperh4rley', 'dkdidac-design', 'javi26031994-a11y', 'silmaril464', 'lachicadelaboina', 'spongebob3bray'];
-            isTeamMember = FALLBACK_ALLOWED.includes(userLogin);
-            isAdmin = (userLogin === 'axlfc');
+            // Fail closed: si no se puede verificar la autorización, no se conceden privilegios.
+            console.warn('[GITHUB-API] No se pudo verificar team_profiles.json; privilegios denegados:', tpErr);
+            isTeamMember = false;
+            isAdmin = false;
         }
 
         user.isTeamMember = isTeamMember;
