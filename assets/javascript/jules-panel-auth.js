@@ -271,6 +271,9 @@ window.prefillTaskFromHandoff = async function(task, handoff = {}) {
         if ($('opt-auto')) $('opt-auto').classList.remove('active');
 
         if (canonicalRepo && typeof window.selectRepo === 'function') {
+            // Pin target before loading branches, including during background refresh.
+            window.JulesPanelState.handoffTargetRepo = canonicalRepo;
+            window.JulesPanelState.handoffTargetBranch = targetBranch;
             await window.selectRepo(canonicalRepo);
         }
 
@@ -288,6 +291,10 @@ window.prefillTaskFromHandoff = async function(task, handoff = {}) {
         }
 
         window.JulesPanelState._handoffBranchBlocked = !!(canonicalRepo && !branchReady);
+        if (launchBtn && branchReady) {
+            launchBtn.disabled = false;
+            launchBtn.title = '';
+        }
         if (launchBtn && window.JulesPanelState._handoffBranchBlocked) {
             launchBtn.disabled = true;
             launchBtn.title = 'La rama solicitada no está disponible. Selecciona una rama existente en Jules Panel.';
@@ -557,9 +564,12 @@ window.desvincularNeuralSession = function() {
     }
 }
 
-window.launchSession = async function() {
-    let prompt = $('session-prompt').value.trim();
-    if (!prompt) { $('session-prompt').focus(); showToast("Escribe una tarea para Jules", "red"); return; }
+window.launchSession = async function(options = {}) {
+    // A first Jules chat message creates a session using the user's text as
+    // its initial prompt. Subsequent messages use :sendMessage, never both.
+    if (window._julesLaunchInFlight) return null;
+    let prompt = String(options.promptOverride ?? $('session-prompt')?.value ?? '').trim();
+    if (!prompt) { $('session-prompt')?.focus(); showToast("Escribe una tarea para Jules", "red"); return null; }
 
     // Ensure repo and branch are real and normalized
     const source = window.JulesPanelState.activeRepo;
@@ -617,12 +627,39 @@ window.launchSession = async function() {
 
     const btn = $('launch-btn');
     const textarea = $('session-prompt');
+    window._julesLaunchInFlight = true;
     btn.disabled = true;
     textarea.disabled = true;
     const originalText = btn.innerHTML;
     btn.innerHTML = 'Iniciando...';
 
     try {
+        // This is a per-user safety cap, not a server-side global quota.
+        // Remote list (rather than UI cache) keeps concurrent sessions visible.
+        const existingSessions = await window.julesApi.listSessions(100);
+        if (!Array.isArray(existingSessions)) throw new Error('No se pudo consultar el número de sesiones Jules.');
+        const activeStates = new Set(['QUEUED','PLANNING','AWAITING_PLAN_APPROVAL','AWAITING_USER_FEEDBACK','IN_PROGRESS','PAUSED']);
+        const active = existingSessions.filter(item => activeStates.has(item.state));
+        if (active.length >= 3) {
+            throw new Error('Límite HAIS: ya hay ' + active.length + ' sesiones Jules activas o esperando intervención (máximo 3). Finaliza o resuelve una antes de iniciar otra.');
+        }
+
+        // Block actual unresolved dependencies, rather than relying solely
+        // on a status badge. No auto-relocation of blocked tasks.
+        const linkedContext = JSON.parse(localStorage.getItem('hy_neural_task_context') || '{}');
+        const blockedBy = Array.isArray(linkedContext.blocked_by) ? linkedContext.blocked_by : [];
+        if (blockedBy.length && window.taskOps?.getAllTasks) {
+            const allTasks = await window.taskOps.getAllTasks();
+            const unresolved = blockedBy.filter(taskId => {
+                const dep = (allTasks || []).find(t => String(t.id) === String(taskId));
+                return !dep || !['DONE','Fixed','COMPLETED'].includes(String(dep.estado || dep.status));
+            });
+            if (unresolved.length) throw new Error('Tarea bloqueada por dependencias sin completar: ' + unresolved.join(', ') + '. Revisa el Kanban antes de ejecutar.');
+        }
+        if (linkedContext.estado === 'BLOCKED' && !blockedBy.length && !window.confirm('Esta tarea está marcada como BLOCKED. ¿Quieres iniciar solo una revisión supervisada de sus bloqueos?')) {
+            return null;
+        }
+
         // Prepare API payload (only supported fields)
         const body = {
             prompt,
@@ -649,7 +686,9 @@ window.launchSession = async function() {
         addTel("SYSTEM", "Iniciando (UI:" + logPayload.ui_mode + ") - API Payload: " + JSON.stringify(logPayload.api_body), "info");
 
         const res = await window.julesApi.createSession(body);
+        if (!res?.name || !/^sessions\/[^/]+$/.test(res.name)) throw new Error('Jules respondió sin un ID de sesión válido.');
         const sid = res.name.split('/').pop();
+        window._lastCreatedJulesSessionId = sid;
         showToast("Sesión iniciada correctamente", "green");
         addTel("JULES", "Sesión iniciada: " + sid, "success");
 
@@ -662,7 +701,7 @@ window.launchSession = async function() {
         // session to the matching Claude conversation; never link to a stale session.
         const shouldAutoLink = localStorage.getItem('hy_handoff_autolink') === 'true';
         const handoffClaudeId = localStorage.getItem('hy_pending_claude_handoff_id');
-        if (shouldAutoLink && typeof window.linkClaudeToJulesTask === 'function') {
+        if ((shouldAutoLink || options.fromChat) && typeof window.linkClaudeToJulesTask === 'function') {
             const knownClaude = handoffClaudeId && (window.julesPanelSessions || []).some(s => s.id === handoffClaudeId);
             if (knownClaude) {
                 window.linkClaudeToJulesTask(handoffClaudeId, sid, sessionName);
@@ -714,7 +753,12 @@ window.launchSession = async function() {
             window.JulesPanelState.linkedTaskId = null;
         }
 
-        $('session-prompt').value = ''; await refreshDashboard();
+        if (!options.fromChat) $('session-prompt').value = '';
+        // A dashboard refresh is secondary; a successful create must never
+        // look like a failed create (which could cause a duplicate retry).
+        try { await refreshDashboard(); }
+        catch (refreshError) { console.warn('[Jules] Session created; dashboard refresh failed', refreshError); }
+        return sid;
     } catch (e) {
         console.error("[Jules Debug] Error en createSession:", e);
         const errorInfo = {
@@ -724,9 +768,11 @@ window.launchSession = async function() {
         };
         addTel("SYSTEM", JSON.stringify(errorInfo), "error");
         showToast(e.message || "Error al lanzar sesión", "red");
+        return window._lastCreatedJulesSessionId || null;
     }
     finally {
-        btn.disabled = false;
+        window._julesLaunchInFlight = false;
+        btn.disabled = !!window.JulesPanelState._handoffBranchBlocked;
         textarea.disabled = false;
         btn.innerHTML = originalText;
     }
