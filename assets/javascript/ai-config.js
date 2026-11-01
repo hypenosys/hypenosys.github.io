@@ -93,6 +93,14 @@ function getEmbeddingsConfig() {
     };
 }
 
+function validateAnthropicWorkspaceId(workspaceId) {
+    const value = String(workspaceId || '').trim();
+    if (value && !/^wrkspc_[A-Za-z0-9_-]{4,128}$/.test(value)) {
+        throw new Error('Workspace ID de Anthropic inválido. Déjalo vacío si tu API key ya está vinculada a un workspace, o copia el ID de Claude Console (empieza por wrkspc_). No introduzcas aquí la API key.');
+    }
+    return value;
+}
+
 async function discoverModels({ provider, baseUrl, apiKey, workspaceId = '' }) {
     if (!baseUrl && provider !== 'none') {
         throw new Error('Base URL no provista.');
@@ -170,13 +178,16 @@ async function discoverModels({ provider, baseUrl, apiKey, workspaceId = '' }) {
                 throw new Error('Introduce una API Key de Anthropic para descubrir modelos.');
             }
 
+            // Validate before network I/O: this error is distinct from invalid credentials and CORS.
+            const validWorkspaceId = validateAnthropicWorkspaceId(workspaceId);
+
             // BYOK relay runs on the same origin (Cloudflare Pages Function).
             // The API key is sent only to our fixed Anthropic relay, not cross-origin by the browser.
             const headers = {
                 'Authorization': `Bearer ${apiKey.trim()}`,
                 'anthropic-version': '2026-10-21'
             };
-            if (workspaceId?.trim()) headers['anthropic-workspace-id'] = workspaceId.trim();
+            if (validWorkspaceId) headers['anthropic-workspace-id'] = validWorkspaceId;
             const cursors = new Set();
             let afterId = '';
 
@@ -191,7 +202,12 @@ async function discoverModels({ provider, baseUrl, apiKey, workspaceId = '' }) {
                     credentials: 'omit'
                 });
                 if (!res.ok) {
-                    const reason = res.status === 401 ? 'API key no válida.'
+                    const details = res.status === 400 ? await res.clone().text().catch(() => '') : '';
+                    const workspaceProblem = /workspace/i.test(details);
+                    const reason = res.status === 400 && workspaceProblem
+                        ? 'El Workspace ID falta, es inválido o no corresponde a la clave. Usa el ID wrkspc_... de Claude Console; si la clave ya está vinculada a un workspace, deja el campo vacío.'
+                        : res.status === 400 ? 'Solicitud inválida. Revisa la configuración de Anthropic y el modelo elegido.'
+                        : res.status === 401 ? 'API key no válida.'
                         : res.status === 403 ? 'La API key no tiene permisos.'
                         : res.status === 429 ? 'Límite de peticiones alcanzado.'
                         : res.status === 404 ? 'El relay de Cloudflare Pages no está desplegado (HTTP 404).'
@@ -333,6 +349,7 @@ if (typeof window !== 'undefined') {
     window.getEmbeddingsConfig = getEmbeddingsConfig;
     window.discoverModels = discoverModels;
     window.testEmbeddingEndpoint = testEmbeddingEndpoint;
+    window.validateAnthropicWorkspaceId = validateAnthropicWorkspaceId;
 }
 
 class OllamaUI {
@@ -727,12 +744,15 @@ class OllamaUI {
                 })
             });
             if (!response.ok) {
-                const reason = response.status === 401 ? 'API key inválida'
+                const details = response.status === 400 ? await response.clone().text().catch(() => '') : '';
+                const reason = response.status === 400 && /workspace/i.test(details)
+                    ? 'Workspace ID incorrecto o ausente: utiliza un ID wrkspc_... o deja el campo vacío si la clave está vinculada'
+                    : response.status === 400 ? 'Petición inválida para el modelo seleccionado'
+                    : response.status === 401 ? 'API key inválida'
                     : response.status === 403 ? 'Sin permisos de acceso'
                     : response.status === 404 ? 'Modelo no disponible'
                     : response.status === 429 ? 'Límite de peticiones o cuota'
                     : response.status === 502 ? 'El relay no puede alcanzar Anthropic'
-                    : response.status === 404 ? 'Relay de Cloudflare no desplegado'
                     : 'Petición rechazada';
                 throw new Error(`HTTP ${response.status}: ${reason}.`);
             }
@@ -892,6 +912,17 @@ class OllamaUI {
             }
             nameInput.focus();
             return;
+        }
+
+        if (document.getElementById('ai_provider')?.value === 'anthropic') {
+            try {
+                validateAnthropicWorkspaceId(document.getElementById('ai_anthropic_workspace_id')?.value);
+            } catch (error) {
+                const status = document.getElementById('anthropic-test-status');
+                if (status) status.textContent = '✗ ' + error.message;
+                document.getElementById('ai_anthropic_workspace_id')?.focus();
+                return;
+            }
         }
 
         let profiles = JSON.parse(localStorage.getItem('ai_profiles') || '{}');
