@@ -160,6 +160,20 @@ window.restoreNeuralWorkspaceState = function() {
     window.persistNeuralWorkspaceState();
 };
 
+window._julesNeuralDrafts = window._julesNeuralDrafts || { claude: '', jules: '' };
+window.setJulesComposerDraft = function(mode, content) {
+    if (mode !== 'claude' && mode !== 'jules') return;
+    const value = String(content || '');
+    window._julesNeuralDrafts[mode] = value;
+    if (window.currentSendMode === mode) {
+        const input = $('v2-chat-input');
+        if (input) {
+            input.value = value;
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+    }
+};
+
 window.setNeuralWorkspaceMode = function(mode, options = {}) {
     if (mode !== 'claude' && mode !== 'jules') {
         console.error("[Neural Workspace] Invalid mode:", mode);
@@ -167,6 +181,11 @@ window.setNeuralWorkspaceMode = function(mode, options = {}) {
     }
 
     console.log("[Neural Workspace] Setting mode to:", mode);
+    const inputBeforeModeChange = $('v2-chat-input');
+    const previousMode = window.currentSendMode || window.NeuralWorkspaceState.activeMode;
+    if (inputBeforeModeChange && previousMode !== mode && ['claude', 'jules'].includes(previousMode)) {
+        window._julesNeuralDrafts[previousMode] = inputBeforeModeChange.value;
+    }
     window.NeuralWorkspaceState.activeMode = mode;
 
     // Update tab elements
@@ -220,6 +239,8 @@ window.setNeuralWorkspaceMode = function(mode, options = {}) {
         const input = $('v2-chat-input');
         if (input) {
             input.placeholder = "Escribe un mensaje para Claude...";
+            if (previousMode !== mode) input.value = window._julesNeuralDrafts.claude || '';
+            input.dispatchEvent(new Event('input', { bubbles: true }));
         }
 
         // Toggle sidebars
@@ -244,6 +265,8 @@ window.setNeuralWorkspaceMode = function(mode, options = {}) {
         const input = $('v2-chat-input');
         if (input) {
             input.placeholder = "Enviar instrucción directa a Jules...";
+            if (previousMode !== mode) input.value = window._julesNeuralDrafts.jules || '';
+            input.dispatchEvent(new Event('input', { bubbles: true }));
         }
 
         // Toggle sidebars
@@ -978,6 +1001,7 @@ window.sendChatV2Msg = async function() {
     }
 
     input.value = '';
+    window._julesNeuralDrafts.claude = '';
     input.style.height = 'auto';
 
     setNeuralProcessingState(true);
@@ -1043,12 +1067,18 @@ window.sendChatV2Msg = async function() {
             },
             onError: (err) => {
                 setNeuralProcessingState(false);
+                if (!input.value.trim() && window.currentSendMode === 'claude') {
+                    window.setJulesComposerDraft('claude', msg);
+                }
                 showToast(err.message, "red");
                 window.renderChatV2Messages();
             }
         });
     } catch (e) {
         setNeuralProcessingState(false);
+        if (!input.value.trim() && window.currentSendMode === 'claude') {
+            window.setJulesComposerDraft('claude', msg);
+        }
         showToast(e.message, "red");
     }
 }
@@ -1472,7 +1502,6 @@ window.sendNeuralMessage = async function() {
     }
 
     const targetId = sid.startsWith('sessions/') ? sid : 'sessions/' + sid;
-    input.value = '';
 
     const session = window.julesPanelSessions.find(s => s.id === window.currentJulesPanelSessionId);
     if (session) {
@@ -1483,11 +1512,16 @@ window.sendNeuralMessage = async function() {
 
     try {
         const ok = await window.julesApi.sendMessage(targetId, msg);
-        if (ok) {
+        if (ok !== false) {
+            input.value = '';
+            window._julesNeuralDrafts.jules = '';
+            input.dispatchEvent(new Event('input', { bubbles: true }));
             addTel("USER", "Mensaje enviado a Jules", "info");
             refreshActivities(sid);
         }
     } catch (e) {
+        // Keep the text editable if the external send fails.
+        if (!input.value.trim()) window.setJulesComposerDraft('jules', msg);
         showToast("Error al enviar: " + e.message, "red");
     }
 }
