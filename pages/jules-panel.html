@@ -676,9 +676,11 @@ permalink: /jules-panel/
         <section id="neural-claude-workspace" role="tabpanel" aria-labelledby="neural-tab-claude" style="flex: 1; display: flex; flex-direction: column; overflow: hidden;">
             <!-- Claude Linking Status Bar -->
             <div id="claude-linking-bar"></div>
-            <div id="claude-selected-toolbar" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:7px 18px;background:rgba(189,147,249,.07);border-bottom:1px solid rgba(189,147,249,.16)">
-                <span style="font-size:10px;color:#b4a6cb" id="claude-selection-count">0 mensajes Claude seleccionados</span>
-                <button class="btn btn-ghost btn-sm" type="button" onclick="window.prepareSelectedClaudeForJules()">Citar selección en Jules</button>
+            <div id="claude-selected-toolbar" style="display:none;gap:8px;align-items:center;flex-wrap:wrap;padding:7px 18px;background:rgba(189,147,249,.07);border-bottom:1px solid rgba(189,147,249,.16)">
+                <span style="font-size:10px;color:#b4a6cb" id="claude-selection-count">0 mensajes</span>
+                <button class="btn btn-ghost btn-sm" type="button" onclick="window.prepareSelectedClaudeForJules()">→ Jules</button>
+                <button class="btn btn-ghost btn-sm" type="button" onclick="window.clearPanelMessageSelection('claude')">Limpiar</button>
+                <span style="color:#999;font-size:10px">Mayús + clic para agrupar; arrastra para citar un fragmento</span>
             </div>
 
             <!-- Claude Neural Chat (Full View) -->
@@ -722,10 +724,12 @@ permalink: /jules-panel/
 
             <!-- Jules Linking Status Bar -->
             <div id="jules-linking-bar"></div>
-            <div id="jules-selected-toolbar" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:7px 18px;background:rgba(189,147,249,.07);border-bottom:1px solid rgba(189,147,249,.16)">
-                <span style="font-size:10px;color:#b4a6cb" id="jules-selection-count">0 actividades Jules seleccionadas</span>
-                <button type="button" class="btn btn-ghost btn-sm" onclick="window.prepareSelectedJulesForClaude(false)">Citar en Claude</button>
-                <button type="button" class="btn btn-primary btn-sm" onclick="window.prepareSelectedJulesForClaude(true)">Analizar con Claude</button>
+            <div id="jules-selected-toolbar" style="display:none;gap:8px;align-items:center;flex-wrap:wrap;padding:7px 18px;background:rgba(189,147,249,.07);border-bottom:1px solid rgba(189,147,249,.16)">
+                <span style="font-size:10px;color:#b4a6cb" id="jules-selection-count">0 actividades</span>
+                <button type="button" class="btn btn-ghost btn-sm" onclick="window.prepareSelectedJulesForClaude(false)">→ Claude</button>
+                <button type="button" class="btn btn-primary btn-sm" onclick="window.prepareSelectedJulesForClaude(true)">Analizar</button>
+                <button type="button" class="btn btn-ghost btn-sm" onclick="window.prepareSelectedJulesForJules()">→ Jules</button>
+                <button type="button" class="btn btn-ghost btn-sm" onclick="window.clearPanelMessageSelection('jules')">Limpiar</button>
             </div>
 
             <!-- Jules Execution History (Full View) -->
@@ -743,7 +747,7 @@ permalink: /jules-panel/
                 </button>
 
                 <!-- Floating Selection Toolbar -->
-                <div id="neural-selection-toolbar">
+                <div id="neural-selection-toolbar" style="display:none !important" aria-hidden="true">
                     <div class="flex items-center gap-3 pr-4 border-r border-white/10">
                         <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Seleccionados</span>
                         <span id="selection-count" class="bg-indigo-500 text-white text-[11px] font-bold px-2 py-0.5 rounded-full">0</span>
@@ -1058,7 +1062,7 @@ permalink: /jules-panel/
 <script src="{{ '/assets/javascript/jules-svn-bridge.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/neural-chat-profiles.js' | relative_url }}?v=anthropic-workspace-20261101-v1"></script>
 <script src="{{ '/assets/javascript/jules-activities.js' | relative_url }}"></script>
-<script src="{{ '/assets/javascript/jules-panel-neural.js' | relative_url }}?v=jules-handoff-v3"></script>
+<script src="{{ '/assets/javascript/jules-panel-neural.js' | relative_url }}?v=jules-context-20261101"></script>
 <script src="{{ '/assets/javascript/jules-claude-bridge.js' | relative_url }}?v=claude-jules-bridge-v1"></script>
 <script src="{{ '/assets/javascript/jules-task-supervisor.js' | relative_url }}?v=hais-task-supervisor-v1"></script>
 <script src="{{ '/assets/javascript/jules-panel-auth.js' | relative_url }}?v=jules-handoff-v3"></script>
