@@ -120,6 +120,7 @@ window.sendMessage = async function() {
         } finally {
             window.sendBtn.disabled = false;
             window.chatInput.disabled = false;
+            window._neuralSendInFlight = false;
         }
         return;
     }
@@ -181,6 +182,7 @@ window.sendMessage = async function() {
         } finally {
             window.sendBtn.disabled = false;
             window.chatInput.disabled = false;
+            window._neuralSendInFlight = false;
             window.chatInput.focus();
         }
         return;
