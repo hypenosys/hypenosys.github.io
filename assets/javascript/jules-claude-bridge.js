@@ -214,6 +214,20 @@
         busy = true;
         const revision = sequence;
         try {
+            // Jules' published session states distinguish a human plan approval
+            // from a request for additional feedback. Never auto-approve a plan.
+            const remote = typeof window.julesApi.getSession === 'function'
+                ? await window.julesApi.getSession(state.pair.sessionName) : null;
+            if (revision !== sequence || current !== state) return;
+            const julesState = String(remote?.state || '');
+            if (julesState === 'AWAITING_PLAN_APPROVAL') {
+                setStatus('Jules espera aprobación HUMANA del plan. Auto no aprobará ni enviará instrucciones.');
+                return;
+            }
+            if (julesState === 'PAUSED') {
+                setStatus('Jules está pausado; no se enviará feedback.');
+                return;
+            }
             const all = await readActivity(state.pair);
             if (revision !== sequence || current !== state) return;
             const news = all.filter(a => !state.seen.has(a.key));
@@ -226,6 +240,10 @@
             persistAnalysis(state.pair, excerpt, analysis);
             if (news.some(a => a.terminal)) {
                 stop('sesión Jules finalizada; análisis registrado, sin nuevos mensajes');
+                return;
+            }
+            if (julesState && julesState !== 'AWAITING_USER_FEEDBACK') {
+                setStatus('Claude analizó el progreso. Jules sigue trabajando (' + julesState + '), sin enviar mensajes.');
                 return;
             }
             if (!window.julesApi?.sendMessage) throw new Error('Jules no admite envío de mensajes.');
