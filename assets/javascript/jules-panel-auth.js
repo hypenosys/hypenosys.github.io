@@ -281,11 +281,13 @@ window.prefillTaskFromHandoff = async function(task, handoff = {}) {
         const launchBtn = $('launch-btn');
         let branchReady = false;
         if (canonicalRepo && select && !select.disabled && select.dataset.repo === canonicalRepo) {
-            if (targetBranch && [...select.options].some(o => o.value === targetBranch)) {
-                select.value = targetBranch;
+            const branchNames = [...select.options].map(o => o.value).filter(Boolean);
+            const matching = window.resolveJulesTaskBranch?.(targetBranch, branchNames) || '';
+            if (matching) {
+                select.value = matching;
                 select.dispatchEvent(new Event('change', { bubbles: true }));
                 branchReady = true;
-            } else if (!targetBranch && select.value) {
+            } else if (!targetBranch && branchNames.includes(select.value)) {
                 branchReady = true;
             }
         }
@@ -843,8 +845,9 @@ window.checkBranchWarning = function() {
         return;
     }
 
-    const normExpected = window.normalizeBranchName(expectedBranch);
     const normCurrent = window.normalizeBranchName(currentBranch);
+    const resolvedExpected = window.resolveJulesTaskBranch?.(expectedBranch, [normCurrent]);
+    const normExpected = resolvedExpected || window.normalizeBranchName(expectedBranch);
 
     if (normExpected && normCurrent && normExpected !== normCurrent) {
         banner.classList.remove('hidden');
