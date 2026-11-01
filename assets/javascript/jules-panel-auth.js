@@ -270,6 +270,11 @@ window.prefillTaskFromHandoff = async function(task, handoff = {}) {
         if ($('opt-review')) $('opt-review').classList.remove('active');
         if ($('opt-auto')) $('opt-auto').classList.remove('active');
 
+        // Without a task repository, never reuse the prior session's repo silently.
+        window.JulesPanelState._handoffRepoUnconfirmed = !canonicalRepo;
+        if (window.JulesPanelState._handoffRepoUnconfirmed) {
+            showToast('Selecciona explícitamente el repositorio para este primer mensaje a Jules.', 'amber');
+        }
         if (canonicalRepo && typeof window.selectRepo === 'function') {
             // Pin target before loading branches, including during background refresh.
             window.JulesPanelState.handoffTargetRepo = canonicalRepo;
@@ -573,7 +578,11 @@ window.launchSession = async function(options = {}) {
     let prompt = String(options.promptOverride ?? $('session-prompt')?.value ?? '').trim();
     if (!prompt) { $('session-prompt')?.focus(); showToast("Escribe una tarea para Jules", "red"); return null; }
 
-    // Ensure repo and branch are real and normalized
+    // Ensure repo and branch are real and normalized.
+    if (window.JulesPanelState._handoffRepoUnconfirmed) {
+        showToast('Selecciona el repositorio de destino en Jules Panel. No se usará automáticamente el anterior.', 'amber');
+        return null;
+    }
     const source = window.JulesPanelState.activeRepo;
     const branch = window.JulesPanelState.activeBranch;
     const selectedRepo = localStorage.getItem('hypenosys_active_repo') || '';
