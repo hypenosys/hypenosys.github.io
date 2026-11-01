@@ -1029,17 +1029,12 @@ window.sendChatV2Msg = async function() {
             systemPrompt: dynamicSystemPrompt,
             onToken: () => {
                 const lastMsg = session.messages[session.messages.length - 1];
-                if (lastMsg && lastMsg.role === 'assistant') {
-                    lastMsg.sources = currentSources;
-                }
+                if (lastMsg && lastMsg.role === 'assistant') lastMsg.sources = currentSources;
                 window.renderChatV2Messages();
             },
             saveCallback: () => {
                 saveJulesPanelSessions();
                 window.renderNeuralChatHistory();
-            },
-            onToken: () => {
-                window.renderChatV2Messages();
             },
             onDone: () => {
                 setNeuralProcessingState(false);
@@ -1263,7 +1258,7 @@ window.renderChatV2Messages = function() {
         let displayName = isJules ? 'JULES' : (isAssistant ? 'CLAUDE' : 'USUARIO');
 
         // Apply Authenticated User Identity if role is user
-        if (!isAssistant && githubUser) {
+        if (!isAssistant && githubUser && !isJules) {
             displayName = githubUser.login || githubUser.name || 'USUARIO';
             if (githubUser.avatar_url) {
                 iconHTML = '<img src="' + githubUser.avatar_url + '" style="width:24px; height:24px; border-radius:50%; object-fit:cover;">';
