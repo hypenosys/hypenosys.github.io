@@ -1,41 +1,55 @@
-# HAIS — acceso web y límites de operativa
+# HAIS — Observatorio multi-mercado y operativa PAPER
 
-## URLs previstas en develop
+## Rutas de develop
 
-- **Terminal PAPER:** https://dev.hypenosys.com/hais/
-- **Estado del proyecto y Kanban:** https://dev.hypenosys.com/hais/estado/
-- **Demo genérica del AI Control Center:** https://dev.hypenosys.com/hais/demo/
-- **Dashboard Hypenosys:** https://dev.hypenosys.com/dashboard.html
+- Mercados externos (sin valores simulados): https://dev.hypenosys.com/hais/
+- Terminal PAPER **separado**, de entrenamiento local: https://dev.hypenosys.com/hais/operar/
+- Estado del proyecto y tareas: https://dev.hypenosys.com/hais/estado/
+- Demo AI independiente: https://dev.hypenosys.com/hais/demo/
+- Dashboard Hypenosys: https://dev.hypenosys.com/dashboard.html
 
-La rama `develop` incluye las páginas Jekyll: `pages/hais-terminal.html`, `pages/hais.md` y `pages/hais-prototype.html`. Cada una tiene un permalink único para evitar dos fuentes que intenten generar el mismo `/hais/index.html`.
+Las fuentes Jekyll y sus permalink son únicos. La ruta principal /hais/ ya NO abre el antiguo simulador.
 
-## Qué funciona en el terminal
+## Observatorio real
 
-- Panel responsive con efectivo, posiciones, patrimonio y P/L en USD **ficticios**.
-- Precios de escenario AAPL/MSFT/NVDA sintetizados y editables manualmente; gráfico de historial local, sin feed de cotizaciones.
-- Compra y venta **PAPER locales** con confirmación y validaciones: saldo, cantidad, tenencia, límite conservador ilustrativo del 30% por activo, parada de compras.
-- Persistencia en `localStorage`, historial, eventos locales, exportación JSON y reinicio.
-- Comprobación optativa y de solo lectura de `GET /api/hais/health` y `GET /api/hais/v1/capabilities`, y cálculo teórico con `POST /api/hais/v1/paper/estimate` **si** se configura un gateway same-origin.
+`pages/hais-markets.html` incorpora los widgets oficiales de TradingView (Market Overview y Advanced Chart) para:
+- S&P 500 (SP:SPX)
+- NASDAQ Composite (NASDAQ:IXIC) y NASDAQ 100 (NASDAQ:NDX)
+- CSI 300 (SSE:000300)
+- IBEX 35 (BME:IBC)
+- Rentabilidades soberanas a 10 años de EE. UU., Alemania, España y China (TVC:US10Y, TVC:DE10Y, TVC:ES10Y, TVC:CN10Y)
+- Oro, plata, WTI y Brent (referencias TVC; no spot ejecutable)
+- Cripto BTC/USD, ETH/USD, SOL/USDT; divisas EUR/USD y USD/JPY.
 
-**Importante:** ninguna compra o venta de la interfaz se manda al backend. El backend actual solo estima nominales y devuelve `executed=false` / `persisted=false`. No hay datos de mercado reales, cartera persistida en servidor, autorización de estrategia ni ejecución con dinero. Las reglas de la demo no implican aprobación de una política de riesgo. Un navegador o usuario diferente verá otra simulación.
+La API pública de CoinGecko permite mostrar **datos numéricos reales** de BTC, ETH y SOL, con fecha/hora y cambio 24h, sin almacenar secretos. Si faltan campos, hay rate limit, el dato es antiguo o la red falla se muestran **datos no disponibles**, nunca datos inventados. El widget controla su propia actualización.
 
-## Contrato seguro pendiente para operativa PAPER de backend
+**Licencias:** TradingView permite los widgets integrados, respetando marca y sus condiciones. La integración del widget no otorga una API de precios a HAIS. Los índices y acciones pueden llevar retraso por condiciones de las bolsas, y algunas plazas/símbolos no están disponibles para widgets. Los instrumentos TVC son series derivadas/calculadas por TradingView, no necesariamente cotizaciones spot de bolsa. Ver https://www.tradingview.com/widget-docs/faq/data/ . Para ingestión programática con uso interno/redistribución hay que contratar y verificar proveedores y su licencia. Evitar el scraping no autorizado de Investing/Yahoo/Stooq o reproducir datos con derechos.
 
-La configuración de hosting **debe** disponer de un reverse proxy con autenticación / sesión y control de permisos para usar `/api/hais`. No publicar el servicio FastAPI anónimo, ni almacenar API keys, tokens de bróker o secretos en Jekyll/JS/localStorage. No habilitar LIVE.
+## Lectura programática en HAIS (PR #2)
 
-El siguiente hito exige diseñar `GET /v1/paper/portfolio`, `GET /v1/paper/quotes`, `GET /v1/paper/orders`, `POST /v1/paper/orders`, `POST /v1/paper/kill-switch` con autenticación, CSRF, multi-tenant, idempotencia, auditoría, validación de datos y persistencia. **No existen aún** en HAIS: el terminal no debe llamarlos ni simular que existen. Antes de desarrollar esas rutas se deben aprobar reglas de estrategia, fuentes de precios/señales y límites de riesgo.
+La rama propuesta https://github.com/hypenosys/HAIS/pull/2 añade:
+- `GET /v1/market/catalog`: clases y símbolos, distinguiendo `access=api` de `access=tradingview-widget`.
+- `GET /v1/market/crypto`: CoinGecko, moneda USD, cambio 24h, origen, observación, TTL 60 s.
+- `GET /v1/market/treasury`: FRED DGS2/DGS10, rendimiento % y variación en puntos básicos; fecha diaria; TTL 900 s.
 
-## Publicación y pruebas
+Estos endpoints necesitan integración, CI, despliegue y acceso protegido antes de estar disponibles en dev. Nunca presentar una API no desplegada como activa. La API es read-only y no obtiene valores autorizados de SP500, NASDAQ, CSI300, IBEX35 o commodities para decisiones internas, aún pendientes de proveedor. No hay órdenes automáticas ni LIVE.
 
-El CNAME del repositorio apunta a `hypenosys.com`. No cambiarlo al subdominio de desarrollo. El hosting de `dev.hypenosys.com` debe publicar explícitamente `develop`; el commit por sí solo no demuestra que el dominio esté actualizado.
+## Simulador
+
+`/hais/operar/` contiene el antiguo terminal PAPER aislado con precios sintéticos introducidos por el usuario. Conserva historial, efectivo y operaciones locales en navegador. NO envía órdenes al backend, ni usa valores del widget como precio de ejecución, ni replica mercado real. La seguridad de compras y ventas está solo en la simulación; hasta acordar estrategia, fuente de precios autorizada, límites y autenticación no conectar órdenes de servidor.
+
+## Publicación y QA
+
+La configuración existente de `develop` utiliza el workflow `.github/workflows/deploy-dev-pages.yml`, con build Jekyll y Cloudflare Pages `hypenosys-dev`. El archivo CNAME no se debe modificar. Comprobar que el workflow dispone de credenciales y finaliza sin errores; la existencia del commit no demuestra despliegue público.
 
 ```bash
-bundle exec jekyll build
+bundle exec jekyll build --source . --destination ./_site --baseurl ""
 test -f _site/hais/index.html
-test -f _site/hais/demo/index.html
+test -f _site/hais/operar/index.html
 test -f _site/hais/estado/index.html
-npx playwright test tests/verify_hais_terminal.spec.js
+test -f _site/hais/demo/index.html
+npx playwright test tests/verify_hais_markets.spec.js tests/verify_hais_terminal.spec.js
 curl -IL --fail https://dev.hypenosys.com/hais/
 ```
 
-Comprobar sin backend que el indicador permanece desconectado y que la simulación opera solo en localStorage; con gateway autenticado, verificar el contrato PAPER antes de mostrar conexión. No declarar publicación en el dominio ni backend activo sin evidencia.
+Las pruebas funcionales de widgets de terceros dependen de disponibilidad y licencias; no declarar que se ha verificado una cotización real en CI cuando solo se ha probado el marco. Revisar latencia, CORS de CoinGecko, errores 429, navegación mobile y etiquetado de fuente.
