@@ -129,9 +129,11 @@
       const dependencies = Array.isArray(task.blocked_by) ? task.blocked_by : [];
       if (next === 'WORKING' && dependencies.length) {
         const tasks = await window.taskOps.getAllTasks();
+        const dependencyDoneStates = new Set(['OK', 'DONE', 'COMPLETED', 'FIXED', 'CLOSED', 'RESOLVED']);
         const outstanding = dependencies.filter(id => {
           const dep = (tasks || []).find(item => String(item.id) === String(id));
-          return !dep || String(dep.estado || dep.status || '').toUpperCase() !== 'DONE';
+          const depState = String(dep?.estado || dep?.status || '').trim().toUpperCase();
+          return !dep || !dependencyDoneStates.has(depState);
         });
         if (outstanding.length) throw new Error('Bloqueada por tareas ' + outstanding.join(', ') + '. No se puede mover a WORKING.');
       }
