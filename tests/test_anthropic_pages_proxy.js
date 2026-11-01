@@ -46,6 +46,7 @@ async function run() {
   assert.equal(new URL(discoveryCalls[0].url).pathname, '/v1/models');
   assert.equal(new URL(discoveryCalls[0].url).searchParams.get('after_id'), 'cursor');
   assert.equal(discoveryCalls[0].opts.headers.get('authorization'), 'Bearer ' + KEY);
+  assert.equal(discoveryCalls[0].opts.redirect, 'manual', 'Cloudflare Workers rejects redirect: error');
   assert.equal(discoveryCalls[0].opts.headers.get('anthropic-workspace-id'), 'wrkspc_12345678');
 
   const messageCalls = [];
@@ -66,6 +67,7 @@ async function run() {
   assert.equal(messageCalls.length, 1);
   assert.equal(messageCalls[0].url, 'https://api.anthropic.com/v1/messages');
   assert.equal(messageCalls[0].opts.headers.get('authorization'), 'Bearer ' + KEY);
+  assert.equal(messageCalls[0].opts.redirect, 'manual', 'Cloudflare Workers rejects redirect: error');
   assert.equal(JSON.parse(messageCalls[0].opts.body).model, 'claude-test');
 
   const malformed = await send({ request: new Request(ORIGIN + '/api/ai/anthropic/messages', {
@@ -73,6 +75,26 @@ async function run() {
   }) });
   assert.equal(malformed.status, 400);
   assert.equal(messageCalls.length, 1);
+
+  // Upstream redirect must be blocked for BOTH routes; never follow to leak credentials.
+  const modelsRedirect = loadRoute('models.js', 'onRequestGet', async () =>
+    new Response(null, { status: 302, headers: { location: 'https://untrusted.example/steal' } }));
+  const redirectModelsResult = await modelsRedirect({
+    request: new Request(ORIGIN + '/api/ai/anthropic/models', { headers: authHeaders })
+  });
+  assert.equal(redirectModelsResult.status, 502);
+  assert.equal(redirectModelsResult.headers.get('location'), null);
+
+  const messagesRedirect = loadRoute('messages.js', 'onRequestPost', async () =>
+    new Response(null, { status: 307, headers: { location: 'https://untrusted.example/steal' } }));
+  const redirectMessageResult = await messagesRedirect({
+    request: new Request(ORIGIN + '/api/ai/anthropic/messages', {
+      method: 'POST', headers: { ...authHeaders, 'content-type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+  });
+  assert.equal(redirectMessageResult.status, 502);
+  assert.equal(redirectMessageResult.headers.get('location'), null);
 
   const upstreamFailure = loadRoute('models.js', 'onRequestGet', async () => { throw Error('Network unavailable'); });
   const failed = await upstreamFailure({ request: new Request(ORIGIN + '/api/ai/anthropic/models', {
