@@ -154,172 +154,195 @@ window.registerPanelListenersOnce = function() {
     }
 };
 
-window.prefillTaskFromHandoff = async function(task) {
-    if (!task) return;
+/**
+ * Shared task/message handoff. It NEVER sends messages automatically.
+ * Repositories and branches are validated before the task launch can execute.
+ */
+window.resizeJulesDraftTextarea = function(textarea = document.getElementById('session-prompt')) {
+    if (!textarea) return;
+    textarea.style.height = 'auto';
+    const needed = textarea.scrollHeight || 240;
+    textarea.style.height = Math.min(420, Math.max(240, needed)) + 'px';
+    textarea.style.overflowY = needed > 420 ? 'auto' : 'hidden';
+};
 
-    // Determinar si hay una sesión activa vinculada
-    const claudeId = localStorage.getItem('hy_active_claude_session_id');
-    let linkedSid = null;
-    if (claudeId) {
-        linkedSid = localStorage.getItem('hy_neural_session_id_' + claudeId);
-    }
-    if (!linkedSid) linkedSid = localStorage.getItem('hy_neural_session_id');
-
-    let isSessionActive = false;
-    if (linkedSid) {
-        try {
-            const sessionData = await window.julesApi.getSession(linkedSid);
-            const terminalStates = ['COMPLETED', 'FAILED', 'CANCELLED', 'ERROR'];
-            if (sessionData && !terminalStates.includes(sessionData.state)) {
-                isSessionActive = true;
-            }
-        } catch (e) {
-            console.warn("Error checking linked session status", e);
-        }
-    }
-
-    const payloadStr = localStorage.getItem('jules_task_payload');
-    let formattedPrompt = "";
+window.prefillTaskFromHandoff = async function(task, handoff = {}) {
     let payload = null;
-
-    if (payloadStr) {
-        try {
-            payload = JSON.parse(payloadStr);
-            if (payload.user_note) formattedPrompt += "[NOTA DEL USUARIO]\n" + payload.user_note + "\n\n";
-            if (payload.session_context && typeof payload.session_context === 'string') {
-                formattedPrompt += "[CONTEXTO NEURAL]\n\n" + payload.session_context + "\n\n";
-            }
-            if (payload.claude_response) {
-                formattedPrompt += "[RESPUESTA DE CLAUDE]\n\n" + payload.claude_response;
-            }
-        } catch(e) { console.error("Error parsing payload", e); }
+    try {
+        payload = JSON.parse(localStorage.getItem('jules_task_payload') || 'null');
+    } catch (error) {
+        console.warn('[Jules Handoff] Invalid payload ignored');
     }
 
+    const contextTask = task || payload?.source_task || {};
+    const claudeId = String(handoff.claude_conversation_id || payload?.claude_conversation_id || '');
+    const taskTitle = contextTask.titulo || contextTask.title || '';
+    const isDashboardTask = handoff.source === 'dashboard' || handoff.intent === 'new-task';
+
+    const fragments = [];
+    if (payload?.user_note) fragments.push('[NOTA DEL USUARIO]\n' + payload.user_note);
+    if (payload?.session_context) fragments.push('[CONTEXTO CLAUDE]\n' + payload.session_context);
+    if (payload?.claude_response) fragments.push('[RESPUESTA DE CLAUDE]\n' + payload.claude_response);
+
+    if (!fragments.length && contextTask.id) {
+        fragments.push(
+            'Tarea #' + contextTask.id + ' — ' + taskTitle +
+            '\n\n' + (contextTask.descripcion || contextTask.description || '') +
+            '\n\nAnaliza el alcance, las dependencias y los bloqueos. Propón un plan verificable antes de ejecutar cambios.'
+        );
+    }
+    const formattedPrompt = fragments.join('\n\n').trim();
     if (!formattedPrompt) {
-        formattedPrompt = "He vinculado esta tarea para su análisis técnico:\n\n📌 TAREA: #" + task.id + " - " + (task.titulo || task.title) + "\n";
-        if (task.descripcion) formattedPrompt += "📝 DESCRIPCIÓN: " + task.descripcion + "\n";
-        formattedPrompt += "\n¿Cómo podemos abordar esta tarea?";
+        showToast('El traspaso no contiene ninguna instrucción para Jules.', 'red');
+        return;
     }
 
-    const targetRepo = task.repository || task.repo || ((payload && payload.source_task && payload.source_task.repository) || (payload && payload.source_task && payload.source_task.repo));
-    const targetBranch = task.rama || task.branch || (payload && payload.rama);
+    const targetRepo = contextTask.repository || contextTask.repo
+        || payload?.source_task?.repository || payload?.source_task?.repo || '';
+    const targetBranch = contextTask.rama || contextTask.branch || payload?.rama || '';
+    const canonicalRepo = targetRepo && window.getCanonicalRepoName
+        ? window.getCanonicalRepoName(targetRepo) : '';
+    const sidRaw = handoff.linked_jules_session_id || payload?.linked_jules_session_id
+        || (claudeId ? localStorage.getItem('hy_neural_session_id_' + claudeId) : null);
+    const linkedSid = String(sidRaw || '').replace(/^sessions\//, '');
+    let existing = null;
 
-    if (targetRepo) {
-        const source = (window.julesSourcesCache || []).find(function(src) {
-            return src.name === targetRepo || src.name === 'sources/github/' + targetRepo || src.displayName === targetRepo;
-        });
-        if (source) {
-            switchRepo(source.name, source);
-        } else if (targetRepo.includes('/')) {
-            const sourceName = targetRepo.startsWith('sources/') ? targetRepo : 'sources/github/' + targetRepo;
-            switchRepo(sourceName, { name: sourceName });
-        }
-    }
-
-    if (targetBranch) {
-        const waitForBranches = () => {
-            return new Promise((resolve) => {
-                let attempts = 0;
-                const check = () => {
-                    const sel = $('branch-sel');
-                    if (sel && !sel.disabled && sel.options.length > 0) {
-                        const option = Array.from(sel.options).find(o => o.value === targetBranch);
-                        if (option) {
-                            sel.value = targetBranch;
-                            window.JulesPanelState.activeBranch = targetBranch;
-                            const sessCtx = $('sess-ctx');
-                            if(sessCtx) {
-                                const repoLabel = $('repo-label').textContent;
-                                sessCtx.textContent = repoLabel + ': ' + targetBranch;
-                            }
-                            addTel("SYSTEM", "Rama auto-ajustada a " + targetBranch + " (Tarea #" + task.id + ")", "info");
-                            resolve(true);
-                        } else {
-                            resolve(false);
-                        }
-                    } else if (attempts < 20) {
-                        attempts++;
-                        setTimeout(check, 250);
-                    } else {
-                        resolve(false);
-                    }
-                };
-                check();
-            });
-        };
-
-        const exists = await waitForBranches();
-        if (!exists) {
-             formattedPrompt = "Crea la branch " + targetBranch + " a partir de main antes de empezar.\n\n" + formattedPrompt;
-             addTel("SYSTEM", "Instrucción de creación de branch añadida al prompt", "warn");
-        }
-    }
-
-    if (isSessionActive) {
-        showToast("Enviando orden a sesión activa...", "amber");
+    // Never borrow the globally active Jules session for a different task.
+    if (!isDashboardTask && linkedSid && /^[A-Za-z0-9_-]{3,100}$/.test(linkedSid)) {
         try {
-            const targetId = linkedSid.startsWith('sessions/') ? linkedSid : 'sessions/' + linkedSid;
-            const ok = await window.julesApi.sendMessage(targetId, formattedPrompt);
-            if (ok) {
-                showToast("Orden enviada con éxito", "green");
-                addTel("USER", "Orden enviada vía Neural Link", "info");
-
-                const panelSession = window.julesPanelSessions.find(s => s.id === window.currentJulesPanelSessionId);
-                if (panelSession) {
-                    panelSession.messages.push({ role: 'user', content: formattedPrompt, timestamp: Date.now() });
-                    if (window.saveJulesPanelSessions) window.saveJulesPanelSessions();
-                    if (window.renderChatV2Messages) window.renderChatV2Messages();
+            const remote = await window.julesApi.getSession('sessions/' + linkedSid);
+            const terminal = ['COMPLETED', 'FAILED', 'CANCELLED', 'ERROR'];
+            const remoteRepo = remote?.sourceContext?.source || '';
+            const remoteBranch = remote?.sourceContext?.githubRepoContext?.startingBranch || '';
+            const sameRepo = !canonicalRepo || !remoteRepo
+                || window.getCanonicalRepoName(remoteRepo) === canonicalRepo;
+            const sameBranch = !targetBranch || !remoteBranch || remoteBranch === targetBranch;
+            if (remote && !terminal.includes(remote.state) && sameRepo && sameBranch) {
+                existing = remote;
+                if (!Array.isArray(window.julesSessionsCache)) window.julesSessionsCache = [];
+                if (!window.julesSessionsCache.some(x => x.name?.endsWith('/' + linkedSid))) {
+                    window.julesSessionsCache.unshift({ ...remote, name: 'sessions/' + linkedSid });
                 }
-
-                localStorage.setItem('hy_neural_active', 'true');
-                localStorage.setItem('hy_neural_task_context', JSON.stringify(task));
-                switchView('chat');
             }
-        } catch (err) {
-            showToast("Error al enviar: " + err.message, "red");
-            isSessionActive = false;
+        } catch (error) {
+            console.warn('[Jules Handoff] Session unavailable; preparing a draft, not sending.');
         }
     }
 
-    if (!isSessionActive) {
-        localStorage.setItem('hy_neural_active', 'true');
-        localStorage.setItem('hy_neural_task_context', JSON.stringify(task));
-
-        if ($('session-prompt')) {
-            $('session-prompt').value = formattedPrompt.trim();
+    // Restore the original Claude conversation, but only if it still exists.
+    if (claudeId) {
+        const saved = window.julesPanelSessions || [];
+        if (saved.some(x => x.id === claudeId) && typeof window.loadJulesPanelSession === 'function') {
+            window.loadJulesPanelSession(claudeId);
         }
+    }
 
-        if ($('neural-session-banner')) {
-            $('neural-session-banner').classList.remove('hidden');
-            $('neural-banner-task').textContent = "Tarea #" + task.id + ": " + (task.titulo || task.title);
-            $('neural-banner-task').classList.remove('skeleton');
+    if (contextTask.id) {
+        localStorage.setItem('hy_neural_task_context', JSON.stringify(contextTask));
+        window.JulesPanelState.linkedTaskId = contextTask.id;
+        if (typeof showTaskContextInChat === 'function') showTaskContextInChat(contextTask);
+    } else {
+        window.JulesPanelState.linkedTaskId = null;
+    }
+    if (claudeId) localStorage.setItem('hy_pending_claude_handoff_id', claudeId);
+
+    if (existing) {
+        if (claudeId && typeof window.linkClaudeToJulesTask === 'function') {
+            window.linkClaudeToJulesTask(claudeId, linkedSid, existing.title || linkedSid);
         }
-        showTaskContextInChat(task);
-
-        showToast("Contexto cargado en Nueva Tarea", "green");
+        window.NeuralWorkspaceState.activeJulesSessionId = linkedSid;
+        localStorage.setItem('hy_neural_session_id', linkedSid);
+        if (claudeId) localStorage.setItem('hy_neural_session_id_' + claudeId, linkedSid);
+        switchView('chat');
+        window.setNeuralWorkspaceMode('jules');
+        if (typeof window.setJulesComposerDraft === 'function') {
+            window.setJulesComposerDraft('jules', formattedPrompt);
+        } else if ($('v2-chat-input')) {
+            $('v2-chat-input').value = formattedPrompt;
+            $('v2-chat-input').dispatchEvent(new Event('input'));
+        }
+        showToast('Mensaje preparado para Jules en su sesión vinculada. Revisa y pulsa Enviar.', 'green');
+    } else {
+        // New work must start from an existing GitHub branch. Never assume main.
         switchView('neural');
+        if ($('opt-review')) $('opt-review').classList.add('active');
+        if ($('opt-auto')) $('opt-auto').classList.remove('active');
+
+        if (canonicalRepo && typeof window.selectRepo === 'function') {
+            await window.selectRepo(canonicalRepo);
+        }
+
+        const select = $('branch-sel');
+        const launchBtn = $('launch-btn');
+        let branchReady = false;
+        if (canonicalRepo && select && !select.disabled && select.dataset.repo === canonicalRepo) {
+            if (targetBranch && [...select.options].some(o => o.value === targetBranch)) {
+                select.value = targetBranch;
+                select.dispatchEvent(new Event('change', { bubbles: true }));
+                branchReady = true;
+            } else if (!targetBranch && select.value) {
+                branchReady = true;
+            }
+        }
+
+        window.JulesPanelState._handoffBranchBlocked = !!(canonicalRepo && !branchReady);
+        if (launchBtn && window.JulesPanelState._handoffBranchBlocked) {
+            launchBtn.disabled = true;
+            launchBtn.title = 'La rama solicitada no está disponible. Selecciona una rama existente en Jules Panel.';
+            showToast('La rama de esta tarea no está disponible en GitHub. Selecciona una rama existente antes de ejecutar.', 'amber');
+        }
+
+        const textArea = $('session-prompt');
+        if (textArea) {
+            textArea.value = formattedPrompt;
+            window.resizeJulesDraftTextarea(textArea);
+        }
+        const banner = $('neural-session-banner');
+        if (banner && contextTask.id) {
+            banner.classList.remove('hidden');
+            const label = $('neural-banner-task');
+            if (label) {
+                label.textContent = 'Tarea #' + contextTask.id + ': ' + taskTitle;
+                label.classList.remove('skeleton');
+            }
+        }
+        showToast('Borrador listo en Nueva Tarea Jules (revisión supervisada).', 'green');
     }
 
-    localStorage.removeItem('jules_task_payload');
-    localStorage.removeItem('hy_jules_handoff');
-    localStorage.removeItem('jules_clipboard');
-    localStorage.removeItem('jules_linked_task_id');
-}
+    // Consume a handoff once. Reloads must not send or duplicate a task.
+    for (const key of ['jules_task_payload', 'hy_jules_handoff', 'jules_clipboard', 'jules_linked_task_id']) {
+        localStorage.removeItem(key);
+    }
+};
 
 window.handleUrlParams = async function() {
     const handoffRaw = localStorage.getItem('hy_jules_handoff');
     if (handoffRaw) {
         try {
-            const { task, timestamp } = JSON.parse(handoffRaw);
-            if (Date.now() - timestamp < 30000) {
-                await prefillTaskFromHandoff(task);
-                localStorage.removeItem('hy_jules_handoff');
+            const handoff = JSON.parse(handoffRaw);
+            if (handoff && Date.now() - Number(handoff.timestamp) < 10 * 60 * 1000) {
+                await prefillTaskFromHandoff(handoff.task || null, handoff);
                 return;
             }
-        } catch(e) {
-            console.error("Error parsing hy_jules_handoff", e);
+        } catch (e) {
+            console.warn('[Jules Handoff] Ignoring invalid or expired handoff');
         }
         localStorage.removeItem('hy_jules_handoff');
+    }
+    // A Claude response can be sent without a dashboard task; this path must still
+    // land in the correct composer and must never re-submit automatically.
+    const pendingClaudePayload = localStorage.getItem('jules_task_payload');
+    if (pendingClaudePayload) {
+        let parsed = null;
+        try { parsed = JSON.parse(pendingClaudePayload); } catch (e) {}
+        if (parsed && Date.now() - Number(parsed.timestamp || 0) < 10 * 60 * 1000) {
+            await prefillTaskFromHandoff(parsed.source_task || null, {
+                source: 'claude-chat', claude_conversation_id: parsed.claude_conversation_id,
+                linked_jules_session_id: parsed.linked_jules_session_id
+            });
+            return;
+        }
+        localStorage.removeItem('jules_task_payload');
     }
 
     const urlParams = new URLSearchParams(window.location.search);
