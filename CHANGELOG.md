@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Changed
+- **Neural workspaces**: Updated Claude and Jules with a purple segmented selector, development actions, a shared composer, task context and supervision cards. Jules now includes a session table with execution/history filters and an operational summary driven by existing session data.
+
 ### Added
 - **HAIS-001 pilot bootstrap**: Added a 24-task dependency backlog, a PAPER-only validation script, CI contract checks and an onboarding runbook. No production secrets or trading permissions are enabled.
 
@@ -22,3 +25,4 @@ Todas las actualizaciones notables de Hypenosys se documentarán en este archivo
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
+

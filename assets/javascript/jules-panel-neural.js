@@ -323,6 +323,7 @@ window.setNeuralWorkspaceMode = function(mode, options = {}) {
     if (window.neuralSyncChannel) {
         window.neuralSyncChannel.postMessage({ type: 'workspace-mode-changed', mode: mode, sessionId: window.currentJulesPanelSessionId });
     }
+    window.NeuralPanelUI?.render();
 };
 
 window.selectLinkedClaudeConversation = function(conversationId, options = {}) {
@@ -1510,8 +1511,8 @@ window.renderChatV2Messages = function() {
         const isJules = msg.source === 'jules';
         const time = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString('es-ES') : '--:--';
 
-        let iconHTML = isAssistant ? '🤖' : '👤';
-        let displayName = isJules ? 'JULES' : (isAssistant ? 'CLAUDE' : 'USUARIO');
+        let iconHTML = isJules ? '<i class="fas fa-bolt"></i>' : (isAssistant ? '<i class="fas fa-brain"></i>' : 'T');
+        let displayName = isJules ? 'Jules' : (isAssistant ? 'Claude' : 'Tú');
 
         // Apply Authenticated User Identity if role is user
         if (!isAssistant && githubUser && !isJules) {
@@ -1546,7 +1547,7 @@ window.renderChatV2Messages = function() {
             '<span class="activity-icon">' + iconHTML + '</span>' +
             '<div class="activity-body">' +
               '<div class="activity-header">' +
-                '<span class="activity-originator">' + displayName + '</span>' +
+                '<span class="activity-originator">' + window.NeuralChatCore.escapeHtml(displayName) + '</span>' +
                 '<span class="activity-time">' + time + '</span>' +
               '</div>' +
               '<div class="activity-content">' + renderedContent + '</div>' +
@@ -2727,3 +2728,4 @@ window.loadLinkedJulesHistoryForConversation = function(conversation) {
 
     window.loadAndRenderJulesSession(linkedId, true);
 }
+

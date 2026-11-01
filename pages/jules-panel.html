@@ -23,6 +23,7 @@ permalink: /jules-panel/
     <script src="/assets/javascript/global-header.js"></script>
 
 {% include jules-panel-styles.html %}
+{% include neural-panel-workspace-styles.html %}
 
 </head>
 <body>
@@ -614,7 +615,7 @@ permalink: /jules-panel/
 
 
     <!-- ─── NEURAL CHAT VIEW ─── -->
-    <div class="view" id="view-chat" style="padding: 0; background: #07070a; flex-direction: column; height: calc(100vh - var(--header-h)); position: relative;">
+    <div class="view" id="view-chat" data-workspace-mode="claude" style="padding: 0; background: #07070a; flex-direction: column; height: calc(100vh - var(--header-h)); position: relative;">
         <!-- Premium Segmented Tabs for Workspace Mode Selector -->
         <header class="neural-workspace-header">
             <div class="neural-mode-tabs" role="tablist" id="neural-workspace-tabs">
@@ -624,7 +625,7 @@ permalink: /jules-panel/
                     role="tab"
                     data-neural-mode="claude"
                     aria-selected="true"
-                    aria-controls="v2-chat-messages"
+                    aria-controls="neural-claude-workspace"
                     tabindex="0">
                     <i class="fas fa-brain"></i>
                     <span>Claude</span>
@@ -635,16 +636,14 @@ permalink: /jules-panel/
                     role="tab"
                     data-neural-mode="jules"
                     aria-selected="false"
-                    aria-controls="jules-history-container"
+                    aria-controls="neural-jules-workspace"
                     tabindex="-1">
                     <i class="fas fa-bolt"></i>
                     <span>Jules</span>
                 </button>
             </div>
-        </header>
-
         <!-- Chat Utility Bar (Always Visible) -->
-        <div style="position: absolute; top: 12px; right: 24px; z-index: 20; display: flex; gap: 8px; align-items: center;">
+        <div class="neural-workspace-utilities">
             <div id="svn-status-badge"></div>
             <div id="docs-status-badge" class="hidden"></div>
             <button onclick="toggleSessionDrawer()" class="btn btn-ghost btn-sm" style="padding: 6px 12px; font-size: 11px; background: rgba(13, 13, 20, 0.8); backdrop-filter: blur(8px); border: 1px solid var(--border-accent); box-shadow: 0 0 15px rgba(124, 58, 237, 0.2);">
@@ -652,31 +651,28 @@ permalink: /jules-panel/
             </button>
         </div>
 
-        <!-- Session-scoped and explicitly bounded Jules/Claude collaboration. -->
-        <div id="jules-claude-bridge-toolbar" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 18px;background:#12101b;border-bottom:1px solid rgba(189,147,249,.22);">
-          <span style="color:#bd93f9;font-weight:700;font-size:11px;">Claude ↔ Jules</span>
-          <button type="button" class="btn btn-ghost btn-sm" onclick="window.JulesClaudeBridge.analyzeLatest()">Analizar última salida</button>
-          <button type="button" class="btn btn-primary btn-sm" id="jules-claude-bridge-start" onclick="window.JulesClaudeBridge.start()">Iniciar auto (máx. 3)</button>
-          <button type="button" class="btn btn-ghost btn-sm" id="jules-claude-bridge-stop" onclick="window.JulesClaudeBridge.stop()" disabled>Detener</button>
-          <span id="jules-claude-bridge-status" role="status" aria-live="polite" style="font-size:10px;color:#aaa1bd;overflow-wrap:anywhere;">Auto desactivado</span>
-        </div>
+        </header>
 
-        <div id="jules-task-supervisor" style="display:flex;align-items:center;flex-wrap:wrap;gap:7px;padding:8px 18px;border-bottom:1px solid rgba(189,147,249,.12);background:rgba(12,12,22,.8);">
-            <strong style="font-size:10px;color:#bd93f9">SUPERVISIÓN DE TAREA</strong>
-            <button type="button" class="btn btn-ghost btn-sm" onclick="window.JulesTaskSupervisor.review()">Revisar estado</button>
-            <button type="button" class="btn btn-primary btn-sm" onclick="window.JulesTaskSupervisor.applySuggestedLifecycle()" title="Consulta el estado actual de Jules y solicita confirmación antes de mover la tarea en Kanban">Sincronizar estado → Kanban</button>
-            <button type="button" class="btn btn-ghost btn-sm" onclick="window.JulesTaskSupervisor.applyStatus('WORKING')">En curso</button>
-            <button type="button" class="btn btn-ghost btn-sm" onclick="window.JulesTaskSupervisor.applyStatus('BLOCKED')">Bloqueada</button>
-            <button type="button" class="btn btn-ghost btn-sm" onclick="window.JulesTaskSupervisor.applyStatus('REVIEW')">En revisión</button>
-            <button type="button" class="btn btn-ghost btn-sm" onclick="window.JulesTaskSupervisor.editTask()">Editar tarea</button>
-            <button type="button" class="btn btn-ghost btn-sm" style="color:#ff7689" onclick="window.JulesTaskSupervisor.archive()">Cementerio</button>
-            <span id="jules-task-supervisor-status" role="status" aria-live="polite" style="font-size:10px;color:#aaa1bd;overflow-wrap:anywhere">Sin cambios automáticos</span>
+        <div class="neural-workspace-hero">
+            <div class="neural-hero-copy">
+                <span class="neural-hero-icon"><i id="neural-hero-icon" class="far fa-comment-dots" aria-hidden="true"></i></span>
+                <div><h1 id="neural-workspace-title">Claude · Asistente de desarrollo</h1>
+                <p id="neural-workspace-description">Analiza, planifica, escribe y revisa código con el contexto de tu proyecto.</p></div>
+            </div>
+            <div id="neural-quick-actions" class="neural-quick-actions" aria-label="Acciones para Claude">
+                <button type="button" data-neural-prompt="Analiza el código del repositorio y señala posibles mejoras."><i class="fas fa-code-branch"></i> Analizar código</button>
+                <button type="button" data-neural-prompt="Ayúdame a generar una implementación para: "><i class="fas fa-wand-magic-sparkles"></i> Generar</button>
+                <button type="button" data-neural-prompt="Explica cómo funciona este código: "><i class="fas fa-book-open"></i> Explicar</button>
+                <button type="button" data-neural-prompt="Revisa los cambios e identifica errores, riesgos y pruebas necesarias."><i class="fas fa-magnifying-glass"></i> Revisar</button>
+                <button type="button" data-neural-prompt="Propón una refactorización que conserve el comportamiento de: "><i class="fas fa-code-branch"></i> Refactorizar</button>
+            </div>
+            <ol class="neural-workflow" aria-label="Flujo de trabajo de Jules"><li>Crear</li><li>Encolar</li><li>Ejecutar</li><li>Revisar</li><li>Cerrar</li></ol>
         </div>
-
+        <div class="neural-workspace-body">
+        <div class="neural-workspace-main">
         <!-- ─── CLAUDE WORKSPACE ─── -->
         <section id="neural-claude-workspace" role="tabpanel" aria-labelledby="neural-tab-claude" style="flex: 1; display: flex; flex-direction: column; overflow: hidden;">
             <!-- Claude Linking Status Bar -->
-            <div id="claude-linking-bar"></div>
             <div id="claude-selected-toolbar" style="display:none;gap:8px;align-items:center;flex-wrap:wrap;padding:7px 18px;background:rgba(189,147,249,.07);border-bottom:1px solid rgba(189,147,249,.16)">
                 <span style="font-size:10px;color:#b4a6cb" id="claude-selection-count">0 mensajes</span>
                 <button class="btn btn-ghost btn-sm" type="button" onclick="window.prepareSelectedClaudeForJules()">→ Jules</button>
@@ -704,27 +700,20 @@ permalink: /jules-panel/
 
         <!-- ─── JULES WORKSPACE ─── -->
         <section id="neural-jules-workspace" role="tabpanel" aria-labelledby="neural-tab-jules" hidden style="flex: 1; display: flex; flex-direction: column; overflow: hidden;">
-            <!-- Task Context Header (Integrated) -->
-            <div id="v2-task-context" class="hidden" style="background: rgba(124, 58, 237, 0.05); border-bottom: 1px solid var(--border); padding: 12px 24px;">
-                <details style="width: 100%;">
-                    <summary style="list-style: none; cursor: pointer; display: flex; align-items:center; justify-content: space-between;">
-                        <div style="display:flex; align-items:center; gap:10px">
-                            <span style="font-size: 14px;">📋</span>
-                            <div>
-                                <div style="font-size: 9px; font-weight: 800; color: var(--accent2); text-transform: uppercase;">Contexto de Tarea</div>
-                                <div id="v2-task-title" style="font-size: 13px; font-weight: 700; color: var(--text);">Cargando tarea...</div>
-                            </div>
-                        </div>
-                        <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="opacity: 0.5;"><path d="M19 9l-7 7-7-7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    </summary>
-                    <div id="v2-task-details" style="padding-top: 15px; font-size: 12px; color: var(--text2); display: flex; flex-direction: column; gap: 8px;">
-                        <!-- Details populated via JS -->
-                    </div>
-                </details>
+            <div class="neural-queue-tabs" role="group" aria-label="Filtrar sesiones de Jules">
+                <button type="button" data-neural-filter="all" aria-pressed="true"><i class="fas fa-list-ul"></i> Cola de tareas</button>
+                <button type="button" data-neural-filter="active" aria-pressed="false"><i class="fas fa-play"></i> Ejecuciones</button>
+                <button type="button" data-neural-filter="finished" aria-pressed="false"><i class="fas fa-clock-rotate-left"></i> Historial</button>
             </div>
-
+            <section class="neural-panel-card neural-queue-card" aria-labelledby="neural-queue-heading">
+                <div class="neural-card-heading"><div><h2 id="neural-queue-heading"><i class="fas fa-layer-group"></i> Cola de tareas <span id="neural-queue-count">(0)</span></h2><p>Sesiones de Jules y su estado actual.</p></div>
+                    <div class="neural-card-actions"><button type="button" class="btn btn-primary btn-sm" onclick="window.openNewTaskModal('running')"><i class="fas fa-plus"></i> Nueva tarea</button><button type="button" class="btn btn-ghost btn-sm" id="neural-refresh-sessions"><i class="fas fa-rotate"></i> Actualizar</button></div>
+                </div>
+                <div class="neural-queue-scroll"><table class="neural-queue-table"><thead><tr><th scope="col">Tarea (título)</th><th scope="col">ID</th><th scope="col">Repositorio</th><th scope="col">Rama</th><th scope="col">Estado</th><th scope="col">Modo</th></tr></thead><tbody id="neural-queue-rows"></tbody></table></div>
+                <div class="neural-queue-footer" id="neural-queue-footer">Selecciona una sesión para ver su ejecución.</div>
+            </section>
+            <div class="neural-execution-heading"><h2><i class="fas fa-terminal"></i> Detalle de ejecución <span id="neural-execution-id"></span></h2><span id="neural-execution-state"></span></div>
             <!-- Jules Linking Status Bar -->
-            <div id="jules-linking-bar"></div>
             <div id="jules-selected-toolbar" style="display:none;gap:8px;align-items:center;flex-wrap:wrap;padding:7px 18px;background:rgba(189,147,249,.07);border-bottom:1px solid rgba(189,147,249,.16)">
                 <span style="font-size:10px;color:#b4a6cb" id="jules-selection-count">0 actividades</span>
                 <button type="button" class="btn btn-ghost btn-sm" onclick="window.prepareSelectedJulesForClaude(false)">→ Claude</button>
@@ -766,35 +755,75 @@ permalink: /jules-panel/
             </div>
         </section>
 
-        <!-- Styled Divider (Kept hidden for compatibility but styled invisible) -->
-        <div id="neural-divider" class="hidden" style="display: none !important;"></div>
-        <div class="chat-input-area" style="padding: 24px; background: rgba(0,0,0,0.3); border-top: 1px solid var(--border);">
-            <div style="max-width: 900px; margin: 0 auto; position: relative; display: flex; flex-direction: column; gap: 12px;">
-                <div id="v2-thinking-indicator" class="hidden" style="font-size: 10px; font-weight: 800; color: var(--cyan); letter-spacing: 0.05em;">
-                    CLAUDE ESTÁ PROCESANDO...
-                </div>
-
-                <div id="chat-input-wrapper" class="transition-all duration-500" style="position: relative; display: flex; flex-direction: column; gap: 10px; background: var(--surface-opaque); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 12px;">
-                    <div class="flex items-center gap-3">
-                        <div class="jules-neural-mode-toggle">
-                            <button onclick="setSendMode('claude')" class="jules-neural-mode-option active" data-mode="claude">
-                                <i class="fas fa-brain"></i>
-                                <span>CLAUDE</span>
-                            </button>
-                            <button onclick="setSendMode('jules')" class="jules-neural-mode-option" data-mode="jules">
-                                <i class="fas fa-bolt"></i>
-                                <span>JULES</span>
-                            </button>
-                        </div>
-                        <textarea id="v2-chat-input" placeholder="Pregunta algo..." rows="2"
-                            style="width: 100%; background: transparent; border: none; color: #fff; resize: none; font-size: 14px; min-height: 40px; max-height: 200px; font-family: var(--font-ui); outline: none;"></textarea>
-
-                        <button id="v2-send-btn" style="width: 38px; height: 38px; border-radius: 12px; background: var(--accent-grad); color: #fff; border: none; cursor: pointer; display: flex; align-items:center; justify-content:center; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3); flex-shrink: 0;">
-                            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
-                        </button>
+        <div id="neural-divider" class="hidden" style="display:none"></div>
+        <div class="chat-input-area neural-composer">
+            <div id="v2-thinking-indicator" class="hidden" role="status">Procesando mensaje…</div>
+            <div id="chat-input-wrapper">
+                <label class="neural-sr-only" for="v2-chat-input">Mensaje para el asistente seleccionado</label>
+                <textarea id="v2-chat-input" placeholder="Escribe un mensaje para Claude..." rows="2"></textarea>
+                <div class="neural-composer-footer">
+                    <div class="neural-composer-tools">
+                        <button type="button" class="neural-tool-btn" id="neural-composer-link" title="Vincular sesión" aria-label="Vincular sesión"><i class="fas fa-link"></i></button>
+                        <button type="button" class="neural-tool-btn" id="neural-insert-code" title="Insertar bloque de código" aria-label="Insertar bloque de código"><i class="fas fa-code"></i></button>
+                        <button type="button" class="neural-tool-btn" id="neural-docs-toggle" title="Contexto de documentación" aria-label="Contexto de documentación" aria-pressed="false"><i class="fas fa-book-open"></i></button>
                     </div>
+                    <div class="neural-composer-send"><button type="button" class="btn btn-ghost btn-sm" id="neural-model-config" title="Configurar proveedor y modelo"><i class="fas fa-brain"></i><span id="neural-composer-model">Configurar modelo</span><i class="fas fa-chevron-down"></i></button>
+                        <button type="button" id="v2-send-btn" class="btn btn-primary"><i class="far fa-paper-plane"></i> Enviar</button></div>
                 </div>
             </div>
+        </div>
+        </div>
+        <aside class="neural-context-rail" aria-label="Contexto y supervisión">
+            <section class="neural-panel-card"><div class="neural-card-heading"><h2><i class="far fa-note-sticky"></i> Contexto de la tarea</h2></div><div id="neural-task-overview" class="neural-card-content"></div></section>
+            <section class="neural-panel-card neural-linked-card"><div class="neural-card-heading"><h2><i class="fas fa-link"></i> Sesión vinculada</h2></div><div id="claude-linking-bar"></div><div id="jules-linking-bar"></div></section>
+            <section class="neural-panel-card neural-auto-card"><div class="neural-card-heading"><h2><i class="fas fa-bolt"></i> Modo automático</h2><span id="neural-auto-state" class="neural-status">Desactivado</span></div><p class="neural-card-content">Claude puede analizar la actividad de Jules y enviar hasta 3 intercambios por activación.</p>
+        <!-- Session-scoped and explicitly bounded Jules/Claude collaboration. -->
+        <div id="jules-claude-bridge-toolbar" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 18px;background:#12101b;border-bottom:1px solid rgba(189,147,249,.22);">
+          <span style="color:#bd93f9;font-weight:700;font-size:11px;">Claude ↔ Jules</span>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="window.JulesClaudeBridge.analyzeLatest()">Analizar última salida</button>
+          <button type="button" class="btn btn-primary btn-sm" id="jules-claude-bridge-start" onclick="window.JulesClaudeBridge.start()">Iniciar auto (máx. 3)</button>
+          <button type="button" class="btn btn-ghost btn-sm" id="jules-claude-bridge-stop" onclick="window.JulesClaudeBridge.stop()" disabled>Detener</button>
+          <span id="jules-claude-bridge-status" role="status" aria-live="polite" style="font-size:10px;color:#aaa1bd;overflow-wrap:anywhere;">Auto desactivado</span>
+        </div>
+
+
+
+            </section>
+            <section class="neural-panel-card"><div class="neural-card-heading"><h2><i class="fas fa-chart-simple"></i> Resumen operativo</h2></div><div id="neural-operational-summary" class="neural-summary-grid"></div></section>
+            <section class="neural-panel-card"><div class="neural-card-heading"><h2><i class="far fa-clock"></i> Actividad reciente</h2></div><div id="neural-recent-activity" class="neural-card-content"></div></section>
+            <!-- Task Context Header (Integrated) -->
+            <div id="v2-task-context" class="hidden" style="background: rgba(124, 58, 237, 0.05); border-bottom: 1px solid var(--border); padding: 12px 24px;">
+                <details style="width: 100%;">
+                    <summary style="list-style: none; cursor: pointer; display: flex; align-items:center; justify-content: space-between;">
+                        <div style="display:flex; align-items:center; gap:10px">
+                            <span style="font-size: 14px;">📋</span>
+                            <div>
+                                <div style="font-size: 9px; font-weight: 800; color: var(--accent2); text-transform: uppercase;">Contexto de Tarea</div>
+                                <div id="v2-task-title" style="font-size: 13px; font-weight: 700; color: var(--text);">Cargando tarea...</div>
+                            </div>
+                        </div>
+                        <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="opacity: 0.5;"><path d="M19 9l-7 7-7-7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </summary>
+                    <div id="v2-task-details" style="padding-top: 15px; font-size: 12px; color: var(--text2); display: flex; flex-direction: column; gap: 8px;">
+                        <!-- Details populated via JS -->
+                    </div>
+                </details>
+            </div>
+
+            <details class="neural-panel-card neural-supervisor-card"><summary><i class="fas fa-shield-halved"></i> Supervisión de tarea</summary>
+        <div id="jules-task-supervisor" style="display:flex;align-items:center;flex-wrap:wrap;gap:7px;padding:8px 18px;border-bottom:1px solid rgba(189,147,249,.12);background:rgba(12,12,22,.8);">
+            <strong style="font-size:10px;color:#bd93f9">SUPERVISIÓN DE TAREA</strong>
+            <button type="button" class="btn btn-ghost btn-sm" onclick="window.JulesTaskSupervisor.review()">Revisar estado</button>
+            <button type="button" class="btn btn-primary btn-sm" onclick="window.JulesTaskSupervisor.applySuggestedLifecycle()" title="Consulta el estado actual de Jules y solicita confirmación antes de mover la tarea en Kanban">Sincronizar estado → Kanban</button>
+            <button type="button" class="btn btn-ghost btn-sm" onclick="window.JulesTaskSupervisor.applyStatus('WORKING')">En curso</button>
+            <button type="button" class="btn btn-ghost btn-sm" onclick="window.JulesTaskSupervisor.applyStatus('BLOCKED')">Bloqueada</button>
+            <button type="button" class="btn btn-ghost btn-sm" onclick="window.JulesTaskSupervisor.applyStatus('REVIEW')">En revisión</button>
+            <button type="button" class="btn btn-ghost btn-sm" onclick="window.JulesTaskSupervisor.editTask()">Editar tarea</button>
+            <button type="button" class="btn btn-ghost btn-sm" style="color:#ff7689" onclick="window.JulesTaskSupervisor.archive()">Cementerio</button>
+            <span id="jules-task-supervisor-status" role="status" aria-live="polite" style="font-size:10px;color:#aaa1bd;overflow-wrap:anywhere">Sin cambios automáticos</span>
+        </div>
+            </details>
+        </aside>
         </div>
     </div>
 
@@ -1063,11 +1092,12 @@ permalink: /jules-panel/
 <script src="{{ '/assets/javascript/jules-svn-bridge.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/neural-chat-profiles.js' | relative_url }}?v=anthropic-workspace-20261101-v1"></script>
 <script src="{{ '/assets/javascript/jules-activities.js' | relative_url }}"></script>
-<script src="{{ '/assets/javascript/jules-panel-neural.js' | relative_url }}?v=hais-jules-first-send-20261101-v5"></script>
+<script src="{{ '/assets/javascript/jules-panel-neural.js' | relative_url }}?v=neural-workspace-ui-20261101-v1"></script>
 <script src="{{ '/assets/javascript/jules-claude-bridge.js' | relative_url }}?v=claude-jules-bridge-v1"></script>
 <script src="{{ '/assets/javascript/jules-task-supervisor.js' | relative_url }}?v=hais-jules-lifecycle-20261101-v2"></script>
 <script src="{{ '/assets/javascript/jules-panel-auth.js' | relative_url }}?v=hais-jules-branch-20261101-v6"></script>
 <script src="{{ '/assets/javascript/jules-export.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/neural-panel-workspace.js' | relative_url }}?v=20261101-v1"></script>
 
 <script>
     async function init() {
@@ -1218,3 +1248,4 @@ permalink: /jules-panel/
 </script>
 </body>
 </html>
+
