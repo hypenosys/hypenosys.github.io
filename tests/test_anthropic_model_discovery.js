@@ -33,10 +33,9 @@ async function main() {
     assert.equal(calls[0].url.pathname, '/v1/models');
     assert.equal(calls[0].url.searchParams.get('limit'), '100');
     assert.equal(calls[1].url.searchParams.get('after_id'), 'claude-sonnet-4-6');
-    assert.equal(calls[0].options.headers['x-api-key'], 'TEST-KEY');
-    assert.equal(calls[0].options.headers['anthropic-version'], '2023-06-01');
-    assert.equal(calls[0].options.headers['anthropic-dangerous-direct-browser-access'], 'true');
-    assert.equal(calls[0].options.headers.Authorization, undefined);
+    assert.equal(calls[0].options.headers.Authorization, 'Bearer TEST-KEY');
+    assert.equal(calls[0].options.headers['anthropic-version'], '2026-10-21');
+    assert.equal(calls[0].options.headers['x-api-key'], undefined);
 
     const bad = makeContext(async () => ({ ok: false, status: 401 }));
     await assert.rejects(() => bad.discoverModels({
