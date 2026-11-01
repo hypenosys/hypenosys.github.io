@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-11-01T09:10:18.302Z",
+  "last_updated": "2026-11-01T09:10:25.293Z",
   "last_updated_by": "haopengwang123",
   "tasks": [
     {
@@ -6050,9 +6050,109 @@
       "blocks": [],
       "jules_session": null,
       "assignee_proposed": "human"
+    },
+    {
+      "id": 900002,
+      "pilot_task_id": "HAIS-001-H002",
+      "pilot_id": "HAIS-001",
+      "organizationId": "hais",
+      "repository": "hypenosys/HAIS",
+      "title": "Crear workspace HAIS en Hypenosys",
+      "descripcion": "Verificar registro HAIS en _data/organizations.json y _data/orgs/hais/meta.json, membresía, aislamiento del shard y compatibilidad con Kanban; no marcar completado solo porque exista el nombre.",
+      "tema_principal": "HAIS-001 / identity",
+      "prioridad": "Critical",
+      "estado": "OK",
+      "completitud": 0,
+      "task_type": "test",
+      "resuelto_por": "",
+      "asignados": [],
+      "tags": [
+        "hais-001",
+        "identity",
+        "tenancy",
+        "organization",
+        "sharding"
+      ],
+      "blocked_by": [
+        900001
+      ],
+      "acceptance_criteria": "workspace aislado verificado\nLectura y escritura aisladas en org hais; ninguna tarea de hypenosys/empty-space-videogames aparece; checklist de consistencia isSharded",
+      "executor_proposed": "human",
+      "subtasks": [
+        {
+          "id": 900001011,
+          "text": "Comparar entrada HAIS en organizations.json con meta.json y miembros",
+          "done": false
+        },
+        {
+          "id": 900001012,
+          "text": "Comprobar isSharded y la ubicación exclusiva de tasks.json",
+          "done": false
+        },
+        {
+          "id": 900001013,
+          "text": "Crear y releer una tarea de prueba sin contaminar otra organización",
+          "done": false
+        },
+        {
+          "id": 900001014,
+          "text": "Documentar resultado y corregir inconsistencias del shard",
+          "done": false
+        }
+      ],
+      "external_links": [
+        {
+          "label": "Organización HAIS — registro",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/_data/organizations.json"
+        },
+        {
+          "label": "Workspace HAIS — tareas",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/_data/orgs/hais/tasks.json"
+        },
+        {
+          "label": "Workspace HAIS — metadata",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/_data/orgs/hais/meta.json"
+        }
+      ],
+      "comments": [],
+      "change_log": [
+        {
+          "author_login": "Codex",
+          "timestamp": "2026-10-31T23:51:27Z",
+          "field": "estado",
+          "old_value": "OK",
+          "new_value": "Pending"
+        }
+      ],
+      "comentario": "Evidencia requerida: Lectura y escritura aisladas en org hais; ninguna tarea de hypenosys/empty-space-videogames aparece; checklist de consistencia isSharded",
+      "estimated_hours": 4,
+      "story_points": 3,
+      "milestone": "M0 — Acceso y aislamiento",
+      "seccion": "HAIS · identity",
+      "rama": "feature/hais-002",
+      "rama2": null,
+      "branch": "Desarrollo (develop)",
+      "fecha": null,
+      "start_date": null,
+      "due_date": null,
+      "limite": null,
+      "ver": true,
+      "detectado_por": "HAIS-001",
+      "apoyo": null,
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "blocks": [],
+      "jules_session": null,
+      "assignee_proposed": "human"
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: tarea #900002 movida al archivo",
+      "user": "haopengwang123",
+      "timestamp": "2026-11-01T09:10:25.293Z"
+    },
     {
       "action": "chore: tarea #900001 movida al archivo",
       "user": "haopengwang123",
