@@ -743,8 +743,13 @@ window.launchSession = async function(options = {}) {
         // When a task was explicitly handed off, link the newly created Jules
         // session to the matching Claude conversation; never link to a stale session.
         const shouldAutoLink = localStorage.getItem('hy_handoff_autolink') === 'true';
-        const handoffClaudeId = localStorage.getItem('hy_pending_claude_handoff_id') ||
-            (options.fromChat ? window.currentJulesPanelSessionId : null);
+        // A launch initiated from the chat must bind to the Claude conversation
+        // currently visible at send time. A stale pending handoff ID from a prior
+        // task must never override the active conversation.
+        const pendingClaudeId = localStorage.getItem('hy_pending_claude_handoff_id');
+        const handoffClaudeId = options.fromChat
+            ? window.currentJulesPanelSessionId
+            : pendingClaudeId;
         if ((shouldAutoLink || options.fromChat) && typeof window.linkClaudeToJulesTask === 'function') {
             const knownClaude = handoffClaudeId && (window.julesPanelSessions || []).some(s => s.id === handoffClaudeId);
             if (knownClaude) {
@@ -753,8 +758,19 @@ window.launchSession = async function(options = {}) {
             } else if (typeof window.createNewClaudeFromJulesSession === 'function') {
                 window.createNewClaudeFromJulesSession(sid);
             }
-            localStorage.setItem('hy_neural_session_id', sid);
+            // Make the just-created Jules session canonical before the UI
+            // switches workspace. Clear previous rendered activities so a fresh
+            // session cannot momentarily display history from an older one.
+            window.linkedHistoryLoadRevision = (window.linkedHistoryLoadRevision || 0) + 1;
             window.NeuralWorkspaceState.activeJulesSessionId = sid;
+            if (window.JulesPanelState) window.JulesPanelState.activeSessionId = sid;
+            localStorage.setItem('hy_neural_session_id', sid);
+            window.lastNormalizedList = [];
+            window.previousListLength = 0;
+            window.unseenJulesActivitiesCount = 0;
+            window.clearLinkedJulesHistory?.();
+            window.setJulesHistoryState?.('empty');
+
             window.switchView?.('chat');
             window.setNeuralWorkspaceMode?.('jules');
             showToast('Sesión Jules y conversación Claude vinculadas.', 'green');
