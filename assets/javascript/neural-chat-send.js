@@ -359,6 +359,28 @@ window.sendMessage = async function() {
                     renderMessages();
                     renderSessionList();
                     saveSessions(false, 'assistant-done');
+
+                    const orchestrator = window.HypenosysTaskOrchestrator;
+                    const orchestratorState = orchestrator?.load?.();
+                    const activeTask = window._activeTaskContext;
+                    if (orchestratorState?.enabled && activeTask?.id &&
+                        String(orchestratorState.currentTaskId || '') === String(activeTask.id) &&
+                        orchestratorState.phase === 'claude-running') {
+                        orchestrator.setPhase('handoff-jules');
+                        setTimeout(() => {
+                            try {
+                                window.handoffClaudeToJules(
+                                    fullContent,
+                                    '',
+                                    activeTask,
+                                    currentSession
+                                );
+                            } catch (error) {
+                                orchestrator.patch({ phase: 'error', lastError: error.message || String(error) });
+                            }
+                        }, 150);
+                    }
+
                     if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] send finished");
                 },
                 onError: (err) => {
@@ -366,6 +388,12 @@ window.sendMessage = async function() {
                     window.thinkingIndicator.classList.add('hidden');
                     appendSystemMessage(err.message, 'error');
                     renderMessages();
+                    const orchestrator = window.HypenosysTaskOrchestrator;
+                    const activeTask = window._activeTaskContext;
+                    const state = orchestrator?.load?.();
+                    if (state?.enabled && activeTask?.id && String(state.currentTaskId || '') === String(activeTask.id)) {
+                        orchestrator.patch({ phase: 'error', lastError: 'Claude: ' + err.message });
+                    }
                 }
             });
         } else {
