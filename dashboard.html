@@ -1225,6 +1225,7 @@ layout: null
           }
           localStorage.setItem('hy_neural_task_context', JSON.stringify(task));
           localStorage.removeItem('hy_neural_new_task_sent');
+          localStorage.removeItem('hy_pending_claude_handoff_id');
           localStorage.setItem('hy_jules_handoff', JSON.stringify({
             task, source: 'dashboard', intent: 'new-task',
             supervision: 'review', timestamp: Date.now()
