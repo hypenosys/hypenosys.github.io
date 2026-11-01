@@ -2900,10 +2900,241 @@
       "images": [],
       "blocks": [],
       "jules_session": null
+    },
+    {
+      "id": 900036,
+      "organizationId": "hais",
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "Terminal web PAPER con valores sintéticos y cartera local",
+      "descripcion": "Implementar en dev.hypenosys.com/hais/ panel de cotizaciones sintéticas editables, gráficos, efectivo, cartera PAPER, compras/ventas simuladas, validaciones y registro local; mantener claramente separados valores ficticios de telemetría del backend.",
+      "tema_principal": "HAIS · interfaz web",
+      "prioridad": "Major",
+      "estado": "In Review",
+      "completitud": 0.85,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "asignados": [
+        "axlfc",
+        "haopengwang123"
+      ],
+      "tags": [
+        "hais",
+        "web",
+        "frontend",
+        "paper",
+        "simulation"
+      ],
+      "blocked_by": [],
+      "acceptance_criteria": "- La ruta /hais/ entrega el terminal PAPER, /hais/estado/ muestra el seguimiento y /hais/demo/ mantiene el prototipo general.\n- Los valores etiquetan su fuente sintética; no aparecen cifras como datos de mercado reales.\n- Compras, ventas, P/L, parada, persistencia local, exportación y reinicio funcionan, con aceptación explícita por operación.\n- No hay peticiones HTTP de compra/venta ni credenciales en cliente; no se anuncia operativa de servidor.\n- Test Playwright y build Jekyll ejecutados y verificados en CI antes de cerrar.",
+      "subtasks": [
+        {
+          "id": 900036001,
+          "text": "Completar implementación accesible, responsive y modo local PAPER",
+          "done": false
+        },
+        {
+          "id": 900036002,
+          "text": "Revisar delimitación de operaciones del navegador frente a backend",
+          "done": false
+        },
+        {
+          "id": 900036003,
+          "text": "Ejecutar Playwright y build sobre despliegue develop",
+          "done": false
+        }
+      ],
+      "external_links": [
+        {
+          "label": "Terminal PAPER",
+          "url": "https://dev.hypenosys.com/hais/"
+        },
+        {
+          "label": "Commit implementación",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/commit/205f88fd82272cb167e0f4189d1194da6d178235"
+        }
+      ],
+      "comments": [],
+      "change_log": [],
+      "comentario": "PAPER exclusivamente: no hay órdenes reales ni cartera persistida en HAIS API.",
+      "estimated_hours": null,
+      "story_points": null,
+      "milestone": "M1",
+      "seccion": "HAIS · interfaz web",
+      "rama": "",
+      "rama2": null,
+      "branch": "Desarrollo (develop)",
+      "fecha": "2026-11-01",
+      "start_date": null,
+      "due_date": null,
+      "limite": null,
+      "ver": true,
+      "detectado_por": "ChatGPT",
+      "apoyo": null,
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "blocks": [],
+      "jules_session": null
+    },
+    {
+      "id": 900037,
+      "organizationId": "hais",
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "API PAPER segura para valores y operaciones persistidas",
+      "descripcion": "Diseñar e implementar en hypenosys/HAIS, en una fase posterior, endpoints autenticados de cotizaciones, saldo, posiciones, órdenes simuladas, auditoría y parada; publicar vía proxy protegido en /api/hais, con controles de tenant y CSRF. La API v0.1 únicamente estima importes.",
+      "tema_principal": "HAIS · interfaz web",
+      "prioridad": "Major",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "asignados": [
+        "axlfc",
+        "haopengwang123"
+      ],
+      "tags": [
+        "hais",
+        "api",
+        "backend",
+        "paper",
+        "auth",
+        "portfolio"
+      ],
+      "blocked_by": [
+        "900020",
+        "900025",
+        "900028",
+        "900030",
+        "900033"
+      ],
+      "acceptance_criteria": "- Todos los endpoints PAPER de escritura requieren autenticación, autorización tenant, CSRF, rate limit e idempotencia.\n- Precios/símbolos muestran origen, timestamp y latencia; nunca se confunde SYNTHETIC con LIVE.\n- Las compras/ventas PAPER persisten con ledger auditable y tienen límites de riesgo aprobados; trading LIVE es imposible.\n- La web cambia a modo backend solo después de contrato probado y consentimiento humano; sin secretos cliente.\n- Pruebas negativas cross-tenant, duplicados, desconexión y kill switch.",
+      "subtasks": [
+        {
+          "id": 900037001,
+          "text": "Especificar contrato de lectura/cartera y alcance PAPER",
+          "done": false
+        },
+        {
+          "id": 900037002,
+          "text": "Configurar autenticación proxy y sesión same-origin",
+          "done": false
+        },
+        {
+          "id": 900037003,
+          "text": "Persistir y auditar órdenes simuladas con protección contra duplicados",
+          "done": false
+        },
+        {
+          "id": 900037004,
+          "text": "Integrar frontend con backend tras pruebas E2E",
+          "done": false
+        }
+      ],
+      "external_links": [],
+      "comments": [],
+      "change_log": [],
+      "comentario": "PAPER exclusivamente: no hay órdenes reales ni cartera persistida en HAIS API.",
+      "estimated_hours": null,
+      "story_points": null,
+      "milestone": "M1",
+      "seccion": "HAIS · interfaz web",
+      "rama": "",
+      "rama2": null,
+      "branch": "Desarrollo (develop)",
+      "fecha": "2026-11-01",
+      "start_date": null,
+      "due_date": null,
+      "limite": null,
+      "ver": true,
+      "detectado_por": "ChatGPT",
+      "apoyo": null,
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "blocks": [],
+      "jules_session": null
+    },
+    {
+      "id": 900038,
+      "organizationId": "hais",
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "Smoke y pruebas E2E de terminal HAIS en develop",
+      "descripcion": "Validar en el dominio de desarrollo las rutas del terminal, el estado, la demo y la seguridad de los límites del simulador; probar sin gateway y con gateway PAPER simulado, y evitar publicar falsos estados de operativa real.",
+      "tema_principal": "HAIS · interfaz web",
+      "prioridad": "Major",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "asignados": [
+        "axlfc",
+        "haopengwang123"
+      ],
+      "tags": [
+        "hais",
+        "qa",
+        "web",
+        "paper",
+        "deploy"
+      ],
+      "blocked_by": [
+        "900036"
+      ],
+      "acceptance_criteria": "- Build Jekyll produce /hais/index.html, /hais/estado/index.html, /hais/demo/index.html sin rutas duplicadas.\n- Playwright valida cotizaciones sintéticas, compra/venta local, parada, persistencia, estimación de backend y cero POST de órdenes.\n- Verificación HTTPS y navegación en dev.hypenosys.com documentada con evidencia reproducible.\n- No se declara gateway conectada, órdenes del backend ni mercado real sin pruebas externas.",
+      "subtasks": [
+        {
+          "id": 900038001,
+          "text": "Ejecutar Jekyll build y Playwright en CI",
+          "done": false
+        },
+        {
+          "id": 900038002,
+          "text": "Verificar enlaces y rutas en dev.hypenosys.com",
+          "done": false
+        },
+        {
+          "id": 900038003,
+          "text": "Adjuntar logs/capturas y dictamen de QA",
+          "done": false
+        }
+      ],
+      "external_links": [
+        {
+          "label": "Pruebas Playwright",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/tests/verify_hais_terminal.spec.js"
+        }
+      ],
+      "comments": [],
+      "change_log": [],
+      "comentario": "PAPER exclusivamente: no hay órdenes reales ni cartera persistida en HAIS API.",
+      "estimated_hours": null,
+      "story_points": null,
+      "milestone": "M1",
+      "seccion": "HAIS · interfaz web",
+      "rama": "",
+      "rama2": null,
+      "branch": "Desarrollo (develop)",
+      "fecha": "2026-11-01",
+      "start_date": null,
+      "due_date": null,
+      "limite": null,
+      "ver": true,
+      "detectado_por": "ChatGPT",
+      "apoyo": null,
+      "email_responsable": null,
+      "emails_asignados": [],
+      "images": [],
+      "blocks": [],
+      "jules_session": null
     }
   ],
-  "last_updated_by": "Codex",
+  "last_updated_by": "HAIS web PAPER console design",
   "_audit_log": [
+    {
+      "action": "feat(HAIS): registrar terminal PAPER web, API segura pendiente y E2E",
+      "user": "ChatGPT",
+      "timestamp": "2026-11-01T12:57:00Z"
+    },
     {
       "action": "chore(HAIS): registrar validación local #900010 y reproducibilidad #900011",
       "user": "Codex",
