@@ -171,8 +171,21 @@ async function selectRepo(repoFullName, onlyUI = false) {
     const items = document.querySelectorAll('.repo-item');
     items.forEach(i => i.classList.remove('active'));
 
-    const selectedItem = Array.from(items).find(i => i.getAttribute('data-id') === repoFullName);
-    const sourceName = selectedItem ? selectedItem.getAttribute('data-jules') : (repoFullName.startsWith('sources/') ? repoFullName : 'sources/github/' + repoFullName);
+    const canonical = window.getCanonicalRepoName(repoFullName);
+    const selectedItem = Array.from(items).find(i => window.getCanonicalRepoName(i.getAttribute('data-id')) === canonical);
+    // Use Jules' verified resource name from listSources, never invent one when
+    // the GitHub repo is visible but the Jules GitHub App isn't installed.
+    const sourceName = selectedItem?.getAttribute('data-jules') ||
+        (repoFullName.startsWith('sources/') ? repoFullName : '');
+    if (!sourceName) {
+        window.JulesPanelState.activeRepo = null;
+        window.JulesPanelState._handoffBranchBlocked = true;
+        const launch = $('launch-btn');
+        if (launch) { launch.disabled = true; launch.title = 'Conecta este repositorio en Jules antes de iniciar una tarea.'; }
+        if (typeof showToast === 'function') showToast('El repositorio ' + repoFullName + ' no está conectado a Jules. Instala la integración de GitHub.', 'amber');
+        return;
+    }
+    repoFullName = selectedItem?.getAttribute('data-id') || repoFullName;
 
     if (selectedItem) selectedItem.classList.add('active');
 
