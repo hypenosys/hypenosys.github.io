@@ -133,13 +133,24 @@ window.NeuralProviderClient = (function() {
                 console.log("[Claude Neural] provider request payload:", payload);
             }
 
-            const response = await fetch(requestEndpoint, {
-                method: 'POST',
-                headers: requestHeaders,
-                body: JSON.stringify(payload),
-                mode: 'cors',
-                credentials: 'omit'
-            });
+            const requestController = new AbortController();
+            const requestTimeout = setTimeout(() => requestController.abort(), 180000);
+            let response;
+            try {
+                response = await fetch(requestEndpoint, {
+                    method: 'POST',
+                    headers: requestHeaders,
+                    body: JSON.stringify(payload),
+                    mode: 'cors',
+                    credentials: 'omit',
+                    signal: requestController.signal
+                });
+            } catch (fetchError) {
+                if (fetchError?.name === 'AbortError') {
+                    throw new Error('Provider timeout: la petición no terminó en 180 segundos.');
+                }
+                throw fetchError;
+            }
 
             if (!response.ok) {
                 const errText = await response.text().catch(() => 'Unknown error');
@@ -239,11 +250,15 @@ window.NeuralProviderClient = (function() {
                 if (onToken) onToken(aiContent, aiContent);
             }
 
+            clearTimeout(requestTimeout);
+
             console.log('[NeuralProviderClient] Done');
             if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] provider response text:", aiContent);
             if (onDone) onDone(aiContent);
 
         } catch (e) {
+            // requestTimeout may not exist if request construction failed before fetch.
+            try { clearTimeout(requestTimeout); } catch (_) {}
             // Sanitize error message to prevent API key leakage
             let safeMessage = e.message || "Unknown error";
             if (apiKey) {
