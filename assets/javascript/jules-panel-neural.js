@@ -1289,6 +1289,35 @@ window.prepareSelectedJulesForClaude = async function(sendImmediately = false) {
     if (sendImmediately) await window.sendChatV2Msg();
 };
 
+window.prepareSelectedJulesForJules = function() {
+    const chosen = (window.lastNormalizedList || []).filter(act =>
+        window._selectedJulesActivityKeys.has(window.getJulesActivitySelectionKey(act)));
+    if (!chosen.length) {
+        showToast('Usa Mayús + clic sobre las actividades que quieras citar.', 'amber');
+        return;
+    }
+    const quote = chosen.slice(-15).map(act => '[' + (act.createTime || 'Jules') + ']\n' +
+        window.redactNeuralActivityText(window.panelActivityText(act)).slice(0,1800)
+    ).join('\n\n').slice(0,12000);
+    const session = window.julesPanelSessions.find(s => s.id === window.currentJulesPanelSessionId);
+    const prompt = 'Estas son actividades anteriores de Jules, proporcionadas únicamente como contexto. Revisa y continúa según las instrucciones actuales, sin aprobar planes ni ejecutar cambios implícitamente:\n\n' + quote;
+    const sid = session && window.resolveLinkedJulesId(session);
+    if (!sid) {
+        const textarea = document.getElementById('session-prompt');
+        if (!textarea) return;
+        textarea.value = prompt;
+        window.resizeJulesDraftTextarea?.(textarea);
+        window.switchView('neural');
+        showToast('Borrador preparado para Nueva Tarea Jules; comprueba repositorio y rama.', 'amber');
+    } else {
+        window.switchView('chat');
+        window.setNeuralWorkspaceMode('jules');
+        window.setJulesComposerDraft('jules', prompt);
+        showToast('Cita preparada para Jules. Revisa y envía.', 'green');
+    }
+    window.clearPanelMessageSelection('jules');
+};
+
 window.prepareSelectedClaudeForJules = function() {
     const session = window.julesPanelSessions.find(s => s.id === window.currentJulesPanelSessionId);
     if (!session) return;
