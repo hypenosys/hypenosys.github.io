@@ -749,16 +749,33 @@ window.launchSession = async function(options = {}) {
         localStorage.setItem('hy_neural_sessions', JSON.stringify(sessions));
 
         if (window.JulesPanelState.linkedTaskId) {
-            const currentUser = window.githubApi.user || user;
-            await window.taskOps.updateTask(window.JulesPanelState.linkedTaskId, {
+            const currentUser = window.githubApi?.user || window.user || null;
+            const taskId = window.JulesPanelState.linkedTaskId;
+            const initialState = String(taskContext.estado || taskContext.status || '').toUpperCase();
+            const update = {
                 jules_session: {
                     session_id: sid,
                     initiated_by: (currentUser && currentUser.login) || 'Invitado',
-                    status: 'PLANNING',
+                    status: 'QUEUED',
                     updated_at: new Date().toISOString()
-                }
-            });
+                },
+                // Launch is user-initiated. Move only queued work to WORKING;
+                // never override BLOCKED, REVIEW or DONE automatically.
+                ...(['BACKLOG', 'TODO', 'PENDING'].includes(initialState) ? { estado: 'WORKING' } : {})
+            };
+            // Record the association locally before attempting the GitHub write:
+            // a failure must not cause a second create on retries.
+            localStorage.setItem('hy_neural_task_context', JSON.stringify({
+                ...taskContext, jules_session: update.jules_session,
+                ...(update.estado ? {estado:update.estado} : {})
+            }));
             window.JulesPanelState.linkedTaskId = null;
+            try {
+                await window.taskOps.updateTask(taskId, update);
+            } catch (taskError) {
+                showToast('Jules #' + sid + ' creado, pero no se pudo sincronizar la tarea en GitHub. Revisa el Kanban.', 'amber');
+                console.warn('[Jules] Session created but task sync failed', taskError.message);
+            }
         }
 
         if (!options.fromChat) $('session-prompt').value = '';
