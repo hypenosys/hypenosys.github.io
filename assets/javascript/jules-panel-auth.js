@@ -628,6 +628,7 @@ window.launchSession = async function(options = {}) {
     const btn = $('launch-btn');
     const textarea = $('session-prompt');
     window._julesLaunchInFlight = true;
+    window._lastCreatedJulesSessionId = null;
     btn.disabled = true;
     textarea.disabled = true;
     const originalText = btn.innerHTML;
@@ -639,7 +640,7 @@ window.launchSession = async function(options = {}) {
         const existingSessions = await window.julesApi.listSessions(100);
         if (!Array.isArray(existingSessions)) throw new Error('No se pudo consultar el número de sesiones Jules.');
         const activeStates = new Set(['QUEUED','PLANNING','AWAITING_PLAN_APPROVAL','AWAITING_USER_FEEDBACK','IN_PROGRESS','PAUSED']);
-        const active = existingSessions.filter(item => activeStates.has(item.state));
+        const active = existingSessions.filter(item => activeStates.has(String(item.state || '').toUpperCase()));
         if (active.length >= 3) {
             throw new Error('Límite HAIS: ya hay ' + active.length + ' sesiones Jules activas o esperando intervención (máximo 3). Finaliza o resuelve una antes de iniciar otra.');
         }
@@ -695,12 +696,17 @@ window.launchSession = async function(options = {}) {
         const taskContext = JSON.parse(localStorage.getItem('hy_neural_task_context') || '{}');
         const sessionName = taskContext.titulo || taskContext.title || "Sesión Neural " + new Date().toLocaleDateString();
 
+        if (!Array.isArray(window.julesSessionsCache)) window.julesSessionsCache = [];
+        if (!window.julesSessionsCache.some(item => item.name === res.name)) {
+            window.julesSessionsCache.unshift({ ...res, state: res.state || 'QUEUED' });
+        }
         startNeuralPolling(sid, true);
 
         // When a task was explicitly handed off, link the newly created Jules
         // session to the matching Claude conversation; never link to a stale session.
         const shouldAutoLink = localStorage.getItem('hy_handoff_autolink') === 'true';
-        const handoffClaudeId = localStorage.getItem('hy_pending_claude_handoff_id');
+        const handoffClaudeId = localStorage.getItem('hy_pending_claude_handoff_id') ||
+            (options.fromChat ? window.currentJulesPanelSessionId : null);
         if ((shouldAutoLink || options.fromChat) && typeof window.linkClaudeToJulesTask === 'function') {
             const knownClaude = handoffClaudeId && (window.julesPanelSessions || []).some(s => s.id === handoffClaudeId);
             if (knownClaude) {
