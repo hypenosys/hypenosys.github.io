@@ -27,12 +27,12 @@ La API pública de CoinGecko permite mostrar **datos numéricos reales** de BTC,
 
 ## Lectura programática en HAIS (PR #2)
 
-La rama propuesta https://github.com/hypenosys/HAIS/pull/2 añade:
+El PR #2 https://github.com/hypenosys/HAIS/pull/2 fue fusionado a `develop` con CI verde. El código implementado incorpora:
 - `GET /v1/market/catalog`: clases y símbolos, distinguiendo `access=api` de `access=tradingview-widget`.
 - `GET /v1/market/crypto`: CoinGecko, moneda USD, cambio 24h, origen, observación, TTL 60 s.
 - `GET /v1/market/treasury`: FRED DGS2/DGS10, rendimiento % y variación en puntos básicos; fecha diaria; TTL 900 s.
 
-Estos endpoints necesitan integración, CI, despliegue y acceso protegido antes de estar disponibles en dev. Nunca presentar una API no desplegada como activa. La API es read-only y no obtiene valores autorizados de SP500, NASDAQ, CSI300, IBEX35 o commodities para decisiones internas, aún pendientes de proveedor. No hay órdenes automáticas ni LIVE.
+Estos endpoints están implementados en código y cubiertos por CI; necesitan despliegue de la API y acceso protegido antes de estar disponibles desde dev. El observatorio intenta primero el gateway `GET /api/hais/v1/market/crypto` y, si no existe, usa la API pública de CoinGecko directamente. Solo intenta FRED mediante el gateway propio y muestra indisponibilidad si falta. Nunca presentar una API no desplegada como activa. La API es read-only y no obtiene valores autorizados de SP500, NASDAQ, CSI300, IBEX35 o commodities para decisiones internas, aún pendientes de proveedor. No hay órdenes automáticas ni LIVE.
 
 ## Simulador
 
