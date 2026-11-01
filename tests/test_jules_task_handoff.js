@@ -67,6 +67,10 @@ function makeContext(withLinkedSession) {
     context.julesPanelSessions=withLinkedSession?[{id:'claude-1',messages:[]}]:[];
     context.julesSessionsCache=[];
     context.getCanonicalRepoName=repo=>String(repo||'').replace(/^sources\/github\//,'').toLowerCase();
+    context.resolveJulesTaskBranch=(hint,branches)=>{
+        const raw=String(hint||'').trim();
+        return branches.includes(raw)?raw:(branches.includes(raw.match(/\(([^()]+)\)$/)?.[1])?raw.match(/\(([^()]+)\)$/)[1]:'');
+    };
     context.selectRepo=async repo=>{
         calls.selectedRepo.push(repo);
         select.dataset.repo=repo;
@@ -116,6 +120,12 @@ function makeContext(withLinkedSession) {
     assert.match(existing.calls.drafts[0][1],/RESPUESTA DE CLAUDE/);
     assert.equal(existing.context.NeuralWorkspaceState.activeJulesSessionId,'jules-123');
     assert.equal(existing.storage.get('jules_task_payload'),undefined);
+
+    const labeled=makeContext(false);
+    labeled.task.rama='Desarrollo (develop)';
+    await labeled.context.prefillTaskFromHandoff(labeled.task,{source:'dashboard',intent:'new-task'});
+    assert.equal(labeled.select.value,'develop','human label must resolve to GitHub branch');
+    assert.equal(labeled.launch.disabled,false);
 
     const noLink=makeContext(false);
     noLink.storage.set('hy_neural_session_id','stale-global-session');
