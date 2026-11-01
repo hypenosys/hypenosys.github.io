@@ -203,7 +203,8 @@ async function selectRepo(repoFullName, onlyUI = false) {
     }
 
     if (sourceName && !onlyUI) {
-        loadBranches(repoFullName);
+        // Task handoffs must await the resolved repository's branch list.
+        await loadBranches(repoFullName);
         updateRepoConfigUI(repoFullName);
     }
 }
