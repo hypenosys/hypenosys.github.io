@@ -194,6 +194,23 @@
         }
     }
 
+    function getHaisStressContext() {
+        // Use the same dashboard computation and workspace-scoped cached data.
+        // Unknown/stale context is never interpreted as low stress.
+        try {
+            const ws = localStorage.getItem('hy_active_workspace') || localStorage.getItem('hy_workspace_id') || '';
+            const tasks = typeof currentTasks !== 'undefined' ? currentTasks : null;
+            const budget = typeof currentBudget !== 'undefined' ? currentBudget : null;
+            if (!Array.isArray(tasks) || !budget || !window.githubApi?.computeBurnoutIndex) return null;
+            const milestoneId = budget.burnout?.current_milestone || 'M1';
+            const milestone = (budget.burnout?.milestones || []).find(m => m.id === milestoneId);
+            const value = window.githubApi.computeBurnoutIndex(tasks, milestoneId, milestone?.date_start, milestone?.date_end);
+            return Number.isFinite(value) && value >= 0 && value <= 1
+                ? { value, percent: (value * 100).toFixed(1), milestoneId, workspace: ws }
+                : null;
+        } catch { return null; }
+    }
+
     async function askClaudeSupervisor(excerpt, julesState) {
         const task = (() => {
             try { return JSON.parse(localStorage.getItem('hy_neural_task_context') || 'null'); }
@@ -206,7 +223,12 @@
             String(task.acceptance_criteria || '')
         ].filter(Boolean).join('\n') : 'Sin contexto de tarea verificable.';
 
+        const stress = getHaisStressContext();
+        const stressPolicy = stress && stress.value > 0.7
+            ? 'CONTEXTO OPERATIVO: ALTA PRESIÓN HAIS, Stress Index ' + stress.percent + '% en milestone ' + stress.milestoneId + '. Evita nuevas rondas por detalles opcionales; aprueba planes seguros y ejecutables con seguimiento de mejoras no bloqueantes durante la implementación. Si hay riesgos reales, exige un único feedback conciso y priorizado, o escala si requiere humano. Prefiere alcance mínimo reversible, pruebas críticas, control de dependencias y no ampliar WIP. La presión NUNCA justifica saltar seguridad, pruebas, autorizaciones ni aprobar trading real. '
+            : 'CONTEXTO OPERATIVO: índice de presión no disponible o no elevado; utiliza la revisión técnica normal sin asumir un Stress Index numérico. ';
         const prompt =
+            stressPolicy +
             'CRITERIO DE DECISIÓN: aprueba si el plan es ejecutable de manera segura, cubre los criterios esenciales y las mejoras restantes son opcionales o se pueden aplicar durante implementación. No exijas perfección, detalles que solo pueden verificarse implementando ni una nueva ronda para mejoras cosméticas. Si el plan incorpora las correcciones críticas de la revisión anterior, devuelve approve_plan y responde con el texto Approve plan; no repitas críticas ya resueltas. send_feedback SOLO para defectos bloqueantes demostrables, concretos y verificables del plan, todos en un único mensaje. Si se repiten defectos críticos irresolubles o hacen falta decisiones humanas, escalate y no mantengas el bucle. ' +
             'Actúa como un revisor técnico senior, exigente, crítico e independiente; NO apruebes por complacencia. Examina la versión concreta del plan de Jules frente a la tarea, criterios de aceptación, arquitectura, seguridad, dependencias, viabilidad, riesgos, casos límite y pruebas. Identifica errores reales, omisiones, contradicciones y mejoras justificadas; NO inventes bloqueos hipotéticos. Haz UNA ÚNICA evaluación por versión del plan y formula todas las correcciones accionables en UN SOLO mensaje consolidado para Jules. No realices intercambio de preguntas en esta revisión. Devuelve SOLO JSON válido con este esquema: ' +
             '{"decision":"approve_plan|send_feedback|wait|escalate","message":"texto","reason":"motivo"}.\n' +
