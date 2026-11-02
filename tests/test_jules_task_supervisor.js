@@ -94,6 +94,9 @@ vm.runInContext(script,context);
     assert.equal(log[3][2].estado,'OK');
     assert.equal(log[3][2].jules_session.status,'COMPLETED');
     assert.equal(JSON.parse(store.get('hy_neural_task_context')).estado,'OK');
+    // Reflect the committed GitHub task in subsequent reads; the synchronizer
+    // verifies server state instead of trusting its browser-only marker.
+    savedTask.estado='OK';
     assert.equal(await supervisor.syncCompletedFromJules('js-123',completed),true);
     assert.equal(log.length,4,'repeated completion notifications are idempotent');
     store.delete('hy_jules_task_synced_completed_js-123');
