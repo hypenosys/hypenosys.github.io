@@ -290,7 +290,7 @@ window.resolveJulesTaskBranch = function(hint, branchNames) {
 
 window._loadBranchesRequestId = window._loadBranchesRequestId || 0;
 
-async function loadBranches(repoFullName) {
+window.loadBranches = async function loadBranches(repoFullName) {
     const branchSelect = $('branch-sel') || $('branch-selector');
     const branchMeta = $('branch-meta');
     if (!branchSelect) return;

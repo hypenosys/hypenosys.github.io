@@ -294,6 +294,43 @@ window.prefillTaskFromHandoff = async function(task, handoff = {}) {
         const select = $('branch-sel');
         const launchBtn = $('launch-btn');
         let branchReady = false;
+        // If the task's intended branch is missing, create it in that SAME
+        // repository from its GitHub default branch; never silently use master.
+        const available = select && select.dataset.repo === canonicalRepo
+            ? [...select.options].map(o => o.value).filter(Boolean) : [];
+        const missingTaskBranch = canonicalRepo && targetBranch &&
+            !window.resolveJulesTaskBranch?.(targetBranch, available);
+        if (!sourceSelectionFailed && missingTaskBranch && select && !select.disabled &&
+            select.dataset.repo === canonicalRepo) {
+            const raw = String(targetBranch).trim().replace(/^refs\/heads\//, '');
+            const label = raw.match(/\(([^()]+)\)\s*$/);
+            const name = label ? label[1].trim() : raw;
+            const valid = /^(?!\/)(?!.*(?:\.\.|@\{|\/\/|\\|\s))[A-Za-z0-9._\/-]+$/.test(name) &&
+                !name.endsWith('/') && !name.endsWith('.') && !name.endsWith('.lock');
+            if (valid && window.githubContext?.createBranch && window.githubApi?.getRepo) {
+                try {
+                    const info = await window.githubApi.getRepo(canonicalRepo);
+                    const base = String(info?.default_branch || '').trim();
+                    if (!base) throw new Error('No se pudo comprobar la rama base de GitHub.');
+                    const [owner, repository] = canonicalRepo.split('/');
+                    window.JulesPanelState._handoffBranchBlocked = true;
+                    window.setJulesLaunchReadyState?.(false, 'Creando rama de tarea...');
+                    showToast('Creando rama ' + name + ' desde ' + base + ' en ' + canonicalRepo + '...', 'info');
+                    await window.githubContext.createBranch(repository, name, base, owner);
+                    // Reload authoritative branch list; keep its repo/branch guards.
+                    await window.loadBranches(canonicalRepo);
+                    showToast('Rama ' + name + ' creada correctamente para la tarea.', 'green');
+                } catch (error) {
+                    // GitHub may return 422 if another client created it first:
+                    // reload and inspect rather than attempting a duplicate write.
+                    try { await window.loadBranches?.(canonicalRepo); } catch {}
+                    console.warn('[Jules Handoff] Could not create task branch:', error);
+                    showToast('No se pudo crear la rama de la tarea. Comprueba permisos y rama base.', 'amber');
+                }
+            } else {
+                showToast('Rama de tarea ausente; no se puede crear automáticamente con esta sesión.', 'amber');
+            }
+        }
         if (canonicalRepo && select && !select.disabled && select.dataset.repo === canonicalRepo) {
             const branchNames = [...select.options].map(o => o.value).filter(Boolean);
             const matching = window.resolveJulesTaskBranch?.(targetBranch, branchNames) || '';
