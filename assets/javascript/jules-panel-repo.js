@@ -48,6 +48,8 @@ window.getCanonicalRepoName = function(fullName) {
 window.setJulesLaunchReadyState = function(ready, reason = '') {
     const btn = $('launch-btn');
     if (!btn || window._julesLaunchInFlight) return;
+    const generation = (window._julesDependencyCheckGeneration || 0) + 1;
+    window._julesDependencyCheckGeneration = generation;
     // Immediate accessible guard from the linked task context. The full
     // dependency resolution is rechecked against taskOps before API launch.
     let linked = {};
@@ -66,8 +68,6 @@ window.setJulesLaunchReadyState = function(ready, reason = '') {
     else btn.removeAttribute('aria-label');
     btn.innerHTML = '<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> ' + (blocked ? 'Dependencias pendientes' : 'Iniciar Ejecución');
     if (ready && pendingIds.length && window.taskOps?.getAllTasks) {
-        const generation = (window._julesDependencyCheckGeneration || 0) + 1;
-        window._julesDependencyCheckGeneration = generation;
         window.taskOps.getAllTasks().then(tasks => {
             if (window._julesDependencyCheckGeneration !== generation || window._julesLaunchInFlight || !btn.isConnected) return;
             const done = new Set(['OK', 'DONE', 'COMPLETED', 'FIXED', 'CLOSED', 'RESOLVED']);
