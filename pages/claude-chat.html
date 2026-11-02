@@ -796,8 +796,14 @@ permalink: /chat/neural/
                                 // visible; never switch sessions or send stale text.
                                 if (sameSession && samePrompt && autoSendAttempts < 60) {
                                     setTimeout(triggerDashboardAutoSend, 500);
-                                } else if (window.HYPENOSYS_NEURAL_DEBUG) {
-                                    console.warn('[Claude Neural] Dashboard auto-send could not start; preserving the task draft for manual send.');
+                                } else if (sameSession && samePrompt && !alreadySent) {
+                                    // Do not silently lose a task when API/profile readiness
+                                    // exceeds the retry window. Preserve a visible draft.
+                                    localStorage.setItem('hy_neural_pending_prompt', pendingAutoSend.prompt);
+                                    const note = 'No se pudo enviar automáticamente la tarea #' +
+                                        pendingAutoSend.taskId + '. El texto sigue en el editor: pulsa Enviar cuando Anthropic esté listo.';
+                                    if (typeof window.showToast === 'function') window.showToast(note, 'amber');
+                                    else console.warn('[Claude Neural]', note);
                                 }
                             };
 
