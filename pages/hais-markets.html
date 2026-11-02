@@ -178,9 +178,12 @@ async function updateCrypto(){
     const snapshot=await response.json();
     if(snapshot.mode!=='OBSERVE'||snapshot.source!=='CoinGecko'||!Array.isArray(snapshot.quotes)||snapshot.quotes.length!==4)throw Error('Invalid HAIS market contract');
     payload={};
+    const seen=new Set();
     for(const q of snapshot.quotes) {
      const id={BTC:'bitcoin',ETH:'ethereum',SOL:'solana',APE:'apecoin'}[q.symbol];
-     if(!id||typeof q.observed_at!=='string')throw Error('Unrecognized HAIS coin');
+     // The gateway must not relabel synthetic, duplicate or foreign-currency data as CoinGecko USD.
+     if(!id||seen.has(id)||q.source!=='CoinGecko'||q.currency!=='USD'||q.kind!=='provider-price'||typeof q.observed_at!=='string')throw Error('Cotización HAIS sin atribución válida');
+     seen.add(id);
      payload[id]={usd:q.value,usd_24h_change:q.change_24h_pct,last_updated_at:Date.parse(q.observed_at)/1000};
     }
     provider='HAIS / CoinGecko';
@@ -226,7 +229,9 @@ async function updateTreasury(){
   const symbols=new Set();
   for(const q of result.quotes){
    if(!['DGS2','DGS10'].includes(q.symbol)||symbols.has(q.symbol)||q.unit!=='percent_yield'||q.source!=='FRED / US Treasury'||!Number.isFinite(q.value)||!Number.isFinite(q.change_previous_bps)||!/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(q.observation_date))throw Error('Observación FRED inválida');
-   if(Math.abs(Date.now()-Date.parse(q.observation_date+'T00:00:00Z'))>11*86400000)throw Error('Dato FRED caducado');
+   const observationTime=Date.parse(q.observation_date+'T00:00:00Z');
+   // Reject impossible calendar dates and future observations; daily FRED data may lag weekends.
+   if(!Number.isFinite(observationTime)||new Date(observationTime).toISOString().slice(0,10)!==q.observation_date||observationTime>Date.now()||Date.now()-observationTime>11*86400000)throw Error('Dato FRED caducado o inválido');
    symbols.add(q.symbol);
   }
   ratesBody.replaceChildren();
