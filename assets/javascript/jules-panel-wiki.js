@@ -48,12 +48,12 @@ window.JulesWikiModule = (function() {
     function redactWikiEvidence(value) {
         return String(value || '')
             .replace(/\b(?:sk-ant-[A-Za-z0-9_-]{12,}|gh[pousr]_[A-Za-z0-9_-]{20,}|github_pat_[A-Za-z0-9_-]{20,}|nvapi-[A-Za-z0-9_-]{12,})\b/g, '[REDACTED]')
-            .replace(/(Authorization\\s*:\\s*Bearer\\s+)\\S+/gi, '$1[REDACTED]')
-            .replace(/((?:api[_-]?key|access[_-]?token|client[_-]?secret|password)\\s*[:=]\\s*["']?)[A-Za-z0-9_./+-]{12,}/gi, '$1[REDACTED]');
+            .replace(/(Authorization\s*:\s*Bearer\s+)\S+/gi, '$1[REDACTED]')
+            .replace(/((?:api[_-]?key|access[_-]?token|client[_-]?secret|password)\s*[:=]\s*["']?)[A-Za-z0-9_./+-]{12,}/gi, '$1[REDACTED]');
     }
 
     function collectSessionLearnings(session, activities) {
-        const sid = String(session?.name || '').replace(/^sessions\\//, '');
+        const sid = String(session?.name || '').replace(/^sessions\//, '');
         const relevant = (Array.isArray(activities) ? activities : []).slice(-100);
         const evidence = [];
         for (const activity of relevant) {
@@ -77,7 +77,7 @@ window.JulesWikiModule = (function() {
             const linked = String(conversation.metadata?.linkedJulesSessionId ||
                 conversation.metadata?.linkedJulesTaskId ||
                 localStorage.getItem('hy_neural_session_id_' + conversation.id) || '')
-                .replace(/^sessions\\//, '');
+                .replace(/^sessions\//, '');
             if (linked !== sid) continue;
             const reviews = (conversation.messages || []).filter(m =>
                 m.source === 'claude_bridge' && m.jules_analysis);
@@ -85,7 +85,7 @@ window.JulesWikiModule = (function() {
                 evidence.push('Claude (' + (review.bridge_action || 'review') + '): ' + review.content);
             }
         }
-        return redactWikiEvidence(evidence.join('\\n')).slice(0, 7500);
+        return redactWikiEvidence(evidence.join('\n')).slice(0, 7500);
     }
 
     async function generateProposal(taskId, session) {
