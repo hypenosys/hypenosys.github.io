@@ -12,6 +12,7 @@
     'use strict';
     const MAX_ROUNDS = 3;
     const CLAUDE_SUPERVISOR_MAX_ROUNDS = 8;
+    const MAX_PLAN_REVIEW_FEEDBACK = 2;
     const POLL_MS = 15000;
     const MAX_CONTEXT = 8000;
     const MAX_REPLY = 1200;
@@ -206,6 +207,7 @@
         ].filter(Boolean).join('\n') : 'Sin contexto de tarea verificable.';
 
         const prompt =
+            'CRITERIO DE DECISIÓN: aprueba si el plan es ejecutable de manera segura, cubre los criterios esenciales y las mejoras restantes son opcionales o se pueden aplicar durante implementación. No exijas perfección, detalles que solo pueden verificarse implementando ni una nueva ronda para mejoras cosméticas. Si el plan incorpora las correcciones críticas de la revisión anterior, devuelve approve_plan y responde con el texto Approve plan; no repitas críticas ya resueltas. send_feedback SOLO para defectos bloqueantes demostrables, concretos y verificables del plan, todos en un único mensaje. Si se repiten defectos críticos irresolubles o hacen falta decisiones humanas, escalate y no mantengas el bucle. ' +
             'Actúa como un revisor técnico senior, exigente, crítico e independiente; NO apruebes por complacencia. Examina la versión concreta del plan de Jules frente a la tarea, criterios de aceptación, arquitectura, seguridad, dependencias, viabilidad, riesgos, casos límite y pruebas. Identifica errores reales, omisiones, contradicciones y mejoras justificadas; NO inventes bloqueos hipotéticos. Haz UNA ÚNICA evaluación por versión del plan y formula todas las correcciones accionables en UN SOLO mensaje consolidado para Jules. No realices intercambio de preguntas en esta revisión. Devuelve SOLO JSON válido con este esquema: ' +
             '{"decision":"approve_plan|send_feedback|wait|escalate","message":"texto","reason":"motivo"}.\n' +
             'Estado Jules: ' + String(julesState || 'UNKNOWN') + '.\n' +
@@ -364,6 +366,23 @@
                 // Mark the reviewed version before side effects. A failed API write
                 // must not replay the same approval or feedback automatically.
                 state.lastDecisionKey = decisionKey;
+                // Bound the feedback loop: approval is never forced, but repeated
+                // critical objections must become a human decision rather than
+                // generate unlimited Claude/Jules messages and BYOK charges.
+                if (julesState === 'AWAITING_PLAN_APPROVAL') {
+                    const meta = state.pair.conversation.metadata || {};
+                    const previous = Number(meta.claudePlanFeedbackCount || 0);
+                    if (decision.decision === 'send_feedback' && previous >= MAX_PLAN_REVIEW_FEEDBACK) {
+                        escalateToHuman(state, excerpt, {
+                            decision: 'escalate',
+                            message: 'Claude ha detectado problemas bloqueantes después de ' + previous +
+                                ' revisiones del plan. No se seguirá enviando el mismo plan en bucle. Revisa el dictamen antes de continuar.',
+                            reason: decision.reason || decision.message || 'Plan no aprobable tras el límite de revisiones.'
+                        });
+                        return;
+                    }
+                }
+
 
                 if (decision.decision === 'escalate') {
                     escalateToHuman(state, excerpt, decision);
@@ -418,6 +437,12 @@
                         + (decision.message || decision.reason || 'Revisa el plan y continúa dentro del alcance.').slice(0, MAX_REPLY);
                     await window.julesApi.sendMessage(state.pair.sessionName, feedback);
                     if (revision !== sequence || current !== state) return;
+                    if (julesState === 'AWAITING_PLAN_APPROVAL') {
+                        state.pair.conversation.metadata ||= {};
+                        state.pair.conversation.metadata.claudePlanFeedbackCount =
+                            Number(state.pair.conversation.metadata.claudePlanFeedbackCount || 0) + 1;
+                        window.NeuralChatCore?.saveSessions?.('claude_chat_sessions', state.pair.sessions);
+                    }
                     state.rounds++;
                     setStatus('🤖 Claude envió feedback a Jules (' + state.rounds + '/' + state.maxRounds + ').');
                 } else {
