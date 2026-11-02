@@ -263,7 +263,7 @@
       "descripcion": "Desde el Kanban HAIS lanzar una tarea inocua a Jules contra hypenosys/HAIS en rama feature; registrar session_id, branch, commit, coste y resultado sin permitir merge automático ni secretos de producción.",
       "tema_principal": "HAIS-001 / platform",
       "prioridad": "High",
-      "estado": "OK",
+      "estado": "Working",
       "completitud": 0,
       "task_type": "integration",
       "resuelto_por": "Haopeng",
@@ -4213,8 +4213,13 @@
       "assignee_proposed": "human"
     }
   ],
-  "last_updated_by": "haopengwang123",
+  "last_updated_by": "Sistema",
   "_audit_log": [
+    {
+      "action": "chore: actualizar estado tarea #900008 → Working",
+      "user": "haopengwang123",
+      "timestamp": "2026-11-02T18:36:49.702Z"
+    },
     {
       "action": "chore: tarea #900001 restaurada desde el archivo",
       "user": "haopengwang123",
@@ -4491,5 +4496,5 @@
       ]
     }
   ],
-  "last_updated": "2026-11-02T18:36:27.929Z"
+  "last_updated": "2026-11-02T18:36:49.702Z"
 }
