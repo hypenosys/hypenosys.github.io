@@ -1,15 +1,15 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-11-02T16:26:48.168Z",
+  "computed_at": "2026-11-02T18:24:06.786Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 39,
-    "total_ok": 2,
+    "total_ok": 3,
     "total_ko": 0,
     "total_uncertain": 3,
     "total_obsolete": 0,
-    "fixed_found_ratio": 0.0513,
-    "verified_ratio": 0.0513
+    "fixed_found_ratio": 0.0769,
+    "verified_ratio": 0.0769
   },
   "group": {
     "velocity_trend": {
@@ -23,18 +23,14 @@
       "2026-W45": 0
     },
     "bug_rate": 0,
-    "blocker_health": 31,
+    "blocker_health": 30,
     "tag_heatmap": {
-      "byok": 2,
-      "hais-001": 19,
-      "identity": 1,
-      "jules": 5,
-      "oauth": 1,
-      "secrets": 2,
+      "hais-001": 18,
       "platform": 3,
       "scheduler": 1,
       "dag": 1,
       "idempotency": 2,
+      "jules": 4,
       "agent": 1,
       "github": 1,
       "execution": 1,
@@ -53,6 +49,7 @@
       "tenant-isolation": 1,
       "openai": 1,
       "openrouter": 1,
+      "byok": 1,
       "cost-control": 1,
       "market-data": 6,
       "ohlcv": 1,
@@ -74,6 +71,7 @@
       "agent-security": 1,
       "deployment": 5,
       "infrastructure": 1,
+      "secrets": 1,
       "threat-model": 1,
       "staging": 1,
       "health-check": 1,
@@ -115,7 +113,7 @@
       "plus500": 1,
       "minimum-mocks": 1
     },
-    "milestone_tasks_remaining": 19,
+    "milestone_tasks_remaining": 18,
     "hall_of_fame_winners": {
       "mvp": {
         "handle": "axlfc",
@@ -159,7 +157,7 @@
         "mvp_points": 6.800000000000001,
         "bugs_solved": 6,
         "unblocked_count": 6,
-        "velocity": 3.515151515151515,
+        "velocity": 3.7058823529411766,
         "research_solved": 1,
         "art_tasks": 0,
         "comments_left": 1
@@ -210,8 +208,8 @@
     "axlfc": {
       "member_name": "Axel",
       "completed": {
-        "all_time": 47,
-        "milestone": 33,
+        "all_time": 48,
+        "milestone": 34,
         "week": 1
       },
       "weekly_velocity": {
@@ -225,12 +223,13 @@
         "2026-W45": 0
       },
       "type_breakdown": {
-        "feature": 31,
+        "feature": 32,
         "chore": 8,
         "bug": 6,
         "research": 2
       },
       "rama_breakdown": {
+        "feature/hais-004": 1,
         "": 1,
         "PRO": 15,
         "chore/upgrade-ue-5.7.4": 2,
@@ -249,6 +248,12 @@
         "develop": 1
       },
       "tag_frequency": {
+        "byok": 1,
+        "hais-001": 1,
+        "identity": 1,
+        "jules": 3,
+        "oauth": 1,
+        "secrets": 1,
         "hais": 1,
         "paper": 1,
         "estrategia": 1,
@@ -256,7 +261,6 @@
         "chore": 6,
         "devops": 4,
         "git": 2,
-        "jules": 2,
         "infraestructura": 1,
         "UX/UI": 1,
         "bug": 2,
@@ -287,8 +291,8 @@
         "reprioritizations": 27
       },
       "workload": {
-        "active_tasks": 23,
-        "story_points": 86
+        "active_tasks": 22,
+        "story_points": 81
       }
     },
     "topperh4rley": {
@@ -563,7 +567,7 @@
           "mvp_points": 6.800000000000001,
           "bugs_solved": 6,
           "unblocked_count": 6,
-          "velocity": 3.515151515151515,
+          "velocity": 3.7058823529411766,
           "research_solved": 1,
           "art_tasks": 0,
           "comments_left": 1
@@ -616,7 +620,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "haopengwang123",
-      "timestamp": "2026-11-02T16:26:49.005Z"
+      "timestamp": "2026-11-02T18:24:07.697Z"
     }
   ]
 }
