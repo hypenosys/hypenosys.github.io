@@ -1599,7 +1599,7 @@ window.renderChatV2Messages = function() {
                 event.stopPropagation();
                 approveBtn.disabled = true;
                 try {
-                    await window.approvePlan(String(linkedPlanSessionId).replace(/^sessions\\//, ''));
+                    await window.approvePlan(String(linkedPlanSessionId).replace(/^sessions\//, ''));
                 } finally {
                     approveBtn.disabled = false;
                 }
