@@ -3547,7 +3547,7 @@
       "descripcion": "Escoger API con derechos adecuados para S&P500, NASDAQ, CSI300, IBEX35, bonos globales, oro, plata y petróleo; distinguir spot, futuros, índices y proxies; negociar frecuencia, cobertura, latencia y redistribución. No scraping ni asumir que los widgets permiten extracción API.",
       "tema_principal": "HAIS · fuentes de datos",
       "prioridad": "Critical",
-      "estado": "Pending",
+      "estado": "WORKING",
       "completitud": 0,
       "task_type": "feature",
       "resuelto_por": "",
@@ -3627,7 +3627,14 @@
       "emails_asignados": [],
       "images": [],
       "blocks": [],
-      "jules_session": null
+      "jules_session": {
+        "session_id": "17642950733594706359",
+        "initiated_by": "haopengwang123",
+        "supervision": "claude",
+        "status": "QUEUED",
+        "updated_at": "2026-11-02T16:26:44.290Z"
+      },
+      "updated_at": "2026-11-02T16:26:45.332Z"
     },
     {
       "id": 900042,
@@ -3932,6 +3939,11 @@
   "last_updated_by": "HAIS revisión automática 2026-11-02",
   "_audit_log": [
     {
+      "action": "chore: actualizar tarea 900041",
+      "user": "haopengwang123",
+      "timestamp": "2026-11-02T16:26:45.332Z"
+    },
+    {
       "action": "HAIS daily QA: PR #441 merged, browser CI green; mark 900043 Working, QA degradation subtask done, leave live gateway and source verification open",
       "user": "HAIS review",
       "timestamp": "2026-11-02T09:08:31.680Z"
@@ -4177,5 +4189,5 @@
       ]
     }
   ],
-  "last_updated": "2026-11-01T20:09:55.232Z"
+  "last_updated": "2026-11-02T16:26:45.332Z"
 }
