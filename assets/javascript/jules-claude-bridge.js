@@ -441,7 +441,7 @@
                         state.pair.conversation.metadata ||= {};
                         state.pair.conversation.metadata.claudePlanFeedbackCount =
                             Number(state.pair.conversation.metadata.claudePlanFeedbackCount || 0) + 1;
-                        try { window.saveSessions?.(); } catch {}
+                        window.NeuralChatCore?.saveSessions?.('claude_chat_sessions', state.pair.sessions);
                     }
                     state.rounds++;
                     setStatus('🤖 Claude envió feedback a Jules (' + state.rounds + '/' + state.maxRounds + ').');
