@@ -120,6 +120,28 @@ function buildTaskCard(task) {
     return card;
   }
 
+  // An unresolved dependency is a visual and semantic state, not a faded
+  // whole-card opacity that makes text and focus indicators inaccessible.
+  const done = new Set(['OK', 'DONE', 'COMPLETED', 'FIXED', 'CLOSED', 'RESOLVED']);
+  const dependencies = Array.isArray(task.blocked_by) ? task.blocked_by : [];
+  const unresolved = dependencies.filter(id => {
+    const dependency = currentTasks.find(t => String(t.id) === String(id));
+    return !dependency || !done.has(String(dependency.estado || dependency.status || '').trim().toUpperCase());
+  });
+  const blocked = unresolved.length > 0 || String(task.estado || '').toUpperCase() === 'BLOCKED';
+  if (blocked) {
+    cardEl.classList.add('hy-task-blocked');
+    const reason = document.createElement('p');
+    reason.className = 'hy-task-blocked-reason';
+    reason.textContent = unresolved.length
+      ? '🔒 Bloqueada por tareas pendientes: ' + unresolved.map(id => '#' + id).join(', ')
+      : '🔒 Bloqueada: revisa el estado antes de ejecutar';
+    reason.id = 'task-block-reason-' + String(task.id).replace(/[^a-zA-Z0-9_-]/g, '');
+    cardEl.appendChild(reason);
+    cardEl.setAttribute('aria-describedby', reason.id);
+    cardEl.dataset.blocked = 'true';
+  }
+
   cardEl.id = `card-${task.id}`;
   cardEl.draggable = true;
 
