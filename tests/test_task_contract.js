@@ -85,6 +85,7 @@ test('requires stable identifiers, required fields and valid output types', () =
   const envelope = normalizeTask(task());
   for (const broken of [
     { ...envelope, contract_version: '1.0.0' }, { ...envelope, task_id: 'other:4' },
+    { ...envelope, title: '   ' }, { ...envelope, source: ' ' },
     { ...envelope, status: 'unknown' }, { ...envelope, priority: 'ToDo' },
     { ...envelope, acceptance_criteria: ['ok', null] }, { ...envelope, metadata: null }
   ]) assert.equal(validateTaskEnvelope(broken).valid, false);
