@@ -1,0 +1,48 @@
+name: HAIS market contracts (offline providers)
+
+on:
+  pull_request:
+    branches: [develop]
+    paths:
+      - pages/hais-markets.html
+      - tests/verify_hais_markets.spec.js
+      - .github/workflows/hais-market-tests.yml
+  push:
+    branches: [develop]
+    paths:
+      - pages/hais-markets.html
+      - tests/verify_hais_markets.spec.js
+      - .github/workflows/hais-market-tests.yml
+
+permissions:
+  contents: read
+
+jobs:
+  playwright:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install test dependencies and Chromium
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+      - name: Build the static observatory
+        run: bundle exec jekyll build --source . --destination ./_site --baseurl ""
+      - name: Test HAIS market contracts without external market calls
+        run: |
+          python3 -m http.server 4000 --bind 127.0.0.1 --directory ./_site >/tmp/hais-market-server.log 2>&1 &
+          for i in {1..20}; do
+            if curl -fsS http://127.0.0.1:4000/hais/ >/dev/null; then break; fi
+            sleep 1
+          done
+          curl --fail --silent --show-error http://127.0.0.1:4000/hais/ >/dev/null
+          npx playwright test tests/verify_hais_markets.spec.js --workers=1
