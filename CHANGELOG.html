@@ -60,6 +60,7 @@ permalink: /CHANGELOG.html
       <!-- Unreleased -->
       <div class="changelog-section mb-5">
 ## [Unreleased]
+        <p><strong>Jules → GitHub PR → develop:</strong> una sesión Jules completada no marca la tarea OK hasta verificar que la PR asociada esté realmente fusionada en develop; sin PR verificable, la tarea permanece en REVIEW y el supervisor explica el motivo.</p>
         <p><strong>Wiki Ops · aprendizajes de sesiones Jules/Claude:</strong> las propuestas de documentación al finalizar Jules incorporan revisiones de Claude, decisiones técnicas y evidencias de la ejecución con sanitización de secretos; se mantienen como borradores hasta confirmación explícita del usuario.</p>
         <p><strong>Claude supervisor sensible a presión HAIS:</strong> reutiliza el Stress Index calculado por el dashboard para el milestone actual (umbral superior al 70 %) y prioriza planes viables de alcance acotado y feedback crítico consolidado, sin saltar controles técnicos, autorización humana ni pruebas.</p>
         <p><strong>Claude/Jules plan review loop:</strong> Claude aprueba planes técnicamente viables sin exigir mejoras cosméticas; limita las revisiones críticas a dos rondas y eleva a revisión humana los defectos persistentes en lugar de repetir feedback y consumir llamadas de Anthropic indefinidamente.</p>

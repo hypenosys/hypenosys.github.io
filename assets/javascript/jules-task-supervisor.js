@@ -154,6 +154,33 @@
     finally { busy = false; }
   }
 
+  function findPullRequest(session) {
+    const candidates = [
+      session?.pullRequestUrl, session?.pull_request_url,
+      session?.output?.pullRequestUrl, session?.output?.pullRequest?.url,
+      ...(Array.isArray(session?.outputs) ? session.outputs.flatMap(o => [o?.pullRequest?.url, o?.pullRequestUrl, o?.url]) : [])
+    ].filter(v => typeof v === 'string');
+    for (const candidate of candidates) {
+      const m = candidate.match(/^https:\/\/github\.com\/([^/]+)\/([^/]+)\/pull\/(\d+)(?:[/?#]|$)/);
+      if (m) return {owner:m[1], repo:m[2], number:Number(m[3]), url:m[0].replace(/[/?#]$/, '')};
+    }
+    return null;
+  }
+
+  async function getPullRequestStatus(pr) {
+    const token = sessionStorage.getItem('gh_access_token') ||
+      localStorage.getItem('gh_access_token') || localStorage.getItem('github_token');
+    if (!token) throw new Error('Conecta GitHub para verificar la PR.');
+    const headers = {Accept:'application/vnd.github+json', Authorization:'Bearer ' + token};
+    const response = await fetch('https://api.github.com/repos/' +
+      encodeURIComponent(pr.owner) + '/' + encodeURIComponent(pr.repo) +
+      '/pulls/' + pr.number, {headers, cache:'no-store'});
+    if (!response.ok) throw new Error('GitHub no permitió consultar la PR (HTTP ' + response.status + ').');
+    const data = await response.json();
+    return {merged:!!data.merged, base:data.base?.ref, state:data.state,
+      headSha:data.head?.sha, mergeable:data.mergeable, url:data.html_url};
+  }
+
   async function syncCompletedFromJules(sessionId, remoteSession = null) {
     if (busy) return false;
     const sid = String(sessionId || '').replace(/^sessions\//, '');
@@ -172,6 +199,26 @@
       if (!remote || String(remote.name || '').replace(/^sessions\//, '') !== sid ||
           String(remote.state || '').toUpperCase() !== 'COMPLETED') return false;
 
+      // Jules completing work is not equivalent to merging the PR.
+      const pr = findPullRequest(remote);
+      let prStatus = null;
+      if (pr) prStatus = await getPullRequestStatus(pr);
+      if (!prStatus?.merged || prStatus.base !== 'develop') {
+        const nextStatus = 'REVIEW';
+        if (String(task.estado || task.status || '').toUpperCase() !== nextStatus) {
+          await window.taskOps.updateTask(task.id, {
+            estado: nextStatus,
+            jules_session: {...(task.jules_session || {}), session_id:sid,
+              status:'COMPLETED', pull_request_url:pr?.url || null,
+              updated_at:new Date().toISOString()}
+          });
+        }
+        message(pr
+          ? 'Jules completó la sesión, pero la PR #' + pr.number +
+            ' aún no consta fusionada en develop. Tarea en REVIEW.'
+          : 'Jules completó la sesión. Sin PR verificable: tarea en REVIEW; no se marca OK.');
+        return false;
+      }
       const current = String(task.estado || task.status || '').trim().toUpperCase();
       if (['OK','DONE','COMPLETED','CLOSED','RESOLVED'].includes(current)) {
         localStorage.setItem(syncKey, 'true');
