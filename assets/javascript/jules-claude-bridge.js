@@ -206,7 +206,7 @@
         ].filter(Boolean).join('\n') : 'Sin contexto de tarea verificable.';
 
         const prompt =
-            'Evalúa la salida de Jules como supervisor técnico. Devuelve SOLO JSON válido con este esquema: ' +
+            'Actúa como un revisor técnico senior, exigente, crítico e independiente; NO apruebes por complacencia. Examina la versión concreta del plan de Jules frente a la tarea, criterios de aceptación, arquitectura, seguridad, dependencias, viabilidad, riesgos, casos límite y pruebas. Identifica errores reales, omisiones, contradicciones y mejoras justificadas; NO inventes bloqueos hipotéticos. Haz UNA ÚNICA evaluación por versión del plan y formula todas las correcciones accionables en UN SOLO mensaje consolidado para Jules. No realices intercambio de preguntas en esta revisión. Devuelve SOLO JSON válido con este esquema: ' +
             '{"decision":"approve_plan|send_feedback|wait|escalate","message":"texto","reason":"motivo"}.\n' +
             'Estado Jules: ' + String(julesState || 'UNKNOWN') + '.\n' +
             'Puedes usar approve_plan ÚNICAMENTE cuando Jules está AWAITING_PLAN_APPROVAL, el plan está dentro del alcance, es reversible y contiene validación razonable. La mera mención de seguridad, BYOK, Secret Manager, contratos de datos, proveedores o arquitectura NO obliga a escalar si son parte explícita de la tarea y el plan solo propone implementación/documentación/validación reversible.\n' +
@@ -220,7 +220,7 @@
             let settled = false;
             window.NeuralProviderClient.sendMessage({
                 messages: [{ role:'user', content:prompt }],
-                systemPrompt: 'Eres el supervisor Claude de Jules. Tu prioridad es respetar el alcance y escalar decisiones humanas. Solo emites JSON según el esquema solicitado.',
+                systemPrompt: 'Eres revisor técnico senior de planes Jules: independiente, riguroso y crítico. Primero encuentra defectos concretos en requisitos, arquitectura, viabilidad, seguridad, dependencias, pruebas y casos límite. No inventes fallos. Aprueba solo planes sólidos, reversibles y dentro de alcance. Si hay problemas corregibles, emite una sola revisión consolidada y accionable; si exigen decisiones humanas, escala. Nunca autorizas Trading 212 LIVE, merge o despliegue. Devuelve exclusivamente el JSON solicitado.',
                 options: { isThinkingEnabled:false },
                 onDone: text => {
                     if (settled) return;
@@ -330,13 +330,27 @@
             const news = all.filter(a => !state.seen.has(a.key));
             all.forEach(a => state.seen.add(a.key));
 
+            // Claude reviews a plan once per distinct plan activity, not once per
+            // generic Jules progress event or each 15-second polling interval.
             const waitingForDecision = state.mode === 'claude' &&
                 ['AWAITING_PLAN_APPROVAL','AWAITING_USER_FEEDBACK'].includes(julesState);
-            const latestKey = all.length ? all[all.length - 1].key : 'no-activity';
-            const decisionKey = julesState + ':' + latestKey;
-            const reviewItems = news.length
-                ? news.slice(-8)
-                : (waitingForDecision && state.lastDecisionKey !== decisionKey ? all.slice(-8) : []);
+            const latestPlan = [...all].reverse().find(a => a.kind === 'plan');
+            const latestFeedback = [...all].reverse().find(a => a.kind === 'message');
+            const decisionKey = julesState === 'AWAITING_PLAN_APPROVAL'
+                ? ('plan:' + (latestPlan?.key || 'missing'))
+                : ('feedback:' + (latestFeedback?.key || 'missing'));
+            let reviewItems = news.length ? news.slice(-8) : [];
+            if (state.mode === 'claude') {
+                if (!waitingForDecision) return;
+                if (julesState === 'AWAITING_PLAN_APPROVAL' && !latestPlan) {
+                    setStatus('🤖 Jules espera aprobación, pero aún falta el plan estructurado. Sin aprobación automática.');
+                    return;
+                }
+                if (state.lastDecisionKey === decisionKey) return;
+                reviewItems = julesState === 'AWAITING_PLAN_APPROVAL'
+                    ? [latestPlan]
+                    : (latestFeedback ? [latestFeedback] : all.slice(-1));
+            }
             if (!reviewItems.length) return;
 
             const excerpt = reviewItems.map(a => '[' + a.time + '] ' + a.content).join('\n');
@@ -347,6 +361,8 @@
             if (state.mode === 'claude') {
                 const decision = await askClaudeSupervisor(excerpt, julesState);
                 if (revision !== sequence || current !== state || !comparable(state.pair)) return;
+                // Mark the reviewed version before side effects. A failed API write
+                // must not replay the same approval or feedback automatically.
                 state.lastDecisionKey = decisionKey;
 
                 if (decision.decision === 'escalate') {
@@ -356,7 +372,7 @@
 
                 const planSteps = [...reviewItems].reverse().find(item => item.kind === 'plan' && item.planSteps?.length)?.planSteps || [];
                 const summary = decision.decision === 'approve_plan'
-                    ? 'Approve plan\n\n' + (decision.message || 'Plan aprobado por Claude dentro del alcance de la tarea.')
+                    ? '[SUPERVISOR CLAUDE · APROBACIÓN PROPUESTA]\n' + (decision.message || 'Plan revisado favorablemente; enviando aprobación a Jules.')
                         + (decision.reason ? '\n\nMotivo: ' + decision.reason : '')
                     : '[SUPERVISOR CLAUDE · ' + decision.decision.toUpperCase() + ']\n'
                         + (decision.message || 'Sin mensaje adicional.')
@@ -385,6 +401,9 @@
                     if (!maintainLease(state)) { stop('otra pestaña adquirió la sesión'); return; }
                     await window.julesApi.approvePlan(state.pair.sessionName);
                     if (revision !== sequence || current !== state) return;
+                    persistAnalysis(state.pair, '', 'Approve plan — confirmación: Jules API aceptó la aprobación.', {
+                        bridge_action: 'approve_plan_confirmed', jules_state: julesState
+                    });
                     state.rounds++;
                     window.HypenosysTaskOrchestrator?.setPhase?.('jules-running');
                     setStatus('🤖 Claude aprobó el plan de Jules (' + state.rounds + '/' + state.maxRounds + ').');
