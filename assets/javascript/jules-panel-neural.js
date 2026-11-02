@@ -1545,9 +1545,42 @@ window.renderChatV2Messages = function() {
                 : '') +
             '</div>';
 
-        // Jules' output is externally supplied: do not interpret it as HTML or active Markdown.
-        const renderedContent = isAssistant && !isJules && window.marked
+        // Jules' output is externally supplied: do not interpret it as active HTML/Markdown.
+        // Plan steps are rendered from structured, escaped data so the Claude workspace
+        // does not flatten an AWAITING_PLAN_APPROVAL event into an unreadable paragraph.
+        const planSteps = isJules && Array.isArray(msg.jules_plan_steps) ? msg.jules_plan_steps : [];
+        const linkedPlanSessionId = window.resolveLinkedJulesId(session);
+        let renderedContent = isAssistant && !isJules && window.marked
             ? marked.parse(msg.content) : window.NeuralChatCore.escapeHtml(msg.content);
+
+        if (planSteps.length) {
+            const stepsHtml = planSteps.map((step, stepIdx) => {
+                const title = window.NeuralChatCore.escapeHtml(step?.title || ('Paso ' + (stepIdx + 1)));
+                const description = window.NeuralChatCore.escapeHtml(step?.description || '');
+                return '<li style="margin:8px 0 8px 18px;padding-left:4px">' +
+                    '<strong style="color:var(--text)">' + title + '</strong>' +
+                    (description ? '<div style="color:var(--text2);margin-top:2px;line-height:1.45">' + description + '</div>' : '') +
+                    '</li>';
+            }).join('');
+            const canApprove = Boolean(linkedPlanSessionId && typeof window.approvePlan === 'function');
+            const supervisorActive = window.JulesClaudeBridge?.getState?.().mode === 'claude';
+            renderedContent =
+                '<div class="jules-plan-card" style="border:1px solid rgba(168,85,247,.35);background:rgba(124,58,237,.08);border-radius:10px;padding:12px 14px">' +
+                    '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px">' +
+                        '<strong style="color:var(--accent2);font-size:12px"><i class="fas fa-list-check mr-1"></i> Jules plan</strong>' +
+                        '<span style="font-size:10px;color:var(--text3)">' + window.NeuralChatCore.escapeHtml(msg.jules_state || 'AWAITING_PLAN_APPROVAL') + '</span>' +
+                    '</div>' +
+                    '<ol style="margin:0;padding:0;font-size:12px">' + stepsHtml + '</ol>' +
+                    '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px">' +
+                        '<button type="button" class="btn btn-primary btn-xs jules-plan-approve-btn"' + (canApprove ? '' : ' disabled') + '>' +
+                            '<i class="fas fa-check mr-1"></i> Approve plan' +
+                        '</button>' +
+                        (supervisorActive
+                            ? '<span style="font-size:10px;color:var(--green)">🤖 Claude supervisor puede aprobarlo automáticamente</span>'
+                            : '<span style="font-size:10px;color:var(--text3)">Aprobación manual disponible</span>') +
+                    '</div>' +
+                '</div>';
+        }
 
         div.innerHTML =
             '<span class="activity-icon">' + iconHTML + '</span>' +
@@ -1559,6 +1592,19 @@ window.renderChatV2Messages = function() {
               '<div class="activity-content">' + renderedContent + '</div>' +
               actionBtn +
             '</div>';
+
+        const approveBtn = div.querySelector('.jules-plan-approve-btn');
+        if (approveBtn && linkedPlanSessionId && typeof window.approvePlan === 'function') {
+            approveBtn.addEventListener('click', async (event) => {
+                event.stopPropagation();
+                approveBtn.disabled = true;
+                try {
+                    await window.approvePlan(String(linkedPlanSessionId).replace(/^sessions\\//, ''));
+                } finally {
+                    approveBtn.disabled = false;
+                }
+            });
+        }
 
         container.appendChild(div);
     });
