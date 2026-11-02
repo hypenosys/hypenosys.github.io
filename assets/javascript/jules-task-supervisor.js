@@ -179,6 +179,11 @@
         return false;
       }
       const task = linked[0];
+      const workspace = window.githubApi?.getActiveWorkspace?.();
+      if (!workspace || (task.organizationId && task.organizationId !== workspace)) {
+        message('La tarea vinculada pertenece a otra organización; cambia al workspace correcto.');
+        return false;
+      }
 
       const remote = remoteSession || await window.julesApi.getSession('sessions/' + sid);
       if (!remote || String(remote.name || '').replace(/^sessions\//, '') !== sid ||
