@@ -1,15 +1,15 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-11-02T18:24:06.786Z",
+  "computed_at": "2026-11-02T18:24:16.717Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 39,
-    "total_ok": 3,
+    "total_ok": 4,
     "total_ko": 0,
     "total_uncertain": 3,
     "total_obsolete": 0,
-    "fixed_found_ratio": 0.0769,
-    "verified_ratio": 0.0769
+    "fixed_found_ratio": 0.1026,
+    "verified_ratio": 0.1026
   },
   "group": {
     "velocity_trend": {
@@ -23,17 +23,14 @@
       "2026-W45": 0
     },
     "bug_rate": 0,
-    "blocker_health": 30,
+    "blocker_health": 29,
     "tag_heatmap": {
-      "hais-001": 18,
-      "platform": 3,
+      "hais-001": 17,
+      "platform": 2,
       "scheduler": 1,
       "dag": 1,
       "idempotency": 2,
-      "jules": 4,
-      "agent": 1,
-      "github": 1,
-      "execution": 1,
+      "jules": 3,
       "github-actions": 1,
       "webhooks": 1,
       "sync": 1,
@@ -620,7 +617,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "haopengwang123",
-      "timestamp": "2026-11-02T18:24:07.697Z"
+      "timestamp": "2026-11-02T18:24:17.545Z"
     }
   ]
 }
