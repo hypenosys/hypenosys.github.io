@@ -160,13 +160,25 @@
     if (!sid) return false;
 
     const syncKey = 'hy_jules_task_synced_completed_' + sid;
-    if (localStorage.getItem(syncKey) === 'true') return true;
+    // Never trust a browser-only completion marker over the GitHub task state.
+    // A missed/failed write must be retried on later session refreshes.
 
     busy = true;
     try {
-      const {task} = await loadTask();
-      const associated = String(task.jules_session?.session_id || '').replace(/^sessions\//, '');
-      if (associated !== sid) return false;
+      // Resolve by the persisted Jules-session association, not by whichever
+      // task the user currently has selected in the dashboard.
+      if (!window.taskOps?.getAllTasks) throw new Error('GitHub Task Ops no está disponible.');
+      const tasks = await window.taskOps.getAllTasks();
+      const linked = (tasks || []).filter(item =>
+        String(item.jules_session?.session_id || '').replace(/^sessions\//, '') === sid
+      );
+      if (linked.length !== 1) {
+        message(linked.length > 1
+          ? 'Sesión Jules #' + sid + ' vinculada a varias tareas: requiere resolver la asociación.'
+          : 'Sesión Jules #' + sid + ' completada, pero no hay una tarea vinculada en el workspace activo.');
+        return false;
+      }
+      const task = linked[0];
 
       const remote = remoteSession || await window.julesApi.getSession('sessions/' + sid);
       if (!remote || String(remote.name || '').replace(/^sessions\//, '') !== sid ||
