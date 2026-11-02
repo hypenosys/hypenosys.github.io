@@ -60,6 +60,7 @@ permalink: /CHANGELOG.html
       <!-- Unreleased -->
       <div class="changelog-section mb-5">
 ## [Unreleased]
+        <p><strong>Claude supervisor sensible a presión HAIS:</strong> reutiliza el Stress Index calculado por el dashboard para el milestone actual (umbral superior al 70 %) y prioriza planes viables de alcance acotado y feedback crítico consolidado, sin saltar controles técnicos, autorización humana ni pruebas.</p>
         <p><strong>Claude/Jules plan review loop:</strong> Claude aprueba planes técnicamente viables sin exigir mejoras cosméticas; limita las revisiones críticas a dos rondas y eleva a revisión humana los defectos persistentes en lugar de repetir feedback y consumir llamadas de Anthropic indefinidamente.</p>
         <p><strong>Jules Panel · creación de ramas faltantes:</strong> si la tarea apunta a una rama que no existe, se crea en el repositorio seleccionado a partir de su rama predeterminada de GitHub, se recargan las ramas y se valida la selección antes de permitir ejecutar; un error mantiene el lanzamiento bloqueado.</p>
         <p><strong>Tareas bloqueadas accesibles:</strong> el Kanban muestra un tratamiento visual tenue pero de alto contraste y las dependencias pendientes; el botón Jules advierte del bloqueo antes del intento de ejecución, manteniendo la comprobación de dependencias en el servidor de lanzamiento.</p>
