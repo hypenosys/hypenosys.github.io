@@ -3357,6 +3357,10 @@
         {
           "label": "Build de develop con APE",
           "url": "https://github.com/hypenosys/hypenosys.github.io/actions/runs/41307153274"
+        },
+        {
+          "label": "CI de navegador mercados + PAPER (PR #441)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/actions/runs/41418007870"
         }
       ],
       "comments": [
@@ -3379,6 +3383,11 @@
           "author_login": "Codex",
           "timestamp": "2026-11-01T19:32:20.498Z",
           "body": "Instrucción del usuario: proceder con el mínimo de datos mock necesarios. Esta actualización prevalece sobre comentarios anteriores que proponían mocks primero."
+        },
+        {
+          "author_login": "HAIS review",
+          "timestamp": "2026-11-02T09:08:31.680Z",
+          "body": "2026-11-02: cobertura de contratos de mercado añadida a Playwright y ejecutada con éxito en PR #441; valida atribución y degradación con fixtures de prueba. Sigue In Review hasta smoke público de índices, materias primas, cripto y navegador en dev."
         }
       ],
       "change_log": [
@@ -3670,6 +3679,10 @@
         {
           "label": "Contrato web",
           "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/HAIS_DEPLOYMENT.md"
+        },
+        {
+          "label": "Despliegue dev anterior correcto",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/actions/runs/41352889934"
         }
       ],
       "comments": [
@@ -3682,6 +3695,11 @@
           "author_login": "Codex",
           "timestamp": "2026-11-01T19:32:20.498Z",
           "body": "Instrucción del usuario: proceder con el mínimo de datos mock necesarios. Esta actualización prevalece sobre comentarios anteriores que proponían mocks primero."
+        },
+        {
+          "author_login": "HAIS review",
+          "timestamp": "2026-11-02T09:08:31.680Z",
+          "body": "2026-11-02: la ejecución de despliegue dev anterior fue exitosa (41352889934), pero no constituye una prueba del gateway HAIS. Las consultas directas a dev.hypenosys.com y a upstreams desde el entorno de esta revisión no resolvieron DNS; no se puede inferir una caída pública ni confirmar la API, CORS, autenticación, precios o latencia. Pendiente smoke HTTPS desde un runner con conectividad y evidencia de 200/503 con timestamps."
         }
       ],
       "change_log": [
@@ -3722,8 +3740,8 @@
       "descripcion": "Establecer vigilancia de disponibilidad/frescura y discrepancias entre proveedor y gráficos, y mantener tareas del Kanban con evidencia de CI/deploy, bloqueo de fuentes y límites. No marcar completado por código sin verificación.",
       "tema_principal": "HAIS · datos reales de mercado",
       "prioridad": "Critical",
-      "estado": "Pending",
-      "completitud": 0,
+      "estado": "Working",
+      "completitud": 0.3,
       "task_type": "feature",
       "resuelto_por": "",
       "asignados": [
@@ -3751,7 +3769,7 @@
         {
           "id": 900043002,
           "text": "Añadir pruebas de ausencia de mock y degradación",
-          "done": false
+          "done": true
         },
         {
           "id": 900043003,
@@ -3763,6 +3781,22 @@
         {
           "label": "Kanban HAIS",
           "url": "https://dev.hypenosys.com/hais/estado/"
+        },
+        {
+          "label": "PR #441 · integridad de fuentes y CI",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/pull/441"
+        },
+        {
+          "label": "Playwright HAIS · CI verde 2026-11-02",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/actions/runs/41418007870"
+        },
+        {
+          "label": "FRED DGS2 · fuente primaria",
+          "url": "https://fred.stlouisfed.org/series/DGS2"
+        },
+        {
+          "label": "FRED DGS10 · fuente primaria",
+          "url": "https://fred.stlouisfed.org/series/DGS10"
         }
       ],
       "comments": [
@@ -3770,6 +3804,11 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-01T12:21:47.698Z",
           "body": "Alcance acordado: leer mercado real con proveedor/latencia explícitos. No confundir widget con datos ingeridos para decisiones o trading; LIVE prohibido."
+        },
+        {
+          "author_login": "HAIS review",
+          "timestamp": "2026-11-02T09:08:31.680Z",
+          "body": "Revisión 2026-11-02: PR #441 fusionado en develop; Playwright (terminal PAPER y mercados) y comprobación de CHANGELOG verdes. El frontend ahora rechaza cotizaciones de gateway con fuente no CoinGecko, moneda distinta de USD, tipo inválido o símbolos duplicados, y fechas FRED futuras/imposibles; los tests de degradación se ejecutan con fixtures aisladas. FRED oficial mostraba DGS2=4,61 % y DGS10=4,98 % con observación 2026-10-29, actualización 2026-10-30 y próxima publicación 2026-11-02 (no son lecturas de HAIS). Pendiente telemetría real de frescura/429, monitorización periódica y smoke público del gateway. No se han comprobado cotizaciones en vivo ni activado LIVE."
         }
       ],
       "change_log": [],
@@ -3890,8 +3929,13 @@
       "jules_session": null
     }
   ],
-  "last_updated_by": "Sistema",
+  "last_updated_by": "HAIS revisión automática 2026-11-02",
   "_audit_log": [
+    {
+      "action": "HAIS daily QA: PR #441 merged, browser CI green; mark 900043 Working, QA degradation subtask done, leave live gateway and source verification open",
+      "user": "HAIS review",
+      "timestamp": "2026-11-02T09:08:31.680Z"
+    },
     {
       "action": "chore: actualizar estado tarea #900030 → OK",
       "user": "haopengwang123",
