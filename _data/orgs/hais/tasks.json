@@ -3594,8 +3594,12 @@
           "url": "https://github.com/hypenosys/HAIS/blob/develop/src/hais/markets.py"
         },
         {
-          "label": "PR HAIS #10 · catálogo China 10Y y Brent (pendiente CI)",
+          "label": "PR HAIS #10 · China 10Y y Brent (fusionado, CI verde)",
           "url": "https://github.com/hypenosys/HAIS/pull/10"
+        },
+        {
+          "label": "CI HAIS PR #10 · 2026-11-03",
+          "url": "https://github.com/hypenosys/HAIS/actions/runs/41606689228"
         }
       ],
       "comments": [
@@ -3613,6 +3617,11 @@
           "author_login": "HAIS review",
           "timestamp": "2026-11-03T08:52:57Z",
           "body": "2026-11-03: PR HAIS #10 abierto: catálogo de instrumentos China 10Y (TVC:CN10Y) y Brent (TVC:UKOIL) etiquetados como widget-only, sin feed propio, precios ni órdenes. Tests offline añadidos; CI del PR aún sin resultado verificado. No supone contratación/licencia ni disponibilidad de cotizaciones. Tarea sigue WORKING y 0% hasta evaluación y aprobación del proveedor."
+        },
+        {
+          "author_login": "HAIS review",
+          "timestamp": "2026-11-03T08:54:09Z",
+          "body": "PR #10 fusionado a develop (squash efd00e8) tras CI success 41606689228. Verificada únicamente cobertura y etiqueta widget-only del catálogo, sin fuente licenciada ni cotización real; tarea de contratación sigue WORKING."
         }
       ],
       "change_log": [
