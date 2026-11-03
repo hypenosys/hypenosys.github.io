@@ -48,7 +48,8 @@
 .neural-workspace-body { display: grid; grid-template-columns: minmax(0, 1fr) 326px; gap: 15px; flex: 1; min-height: 0; padding: 14px 18px 12px; }
 .neural-workspace-main { display: flex; flex-direction: column; min-height: 0; min-width: 0; }
 #view-chat #neural-claude-workspace, #view-chat #neural-jules-workspace { min-height: 0; min-width: 0; }
-#view-chat #v2-chat-messages { padding: 0 6px 16px 0 !important; gap: 14px !important; overscroll-behavior: contain; }
+#view-chat #v2-chat-messages { min-height: 0; padding: 0 6px 16px 0 !important; gap: 14px !important; overscroll-behavior: contain; scrollbar-gutter: stable; }
+#view-chat #v2-chat-messages > .jules-activity-entry { flex-shrink: 0; }
 #view-chat .jules-activity-entry { display: flex; align-items: flex-start; border: 1px solid var(--neural-line); border-radius: 10px; background: var(--neural-panel); padding: 14px; gap: 14px; }
 #view-chat .activity-icon, #view-chat .entry-icon { width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0; background: linear-gradient(135deg, #7625e8, #a43cff); box-shadow: 0 0 15px #8b35ff44; color: white; display: flex; align-items: center; justify-content: center; font-size: 19px; }
 #view-chat .activity-body, #view-chat .entry-body { min-width: 0; flex: 1; }

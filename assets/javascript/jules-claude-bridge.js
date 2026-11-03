@@ -21,9 +21,11 @@
     let timer = null;
     let current = null;
     let busy = false;
+    let lastStatus = 'Disponible: revisión manual o 🤖 supervisor Claude.';
     const instanceId = 'bridge-' + Math.random().toString(36).slice(2);
 
     function setStatus(message) {
+        lastStatus = message;
         for (const id of ['jules-claude-bridge-status', 'neural-activity-bridge-status']) {
             const el = document.getElementById(id);
             if (el) el.textContent = message;
@@ -52,6 +54,11 @@
         const sid = String(linked || '').replace(/^sessions\//, '');
         if (!/^[A-Za-z0-9_-]{3,100}$/.test(sid)) {
             throw new Error('Vincula primero esta conversación con una sesión Jules válida.');
+        }
+        const selectedJules = window.NeuralWorkspaceState?.activeJulesSessionId;
+        if (panel && window.NeuralWorkspaceState?.activeMode === 'jules' && selectedJules &&
+            String(selectedJules).replace(/^sessions\//, '') !== sid) {
+            throw new Error('La sesión Jules seleccionada no corresponde a esta conversación Claude.');
         }
         return { conversation, sessions, activeId, sessionName: 'sessions/' + sid };
     }
@@ -125,6 +132,11 @@
 
     function persistAnalysis(pair, excerpt, analysis, metadata = {}) {
         if (!comparable(pair)) return;
+        // Storage/BroadcastChannel refreshes may replace the array captured at
+        // startup. Commit to the currently displayed pair, preserving new turns.
+        const live = getPair();
+        pair.conversation = live.conversation;
+        pair.sessions = live.sessions;
         pair.conversation.messages ||= [];
         const planSteps = Array.isArray(metadata.jules_plan_steps) ? metadata.jules_plan_steps : [];
         pair.conversation.messages.push({
@@ -211,11 +223,16 @@
         } catch { return null; }
     }
 
-    async function askClaudeSupervisor(excerpt, julesState) {
-        const task = (() => {
-            try { return JSON.parse(localStorage.getItem('hy_neural_task_context') || 'null'); }
-            catch { return null; }
-        })();
+    function taskForPair(pair) {
+        const sid = pair.sessionName.split('/').pop();
+        let stored = null;
+        try { stored = JSON.parse(localStorage.getItem('hy_neural_task_context') || 'null'); } catch { /* no context */ }
+        const tasks = typeof currentTasks !== 'undefined' && Array.isArray(currentTasks) ? currentTasks : [];
+        return [stored, ...tasks].find(task => task?.id &&
+            String(task.jules_session?.session_id || '').replace(/^sessions\//, '') === sid) || null;
+    }
+
+    async function askClaudeSupervisor(excerpt, julesState, task) {
         const scope = task ? [
             'Tarea #' + String(task.id || ''),
             String(task.titulo || task.title || ''),
@@ -293,7 +310,31 @@
         } catch { return false; } // localStorage must work for multi-tab protection
     }
 
-    function stop(reason = 'Detenido por el usuario') {
+    function progressKey(pair) {
+        return 'hy_jules_claude_bridge_progress_' + pair.sessionName.split('/').pop();
+    }
+
+    function readProgress(pair) {
+        const raw = localStorage.getItem(progressKey(pair));
+        if (!raw) return null;
+        const saved = JSON.parse(raw);
+        if (saved.conversationId !== pair.activeId || saved.sessionName !== pair.sessionName) {
+            return { enabled: false }; // a changed association needs explicit activation
+        }
+        return saved;
+    }
+
+    function saveProgress(state, enabled) {
+        if (!state || state.mode !== 'claude') return;
+        localStorage.setItem(progressKey(state.pair), JSON.stringify({
+            conversationId: state.pair.activeId, sessionName: state.pair.sessionName,
+            enabled, rounds: state.rounds, lastDecisionKey: state.lastDecisionKey,
+            updatedAt: new Date().toISOString()
+        }));
+    }
+
+    function stop(reason = 'Detenido por el usuario', preserveAuthorization = false) {
+        saveProgress(current, preserveAuthorization);
         sequence++;
         if (timer) clearInterval(timer);
         timer = null;
@@ -327,7 +368,7 @@
     async function pollOnce() {
         const state = current;
         if (!state || busy) return;
-        if (!comparable(state.pair)) { stop('cambio de conversación o sesión; vuelve a activarlo'); return; }
+        if (!comparable(state.pair)) { stop('cambio de conversación o sesión', true); return; }
         if (!maintainLease(state)) { stop('ya existe otra pestaña coordinando esta sesión'); return; }
         busy = true;
         const revision = sequence;
@@ -383,11 +424,23 @@
                 : 'Nuevas actividades de Jules: analizando con Claude...');
 
             if (state.mode === 'claude') {
-                const decision = await askClaudeSupervisor(excerpt, julesState);
+                const task = taskForPair(state.pair);
+                if (!task) {
+                    escalateToHuman(state, excerpt, {
+                        message: 'No se encuentra el contexto de tarea asociado a esta sesión Jules. Vuelve a vincular la tarea antes de revisar o aprobar el plan.',
+                        reason: 'La tarea global no coincide con la sesión vinculada.'
+                    });
+                    return;
+                }
+                const decision = await askClaudeSupervisor(excerpt, julesState, task);
                 if (revision !== sequence || current !== state || !comparable(state.pair)) return;
+                const livePair = getPair();
+                state.pair.conversation = livePair.conversation;
+                state.pair.sessions = livePair.sessions;
                 // Mark the reviewed version before side effects. A failed API write
                 // must not replay the same approval or feedback automatically.
                 state.lastDecisionKey = decisionKey;
+                saveProgress(state, true);
                 // Bound the feedback loop: approval is never forced, but repeated
                 // critical objections must become a human decision rather than
                 // generate unlimited Claude/Jules messages and BYOK charges.
@@ -446,6 +499,7 @@
                         bridge_action: 'approve_plan_confirmed', jules_state: julesState
                     });
                     state.rounds++;
+                    saveProgress(state, true);
                     window.HypenosysTaskOrchestrator?.setPhase?.('jules-running');
                     setStatus('🤖 Claude aprobó el plan de Jules (' + state.rounds + '/' + state.maxRounds + ').');
                 } else if (decision.decision === 'send_feedback') {
@@ -460,12 +514,16 @@
                     await window.julesApi.sendMessage(state.pair.sessionName, feedback);
                     if (revision !== sequence || current !== state) return;
                     if (julesState === 'AWAITING_PLAN_APPROVAL') {
+                        const livePair = getPair();
+                        state.pair.conversation = livePair.conversation;
+                        state.pair.sessions = livePair.sessions;
                         state.pair.conversation.metadata ||= {};
                         state.pair.conversation.metadata.claudePlanFeedbackCount =
                             Number(state.pair.conversation.metadata.claudePlanFeedbackCount || 0) + 1;
                         window.NeuralChatCore?.saveSessions?.('claude_chat_sessions', state.pair.sessions);
                     }
                     state.rounds++;
+                    saveProgress(state, true);
                     setStatus('🤖 Claude envió feedback a Jules (' + state.rounds + '/' + state.maxRounds + ').');
                 } else {
                     setStatus('🤖 Claude revisó la actividad y decidió esperar. Jules: ' + (julesState || 'sin estado') + '.');
@@ -504,6 +562,9 @@
             }
         } catch (error) {
             if (state.mode === 'claude') {
+                persistAnalysis(state.pair, '', '[ERROR DEL SUPERVISOR CLAUDE]\n' + redactSensitive(error.message), {
+                    bridge_action: 'supervisor_error'
+                });
                 window.HypenosysTaskOrchestrator?.pauseForHuman?.('Error del supervisor Claude: ' + error.message);
             }
             stop('error: ' + error.message);
@@ -519,6 +580,12 @@
             const sid = pair.sessionName.split('/').pop();
             const storedMode = localStorage.getItem('hy_jules_supervision_mode_' + sid);
             const mode = options.supervisorMode === 'claude' || storedMode === 'claude' ? 'claude' : 'review';
+            const saved = options.resume === true ? readProgress(pair) : null;
+            const resumeAuthorized = options.resume === true && storedMode === 'claude' && saved?.enabled !== false;
+            if (options.resume === true && !resumeAuthorized) {
+                setStatus('Supervisor Claude en pausa. Pulsa Reanudar para iniciar otra revisión explícita.');
+                return;
+            }
             if (mode === 'claude' && !window.julesApi?.approvePlan) {
                 throw new Error('La API de Jules no admite aprobación de planes para supervisión Claude.');
             }
@@ -529,7 +596,7 @@
                 orchestratorState?.enabled && taskContext?.id &&
                 String(orchestratorState.currentTaskId || '') === String(taskContext.id);
             const explicitClaudeLaunch = options.explicitLaunch === true && storedMode === 'claude';
-            if (!orchestratorAuthorized && !explicitClaudeLaunch) {
+            if (!orchestratorAuthorized && !explicitClaudeLaunch && !resumeAuthorized) {
                 const prompt = mode === 'claude'
                     ? 'Activar SUPERVISOR CLAUDE para esta sesión? Claude podrá revisar y aprobar planes seguros o pedir ajustes. Ante riesgos/ambigüedad se detendrá y pedirá decisión humana. Nunca autoriza merge ni despliegue.'
                     : 'Activar colaboración Claude ↔ Jules para esta sesión (máximo 3 respuestas automáticas)? Solo feedback técnico, sin aprobación de planes, merge ni despliegues.';
@@ -537,12 +604,17 @@
             }
 
             const state = {
-                pair, mode, seen:new Set(), rounds:0, lastDecisionKey:'',
+                pair, mode, seen:new Set(), rounds: Number(saved?.rounds || 0), lastDecisionKey: saved?.lastDecisionKey || '',
                 maxRounds: mode === 'claude' ? CLAUDE_SUPERVISOR_MAX_ROUNDS : MAX_ROUNDS,
                 leaseKey:'hy_jules_claude_bridge_lock_' + sid
             };
+            if (resumeAuthorized && state.rounds >= state.maxRounds) {
+                setStatus('Supervisor Claude en pausa: límite de decisiones alcanzado.');
+                return;
+            }
             if (!maintainLease(state)) throw new Error('Ya se está coordinando esta sesión desde otra pestaña.');
             current = state;
+            saveProgress(state, true);
             const revision = ++sequence;
             busy = true;
             setStatus(mode === 'claude'
@@ -558,7 +630,7 @@
             } finally { busy = false; }
             if (current !== state) return;
             setStatus(mode === 'claude'
-                ? '🤖 Supervisor Claude activo (0/' + state.maxRounds + '). Escalará lo sensible al usuario.'
+                ? '🤖 Supervisor Claude activo (' + state.rounds + '/' + state.maxRounds + '). Escalará lo sensible al usuario.'
                 : 'Auto activado (0/' + state.maxRounds + '). Esperando actividad NUEVA de Jules...');
             timer = setInterval(() => { void pollOnce(); }, POLL_MS);
             // Important when the bridge is resumed while Jules is already waiting
@@ -569,11 +641,25 @@
         }
     }
 
+    async function resume() {
+        if (current && !comparable(current.pair)) stop('cambio de conversación o sesión', true);
+        if (current || busy) return;
+        try {
+            const pair = getPair();
+            const sid = pair.sessionName.split('/').pop();
+            // The persisted launch policy is explicit authorization for THIS
+            // linked session only. Human/review modes are never upgraded.
+            if (localStorage.getItem('hy_jules_supervision_mode_' + sid) !== 'claude') return;
+            await start({ resume: true });
+        } catch (error) { setStatus('Supervisor Claude: ' + error.message); }
+    }
+
     window.JulesClaudeBridge = {
-        start, stop, pollOnce, analyzeLatest,
+        start, stop, pollOnce, analyzeLatest, resume,
         getState: () => ({ enabled: !!current, rounds: current?.rounds || 0,
+            maxRounds: current?.maxRounds || 0, status: lastStatus,
             mode: current?.mode || null, sessionId: current?.pair.sessionName || null, busy })
     };
-    window.addEventListener('pagehide', () => stop('página cerrada'));
+    window.addEventListener('pagehide', () => stop('página cerrada', true));
     setStatus('Disponible: revisión manual o 🤖 supervisor Claude.');
 })();

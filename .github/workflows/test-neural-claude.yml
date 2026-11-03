@@ -11,6 +11,8 @@ on:
       - 'tests/test_anthropic_model_discovery.js'
       - 'tests/test_neural_claude_smoke.js'
       - 'tests/test_jules_claude_bridge.js'
+      - 'tests/test_jules_bridge_resume.js'
+      - 'tests/verify_jules_chat_scroll.spec.js'
       - 'tests/test_jules_task_handoff.js'
       - 'tests/test_jules_first_message.js'
       - 'tests/test_jules_launch_lifecycle.js'
@@ -51,6 +53,8 @@ on:
       - 'tests/test_anthropic_model_discovery.js'
       - 'tests/test_neural_claude_smoke.js'
       - 'tests/test_jules_claude_bridge.js'
+      - 'tests/test_jules_bridge_resume.js'
+      - 'tests/verify_jules_chat_scroll.spec.js'
       - 'tests/test_jules_task_handoff.js'
       - 'tests/test_jules_first_message.js'
       - 'tests/test_jules_launch_lifecycle.js'
@@ -96,8 +100,8 @@ jobs:
           node-version: '22'
       - run: npm ci
       - run: npx playwright install --with-deps chromium
-      - name: Verify selection at desktop and mobile widths with 130% zoom
-        run: npx playwright test tests/verify_neural_message_actions.spec.js --workers=1 --reporter=line
+      - name: Verify selection and chat scroll at desktop and mobile widths with 130% zoom
+        run: npx playwright test tests/verify_neural_message_actions.spec.js tests/verify_jules_chat_scroll.spec.js --workers=1 --reporter=line
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -122,6 +126,8 @@ jobs:
         run: node tests/test_anthropic_pages_proxy.js
       - name: Jules and Claude bridge guardrails
         run: node tests/test_jules_claude_bridge.js
+      - name: Restore authorized Claude supervision and preserve review state
+        run: node tests/test_jules_bridge_resume.js
       - name: Dashboard to Jules to Claude handoff contracts
         run: node tests/test_jules_task_handoff.js
       - name: Jules first message and branch-resolution contracts

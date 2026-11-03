@@ -326,10 +326,11 @@ window.setNeuralWorkspaceMode = function(mode, options = {}) {
 
     window.persistNeuralWorkspaceState();
 
-    if (window.neuralSyncChannel) {
+    if (window.neuralSyncChannel && !options.skipBroadcast) {
         window.neuralSyncChannel.postMessage({ type: 'workspace-mode-changed', mode: mode, sessionId: window.currentJulesPanelSessionId });
     }
     window.NeuralPanelUI?.render();
+    void window.JulesClaudeBridge?.resume?.();
 };
 
 window.selectLinkedClaudeConversation = function(conversationId, options = {}) {
@@ -344,6 +345,7 @@ window.selectLinkedClaudeConversation = function(conversationId, options = {}) {
         window.NeuralWorkspaceState.activeJulesSessionId = linkedJulesId;
     }
     window.persistNeuralWorkspaceState();
+    void window.JulesClaudeBridge?.resume?.();
 
     // Re-render
     if (window.NeuralWorkspaceState.activeMode === 'claude') {
@@ -371,6 +373,7 @@ window.selectLinkedJulesSession = function(julesSessionId, options = {}) {
     window.NeuralWorkspaceState.activeJulesSessionId = cleanJulesId;
 
     window.persistNeuralWorkspaceState();
+    void window.JulesClaudeBridge?.resume?.();
 
     if (window.NeuralWorkspaceState.activeMode === 'jules') {
         if (cleanJulesId) {
@@ -853,7 +856,7 @@ window.initJulesPanelNeuralChat = function() {
             }
 
             window.restoreNeuralWorkspaceState();
-            window.setNeuralWorkspaceMode(window.NeuralWorkspaceState.activeMode);
+            window.setNeuralWorkspaceMode(window.NeuralWorkspaceState.activeMode, { skipBroadcast: true });
         }
     });
 
@@ -875,7 +878,7 @@ window.initJulesPanelNeuralChat = function() {
             }
         } else {
             window.restoreNeuralWorkspaceState();
-            window.setNeuralWorkspaceMode(window.NeuralWorkspaceState.activeMode);
+            window.setNeuralWorkspaceMode(window.NeuralWorkspaceState.activeMode, { skipBroadcast: true });
         }
     };
 
@@ -1365,6 +1368,9 @@ window.renderChatV2Messages = function() {
     if (!container) return;
 
     const session = window.julesPanelSessions.find(s => s.id === window.currentJulesPanelSessionId);
+    const previousScrollTop = container.scrollTop;
+    const changedConversation = container._renderedClaudeId !== session?.id;
+    const followLatest = changedConversation || container.scrollHeight - previousScrollTop - container.clientHeight < 80;
 
     // Update Premium Claude Linking Status Bar
     const bar = document.getElementById('claude-linking-bar');
@@ -1488,7 +1494,18 @@ window.renderChatV2Messages = function() {
         }
     }
 
-    if (!session) return;
+    if (!session) {
+        container.innerHTML = '';
+        container._renderedClaudeId = null;
+        container._renderedClaudeSignature = null;
+        return;
+    }
+
+    // Polling and cross-tab notifications often carry an unchanged transcript.
+    // Keep its DOM intact so reading, text selection and open details survive.
+    const signature = JSON.stringify([session.messages,
+        [...window._selectedClaudeMessageKeys].filter(key => key.startsWith(session.id + ':'))]);
+    if (!changedConversation && container._renderedClaudeSignature === signature) return;
 
     const welcome = container.querySelector('#v2-welcome-screen');
     if (session.messages.length > 0) {
@@ -1621,7 +1638,9 @@ window.renderChatV2Messages = function() {
         container.appendChild(div);
     });
 
-    container.scrollTop = container.scrollHeight;
+    container._renderedClaudeId = session.id;
+    container._renderedClaudeSignature = signature;
+    container.scrollTop = followLatest ? container.scrollHeight : previousScrollTop;
     window.updateJulesSelectionBar('claude');
 }
 
@@ -2804,4 +2823,3 @@ window.loadLinkedJulesHistoryForConversation = function(conversation) {
 
     window.loadAndRenderJulesSession(linkedId, true);
 }
-
