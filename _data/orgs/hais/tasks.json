@@ -600,7 +600,7 @@
       "descripcion": "Definir modelos Pydantic versionados para MarketBar, Signal, Thesis, RiskAssessment, PaperOrder, PaperFill y DecisionTrace; incluir timestamps UTC, source, currency, precision, idempotency_key y validación de instrumentos.",
       "tema_principal": "HAIS-001 / product",
       "prioridad": "High",
-      "estado": "Fixed",
+      "estado": "OK",
       "completitud": 1,
       "task_type": "feature",
       "resuelto_por": "",
@@ -4384,6 +4384,11 @@
   "last_updated_by": "Sistema",
   "_audit_log": [
     {
+      "action": "chore: actualizar estado tarea #900011 → OK",
+      "user": "haopengwang123",
+      "timestamp": "2026-11-03T20:36:58.273Z"
+    },
+    {
       "action": "chore: actualizar tarea 900011",
       "user": "haopengwang123",
       "timestamp": "2026-11-03T20:34:26.294Z"
@@ -4729,5 +4734,5 @@
       ]
     }
   ],
-  "last_updated": "2026-11-03T20:34:26.294Z"
+  "last_updated": "2026-11-03T20:36:58.273Z"
 }
