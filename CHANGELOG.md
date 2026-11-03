@@ -3,6 +3,9 @@
 ## [Unreleased]
 
 ### Fixed
+- **Jules Panel chat and Claude supervision**: Preserve the reader's scroll position during polling and streaming, avoid rebuilding unchanged transcripts, and prevent reflected workspace broadcasts. Restore previously authorized Claude supervision after reload while preserving manual pauses, reviewed plan versions, decision limits and session isolation. Save review output to the current conversation after cross-tab refreshes, persist review errors, and display the actual supervision policy and limit.
+
+### Fixed
 - **Claude Neural Chat**: Preserve the in-flight conversation during cross-tab synchronization so Claude replies remain visible and persisted. Optional task-context preparation is bounded and failures before the provider are saved in the transcript. Keep message selection inside each bubble, visible and keyboard accessible, removing the floating hover artifact. Refresh the standalone script cache versions.
 
 ### Changed

@@ -59,9 +59,18 @@
         const branch = session?.sourceContext?.githubRepoContext?.startingBranch || context?.rama || '—';
         const taskTitle = context?.titulo || context?.title || session?.title || session?.prompt
             || (sid ? conversation?.metadata?.linkedJulesTaskTitle : '') || 'Sin tarea vinculada';
+        const bridge = window.JulesClaudeBridge?.getState?.();
+        const bridgeMatches = !!sid && cleanId(bridge?.sessionId) === sid;
+        const bridgeActive = bridgeMatches && bridge.enabled;
+        const supervisionMode = sid ? localStorage.getItem('hy_jules_supervision_mode_' + sid) : null;
+        const supervisorLabel = bridgeActive
+            ? (bridge.mode === 'claude' ? 'Claude · Activo' : 'Revisión · Activa')
+            : supervisionMode === 'claude' ? 'Claude · En pausa'
+            : supervisionMode === 'human' ? 'Humana' : 'Sin supervisor activo';
         const details = [
             ['Repositorio', repo], ['Rama', branch], ['Prioridad', context?.prioridad || context?.priority || '—'],
             ['Modo', sid ? (isClaude || window.resolveLinkedClaudeConversationId?.(sid) ? 'Claude + Jules' : 'Jules') : 'Claude'],
+            ['Supervisión', supervisorLabel],
             ['Creada', date(session?.createTime)], ['Actualizada', date(session?.updateTime)]
         ];
         html('neural-task-overview', (sid ? '<strong>#' + escape(context?.id || sid) + '</strong> ' + status(session?.state) : '')
@@ -93,9 +102,12 @@
         html('neural-operational-summary', counts.map(([label, count, icon]) => '<div class="neural-summary-item"><i class="fas fa-' + icon + '" aria-hidden="true"></i><div><strong>' + count + '</strong>' + label + '</div></div>').join(''));
         const recent = [...sessions].sort((a, b) => (Date.parse(b.updateTime || b.createTime) || 0) - (Date.parse(a.updateTime || a.createTime) || 0)).slice(0, 4);
         html('neural-recent-activity', recent.length ? recent.map(s => '<div class="neural-recent-item"><span title="' + escape(s.title || s.prompt) + '">' + escape(s.title || s.prompt || cleanId(s.name)) + '</span><time>' + escape(date(s.updateTime || s.createTime)) + '</time></div>').join('') : 'Sin actividad reciente.');
-        const bridge = window.JulesClaudeBridge?.getState?.();
-        text('neural-auto-state', bridge?.enabled ? 'Activo · ' + bridge.rounds + '/3' : 'Desactivado');
-        $('neural-auto-state').classList.toggle('running', !!bridge?.enabled);
+        text('neural-auto-state', bridgeActive ? 'Activo · ' + bridge.rounds + '/' + (bridge.maxRounds || 3) : 'En pausa');
+        $('neural-auto-state').classList.toggle('running', !!bridgeActive);
+        text('jules-claude-bridge-start', supervisionMode === 'claude' ? 'Reanudar supervisor Claude' : 'Iniciar revisión (máx. 3)');
+        text('neural-supervision-policy', supervisionMode === 'claude'
+            ? 'Claude revisa cada plan y puede aprobarlo o pedir ajustes. Se pausa ante decisiones humanas. Máximo 8 decisiones por activación.'
+            : 'La vinculación no aprueba planes. Inicia una revisión para analizar la salida; la aprobación sigue siendo humana.');
         const config = window.getActiveConfig?.();
         text('neural-composer-model', isClaude ? config?.model || config?.name || 'Configurar modelo' : 'Jules');
         $('neural-docs-toggle').setAttribute('aria-pressed', String(!!window.isDocsEnabled));
@@ -157,3 +169,4 @@
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
     else init();
 })();
+
