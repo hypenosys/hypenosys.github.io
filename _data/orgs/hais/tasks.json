@@ -779,8 +779,15 @@
       "emails_asignados": [],
       "images": [],
       "blocks": [],
-      "jules_session": null,
-      "assignee_proposed": "jules"
+      "jules_session": {
+        "session_id": "9844673159384939790",
+        "initiated_by": "haopengwang123",
+        "supervision": "claude",
+        "status": "QUEUED",
+        "updated_at": "2026-11-03T20:34:25.728Z"
+      },
+      "assignee_proposed": "jules",
+      "updated_at": "2026-11-03T20:34:26.294Z"
     },
     {
       "id": 900012,
@@ -4377,6 +4384,11 @@
   "last_updated_by": "Sistema",
   "_audit_log": [
     {
+      "action": "chore: actualizar tarea 900011",
+      "user": "haopengwang123",
+      "timestamp": "2026-11-03T20:34:26.294Z"
+    },
+    {
       "action": "chore: actualizar estado tarea #900010 → OK",
       "user": "haopengwang123",
       "timestamp": "2026-11-03T20:32:36.718Z"
@@ -4717,5 +4729,5 @@
       ]
     }
   ],
-  "last_updated": "2026-11-03T20:32:36.718Z"
+  "last_updated": "2026-11-03T20:34:26.294Z"
 }
