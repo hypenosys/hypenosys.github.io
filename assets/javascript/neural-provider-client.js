@@ -230,24 +230,20 @@ window.NeuralProviderClient = (function() {
                         if (data.type === 'error') {
                             throw new Error(`Anthropic streaming error: ${data.error?.type || 'unknown'}`);
                         }
-                        try {
-                            let contentDelta = '';
-                            let thinkingDelta = '';
-
-                            if (window.NeuralThinkingParser && parseState) {
-                                const parsed = window.NeuralThinkingParser.parseChunk(provider, data, parseState);
-                                thinkingDelta = parsed.thinkingDelta;
-                                contentDelta = parsed.contentDelta;
-                            } else {
-                                contentDelta = data.choices?.[0]?.delta?.content || '';
-                            }
-
-                            if (contentDelta || thinkingDelta) {
-                                aiContent += contentDelta;
-                                if (onToken) onToken(contentDelta, aiContent, { thinkingDelta });
-                            }
-                        } catch (e) {
-                            console.warn('[NeuralProviderClient] JSON parse error in stream:', e);
+                        // Parsing or rendering errors must not be swallowed as malformed JSON.
+                        // That previously left the Claude bubble empty without telling the user.
+                        let contentDelta = '';
+                        let thinkingDelta = '';
+                        if (window.NeuralThinkingParser && parseState) {
+                            const parsed = window.NeuralThinkingParser.parseChunk(provider, data, parseState);
+                            thinkingDelta = parsed.thinkingDelta || '';
+                            contentDelta = parsed.contentDelta || '';
+                        } else {
+                            contentDelta = data.delta?.text || data.choices?.[0]?.delta?.content || '';
+                        }
+                        if (contentDelta || thinkingDelta) {
+                            aiContent += contentDelta;
+                            if (onToken) onToken(contentDelta, aiContent, { thinkingDelta });
                         }
                     }
                 }
@@ -259,6 +255,9 @@ window.NeuralProviderClient = (function() {
             }
 
             if (requestTimeout && typeof clearTimeout !== 'undefined') clearTimeout(requestTimeout);
+            if (!String(aiContent || '').trim()) {
+                throw new Error('El proveedor terminó sin devolver texto visible. Comprueba el modelo, el streaming y los eventos de Anthropic; no se guardará una respuesta vacía.');
+            }
 
             console.log('[NeuralProviderClient] Done');
             if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] provider response text:", aiContent);
