@@ -1550,8 +1550,20 @@ window.renderChatV2Messages = function() {
         // does not flatten an AWAITING_PLAN_APPROVAL event into an unreadable paragraph.
         const planSteps = isJules && Array.isArray(msg.jules_plan_steps) ? msg.jules_plan_steps : [];
         const linkedPlanSessionId = window.resolveLinkedJulesId(session);
-        let renderedContent = isAssistant && !isJules && window.marked
-            ? marked.parse(msg.content) : window.NeuralChatCore.escapeHtml(msg.content);
+        const rawBody = typeof msg.content === 'string' ? msg.content :
+            window.extractJulesActivityText(msg.content);
+        let renderedContent;
+        if (isAssistant && !isJules && window.marked?.parse && window.DOMPurify?.sanitize) {
+            try {
+                renderedContent = window.DOMPurify.sanitize(window.marked.parse(rawBody || '', { breaks: true }));
+            } catch (error) {
+                console.warn('[JulesPanel] Claude Markdown render failed', error);
+            }
+        }
+        if (renderedContent === undefined) {
+            renderedContent = '<div style="white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.65">' +
+                window.NeuralChatCore.escapeHtml(rawBody || '') + '</div>';
+        }
 
         if (planSteps.length) {
             const stepsHtml = planSteps.map((step, stepIdx) => {
@@ -2245,11 +2257,7 @@ window.extractJulesActivityText = function(value) {
     if (typeof value === 'number' || typeof value === 'boolean') return String(value);
 
     if (Array.isArray(value)) {
-        return value.map(item => {
-            if (typeof item === 'string') return item;
-            if (!item || typeof item !== 'object') return '';
-            return item.text || item.content || item.message || item.value || '';
-        }).filter(Boolean).join('\n');
+        return value.map(item => window.extractJulesActivityText(item)).filter(Boolean).join('\n');
     }
 
     if (typeof value === 'object') {
@@ -2279,7 +2287,9 @@ window.normalizeJulesActivity = function(raw, sessionId) {
 
     // Resolve createTime
     const rawTime = act.createTime || act.create_time || act.timestamp || act.updateTime || act.update_time || act.createdAt || act.created_at;
-    act.createTime = rawTime ? new Date(rawTime).toISOString() : new Date().toISOString();
+    const parsedTime = rawTime ? new Date(rawTime) : null;
+    act.createTime = parsedTime && !Number.isNaN(parsedTime.getTime()) ?
+        parsedTime.toISOString() : new Date().toISOString();
 
     // Resolve id
     if (!act.id) {
@@ -2387,7 +2397,7 @@ window.renderJulesActivityToHTML = function(act) {
     if (typeof window.renderActivityLine === 'function') {
         return window.renderActivityLine(act);
     }
-    return `<div class="jules-activity-entry"><div>${act.description || ''}</div></div>`;
+    return `<div class="jules-activity-entry"><div style="white-space:pre-wrap;overflow-wrap:anywhere">${window.NeuralChatCore.escapeHtml(act.description || '')}</div></div>`;
 }
 
 window.clearLinkedJulesHistory = function() {
