@@ -3592,6 +3592,10 @@
         {
           "label": "Catalogo HAIS",
           "url": "https://github.com/hypenosys/HAIS/blob/develop/src/hais/markets.py"
+        },
+        {
+          "label": "PR HAIS #10 · catálogo China 10Y y Brent (pendiente CI)",
+          "url": "https://github.com/hypenosys/HAIS/pull/10"
         }
       ],
       "comments": [
@@ -3604,6 +3608,11 @@
           "author_login": "Codex",
           "timestamp": "2026-11-01T19:32:20.498Z",
           "body": "Instrucción del usuario: proceder con el mínimo de datos mock necesarios. Esta actualización prevalece sobre comentarios anteriores que proponían mocks primero."
+        },
+        {
+          "author_login": "HAIS review",
+          "timestamp": "2026-11-03T08:52:57Z",
+          "body": "2026-11-03: PR HAIS #10 abierto: catálogo de instrumentos China 10Y (TVC:CN10Y) y Brent (TVC:UKOIL) etiquetados como widget-only, sin feed propio, precios ni órdenes. Tests offline añadidos; CI del PR aún sin resultado verificado. No supone contratación/licencia ni disponibilidad de cotizaciones. Tarea sigue WORKING y 0% hasta evaluación y aprobación del proveedor."
         }
       ],
       "change_log": [
@@ -3811,6 +3820,10 @@
         {
           "label": "FRED DGS10 · fuente primaria",
           "url": "https://fred.stlouisfed.org/series/DGS10"
+        },
+        {
+          "label": "Último deploy dev confirmado por GitHub Actions · 2026-11-02",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/actions/runs/41514717512"
         }
       ],
       "comments": [
@@ -3823,6 +3836,11 @@
           "author_login": "HAIS review",
           "timestamp": "2026-11-02T09:08:31.680Z",
           "body": "Revisión 2026-11-02: PR #441 fusionado en develop; Playwright (terminal PAPER y mercados) y comprobación de CHANGELOG verdes. El frontend ahora rechaza cotizaciones de gateway con fuente no CoinGecko, moneda distinta de USD, tipo inválido o símbolos duplicados, y fechas FRED futuras/imposibles; los tests de degradación se ejecutan con fixtures aisladas. FRED oficial mostraba DGS2=4,61 % y DGS10=4,98 % con observación 2026-10-29, actualización 2026-10-30 y próxima publicación 2026-11-02 (no son lecturas de HAIS). Pendiente telemetría real de frescura/429, monitorización periódica y smoke público del gateway. No se han comprobado cotizaciones en vivo ni activado LIVE."
+        },
+        {
+          "author_login": "HAIS review",
+          "timestamp": "2026-11-03T08:52:57Z",
+          "body": "2026-11-03: develop HAIS en 794e42e (CI success 41345381152); develop web en 4c6819c (deploy dev GitHub Actions success 41514717512, 2026-11-02). Las peticiones directas a dev.hypenosys.com/hais/ y /hais/estado/ no fueron accesibles desde este entorno; sin HTTP público comprobado ni evidencia de frescura real de TradingView, FRED o CoinGecko. No se declara incidencia pública ni precios actuales. Pendientes gateway protegido, telemetría de latencia/429 y licencias para índices/commodities. Alcance PAPER."
         }
       ],
       "change_log": [],
@@ -4220,8 +4238,13 @@
       "assignee_proposed": "human"
     }
   ],
-  "last_updated_by": "Sistema",
+  "last_updated_by": "HAIS review 2026-11-03",
   "_audit_log": [
+    {
+      "action": "HAIS daily review: link PR #10 widget-only coverage and verify latest develop CI/deploy, no source smoke claimed",
+      "user": "HAIS review",
+      "timestamp": "2026-11-03T08:52:57Z"
+    },
     {
       "action": "chore: actualizar estado tarea #900007 → OK",
       "user": "haopengwang123",
