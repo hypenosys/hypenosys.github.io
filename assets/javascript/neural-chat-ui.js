@@ -78,6 +78,24 @@ window.prepareSelectedNeuralMessagesForJules = function() {
     window.handoffClaudeToJules?.(excerpt, '', task, session);
 };
 
+// A bad/partial Markdown chunk must never prevent the complete conversation
+// from rendering. Escape fallback content instead of injecting provider HTML.
+window.renderNeuralMessageBody = function(value, fromJules = false) {
+    const content = typeof value === 'string' ? value :
+        (Array.isArray(value) ? value.map(part => typeof part === 'string' ? part : (part?.text || '')).join('\n') : String(value ?? ''));
+    if (!content) return '';
+    const safeText = escapeHtml(content);
+    if (fromJules || !window.marked?.parse || !window.DOMPurify?.sanitize) {
+        return '<div style="white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.65">' + safeText + '</div>';
+    }
+    try {
+        return window.DOMPurify.sanitize(window.marked.parse(content, { breaks: true }));
+    } catch (error) {
+        console.warn('[NeuralChat] Markdown render error, using readable fallback', error);
+        return '<div style="white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.65">' + safeText + '</div>';
+    }
+};
+
 window.renderMessages = function() {
     const currentSession = window.sessions.find(s => s.id === window.currentSessionId);
     if (!currentSession) {
@@ -236,7 +254,7 @@ window.renderMessages = function() {
                 ` : ''}
                 ${reasoningHtml}
                 <div class="prose prose-invert text-sm prose-pre:bg-[#1e1f29] prose-pre:border prose-pre:border-[#44475a] selection:bg-[#bd93f9]/30">
-                    ${content ? (isJules ? escapeHtml(content).replace(/\n/g, '<span class="block"></span>') : marked.parse(content)) : ''}
+                    ${window.renderNeuralMessageBody(content, isJules)}
                 </div>
 
                 ${docsSourcesHtml}
