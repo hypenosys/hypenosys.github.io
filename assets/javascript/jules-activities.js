@@ -231,40 +231,26 @@ const JulesActivitiesModule = (() => {
       }
     }
 
-    // Helper to decode entities once, escape, and parse code blocks safely
-    const renderTextContent = (text) => {
-      if (!text) return '';
+    // Render untrusted Jules output as readable text. Markdown is only enabled when
+    // a sanitizer is available; otherwise use safe escaped text and preserve newlines.
+    const renderTextContent = (value) => {
+      const text = typeof value === 'string' ? value :
+        (typeof window.extractJulesActivityText === 'function' ? window.extractJulesActivityText(value) : String(value ?? ''));
+      if (!text.trim()) return '<span style="opacity:.65">Sin contenido de texto</span>';
       const decoded = window.decodeHtmlEntities ? window.decodeHtmlEntities(text) : text;
-      let escaped = window.escapeHtml ? window.escapeHtml(decoded) : decoded;
+      const escaped = window.escapeHtml ? window.escapeHtml(decoded) :
+        String(decoded).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-      // Escape code inside ``` blocks safely
-      escaped = escaped.replace(/```([\s\S]*?)```/g, function(match, code) {
-        const lines = code.trim().split('\n');
-        let lang = "";
-        if (lines[0] && lines[0].length < 10 && !lines[0].includes(' ')) {
-          lang = lines.shift();
+      if (window.marked?.parse && window.DOMPurify?.sanitize) {
+        try {
+          return '<div class="jules-output-markdown" style="overflow-wrap:anywhere;word-break:normal;line-height:1.65">' +
+            window.DOMPurify.sanitize(window.marked.parse(decoded, { breaks: true })) + '</div>';
+        } catch (error) {
+          console.warn('[JulesActivities] Markdown rendering failed; using escaped output', error);
         }
-        const cleanCode = lines.join('\n');
-        return `<pre class="code-block" data-lang="${lang}"><code>${cleanCode}</code></pre>`;
-      });
-
-      escaped = escaped.replace(/`([^`]+)`/g, '<code class="u-mono">$1</code>');
-
-      const paragraphs = escaped.split('\n\n').map(p => {
-        const lines = p.split('\n').map(line => {
-            if (line.startsWith('- ') || line.startsWith('* ')) {
-                return `<li>${line.substring(2)}</li>`;
-            }
-            return line;
-        }).join('<br>');
-
-        if (lines.includes('<li>')) {
-            return `<ul>${lines}</ul>`;
-        }
-        return `<p>${lines}</p>`;
-      }).join('');
-
-      return paragraphs;
+      }
+      return '<div class="jules-output-text" style="white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.65">' +
+        escaped + '</div>';
     };
 
     let content = '';
@@ -353,7 +339,7 @@ const JulesActivitiesModule = (() => {
             <span class="activity-originator entry-originator">${displayName}</span>
             <span class="activity-time entry-time">${time}</span>
           </div>
-          <div class="activity-content entry-content">${content}</div>
+          <div class="activity-content entry-content" style="min-width:0;max-width:100%;overflow-wrap:anywhere;line-height:1.6">${content}</div>
           ${extraHTML ? `<div class="entry-extra">${extraHTML}</div>` : ''}
           ${actionBtn}
         </div>
