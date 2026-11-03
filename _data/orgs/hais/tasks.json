@@ -359,8 +359,15 @@
       "emails_asignados": [],
       "images": [],
       "blocks": [],
-      "jules_session": null,
-      "assignee_proposed": "jules"
+      "jules_session": {
+        "session_id": "11012202873959685034",
+        "initiated_by": "haopengwang123",
+        "supervision": "claude",
+        "status": "QUEUED",
+        "updated_at": "2026-11-03T18:00:56.657Z"
+      },
+      "assignee_proposed": "jules",
+      "updated_at": "2026-11-03T18:00:57.245Z"
     },
     {
       "id": 900009,
@@ -4250,6 +4257,11 @@
   "last_updated_by": "HAIS review 2026-11-03",
   "_audit_log": [
     {
+      "action": "chore: actualizar tarea 900008",
+      "user": "haopengwang123",
+      "timestamp": "2026-11-03T18:00:57.245Z"
+    },
+    {
       "action": "HAIS daily review: link PR #10 widget-only coverage and verify latest develop CI/deploy, no source smoke claimed",
       "user": "HAIS review",
       "timestamp": "2026-11-03T08:52:57Z"
@@ -4550,5 +4562,5 @@
       ]
     }
   ],
-  "last_updated": "2026-11-02T19:53:01.009Z"
+  "last_updated": "2026-11-03T18:00:57.245Z"
 }
