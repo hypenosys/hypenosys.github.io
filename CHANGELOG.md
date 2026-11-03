@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Fixed
+- **Claude Neural Chat**: Preserve the in-flight conversation during cross-tab synchronization so Claude replies remain visible and persisted. Optional task-context preparation is bounded and failures before the provider are saved in the transcript. Keep message selection inside each bubble, visible and keyboard accessible, removing the floating hover artifact. Refresh the standalone script cache versions.
+
 ### Changed
 - **HAIS market evidence (2026-11-03)**: Linked the tested China 10Y/Brent widget-only catalog fix and latest verified CI/deploy runs in the HAIS Kanban; real provider freshness and the protected gateway remain unverified. PAPER-only.
 
@@ -31,5 +34,6 @@ Todas las actualizaciones notables de Hypenosys se documentarán en este archivo
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
+
 
 
