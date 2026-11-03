@@ -7,6 +7,165 @@ const JulesActivitiesModule = (() => {
   let _pollInterval = null;
   let _renderedIds = new Set();
   const POLL_MS = 5000;
+  const _reconciledTerminalSessions = new Set();
+
+  function _escapeAttr(value) {
+    return String(value || '')
+      .replace(/&/g, '&amp;')
+      .replace(/"/g, '&quot;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  function _appendCompletionEvidence(task, pr) {
+    const container = _getHistoryContainer();
+    if (!container || !pr?.html_url) return;
+    const evidenceId = 'jules-pr-evidence-' + _sessionId;
+    if (document.getElementById(evidenceId)) return;
+
+    const row = document.createElement('div');
+    row.id = evidenceId;
+    row.className = 'jules-activity-entry jules-timeline-entry jules-state-success';
+    row.innerHTML = `
+      <span class="entry-icon">🔗</span>
+      <div class="entry-body">
+        <div class="entry-header">
+          <span class="activity-originator entry-originator">GITHUB</span>
+          <span class="activity-time entry-time">PR #${pr.number}</span>
+        </div>
+        <div class="activity-content entry-content">
+          Resultado de Jules listo para revisión:
+          <a href="${_escapeAttr(pr.html_url)}" target="_blank" rel="noopener noreferrer"
+             style="color:var(--accent2,#c084fc);font-weight:700;text-decoration:underline;">
+            PR #${pr.number} ↗
+          </a>
+          ${task?.id ? ` · tarea #${task.id} movida a In Review` : ''}
+        </div>
+      </div>`;
+    container.appendChild(row);
+    container.scrollTop = container.scrollHeight;
+  }
+
+  async function _findPullRequestForSession(task) {
+    const repoFullName = String(task?.repository || task?.repo || '').replace('sources/github/', '');
+    if (!repoFullName.includes('/')) return null;
+
+    const token = window.githubApi?.getAuthToken?.();
+    if (!token) return null;
+
+    const sessionId = String(_sessionId || '');
+    const taskId = task?.id ? String(task.id) : '';
+    const url = `https://api.github.com/repos/${repoFullName}/pulls?state=all&per_page=50&sort=updated&direction=desc`;
+    const res = await fetch(url, {
+      headers: {
+        Authorization: 'Bearer ' + token,
+        Accept: 'application/vnd.github+json'
+      }
+    });
+    if (!res.ok) throw new Error(`GitHub PR lookup failed: HTTP ${res.status}`);
+
+    const pulls = await res.json();
+    return pulls.find(pr => {
+      const body = String(pr.body || '');
+      const title = String(pr.title || '');
+      const head = String(pr.head?.ref || '');
+      return (sessionId && (body.includes(sessionId) || head.includes(sessionId))) ||
+             (taskId && title.includes('#' + taskId));
+    }) || null;
+  }
+
+  async function _reconcileTerminalSession(terminalState) {
+    if (!_sessionId || _reconciledTerminalSessions.has(_sessionId)) return;
+    _reconciledTerminalSessions.add(_sessionId);
+
+    try {
+      const tasks = window.taskOps?.getAllTasks ? await window.taskOps.getAllTasks() : [];
+      const task = (tasks || []).find(t => String(t.jules_session?.session_id || '') === String(_sessionId));
+      if (!task) {
+        console.warn('[JulesActivities] Terminal session has no linked task', _sessionId);
+        return;
+      }
+
+      let pr = null;
+      if (terminalState === 'COMPLETED') {
+        try { pr = await _findPullRequestForSession(task); }
+        catch (e) { console.warn('[JulesActivities] PR reconciliation failed', e); }
+      }
+
+      const now = new Date().toISOString();
+      const currentJules = task.jules_session || {};
+      const nextJules = {
+        ...currentJules,
+        session_id: String(_sessionId),
+        status: terminalState,
+        updated_at: now,
+        completed_at: terminalState === 'COMPLETED' ? now : currentJules.completed_at,
+        failed_at: terminalState === 'FAILED' ? now : currentJules.failed_at
+      };
+
+      if (pr) {
+        nextJules.pr_number = pr.number;
+        nextJules.pr_url = pr.html_url;
+        nextJules.pr_state = pr.state;
+        nextJules.branch = pr.head?.ref || nextJules.branch;
+        nextJules.commit = pr.head?.sha || nextJules.commit;
+      }
+
+      const delta = { jules_session: nextJules };
+      if (terminalState === 'COMPLETED' && pr) {
+        // A PR abierta implica revisión, no finalización de la tarea.
+        if (!['OK', 'Completed', 'Closed'].includes(task.estado)) delta.estado = 'In Review';
+        const links = Array.isArray(task.external_links) ? [...task.external_links] : [];
+        if (!links.some(l => l?.url === pr.html_url)) {
+          links.push({ label: `Jules · PR #${pr.number}`, url: pr.html_url });
+        }
+        delta.external_links = links;
+      } else if (terminalState === 'FAILED') {
+        delta.estado = task.estado === 'Working' ? 'Pending' : task.estado;
+      }
+
+      if (window.taskOps?.updateTask) {
+        await window.taskOps.updateTask(task.id, delta);
+      }
+
+      // Archive the finished Jules execution both locally and in the shared panel state.
+      const cachedSession = (window.julesSessionsCache || []).find(s =>
+        String(s.name || '').endsWith('/' + _sessionId) || String(s.name || '') === String(_sessionId)
+      );
+      const localArchive = JSON.parse(localStorage.getItem('hy_neural_archive') || '{}');
+      localArchive[_sessionId] = {
+        ...(cachedSession || { name: 'sessions/' + _sessionId }),
+        state: terminalState === 'COMPLETED' ? 'COMPLETED' : 'FAILED',
+        taskId: task.id,
+        prUrl: pr?.html_url || null,
+        prNumber: pr?.number || null,
+        archivedAt: now
+      };
+      localStorage.setItem('hy_neural_archive', JSON.stringify(localArchive));
+
+      if (window.githubApi?.updateJulesGlobalArchive) {
+        await window.githubApi.updateJulesGlobalArchive(_sessionId, {
+          target: terminalState === 'COMPLETED' ? 'done' : 'error',
+          realCol: terminalState === 'COMPLETED' ? 'done' : 'error',
+          isTask: true,
+          taskId: task.id,
+          prUrl: pr?.html_url || null,
+          prNumber: pr?.number || null,
+          updatedAt: now
+        });
+      }
+
+      if (pr) _appendCompletionEvidence(task, pr);
+      if (window.refreshKanban) window.refreshKanban();
+      if (window.refreshDashboard) await window.refreshDashboard();
+      window.dispatchEvent(new CustomEvent('jules-session-reconciled', {
+        detail: { sessionId: _sessionId, taskId: task.id, status: terminalState, pr }
+      }));
+    } catch (e) {
+      _reconciledTerminalSessions.delete(_sessionId);
+      console.error('[JulesActivities] terminal reconciliation failed', e);
+    }
+  }
 
   function _getApiKey() {
     return typeof window.getJulesApiKey === 'function' ? window.getJulesApiKey() : (localStorage.getItem('jules_api_key') || '');
@@ -35,8 +194,13 @@ const JulesActivitiesModule = (() => {
       if (!res.ok) { console.warn('[JulesActivities] fetch error', res.status); return; }
       const data = await res.json();
       _renderActivities(data.activities || []);
-      const done = (data.activities || []).some(a => a.sessionCompleted || a.sessionFailed);
-      if (done) stopPolling();
+      const activities = data.activities || [];
+      const completed = activities.some(a => a.sessionCompleted);
+      const failed = activities.some(a => a.sessionFailed);
+      if (completed || failed) {
+        await _reconcileTerminalSession(completed ? 'COMPLETED' : 'FAILED');
+        stopPolling();
+      }
     } catch (e) {
       console.error('[JulesActivities] poll error', e);
     }
@@ -266,6 +430,7 @@ const JulesActivitiesModule = (() => {
     _sessionId = sessionId;
     _apiKey = _getApiKey();
     _renderedIds = new Set();
+    _reconciledTerminalSessions.delete(String(sessionId));
     if (!_apiKey) { console.warn('[JulesActivities] No API key'); return; }
     stopPolling();
     _fetchActivities();
