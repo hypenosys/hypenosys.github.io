@@ -141,7 +141,7 @@ window.NeuralChatCore = (function() {
             // Filter out empty messages and format for API
             const apiMessages = session.messages
                 .slice(0, -1)
-                .filter(m => m.content || m.raw)
+                .filter(m => !m.error && (m.content || m.raw))
                 .map(m => {
                     // Jules is an external actor: never pass its messages to Claude
                     // as if they were previous assistant replies.
@@ -200,17 +200,26 @@ window.NeuralChatCore = (function() {
                 },
                 onError: (err) => {
                     if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Neural Chat Core] provider error:", err.message);
-                    // Remove empty placeholder
-                    if (session.messages[assistantIdx] && !session.messages[assistantIdx].content) {
-                        session.messages.splice(assistantIdx, 1);
+                    const placeholder = session.messages[assistantIdx];
+                    if (placeholder) {
+                        placeholder.error = true;
+                        placeholder.errorMessage = err?.message || 'Error del proveedor';
+                        if (!placeholder.content) placeholder.content = 'No se ha recibido ninguna respuesta visible de Claude.';
                     }
+                    session.updatedAt = new Date().toISOString();
+                    if (saveCallback) saveCallback();
                     if (onError) onError(err);
                 }
             });
         } catch (e) {
-            if (!session.messages[assistantIdx].content) {
-                session.messages.splice(assistantIdx, 1);
+            const placeholder = session.messages[assistantIdx];
+            if (placeholder) {
+                placeholder.error = true;
+                placeholder.errorMessage = e?.message || 'Error del proveedor';
+                if (!placeholder.content) placeholder.content = 'No se ha recibido ninguna respuesta visible de Claude.';
             }
+            session.updatedAt = new Date().toISOString();
+            if (saveCallback) saveCallback();
             if (onError) onError(e);
         }
     }
