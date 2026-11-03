@@ -121,7 +121,7 @@ window.renderMessages = function() {
         const isUser = m.role === 'user';
         const isJules = m.source === 'jules' || m.role === 'agent' || m.role === 'jules';
 
-        let label = isUser ? 'USUARIO' : (isJules ? 'JULES' : 'CLAUDE');
+        let label = m.error ? 'ERROR DE CLAUDE' : (isUser ? 'USUARIO' : (isJules ? 'JULES' : 'CLAUDE'));
         let iconHTML = isUser ? '<i class="fas fa-user"></i>' : (isJules ? '<i class="fas fa-bolt"></i>' : '<i class="fas fa-robot"></i>');
 
         if (isUser) {
@@ -139,7 +139,7 @@ window.renderMessages = function() {
         }
 
         const labelColor = isUser ? 'text-[#f8f8f2]' : (isJules ? 'text-[#6272a4]' : 'text-[#bd93f9]');
-        const bubbleClass = isUser ? 'message-user' : (isJules ? 'message-claude border-[#44475a] border shadow-none bg-[#1a1b26]' : 'message-claude shadow-xl');
+        const bubbleClass = m.error ? 'message-claude border border-red-500/70 bg-red-950/25' : (isUser ? 'message-user' : (isJules ? 'message-claude border-[#44475a] border shadow-none bg-[#1a1b26]' : 'message-claude shadow-xl'));
 
         // Handle <think> blocks for Reasoning
         if (content && typeof content === 'string' && content.includes('<think>')) {
@@ -241,6 +241,7 @@ window.renderMessages = function() {
                         ${label}
                     </div>
                 </div>
+                ${m.error ? '<div class="mb-2 text-xs font-semibold text-red-300" style="white-space:pre-wrap;overflow-wrap:anywhere">' + escapeHtml(m.errorMessage || 'Error del proveedor') + '</div>' : ''}
                 ${safetyBadge}
                 ${m.thinking ? `
                     <details class="mb-3 border-l-2 border-[#8be9fd] bg-[#8be9fd]/10 rounded-r-lg overflow-hidden thinking-block" open>
