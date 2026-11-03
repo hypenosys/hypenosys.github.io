@@ -261,8 +261,8 @@ window.renderMessages = function() {
                 ${docsSourcesHtml}
 
                 ${`
-                <div class="neural-message-actions absolute -bottom-3 right-4 flex gap-1.5 z-10">
-                    <label class="neural-action-mini" style="display:inline-flex;align-items:center;gap:4px;cursor:pointer">
+                <div class="neural-message-actions">
+                    <label class="neural-action-mini neural-message-select">
                         <input type="checkbox" aria-label="Seleccionar mensaje" onchange="window.toggleNeuralMessageSelection(${idx},this.checked)" ${window._selectedNeuralMessageKeys.has(currentSession.id + ':' + idx) ? 'checked' : ''}> Seleccionar
                     </label>
                     ${!isUser ? `
@@ -745,3 +745,4 @@ window.sendAudioTranscription = async function(blob) {
         window.thinkingIndicator.classList.add('hidden');
     }
 }
+

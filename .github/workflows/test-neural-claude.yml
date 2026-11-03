@@ -30,6 +30,11 @@ on:
       - 'assets/javascript/jules-claude-bridge.js'
       - 'assets/javascript/jules-panel-neural.js'
       - 'assets/javascript/neural-chat-core.js'
+      - 'assets/javascript/neural-chat-send.js'
+      - 'assets/javascript/neural-chat-sessions.js'
+      - '_includes/neural-chat-styles.html'
+      - 'tests/test_neural_send_recovery.js'
+      - 'tests/verify_neural_message_actions.spec.js'
       - 'pages/jules-panel.html'
       - 'pages/claude-chat.html'
       - 'tests/test_anthropic_pages_proxy.js'
@@ -65,6 +70,11 @@ on:
       - 'assets/javascript/jules-claude-bridge.js'
       - 'assets/javascript/jules-panel-neural.js'
       - 'assets/javascript/neural-chat-core.js'
+      - 'assets/javascript/neural-chat-send.js'
+      - 'assets/javascript/neural-chat-sessions.js'
+      - '_includes/neural-chat-styles.html'
+      - 'tests/test_neural_send_recovery.js'
+      - 'tests/verify_neural_message_actions.spec.js'
       - 'pages/jules-panel.html'
       - 'pages/claude-chat.html'
       - 'tests/test_anthropic_pages_proxy.js'
@@ -77,6 +87,24 @@ permissions:
   contents: read
 
 jobs:
+  message-actions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Verify selection at desktop and mobile widths with 130% zoom
+        run: npx playwright test tests/verify_neural_message_actions.spec.js --workers=1 --reporter=line
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: neural-message-actions
+          path: test-results/
+          retention-days: 7
+
   contract:
     runs-on: ubuntu-latest
     steps:
@@ -88,6 +116,8 @@ jobs:
         run: node tests/test_anthropic_model_discovery.js
       - name: Claude native Messages and SSE (mocked)
         run: node tests/test_neural_claude_smoke.js
+      - name: Standalone Claude send, cross-tab persistence and error recovery
+        run: node tests/test_neural_send_recovery.js
       - name: Cloudflare Anthropic relay contracts (mocked)
         run: node tests/test_anthropic_pages_proxy.js
       - name: Jules and Claude bridge guardrails
@@ -109,6 +139,8 @@ jobs:
           node --check assets/javascript/jules-panel-neural.js
           node --check assets/javascript/neural-chat-jules.js
           node --check assets/javascript/neural-chat-ui.js
+          node --check assets/javascript/neural-chat-send.js
+          node --check assets/javascript/neural-chat-sessions.js
           node --check assets/javascript/jules-claude-bridge.js
           node --check assets/javascript/jules-task-supervisor.js
           node --check assets/javascript/neural-panel-workspace.js
@@ -120,4 +152,5 @@ jobs:
       - name: Thinking adapter regressions
         run: |
           for file in tests/test_thinking_block*.js; do node "$file"; done
+
 

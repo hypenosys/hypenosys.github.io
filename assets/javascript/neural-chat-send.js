@@ -7,6 +7,7 @@ window.attachedImage = null;
 // Cross-trigger lock: click, Enter, dashboard auto-send and auth/init retries
 // must all converge on one in-flight send.
 window._neuralSendInFlight = false;
+window._neuralSendingSession = null;
 
 const timeoutPromise = (ms) => new Promise((_, reject) =>
     setTimeout(() => reject(new Error('timeout')), ms)
@@ -206,6 +207,10 @@ window.sendMessage = async function() {
         return;
     }
 
+    // Keep this exact object alive during cross-tab sync. The core streams into
+    // it; replacing it with a stored snapshot would discard the reply on save.
+    window._neuralSendingSession = currentSession;
+
     // Logic for sync with Neural Thread if needed
     if (localStorage.getItem('hy_neural_active') === 'true') {
         let thread = JSON.parse(localStorage.getItem('hy_neural_thread') || '[]');
@@ -316,7 +321,17 @@ window.sendMessage = async function() {
         window.thinkingIndicator.innerHTML = '<div class="thinking-dots"><span>.</span><span>.</span><span>.</span></div> <span class="text-[10px] ml-2">CLAUDE ESTÁ PENSANDO...</span>';
         if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] thinking indicator shown");
 
-            let baseSystemPrompt = await window.JulesDocsBridge.buildSystemPrompt(content, currentSession.systemPrompt);
+            let baseSystemPrompt = currentSession.systemPrompt;
+            if (window.JulesDocsBridge?.buildSystemPrompt) {
+                try {
+                    baseSystemPrompt = await Promise.race([
+                        window.JulesDocsBridge.buildSystemPrompt(content, currentSession.systemPrompt),
+                        timeoutPromise(3500)
+                    ]);
+                } catch (error) {
+                    console.warn('[NeuralChat] Task context unavailable; continuing with the session prompt', error);
+                }
+            }
 
             // Store sources for the upcoming message (captured during buildSystemPrompt)
             const currentSources = window._lastDocsMetadata || [];
@@ -420,12 +435,24 @@ window.sendMessage = async function() {
         if (provider === 'ollama' && window.ollamaDiscovery) {
             errorMsg = window.ollamaDiscovery.getErrorMessage(e, config.base_url);
         }
-        appendSystemMessage(errorMsg, 'error');
+        // Failures before NeuralChatCore also belong in the transcript. A
+        // transient DOM message disappears on the next render or tab sync.
+        currentSession.messages.push({
+            role: 'assistant',
+            content: 'No se ha podido completar la respuesta de Claude.',
+            error: true,
+            errorMessage: errorMsg,
+            timestamp: Date.now()
+        });
+        currentSession.updatedAt = new Date().toISOString();
+        saveSessions(false, 'send-error');
+        renderMessages();
     } finally {
         window.thinkingIndicator.classList.add('hidden');
         window.sendBtn.disabled = false;
         window.chatInput.disabled = false;
         window._neuralSendInFlight = false;
+        window._neuralSendingSession = null;
         window.chatInput.focus();
         window.chatMessages.scrollTop = window.chatMessages.scrollHeight;
     }
@@ -683,3 +710,4 @@ function detectCodeLanguage(code) {
 
     return jsScore > pyScore ? 'javascript' : 'python';
 }
+

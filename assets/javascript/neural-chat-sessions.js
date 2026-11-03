@@ -188,13 +188,27 @@ window.loadSession = async function(id) {
 }
 
 // Real-time synchronization channel
+window.refreshNeuralSessionsFromStorage = function() {
+    const stored = JSON.parse(localStorage.getItem('claude_chat_sessions') || '[]');
+    if (!Array.isArray(stored)) return;
+    const sending = window._neuralSendInFlight && window._neuralSendingSession;
+    // Only the request's conversation owns its live transcript until the send
+    // finishes. Other conversations still receive their normal remote updates.
+    window.sessions = stored.map(session => sending && session.id === sending.id ? sending : session);
+};
+
 window.neuralSyncChannel = new BroadcastChannel('hypenosys_neural_sessions_sync');
 window.neuralSyncChannel.onmessage = (event) => {
     const { type, sessionId } = event.data;
     if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Neural Sync] Message received:", type, sessionId);
 
     // Refresh sessions from storage
-    window.sessions = JSON.parse(localStorage.getItem('claude_chat_sessions') || '[]');
+    try {
+        window.refreshNeuralSessionsFromStorage();
+    } catch (error) {
+        console.warn('[Neural Sync] Ignoring invalid session storage', error);
+        return;
+    }
 
     if (type === 'active-session-changed' && sessionId) {
         if (window.currentSessionId !== sessionId) {
@@ -211,7 +225,7 @@ window.neuralSyncChannel.onmessage = (event) => {
 window.addEventListener('storage', (e) => {
     if (e.key === 'claude_chat_sessions' || e.key === 'hy_active_claude_session_id') {
         try {
-            window.sessions = JSON.parse(localStorage.getItem('claude_chat_sessions') || '[]');
+            window.refreshNeuralSessionsFromStorage();
             const activeId = localStorage.getItem('hy_active_claude_session_id');
 
             if (e.key === 'hy_active_claude_session_id' && activeId !== window.currentSessionId) {
@@ -628,3 +642,4 @@ window.revealSessionActions = function(content) {
 window.hideSessionActions = function(content) {
     content.style.transform = 'translateX(0)';
 }
+

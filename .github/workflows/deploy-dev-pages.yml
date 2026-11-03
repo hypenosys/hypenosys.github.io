@@ -36,6 +36,7 @@ jobs:
         run: |
           node tests/test_anthropic_model_discovery.js
           node tests/test_neural_claude_smoke.js
+          node tests/test_neural_send_recovery.js
           node tests/test_anthropic_pages_proxy.js
           node tests/test_jules_claude_bridge.js
           node tests/test_jules_task_handoff.js
@@ -102,5 +103,6 @@ jobs:
           done
           echo 'Claude relay upstream probe failed. No valid keys were used.'
           exit 1
+
 
 

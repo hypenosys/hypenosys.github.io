@@ -112,17 +112,19 @@
         opacity: 1;
     }
     .neural-message-actions {
-        opacity: 0;
-        transition: opacity 0.15s ease, transform 0.15s ease;
-        transform: translateY(5px);
-    }
-    .message-bubble:hover .neural-message-actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 6px;
+        margin-top: 12px;
+        padding-top: 10px;
+        border-top: 1px solid rgba(98, 114, 164, 0.25);
         opacity: 1;
-        transform: translateY(0);
     }
     .neural-action-mini {
-        height: 22px;
-        padding: 0 10px;
+        min-height: 28px;
+        padding: 4px 10px;
         border-radius: 999px;
         font-size: 9px;
         font-weight: 800;
@@ -130,7 +132,7 @@
         letter-spacing: 0.02em;
         background: #1e1f29;
         border: 1px solid #44475a;
-        color: #6272a4;
+        color: #c6c9df;
         cursor: pointer;
         display: flex;
         align-items: center;
@@ -138,18 +140,29 @@
         transition: all 0.2s;
         box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     }
+    .neural-message-select {
+        margin: 0;
+    }
+    .neural-message-select input[type="checkbox"] {
+        appearance: auto;
+        position: static;
+        width: 14px;
+        height: 14px;
+        margin: 0;
+        opacity: 1;
+        accent-color: #bd93f9;
+        cursor: pointer;
+    }
+    .neural-action-mini:focus-visible,
+    .neural-message-select:focus-within {
+        outline: 2px solid #bd93f9;
+        outline-offset: 2px;
+    }
     .neural-action-mini:hover {
         border-color: #bd93f9;
         color: #fff;
         background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
-        transform: translateY(-1px);
         box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
-    }
-    @media (hover: none) {
-        .neural-message-actions {
-            opacity: 1;
-            transform: translateY(0);
-        }
     }
 
     .sidebar-section-label {
@@ -672,3 +685,4 @@
         outline: none;
     }
 </style>
+
