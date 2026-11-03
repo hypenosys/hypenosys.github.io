@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Changed
+- **HAIS market evidence (2026-11-03)**: Linked the tested China 10Y/Brent widget-only catalog fix and latest verified CI/deploy runs in the HAIS Kanban; real provider freshness and the protected gateway remain unverified. PAPER-only.
+
 ### Fixed
 - **Jules integration and dev deployment**: Updated completion contracts to use the canonical Kanban `OK` state, verify exact task/session association and idempotence, and run Claude/Jules workspace checks before deployment.
 
