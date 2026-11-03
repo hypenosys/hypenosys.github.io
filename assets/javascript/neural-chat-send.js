@@ -396,8 +396,10 @@ window.sendMessage = async function() {
                 onError: (err) => {
                     if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] send failed:", err.message);
                     window.thinkingIndicator.classList.add('hidden');
-                    appendSystemMessage(err.message, 'error');
+                    // Error bubbles are persisted by NeuralChatCore; do not add a
+                    // transient DOM warning that renderMessages would immediately erase.
                     renderMessages();
+                    window.showToast?.('Claude: ' + (err?.message || 'Error de respuesta'));
                     const orchestrator = window.HypenosysTaskOrchestrator;
                     const activeTask = window._activeTaskContext;
                     const state = orchestrator?.load?.();
