@@ -6,7 +6,7 @@ const path = require('node:path');
 for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844 }]) {
     test(`message selection stays inside the bubble at ${viewport.width}px and 130% zoom`, async ({ page }, testInfo) => {
         await page.setViewportSize(viewport);
-        await page.setContent(`<!doctype html><html><head><style>
+        await page.route('http://neural.test/', route => route.fulfill({ contentType: 'text/html', body: `<!doctype html><html><head><style>
             body { margin: 0; background: #282a36; color: #f8f8f2; font: 14px sans-serif; zoom: 1.3; }
             #chat-messages { padding: 12px; }
             .flex { display: flex; } .justify-end { justify-content: flex-end; }
@@ -16,7 +16,8 @@ for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844
             .mb-4 { margin-bottom: 16px; } .prose { overflow-wrap: anywhere; }
         </style>${fs.readFileSync(path.join(__dirname, '../_includes/neural-chat-styles.html'), 'utf8')}
         </head><body><main id="claude-main-interface"><div id="neural-selected-message-count"></div>
-        <div id="welcome-screen"></div><div id="chat-messages"></div></main></body></html>`);
+        <div id="welcome-screen"></div><div id="chat-messages"></div></main></body></html>` }));
+        await page.goto('http://neural.test/');
         await page.addScriptTag({ path: path.join(__dirname, '../assets/javascript/neural-chat-core.js') });
         await page.addScriptTag({ path: path.join(__dirname, '../assets/javascript/neural-chat-ui.js') });
         await page.evaluate(() => {
