@@ -270,7 +270,7 @@
       "descripcion": "Desde el Kanban HAIS lanzar una tarea inocua a Jules contra hypenosys/HAIS en rama feature; registrar session_id, branch, commit, coste y resultado sin permitir merge automático ni secretos de producción.",
       "tema_principal": "HAIS-001 / platform",
       "prioridad": "High",
-      "estado": "Working",
+      "estado": "In Review",
       "completitud": 0,
       "task_type": "integration",
       "resuelto_por": "Haopeng",
@@ -325,6 +325,10 @@
         {
           "label": "GitHub — Pull Request API",
           "url": "https://docs.github.com/en/rest/pulls/pulls"
+        },
+        {
+          "label": "Jules · PR #11",
+          "url": "https://github.com/hypenosys/HAIS/pull/11"
         }
       ],
       "comments": [
@@ -363,11 +367,17 @@
         "session_id": "11012202873959685034",
         "initiated_by": "haopengwang123",
         "supervision": "claude",
-        "status": "QUEUED",
-        "updated_at": "2026-11-03T18:00:56.657Z"
+        "status": "COMPLETED",
+        "updated_at": "2026-11-03T18:15:05.211Z",
+        "completed_at": "2026-11-03T18:15:05.211Z",
+        "pr_number": 11,
+        "pr_url": "https://github.com/hypenosys/HAIS/pull/11",
+        "pr_state": "open",
+        "branch": "feature-hais-008-11012202873959685034",
+        "commit": "1a7a5ba97656d5966224a574ea9028524540517d"
       },
       "assignee_proposed": "jules",
-      "updated_at": "2026-11-03T18:00:57.245Z"
+      "updated_at": "2026-11-03T18:15:05.211Z"
     },
     {
       "id": 900009,
@@ -4254,7 +4264,7 @@
       "assignee_proposed": "human"
     }
   ],
-  "last_updated_by": "HAIS review 2026-11-03",
+  "last_updated_by": "haopengwang123",
   "_audit_log": [
     {
       "action": "chore: actualizar tarea 900008",
