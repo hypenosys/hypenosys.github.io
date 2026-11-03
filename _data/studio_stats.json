@@ -1,15 +1,15 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-11-03T19:28:50.928Z",
+  "computed_at": "2026-11-03T20:13:45.015Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 42,
-    "total_ok": 8,
+    "total_ok": 9,
     "total_ko": 0,
     "total_uncertain": 3,
     "total_obsolete": 0,
-    "fixed_found_ratio": 0.1905,
-    "verified_ratio": 0.1905
+    "fixed_found_ratio": 0.2143,
+    "verified_ratio": 0.2143
   },
   "group": {
     "velocity_trend": {
@@ -23,14 +23,9 @@
       "2026-W45": 0
     },
     "bug_rate": 0,
-    "blocker_health": 28,
+    "blocker_health": 27,
     "tag_heatmap": {
-      "hais-001": 16,
-      "platform": 1,
-      "jules": 3,
-      "github-actions": 1,
-      "webhooks": 1,
-      "sync": 1,
+      "hais-001": 15,
       "product": 5,
       "fastapi": 1,
       "docker": 3,
@@ -54,6 +49,7 @@
       "pytest": 1,
       "supply-chain": 1,
       "pull-requests": 1,
+      "jules": 2,
       "review": 1,
       "concurrency": 1,
       "workers": 1,
@@ -203,7 +199,7 @@
     "axlfc": {
       "member_name": "Axel",
       "completed": {
-        "all_time": 49,
+        "all_time": 50,
         "milestone": 34,
         "week": 1
       },
@@ -219,6 +215,7 @@
       },
       "type_breakdown": {
         "feature": 33,
+        "integration": 1,
         "chore": 8,
         "bug": 6,
         "research": 2
@@ -226,6 +223,7 @@
       "rama_breakdown": {
         "feature/hais-004": 1,
         "feature/hais-007": 1,
+        "feature/hais-009": 1,
         "": 1,
         "PRO": 15,
         "chore/upgrade-ue-5.7.4": 2,
@@ -245,15 +243,18 @@
       },
       "tag_frequency": {
         "byok": 1,
-        "hais-001": 2,
+        "hais-001": 3,
         "identity": 1,
-        "jules": 3,
+        "jules": 4,
         "oauth": 1,
         "secrets": 1,
-        "platform": 1,
+        "platform": 2,
         "scheduler": 1,
         "dag": 1,
         "idempotency": 1,
+        "github-actions": 1,
+        "webhooks": 1,
+        "sync": 1,
         "hais": 1,
         "paper": 1,
         "estrategia": 1,
@@ -291,8 +292,8 @@
         "reprioritizations": 27
       },
       "workload": {
-        "active_tasks": 21,
-        "story_points": 73
+        "active_tasks": 20,
+        "story_points": 65
       }
     },
     "topperh4rley": {
@@ -620,7 +621,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "haopengwang123",
-      "timestamp": "2026-11-03T19:28:51.874Z"
+      "timestamp": "2026-11-03T20:13:45.904Z"
     }
   ]
 }
