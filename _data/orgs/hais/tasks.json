@@ -3414,6 +3414,10 @@
         {
           "label": "CI de navegador mercados + PAPER (PR #441)",
           "url": "https://github.com/hypenosys/hypenosys.github.io/actions/runs/41418007870"
+        },
+        {
+          "label": "Dev develop · deploy correcto 2026-11-03 (commit 163723c)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/actions/runs/41715339716"
         }
       ],
       "comments": [
@@ -3441,6 +3445,11 @@
           "author_login": "HAIS review",
           "timestamp": "2026-11-02T09:08:31.680Z",
           "body": "2026-11-02: cobertura de contratos de mercado añadida a Playwright y ejecutada con éxito en PR #441; valida atribución y degradación con fixtures de prueba. Sigue In Review hasta smoke público de índices, materias primas, cripto y navegador en dev."
+        },
+        {
+          "author_login": "HAIS review",
+          "timestamp": "2026-11-04T08:23:29Z",
+          "body": "2026-11-04: deploy de develop a dev marcado success por GitHub Actions 41715339716 (SHA 163723c, 2026-11-03 20:45 UTC). No equivale a smoke HTTP ni a cotizaciones reales; acceso /hais/ no comprobable desde este entorno. Sigue In Review sin cambiar subtareas."
         }
       ],
       "change_log": [
@@ -3538,6 +3547,10 @@
         {
           "label": "CI backend APE",
           "url": "https://github.com/hypenosys/HAIS/actions/runs/41307208369"
+        },
+        {
+          "label": "HAIS develop · CI success 2026-11-03",
+          "url": "https://github.com/hypenosys/HAIS/actions/runs/41606755531"
         }
       ],
       "comments": [
@@ -3560,6 +3573,11 @@
           "author_login": "Codex",
           "timestamp": "2026-11-01T19:32:20.498Z",
           "body": "Instrucción del usuario: proceder con el mínimo de datos mock necesarios. Esta actualización prevalece sobre comentarios anteriores que proponían mocks primero."
+        },
+        {
+          "author_login": "HAIS review",
+          "timestamp": "2026-11-04T08:23:29Z",
+          "body": "2026-11-04: develop HAIS efd00e8; CI success 41606755531 (2026-11-03). CoinGecko BTC/ETH/SOL/APE y FRED DGS2/DGS10 son contratos implementados, pero no se ha verificado upstream desde staging ni gateway. Se mantiene In Review."
         }
       ],
       "change_log": [
@@ -3761,6 +3779,10 @@
         {
           "label": "Despliegue dev anterior correcto",
           "url": "https://github.com/hypenosys/hypenosys.github.io/actions/runs/41352889934"
+        },
+        {
+          "label": "Dev develop · deploy correcto 2026-11-03 (commit 163723c)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/actions/runs/41715339716"
         }
       ],
       "comments": [
@@ -3778,6 +3800,11 @@
           "author_login": "HAIS review",
           "timestamp": "2026-11-02T09:08:31.680Z",
           "body": "2026-11-02: la ejecución de despliegue dev anterior fue exitosa (41352889934), pero no constituye una prueba del gateway HAIS. Las consultas directas a dev.hypenosys.com y a upstreams desde el entorno de esta revisión no resolvieron DNS; no se puede inferir una caída pública ni confirmar la API, CORS, autenticación, precios o latencia. Pendiente smoke HTTPS desde un runner con conectividad y evidencia de 200/503 con timestamps."
+        },
+        {
+          "author_login": "HAIS review",
+          "timestamp": "2026-11-04T08:23:29Z",
+          "body": "2026-11-04: workflow de publicación web dev success (41715339716), pero /hais/ y /hais/estado/ no accesibles mediante la herramienta de consulta externa; no es evidencia de caída ni de gateway funcional. Sin respuesta HTTP del proxy, autenticación o frescura; mantener Pending."
         }
       ],
       "change_log": [
@@ -3879,6 +3906,10 @@
         {
           "label": "Último deploy dev confirmado por GitHub Actions · 2026-11-02",
           "url": "https://github.com/hypenosys/hypenosys.github.io/actions/runs/41514717512"
+        },
+        {
+          "label": "Dev develop · deploy correcto 2026-11-03 (commit 163723c)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/actions/runs/41715339716"
         }
       ],
       "comments": [
@@ -3896,6 +3927,11 @@
           "author_login": "HAIS review",
           "timestamp": "2026-11-03T08:52:57Z",
           "body": "2026-11-03: develop HAIS en 794e42e (CI success 41345381152); develop web en 4c6819c (deploy dev GitHub Actions success 41514717512, 2026-11-02). Las peticiones directas a dev.hypenosys.com/hais/ y /hais/estado/ no fueron accesibles desde este entorno; sin HTTP público comprobado ni evidencia de frescura real de TradingView, FRED o CoinGecko. No se declara incidencia pública ni precios actuales. Pendientes gateway protegido, telemetría de latencia/429 y licencias para índices/commodities. Alcance PAPER."
+        },
+        {
+          "author_login": "HAIS review",
+          "timestamp": "2026-11-04T08:23:29Z",
+          "body": "2026-11-04 09:23 Europe/Madrid: FRED oficial publica DGS2=4,59 % y DGS10=4,91 % para observación 2026-11-02; ambos actualizados 2026-11-03 15:16 CST, siguiente publicación anunciada 2026-11-04. Estas lecturas son de FRED, NO del gateway HAIS. Último CI HAIS develop success 41606755531; último deploy web success 41715339716. La consulta directa de dev.hypenosys.com/hais/ y /hais/estado/ no fue accesible desde este entorno: no concluir caída. No hay cotizaciones verificadas ni latencia/frescura medible de S&P500, NASDAQ, CSI300, IBEX35, TVC bonos UE/CN, oro/plata/WTI/Brent ni CoinGecko BTC/ETH/SOL/APE. Permanecen pendientes SLIs reales, smoke y licencia de feeds; no cambiar % ni cerrar subtareas."
         }
       ],
       "change_log": [],
@@ -4388,8 +4424,13 @@
       "assignee_proposed": "human"
     }
   ],
-  "last_updated_by": "Sistema",
+  "last_updated_by": "HAIS review 2026-11-04",
   "_audit_log": [
+    {
+      "action": "chore(HAIS): registrar CI, deploy y observaciones oficiales FRED sin inferir disponibilidad de gateway",
+      "user": "HAIS review",
+      "timestamp": "2026-11-04T08:23:29Z"
+    },
     {
       "action": "chore: actualizar tarea 900012",
       "user": "haopengwang123",
