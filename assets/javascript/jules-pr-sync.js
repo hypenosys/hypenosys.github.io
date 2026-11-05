@@ -128,7 +128,21 @@
       if (sessionId(session?.name) !== sid) return false;
       const pr = selectPullRequest(session, task);
       if (!pr) {
-        if (String(session.state).toUpperCase() === 'COMPLETED') showStatus(task, null, 'awaiting_pr');
+        if (String(session.state).toUpperCase() === 'COMPLETED') {
+          showStatus(task, null, 'awaiting_pr');
+          const current = String(task.estado || task.status || '').toUpperCase();
+          if (!doneStates.has(current) &&
+              (current !== 'REVIEW' || task.jules_session?.pr_sync_status !== 'awaiting_pr')) {
+            if (workspace !== root.githubApi?.getActiveWorkspace?.()) return false;
+            await root.taskOps.updateTask(task.id, {
+              estado: 'REVIEW',
+              jules_session: { ...(task.jules_session || {}), session_id: sid,
+                status: 'COMPLETED', pr_sync_status: 'awaiting_pr' }
+            });
+            root.taskEngine?.notifyUpdate?.();
+            if (typeof root.refreshDashboard === 'function') await root.refreshDashboard();
+          }
+        }
         return false;
       }
 
@@ -152,6 +166,11 @@
         merged_at: stage.merged ? verified.merged_at : null
       };
       const current = String(task.estado || task.status || '').toUpperCase();
+      // A transient GitHub outage must not revert an already verified merge.
+      if (!verified && oldPr.sync_status === 'merged' && oldPr.merged_at && doneStates.has(current)) {
+        showStatus(task, pr, 'merged');
+        return true;
+      }
       // Never silently downgrade a manually completed task; do correct legacy auto-completions.
       const protectManualCompletion = doneStates.has(current) && task.updated_by_agent_supervisor !== true;
       const nextStatus = stage.merged ? 'OK' : (protectManualCompletion ? task.estado : 'REVIEW');
