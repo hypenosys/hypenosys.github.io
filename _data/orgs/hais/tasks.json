@@ -3652,7 +3652,7 @@
       "descripcion": "Escoger API con derechos adecuados para S&P500, NASDAQ, CSI300, IBEX35, bonos globales, oro, plata y petróleo; distinguir spot, futuros, índices y proxies; negociar frecuencia, cobertura, latencia y redistribución. No scraping ni asumir que los widgets permiten extracción API.",
       "tema_principal": "HAIS · fuentes de datos",
       "prioridad": "Critical",
-      "estado": "WORKING",
+      "estado": "REVIEW",
       "completitud": 0,
       "task_type": "feature",
       "resuelto_por": "",
@@ -3754,10 +3754,11 @@
         "session_id": "17642950733594706359",
         "initiated_by": "haopengwang123",
         "supervision": "claude",
-        "status": "QUEUED",
-        "updated_at": "2026-11-02T16:26:44.290Z"
+        "status": "COMPLETED",
+        "updated_at": "2026-11-02T16:26:44.290Z",
+        "pr_sync_status": "awaiting_pr"
       },
-      "updated_at": "2026-11-02T16:26:45.332Z"
+      "updated_at": "2026-11-05T19:08:39.650Z"
     },
     {
       "id": 900042,
@@ -4483,6 +4484,11 @@
   "last_updated_by": "Sistema",
   "_audit_log": [
     {
+      "action": "chore: actualizar tarea 900041",
+      "user": "haopengwang123",
+      "timestamp": "2026-11-05T19:08:39.650Z"
+    },
+    {
       "action": "chore: actualizar estado tarea #900012 → OK",
       "user": "haopengwang123",
       "timestamp": "2026-11-05T19:07:43.797Z"
@@ -4889,5 +4895,5 @@
       ]
     }
   ],
-  "last_updated": "2026-11-05T19:07:43.797Z"
+  "last_updated": "2026-11-05T19:08:39.650Z"
 }
