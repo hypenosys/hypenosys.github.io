@@ -23,6 +23,9 @@ on:
       - 'assets/javascript/neural-panel-workspace.js'
       - '_includes/neural-panel-workspace-styles.html'
       - 'assets/javascript/jules-task-supervisor.js'
+      - 'assets/javascript/jules-pr-sync.js'
+      - 'assets/javascript/jules-panel-sessions.js'
+      - 'tests/test_jules_pr_sync.js'
       - 'assets/javascript/jules-panel-auth.js'
       - 'assets/javascript/jules-panel-repo.js'
       - 'assets/javascript/neural-chat-jules.js'
@@ -65,6 +68,9 @@ on:
       - 'assets/javascript/neural-panel-workspace.js'
       - '_includes/neural-panel-workspace-styles.html'
       - 'assets/javascript/jules-task-supervisor.js'
+      - 'assets/javascript/jules-pr-sync.js'
+      - 'assets/javascript/jules-panel-sessions.js'
+      - 'tests/test_jules_pr_sync.js'
       - 'assets/javascript/jules-panel-auth.js'
       - 'assets/javascript/jules-panel-repo.js'
       - 'assets/javascript/neural-chat-jules.js'
@@ -136,6 +142,8 @@ jobs:
         run: node tests/test_jules_launch_lifecycle.js
       - name: HAIS task supervisor approval and organizational boundary tests
         run: node tests/test_jules_task_supervisor.js
+      - name: Jules PR merge-to-develop and task synchronization regressions
+        run: node tests/test_jules_pr_sync.js
       - name: Claude and Jules workspace filters, drafts and context isolation
         run: node tests/test_neural_panel_workspace.js
       - name: Syntax checks for Neural, Jules and routing scripts
@@ -149,6 +157,8 @@ jobs:
           node --check assets/javascript/neural-chat-sessions.js
           node --check assets/javascript/jules-claude-bridge.js
           node --check assets/javascript/jules-task-supervisor.js
+          node --check assets/javascript/jules-pr-sync.js
+          node --check assets/javascript/jules-panel-sessions.js
           node --check assets/javascript/neural-panel-workspace.js
           node --check assets/javascript/kanban-ui.js
       - name: Jules panel contextual actions and partial quote safety

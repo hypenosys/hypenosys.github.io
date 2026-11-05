@@ -66,7 +66,7 @@ function setup({active=0,blockedBy=[],blocked=false}={}){
     assert.equal(happy.payloads.length,1);
     assert.equal(happy.payloads[0].sourceContext.githubRepoContext.startingBranch,'develop');
     assert.equal(happy.payloads[0].requirePlanApproval,true,'supervised plan approval enforced');
-    assert.equal(happy.payloads[0].automationMode,undefined);
+    assert.equal(happy.payloads[0].automationMode,'AUTO_CREATE_PR','supervised sessions must create a PR after plan approval');
     assert.equal(happy.payloads[0].prompt.startsWith('First instruction\n\nwith lines'),true);
     assert.equal(happy.updates.length,1);
     assert.equal(happy.updates[0][1].estado,'WORKING');
