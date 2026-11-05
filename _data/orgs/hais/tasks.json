@@ -1006,7 +1006,7 @@
       "descripcion": "Mantener únicamente fixtures SYNTHETIC pequeñas y deterministas para CI, validación y fallos difíciles de reproducir. Reutilizar muestras reales saneadas cuando sean suficientes; no construir un feed sintético como fuente habitual de la aplicación.",
       "tema_principal": "HAIS-001 / product",
       "prioridad": "High",
-      "estado": "REVIEW",
+      "estado": "In Review",
       "completitud": 0,
       "task_type": "feature",
       "resuelto_por": "",
@@ -1125,13 +1125,17 @@
         "initiated_by": "haopengwang123",
         "supervision": "claude",
         "status": "COMPLETED",
-        "updated_at": "2026-11-05T19:09:03.249Z",
+        "updated_at": "2026-11-05T19:18:15.002Z",
         "pr_url": "https://github.com/hypenosys/HAIS/pull/20",
         "pr_number": 20,
-        "pr_sync_status": "wrong_base"
+        "pr_sync_status": "wrong_base",
+        "completed_at": "2026-11-05T19:18:15.002Z",
+        "pr_state": "open",
+        "branch": "feature/hais-014-17672423486422672759",
+        "commit": "7576f17ae6bd7d248dd53355024be24f167c9f91"
       },
       "assignee_proposed": "jules",
-      "updated_at": "2026-11-05T19:18:09.673Z",
+      "updated_at": "2026-11-05T19:18:15.467Z",
       "pull_request": {
         "url": "https://github.com/hypenosys/HAIS/pull/20",
         "number": 20,
@@ -4511,6 +4515,11 @@
     {
       "action": "chore: actualizar tarea 900014",
       "user": "haopengwang123",
+      "timestamp": "2026-11-05T19:18:15.467Z"
+    },
+    {
+      "action": "chore: actualizar tarea 900014",
+      "user": "haopengwang123",
       "timestamp": "2026-11-05T19:18:09.673Z"
     },
     {
@@ -4935,5 +4944,5 @@
       ]
     }
   ],
-  "last_updated": "2026-11-05T19:18:09.673Z"
+  "last_updated": "2026-11-05T19:18:15.467Z"
 }
