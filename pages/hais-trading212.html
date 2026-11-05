@@ -1,11 +1,135 @@
 ---
 layout: null
 permalink: /hais/trading212/
-title: HAIS — Integración Trading 212
+title: HAIS — Trading 212 Demo
 ---
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>HAIS · Trading 212 · Estado de integración</title><style>
-:root{color-scheme:dark;font-family:system-ui,sans-serif;background:#0b1421;color:#ebf3f6}*{box-sizing:border-box}body{margin:0}.wrap{max-width:940px;margin:auto;padding:24px 18px 65px}a{color:#7dd3fc}.links{display:flex;gap:16px;flex-wrap:wrap}.eyebrow{color:#5eead4;font-size:12px;letter-spacing:.15em;text-transform:uppercase}h1{font-size:clamp(28px,5vw,48px)}p{line-height:1.6;color:#bfd0dc}.panel{border:1px solid #345066;background:#15263a;border-radius:14px;padding:19px;margin:20px 0}.status{font-weight:bold;color:#ffd18b}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}.step{background:#101e30;border:1px solid #345066;border-radius:11px;padding:15px}button{background:#5eead4;color:#08161f;padding:12px 16px;border:0;border-radius:9px;font-weight:700;cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #7dd3fc;outline-offset:3px}label{display:flex;gap:10px;align-items:start;line-height:1.5;margin:12px 0}input{width:20px;height:20px;flex-shrink:0;accent-color:#5eead4}small{color:#a7b8c7}.warning{border-left:4px solid #ffd18b;padding:10px 15px;background:#292822}#progress{font-weight:700;color:#5eead4}</style></head>
-<body><main class="wrap"><div class="links"><a href="{{ '/hais/' | relative_url }}">← Mercados</a><a href="{{ '/hais/operar/' | relative_url }}">Terminal PAPER</a><a href="{{ '/dashboard.html' | relative_url }}">Dashboard</a></div><p class="eyebrow">HAIS · Conectores · Diseño verificable</p><h1>Trading 212 · cuenta real</h1><p class="status">Estado: integración planificada — NO conectada</p><p>Esta página documenta la integración prevista. No muestra saldos, precios ni órdenes reales y no solicita claves API. El terminal PAPER existente continúa separado.</p><div class="warning"><strong>Seguridad:</strong> nunca pegues una clave API o secreto en esta página. No es un formulario de conexión ni una pasarela de órdenes.</div>
-<section class="panel"><h2>Arquitectura prevista</h2><div class="grid"><div class="step"><strong>1. Navegador HAIS</strong><p>Consulta de estado, cartera y preparación de órdenes. Sin secretos ni llamadas directas al bróker.</p></div><div class="step"><strong>2. Backend protegido</strong><p>Credenciales almacenadas del lado servidor, autenticación, permisos, límites y registro de auditoría.</p></div><div class="step"><strong>3. Trading 212 Live</strong><p>API real: lectura de saldos y posiciones; órdenes solo tras habilitación específica y confirmación.</p></div></div></section>
-<section class="panel"><h2>Lista de verificación interactiva</h2><p>Marca los elementos para estudiar los requisitos. Las marcas son locales a esta página y no actualizan GitHub ni conectan el bróker.</p><div id="checks"><label><input type="checkbox">Confirmar acceso de cuenta española a API Live y permisos</label><label><input type="checkbox">Implementar backend con almacén seguro de credenciales</label><label><input type="checkbox">Mostrar saldo y posiciones reales con errores explícitos</label><label><input type="checkbox">Validar instrumentos, mercados, divisa y cantidades</label><label><input type="checkbox">Añadir confirmación explícita de compra/venta y controles anti-duplicados</label><label><input type="checkbox">Probar límites API, revocación, conciliación y auditoría</label><label><input type="checkbox">Validar despliegue dev y revisión de seguridad antes de producción</label></div><p id="progress" role="status">0 de 7 requisitos marcados en esta visita</p><button type="button" id="reset">Reiniciar marcas</button></section>
-<section class="panel"><h2>Fuentes y alcance</h2><p>El endpoint de producción documentado es <code>https://live.trading212.com/api/v0</code>. La API es beta. La disponibilidad para una cuenta determinada y los permisos concretos deben validarse. No se garantiza cotización de todos los índices, bonos, materias primas o criptomonedas desde Trading 212.</p><div class="links"><a href="https://docs.trading212.com/api">Documentación oficial</a><a href="https://helpcentre.trading212.com/hc/en-us/articles/14584770928157-Trading-212-API-key">Claves API</a><a href="https://github.com/hypenosys/hypenosys.github.io/tree/develop">Código HAIS</a></div></section><small>Documento de alcance, no certificación de integración operativa.</small></main><script>(()=>{const root=document.getElementById('checks'),status=document.getElementById('progress');const update=()=>{const all=[...root.querySelectorAll('input')];status.textContent=all.filter(x=>x.checked).length+' de '+all.length+' requisitos marcados en esta visita'};root.addEventListener('change',update);document.getElementById('reset').addEventListener('click',()=>{root.querySelectorAll('input').forEach(x=>x.checked=false);update()})})();</script></body></html>
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HAIS · Trading 212 Demo</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,sans-serif;background:#0b1421;color:#ebf3f6}
+*{box-sizing:border-box}body{margin:0}.wrap{max-width:1000px;margin:auto;padding:22px 18px 65px}
+a{color:#7dd3fc}nav{display:flex;gap:17px;flex-wrap:wrap}h1{font-size:clamp(26px,5vw,42px)}
+p,dd{line-height:1.55;color:#c1d2df}.eyebrow{color:#5eead4;text-transform:uppercase;letter-spacing:.13em;font-size:12px}
+.panel{border:1px solid #345066;background:#15263a;border-radius:14px;padding:20px;margin:18px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.metric{background:#101e30;border:1px solid #345066;border-radius:10px;padding:15px}
+dt{font-size:13px;color:#9fb6c7}dd{margin:7px 0 0;font-size:23px;font-weight:700;overflow-wrap:anywhere}
+.tag{display:inline-block;border:1px solid #70cdb5;border-radius:20px;padding:5px 12px;font-weight:700;color:#8ff3d5}
+.status{font-weight:700}.notice{border-left:4px solid #fbbf85;padding:12px 15px;background:#30271d}
+button{background:#66dfc0;color:#082025;border:0;border-radius:8px;padding:11px 17px;font-weight:700;cursor:pointer}
+button:disabled{opacity:.55;cursor:not-allowed}button:focus-visible,a:focus-visible{outline:3px solid #7dd3fc;outline-offset:3px}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;border-bottom:1px solid #365066;padding:12px 8px}
+th{color:#b2d0df}td{overflow-wrap:anywhere} .overflow{overflow-x:auto}
+small{color:#abc1d0}.muted{color:#b4c7d4}.error{color:#ffb0ad}
+</style>
+</head>
+<body><main class="wrap">
+<nav><a href="{{ '/hais/' | relative_url }}">← Mercados</a><a href="{{ '/hais/operar/' | relative_url }}">Terminal PAPER</a><a href="{{ '/dashboard.html' | relative_url }}">Dashboard</a></nav>
+<p class="eyebrow">HAIS · Conectores · Solo lectura</p>
+<h1>Trading 212 <span class="tag">DEMO</span></h1>
+<p>Vista preparada para información procedente de Trading 212 Demo. Sin compras, ventas ni operaciones con dinero real.</p>
+<div class="notice"><strong>Protección:</strong> esta página nunca solicita claves API. Los secretos deben residir únicamente en un backend protegido. Que existan en GitHub Actions no significa que estén disponibles para el sitio web.</div>
+<section class="panel" aria-labelledby="connection-title">
+<h2 id="connection-title">Conexión</h2>
+<p id="connection" class="status" role="status" aria-live="polite">Sin comprobar</p>
+<p id="detail" class="muted">La conexión necesita el gateway privado de HAIS con autenticación de sesión. No se muestran datos de prueba como reales.</p>
+<button id="refresh" type="button">Comprobar conexión</button>
+<p><small id="updated">Última comprobación: todavía ninguna</small></p>
+</section>
+<section class="panel" aria-labelledby="summary-title">
+<h2 id="summary-title">Resumen de la cuenta Demo</h2>
+<div class="grid">
+<dl class="metric"><dt>Divisa</dt><dd id="currency">—</dd></dl>
+<dl class="metric"><dt>Saldo disponible</dt><dd id="cash">No disponible</dd></dl>
+<dl class="metric"><dt>Valor de cartera</dt><dd id="portfolio">No disponible</dd></dl>
+</div>
+<p><small>Fuente: API Trading 212 Demo, únicamente cuando el servidor confirme la procedencia y autorice el acceso.</small></p>
+</section>
+<section class="panel" aria-labelledby="positions-title">
+<h2 id="positions-title">Posiciones Demo</h2>
+<div class="overflow"><table><thead><tr><th scope="col">Instrumento</th><th scope="col">Cantidad</th><th scope="col">Precio actual</th></tr></thead>
+<tbody id="positions"><tr><td colspan="3">Datos no disponibles.</td></tr></tbody></table></div>
+</section>
+<section class="panel"><h2>Estado de integración</h2>
+<p>La rama <code>develop</code> de <a href="https://github.com/hypenosys/HAIS">HAIS</a> contiene un adaptador de lectura Demo. El sitio web necesita una pasarela propia autenticada antes de mostrar saldos y posiciones. Los fallos se muestran explícitamente; nunca se generan importes ni cotizaciones sintéticas.</p>
+<p>Las operaciones reales están deshabilitadas. La cuenta Live no se consulta desde esta página.</p>
+</section>
+</main>
+<script>
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const number = (value, currency) => {
+    if (typeof value !== 'number' || !Number.isFinite(value)) return 'No disponible';
+    return new Intl.NumberFormat('es-ES',{style: 'currency', currency}).format(value);
+  };
+  const clear = () => {
+    $('currency').textContent = '—';
+    $('cash').textContent = 'No disponible';
+    $('portfolio').textContent = 'No disponible';
+    $('positions').replaceChildren();
+    const row=document.createElement('tr'), cell=document.createElement('td');
+    cell.colSpan=3;cell.textContent='Datos no disponibles.';row.append(cell);$('positions').append(row);
+  };
+  // Same-origin only. Credentials MUST NOT be passed through the browser.
+  // Protected gateway contract: GET /api/hais/broker/demo/{status,account,positions}.
+  const request = async path => {
+    const response = await fetch('/api/hais/broker/demo/'+path,{
+      method:'GET',credentials:'same-origin',cache:'no-store',redirect:'error',
+      headers:{'Accept':'application/json'}
+    });
+    if(!response.ok) throw new Error('HTTP '+response.status);
+    return response.json();
+  };
+  async function refresh() {
+    clear();
+    $('refresh').disabled=true;
+    $('connection').textContent='Comprobando…';
+    $('detail').textContent='Consultando el gateway protegido de HAIS.';
+    $('updated').textContent='Última comprobación: '+new Date().toLocaleString('es-ES');
+    try {
+      const status=await request('status');
+      if(!status || status.mode!=='DEMO' || status.connected!==true || status.source!=='trading212-demo') {
+        $('connection').textContent='Demo no conectada';
+        $('detail').textContent='El gateway no ha confirmado una conexión autenticada con Trading 212 Demo.';
+        return;
+      }
+      const [account, positions]=await Promise.all([request('account'),request('positions')]);
+      if(account?.mode!=='DEMO'||account?.source!=='trading212-demo'||positions?.mode!=='DEMO'||positions?.source!=='trading212-demo'||!Array.isArray(positions.items)) {
+        throw new Error('invalid provenance');
+      }
+      const currency=account.currency;
+      if(typeof currency!=='string'||!/^[A-Z]{3}$/.test(currency)) throw new Error('invalid currency');
+      $('currency').textContent=currency;
+      $('cash').textContent=number(account.availableCash,currency);
+      $('portfolio').textContent=number(account.portfolioValue,currency);
+      const body=$('positions');body.replaceChildren();
+      for(const item of positions.items) {
+        const row=document.createElement('tr');
+        const fields=[
+          typeof item.symbol==='string'&&item.symbol.length<=40?item.symbol:'—',
+          typeof item.quantity==='number'&&Number.isFinite(item.quantity)?String(item.quantity):'—',
+          number(item.currentPrice,currency)
+        ];
+        fields.forEach(value=>{const cell=document.createElement('td');cell.textContent=value;row.append(cell)});
+        body.append(row);
+      }
+      if(!positions.items.length){const row=document.createElement('tr'),cell=document.createElement('td');cell.colSpan=3;cell.textContent='Sin posiciones abiertas en Demo.';row.append(cell);body.append(row)}
+      $('connection').textContent='Trading 212 Demo conectada · Solo lectura';
+      $('detail').textContent='Datos proporcionados por el gateway HAIS. '+(account.asOf?'Actualizados: '+String(account.asOf):'Fecha de origen no disponible.');
+    } catch(e) {
+      clear();
+      $('connection').textContent='Datos no disponibles';
+      $('detail').textContent='No hay un gateway protegido operativo o la sesión no tiene acceso. No se ha realizado ninguna operación.';
+    } finally {
+      $('refresh').disabled=false;
+    }
+  }
+  $('refresh').addEventListener('click', refresh);
+  refresh();
+})();
+</script></body></html>
