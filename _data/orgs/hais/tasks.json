@@ -1363,7 +1363,7 @@
         "target_branch": "develop"
       },
       "assignee_proposed": "jules",
-      "updated_at": "2026-11-05T19:48:05.845Z",
+      "updated_at": "2026-11-05T19:48:08.576Z",
       "pull_request": {
         "url": "https://github.com/hypenosys/HAIS/pull/21",
         "number": 21,
@@ -1371,7 +1371,6 @@
         "title": "[HAIS-016] Comprobar workflow de creación de PR (#900016)",
         "state": "closed",
         "base": "feature/hais-016",
-        "target_branch": "develop",
         "sync_status": "closed_unmerged",
         "merged_at": null
       },
@@ -5020,5 +5019,5 @@
       ]
     }
   ],
-  "last_updated": "2026-11-05T19:48:05.845Z"
+  "last_updated": "2026-11-05T19:48:08.576Z"
 }
