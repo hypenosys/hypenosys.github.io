@@ -882,15 +882,14 @@
       "images": [],
       "blocks": [],
       "jules_session": {
-        "session_id": "14757350852273290832",
+        "session_id": "4290417586868987163",
         "initiated_by": "haopengwang123",
         "supervision": "claude",
-        "status": "COMPLETED",
-        "updated_at": "2026-11-05T18:47:21.523Z",
-        "completed_at": "2026-11-05T18:47:21.523Z"
+        "status": "QUEUED",
+        "updated_at": "2026-11-05T18:50:28.425Z"
       },
       "assignee_proposed": "jules",
-      "updated_at": "2026-11-05T18:47:22.054Z"
+      "updated_at": "2026-11-05T18:50:28.956Z"
     },
     {
       "id": 900013,
@@ -4486,6 +4485,11 @@
     {
       "action": "chore: actualizar tarea 900012",
       "user": "haopengwang123",
+      "timestamp": "2026-11-05T18:50:28.956Z"
+    },
+    {
+      "action": "chore: actualizar tarea 900012",
+      "user": "haopengwang123",
       "timestamp": "2026-11-05T18:47:22.054Z"
     },
     {
@@ -4880,5 +4884,5 @@
       ]
     }
   ],
-  "last_updated": "2026-11-05T18:47:22.054Z"
+  "last_updated": "2026-11-05T18:50:28.956Z"
 }
