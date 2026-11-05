@@ -771,7 +771,7 @@ window.launchSession = async function(options = {}) {
         // on a status badge. No auto-relocation of blocked tasks.
         const linkedContext = JSON.parse(localStorage.getItem('hy_neural_task_context') || '{}');
 
-        const configuredBase = window.resolveJulesIntegrationBranchFromTask(linkedContext);
+        const configuredBase = window.resolveJulesIntegrationBranchFromTask?.(linkedContext) || '';
         if (linkedContext?.id && configuredBase && branch !== configuredBase) {
             throw new Error('Esta tarea debe partir de ' + configuredBase +
                 ' para que Jules genere la PR hacia la rama de integración correcta.');
@@ -907,7 +907,7 @@ window.launchSession = async function(options = {}) {
                     session_id: sid,
                     initiated_by: (currentUser && currentUser.login) || 'Invitado',
                     supervision: supervisionMode,
-                    target_branch: window.resolveJulesIntegrationBranchFromTask(taskContext) || branch,
+                    target_branch: window.resolveJulesIntegrationBranchFromTask?.(taskContext) || branch,
                     status: 'QUEUED',
                     updated_at: new Date().toISOString()
                 },
