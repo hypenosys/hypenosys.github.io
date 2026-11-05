@@ -757,6 +757,14 @@ window.pollActiveSessionStatuses = async function() {
             await window.requestDashboardRefresh('active-session-status-transition');
         }
 
+        // Polling stops once Jules reaches a terminal state. Reconcile the PR
+        // here rather than relying on a later manual activity refresh.
+        for (const res of results) {
+            if (res.success && String(res.fresh?.state || '').toUpperCase() === 'COMPLETED') {
+                await window.HypenosysJulesPrSync?.reconcileSession?.(res.name, res.fresh);
+            }
+        }
+
     } catch (err) {
         console.warn("[JULES-POLLING] Polling error:", err);
     } finally {
