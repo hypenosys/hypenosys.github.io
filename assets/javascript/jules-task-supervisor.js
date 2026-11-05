@@ -99,7 +99,7 @@
       if (!sid) { message('Tarea #' + task.id + ' vinculada. Sin sesión Jules para recomendar un estado.'); return; }
       const session = await window.julesApi.getSession('sessions/' + sid);
       const state = session?.state || 'desconocido';
-      const suggestion = state === 'COMPLETED' ? 'REVIEW (hasta merge de la PR en develop)' :
+      const suggestion = state === 'COMPLETED' ? 'REVIEW (hasta merge en la rama de integración)' :
         state === 'FAILED' ? 'BLOCKED' :
         ['PLANNING','IN_PROGRESS'].includes(state) ? 'WORKING' : null;
       message('Tarea #' + task.id + ' · Jules: ' + state +
@@ -162,6 +162,6 @@
   }
 
   window.JulesTaskSupervisor = { review, applyStatus, applySuggestedLifecycle, syncCompletedFromJules, editTask, archive };
-  message('Jules → PR pendiente → merge verificado en develop → OK automáticamente.');
+  message('Jules → PR → CI → merge verificado en develop/master → OK automáticamente.');
 })();
 
