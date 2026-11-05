@@ -166,6 +166,21 @@ window.resizeJulesDraftTextarea = function(textarea = document.getElementById('s
     textarea.style.overflowY = needed > 420 ? 'auto' : 'hidden';
 };
 
+window.resolveJulesIntegrationBranchFromTask = function(task) {
+    // Task "rama" is often a feature branch, but Jules must base the PR on
+    // the configured integration branch (develop or master) instead.
+    for (const raw of [
+        task?.integration_branch, task?.merge_target_branch,
+        task?.target_branch, task?.base_branch, task?.branch, task?.rama
+    ]) {
+        const value = String(raw || '').trim();
+        const labeled = /\\((develop|master)\\)\\s*$/i.exec(value);
+        const target = (labeled ? labeled[1] : value).toLowerCase();
+        if (target === 'develop' || target === 'master') return target;
+    }
+    return '';
+};
+
 window.prefillTaskFromHandoff = async function(task, handoff = {}) {
     let payload = null;
     try {
@@ -199,7 +214,8 @@ window.prefillTaskFromHandoff = async function(task, handoff = {}) {
 
     const targetRepo = contextTask.repository || contextTask.repo
         || payload?.source_task?.repository || payload?.source_task?.repo || '';
-    const targetBranch = contextTask.rama || contextTask.branch || payload?.rama || '';
+    const targetBranch = window.resolveJulesIntegrationBranchFromTask(contextTask)
+        || contextTask.rama || contextTask.branch || payload?.rama || '';
     const canonicalRepo = targetRepo && window.getCanonicalRepoName
         ? window.getCanonicalRepoName(targetRepo) : '';
     const sidRaw = handoff.linked_jules_session_id || payload?.linked_jules_session_id
@@ -754,6 +770,12 @@ window.launchSession = async function(options = {}) {
         // Block actual unresolved dependencies, rather than relying solely
         // on a status badge. No auto-relocation of blocked tasks.
         const linkedContext = JSON.parse(localStorage.getItem('hy_neural_task_context') || '{}');
+
+        const configuredBase = window.resolveJulesIntegrationBranchFromTask(linkedContext);
+        if (linkedContext?.id && configuredBase && branch !== configuredBase) {
+            throw new Error('Esta tarea debe partir de ' + configuredBase +
+                ' para que Jules genere la PR hacia la rama de integración correcta.');
+        }
         const blockedBy = Array.isArray(linkedContext.blocked_by) ? linkedContext.blocked_by : [];
         if (blockedBy.length && window.taskOps?.getAllTasks) {
             const allTasks = await window.taskOps.getAllTasks();
@@ -885,6 +907,7 @@ window.launchSession = async function(options = {}) {
                     session_id: sid,
                     initiated_by: (currentUser && currentUser.login) || 'Invitado',
                     supervision: supervisionMode,
+                    target_branch: window.resolveJulesIntegrationBranchFromTask(taskContext) || branch,
                     status: 'QUEUED',
                     updated_at: new Date().toISOString()
                 },
