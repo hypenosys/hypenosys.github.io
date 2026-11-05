@@ -45,11 +45,13 @@ jobs:
           node tests/test_jules_launch_lifecycle.js
           node tests/test_jules_context_actions.js
           node tests/test_jules_task_supervisor.js
+          node tests/test_jules_pr_sync.js
           node tests/test_neural_panel_workspace.js
           node tests/test_task_orchestrator.js
           node --check assets/javascript/hypenosys-task-orchestrator.js
           node --check assets/javascript/neural-panel-workspace.js
           node --check assets/javascript/jules-task-supervisor.js
+          node --check assets/javascript/jules-pr-sync.js
           node --check assets/javascript/jules-claude-bridge.js
           node --check assets/javascript/jules-panel-auth.js
           node --check assets/javascript/jules-panel-neural.js
