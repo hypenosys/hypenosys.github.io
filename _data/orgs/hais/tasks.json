@@ -1387,7 +1387,7 @@
       "descripcion": "Ejecutar dos tareas independientes con Jules usando ramas separadas y máximo dos workers; simular escrituras simultáneas, timeout y reintentos sin duplicados.",
       "tema_principal": "HAIS-001 / quality",
       "prioridad": "High",
-      "estado": "Working",
+      "estado": "In Review",
       "completitud": 0,
       "task_type": "test",
       "resuelto_por": "",
@@ -1442,6 +1442,10 @@
         {
           "label": "HAIS — ramas de trabajo",
           "url": "https://github.com/hypenosys/HAIS/branches"
+        },
+        {
+          "label": "Jules · PR #22",
+          "url": "https://github.com/hypenosys/HAIS/pull/22"
         }
       ],
       "comments": [
@@ -1476,11 +1480,17 @@
         "initiated_by": "haopengwang123",
         "supervision": "claude",
         "target_branch": "develop",
-        "status": "QUEUED",
-        "updated_at": "2026-11-05T19:49:59.839Z"
+        "status": "COMPLETED",
+        "updated_at": "2026-11-05T19:58:07.737Z",
+        "completed_at": "2026-11-05T19:58:07.737Z",
+        "pr_number": 22,
+        "pr_url": "https://github.com/hypenosys/HAIS/pull/22",
+        "pr_state": "open",
+        "branch": "feature/hais-017-2052707589934035298",
+        "commit": "cb3724f3ad335f7bac0097a17f156133a5660f84"
       },
       "assignee_proposed": "jules",
-      "updated_at": "2026-11-05T19:50:00.388Z"
+      "updated_at": "2026-11-05T19:58:08.416Z"
     },
     {
       "id": 900018,
@@ -4560,6 +4570,11 @@
   "last_updated_by": "Sistema",
   "_audit_log": [
     {
+      "action": "chore: actualizar tarea 900017",
+      "user": "haopengwang123",
+      "timestamp": "2026-11-05T19:58:08.416Z"
+    },
+    {
       "action": "chore: actualizar tarea 900018",
       "user": "haopengwang123",
       "timestamp": "2026-11-05T19:51:20.763Z"
@@ -5056,5 +5071,5 @@
       ]
     }
   ],
-  "last_updated": "2026-11-05T19:51:20.763Z"
+  "last_updated": "2026-11-05T19:58:08.416Z"
 }
