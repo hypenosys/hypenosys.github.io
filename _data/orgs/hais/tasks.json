@@ -3418,6 +3418,14 @@
         {
           "label": "Dev develop · deploy correcto 2026-11-03 (commit 163723c)",
           "url": "https://github.com/hypenosys/hypenosys.github.io/actions/runs/41715339716"
+        },
+        {
+          "label": "PR web #457 · Trading 212 DEMO (no feed de índices)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/pull/457"
+        },
+        {
+          "label": "Deploy dev web · 2026-11-05",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/actions/runs/41986197053"
         }
       ],
       "comments": [
@@ -3450,6 +3458,11 @@
           "author_login": "HAIS review",
           "timestamp": "2026-11-04T08:23:29Z",
           "body": "2026-11-04: deploy de develop a dev marcado success por GitHub Actions 41715339716 (SHA 163723c, 2026-11-03 20:45 UTC). No equivale a smoke HTTP ni a cotizaciones reales; acceso /hais/ no comprobable desde este entorno. Sigue In Review sin cambiar subtareas."
+        },
+        {
+          "author_login": "HAIS review",
+          "timestamp": "2026-11-05T08:08:46Z",
+          "body": "2026-11-05: PR web #457 fusionada a develop (51480805) y deploy GitHub Actions 41986197053 success. La nueva vista Trading 212 DEMO no demuestra cotizaciones de TradingView ni funcionamiento del gateway de mercado. La página /hais/ sigue sin smoke HTTP desde este entorno; mantener In Review."
         }
       ],
       "change_log": [
@@ -3551,6 +3564,14 @@
         {
           "label": "HAIS develop · CI success 2026-11-03",
           "url": "https://github.com/hypenosys/HAIS/actions/runs/41606755531"
+        },
+        {
+          "label": "CI HAIS develop · 2026-11-04",
+          "url": "https://github.com/hypenosys/HAIS/actions/runs/41805403690"
+        },
+        {
+          "label": "PR HAIS #15 · Trading 212 DEMO solo lectura",
+          "url": "https://github.com/hypenosys/HAIS/pull/15"
         }
       ],
       "comments": [
@@ -3578,6 +3599,11 @@
           "author_login": "HAIS review",
           "timestamp": "2026-11-04T08:23:29Z",
           "body": "2026-11-04: develop HAIS efd00e8; CI success 41606755531 (2026-11-03). CoinGecko BTC/ETH/SOL/APE y FRED DGS2/DGS10 son contratos implementados, pero no se ha verificado upstream desde staging ni gateway. Se mantiene In Review."
+        },
+        {
+          "author_login": "HAIS review",
+          "timestamp": "2026-11-05T08:08:46Z",
+          "body": "2026-11-05: HAIS develop aa20e487 (PR #15 Trading 212 DEMO solo lectura); CI 41805403690 success. La conexión demo no equivale a upstream CoinGecko/FRED verificado desde staging. Mantener In Review; sin órdenes ni LIVE."
         }
       ],
       "change_log": [
@@ -3783,6 +3809,10 @@
         {
           "label": "Dev develop · deploy correcto 2026-11-03 (commit 163723c)",
           "url": "https://github.com/hypenosys/hypenosys.github.io/actions/runs/41715339716"
+        },
+        {
+          "label": "Deploy dev web · 2026-11-05",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/actions/runs/41986197053"
         }
       ],
       "comments": [
@@ -3805,6 +3835,11 @@
           "author_login": "HAIS review",
           "timestamp": "2026-11-04T08:23:29Z",
           "body": "2026-11-04: workflow de publicación web dev success (41715339716), pero /hais/ y /hais/estado/ no accesibles mediante la herramienta de consulta externa; no es evidencia de caída ni de gateway funcional. Sin respuesta HTTP del proxy, autenticación o frescura; mantener Pending."
+        },
+        {
+          "author_login": "HAIS review",
+          "timestamp": "2026-11-05T08:08:46Z",
+          "body": "2026-11-05: desplegado frontend develop 51480805 (Actions 41986197053 success); peticiones HTTP a /hais/, /hais/estado/ y /api/hais/v1/market/crypto no pudieron resolver DNS desde el entorno de revisión. No afirmar gateway activo ni caída pública; pendientes auth, CORS, rate limit y smoke HTTPS en runner con acceso. Mantener Pending."
         }
       ],
       "change_log": [
@@ -3910,6 +3945,14 @@
         {
           "label": "Dev develop · deploy correcto 2026-11-03 (commit 163723c)",
           "url": "https://github.com/hypenosys/hypenosys.github.io/actions/runs/41715339716"
+        },
+        {
+          "label": "CI HAIS develop · 2026-11-04",
+          "url": "https://github.com/hypenosys/HAIS/actions/runs/41805403690"
+        },
+        {
+          "label": "Deploy dev web · 2026-11-05",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/actions/runs/41986197053"
         }
       ],
       "comments": [
@@ -3932,6 +3975,11 @@
           "author_login": "HAIS review",
           "timestamp": "2026-11-04T08:23:29Z",
           "body": "2026-11-04 09:23 Europe/Madrid: FRED oficial publica DGS2=4,59 % y DGS10=4,91 % para observación 2026-11-02; ambos actualizados 2026-11-03 15:16 CST, siguiente publicación anunciada 2026-11-04. Estas lecturas son de FRED, NO del gateway HAIS. Último CI HAIS develop success 41606755531; último deploy web success 41715339716. La consulta directa de dev.hypenosys.com/hais/ y /hais/estado/ no fue accesible desde este entorno: no concluir caída. No hay cotizaciones verificadas ni latencia/frescura medible de S&P500, NASDAQ, CSI300, IBEX35, TVC bonos UE/CN, oro/plata/WTI/Brent ni CoinGecko BTC/ETH/SOL/APE. Permanecen pendientes SLIs reales, smoke y licencia de feeds; no cambiar % ni cerrar subtareas."
+        },
+        {
+          "author_login": "HAIS review",
+          "timestamp": "2026-11-05T08:08:46Z",
+          "body": "2026-11-05: verificado en FRED (fuente primaria) que DGS2=4,61 % y DGS10=4,95 %, observación 2026-11-03, publicación 2026-11-04 15:16 CST; próxima publicación indicada 2026-11-05. Son datos FRED, NO lecturas del gateway HAIS. Backend develop aa20e487 CI success 41805403690; web develop 51480805 deploy success 41986197053 (2026-11-05). Intento HTTP de /hais/, /hais/estado/ y /api/hais/v1/market/crypto: DNS no resolvió desde este entorno, por lo que no hay confirmación de HTTP público ni de caída. Sin frescura comprobada de índices S&P500/NASDAQ/CSI300/IBEX35, bonos TVC UE/CN, oro/plata/WTI/Brent o cripto BTC/ETH/SOL/APE. SLIs de disponibilidad/429, gateway y licencias siguen pendientes; sin cambios de estado, porcentaje o subtareas."
         }
       ],
       "change_log": [],
@@ -4424,8 +4472,19 @@
       "assignee_proposed": "human"
     }
   ],
-  "last_updated_by": "HAIS review 2026-11-04",
+  "last_updated_by": "HAIS review 2026-11-05",
   "_audit_log": [
+    {
+      "action": "Revisión 2026-11-05: FRED DGS2/DGS10, CI HAIS y deploy dev verificados; HTTP/gateway y demás feeds sin confirmar; PAPER",
+      "user": "HAIS review",
+      "timestamp": "2026-11-05T08:08:46Z",
+      "task_ids": [
+        900043,
+        900039,
+        900040,
+        900042
+      ]
+    },
     {
       "action": "chore(HAIS): registrar CI, deploy y observaciones oficiales FRED sin inferir disponibilidad de gateway",
       "user": "HAIS review",
@@ -4787,5 +4846,5 @@
       ]
     }
   ],
-  "last_updated": "2026-11-03T20:44:23.247Z"
+  "last_updated": "2026-11-05T08:08:46Z"
 }
