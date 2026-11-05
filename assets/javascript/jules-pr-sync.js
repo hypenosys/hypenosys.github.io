@@ -141,6 +141,7 @@
             });
             root.taskEngine?.notifyUpdate?.();
             if (typeof root.refreshDashboard === 'function') await root.refreshDashboard();
+            if (typeof root.refreshDashboardData === 'function') await root.refreshDashboardData();
           }
         }
         return false;
@@ -218,6 +219,7 @@
         detail: { taskId: task.id, sessionId: sid, pullRequest: latestPr, status: nextStatus }
       }));
       if (typeof root.refreshDashboard === 'function') await root.refreshDashboard();
+      if (typeof root.refreshDashboardData === 'function') await root.refreshDashboardData();
       if (stage.merged) await root.HypenosysTaskOrchestrator?.handleTaskCompleted?.(task.id);
       return stage.merged;
     } catch (error) {
