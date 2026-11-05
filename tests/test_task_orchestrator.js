@@ -11,6 +11,7 @@ const send = read('assets/javascript/neural-chat-send.js');
 const auth = read('assets/javascript/jules-panel-auth.js');
 const bridge = read('assets/javascript/jules-claude-bridge.js');
 const supervisor = read('assets/javascript/jules-task-supervisor.js');
+const prSync = read('assets/javascript/jules-pr-sync.js');
 const panel = read('pages/jules-panel.html');
 
 assert.match(orchestrator,/hy_task_orchestrator_v1/);
@@ -39,7 +40,8 @@ assert.match(auth,/jules-running/);
 assert.match(bridge,/orchestratorAuthorized/);
 assert.match(bridge,/skipConfirm/);
 
-assert.match(supervisor,/HypenosysTaskOrchestrator.*handleTaskCompleted/s);
+assert.match(supervisor,/HypenosysJulesPrSync.*reconcileSession/s);
+assert.match(prSync,/HypenosysTaskOrchestrator.*handleTaskCompleted/s);
 assert.match(panel,/id="hypenosys-task-orchestrator"/);
 assert.match(panel,/hypenosys-task-orchestrator\.js/);
 
