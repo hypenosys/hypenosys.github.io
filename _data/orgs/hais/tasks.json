@@ -985,8 +985,15 @@
       "emails_asignados": [],
       "images": [],
       "blocks": [],
-      "jules_session": null,
-      "assignee_proposed": "jules"
+      "jules_session": {
+        "session_id": "14333819840872642067",
+        "initiated_by": "haopengwang123",
+        "supervision": "claude",
+        "status": "QUEUED",
+        "updated_at": "2026-11-05T18:20:16.302Z"
+      },
+      "assignee_proposed": "jules",
+      "updated_at": "2026-11-05T18:20:16.823Z"
     },
     {
       "id": 900014,
@@ -4475,6 +4482,11 @@
   "last_updated_by": "HAIS review 2026-11-05",
   "_audit_log": [
     {
+      "action": "chore: actualizar tarea 900013",
+      "user": "haopengwang123",
+      "timestamp": "2026-11-05T18:20:16.823Z"
+    },
+    {
       "action": "Revisión 2026-11-05: FRED DGS2/DGS10, CI HAIS y deploy dev verificados; HTTP/gateway y demás feeds sin confirmar; PAPER",
       "user": "HAIS review",
       "timestamp": "2026-11-05T08:08:46Z",
@@ -4846,5 +4858,5 @@
       ]
     }
   ],
-  "last_updated": "2026-11-05T08:08:46Z"
+  "last_updated": "2026-11-05T18:20:16.823Z"
 }
