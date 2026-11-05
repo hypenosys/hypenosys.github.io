@@ -56,7 +56,7 @@
     ];
     for (const raw of values) {
       const text = String(raw || '').trim();
-      const labeled = /\\((develop|master)\\)\\s*$/i.exec(text);
+      const labeled = /\((develop|master)\)\s*$/i.exec(text);
       const candidate = (labeled ? labeled[1] : text).toLowerCase();
       if (candidate === 'develop' || candidate === 'master') return candidate;
     }
