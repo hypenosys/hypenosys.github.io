@@ -218,9 +218,18 @@
       root.dispatchEvent?.(new CustomEvent('hy:jules-pr-synced', {
         detail: { taskId: task.id, sessionId: sid, pullRequest: latestPr, status: nextStatus }
       }));
-      if (typeof root.refreshDashboard === 'function') await root.refreshDashboard();
-      if (typeof root.refreshDashboardData === 'function') await root.refreshDashboardData();
-      if (stage.merged) await root.HypenosysTaskOrchestrator?.handleTaskCompleted?.(task.id);
+      // Persistence is authoritative. UI refresh failures must not prevent the
+      // orchestrator from advancing or cause a second GitHub write.
+      if (stage.merged) {
+        try { await root.HypenosysTaskOrchestrator?.handleTaskCompleted?.(task.id); }
+        catch (error) { console.warn('[Jules PR Sync] Error avanzando la cola:', error); }
+      }
+      try {
+        if (typeof root.refreshDashboard === 'function') await root.refreshDashboard();
+        if (typeof root.refreshDashboardData === 'function') await root.refreshDashboardData();
+      } catch (error) {
+        console.warn('[Jules PR Sync] La actualización de la vista falló; los datos están guardados:', error);
+      }
       return stage.merged;
     } catch (error) {
       console.warn('[Jules PR Sync] Error en reconciliación:', error);
