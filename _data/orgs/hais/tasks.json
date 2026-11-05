@@ -799,7 +799,7 @@
       "descripcion": "Implementar PostgreSQL de simulación para series, estrategias, órdenes PAPER, fills, posiciones y auditoría; migraciones Alembic adelante/atrás y constraints tenant_id/idempotency_key.",
       "tema_principal": "HAIS-001 / product",
       "prioridad": "High",
-      "estado": "WORKING",
+      "estado": "OK",
       "completitud": 0,
       "task_type": "feature",
       "resuelto_por": "",
@@ -4483,6 +4483,11 @@
   "last_updated_by": "Sistema",
   "_audit_log": [
     {
+      "action": "chore: actualizar estado tarea #900012 → OK",
+      "user": "haopengwang123",
+      "timestamp": "2026-11-05T19:07:43.797Z"
+    },
+    {
       "action": "chore: actualizar tarea 900012",
       "user": "haopengwang123",
       "timestamp": "2026-11-05T18:50:28.956Z"
@@ -4884,5 +4889,5 @@
       ]
     }
   ],
-  "last_updated": "2026-11-05T18:50:28.956Z"
+  "last_updated": "2026-11-05T19:07:43.797Z"
 }
