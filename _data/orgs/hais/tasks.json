@@ -1515,7 +1515,7 @@
       "descripcion": "Agregar ledger de eventos para decision_id, run_id, source_version, model/provider, prompts saneados, coste estimado y resultados PAPER; replay idempotente y sin exponer contenido secreto.",
       "tema_principal": "HAIS-001 / quality",
       "prioridad": "High",
-      "estado": "WORKING",
+      "estado": "In Review",
       "completitud": 0,
       "task_type": "feature",
       "resuelto_por": "",
@@ -1570,6 +1570,10 @@
         {
           "label": "PostgreSQL — transacciones",
           "url": "https://www.postgresql.org/docs/current/tutorial-transactions.html"
+        },
+        {
+          "label": "Jules · PR #23",
+          "url": "https://github.com/hypenosys/HAIS/pull/23"
         }
       ],
       "comments": [
@@ -1604,11 +1608,17 @@
         "initiated_by": "haopengwang123",
         "supervision": "claude",
         "target_branch": "develop",
-        "status": "QUEUED",
-        "updated_at": "2026-11-05T19:51:20.238Z"
+        "status": "COMPLETED",
+        "updated_at": "2026-11-05T20:02:56.024Z",
+        "completed_at": "2026-11-05T20:02:56.024Z",
+        "pr_number": 23,
+        "pr_url": "https://github.com/hypenosys/HAIS/pull/23",
+        "pr_state": "open",
+        "branch": "feature/hais-018-3875897152987456539",
+        "commit": "c31a7a62a8915ad50347b5bd273d0bfa13606634"
       },
       "assignee_proposed": "jules",
-      "updated_at": "2026-11-05T19:51:20.763Z"
+      "updated_at": "2026-11-05T20:02:56.817Z"
     },
     {
       "id": 900019,
@@ -4583,6 +4593,11 @@
   "last_updated_by": "Sistema",
   "_audit_log": [
     {
+      "action": "chore: actualizar tarea 900018",
+      "user": "haopengwang123",
+      "timestamp": "2026-11-05T20:02:56.817Z"
+    },
+    {
       "action": "chore: actualizar tarea 900017",
       "user": "haopengwang123",
       "timestamp": "2026-11-05T20:01:45.284Z"
@@ -5089,5 +5104,5 @@
       ]
     }
   ],
-  "last_updated": "2026-11-05T20:01:45.284Z"
+  "last_updated": "2026-11-05T20:02:56.817Z"
 }
