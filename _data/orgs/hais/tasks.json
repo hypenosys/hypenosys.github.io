@@ -1006,7 +1006,7 @@
       "descripcion": "Mantener únicamente fixtures SYNTHETIC pequeñas y deterministas para CI, validación y fallos difíciles de reproducir. Reutilizar muestras reales saneadas cuando sean suficientes; no construir un feed sintético como fuente habitual de la aplicación.",
       "tema_principal": "HAIS-001 / product",
       "prioridad": "High",
-      "estado": "WORKING",
+      "estado": "REVIEW",
       "completitud": 0,
       "task_type": "feature",
       "resuelto_por": "",
@@ -1060,6 +1060,10 @@
         {
           "label": "NumPy — generadores reproducibles",
           "url": "https://numpy.org/doc/stable/reference/random/index.html"
+        },
+        {
+          "label": "Jules PR #20",
+          "url": "https://github.com/hypenosys/HAIS/pull/20"
         }
       ],
       "comments": [
@@ -1120,11 +1124,25 @@
         "session_id": "17672423486422672759",
         "initiated_by": "haopengwang123",
         "supervision": "claude",
-        "status": "QUEUED",
-        "updated_at": "2026-11-05T19:09:03.249Z"
+        "status": "IN_PROGRESS",
+        "updated_at": "2026-11-05T19:09:03.249Z",
+        "pr_url": "https://github.com/hypenosys/HAIS/pull/20",
+        "pr_number": 20,
+        "pr_sync_status": "wrong_base"
       },
       "assignee_proposed": "jules",
-      "updated_at": "2026-11-05T19:09:03.975Z"
+      "updated_at": "2026-11-05T19:17:57.780Z",
+      "pull_request": {
+        "url": "https://github.com/hypenosys/HAIS/pull/20",
+        "number": 20,
+        "repository": "hypenosys/HAIS",
+        "title": "feat: Minimal financial fixtures for reproducible testing",
+        "state": "open",
+        "base": "feature/hais-014",
+        "sync_status": "wrong_base",
+        "merged_at": null
+      },
+      "updated_by_agent_supervisor": true
     },
     {
       "id": 900015,
@@ -4493,6 +4511,11 @@
     {
       "action": "chore: actualizar tarea 900014",
       "user": "haopengwang123",
+      "timestamp": "2026-11-05T19:17:57.780Z"
+    },
+    {
+      "action": "chore: actualizar tarea 900014",
+      "user": "haopengwang123",
       "timestamp": "2026-11-05T19:09:03.975Z"
     },
     {
@@ -4907,5 +4930,5 @@
       ]
     }
   ],
-  "last_updated": "2026-11-05T19:09:03.975Z"
+  "last_updated": "2026-11-05T19:17:57.780Z"
 }
