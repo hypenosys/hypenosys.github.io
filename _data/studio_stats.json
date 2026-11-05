@@ -1,15 +1,15 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-11-05T20:02:59.124Z",
+  "computed_at": "2026-11-05T20:03:11.594Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 43,
-    "total_ok": 17,
+    "total_ok": 18,
     "total_ko": 0,
-    "total_uncertain": 4,
+    "total_uncertain": 3,
     "total_obsolete": 0,
-    "fixed_found_ratio": 0.3953,
-    "verified_ratio": 0.3953
+    "fixed_found_ratio": 0.4186,
+    "verified_ratio": 0.4186
   },
   "group": {
     "velocity_trend": {
@@ -23,18 +23,14 @@
       "2026-W45": 0
     },
     "bug_rate": 0,
-    "blocker_health": 20,
+    "blocker_health": 19,
     "tag_heatmap": {
-      "hais-001": 8,
-      "quality": 3,
+      "hais-001": 7,
+      "quality": 2,
       "ci": 1,
       "pytest": 1,
       "supply-chain": 1,
       "docker": 2,
-      "audit": 1,
-      "event-sourcing": 1,
-      "idempotency": 1,
-      "paper": 20,
       "cognito": 1,
       "sandbox": 1,
       "agent-security": 1,
@@ -44,6 +40,7 @@
       "threat-model": 1,
       "staging": 1,
       "health-check": 1,
+      "paper": 19,
       "backup": 1,
       "rollback": 1,
       "postgresql": 1,
@@ -180,7 +177,7 @@
     "axlfc": {
       "member_name": "Axel",
       "completed": {
-        "all_time": 52,
+        "all_time": 53,
         "milestone": 34,
         "week": 1
       },
@@ -195,7 +192,7 @@
         "2026-W45": 0
       },
       "type_breakdown": {
-        "feature": 33,
+        "feature": 34,
         "integration": 1,
         "test": 2,
         "chore": 8,
@@ -208,6 +205,7 @@
         "feature/hais-009": 1,
         "feature/hais-016": 1,
         "feature/hais-017": 1,
+        "feature/hais-018": 1,
         "": 1,
         "PRO": 15,
         "chore/upgrade-ue-5.7.4": 2,
@@ -227,7 +225,7 @@
       },
       "tag_frequency": {
         "byok": 1,
-        "hais-001": 5,
+        "hais-001": 6,
         "identity": 1,
         "jules": 6,
         "oauth": 1,
@@ -235,19 +233,21 @@
         "platform": 2,
         "scheduler": 1,
         "dag": 1,
-        "idempotency": 1,
+        "idempotency": 2,
         "github-actions": 1,
         "webhooks": 1,
         "sync": 1,
-        "quality": 2,
+        "quality": 3,
         "pull-requests": 1,
         "ci": 1,
         "review": 1,
         "concurrency": 1,
         "workers": 1,
         "retry": 1,
+        "audit": 1,
+        "event-sourcing": 1,
+        "paper": 2,
         "hais": 1,
-        "paper": 1,
         "estrategia": 1,
         "riesgo": 1,
         "chore": 6,
@@ -276,15 +276,15 @@
         "days": 0.5,
         "estimated_start": true
       },
-      "dependency_impact": 8,
+      "dependency_impact": 9,
       "comment_activity": 1,
       "volatility": {
         "reopens": 3,
         "reprioritizations": 27
       },
       "workload": {
-        "active_tasks": 18,
-        "story_points": 52
+        "active_tasks": 17,
+        "story_points": 44
       }
     },
     "topperh4rley": {
@@ -612,7 +612,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "haopengwang123",
-      "timestamp": "2026-11-05T20:03:00.180Z"
+      "timestamp": "2026-11-05T20:03:12.424Z"
     }
   ]
 }
