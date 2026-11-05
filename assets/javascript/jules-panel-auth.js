@@ -776,9 +776,11 @@ window.launchSession = async function(options = {}) {
             requirePlanApproval: isReview || isSupervised || isClaudeSupervised // Human/Claude supervision both gate the plan
         };
 
-        if (isAuto) {
-            body.requirePlanApproval = false;
+        // Generate a PR after execution even in supervised modes. The plan
+        // still requires human/Claude approval; this never auto-merges code.
+        if (isAuto || isSupervised || isClaudeSupervised) {
             body.automationMode = "AUTO_CREATE_PR";
+            if (isAuto) body.requirePlanApproval = false;
         }
 
         // Defensive Logging (internal UI state + final API body)
