@@ -52,7 +52,8 @@
   function resolveTargetBranch(task, repositoryDefault = '') {
     const values = [
       task?.integration_branch, task?.merge_target_branch,
-      task?.target_branch, task?.base_branch, task?.branch, task?.rama
+      task?.target_branch, task?.base_branch,
+      task?.jules_session?.target_branch, task?.branch, task?.rama
     ];
     for (const raw of values) {
       const text = String(raw || '').trim();
@@ -124,8 +125,15 @@
     }
     if (runs.some(check => check.status !== 'completed')) return 'ci_pending';
     if (runs.some(check => !['success', 'neutral', 'skipped'].includes(check.conclusion))) return 'ci_failed';
-    if (runs.some(check => check.conclusion === 'success')) return 'ci_passed';
-    return 'ci_pending';
+    if (!runs.some(check => check.conclusion === 'success')) return 'ci_pending';
+
+    // Repositories may publish legacy commit statuses alongside check runs.
+    // Do not auto-merge while a legacy check is pending or failing.
+    const legacy = await githubRequest(pr, '/commits/' + sha + '/status');
+    const statuses = Array.isArray(legacy?.statuses) ? legacy.statuses : [];
+    if (statuses.some(status => ['error', 'failure'].includes(status.state))) return 'ci_failed';
+    if (statuses.some(status => status.state !== 'success')) return 'ci_pending';
+    return 'ci_passed';
   }
 
   async function integratePullRequest(pr, pull, task, sid, target) {
