@@ -1492,7 +1492,7 @@
       "descripcion": "Agregar ledger de eventos para decision_id, run_id, source_version, model/provider, prompts saneados, coste estimado y resultados PAPER; replay idempotente y sin exponer contenido secreto.",
       "tema_principal": "HAIS-001 / quality",
       "prioridad": "High",
-      "estado": "Pending",
+      "estado": "WORKING",
       "completitud": 0,
       "task_type": "feature",
       "resuelto_por": "",
@@ -1576,8 +1576,16 @@
       "emails_asignados": [],
       "images": [],
       "blocks": [],
-      "jules_session": null,
-      "assignee_proposed": "jules"
+      "jules_session": {
+        "session_id": "3875897152987456539",
+        "initiated_by": "haopengwang123",
+        "supervision": "claude",
+        "target_branch": "develop",
+        "status": "QUEUED",
+        "updated_at": "2026-11-05T19:51:20.238Z"
+      },
+      "assignee_proposed": "jules",
+      "updated_at": "2026-11-05T19:51:20.763Z"
     },
     {
       "id": 900019,
@@ -4552,6 +4560,11 @@
   "last_updated_by": "Sistema",
   "_audit_log": [
     {
+      "action": "chore: actualizar tarea 900018",
+      "user": "haopengwang123",
+      "timestamp": "2026-11-05T19:51:20.763Z"
+    },
+    {
       "action": "chore: actualizar tarea 900017",
       "user": "haopengwang123",
       "timestamp": "2026-11-05T19:50:00.388Z"
@@ -5043,5 +5056,5 @@
       ]
     }
   ],
-  "last_updated": "2026-11-05T19:50:00.388Z"
+  "last_updated": "2026-11-05T19:51:20.763Z"
 }
