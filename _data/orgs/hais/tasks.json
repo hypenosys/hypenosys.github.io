@@ -1643,7 +1643,7 @@
       "descripcion": "Probar Cognito desde Axlfc/connect-core en sandbox de solo lectura sobre HAIS, con red/FS limitados, timeout, cuota y sin acceso a claves; comparar con Jules usando el mismo ticket.",
       "tema_principal": "HAIS-001 / quality",
       "prioridad": "High",
-      "estado": "Pending",
+      "estado": "BLOCKED",
       "completitud": 0,
       "task_type": "test",
       "resuelto_por": "",
@@ -1703,9 +1703,22 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-01T09:26:07.863Z",
           "body": "[HAIS · PLAN 2026-11-01] Axel prueba Cognito en sandbox aislado, cuota y acceso de solo lectura; comparar el mismo ticket con Jules sin copiar credenciales. Experimento opcional tras las pruebas críticas de Jules. Responsable(s): axlfc. Estado Pending conservado; subtareas y criterios existentes sin alterar."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-05T20:10:33.460Z",
+          "body": "[CODEX · WINDOWS · HAIS-019] BLOQUEO TÉCNICO. Sin smoke test Cognito: WSL no instalado y Docker Desktop Engine no responde. No se ha verificado sandbox de solo lectura, red/FS, cuotas, timeouts ni ausencia de secretos. Codex redactó localmente docs/HAIS-019-CODEX-WINDOWS.md y commit ecebcef en feature/hais-019 (NO publicado: gh sin autenticación). Pendiente: entorno Linux aislado, ejecución real, comparación con Jules, pytest y verificación de recuperación. No crear PR ni cerrar la tarea hasta tener evidencias."
         }
       ],
-      "change_log": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-05T20:10:33.460Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "BLOCKED"
+        }
+      ],
       "comentario": "Evidencia requerida: Informe comparable de resultados; sandbox aislado; salida controlada si worker falla; cero escrituras productivas",
       "estimated_hours": 10,
       "story_points": 5,
@@ -1726,7 +1739,9 @@
       "images": [],
       "blocks": [],
       "jules_session": null,
-      "assignee_proposed": "cognito"
+      "assignee_proposed": "cognito",
+      "updated_at": "2026-11-05T20:10:33.460Z",
+      "blocked_reason": "Entorno Windows sin WSL2 y Docker Engine operativo; aislamiento y smoke test Cognito no verificados."
     },
     {
       "id": 900020,
@@ -4603,7 +4618,7 @@
       "assignee_proposed": "human"
     }
   ],
-  "last_updated_by": "Sistema",
+  "last_updated_by": "ChatGPT",
   "_audit_log": [
     {
       "action": "chore: actualizar tarea 900018",
@@ -5122,5 +5137,5 @@
       ]
     }
   ],
-  "last_updated": "2026-11-05T20:03:09.105Z"
+  "last_updated": "2026-11-05T20:10:33.460Z"
 }
