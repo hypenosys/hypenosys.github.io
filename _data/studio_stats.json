@@ -1,15 +1,15 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-11-05T18:28:04.881Z",
+  "computed_at": "2026-11-05T18:33:49.618Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 43,
-    "total_ok": 12,
+    "total_ok": 13,
     "total_ko": 0,
     "total_uncertain": 3,
     "total_obsolete": 0,
-    "fixed_found_ratio": 0.2791,
-    "verified_ratio": 0.2791
+    "fixed_found_ratio": 0.3023,
+    "verified_ratio": 0.3023
   },
   "group": {
     "velocity_trend": {
@@ -23,17 +23,13 @@
       "2026-W45": 0
     },
     "bug_rate": 0,
-    "blocker_health": 25,
+    "blocker_health": 24,
     "tag_heatmap": {
-      "hais-001": 13,
-      "product": 3,
+      "hais-001": 12,
+      "product": 2,
       "postgresql": 2,
       "alembic": 1,
       "tenant-isolation": 1,
-      "openai": 1,
-      "openrouter": 1,
-      "byok": 1,
-      "cost-control": 1,
       "market-data": 6,
       "ohlcv": 1,
       "backtesting": 1,
@@ -618,7 +614,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "haopengwang123",
-      "timestamp": "2026-11-05T18:28:05.702Z"
+      "timestamp": "2026-11-05T18:33:50.513Z"
     }
   ]
 }
