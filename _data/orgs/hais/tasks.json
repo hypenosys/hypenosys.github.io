@@ -1259,7 +1259,7 @@
       "descripcion": "Probar creación de PR HAIS desde Jules, vínculo con tarea Kanban y feedback de CI, revisión y merge controlado; registrar correctamente PR descartadas y ramas huérfanas.",
       "tema_principal": "HAIS-001 / quality",
       "prioridad": "High",
-      "estado": "In Review",
+      "estado": "REVIEW",
       "completitud": 0,
       "task_type": "test",
       "resuelto_por": "",
@@ -1358,10 +1358,24 @@
         "pr_url": "https://github.com/hypenosys/HAIS/pull/21",
         "pr_state": "open",
         "branch": "feature/hais-016-2644728174667277934",
-        "commit": "6c45239b4952e9a05f43dda16d1def7e4bdbbc71"
+        "commit": "6c45239b4952e9a05f43dda16d1def7e4bdbbc71",
+        "pr_sync_status": "closed_unmerged",
+        "target_branch": "develop"
       },
       "assignee_proposed": "jules",
-      "updated_at": "2026-11-05T19:46:50.561Z"
+      "updated_at": "2026-11-05T19:47:36.787Z",
+      "pull_request": {
+        "url": "https://github.com/hypenosys/HAIS/pull/21",
+        "number": 21,
+        "repository": "hypenosys/HAIS",
+        "title": "[HAIS-016] Comprobar workflow de creación de PR (#900016)",
+        "state": "closed",
+        "base": "feature/hais-016",
+        "target_branch": "develop",
+        "sync_status": "closed_unmerged",
+        "merged_at": null
+      },
+      "updated_by_agent_supervisor": true
     },
     {
       "id": 900017,
@@ -4532,6 +4546,11 @@
     {
       "action": "chore: actualizar tarea 900016",
       "user": "haopengwang123",
+      "timestamp": "2026-11-05T19:47:36.787Z"
+    },
+    {
+      "action": "chore: actualizar tarea 900016",
+      "user": "haopengwang123",
       "timestamp": "2026-11-05T19:46:50.561Z"
     },
     {
@@ -4986,5 +5005,5 @@
       ]
     }
   ],
-  "last_updated": "2026-11-05T19:46:50.561Z"
+  "last_updated": "2026-11-05T19:47:36.787Z"
 }
