@@ -1708,6 +1708,11 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-05T20:10:33.460Z",
           "body": "[CODEX · WINDOWS · HAIS-019] BLOQUEO TÉCNICO. Sin smoke test Cognito: WSL no instalado y Docker Desktop Engine no responde. No se ha verificado sandbox de solo lectura, red/FS, cuotas, timeouts ni ausencia de secretos. Codex redactó localmente docs/HAIS-019-CODEX-WINDOWS.md y commit ecebcef en feature/hais-019 (NO publicado: gh sin autenticación). Pendiente: entorno Linux aislado, ejecución real, comparación con Jules, pytest y verificación de recuperación. No crear PR ni cerrar la tarea hasta tener evidencias."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-05T20:29:23.377Z",
+          "body": "[CODEX · WINDOWS · HAIS-019 · PREFLIGHT] Docker Desktop recuperado; preflight en Alpine desechable verificado (UID 10001, montaje y raíz read-only, sin red externa, cgroups CPU=1, RAM=512 MiB, PIDs=64 y limpieza del contenedor). Sin uso de contenedores Cognito existentes. Codex actualizó docs/HAIS-019-CODEX-WINDOWS.md y añadió scripts/hais019-isolation.ps1; commits locales ecebcef y 31bc615 en feature/hais-019, todavía sin publicar. BLOQUEO ACTUAL: construir imagen de prueba Cognito con dependencias, verificar timeout externo + terminación de descendientes, evitar escrituras Git en repo base, ejecutar smoke test real y comparar con Jules; pytest HAIS pendiente. La prueba con proveedor mock NO demuestra ejecución real del agente."
         }
       ],
       "change_log": [
@@ -1740,8 +1745,8 @@
       "blocks": [],
       "jules_session": null,
       "assignee_proposed": "cognito",
-      "updated_at": "2026-11-05T20:10:33.460Z",
-      "blocked_reason": "Entorno Windows sin WSL2 y Docker Engine operativo; aislamiento y smoke test Cognito no verificados."
+      "updated_at": "2026-11-05T20:29:23.377Z",
+      "blocked_reason": "Preflight Docker desechable verificado. Pendiente: imagen Cognito de prueba aislada, timeout que termine todo el contenedor/subprocesos, smoke test real, pytest y comparación con Jules."
     },
     {
       "id": 900020,
@@ -5137,5 +5142,5 @@
       ]
     }
   ],
-  "last_updated": "2026-11-05T20:10:33.460Z"
+  "last_updated": "2026-11-05T20:29:23.377Z"
 }
