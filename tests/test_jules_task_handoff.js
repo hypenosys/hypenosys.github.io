@@ -111,6 +111,13 @@ function makeContext(withLinkedSession) {
     assert.equal(handoff.calls.sends,0);
     assert.deepEqual(handoff.calls.selectedRepo,['hypenosys/hypenosys.github.io']);
     assert.equal(handoff.select.value,'develop');
+    const featureTask = makeContext(false);
+    featureTask.task.rama = 'feature/hais-014';
+    featureTask.task.branch = 'Desarrollo (develop)';
+    await featureTask.context.prefillTaskFromHandoff(featureTask.task, { source: 'dashboard', intent: 'new-task' });
+    assert.equal(featureTask.select.value, 'develop',
+        'Jules startingBranch must be the integration base, not a task feature branch');
+
     assert.equal(handoff.state.activeBranch,'develop');
     assert.equal(handoff.launch.disabled,false);
     assert.match(handoff.area.value,/Dos párrafos\n\nmás contexto/);

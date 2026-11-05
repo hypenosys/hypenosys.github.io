@@ -7,7 +7,7 @@ const source = fs.readFileSync(path.join(__dirname, '../assets/javascript/jules-
 
 function fixture() {
   let task = {
-    id: 900012, organizationId: 'hais', repository: 'hypenosys/HAIS',
+    id: 900012, organizationId: 'hais', repository: 'hypenosys/HAIS', branch: 'Desarrollo (develop)',
     estado: 'WORKING', jules_session: { session_id: 'session-1' },
     external_links: []
   };
@@ -60,6 +60,11 @@ function fixture() {
 
 (async () => {
   const f = fixture();
+  assert.equal(f.api.resolveTargetBranch({ rama: 'feature/hais-014', branch: 'Desarrollo (develop)' }), 'develop');
+  assert.equal(f.api.resolveTargetBranch({ branch: 'Producción (master)' }), 'master');
+  assert.equal(f.api.resolveTargetBranch({ rama: 'feature/hais-014' }, 'master'), 'master');
+  assert.equal(f.api.resolveTargetBranch({ rama: 'feature/hais-014' }, 'main'), '');
+
   assert.equal(f.api.parsePullRequest('https://github.com/hypenosys/HAIS/pull/42').number, 42);
   for (const url of [
     'http://github.com/hypenosys/HAIS/pull/42',
@@ -71,7 +76,7 @@ function fixture() {
 
   assert.equal(await f.api.reconcileSession('session-1'), false);
   assert.equal(f.task().estado, 'REVIEW', 'an open PR must not close the task');
-  assert.equal(f.task().pull_request.sync_status, 'awaiting_merge');
+  assert.equal(f.task().pull_request.sync_status, 'manual_review');
   assert.equal(f.task().external_links[0].url, 'https://github.com/hypenosys/HAIS/pull/42');
   assert.equal(f.writes.length, 1);
   await f.api.reconcileSession('session-1');
