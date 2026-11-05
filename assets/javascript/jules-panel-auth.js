@@ -174,7 +174,7 @@ window.resolveJulesIntegrationBranchFromTask = function(task) {
         task?.target_branch, task?.base_branch, task?.branch, task?.rama
     ]) {
         const value = String(raw || '').trim();
-        const labeled = /\\((develop|master)\\)\\s*$/i.exec(value);
+        const labeled = /\((develop|master)\)\s*$/i.exec(value);
         const target = (labeled ? labeled[1] : value).toLowerCase();
         if (target === 'develop' || target === 'master') return target;
     }
