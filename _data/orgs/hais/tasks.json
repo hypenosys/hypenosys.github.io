@@ -1713,6 +1713,11 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-05T20:29:23.377Z",
           "body": "[CODEX · WINDOWS · HAIS-019 · PREFLIGHT] Docker Desktop recuperado; preflight en Alpine desechable verificado (UID 10001, montaje y raíz read-only, sin red externa, cgroups CPU=1, RAM=512 MiB, PIDs=64 y limpieza del contenedor). Sin uso de contenedores Cognito existentes. Codex actualizó docs/HAIS-019-CODEX-WINDOWS.md y añadió scripts/hais019-isolation.ps1; commits locales ecebcef y 31bc615 en feature/hais-019, todavía sin publicar. BLOQUEO ACTUAL: construir imagen de prueba Cognito con dependencias, verificar timeout externo + terminación de descendientes, evitar escrituras Git en repo base, ejecutar smoke test real y comparar con Jules; pytest HAIS pendiente. La prueba con proveedor mock NO demuestra ejecución real del agente."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-05T20:35:01.684Z",
+          "body": "[CODEX · WINDOWS · HAIS-019 · TIMEOUT] Ensayo manual de terminación forzada superado en Alpine desechable: docker top identificó docker-init (PID 809), shell (PID 822) y sleep 300 hijo (PID 823); docker rm -f eliminó el contenedor y posterior docker inspect confirmó su ausencia (CONTAINER_TIMEOUT_CLEANUP_OK). Sin uso del Cognito Worker real. Próximo control: supervisor automático con timeout efectivo + limpieza comprobable, imagen Cognito aislada, pruebas ASGI sintéticas, ejecución real autorizada y comparación Jules. Estado BLOCKED conservado."
         }
       ],
       "change_log": [
@@ -1745,8 +1750,8 @@
       "blocks": [],
       "jules_session": null,
       "assignee_proposed": "cognito",
-      "updated_at": "2026-11-05T20:29:23.377Z",
-      "blocked_reason": "Preflight Docker desechable verificado. Pendiente: imagen Cognito de prueba aislada, timeout que termine todo el contenedor/subprocesos, smoke test real, pytest y comparación con Jules."
+      "updated_at": "2026-11-05T20:35:01.684Z",
+      "blocked_reason": "Terminación forzada de contenedor Alpine e hijo verificada manualmente. Pendiente: supervisor automático de timeout, imagen y ejecución del Cognito Worker real, tests HAIS y comparación con Jules."
     },
     {
       "id": 900020,
@@ -5142,5 +5147,5 @@
       ]
     }
   ],
-  "last_updated": "2026-11-05T20:29:23.377Z"
+  "last_updated": "2026-11-05T20:35:01.684Z"
 }
