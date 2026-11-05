@@ -1128,22 +1128,22 @@
         "updated_at": "2026-11-05T19:18:15.002Z",
         "pr_url": "https://github.com/hypenosys/HAIS/pull/20",
         "pr_number": 20,
-        "pr_sync_status": "wrong_base",
+        "pr_sync_status": "awaiting_merge",
         "completed_at": "2026-11-05T19:18:15.002Z",
         "pr_state": "open",
         "branch": "feature/hais-014-17672423486422672759",
         "commit": "7576f17ae6bd7d248dd53355024be24f167c9f91"
       },
       "assignee_proposed": "jules",
-      "updated_at": "2026-11-05T19:18:25.649Z",
+      "updated_at": "2026-11-05T19:24:46.308Z",
       "pull_request": {
         "url": "https://github.com/hypenosys/HAIS/pull/20",
         "number": 20,
         "repository": "hypenosys/HAIS",
         "title": "feat: Minimal financial fixtures for reproducible testing",
         "state": "open",
-        "base": "feature/hais-014",
-        "sync_status": "wrong_base",
+        "base": "develop",
+        "sync_status": "awaiting_merge",
         "merged_at": null
       },
       "updated_by_agent_supervisor": true
@@ -4515,6 +4515,11 @@
     {
       "action": "chore: actualizar tarea 900014",
       "user": "haopengwang123",
+      "timestamp": "2026-11-05T19:24:46.308Z"
+    },
+    {
+      "action": "chore: actualizar tarea 900014",
+      "user": "haopengwang123",
       "timestamp": "2026-11-05T19:18:25.649Z"
     },
     {
@@ -4949,5 +4954,5 @@
       ]
     }
   ],
-  "last_updated": "2026-11-05T19:18:25.649Z"
+  "last_updated": "2026-11-05T19:24:46.308Z"
 }
