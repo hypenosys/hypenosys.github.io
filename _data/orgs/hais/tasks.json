@@ -1359,11 +1359,10 @@
         "pr_state": "open",
         "branch": "feature/hais-016-2644728174667277934",
         "commit": "6c45239b4952e9a05f43dda16d1def7e4bdbbc71",
-        "pr_sync_status": "closed_unmerged",
-        "target_branch": "develop"
+        "pr_sync_status": "closed_unmerged"
       },
       "assignee_proposed": "jules",
-      "updated_at": "2026-11-05T19:47:36.787Z",
+      "updated_at": "2026-11-05T19:47:39.699Z",
       "pull_request": {
         "url": "https://github.com/hypenosys/HAIS/pull/21",
         "number": 21,
@@ -1371,7 +1370,6 @@
         "title": "[HAIS-016] Comprobar workflow de creación de PR (#900016)",
         "state": "closed",
         "base": "feature/hais-016",
-        "target_branch": "develop",
         "sync_status": "closed_unmerged",
         "merged_at": null
       },
@@ -4546,6 +4544,11 @@
     {
       "action": "chore: actualizar tarea 900016",
       "user": "haopengwang123",
+      "timestamp": "2026-11-05T19:47:39.699Z"
+    },
+    {
+      "action": "chore: actualizar tarea 900016",
+      "user": "haopengwang123",
       "timestamp": "2026-11-05T19:47:36.787Z"
     },
     {
@@ -5005,5 +5008,5 @@
       ]
     }
   ],
-  "last_updated": "2026-11-05T19:47:36.787Z"
+  "last_updated": "2026-11-05T19:47:39.699Z"
 }
