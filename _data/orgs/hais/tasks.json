@@ -1515,8 +1515,8 @@
       "descripcion": "Agregar ledger de eventos para decision_id, run_id, source_version, model/provider, prompts saneados, coste estimado y resultados PAPER; replay idempotente y sin exponer contenido secreto.",
       "tema_principal": "HAIS-001 / quality",
       "prioridad": "High",
-      "estado": "In Review",
-      "completitud": 0,
+      "estado": "OK",
+      "completitud": 1,
       "task_type": "feature",
       "resuelto_por": "",
       "asignados": [
@@ -1615,10 +1615,23 @@
         "pr_url": "https://github.com/hypenosys/HAIS/pull/23",
         "pr_state": "open",
         "branch": "feature/hais-018-3875897152987456539",
-        "commit": "c31a7a62a8915ad50347b5bd273d0bfa13606634"
+        "commit": "c31a7a62a8915ad50347b5bd273d0bfa13606634",
+        "pr_sync_status": "merged"
       },
       "assignee_proposed": "jules",
-      "updated_at": "2026-11-05T20:02:56.817Z"
+      "updated_at": "2026-11-05T20:03:09.105Z",
+      "pull_request": {
+        "url": "https://github.com/hypenosys/HAIS/pull/23",
+        "number": 23,
+        "repository": "hypenosys/HAIS",
+        "title": "feat(audit): auditable events and idempotency (#900018)",
+        "state": "closed",
+        "base": "develop",
+        "target_branch": "develop",
+        "sync_status": "merged",
+        "merged_at": "2026-11-05T20:03:05Z"
+      },
+      "updated_by_agent_supervisor": true
     },
     {
       "id": 900019,
@@ -4595,6 +4608,11 @@
     {
       "action": "chore: actualizar tarea 900018",
       "user": "haopengwang123",
+      "timestamp": "2026-11-05T20:03:09.105Z"
+    },
+    {
+      "action": "chore: actualizar tarea 900018",
+      "user": "haopengwang123",
       "timestamp": "2026-11-05T20:02:56.817Z"
     },
     {
@@ -5104,5 +5122,5 @@
       ]
     }
   ],
-  "last_updated": "2026-11-05T20:02:56.817Z"
+  "last_updated": "2026-11-05T20:03:09.105Z"
 }
