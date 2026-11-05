@@ -68,6 +68,7 @@ function harness({ target = 'develop', supervision = 'claude', ci = 'pending',
         pr.state = 'closed';
         return response({ merged: true, sha: 'c'.repeat(40) });
       }
+      if (url.pathname.endsWith('/status') && method === 'GET') return response({ statuses: [] });
       if (url.pathname.endsWith('/check-runs') && method === 'GET') {
         const checks = stateCI === 'pending' ? [{ status: 'in_progress', conclusion: null }] :
           [{ status: 'completed', conclusion: stateCI === 'success' ? 'success' : 'failure' }];
