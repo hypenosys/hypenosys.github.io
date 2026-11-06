@@ -5,6 +5,9 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="dark">
 <title>{{ page.title | escape }} · Hypenosys</title>
+<!-- Match the authenticated Dashboard header: avatar, mobile account menu and
+     Bootstrap dropdown require the shared UI styles and AuthManager. -->
+<link rel="stylesheet" href="{{ '/assets/main.css' | relative_url }}">
 <style>
 :root{color-scheme:dark;--bg:#0b0c16;--layer:#141522;--layer2:#1a1a2a;--border:#333046;--purple:#bd93f9;--green:#50fa7b;--cyan:#8be9fd;--muted:#a6a8c4;--ink:#f8f8f2;--red:#ff838c}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,system-ui,sans-serif}
@@ -38,8 +41,15 @@ button,input,select{font:inherit}button{cursor:pointer}a{color:var(--cyan);text-
 @media(max-width:850px){.eco-layout{display:block}.eco-nav{display:flex;overflow-x:auto;gap:6px;padding:10px}.eco-nav strong{display:none}.eco-nav a{white-space:nowrap;margin:0}.eco-main{padding:16px}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
 </style>
+<!-- Defer preserves order: config → header → GitHub identity → authReady →
+     desktop/mobile avatar → data views. Never use cached profile identities. -->
+<script src="{{ '/assets/javascript/bootstrap/jquery.min.js' | relative_url }}" defer></script>
+<script src="{{ '/assets/javascript/bootstrap/bootstrap.bundle.min.js' | relative_url }}" defer></script>
+<script src="{{ '/assets/javascript/ui-components.js' | relative_url }}" defer></script>
+<script src="{{ '/assets/javascript/auth-config.js' | relative_url }}" defer></script>
 <script src="{{ '/assets/javascript/global-header.js' | relative_url }}" defer></script>
 <script src="{{ '/assets/javascript/github-api.js' | relative_url }}" defer></script>
+<script src="{{ '/assets/javascript/auth.js' | relative_url }}" defer></script>
 <script src="{{ '/assets/javascript/ecosystem-v2.js' | relative_url }}" defer></script>
 </head>
 <body data-eco-module="{{ page.eco_module | escape }}">
