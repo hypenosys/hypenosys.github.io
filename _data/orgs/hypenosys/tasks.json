@@ -4235,7 +4235,9 @@
         "97",
         "98",
         "107",
-        "111"
+        "111",
+        "112",
+        "113"
       ],
       "comments": [
         {
@@ -5584,6 +5586,212 @@
           "new_value": "Created for TC/Hypenosys/IRC integration"
         }
       ]
+    },
+    {
+      "id": 112,
+      "integration_key": "irc-real-views",
+      "organizationId": "hypenosys",
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "[IRC HYBRID] Implementar Canales, Bots, Bridges, Incidents y Config sobre datos reales",
+      "descripcion": "Primera UI implementada en PR #466 en forma de cliente web IRC y vistas respaldadas por endpoints de gateway; completar pruebas y conectores reales, sin mocks ni permisos de agentes desde el chat.",
+      "rama": "feat/irc-hybrid-views-cloudflare-20261106",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Tools / Automation",
+      "seccion": "IRC Hybrid",
+      "prioridad": "Major",
+      "milestone": "P1",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "axlfc",
+        "haopengwang123"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "irc-hybrid",
+        "cloudflare",
+        "zimaboard2",
+        "irc-real-views"
+      ],
+      "external_links": [
+        {
+          "label": "PR draft #466",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/pull/466"
+        },
+        {
+          "label": "Guía Cloudflare ZimaBoard2",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/feat/irc-hybrid-views-cloudflare-20261106/docs/IRC_ZIMABOARD2_CLOUDFLARE_DEPLOY.md"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 11201,
+          "text": "Revisar UI de /irc/ con pestañas reales Canales/Bots/Bridges/Incidents/Config, navegación y diseño accesible responsive.",
+          "done": false
+        },
+        {
+          "id": 11202,
+          "text": "Conectar IRCv3 WSS a servidor real y validar PING/PONG, JOIN/LIST, mensajes y reconexión sin estado fantasma.",
+          "done": false
+        },
+        {
+          "id": 11203,
+          "text": "Implementar /api/irc/bots autenticado con identidad/estado reales de agentes canónicos TC.",
+          "done": false
+        },
+        {
+          "id": 11204,
+          "text": "Implementar /api/irc/bridges y /api/irc/incidents con fuentes persistentes, timestamps, error/partial/stale.",
+          "done": false
+        },
+        {
+          "id": 11205,
+          "text": "Configurar preferencias locales y endpoint admin separado con ACL/CSRF y consentimiento cuando exista SSO.",
+          "done": false
+        },
+        {
+          "id": 11206,
+          "text": "Ejecutar QA E2E dos usuarios, canales privados, permisos, modo desconectado, CORS y logs sin secretos.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Todas las vistas obtienen datos remotos verificables o muestran desconectado/no configurado; CSS/JS, CI, WSS/JOIN/LIST y ACL multi-org verificados; cero datos simulados.",
+      "blocks": [],
+      "blocked_by": [
+        "89"
+      ],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T19:36:46.000Z",
+          "body": "La UI inicial está en PR draft #466; no existe evidencia de backend/infra operativo, ni de CI/E2E. Mantener Pending hasta completar gates."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T19:36:46.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created in IRC hybrid plan"
+        }
+      ]
+    },
+    {
+      "id": 113,
+      "integration_key": "irc-zimaboard-cloudflare",
+      "organizationId": "hypenosys",
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "[IRC INFRA] Publicar irc.hypenosys.com en ZimaBoard2 mediante Cloudflare Tunnel",
+      "descripcion": "Configurar origin real Ergo IRCd/WS, reverse proxy y hosting del cliente IRC en ZimaBoard2, DNS Cloudflare Tunnel/HTTPS, WAF, backups y monitorización. Documentación en PR #466, infraestructura sin desplegar.",
+      "rama": "infra/irc-zimaboard2-tunnel",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Tools / Automation",
+      "seccion": "IRC Hybrid",
+      "prioridad": "Critical",
+      "milestone": "P1",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "axlfc",
+        "haopengwang123"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "irc-hybrid",
+        "cloudflare",
+        "zimaboard2",
+        "irc-zimaboard-cloudflare"
+      ],
+      "external_links": [
+        {
+          "label": "PR draft #466",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/pull/466"
+        },
+        {
+          "label": "Guía Cloudflare ZimaBoard2",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/feat/irc-hybrid-views-cloudflare-20261106/docs/IRC_ZIMABOARD2_CLOUDFLARE_DEPLOY.md"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 11301,
+          "text": "Verificar capacidad/disponibilidad ZimaBoard2, contenedores, políticas de redes y backups; seleccionar ubicación de datos fuera del sitio web.",
+          "done": false
+        },
+        {
+          "id": 11302,
+          "text": "Instalar Ergo IRCd con listeners WebSocket restringidos, cuentas IRC, TLS adecuado y rate limits; sin revelar credenciales.",
+          "done": false
+        },
+        {
+          "id": 11303,
+          "text": "Desplegar reverse proxy con /webirc hacia Ergo, /api/irc/* al gateway y archivos estáticos del build Jekyll.",
+          "done": false
+        },
+        {
+          "id": 11304,
+          "text": "Crear DNS irc.hypenosys.com y Cloudflare Tunnel publicados con WebSockets/HTTPS, probar puerto público sin abrir red del host.",
+          "done": false
+        },
+        {
+          "id": 11305,
+          "text": "Aplicar autenticación para operaciones, WAF y políticas de canal; mantener separada la gestión de SSO, Matrix y bots.",
+          "done": false
+        },
+        {
+          "id": 11306,
+          "text": "Hacer smoke SSL/WSS, fallback/reconexión, backup/restore, seguridad, logs/alertas y confirmar documentación de operación.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "DNS/tunnel y sitio público válidos, upgrade WSS 101, IRC real 001/LIST/JOIN/PRIVMSG, protecciones server-side y backup probado; health/incident monitors no inventados.",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T19:36:46.000Z",
+          "body": "La UI inicial está en PR draft #466; no existe evidencia de backend/infra operativo, ni de CI/E2E. Mantener Pending hasta completar gates."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T19:36:46.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created in IRC hybrid plan"
+        }
+      ]
     }
   ],
   "_audit_log": [
@@ -5593,5 +5801,5 @@
       "timestamp": "2026-09-13T06:26:21.846Z"
     }
   ],
-  "last_updated_by": "Hypenosys-TC-IRC canonical identity/ledger planning"
+  "last_updated_by": "IRC Hybrid tasks"
 }
