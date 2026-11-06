@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-11-06T20:34:41.000Z",
+  "last_updated": "2026-11-06T21:03:42.000Z",
   "organizationId": "hypenosys",
   "tasks": [
     {
@@ -3108,6 +3108,10 @@
         {
           "label": "Repositorio objetivo (develop)",
           "url": "https://github.com/hypenosys/hypenosys.github.io/tree/develop"
+        },
+        {
+          "label": "Avatar HypenOS autenticado (merged)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/pull/471"
         }
       ],
       "subtasks": [
@@ -3150,6 +3154,11 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-06T18:39:52.000Z",
           "body": "Planificación 2026-11-06: especificada, no implementada. Base: develop. No ejecutar ni declarar completada hasta superar criterios de aceptación y PR/CI correspondientes."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T21:03:42.000Z",
+          "body": "[HYPENOS MERGE 2026-11-06] PR #471 merged to develop: cabecera con avatar/menú autenticado desktop/móvil. Playwright 17 tests passed. Esto NO da por completado todo el diseño/i18n y no cambia estado Pending."
         }
       ],
       "images": [],
@@ -3264,6 +3273,11 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-06T20:34:41.000Z",
           "body": "[HYPENOS SPRINT 2026-11-06] Mission Control: cola priorizada, bloqueos reales y actividad a partir de change_log; módulo en PR #470. Tests Node pasan; Playwright en curso. Mantener tarea Pending y blocked_by #88/#89: conector TC y telemetría faltan."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T21:03:42.000Z",
+          "body": "[HYPENOS MERGE 2026-11-06] PR #470 merged to develop (d068e9c7). Mission Control cola priorizada, dependencias y actividad de tareas GitHub. CI Node+Playwright passed. Faltan conectores TC/HAIS, alertas/estado remoto y pruebas de reconciliación; no marcar fase completada."
         }
       ],
       "images": [],
@@ -3378,6 +3392,11 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-06T20:34:41.000Z",
           "body": "[HYPENOS SPRINT 2026-11-06] Task Flow: Kanban read-only e inspector de cambios/notas/PR con deep-links del workspace. No equivale a saga Claude/Cog/PR/merge; PR #470 pendiente revisión y Playwright. Mantener estado y deps."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T21:03:42.000Z",
+          "body": "[HYPENOS MERGE 2026-11-06] PR #470 merged to develop: Task Flow Kanban, inspector, deep-link y change_log/PR referenciada sin simular merge. Node y Playwright passed. No implementa ledger TC, ciclo de aprobación Claude/Cog ni CI/merge confirmado. Pendiente #88/#89."
         }
       ],
       "images": [],
@@ -5846,5 +5865,5 @@
       "timestamp": "2026-09-13T06:26:21.846Z"
     }
   ],
-  "last_updated_by": "HypenOS increment — linked PRs #470 and #850"
+  "last_updated_by": "HypenOS incremental merges #470 #471"
 }
