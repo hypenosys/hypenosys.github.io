@@ -11,6 +11,8 @@ on:
       - 'assets/javascript/**'
       - 'tests/verify_hais_terminal.spec.js'
       - 'tests/verify_hais_markets.spec.js'
+      - 'tests/verify_hypenosos.spec.js'
+      - '_includes/ecosystem_v2_shell.html'
       - 'package.json'
       - 'package-lock.json'
       - '_config.yml'
@@ -61,6 +63,8 @@ jobs:
         run: |
           test -f _site/hais/operar/index.html
           test -f _site/hais/index.html
+          test -f _site/control/mission/index.html
+          test -f _site/control/task-flow/index.html
 
       - name: Serve built site on localhost:4000
         run: |
@@ -75,7 +79,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Run PAPER terminal and market provider contract specs
-        run: npx playwright test tests/verify_hais_terminal.spec.js tests/verify_hais_markets.spec.js --reporter=list --workers=1
+        run: npx playwright test tests/verify_hais_terminal.spec.js tests/verify_hais_markets.spec.js tests/verify_hypenosos.spec.js --reporter=list --workers=1
 
       - name: Upload Playwright report on failure
         if: failure()
