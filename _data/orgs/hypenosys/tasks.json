@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-11-06T18:57:04.000Z",
+  "last_updated": "2026-11-06T19:05:01.000Z",
   "organizationId": "hypenosys",
   "tasks": [
     {
@@ -4219,7 +4219,7 @@
       "organizationId": "hypenosys",
       "repository": "hypenosys/hypenosys.github.io",
       "title": "[CONTINUIDAD P0] Exportar y conservar sesiones Jules antes del 11/11/2026",
-      "descripcion": "Inventariar y conservar sesiones/planes/activities/patches de Jules, terminar pendientes y recuperar historial sin secrets antes de solo lectura 11/11; Google cierra 31/12. No almacenar exports con env vars en GitHub, TC Wiki, issues o Qdrant.",
+      "descripcion": "Inventariar y conservar sesiones/planes/activities/patches de Jules, terminar pendientes y recuperar historial sin secrets antes de solo lectura 11/11; Google cierra 31/12. No almacenar exports con env vars en GitHub, TC Wiki, issues o Qdrant.\n\nExportador web existente y operativo al menos para un usuario según informe: pages/jules-panel.html → assets/javascript/jules-export.js. Axel ha realizado una exportación de una cuenta; ZIP y manifest aún no verificados. Reutilizar el botón, completar las otras cuentas y contrastar con export oficial.",
       "rama": "chore/jules-sunset-safe-export",
       "rama2": null,
       "ver": true,
@@ -4265,6 +4265,10 @@
         {
           "label": "Aviso oficial de cierre Jules",
           "url": "https://jules.google/docs/changelog/2026-10-29"
+        },
+        {
+          "label": "Exportador web Jules",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/assets/javascript/jules-export.js"
         }
       ],
       "subtasks": [
@@ -4280,7 +4284,7 @@
         },
         {
           "id": 10003,
-          "text": "Guiar exportación local con la herramienta oficial por el propietario autenticado, sin capturar credenciales en el asistente.",
+          "text": "Aprovechar el botón Exportar del Jules Panel (ya implementado). Axel comunicó exportación de una cuenta; verificar artefactos existentes antes de repetir o desarrollar otro exporter.",
           "done": false
         },
         {
@@ -4297,9 +4301,34 @@
           "id": 10006,
           "text": "Ejecutar smoke de restauración/export y documentar lagunas y fecha de último snapshot.",
           "done": false
+        },
+        {
+          "id": 10007,
+          "text": "Auditar ZIP índice y todas sus partes de la cuenta exportada: manifest.complete, errors_count, stopReasons, CRC/hash, recuentos de sesiones y restauración de muestra; registrar evidencia saneada.",
+          "done": false
+        },
+        {
+          "id": 10008,
+          "text": "Inventariar cuentas Jules que faltan, usar el botón de Hypenosys con la credencial correcta y etiquetar/salvaguardar cada respaldo sin que se sobrescriban ZIP del mismo día.",
+          "done": false
+        },
+        {
+          "id": 10009,
+          "text": "Corregir semántica del exportador: complete=false/partial cuando hay errores o paginación truncada; exportId por cuenta/ejecución; tests de éxito parcial, multi ZIP y multi cuenta.",
+          "done": false
+        },
+        {
+          "id": 10010,
+          "text": "Contrastar cobertura del exportador web (sesiones, fuentes, actividades, patches) contra el export oficial de Jules (settings/memories/schedules/env) bajo ACL y cifrado; nunca exponer secretos.",
+          "done": false
+        },
+        {
+          "id": 10011,
+          "text": "Diseñar importador validado de archivos Jules en modo solo lectura sin API key, con indexado privado y vínculos org/tarea/PR.",
+          "done": false
         }
       ],
-      "acceptance_criteria": "Inventario completo y export cifrado fuera del repositorio, sin secretos en commit ni RAG; al menos una restauración verificada; sesiones históricas referenciables.",
+      "acceptance_criteria": "Inventario completo y export cifrado fuera del repositorio, sin secretos en commit ni RAG; al menos una restauración verificada; sesiones históricas referenciables.\nPor cada cuenta: inventario sin credenciales, ZIP index + todas las partes, errores/paginación reconciliados, hashes/CRC y restauración; no marcar completado solo por descarga del navegador ni por manifest.complete actual.",
       "blocks": [],
       "blocked_by": [],
       "comments": [
@@ -4307,6 +4336,11 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-06T18:57:04.000Z",
           "body": "Plan registrado 2026-11-06. No ejecutar ni declarar completado sin evidencia verificable; no exponer secretos de Jules, Forgejo o GitHub en documentación/PR."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T19:05:01.000Z",
+          "body": "[REVISIÓN EXPORT WEB 2026-11-06] El usuario muestra botón Exportar en Jules Panel e informa que Axel ya exportó desde una de las cuentas. Revisado código real: exportador existente jules-export.js genera índice ZIP y partes por fecha con sessions/activities/patches/manifest. No se recibieron ZIP para verificar; NO marcar subtareas completadas ni alterar estado Pending. Riesgos a corregir: manifest.complete=true incluso con errores; nombres ZIP por fecha sin cuenta; faltan verificaciones de integridad y demás cuentas. Plan: docs/COG_JULES_CONTINUITY_2026.md."
         }
       ],
       "images": [],
@@ -4413,6 +4447,11 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-06T18:57:04.000Z",
           "body": "Plan registrado 2026-11-06. No ejecutar ni declarar completado sin evidencia verificable; no exponer secretos de Jules, Forgejo o GitHub en documentación/PR."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T19:05:01.000Z",
+          "body": "[ARCHIVO IMPORTADO] Reutilizar ZIP producidos por el botón Exportar de Jules Panel y diseñar un importador read-only; el código actual no garantiza cierre sin errores ni conservación en servidor. No vincular sesiones sin organización/identidad verificada."
         }
       ],
       "images": [],
@@ -5088,5 +5127,5 @@
       "timestamp": "2026-09-13T06:26:21.846Z"
     }
   ],
-  "last_updated_by": "Continuidad Cog/Jules/Forgejo"
+  "last_updated_by": "Continuidad Jules (reutilización de exportador web)"
 }
