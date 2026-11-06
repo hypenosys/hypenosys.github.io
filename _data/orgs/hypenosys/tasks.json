@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-09-13T06:26:21.846Z",
+  "last_updated": "2026-11-06T18:39:52.000Z",
   "organizationId": "hypenosys",
   "tasks": [
     {
@@ -2938,6 +2938,1268 @@
         }
       ],
       "id": 87
+    },
+    {
+      "id": 88,
+      "ecosystem_v2_key": "foundation",
+      "organizationId": "hypenosys",
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "[Ecosystem 2.0] F0 — Contratos, identidades, ACL y eventos entre Hypenosys, TC y HAIS",
+      "descripcion": "Base transversal: inventariar identidades y fuentes canónicas (tarea Hypenosys, Project/Agent TC, ejecución Claude/Jules/Codex, HAIS); definir envelopes de eventos idempotentes, sincronización y permisos efectivos sin mutar contratos existentes a ciegas.",
+      "rama": "feat/ecosystem-v2-contracts",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Ecosystem 2.0",
+      "prioridad": "Critical",
+      "milestone": "M0",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "chore",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "haopengwang123"
+      ],
+      "email_responsable": "",
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "ecosystem-v2",
+        "roadmap",
+        "epic",
+        "foundation",
+        "m0"
+      ],
+      "external_links": [
+        {
+          "label": "Arquitectura Ecosystem 2.0",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/ECOSYSTEM_2_0_ARCHITECTURE.md"
+        },
+        {
+          "label": "Repositorio objetivo (develop)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/tree/develop"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 8801,
+          "text": "Auditar los contratos de tareas sharded de Hypenosys, Project/Agent TC y sesiones Jules/Claude existentes en develop.",
+          "done": false
+        },
+        {
+          "id": 8802,
+          "text": "Definir EntityRef, TaskEnvelope y ExecutionRef versionados con correlación, revisión, actor y procedencia.",
+          "done": false
+        },
+        {
+          "id": 8803,
+          "text": "Definir threat model multi-organización, ACL server-side, revocación y política de secretos/gateway.",
+          "done": false
+        },
+        {
+          "id": 8804,
+          "text": "Definir adaptadores y reconciliación idempotente (outbox, reintentos, CAS/ETag, replay y conflicto).",
+          "done": false
+        },
+        {
+          "id": 8805,
+          "text": "Añadir pruebas de contratos, aislamiento de organizaciones y migración/rollback sin cambiar las fuentes de verdad.",
+          "done": false
+        },
+        {
+          "id": 8806,
+          "text": "Documentar ADR de source-of-truth y plan de despliegue progresivo.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Contratos versionados revisados; cada entidad tiene ID y scope inequívocos; ningún evento permite elevar permisos; reintentos sin duplicados; tests de contrato y seguridad en CI.",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "body": "Planificación 2026-11-06: especificada, no implementada. Base: develop. No ejecutar ni declarar completada hasta superar criterios de aceptación y PR/CI correspondientes."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created via ecosystem v2 planning"
+        }
+      ]
+    },
+    {
+      "id": 89,
+      "ecosystem_v2_key": "design",
+      "organizationId": "hypenosys",
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "[Ecosystem 2.0] F0 — Diseño UX/UI, navegación, componentes accesibles e i18n",
+      "descripcion": "Diseñar sistema visual compartido por las ocho páginas reutilizando Dracula, header y layout actual de Hypenosys. No sustituir los flujos funcionales de dashboard/Neural/Jules por maquetas.",
+      "rama": "feat/ecosystem-v2-shell",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Diseño / UX",
+      "seccion": "Ecosystem 2.0",
+      "prioridad": "Major",
+      "milestone": "M0",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "design",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "haopengwang123"
+      ],
+      "email_responsable": "",
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "ecosystem-v2",
+        "roadmap",
+        "epic",
+        "design",
+        "m0"
+      ],
+      "external_links": [
+        {
+          "label": "Arquitectura Ecosystem 2.0",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/ECOSYSTEM_2_0_ARCHITECTURE.md"
+        },
+        {
+          "label": "Repositorio objetivo (develop)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/tree/develop"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 8901,
+          "text": "Inventariar design tokens, layout, navegación y estados existentes; diseñar IA de las ocho rutas.",
+          "done": false
+        },
+        {
+          "id": 8902,
+          "text": "Crear wireframes desktop/tablet/móvil y navegación cruzada por tarea, proyecto, agente y organización.",
+          "done": false
+        },
+        {
+          "id": 8903,
+          "text": "Definir componentes para tablas, timeline, approvals, graphs, métricas y errores/empty/offline/stale.",
+          "done": false
+        },
+        {
+          "id": 8904,
+          "text": "Asegurar contraste WCAG AA, foco visible, teclado, lectores de pantalla, reduced motion y estados no solo por color.",
+          "done": false
+        },
+        {
+          "id": 8905,
+          "text": "Preparar cadenas traducibles es/ca/en/zh-cn según soporte disponible y pruebas responsive.",
+          "done": false
+        },
+        {
+          "id": 8906,
+          "text": "Definir feature flags y pruebas visuales de regresión sobre dashboard y paneles existentes.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Diseños y componentes trazables a rutas propuestas; responsive, teclado y WCAG AA; traducciones y estados verificados; sin regresiones en UI existente.",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "body": "Planificación 2026-11-06: especificada, no implementada. Base: develop. No ejecutar ni declarar completada hasta superar criterios de aceptación y PR/CI correspondientes."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created via ecosystem v2 planning"
+        }
+      ]
+    },
+    {
+      "id": 90,
+      "ecosystem_v2_key": "mission",
+      "organizationId": "hypenosys",
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "[Ecosystem 2.0] Mission Control — Centro de operaciones unificado",
+      "descripcion": "Crear /control/mission/ como landing operativa con métricas del workspace seleccionado, tareas, bloqueos, agentes y actividad confirmada, reutilizando dashboard y orquestador actuales.",
+      "rama": "feat/ecosystem-v2-mission-control",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Ecosystem 2.0",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "haopengwang123"
+      ],
+      "email_responsable": "",
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "ecosystem-v2",
+        "roadmap",
+        "epic",
+        "mission",
+        "m1"
+      ],
+      "external_links": [
+        {
+          "label": "Arquitectura Ecosystem 2.0",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/ECOSYSTEM_2_0_ARCHITECTURE.md"
+        },
+        {
+          "label": "Repositorio objetivo (develop)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/tree/develop"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 9001,
+          "text": "Implementar ruta Jekyll, header y navegación con selector de organización válido.",
+          "done": false
+        },
+        {
+          "id": 9002,
+          "text": "Proyectar tareas sharded, cola orquestador y señales reales de Jules/Claude/HAIS por fuentes autorizadas.",
+          "done": false
+        },
+        {
+          "id": 9003,
+          "text": "Crear KPIs con fuente, timestamp de verificación, estados stale/offline/error y ausencia de datos.",
+          "done": false
+        },
+        {
+          "id": 9004,
+          "text": "Ofrecer drill-down a tarea/sesión/PR y filtros de prioridad, owner, proyecto y estado.",
+          "done": false
+        },
+        {
+          "id": 9005,
+          "text": "Añadir empty/loading/permission denied y pruebas móvil, acceso por teclado y aislamiento multi-org.",
+          "done": false
+        },
+        {
+          "id": 9006,
+          "text": "Verificar que cambios de tarea y PR se reflejan tras reconciliación sin duplicar modelos.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Mission Control no inventa datos/estado verde; muestra bloqueos y fuentes verificadas; navegación contextual, ACL, móvil y pruebas E2E.",
+      "blocks": [],
+      "blocked_by": [
+        "88",
+        "89"
+      ],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "body": "Planificación 2026-11-06: especificada, no implementada. Base: develop. No ejecutar ni declarar completada hasta superar criterios de aceptación y PR/CI correspondientes."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created via ecosystem v2 planning"
+        }
+      ]
+    },
+    {
+      "id": 91,
+      "ecosystem_v2_key": "flow",
+      "organizationId": "hypenosys",
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "[Ecosystem 2.0] Task Flow — Trazabilidad tarea → Claude/Jules/Codex → PR → merge",
+      "descripcion": "Crear /control/task-flow/ sobre el orquestador y jules-pr-sync existentes: máquina de estados explícita, trazabilidad, historiales aislados por tarea y reconciliación de estado con pruebas.",
+      "rama": "feat/ecosystem-v2-task-flow",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Ecosystem 2.0",
+      "prioridad": "Critical",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "haopengwang123"
+      ],
+      "email_responsable": "",
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "ecosystem-v2",
+        "roadmap",
+        "epic",
+        "flow",
+        "m1"
+      ],
+      "external_links": [
+        {
+          "label": "Arquitectura Ecosystem 2.0",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/ECOSYSTEM_2_0_ARCHITECTURE.md"
+        },
+        {
+          "label": "Repositorio objetivo (develop)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/tree/develop"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 9101,
+          "text": "Inventariar el lifecycle de create/queue/blocked/Claude/Jules/PR/checks/merge/archive.",
+          "done": false
+        },
+        {
+          "id": 9102,
+          "text": "Definir estados y transiciones verificadas por eventos, causa, correlación y propietario de ejecución.",
+          "done": false
+        },
+        {
+          "id": 9103,
+          "text": "Crear timeline por tarea con hashes, sesión Jules/Claude, PR, checks y mensajes redactados.",
+          "done": false
+        },
+        {
+          "id": 9104,
+          "text": "Añadir detección de divergencias, reintentos idempotentes, recovering y estado esperando aprobación.",
+          "done": false
+        },
+        {
+          "id": 9105,
+          "text": "Actualizar proyecciones de dashboard y cierre solo con merge/QA/política verificados.",
+          "done": false
+        },
+        {
+          "id": 9106,
+          "text": "Agregar tests de no mezcla de conversaciones, deduplicación, errores de PR y tareas bloqueadas.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Una tarea conserva el mismo ID y muestra eventos reales de punta a punta; no se completa antes de la evidencia requerida; no hay mezcla de sesiones ni duplicación por reintentos.",
+      "blocks": [],
+      "blocked_by": [
+        "88",
+        "89"
+      ],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "body": "Planificación 2026-11-06: especificada, no implementada. Base: develop. No ejecutar ni declarar completada hasta superar criterios de aceptación y PR/CI correspondientes."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created via ecosystem v2 planning"
+        }
+      ]
+    },
+    {
+      "id": 92,
+      "ecosystem_v2_key": "approvals",
+      "organizationId": "hypenosys",
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "[Ecosystem 2.0] Approval Center — Supervisión humana y automatizada gobernada",
+      "descripcion": "Crear /control/approvals/ para planes, permisos, PR, operaciones de agentes y preguntas a humanos. Soportar supervisión humana/Claude sin autoaprobar operaciones sensibles.",
+      "rama": "feat/ecosystem-v2-approval-center",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Ecosystem 2.0",
+      "prioridad": "Critical",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "haopengwang123"
+      ],
+      "email_responsable": "",
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "ecosystem-v2",
+        "roadmap",
+        "epic",
+        "approvals",
+        "m1"
+      ],
+      "external_links": [
+        {
+          "label": "Arquitectura Ecosystem 2.0",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/ECOSYSTEM_2_0_ARCHITECTURE.md"
+        },
+        {
+          "label": "Repositorio objetivo (develop)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/tree/develop"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 9201,
+          "text": "Definir ApprovalRequest con policy, vencimiento, scope, diff propuesto, riesgo y actor.",
+          "done": false
+        },
+        {
+          "id": 9202,
+          "text": "Conectar pedidos del orquestador, Neural Chat, Jules y GitHub con la misma referencia de tarea.",
+          "done": false
+        },
+        {
+          "id": 9203,
+          "text": "Implementar inbox con approve/reject/request changes y estados pending/decided/expired.",
+          "done": false
+        },
+        {
+          "id": 9204,
+          "text": "Añadir prevención de doble submit, firma/proveniencia del actor y confirmación reforzada en alto riesgo.",
+          "done": false
+        },
+        {
+          "id": 9205,
+          "text": "Garantizar intersección de permisos y no elevación por agente supervisor ni datos entre orgs.",
+          "done": false
+        },
+        {
+          "id": 9206,
+          "text": "Cubrir tests de expiración, idempotencia, denegación, concurrencia, uso offline y auditoría.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Solo un actor autorizado decide; toda decisión se audita y no se duplica; Claude no autoaprueba privilegios o merges fuera de policy; UX informa claramente.",
+      "blocks": [],
+      "blocked_by": [
+        "88",
+        "89"
+      ],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "body": "Planificación 2026-11-06: especificada, no implementada. Base: develop. No ejecutar ni declarar completada hasta superar criterios de aceptación y PR/CI correspondientes."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created via ecosystem v2 planning"
+        }
+      ]
+    },
+    {
+      "id": 93,
+      "ecosystem_v2_key": "agents",
+      "organizationId": "hypenosys",
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "[Ecosystem 2.0] Agent Studio — Identidad, modelos, herramientas y permisos",
+      "descripcion": "Crear /control/agents/ para gestionar agentes disponibles, sesiones, herramientas, proveedores y políticas usando TC canonical Agent y los conectores existentes, sin introducir una segunda identidad.",
+      "rama": "feat/ecosystem-v2-agent-studio",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Ecosystem 2.0",
+      "prioridad": "Major",
+      "milestone": "M2",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "haopengwang123"
+      ],
+      "email_responsable": "",
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "ecosystem-v2",
+        "roadmap",
+        "epic",
+        "agents",
+        "m2"
+      ],
+      "external_links": [
+        {
+          "label": "Arquitectura Ecosystem 2.0",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/ECOSYSTEM_2_0_ARCHITECTURE.md"
+        },
+        {
+          "label": "Repositorio objetivo (develop)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/tree/develop"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 9301,
+          "text": "Mapear modelos/proveedores Claude, Jules, Codex, HAIS y entidad Agent de TC con identidad explícita.",
+          "done": false
+        },
+        {
+          "id": 9302,
+          "text": "Crear catálogo y vista detalle de agentes por proyecto y workspace con estado de conexión real.",
+          "done": false
+        },
+        {
+          "id": 9303,
+          "text": "Mostrar policy de herramientas, coste/cuota, modelo, permisos efectivos y cambios pendientes de aprobación.",
+          "done": false
+        },
+        {
+          "id": 9304,
+          "text": "Implementar configuración versionada mediante API autorizada; nunca exponer tokens al navegador.",
+          "done": false
+        },
+        {
+          "id": 9305,
+          "text": "Visualizar ejecución/sesiones y enlaces a Task Flow; gestionar revoked/unavailable/degraded.",
+          "done": false
+        },
+        {
+          "id": 9306,
+          "text": "Verificar no elevación de privilegios y E2E de identidad Agent consistente entre TC y Hypenosys.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Un agente tiene identidad estable y permisos mínimos verificados; configuración versionada, errores y límites visibles; ninguna credencial filtrada.",
+      "blocks": [],
+      "blocked_by": [
+        "88",
+        "89"
+      ],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "body": "Planificación 2026-11-06: especificada, no implementada. Base: develop. No ejecutar ni declarar completada hasta superar criterios de aceptación y PR/CI correspondientes."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created via ecosystem v2 planning"
+        }
+      ]
+    },
+    {
+      "id": 94,
+      "ecosystem_v2_key": "knowledge",
+      "organizationId": "hypenosys",
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "[Ecosystem 2.0] Knowledge Graph — Grafo de conocimiento con procedencia y ACL",
+      "descripcion": "Crear /knowledge/graph/ conectando tareas, proyectos, sesiones, PR, Wiki y fuentes TC con indexación derivada, procedencia/citas y control de acceso antes de consultar o proyectar.",
+      "rama": "feat/ecosystem-v2-knowledge-graph",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Ecosystem 2.0",
+      "prioridad": "Major",
+      "milestone": "M3",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "haopengwang123"
+      ],
+      "email_responsable": "",
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "ecosystem-v2",
+        "roadmap",
+        "epic",
+        "knowledge",
+        "m3"
+      ],
+      "external_links": [
+        {
+          "label": "Arquitectura Ecosystem 2.0",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/ECOSYSTEM_2_0_ARCHITECTURE.md"
+        },
+        {
+          "label": "Repositorio objetivo (develop)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/tree/develop"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 9401,
+          "text": "Definir NodeRef/EdgeRef con IDs estables, fuente, hash, org/proyecto, timestamps y ACL.",
+          "done": false
+        },
+        {
+          "id": 9402,
+          "text": "Indexar metadata permitida desde Wiki, TC ProjectHistory, tareas, PR y sesiones sin copiar secretos.",
+          "done": false
+        },
+        {
+          "id": 9403,
+          "text": "Implementar consultas y filtros server-side ACL-first; Qdrant únicamente como índice derivado.",
+          "done": false
+        },
+        {
+          "id": 9404,
+          "text": "Crear vista grafo + lista accesible y detalle de fuentes con citas y versionado/superseded.",
+          "done": false
+        },
+        {
+          "id": 9405,
+          "text": "Añadir sincronización idempotente, reindex/rollback y tratamiento de fuentes revocadas.",
+          "done": false
+        },
+        {
+          "id": 9406,
+          "text": "Cubrir tests de fuga por nodos/aristas, autorización RAG, fuente borrada, reconstrucción y accesibilidad.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Citas resuelven a fuentes autorizadas, no hay nodos privados en respuestas no autorizadas; índice reconstruible desde almacenes canónicos.",
+      "blocks": [],
+      "blocked_by": [
+        "88",
+        "89",
+        "98"
+      ],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "body": "Planificación 2026-11-06: especificada, no implementada. Base: develop. No ejecutar ni declarar completada hasta superar criterios de aceptación y PR/CI correspondientes."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created via ecosystem v2 planning"
+        }
+      ]
+    },
+    {
+      "id": 95,
+      "ecosystem_v2_key": "org",
+      "organizationId": "hypenosys",
+      "repository": "Axlfc/tc",
+      "title": "[Ecosystem 2.0] Organization Hub — Organizaciones y proyectos bidireccionales con TC",
+      "descripcion": "Diseñar /organizations/hub/ en Hypenosys con proyección desde /api/projects de TC y miembros de Hypenosys; vincular sin asumir equivalencia directa de IDs, roles ni identidades.",
+      "rama": "feat/ecosystem-v2-organization-hub",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Ecosystem 2.0",
+      "prioridad": "Critical",
+      "milestone": "M3",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "haopengwang123"
+      ],
+      "email_responsable": "",
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "ecosystem-v2",
+        "roadmap",
+        "epic",
+        "org",
+        "m3"
+      ],
+      "external_links": [
+        {
+          "label": "Arquitectura Ecosystem 2.0",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/ECOSYSTEM_2_0_ARCHITECTURE.md"
+        },
+        {
+          "label": "Repositorio objetivo (develop)",
+          "url": "https://github.com/Axlfc/tc/tree/develop"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 9501,
+          "text": "Diseñar mapeo explícito entre Hypenosys organizationId, TC Project.id y miembros autorizados.",
+          "done": false
+        },
+        {
+          "id": 9502,
+          "text": "Crear UI de proyectos, equipos, roles, archivos y conexiones; reutilizar pantallas/servicios TC.",
+          "done": false
+        },
+        {
+          "id": 9503,
+          "text": "Implementar linking/unlinking con confirmación y estados linked/pending/conflict/revoked.",
+          "done": false
+        },
+        {
+          "id": 9504,
+          "text": "Aplicar ACL a listados, búsquedas, archivos, invitaciones y eventos en ambos sistemas.",
+          "done": false
+        },
+        {
+          "id": 9505,
+          "text": "Reconciliar cambios TC/Hyp con eventId/idempotencyKey, conflictos y revocación.",
+          "done": false
+        },
+        {
+          "id": 9506,
+          "text": "Añadir E2E multi-org, cambios de miembros, archivos, traducciones y recuperación de fallos.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "No se crea acceso implícito al vincular; usuarios ven solo proyectos permitidos, estado eventual explícito, enlace reversible y errores recuperables.",
+      "blocks": [],
+      "blocked_by": [
+        "88",
+        "89",
+        "98"
+      ],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "body": "Planificación 2026-11-06: especificada, no implementada. Base: develop. No ejecutar ni declarar completada hasta superar criterios de aceptación y PR/CI correspondientes."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created via ecosystem v2 planning"
+        }
+      ]
+    },
+    {
+      "id": 96,
+      "ecosystem_v2_key": "sandbox",
+      "organizationId": "hypenosys",
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "[Ecosystem 2.0] Sandbox Lab — Experimentos Codex/Jules en aislamiento estricto",
+      "descripcion": "Crear /labs/sandbox/ para comparativas de agentes sobre clones saneados por allowlist, límites de CPU/RAM/tiempo/red y sin acceso a credenciales ni repos completos. Relacionado con ensayo HAIS #900019, evitando duplicar su ejecución.",
+      "rama": "feat/ecosystem-v2-sandbox-lab",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Ecosystem 2.0",
+      "prioridad": "Major",
+      "milestone": "M4",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "haopengwang123"
+      ],
+      "email_responsable": "",
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "ecosystem-v2",
+        "roadmap",
+        "epic",
+        "sandbox",
+        "m4"
+      ],
+      "external_links": [
+        {
+          "label": "Arquitectura Ecosystem 2.0",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/ECOSYSTEM_2_0_ARCHITECTURE.md"
+        },
+        {
+          "label": "Repositorio objetivo (develop)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/tree/develop"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 9601,
+          "text": "Inventariar el protocolo de ensayo seguro de HAIS #900019 y reutilizar criterios del sandbox existente si están validados.",
+          "done": false
+        },
+        {
+          "id": 9602,
+          "text": "Definir exportación revisada de archivos, sanitización de rutas, secretos y licencia.",
+          "done": false
+        },
+        {
+          "id": 9603,
+          "text": "Implementar backend runner aislado, egress denegado por defecto, cuotas/timeout y cancelación.",
+          "done": false
+        },
+        {
+          "id": 9604,
+          "text": "Diseñar UI de definición de experimento, selección de agente y ejecución sin credenciales persistentes.",
+          "done": false
+        },
+        {
+          "id": 9605,
+          "text": "Comparar outputs/diffs/tests de Codex y Jules con mismo ticket y versión de entorno.",
+          "done": false
+        },
+        {
+          "id": 9606,
+          "text": "Añadir auditoría, limpieza garantizada, bloqueo de merges automáticos y pruebas adversariales.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Sin secretos, sin acceso al host/repo real, sin persistencia inadvertida; cuotas y red restringidas y comparación reproducible con evidencia.",
+      "blocks": [],
+      "blocked_by": [
+        "88",
+        "89"
+      ],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "body": "Planificación 2026-11-06: especificada, no implementada. Base: develop. No ejecutar ni declarar completada hasta superar criterios de aceptación y PR/CI correspondientes."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created via ecosystem v2 planning"
+        }
+      ]
+    },
+    {
+      "id": 97,
+      "ecosystem_v2_key": "observatory",
+      "organizationId": "hypenosys",
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "[Ecosystem 2.0] HAIS Observatory — Telemetría y presión operativa verificables",
+      "descripcion": "Crear /hais/observatory/ para estado HAIS, colas, capacidad, errores y Stress Index con fuentes y timestamps. No confundir con datos del simulador/mercados ni fabricar indicadores.",
+      "rama": "feat/ecosystem-v2-hais-observatory",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Ecosystem 2.0",
+      "prioridad": "Major",
+      "milestone": "M2",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "haopengwang123"
+      ],
+      "email_responsable": "",
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "ecosystem-v2",
+        "roadmap",
+        "epic",
+        "observatory",
+        "m2"
+      ],
+      "external_links": [
+        {
+          "label": "Arquitectura Ecosystem 2.0",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/ECOSYSTEM_2_0_ARCHITECTURE.md"
+        },
+        {
+          "label": "Repositorio objetivo (develop)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/tree/develop"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 9701,
+          "text": "Inventariar métricas reales disponibles de HAIS, orquestador, runners, Jules y CI; documentar las ausentes.",
+          "done": false
+        },
+        {
+          "id": 9702,
+          "text": "Definir contrato read-only de telemetría por organización con TTL, integridad y timestamps.",
+          "done": false
+        },
+        {
+          "id": 9703,
+          "text": "Crear panel de presión, capacidad, colas, errores, latencia y degradaciones con N/D cuando no haya fuente.",
+          "done": false
+        },
+        {
+          "id": 9704,
+          "text": "Añadir detalles del cálculo/umbral de Stress Index y separar indicador observado de recomendación.",
+          "done": false
+        },
+        {
+          "id": 9705,
+          "text": "Conectar alertas autorizadas a Mission Control sin ejecutar mitigaciones sensibles automáticamente.",
+          "done": false
+        },
+        {
+          "id": 9706,
+          "text": "Añadir tests de métricas stale, auth, accesibilidad, performance y ausencia de datos falsos.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Métricas auditables con fórmula y fuente, no hay cifras simuladas presentadas como reales; alertas y estado degradado explícitos.",
+      "blocks": [],
+      "blocked_by": [
+        "88",
+        "89"
+      ],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "body": "Planificación 2026-11-06: especificada, no implementada. Base: develop. No ejecutar ni declarar completada hasta superar criterios de aceptación y PR/CI correspondientes."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created via ecosystem v2 planning"
+        }
+      ]
+    },
+    {
+      "id": 98,
+      "ecosystem_v2_key": "tcbridge",
+      "organizationId": "hypenosys",
+      "repository": "Axlfc/tc",
+      "title": "[Ecosystem 2.0] F3 — Bridge TC Projects ↔ Hypenosys Workspace/Task",
+      "descripcion": "Construir integración entre contratos ProjectStructure y eventos de proyecto TC con referencias a organizationId/tareas Hypenosys. No dar por merged la rama experimental feat/hypenosys-bidirectional-bridge; comprobar develop.",
+      "rama": "feat/ecosystem-v2-tc-project-bridge",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Ecosystem 2.0",
+      "prioridad": "Critical",
+      "milestone": "M3",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "chore",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "haopengwang123"
+      ],
+      "email_responsable": "",
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "ecosystem-v2",
+        "roadmap",
+        "epic",
+        "tcbridge",
+        "m3"
+      ],
+      "external_links": [
+        {
+          "label": "Arquitectura Ecosystem 2.0",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/ECOSYSTEM_2_0_ARCHITECTURE.md"
+        },
+        {
+          "label": "Repositorio objetivo (develop)",
+          "url": "https://github.com/Axlfc/tc/tree/develop"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 9801,
+          "text": "Auditar /api/projects, ProjectStructure, ProjectEvent y alcance de la rama experimental del bridge frente a develop.",
+          "done": false
+        },
+        {
+          "id": 9802,
+          "text": "Definir mapeo org/project/task y endpoint autenticado de linking, sin equivalencia automática ni lectura pública.",
+          "done": false
+        },
+        {
+          "id": 9803,
+          "text": "Implementar autorización server-side, scopes, consentimiento, revocación y protecciones CSRF/replay.",
+          "done": false
+        },
+        {
+          "id": 9804,
+          "text": "Publicar eventos versionados de proyecto y consumir actualizaciones Hypenosys con outbox/reconciliation.",
+          "done": false
+        },
+        {
+          "id": 9805,
+          "text": "Definir alta real de proyectos TC solo vía API autenticada y rollback de vinculaciones fallidas.",
+          "done": false
+        },
+        {
+          "id": 9806,
+          "text": "Cubrir pruebas de multi-org, invitaciones, aislamiento, idempotencia, fallos de red y sincronización eventual.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Proyecto TC y organización Hypenosys enlazables con referencias y roles explícitos; operación autorizada, reversible, auditada y con pruebas; sin escritura ficticia en datos de TC.",
+      "blocks": [],
+      "blocked_by": [
+        "88"
+      ],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "body": "Planificación 2026-11-06: especificada, no implementada. Base: develop. No ejecutar ni declarar completada hasta superar criterios de aceptación y PR/CI correspondientes."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created via ecosystem v2 planning"
+        }
+      ]
+    },
+    {
+      "id": 99,
+      "ecosystem_v2_key": "qa",
+      "organizationId": "hypenosys",
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "[Ecosystem 2.0] F4 — Validación E2E, CI, seguridad y rollout progresivo",
+      "descripcion": "Gate transversal antes de declarar las ocho páginas completadas: workflows reales con tareas, agentes y TC; pruebas accesibilidad/performance, permisos y reconciliación; flag rollout y rollback.",
+      "rama": "test/ecosystem-v2-e2e",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "QA / Testing",
+      "seccion": "Ecosystem 2.0",
+      "prioridad": "Critical",
+      "milestone": "M4",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "test",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "haopengwang123"
+      ],
+      "email_responsable": "",
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "ecosystem-v2",
+        "roadmap",
+        "epic",
+        "qa",
+        "m4"
+      ],
+      "external_links": [
+        {
+          "label": "Arquitectura Ecosystem 2.0",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/ECOSYSTEM_2_0_ARCHITECTURE.md"
+        },
+        {
+          "label": "Repositorio objetivo (develop)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/tree/develop"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 9901,
+          "text": "Construir fixture multi-org con identidades/ACL y datos falsos no sensibles para E2E.",
+          "done": false
+        },
+        {
+          "id": 9902,
+          "text": "Simular task→Claude→Jules/Codex→PR→checks→merge→archive y fallos/reintentos sin duplicaciones.",
+          "done": false
+        },
+        {
+          "id": 9903,
+          "text": "Verificar transiciones de aprobación, cambio de organización, agentes y sesión no mezclada.",
+          "done": false
+        },
+        {
+          "id": 9904,
+          "text": "Ejecutar pruebas cross-browser móvil, WCAG AA, localización, caída de red y métricas stale.",
+          "done": false
+        },
+        {
+          "id": 9905,
+          "text": "Añadir CI obligatorio, revisión de amenazas, escaneo de secretos y rollback/feature flags.",
+          "done": false
+        },
+        {
+          "id": 9906,
+          "text": "Recopilar evidencia de tests y registrar cambios aprendidos en Wiki tras PR aprobado/merge.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "CI y E2E pasan en develop; sin fugas cross-org, sin tareas fantasmas ni éxito ficticio; rollback probado y documentación actualizada.",
+      "blocks": [],
+      "blocked_by": [
+        "90",
+        "91",
+        "92",
+        "93",
+        "94",
+        "95",
+        "96",
+        "97",
+        "98"
+      ],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "body": "Planificación 2026-11-06: especificada, no implementada. Base: develop. No ejecutar ni declarar completada hasta superar criterios de aceptación y PR/CI correspondientes."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created via ecosystem v2 planning"
+        }
+      ]
     }
   ],
   "_audit_log": [
@@ -2946,5 +4208,6 @@
       "user": "Sistema",
       "timestamp": "2026-09-13T06:26:21.846Z"
     }
-  ]
+  ],
+  "last_updated_by": "Ecosystem 2.0 planning"
 }
