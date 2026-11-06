@@ -30,28 +30,160 @@
   function stamp(value) {if(!value)return 'N/D';const d=new Date(value);return Number.isNaN(d.valueOf())?String(value).slice(0,24):d.toLocaleString('es-ES');}
   function linkableTask(c,t,metaInfo){const r=el('div','eco-row');const b=el('div');b.append(taskLink(t));para(b,metaInfo||('Estado: '+state(t)+' · '+(t.repository||'Repositorio no indicado')));r.append(b,el('span','eco-tag',state(t)));c.append(r);}
   function renderMission(){
-    const grid=el('div','eco-grid');const active=tasks.filter(t=>!done.has(state(t))&&state(t)!=='OBSOLETE');
-    const blockers=active.filter(t=>blocked(t).length>0||state(t)==='BLOCKED');
-    const reviewing=tasks.filter(t=>/REVIEW|VALIDACION/i.test(state(t))||t.jules_loop_estado==='esperando_validacion');
-    grid.append(cardKpi('Tareas activas',active.length,'Solo workspace '+workspace),cardKpi('Bloqueadas',blockers.length,'Dependencias o estado BLOCKED'),cardKpi('En revisión',reviewing.length,'Estados visibles en tareas'),cardKpi('Recuento total',tasks.length,'Actualizado '+stamp(verifiedAt)));root.append(grid);
-    const c=article('Trabajo prioritario');list(c,active.sort((a,b)=>(['Critical','Major','Medium','Minor'].indexOf(a.prioridad)+4)%4-( ['Critical','Major','Medium','Minor'].indexOf(b.prioridad)+4)%4).slice(0,20),(c,t)=>linkableTask(c,t,blocked(t).length?'Bloqueada por '+blocked(t).join(', '):'Prioridad '+(t.prioridad||'N/D')),'No hay tareas activas en el workspace.');
-    const n=article('Agentes y telemetría');para(n,'El Dashboard existente gestiona las sesiones Claude/Jules. El backend unificado de ejecuciones aún no está conectado: no se muestran agentes online ficticios.');n.append(htmlLink('/jules-panel/','Abrir Jules Panel'));
+    const model=window.HypenOSModel;
+    const stats=model.summary(tasks);
+    const grid=el('div','eco-grid eco-summary');
+    [
+      ['Pendientes',stats.pending,'Sin comenzar o ToDo'],
+      ['En ejecución',stats.working,'Working / In Progress'],
+      ['En revisión',stats.review,'In Review / Validación'],
+      ['Bloqueadas',stats.blocked,'Dependencias sin cerrar'],
+      ['Completadas',stats.done,'Estados de cierre registrados']
+    ].forEach(([heading,value,detail])=>grid.append(cardKpi(heading,value,detail)));
+    root.append(grid);
+
+    const actions=el('div','eco-actions eco-quick-nav');
+    [
+      ['/control/task-flow/','Abrir Task Flow'],
+      ['/control/approvals/','Revisar aprobaciones'],
+      ['/control/agents/','Agent Studio'],
+      ['https://dev.tc.hypenosys.com/dashboard/files','Proyectos TC (sesión propia)']
+    ].forEach(([url,title])=>{
+      const a=htmlLink(url,title);a.className='eco-btn secondary';actions.append(a);
+    });
+    root.append(actions);
+
+    const cols=el('div','eco-two-column');
+    const queue=el('section','eco-card');
+    queue.append(el('h2',null,'Cola priorizada · origen Hypenosys'));
+    para(queue,'Tareas del workspace autorizado, ordenadas por prioridad. Las dependencias pueden impedir su ejecución.');
+    const priorityTasks=model.ordered(tasks.filter(t=>!model.isDone(t)&&!model.isObsolete(t)));
+    list(queue,priorityTasks.slice(0,16),(parent,t)=>{
+      const dep=model.unresolvedDependencies(t,tasks);
+      const state=model.stage(t,tasks);
+      const meta='Prioridad: '+(t.prioridad||'N/D')+' · '+(t.repository||'Sin repositorio')+(dep.length?' · Espera #'+dep.join(', #'):'');
+      const rowEl=el('div','eco-row');
+      const detail=el('div','eco-task-summary');const link=htmlLink('/control/task-flow/?task='+encodeURIComponent(t.id),'#'+t.id+' · '+label(t));
+      detail.append(link);para(detail,meta);rowEl.append(detail,el('span','eco-tag'+(state==='blocked'?' warn':''),state==='blocked'?'Bloqueada':state==='working'?'En curso':state==='review'?'En revisión':'Pendiente'));parent.append(rowEl);
+    },'No hay tareas pendientes.');
+    const activity=el('section','eco-card');activity.append(el('h2',null,'Actividad registrada'));
+    para(activity,'Últimos cambios incluidos en el historial de tareas de GitHub; aún no es el ledger transaccional de TC.');
+    const recent=model.activity(tasks,14);
+    list(activity,recent,(parent,e)=>{
+      const rowEl=el('div','eco-row');
+      const block=el('div');block.append(htmlLink('/control/task-flow/?task='+encodeURIComponent(e.taskId),'#'+e.taskId+' · '+e.label));
+      para(block,e.actor+' · '+(e.detail||'Sin detalle')+' · '+stamp(e.when));rowEl.append(block);parent.append(rowEl);
+    },'No existen entradas de cambio con fecha verificable.');
+    cols.append(queue,activity);root.append(cols);
+
+    const gap=article('Integridad y estado de las conexiones');
+    const inferred=tasks.filter(t=>t.jules_session||t.jules_session_id).length;
+    row(gap,'Sesiones Jules referenciadas en tareas',String(inferred));
+    row(gap,'Ledger de operaciones de TC','No conectado');
+    row(gap,'Telemetría HAIS en tiempo real','No conectada');
+    para(gap,'Las referencias de sesión no prueban que un agente esté online. Los estados remotos requieren respuesta firmada de su proveedor.');
   }
   function renderFlow(){
-    const c=article('Selecciona una tarea');
-    const input=el('select','eco-filter');input.setAttribute('aria-label','Seleccionar tarea');
-    tasks.forEach(t=>{const o=el('option',null,('#'+t.id+' · '+label(t)).slice(0,145));o.value=String(t.id);input.append(o);});
-    c.append(input);const timeline=article('Línea de eventos verificados');
-    if(!tasks.length){noData(timeline,'No hay tareas cargadas.');return;}
-    function draw(t){timeline.replaceChildren(el('h2',null,'Línea de eventos · #'+t.id));const points=[];
-      points.push({when:t.created_at||t.fecha||null,text:'Tarea registrada · estado '+state(t)});
-      (t.change_log||[]).filter(e=>e.timestamp).forEach(e=>points.push({when:e.timestamp,text:'Cambio '+String(e.field||'')+' · '+String(e.new_value||'').slice(0,100)}));
-      const sess=t.jules_session||null;if(sess)points.push({when:sess.updated_at||null,text:'Sesión Jules vinculada · '+String(sess.session_id||t.jules_session_id||'N/D').slice(0,100)});
-      const pr=t.pull_request_url||sess?.pr_url||sess?.pull_request_url||t.pr_url;
-      if(pr)points.push({when:null,text:'Referencia PR: '+String(pr).slice(0,140)});
-      const vertical=el('div','eco-timeline');points.sort((a,b)=>new Date(a.when||0)-new Date(b.when||0)).forEach(e=>{const d=el('div');d.append(el('div',null,e.text),el('small','eco-small',stamp(e.when)));vertical.append(d);});timeline.append(vertical);
-      para(timeline,'Los estados de CI, merge o aprobaciones solo pueden confirmarse mediante su proveedor. La presencia de una URL no confirma merge.');}
-    input.addEventListener('change',()=>draw(tasks.find(t=>String(t.id)===input.value)||tasks[0]));draw(tasks[0]);
+    const model=window.HypenOSModel;
+    const controls=article('Flujo de tareas del workspace · '+workspace);
+    para(controls,'Kanban e historial basados en tareas reales de Hypenosys. Las operaciones de TC, PR y agentes requieren reconciliación externa.');
+    const form=el('div','eco-actions');
+    const search=el('input','eco-filter');
+    search.type='search';search.placeholder='Buscar título o número';search.setAttribute('aria-label','Filtrar tareas del workspace');
+    const filter=el('select','eco-filter');filter.setAttribute('aria-label','Filtrar etapa');
+    [['all','Todas las etapas'],['pending','Pendientes'],['working','En ejecución'],['review','En revisión'],['blocked','Bloqueadas'],['done','Completadas']]
+      .forEach(([value,text])=>{const option=el('option',null,text);option.value=value;filter.append(option);});
+    form.append(search,filter);controls.append(form);
+
+    const board=el('section','eco-board');board.setAttribute('aria-label','Kanban de tareas');
+    root.append(board);
+    const inspector=article('Inspector de tarea y evidencias');
+
+    const header=el('div','eco-actions');
+    const picker=el('select','eco-filter');picker.setAttribute('aria-label','Seleccionar tarea para inspección');
+    model.ordered(tasks).forEach(t=>{
+      const o=el('option',null,('#'+t.id+' · '+label(t)).slice(0,145));o.value=String(t.id);picker.append(o);
+    });header.append(picker);inspector.append(header);
+    const detail=el('div','eco-task-detail');inspector.append(detail);
+    if(!tasks.length){noData(board,'Este workspace no tiene tareas consultables.');noData(detail,'No hay tarea seleccionada.');return;}
+
+    const query=new URLSearchParams(window.location.search).get('task');
+    let selected=tasks.find(t=>String(t.id)===query)||tasks[0];
+    picker.value=String(selected.id);
+    function selectTask(t){
+      selected=t;picker.value=String(t.id);
+      const u=new URL(window.location.href);u.searchParams.set('task',String(t.id));
+      window.history.replaceState(null,'',u.pathname+u.search+u.hash);
+      drawInspector();
+      drawBoard();
+    }
+    function drawBoard(){
+      board.replaceChildren();
+      const q=search.value.trim().toLocaleLowerCase();
+      const flt=filter.value;
+      const visible=model.ordered(tasks.filter(t=>(!q||(String(t.id)+' '+label(t)).toLocaleLowerCase().includes(q))&&(flt==='all'||model.stage(t,tasks)===flt)));
+      [
+        ['pending','Pendientes'],['working','En ejecución'],['review','En revisión'],
+        ['blocked','Bloqueadas'],['done','Completadas']
+      ].forEach(([key,name])=>{
+        const section=el('div','eco-board-column');
+        const items=visible.filter(t=>model.stage(t,tasks)===key);
+        section.append(el('h3',null,name+' · '+items.length));
+        if(!items.length)section.append(el('p','eco-small','Sin tareas'));
+        items.forEach(t=>{
+          const button=el('button','eco-task'+(String(selected.id)===String(t.id)?' selected':''));button.type='button';
+          button.setAttribute('aria-pressed',String(selected.id)===String(t.id)?'true':'false');
+          button.append(el('strong',null,'#'+t.id+' · '+label(t)));
+          button.append(el('span','eco-small','Prioridad '+(t.prioridad||'N/D')+' · '+(t.asignados||[]).join(', ')));
+          const unresolved=model.unresolvedDependencies(t,tasks);
+          if(unresolved.length)button.append(el('span','eco-tag warn','Espera #'+unresolved.join(', #')));
+          button.addEventListener('click',()=>selectTask(t));
+          section.append(button);
+        });board.append(section);
+      });
+    }
+    function drawInspector(){
+      detail.replaceChildren();
+      detail.append(el('h2',null,'#'+selected.id+' · '+label(selected)));
+      const banner=el('div','eco-actions');
+      banner.append(el('span','eco-tag','Estado: '+model.status(selected)),el('span','eco-tag','Prioridad: '+(selected.prioridad||'N/D')));
+      detail.append(banner);
+      row(detail,'Repositorio',selected.repository||'No registrado');
+      row(detail,'Asignados',(selected.asignados||[]).join(', ')||'No registrados');
+      row(detail,'Organización',workspace);
+      const deps=model.unresolvedDependencies(selected,tasks);
+      row(detail,'Dependencias pendientes',deps.length?'#'+deps.join(', #'):'Ninguna pendiente según datos disponibles');
+      if(deps.length){
+        const links=el('div','eco-actions');
+        deps.forEach(id=>{
+          const found=tasks.find(t=>String(t.id)===id);
+          if(found){const link=el('button','eco-btn secondary','#'+id+' · '+label(found));link.type='button';link.addEventListener('click',()=>selectTask(found));links.append(link);}
+        });
+        if(links.childNodes.length)detail.append(links);
+      }
+      const actions=el('div','eco-actions');actions.append(htmlLink('/dashboard.html','Abrir Dashboard'));
+      model.taskArtifacts(selected).forEach(a=>{
+        const link=htmlLink(a.url,a.label);link.target='_blank';link.rel='noopener noreferrer';actions.append(link);
+      });
+      detail.append(actions);
+      const events=model.taskEvents(selected);
+      const timeline=el('section');
+      timeline.append(el('h3',null,'Historial de la tarea · '+events.length+' entradas declaradas'));
+      const vertical=el('div','eco-timeline');
+      list(vertical,events,(parent,e)=>{
+        const node=el('div');node.append(el('strong',null,e.label+' · '+e.actor),el('small','eco-small',stamp(e.when)));
+        if(e.detail)para(node,e.detail);parent.append(node);
+      },'No hay eventos/metadata con timestamp en esta tarea.');
+      timeline.append(vertical);detail.append(timeline);
+      para(detail,'Historial originado en campos change_log, comments y fechas de la tarea. No garantiza auditoría completa; PR referenciadas no implican merge ni CI superada.');
+      const related=el('div','eco-actions');
+      related.append(htmlLink('https://dev.tc.hypenosys.com/dashboard/history','Abrir historial TC (sesión aparte)'));
+      related.append(htmlLink('/control/mission/','Mission Control'));
+      detail.append(related);
+    }
+    picker.addEventListener('change',()=>selectTask(tasks.find(t=>String(t.id)===picker.value)||tasks[0]));
+    search.addEventListener('input',drawBoard);filter.addEventListener('change',drawBoard);
+    drawBoard();drawInspector();
   }
   function renderApprovals(){
     const c=article('Tareas que requieren revisión');
@@ -112,7 +244,7 @@
   async function load(){
     status.hidden=false;status.textContent='Verificando identidad y acceso al workspace…';status.dataset.state='loading';root.hidden=true;root.replaceChildren();
     const api=window.githubApi;
-    if(!api?.validateToken||!window.taskOps?.getAllTasks) {status.textContent='El conector GitHub no está disponible. Vuelve al Dashboard y comprueba tu sesión.';status.dataset.state='error';return;}
+    if(!api?.validateToken||!window.taskOps?.getAllTasks||!window.HypenOSModel) {status.textContent='La sesión o el modelo HypenOS no está disponible. Vuelve al Dashboard o recarga la página.';status.dataset.state='error';return;}
     try {
       const login=await api.validateToken();
       if(!login.valid||!login.user?.isTeamMember)throw Error('Acceso denegado: inicia sesión en el Dashboard con una cuenta autorizada.');

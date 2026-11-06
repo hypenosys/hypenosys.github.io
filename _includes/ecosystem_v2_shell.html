@@ -34,12 +34,32 @@ button,input,select{font:inherit}button{cursor:pointer}a{color:var(--cyan);text-
 .eco-status{color:var(--muted);font-size:12px}.eco-status[data-state=error]{color:var(--red)}
 .eco-empty{border:1px dashed #635675;border-radius:10px;padding:20px;color:var(--muted)}
 .eco-foot{border-top:1px solid var(--border);padding:16px;color:var(--muted);font-size:11px;margin-top:28px}
+.eco-summary{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.eco-quick-nav{padding:5px 0}
+.eco-two-column{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}
+.eco-task-summary{min-width:0;overflow-wrap:anywhere;flex:1}
+.eco-board{display:grid;grid-template-columns:repeat(5,minmax(185px,1fr));align-items:start;gap:12px;overflow-x:auto;padding-bottom:10px}
+.eco-board-column{background:var(--layer);border:1px solid var(--border);padding:12px;border-radius:12px;display:grid;gap:10px;min-height:210px}
+.eco-board-column h3{font-size:14px;font-weight:700;margin:0 0 6px}
+.eco-task{min-width:0;width:100%;text-align:left;background:#211e32;border:1px solid #4c415c;border-radius:10px;padding:12px;display:grid;gap:9px;color:var(--ink);transition:background .12s ease}
+.eco-task:hover{background:#2b2240}
+.eco-task.selected{border-color:var(--purple);box-shadow:0 0 0 1px var(--purple)}
+.eco-task strong{font-size:13px;line-height:1.35;overflow-wrap:anywhere}
+.eco-task .eco-small{display:block;overflow-wrap:anywhere}
+.eco-task-detail{display:grid;gap:12px;overflow-wrap:anywhere}
+.eco-task-detail h2{font-size:21px}
+.eco-task-detail h3{font-size:15px;margin:8px 0}
+.eco-task-detail .eco-actions a{color:var(--cyan)}
+.eco-task-detail .eco-timeline>div{padding-bottom:8px;overflow-wrap:anywhere}
+.eco-task-detail .eco-timeline small{display:block}
+
 [hidden]{display:none!important}
-@media(max-width:850px){.eco-layout{display:block}.eco-nav{display:flex;overflow-x:auto;gap:6px;padding:10px}.eco-nav strong{display:none}.eco-nav a{white-space:nowrap;margin:0}.eco-main{padding:16px}}
+@media(max-width:850px){.eco-two-column{grid-template-columns:1fr}.eco-layout{display:block}.eco-nav{display:flex;overflow-x:auto;gap:6px;padding:10px}.eco-nav strong{display:none}.eco-nav a{white-space:nowrap;margin:0}.eco-main{padding:16px}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
 </style>
 <script src="{{ '/assets/javascript/global-header.js' | relative_url }}" defer></script>
 <script src="{{ '/assets/javascript/github-api.js' | relative_url }}" defer></script>
+<script src="{{ '/assets/javascript/hypenosys-os-model.js' | relative_url }}" defer></script>
 <script src="{{ '/assets/javascript/ecosystem-v2.js' | relative_url }}" defer></script>
 </head>
 <body data-eco-module="{{ page.eco_module | escape }}">
