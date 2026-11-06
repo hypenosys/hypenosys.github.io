@@ -71,5 +71,5 @@ test('the shared authenticated avatar opens the account menu on desktop and mobi
   await expect(toggle).toBeVisible();
   await toggle.click();
   await expect(page.locator('#gh-mobile-account-menu')).toBeVisible();
-  await expect(page.locator('#gh-mobile-account-name')).toContainText('verified-tester');
+  await expect(page.locator('.gh-mobile-account-name')).toContainText('verified-tester');
 });
