@@ -1,15 +1,15 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-11-06T21:32:09.998Z",
+  "computed_at": "2026-11-06T21:32:40.515Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 49,
-    "total_ok": 3,
+    "total_ok": 4,
     "total_ko": 0,
     "total_uncertain": 7,
     "total_obsolete": 10,
-    "fixed_found_ratio": 0.0517,
-    "verified_ratio": 0.0508
+    "fixed_found_ratio": 0.069,
+    "verified_ratio": 0.0678
   },
   "group": {
     "velocity_trend": {
@@ -22,7 +22,7 @@
       "2026-W44": 0,
       "2026-W45": 0
     },
-    "bug_rate": 0.087,
+    "bug_rate": 0.0667,
     "blocker_health": 21,
     "tag_heatmap": {
       "brainstorm": 1,
@@ -38,12 +38,12 @@
       "jules-panel": 1,
       "neural-chat": 1,
       "svn": 1,
-      "bug": 4,
+      "bug": 3,
       "security": 2,
       "Infraestructura": 1,
       "chat": 1,
       "matrix": 1,
-      "master": 12,
+      "master": 11,
       "Art": 1,
       "logo": 1,
       "ecosystem-v2": 12,
@@ -94,7 +94,7 @@
       "irc-real-views": 1,
       "irc-zimaboard-cloudflare": 1
     },
-    "milestone_tasks_remaining": 13,
+    "milestone_tasks_remaining": 12,
     "hall_of_fame_winners": {
       "mvp": {
         "handle": "axlfc",
@@ -146,9 +146,9 @@
       "topperh4rley": {
         "member_name": "Alex",
         "mvp_points": 6.5,
-        "bugs_solved": 3,
+        "bugs_solved": 4,
         "unblocked_count": 4,
-        "velocity": 3.6,
+        "velocity": 3.5384615384615383,
         "research_solved": 1,
         "art_tasks": 0,
         "comments_left": 0
@@ -268,8 +268,8 @@
     "topperh4rley": {
       "member_name": "Alex",
       "completed": {
-        "all_time": 34,
-        "milestone": 25,
+        "all_time": 35,
+        "milestone": 26,
         "week": 0
       },
       "weekly_velocity": {
@@ -283,12 +283,13 @@
         "2026-W45": 0
       },
       "type_breakdown": {
+        "bug": 4,
         "feature": 23,
         "chore": 6,
-        "bug": 3,
         "research": 2
       },
       "rama_breakdown": {
+        "master": 7,
         "PRO": 16,
         "chore/upgrade-ue-5.7.4": 2,
         "feature/repo-labels-ui": 1,
@@ -296,7 +297,6 @@
         "feature/mobile-github-ops": 1,
         "fix/jules-neural-mobile-markdown": 1,
         "feature/dashboard-tag-filter": 1,
-        "master": 6,
         "feature/n8n-providers-nim-agent": 1,
         "chore/scripts-svn-sync": 1,
         "feature/dashboard-chat-icon": 1,
@@ -333,7 +333,7 @@
         "reprioritizations": 31
       },
       "workload": {
-        "active_tasks": 7,
+        "active_tasks": 6,
         "story_points": 13
       }
     },
@@ -545,9 +545,9 @@
         "topperh4rley": {
           "member_name": "Alex",
           "mvp_points": 6.5,
-          "bugs_solved": 3,
+          "bugs_solved": 4,
           "unblocked_count": 4,
-          "velocity": 3.6,
+          "velocity": 3.5384615384615383,
           "research_solved": 1,
           "art_tasks": 0,
           "comments_left": 0
@@ -590,7 +590,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "haopengwang123",
-      "timestamp": "2026-11-06T21:32:10.795Z"
+      "timestamp": "2026-11-06T21:32:41.358Z"
     }
   ]
 }
