@@ -15,6 +15,7 @@ permalink: /jules-panel/
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{{ '/assets/main.css' | relative_url }}">
+<link rel="stylesheet" href="{{ '/assets/css/jules-import.css' | relative_url }}?v=local-archive-20261106-1">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <script src="{{ '/assets/javascript/bootstrap/jquery.min.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/bootstrap/bootstrap.bundle.min.js' | relative_url }}"></script>
@@ -192,6 +193,9 @@ permalink: /jules-panel/
         <button class="btn btn-ghost btn-sm" id="hdr-export-btn" onclick="triggerJulesExport()" title="Exportar historial de Jules">
           <i class="fas fa-download mr-1"></i>
           <span id="hdr-export-text">Exportar</span>
+        </button>
+        <button class="btn btn-ghost btn-sm" id="hdr-import-btn" type="button" title="Importar ZIP de Jules en modo solo lectura" aria-haspopup="dialog" aria-controls="jules-archive-dialog">
+          <i class="fas fa-file-import mr-1" aria-hidden="true"></i><span>Importar</span>
         </button>
         <!-- NOTIF BELL -->
         <div class="notif-bell" id="notif-bell" onclick="toggleNotifPanel()">
@@ -1069,6 +1073,42 @@ permalink: /jules-panel/
 <script src="{{ '/assets/javascript/jules-api.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/github-context.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/task-engine.js' | relative_url }}"></script>
+
+<!-- JULES LOCAL ARCHIVE IMPORT — offline and read-only -->
+<dialog class="jules-archive-dialog" id="jules-archive-dialog" aria-labelledby="jules-archive-title">
+  <div class="jules-archive-header">
+    <div>
+      <h2 id="jules-archive-title"><i class="fas fa-box-open" aria-hidden="true"></i> Archivo Jules · Importar ZIP</h2>
+      <p>Consulta sesiones antiguas sin API key. El contenido permanece en memoria de esta pestaña;
+         no se sube, sincroniza ni almacena sin cifrado. Conserva tus ZIP originales en un respaldo seguro.</p>
+    </div>
+    <button type="button" id="jules-archive-close" class="btn btn-ghost btn-sm" aria-label="Cerrar importador">✕</button>
+  </div>
+  <div class="jules-archive-form">
+    <label for="jules-archive-account">Cuenta origen (etiqueta, sin credenciales)</label>
+    <input id="jules-archive-account" type="text" maxlength="60" autocomplete="off" placeholder="Ej.: cuenta de Axel" />
+    <div class="jules-archive-scope">Organización actual: <strong id="jules-archive-workspace"></strong></div>
+    <label for="jules-archive-files">ZIP de índice y todas las partes de esa cuenta</label>
+    <input id="jules-archive-files" type="file" accept=".zip,application/zip" multiple />
+    <button id="jules-archive-load" type="button" class="btn btn-primary btn-sm"><i class="fas fa-file-import" aria-hidden="true"></i> Cargar archivo local</button>
+  </div>
+  <p id="jules-archive-status" class="jules-archive-status" role="status" aria-live="polite">Selecciona el archivo -index.zip y todos los -partNN.zip del mismo respaldo.</p>
+  <pre id="jules-archive-summary" class="jules-archive-summary" aria-label="Estado de la importación"></pre>
+  <div class="jules-archive-browser">
+    <div class="jules-archive-list-pane">
+      <label for="jules-archive-filter">Buscar sesión importada</label>
+      <input type="search" id="jules-archive-filter" placeholder="Título, ID, repo o estado" />
+      <span id="jules-archive-count" class="jules-archive-count">Sin archivo cargado</span>
+      <div id="jules-archive-sessions" class="jules-archive-sessions" aria-label="Sesiones Jules importadas"></div>
+    </div>
+    <div class="jules-archive-preview-pane">
+      <h3>Registro histórico <span>solo lectura</span></h3>
+      <pre id="jules-archive-detail" tabindex="0">Carga una exportación para consultar los datos de sesiones.</pre>
+      <div id="jules-archive-patches" class="jules-archive-patches" aria-label="Parches exportados"></div>
+    </div>
+  </div>
+</dialog>
+
 <script src="{{ '/assets/javascript/neural-session.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/kanban-ui.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/gh-explorer.js' | relative_url }}"></script>
@@ -1105,6 +1145,7 @@ permalink: /jules-panel/
 <script src="{{ '/assets/javascript/jules-pr-sync.js' | relative_url }}?v=20261105-automerge-v2"></script>
 <script src="{{ '/assets/javascript/jules-panel-auth.js' | relative_url }}?v=jules-target-20261105-v2"></script>
 <script src="{{ '/assets/javascript/jules-export.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/jules-import.js' | relative_url }}?v=local-archive-20261106-1"></script>
 <script src="{{ '/assets/javascript/neural-panel-workspace.js' | relative_url }}?v=panel-scroll-supervisor-20261103-v1"></script>
 
 <script>

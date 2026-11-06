@@ -1,0 +1,30 @@
+name: Jules ZIP Import contract tests
+on:
+  pull_request:
+    branches: [develop]
+    paths:
+      - assets/javascript/jules-import.js
+      - pages/jules-panel.html
+      - assets/css/jules-import.css
+      - tests/test_jules_import.js
+      - .github/workflows/jules-import-contract.yml
+  push:
+    branches: [develop]
+    paths:
+      - assets/javascript/jules-import.js
+      - tests/test_jules_import.js
+      - .github/workflows/jules-import-contract.yml
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run no-dependency importer tests
+        run: node tests/test_jules_import.js
+      - name: Check browser JavaScript syntax
+        run: node --check assets/javascript/jules-import.js
