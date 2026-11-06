@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Added
+- **IRC híbrido (2026-11-06)**: Primera vista `/irc/` con chat/Canales IRC por WSS y vistas Bots, Bridges, Incidents y Config que consultan únicamente fuentes reales. Plan Cloudflare Tunnel/ZimaBoard2; gateway, servidor IRC y SSO todavía no desplegados.
+
 ### Fixed
 - **Jules Panel chat and Claude supervision**: Preserve the reader's scroll position during polling and streaming, avoid rebuilding unchanged transcripts, and prevent reflected workspace broadcasts. Restore previously authorized Claude supervision after reload while preserving manual pauses, reviewed plan versions, decision limits and session isolation. Save review output to the current conversation after cross-tab refreshes, persist review errors, and display the actual supervision policy and limit.
 
