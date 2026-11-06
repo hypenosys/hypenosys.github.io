@@ -5,7 +5,17 @@ const path = require('path');
 test.describe('The Machine GitHub issue source', () => {
   test('projects Issues as read-only dashboard tasks and excludes pull requests', async ({ page }) => {
     const script = fs.readFileSync(path.resolve(__dirname, '../assets/javascript/github-api.js'), 'utf8');
-    await page.goto('about:blank');
+
+    await page.addInitScript(() => {
+      const data = new Map([['hy_active_workspace', 'the-machine']]);
+      const storage = {
+        getItem: key => data.has(key) ? data.get(key) : null,
+        setItem: (key, value) => data.set(key, String(value)),
+        removeItem: key => data.delete(key)
+      };
+      Object.defineProperty(window, 'localStorage', { value: storage, configurable: true });
+      Object.defineProperty(window, 'sessionStorage', { value: storage, configurable: true });
+    });
     await page.addInitScript(() => {
       const source = {
         taskSource: {
@@ -32,7 +42,7 @@ test.describe('The Machine GitHub issue source', () => {
           pull_request: { url: 'https://api.github.com/repos/hypenosys/the_machine/pulls/35' }
         }
       ];
-      window.fetch = async (url) => {
+      window.fetch = async url => {
         if (url.includes('/contents/_data/orgs/the-machine/meta.json')) {
           const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(source))));
           return new Response(JSON.stringify({ content: encoded, sha: 'meta-sha' }), { status: 200 });
@@ -43,6 +53,8 @@ test.describe('The Machine GitHub issue source', () => {
         return new Response(JSON.stringify({ message: 'not found' }), { status: 404 });
       };
     });
+
+    await page.goto('about:blank');
     await page.evaluate(script);
 
     const result = await page.evaluate(async () => {
