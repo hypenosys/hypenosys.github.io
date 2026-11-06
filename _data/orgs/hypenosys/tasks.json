@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-11-06T19:44:25.000Z",
+  "last_updated": "2026-11-06T20:34:41.000Z",
   "organizationId": "hypenosys",
   "tasks": [
     {
@@ -3210,6 +3210,10 @@
         {
           "label": "Repositorio objetivo (develop)",
           "url": "https://github.com/hypenosys/hypenosys.github.io/tree/develop"
+        },
+        {
+          "label": "HypenOS Mission/Task Flow (draft)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/pull/470"
         }
       ],
       "subtasks": [
@@ -3255,6 +3259,11 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-06T18:39:52.000Z",
           "body": "Planificación 2026-11-06: especificada, no implementada. Base: develop. No ejecutar ni declarar completada hasta superar criterios de aceptación y PR/CI correspondientes."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T20:34:41.000Z",
+          "body": "[HYPENOS SPRINT 2026-11-06] Mission Control: cola priorizada, bloqueos reales y actividad a partir de change_log; módulo en PR #470. Tests Node pasan; Playwright en curso. Mantener tarea Pending y blocked_by #88/#89: conector TC y telemetría faltan."
         }
       ],
       "images": [],
@@ -3315,6 +3324,10 @@
         {
           "label": "Repositorio objetivo (develop)",
           "url": "https://github.com/hypenosys/hypenosys.github.io/tree/develop"
+        },
+        {
+          "label": "HypenOS Mission/Task Flow (draft)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/pull/470"
         }
       ],
       "subtasks": [
@@ -3360,6 +3373,11 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-06T18:39:52.000Z",
           "body": "Planificación 2026-11-06: especificada, no implementada. Base: develop. No ejecutar ni declarar completada hasta superar criterios de aceptación y PR/CI correspondientes."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T20:34:41.000Z",
+          "body": "[HYPENOS SPRINT 2026-11-06] Task Flow: Kanban read-only e inspector de cambios/notas/PR con deep-links del workspace. No equivale a saga Claude/Cog/PR/merge; PR #470 pendiente revisión y Playwright. Mantener estado y deps."
         }
       ],
       "images": [],
@@ -5220,6 +5238,10 @@
         {
           "label": "TC CodeQL checkout (bloqueado)",
           "url": "https://github.com/Axlfc/tc/actions/runs/42282233418"
+        },
+        {
+          "label": "TC seguridad ACL/auth (draft)",
+          "url": "https://github.com/Axlfc/tc/pull/850"
         }
       ],
       "subtasks": [
@@ -5272,6 +5294,11 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-06T19:44:25.000Z",
           "body": "[CI TC 2026-11-06] PR TC #849: Project Automation y Documentation Check pasan. CI Pipeline / i18n / Dependency Scan fallan en npm ci por desajuste package-lock (falta typescript 5.9.3, ajv, etc.) antes de ejecutar pruebas. CodeQL falla en checkout con Repository not found; revisar permisos/runner. Security Scan Secret Scanning pasa. No marcar tests de seguridad realizados mientras no se arregle baseline."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T20:34:41.000Z",
+          "body": "[HYPENOS SPRINT 2026-11-06] PR TC #850 añade guards server-side para GET /api/projects, GET /api/projects/:id, historial y POST heredado; JWT sin fallback, pruebas unitarias/HTTP propuestas. CI TC baseline npm ci y checkout CodeQL sigue bloqueada; no merge ni marcar subtareas done."
         }
       ],
       "images": [],
@@ -5819,5 +5846,5 @@
       "timestamp": "2026-09-13T06:26:21.846Z"
     }
   ],
-  "last_updated_by": "TC CI blockers audit"
+  "last_updated_by": "HypenOS increment — linked PRs #470 and #850"
 }
