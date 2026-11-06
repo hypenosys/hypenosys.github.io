@@ -123,3 +123,21 @@ Fuentes oficiales: https://forgejo.org/docs/latest/user/repo-mirror/ y https://f
 6. Ejercicios de caída completos y fecha de último éxito documentados en Mission Control y HAIS Observatory.
 
 **No declarar “GitHub redundancy ready” hasta que exista espejo verificado, backend writable probado, segundo hosting y un ensayo de failover/failback.**
+
+
+## Actualización 2026-11-06 — exportador web ya existente y primer respaldo comunicado
+
+**Evidencia de producto:** en la captura del Jules Panel de Hypenosys (rama develop) aparece el botón superior **Exportar**. El usuario informa de que **Axel ya exportó los datos accesibles de una de las cuentas**. Es un avance **reportado**, pendiente de verificar los ZIP y el manifiesto; no se conoce aún qué cuenta fue, número de sesiones incluidas ni integridad del resultado. No volver a planificar un exportador nuevo como si no existiese.
+
+**Código analizado:** `pages/jules-panel.html` enlaza `<button id="hdr-export-btn" onclick="triggerJulesExport()">`; `assets/javascript/jules-export.js` contiene `triggerJulesExport` y descarga ZIP del lado del navegador. Recupera `/sources`, `/sessions`, detalle de `/sessions/{id}` y `/sessions/{id}/activities`, con paginación, reintentos, deduplicación y extracción de patches. Exporta archivos de sesión `session.json`, `activities.json`, `summary.md`, `patches-index.json`, diffs, `sessions-index.csv`, `sources.json`, `sessions.json`, `manifest.json` y `errors.json`. Puede generar múltiples `jules-export-YYYY-MM-DD-partNN.zip` más `jules-export-YYYY-MM-DD-index.zip`; **conservar siempre todas las partes y el índice**. El exportador no cifra los ZIP, así que el almacenamiento cifrado debe hacerse por separado.
+
+**Limitaciones/bugs detectados por inspección (no validados con ejecución real):**
+1. El manifiesto actualmente asigna `complete: true` en el flujo normal **aunque** `errors_count > 0`, un `pagination_stop_reason` distinto de `COMPLETED` o `activities_stop_reason` distinto de `COMPLETED`. La UI puede mostrar “Exportación completada con éxito” aunque falten páginas/actividades: cambiar el criterio a completitud comprobable y presentar avisos accionables.
+2. El nombre de los ZIP solo incluye **fecha y número de parte**, no una identificación estable de la exportación o cuenta. Si se exportan varias cuentas el mismo día pueden aparecer nombres idénticos. Añadir export ID no sensible, selector/etiqueta explícita de origen, y preservar trazabilidad sin almacenar API keys.
+3. El exportador usa la **API pública de Jules del contexto de la credencial configurada**: exportar una cuenta **no garantiza** exportar las demás. Tampoco puede garantizar que incluya datos históricos invisibles para la API pública, ni settings/env vars, memories y scheduled tasks; contrastar con export oficial por cuenta.
+4. Descargar ZIPs mediante `downloadFn` no acredita que el usuario guardó todos los archivos, ni que puedan abrirse; comprobar ZIP CRC/entries, recuentos, hashes y extracción de muestra restaurable fuera del repositorio.
+5. `sessions.json`, actividades, logs y patches pueden contener datos privados, credenciales o diffs sensibles; **no** subir ZIP ni manifiestos con datos sensibles a GitHub, Forgejo, TC, Wiki o Qdrant. Solo registrar metadatos saneados, resultado de verificación y hash de cada artefacto.
+
+**Plan inmediato por cuenta, sin duplicar:** usar el botón ya existente cuando funcione; copiar y proteger el resultado ya descargado por Axel; validar `manifest.json` + partes + hashes; repetir desde las otras identidades de Jules, etiquetando cada respaldo con un `exportId`; comparar número de sesiones esperado vs exportado y registrar lagunas; complementar con export oficial cuando sea necesario. Para el modo Jules Archive, implementar **importador de ZIP verificados** y permisos por organización; no depender de conservar las API keys después del cierre.
+
+**Condición de cierre de la tarea #100:** listado de todas las cuentas pertinentes (sin tokens), artefactos exportados por cuenta, fecha, recuentos y `errors_count=0` con paginación completa o discrepancias documentadas, muestras restauradas, cifrado/offsite y acceso histórico autorizado. El respaldo de una cuenta comunicado hasta ahora **no** habilita marcar #100 `OK`.
