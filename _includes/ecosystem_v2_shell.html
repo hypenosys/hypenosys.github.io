@@ -1,0 +1,73 @@
+{% comment %} Shared read-only ecosystem module shell. Live data always scoped to authenticated Hypenosys workspace; no fictitious status. {% endcomment %}
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>{{ page.title | escape }} · Hypenosys</title>
+<style>
+:root{color-scheme:dark;--bg:#0b0c16;--layer:#141522;--layer2:#1a1a2a;--border:#333046;--purple:#bd93f9;--green:#50fa7b;--cyan:#8be9fd;--muted:#a6a8c4;--ink:#f8f8f2;--red:#ff838c}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,system-ui,sans-serif}
+button,input,select{font:inherit}button{cursor:pointer}a{color:var(--cyan);text-decoration:none}a:hover{text-decoration:underline}a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--cyan);outline-offset:3px}
+.eco-layout{max-width:1600px;margin:auto;min-height:calc(100vh - 65px);display:grid;grid-template-columns:225px minmax(0,1fr)}
+.eco-nav{border-right:1px solid var(--border);padding:24px 14px;background:#10111c}
+.eco-nav strong{display:block;letter-spacing:.12em;font-size:11px;color:var(--muted);margin:0 11px 16px}
+.eco-nav a{display:block;padding:11px 12px;color:var(--muted);margin:4px 0;border-radius:9px;border:1px solid transparent}
+.eco-nav a[aria-current=page]{color:var(--ink);background:#291a41;border-color:#694198}
+.eco-main{padding:clamp(18px,3vw,42px);min-width:0}
+.eco-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px}
+.eco-head h1{font-size:clamp(26px,3vw,37px);margin:4px 0}.eco-eyebrow{color:var(--purple);font-size:12px;text-transform:uppercase;letter-spacing:.12em}
+.eco-small{color:var(--muted);font-size:13px}.eco-stack{display:grid;gap:14px}.eco-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:13px}
+.eco-card{border:1px solid var(--border);background:linear-gradient(145deg,var(--layer),var(--layer2));border-radius:13px;padding:18px;min-width:0}
+.eco-card h2,.eco-card h3{margin:0 0 12px}.eco-card h2{font-size:16px}.eco-card h3{font-size:14px}
+.eco-kpi{font-weight:800;font-size:29px;display:block;font-variant-numeric:tabular-nums;margin:4px 0}
+.eco-row{display:flex;align-items:center;gap:12px;justify-content:space-between;flex-wrap:wrap;border-bottom:1px solid #302d42;padding:13px 0}
+.eco-row:last-child{border-bottom:0}.eco-tag{border:1px solid #524170;border-radius:99px;padding:3px 9px;font-size:11px;color:#d8bdff}
+.eco-tag.ok{color:var(--green);border-color:#246245}.eco-tag.warn{color:#f6c77e;border-color:#75613c}
+.eco-actions{display:flex;flex-wrap:wrap;gap:9px}.eco-btn{display:inline-block;background:#392356;border:1px solid #8053ae;border-radius:9px;color:white;padding:10px 13px}
+.eco-btn.secondary{background:var(--layer);border-color:var(--border)}.eco-btn:disabled{opacity:.5;cursor:not-allowed}
+.eco-filter{color:var(--ink);background:var(--layer);border:1px solid var(--border);border-radius:8px;padding:9px;min-width:160px;max-width:100%}
+.eco-notice{border-left:3px solid var(--purple);background:#21182e;border-radius:9px;padding:12px 14px;color:#ddd0ef}
+.eco-timeline{border-left:2px solid #6d4b8b;margin-left:7px;padding-left:18px}
+.eco-timeline>div{margin-bottom:14px;position:relative}.eco-timeline>div:before{content:"";position:absolute;left:-24px;top:7px;border-radius:50%;width:9px;height:9px;background:var(--purple)}
+.eco-svg{width:100%;height:340px;background:#101321;border:1px solid var(--border);border-radius:12px}
+.eco-status{color:var(--muted);font-size:12px}.eco-status[data-state=error]{color:var(--red)}
+.eco-empty{border:1px dashed #635675;border-radius:10px;padding:20px;color:var(--muted)}
+.eco-foot{border-top:1px solid var(--border);padding:16px;color:var(--muted);font-size:11px;margin-top:28px}
+[hidden]{display:none!important}
+@media(max-width:850px){.eco-layout{display:block}.eco-nav{display:flex;overflow-x:auto;gap:6px;padding:10px}.eco-nav strong{display:none}.eco-nav a{white-space:nowrap;margin:0}.eco-main{padding:16px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+</style>
+<script src="{{ '/assets/javascript/global-header.js' | relative_url }}" defer></script>
+<script src="{{ '/assets/javascript/github-api.js' | relative_url }}" defer></script>
+<script src="{{ '/assets/javascript/ecosystem-v2.js' | relative_url }}" defer></script>
+</head>
+<body data-eco-module="{{ page.eco_module | escape }}">
+<div class="eco-layout">
+<nav class="eco-nav" aria-label="Ecosystem 2.0">
+<strong>HYPENOSYS · ECOSYSTEM</strong>
+<a href="{{ '/control/mission/' | relative_url }}" data-eco-nav="mission">◈ Mission Control</a>
+<a href="{{ '/control/task-flow/' | relative_url }}" data-eco-nav="flow">⤴ Task Flow</a>
+<a href="{{ '/control/approvals/' | relative_url }}" data-eco-nav="approvals">✓ Approval Center</a>
+<a href="{{ '/control/agents/' | relative_url }}" data-eco-nav="agents">◇ Agent Studio</a>
+<a href="{{ '/knowledge/graph/' | relative_url }}" data-eco-nav="knowledge">◎ Knowledge Graph</a>
+<a href="{{ '/organizations/hub/' | relative_url }}" data-eco-nav="organizations">♧ Organization Hub</a>
+<a href="{{ '/labs/sandbox/' | relative_url }}" data-eco-nav="sandbox">⌘ Sandbox Lab</a>
+<a href="{{ '/hais/observatory/' | relative_url }}" data-eco-nav="observatory">◉ HAIS Observatory</a>
+<hr style="border-color:#2a2739;width:100%">
+<a href="{{ '/dashboard.html' | relative_url }}">↖ Dashboard original</a>
+<a href="{{ '/jules-panel/' | relative_url }}">↖ Jules Panel</a>
+</nav>
+<main class="eco-main">
+<header class="eco-head">
+<div><span class="eco-eyebrow">Ecosystem 2.0 · Datos verificables</span>
+<h1>{{ page.title | escape }}</h1>
+<p class="eco-small">{{ page.eco_description | escape }}</p></div>
+<div class="eco-actions"><span id="eco-workspace" class="eco-tag">Workspace: verificando…</span><button class="eco-btn" id="eco-reload" type="button">Actualizar</button></div>
+</header>
+<p class="eco-notice" id="eco-privacy" role="status">La vista muestra únicamente datos autorizados del workspace actual. No se ejecutan acciones ni se inventan métricas.</p>
+<div class="eco-status" id="eco-loading" role="status" aria-live="polite">Verificando sesión y permisos…</div>
+<div id="eco-content" class="eco-stack" hidden></div>
+<footer class="eco-foot">Fuente de tareas: GitHub / Hypenosys workspace · Módulos read-only iniciales · Conectores no implementados se muestran como no disponibles.</footer>
+</main></div>
+</body></html>
