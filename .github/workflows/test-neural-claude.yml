@@ -35,6 +35,12 @@ on:
       - 'assets/javascript/neural-chat-ui.js'
       - 'assets/javascript/kanban-ui.js'
       - 'dashboard.html'
+      - 'assets/javascript/dashboard-data.js'
+      - 'assets/javascript/dashboard-cache.js'
+      - 'tests/test_dashboard_cache_quota.js'
+      - 'assets/javascript/dashboard-data.js'
+      - 'assets/javascript/dashboard-cache.js'
+      - 'tests/test_dashboard_cache_quota.js'
       - 'assets/javascript/jules-claude-bridge.js'
       - 'assets/javascript/jules-panel-neural.js'
       - 'assets/javascript/neural-chat-core.js'
@@ -152,6 +158,11 @@ jobs:
         run: node tests/test_jules_pr_sync.js
       - name: Jules guarded auto-merge into develop or master
         run: node tests/test_jules_pr_automerge.js
+      - name: Dashboard sync when localStorage quota is exhausted
+        run: |
+          node tests/test_dashboard_cache_quota.js
+          node --check assets/javascript/dashboard-cache.js
+          node --check assets/javascript/dashboard-data.js
       - name: Task orchestrator architectural boundaries
         run: node tests/test_task_orchestrator.js
       - name: Claude and Jules workspace filters, drafts and context isolation
