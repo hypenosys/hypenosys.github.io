@@ -1643,7 +1643,7 @@
       "descripcion": "Probar Cognito desde Axlfc/connect-core en sandbox de solo lectura sobre HAIS, con red/FS limitados, timeout, cuota y sin acceso a claves; comparar con Jules usando el mismo ticket.",
       "tema_principal": "HAIS-001 / quality",
       "prioridad": "High",
-      "estado": "BLOCKED",
+      "estado": "Pending",
       "completitud": 0,
       "task_type": "test",
       "resuelto_por": "",
@@ -4672,8 +4672,13 @@
       "assignee_proposed": "human"
     }
   ],
-  "last_updated_by": "HAIS review 2026-11-06",
+  "last_updated_by": "Sistema",
   "_audit_log": [
+    {
+      "action": "chore: actualizar estado tarea #900019 → Pending",
+      "user": "haopengwang123",
+      "timestamp": "2026-11-06T15:45:41.898Z"
+    },
     {
       "action": "HAIS daily review 2026-11-06: PR #462 offline stale gateway test; current CI/deploy/FRED evidence; no task closure",
       "user": "HAIS review",
@@ -5196,5 +5201,5 @@
       ]
     }
   ],
-  "last_updated": "2026-11-05T20:35:01.684Z"
+  "last_updated": "2026-11-06T15:45:41.898Z"
 }
