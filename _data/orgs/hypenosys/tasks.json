@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-11-06T19:05:01.000Z",
+  "last_updated": "2026-11-06T19:36:46.000Z",
   "organizationId": "hypenosys",
   "tasks": [
     {
@@ -2997,6 +2997,10 @@
         {
           "label": "Repositorio objetivo (develop)",
           "url": "https://github.com/hypenosys/hypenosys.github.io/tree/develop"
+        },
+        {
+          "label": "TC ADR interconexión (PR draft)",
+          "url": "https://github.com/Axlfc/tc/pull/849"
         }
       ],
       "subtasks": [
@@ -3028,6 +3032,11 @@
         {
           "id": 8806,
           "text": "Documentar ADR de source-of-truth y plan de despliegue progresivo.",
+          "done": false
+        },
+        {
+          "id": 8807,
+          "text": "Añadir contrato IdentityLink, OrgProjectLink, TaskLink y canonical event envelope; medir fuente/ACL/versioning sin migrar automáticamente.",
           "done": false
         }
       ],
@@ -3727,6 +3736,10 @@
         {
           "label": "Repositorio objetivo (develop)",
           "url": "https://github.com/Axlfc/tc/tree/develop"
+        },
+        {
+          "label": "TC ADR interconexión (PR draft)",
+          "url": "https://github.com/Axlfc/tc/pull/849"
         }
       ],
       "subtasks": [
@@ -3759,6 +3772,11 @@
           "id": 9506,
           "text": "Añadir E2E multi-org, cambios de miembros, archivos, traducciones y recuperación de fallos.",
           "done": false
+        },
+        {
+          "id": 9507,
+          "text": "Incorporar orgUid↔TC ProjectUid, membresías accepted, estado de linking/revocación y auditoría real; depender de broker SSO y ledger TC.",
+          "done": false
         }
       ],
       "acceptance_criteria": "No se crea acceso implícito al vincular; usuarios ven solo proyectos permitidos, estado eventual explícito, enlace reversible y errores recuperables.",
@@ -3766,7 +3784,9 @@
       "blocked_by": [
         "88",
         "89",
-        "98"
+        "98",
+        "109",
+        "110"
       ],
       "comments": [
         {
@@ -4043,6 +4063,10 @@
         {
           "label": "Repositorio objetivo (develop)",
           "url": "https://github.com/Axlfc/tc/tree/develop"
+        },
+        {
+          "label": "TC ADR interconexión (PR draft)",
+          "url": "https://github.com/Axlfc/tc/pull/849"
         }
       ],
       "subtasks": [
@@ -4075,12 +4099,20 @@
           "id": 9806,
           "text": "Cubrir pruebas de multi-org, invitaciones, aislamiento, idempotencia, fallos de red y sincronización eventual.",
           "done": false
+        },
+        {
+          "id": 9807,
+          "text": "Integración TaskLink: una tarea lógica, adaptador Hyp JSON ↔ TC ProjectStructure, saga para escrituras remotas, CAS e historial TC obligatorio.",
+          "done": false
         }
       ],
       "acceptance_criteria": "Proyecto TC y organización Hypenosys enlazables con referencias y roles explícitos; operación autorizada, reversible, auditada y con pruebas; sin escritura ficticia en datos de TC.",
       "blocks": [],
       "blocked_by": [
-        "88"
+        "88",
+        "108",
+        "109",
+        "110"
       ],
       "comments": [
         {
@@ -4147,6 +4179,10 @@
         {
           "label": "Repositorio objetivo (develop)",
           "url": "https://github.com/hypenosys/hypenosys.github.io/tree/develop"
+        },
+        {
+          "label": "TC ADR interconexión (PR draft)",
+          "url": "https://github.com/Axlfc/tc/pull/849"
         }
       ],
       "subtasks": [
@@ -4179,6 +4215,11 @@
           "id": 9906,
           "text": "Recopilar evidencia de tests y registrar cambios aprendidos en Wiki tras PR aprobado/merge.",
           "done": false
+        },
+        {
+          "id": 9907,
+          "text": "Agregar E2E cross-domains Hyp/TC/IRC/Matrix, API vs funciones auxiliares, dos usuarios/organizaciones, eventos perdidos, replay y revocación.",
+          "done": false
         }
       ],
       "acceptance_criteria": "CI y E2E pasan en develop; sin fugas cross-org, sin tareas fantasmas ni éxito ficticio; rollback probado y documentación actualizada.",
@@ -4193,7 +4234,8 @@
         "96",
         "97",
         "98",
-        "107"
+        "107",
+        "111"
       ],
       "comments": [
         {
@@ -5118,6 +5160,430 @@
           "new_value": "Created via Cog/Forgejo continuity plan"
         }
       ]
+    },
+    {
+      "id": 108,
+      "integration_key": "tc-auth-guards",
+      "organizationId": "hypenosys",
+      "repository": "Axlfc/tc",
+      "title": "[INTEROPERABILIDAD P0] TC: asegurar API Projects, History, SSE, auditoría e identidad",
+      "descripcion": "Bloquear por defecto las lecturas/mutaciones y eventos TC-Sync no autorizados; derivar actor del servidor y persistir auditoría requerida antes de afirmar éxito. Hallazgos en code review de develop; no afirmar explotación.",
+      "rama": "fix/tc-auth-history-audit-guards",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Interoperabilidad Hypenosys · TC · IRC",
+      "prioridad": "Critical",
+      "milestone": "P0",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "axlfc",
+        "haopengwang123"
+      ],
+      "email_responsable": "",
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "interoperability",
+        "tc",
+        "hypenosys",
+        "irc",
+        "identity-ledger",
+        "tc-auth-guards"
+      ],
+      "external_links": [
+        {
+          "label": "ADR propuesta en TC",
+          "url": "https://github.com/Axlfc/tc/blob/docs/hypenosys-tc-irc-identity-ledger-20261106/docs/HYPENOSYS_TC_IRC_UNIFIED_IDENTITY_LEDGER.md"
+        },
+        {
+          "label": "TC PR #849 (draft)",
+          "url": "https://github.com/Axlfc/tc/pull/849"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 10801,
+          "text": "Revisar y corregir autenticación y autorización en /api/projects, /api/projects/[id] y /api/projects/[id]/history; no fiarse de userId enviado por frontend.",
+          "done": false
+        },
+        {
+          "id": 10802,
+          "text": "Proteger /api/tc-sync/{stream,history,publish}, filtros por sala, replay, CORS y validación de roomId; fail-closed sin secreto configurado.",
+          "done": false
+        },
+        {
+          "id": 10803,
+          "text": "Asegurar JWT con AUTH_SECRET obligatorio y sesiones revocables; no confiar en modo demo para operaciones protegidas.",
+          "done": false
+        },
+        {
+          "id": 10804,
+          "text": "Consolidar logAudit + eventos: errores de persistencia no devuelven OK y no se filtran datos sensibles por logging.",
+          "done": false
+        },
+        {
+          "id": 10805,
+          "text": "Corregir aprovisionamiento Matrix para devolver estado real en caso de error y proteger tokens.",
+          "done": false
+        },
+        {
+          "id": 10806,
+          "text": "Crear pruebas HTTP E2E con dos usuarios, dos proyectos, roles, revocación, acceso anónimo y denegaciones.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "GET/POST/SSE y auditoría deniegan accesos no autorizados con tests API multiusuario; roles revoked se aplican; sin exponer eventos privados, room IDs ni tokens; fallos de auditoría no afirman éxito.",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T19:36:46.000Z",
+          "body": "Tarea abierta tras revisión de develop 2026-11-06: el contrato y riesgos están especificados, ninguna ejecución o API unificada se declara terminada. PR documentación TC #849 pendiente de review."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T19:36:46.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created for TC/Hypenosys/IRC integration"
+        }
+      ]
+    },
+    {
+      "id": 109,
+      "integration_key": "unified-identity",
+      "organizationId": "hypenosys",
+      "repository": "Axlfc/tc",
+      "title": "[INTEROPERABILIDAD P0] Identidad SSO estable Hypenosys ↔ TC ↔ IRC/Matrix",
+      "descripcion": "Definir y entregar broker central de identidad userUid + enlaces verificables de GitHub ID numérico, TC User, Matrix MXID e IRC account; no unificar por login/email/nick. Sesión segura por dominio y ACL de org/proyecto.",
+      "rama": "feat/identity-link-oidc",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Interoperabilidad Hypenosys · TC · IRC",
+      "prioridad": "Critical",
+      "milestone": "P0",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "axlfc",
+        "haopengwang123"
+      ],
+      "email_responsable": "",
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "interoperability",
+        "tc",
+        "hypenosys",
+        "irc",
+        "identity-ledger",
+        "unified-identity"
+      ],
+      "external_links": [
+        {
+          "label": "ADR propuesta en TC",
+          "url": "https://github.com/Axlfc/tc/blob/docs/hypenosys-tc-irc-identity-ledger-20261106/docs/HYPENOSYS_TC_IRC_UNIFIED_IDENTITY_LEDGER.md"
+        },
+        {
+          "label": "TC PR #849 (draft)",
+          "url": "https://github.com/Axlfc/tc/pull/849"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 10901,
+          "text": "Definir canonical userUid e IdentityLink con proveedor issuer/subject, prueba de propiedad, revocación y aliases históricos.",
+          "done": false
+        },
+        {
+          "id": 10902,
+          "text": "Implementar servidor OIDC o broker SSO PKCE + sesiones seguras por dominio; proteger audience, issuer, nonce/state/CSRF.",
+          "done": false
+        },
+        {
+          "id": 10903,
+          "text": "Mapear roles y membresías accepted por organización/proyecto de TC y Hypenosys con ACL validado en servidor.",
+          "done": false
+        },
+        {
+          "id": 10904,
+          "text": "Vincular Matrix MXID real del aprovisionamiento existente con userUid y revisar tokens Matrix/rotación.",
+          "done": false
+        },
+        {
+          "id": 10905,
+          "text": "Vincular cuentas IRC (no solo nick) a userUid mediante sesión autenticada y cuenta registrada del IRCd.",
+          "done": false
+        },
+        {
+          "id": 10906,
+          "text": "Probar dos usuarios y dos orgs, revocación inmediata, cambio de nick y fallo del proveedor sin elevación.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Mismo usuario aparece con userUid estable en dev.hypenosys.com, dev.tc.hypenosys.com e irc.hypenosys.com; MFA/revocación, cambio de nick/login, y aislamiento org/proyecto verificados. No PAT en navegador.",
+      "blocks": [],
+      "blocked_by": [
+        "108"
+      ],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T19:36:46.000Z",
+          "body": "Tarea abierta tras revisión de develop 2026-11-06: el contrato y riesgos están especificados, ninguna ejecución o API unificada se declara terminada. PR documentación TC #849 pendiente de review."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T19:36:46.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created for TC/Hypenosys/IRC integration"
+        }
+      ]
+    },
+    {
+      "id": 110,
+      "integration_key": "tc-durable-ledger",
+      "organizationId": "hypenosys",
+      "repository": "Axlfc/tc",
+      "title": "[INTEROPERABILIDAD P0] Ledger TC transaccional de eventos, comandos y outbox",
+      "descripcion": "Ampliar TCEvent/historial existente a almacén PostgreSQL append-only y log requerido con correlationId/causationId, actor/procedencia, estados requested→committed|failed, outbox transaccional, replay ACL-first y reconciliación cross-app.",
+      "rama": "feat/tc-project-event-ledger-postgres",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Interoperabilidad Hypenosys · TC · IRC",
+      "prioridad": "Critical",
+      "milestone": "P0",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "axlfc",
+        "haopengwang123"
+      ],
+      "email_responsable": "",
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "interoperability",
+        "tc",
+        "hypenosys",
+        "irc",
+        "identity-ledger",
+        "tc-durable-ledger"
+      ],
+      "external_links": [
+        {
+          "label": "ADR propuesta en TC",
+          "url": "https://github.com/Axlfc/tc/blob/docs/hypenosys-tc-irc-identity-ledger-20261106/docs/HYPENOSYS_TC_IRC_UNIFIED_IDENTITY_LEDGER.md"
+        },
+        {
+          "label": "TC PR #849 (draft)",
+          "url": "https://github.com/Axlfc/tc/pull/849"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 11001,
+          "text": "Diseñar schema/migración project_events, domain_commands, outbox_events y external_refs con constraints idempotentes y secuencia por proyecto.",
+          "done": false
+        },
+        {
+          "id": 11002,
+          "text": "Persistir mutación TC+event+outbox en una transacción; para GitHub usar saga duradera hasta SHA confirmado.",
+          "done": false
+        },
+        {
+          "id": 11003,
+          "text": "Publicar API de historial con cursor, filtros proyecto/org/tarea/actor, datos redactados y ACL server-side.",
+          "done": false
+        },
+        {
+          "id": 11004,
+          "text": "Migrar archivos audit NDJSON e historial client-only mediante import idempotente, conservando procedencia y reportando lagunas.",
+          "done": false
+        },
+        {
+          "id": 11005,
+          "text": "Crear worker de delivery/retry/backoff/dead letter y reconciliador de snapshots contra GitHub/Forgejo/TC.",
+          "done": false
+        },
+        {
+          "id": 11006,
+          "text": "E2E fallo base, caída broker, duplicados, replay, edición simultánea y reconstrucción exacta del historial.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Cada mutación produce evento duradero verificable o falla explícitamente; 10 reintentos idempotentes no duplican efectos; reconstrucción de historial y filtros ACL; caídas Matrix/IRC no pierden eventos.",
+      "blocks": [],
+      "blocked_by": [
+        "108"
+      ],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T19:36:46.000Z",
+          "body": "Tarea abierta tras revisión de develop 2026-11-06: el contrato y riesgos están especificados, ninguna ejecución o API unificada se declara terminada. PR documentación TC #849 pendiente de review."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T19:36:46.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created for TC/Hypenosys/IRC integration"
+        }
+      ]
+    },
+    {
+      "id": 111,
+      "integration_key": "matrix-irc-project-bridge",
+      "organizationId": "hypenosys",
+      "repository": "Axlfc/tc",
+      "title": "[INTEROPERABILIDAD P2] Bridge ProjectEvent → Matrix / IRC y supervisión por canal",
+      "descripcion": "Usar Matrix/IRC como proyecciones autorizadas del ledger TC, vincular salas y canales a proyectos y agentes supervisables, deduplicar por eventId/origin, preservar privacidad y evitar autorización basada en mensajes.",
+      "rama": "feat/tc-matrix-irc-project-event-bridge",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Interoperabilidad Hypenosys · TC · IRC",
+      "prioridad": "Major",
+      "milestone": "P2",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "axlfc",
+        "haopengwang123"
+      ],
+      "email_responsable": "",
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "interoperability",
+        "tc",
+        "hypenosys",
+        "irc",
+        "identity-ledger",
+        "matrix-irc-project-bridge"
+      ],
+      "external_links": [
+        {
+          "label": "ADR propuesta en TC",
+          "url": "https://github.com/Axlfc/tc/blob/docs/hypenosys-tc-irc-identity-ledger-20261106/docs/HYPENOSYS_TC_IRC_UNIFIED_IDENTITY_LEDGER.md"
+        },
+        {
+          "label": "TC PR #849 (draft)",
+          "url": "https://github.com/Axlfc/tc/pull/849"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 11101,
+          "text": "Crear MatrixBinding/IRCBinding versionados por projectUid/orgUid con estado linked/pending/revoked y pruebas de ACL.",
+          "done": false
+        },
+        {
+          "id": 11102,
+          "text": "Proyectar eventos del outbox a Matrix con appservice mínimo, idempotency/transaction ID, retries y redacción.",
+          "done": false
+        },
+        {
+          "id": 11103,
+          "text": "Crear bridge IRC limitado a canales permitidos, origin/hops/eventId dedup, y cuentas IRC verificadas.",
+          "done": false
+        },
+        {
+          "id": 11104,
+          "text": "Registrar chat/eventos operacionales según retención y privacidad sin convertir mensajes en fuente de verdad de tareas.",
+          "done": false
+        },
+        {
+          "id": 11105,
+          "text": "Implementar comandos seguros !status/!task que consulten gateway; ejecución/aprobación solo mediante acciones autenticadas y policy.",
+          "done": false
+        },
+        {
+          "id": 11106,
+          "text": "Simular sala privada, DM, usuario expulsado, loop de puente, broker desconectado y recuperación de historial.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Eventos de proyecto llegan a sala/canal correcto sin loops ni fugas; caídas no pierden ledger; !status read-only, acciones sensibles pasan por gateway+approval; ACL revocada elimina acceso.",
+      "blocks": [],
+      "blocked_by": [
+        "109",
+        "110",
+        "98"
+      ],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T19:36:46.000Z",
+          "body": "Tarea abierta tras revisión de develop 2026-11-06: el contrato y riesgos están especificados, ninguna ejecución o API unificada se declara terminada. PR documentación TC #849 pendiente de review."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T19:36:46.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created for TC/Hypenosys/IRC integration"
+        }
+      ]
     }
   ],
   "_audit_log": [
@@ -5127,5 +5593,5 @@
       "timestamp": "2026-09-13T06:26:21.846Z"
     }
   ],
-  "last_updated_by": "Continuidad Jules (reutilización de exportador web)"
+  "last_updated_by": "Hypenosys-TC-IRC canonical identity/ledger planning"
 }
