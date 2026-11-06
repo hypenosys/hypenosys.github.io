@@ -1,14 +1,14 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-11-06T21:33:22.555Z",
+  "computed_at": "2026-11-06T21:33:29.472Z",
   "last_computed_milestone": "M1",
   "global": {
-    "total_tasks": 62,
-    "total_ok": 62,
+    "total_tasks": 63,
+    "total_ok": 63,
     "total_ko": 0,
     "total_uncertain": 0,
     "total_obsolete": 0,
-    "fixed_found_ratio": 1.1273,
+    "fixed_found_ratio": 1.125,
     "verified_ratio": 1
   },
   "group": {
@@ -77,9 +77,9 @@
       "topperh4rley": {
         "member_name": "Alex",
         "mvp_points": 13.000000000000002,
-        "bugs_solved": 6,
+        "bugs_solved": 7,
         "unblocked_count": 16,
-        "velocity": 3.6,
+        "velocity": 3.5686274509803924,
         "research_solved": 2,
         "art_tasks": 0,
         "comments_left": 0
@@ -199,8 +199,8 @@
     "topperh4rley": {
       "member_name": "Alex",
       "completed": {
-        "all_time": 68,
-        "milestone": 50,
+        "all_time": 69,
+        "milestone": 51,
         "week": 0
       },
       "weekly_velocity": {
@@ -216,7 +216,7 @@
       "type_breakdown": {
         "feature": 46,
         "chore": 12,
-        "bug": 6,
+        "bug": 7,
         "research": 4
       },
       "rama_breakdown": {
@@ -227,7 +227,7 @@
         "feature/mobile-github-ops": 2,
         "fix/jules-neural-mobile-markdown": 2,
         "feature/dashboard-tag-filter": 2,
-        "master": 12,
+        "master": 13,
         "feature/n8n-providers-nim-agent": 2,
         "chore/scripts-svn-sync": 2,
         "feature/dashboard-chat-icon": 2,
@@ -476,9 +476,9 @@
         "topperh4rley": {
           "member_name": "Alex",
           "mvp_points": 13.000000000000002,
-          "bugs_solved": 6,
+          "bugs_solved": 7,
           "unblocked_count": 16,
-          "velocity": 3.6,
+          "velocity": 3.5686274509803924,
           "research_solved": 2,
           "art_tasks": 0,
           "comments_left": 0
@@ -521,7 +521,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "haopengwang123",
-      "timestamp": "2026-11-06T21:33:24.236Z"
+      "timestamp": "2026-11-06T21:33:30.232Z"
     }
   ]
 }
