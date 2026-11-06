@@ -1,0 +1,31 @@
+name: IRC hybrid syntax and interface contract
+
+on:
+  pull_request:
+    paths:
+      - 'assets/javascript/hypenosys-irc.js'
+      - 'pages/irc-hybrid.html'
+      - 'tests/test_irc_hybrid_contract.cjs'
+      - '.github/workflows/irc-client-static-check.yml'
+  push:
+    branches: [develop]
+    paths:
+      - 'assets/javascript/hypenosys-irc.js'
+      - 'pages/irc-hybrid.html'
+      - 'tests/test_irc_hybrid_contract.cjs'
+
+permissions:
+  contents: read
+
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate IRC script syntax
+        run: node --check assets/javascript/hypenosys-irc.js
+      - name: Validate static UI and data-source contracts
+        run: node --test tests/test_irc_hybrid_contract.cjs
