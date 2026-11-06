@@ -31,9 +31,29 @@
           "roles": []
         }
       ]
+    },
+    {
+      "id": "the-machine",
+      "name": "The Machine",
+      "createdBy": "haopengwang123",
+      "createdAt": "2026-11-06T19:43:42.479Z",
+      "isDefault": false,
+      "isSharded": false,
+      "members": [
+        {
+          "handle": "haopengwang123",
+          "teams": [],
+          "roles": []
+        }
+      ]
     }
   ],
   "_audit_log": [
+    {
+      "action": "feat: nueva organización The Machine añadida",
+      "user": "haopengwang123",
+      "timestamp": "2026-11-06T19:43:44.578Z"
+    },
     {
       "action": "feat: nueva organización HAIS añadida",
       "user": "haopengwang123",
