@@ -2,6 +2,8 @@ const { test, expect } = require('@playwright/test');
 
 const fakeRepoApi = `
 window.githubApi = {
+  getAuthToken: () => 'ghp_mock_test_only',
+  clearAuth: () => {},
   validateToken: async () => ({
     valid: !window.__HY_UNAUTHORIZED__,
     user: { login: 'verified-tester', isTeamMember: true, avatar_url: 'https://example.test/avatar.png' }
@@ -57,4 +59,17 @@ test('unauthorized users never see task data', async ({ page }) => {
   await expect(page.locator('#eco-loading')).toContainText('Acceso denegado');
   await expect(page.locator('#eco-content')).toBeHidden();
   await expect(page.getByText('Mission task')).toHaveCount(0);
+});
+
+test('the shared authenticated avatar opens the account menu on desktop and mobile', async ({ page }) => {
+  await page.goto('http://localhost:4000/control/mission/');
+  await expect(page.locator('#eco-content')).toBeVisible();
+  await expect(page.locator('#userDropdown')).toContainText('verified-tester');
+  await expect(page.locator('#userDropdown img')).toHaveAttribute('src', 'https://example.test/avatar.png');
+  await page.setViewportSize({ width: 390, height: 840 });
+  const toggle=page.locator('#gh-mobile-account-toggle');
+  await expect(toggle).toBeVisible();
+  await toggle.click();
+  await expect(page.locator('#gh-mobile-account-menu')).toBeVisible();
+  await expect(page.locator('.gh-mobile-account-name')).toContainText('verified-tester');
 });
