@@ -89,3 +89,37 @@ Prueba con task de desarrollo inofensiva y fixture repo separado, comparando ent
 La ventana Jules obliga a **no** bloquear el backup y el desacoplamiento por toda la arquitectura del Ecosystem 2.0. Los contratos de #88 se pueden reutilizar, pero P0/A y P0/B se ejecutan inmediatamente; los trabajos de Cog runtime y gateway pueden continuar después del corte. Después enlazar Task Flow (#91), Agent Studio (#93), Approval Center (#92), Sandbox Lab (#96) y TC bridge (#98).
 
 **Importante:** este documento es un plan. No supone que el export se haya realizado ni que Cog tenga ya endpoints operativos.
+
+
+## P0/P1 — Forgejo soberano como plan B frente a caídas de GitHub
+
+**Estado observado:** en Hypenosys existe la tarea **#84 «Crear Forjejo (Git) en ZimaBoard2»** asignada a Axel, estado Working; **no** hay evidencia en el repositorio de que el servidor esté instalado, en línea, publicado ni que tenga backups operativos. Vincular las tareas nuevas a #84 sin marcarla completada. La plataforma puede ser un Forgejo self-hosted en ZimaBoard2, sujeto a validar recursos, TLS, almacenamiento, uptime, acceso desde fuera, recuperación fuera del propio host y DNS.
+
+### Límite de lo que resuelve el espejo
+
+Forgejo **sí** admite pull-mirroring de ramas, tags y commits desde GitHub; no significa que replique de forma idéntica PR, revisiones, issues, Actions, secretos, reglas de ramas, deploys, LFS, wiki ni archivos adjuntos. Hacer backups/exportaciones específicas y pruebas de restauración de esos artefactos. Los push mirrors de Forgejo pueden forzar actualizaciones remotas; **nunca** activar espejos push bidireccionales en producción porque pueden sobrescribir cambios y crear split-brain.
+
+Fuentes oficiales: https://forgejo.org/docs/latest/user/repo-mirror/ y https://forgejo.org/docs/latest/user/actions/github-actions/
+
+### Diseño Git backend adapter
+
+- `GitBackendProvider`: GitHub y Forgejo con `repoRef`, `remoteUrl`, `apiBase`, `branch`, `capabilities`, `getTree`, `getContent`, `commitCAS`, `createBranch`, `createPR`, `getChecks`, `mergePR`, `getHealth`; no simular paridad de permisos/CI.
+- `RepositoryIdentity` estable `logicalRepoId` -> URLs GitHub/Forgejo con mapeo explícito de repos, `develop` / `master` según repo. No asumir que todos tienen `develop` (COG solo `master`).
+- Operación normal: `activeWriter = github`, Forgejo espejo **solo lectura**, con marca `lastMirrorCommitSha`, retraso y controles de integridad. Sincronización inicial y health checks; target RPO medido, sin prometer cero pérdida.
+- Caída GitHub: modo `degraded` para lecturas; para promover Forgejo a escritor, ejecutar una **operación de failover explícita, auditada y autorizada** con lease/epoch/fencing para bloquear el anterior escritor, guardar punto de sincronización y verificar quórum/almacén de coordinación. Si no se puede garantizar un único escritor, **solo lectura y cola segura de solicitudes, NO dos escritores**.
+- El API Gateway de tareas puede cambiar del adapter GitHub a Forgejo solo si la fuente de datos de tareas está migrada/replicada con esquema, ACL y CAS; la disponibilidad del espejo de código por sí sola **NO** mantiene las tareas en línea.
+- Tras recuperación: exportar y reconciliar por hash/revisión/event IDs, establecer resolución manual de conflictos, probar `failback` con una sola fuente activa. No usar `git push --mirror` para reparar divergencias sin validación humana.
+- Acceso por TLS/SSH con autenticación fuerte; tokens de instalación/usuarios guardados server-side, rotados y mínimos; backups cifrados **fuera de ZimaBoard2**. Separar los datos operativos de secretos de backups.
+- GitHub Pages no tiene fallback automático por replicar un repositorio. Definir hosting alternativo para Hypenosys/TC, publicación independiente, DNS/health checks y verificación de que CSS/JS/assets/API/auth siguen operativos.
+- Forgejo Actions **NO es totalmente compatible** con GitHub Actions; portabilidad mediante test real de workflows (Jekyll, TC, HAIS, Cog), Forgejo Runner y secrets independientes. No marcar checks como verdes por una traducción superficial.
+
+### Checks obligatorios de recuperación
+
+1. GitHub inaccesible con Forgejo espejo actualizado: lectura de `develop` y de datos Hypenosys de un clon/almacén seguro, latencia de mirror visible.
+2. Gateway responde con degradación real; no retorna éxito de escritura sin commit SHA y revisión validada; demandas pueden quedar en cola durable cifrada con idempotency keys.
+3. Failover controlado por operador: escritura en Forgejo, commit CAS, apertura PR, revisión/CI/merge y tarea asociada, sin tokens de navegador.
+4. Restablecer GitHub y comprobar hashes, conflictos, permisos, historial y failback sin sobrescrituras ni duplicación.
+5. Restauración completa desde backup independiente, recuperación de Forgejo tras fallo de disco/host, CI runners/secretos y dominio secundario operativos.
+6. Ejercicios de caída completos y fecha de último éxito documentados en Mission Control y HAIS Observatory.
+
+**No declarar “GitHub redundancy ready” hasta que exista espejo verificado, backend writable probado, segundo hosting y un ensayo de failover/failback.**
