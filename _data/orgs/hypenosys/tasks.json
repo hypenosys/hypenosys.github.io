@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-11-06T19:36:46.000Z",
+  "last_updated": "2026-11-06T19:44:25.000Z",
   "organizationId": "hypenosys",
   "tasks": [
     {
@@ -5212,6 +5212,14 @@
         {
           "label": "TC PR #849 (draft)",
           "url": "https://github.com/Axlfc/tc/pull/849"
+        },
+        {
+          "label": "TC CI Pipeline (bloqueado)",
+          "url": "https://github.com/Axlfc/tc/actions/runs/42282233434"
+        },
+        {
+          "label": "TC CodeQL checkout (bloqueado)",
+          "url": "https://github.com/Axlfc/tc/actions/runs/42282233418"
         }
       ],
       "subtasks": [
@@ -5244,6 +5252,11 @@
           "id": 10806,
           "text": "Crear pruebas HTTP E2E con dos usuarios, dos proyectos, roles, revocación, acceso anónimo y denegaciones.",
           "done": false
+        },
+        {
+          "id": 10807,
+          "text": "Reparar el baseline CI de Axlfc/tc: lockfile/npm ci inconsistentes, checkout CodeQL inaccesible y tests i18n/dependencias bloqueados; distinguir de fallos reales de aplicación y reejecutar.",
+          "done": false
         }
       ],
       "acceptance_criteria": "GET/POST/SSE y auditoría deniegan accesos no autorizados con tests API multiusuario; roles revoked se aplican; sin exponer eventos privados, room IDs ni tokens; fallos de auditoría no afirman éxito.",
@@ -5254,6 +5267,11 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-06T19:36:46.000Z",
           "body": "Tarea abierta tras revisión de develop 2026-11-06: el contrato y riesgos están especificados, ninguna ejecución o API unificada se declara terminada. PR documentación TC #849 pendiente de review."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T19:44:25.000Z",
+          "body": "[CI TC 2026-11-06] PR TC #849: Project Automation y Documentation Check pasan. CI Pipeline / i18n / Dependency Scan fallan en npm ci por desajuste package-lock (falta typescript 5.9.3, ajv, etc.) antes de ejecutar pruebas. CodeQL falla en checkout con Repository not found; revisar permisos/runner. Security Scan Secret Scanning pasa. No marcar tests de seguridad realizados mientras no se arregle baseline."
         }
       ],
       "images": [],
@@ -5801,5 +5819,5 @@
       "timestamp": "2026-09-13T06:26:21.846Z"
     }
   ],
-  "last_updated_by": "IRC Hybrid tasks"
+  "last_updated_by": "TC CI blockers audit"
 }
