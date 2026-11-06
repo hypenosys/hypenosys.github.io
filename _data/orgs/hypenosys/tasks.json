@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-11-06T21:31:44.121Z",
+  "last_updated": "2026-11-06T21:36:00.000Z",
   "organizationId": "hypenosys",
   "tasks": [
     {
@@ -5218,7 +5218,7 @@
       "seccion": "Interoperabilidad Hypenosys · TC · IRC",
       "prioridad": "Critical",
       "milestone": "P0",
-      "estado": "Pending",
+      "estado": "Working",
       "completitud": 0,
       "task_type": "feature",
       "resuelto_por": "",
@@ -5229,7 +5229,7 @@
       ],
       "email_responsable": "",
       "emails_asignados": [],
-      "start_date": null,
+      "start_date": "2026-11-06",
       "due_date": null,
       "estimated_hours": null,
       "story_points": null,
@@ -5261,6 +5261,22 @@
         {
           "label": "TC seguridad ACL/auth (draft)",
           "url": "https://github.com/Axlfc/tc/pull/850"
+        },
+        {
+          "label": "TC #108 P0 hardening: Sync/Audit/Matrix + tests (draft)",
+          "url": "https://github.com/Axlfc/tc/pull/851"
+        },
+        {
+          "label": "CI seguridad por rutas",
+          "url": "https://github.com/Axlfc/tc/actions/runs/42296962755"
+        },
+        {
+          "label": "Lockfile npm ci reparado (workflow)",
+          "url": "https://github.com/Axlfc/tc/actions/runs/42296391691"
+        },
+        {
+          "label": "CI general (lint legado falla)",
+          "url": "https://github.com/Axlfc/tc/actions/runs/42296584465"
         }
       ],
       "subtasks": [
@@ -5318,6 +5334,11 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-06T20:34:41.000Z",
           "body": "[HYPENOS SPRINT 2026-11-06] PR TC #850 añade guards server-side para GET /api/projects, GET /api/projects/:id, historial y POST heredado; JWT sin fallback, pruebas unitarias/HTTP propuestas. CI TC baseline npm ci y checkout CodeQL sigue bloqueada; no merge ni marcar subtareas done."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T21:36:00.000Z",
+          "body": "[TC108 2026-11-06 21:36] PR #850 ya está merged en develop: controles previos de Projects/JWT. PR #851 draft implementa TC-Sync fail-closed/tickets ACL, cliente con Bearer, auditoría explícita y redacción, Matrix status real, miembros de proyectos ACL y paquete npm lockfile sincronizado. Vitest focalizado pasado en Actions; CI global falla después de npm ci por ESLint legacy; CodeQL checkout arreglado en rama, npm audit informa 123 vulnerabilidades (19 critical, 20 high, 75 moderate, 9 low), requieren auditoría/actualización; revocación JWT central y ledger transaccional siguen pendientes. No marcar subtareas terminadas mientras PR #851 no se revise, E2E real no pase y producción no esté verificada."
         }
       ],
       "images": [],
@@ -5870,5 +5891,5 @@
       "timestamp": "2026-09-13T06:26:21.846Z"
     }
   ],
-  "last_updated_by": "Sistema"
+  "last_updated_by": "TC108 security engineering"
 }
