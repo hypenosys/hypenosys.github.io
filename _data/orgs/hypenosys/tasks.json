@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-11-06T21:33:13.771Z",
+  "last_updated": "2026-11-06T21:33:16.099Z",
   "organizationId": "hypenosys",
   "tasks": [
     {
@@ -2054,55 +2054,6 @@
         }
       ],
       "id": 70,
-      "jules_session": null,
-      "branch": "Programación (PRO)",
-      "organizationId": "hypenosys"
-    },
-    {
-      "title": "Arreglo de jjules panel descripcion de repo y branch",
-      "descripcion": "arreglar en jules panel respetando el estilo de la web",
-      "rama": "master",
-      "task_type": "feature",
-      "tema_principal": "Programación / Engine",
-      "seccion": "",
-      "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Major",
-      "milestone": "M1",
-      "estado": "OK",
-      "completitud": 0,
-      "resuelto_por": null,
-      "detectado_por": "Alex",
-      "asignados": [],
-      "email_responsable": null,
-      "emails_asignados": [],
-      "start_date": null,
-      "due_date": null,
-      "estimated_hours": null,
-      "story_points": null,
-      "tags": [],
-      "external_links": [],
-      "subtasks": [],
-      "acceptance_criteria": "",
-      "blocks": [],
-      "blocked_by": [],
-      "comments": [],
-      "images": [],
-      "rama2": null,
-      "ver": true,
-      "fecha": "2026-06-24",
-      "apoyo": null,
-      "limite": null,
-      "comentario": "",
-      "change_log": [
-        {
-          "author_login": "topperh4rley",
-          "timestamp": "2026-06-24T17:46:08.958Z",
-          "field": "id",
-          "old_value": null,
-          "new_value": "Created"
-        }
-      ],
-      "id": 71,
       "jules_session": null,
       "branch": "Programación (PRO)",
       "organizationId": "hypenosys"
@@ -5790,6 +5741,11 @@
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: archivar tarea #71",
+      "user": "haopengwang123",
+      "timestamp": "2026-11-06T21:33:16.099Z"
+    },
     {
       "action": "chore: archivar tarea #55",
       "user": "haopengwang123",
