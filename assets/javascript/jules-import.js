@@ -116,7 +116,24 @@
         throw new Error('El navegador no admite DEFLATE-RAW; usa una versión actualizada.');
       try {
         const stream = compressed.stream().pipeThrough(new DecompressionStream('deflate-raw'));
-        bytes = new Uint8Array(await new Response(stream).arrayBuffer());
+        const reader = stream.getReader();
+        const chunks = [];
+        let total = 0;
+        try {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            total += value.byteLength;
+            if (total > maxBytes || total > entry.uncompressedSize) {
+              await reader.cancel();
+              throw new Error('Entrada descomprimida excede tamaño declarado.');
+            }
+            chunks.push(value);
+          }
+        } finally { reader.releaseLock(); }
+        bytes = new Uint8Array(total);
+        let at = 0;
+        for (const chunk of chunks) { bytes.set(chunk, at); at += chunk.byteLength; }
       } catch (err) {
         throw new Error('Falló la descompresión de ' + name + ': ' + String(err.message || err));
       }
@@ -310,7 +327,18 @@
   function openDialog() {
     const dlg = byId('jules-archive-dialog');
     if (!dlg || typeof dlg.showModal !== 'function') return;
-    write('jules-archive-workspace', root.githubApi?.getActiveWorkspace?.() || 'hypenosys');
+    const currentWorkspace = root.githubApi?.getActiveWorkspace?.() || 'hypenosys';
+    if (activeArchive && activeArchive.workspace !== currentWorkspace) {
+      activeArchive = null;
+      ++viewGeneration;
+      byId('jules-archive-sessions')?.replaceChildren();
+      byId('jules-archive-patches')?.replaceChildren();
+      write('jules-archive-summary', '');
+      write('jules-archive-detail', 'Cambiaste de organización. Importa el ZIP autorizado para este workspace.');
+      write('jules-archive-count', 'Sin archivo cargado');
+      write('jules-archive-status', 'Archivo anterior descartado de la vista para evitar mezclar organizaciones.');
+    }
+    write('jules-archive-workspace', currentWorkspace);
     dlg.showModal();
     if (activeArchive) renderList(byId('jules-archive-filter')?.value || '');
   }
