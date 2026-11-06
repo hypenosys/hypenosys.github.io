@@ -1,0 +1,22 @@
+{
+  "id": "the-machine",
+  "name": "The Machine",
+  "createdBy": "haopengwang123",
+  "createdAt": "2026-11-06T19:43:42.479Z",
+  "isDefault": false,
+  "members": [
+    {
+      "handle": "haopengwang123",
+      "teams": [],
+      "roles": []
+    }
+  ],
+  "schema_version": "1.0.0",
+  "_audit_log": [
+    {
+      "action": "feat: crear metadata para The Machine",
+      "user": "haopengwang123",
+      "timestamp": "2026-11-06T19:43:42.882Z"
+    }
+  ]
+}
