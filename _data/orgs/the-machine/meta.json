@@ -19,6 +19,11 @@
   "schema_version": "1.0.0",
   "_audit_log": [
     {
+      "action": "feat: conectar GitHub Issues de hypenosys/the_machine al dashboard como fuente canónica de solo lectura",
+      "user": "Codex",
+      "timestamp": "2026-11-06T20:06:01.000Z"
+    },
+    {
       "action": "chore: añadir miembro axlfc a The Machine",
       "user": "haopengwang123",
       "timestamp": "2026-11-06T19:43:59.856Z"
@@ -28,5 +33,13 @@
       "user": "haopengwang123",
       "timestamp": "2026-11-06T19:43:42.882Z"
     }
-  ]
+  ],
+  "taskSource": {
+    "kind": "github-issues",
+    "repository": "hypenosys/the_machine",
+    "readOnly": true,
+    "canonical": "GitHub Issues",
+    "active_state": "open",
+    "archive_state": "closed"
+  }
 }

@@ -45,10 +45,26 @@
           "teams": [],
           "roles": []
         }
-      ]
+      ],
+      "taskSource": {
+        "kind": "github-issues",
+        "repository": "hypenosys/the_machine",
+        "readOnly": true
+      },
+      "isExternalTaskSource": true
     }
   ],
   "_audit_log": [
+    {
+      "action": "fix: distinguir fuente externa de tareas de sharding interno para The Machine",
+      "user": "Codex",
+      "timestamp": "2026-11-06T20:20:00.000Z"
+    },
+    {
+      "action": "feat: registrar The Machine como workspace sincronizado desde GitHub Issues",
+      "user": "Codex",
+      "timestamp": "2026-11-06T20:06:01.000Z"
+    },
     {
       "action": "feat: nueva organización The Machine añadida",
       "user": "haopengwang123",

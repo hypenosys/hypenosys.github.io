@@ -179,29 +179,212 @@ async function resolveTasksPathForWrite(workspaceId, isArchive = false) {
  * @param {boolean} [forceRemote=false]
  * @returns {Promise<Object>} { content, sha }
  */
+
+const READ_ONLY_EXTERNAL_TASK_WORKSPACES = new Set(['the-machine']);
+
+function escapeExternalTaskText(value) {
+    return String(value == null ? '' : value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/[\\\x60*_[\]()#!|]/g, function(character) {
+            return '&#' + character.charCodeAt(0) + ';';
+        });
+}
+
+function getGitHubIssueLabels(issue) {
+    return (issue.labels || [])
+        .map(function(label) {
+            return escapeExternalTaskText(typeof label === 'string' ? label : label && label.name);
+        })
+        .filter(Boolean);
+}
+
+function getGitHubIssuePriority(labels) {
+    const normalized = labels.map(function(label) { return String(label).toLowerCase(); });
+    if (normalized.some(function(label) { return label.includes('critical'); })) return 'Critical';
+    if (normalized.some(function(label) { return label.includes('high'); })) return 'High';
+    if (normalized.some(function(label) { return label.includes('low'); })) return 'Low';
+    return 'Medium';
+}
+
+function getGitHubIssueSubtasks(body, issueNumber) {
+    const matches = Array.from(String(body || '').matchAll(/^\s*[-*]\s+\[([ xX])\]\s+(.+?)\s*$/gm));
+    return matches.map(function(match, index) {
+        return {
+            id: Number(issueNumber) * 1000 + index + 1,
+            text: escapeExternalTaskText(match[2]),
+            done: String(match[1]).toLowerCase() === 'x'
+        };
+    });
+}
+
+function mapGitHubIssueToTask(issue, workspaceId, repository) {
+    const issueNumber = Number(issue.number);
+    const body = String(issue.body || '');
+    const labels = getGitHubIssueLabels(issue);
+    const subtasks = getGitHubIssueSubtasks(body, issueNumber);
+    const completedSubtasks = subtasks.filter(function(subtask) { return subtask.done; }).length;
+    const safeIssueUrl = 'https://github.com/' + repository + '/issues/' + issueNumber;
+    const state = String(issue.state || 'open').toLowerCase();
+
+    return {
+        id: issueNumber,
+        organizationId: workspaceId,
+        repository: repository,
+        title: escapeExternalTaskText(issue.title || ('Issue #' + issueNumber)),
+        descripcion: escapeExternalTaskText(body),
+        estado: state === 'closed' ? 'OK' : 'Pending',
+        completitud: subtasks.length ? completedSubtasks / subtasks.length : 0,
+        prioridad: getGitHubIssuePriority(labels),
+        task_type: 'github-issue',
+        tema_principal: 'Governance / Evidence',
+        milestone: 'Issue #' + issueNumber,
+        seccion: 'The Machine · GitHub Issues',
+        asignados: (issue.assignees || [])
+            .map(function(assignee) { return String(assignee && assignee.login || '').toLowerCase(); })
+            .filter(Boolean),
+        tags: labels,
+        subtasks: subtasks,
+        acceptance_criteria: '',
+        external_links: [{ label: 'GitHub Issue #' + issueNumber, url: safeIssueUrl }],
+        comments: [],
+        change_log: [{
+            author_login: 'GitHub',
+            timestamp: issue.updated_at || issue.created_at || '',
+            field: 'source',
+            old_value: null,
+            new_value: safeIssueUrl
+        }],
+        branch: 'master',
+        rama: 'master',
+        fecha: issue.updated_at ? String(issue.updated_at).slice(0, 10) : null,
+        created_at: issue.created_at || null,
+        updated_at: issue.updated_at || null,
+        executor_proposed: 'human',
+        assignee_proposed: 'human',
+        source: {
+            provider: 'github-issues',
+            repository: repository,
+            issue_number: issueNumber,
+            issue_url: safeIssueUrl,
+            read_only: true
+        }
+    };
+}
+
+async function getExternalTaskSource(workspaceId) {
+    if (!workspaceId || workspaceId === 'personal') return null;
+
+    const metaRes = await fetchOrgMetaWithDualRead(workspaceId);
+    const source = metaRes && metaRes.content && metaRes.content.taskSource;
+    if (!source) {
+        if (READ_ONLY_EXTERNAL_TASK_WORKSPACES.has(workspaceId)) {
+            throw new AtomicWriteNonRetryableError('No se ha podido verificar la fuente canónica de tareas de ' + workspaceId + '.');
+        }
+        return null;
+    }
+    if (source.kind !== 'github-issues') {
+        throw new AtomicWriteNonRetryableError('Fuente de tareas externa no compatible: ' + String(source.kind || 'desconocida') + '.');
+    }
+
+    const repository = String(source.repository || '');
+    if (!/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(repository)) {
+        throw new AtomicWriteNonRetryableError('Repositorio de fuente de tareas inválido.');
+    }
+    return { kind: source.kind, repository: repository, readOnly: source.readOnly !== false };
+}
+
+async function fetchExternalGitHubIssueTasks(workspaceId, source, isArchive) {
+    const state = isArchive ? 'closed' : 'open';
+    const response = await fetch(
+        GITHUB_API_BASE + '/repos/' + source.repository + '/issues?state=' + state + '&per_page=100&sort=updated&direction=desc',
+        { headers: getHeaders() }
+    );
+
+    if (!response.ok) {
+        throw new AtomicWriteNonRetryableError(
+            'No se pudieron cargar las issues de ' + source.repository + ' (HTTP ' + response.status + ').',
+            response.status
+        );
+    }
+
+    const issues = await response.json();
+    if (!Array.isArray(issues)) {
+        throw new AtomicWriteNonRetryableError('La respuesta de GitHub Issues no tiene el formato esperado.');
+    }
+
+    const tasks = issues
+        .filter(function(issue) {
+            return issue && Number.isInteger(Number(issue.number)) && !issue.pull_request;
+        })
+        .map(function(issue) {
+            return mapGitHubIssueToTask(issue, workspaceId, source.repository);
+        });
+
+    const mostRecent = tasks.reduce(function(latest, task) {
+        return String(task.updated_at || '') > latest ? String(task.updated_at || '') : latest;
+    }, '');
+
+    return {
+        content: {
+            schema_version: '1.2.0',
+            organizationId: workspaceId,
+            last_updated: mostRecent,
+            tasks: tasks,
+            source: {
+                kind: source.kind,
+                repository: source.repository,
+                read_only: source.readOnly
+            },
+            _audit_log: [{
+                action: 'sync: proyección de GitHub Issues',
+                user: 'GitHub',
+                timestamp: mostRecent
+            }]
+        },
+        sha: null,
+        readOnly: source.readOnly
+    };
+}
+
+async function assertTaskWorkspaceWritable(workspaceId) {
+    const source = await getExternalTaskSource(workspaceId);
+    if (source && source.readOnly) {
+        throw new AtomicWriteNonRetryableError(
+            'The Machine se sincroniza desde GitHub Issues y es de solo lectura aquí. Actualiza la issue canónica en ' + source.repository + '.'
+        );
+    }
+}
+
+
 async function fetchTasksWithDualRead(workspaceId = getActiveWorkspace(), isArchive = false, forceRemote = false) {
     if (workspaceId === 'personal') {
         const legacyPath = isArchive ? '_data/dashboard_tasks_archive.json' : '_data/dashboard_tasks.json';
         return await fetchFileWithSha(legacyPath, 'json', forceRemote);
     }
 
+    const externalSource = await getExternalTaskSource(workspaceId);
+    if (externalSource) {
+        return await fetchExternalGitHubIssueTasks(workspaceId, externalSource, isArchive);
+    }
+
     const shardedPath = getTasksPathForWorkspace(workspaceId, isArchive);
     try {
         const shardedRes = await fetchFileWithSha(shardedPath, 'json', forceRemote);
         if (shardedRes.content !== null) {
-            _shardedWorkspaceCache.add(`${workspaceId}:${isArchive ? 'archive' : 'active'}`);
+            _shardedWorkspaceCache.add(workspaceId + ':' + (isArchive ? 'archive' : 'active'));
             return shardedRes;
         }
     } catch (e) {
-        console.warn(`[SHARDING] Dual read fallback for ${workspaceId} (${shardedPath}):`, e);
+        console.warn('[SHARDING] Dual read fallback for ' + workspaceId + ' (' + shardedPath + '):', e);
     }
 
-    // Fallback al monolito legacy y filtrado por organizationId
     const legacyPath = isArchive ? '_data/dashboard_tasks_archive.json' : '_data/dashboard_tasks.json';
     const legacyRes = await fetchFileWithSha(legacyPath, 'json', forceRemote);
     if (legacyRes.content && Array.isArray(legacyRes.content.tasks)) {
-        const filteredTasks = legacyRes.content.tasks.filter(t => {
-            const taskOrg = t.organizationId || 'hypenosys';
+        const filteredTasks = legacyRes.content.tasks.filter(function(task) {
+            const taskOrg = task.organizationId || 'hypenosys';
             return taskOrg === workspaceId;
         });
         return {
@@ -214,7 +397,6 @@ async function fetchTasksWithDualRead(workspaceId = getActiveWorkspace(), isArch
     }
     return legacyRes;
 }
-
 /**
  * Lectura dual de metadatos de organización con fallback a organizations.json.
  * @param {string} orgId
@@ -1009,6 +1191,7 @@ async function createTask(taskObject) {
     if (!taskObject.organizationId) {
         taskObject.organizationId = targetOrg;
     }
+    await assertTaskWorkspaceWritable(targetOrg);
     const writePath = await resolveTasksPathForWrite(targetOrg, false);
 
     return atomicWrite(writePath, (db) => {
@@ -1034,6 +1217,7 @@ async function updateTask(taskId, taskDelta) {
     const isRemote = String(taskId).startsWith('remote-');
     const cleanId = isRemote ? taskId.substring(7) : taskId;
     const activeWs = getActiveWorkspace();
+    await assertTaskWorkspaceWritable(activeWs);
     const writePath = await resolveTasksPathForWrite(activeWs, false);
 
     return atomicWrite(writePath, (db) => {
@@ -1060,6 +1244,7 @@ async function updateTaskStatus(taskId, newEstado, resolverHandle, testerHandle)
     const isRemote = String(taskId).startsWith('remote-');
     const cleanId = isRemote ? taskId.substring(7) : taskId;
     const activeWs = getActiveWorkspace();
+    await assertTaskWorkspaceWritable(activeWs);
     const writePath = await resolveTasksPathForWrite(activeWs, false);
 
     return atomicWrite(writePath, (db) => {
@@ -1088,6 +1273,7 @@ async function archiveTask(taskId) {
     const isRemote = String(taskId).startsWith('remote-');
     const cleanId = isRemote ? taskId.substring(7) : taskId;
     const activeWs = getActiveWorkspace();
+    await assertTaskWorkspaceWritable(activeWs);
     const activeWritePath = await resolveTasksPathForWrite(activeWs, false);
     const archiveWritePath = await resolveTasksPathForWrite(activeWs, true);
     let taskToArchive = null;
@@ -1133,6 +1319,7 @@ async function restoreTask(taskId) {
     const isRemote = String(taskId).startsWith('remote-');
     const cleanId = isRemote ? taskId.substring(7) : taskId;
     const activeWs = getActiveWorkspace();
+    await assertTaskWorkspaceWritable(activeWs);
     const activeWritePath = await resolveTasksPathForWrite(activeWs, false);
     const archiveWritePath = await resolveTasksPathForWrite(activeWs, true);
     let taskToRestore = null;
@@ -1356,7 +1543,8 @@ const taskOps = {
      */
     createTask: async (task) => {
         const activeWs = getActiveWorkspace();
-        const writePath = await resolveTasksPathForWrite(activeWs, false);
+        await assertTaskWorkspaceWritable(activeWs);
+    const writePath = await resolveTasksPathForWrite(activeWs, false);
         return await atomicWrite(writePath, (db) => {
             const now = new Date().toISOString();
             const newTask = {
@@ -1378,7 +1566,8 @@ const taskOps = {
      */
     updateTask: async (taskId, delta) => {
         const activeWs = getActiveWorkspace();
-        const writePath = await resolveTasksPathForWrite(activeWs, false);
+        await assertTaskWorkspaceWritable(activeWs);
+    const writePath = await resolveTasksPathForWrite(activeWs, false);
         return await atomicWrite(writePath, (db) => {
             const idx = (db.tasks || []).findIndex(t => t.id === taskId);
             if (idx === -1) throw new Error(`Tarea ${taskId} no encontrada`);
