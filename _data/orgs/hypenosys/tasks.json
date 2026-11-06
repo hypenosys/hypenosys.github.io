@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-11-06T21:33:24.984Z",
+  "last_updated": "2026-11-06T21:38:00.000Z",
   "organizationId": "hypenosys",
   "tasks": [
     {
@@ -5089,6 +5089,14 @@
         {
           "label": "CI general (lint legado falla)",
           "url": "https://github.com/Axlfc/tc/actions/runs/42296584465"
+        },
+        {
+          "label": "Validación HTTP premerge aislada #108 (passing)",
+          "url": "https://github.com/Axlfc/tc/actions/runs/42298143878"
+        },
+        {
+          "label": "Runbook validación premerge #108",
+          "url": "https://github.com/Axlfc/tc/blob/fix/tc-108-sync-audit-matrix-security-20261106/docs/TC108_PREMERGE_VALIDATION.md"
         }
       ],
       "subtasks": [
@@ -5151,6 +5159,11 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-06T21:36:00.000Z",
           "body": "[TC108 2026-11-06 21:36] PR #850 ya está merged en develop: controles previos de Projects/JWT. PR #851 draft implementa TC-Sync fail-closed/tickets ACL, cliente con Bearer, auditoría explícita y redacción, Matrix status real, miembros de proyectos ACL y paquete npm lockfile sincronizado. Vitest focalizado pasado en Actions; CI global falla después de npm ci por ESLint legacy; CodeQL checkout arreglado en rama, npm audit informa 123 vulnerabilidades (19 critical, 20 high, 75 moderate, 9 low), requieren auditoría/actualización; revocación JWT central y ledger transaccional siguen pendientes. No marcar subtareas terminadas mientras PR #851 no se revise, E2E real no pase y producción no esté verificada."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T21:38:00.000Z",
+          "body": "[TC108 PR PREMERGE HTTP 2026-11-06] PR #851 probada sin merge mediante GH Actions #42298143878: Next.js real en runner desechable con claves aleatorias y proyectos sintéticos separados. Checks HTTP exitosos: Alice/Bob/Eve aislamiento de proyectos e historial, petición de membresía denegada, acceso anónimo/global denegado, salas DM por ACL, ticket SSE ligado a sala y autor de mensajes verificado por servidor. No reemplaza E2E visual ni staging Matrix/broker ni auditoría transaccional; #108 sigue Working y #851 Draft. Guía en docs/TC108_PREMERGE_VALIDATION.md."
         }
       ],
       "images": [],
@@ -5748,5 +5761,5 @@
       "timestamp": "2026-09-13T06:26:21.846Z"
     }
   ],
-  "last_updated_by": "haopengwang123"
+  "last_updated_by": "TC108 premerge HTTP validation"
 }
