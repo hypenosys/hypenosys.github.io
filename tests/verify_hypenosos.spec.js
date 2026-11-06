@@ -47,7 +47,8 @@ test('Task Flow navigates real task inspector without inventing merge state', as
   await expect(page.getByRole('link', { name: 'PR referenciada (merge no verificado)' })).toBeVisible();
   await page.getByRole('button', { name: /#90 · Mission task/ }).click();
   await expect(page).toHaveURL(/\?task=90/);
-  await expect(page.locator('.eco-task-detail')).toContainText('Espera #88');
+  await expect(page.locator('.eco-task-detail')).toContainText('Dependencias pendientes');
+  await expect(page.locator('.eco-task-detail')).toContainText('#88');
 });
 
 test('unauthorized users never see task data', async ({ page }) => {
