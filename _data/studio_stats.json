@@ -1,15 +1,15 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-11-06T21:32:42.788Z",
+  "computed_at": "2026-11-06T21:32:51.012Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 49,
-    "total_ok": 4,
+    "total_ok": 5,
     "total_ko": 0,
     "total_uncertain": 7,
     "total_obsolete": 10,
-    "fixed_found_ratio": 0.069,
-    "verified_ratio": 0.0678
+    "fixed_found_ratio": 0.0862,
+    "verified_ratio": 0.0847
   },
   "group": {
     "velocity_trend": {
@@ -22,7 +22,7 @@
       "2026-W44": 0,
       "2026-W45": 0
     },
-    "bug_rate": 0.0667,
+    "bug_rate": 0.0682,
     "blocker_health": 21,
     "tag_heatmap": {
       "brainstorm": 1,
@@ -33,7 +33,7 @@
       "testing": 1,
       "devops": 3,
       "api": 3,
-      "feature": 9,
+      "feature": 8,
       "infraestructura": 1,
       "jules-panel": 1,
       "neural-chat": 1,
@@ -43,7 +43,7 @@
       "Infraestructura": 1,
       "chat": 1,
       "matrix": 1,
-      "master": 11,
+      "master": 10,
       "Art": 1,
       "logo": 1,
       "ecosystem-v2": 12,
@@ -94,7 +94,7 @@
       "irc-real-views": 1,
       "irc-zimaboard-cloudflare": 1
     },
-    "milestone_tasks_remaining": 12,
+    "milestone_tasks_remaining": 11,
     "hall_of_fame_winners": {
       "mvp": {
         "handle": "axlfc",
@@ -590,7 +590,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "haopengwang123",
-      "timestamp": "2026-11-06T21:32:43.787Z"
+      "timestamp": "2026-11-06T21:32:51.816Z"
     }
   ]
 }
