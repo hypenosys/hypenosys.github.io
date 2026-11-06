@@ -208,34 +208,45 @@ function getGitHubIssuePriority(labels) {
     return 'Medium';
 }
 
-function getGitHubIssueSubtasks(body, issueNumber) {
+function getGitHubIssueWorkItems(body) {
     const matches = Array.from(String(body || '').matchAll(/^\s*[-*]\s+\[([ xX])\]\s+(.+?)\s*$/gm));
     return matches.map(function(match, index) {
+        const rawText = String(match[2] || '').replace(/\*\*/g, '').trim();
+        const codeMatch = rawText.match(/^([A-Za-z][A-Za-z0-9]+-\d+)\s*[—–-]\s*(.+)$/);
+        const key = codeMatch ? codeMatch[1] : 'item-' + (index + 1);
+        const title = codeMatch ? codeMatch[1] + ' — ' + codeMatch[2] : rawText;
+        const compactDescription = rawText.replace(/\s+/g, ' ').trim();
         return {
-            id: Number(issueNumber) * 1000 + index + 1,
-            text: escapeExternalTaskText(match[2]),
+            key: key,
+            title: title,
+            description: compactDescription.length > 360
+                ? compactDescription.slice(0, 357).trimEnd() + '…'
+                : compactDescription,
             done: String(match[1]).toLowerCase() === 'x'
         };
     });
 }
 
-function mapGitHubIssueToTask(issue, workspaceId, repository) {
+function mapGitHubIssueToTask(issue, workspaceId, repository, workItem) {
     const issueNumber = Number(issue.number);
     const body = String(issue.body || '');
     const labels = getGitHubIssueLabels(issue);
-    const subtasks = getGitHubIssueSubtasks(body, issueNumber);
-    const completedSubtasks = subtasks.filter(function(subtask) { return subtask.done; }).length;
     const safeIssueUrl = 'https://github.com/' + repository + '/issues/' + issueNumber;
-    const state = String(issue.state || 'open').toLowerCase();
+    const issueIsClosed = String(issue.state || 'open').toLowerCase() === 'closed';
+    const hasWorkItem = !!workItem;
+    const itemKey = hasWorkItem ? workItem.key : null;
+    const taskTitle = hasWorkItem ? workItem.title : (issue.title || ('Issue #' + issueNumber));
+    const taskDescription = hasWorkItem ? workItem.description : body;
+    const completed = issueIsClosed || (hasWorkItem && workItem.done);
 
     return {
-        id: issueNumber,
+        id: hasWorkItem ? String(issueNumber) + '-' + itemKey : issueNumber,
         organizationId: workspaceId,
         repository: repository,
-        title: escapeExternalTaskText(issue.title || ('Issue #' + issueNumber)),
-        descripcion: escapeExternalTaskText(body),
-        estado: state === 'closed' ? 'OK' : 'Pending',
-        completitud: subtasks.length ? completedSubtasks / subtasks.length : 0,
+        title: escapeExternalTaskText(taskTitle),
+        descripcion: escapeExternalTaskText(taskDescription),
+        estado: completed ? 'OK' : 'Pending',
+        completitud: completed ? 1 : 0,
         prioridad: getGitHubIssuePriority(labels),
         task_type: 'github-issue',
         tema_principal: 'Governance / Evidence',
@@ -244,9 +255,9 @@ function mapGitHubIssueToTask(issue, workspaceId, repository) {
         asignados: (issue.assignees || [])
             .map(function(assignee) { return String(assignee && assignee.login || '').toLowerCase(); })
             .filter(Boolean),
-        tags: labels,
-        subtasks: subtasks,
-        acceptance_criteria: '',
+        tags: Array.from(new Set(labels.concat(hasWorkItem ? [itemKey] : []))),
+        subtasks: [],
+        acceptance_criteria: 'La evidencia y el estado canónicos permanecen en GitHub Issue #' + issueNumber + '.',
         external_links: [{ label: 'GitHub Issue #' + issueNumber, url: safeIssueUrl }],
         comments: [],
         change_log: [{
@@ -268,9 +279,20 @@ function mapGitHubIssueToTask(issue, workspaceId, repository) {
             repository: repository,
             issue_number: issueNumber,
             issue_url: safeIssueUrl,
+            issue_item_key: itemKey,
             read_only: true
         }
     };
+}
+
+function mapGitHubIssueToTasks(issue, workspaceId, repository) {
+    const workItems = getGitHubIssueWorkItems(issue.body);
+    if (!workItems.length) {
+        return [mapGitHubIssueToTask(issue, workspaceId, repository, null)];
+    }
+    return workItems.map(function(workItem) {
+        return mapGitHubIssueToTask(issue, workspaceId, repository, workItem);
+    });
 }
 
 async function getExternalTaskSource(workspaceId) {
@@ -318,8 +340,8 @@ async function fetchExternalGitHubIssueTasks(workspaceId, source, isArchive) {
         .filter(function(issue) {
             return issue && Number.isInteger(Number(issue.number)) && !issue.pull_request;
         })
-        .map(function(issue) {
-            return mapGitHubIssueToTask(issue, workspaceId, source.repository);
+        .flatMap(function(issue) {
+            return mapGitHubIssueToTasks(issue, workspaceId, source.repository);
         });
 
     const mostRecent = tasks.reduce(function(latest, task) {
