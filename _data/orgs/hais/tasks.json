@@ -1658,7 +1658,7 @@
         "agent-security"
       ],
       "blocked_by": [],
-      "acceptance_criteria": "Solo ejecución experimental en sandbox desechable, sin secretos, credenciales GitHub de escritura ni acceso a producción.\nExportación de HAIS por lista explícita de archivos y escaneo preventivo de secretos; no montar repositorio base con Git writable ni socket Docker.\nCPU 1, RAM 512 MiB, máximo 64 PIDs, red deshabilitada o salida restringida aprobada, filesystem HAIS de solo lectura; timeout externo que elimine contenedor y descendientes.\nHMAC exclusivamente sintético, sin imprimir valores; recoger evidencias de tmpfs y logs antes de la limpieza; fallo controlado y cero escrituras productivas.\nValidar protocolo y límites del proveedor real antes de habilitarlo; mock/ASGI no equivale a agente real. Registrar no disponibles las métricas Jules o auditorías no observables.\nComparación con Jules mediante ticket equivalente y evidencia, o documentar BLOCKED si no puede observarse.\nExcepción de dependencia #900003 autorizada solo para pruebas aisladas; no implica aceptación de protección de master/develop ni aprobación de merges.",
+      "acceptance_criteria": "Autorización exclusivamente para pruebas con sandbox desechable y sin escrituras productivas; #900003 permanece BLOCKED por falta de protección real de ramas.\nTicket offline fijado: ejecutar tests/test_risk.py (PAPER) sobre una exportación de HAIS por selección explícita, tras revisión de archivos y escaneo de secretos; excluir .git, .github, configuraciones locales y despliegues.\nSandbox verificable: red none, 1 CPU, 512 MiB, 64 PIDs, usuario no root, rootfs de solo lectura cuando sea viable, directorios temporales separados, timeout externo con terminación y limpieza de todos los descendientes.\nFijar y auditar connect-core (por ejemplo commit b5f0da28f2c72dd5750302c88e63a8e654afe819) antes de ejecutar su proveedor. Confirmar que el proveedor real funciona offline; de lo contrario no iniciar ejecución real y registrar BLOCKED.\nHMAC-SHA256 es requisito del protocolo HTTP autenticado del *Cognito Worker*, NO de HAIS. Usar exclusivamente COGNITO_WORKER_SECRETS con valor sintético cuando se invoque esa API; no crear HAIS_HMAC_KEY_FILE ni registrar el secreto.\nRecoger resultados, diffs, procesos y escrituras en tmpfs/volúmenes antes de destruir el contenedor; verificar ausencia de acceso a secretos y de escrituras al repositorio base.\nComparar con Jules sobre un ticket equivalente solo con métricas realmente observables. Marcar métricas o auditorías no disponibles como N/D; mock ASGI no equivale a ejecución del agente real.\nNo autorizar merge automático, push directo de agentes, permisos amplios ni cierre del ticket hasta verificar todos los criterios.",
       "executor_proposed": "cognito",
       "subtasks": [
         {
@@ -1731,6 +1731,11 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-06T16:55:49.132Z",
           "body": "[DECISIÓN DEL PROPIETARIO · 2026-11-06] Autorizado desbloquear #900019 para ejecución de pruebas Cognito *solo en sandbox*, sin contratar GitHub Team ni hacer público HAIS. Excepción registrada a la dependencia #900003: blocked_by [900003] → [] exclusivamente para el smoke test aislado; #900003 permanece BLOCKED porque master/develop carecen de protección GitHub. Límites: 1 CPU/512 MiB/64 PIDs, timeout externo, export explícito saneado de HAIS, HMAC sintético, sin credenciales de escritura ni acceso a producción, evidencias antes de cleanup. El Kanban/orquestador puede programar la tarea Pending, pero esa transición no instala un control de seguridad ni inicia por sí sola la ejecución de Codex/Cognito. Proveedor real y comparativa Jules siguen sujetos a validaciones técnicas, no se declara test completado ni se autoriza merge."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T17:03:15.494Z",
+          "body": "[HAIS-019 · AUDITORÍA DE ALCANCE · 2026-11-06] Diferenciar HAIS (no requiere HMAC) de Cognito Worker (worker_app/auth.py implementa HMAC-SHA256; worker_app/main.py usa COGNITO_WORKER_SECRETS). No crear HAIS_HMAC_KEY_FILE. Candidato offline: tests/test_risk.py; export explícito saneado, sin red, límites ya comprobados, recolección de tmpfs antes de cleanup. Pin sugerido para auditar connect-core: b5f0da28f2c72dd5750302c88e63a8e654afe819. Confirmar protocolo/ejecución real offline antes de invocar proveedor SubprocessCodexProvider; mock no es smoke real. Los informes/commits locales no están publicados en rama GitHub; distinguir los clones HAIS (master con hypenosys-test/ sin seguimiento) y HAIS-019 (feature). Estado Pending y autorización sandbox_only se mantienen, pero no equivalen a preflight técnico completado ni autoriza merge. #900003 sigue BLOCKED."
         }
       ],
       "change_log": [
@@ -1763,7 +1768,7 @@
           "new_value": "Pending"
         }
       ],
-      "comentario": "Evidencia requerida: Informe comparable de resultados; sandbox aislado; salida controlada si worker falla; cero escrituras productivas",
+      "comentario": "Plan experimental: ticket PAPER offline tests/test_risk.py; Cognito Worker autenticado mediante HMAC sintético solo si se invoca su API. Rama master del clon primario y carpeta hypenosys-test/ no deben modificarse. Ejecución real sujeta a preflight y protocolo viable; Jules N/D si no observable.",
       "estimated_hours": 10,
       "story_points": 5,
       "milestone": "M3 — Calidad y trazabilidad",
@@ -1784,7 +1789,7 @@
       "blocks": [],
       "jules_session": null,
       "assignee_proposed": "cognito",
-      "updated_at": "2026-11-06T16:55:49.132Z",
+      "updated_at": "2026-11-06T17:03:15.494Z",
       "blocked_reason": null,
       "execution_authorization": {
         "mode": "sandbox_only",
@@ -1796,7 +1801,10 @@
         "production_writes_allowed": false,
         "github_write_credentials_allowed": false,
         "requires_manual_sandbox_preflight": true,
-        "automatic_merge_allowed": false
+        "automatic_merge_allowed": false,
+        "requires_fixed_worker_revision": true,
+        "requires_real_provider_offline_feasibility": true,
+        "requires_sanitized_export_review": true
       }
     },
     {
@@ -5262,5 +5270,5 @@
       ]
     }
   ],
-  "last_updated": "2026-11-06T16:55:49.132Z"
+  "last_updated": "2026-11-06T17:03:15.494Z"
 }
