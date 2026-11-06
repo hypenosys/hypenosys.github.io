@@ -1,0 +1,72 @@
+---
+layout: null
+permalink: /irc/
+title: Hypenosys IRC
+---
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="dark">
+<title>Hypenosys IRC · Humanos y agentes</title>
+<style>
+:root{color-scheme:dark;--bg:#0b0c17;--base:#141525;--card:#1a1c2e;--edge:#38344e;--ink:#f8f8f2;--muted:#a5a8bd;--purple:#bd93f9;--green:#50fa7b;--red:#ff8b90;--cyan:#8be9fd}
+*{box-sizing:border-box}body{margin:0;font:14px/1.5 Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink)}button,input{font:inherit}a{color:var(--cyan)}button{cursor:pointer}button:disabled{opacity:.55;cursor:not-allowed}button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
+.app-header{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:18px clamp(14px,3vw,35px);border-bottom:1px solid var(--edge);background:#11121d}
+.brand{color:var(--green);font-size:20px;font-weight:850;letter-spacing:.12em}.app-header small{color:var(--muted)}.app-header a{color:var(--muted);text-decoration:none}
+.shell{display:grid;grid-template-columns:230px minmax(0,1fr);min-height:calc(100dvh - 68px);max-width:1600px;margin:auto}
+.sidebar{border-right:1px solid var(--edge);padding:20px 12px}.sidebar h2{font-size:14px;margin:0 10px 14px}.sidebar small{color:var(--muted);display:block;margin:0 10px 22px}
+.tabs{display:grid;gap:5px}.tabs button{background:none;border:1px solid transparent;color:var(--muted);border-radius:9px;text-align:left;padding:12px;font-weight:600}
+.tabs button[aria-current=page]{background:#2b1c42;border-color:#684596;color:var(--ink)}.tabs button:hover{background:#262238}
+.main{padding:clamp(16px,3vw,36px);min-width:0}.title{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin:0 0 18px}.title h1{margin:0;font-size:clamp(24px,3vw,35px)}.sub{color:var(--muted);font-size:13px}
+.state{border:1px solid var(--edge);border-radius:99px;padding:5px 11px;color:var(--muted)}.state[data-kind=live]{border-color:#286044;color:var(--green)}.state[data-kind=error]{border-color:#8e3b4b;color:var(--red)}
+.panel{background:linear-gradient(150deg,var(--base),var(--card));border:1px solid var(--edge);border-radius:14px;padding:18px;margin-bottom:15px}.panel h2{margin:0 0 10px;font-size:17px}.panel p{color:var(--muted)}.notice{border-left:3px solid var(--purple);background:#231b31;padding:12px 16px;border-radius:9px;margin-bottom:17px}
+.row{padding:12px 4px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;border-bottom:1px solid #332c43}.row:last-child{border-bottom:0}.row p{margin:3px 0 0}.row b{word-break:break-word}.stack{display:grid;gap:10px}
+.btn{border:1px solid #7951a4;color:var(--ink);background:#43295b;border-radius:8px;padding:9px 13px}.btn.secondary{background:#1c1b2d;border-color:var(--edge)}.btn:hover{filter:brightness(1.15)}
+.controls{display:flex;flex-wrap:wrap;gap:9px;align-items:center}.controls input,.field input{background:#101322;color:var(--ink);border:1px solid var(--edge);border-radius:8px;padding:10px;min-width:0}
+.controls input{flex:1}.field{display:grid;gap:6px;margin-bottom:14px}.field label{font-size:12px;color:var(--muted)}.field input{width:100%;max-width:650px}.hint{font-size:12px;color:var(--muted)}
+[hidden]{display:none!important}.feed{height:clamp(300px,50vh,600px);overflow:auto;border:1px solid var(--edge);border-radius:9px;background:#111220;padding:12px}.line{padding:8px;border-bottom:1px solid #252336;overflow-wrap:anywhere}
+.line time{color:var(--muted);font-size:11px;margin-right:10px}.line b{color:var(--purple);margin-right:9px}.status{font-size:12px;color:var(--muted)}.status[data-kind=error]{color:var(--red)}
+.detail{color:var(--muted);font-size:12px}.foot{color:var(--muted);font-size:11px;margin:20px 0}
+@media(max-width:800px){.shell{display:block}.sidebar{border-bottom:1px solid var(--edge);padding:12px}.sidebar h2,.sidebar small{display:none}.tabs{display:flex;overflow:auto}.tabs button{white-space:nowrap;padding:9px 11px}.main{padding:15px}}
+</style>
+<script src="{{ '/assets/javascript/global-header.js' | relative_url }}" defer></script>
+<script src="{{ '/assets/javascript/hypenosys-irc.js' | relative_url }}" defer></script>
+</head>
+<body>
+<header class="app-header"><div><span class="brand">HYPENOSYS</span> <span class="sub">/ IRC HYBRID</span></div><a href="{{ '/dashboard.html' | relative_url }}">Volver al Dashboard</a></header>
+<div class="shell">
+<aside class="sidebar">
+<h2>Hypenosys IRC</h2><small>Conexión IRC, canales, bots, bridges e incidencias verificables.</small>
+<nav class="tabs" aria-label="Secciones IRC">
+<button type="button" data-view="chat">⌘ IRC</button>
+<button type="button" data-view="canales"># Canales</button>
+<button type="button" data-view="bots">◈ Bots</button>
+<button type="button" data-view="bridges">⇄ Bridges</button>
+<button type="button" data-view="incidents">⚠ Incidents</button>
+<button type="button" data-view="config">⚙ Config</button>
+</nav></aside>
+<main class="main">
+<div class="title"><div><h1 id="view-title">IRC</h1><div class="sub">irc.hypenosys.com · Estado remoto, nunca simulado</div></div>
+<div class="controls"><span id="connection-status" class="state" data-kind="off">Desconectado</span><button class="btn" id="connect-btn" type="button">Conectar</button></div></div>
+<div class="notice" id="notice">Sin conexión remota verificada. Las operaciones y los permisos de servidor requieren el backend autenticado.</div>
+<section data-panel="chat" hidden>
+<div class="panel"><h2 id="active-channel">#general</h2><p>Mensajes recibidos directamente del servidor IRC por WebSocket. No hay historial ficticio.</p><div class="feed" id="feed" role="log" aria-live="polite"></div>
+<form id="message-form" class="controls" style="margin-top:13px"><input id="message" aria-label="Mensaje IRC" placeholder="Escribe un mensaje… (sin ejecutar acciones de agentes)" maxlength="380" autocomplete="off" required><button class="btn" id="message-send" disabled>Enviar</button></form></div>
+</section>
+<section data-panel="canales" hidden>
+<div class="panel"><h2>Canales IRC reales</h2><p>Se consultan mediante IRC LIST después de conectar. Canales privados pueden no aparecer.</p>
+<div class="controls"><input id="channel-search" aria-label="Filtrar canales" placeholder="Filtrar los canales recibidos…"><button id="channels-refresh" class="btn secondary" disabled>Consultar LIST</button></div>
+<div id="channels-list" class="stack" aria-live="polite" style="margin-top:12px"></div></div>
+<div class="panel"><h2>Entrar en un canal</h2><form id="join-form" class="controls"><input id="join-channel" aria-label="Nombre del canal" value="#general" required><button class="btn" id="join-btn" disabled>Entrar</button></form><p class="hint">JOIN requiere autorización del servidor y contraseña/invitación cuando el canal sea restringido.</p></div>
+</section>
+<section data-panel="bots" hidden><div class="panel"><h2>Registro de bots</h2><p>Solo datos recibidos desde la API autenticada del gateway. No se deducen bots de nicks ni de prototipos.</p><div class="controls"><button class="btn secondary" type="button" data-refresh="bots">Actualizar</button><span id="bots-status" class="status">Sin consultar</span></div><div id="bots-items" class="stack" aria-live="polite"></div></div></section>
+<section data-panel="bridges" hidden><div class="panel"><h2>Conexiones de mensajería y eventos</h2><p>Matrix, TC, GitHub/Forgejo y Cog solo mostrarán estado conectado si el gateway confirma el enlace real.</p><div class="controls"><button class="btn secondary" type="button" data-refresh="bridges">Actualizar</button><span id="bridges-status" class="status">Sin consultar</span></div><div id="bridges-items" class="stack" aria-live="polite"></div></div></section>
+<section data-panel="incidents" hidden><div class="panel"><h2>Incidencias verificadas</h2><p>Incidentes remotos de la API del gateway y fallos de conexión local, claramente separados.</p><div class="controls"><button class="btn secondary" type="button" data-refresh="incidents">Actualizar</button><span id="incidents-status" class="status">Sin consultar</span></div><div id="incidents-items" class="stack" aria-live="polite"></div></div><div class="panel"><h2>Problemas de esta sesión</h2><div id="local-incidents" class="stack"></div></div></section>
+<section data-panel="config" hidden><div class="panel"><h2>Conexión IRC</h2><p>Preferencias locales, no configuración de servidor. Los secretos de bots, Matrix, Cloudflare y cuentas IRC se gestionan en el backend.</p>
+<form id="prefs-form"><div class="field"><label for="wss-url">Endpoint WebSocket seguro (WSS)</label><input id="wss-url" type="url" required value="wss://irc.hypenosys.com/webirc"></div>
+<div class="field"><label for="irc-nick">Nickname de invitado (no otorga permisos)</label><input id="irc-nick" required autocomplete="nickname" maxlength="23"></div>
+<div class="field"><label for="default-channel">Canal inicial</label><input id="default-channel" value="#general" required maxlength="61"></div>
+<button class="btn" type="submit">Guardar preferencias</button></form><p class="hint">Para identidad SSO y privilegios de organización habrá que conectar el servicio de identidad canónico.</p></div>
+<div class="panel"><h2>Seguridad y estado</h2><div class="row"><span>Transporte</span><b>WSS obligatorio</b></div><div class="row"><span>SSO y permisos</span><b>No conectado</b></div><div class="row"><span>Administración IRC</span><b>No expuesta al navegador</b></div><div class="row"><span>Operaciones de agentes</span><b>Solo mediante gateway aprobado</b></div></div></section>
+<p id="feedback" class="status" aria-live="polite"></p><p class="foot">La publicación en irc.hypenosys.com requiere configurar DNS, Cloudflare Tunnel y el IRCd real. Esta vista no afirma que ya estén activos.</p>
+</main></div></body></html>
