@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "computed_at": "2026-11-06T15:45:44.767Z",
+  "computed_at": "2026-11-06T19:43:19.248Z",
   "last_computed_milestone": "M1",
   "global": {
     "total_tasks": 43,
@@ -23,7 +23,7 @@
       "2026-W45": 0
     },
     "bug_rate": 0,
-    "blocker_health": 19,
+    "blocker_health": 18,
     "tag_heatmap": {
       "hais-001": 7,
       "quality": 2,
@@ -612,7 +612,7 @@
     {
       "action": "chore: recalcular studio_stats.json (Layer A & B)",
       "user": "haopengwang123",
-      "timestamp": "2026-11-06T15:45:45.559Z"
+      "timestamp": "2026-11-06T19:43:20.056Z"
     }
   ]
 }
