@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-11-06T18:39:52.000Z",
+  "last_updated": "2026-11-06T18:57:04.000Z",
   "organizationId": "hypenosys",
   "tasks": [
     {
@@ -2790,12 +2790,23 @@
       "estimated_hours": null,
       "story_points": null,
       "tags": [],
-      "external_links": [],
+      "external_links": [
+        {
+          "label": "Plan Cog y Forgejo DR",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/COG_JULES_CONTINUITY_2026.md"
+        }
+      ],
       "subtasks": [],
       "acceptance_criteria": "",
       "blocks": [],
       "blocked_by": [],
-      "comments": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:57:04.000Z",
+          "body": "Continuidad GitHub: la instalación de Forgejo en ZimaBoard2 de esta tarea #84 es dependencia de la tarea #104. El espejo/backup, failover de escrituras y CI/hosting alternativo se planifican por separado (tareas #104–#106), sin alterar su estado Working."
+        }
+      ],
       "images": [],
       "rama2": null,
       "ver": true,
@@ -4181,7 +4192,8 @@
         "95",
         "96",
         "97",
-        "98"
+        "98",
+        "107"
       ],
       "comments": [
         {
@@ -4200,6 +4212,873 @@
           "new_value": "Created via ecosystem v2 planning"
         }
       ]
+    },
+    {
+      "id": 100,
+      "continuity_key": "jules-sunset-export",
+      "organizationId": "hypenosys",
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "[CONTINUIDAD P0] Exportar y conservar sesiones Jules antes del 11/11/2026",
+      "descripcion": "Inventariar y conservar sesiones/planes/activities/patches de Jules, terminar pendientes y recuperar historial sin secrets antes de solo lectura 11/11; Google cierra 31/12. No almacenar exports con env vars en GitHub, TC Wiki, issues o Qdrant.",
+      "rama": "chore/jules-sunset-safe-export",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Tools / Automation",
+      "seccion": "Continuidad Cog · Jules · Forgejo",
+      "prioridad": "Critical",
+      "milestone": "P0",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "haopengwang123",
+        "axlfc"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": "2026-11-10",
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "continuity-2026",
+        "cog-jules-forgejo",
+        "epic",
+        "p0",
+        "jules-sunset-export"
+      ],
+      "external_links": [
+        {
+          "label": "Plan de continuidad",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/COG_JULES_CONTINUITY_2026.md"
+        },
+        {
+          "label": "Repositorio objetivo (base actual)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/tree/develop"
+        },
+        {
+          "label": "Aviso oficial de cierre Jules",
+          "url": "https://jules.google/docs/changelog/2026-10-29"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 10001,
+          "text": "Identificar todos los workspace y tareas Hypenosys con Jules session ID, PR y fuente de datos.",
+          "done": false
+        },
+        {
+          "id": 10002,
+          "text": "Revisar las sesiones abiertas, finalizar o cancelar responsablemente antes del corte y registrar estados verificados.",
+          "done": false
+        },
+        {
+          "id": 10003,
+          "text": "Guiar exportación local con la herramienta oficial por el propietario autenticado, sin capturar credenciales en el asistente.",
+          "done": false
+        },
+        {
+          "id": 10004,
+          "text": "Separar y cifrar ajustes y variables de entorno, eliminar secretos de índices y logs, generar manifest de hashes no sensible.",
+          "done": false
+        },
+        {
+          "id": 10005,
+          "text": "Crear archivo histórico consultable por tarea/org con ACL, source y timestamps, preservando PR y patches.",
+          "done": false
+        },
+        {
+          "id": 10006,
+          "text": "Ejecutar smoke de restauración/export y documentar lagunas y fecha de último snapshot.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Inventario completo y export cifrado fuera del repositorio, sin secretos en commit ni RAG; al menos una restauración verificada; sesiones históricas referenciables.",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:57:04.000Z",
+          "body": "Plan registrado 2026-11-06. No ejecutar ni declarar completado sin evidencia verificable; no exponer secretos de Jules, Forgejo o GitHub en documentación/PR."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:57:04.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created via Cog/Forgejo continuity plan"
+        }
+      ]
+    },
+    {
+      "id": 101,
+      "continuity_key": "jules-readonly-adapter",
+      "organizationId": "hypenosys",
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "[CONTINUIDAD P0] Desacoplar Jules: provider neutral, read-only y selector Cog",
+      "descripcion": "Desacoplar el motor de jules-api.js, Jules Panel y Neural Chat mediante CodingAgentProvider. Después de 11/11 Jules es histórico/solo lectura; Cog se selecciona explícitamente como sustituto solo si el runner está operativo.",
+      "rama": "feat/cog-jules-provider-cutover",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Tools / Automation",
+      "seccion": "Continuidad Cog · Jules · Forgejo",
+      "prioridad": "Critical",
+      "milestone": "P0",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "haopengwang123"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": "2026-11-10",
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "continuity-2026",
+        "cog-jules-forgejo",
+        "epic",
+        "p0",
+        "jules-readonly-adapter"
+      ],
+      "external_links": [
+        {
+          "label": "Plan de continuidad",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/COG_JULES_CONTINUITY_2026.md"
+        },
+        {
+          "label": "Repositorio objetivo (base actual)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/tree/develop"
+        },
+        {
+          "label": "Integración Jules actual",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/assets/javascript/jules-api.js"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 10101,
+          "text": "Diseñar interfaz CodingAgentProvider con capabilities, start, events, feedback, cancel y handle de sesión con provider.",
+          "done": false
+        },
+        {
+          "id": 10102,
+          "text": "Implementar adaptador Jules Legacy con capabilities writable=false al corte y degradación controlada ante 401/403/404.",
+          "done": false
+        },
+        {
+          "id": 10103,
+          "text": "Exponer provider activo y estado real en Neural Chat/Jules Panel/Task Flow sin ghost outputs.",
+          "done": false
+        },
+        {
+          "id": 10104,
+          "text": "Mantener sesiones separadas por (organizationId, taskId, provider, executionId) y reconciliar relaciones PR.",
+          "done": false
+        },
+        {
+          "id": 10105,
+          "text": "Añadir feature flag y selector seguro de proveedor sin reintentos silenciosos ni doble ejecución.",
+          "done": false
+        },
+        {
+          "id": 10106,
+          "text": "Probar inputs/errores, exports legibles, backwards compatibility y recuperación de UI si Jules desaparece.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "UI y API no intentan iniciar/aprobar sesiones Jules cuando son read-only; no mezcla historiales; Task Flow reconoce sesiones Cog sin falsificar estado.",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:57:04.000Z",
+          "body": "Plan registrado 2026-11-06. No ejecutar ni declarar completado sin evidencia verificable; no exponer secretos de Jules, Forgejo o GitHub en documentación/PR."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:57:04.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created via Cog/Forgejo continuity plan"
+        }
+      ]
+    },
+    {
+      "id": 102,
+      "continuity_key": "cog-agent-runner",
+      "organizationId": "hypenosys",
+      "repository": "hypenosys/cog",
+      "title": "[CONTINUIDAD] Convertir Cog/Cognito en coding agent ejecutor aislado con PR",
+      "descripcion": "Cog actual es CLI PowerShell/Cognito + RAG (master); necesita ejecución asíncrona real sobre repo sanitizado, trazas, pruebas, diffs y PR. Integrar con Hypenosys, no simular Jules ni asumir repos privados legibles.",
+      "rama": "feat/cog-coding-agent-runner",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Tools / Automation",
+      "seccion": "Continuidad Cog · Jules · Forgejo",
+      "prioridad": "Critical",
+      "milestone": "P1",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "haopengwang123"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "continuity-2026",
+        "cog-jules-forgejo",
+        "epic",
+        "p1",
+        "cog-agent-runner"
+      ],
+      "external_links": [
+        {
+          "label": "Plan de continuidad",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/COG_JULES_CONTINUITY_2026.md"
+        },
+        {
+          "label": "Repositorio objetivo (base actual)",
+          "url": "https://github.com/hypenosys/cog/tree/master"
+        },
+        {
+          "label": "Repositorio Cog",
+          "url": "https://github.com/hypenosys/cog"
+        },
+        {
+          "label": "HAIS sandbox #900019",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/_data/orgs/hais/tasks.json"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 10201,
+          "text": "Auditar cog.ps1, cog_rag.py, backend Cognito y límites del prototipo sin comprometer el secreto/volumen HAIS.",
+          "done": false
+        },
+        {
+          "id": 10202,
+          "text": "Diseñar lifecycle de ejecución, job IDs, mensajes, plan, cancelación, feedback, estado y persistencia con eventos.",
+          "done": false
+        },
+        {
+          "id": 10203,
+          "text": "Implementar runner aislado de snapshot allowlist con CPU/RAM/timeout/red limitada y vault de tokens efímeros.",
+          "done": false
+        },
+        {
+          "id": 10204,
+          "text": "Implementar patches, validación Git, tests controlados y publicación de branch/PR en backend Git configurado.",
+          "done": false
+        },
+        {
+          "id": 10205,
+          "text": "Integrar connector de Cog en Neural Chat, Task Flow y Approval Center con flujo humano/Claude supervisado.",
+          "done": false
+        },
+        {
+          "id": 10206,
+          "text": "E2E: misma tarea en Cog, eventos/CI/PR reales y control de costo/fallo; reutilizar HAIS #900019.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Cog inicia y completa una tarea verificada en sandbox, crea PR no merge automático, guarda eventos y respeta scopes; no se confunde con RAG/chat sin ejecución.",
+      "blocks": [],
+      "blocked_by": [
+        "101"
+      ],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:57:04.000Z",
+          "body": "Plan registrado 2026-11-06. No ejecutar ni declarar completado sin evidencia verificable; no exponer secretos de Jules, Forgejo o GitHub en documentación/PR."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:57:04.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created via Cog/Forgejo continuity plan"
+        }
+      ]
+    },
+    {
+      "id": 103,
+      "continuity_key": "secure-write-gateway",
+      "organizationId": "hypenosys",
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "[CONTINUIDAD] Endpoint propio de escritura: tareas, GitHub/Forgejo y sesiones",
+      "descripcion": "Reemplazar escrituras desde PAT en localStorage por gateway autenticado con GitHub App o auth server-side equivalentes; usar adaptador GitHub/Forgejo y rutas versionadas con CAS/ACL/replay protection. Un endpoint NO puede reactivar la API cerrada de Jules.",
+      "rama": "feat/secure-write-gateway",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Tools / Automation",
+      "seccion": "Continuidad Cog · Jules · Forgejo",
+      "prioridad": "Critical",
+      "milestone": "P1",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "haopengwang123",
+        "axlfc"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "continuity-2026",
+        "cog-jules-forgejo",
+        "epic",
+        "p1",
+        "secure-write-gateway"
+      ],
+      "external_links": [
+        {
+          "label": "Plan de continuidad",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/COG_JULES_CONTINUITY_2026.md"
+        },
+        {
+          "label": "Repositorio objetivo (base actual)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/tree/develop"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 10301,
+          "text": "Auditar todas las escrituras del navegador (github-api.js, taskOps, credenciales Jules) y definir amenazas y migración.",
+          "done": false
+        },
+        {
+          "id": 10302,
+          "text": "Diseñar API versionada para task transition, run/feedback/cancel, branch/PR, auth, status y capabilities.",
+          "done": false
+        },
+        {
+          "id": 10303,
+          "text": "Implementar autenticación/autorización server-side por usuario/organización/proyecto con tokens mínimos efímeros.",
+          "done": false
+        },
+        {
+          "id": 10304,
+          "text": "Crear adapters GitHub/Forgejo con optimistic locking (SHA/ETag), idempotencyKey, outbox y rate limits.",
+          "done": false
+        },
+        {
+          "id": 10305,
+          "text": "Añadir observabilidad de fallos, 401/403/409/429, compensación, auditoría y revocación de tokens.",
+          "done": false
+        },
+        {
+          "id": 10306,
+          "text": "Probar ejecución durante desconexión de GitHub, no doble escritura, no filtración de secretos y rollback sin bloqueo de UI.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Permisos y escritura verificados en servidor; sin PAT de escritura persistente en navegador; status remoto/commit SHA comprobable; soporta backend selectable sin split-brain.",
+      "blocks": [],
+      "blocked_by": [
+        "88"
+      ],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:57:04.000Z",
+          "body": "Plan registrado 2026-11-06. No ejecutar ni declarar completado sin evidencia verificable; no exponer secretos de Jules, Forgejo o GitHub en documentación/PR."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:57:04.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created via Cog/Forgejo continuity plan"
+        }
+      ]
+    },
+    {
+      "id": 104,
+      "continuity_key": "forgejo-mirror-backup",
+      "organizationId": "hypenosys",
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "[RESILIENCIA] Forgejo ZimaBoard2: espejo GitHub y backups independientes",
+      "descripcion": "Extender tarea existente #84 sin duplicar la instalación: auditar Forgejo ZimaBoard2 y crear repos espejo de Hypenosys/TC/HAIS/Cog con ramas reales; backups completos y restores fuera del host. Estado del espejo nunca equivaldrá a disponibilidad del writer.",
+      "rama": "feat/forgejo-mirror-backups",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Tools / Automation",
+      "seccion": "Continuidad Cog · Jules · Forgejo",
+      "prioridad": "Critical",
+      "milestone": "P1",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "axlfc"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "continuity-2026",
+        "cog-jules-forgejo",
+        "epic",
+        "p1",
+        "forgejo-mirror-backup"
+      ],
+      "external_links": [
+        {
+          "label": "Plan de continuidad",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/COG_JULES_CONTINUITY_2026.md"
+        },
+        {
+          "label": "Repositorio objetivo (base actual)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/tree/develop"
+        },
+        {
+          "label": "Forgejo mirroring oficial",
+          "url": "https://forgejo.org/docs/latest/user/repo-mirror/"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 10401,
+          "text": "Comprobar que #84 tiene Forgejo funcional, TLS, autenticación, almacenamiento, conectividad y backups básicos.",
+          "done": false
+        },
+        {
+          "id": 10402,
+          "text": "Crear catálogo repo lógico→remote GitHub/Forgejo, rama base real, ACL y ubicación de datos (incl. LFS).",
+          "done": false
+        },
+        {
+          "id": 10403,
+          "text": "Configurar pull mirrors GitHub→Forgejo de forma segura; medir lastMirrorSHA/lag, alertas y fallos.",
+          "done": false
+        },
+        {
+          "id": 10404,
+          "text": "Diseñar export/restauración independiente de issues/PR reviews, wiki, LFS, attachments, Actions y metadatos no incluidos en Git.",
+          "done": false
+        },
+        {
+          "id": 10405,
+          "text": "Automatizar backups cifrados fuera de ZimaBoard2 y comprobar checksum, restauración de al menos un repositorio.",
+          "done": false
+        },
+        {
+          "id": 10406,
+          "text": "Publicar runbook de operaciones sin credenciales, health checks y evidencias reproducibles.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Al menos un espejo verificado con ramas y hashes; backup off-host y restauración probada; faltantes no-Git documentados; sin push bidireccional.",
+      "blocks": [],
+      "blocked_by": [
+        "84"
+      ],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:57:04.000Z",
+          "body": "Plan registrado 2026-11-06. No ejecutar ni declarar completado sin evidencia verificable; no exponer secretos de Jules, Forgejo o GitHub en documentación/PR."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:57:04.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created via Cog/Forgejo continuity plan"
+        }
+      ]
+    },
+    {
+      "id": 105,
+      "continuity_key": "forgejo-single-writer-failover",
+      "organizationId": "hypenosys",
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "[RESILIENCIA] Failover GitHub→Forgejo con único escritor y reconciliación",
+      "descripcion": "Capacidad de seguir creando commits/ramas/PR y actualizar tareas cuando Github no esté disponible mediante conmutación explícita al writer Forgejo; fencing/epoch y coordinación evitan escrituras concurrentes y sobrescrituras destructivas.",
+      "rama": "feat/forgejo-controlled-write-failover",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Tools / Automation",
+      "seccion": "Continuidad Cog · Jules · Forgejo",
+      "prioridad": "Critical",
+      "milestone": "P2",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "axlfc",
+        "haopengwang123"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "continuity-2026",
+        "cog-jules-forgejo",
+        "epic",
+        "p2",
+        "forgejo-single-writer-failover"
+      ],
+      "external_links": [
+        {
+          "label": "Plan de continuidad",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/COG_JULES_CONTINUITY_2026.md"
+        },
+        {
+          "label": "Repositorio objetivo (base actual)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/tree/develop"
+        },
+        {
+          "label": "Plan continuidad Cog y Forgejo",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/COG_JULES_CONTINUITY_2026.md"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 10501,
+          "text": "Definir GitBackendProvider, logicalRepoId, chequeos de salud y capabilities de PR/CI/merge GitHub vs Forgejo.",
+          "done": false
+        },
+        {
+          "id": 10502,
+          "text": "Implementar writer lease/epoch/fencing con auditoría y estado degraded/read-only si no se garantiza un solo escritor.",
+          "done": false
+        },
+        {
+          "id": 10503,
+          "text": "Asegurar snapshot consistente de tareas sharded, CAS y que Forgejo contiene los datos necesarios para continuar.",
+          "done": false
+        },
+        {
+          "id": 10504,
+          "text": "Implementar transición explícita GitHub→Forgejo con comprobación de hashes y autorización de operador.",
+          "done": false
+        },
+        {
+          "id": 10505,
+          "text": "Diseñar reconciliación de commits/tareas/PR/conflictos y failback a GitHub sin force-push no revisado.",
+          "done": false
+        },
+        {
+          "id": 10506,
+          "text": "Probar simulaciones de caída/parcialidad de red, split-brain, error de token, idempotencia y revocación.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Una única fuente activa; falla de GitHub no permite dual-write ni falsos OK; Forgejo puede escribir/abrir PR y sincronizar tareas tras failover autorizado, con failback seguro.",
+      "blocks": [],
+      "blocked_by": [
+        "104",
+        "103"
+      ],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:57:04.000Z",
+          "body": "Plan registrado 2026-11-06. No ejecutar ni declarar completado sin evidencia verificable; no exponer secretos de Jules, Forgejo o GitHub en documentación/PR."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:57:04.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created via Cog/Forgejo continuity plan"
+        }
+      ]
+    },
+    {
+      "id": 106,
+      "continuity_key": "forgejo-ci-hosting",
+      "organizationId": "hypenosys",
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "[RESILIENCIA] Forgejo Actions, deploy alternativo y acceso a Hypenosys sin GitHub",
+      "descripcion": "Recuperar pipelines CI/CD y web de Hypenosys cuando falla GitHub Pages/Actions. Forgejo Actions no es compatible al 100%; validar pipelines, runners, artefactos, host alternativo y DNS de forma independiente.",
+      "rama": "feat/forgejo-actions-and-alt-hosting",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Tools / Automation",
+      "seccion": "Continuidad Cog · Jules · Forgejo",
+      "prioridad": "Major",
+      "milestone": "P2",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "axlfc"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "continuity-2026",
+        "cog-jules-forgejo",
+        "epic",
+        "p2",
+        "forgejo-ci-hosting"
+      ],
+      "external_links": [
+        {
+          "label": "Plan de continuidad",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/COG_JULES_CONTINUITY_2026.md"
+        },
+        {
+          "label": "Repositorio objetivo (base actual)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/tree/develop"
+        },
+        {
+          "label": "Forgejo Actions vs GitHub Actions",
+          "url": "https://forgejo.org/docs/latest/user/actions/github-actions/"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 10601,
+          "text": "Inventariar GitHub Actions de Hypenosys, TC, HAIS y Cog, dependencias y secretos.",
+          "done": false
+        },
+        {
+          "id": 10602,
+          "text": "Diseñar workflows Forgejo específicos y runners aislados; prohibir exponer credenciales en PR no confiables.",
+          "done": false
+        },
+        {
+          "id": 10603,
+          "text": "Ejecutar builds/test reales de Jekyll, Next.js, HAIS y Cog con matrices de compatibilidad.",
+          "done": false
+        },
+        {
+          "id": 10604,
+          "text": "Publicar versión de recuperación en hosting propio/alternativo independiente de GitHub Pages.",
+          "done": false
+        },
+        {
+          "id": 10605,
+          "text": "Definir TLS/DNS/health checks, límites y conmutación manual/automatizada segura para frontend y API.",
+          "done": false
+        },
+        {
+          "id": 10606,
+          "text": "Simular caída de Pages/Actions y verificar UI, login, endpoints, CI, PR y rollback.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Compilación y pruebas pasan en runners Forgejo; sitio y APIs sobreviven a corte GitHub Pages mediante hosting independiente verificado; DNS y certificados no dependen del proveedor caído.",
+      "blocks": [],
+      "blocked_by": [
+        "104"
+      ],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:57:04.000Z",
+          "body": "Plan registrado 2026-11-06. No ejecutar ni declarar completado sin evidencia verificable; no exponer secretos de Jules, Forgejo o GitHub en documentación/PR."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:57:04.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created via Cog/Forgejo continuity plan"
+        }
+      ]
+    },
+    {
+      "id": 107,
+      "continuity_key": "continuity-drills",
+      "organizationId": "hypenosys",
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "[RESILIENCIA] Simulacro E2E Jules apagado + Cog + GitHub caído + Forgejo",
+      "descripcion": "Criterio de salida de todo el plan: historial Jules exportado/solo lectura, Cog ejecuta tarea en sandbox, endpoint seguro escribe y Forgejo puede reemplazar GitHub en un simulacro auditado; compatibilidad con TC y HAIS.",
+      "rama": "test/cog-forgejo-resilience-drills",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Tools / Automation",
+      "seccion": "Continuidad Cog · Jules · Forgejo",
+      "prioridad": "Critical",
+      "milestone": "P3",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "haopengwang123",
+        "axlfc"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "continuity-2026",
+        "cog-jules-forgejo",
+        "epic",
+        "p3",
+        "continuity-drills"
+      ],
+      "external_links": [
+        {
+          "label": "Plan de continuidad",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/COG_JULES_CONTINUITY_2026.md"
+        },
+        {
+          "label": "Repositorio objetivo (base actual)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/tree/develop"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 10701,
+          "text": "Crear fixtures de repos/tareas/múltiples organizaciones y permisos sin datos reales sensibles.",
+          "done": false
+        },
+        {
+          "id": 10702,
+          "text": "Simular 401/read-only/404 de Jules y verificar chats archivados sin uso accidental de credenciales.",
+          "done": false
+        },
+        {
+          "id": 10703,
+          "text": "Ejecutar task→Claude/HAIS→Cog→runner→Git PR→CI→Approval→merge→completion y verificar transiciones reales.",
+          "done": false
+        },
+        {
+          "id": 10704,
+          "text": "Simular GitHub fuera: espejo, elección de writer, guard de split-brain, PR, CI y acceso web alternativo.",
+          "done": false
+        },
+        {
+          "id": 10705,
+          "text": "Restaurar GitHub, reconciliar commits/revisiones, validar RPO/RTO medidos y failback sin sobrescrituras.",
+          "done": false
+        },
+        {
+          "id": 10706,
+          "text": "Publicar evidence/runbook, pruebas de seguridad/secretos y rollout por feature flag reversible.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "E2E CI reproducible con degradación honesta, una sola escritura, PR/QA reales, backup restaurable y fallback de frontend; pruebas sin fuga cross-org ni secretos.",
+      "blocks": [],
+      "blocked_by": [
+        "100",
+        "101",
+        "102",
+        "103",
+        "104",
+        "105",
+        "106"
+      ],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:57:04.000Z",
+          "body": "Plan registrado 2026-11-06. No ejecutar ni declarar completado sin evidencia verificable; no exponer secretos de Jules, Forgejo o GitHub en documentación/PR."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:57:04.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created via Cog/Forgejo continuity plan"
+        }
+      ]
     }
   ],
   "_audit_log": [
@@ -4209,5 +5088,5 @@
       "timestamp": "2026-09-13T06:26:21.846Z"
     }
   ],
-  "last_updated_by": "Ecosystem 2.0 planning"
+  "last_updated_by": "Continuidad Cog/Jules/Forgejo"
 }
