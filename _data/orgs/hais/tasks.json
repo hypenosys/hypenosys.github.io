@@ -1723,6 +1723,11 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-06T16:17:56.557Z",
           "body": "[HAIS-019 · CODEX WINDOWS · COMMIT LOCAL 8a2ef99 · AVANCE REPORTADO 2026-11-06] Codex informa cinco pruebas PASS (no reejecutadas independientemente en esta actualización): supervisor con timeout automático; proceso hijo sleep 300 que ignora TERM + eliminación del contenedor; imagen desechable Cognito Worker; ASGI con secretos sintéticos y mock; regresión HAIS 240 tests PASS, 2 avisos. Árbol local limpio y commits ecebcef, 31bc615 y 8a2ef99 conservados. La rama remota feature/hais-019 sigue en cf7058981d8bdc3a897e11355036c1f3303cab0d; cambios locales SIN publicar y SIN PR. Pendiente para aceptación: validar protocolo/limitaciones del proveedor real, pruebas de agotamiento recursos, ejecución real aislada y comparación equivalente con Jules. No hubo merge ni escritura en contenedores existentes; mock != ejecución real. Mantener BLOCKED y completitud=0."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T16:34:37.189Z",
+          "body": "[HAIS-019 · DEPENDENCIA DE SEGURIDAD] Codex informa revisión local en commit 9db1c21 (sin evidencia de publicación remota todavía). #900003 incumple la protección de master/develop y GitHub devuelve 403 en rulesets. Conservar límites probados del arnés 1 CPU, 512 MiB, 64 PIDs; exportación por lista explícita + escaneo de secretos, HMAC sintético sin valores en logs, evidencias previas a limpieza y Jules/producción como no disponibles cuando no sean observables. Se suspende ejecutar el proveedor Cognito real o integrar cambios hasta decisión del propietario y controles verificados; smoke test real y comparación Jules pendientes."
         }
       ],
       "change_log": [
@@ -1762,8 +1767,8 @@
       "blocks": [],
       "jules_session": null,
       "assignee_proposed": "cognito",
-      "updated_at": "2026-11-06T16:17:56.557Z",
-      "blocked_reason": "Preflight, supervisor con timeout, imagen worker, ASGI mock y HAIS 240 tests reportados PASS por Codex; faltan proveedor real, agotamiento de recursos y comparación equivalente Jules. Evidencias en commit local 8a2ef99, aún sin publicar."
+      "updated_at": "2026-11-06T16:34:37.189Z",
+      "blocked_reason": "Dependencia #900003 sin protección obligatoria de ramas; decisión del propietario pendiente. Proveedor Cognito real, ensayos de agotamiento de recursos y comparación Jules siguen pendientes."
     },
     {
       "id": 900020,
@@ -4598,7 +4603,7 @@
       "descripcion": "Verificar repo privado hypenosys/HAIS, ramas master/develop, protección de develop, PR #1, checks CI y privilegios reales de los colaboradores.",
       "tema_principal": "HAIS-001 / identity",
       "prioridad": "Critical",
-      "estado": "OK",
+      "estado": "BLOCKED",
       "completitud": 0,
       "task_type": "chore",
       "resuelto_por": "",
@@ -4651,7 +4656,13 @@
           "url": "https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches"
         }
       ],
-      "comments": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T16:34:37.189Z",
+          "body": "[AUDITORÍA #900003 · 2026-11-06] REAPERTURA POR ACEPTACIÓN INCUMPLIDA. Repositorio hypenosys/HAIS privado y PR #1 fusionada: comprobados. GitHub /branches/master y /branches/develop: protected=false, required_status_checks.enforcement_level=off; /rulesets: HTTP 403 ('Upgrade to GitHub Pro or make this repository public to enable this feature'). No se ha demostrado protección de ramas ni restricción de escritura directa exigida por acceptance_criteria. Decisión pendiente del propietario de la organización sobre plan compatible para repositorio privado y configuración/validación de reglas. NO hacer público el repositorio ni ejecutar agentes con escrituras Git hasta que se comprueben los controles."
+        }
+      ],
       "change_log": [
         {
           "author_login": "Codex",
@@ -4659,6 +4670,13 @@
           "field": "estado",
           "old_value": "OK",
           "new_value": "Pending"
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T16:34:37.189Z",
+          "field": "estado",
+          "old_value": "OK",
+          "new_value": "BLOCKED"
         }
       ],
       "comentario": "Evidencia requerida: PR #1 referenciada; ruleset/branch protection comprobado; ningún colaborador sin autorización puede escribir directamente",
@@ -4681,7 +4699,9 @@
       "images": [],
       "blocks": [],
       "jules_session": null,
-      "assignee_proposed": "human"
+      "assignee_proposed": "human",
+      "updated_at": "2026-11-06T16:34:37.189Z",
+      "blocked_reason": "Repositorio privado con master/develop sin protección, checks no obligatorios y rulesets no disponibles (GitHub HTTP 403). Requiere decisión del propietario sobre plan/permisos y verificación de reglas."
     }
   ],
   "last_updated_by": "ChatGPT",
@@ -5213,5 +5233,5 @@
       ]
     }
   ],
-  "last_updated": "2026-11-06T16:17:56.557Z"
+  "last_updated": "2026-11-06T16:34:37.189Z"
 }
