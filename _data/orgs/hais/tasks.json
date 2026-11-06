@@ -3581,6 +3581,10 @@
         {
           "label": "Deploy dev web · 2026-11-05",
           "url": "https://github.com/hypenosys/hypenosys.github.io/actions/runs/41986197053"
+        },
+        {
+          "label": "Dev deploy develop 2026-11-05 20:35 UTC · success",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/actions/runs/42104738898"
         }
       ],
       "comments": [
@@ -3618,6 +3622,11 @@
           "author_login": "HAIS review",
           "timestamp": "2026-11-05T08:08:46Z",
           "body": "2026-11-05: PR web #457 fusionada a develop (51480805) y deploy GitHub Actions 41986197053 success. La nueva vista Trading 212 DEMO no demuestra cotizaciones de TradingView ni funcionamiento del gateway de mercado. La página /hais/ sigue sin smoke HTTP desde este entorno; mantener In Review."
+        },
+        {
+          "author_login": "HAIS review",
+          "timestamp": "2026-11-06T08:22:21Z",
+          "body": "2026-11-06: última publicación dev en develop (9f8ec75) con Actions 42104738898 success, 2026-11-05 20:35 UTC. No demuestra acceso HTTP ni cotizaciones; /hais/ no accesible desde la herramienta externa. Sigue In Review."
         }
       ],
       "change_log": [
@@ -3727,6 +3736,10 @@
         {
           "label": "PR HAIS #15 · Trading 212 DEMO solo lectura",
           "url": "https://github.com/hypenosys/HAIS/pull/15"
+        },
+        {
+          "label": "CI HAIS develop 2026-11-05 · success",
+          "url": "https://github.com/hypenosys/HAIS/actions/runs/42099700793"
         }
       ],
       "comments": [
@@ -3759,6 +3772,11 @@
           "author_login": "HAIS review",
           "timestamp": "2026-11-05T08:08:46Z",
           "body": "2026-11-05: HAIS develop aa20e487 (PR #15 Trading 212 DEMO solo lectura); CI 41805403690 success. La conexión demo no equivale a upstream CoinGecko/FRED verificado desde staging. Mantener In Review; sin órdenes ni LIVE."
+        },
+        {
+          "author_login": "HAIS review",
+          "timestamp": "2026-11-06T08:22:21Z",
+          "body": "2026-11-06: HAIS develop cf705898 (auditoría idempotente PAPER, PR #23); CI success 42099700793. El CI no prueba conectividad de CoinGecko/FRED desde staging. Sin cambios de alcance ni estado."
         }
       ],
       "change_log": [
@@ -3969,6 +3987,10 @@
         {
           "label": "Deploy dev web · 2026-11-05",
           "url": "https://github.com/hypenosys/hypenosys.github.io/actions/runs/41986197053"
+        },
+        {
+          "label": "Dev deploy develop 2026-11-05 20:35 UTC · success",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/actions/runs/42104738898"
         }
       ],
       "comments": [
@@ -3996,6 +4018,11 @@
           "author_login": "HAIS review",
           "timestamp": "2026-11-05T08:08:46Z",
           "body": "2026-11-05: desplegado frontend develop 51480805 (Actions 41986197053 success); peticiones HTTP a /hais/, /hais/estado/ y /api/hais/v1/market/crypto no pudieron resolver DNS desde el entorno de revisión. No afirmar gateway activo ni caída pública; pendientes auth, CORS, rate limit y smoke HTTPS en runner con acceso. Mantener Pending."
+        },
+        {
+          "author_login": "HAIS review",
+          "timestamp": "2026-11-06T08:22:21Z",
+          "body": "2026-11-06: dev Actions success 42104738898, pero consultas /hais/, /hais/estado/ y /api/hais/v1/market/crypto no accesibles desde herramienta externa; no se ha obtenido HTTP, auth ni datos del gateway. No inferir caída ni disponibilidad. Pending."
         }
       ],
       "change_log": [
@@ -4109,6 +4136,18 @@
         {
           "label": "Deploy dev web · 2026-11-05",
           "url": "https://github.com/hypenosys/hypenosys.github.io/actions/runs/41986197053"
+        },
+        {
+          "label": "PR #462 · prueba de gateway cripto caducado (pendiente CI)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/pull/462"
+        },
+        {
+          "label": "CI HAIS develop 2026-11-05",
+          "url": "https://github.com/hypenosys/HAIS/actions/runs/42099700793"
+        },
+        {
+          "label": "Deploy web develop 2026-11-05",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/actions/runs/42104738898"
         }
       ],
       "comments": [
@@ -4136,6 +4175,11 @@
           "author_login": "HAIS review",
           "timestamp": "2026-11-05T08:08:46Z",
           "body": "2026-11-05: verificado en FRED (fuente primaria) que DGS2=4,61 % y DGS10=4,95 %, observación 2026-11-03, publicación 2026-11-04 15:16 CST; próxima publicación indicada 2026-11-05. Son datos FRED, NO lecturas del gateway HAIS. Backend develop aa20e487 CI success 41805403690; web develop 51480805 deploy success 41986197053 (2026-11-05). Intento HTTP de /hais/, /hais/estado/ y /api/hais/v1/market/crypto: DNS no resolvió desde este entorno, por lo que no hay confirmación de HTTP público ni de caída. Sin frescura comprobada de índices S&P500/NASDAQ/CSI300/IBEX35, bonos TVC UE/CN, oro/plata/WTI/Brent o cripto BTC/ETH/SOL/APE. SLIs de disponibilidad/429, gateway y licencias siguen pendientes; sin cambios de estado, porcentaje o subtareas."
+        },
+        {
+          "author_login": "HAIS review",
+          "timestamp": "2026-11-06T08:22:21Z",
+          "body": "2026-11-06: PR #462 incorpora prueba offline de cotizaciones cripto caducadas a través de gateway HAIS (sin consultar upstream ni inventar datos); CI de esta PR aún no verificado, no marcar subtarea adicional. FRED fuente oficial: DGS2 4,58% y DGS10 4,90%, observación 2026-11-04, publicación 2026-11-05 15:16 CST, próxima 2026-11-06; no es lectura del gateway. CI backend develop cf705898 success 42099700793, deploy web develop 9f8ec75 success 42104738898. Sin HTTP público verificable, ni frescura de índices S&P500/NASDAQ/CSI300/IBEX35, bonos TVC UE/CN, oro/plata/WTI/Brent o cripto BTC/ETH/SOL/APE. Mantener PAPER, Working 30%, sin cierres."
         }
       ],
       "change_log": [],
@@ -4628,8 +4672,13 @@
       "assignee_proposed": "human"
     }
   ],
-  "last_updated_by": "ChatGPT",
+  "last_updated_by": "HAIS review 2026-11-06",
   "_audit_log": [
+    {
+      "action": "HAIS daily review 2026-11-06: PR #462 offline stale gateway test; current CI/deploy/FRED evidence; no task closure",
+      "user": "HAIS review",
+      "timestamp": "2026-11-06T08:22:21Z"
+    },
     {
       "action": "chore: actualizar tarea 900018",
       "user": "haopengwang123",

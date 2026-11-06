@@ -143,3 +143,25 @@ test('future FRED observation is rejected without fabricated fallback', async ({
   await expect(page.locator('#treasury-body')).toContainText('Sin lectura FRED disponible');
   await expect(page.locator('#treasury-body')).not.toContainText('99.900');
 });
+
+test('stale HAIS gateway crypto is not shown as current even with valid attribution', async ({ page }) => {
+  const observed_at = new Date(Date.now() - 86400000).toISOString();
+  const quotes = [
+    ['BTC', 'Bitcoin'], ['ETH', 'Ethereum'],
+    ['SOL', 'Solana'], ['APE', 'ApeCoin']
+  ].map(([symbol, name]) => ({
+    symbol, name, value: 98765.4321, currency: 'USD',
+    change_24h_pct: 1.5, observed_at, source: 'CoinGecko',
+    kind: 'provider-price'
+  }));
+  await page.route('**/api/hais/v1/market/crypto', route => route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({ mode: 'OBSERVE', source: 'CoinGecko', quotes })
+  }));
+  // No live upstream in CI: the stale gateway must never become a verified quote.
+  await page.route('https://api.coingecko.com/**', route => route.fulfill({ status: 429, body: 'Rate limit' }));
+  await page.goto(base);
+  await expect(page.locator('#crypto-status')).toContainText('Cotización caducada');
+  await expect(page.locator('#crypto-body')).toContainText('Datos no disponibles');
+  await expect(page.locator('#crypto-body')).not.toContainText('98.765');
+});
