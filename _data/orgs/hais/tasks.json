@@ -1643,7 +1643,7 @@
       "descripcion": "Probar Cognito desde Axlfc/connect-core en sandbox de solo lectura sobre HAIS, con red/FS limitados, timeout, cuota y sin acceso a claves; comparar con Jules usando el mismo ticket.",
       "tema_principal": "HAIS-001 / quality",
       "prioridad": "High",
-      "estado": "Pending",
+      "estado": "BLOCKED",
       "completitud": 0,
       "task_type": "test",
       "resuelto_por": "",
@@ -1718,12 +1718,24 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-05T20:35:01.684Z",
           "body": "[CODEX · WINDOWS · HAIS-019 · TIMEOUT] Ensayo manual de terminación forzada superado en Alpine desechable: docker top identificó docker-init (PID 809), shell (PID 822) y sleep 300 hijo (PID 823); docker rm -f eliminó el contenedor y posterior docker inspect confirmó su ausencia (CONTAINER_TIMEOUT_CLEANUP_OK). Sin uso del Cognito Worker real. Próximo control: supervisor automático con timeout efectivo + limpieza comprobable, imagen Cognito aislada, pruebas ASGI sintéticas, ejecución real autorizada y comparación Jules. Estado BLOCKED conservado."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T16:17:56.557Z",
+          "body": "[HAIS-019 · CODEX WINDOWS · COMMIT LOCAL 8a2ef99 · AVANCE REPORTADO 2026-11-06] Codex informa cinco pruebas PASS (no reejecutadas independientemente en esta actualización): supervisor con timeout automático; proceso hijo sleep 300 que ignora TERM + eliminación del contenedor; imagen desechable Cognito Worker; ASGI con secretos sintéticos y mock; regresión HAIS 240 tests PASS, 2 avisos. Árbol local limpio y commits ecebcef, 31bc615 y 8a2ef99 conservados. La rama remota feature/hais-019 sigue en cf7058981d8bdc3a897e11355036c1f3303cab0d; cambios locales SIN publicar y SIN PR. Pendiente para aceptación: validar protocolo/limitaciones del proveedor real, pruebas de agotamiento recursos, ejecución real aislada y comparación equivalente con Jules. No hubo merge ni escritura en contenedores existentes; mock != ejecución real. Mantener BLOCKED y completitud=0."
         }
       ],
       "change_log": [
         {
           "author_login": "ChatGPT",
           "timestamp": "2026-11-05T20:10:33.460Z",
+          "field": "estado",
+          "old_value": "Pending",
+          "new_value": "BLOCKED"
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T16:17:56.557Z",
           "field": "estado",
           "old_value": "Pending",
           "new_value": "BLOCKED"
@@ -1750,8 +1762,8 @@
       "blocks": [],
       "jules_session": null,
       "assignee_proposed": "cognito",
-      "updated_at": "2026-11-05T20:35:01.684Z",
-      "blocked_reason": "Terminación forzada de contenedor Alpine e hijo verificada manualmente. Pendiente: supervisor automático de timeout, imagen y ejecución del Cognito Worker real, tests HAIS y comparación con Jules."
+      "updated_at": "2026-11-06T16:17:56.557Z",
+      "blocked_reason": "Preflight, supervisor con timeout, imagen worker, ASGI mock y HAIS 240 tests reportados PASS por Codex; faltan proveedor real, agotamiento de recursos y comparación equivalente Jules. Evidencias en commit local 8a2ef99, aún sin publicar."
     },
     {
       "id": 900020,
@@ -4672,7 +4684,7 @@
       "assignee_proposed": "human"
     }
   ],
-  "last_updated_by": "Sistema",
+  "last_updated_by": "ChatGPT",
   "_audit_log": [
     {
       "action": "chore: actualizar estado tarea #900019 → Pending",
@@ -5201,5 +5213,5 @@
       ]
     }
   ],
-  "last_updated": "2026-11-06T15:45:41.898Z"
+  "last_updated": "2026-11-06T16:17:56.557Z"
 }
