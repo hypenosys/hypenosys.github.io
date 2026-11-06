@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-11-06T21:38:00.000Z",
+  "last_updated": "2026-11-06T21:43:56.000Z",
   "organizationId": "hypenosys",
   "tasks": [
     {
@@ -5097,6 +5097,10 @@
         {
           "label": "Runbook validación premerge #108",
           "url": "https://github.com/Axlfc/tc/blob/fix/tc-108-sync-audit-matrix-security-20261106/docs/TC108_PREMERGE_VALIDATION.md"
+        },
+        {
+          "label": "Merge TC PR #851 → develop (no auto deploy)",
+          "url": "https://github.com/Axlfc/tc/commit/29f02d5843733731ada0a6ff9dbf3ea58bac8cf5"
         }
       ],
       "subtasks": [
@@ -5164,6 +5168,11 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-06T21:38:00.000Z",
           "body": "[TC108 PR PREMERGE HTTP 2026-11-06] PR #851 probada sin merge mediante GH Actions #42298143878: Next.js real en runner desechable con claves aleatorias y proyectos sintéticos separados. Checks HTTP exitosos: Alice/Bob/Eve aislamiento de proyectos e historial, petición de membresía denegada, acceso anónimo/global denegado, salas DM por ACL, ticket SSE ligado a sala y autor de mensajes verificado por servidor. No reemplaza E2E visual ni staging Matrix/broker ni auditoría transaccional; #108 sigue Working y #851 Draft. Guía en docs/TC108_PREMERGE_VALIDATION.md."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T21:43:56.000Z",
+          "body": "[TC108 MERGED 2026-11-06] PR #851 merged mediante squash al develop de Axlfc/tc, commit 29f02d5843733731ada0a6ff9dbf3ea58bac8cf5. Gates específicos (Vitest + HTTP 2 usuarios en runner aislado) pasan al HEAD premerge. Merge usa [skip ci] para evitar el workflow de despliegue automático a dev.tc.hypenosys.com; NO está desplegado. CI general/internacionalización/escaneo de dependencias siguen fallando también en baseline; TypeScript con errores preexistentes. Pendientes: staging con permisos reales, revisiones Matrix y auditoría transaccional/ledger #110; no marcar tarea terminada."
         }
       ],
       "images": [],
@@ -5761,5 +5770,5 @@
       "timestamp": "2026-09-13T06:26:21.846Z"
     }
   ],
-  "last_updated_by": "TC108 premerge HTTP validation"
+  "last_updated_by": "TC108 squash merge into develop"
 }
