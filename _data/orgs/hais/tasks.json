@@ -1736,6 +1736,11 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-06T17:03:15.494Z",
           "body": "[HAIS-019 · AUDITORÍA DE ALCANCE · 2026-11-06] Diferenciar HAIS (no requiere HMAC) de Cognito Worker (worker_app/auth.py implementa HMAC-SHA256; worker_app/main.py usa COGNITO_WORKER_SECRETS). No crear HAIS_HMAC_KEY_FILE. Candidato offline: tests/test_risk.py; export explícito saneado, sin red, límites ya comprobados, recolección de tmpfs antes de cleanup. Pin sugerido para auditar connect-core: b5f0da28f2c72dd5750302c88e63a8e654afe819. Confirmar protocolo/ejecución real offline antes de invocar proveedor SubprocessCodexProvider; mock no es smoke real. Los informes/commits locales no están publicados en rama GitHub; distinguir los clones HAIS (master con hypenosys-test/ sin seguimiento) y HAIS-019 (feature). Estado Pending y autorización sandbox_only se mantienen, pero no equivalen a preflight técnico completado ni autoriza merge. #900003 sigue BLOCKED."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T17:06:43.804Z",
+          "body": "[HAIS-019 · REVISIÓN DE PROVEEDOR REAL · 2026-11-06] Resultado comunicado desde el clon local HAIS-019: SubprocessCodexProvider del commit fijado connect-core b5f0da28f2c72dd5750302c88e63a8e654afe819 está INCOMPLETO: execute_task no transmite requirements/ticket al App Server y carece de timeout y limpieza explícitos; contrastado en worker_app/codex.py. NO ejecutar proveedor real aún ni sustituirlo por mock y declararlo equivalente. Export allowlist local scripts/hais019/export_list.txt redactado pero no materializado ni escaneado con gitleaks/trufflehog; pytest de tests/test_risk.py sin ejecutar (pytest no instalado en host); no ejecución Jules equivalente; sin contenedores nuevos. Prioridad: arreglar/validar el contrato del proveedor en rama aislada de connect-core; export + escaneo completos; ejecutar pytest en entorno efímero con dependencias prefijadas; comparar Jules solo si observable. La autorización sandbox_only del Dashboard se conserva y NO implica que las barreras del arnés estén verificadas para ejecución real; master/develop no protegidas y #900003 sigue BLOCKED."
         }
       ],
       "change_log": [
@@ -1768,7 +1773,7 @@
           "new_value": "Pending"
         }
       ],
-      "comentario": "Plan experimental: ticket PAPER offline tests/test_risk.py; Cognito Worker autenticado mediante HMAC sintético solo si se invoca su API. Rama master del clon primario y carpeta hypenosys-test/ no deben modificarse. Ejecución real sujeta a preflight y protocolo viable; Jules N/D si no observable.",
+      "comentario": "Autorizada planificación y preflight sandbox; ejecución real del proveedor BLOQUEADA por protocolo incompleto (no transmite ticket ni asegura timeout/cleanup). Export y gitleaks pendientes; pytest y Jules N/D. No merge.",
       "estimated_hours": 10,
       "story_points": 5,
       "milestone": "M3 — Calidad y trazabilidad",
@@ -1789,7 +1794,7 @@
       "blocks": [],
       "jules_session": null,
       "assignee_proposed": "cognito",
-      "updated_at": "2026-11-06T17:03:15.494Z",
+      "updated_at": "2026-11-06T17:06:43.804Z",
       "blocked_reason": null,
       "execution_authorization": {
         "mode": "sandbox_only",
@@ -5270,5 +5275,5 @@
       ]
     }
   ],
-  "last_updated": "2026-11-06T17:03:15.494Z"
+  "last_updated": "2026-11-06T17:06:43.804Z"
 }
