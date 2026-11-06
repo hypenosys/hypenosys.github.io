@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 test.describe('The Machine GitHub issue source', () => {
-  test('projects Issues as read-only dashboard tasks and excludes pull requests', async ({ page }) => {
+  test('projects checked issue work items as separate read-only dashboard tasks', async ({ page }) => {
     const script = fs.readFileSync(path.resolve(__dirname, '../assets/javascript/github-api.js'), 'utf8');
 
     await page.addInitScript(() => {
@@ -28,7 +28,7 @@ test.describe('The Machine GitHub issue source', () => {
         {
           number: 34,
           title: 'Evidence review',
-          body: '- [x] Reproduce manifest\n- [ ] Independent review\n<script>alert(1)</script>',
+          body: '- [x] **REF-01 — Reproduce manifest**\n- [ ] **GOV-01 — Ratification review <script>alert(1)</script>**\n- [x] **SEC-01 — Coverage review**\n- [ ] **CLOSE-01 — Independent review**',
           state: 'open',
           labels: [{ name: 'priority: high' }],
           assignees: [{ login: 'Axlfc' }],
@@ -62,21 +62,17 @@ test.describe('The Machine GitHub issue source', () => {
     });
     expect(result.readOnly).toBe(true);
     expect(result.content.schema_version).toBe('1.2.0');
-    expect(result.content.tasks).toHaveLength(1);
-
-    const task = result.content.tasks[0];
-    expect(task.id).toBe(34);
-    expect(task.source).toMatchObject({
-      provider: 'github-issues',
-      repository: 'hypenosys/the_machine',
-      issue_number: 34,
-      read_only: true
-    });
-    expect(task.completitud).toBe(0.5);
-    expect(task.descripcion).not.toContain('<script>');
+    expect(result.content.tasks).toHaveLength(4);
+    expect(result.content.tasks.map(task => task.id)).toEqual([
+      '34-REF-01', '34-GOV-01', '34-SEC-01', '34-CLOSE-01'
+    ]);
+    expect(result.content.tasks.map(task => task.estado)).toEqual([
+      'OK', 'Pending', 'OK', 'Pending'
+    ]);
+    expect(result.content.tasks[1].descripcion).not.toContain('<script>');
 
     const writeError = await page.evaluate(async () => {
-      return window.githubApi.updateTask(34, { estado: 'OK' })
+      return window.githubApi.updateTask('34-GOV-01', { estado: 'OK' })
         .then(() => 'allowed')
         .catch(error => error.message);
     });
