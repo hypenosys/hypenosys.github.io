@@ -38,17 +38,27 @@
       "createdBy": "haopengwang123",
       "createdAt": "2026-11-06T19:43:42.479Z",
       "isDefault": false,
-      "isSharded": false,
+      "isSharded": true,
       "members": [
         {
           "handle": "haopengwang123",
           "teams": [],
           "roles": []
         }
-      ]
+      ],
+      "taskSource": {
+        "kind": "github-issues",
+        "repository": "hypenosys/the_machine",
+        "readOnly": true
+      }
     }
   ],
   "_audit_log": [
+    {
+      "action": "feat: registrar The Machine como workspace sincronizado desde GitHub Issues",
+      "user": "Codex",
+      "timestamp": "2026-11-06T20:06:01.000Z"
+    },
     {
       "action": "feat: nueva organización The Machine añadida",
       "user": "haopengwang123",
