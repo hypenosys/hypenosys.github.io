@@ -537,19 +537,25 @@ async function refreshDashboardData() {
     currentProfiles = newProfiles;
     loadWorkspaceMembers();
 
-    // Persist to cache
-    localStorage.setItem(`hy_cache_tasks_${ws}`, JSON.stringify(currentTasks));
-    localStorage.setItem(`hy_cache_archive_${ws}`, JSON.stringify(archivedTasks));
-    localStorage.setItem(`hy_cache_stats_${ws}`, JSON.stringify(currentStats));
-    localStorage.setItem(`hy_cache_budget_${ws}`, JSON.stringify(currentBudget));
-    localStorage.setItem(`hy_cache_profiles_${ws}`, JSON.stringify(currentProfiles));
+    // Cache is an optimization only. A full localStorage must never abort
+    // remote GitHub sync, suppress the Kanban render or erase user data.
+    const cacheResult = window.HypenosysDashboardCache?.persist(ws, {
+        tasks: currentTasks,
+        archive: archivedTasks,
+        stats: currentStats,
+        budget: currentBudget,
+        profiles: currentProfiles
+    }) || { limited: true };
+    if (cacheResult.limited) {
+        console.warn('[DASHBOARD] Synced from GitHub; local cache is unavailable or full.');
+    }
 
     // Stats are scoped in memory. Do not write tenant metrics to global stats.
-
     renderDashboard();
 
     const tsEl = document.getElementById('last-sync-timestamp');
-    if (tsEl) tsEl.textContent = `Última sincronización: ${new Date().toLocaleTimeString('es-ES')}`;
+    if (tsEl) tsEl.textContent = `Última sincronización: ${new Date().toLocaleTimeString('es-ES')}` +
+        (cacheResult.limited ? ' · sin caché local' : '');
 
   } catch (err) {
     if (window.isUnloading) {

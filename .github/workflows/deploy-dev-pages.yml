@@ -47,6 +47,9 @@ jobs:
           node tests/test_jules_task_supervisor.js
           node tests/test_jules_pr_sync.js
           node tests/test_jules_pr_automerge.js
+          node tests/test_dashboard_cache_quota.js
+          node --check assets/javascript/dashboard-cache.js
+          node --check assets/javascript/dashboard-data.js
           node tests/test_neural_panel_workspace.js
           node tests/test_task_orchestrator.js
           node --check assets/javascript/hypenosys-task-orchestrator.js

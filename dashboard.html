@@ -1076,8 +1076,9 @@ layout: null
     <script src="{{ "/assets/javascript/ai-config.js" | relative_url }}"></script>
     <script src="{{ "/assets/javascript/repo-aliases.js" | relative_url }}"></script>
 
-    <!-- Data & Orchestration -->
-    <script src="{{ "/assets/javascript/dashboard-data.js" | relative_url }}"></script>
+    <!-- Data & Orchestration: cache is optional and must never block GitHub sync -->
+    <script src="{{ "/assets/javascript/dashboard-cache.js" | relative_url }}?v=20261106-quota-v1"></script>
+    <script src="{{ "/assets/javascript/dashboard-data.js" | relative_url }}?v=20261106-quota-v1"></script>
 
     <!-- Dashboard Modules (UI & Logic) -->
     <script src="{{ "/assets/javascript/task-engine.js" | relative_url }}"></script>
