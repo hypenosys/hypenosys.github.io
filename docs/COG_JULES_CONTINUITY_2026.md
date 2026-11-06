@@ -1,0 +1,91 @@
+# Continuidad del flujo de agentes — Jules → Cog / Cognito y gateway de escritura
+
+**Fecha:** 2026-11-06. **Estado:** planificación y migración urgente, NO ejecución completada. **Due date operacional:** antes del 2026-11-11. **Cierre Jules:** 2026-12-31.
+
+## Fuente primaria / fechas confirmadas
+
+Google anunció el 2026-10-29 que Jules pasa a **solo lectura después del 2026-11-11**, con cierre definitivo 2026-12-31. Hay que terminar/exportar el contenido antes del límite operativo. Documentación oficial: https://jules.google/docs/changelog/2026-10-29
+
+Google expone exportación de settings, env vars, scheduled tasks, repos conectados, memories, prompts, planes, logs, sesiones y diffs; el repositorio/branches/PR publicados permanecen en GitHub. La exportación incluye valores de variables de entorno: **guardar cifrada y fuera de repositorios e índices RAG**. Solicitar al propietario `jules login` interactivamente; jamás capturar tokens o inventar conexiones. Revisar los datos y redactarlos antes de ingerirlos en Cog.
+
+## Estado real observado en repos (2026-11-06)
+
+- `hypenosys/cog` usa rama por defecto **master**, **no** develop. `cog.ps1` incluye un cliente interactivo de Jules (`cog jules sources|sessions`, clave pedida por consola), chat Cognito, comandos RAG `index/search/ask`, backend local predeterminado `http://localhost:8000`. `README-COG-RAG.md` declara prototipo, no probado en máquina del usuario, Qdrant/Ollama y RAG de HAIS limitado a master.
+- `hypenosys/hypenosys.github.io` en `develop` tiene `assets/javascript/jules-api.js` con URL configurable por UI, `jules-claude-bridge.js`, `jules-pr-sync.js`, `hypenosys-task-orchestrator.js` y `github-api.js`. Este último lee `gh_access_token` del browser para escrituras a GitHub. La UI no debe dar por exitoso el trabajo cuando se pierde acceso.
+- Un endpoint **propio** puede reemplazar el transporte del agente y de las escrituras, pero **NO** revive los servicios de Google Jules después de su cierre. Los endpoints deben ejecutar un motor alternativo, p. ej. Cog + runner aislado + GitHub App.
+- `hypenosys/HAIS` tiene la tarea #900019 de sandbox Cognito: reutilizar sus resultados, no duplicar la prueba segura.
+- El diseño de eventos y tareas del Ecosystem 2.0 está en `docs/ECOSYSTEM_2_0_ARCHITECTURE.md` y backlog #88–#99. Migration paths deben cumplir esos contratos cuando estén aprobados.
+
+## Fases con deadline
+
+### P0/A — Rescate histórico (hasta 2026-11-10)
+
+1. Inventariar sesiones activas en Hypenosys y Jules con correlación `taskId/orgId/repo/sessionId`; no confiar únicamente en la caché del browser.
+2. Terminar, verificar o cancelar con criterio sesiones incompletas antes de límite; no abrir nuevas sesiones cuando no puedan completarse.
+3. Propietario autenticado exporta Jules **localmente** siguiendo guía oficial (CLI y export prompt); guardar la copia fuera del repositorio, cifrada, y registrar hashes, recuentos y ubicación en un manifiesto **sin secretos**.
+4. Separar de la exportación credenciales y variables de entorno, nunca indexar el archivo de secretos ni volcar logs en tareas/PR públicos.
+5. Guardar historial de sesiones, planes, actividades, patches y referencias a PR en archive privado ACL-scoped; marcar legibles en UI aun si Jules API devuelve read-only/404.
+
+### P0/B — Desacoplar el motor (antes del 2026-11-11)
+
+Crear interfaz `CodingAgentProvider` neutral y usar backend seleccionado por policy, no por nombre de pantalla:
+
+```ts
+type ProviderId = 'jules-legacy' | 'cog';
+interface CodingAgentProvider {
+  start(input: { taskRef: string; repo: string; branch: string; prompt: string; idempotencyKey: string }): Promise<{ executionId: string }>;
+  getExecution(id: string): Promise<AgentExecution>;
+  listEvents(id: string, cursor?: string): Promise<AgentEvent[]>;
+  submitFeedback(id: string, input: { feedback: string; approvalRef?: string }): Promise<void>;
+  cancel(id: string): Promise<void>;
+  getCapabilities(): Promise<{ writable: boolean; supportsApproval: boolean; supportsGitPR: boolean }>;
+}
+```
+
+- Jules legacy: **read-only histórica** después del corte; sin prometer `start/sendMessage/approvePlan` aun si cache local muestra botones.
+- Cog: primero implementar backend server-side de ejecución asíncrona, sesión, output, tests y creación PR; **no** equiparar el comando local `cog jules sessions` con runner de código.
+- UI Neural/Jules Panel: proveedor y estado visibles; consola conserva historial, labels «Jules (archivo)» vs «Cog (activo)». No reutilizar session IDs entre proveedores; usar `provider:executionId`.
+- Mantener el mismo ciclo `TaskFlow/ApprovalCenter`: task → plan → execute → test → PR → checks → review/merge → task done.
+- Fail closed cuando `capabilities.writable=false`; no hacer fallback de escritura silencioso a otro proveedor ni abrir trabajos duplicados.
+
+### P1 — Cog execution runner / HAIS sandbox
+
+Servicio aislado para operar sobre una **copia allowlist**, nunca un bind mount del repo real; acceso GitHub vía token efímero y scope mínimo; timeout, CPU/RAM/network egress/secret protection. Modelo y runner no heredan PATs del usuario; enlazar evidencia y diff al TaskEnvelope. Controlar el merge con Approval Center / CI. Respetar el piloto HAIS #900019.
+
+### P1 — Gateway de escritura propio
+
+**No confundir:** `JULES_API_KEY` autentica contra Google Jules y morirá con ese servicio; `gh_access_token` / token GitHub usado para escrituras de tareas es otra credencial. El endpoint resolverá **la segunda necesidad** (y despachará a Cog), sin eludir permisos.
+
+Implementación candidata: TC Next.js server API o Cloudflare Functions / Worker autenticado (la web Jekyll estática sola NO proporciona backend persistente). Elegir tras probar entorno/identidad disponibles.
+
+Endpoints propuestos, **no existentes todavía**:
+
+```text
+POST /api/v1/agent-executions
+GET  /api/v1/agent-executions/:id
+GET  /api/v1/agent-executions/:id/events
+POST /api/v1/agent-executions/:id/feedback
+POST /api/v1/agent-executions/:id/cancel
+POST /api/v1/tasks/:orgId/:id/transition
+POST /api/v1/github/pull-requests
+```
+
+Asegurar auth y sesión usuario server-side, vínculo de organización/proyecto, RBAC/ACL, permisos efectivos `user ∩ project ∩ agent`, GitHub App installation tokens de corta vida, allowlist de repos y operaciones, CSRF/CORS/nonce, idempotency-key, rate limits, límites de gasto, audit trail, secret redaction, revisión de branch protection, CAS/sha en tareas GitHub JSON, webhooks firmados y reconciliación eventual. Para backend-to-backend usar credenciales rotables en secret manager. **No** trasladar la misma API key estática del navegador a una URL con CORS abierto ni dar a cualquier visitante la facultad de crear commits.
+
+### P2 — Cutover y retirada Jules
+
+Prueba con task de desarrollo inofensiva y fixture repo separado, comparando entradas/salidas; gates: sin duplicados, sin secretos, tareas y PR reconciliadas, pendiente de aprobación bien señalado, historial pasado accesible. Feature flags `provider=cog` y `jules=readonly` con rollback de UI sin reabrir sesión de Google. Retirar inputs para Jules API key solo cuando copia e importador estén verificados; no borrar links a sesiones antiguas.
+
+## Criterios de aceptación de continuidad
+
+1. Antes del límite se ha exportado y verificado un inventario de sesiones completas y datos protegidos; nunca hay secretos de Jules en repositorios, Wiki, RAG ni Issue.
+2. El cierre o 401/403/404 de Jules no bloquea creación/edición de tareas del Dashboard ni la UX de Cog; las pantallas muestran un error accionable y estado `read-only` real.
+3. Motor Cog tiene session IDs, trazas, ejecución, tests y resultados auténticos desde runner seguro; no se presenta chat local como sustitución suficiente.
+4. Escrituras se autorizan en servidor mediante identidades verificables, mínimo privilegio, auditoría e idempotencia; se puede revocar la credencial sin perder histórico.
+5. CI/E2E valida read-only Jules, alternancia, tareas cross-org, PR y merge autorizados, fallos, replay y recuperación. Sin merge automático por simple éxito de respuesta del modelo.
+
+## Dependencias y priorización
+
+La ventana Jules obliga a **no** bloquear el backup y el desacoplamiento por toda la arquitectura del Ecosystem 2.0. Los contratos de #88 se pueden reutilizar, pero P0/A y P0/B se ejecutan inmediatamente; los trabajos de Cog runtime y gateway pueden continuar después del corte. Después enlazar Task Flow (#91), Agent Studio (#93), Approval Center (#92), Sandbox Lab (#96) y TC bridge (#98).
+
+**Importante:** este documento es un plan. No supone que el export se haya realizado ni que Cog tenga ya endpoints operativos.
