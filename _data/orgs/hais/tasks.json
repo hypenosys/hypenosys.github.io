@@ -3648,6 +3648,10 @@
         {
           "label": "Deploy dev develop 2026-11-06 · success",
           "url": "https://github.com/hypenosys/hypenosys.github.io/actions/runs/42299193661"
+        },
+        {
+          "label": "PR #472 · prueba de frescura FRED (fusionada)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/pull/472"
         }
       ],
       "comments": [
@@ -3695,6 +3699,11 @@
           "author_login": "HAIS review",
           "timestamp": "2026-11-07T08:09:33Z",
           "body": "2026-11-07: web develop 0adfab0485f87ae68c9e84c7eae4fe52e9fcfe38, Actions 42299193661 completed/success (2026-11-06). Éxito de publicación, NO smoke HTTPS ni cotizaciones verificadas. Índices S&P 500/NASDAQ/CSI 300/IBEX 35, bonos TVC y commodities siguen solo widgets, frescura no comprobada."
+        },
+        {
+          "author_login": "HAIS review",
+          "timestamp": "2026-11-07T08:13:00Z",
+          "body": "2026-11-07: PR web #472 fusionada a develop con test offline de rechazo de FRED caducado; Playwright 42354351056 success, changelog 42354350990 success. No equivale a comprobación de cotizaciones ni smoke del dominio; In Review."
         }
       ],
       "change_log": [
@@ -4232,12 +4241,24 @@
           "url": "https://github.com/hypenosys/hypenosys.github.io/actions/runs/42104738898"
         },
         {
-          "label": "PR web #472 · prueba de FRED caducado (CI pendiente)",
+          "label": "PR #472 · FRED caducado · fusionada",
           "url": "https://github.com/hypenosys/hypenosys.github.io/pull/472"
         },
         {
           "label": "Deploy dev develop 2026-11-06 · success",
           "url": "https://github.com/hypenosys/hypenosys.github.io/actions/runs/42299193661"
+        },
+        {
+          "label": "CI Playwright PAPER PR #472 · success",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/actions/runs/42354351056"
+        },
+        {
+          "label": "CI changelog PR #472 · success",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/actions/runs/42354350990"
+        },
+        {
+          "label": "Deploy evidencias 2026-11-07 · success",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/actions/runs/42354327213"
         }
       ],
       "comments": [
@@ -4275,6 +4296,11 @@
           "author_login": "HAIS review",
           "timestamp": "2026-11-07T08:09:33Z",
           "body": "2026-11-07: se abrió PR web #472 con test Playwright offline para rechazar observaciones FRED de 14 días en el gateway, sin fallback ficticio; aún sin CI de PR verificado, no cerrar subtareas. Último deploy develop 0adfab0 Actions 42299193661 success. Fuente primaria FRED (no backend HAIS): DGS2=4,46 % y DGS10=4,84 %, observación 2026-11-05, actualizadas 2026-11-06 16:05 CST; próxima publicación 2026-11-09. Sin frescura confirmada de widgets, cripto ni gateway. PAPER sin órdenes."
+        },
+        {
+          "author_login": "HAIS review",
+          "timestamp": "2026-11-07T08:13:00Z",
+          "body": "2026-11-07 actualización verificada: PR web #472 fusionada a develop con squash 4ff5cbd56aa1103d110d95ab0e0caf4a864b88e5. Changelog CI 42354350990 success y Playwright HAIS terminal PAPER 42354351056 success. La nueva prueba offline cubre rechazo de FRED con observación de 14 días, sin rendimientos inventados. Deploy del commit de evidencias 59ef6b3 Actions 42354327213 success; despliegue posterior al merge #472 aún sin comprobar. No es prueba de fuente real ni gateway; mantener Working 30%."
         }
       ],
       "change_log": [],
@@ -4784,6 +4810,11 @@
   ],
   "last_updated_by": "HAIS review",
   "_audit_log": [
+    {
+      "action": "HAIS: PR #472 merged after green Playwright/changelog; record evidence, no state change",
+      "user": "HAIS review",
+      "timestamp": "2026-11-07T08:13:00Z"
+    },
     {
       "action": "HAIS 2026-11-07: actualizar evidencias de CI, deploy, FRED y PR #472 sin cambiar estados ni porcentajes",
       "user": "HAIS review",
@@ -5321,5 +5352,5 @@
       ]
     }
   ],
-  "last_updated": "2026-11-07T08:09:33Z"
+  "last_updated": "2026-11-07T08:13:00Z"
 }
