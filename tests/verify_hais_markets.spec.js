@@ -144,6 +144,26 @@ test('future FRED observation is rejected without fabricated fallback', async ({
   await expect(page.locator('#treasury-body')).not.toContainText('99.900');
 });
 
+test('stale FRED gateway yields are rejected without presenting a fabricated rate', async ({ page }) => {
+  const observation_date = new Date(Date.now() - 14 * 86400000).toISOString().slice(0, 10);
+  await page.route('**/api/hais/v1/market/treasury', route => route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({
+      mode: 'OBSERVE', source: 'FRED',
+      quotes: ['DGS2', 'DGS10'].map(symbol => ({
+        symbol, value: 99.9, unit: 'percent_yield',
+        change_previous_bps: 2, observation_date, source: 'FRED / US Treasury'
+      }))
+    })
+  }));
+  // Offline fixture: no actual provider prices, and no stale yields displayed.
+  await page.route('https://api.coingecko.com/**', route => route.fulfill({ status: 429, body: 'Rate limit' }));
+  await page.goto(base);
+  await expect(page.locator('#treasury-status')).toContainText('Gateway no conectado o fuente no disponible');
+  await expect(page.locator('#treasury-body')).toContainText('Sin lectura FRED disponible');
+  await expect(page.locator('#treasury-body')).not.toContainText('99.900');
+});
+
 test('stale HAIS gateway crypto is not shown as current even with valid attribution', async ({ page }) => {
   const observed_at = new Date(Date.now() - 86400000).toISOString();
   const quotes = [
