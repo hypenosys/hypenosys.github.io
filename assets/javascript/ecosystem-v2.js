@@ -220,9 +220,24 @@
     const c=article('Workspace verificado');row(c,'Organización',workspace);row(c,'Usuario autenticado',user.login);
     row(c,'Miembros en el metadata autorizado',String(meta?.members?.length??'N/D'));
     const m=article('Participación y roles');list(m,(meta?.members||[]).slice(0,75),(m,x)=>row(m,String(x.handle||x),Array.isArray(x.roles)&&x.roles.length?x.roles.join(', '):'Rol no indicado'),'No se pudo verificar la lista de miembros.');
+    if(workspace==='the-machine'){
+      const pilot=article('THE MACHINE · integración TC / GitHub');
+      row(pilot,'Repositorio canónico','hypenosys/the_machine');
+      row(pilot,'Rama principal','master');
+      row(pilot,'Tareas','GitHub Issues · fuente canónica de solo lectura');
+      row(pilot,'Editor / historial TC','Vinculación explícita en TC; sin escritura Git ni ledger unificado');
+      row(pilot,'Forgejo','Espejo pendiente de verificación');
+      para(pilot,'Fase 0: abre un proyecto TC existente, verifica los miembros aceptados y confirma la vinculación desde el panel de repositorio Git. No se crea otro proyecto ni se duplican tareas. Se necesita iniciar sesión en TC por separado.');
+      const links=el('div','eco-actions');
+      links.append(htmlLink('https://dev.tc.hypenosys.com/dashboard/files','Abrir proyectos en TC (dev)'));
+      links.append(htmlLink('https://github.com/hypenosys/the_machine','Explorar repositorio GitHub'));
+      links.append(htmlLink('https://github.com/hypenosys/the_machine/issues','Consultar Issues originales'));
+      pilot.append(links);
+      para(pilot,'Estado de TC en vivo: no consultado desde este panel. Los permisos y el vínculo se verifican en el servidor TC antes de mostrar sus datos.');
+    }
     const n=article('TC Projects');
     para(n,'Los proyectos TC se consultan desde /api/projects en TC con una sesión autorizada. No se importan automáticamente ni se concede acceso al vincularlos.');
-    n.append(htmlLink('https://tc.hypenosys.com/dashboard/files','Abrir archivos y proyectos en TC'));
+    n.append(htmlLink('https://dev.tc.hypenosys.com/dashboard/files','Abrir archivos y proyectos en TC (dev)'));
   }
   function renderSandbox(){
     const c=article('Experimentos existentes');
