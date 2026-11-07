@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-11-06T21:43:56.000Z",
+  "last_updated": "2026-11-07T11:06:30.000Z",
   "organizationId": "hypenosys",
   "tasks": [
     {
@@ -3589,6 +3589,10 @@
         {
           "label": "TC ADR interconexión (PR draft)",
           "url": "https://github.com/Axlfc/tc/pull/849"
+        },
+        {
+          "label": "Piloto THE MACHINE TC/GitHub/Forgejo (ADR draft)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/pull/473"
         }
       ],
       "subtasks": [
@@ -3625,6 +3629,11 @@
         {
           "id": 9507,
           "text": "Incorporar orgUid↔TC ProjectUid, membresías accepted, estado de linking/revocación y auditoría real; depender de broker SSO y ledger TC.",
+          "done": false
+        },
+        {
+          "id": 9508,
+          "text": "PILOTO THE MACHINE: confirmar TC Project.id existente con sus miembros accepted y enlazar explícitamente con organización the-machine y repo hypenosys/the_machine; comenzar read-only y verificar ACL.",
           "done": false
         }
       ],
@@ -3916,6 +3925,10 @@
         {
           "label": "TC ADR interconexión (PR draft)",
           "url": "https://github.com/Axlfc/tc/pull/849"
+        },
+        {
+          "label": "Piloto THE MACHINE TC/GitHub/Forgejo (ADR draft)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/pull/473"
         }
       ],
       "subtasks": [
@@ -3952,6 +3965,11 @@
         {
           "id": 9807,
           "text": "Integración TaskLink: una tarea lógica, adaptador Hyp JSON ↔ TC ProjectStructure, saga para escrituras remotas, CAS e historial TC obligatorio.",
+          "done": false
+        },
+        {
+          "id": 9808,
+          "text": "PILOTO THE MACHINE: proyectar Issues de hypenosys/the_machine (fuente canónica en Hypenosys) en TC Kanban con Issue number/node_id; evitar TC Tasks duplicadas y mapear estados solo con contrato aprobado.",
           "done": false
         }
       ],
@@ -4518,6 +4536,10 @@
         {
           "label": "Repositorio objetivo (base actual)",
           "url": "https://github.com/hypenosys/hypenosys.github.io/tree/develop"
+        },
+        {
+          "label": "Piloto THE MACHINE TC/GitHub/Forgejo (ADR draft)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/pull/473"
         }
       ],
       "subtasks": [
@@ -4549,6 +4571,11 @@
         {
           "id": 10306,
           "text": "Probar ejecución durante desconexión de GitHub, no doble escritura, no filtración de secretos y rollback sin bloqueo de UI.",
+          "done": false
+        },
+        {
+          "id": 10307,
+          "text": "PILOTO THE MACHINE: permitir editor TC git-bound con borrador privado, SHA/CAS, branch/PR contra master, publicación explícita y respuestas pending/409/confirmed con permisos server-side.",
           "done": false
         }
       ],
@@ -4626,6 +4653,10 @@
         {
           "label": "Forgejo mirroring oficial",
           "url": "https://forgejo.org/docs/latest/user/repo-mirror/"
+        },
+        {
+          "label": "Piloto THE MACHINE TC/GitHub/Forgejo (ADR draft)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/pull/473"
         }
       ],
       "subtasks": [
@@ -4657,6 +4688,11 @@
         {
           "id": 10406,
           "text": "Publicar runbook de operaciones sin credenciales, health checks y evidencias reproducibles.",
+          "done": false
+        },
+        {
+          "id": 10407,
+          "text": "PILOTO THE MACHINE: verificar Forgejo en ZimaBoard2 y configurar espejo pull GitHub→Forgejo solo lectura con estado SHA/lag; respaldar Issues, PR, archivos TC y ledger por separado.",
           "done": false
         }
       ],
@@ -5341,6 +5377,10 @@
         {
           "label": "TC PR #849 (draft)",
           "url": "https://github.com/Axlfc/tc/pull/849"
+        },
+        {
+          "label": "Piloto THE MACHINE TC/GitHub/Forgejo (ADR draft)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/pull/473"
         }
       ],
       "subtasks": [
@@ -5372,6 +5412,11 @@
         {
           "id": 11006,
           "text": "E2E fallo base, caída broker, duplicados, replay, edición simultánea y reconstrucción exacta del historial.",
+          "done": false
+        },
+        {
+          "id": 11007,
+          "text": "PILOTO THE MACHINE: registrar edición/archivo/Issue/PR en historial TC append-only con correlationId, actor, comando requested→confirmed|failed, outbox y reconciliación webhook.",
           "done": false
         }
       ],
@@ -5770,5 +5815,5 @@
       "timestamp": "2026-09-13T06:26:21.846Z"
     }
   ],
-  "last_updated_by": "TC108 squash merge into develop"
+  "last_updated_by": "Piloto THE MACHINE TC GitHub Forgejo"
 }
