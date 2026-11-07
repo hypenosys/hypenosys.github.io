@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-11-07T11:17:41.000Z",
+  "last_updated": "2026-11-07T13:00:00.000Z",
   "organizationId": "hypenosys",
   "tasks": [
     {
@@ -3597,6 +3597,10 @@
         {
           "label": "TC THE MACHINE fase 0 read-only binding #852",
           "url": "https://github.com/Axlfc/tc/pull/852"
+        },
+        {
+          "label": "Organization Hub THE MACHINE phase 0 (review)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/pull/474"
         }
       ],
       "subtasks": [
@@ -3660,6 +3664,11 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-07T11:17:41.000Z",
           "body": "[THE MACHINE P0 2026-11-07] PR TC #852: vínculo aprobado por owner entre TC Project.id (real, aún sin identificar en instancia) y repo hypenosys/the_machine master, Issues GitHub canónicas de solo lectura, árbol y preview textual con SHA, journal local enlace/revocación, ACL y suite Vitest. Se corrige auth en hidratación de proyectos TC. No se ha creado copia de Issues, Git commit, ledger ACID, mirror Forgejo ni vínculo real en Oracle; mantener pendiente y revisar CI/deploy."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-07T13:00:00.000Z",
+          "body": "[THE MACHINE PHASE 0 2026-11-07] TC PR #852 merged to develop: binding explícito read-only de proyecto existente con owner accepted, GitHub Issues canónicas y árbol de archivos master, journal revocable. CI focalizada passing; no evidencia de despliegue de #852 en dev.tc. Hypenosys PR #474 añade navegación contextual en Org Hub con enlaces GitHub/TC. NO equivale a ledger durable (#110), gateway write (#103), editor Git ni Forgejo espejo (#104). Estado tarea permanece Pending."
         }
       ],
       "images": [],
@@ -3942,6 +3951,10 @@
         {
           "label": "TC THE MACHINE fase 0 read-only binding #852",
           "url": "https://github.com/Axlfc/tc/pull/852"
+        },
+        {
+          "label": "Organization Hub THE MACHINE phase 0 (review)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/pull/474"
         }
       ],
       "subtasks": [
@@ -4004,6 +4017,11 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-07T11:17:41.000Z",
           "body": "[THE MACHINE P0 2026-11-07] PR TC #852: vínculo aprobado por owner entre TC Project.id (real, aún sin identificar en instancia) y repo hypenosys/the_machine master, Issues GitHub canónicas de solo lectura, árbol y preview textual con SHA, journal local enlace/revocación, ACL y suite Vitest. Se corrige auth en hidratación de proyectos TC. No se ha creado copia de Issues, Git commit, ledger ACID, mirror Forgejo ni vínculo real en Oracle; mantener pendiente y revisar CI/deploy."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-07T13:00:00.000Z",
+          "body": "[THE MACHINE PHASE 0 2026-11-07] TC PR #852 merged to develop: binding explícito read-only de proyecto existente con owner accepted, GitHub Issues canónicas y árbol de archivos master, journal revocable. CI focalizada passing; no evidencia de despliegue de #852 en dev.tc. Hypenosys PR #474 añade navegación contextual en Org Hub con enlaces GitHub/TC. NO equivale a ledger durable (#110), gateway write (#103), editor Git ni Forgejo espejo (#104). Estado tarea permanece Pending."
         }
       ],
       "images": [],
@@ -5851,5 +5869,5 @@
       "timestamp": "2026-09-13T06:26:21.846Z"
     }
   ],
-  "last_updated_by": "THE MACHINE Phase 0 TC project link implementation"
+  "last_updated_by": "THE MACHINE phase-0 read-only bridge"
 }
