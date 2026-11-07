@@ -73,3 +73,21 @@ test('the shared authenticated avatar opens the account menu on desktop and mobi
   await expect(page.locator('#gh-mobile-account-menu')).toBeVisible();
   await expect(page.locator('.gh-mobile-account-name')).toContainText('verified-tester');
 });
+
+test('THE MACHINE Organization Hub shows canonical read-only TC/GitHub links, without fake sync status', async ({ page }) => {
+  await page.route('**/assets/javascript/github-api.js', route => route.fulfill({
+    status: 200, contentType: 'application/javascript',
+    body: fakeRepoApi.replace(
+      "getActiveWorkspace: () => 'hypenosys'",
+      "getActiveWorkspace: () => 'the-machine'"
+    ),
+  }));
+  await page.goto('http://localhost:4000/organizations/hub/');
+  await expect(page.getByText('THE MACHINE · integración TC / GitHub')).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Abrir proyectos en TC (dev)' }))
+    .toHaveAttribute('href', 'https://dev.tc.hypenosys.com/dashboard/files');
+  await expect(page.getByRole('link', { name: 'Consultar Issues originales' }))
+    .toHaveAttribute('href', 'https://github.com/hypenosys/the_machine/issues');
+  await expect(page.getByText('Espejo pendiente de verificación')).toBeVisible();
+  await expect(page.getByText('Estado de TC en vivo: no consultado desde este panel', { exact: false })).toBeVisible();
+});
