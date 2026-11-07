@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-11-07T11:06:30.000Z",
+  "last_updated": "2026-11-07T11:17:41.000Z",
   "organizationId": "hypenosys",
   "tasks": [
     {
@@ -3593,6 +3593,10 @@
         {
           "label": "Piloto THE MACHINE TC/GitHub/Forgejo (ADR draft)",
           "url": "https://github.com/hypenosys/hypenosys.github.io/pull/473"
+        },
+        {
+          "label": "TC THE MACHINE fase 0 read-only binding #852",
+          "url": "https://github.com/Axlfc/tc/pull/852"
         }
       ],
       "subtasks": [
@@ -3651,6 +3655,11 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-06T18:39:52.000Z",
           "body": "Planificación 2026-11-06: especificada, no implementada. Base: develop. No ejecutar ni declarar completada hasta superar criterios de aceptación y PR/CI correspondientes."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-07T11:17:41.000Z",
+          "body": "[THE MACHINE P0 2026-11-07] PR TC #852: vínculo aprobado por owner entre TC Project.id (real, aún sin identificar en instancia) y repo hypenosys/the_machine master, Issues GitHub canónicas de solo lectura, árbol y preview textual con SHA, journal local enlace/revocación, ACL y suite Vitest. Se corrige auth en hidratación de proyectos TC. No se ha creado copia de Issues, Git commit, ledger ACID, mirror Forgejo ni vínculo real en Oracle; mantener pendiente y revisar CI/deploy."
         }
       ],
       "images": [],
@@ -3929,6 +3938,10 @@
         {
           "label": "Piloto THE MACHINE TC/GitHub/Forgejo (ADR draft)",
           "url": "https://github.com/hypenosys/hypenosys.github.io/pull/473"
+        },
+        {
+          "label": "TC THE MACHINE fase 0 read-only binding #852",
+          "url": "https://github.com/Axlfc/tc/pull/852"
         }
       ],
       "subtasks": [
@@ -3986,6 +3999,11 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-06T18:39:52.000Z",
           "body": "Planificación 2026-11-06: especificada, no implementada. Base: develop. No ejecutar ni declarar completada hasta superar criterios de aceptación y PR/CI correspondientes."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-07T11:17:41.000Z",
+          "body": "[THE MACHINE P0 2026-11-07] PR TC #852: vínculo aprobado por owner entre TC Project.id (real, aún sin identificar en instancia) y repo hypenosys/the_machine master, Issues GitHub canónicas de solo lectura, árbol y preview textual con SHA, journal local enlace/revocación, ACL y suite Vitest. Se corrige auth en hidratación de proyectos TC. No se ha creado copia de Issues, Git commit, ledger ACID, mirror Forgejo ni vínculo real en Oracle; mantener pendiente y revisar CI/deploy."
         }
       ],
       "images": [],
@@ -4540,6 +4558,10 @@
         {
           "label": "Piloto THE MACHINE TC/GitHub/Forgejo (ADR draft)",
           "url": "https://github.com/hypenosys/hypenosys.github.io/pull/473"
+        },
+        {
+          "label": "TC THE MACHINE fase 0 read-only binding #852",
+          "url": "https://github.com/Axlfc/tc/pull/852"
         }
       ],
       "subtasks": [
@@ -4589,6 +4611,11 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-06T18:57:04.000Z",
           "body": "Plan registrado 2026-11-06. No ejecutar ni declarar completado sin evidencia verificable; no exponer secretos de Jules, Forgejo o GitHub en documentación/PR."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-07T11:17:41.000Z",
+          "body": "[THE MACHINE P0 2026-11-07] PR TC #852: vínculo aprobado por owner entre TC Project.id (real, aún sin identificar en instancia) y repo hypenosys/the_machine master, Issues GitHub canónicas de solo lectura, árbol y preview textual con SHA, journal local enlace/revocación, ACL y suite Vitest. Se corrige auth en hidratación de proyectos TC. No se ha creado copia de Issues, Git commit, ledger ACID, mirror Forgejo ni vínculo real en Oracle; mantener pendiente y revisar CI/deploy."
         }
       ],
       "images": [],
@@ -5381,6 +5408,10 @@
         {
           "label": "Piloto THE MACHINE TC/GitHub/Forgejo (ADR draft)",
           "url": "https://github.com/hypenosys/hypenosys.github.io/pull/473"
+        },
+        {
+          "label": "TC THE MACHINE fase 0 read-only binding #852",
+          "url": "https://github.com/Axlfc/tc/pull/852"
         }
       ],
       "subtasks": [
@@ -5430,6 +5461,11 @@
           "author_login": "ChatGPT",
           "timestamp": "2026-11-06T19:36:46.000Z",
           "body": "Tarea abierta tras revisión de develop 2026-11-06: el contrato y riesgos están especificados, ninguna ejecución o API unificada se declara terminada. PR documentación TC #849 pendiente de review."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-07T11:17:41.000Z",
+          "body": "[THE MACHINE P0 2026-11-07] PR TC #852: vínculo aprobado por owner entre TC Project.id (real, aún sin identificar en instancia) y repo hypenosys/the_machine master, Issues GitHub canónicas de solo lectura, árbol y preview textual con SHA, journal local enlace/revocación, ACL y suite Vitest. Se corrige auth en hidratación de proyectos TC. No se ha creado copia de Issues, Git commit, ledger ACID, mirror Forgejo ni vínculo real en Oracle; mantener pendiente y revisar CI/deploy."
         }
       ],
       "images": [],
@@ -5815,5 +5851,5 @@
       "timestamp": "2026-09-13T06:26:21.846Z"
     }
   ],
-  "last_updated_by": "Piloto THE MACHINE TC GitHub Forgejo"
+  "last_updated_by": "THE MACHINE Phase 0 TC project link implementation"
 }
