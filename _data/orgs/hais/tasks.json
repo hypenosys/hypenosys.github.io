@@ -3644,6 +3644,10 @@
         {
           "label": "Dev deploy develop 2026-11-05 20:35 UTC · success",
           "url": "https://github.com/hypenosys/hypenosys.github.io/actions/runs/42104738898"
+        },
+        {
+          "label": "Deploy dev develop 2026-11-06 · success",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/actions/runs/42299193661"
         }
       ],
       "comments": [
@@ -3686,6 +3690,11 @@
           "author_login": "HAIS review",
           "timestamp": "2026-11-06T08:22:21Z",
           "body": "2026-11-06: última publicación dev en develop (9f8ec75) con Actions 42104738898 success, 2026-11-05 20:35 UTC. No demuestra acceso HTTP ni cotizaciones; /hais/ no accesible desde la herramienta externa. Sigue In Review."
+        },
+        {
+          "author_login": "HAIS review",
+          "timestamp": "2026-11-07T08:09:33Z",
+          "body": "2026-11-07: web develop 0adfab0485f87ae68c9e84c7eae4fe52e9fcfe38, Actions 42299193661 completed/success (2026-11-06). Éxito de publicación, NO smoke HTTPS ni cotizaciones verificadas. Índices S&P 500/NASDAQ/CSI 300/IBEX 35, bonos TVC y commodities siguen solo widgets, frescura no comprobada."
         }
       ],
       "change_log": [
@@ -3836,6 +3845,11 @@
           "author_login": "HAIS review",
           "timestamp": "2026-11-06T08:22:21Z",
           "body": "2026-11-06: HAIS develop cf705898 (auditoría idempotente PAPER, PR #23); CI success 42099700793. El CI no prueba conectividad de CoinGecko/FRED desde staging. Sin cambios de alcance ni estado."
+        },
+        {
+          "author_login": "HAIS review",
+          "timestamp": "2026-11-07T08:09:33Z",
+          "body": "2026-11-07: backend develop cf7058981d8bdc3a897e11355036c1f3303cab0d, CI 42099700793 completed/success (2026-11-05); sin nuevos commits backend desde revisión anterior. CoinGecko BTC/ETH/SOL/APE y FRED DGS2/DGS10 siguen como lectores de solo observación, sin smoke de staging ni precios verificados."
         }
       ],
       "change_log": [
@@ -4050,6 +4064,10 @@
         {
           "label": "Dev deploy develop 2026-11-05 20:35 UTC · success",
           "url": "https://github.com/hypenosys/hypenosys.github.io/actions/runs/42104738898"
+        },
+        {
+          "label": "Deploy dev develop 2026-11-06 · success (no prueba HTTP)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/actions/runs/42299193661"
         }
       ],
       "comments": [
@@ -4082,6 +4100,11 @@
           "author_login": "HAIS review",
           "timestamp": "2026-11-06T08:22:21Z",
           "body": "2026-11-06: dev Actions success 42104738898, pero consultas /hais/, /hais/estado/ y /api/hais/v1/market/crypto no accesibles desde herramienta externa; no se ha obtenido HTTP, auth ni datos del gateway. No inferir caída ni disponibilidad. Pending."
+        },
+        {
+          "author_login": "HAIS review",
+          "timestamp": "2026-11-07T08:09:33Z",
+          "body": "2026-11-07: intento de abrir https://dev.hypenosys.com/hais/, /hais/estado/ y /api/hais/v1/market/crypto desde herramienta externa: no accesibles (sin código HTTP fiable). Actions de deploy develop 42299193661 success, pero no confirma acceso público, auth ni gateway; mantener Pending."
         }
       ],
       "change_log": [
@@ -4207,6 +4230,14 @@
         {
           "label": "Deploy web develop 2026-11-05",
           "url": "https://github.com/hypenosys/hypenosys.github.io/actions/runs/42104738898"
+        },
+        {
+          "label": "PR web #472 · prueba de FRED caducado (CI pendiente)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/pull/472"
+        },
+        {
+          "label": "Deploy dev develop 2026-11-06 · success",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/actions/runs/42299193661"
         }
       ],
       "comments": [
@@ -4239,6 +4270,11 @@
           "author_login": "HAIS review",
           "timestamp": "2026-11-06T08:22:21Z",
           "body": "2026-11-06: PR #462 incorpora prueba offline de cotizaciones cripto caducadas a través de gateway HAIS (sin consultar upstream ni inventar datos); CI de esta PR aún no verificado, no marcar subtarea adicional. FRED fuente oficial: DGS2 4,58% y DGS10 4,90%, observación 2026-11-04, publicación 2026-11-05 15:16 CST, próxima 2026-11-06; no es lectura del gateway. CI backend develop cf705898 success 42099700793, deploy web develop 9f8ec75 success 42104738898. Sin HTTP público verificable, ni frescura de índices S&P500/NASDAQ/CSI300/IBEX35, bonos TVC UE/CN, oro/plata/WTI/Brent o cripto BTC/ETH/SOL/APE. Mantener PAPER, Working 30%, sin cierres."
+        },
+        {
+          "author_login": "HAIS review",
+          "timestamp": "2026-11-07T08:09:33Z",
+          "body": "2026-11-07: se abrió PR web #472 con test Playwright offline para rechazar observaciones FRED de 14 días en el gateway, sin fallback ficticio; aún sin CI de PR verificado, no cerrar subtareas. Último deploy develop 0adfab0 Actions 42299193661 success. Fuente primaria FRED (no backend HAIS): DGS2=4,46 % y DGS10=4,84 %, observación 2026-11-05, actualizadas 2026-11-06 16:05 CST; próxima publicación 2026-11-09. Sin frescura confirmada de widgets, cripto ni gateway. PAPER sin órdenes."
         }
       ],
       "change_log": [],
@@ -4746,8 +4782,13 @@
       "blocked_reason": "Repositorio privado con master/develop sin protección, checks no obligatorios y rulesets no disponibles (GitHub HTTP 403). Requiere decisión del propietario sobre plan/permisos y verificación de reglas."
     }
   ],
-  "last_updated_by": "Sistema",
+  "last_updated_by": "HAIS review",
   "_audit_log": [
+    {
+      "action": "HAIS 2026-11-07: actualizar evidencias de CI, deploy, FRED y PR #472 sin cambiar estados ni porcentajes",
+      "user": "HAIS review",
+      "timestamp": "2026-11-07T08:09:33Z"
+    },
     {
       "action": "chore: actualizar estado tarea #900003 → OK",
       "user": "haopengwang123",
@@ -5280,5 +5321,5 @@
       ]
     }
   ],
-  "last_updated": "2026-11-06T19:43:16.887Z"
+  "last_updated": "2026-11-07T08:09:33Z"
 }
