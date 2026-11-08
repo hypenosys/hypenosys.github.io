@@ -3830,6 +3830,10 @@
         {
           "label": "PR HAIS #24 · contrato de frescura CoinGecko",
           "url": "https://github.com/hypenosys/HAIS/pull/24"
+        },
+        {
+          "label": "CI backend PR #24 · success",
+          "url": "https://github.com/hypenosys/HAIS/actions/runs/42463927404"
         }
       ],
       "comments": [
@@ -3877,6 +3881,11 @@
           "author_login": "HAIS review",
           "timestamp": "2026-11-08T08:40:00Z",
           "body": "2026-11-08: backend develop cf7058981d8bdc3a897e11355036c1f3303cab0d, CI 42099700793 completed/success (2026-11-05). CoinGecko BTC/ETH/SOL/APE y FRED DGS2/DGS10 son lectores implementados, no cotizaciones de staging verificadas. PR backend #24 añade pruebas offline de cotizaciones cripto caducadas/futuras/inválidas; resultado CI todavía pendiente."
+        },
+        {
+          "author_login": "HAIS review",
+          "timestamp": "2026-11-08T08:42:00Z",
+          "body": "PR backend #24 fusionada en develop con squash 9810e65d95dc30996df62127530ddd81b5caf93d tras CI Actions 42463927404 completed/success. Pruebas offline de fail-closed CoinGecko para BTC caducado, APE futuro, SOL con precio negativo y ETH sin cambio 24h; cada caso exige 503 sin caché. No es smoke de proveedor real; mantener estado/progreso."
         }
       ],
       "change_log": [
@@ -4290,6 +4299,10 @@
         {
           "label": "PR backend #24 · tests de degradación cripto",
           "url": "https://github.com/hypenosys/HAIS/pull/24"
+        },
+        {
+          "label": "CI backend PR #24 · success",
+          "url": "https://github.com/hypenosys/HAIS/actions/runs/42463927404"
         }
       ],
       "comments": [
@@ -4337,6 +4350,11 @@
           "author_login": "HAIS review",
           "timestamp": "2026-11-08T08:40:00Z",
           "body": "2026-11-08: PR backend #24 abierta con prueba offline fail-closed para CoinGecko: BTC antiguo (>3600 s), APE futuro (>120 s), SOL negativo y ETH con cambio 24h ausente; se exige 503 sin quotes ni caché. No afirmar ejecución CI antes de comprobarla. FRED oficial DGS2=4,46 % y DGS10=4,84 %, observación 2026-11-05, publicación 2026-11-06 16:05 CST, próxima 2026-11-09; no es lectura del gateway. No subir progreso ni cerrar sin telemetría y smoke."
+        },
+        {
+          "author_login": "HAIS review",
+          "timestamp": "2026-11-08T08:42:00Z",
+          "body": "PR backend #24 fusionada en develop con squash 9810e65d95dc30996df62127530ddd81b5caf93d tras CI Actions 42463927404 completed/success. Pruebas offline de fail-closed CoinGecko para BTC caducado, APE futuro, SOL con precio negativo y ETH sin cambio 24h; cada caso exige 503 sin caché. No es smoke de proveedor real; mantener estado/progreso."
         }
       ],
       "change_log": [],
@@ -4846,6 +4864,11 @@
   ],
   "last_updated_by": "HAIS review",
   "_audit_log": [
+    {
+      "action": "HAIS 2026-11-08: PR #24 merged after CI success; offline crypto freshness coverage, no task closure",
+      "user": "HAIS review",
+      "timestamp": "2026-11-08T08:42:00Z"
+    },
     {
       "action": "HAIS 2026-11-08: CI/deploy and FRED evidence, PR #24 crypto fail-closed tests pending CI; no state change",
       "user": "HAIS review",
@@ -5393,5 +5416,5 @@
       ]
     }
   ],
-  "last_updated": "2026-11-08T08:40:00Z"
+  "last_updated": "2026-11-08T08:42:00Z"
 }
