@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Changed
+- **HAIS market evidence (2026-11-08)**: Recorded latest verified develop CI and dev deployment, FRED DGS2/DGS10 publication dates, inaccessible public gateway smoke, and pending backend crypto freshness tests in HAIS Kanban. No task closures or LIVE trading.
+
 ### Fixed
 - **Jules Panel chat and Claude supervision**: Preserve the reader's scroll position during polling and streaming, avoid rebuilding unchanged transcripts, and prevent reflected workspace broadcasts. Restore previously authorized Claude supervision after reload while preserving manual pauses, reviewed plan versions, decision limits and session isolation. Save review output to the current conversation after cross-tab refreshes, persist review errors, and display the actual supervision policy and limit.
 
