@@ -3656,6 +3656,10 @@
         {
           "label": "Deploy develop 2026-11-07 · success",
           "url": "https://github.com/hypenosys/hypenosys.github.io/actions/runs/42376252455"
+        },
+        {
+          "label": "Tests Playwright mercados (rama revisión 09-11)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/test/hais-coingecko-browser-failclosed-20261109/tests/verify_hais_markets.spec.js"
         }
       ],
       "comments": [
@@ -3713,6 +3717,11 @@
           "author_login": "HAIS review",
           "timestamp": "2026-11-08T08:40:00Z",
           "body": "2026-11-08: web develop 97c471f27bd61ea7b799dfbbe380423335d02f59, deploy Actions 42376252455 completed/success (2026-11-07). S&P 500/NASDAQ/CSI 300/IBEX 35 y materias primas siguen solo TradingView; no se ha verificado la frescura real de widgets ni acceso HTTPS público."
+        },
+        {
+          "author_login": "HAIS review",
+          "timestamp": "2026-11-09T08:59:28Z",
+          "body": "2026-11-09: se añaden tests Playwright offline para que la tabla CoinGecko no muestre APE con timestamp futuro (+1 h) ni ETH sin variación 24h. No hay precios reales ni verificación HTTPS pública. CI pendiente de comprobar."
         }
       ],
       "change_log": [
@@ -4108,6 +4117,10 @@
         {
           "label": "Deploy dev develop 2026-11-07 · success, sin smoke HTTPS",
           "url": "https://github.com/hypenosys/hypenosys.github.io/actions/runs/42376252455"
+        },
+        {
+          "label": "Deploy dev 08-11 completado",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/actions/runs/42464054582"
         }
       ],
       "comments": [
@@ -4150,6 +4163,11 @@
           "author_login": "HAIS review",
           "timestamp": "2026-11-08T08:40:00Z",
           "body": "2026-11-08: se intentó acceder por HTTPS a /hais/, /hais/estado/ y /api/hais/v1/market/crypto; herramienta externa no devolvió respuesta HTTP verificable. Deploy GitHub Actions 42376252455 success no confirma disponibilidad del dominio, autenticación ni gateway. Mantener Pending."
+        },
+        {
+          "author_login": "HAIS review",
+          "timestamp": "2026-11-09T08:59:28Z",
+          "body": "2026-11-09: despliegue dev del commit f38ce4488e19acbf70fa37794b34ab8bdf8475c4 (08-11) completed/success en Actions 42464054582. No demuestra acceso HTTPS público ni gateway autenticado: /hais/ y /hais/estado/ no devolvieron respuesta HTTP verificable desde herramienta externa. Sin cierre."
         }
       ],
       "change_log": [
@@ -4303,6 +4321,10 @@
         {
           "label": "CI backend PR #24 · success",
           "url": "https://github.com/hypenosys/HAIS/actions/runs/42463927404"
+        },
+        {
+          "label": "CI backend develop 08-11",
+          "url": "https://github.com/hypenosys/HAIS/actions/runs/42463989845"
         }
       ],
       "comments": [
@@ -4355,6 +4377,11 @@
           "author_login": "HAIS review",
           "timestamp": "2026-11-08T08:42:00Z",
           "body": "PR backend #24 fusionada en develop con squash 9810e65d95dc30996df62127530ddd81b5caf93d tras CI Actions 42463927404 completed/success. Pruebas offline de fail-closed CoinGecko para BTC caducado, APE futuro, SOL con precio negativo y ETH sin cambio 24h; cada caso exige 503 sin caché. No es smoke de proveedor real; mantener estado/progreso."
+        },
+        {
+          "author_login": "HAIS review",
+          "timestamp": "2026-11-09T08:59:28Z",
+          "body": "2026-11-09: backend develop 9810e65d95dc30996df62127530ddd81b5caf93d, CI 42463989845 completed/success (08-11). Se añaden dos tests web offline para rechazo fail-closed de cotizaciones CoinGecko futuras e incompletas; sin telemetría SLI ni smoke de upstream, progreso 30% sin cambios."
         }
       ],
       "change_log": [],
@@ -4864,6 +4891,11 @@
   ],
   "last_updated_by": "HAIS review",
   "_audit_log": [
+    {
+      "action": "review(hais): Nov 9 verified develop CI/deploy and browser fail-closed test additions, no real source freshness verified",
+      "user": "HAIS review",
+      "timestamp": "2026-11-09T08:59:28Z"
+    },
     {
       "action": "HAIS 2026-11-08: PR #24 merged after CI success; offline crypto freshness coverage, no task closure",
       "user": "HAIS review",
