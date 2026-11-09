@@ -69,6 +69,37 @@ test('Stale provider quote is rejected instead of shown as current', async ({ pa
   await expect(page.locator('#crypto-body')).toContainText('Datos no disponibles');
 });
 
+
+test('future-dated CoinGecko quote is rejected rather than displayed', async ({ page }) => {
+  const now = Math.floor(Date.now() / 1000);
+  const future = now + 3600;
+  const quotes = Object.fromEntries(['bitcoin', 'ethereum', 'solana', 'apecoin'].map(id => [
+    id, { usd: 98765.43, usd_24h_change: 1.5, last_updated_at: id === 'apecoin' ? future : now }
+  ]));
+  await page.route('https://api.coingecko.com/**', route => route.fulfill({
+    status: 200, contentType: 'application/json', body: JSON.stringify(quotes)
+  }));
+  await page.goto(base);
+  await expect(page.locator('#crypto-status')).toContainText('Cotización caducada');
+  await expect(page.locator('#crypto-body')).toContainText('Datos no disponibles');
+  await expect(page.locator('#crypto-body')).not.toContainText('98.765');
+});
+
+test('incomplete CoinGecko response never becomes a verified price', async ({ page }) => {
+  const now = Math.floor(Date.now() / 1000);
+  const quotes = Object.fromEntries(['bitcoin', 'ethereum', 'solana', 'apecoin'].map(id => [
+    id, { usd: 98765.43, usd_24h_change: 1.5, last_updated_at: now }
+  ]));
+  delete quotes.ethereum.usd_24h_change;
+  await page.route('https://api.coingecko.com/**', route => route.fulfill({
+    status: 200, contentType: 'application/json', body: JSON.stringify(quotes)
+  }));
+  await page.goto(base);
+  await expect(page.locator('#crypto-status')).toContainText('Sin cotización comprobada');
+  await expect(page.locator('#crypto-body')).toContainText('Datos no disponibles');
+  await expect(page.locator('#crypto-body')).not.toContainText('98.765');
+});
+
 test('HAIS gateway accepts only attributed four-coin USD observations (offline fixture)', async ({ page }) => {
   const observed_at = new Date().toISOString();
   const quotes = [
