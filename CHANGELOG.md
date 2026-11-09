@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Added
+- **HAIS CoinGecko fail-closed browser coverage (2026-11-09)**: Playwright offline checks reject future-dated APE and incomplete ETH quotes without displaying invented or unverified prices. Kanban evidence links verified backend CI and dev deploy; HTTPS public gateway and upstream freshness remain unverified. PAPER-only.
+
 ### Changed
 - **HAIS market evidence (2026-11-08)**: Recorded latest verified develop CI and dev deployment, FRED DGS2/DGS10 publication dates, inaccessible public gateway smoke, and pending backend crypto freshness tests in HAIS Kanban. No task closures or LIVE trading.
 
