@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Changed
+- **HAIS revisión 2026-11-10:** PR backend #25 fusionada tras CI verde: pruebas offline de rechazo de FRED DGS10 futuro, caducado e incompleto sin caché parcial. Se registran CI/deploy develop y publicación oficial DGS2 del 06-11 en el Kanban; HTTPS público, gateway y frescura de otras fuentes siguen sin verificar. PAPER-only.
+
+
 ### Added
 - **HAIS CoinGecko fail-closed browser coverage (2026-11-09)**: Playwright offline checks reject future-dated APE and incomplete ETH quotes without displaying invented or unverified prices. Kanban evidence links verified backend CI and dev deploy; HTTPS public gateway and upstream freshness remain unverified. PAPER-only.
 

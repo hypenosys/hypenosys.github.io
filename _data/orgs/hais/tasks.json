@@ -4168,6 +4168,11 @@
           "author_login": "HAIS review",
           "timestamp": "2026-11-09T08:59:28Z",
           "body": "2026-11-09: despliegue dev del commit f38ce4488e19acbf70fa37794b34ab8bdf8475c4 (08-11) completed/success en Actions 42464054582. No demuestra acceso HTTPS público ni gateway autenticado: /hais/ y /hais/estado/ no devolvieron respuesta HTTP verificable desde herramienta externa. Sin cierre."
+        },
+        {
+          "author_login": "HAIS review",
+          "timestamp": "2026-11-10T08:16:56Z",
+          "body": "2026-11-10: dev deploy Actions 42590340876 completed/success para develop c48857a4 (09-11). Intentos HTTPS a /hais/, /hais/estado/ y /api/hais/v1/market/crypto sin respuesta HTTP verificable; no inferir caída, no confirmar auth, CORS ni frescura. Mantener Pending 10%."
         }
       ],
       "change_log": [
@@ -4325,6 +4330,18 @@
         {
           "label": "CI backend develop 08-11",
           "url": "https://github.com/hypenosys/HAIS/actions/runs/42463989845"
+        },
+        {
+          "label": "PR #25 · FRED fail-closed offline",
+          "url": "https://github.com/hypenosys/HAIS/pull/25"
+        },
+        {
+          "label": "Deploy web develop 09-11",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/actions/runs/42590340876"
+        },
+        {
+          "label": "CI FRED fail-closed PR #25 (success)",
+          "url": "https://github.com/hypenosys/HAIS/actions/runs/42781504115"
         }
       ],
       "comments": [
@@ -4382,6 +4399,11 @@
           "author_login": "HAIS review",
           "timestamp": "2026-11-09T08:59:28Z",
           "body": "2026-11-09: backend develop 9810e65d95dc30996df62127530ddd81b5caf93d, CI 42463989845 completed/success (08-11). Se añaden dos tests web offline para rechazo fail-closed de cotizaciones CoinGecko futuras e incompletas; sin telemetría SLI ni smoke de upstream, progreso 30% sin cambios."
+        },
+        {
+          "author_login": "HAIS review",
+          "timestamp": "2026-11-10T08:16:56Z",
+          "body": "2026-11-10: backend develop 9810e65d (CI 42463989845 success, 08-11); web develop c48857a4 (deploy 42590340876 success, 09-11). PR HAIS #25 fusionada en develop (squash b3c60182) tras CI 42781504115 completed/success: tests offline FRED DGS10 futuro/caducado/incompleto frente a DGS2 válido, sin caché ni lecturas parciales. No se marca subtarea nueva ni se incrementa progreso. FRED DGS2 4.51% observado 06-11, publicado 09-11 (fuente oficial, no gateway); DGS10 requiere nueva verificación. HTTPS /hais/, /hais/estado/ y /api/hais/v1/market/crypto sin respuesta verificable desde herramienta externa. Sin evidencia de frescura de índices/commodities/cripto, ni autenticación del gateway. PAPER sin LIVE."
         }
       ],
       "change_log": [],
@@ -4891,6 +4913,11 @@
   ],
   "last_updated_by": "HAIS review",
   "_audit_log": [
+    {
+      "action": "HAIS daily review 2026-11-10: FRED regression PR #25 merged with successful CI; record develop deploy, FRED DGS2 and gateway limitations",
+      "user": "HAIS review",
+      "timestamp": "2026-11-10T08:16:56Z"
+    },
     {
       "action": "review(hais): Nov 9 verified develop CI/deploy and browser fail-closed test additions, no real source freshness verified",
       "user": "HAIS review",
