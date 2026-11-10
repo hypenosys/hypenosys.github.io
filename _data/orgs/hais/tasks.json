@@ -4338,6 +4338,10 @@
         {
           "label": "Deploy web develop 09-11",
           "url": "https://github.com/hypenosys/hypenosys.github.io/actions/runs/42590340876"
+        },
+        {
+          "label": "CI FRED fail-closed PR #25 (success)",
+          "url": "https://github.com/hypenosys/HAIS/actions/runs/42781504115"
         }
       ],
       "comments": [
@@ -4399,7 +4403,7 @@
         {
           "author_login": "HAIS review",
           "timestamp": "2026-11-10T08:16:56Z",
-          "body": "2026-11-10: backend develop 9810e65d (CI 42463989845 success, 08-11); web develop c48857a4 (deploy 42590340876 success, 09-11). PR HAIS #25 añade tests offline de FRED DGS10 futuro/caducado/incompleto frente a DGS2 válido; CI aún pendiente, no se marca subtarea nueva ni se incrementa progreso. FRED DGS2 4.51% observado 06-11, publicado 09-11 (fuente oficial, no gateway); DGS10 requiere nueva verificación. HTTPS /hais/, /hais/estado/ y /api/hais/v1/market/crypto sin respuesta verificable desde herramienta externa. Sin evidencia de frescura de índices/commodities/cripto, ni autenticación del gateway. PAPER sin LIVE."
+          "body": "2026-11-10: backend develop 9810e65d (CI 42463989845 success, 08-11); web develop c48857a4 (deploy 42590340876 success, 09-11). PR HAIS #25 fusionada en develop (squash b3c60182) tras CI 42781504115 completed/success: tests offline FRED DGS10 futuro/caducado/incompleto frente a DGS2 válido, sin caché ni lecturas parciales. No se marca subtarea nueva ni se incrementa progreso. FRED DGS2 4.51% observado 06-11, publicado 09-11 (fuente oficial, no gateway); DGS10 requiere nueva verificación. HTTPS /hais/, /hais/estado/ y /api/hais/v1/market/crypto sin respuesta verificable desde herramienta externa. Sin evidencia de frescura de índices/commodities/cripto, ni autenticación del gateway. PAPER sin LIVE."
         }
       ],
       "change_log": [],
@@ -4910,7 +4914,7 @@
   "last_updated_by": "HAIS review",
   "_audit_log": [
     {
-      "action": "HAIS daily review 2026-11-10: verify develop CI/deploy, log FRED DGS2 publication and pending FRED regression PR #25; keep statuses",
+      "action": "HAIS daily review 2026-11-10: FRED regression PR #25 merged with successful CI; record develop deploy, FRED DGS2 and gateway limitations",
       "user": "HAIS review",
       "timestamp": "2026-11-10T08:16:56Z"
     },
