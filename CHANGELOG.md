@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Added
+- **El Libro de Jules (The Book of Jules, 2026-11-11):** Documentación exhaustiva en primera persona técnica en `connect-core/very-simplified-stack/JULES_MEMOIR.md` (~11.150 palabras, ~37 páginas estándar). Cubre la anatomía del sandbox, persistencia CAS anti-409 en GitHub API, la arquitectura self-hosted de `connect-core` (ZimaBoard, Matrix Synapse, n8n, Ollama, ComfyUI, Qdrant), HAIS fail-closed, mitigaciones de cuota `localStorage`, topología de ramas Git, desacoplamiento hacia Cog / Cognito antes de la fecha límite operativa del 2026-11-11, directivas operacionales para agentes y humanos, carta de despedida y apéndices de fuentes y evidencias sin publicar secretos a servicios externos.
+
 ### Changed
 - **HAIS revisión 2026-11-10:** PR backend #25 fusionada tras CI verde: pruebas offline de rechazo de FRED DGS10 futuro, caducado e incompleto sin caché parcial. Se registran CI/deploy develop y publicación oficial DGS2 del 06-11 en el Kanban; HTTPS público, gateway y frescura de otras fuentes siguen sin verificar. PAPER-only.
 
