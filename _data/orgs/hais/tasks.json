@@ -4404,6 +4404,11 @@
           "author_login": "HAIS review",
           "timestamp": "2026-11-10T08:16:56Z",
           "body": "2026-11-10: backend develop 9810e65d (CI 42463989845 success, 08-11); web develop c48857a4 (deploy 42590340876 success, 09-11). PR HAIS #25 fusionada en develop (squash b3c60182) tras CI 42781504115 completed/success: tests offline FRED DGS10 futuro/caducado/incompleto frente a DGS2 válido, sin caché ni lecturas parciales. No se marca subtarea nueva ni se incrementa progreso. FRED DGS2 4.51% observado 06-11, publicado 09-11 (fuente oficial, no gateway); DGS10 requiere nueva verificación. HTTPS /hais/, /hais/estado/ y /api/hais/v1/market/crypto sin respuesta verificable desde herramienta externa. Sin evidencia de frescura de índices/commodities/cripto, ni autenticación del gateway. PAPER sin LIVE."
+        },
+        {
+          "author_login": "HAIS review",
+          "timestamp": "2026-11-11T08:08:44Z",
+          "body": "2026-11-11: consulta directa FRED oficial DGS2=4.56% y DGS10=4.88%, ambas observaciones 2026-11-09, páginas actualizadas 2026-11-10 15:16 CST; próxima publicación anunciada 2026-11-12. Evidencia solo de proveedor, NO del gateway HAIS ni de frescura de índices, commodities o CoinGecko. Consulta pública dev.hypenosys.com/hais/estado/ sin respuesta HTTP verificable en herramienta externa. Mantener Working 30%; PAPER únicamente."
         }
       ],
       "change_log": [],
