@@ -4409,6 +4409,11 @@
           "author_login": "HAIS review",
           "timestamp": "2026-11-11T08:08:44Z",
           "body": "2026-11-11: consulta directa FRED oficial DGS2=4.56% y DGS10=4.88%, ambas observaciones 2026-11-09, páginas actualizadas 2026-11-10 15:16 CST; próxima publicación anunciada 2026-11-12. Evidencia solo de proveedor, NO del gateway HAIS ni de frescura de índices, commodities o CoinGecko. Consulta pública dev.hypenosys.com/hais/estado/ sin respuesta HTTP verificable en herramienta externa. Mantener Working 30%; PAPER únicamente."
+        },
+        {
+          "author_login": "HAIS review",
+          "timestamp": "2026-11-13T08:54:38Z",
+          "body": "2026-11-13: fuente primaria FRED DGS2=4,73 % (https://fred.stlouisfed.org/series/DGS2) y DGS10=4,98 % (https://fred.stlouisfed.org/series/DGS10), observación 2026-11-10, actualización 2026-11-12 15:16 CST; próxima publicación indicada 2026-11-13. Son observaciones oficiales, NO cotizaciones del gateway HAIS. PR web #479 https://github.com/hypenosys/hypenosys.github.io/pull/479: CI Enforce CHANGELOG update falló en https://github.com/hypenosys/hypenosys.github.io/actions/runs/43184779164 por faltar CHANGELOG.html; se corrige en rama PR, pendiente nueva ejecución y fusión. Intentos HTTPS de /hais/estado/ y /api/hais/v1/market/crypto sin resolución DNS desde entorno de comprobación: no afirmar caída ni disponibilidad. Sin frescura verificable de S&P 500, NASDAQ, CSI 300, IBEX 35, bonos UE/CN, oro/plata/WTI/Brent ni BTC/ETH/SOL/APE; sin SLIs/429 ni upstream autenticado. Mantener Working 30%, sin cierre de subtareas; PAPER exclusivamente."
         }
       ],
       "change_log": [],
@@ -5480,5 +5485,5 @@
       ]
     }
   ],
-  "last_updated": "2026-11-08T08:42:00Z"
+  "last_updated": "2026-11-13T08:54:38Z"
 }
