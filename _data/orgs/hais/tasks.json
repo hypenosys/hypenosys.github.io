@@ -4419,6 +4419,11 @@
           "author_login": "HAIS review",
           "timestamp": "2026-11-15T08:12:23Z",
           "body": "2026-11-15: FRED oficial DGS2=4,86 % y DGS10=5,10 %, observación 2026-11-12, publicación 2026-11-13 15:16 CST, próxima 2026-11-16. https://fred.stlouisfed.org/series/DGS2 y https://fred.stlouisfed.org/series/DGS10 . Solo fuente oficial, no gateway HAIS. dev.hypenosys.com/hais/estado/ no accesible desde herramienta de comprobación; no inferir caída. Índices S&P 500/NASDAQ/CSI 300/IBEX 35, bonos UE/CN, oro/plata/WTI/Brent y BTC/ETH/SOL/APE sin timestamps de upstream verificables. Mantener Working 30%, sin subtareas cerradas, PAPER-only."
+        },
+        {
+          "author_login": "HAIS review",
+          "timestamp": "2026-11-17T08:12:42Z",
+          "body": "2026-11-17: FRED oficial DGS2=4,88 % y DGS10=5,15 %, observación 2026-11-13, publicados 2026-11-16 15:17/15:16 CST, próxima publicación 2026-11-17. Fuentes https://fred.stlouisfed.org/series/DGS2 y https://fred.stlouisfed.org/series/DGS10 . Solo upstream FRED, sin verificación de gateway HAIS ni precios en tiempo real. S&P 500, NASDAQ, CSI 300, IBEX 35, bonos UE/CN, oro/plata/WTI/Brent y BTC/ETH/SOL/APE sin frescura upstream comprobada. Conservar Working 30%, PAPER exclusivamente, ninguna subtarea cerrada."
         }
       ],
       "change_log": [],
