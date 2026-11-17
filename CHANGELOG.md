@@ -3,6 +3,9 @@
 ## [Unreleased]
 
 ### Changed
+- **HAIS FRED evidence (2026-11-17):** DGS2 4.88% and DGS10 5.15% (observations 2026-11-13, published 2026-11-16). Official FRED only; gateway and other feeds not verified. #900043 remains Working 30%; PAPER-only.
+
+### Changed
 - **HAIS FRED evidence (2026-11-15):** Official DGS2 4.86% and DGS10 5.10% (2026-11-12 observations, published 2026-11-13). No gateway or other market freshness verification; task #900043 remains Working 30%, PAPER-only.
 
 ### Changed
