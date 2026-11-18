@@ -47,5 +47,6 @@ jobs:
           git add favicon.ico favicon.svg apple-touch-icon.png android-chrome-192x192.png android-chrome-512x512.png assets/images/brand/
           if ! git diff --cached --quiet; then
             git commit -m 'feat(brand): synchronize approved v2 logos and favicons'
+            git pull --rebase origin feat/brand-v2-site
             git push
           fi
