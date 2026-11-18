@@ -91,8 +91,12 @@ class GlobalHeader {
             }
 
             .gh-logo img {
-                height: 32px;
+                display: block;
+                height: 52px;
                 width: auto;
+                max-width: 180px;
+                object-fit: contain;
+                image-rendering: pixelated;
             }
 
             .gh-nav-content {
@@ -343,7 +347,7 @@ class GlobalHeader {
             @media (max-width: 750px) {
                 .gh-container { min-width: 0; }
                 .gh-logo { min-width: 0; }
-                .gh-logo img { width: auto; max-width: min(30vw, 130px); height: auto; max-height: 32px; }
+                .gh-logo img { width: auto; height: 44px; max-width: min(34vw, 120px); object-fit: contain; }
                 .gh-mobile-toggle { display: inline-flex; }
                 .gh-mobile-actions { display: flex; }
                 .gh-nav-content {
