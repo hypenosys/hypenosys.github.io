@@ -5,7 +5,7 @@ permalink: /aviso-legal/
 ---
 # Aviso legal
 
-**Titular y responsable:** Axel Fernández Curros (persona física). **Domicilio de contacto:** [DATO PENDIENTE: domicilio a efectos legales]. **Correo electrónico:** [axel@hypenosys.com](mailto:axel@hypenosys.com).
+**Titular y responsable:** Axel Fernández Curros (persona física). **Dirección postal:** no publicada por motivos de privacidad. Pendiente de determinar si la actividad está sujeta a una obligación legal de facilitar domicilio u otro dato equivalente. **Correo electrónico:** [axel@hypenosys.com](mailto:axel@hypenosys.com).
 
 **NIF:** no se publica en este borrador. Su exigibilidad deberá determinarse según la actividad efectivamente realizada y la normativa aplicable; la inexistencia de sociedad o marca registrada no decide por sí sola esta cuestión.
 
