@@ -1,9 +1,9 @@
 # Site identity
 title: Hypenosys
+lang: es
 email: ""
 description: >-
-  Proyecto independiente de creación interactiva, ingeniería de software,
-  automatización e inteligencia artificial. Código público y experimentación abierta.
+  Iniciativa independiente de inteligencia artificial, software abierto y experimentación creativa.
 url: "https://hypenosys.com"
 repository: "hypenosys/hypenosys.github.io"
 
