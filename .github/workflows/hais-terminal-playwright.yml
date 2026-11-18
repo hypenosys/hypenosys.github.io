@@ -4,19 +4,7 @@ name: HAIS terminal Playwright
 # Scope: test-only. No deployment, secrets or live upstream checks; provider fixtures are isolated to tests.
 on:
   pull_request:
-    branches: [develop]
-    paths:
-      - 'pages/hais-terminal.html'
-      - 'pages/hais-markets.html'
-      - 'assets/javascript/**'
-      - 'tests/verify_hais_terminal.spec.js'
-      - 'tests/verify_hais_markets.spec.js'
-      - 'tests/verify_hypenosos.spec.js'
-      - '_includes/ecosystem_v2_shell.html'
-      - 'package.json'
-      - 'package-lock.json'
-      - '_config.yml'
-      - '.github/workflows/hais-terminal-playwright.yml'
+    branches: [develop, master]
   workflow_dispatch:
 
 permissions:
