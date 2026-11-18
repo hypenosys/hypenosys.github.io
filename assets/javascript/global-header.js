@@ -39,7 +39,7 @@ class GlobalHeader {
                 --gh-accent: #bd93f9;
                 --gh-text: #f8fafc;
                 --gh-text-dim: #94a3b8;
-                --gh-h: 64px;
+                --gh-h: 84px;
             }
 
             /* Bootstrap modals/backdrops must cover the sticky global header. */
@@ -92,9 +92,9 @@ class GlobalHeader {
 
             .gh-logo img {
                 display: block;
-                height: 52px;
+                height: 76px;
                 width: auto;
-                max-width: 180px;
+                max-width: 200px;
                 object-fit: contain;
                 image-rendering: pixelated;
             }
@@ -345,9 +345,10 @@ class GlobalHeader {
             }
 
             @media (max-width: 750px) {
+                :root { --gh-h: 64px; }
                 .gh-container { min-width: 0; }
                 .gh-logo { min-width: 0; }
-                .gh-logo img { width: auto; height: 44px; max-width: min(34vw, 120px); object-fit: contain; }
+                .gh-logo img { width: auto; height: 54px; max-width: min(38vw, 140px); object-fit: contain; }
                 .gh-mobile-toggle { display: inline-flex; }
                 .gh-mobile-actions { display: flex; }
                 .gh-nav-content {
