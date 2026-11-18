@@ -15,6 +15,6 @@ Hypenosys utiliza almacenamiento técnico para recordar preferencias y, únicame
 
 **Comportamiento previsto:** la analítica requiere consentimiento previo y debe detenerse al rechazar o revocar. La ausencia efectiva de solicitudes previas y la eliminación de todas las cookies de Matomo aún requieren comprobación con navegador.
 
-**Servidor Matomo:** matomo.hypenosys.com. No se ha verificado aún la anonimización de IP, los plazos de conservación ni los posibles destinatarios o transferencias..
+**Servidor Matomo:** matomo.hypenosys.com. No se ha verificado aún la anonimización de IP, los plazos de conservación ni los posibles destinatarios o transferencias.
 
 La guía de la AEPD de enero de 2024 contempla una posible exención condicionada para determinadas mediciones de audiencia. Hypenosys **no se acoge a ella** y mantiene consentimiento previo.
