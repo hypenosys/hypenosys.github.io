@@ -1,8 +1,8 @@
 # 🌌 Hypenosys Dashboard
 
-Bienvenido al centro de operaciones de Hypenosys, un estudio de videojuegos indie enfocado en la perfección técnica y la estética oscura. Este dashboard centraliza la gestión de tareas, métricas de equipo e integración avanzada con agentes de IA.
+Hypenosys es una iniciativa independiente de inteligencia artificial, software abierto y experimentación creativa. Este repositorio contiene su sitio web y herramientas experimentales.
 
-Construido sobre **Jekyll** y desplegado mediante **GitHub Pages**, el sistema utiliza una arquitectura "serverless" basada en el almacenamiento del lado del cliente y la API de GitHub para la persistencia de datos. 
+Construido sobre **Jekyll** y desplegado mediante **un proveedor de páginas estáticas**, el sistema utiliza una arquitectura "serverless" basada en el almacenamiento del lado del cliente y la API de GitHub para la persistencia de datos. 
 
 ---
 
@@ -99,4 +99,4 @@ El repositorio está organizado siguiendo las convenciones de Jekyll, con lógic
 
 ## ⚖️ Licencia
 
-Este proyecto es propiedad de **Hypenosys Indie Studio**. Consulta el archivo `LICENSE.md` para más detalles.
+Consulta `LICENSE.md` para los términos MIT y conserva sus avisos de copyright. El archivo incluye la atribución «Copyright (c) 2018 Nicolas Vanhoren»; su procedencia está pendiente de verificación y no debe eliminarse sin revisión.

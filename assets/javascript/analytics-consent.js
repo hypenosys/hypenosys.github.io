@@ -159,7 +159,7 @@
                         Privacidad en Hypenosys
                     </h3>
                     <p class="hy-consent-banner-desc">
-                        Utilizamos analítica propia y privada (Matomo self-hosted) para mejorar la plataforma. No compartimos datos con terceros ni rastreamos entre sitios. <a href="/privacidad/" target="_blank">Más información</a>.
+                        Utilizamos analítica propia y privada (Matomo self-hosted) para mejorar la plataforma. Consulta la política de privacidad para conocer los tratamientos y proveedores de infraestructura. <a href="/privacidad/" target="_blank">Más información</a>.
                     </p>
                 </div>
                 <div class="hy-consent-banner-actions">
@@ -236,7 +236,7 @@
                             <span class="hy-consent-badge-always">Siempre Activo</span>
                         </div>
                         <p class="hy-consent-option-desc">
-                            Permite recordar tus configuraciones, autenticación y esta preferencia de privacidad. No recoge datos analíticos ni personales.
+                            Permite recordar tus configuraciones, autenticación y esta preferencia de privacidad. Su uso puede implicar datos técnicos y preferencias guardadas en tu navegador.
                         </p>
                     </div>
 
@@ -253,7 +253,7 @@
                             </label>
                         </div>
                         <p class="hy-consent-option-desc">
-                            Matomo self-hosted por Hypenosys con IP anonimizada. Nos ayuda a entender el uso de la web y mejorar las herramientas sin vender ni compartir información con terceros.
+                            Matomo autoalojado para medir el uso del sitio si das tu consentimiento. Consulta la política de privacidad para conocer las condiciones del tratamiento.
                         </p>
                     </div>
 
