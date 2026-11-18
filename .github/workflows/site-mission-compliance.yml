@@ -1,0 +1,42 @@
+name: Public site mission and compliance guardrails
+
+on:
+  pull_request:
+    branches: [develop, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  site-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Static site contract
+        run: |
+          npm run test:site-audit
+          node --check assets/javascript/global-header.js
+          node --check assets/javascript/analytics-consent.js
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+      - name: Build Jekyll site
+        run: bundle exec jekyll build --source . --destination ./_site --baseurl ""
+        env:
+          JEKYLL_ENV: production
+      - name: Confirm public routes and landmarks
+        run: |
+          set -eu
+          test -s _site/index.html
+          test -s _site/aviso-legal/index.html
+          test -s _site/privacidad/index.html
+          test -s _site/cookies/index.html
+          grep -q 'id="mision"' _site/index.html
+          grep -q 'id="proyectos"' _site/index.html
+          grep -q 'Hypenosys' _site/index.html

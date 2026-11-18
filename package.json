@@ -9,6 +9,7 @@
     "playwright": "^1.63.0"
   },
   "scripts": {
-    "test:hais-terminal": "playwright test tests/verify_hais_terminal.spec.js"
+    "test:hais-terminal": "playwright test tests/verify_hais_terminal.spec.js",
+    "test:site-audit": "node tests/test_public_site_contract.cjs"
   }
 }

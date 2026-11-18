@@ -1,2 +1,7 @@
+# Cloudflare Pages static responses only; Pages Functions require their own header policy.
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+
 /assets/javascript/*.js
   Content-Type: application/javascript; charset=utf-8
