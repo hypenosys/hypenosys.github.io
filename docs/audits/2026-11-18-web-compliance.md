@@ -41,7 +41,7 @@ Ejemplos confirmados: HAIS ofrece observatorio y simulador PAPER sin operativa r
 | WEB-06 | Alta | Atribuciones absolutas «no se envían datos» ignoraban funciones de terceros | Redacción corregida | Mapa de egress efectivo por servicio y textos concordantes |
 | WEB-07 | Alta | PAT y API keys en localStorage pueden ser leídos por JavaScript del origen | Aviso y documentación corregidos; arquitectura **abierta** | Threat model; privilegio mínimo; alternativa de credenciales efímeras o BFF si se necesita |
 | WEB-08 | Alta | Autenticación/administración en HTML público; no es control de autorización | **Abierto** | Inspección de endpoints de escritura y autorización en origen por recurso y por usuario |
-| WEB-09 | Alta | `_headers` no declara CSP, HSTS, nosniff ni políticas de contexto | **Abierto** | Auditoría efectiva de cabeceras + CSP Report-Only y despliegue gradual sin bloquear scripts inline |
+| WEB-09 | Alta | Faltaban cabeceras de endurecimiento y CSP/HSTS sin verificar | **Parcial:** nosniff y Referrer-Policy para estáticos Pages; CSP/HSTS y Functions siguen abiertos | Verificar cabeceras efectivas, CSP Report-Only y despliegue gradual sin bloquear scripts inline |
 | WEB-10 | Media-alta | Dropdowns eran `div` activados por hover, inaccesibles por teclado | Mejorado con botones y `:focus-within`; pendiente test real | Tab/Shift+Tab, Enter, Escape, lector de pantalla y móvil pasan |
 | WEB-11 | Media | Falta de acceso rápido al contenido tras cabecera persistente | Mejorado en páginas con `#contenido` | Foco visible y salto funcional desde primera tabulación |
 | WEB-12 | Media | Consentimiento: contraste y tamaño inferior en opción Rechazar | Ajuste CSS; validación pendiente | Igual visibilidad y facilidad en ambas acciones; prueba AEPD |
@@ -89,3 +89,9 @@ El HTML de administración público permite inspeccionar interfaces y rutas; ell
 - Guía de cookies AEPD: https://www.aepd.es/guias/guia-cookies.pdf
 - AEPD deber de información: https://www.aepd.es/preguntas-frecuentes/2-tus-obligaciones-como-responsable-del-tratamiento/6-el-deber-de-informacion
 - WCAG 2.2: https://www.w3.org/TR/WCAG22/
+
+## 9. Cloudflare Pages: estáticos y Functions
+
+`_headers` incorpora `X-Content-Type-Options: nosniff` y `Referrer-Policy: strict-origin-when-cross-origin` para las respuestas **estáticas**; no introduce CSP, COOP ni HSTS sin inventariar compatibilidad. Referencia: https://developers.cloudflare.com/pages/configuration/headers/.
+
+**Importante:** Cloudflare Pages no aplica estas reglas automáticamente a las respuestas de `functions/`. Se deben auditar individualmente las rutas `/api/ai/*`, autorización, errores y cabeceras. Un archivo de configuración no acredita la presencia efectiva de headers: inspeccionar la respuesta real en producción y desarrollo.

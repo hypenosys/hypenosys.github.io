@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Security
+- **Cloudflare Pages static headers (2026-11-18):** Add nosniff and strict-origin-when-cross-origin; Pages Functions, CSP and HSTS require separate verification.
+
 ### Added
 - **Auditoría de misión y compliance (2026-11-18):** portada con misión, proyectos verificables, H1 accesible y navegación por teclado; pruebas y CI específicas; matriz de 23 riesgos documentada. No se proclama cumplimiento total.
 

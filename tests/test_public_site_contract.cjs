@@ -12,6 +12,7 @@ const cookies = read('cookies.md');
 const legal = read('aviso-legal.md');
 const consent = read('assets/javascript/analytics-consent.js');
 const css = read('assets/css/consent.css');
+const headers = read('_headers');
 
 assert.match(index, /<html lang="es">/, 'homepage language');
 assert.match(index, /<main id="contenido"/, 'semantic main landmark');
@@ -47,4 +48,6 @@ assert.match(consent, /if \(!MATOMO_SITE_ID\)/);
 assert.match(consent, /_paq\.push\(\['requireConsent'\]\)/);
 assert.match(css, /prefers-reduced-motion: reduce/);
 assert.match(css, /min-height: 44px;/);
+assert.match(headers, /X-Content-Type-Options: nosniff/);
+assert.match(headers, /Referrer-Policy: strict-origin-when-cross-origin/);
 console.log('Site mission, transparency, accessibility and privacy contract: OK');
