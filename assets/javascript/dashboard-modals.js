@@ -246,7 +246,11 @@ function openAssignmentModal(taskId) {
             showToast(`Asignados actualizados para #${taskId}`, 'success');
             await refreshDashboardData();
         } catch (err) {
-            showToast(`Error: ${err.message}`, 'error');
+            if (window.isWritePermissionError && window.isWritePermissionError(err) && window.showWritePermissionModal) {
+                window.showWritePermissionModal();
+            } else {
+                showToast(`Error: ${err.message}`, 'error');
+            }
         }
     };
 }

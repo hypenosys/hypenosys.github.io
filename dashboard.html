@@ -123,6 +123,15 @@ layout: null
     </div>
 
     <main class="flex-grow p-6 space-y-8 max-w-[1600px] mx-auto w-full">
+        <!-- HAIS control center: development preview, no production dependency -->
+        <section aria-label="Acceso a HAIS" class="rounded-2xl border border-violet-500/50 bg-slate-900 px-5 py-4 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-widest text-violet-300">Hypenosys AI System · prototipo</p>
+            <h2 class="text-xl font-bold text-white mt-1">HAIS Control Center</h2>
+            <p class="text-slate-400 text-sm mt-1">Explora 12 módulos de IA, agentes, workflows y proyectos en un sandbox sin conexiones reales.</p>
+          </div>
+          <a href="{{ '/hais/' | relative_url }}" class="inline-flex items-center justify-center rounded-xl bg-violet-400 text-slate-950 font-bold px-5 py-3 hover:bg-violet-300 focus:outline-none focus:ring-2 focus:ring-cyan-300">Abrir HAIS ↗</a>
+        </section>
         
         <!-- Critical Path Alert Panel -->
         <div id="critical-path-panel" class="hidden space-y-2">
@@ -961,7 +970,7 @@ layout: null
                 <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Añadir Nuevo Miembro</label>
                 <div class="flex gap-2">
                     <input type="text" id="add-member-input" class="flex-grow bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-slate-100 outline-none focus:border-indigo-500" placeholder="Username de GitHub (ej. axlfc)">
-                    <button onclick="handleAddOrgMember()" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold px-4 py-2 rounded-lg text-sm transition-all">Añadir</button>
+                    <button id="add-member-btn" type="button" onclick="handleAddOrgMember()" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold px-4 py-2 rounded-lg text-sm transition-all disabled:opacity-50">Añadir</button>
                 </div>
                 <div id="add-member-error" class="text-xs text-red-400 hidden"></div>
             </div>
@@ -1067,8 +1076,9 @@ layout: null
     <script src="{{ "/assets/javascript/ai-config.js" | relative_url }}"></script>
     <script src="{{ "/assets/javascript/repo-aliases.js" | relative_url }}"></script>
 
-    <!-- Data & Orchestration -->
-    <script src="{{ "/assets/javascript/dashboard-data.js" | relative_url }}"></script>
+    <!-- Data & Orchestration: cache is optional and must never block GitHub sync -->
+    <script src="{{ "/assets/javascript/dashboard-cache.js" | relative_url }}?v=20261106-quota-v1"></script>
+    <script src="{{ "/assets/javascript/dashboard-data.js" | relative_url }}?v=20261106-quota-v1"></script>
 
     <!-- Dashboard Modules (UI & Logic) -->
     <script src="{{ "/assets/javascript/task-engine.js" | relative_url }}"></script>
@@ -1081,6 +1091,7 @@ layout: null
     <script src="{{ "/assets/javascript/dashboard-modals.js" | relative_url }}"></script>
     <script src="{{ "/assets/javascript/dashboard-profiles.js" | relative_url }}"></script>
     <script src="{{ "/assets/javascript/dashboard-ui.js" | relative_url }}"></script>
+    <script src="{{ "/assets/javascript/jules-pr-sync.js" | relative_url }}?v=20261105-automerge-v2"></script>
     <script src="{{ "/assets/javascript/profile-editor.js" | relative_url }}"></script>
 
     <!-- Jules Neural Operations Dashboard Logic (Area 2) -->
@@ -1199,6 +1210,31 @@ layout: null
     <script>
     document.addEventListener('DOMContentLoaded', function() {
       setTimeout(function() {
+        // Dedicated Jules route: reserved for an EXPLICIT "Create with Jules" action.
+        // Dashboard robot clicks always use _openTaskInClaude below.
+        window._openTaskInJules = function(taskDataOrId) {
+          const supplied = typeof taskDataOrId === 'object' && taskDataOrId
+            ? taskDataOrId : null;
+          const id = supplied?.id ?? taskDataOrId;
+          const task = (window.currentTasks || []).find(t => String(t.id) === String(id))
+            || (typeof currentTasks !== 'undefined' && Array.isArray(currentTasks)
+                ? currentTasks.find(t => String(t.id) === String(id)) : null)
+            || supplied;
+          if (!task || !task.id || !(task.title || task.titulo)) {
+            if (typeof window.hypeToast === 'function') window.hypeToast('No se pudo recuperar la tarea completa.', 'error');
+            else alert('No se pudo recuperar la tarea completa para Jules.');
+            return;
+          }
+          localStorage.setItem('hy_neural_task_context', JSON.stringify(task));
+          localStorage.removeItem('hy_neural_new_task_sent');
+          localStorage.removeItem('hy_pending_claude_handoff_id');
+          localStorage.setItem('hy_jules_handoff', JSON.stringify({
+            task, source: 'dashboard', intent: 'new-task',
+            supervision: 'review', timestamp: Date.now()
+          }));
+          window.location.assign((window.SITE_BASEURL || '') + '/jules-panel/');
+        };
+
         window._openTaskInClaude = function(taskDataOrId) {
           try {
             let taskData = null;
@@ -1218,12 +1254,33 @@ layout: null
                       || { id: id };
             }
 
+            if (!taskData || !taskData.id || !(taskData.title || taskData.titulo)) {
+              throw new Error('No se ha podido recuperar el contenido completo de la tarea.');
+            }
+
+            // Navigation itself is idempotent. This protects alternate callers
+            // in addition to the Kanban button's click/touch guard.
+            const launchKey = String(taskData.id);
+            const previousEntry = window._dashboardClaudeEntryGuard;
+            const now = Date.now();
+            if (previousEntry?.taskId === launchKey && now - previousEntry.at < 1500) return;
+            window._dashboardClaudeEntryGuard = { taskId: launchKey, at: now };
+
+            // Explicit Claude entry: never reuse an unrelated Jules handoff,
+            // pending prompt, or cross-task neural thread.
+            localStorage.removeItem('hy_jules_handoff');
+            localStorage.removeItem('jules_task_payload');
+            localStorage.removeItem('hy_pending_claude_handoff_id');
+            localStorage.removeItem('hy_handoff_autolink');
+            localStorage.removeItem('hy_neural_pending_prompt');
+            localStorage.removeItem('hy_neural_thread');
             localStorage.setItem('hy_neural_task_context', JSON.stringify(taskData));
             localStorage.setItem('hy_neural_active', 'true');
             localStorage.setItem('hy_neural_new_task_sent', 'true');
+            localStorage.setItem('hy_neural_entry_point', 'dashboard-claude');
 
             const baseUrl = window.SITE_BASEURL || '';
-            window.location.href = baseUrl + '/chat/neural/';
+            window.location.href = baseUrl + '/chat/neural/?from=dashboard';
           } catch (e) {
             console.error('_openTaskInClaude error:', e, e.stack);
           }

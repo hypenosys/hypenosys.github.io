@@ -7,69 +7,167 @@ permalink: /
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hypenosys Indie Studio</title>
+    <meta name="description" content="Hypenosys es un proyecto independiente de código abierto, creación interactiva, ingeniería de software, automatización e inteligencia artificial.">
+    <meta name="theme-color" content="#282a36">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Hypenosys — Laboratorio creativo y técnico">
+    <meta property="og:description" content="Donde las pesadillas se vuelven código y el arte cobra vida. Proyecto independiente, desarrollo abierto y experimentación técnica.">
+    <meta property="og:locale" content="es_ES">
+    <meta property="og:url" content="https://hypenosys.com/">
+    <link rel="canonical" href="https://hypenosys.com/">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <title>Hypenosys — Laboratorio creativo y técnico</title>
     <link rel="stylesheet" href="/assets/main.css">
     <script src="/assets/javascript/bootstrap/jquery.min.js"></script>
     <script src="/assets/javascript/bootstrap/bootstrap.bundle.min.js"></script>
     <script src="/assets/javascript/ui-components.js"></script>
     <script src="/assets/javascript/global-header.js"></script>
-
-    <!-- Hypenosys Analytics & Consent Manager -->
-
+    <style>
+        .hy-landing { color: #f8f8f2; max-width: 1180px; }
+        .hy-landing a { color: #bd93f9; }
+        .hy-landing a:hover { color: #e2d2ff; }
+        .hy-landing a:focus-visible { outline: 2px solid #8be9fd; outline-offset: 4px; }
+        .hy-hero { border: 1px solid rgba(189,147,249,.35); border-radius: 20px; padding: clamp(2rem, 6vw, 5rem); background: radial-gradient(ellipse at 85% 10%, rgba(189,147,249,.16), transparent 52%), #252636; }
+        .hy-eyebrow { color: #8be9fd; text-transform: uppercase; font-size: .78rem; font-weight: 700; letter-spacing: .15em; }
+        .hy-hero h1 { font-size: clamp(3.2rem, 10vw, 6rem); font-weight: 800; letter-spacing: -.05em; line-height: 1.1; margin: 1.1rem 0; color: #f8f8f2; }
+        .hy-brand-heading img { display: block; width: min(100%, 540px); height: auto; image-rendering: pixelated; }
+        .hy-motto { font-size: clamp(1.2rem, 2.8vw, 1.75rem); line-height: 1.5; max-width: 42rem; }
+        .hy-muted { color: #c8c7d2; line-height: 1.7; }
+        .hy-hero-summary { max-width: 45rem; margin: 1.6rem 0 0; }
+        .hy-actions { display: flex; flex-wrap: wrap; gap: .8rem; margin-top: 2rem; }
+        .hy-action { display: inline-flex; justify-content: center; align-items: center; min-height: 44px; border-radius: 9px; padding: .7rem 1.3rem; font-weight: 700; text-decoration: none !important; }
+        .hy-landing .hy-action-primary { background: #bd93f9; border: 1px solid #bd93f9; color: #20202d; }
+        .hy-landing .hy-action-primary:hover { background: #e2d2ff; color: #20202d; }
+        .hy-landing .hy-action-secondary { border: 1px solid #827f99; color: #f8f8f2; }
+        .hy-landing .hy-action-secondary:hover { border-color: #bd93f9; color: #fff; }
+        .hy-status { margin-top: 2rem; border-left: 3px solid #50fa7b; padding-left: 1rem; font-size: .95rem; }
+        .hy-section { margin-top: 4.5rem; }
+        .hy-section h2 { font-size: clamp(1.6rem, 4vw, 2.2rem); font-weight: 750; margin-bottom: 1rem; }
+        .hy-section-lead { max-width: 49rem; }
+        .hy-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin-top: 1.7rem; }
+        .hy-card { border: 1px solid #47475c; background: #303142; border-radius: 14px; padding: 1.6rem; }
+        .hy-card h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: .7rem; color: #f8f8f2; }
+        .hy-card p { margin-bottom: 0; }
+        .hy-card-accent { border-color: rgba(189,147,249,.55); }
+        .hy-link-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .8rem; margin-top: 1.5rem; }
+        .hy-resource { display: block; border: 1px solid #47475c; border-radius: 9px; padding: 1rem 1.2rem; text-decoration: none !important; background: rgba(255,255,255,.025); }
+        .hy-resource:hover { border-color: #bd93f9; background: rgba(189,147,249,.08); }
+        .hy-resource small { display: block; color: #c8c7d2; margin-top: .3rem; }
+        .hy-footnote { margin-top: 4rem; padding: 1.6rem 0 2rem; border-top: 1px solid #47475c; font-size: .92rem; }
+        @media (max-width: 767px) { .hy-grid, .hy-link-grid { grid-template-columns: 1fr; } .hy-hero { padding: 2rem 1.35rem; } .hy-action { width: 100%; } }
+        @media (prefers-reduced-motion: no-preference) { .hy-action, .hy-resource { transition: background-color .15s ease, border-color .15s ease; } }
+        /* Bootstrap-based styling for the shared profile editor on the standalone homepage. */
+        #modalEditProfile .modal-content { background: #202330; border: 1px solid #665087; color: #f8f8f2; }
+        #modalEditProfile .modal-header, #modalEditProfile .modal-footer { padding: 1rem 1.3rem; border-color: #47475c; }
+        #modalEditProfile .modal-body { min-height: 0; }
+        #modalEditProfile .tab-content { padding: 1.25rem; max-height: 58dvh; overflow-y: auto; }
+        #modalEditProfile .nav-tabs { display: flex; padding: 0.5rem; border-color: #47475c; }
+        #modalEditProfile .nav-link { color: #c8c7d2; border: none; }
+        #modalEditProfile .nav-link.active { color: #bd93f9; background: #252636; }
+        #modalEditProfile .modal-content .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        #modalEditProfile .modal-content .space-y-6 > * + * { margin-top: 1.2rem; }
+        #modalEditProfile label { display: block; font-size: 0.85rem; margin-bottom: 0.35rem; color: #c8c7d2; }
+        #modalEditProfile input, #modalEditProfile textarea, #modalEditProfile select {
+            display: block; width: 100%; max-width: 100%; background: #171a27; color: #f8f8f2;
+            border: 1px solid #665087; border-radius: 0.65rem; padding: 0.7rem;
+        }
+        #modalEditProfile #prof-avatar-preview { width: 48px; height: 48px; object-fit: cover; }
+        #modalEditProfile .modal-footer button { flex: 1; min-height: 44px; padding: .6rem; border-radius: .6rem; }
+        #modalEditProfile #btn-save-profile-editor { background: #50fa7b; color: #171a27; }
+        #modalEditProfile .modal-footer [data-dismiss="modal"] { background: #303142; color: #fff; }
+        #modalEditProfile #container-ai-base-url.hidden { display: none; }
+        @media (max-width: 750px) {
+            #modalEditProfile .modal-content .grid { grid-template-columns: 1fr; }
+            #modalEditProfile .modal-header, #modalEditProfile .modal-footer { padding: .75rem; }
+            #modalEditProfile .tab-content { max-height: none; }
+        }
+    </style>
 </head>
 <body class="bg-slate-950 text-white">
+<main id="contenido" class="container py-5 hy-landing">
+    <section class="hy-hero" aria-labelledby="hy-title">
+        <p class="hy-eyebrow">Proyecto independiente · Open source · En desarrollo</p>
+        <h1 id="hy-title" class="hy-brand-heading"><img src="/assets/images/brand/logo_simple.svg" alt="HYPENOSYS" width="512" height="256"></h1>
+        <p class="hy-motto">Donde las pesadillas se vuelven código y el arte cobra vida.</p>
+        <p class="hy-muted hy-hero-summary">
+            Un laboratorio creativo y técnico para construir, experimentar y compartir
+            software, experiencias interactivas y herramientas que conectan arte, ingeniería e inteligencia artificial.
+        </p>
+        <nav class="hy-actions" aria-label="Acciones principales">
+            <a class="hy-action hy-action-primary" href="{{ '/hais/' | relative_url }}">Explorar HAIS (demo)</a>
+            <a class="hy-action hy-action-primary" href="https://github.com/hypenosys/hypenosys.github.io">Explorar el código</a>
+            <a class="hy-action hy-action-secondary" href="#documentacion">Ver documentación</a>
+            <a class="hy-action hy-action-secondary" href="https://github.com/hypenosys/hypenosys.github.io/blob/master/CONTRIBUTING.md">Cómo contribuir</a>
+        </nav>
+        <p class="hy-status hy-muted">
+            <strong class="text-white">Estado:</strong> iniciativa independiente de inteligencia artificial, software abierto y experimentación creativa.
+            El código de esta web es público; otros componentes de Hypenosys todavía se desarrollan en repositorios privados.
+            La disponibilidad pública de cada proyecto se indica por separado.
+        </p>
+    </section>
 
-<div class="container py-5">
-<div class="jumbotron bg-dark text-purple border border-purple shadow-lg mb-5">
-  <h1 class="display-4 font-weight-bold">HYPENOSYS</h1>
-  <p class="lead text-white">Donde las pesadillas se vuelven código y el arte cobra vida.</p>
-  <hr class="my-4 border-purple">
-  <p class="text-muted">Desarrollando experiencias únicas con Unreal Engine 5.</p>
-</div>
+    <section class="hy-section" id="que-hacemos" aria-labelledby="hy-focus-title">
+        <h2 id="hy-focus-title">Territorios de exploración</h2>
+        <p class="hy-muted hy-section-lead">
+            Hypenosys no es un catálogo de productos terminados. Es un espacio de experimentación
+            donde las ideas pasan por código, prototipos, pruebas y documentación.
+        </p>
+        <div class="hy-grid">
+            <article class="hy-card">
+                <h3>Experiencias interactivas</h3>
+                <p class="hy-muted">Videojuegos, herramientas y narrativa experimental. Diseño técnico al servicio de una identidad creativa propia.</p>
+            </article>
+            <article class="hy-card">
+                <h3>Ingeniería de software</h3>
+                <p class="hy-muted">Automatización, interfaces, sistemas e infraestructura reproducible. Menos promesas; más prototipos que se puedan examinar.</p>
+            </article>
+            <article class="hy-card">
+                <h3>IA y herramientas creativas</h3>
+                <p class="hy-muted">Investigación aplicada, flujos de trabajo asistidos y experimentación con modelos y herramientas de inteligencia artificial.</p>
+            </article>
+        </div>
+    </section>
 
-<div class="row">
-  <div class="col-lg-8">
-    <h2 class="mb-4">🚀 Project Hub & Documentation</h2>
-    <div class="card p-4 mb-5 shadow-sm bg-dark border-secondary">
-      <p>Bienvenido al centro de mando. Aquí encontrarás toda la documentación y guías necesarias para el proyecto.</p>
-      <ul class="tree-view">
-        <li><a href="/CHANGELOG.html">Changelog & Project Logs</a></li>
-        <li><a href="/estructura_del_proyecto/">Estructura del Proyecto</a></li>
-        <li><a href="/guia-comandos/">Guía Técnica: Comandos y Flujos</a></li>
-        <li><a href="/guia-ue5-svn/">Guía de Supervivencia: UE5 + SVN</a></li>
-        <li><a href="/plan_de_arranque/">Plan de Arranque</a></li>
-        <li><a href="/tech-stack/">Tech Stack</a></li>
-      </ul>
-    </div>
+    <section class="hy-section" id="codigo-abierto" aria-labelledby="hy-open-title">
+        <h2 id="hy-open-title">Abierto donde puede comprobarse</h2>
+        <div class="hy-grid">
+            <div class="hy-card hy-card-accent">
+                <h3>Web y código fuente</h3>
+                <p class="hy-muted">Este sitio y su historial están disponibles públicamente en GitHub.</p>
+                <p class="mt-3 mb-0"><a href="https://github.com/hypenosys/hypenosys.github.io">Abrir repositorio &rarr;</a></p>
+            </div>
+            <div class="hy-card">
+                <h3>Documentación y evolución</h3>
+                <p class="hy-muted">Los cambios y decisiones técnicas visibles se pueden consultar directamente, sin inventar métricas de adopción.</p>
+                <p class="mt-3 mb-0"><a href="/CHANGELOG.html">Ver historial &rarr;</a></p>
+            </div>
+            <div class="hy-card">
+                <h3>Participación</h3>
+                <p class="hy-muted">Se pueden proponer correcciones, mejoras y colaboraciones a través del repositorio público.</p>
+                <p class="mt-3 mb-0"><a href="https://github.com/hypenosys/hypenosys.github.io/issues">Issues &rarr;</a></p>
+            </div>
+        </div>
+    </section>
 
-    <h2 class="mb-4">⚡ Latest Updates</h2>
-    <div class="card p-4 mb-5 shadow-sm bg-dark border-secondary">
-      <p>Consulta el <a href="/CHANGELOG.html" class="text-purple font-weight-bold">Changelog</a> para estar al día de los commits y cambios en el proyecto.</p>
-    </div>
-  </div>
+    <section class="hy-section" id="documentacion" aria-labelledby="hy-docs-title">
+        <h2 id="hy-docs-title">Documentación técnica</h2>
+        <p class="hy-muted hy-section-lead">Material de trabajo y referencias que forman parte del historial del proyecto. Algunas guías describen sistemas o decisiones de etapas anteriores.</p>
+        <nav class="hy-link-grid" aria-label="Recursos del proyecto">
+            <a class="hy-resource" href="/CHANGELOG.html">Changelog <small>Registro de cambios y actividad</small></a>
+            <a class="hy-resource" href="/estructura_del_proyecto/">Estructura del proyecto <small>Organización y arquitectura</small></a>
+            <a class="hy-resource" href="/tech-stack/">Tech Stack <small>Herramientas y decisiones técnicas</small></a>
+            <a class="hy-resource" href="/guia-comandos/">Guía de comandos <small>Flujos técnicos documentados</small></a>
+            <a class="hy-resource" href="/guia-ue5-svn/">Guía UE5 + SVN <small>Referencia de desarrollo interactivo</small></a>
+            <a class="hy-resource" href="/plan_de_arranque/">Plan de arranque <small>Notas de planificación originales</small></a>
+        </nav>
+    </section>
 
-  <div class="col-lg-4">
-    <h2 class="mb-4">🛠️ Quick Links</h2>
-    <div class="list-group shadow-sm">
-      <a href="/guia-ue5-svn/" class="list-group-item list-group-item-action bg-dark text-white border-purple">
-        <i class="fas fa-book mr-2 text-purple"></i> Guía UE5 + SVN
-      </a>
-      <a href="/plan_de_arranque/" class="list-group-item list-group-item-action bg-dark text-white border-purple">
-        <i class="fas fa-rocket mr-2 text-purple"></i> Plan de Arranque
-      </a>
-    </div>
-  </div>
-</div>
+</main>
 
-<hr class="my-5 border-purple">
+{% include footer.html %}
 
-<h2 class="mb-4 text-center">👥 The Dream Team</h2>
-{% include team_section.html %}
-</div>
-
-<script src="/assets/javascript/auth-config.js"></script>
-<script src="/assets/javascript/github-api.js"></script>
-<script src="/assets/javascript/auth.js"></script>
-
+{% include admin_shell.html %}
 </body>
 </html>

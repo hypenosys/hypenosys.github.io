@@ -4,14 +4,13 @@
 
 class AuthManager {
     constructor() {
-        this.clientId = window.HY_OAUTH_CONFIG.clientId;
+        this.clientId = window.HY_OAUTH_CONFIG ? window.HY_OAUTH_CONFIG.clientId : '';
         this.init();
     }
 
     async init() {
         this.bindEvents();
 
-        // Cargar equipo en la home si el contenedor existe
         if (document.getElementById('dream-team-container')) {
             this.renderDreamTeamComponent();
         }
@@ -29,26 +28,38 @@ class AuthManager {
                 if (result && result.valid) {
                     console.log('[AUTH] OAuth exchange successful via AuthManager');
                     this.dispatchAuthReady(result.user);
+                    this.openRequestedAccountPanel(result.user);
                     return;
                 }
             } catch (e) {
                 console.error('[AUTH] OAuth exchange failed in init:', e);
-                // Continue to check existing state as fallback
             }
 
             console.log('[AUTH] No OAuth code or exchange completed. Checking existing session...');
             const user = await this.checkAuthState();
             this.dispatchAuthReady(user);
+            this.openRequestedAccountPanel(user);
             return;
         }
 
         await this.handleOAuthCallback();
         const user = await this.checkAuthState();
         this.dispatchAuthReady(user);
+        this.openRequestedAccountPanel(user);
+    }
+
+    openRequestedAccountPanel(user) {
+        const requested = new URLSearchParams(window.location.search).get('account');
+        if (!user || !['profile', 'settings', 'api'].includes(requested)) return;
+        const url = new URL(window.location.href);
+        url.searchParams.delete('account');
+        window.history.replaceState({}, '', url.pathname + url.search + url.hash);
+        if (requested === 'profile') this.showProfileModal();
+        if (requested === 'settings') this.showSettingsModal();
+        if (requested === 'api') this.showApiConfigModal();
     }
 
     dispatchAuthReady(user) {
-        // Ensure DOM is fully loaded and a tiny delay for other scripts to initialize
         const trigger = () => {
             console.log('[AUTH] Dispatching authReady event for user:', user?.login || 'guest');
             document.dispatchEvent(new CustomEvent('authReady', {
@@ -63,21 +74,16 @@ class AuthManager {
         }
     }
 
-    /**
-     * Fallback validation for Jules API Key to avoid dependency on jules-api.js
-     * and handle key separation/contamination.
-     */
     async validateJulesKey(key) {
         if (!key) return false;
 
-        // Detect and reject AI provider keys in Jules slot
         if (key.startsWith('nvapi-') || key.startsWith('sk-')) {
             throw new Error("A provider API key (NVIDIA/OpenAI) was detected. Please enter your real Jules API key.");
         }
 
         try {
-            // Direct fetch to Jules API
-            const endpoint = 'https://jules.googleapis.com/v1alpha/sources?pageSize=1';
+            const baseUrl = typeof window.getJulesBase === 'function' ? window.getJulesBase() : 'https://jules.googleapis.com/v1alpha';
+            const endpoint = `${baseUrl}/sources?pageSize=1`;
             const response = await fetch(endpoint, {
                 method: 'GET',
                 headers: {
@@ -103,13 +109,13 @@ class AuthManager {
         document.getElementById('btn-save-api-config')?.addEventListener('click', () => this.handleSaveApiConfig());
 
         document.addEventListener('click', (e) => {
-            if (e.target.closest('#btn-sign-in')) this.handleLogin();
-            if (e.target.closest('#btn-logout')) this.handleLogout();
-            if (e.target.closest('#btn-open-settings')) {
-                if (window.jQuery) window.jQuery('#settingsModal').modal('show');
+            if (e.target.closest('#btn-sign-in, #btn-sign-in-mobile')) this.handleLogin();
+            if (e.target.closest('#btn-logout, #btn-logout-mobile')) this.handleLogout();
+            if (e.target.closest('#btn-open-settings, #btn-open-settings-mobile')) {
+                this.showSettingsModal();
             }
-            if (e.target.closest('#btn-open-profile')) this.showProfileModal();
-            if (e.target.closest('#btn-open-api-config')) this.showApiConfigModal();
+            if (e.target.closest('#btn-open-profile, #btn-open-profile-mobile')) this.showProfileModal();
+            if (e.target.closest('#btn-open-api-config, #btn-open-api-config-mobile')) this.showApiConfigModal();
         });
 
         if (window.jQuery) {
@@ -125,7 +131,6 @@ class AuthManager {
 
                     if (inputJulesKey) {
                         const storedKey = typeof window.getJulesApiKey === 'function' ? window.getJulesApiKey() : '';
-                        // Clean existing contamination from UI and Storage
                         if (storedKey.startsWith('nvapi-') || storedKey.startsWith('sk-')) {
                             inputJulesKey.value = '';
                             inputJulesKey.placeholder = 'Enter real Jules API key (AI key detected)';
@@ -144,13 +149,8 @@ class AuthManager {
         document.getElementById('btn-save-profile')?.addEventListener('click', () => this.handleSaveProfile());
     }
 
-    /**
-     * FIX: Se implementó un bloqueo global (window._oauthExchanging) y limpieza inmediata
-     * de la URL para prevenir bucles de redirección infinitos. El guard de las páginas
-     * protegidas ahora detecta el parámetro 'code' y espera a que este proceso termine
-     * antes de rebotar al index.
-     */
     async handleOAuthCallback() {
+        if (!window.githubApi) return null;
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get('code');
         if (code) {
@@ -161,19 +161,18 @@ class AuthManager {
             window._oauthExchanging = true;
 
             console.log('[AUTH] Consuming OAuth code...');
-            // Limpiar la URL inmediatamente para evitar re-procesamientos
             window.history.replaceState({}, document.title, window.location.pathname);
 
             this.showToast('Autenticando...', 'Intercambiando código con el gatekeeper...', 'info');
             try {
                 const result = await window.githubApi.exchangeCodeForToken(code);
-                if (result.valid) {
+                if (result && result.valid) {
                     this.updateHeaderUI(result.user);
                     this.showToast('Éxito', 'Sesión iniciada correctamente.', 'success');
                     return result;
                 } else {
                     const err = {
-                        status: result.status || 401,
+                        status: result?.status || 401,
                         type: 'INVALID',
                         message: 'Fallo en la validación del token tras el intercambio.'
                     };
@@ -184,8 +183,7 @@ class AuthManager {
                 console.error('[AUTH] Exchange failed:', e);
                 this.showToast('Error', 'Fallo en la autenticación OAuth: ' + (e.message || 'Error desconocido'), 'error');
 
-                // Clear auth and notify
-                window.githubApi.clearAuth();
+                if (window.githubApi) window.githubApi.clearAuth();
                 this.dispatchAuthReady(null);
                 throw e;
             }
@@ -194,6 +192,7 @@ class AuthManager {
     }
 
     async checkAuthState() {
+        if (!window.githubApi) return null;
         const token = window.githubApi.getAuthToken();
         if (!token) {
             this.updateHeaderUI(null);
@@ -210,12 +209,12 @@ class AuthManager {
 
         try {
             const result = await window.githubApi.validateToken();
-            if (result.valid) {
+            if (result && result.valid) {
                 this.updateHeaderUI(result.user);
                 return result.user;
             } else {
                 this.handleAuthError({
-                    status: result.status || 401,
+                    status: result?.status || 401,
                     type: 'INVALID'
                 });
                 return null;
@@ -238,7 +237,8 @@ class AuthManager {
         sessionStorage.setItem('auth_remember_me', rememberMe);
 
         const scope = 'repo';
-        window.location.href = `https://github.com/login/oauth/authorize?client_id=${this.clientId}&scope=${scope}`;
+        const clientId = this.clientId || (window.HY_OAUTH_CONFIG ? window.HY_OAUTH_CONFIG.clientId : '');
+        window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=${scope}`;
     }
 
     async handleSaveSettings() {
@@ -253,14 +253,23 @@ class AuthManager {
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Conectando...';
 
+        const previousToken = window.githubApi ? window.githubApi.getAuthToken() : '';
+        const persisted = !!localStorage.getItem('gh_access_token');
+        let replacedToken = false;
         try {
-            if (token) window.githubApi.setToken(token);
-            if (repo) window.githubApi.setRepo(repo);
-            const user = await window.githubApi.validateToken();
-            this.updateHeaderUI(user);
+            if (token && token !== previousToken && window.githubApi) {
+                window.githubApi.setToken(token, persisted);
+                replacedToken = true;
+            }
+            if (repo && window.githubApi) window.githubApi.setRepo(repo);
+            const validation = window.githubApi ? await window.githubApi.validateToken() : null;
+            if (!validation?.valid || !validation.user?.login) {
+                throw new Error('El token de GitHub no es válido o no tiene acceso.');
+            }
+            this.updateHeaderUI(validation.user);
+            document.dispatchEvent(new CustomEvent('authReady', { detail: { user: validation.user } }));
 
             if (julesKey) {
-                // Save and verify locally first
                 if (typeof window.saveJulesApiKey === 'function') {
                     window.saveJulesApiKey(julesKey);
                 } else {
@@ -268,11 +277,9 @@ class AuthManager {
                 }
 
                 try {
-                    // Use local validation to avoid "window.julesApiCall is not a function"
                     await this.validateJulesKey(julesKey);
                 } catch (julesErr) {
                     console.error("Jules validation failed:", julesErr);
-                    // Keep the key stored! Change state to unauthorized
                     window.julesApiAuthState = 'unauthorized';
                     if (typeof window.updateJulesApiKeyStateIndicator === 'function') {
                         window.updateJulesApiKeyStateIndicator('unauthorized');
@@ -280,7 +287,6 @@ class AuthManager {
                     throw new Error("Jules API Key inválida o error de conexión (la clave se ha guardado localmente): " + julesErr.message);
                 }
             } else {
-                // Allow clearing the key
                 if (typeof window.removeJulesApiKey === 'function') {
                     window.removeJulesApiKey();
                 } else {
@@ -289,19 +295,30 @@ class AuthManager {
             }
 
             if (window.jQuery) window.jQuery('#settingsModal').modal('hide');
-            this.showToast('Éxito', 'Conexión establecida con GitHub y Jules.', 'success');
+            this.showToast('Éxito', 'Configuración guardada y sesión GitHub verificada.', 'success');
 
-            // Dispatch events
             document.dispatchEvent(new CustomEvent('settingsSaved'));
             window.dispatchEvent(new Event('tokenUpdated'));
 
-            // No reload, surgical update instead
             if (window.location.pathname.includes('jules-panel')) {
                 if (typeof window.initializeRepoSelector === 'function') {
                     window.initializeRepoSelector();
                 }
             }
         } catch (e) {
+            if (replacedToken && window.githubApi) {
+                try {
+                    if (previousToken) {
+                        window.githubApi.setToken(previousToken, persisted);
+                        const restored = await window.githubApi.validateToken();
+                        if (restored?.valid) this.updateHeaderUI(restored.user);
+                    } else {
+                        window.githubApi.clearAuth();
+                    }
+                } catch (restoreError) {
+                    console.error('[AUTH] Failed to restore the previous GitHub session:', restoreError);
+                }
+            }
             console.error("Save settings failed:", e);
             this.showToast('Error de Conexión', e.message, 'error');
         } finally {
@@ -313,28 +330,31 @@ class AuthManager {
     }
 
     showSettingsModal() {
+        this.closeAccountMenus();
+        if (!document.getElementById('settingsModal')) {
+            window.location.assign('/dashboard.html?account=settings');
+            return;
+        }
         if (window.jQuery) window.jQuery('#settingsModal').modal('show');
     }
 
     handleAuthError(e) {
-        if (e.status === 401 || e.type === 'INVALID') {
-            window.githubApi.clearAuth();
+        if (e && (e.status === 401 || e.type === 'INVALID')) {
+            if (window.githubApi) window.githubApi.clearAuth();
             this.updateHeaderUI(null);
         }
 
-        if (e.status === 403 && e.type === 'ACL_DENIED') {
-            // Keep the user authenticated but show restricted access if needed
-            // This is now handled at a layer above (e.g., showing a warning instead of locking)
+        if (e && e.status === 403 && e.type === 'ACL_DENIED') {
             this.showToast('Acceso Restringido', 'Estás autenticado pero no tienes permisos de equipo para ciertas operaciones de escritura.', 'warning');
 
             const dashUnauthorized = document.getElementById('unauthorized-overlay');
             if (dashUnauthorized) dashUnauthorized.classList.remove('hidden');
-        } else if (e.status === 401 || e.type === 'INVALID') {
+        } else if (e && (e.status === 401 || e.type === 'INVALID')) {
             this.showToast('Sesión Expirada', 'Tu token es inválido o ha caducado. Por favor, vuelve a iniciar sesión.', 'error');
             const loginOverlay = document.getElementById('login-overlay');
             if (loginOverlay) loginOverlay.classList.remove('hidden');
         } else {
-            this.showToast('Error', e.message || 'Ocurrió un error inesperado.', 'error');
+            this.showToast('Error', e?.message || 'Ocurrió un error inesperado.', 'error');
         }
     }
 
@@ -343,12 +363,11 @@ class AuthManager {
     }
 
     handleLogout() {
-        window.githubApi.clearAuth();
+        if (window.githubApi) window.githubApi.clearAuth();
         window.location.reload();
     }
 
     updateHeaderUI(user) {
-        // Compatibility with new Dashboard header
         if (typeof window.renderUserStatus === 'function' && (document.getElementById('user-status') || document.getElementById('user-status-mobile'))) {
             window.renderUserStatus(user);
             return;
@@ -359,7 +378,7 @@ class AuthManager {
         const chkHeader = document.getElementById('chk-remember-me');
 
         if (chkHeader && chkHeader.parentElement) {
-            chkHeader.parentElement.remove(); // Remove legacy checkbox UI
+            chkHeader.parentElement.remove();
         }
 
         if (!container) return;
@@ -371,12 +390,16 @@ class AuthManager {
 
         if (user) {
             if (leftContainer) leftContainer.innerHTML = '';
+            const avatarHtml = window.HypenosysUI && typeof window.HypenosysUI.renderAvatar === 'function' ?
+                window.HypenosysUI.renderAvatar(user) :
+                `<img src="${user.avatar_url || ''}" class="rounded-circle" width="32" height="32" alt="${user.login}">`;
+
             container.innerHTML = `
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span class="mr-2 d-none d-lg-inline text-gray-400 small font-weight-mono">${user.login}</span>
                         <div class="position-relative">
-                            ${window.HypenosysUI.renderAvatar(user)}
+                            ${avatarHtml}
                             <span class="connectivity-dot"></span>
                         </div>
                     </a>
@@ -451,50 +474,27 @@ class AuthManager {
     }
 
     async showProfileModal() {
-        if (!window.githubApi.user) return;
-        const login = window.githubApi.user.login;
-        this.showToast('Cargando...', 'Obteniendo datos del equipo...', 'info');
-        try {
-            const response = await fetch('/assets/data/team.json');
-            if (!response.ok) throw new Error('No se pudo cargar team.json');
-            const team = await response.json();
-            const member = team.find(m => m.github && m.github.toLowerCase().includes(login.toLowerCase()));
-            if (!member) {
-                this.showToast('Aviso', 'No se encontró tu perfil en el archivo team.json.', 'warning');
-                return;
-            }
-
-            const editProfileName = document.getElementById('edit-profile-name');
-            const editProfileRole = document.getElementById('edit-profile-role');
-            const editProfileDesc = document.getElementById('edit-profile-desc');
-            const editProfilePortfolio = document.getElementById('edit-profile-portfolio');
-            const inputJulesKey = document.getElementById('input-jules-key');
-
-            if (editProfileName) editProfileName.value = member.name || '';
-            if (editProfileRole) editProfileRole.value = member.role || '';
-            if (editProfileDesc) editProfileDesc.value = member.description || '';
-            if (editProfilePortfolio) editProfilePortfolio.value = member.portfolio || '';
-
-            if (inputJulesKey) {
-                const storedKey = typeof window.getJulesApiKey === 'function' ? window.getJulesApiKey() : '';
-                if (storedKey.startsWith('nvapi-') || storedKey.startsWith('sk-')) {
-                    inputJulesKey.value = '';
-                    inputJulesKey.placeholder = 'Re-enter real Jules API key';
-                } else {
-                    inputJulesKey.value = storedKey;
-                }
-            }
-
-            this.currentTeamData = team;
-            this.currentFileSha = fileData.sha;
-            this.currentMemberIndex = team.indexOf(member);
-
-            if (window.jQuery) window.jQuery('#profileModal').modal('show');
-        } catch (e) {
-            this.showToast('Error', 'No se pudo cargar el perfil para editar.', 'error');
+        this.closeAccountMenus();
+        if (window.profileEditor && typeof window.profileEditor.openModal === 'function') {
+            return window.profileEditor.openModal();
         }
+        this.showToast('Perfil no disponible', 'El editor de perfil no se ha cargado. Recarga la página.', 'error');
     }
 
+    closeAccountMenus() {
+        const accountMenu = document.getElementById('gh-mobile-account-menu');
+        const accountButton = document.getElementById('gh-mobile-account-toggle');
+        if (accountMenu) accountMenu.hidden = true;
+        if (accountButton) accountButton.setAttribute('aria-expanded', 'false');
+        const nav = document.getElementById('gh-nav-content');
+        nav?.classList.remove('open');
+        const navToggle = document.getElementById('gh-mobile-toggle');
+        if (navToggle) {
+            navToggle.setAttribute('aria-expanded', 'false');
+            navToggle.setAttribute('aria-label', 'Abrir menú');
+        }
+        document.querySelectorAll('[id^="user-menu-"]').forEach(menu => menu.classList.add('hidden'));
+    }
 
     async handleSaveProfile() {
         const name = document.getElementById('edit-profile-name')?.value.trim() || '';
@@ -504,7 +504,6 @@ class AuthManager {
         const julesKey = document.getElementById('input-jules-key')?.value.trim() || '';
 
         if (julesKey) {
-            // Separation: never save AI provider keys here
             if (!julesKey.startsWith('nvapi-') && !julesKey.startsWith('sk-')) {
                 if (typeof window.saveJulesApiKey === 'function') {
                     try {
@@ -532,7 +531,8 @@ class AuthManager {
         }
 
         try {
-            const login = window.githubApi.user.login;
+            const login = window.githubApi ? window.githubApi.user?.login : null;
+            if (!login) throw new Error("Usuario no autenticado");
             const response = await fetch('/assets/data/team_profiles.json');
             if (!response.ok) throw new Error('No se pudo cargar team_profiles.json');
             const profilesRes = await response.json();
@@ -542,15 +542,14 @@ class AuthManager {
 
             const memberName = memberEntry[0];
             const profileDelta = { display_name: name, role, bio: desc, portfolio };
-            await window.githubApi.updateMemberProfile(memberName, profileDelta);
+            if (window.githubApi) await window.githubApi.updateMemberProfile(memberName, profileDelta);
 
-            // Propagate changes to dashboard if present
             if (window.currentProfiles && window.currentProfiles.members[memberName]) {
                 window.currentProfiles.members[memberName] = {
                     ...window.currentProfiles.members[memberName],
                     ...profileDelta,
-                    display_name: name, // map display_name to display_name
-                    bio: desc           // map bio to bio
+                    display_name: name,
+                    bio: desc
                 };
                 if (typeof window.renderTeamProfiles === 'function') {
                     window.renderTeamProfiles();
@@ -571,8 +570,26 @@ class AuthManager {
         }
     }
 
+    migrateToGatekeeper() {
+        const aiBaseUrl = document.getElementById('ai_base_url');
+        const nimBanner = document.getElementById('nim-migration-banner');
+        if (aiBaseUrl && window.GATEKEEPER_BASE_URL) {
+            aiBaseUrl.value = window.GATEKEEPER_BASE_URL;
+            if (window.ollamaUI) {
+                window.ollamaUI.checkNIMDirectWarning();
+            }
+            if (nimBanner) nimBanner.classList.add('d-none');
+            this.showToast('Migración realizada', 'Base URL actualizada al Gatekeeper Relay.', 'info');
+        }
+    }
+
     async showApiConfigModal() {
-        const user = window.githubApi.user;
+        this.closeAccountMenus();
+        if (!document.getElementById('modalApiConfig')) {
+            window.location.assign('/dashboard.html?account=api');
+            return;
+        }
+        const user = window.githubApi ? window.githubApi.user : null;
         if (!user) {
             this.showToast('Error', 'Debes estar autenticado para configurar la API.', 'error');
             return;
@@ -581,7 +598,6 @@ class AuthManager {
         const login = user.login;
         let config = JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
 
-        // Fallback to team_profiles.json if localStorage is empty for provider/model
         if (!config.provider || !config.model) {
             try {
                 const response = await fetch('/assets/data/team_profiles.json');
@@ -604,24 +620,46 @@ class AuthManager {
         const aiApiKey = document.getElementById('ai_api_key');
         const aiBaseUrl = document.getElementById('ai_base_url');
         const aiLocalNetwork = document.getElementById('ai_local_network');
+        const nimBanner = document.getElementById('nim-migration-banner');
+
+        if (nimBanner) {
+            if (config.provider === 'nvidia_nim' && config.base_url && config.base_url.includes('integrate.api.nvidia.com')) {
+                nimBanner.classList.remove('d-none');
+            } else {
+                nimBanner.classList.add('d-none');
+            }
+        }
+
+        const aiEmbedProvider = document.getElementById('ai_embed_provider');
+        const aiEmbedBaseUrl = document.getElementById('ai_embed_base_url');
+        const aiEmbedApiKey = document.getElementById('ai_embed_api_key');
+        const aiEmbeddingModel = document.getElementById('ai_embedding_model');
 
         if (aiProfileName) aiProfileName.value = config.name || '';
         if (aiProvider) aiProvider.value = config.provider || 'none';
         if (aiModel) aiModel.value = config.model || '';
         if (aiApiKey) aiApiKey.value = config.api_key || '';
+        const anthropicWorkspaceInput = document.getElementById('ai_anthropic_workspace_id');
+        if (anthropicWorkspaceInput) anthropicWorkspaceInput.value = config.anthropic_workspace_id || '';
         if (aiBaseUrl) aiBaseUrl.value = config.base_url || '';
         if (aiLocalNetwork) aiLocalNetwork.checked = !!(config.local_network || config.localNetwork);
 
+        if (aiEmbedProvider) aiEmbedProvider.value = config.embed_provider || config.ai_embed_provider || 'same_as_main';
+        if (aiEmbedBaseUrl) aiEmbedBaseUrl.value = config.embed_base_url || '';
+        if (aiEmbedApiKey) aiEmbedApiKey.value = config.embed_api_key || '';
+        if (aiEmbeddingModel) aiEmbeddingModel.value = config.embedding_model || config.embed_model || '';
+
         if (window.ollamaUI) {
+            window.ollamaUI.previousProvider = config.provider || 'none';
+            window.ollamaUI.previousEmbeddingsProvider = config.embed_provider || config.ai_embed_provider || 'same_as_main';
             window.ollamaUI.handleProviderChange();
+            window.ollamaUI.handleEmbedProviderChange();
         }
 
-        // Hydrate Jules API Key Section
         if (typeof window.hydrateJulesApiKeyModal === 'function') {
             window.hydrateJulesApiKeyModal();
         }
 
-        // Ensure listeners are initialized
         if (typeof window.initJulesApiKeyModalListeners === 'function') {
             window.initJulesApiKeyModalListeners();
         }
@@ -630,15 +668,33 @@ class AuthManager {
     }
 
     async handleSaveApiConfig() {
-        if (!window.githubApi.user) return;
+        if (!window.githubApi || !window.githubApi.user) return;
         const login = window.githubApi.user.login;
 
         const name = document.getElementById('ai_profile_name')?.value.trim() || '';
         const provider = document.getElementById('ai_provider')?.value || 'none';
         const model = document.getElementById('ai_model')?.value.trim() || '';
         const apiKey = document.getElementById('ai_api_key')?.value.trim() || '';
+        const anthropicWorkspaceId = document.getElementById('ai_anthropic_workspace_id')?.value.trim() || '';
         const baseUrl = document.getElementById('ai_base_url')?.value.trim() || '';
         const localNetwork = document.getElementById('ai_local_network')?.checked || false;
+
+        const embedProvider = document.getElementById('ai_embed_provider')?.value || 'same_as_main';
+        const embedBaseUrl = document.getElementById('ai_embed_base_url')?.value.trim() || '';
+        const embedApiKey = document.getElementById('ai_embed_api_key')?.value.trim() || '';
+        const embeddingModel = document.getElementById('ai_embedding_model')?.value.trim() || '';
+
+        // Reject malformed workspaces before they are persisted: the relay would return HTTP 400.
+        if (provider === 'anthropic' && typeof window.validateAnthropicWorkspaceId === 'function') {
+            try {
+                window.validateAnthropicWorkspaceId(anthropicWorkspaceId);
+            } catch (error) {
+                const status = document.getElementById('anthropic-test-status');
+                if (status) status.textContent = '✗ ' + error.message;
+                document.getElementById('ai_anthropic_workspace_id')?.focus();
+                return;
+            }
+        }
 
         const btn = document.getElementById('btn-save-api-config');
         const originalHtml = btn ? btn.innerHTML : 'Guardar Configuración';
@@ -649,23 +705,21 @@ class AuthManager {
         }
 
         try {
-            // Save sensitive + all to localStorage
-            const localConfig = { name, provider, model, api_key: apiKey, base_url: baseUrl, local_network: localNetwork };
+            const localConfig = {
+                name,
+                provider,
+                model,
+                api_key: apiKey,
+                anthropic_workspace_id: provider === 'anthropic' ? anthropicWorkspaceId : '',
+                base_url: baseUrl,
+                local_network: localNetwork,
+                embed_provider: embedProvider,
+                embed_base_url: embedBaseUrl,
+                embed_api_key: embedApiKey,
+                embedding_model: embeddingModel,
+                embed_model: embeddingModel
+            };
             localStorage.setItem('hy_ai_config', JSON.stringify(localConfig));
-
-            // jules_api_key is separate and should not be overwritten by AI provider key
-            // The existing unification logic was causing issues.
-
-            // Sync non-sensitive to team_profiles.json via safe public wrapper
-            const response = await fetch('/assets/data/team_profiles.json');
-            if (!response.ok) throw new Error('No se pudo cargar team_profiles.json');
-            const profilesRes = await response.json();
-            const memberEntry = Object.entries(profilesRes.members).find(([k, v]) => v.github_username.toLowerCase() === login.toLowerCase());
-
-            if (memberEntry) {
-                const memberName = memberEntry[0];
-                await window.githubApi.updateMemberAiConfig(memberName, { provider, model });
-            }
 
             if (window.hypeToast) {
                 window.hypeToast('Configuración API guardada ✓', 'success');
@@ -785,21 +839,19 @@ window.initJulesApiKeyModalListeners = function() {
 
             try {
                 if (typeof window.handleJulesApiKeyChanged === 'function') {
-                    // Jules Panel Flow: Let handleJulesApiKeyChanged manage sync & polling
                     await window.handleJulesApiKeyChanged(val);
                 } else {
-                    // Dashboard Flow
-                    window.saveJulesApiKey(val);
+                    if (typeof window.saveJulesApiKey === 'function') window.saveJulesApiKey(val);
                     window.julesApiAuthState = 'configured';
-                    window.updateJulesApiKeyStateIndicator('configured');
+                    if (typeof window.updateJulesApiKeyStateIndicator === 'function') {
+                        window.updateJulesApiKeyStateIndicator('configured');
+                    }
 
-                    // If renderJulesSessions exists on the Dashboard, run it once
                     if (typeof window.renderJulesSessions === 'function') {
                         window.renderJulesSessions();
                     }
                 }
 
-                // Temporary success state on the button
                 saveBtn.innerHTML = 'Guardada ✓';
                 setTimeout(() => {
                     saveBtn.disabled = false;
@@ -829,12 +881,14 @@ window.initJulesApiKeyModalListeners = function() {
                 if (typeof window.handleJulesApiKeyChanged === 'function') {
                     await window.handleJulesApiKeyChanged('');
                 } else {
-                    window.removeJulesApiKey();
+                    if (typeof window.removeJulesApiKey === 'function') window.removeJulesApiKey();
                     if (input) {
                         input.value = '';
                     }
                     window.julesApiAuthState = 'none';
-                    window.updateJulesApiKeyStateIndicator('none');
+                    if (typeof window.updateJulesApiKeyStateIndicator === 'function') {
+                        window.updateJulesApiKeyStateIndicator('none');
+                    }
 
                     if (typeof window.renderJulesSessions === 'function') {
                         window.renderJulesSessions();
@@ -871,12 +925,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function togglePasswordVisibility(id) {
     const input = document.getElementById(id);
-    const btn = input.nextElementSibling.querySelector('i');
+    if (!input) return;
+    const button = input.nextElementSibling ? input.nextElementSibling.querySelector('button') : null;
+    const btnIcon = input.nextElementSibling ? input.nextElementSibling.querySelector('i') : null;
     if (input.type === 'password') {
         input.type = 'text';
-        btn.classList.replace('fa-eye', 'fa-eye-slash');
+        if (btnIcon) btnIcon.classList.replace('fa-eye', 'fa-eye-slash');
+        if (button) {
+            button.setAttribute('aria-label', 'Ocultar contraseña');
+            button.setAttribute('aria-pressed', 'true');
+        }
     } else {
         input.type = 'password';
-        btn.classList.replace('fa-eye-slash', 'fa-eye');
+        if (btnIcon) btnIcon.classList.replace('fa-eye-slash', 'fa-eye');
+        if (button) {
+            button.setAttribute('aria-label', 'Mostrar contraseña');
+            button.setAttribute('aria-pressed', 'false');
+        }
     }
 }

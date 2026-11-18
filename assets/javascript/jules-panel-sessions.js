@@ -430,7 +430,7 @@ async function performDashboardRefresh() {
 
             if (needsSelection) {
                 console.log("[JULES-REPO] Selecting and restoring active repository context: " + activeRepo);
-                window.selectRepo(activeRepo);
+                await window.selectRepo(activeRepo);
             } else {
                 // Ensure only visual selection state is highlighted, without re-loading branches or configuration side-effects
                 window.selectRepo(activeRepo, true);
@@ -755,6 +755,14 @@ window.pollActiveSessionStatuses = async function() {
         if (anyTransitionDetected) {
             localStorage.setItem('jules_sessions_cache', JSON.stringify(window.julesSessionsCache));
             await window.requestDashboardRefresh('active-session-status-transition');
+        }
+
+        // Polling stops once Jules reaches a terminal state. Reconcile the PR
+        // here rather than relying on a later manual activity refresh.
+        for (const res of results) {
+            if (res.success && String(res.fresh?.state || '').toUpperCase() === 'COMPLETED') {
+                await window.HypenosysJulesPrSync?.reconcileSession?.(res.name, res.fresh);
+            }
         }
 
     } catch (err) {
@@ -1314,6 +1322,10 @@ window.refreshActivities = async function(sessionId) {
                 localStorage.setItem('jules_notif_fail_' + idSafe, Date.now());
             }
         });
+
+        if (String(session?.state || '').toUpperCase() === 'COMPLETED') {
+            await window.JulesTaskSupervisor?.syncCompletedFromJules?.(sessionId, session);
+        }
 
         // Broadcast for Neural Chat UI if open
         window.dispatchEvent(new CustomEvent('julesActivitiesUpdated', { detail: { sessionId, activities, session } }));

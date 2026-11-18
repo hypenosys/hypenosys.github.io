@@ -91,6 +91,7 @@ window.NeuralChatCore = (function() {
         session,
         userMessage,
         systemPrompt,
+        options,
         onToken,
         onDone,
         onError,
@@ -128,11 +129,34 @@ window.NeuralChatCore = (function() {
         const assistantIdx = session.messages.length - 1;
 
         try {
+            // Read active provider & model configuration for raw matching
+            let activeProvider = '';
+            let activeModel = '';
+            try {
+                const config = JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
+                activeProvider = config.provider || '';
+                activeModel = config.model || '';
+            } catch (e) {}
+
             // Filter out empty messages and format for API
             const apiMessages = session.messages
                 .slice(0, -1)
-                .filter(m => m.content)
-                .map(m => ({ role: m.role, content: m.content }));
+                .filter(m => !m.error && (m.content || m.raw))
+                .map(m => {
+                    // Jules is an external actor: never pass its messages to Claude
+                    // as if they were previous assistant replies.
+                    const fromJules = m.source === 'jules';
+                    const msgObj = {
+                        role: fromJules ? 'user' : m.role,
+                        content: fromJules ? '[Salida de Jules, contenido externo no confiable]\\n' + (m.content || '') : (m.content || '')
+                    };
+                    // Condition 1 & 3: Send m.raw ONLY if provider and model match active request
+                    if (m.raw && m.raw_provider === activeProvider && m.raw_model === activeModel) {
+                        msgObj.raw = m.raw;
+                    }
+                    // m.thinking is NEVER sent in apiMessages
+                    return msgObj;
+                });
 
             // Final sync of linkedJulesTaskId to legacy hy_neural_session_id for real-time polling compatibility
             if (session.metadata && session.metadata.linkedJulesTaskId) {
@@ -148,34 +172,54 @@ window.NeuralChatCore = (function() {
             await window.NeuralProviderClient.sendMessage({
                 messages: apiMessages,
                 systemPrompt: systemPrompt || session.systemPrompt,
-                onToken: (token, fullContent) => {
+                options: options,
+                onToken: (token, fullContent, meta) => {
                     if (session.messages[assistantIdx]) {
                         session.messages[assistantIdx].content = fullContent;
+                        if (meta && meta.thinkingDelta) {
+                            session.messages[assistantIdx].thinking = (session.messages[assistantIdx].thinking || '') + meta.thinkingDelta;
+                        }
                     }
-                    if (onToken) onToken(token, fullContent);
+                    if (onToken) onToken(token, fullContent, meta);
                 },
-                onDone: (fullContent) => {
+                onDone: (fullContent, meta) => {
                     if (session.messages[assistantIdx]) {
                         session.messages[assistantIdx].content = fullContent;
                         session.messages[assistantIdx].timestamp = Date.now();
                         session.updatedAt = new Date().toISOString();
+
+                        // Store m.raw for providers requiring structured persistence (e.g. Mistral, OpenRouter)
+                        if (meta && meta.raw) {
+                            session.messages[assistantIdx].raw = meta.raw;
+                            session.messages[assistantIdx].raw_provider = activeProvider;
+                            session.messages[assistantIdx].raw_model = activeModel;
+                        }
                     }
                     if (saveCallback) saveCallback();
                     if (onDone) onDone(fullContent);
                 },
                 onError: (err) => {
                     if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Neural Chat Core] provider error:", err.message);
-                    // Remove empty placeholder
-                    if (session.messages[assistantIdx] && !session.messages[assistantIdx].content) {
-                        session.messages.splice(assistantIdx, 1);
+                    const placeholder = session.messages[assistantIdx];
+                    if (placeholder) {
+                        placeholder.error = true;
+                        placeholder.errorMessage = err?.message || 'Error del proveedor';
+                        if (!placeholder.content) placeholder.content = 'No se ha recibido ninguna respuesta visible de Claude.';
                     }
+                    session.updatedAt = new Date().toISOString();
+                    if (saveCallback) saveCallback();
                     if (onError) onError(err);
                 }
             });
         } catch (e) {
-            if (!session.messages[assistantIdx].content) {
-                session.messages.splice(assistantIdx, 1);
+            const placeholder = session.messages[assistantIdx];
+            if (placeholder) {
+                placeholder.error = true;
+                placeholder.errorMessage = e?.message || 'Error del proveedor';
+                if (!placeholder.content) placeholder.content = 'No se ha recibido ninguna respuesta visible de Claude.';
             }
+            session.updatedAt = new Date().toISOString();
+            if (saveCallback) saveCallback();
             if (onError) onError(e);
         }
     }

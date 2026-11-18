@@ -1,0 +1,34 @@
+name: HypenOS task flow model and syntax
+
+on:
+  pull_request:
+    paths:
+      - 'assets/javascript/ecosystem-v2.js'
+      - 'assets/javascript/hypenosys-os-model.js'
+      - '_includes/ecosystem_v2_shell.html'
+      - 'tests/test_hypenosos_model.cjs'
+      - '.github/workflows/hypenosos-mission-flow.yml'
+  push:
+    branches: [develop]
+    paths:
+      - 'assets/javascript/ecosystem-v2.js'
+      - 'assets/javascript/hypenosys-os-model.js'
+      - 'tests/test_hypenosos_model.cjs'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify JavaScript syntax
+        run: |
+          node --check assets/javascript/hypenosys-os-model.js
+          node --check assets/javascript/ecosystem-v2.js
+      - name: Verify task-state, provenance and evidence guards
+        run: node --test tests/test_hypenosos_model.cjs

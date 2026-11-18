@@ -112,17 +112,19 @@
         opacity: 1;
     }
     .neural-message-actions {
-        opacity: 0;
-        transition: opacity 0.15s ease, transform 0.15s ease;
-        transform: translateY(5px);
-    }
-    .message-bubble:hover .neural-message-actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 6px;
+        margin-top: 12px;
+        padding-top: 10px;
+        border-top: 1px solid rgba(98, 114, 164, 0.25);
         opacity: 1;
-        transform: translateY(0);
     }
     .neural-action-mini {
-        height: 22px;
-        padding: 0 10px;
+        min-height: 28px;
+        padding: 4px 10px;
         border-radius: 999px;
         font-size: 9px;
         font-weight: 800;
@@ -130,7 +132,7 @@
         letter-spacing: 0.02em;
         background: #1e1f29;
         border: 1px solid #44475a;
-        color: #6272a4;
+        color: #c6c9df;
         cursor: pointer;
         display: flex;
         align-items: center;
@@ -138,18 +140,29 @@
         transition: all 0.2s;
         box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     }
+    .neural-message-select {
+        margin: 0;
+    }
+    .neural-message-select input[type="checkbox"] {
+        appearance: auto;
+        position: static;
+        width: 14px;
+        height: 14px;
+        margin: 0;
+        opacity: 1;
+        accent-color: #bd93f9;
+        cursor: pointer;
+    }
+    .neural-action-mini:focus-visible,
+    .neural-message-select:focus-within {
+        outline: 2px solid #bd93f9;
+        outline-offset: 2px;
+    }
     .neural-action-mini:hover {
         border-color: #bd93f9;
         color: #fff;
         background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
-        transform: translateY(-1px);
         box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
-    }
-    @media (hover: none) {
-        .neural-message-actions {
-            opacity: 1;
-            transform: translateY(0);
-        }
     }
 
     .sidebar-section-label {
@@ -588,4 +601,88 @@
     .collapsed .sidebar-footer-link {
         text-align: center;
     }
+
+    /* RAG Attachment Chips */
+    #rag-file-chips-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 8px;
+        width: 100%;
+    }
+    .rag-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 8px;
+        font-size: 11px;
+        font-family: 'JetBrains Mono', monospace;
+        background: #1e1f29;
+        border: 1px solid #44475a;
+        color: #f8f8f2;
+        transition: all 0.2s ease;
+        max-width: 100%;
+    }
+    .rag-chip.indexing {
+        border-color: #8be9fd;
+        color: #8be9fd;
+        background: rgba(139, 233, 253, 0.08);
+    }
+    .rag-chip.ready {
+        border-color: rgba(80, 250, 123, 0.4);
+        color: #f8f8f2;
+    }
+    .rag-chip.ready .rag-chip-icon {
+        color: #50fa7b;
+    }
+    .rag-chip.error {
+        border-color: #ff5555;
+        color: #ff5555;
+        background: rgba(255, 85, 85, 0.08);
+    }
+    .rag-chip-name {
+        max-width: 130px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-weight: 600;
+    }
+    .rag-chip-size {
+        font-size: 9px;
+        color: #6272a4;
+        font-weight: normal;
+    }
+    .rag-chip-badge {
+        font-size: 8px;
+        padding: 1px 4px;
+        border-radius: 4px;
+        font-weight: 800;
+        text-transform: uppercase;
+    }
+    .rag-chip-badge.reindex {
+        background: rgba(255, 184, 108, 0.2);
+        color: #ffb86c;
+        border: 1px solid rgba(255, 184, 108, 0.4);
+    }
+    .rag-chip-remove {
+        background: transparent;
+        border: none;
+        color: #6272a4;
+        cursor: pointer;
+        padding: 2px 4px;
+        border-radius: 4px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        line-height: 1;
+        transition: all 0.15s ease;
+    }
+    .rag-chip-remove:hover, .rag-chip-remove:focus {
+        color: #ff5555;
+        background: rgba(255, 85, 85, 0.15);
+        outline: none;
+    }
 </style>
+

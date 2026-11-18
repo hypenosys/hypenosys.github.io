@@ -45,13 +45,56 @@ window.getCanonicalRepoName = function(fullName) {
     return ('hypenosys/' + clean).toLowerCase();
 };
 
-function initializeRepoSelector() {
+window.setJulesLaunchReadyState = function(ready, reason = '') {
     const btn = $('launch-btn');
-    if (btn) {
-        btn.disabled = true;
-        btn.innerText = 'Cargando fuentes...';
+    if (!btn || window._julesLaunchInFlight) return;
+    const generation = (window._julesDependencyCheckGeneration || 0) + 1;
+    window._julesDependencyCheckGeneration = generation;
+    // Immediate accessible guard from the linked task context. The full
+    // dependency resolution is rechecked against taskOps before API launch.
+    let linked = {};
+    try { linked = JSON.parse(localStorage.getItem('hy_neural_task_context') || '{}') || {}; }
+    catch { linked = {}; }
+    const pendingIds = Array.isArray(linked.blocked_by) ? linked.blocked_by : [];
+    const explicitBlocked = String(linked.estado || '').toUpperCase() === 'BLOCKED';
+    const blocked = explicitBlocked || pendingIds.length > 0;
+    const blockedReason = pendingIds.length
+      ? 'Tarea vinculada: comprobar dependencias ' + pendingIds.map(id => '#' + id).join(', ') + ' antes de ejecutar.'
+      : 'Tarea bloqueada: revisa el Kanban antes de ejecutar.';
+    btn.disabled = !ready || blocked;
+    btn.title = blocked ? blockedReason : (reason || '');
+    btn.setAttribute('aria-disabled', String(!ready || blocked));
+    if (blocked) btn.setAttribute('aria-label', 'Ejecución no disponible. ' + blockedReason);
+    else btn.removeAttribute('aria-label');
+    btn.innerHTML = '<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> ' + (blocked ? 'Dependencias pendientes' : 'Iniciar Ejecución');
+    if (ready && pendingIds.length && window.taskOps?.getAllTasks) {
+        window.taskOps.getAllTasks().then(tasks => {
+            if (window._julesDependencyCheckGeneration !== generation || window._julesLaunchInFlight || !btn.isConnected) return;
+            const done = new Set(['OK', 'DONE', 'COMPLETED', 'FIXED', 'CLOSED', 'RESOLVED']);
+            const unresolved = pendingIds.filter(id => {
+                const dep = (tasks || []).find(t => String(t.id) === String(id));
+                return !dep || !done.has(String(dep.estado || dep.status || '').trim().toUpperCase());
+            });
+            const stillBlocked = explicitBlocked || unresolved.length > 0;
+            const label = unresolved.length ? 'Dependencias pendientes: ' + unresolved.map(id => '#' + id).join(', ') : 'Tarea marcada como bloqueada';
+            btn.disabled = stillBlocked;
+            btn.setAttribute('aria-disabled', String(stillBlocked));
+            btn.title = stillBlocked ? label : '';
+            btn.textContent = stillBlocked ? 'Dependencias pendientes' : 'Iniciar Ejecución';
+            if (stillBlocked) btn.setAttribute('aria-label', 'Ejecución no disponible. ' + label);
+            else btn.removeAttribute('aria-label');
+        }).catch(() => {
+            btn.disabled = true;
+            btn.title = 'No se pudo comprobar el estado de las dependencias';
+        });
     }
-    // We trigger source fetching from auth.js but we ensure this exists
+
+};
+
+function initializeRepoSelector() {
+    // Source loading must never own the CTA label. Keep the action stable and
+    // disabled only until repository + branch readiness is known.
+    window.setJulesLaunchReadyState(false, 'Preparando repositorio y rama…');
 }
 
 function loadCachedRepos() {
@@ -141,7 +184,12 @@ function renderRepos(repos) {
             item.innerHTML = (repo.is_installed ? '<i class="fas fa-check-circle text-success"></i>' : '<i class="fas fa-circle-notch"></i>') +
                              '<span>' + alias + '</span>';
 
-            item.onclick = () => selectRepo(repo.full_name);
+            item.onclick = () => {
+                // Only a deliberate user click can confirm a repository for
+                // a Claude handoff that has no attached task/repo.
+                window.JulesPanelState._handoffRepoUnconfirmed = false;
+                selectRepo(repo.full_name);
+            };
             content.appendChild(item);
         });
 
@@ -171,8 +219,28 @@ async function selectRepo(repoFullName, onlyUI = false) {
     const items = document.querySelectorAll('.repo-item');
     items.forEach(i => i.classList.remove('active'));
 
-    const selectedItem = Array.from(items).find(i => i.getAttribute('data-id') === repoFullName);
-    const sourceName = selectedItem ? selectedItem.getAttribute('data-jules') : (repoFullName.startsWith('sources/') ? repoFullName : 'sources/github/' + repoFullName);
+    const canonical = window.getCanonicalRepoName(repoFullName);
+    const selectedItem = Array.from(items).find(i => window.getCanonicalRepoName(i.getAttribute('data-id')) === canonical);
+    // Use Jules' verified resource name from listSources, never invent one when
+    // the GitHub repo is visible but the Jules GitHub App isn't installed.
+    let sourceName = selectedItem?.getAttribute('data-jules') ||
+        (repoFullName.startsWith('sources/') ? repoFullName : '');
+    if (!sourceName && window.julesApi?.getSources) {
+        // A handoff may arrive before the sidebar's async repo render finishes.
+        // Fetch the authoritative Jules sources instead of manufacturing a URL.
+        const sources = Array.isArray(window.julesSourcesCache) && window.julesSourcesCache.length
+            ? window.julesSourcesCache : await window.julesApi.getSources();
+        window.julesSourcesCache = sources;
+        sourceName = sources.find(item => window.getCanonicalRepoName(item.name) === canonical)?.name || '';
+    }
+    if (!sourceName) {
+        window.JulesPanelState.activeRepo = null;
+        window.JulesPanelState._handoffBranchBlocked = true;
+        window.setJulesLaunchReadyState?.(false, 'Conecta este repositorio en Jules antes de iniciar una tarea.');
+        if (typeof showToast === 'function') showToast('El repositorio ' + repoFullName + ' no está conectado a Jules. Instala la integración de GitHub.', 'amber');
+        return;
+    }
+    repoFullName = selectedItem?.getAttribute('data-id') || repoFullName;
 
     if (selectedItem) selectedItem.classList.add('active');
 
@@ -203,14 +271,26 @@ async function selectRepo(repoFullName, onlyUI = false) {
     }
 
     if (sourceName && !onlyUI) {
-        loadBranches(repoFullName);
+        // Task handoffs must await the resolved repository's branch list.
+        await loadBranches(repoFullName);
         updateRepoConfigUI(repoFullName);
     }
 }
 
+// Task data can store a human label such as "Desarrollo (develop)".
+ // Prefer an exact branch name from GitHub; only then interpret a terminal "(branch)" label.
+window.resolveJulesTaskBranch = function(hint, branchNames) {
+    const raw = String(hint || '').trim().replace(/^refs\/heads\//, '');
+    if (!raw) return '';
+    if (branchNames.includes(raw)) return raw;
+    const label = raw.match(/\(([^()]+)\)\s*$/);
+    const candidate = label ? label[1].trim().replace(/^refs\/heads\//, '') : '';
+    return candidate && branchNames.includes(candidate) ? candidate : '';
+};
+
 window._loadBranchesRequestId = window._loadBranchesRequestId || 0;
 
-async function loadBranches(repoFullName) {
+window.loadBranches = async function loadBranches(repoFullName) {
     const branchSelect = $('branch-sel') || $('branch-selector');
     const branchMeta = $('branch-meta');
     if (!branchSelect) return;
@@ -253,13 +333,18 @@ async function loadBranches(repoFullName) {
             return '<option value="' + b.name + '">' + cleanName + (isDefault ? ' ★' : '') + '</option>';
         }).join('');
 
-        // Priority logic for branch selection
+        // Task handoff takes precedence over the browser's previous/default branch.
+        const requestedRaw = window.JulesPanelState?.handoffTargetRepo === requestedCanonical
+            ? String(window.JulesPanelState.handoffTargetBranch || '') : '';
+        const requested = window.resolveJulesTaskBranch(requestedRaw, branches.map(b => b.name));
         const persistedBranch = localStorage.getItem('hy_active_branch_' + repoFullName);
         let branchToSelect = "";
 
         const branchExists = (name) => branches.some(b => b.name === name);
 
-        if (persistedBranch && branchExists(persistedBranch)) {
+        if (requested && branchExists(requested)) {
+            branchToSelect = requested;
+        } else if (persistedBranch && branchExists(persistedBranch)) {
             branchToSelect = persistedBranch;
         } else if (defaultBranch && branchExists(defaultBranch)) {
             branchToSelect = defaultBranch;
@@ -282,11 +367,26 @@ async function loadBranches(repoFullName) {
         // Success assignment!
         branchSelect.dataset.repo = requestedCanonical;
         window._loadedRepoContext = requestedCanonical;
+        if (requestedRaw && !requested) {
+            window.JulesPanelState._handoffBranchBlocked = true;
+            window.setJulesLaunchReadyState?.(false, 'Rama esperada no disponible: selecciona una válida.');
+            showToast('La rama ' + requestedRaw + ' no está disponible en ' + repoFullName + '. Selecciona otra antes de ejecutar.', 'amber');
+        } else if (requested) {
+            window.JulesPanelState._handoffBranchBlocked = false;
+        }
+
+        if (!window.JulesPanelState._handoffBranchBlocked) {
+            window.setJulesLaunchReadyState?.(true);
+        }
 
         branchSelect.onchange = (e) => {
             const val = e.target.value;
             if (!val) return;
             window.JulesPanelState.activeBranch = val;
+            window.JulesPanelState._handoffBranchBlocked = false;
+            window.JulesPanelState.handoffTargetBranch = val;
+            window.JulesPanelState.handoffTargetRepo = requestedCanonical;
+            window.setJulesLaunchReadyState?.(true);
             localStorage.setItem('hypenosys_active_branch', val);
             localStorage.setItem('hy_active_branch_' + repoFullName, val);
 
@@ -331,6 +431,7 @@ async function loadBranches(repoFullName) {
             if (branchMeta) {
                 branchMeta.innerHTML = '<span class="u-dot" style="background:var(--red)"></span><span style="color:var(--red)">Error de conexión con GitHub</span>';
             }
+            window.setJulesLaunchReadyState?.(false, 'No se pudieron cargar las ramas. Reintenta o selecciona otro repositorio.');
         } else {
             console.log("[JULES-REPO] Ignored loadBranches error for stale request.");
         }

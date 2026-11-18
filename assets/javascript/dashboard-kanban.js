@@ -120,6 +120,28 @@ function buildTaskCard(task) {
     return card;
   }
 
+  // An unresolved dependency is a visual and semantic state, not a faded
+  // whole-card opacity that makes text and focus indicators inaccessible.
+  const done = new Set(['OK', 'DONE', 'COMPLETED', 'FIXED', 'CLOSED', 'RESOLVED']);
+  const dependencies = Array.isArray(task.blocked_by) ? task.blocked_by : [];
+  const unresolved = dependencies.filter(id => {
+    const dependency = currentTasks.find(t => String(t.id) === String(id));
+    return !dependency || !done.has(String(dependency.estado || dependency.status || '').trim().toUpperCase());
+  });
+  const blocked = unresolved.length > 0 || String(task.estado || '').toUpperCase() === 'BLOCKED';
+  if (blocked) {
+    cardEl.classList.add('hy-task-blocked');
+    const reason = document.createElement('p');
+    reason.className = 'hy-task-blocked-reason';
+    reason.textContent = unresolved.length
+      ? '🔒 Bloqueada por tareas pendientes: ' + unresolved.map(id => '#' + id).join(', ')
+      : '🔒 Bloqueada: revisa el estado antes de ejecutar';
+    reason.id = 'task-block-reason-' + String(task.id).replace(/[^a-zA-Z0-9_-]/g, '');
+    cardEl.appendChild(reason);
+    cardEl.setAttribute('aria-describedby', reason.id);
+    cardEl.dataset.blocked = 'true';
+  }
+
   cardEl.id = `card-${task.id}`;
   cardEl.draggable = true;
 
@@ -197,7 +219,11 @@ async function handleCardDrop(taskId, targetColumnId) {
     showToast(UI_STRINGS.taskMoved(taskId, targetColumnId), 'success');
     await refreshDashboardData();
   } catch (err) {
-    showToast(`Error: ${err.message}`, 'error');
+    if (window.isWritePermissionError && window.isWritePermissionError(err) && window.showWritePermissionModal) {
+      window.showWritePermissionModal();
+    } else {
+      showToast(`Error: ${err.message}`, 'error');
+    }
   }
 }
 
@@ -239,7 +265,11 @@ async function handleQuickStageUpdate(taskId, newStage) {
         showToast(`Tarea #${taskId} movida a ${newStage}`, 'success');
         await refreshDashboardData();
     } catch (err) {
-        showToast(`Error: ${err.message}`, 'error');
+        if (window.isWritePermissionError && window.isWritePermissionError(err) && window.showWritePermissionModal) {
+            window.showWritePermissionModal();
+        } else {
+            showToast(`Error: ${err.message}`, 'error');
+        }
     }
 }
 
@@ -259,25 +289,34 @@ async function handleMoveCard(taskId, direction) {
 }
 
 window._openTaskInClaudeWithContext = function(taskId) {
-  if (typeof currentTasks !== 'undefined') {
-    const task = currentTasks.find(t => String(t.id) === String(taskId));
-    if (task) {
-      const payload = {
-        titulo: task.title || task.titulo || '',
-        descripcion: task.descripcion || task.description || '',
-        acceptance_criteria: task.acceptance_criteria || '',
-        tags: task.tags || [],
-        prioridad: task.prioridad || '',
-        asignados: task.asignados || task.asignado_a || [],
-        comments: task.comments || [],
-        estimated_hours: task.estimated_hours || '',
-        repositorio: task.repository || task.repo || '',
-        rama: task.rama || task.branch || ''
-      };
-      localStorage.setItem('hy_neural_task_context', JSON.stringify(payload));
-      localStorage.setItem('hy_neural_active', 'true');
-      localStorage.setItem('hy_neural_new_task_sent', 'true');
-    }
+  const task = (typeof currentTasks !== 'undefined' && Array.isArray(currentTasks))
+    ? currentTasks.find(t => String(t.id) === String(taskId))
+    : null;
+
+  if (!task?.id || !(task.title || task.titulo)) {
+    console.warn('[KANBAN] No complete task found for Claude entry:', taskId);
+    return;
   }
-  window.location.href = `/chat/neural/?from=dashboard`;
+
+  // Keep a single canonical Dashboard -> Claude handoff path. If the richer
+  // dashboard entry point is already registered, delegate to it so task
+  // identity and all metadata are preserved.
+  if (typeof window._openTaskInClaude === 'function') {
+    window._openTaskInClaude(task);
+    return;
+  }
+
+  // Defensive fallback for unusual script-load ordering. A fresh task must
+  // never inherit a previous Claude/Jules thread or pending prompt.
+  localStorage.removeItem('hy_jules_handoff');
+  localStorage.removeItem('jules_task_payload');
+  localStorage.removeItem('hy_pending_claude_handoff_id');
+  localStorage.removeItem('hy_handoff_autolink');
+  localStorage.removeItem('hy_neural_pending_prompt');
+  localStorage.removeItem('hy_neural_thread');
+  localStorage.setItem('hy_neural_task_context', JSON.stringify(task));
+  localStorage.setItem('hy_neural_active', 'true');
+  localStorage.setItem('hy_neural_new_task_sent', 'true');
+  localStorage.setItem('hy_neural_entry_point', 'dashboard-claude');
+  window.location.assign('/chat/neural/?from=dashboard');
 };

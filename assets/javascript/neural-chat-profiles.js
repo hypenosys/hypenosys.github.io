@@ -127,12 +127,17 @@ window.selectProfile = function(id) {
     const embeddingInput = document.getElementById('ai_embedding_model');
     if (embeddingInput) embeddingInput.value = config.embedding_model || '';
     if (keyInput) keyInput.value = config.api_key || '';
+    const workspaceInput = document.getElementById('ai_anthropic_workspace_id');
+    if (workspaceInput) workspaceInput.value = config.anthropic_workspace_id || '';
     if (urlInput) urlInput.value = config.base_url || '';
     if (localNetInput) localNetInput.checked = !!(config.local_network || config.localNetwork);
 
     updateActiveProfileUI(config);
     adaptUI(config);
     checkConnection(config.provider, config);
+    if (typeof window.updateThinkingToggleUI === 'function') {
+        window.updateThinkingToggleUI();
+    }
 
     const dropdown = document.getElementById('profile-dropdown');
     if (dropdown) dropdown.classList.add('hidden');
@@ -153,6 +158,9 @@ window.selectModelFromProfile = function(profileId, model) {
     updateActiveProfileUI(config);
     adaptUI(config);
     checkConnection(config.provider, config);
+    if (typeof window.updateThinkingToggleUI === 'function') {
+        window.updateThinkingToggleUI();
+    }
     document.getElementById('profile-dropdown').classList.add('hidden');
 }
 
@@ -224,6 +232,7 @@ window.adaptUI = function(config) {
     const imgRes = document.getElementById('image-resolution');
     const audioRec = document.getElementById('audio-record-container');
     const attachBtn = document.getElementById('attach-btn');
+    const fileAttachBtn = document.getElementById('file-attach-btn');
     const toggleInput = document.getElementById('toggle-input-mode');
 
     if (imgRes) imgRes.classList.add('hidden');
@@ -231,6 +240,14 @@ window.adaptUI = function(config) {
     if (window.chatInput) window.chatInput.classList.remove('hidden');
     if (attachBtn) attachBtn.classList.add('hidden');
     if (toggleInput) toggleInput.classList.add('hidden');
+
+    if (fileAttachBtn) {
+        if (window.NeuralChatRAG && window.NeuralChatRAG.isEmbeddingsReady()) {
+            fileAttachBtn.classList.remove('hidden');
+        } else {
+            fileAttachBtn.classList.add('hidden');
+        }
+    }
 
     if (type === 'image-gen' && imgRes) {
         imgRes.classList.remove('hidden');

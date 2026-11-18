@@ -154,172 +154,301 @@ window.registerPanelListenersOnce = function() {
     }
 };
 
-window.prefillTaskFromHandoff = async function(task) {
-    if (!task) return;
+/**
+ * Shared task/message handoff. It NEVER sends messages automatically.
+ * Repositories and branches are validated before the task launch can execute.
+ */
+window.resizeJulesDraftTextarea = function(textarea = document.getElementById('session-prompt')) {
+    if (!textarea) return;
+    textarea.style.height = 'auto';
+    const needed = textarea.scrollHeight || 240;
+    textarea.style.height = Math.min(420, Math.max(240, needed)) + 'px';
+    textarea.style.overflowY = needed > 420 ? 'auto' : 'hidden';
+};
 
-    // Determinar si hay una sesión activa vinculada
-    const claudeId = localStorage.getItem('hy_active_claude_session_id');
-    let linkedSid = null;
-    if (claudeId) {
-        linkedSid = localStorage.getItem('hy_neural_session_id_' + claudeId);
+window.resolveJulesIntegrationBranchFromTask = function(task) {
+    // Task "rama" is often a feature branch, but Jules must base the PR on
+    // the configured integration branch (develop or master) instead.
+    for (const raw of [
+        task?.integration_branch, task?.merge_target_branch,
+        task?.target_branch, task?.base_branch, task?.branch, task?.rama
+    ]) {
+        const value = String(raw || '').trim();
+        const labeled = /\((develop|master)\)\s*$/i.exec(value);
+        const target = (labeled ? labeled[1] : value).toLowerCase();
+        if (target === 'develop' || target === 'master') return target;
     }
-    if (!linkedSid) linkedSid = localStorage.getItem('hy_neural_session_id');
+    return '';
+};
 
-    let isSessionActive = false;
-    if (linkedSid) {
-        try {
-            const sessionData = await window.julesApi.getSession(linkedSid);
-            const terminalStates = ['COMPLETED', 'FAILED', 'CANCELLED', 'ERROR'];
-            if (sessionData && !terminalStates.includes(sessionData.state)) {
-                isSessionActive = true;
-            }
-        } catch (e) {
-            console.warn("Error checking linked session status", e);
-        }
-    }
-
-    const payloadStr = localStorage.getItem('jules_task_payload');
-    let formattedPrompt = "";
+window.prefillTaskFromHandoff = async function(task, handoff = {}) {
     let payload = null;
-
-    if (payloadStr) {
-        try {
-            payload = JSON.parse(payloadStr);
-            if (payload.user_note) formattedPrompt += "[NOTA DEL USUARIO]\n" + payload.user_note + "\n\n";
-            if (payload.session_context && typeof payload.session_context === 'string') {
-                formattedPrompt += "[CONTEXTO NEURAL]\n\n" + payload.session_context + "\n\n";
-            }
-            if (payload.claude_response) {
-                formattedPrompt += "[RESPUESTA DE CLAUDE]\n\n" + payload.claude_response;
-            }
-        } catch(e) { console.error("Error parsing payload", e); }
+    try {
+        payload = JSON.parse(localStorage.getItem('jules_task_payload') || 'null');
+    } catch (error) {
+        console.warn('[Jules Handoff] Invalid payload ignored');
     }
 
+    const contextTask = task || payload?.source_task || {};
+    const claudeId = String(handoff.claude_conversation_id || payload?.claude_conversation_id || '');
+    const taskTitle = contextTask.titulo || contextTask.title || '';
+    const isDashboardTask = handoff.source === 'dashboard' || handoff.intent === 'new-task';
+
+    const fragments = [];
+    if (payload?.user_note) fragments.push('[NOTA DEL USUARIO]\n' + payload.user_note);
+    if (payload?.session_context) fragments.push('[CONTEXTO CLAUDE]\n' + payload.session_context);
+    if (payload?.claude_response) fragments.push('[RESPUESTA DE CLAUDE]\n' + payload.claude_response);
+
+    if (!fragments.length && contextTask.id) {
+        fragments.push(
+            'Tarea #' + contextTask.id + ' — ' + taskTitle +
+            '\n\n' + (contextTask.descripcion || contextTask.description || '') +
+            '\n\nAnaliza el alcance, las dependencias y los bloqueos. Propón un plan verificable antes de ejecutar cambios.'
+        );
+    }
+    const formattedPrompt = fragments.join('\n\n').trim();
     if (!formattedPrompt) {
-        formattedPrompt = "He vinculado esta tarea para su análisis técnico:\n\n📌 TAREA: #" + task.id + " - " + (task.titulo || task.title) + "\n";
-        if (task.descripcion) formattedPrompt += "📝 DESCRIPCIÓN: " + task.descripcion + "\n";
-        formattedPrompt += "\n¿Cómo podemos abordar esta tarea?";
+        showToast('El traspaso no contiene ninguna instrucción para Jules.', 'red');
+        return;
     }
 
-    const targetRepo = task.repository || task.repo || ((payload && payload.source_task && payload.source_task.repository) || (payload && payload.source_task && payload.source_task.repo));
-    const targetBranch = task.rama || task.branch || (payload && payload.rama);
+    const targetRepo = contextTask.repository || contextTask.repo
+        || payload?.source_task?.repository || payload?.source_task?.repo || '';
+    const targetBranch = window.resolveJulesIntegrationBranchFromTask(contextTask)
+        || contextTask.rama || contextTask.branch || payload?.rama || '';
+    const canonicalRepo = targetRepo && window.getCanonicalRepoName
+        ? window.getCanonicalRepoName(targetRepo) : '';
+    const sidRaw = handoff.linked_jules_session_id || payload?.linked_jules_session_id
+        || (claudeId ? localStorage.getItem('hy_neural_session_id_' + claudeId) : null);
+    const linkedSid = String(sidRaw || '').replace(/^sessions\//, '');
+    let existing = null;
 
-    if (targetRepo) {
-        const source = (window.julesSourcesCache || []).find(function(src) {
-            return src.name === targetRepo || src.name === 'sources/github/' + targetRepo || src.displayName === targetRepo;
-        });
-        if (source) {
-            switchRepo(source.name, source);
-        } else if (targetRepo.includes('/')) {
-            const sourceName = targetRepo.startsWith('sources/') ? targetRepo : 'sources/github/' + targetRepo;
-            switchRepo(sourceName, { name: sourceName });
-        }
-    }
-
-    if (targetBranch) {
-        const waitForBranches = () => {
-            return new Promise((resolve) => {
-                let attempts = 0;
-                const check = () => {
-                    const sel = $('branch-sel');
-                    if (sel && !sel.disabled && sel.options.length > 0) {
-                        const option = Array.from(sel.options).find(o => o.value === targetBranch);
-                        if (option) {
-                            sel.value = targetBranch;
-                            window.JulesPanelState.activeBranch = targetBranch;
-                            const sessCtx = $('sess-ctx');
-                            if(sessCtx) {
-                                const repoLabel = $('repo-label').textContent;
-                                sessCtx.textContent = repoLabel + ': ' + targetBranch;
-                            }
-                            addTel("SYSTEM", "Rama auto-ajustada a " + targetBranch + " (Tarea #" + task.id + ")", "info");
-                            resolve(true);
-                        } else {
-                            resolve(false);
-                        }
-                    } else if (attempts < 20) {
-                        attempts++;
-                        setTimeout(check, 250);
-                    } else {
-                        resolve(false);
-                    }
-                };
-                check();
-            });
-        };
-
-        const exists = await waitForBranches();
-        if (!exists) {
-             formattedPrompt = "Crea la branch " + targetBranch + " a partir de main antes de empezar.\n\n" + formattedPrompt;
-             addTel("SYSTEM", "Instrucción de creación de branch añadida al prompt", "warn");
-        }
-    }
-
-    if (isSessionActive) {
-        showToast("Enviando orden a sesión activa...", "amber");
+    // Never borrow the globally active Jules session for a different task.
+    if (!isDashboardTask && linkedSid && /^[A-Za-z0-9_-]{3,100}$/.test(linkedSid)) {
         try {
-            const targetId = linkedSid.startsWith('sessions/') ? linkedSid : 'sessions/' + linkedSid;
-            const ok = await window.julesApi.sendMessage(targetId, formattedPrompt);
-            if (ok) {
-                showToast("Orden enviada con éxito", "green");
-                addTel("USER", "Orden enviada vía Neural Link", "info");
-
-                const panelSession = window.julesPanelSessions.find(s => s.id === window.currentJulesPanelSessionId);
-                if (panelSession) {
-                    panelSession.messages.push({ role: 'user', content: formattedPrompt, timestamp: Date.now() });
-                    if (window.saveJulesPanelSessions) window.saveJulesPanelSessions();
-                    if (window.renderChatV2Messages) window.renderChatV2Messages();
+            const remote = await window.julesApi.getSession('sessions/' + linkedSid);
+            const terminal = ['COMPLETED', 'FAILED', 'CANCELLED', 'ERROR'];
+            const remoteRepo = remote?.sourceContext?.source || '';
+            const remoteBranch = remote?.sourceContext?.githubRepoContext?.startingBranch || '';
+            const sameRepo = !canonicalRepo || !remoteRepo
+                || window.getCanonicalRepoName(remoteRepo) === canonicalRepo;
+            const sameBranch = !targetBranch || !remoteBranch || remoteBranch === targetBranch;
+            if (remote && !terminal.includes(remote.state) && sameRepo && sameBranch) {
+                existing = remote;
+                if (!Array.isArray(window.julesSessionsCache)) window.julesSessionsCache = [];
+                if (!window.julesSessionsCache.some(x => x.name?.endsWith('/' + linkedSid))) {
+                    window.julesSessionsCache.unshift({ ...remote, name: 'sessions/' + linkedSid });
                 }
-
-                localStorage.setItem('hy_neural_active', 'true');
-                localStorage.setItem('hy_neural_task_context', JSON.stringify(task));
-                switchView('chat');
             }
-        } catch (err) {
-            showToast("Error al enviar: " + err.message, "red");
-            isSessionActive = false;
+        } catch (error) {
+            console.warn('[Jules Handoff] Session unavailable; preparing a draft, not sending.');
         }
     }
 
-    if (!isSessionActive) {
-        localStorage.setItem('hy_neural_active', 'true');
-        localStorage.setItem('hy_neural_task_context', JSON.stringify(task));
-
-        if ($('session-prompt')) {
-            $('session-prompt').value = formattedPrompt.trim();
+    // Restore the original Claude conversation, but only if it still exists.
+    if (claudeId) {
+        const saved = window.julesPanelSessions || [];
+        if (saved.some(x => x.id === claudeId) && typeof window.loadJulesPanelSession === 'function') {
+            window.loadJulesPanelSession(claudeId);
         }
+    }
 
-        if ($('neural-session-banner')) {
-            $('neural-session-banner').classList.remove('hidden');
-            $('neural-banner-task').textContent = "Tarea #" + task.id + ": " + (task.titulo || task.title);
-            $('neural-banner-task').classList.remove('skeleton');
+    if (contextTask.id) {
+        localStorage.setItem('hy_neural_task_context', JSON.stringify(contextTask));
+        window.JulesPanelState.linkedTaskId = contextTask.id;
+        if (typeof showTaskContextInChat === 'function') showTaskContextInChat(contextTask);
+    } else {
+        window.JulesPanelState.linkedTaskId = null;
+    }
+    if (claudeId) localStorage.setItem('hy_pending_claude_handoff_id', claudeId);
+    if (!existing) localStorage.setItem('hy_handoff_autolink', 'true');
+
+    if (existing) {
+        if (claudeId && typeof window.linkClaudeToJulesTask === 'function') {
+            window.linkClaudeToJulesTask(claudeId, linkedSid, existing.title || linkedSid);
         }
-        showTaskContextInChat(task);
-
-        showToast("Contexto cargado en Nueva Tarea", "green");
+        window.NeuralWorkspaceState.activeJulesSessionId = linkedSid;
+        localStorage.setItem('hy_neural_session_id', linkedSid);
+        if (claudeId) localStorage.setItem('hy_neural_session_id_' + claudeId, linkedSid);
+        switchView('chat');
+        window.setNeuralWorkspaceMode('jules');
+        if (typeof window.setJulesComposerDraft === 'function') {
+            window.setJulesComposerDraft('jules', formattedPrompt);
+        } else if ($('v2-chat-input')) {
+            $('v2-chat-input').value = formattedPrompt;
+            $('v2-chat-input').dispatchEvent(new Event('input'));
+        }
+        showToast('Mensaje preparado para Jules en su sesión vinculada. Revisa y pulsa Enviar.', 'green');
+    } else {
+        // New work must start from an existing GitHub branch. Never assume main.
         switchView('neural');
+        if ($('opt-supervised')) $('opt-supervised').classList.add('active');
+        if ($('opt-claude-supervised')) $('opt-claude-supervised').classList.remove('active');
+        if ($('opt-review')) $('opt-review').classList.remove('active');
+        if ($('opt-auto')) $('opt-auto').classList.remove('active');
+
+        // Without a task repository, never reuse the prior session's repo silently.
+        window.JulesPanelState._handoffRepoUnconfirmed = !canonicalRepo;
+        if (window.JulesPanelState._handoffRepoUnconfirmed) {
+            showToast('Selecciona explícitamente el repositorio para este primer mensaje a Jules.', 'amber');
+        }
+        let sourceSelectionFailed = false;
+        if (canonicalRepo && typeof window.selectRepo === 'function') {
+            // Pin target before loading branches, including during background refresh.
+            window.JulesPanelState.handoffTargetRepo = canonicalRepo;
+            window.JulesPanelState.handoffTargetBranch = targetBranch;
+            try {
+                await window.selectRepo(canonicalRepo);
+                if (!window.JulesPanelState.activeRepo) sourceSelectionFailed = true;
+            } catch (error) {
+                sourceSelectionFailed = true;
+                showToast('No se pudo verificar el repositorio de Jules. El mensaje permanece como borrador.', 'amber');
+                console.warn('[Jules Handoff] Source selection unavailable', error.message);
+            }
+        }
+
+        const select = $('branch-sel');
+        const launchBtn = $('launch-btn');
+        let branchReady = false;
+        // If the task's intended branch is missing, create it in that SAME
+        // repository from its GitHub default branch; never silently use master.
+        const available = select && select.dataset.repo === canonicalRepo
+            ? [...select.options].map(o => o.value).filter(Boolean) : [];
+        const missingTaskBranch = canonicalRepo && targetBranch &&
+            !window.resolveJulesTaskBranch?.(targetBranch, available);
+        if (!sourceSelectionFailed && missingTaskBranch && select && !select.disabled &&
+            select.dataset.repo === canonicalRepo) {
+            const raw = String(targetBranch).trim().replace(/^refs\/heads\//, '');
+            const label = raw.match(/\(([^()]+)\)\s*$/);
+            const name = label ? label[1].trim() : raw;
+            const valid = /^(?!\/)(?!.*(?:\.\.|@\{|\/\/|\\|\s))[A-Za-z0-9._\/-]+$/.test(name) &&
+                !name.endsWith('/') && !name.endsWith('.') && !name.endsWith('.lock');
+            if (valid && window.githubContext?.createBranch && window.githubApi?.getRepo) {
+                try {
+                    const info = await window.githubApi.getRepo(canonicalRepo);
+                    const base = String(info?.default_branch || '').trim();
+                    if (!base) throw new Error('No se pudo comprobar la rama base de GitHub.');
+                    const [owner, repository] = canonicalRepo.split('/');
+                    window.JulesPanelState._handoffBranchBlocked = true;
+                    window.setJulesLaunchReadyState?.(false, 'Creando rama de tarea...');
+                    showToast('Creando rama ' + name + ' desde ' + base + ' en ' + canonicalRepo + '...', 'info');
+                    await window.githubContext.createBranch(repository, name, base, owner);
+                    // Reload authoritative branch list; keep its repo/branch guards.
+                    await window.loadBranches(canonicalRepo);
+                    showToast('Rama ' + name + ' creada correctamente para la tarea.', 'green');
+                } catch (error) {
+                    // GitHub may return 422 if another client created it first:
+                    // reload and inspect rather than attempting a duplicate write.
+                    try { await window.loadBranches?.(canonicalRepo); } catch {}
+                    console.warn('[Jules Handoff] Could not create task branch:', error);
+                    showToast('No se pudo crear la rama de la tarea. Comprueba permisos y rama base.', 'amber');
+                }
+            } else {
+                showToast('Rama de tarea ausente; no se puede crear automáticamente con esta sesión.', 'amber');
+            }
+        }
+        if (canonicalRepo && select && !select.disabled && select.dataset.repo === canonicalRepo) {
+            const branchNames = [...select.options].map(o => o.value).filter(Boolean);
+            const matching = window.resolveJulesTaskBranch?.(targetBranch, branchNames) || '';
+            if (matching) {
+                select.value = matching;
+                select.dispatchEvent(new Event('change', { bubbles: true }));
+                branchReady = true;
+            } else if (!targetBranch && branchNames.includes(select.value)) {
+                branchReady = true;
+            }
+        }
+
+        window.JulesPanelState._handoffBranchBlocked = !!(canonicalRepo && (!branchReady || sourceSelectionFailed));
+        if (branchReady && !window.JulesPanelState._handoffBranchBlocked) {
+            window.setJulesLaunchReadyState?.(true);
+        }
+        if (window.JulesPanelState._handoffBranchBlocked) {
+            window.setJulesLaunchReadyState?.(false, 'La rama solicitada no está disponible. Selecciona una rama existente en Jules Panel.');
+            showToast('La rama de esta tarea no está disponible en GitHub. Selecciona una rama existente antes de ejecutar.', 'amber');
+        }
+
+        const textArea = $('session-prompt');
+        if (textArea) {
+            textArea.value = formattedPrompt;
+            window.resizeJulesDraftTextarea(textArea);
+        }
+        const banner = $('neural-session-banner');
+        if (banner && contextTask.id) {
+            banner.classList.remove('hidden');
+            const label = $('neural-banner-task');
+            if (label) {
+                label.textContent = 'Tarea #' + contextTask.id + ': ' + taskTitle;
+                label.classList.remove('skeleton');
+            }
+        }
+        showToast('Borrador listo en Nueva Tarea Jules (revisión supervisada).', 'green');
+
+        const orchestrator = window.HypenosysTaskOrchestrator;
+        const orchestratorState = orchestrator?.load?.();
+        const isOrchestratedTask = orchestratorState?.enabled && contextTask?.id &&
+            String(orchestratorState.currentTaskId || '') === String(contextTask.id) &&
+            orchestratorState.phase === 'handoff-jules';
+
+        if (isOrchestratedTask && canonicalRepo && branchReady && !sourceSelectionFailed &&
+            !window.JulesPanelState._handoffBranchBlocked && !window.JulesPanelState._handoffRepoUnconfirmed) {
+            const supervisionMode = orchestratorState.supervisionMode || 'auto';
+            ['opt-auto','opt-supervised','opt-claude-supervised','opt-review'].forEach(id => $(id)?.classList.remove('active'));
+            if (supervisionMode === 'human') $('opt-supervised')?.classList.add('active');
+            else if (supervisionMode === 'claude') $('opt-claude-supervised')?.classList.add('active');
+            else $('opt-auto')?.classList.add('active');
+
+            orchestrator.setPhase('jules-launch');
+            const createdSid = await window.launchSession({
+                promptOverride: formattedPrompt,
+                fromChat: true,
+                orchestrator: true,
+                supervisionMode
+            });
+            if (createdSid) {
+                // launchSession starts the Claude supervisor itself when selected,
+                // after the Claude↔Jules link has been made canonical.
+                orchestrator.setPhase('jules-running');
+            } else {
+                orchestrator.patch({ phase: 'error', lastError: 'No se pudo crear la sesión Jules.' });
+            }
+        }
     }
 
-    localStorage.removeItem('jules_task_payload');
-    localStorage.removeItem('hy_jules_handoff');
-    localStorage.removeItem('jules_clipboard');
-    localStorage.removeItem('jules_linked_task_id');
-}
+    // Consume a handoff once. Reloads must not send or duplicate a task.
+    for (const key of ['jules_task_payload', 'hy_jules_handoff', 'jules_clipboard', 'jules_linked_task_id']) {
+        localStorage.removeItem(key);
+    }
+};
 
 window.handleUrlParams = async function() {
     const handoffRaw = localStorage.getItem('hy_jules_handoff');
     if (handoffRaw) {
         try {
-            const { task, timestamp } = JSON.parse(handoffRaw);
-            if (Date.now() - timestamp < 30000) {
-                await prefillTaskFromHandoff(task);
-                localStorage.removeItem('hy_jules_handoff');
+            const handoff = JSON.parse(handoffRaw);
+            if (handoff && Date.now() - Number(handoff.timestamp) < 10 * 60 * 1000) {
+                await prefillTaskFromHandoff(handoff.task || null, handoff);
                 return;
             }
-        } catch(e) {
-            console.error("Error parsing hy_jules_handoff", e);
+        } catch (e) {
+            console.warn('[Jules Handoff] Ignoring invalid or expired handoff');
         }
         localStorage.removeItem('hy_jules_handoff');
+    }
+    // A Claude response can be sent without a dashboard task; this path must still
+    // land in the correct composer and must never re-submit automatically.
+    const pendingClaudePayload = localStorage.getItem('jules_task_payload');
+    if (pendingClaudePayload) {
+        let parsed = null;
+        try { parsed = JSON.parse(pendingClaudePayload); } catch (e) {}
+        if (parsed && Date.now() - Number(parsed.timestamp || 0) < 10 * 60 * 1000) {
+            await prefillTaskFromHandoff(parsed.source_task || null, {
+                source: 'claude-chat', claude_conversation_id: parsed.claude_conversation_id,
+                linked_jules_session_id: parsed.linked_jules_session_id
+            });
+            return;
+        }
+        localStorage.removeItem('jules_task_payload');
     }
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -532,13 +661,27 @@ window.desvincularNeuralSession = function() {
     }
 }
 
-window.launchSession = async function() {
-    let prompt = $('session-prompt').value.trim();
-    if (!prompt) { $('session-prompt').focus(); showToast("Escribe una tarea para Jules", "red"); return; }
+window.launchSession = async function(options = {}) {
+    // A first Jules chat message creates a session using the user's text as
+    // its initial prompt. Subsequent messages use :sendMessage, never both.
+    if (window._julesLaunchInFlight) return null;
+    let prompt = String(options.promptOverride ?? $('session-prompt')?.value ?? '').trim();
+    if (!prompt) { $('session-prompt')?.focus(); showToast("Escribe una tarea para Jules", "red"); return null; }
 
-    // Ensure repo and branch are real and normalized
+    // Ensure repo and branch are real and normalized.
+    if (window.JulesPanelState._handoffRepoUnconfirmed) {
+        showToast('Selecciona el repositorio de destino en Jules Panel. No se usará automáticamente el anterior.', 'amber');
+        return null;
+    }
     const source = window.JulesPanelState.activeRepo;
     const branch = window.JulesPanelState.activeBranch;
+    const selectedRepo = localStorage.getItem('hypenosys_active_repo') || '';
+    const selectedBranch = $('branch-sel');
+    if (window.JulesPanelState._handoffBranchBlocked || !selectedBranch || selectedBranch.disabled ||
+        selectedBranch.value !== branch || selectedBranch.dataset.repo !== window.getCanonicalRepoName(selectedRepo)) {
+        showToast('Verifica y selecciona una rama existente de este repositorio antes de ejecutar.', 'red');
+        return;
+    }
 
     if (!source || source.includes("Cargando") || source === 'null') {
         showToast("Selecciona un repositorio válido", "red");
@@ -561,13 +704,21 @@ window.launchSession = async function() {
     // Capture current UI mode (frontend state)
     const isAuto = $('opt-auto').classList.contains('active');
     const isReview = $('opt-review').classList.contains('active');
+    const isSupervised = !!$('opt-supervised')?.classList.contains('active');
+    const isClaudeSupervised = !!$('opt-claude-supervised')?.classList.contains('active');
 
-    if (!isAuto && !isReview) {
+    if (!isAuto && !isReview && !isSupervised && !isClaudeSupervised) {
         showToast("Selecciona un modo de ejecución para iniciar la sesión.", "red");
         return;
     }
 
     // Append mode-specific instructions to prompt
+    if (isSupervised) {
+        prompt += "\n\n[MODO SUPERVISADO HUMANO] Prepara un plan con cambios, validación y riesgos; espera aprobación explícita de Axel o Haopeng antes de modificar código. No hagas merge ni despliegues.";
+    }
+    if (isClaudeSupervised) {
+        prompt += "\n\n[MODO SUPERVISADO POR CLAUDE] Prepara un plan verificable antes de editar. Claude actuará como supervisor: puede pedir ajustes o aprobar el plan si permanece dentro del alcance y es reversible. Si hay ambigüedad, cambio de alcance, permisos, secretos, producción, datos destructivos, migraciones sensibles o una decisión de producto, detente y solicita decisión humana. No hagas merge ni despliegues sin una política explícita que lo autorice.";
+    }
     if (isReview) {
         prompt += "\n\n[MODO REVISIÓN ACTIVADO]\nInstrucciones obligatorias:\n1. Revisa exclusivamente los cambios actuales en la rama.\n2. NO modifiques ningún archivo.\n3. NO realices commits ni crees PRs.\n4. Devuelve tus hallazgos y sugerencias ordenados por severidad.";
     }
@@ -581,27 +732,82 @@ window.launchSession = async function() {
 
     const btn = $('launch-btn');
     const textarea = $('session-prompt');
+    window._julesLaunchInFlight = true;
+    window._lastCreatedJulesSessionId = null;
     btn.disabled = true;
     textarea.disabled = true;
     const originalText = btn.innerHTML;
     btn.innerHTML = 'Iniciando...';
 
     try {
+        // This is a per-user safety cap, not a server-side global quota.
+        // Remote list (rather than UI cache) keeps concurrent sessions visible.
+        const activeStates = new Set(['QUEUED','PLANNING','AWAITING_PLAN_APPROVAL','AWAITING_USER_FEEDBACK','IN_PROGRESS','PAUSED']);
+        let activeCount = 0;
+        if (typeof window.julesApi.getSessions === 'function') {
+            let page = null;
+            let complete = false;
+            for (let i = 0; i < 10; i++) {
+                const batch = await window.julesApi.getSessions(100, page);
+                if (!Array.isArray(batch?.sessions)) throw new Error('No se pudo verificar el límite de sesiones Jules.');
+                activeCount += batch.sessions.filter(item => activeStates.has(String(item.state || '').toUpperCase())).length;
+                if (activeCount >= 3) break;
+                page = batch.nextPageToken || null;
+                if (!page) { complete = true; break; }
+            }
+            if (!complete && activeCount < 3) {
+                throw new Error('La lista Jules es demasiado extensa para verificar el límite de 3 sesiones.');
+            }
+        } else {
+            const existingSessions = await window.julesApi.listSessions(100);
+            if (!Array.isArray(existingSessions)) throw new Error('No se pudo consultar el número de sesiones Jules.');
+            activeCount = existingSessions.filter(item => activeStates.has(String(item.state || '').toUpperCase())).length;
+        }
+        if (activeCount >= 3) {
+            throw new Error('Límite HAIS: hay ' + activeCount + ' sesiones Jules activas o esperando intervención (máximo 3). Finaliza o resuelve una antes de iniciar otra.');
+        }
+
+        // Block actual unresolved dependencies, rather than relying solely
+        // on a status badge. No auto-relocation of blocked tasks.
+        const linkedContext = JSON.parse(localStorage.getItem('hy_neural_task_context') || '{}');
+
+        const configuredBase = window.resolveJulesIntegrationBranchFromTask?.(linkedContext) || '';
+        if (linkedContext?.id && configuredBase && branch !== configuredBase) {
+            throw new Error('Esta tarea debe partir de ' + configuredBase +
+                ' para que Jules genere la PR hacia la rama de integración correcta.');
+        }
+        const blockedBy = Array.isArray(linkedContext.blocked_by) ? linkedContext.blocked_by : [];
+        if (blockedBy.length && window.taskOps?.getAllTasks) {
+            const allTasks = await window.taskOps.getAllTasks();
+            const dependencyDoneStates = new Set(['OK', 'DONE', 'COMPLETED', 'FIXED', 'CLOSED', 'RESOLVED']);
+            const unresolved = blockedBy.filter(taskId => {
+                const dep = (allTasks || []).find(t => String(t.id) === String(taskId));
+                const depState = String(dep?.estado || dep?.status || '').trim().toUpperCase();
+                return !dep || !dependencyDoneStates.has(depState);
+            });
+            if (unresolved.length) throw new Error('Tarea bloqueada por dependencias sin completar: ' + unresolved.join(', ') + '. Revisa el Kanban antes de ejecutar.');
+        }
+        if (linkedContext.estado === 'BLOCKED' && !blockedBy.length && !window.confirm('Esta tarea está marcada como BLOCKED. ¿Quieres iniciar solo una revisión supervisada de sus bloqueos?')) {
+            return null;
+        }
+
         // Prepare API payload (only supported fields)
         const body = {
             prompt,
             sourceContext: { source, githubRepoContext: { startingBranch: branch } },
-            requirePlanApproval: isReview // Review mode requires plan approval as safety
+            requirePlanApproval: isReview || isSupervised || isClaudeSupervised // Human/Claude supervision both gate the plan
         };
 
-        if (isAuto) {
-            body.requirePlanApproval = false;
+        // Generate a PR after execution even in supervised modes. The plan
+        // still requires human/Claude approval; this never auto-merges code.
+        if (isAuto || isSupervised || isClaudeSupervised) {
             body.automationMode = "AUTO_CREATE_PR";
+            if (isAuto) body.requirePlanApproval = false;
         }
 
         // Defensive Logging (internal UI state + final API body)
         const logPayload = {
-            ui_mode: isAuto ? "auto" : "review",
+            ui_mode: isAuto ? "auto" : isClaudeSupervised ? "claude-supervised" : isSupervised ? "human-supervised" : "review",
             api_body: {
                 requirePlanApproval: body.requirePlanApproval,
                 automationMode: body.automationMode || "NONE",
@@ -609,30 +815,69 @@ window.launchSession = async function() {
                 branch: branch
             }
         };
-        console.log("[Jules Launch] UI State:", {isAuto, isReview}, "API Body:", body);
+        console.log("[Jules Launch] UI State:", {isAuto, isReview, isSupervised, isClaudeSupervised}, "API Body:", body);
         addTel("SYSTEM", "Iniciando (UI:" + logPayload.ui_mode + ") - API Payload: " + JSON.stringify(logPayload.api_body), "info");
 
         const res = await window.julesApi.createSession(body);
+        if (!res?.name || !/^sessions\/[^/]+$/.test(res.name)) throw new Error('Jules respondió sin un ID de sesión válido.');
         const sid = res.name.split('/').pop();
+        window._lastCreatedJulesSessionId = sid;
+        const supervisionMode = options.supervisionMode
+            || (isClaudeSupervised ? 'claude' : isSupervised ? 'human' : isAuto ? 'auto' : 'review');
+        localStorage.setItem('hy_jules_supervision_mode_' + sid, supervisionMode);
         showToast("Sesión iniciada correctamente", "green");
         addTel("JULES", "Sesión iniciada: " + sid, "success");
 
         const taskContext = JSON.parse(localStorage.getItem('hy_neural_task_context') || '{}');
         const sessionName = taskContext.titulo || taskContext.title || "Sesión Neural " + new Date().toLocaleDateString();
 
+        if (!Array.isArray(window.julesSessionsCache)) window.julesSessionsCache = [];
+        if (!window.julesSessionsCache.some(item => item.name === res.name)) {
+            window.julesSessionsCache.unshift({ ...res, state: res.state || 'QUEUED' });
+        }
         startNeuralPolling(sid, true);
 
-        // Show the premium choice dialog to let the user select how they want to link this newly created session
-        if (window.showJulesCreationLinkingChoices) {
+        // When a task was explicitly handed off, link the newly created Jules
+        // session to the matching Claude conversation; never link to a stale session.
+        const shouldAutoLink = localStorage.getItem('hy_handoff_autolink') === 'true';
+        // A launch initiated from the chat must bind to the Claude conversation
+        // currently visible at send time. A stale pending handoff ID from a prior
+        // task must never override the active conversation.
+        const pendingClaudeId = localStorage.getItem('hy_pending_claude_handoff_id');
+        const handoffClaudeId = options.fromChat
+            ? window.currentJulesPanelSessionId
+            : pendingClaudeId;
+        if ((shouldAutoLink || options.fromChat) && typeof window.linkClaudeToJulesTask === 'function') {
+            const knownClaude = handoffClaudeId && (window.julesPanelSessions || []).some(s => s.id === handoffClaudeId);
+            if (knownClaude) {
+                window.linkClaudeToJulesTask(handoffClaudeId, sid, sessionName);
+                window.loadJulesPanelSession?.(handoffClaudeId);
+            } else if (typeof window.createNewClaudeFromJulesSession === 'function') {
+                window.createNewClaudeFromJulesSession(sid);
+            }
+            // Make the just-created Jules session canonical before the UI
+            // switches workspace. Clear previous rendered activities so a fresh
+            // session cannot momentarily display history from an older one.
+            window.linkedHistoryLoadRevision = (window.linkedHistoryLoadRevision || 0) + 1;
+            window.NeuralWorkspaceState.activeJulesSessionId = sid;
+            if (window.JulesPanelState) window.JulesPanelState.activeSessionId = sid;
+            localStorage.setItem('hy_neural_session_id', sid);
+            window.lastNormalizedList = [];
+            window.previousListLength = 0;
+            window.unseenJulesActivitiesCount = 0;
+            window.clearLinkedJulesHistory?.();
+            window.setJulesHistoryState?.('empty');
+
+            window.switchView?.('chat');
+            window.setNeuralWorkspaceMode?.('jules');
+            showToast('Sesión Jules y conversación Claude vinculadas.', 'green');
+        } else if (window.showJulesCreationLinkingChoices) {
             window.showJulesCreationLinkingChoices(sid, sessionName);
         } else {
-            // Fallback for safety
-            const claudeId = localStorage.getItem('hy_active_claude_session_id');
-            if (claudeId) {
-                localStorage.setItem('hy_neural_session_id_' + claudeId, sid);
-            }
             localStorage.setItem('hy_neural_session_id', sid);
         }
+        localStorage.removeItem('hy_handoff_autolink');
+        localStorage.removeItem('hy_pending_claude_handoff_id');
         const now = new Date().toISOString();
 
         localStorage.setItem('hy_neural_active', 'true');
@@ -648,24 +893,60 @@ window.launchSession = async function() {
             branch: branch,
             start: now,
             status: 'active',
+            supervision: supervisionMode,
             messages: []
         });
         localStorage.setItem('hy_neural_sessions', JSON.stringify(sessions));
 
         if (window.JulesPanelState.linkedTaskId) {
-            const currentUser = window.githubApi.user || user;
-            await window.taskOps.updateTask(window.JulesPanelState.linkedTaskId, {
+            const currentUser = window.githubApi?.user || window.user || null;
+            const taskId = window.JulesPanelState.linkedTaskId;
+            const initialState = String(taskContext.estado || taskContext.status || '').toUpperCase();
+            const update = {
                 jules_session: {
                     session_id: sid,
                     initiated_by: (currentUser && currentUser.login) || 'Invitado',
-                    status: 'PLANNING',
+                    supervision: supervisionMode,
+                    target_branch: window.resolveJulesIntegrationBranchFromTask?.(taskContext) || branch,
+                    status: 'QUEUED',
                     updated_at: new Date().toISOString()
-                }
-            });
+                },
+                // Launch is user-initiated. Move only queued work to WORKING;
+                // never override BLOCKED, REVIEW or DONE automatically.
+                ...(['BACKLOG', 'TODO', 'PENDING'].includes(initialState) ? { estado: 'WORKING' } : {})
+            };
+            // Record the association locally before attempting the GitHub write:
+            // a failure must not cause a second create on retries.
+            localStorage.setItem('hy_neural_task_context', JSON.stringify({
+                ...taskContext, jules_session: update.jules_session,
+                ...(update.estado ? {estado:update.estado} : {})
+            }));
             window.JulesPanelState.linkedTaskId = null;
+            try {
+                await window.taskOps.updateTask(taskId, update);
+            } catch (taskError) {
+                showToast('Jules #' + sid + ' creado, pero no se pudo sincronizar la tarea en GitHub. Revisa el Kanban.', 'amber');
+                console.warn('[Jules] Session created but task sync failed', taskError.message);
+            }
         }
 
-        $('session-prompt').value = ''; await refreshDashboard();
+        if (!options.fromChat) $('session-prompt').value = '';
+        // A dashboard refresh is secondary; a successful create must never
+        // look like a failed create (which could cause a duplicate retry).
+        try { await refreshDashboard(); }
+        catch (refreshError) { console.warn('[Jules] Session created; dashboard refresh failed', refreshError); }
+
+        if (supervisionMode === 'claude') {
+            setTimeout(() => {
+                window.JulesClaudeBridge?.start?.({
+                    orchestrator: !!options.orchestrator,
+                    skipConfirm: !!options.orchestrator,
+                    explicitLaunch: true,
+                    supervisorMode: 'claude'
+                });
+            }, 350);
+        }
+        return sid;
     } catch (e) {
         console.error("[Jules Debug] Error en createSession:", e);
         const errorInfo = {
@@ -675,9 +956,11 @@ window.launchSession = async function() {
         };
         addTel("SYSTEM", JSON.stringify(errorInfo), "error");
         showToast(e.message || "Error al lanzar sesión", "red");
+        return window._lastCreatedJulesSessionId || null;
     }
     finally {
-        btn.disabled = false;
+        window._julesLaunchInFlight = false;
+        btn.disabled = !!window.JulesPanelState._handoffBranchBlocked;
         textarea.disabled = false;
         btn.innerHTML = originalText;
     }
@@ -742,8 +1025,9 @@ window.checkBranchWarning = function() {
         return;
     }
 
-    const normExpected = window.normalizeBranchName(expectedBranch);
     const normCurrent = window.normalizeBranchName(currentBranch);
+    const resolvedExpected = window.resolveJulesTaskBranch?.(expectedBranch, [normCurrent]);
+    const normExpected = resolvedExpected || window.normalizeBranchName(expectedBranch);
 
     if (normExpected && normCurrent && normExpected !== normCurrent) {
         banner.classList.remove('hidden');

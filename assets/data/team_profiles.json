@@ -1,6 +1,6 @@
 {
   "schema_version": "2.0.0",
-  "last_updated": "2026-08-10T07:00:35.200Z",
+  "last_updated": "2026-10-29T12:54:27.649Z",
   "members": {
     "Axel": {
       "github_username": "Axlfc",
@@ -50,8 +50,8 @@
         "volatilidad": 0
       },
       "ai_config": {
-        "provider": "ollama",
-        "model": "qwen3-hermes:14b"
+        "provider": "nvidia_nim",
+        "model": "nvidia/nemotron-3.5-lightning-30b-a3b"
       },
       "portfolio": "https://axlfc.github.io"
     },
@@ -278,9 +278,31 @@
         "impacto": 0,
         "volatilidad": 0
       }
+    },
+    "Haopeng": {
+      "github_username": "haopengwang123",
+      "display_name": "Haopeng Wang",
+      "role": "Miembro",
+      "avatar_url": "https://github.com/haopengwang123.png",
+      "is_admin": false
     }
   },
   "_audit_log": [
+    {
+      "action": "chore: actualizar config AI de Axel",
+      "user": "Axlfc",
+      "timestamp": "2026-10-29T12:54:27.649Z"
+    },
+    {
+      "action": "chore: actualizar config AI de Axel",
+      "user": "Axlfc",
+      "timestamp": "2026-10-29T09:42:46.557Z"
+    },
+    {
+      "action": "chore: actualizar config AI de Axel",
+      "user": "Axlfc",
+      "timestamp": "2026-10-29T09:08:08.192Z"
+    },
     {
       "action": "chore: actualizar config AI de Axel",
       "user": "Axlfc",

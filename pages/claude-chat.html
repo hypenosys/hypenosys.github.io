@@ -86,17 +86,6 @@ permalink: /chat/neural/
             </button>
         </div>
 
-        <div class="p-4 border-t border-[#44475a] space-y-2">
-            <button onclick="openSettings()" class="w-full text-left text-xs font-bold text-[#f8f8f2] hover:text-[#bd93f9] transition-all flex items-center gap-2 group relative" title="API Config">
-                <i class="fas fa-cog"></i> <span class="sidebar-text">API CONFIG</span>
-                <div class="session-tooltip collapsed-only">API Config</div>
-            </button>
-            <a href="/jules-panel/" class="w-full text-left text-xs font-bold text-[#f8f8f2] hover:text-[#bd93f9] transition-all flex items-center gap-2 group relative" title="JULES PANEL">
-                <i class="fas fa-bolt"></i> <span class="sidebar-text">JULES PANEL</span>
-                <div class="session-tooltip collapsed-only">Jules Panel</div>
-            </a>
-        </div>
-
     </aside>
 
     <!-- Main Chat Area -->
@@ -133,9 +122,6 @@ permalink: /chat/neural/
                 <div id="connection-status" class="flex items-center gap-2 text-[10px] font-black tracking-widest text-[#50fa7b] bg-[#50fa7b]/5 px-3 py-1 rounded-full border border-[#50fa7b]/20">
                     <span class="w-1.5 h-1.5 rounded-full bg-[#50fa7b] shadow-[0_0_8px_#50fa7b] animate-pulse"></span> ONLINE
                 </div>
-                <button onclick="openSettings()" class="text-[#6272a4] hover:text-[#bd93f9] transition-all">
-                    <i class="fas fa-sliders-h"></i>
-                </button>
             </div>
         </header>
 
@@ -149,6 +135,11 @@ permalink: /chat/neural/
             </button>
         </div>
 
+        <!-- Selected multi-message handoff (explicit user action, never automatic send) -->
+        <div id="neural-selected-message-toolbar" class="px-4 py-2 flex flex-wrap items-center gap-3 border-b border-[#44475a]/30 bg-[#1e1f29]/70">
+            <span id="neural-selected-message-count" class="text-xs text-[#bd93f9]">0 mensajes seleccionados</span>
+            <button type="button" class="text-xs px-3 py-2 rounded-lg border border-[#bd93f9]/40 text-[#bd93f9]" onclick="window.prepareSelectedNeuralMessagesForJules()">Preparar selección en Jules</button>
+        </div>
         <!-- Chat History -->
         <div id="chat-messages" class="chat-container flex-grow p-6 space-y-6 scroll-smooth">
             <!-- Initial state -->
@@ -167,6 +158,13 @@ permalink: /chat/neural/
 
         <!-- Activity Feed -->
         <div id="activity-feed" class="chat-container flex-grow p-6 space-y-4 hidden scroll-smooth">
+            <div class="flex flex-wrap items-center gap-2 p-3 rounded-lg border border-[#bd93f9]/30 bg-[#1e1f29]">
+                <strong class="text-xs text-[#bd93f9]">Claude ↔ Jules</strong>
+                <button type="button" class="px-3 py-2 rounded bg-[#44475a] text-xs" onclick="window.JulesClaudeBridge.analyzeLatest()">Analizar última salida</button>
+                <button type="button" class="px-3 py-2 rounded bg-[#6f43a8] text-xs" id="neural-activity-bridge-start" onclick="window.JulesClaudeBridge.start()">Iniciar auto (máx. 3)</button>
+                <button type="button" class="px-3 py-2 rounded bg-[#44475a] text-xs" id="neural-activity-bridge-stop" onclick="window.JulesClaudeBridge.stop()" disabled>Detener</button>
+                <span id="neural-activity-bridge-status" class="text-[10px] text-[#aaa1bd] break-all" role="status" aria-live="polite">Auto desactivado</span>
+            </div>
             <div id="activity-empty-state" class="h-full flex flex-col items-center justify-center text-center space-y-4 opacity-30">
                 <i class="fas fa-terminal text-6xl"></i>
                 <div>
@@ -202,6 +200,9 @@ permalink: /chat/neural/
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
+
+                <!-- RAG Attachment Chips -->
+                <div id="rag-file-chips-container" class="hidden"></div>
 
                 <div id="chat-input-container" class="bg-[#1e1f29] border border-[#44475a] rounded-2xl p-3 flex flex-col gap-2 focus-within:border-[#bd93f9]/50 focus-within:shadow-[0_0_20px_rgba(189,147,249,0.1)] transition-all duration-500">
                     <div class="flex items-center gap-3">
@@ -251,6 +252,11 @@ permalink: /chat/neural/
                             </button>
                             <input type="file" id="image-input" class="hidden" accept="image/*" />
 
+                            <button id="file-attach-btn" title="Adjuntar archivo para RAG local" class="hidden text-[#6272a4] hover:text-[#50fa7b] transition-colors">
+                                <i class="fas fa-file-lines text-xs"></i>
+                            </button>
+                            <input type="file" id="file-doc-input" class="hidden" accept=".txt,.md,.json,.csv,.js,.py,.cpp,.c,.h,.hpp,.cs,.html,.css,.xml,.yaml,.yml,.log" />
+
                             <button id="toggle-input-mode" title="Cambiar a teclado" class="hidden text-[#6272a4] hover:text-[#50fa7b] transition-colors">
                                 <i class="fas fa-keyboard text-xs"></i>
                             </button>
@@ -258,6 +264,9 @@ permalink: /chat/neural/
                             <button id="toggle-thinking" title="Toggle Extended Thinking" class="text-[#6272a4] hover:text-[#8be9fd] transition-colors">
                                 <i class="fas fa-brain text-xs"></i>
                             </button>
+                            <span id="thinking-mandatory-badge" class="hidden text-[8px] font-bold text-[#bd93f9] bg-[#bd93f9]/10 border border-[#bd93f9]/30 px-1.5 py-0.5 rounded tracking-widest uppercase" title="Razonamiento siempre activo por el modelo">
+                                <i class="fas fa-lock text-[7px] mr-1"></i>SIEMPRE ACTIVO
+                            </span>
 
                             <div id="runners-lang-selector" class="hidden flex items-center gap-1 bg-[#44475a]/30 rounded-lg p-1 border border-[#50fa7b]/20">
                                 <button onclick="setRunnersLang('auto')" id="r-lang-auto" class="px-2 py-0.5 rounded text-[8px] font-black tracking-tighter transition-all bg-[#50fa7b] text-[#282a36]">AUTO</button>
@@ -363,31 +372,38 @@ permalink: /chat/neural/
     };
     marked.setOptions({ renderer });
 </script>
-<script src="{{ '/assets/javascript/auth-config.js' | relative_url }}"></script>
-<script src="{{ '/assets/javascript/github-api.js' | relative_url }}"></script>
-<script src="{{ '/assets/javascript/auth.js' | relative_url }}?v=nim-relay-v1"></script>
-<script src="{{ '/assets/javascript/jules-api.js' | relative_url }}"></script>
-<script src="{{ '/assets/javascript/github-context.js' | relative_url }}"></script>
-<script src="{{ '/assets/javascript/task-engine.js' | relative_url }}"></script>
-<script src="{{ '/assets/javascript/god-mode-tools.js' | relative_url }}"></script>
-<script src="{{ '/assets/javascript/ollama-discovery.js' | relative_url }}"></script>
-<script src="{{ '/assets/javascript/ai-config.js' | relative_url }}?v=nim-relay-v1"></script>
-<script src="{{ '/assets/javascript/neural-chat-core.js' | relative_url }}"></script>
-<script src="{{ '/assets/javascript/neural-provider-client.js' | relative_url }}?v=nim-relay-v1"></script>
+<script src="/assets/javascript/auth-config.js"></script>
+<script src="/assets/javascript/github-api.js"></script>
+<script src="/assets/javascript/auth.js?v=anthropic-workspace-20261101-v1"></script>
+<script src="/assets/javascript/jules-api.js"></script>
+<script src="/assets/javascript/github-context.js"></script>
+<script src="/assets/javascript/task-engine.js"></script>
+<script src="/assets/javascript/god-mode-tools.js"></script>
+<script src="/assets/javascript/ollama-discovery.js"></script>
+<script src="/assets/javascript/ai-config.js?v=anthropic-relay-20261101-v2"></script>
+<script src="/assets/javascript/storage-db.js"></script>
+<script src="/assets/javascript/neural-chat-rag.js"></script>
+<script src="/assets/javascript/neural-thinking-capabilities.js"></script>
+<script src="/assets/javascript/neural-thinking-adapters.js?v=anthropic-workspace-20261101-v1"></script>
+<script src="/assets/javascript/neural-thinking-parser.js"></script>
+<script src="/assets/javascript/neural-chat-core.js?v=neural-reply-actions-20261103-v1"></script>
+<script src="/assets/javascript/neural-provider-client.js?v=neural-send-stability-20261101-v2"></script>
 
-<script src="{{ '/assets/javascript/neural-chat-catalogs.js' | relative_url }}?v=nim-relay-v1"></script>
-<script src="{{ '/assets/javascript/hypenosys-docs-client.js' | relative_url }}"></script>
-<script src="{{ '/assets/javascript/obsidian-markdown-renderer.js' | relative_url }}"></script>
-<script src="{{ '/assets/javascript/hypenosys-docs-index.js' | relative_url }}"></script>
-<script src="{{ '/assets/javascript/jules-docs-bridge.js' | relative_url }}"></script>
-<script src="{{ '/assets/javascript/jules-svn-bridge.js' | relative_url }}"></script>
-<script src="{{ '/assets/javascript/jules-exec-bridge.js' | relative_url }}"></script>
-<script src="{{ '/assets/javascript/neural-chat-ui.js' | relative_url }}"></script>
-<script src="{{ '/assets/javascript/neural-chat-sessions.js' | relative_url }}"></script>
-<script src="{{ '/assets/javascript/neural-chat-profiles.js' | relative_url }}?v=nim-relay-v1"></script>
-<script src="{{ '/assets/javascript/neural-chat-jules.js' | relative_url }}"></script>
-<script src="{{ '/assets/javascript/neural-chat-send.js' | relative_url }}?v=nim-direct-v1"></script>
-<script src="{{ '/assets/javascript/neural-chat-activity.js' | relative_url }}"></script>
+<script src="/assets/javascript/neural-chat-catalogs.js?v=nim-relay-v1"></script>
+<script src="/assets/javascript/hypenosys-docs-client.js"></script>
+<script src="/assets/javascript/obsidian-markdown-renderer.js"></script>
+<script src="/assets/javascript/hypenosys-docs-index.js"></script>
+<script src="/assets/javascript/jules-docs-bridge.js?v=neural-send-stability-20261101-v2"></script>
+<script src="/assets/javascript/jules-svn-bridge.js"></script>
+<script src="/assets/javascript/jules-exec-bridge.js"></script>
+<script src="/assets/javascript/neural-chat-ui.js?v=neural-reply-actions-20261103-v1"></script>
+<script src="/assets/javascript/neural-chat-sessions.js?v=neural-reply-actions-20261103-v1"></script>
+<script src="/assets/javascript/neural-chat-profiles.js?v=anthropic-workspace-20261101-v1"></script>
+<script src="/assets/javascript/neural-chat-jules.js?v=jules-message-select-v1"></script>
+<script src="/assets/javascript/neural-chat-send.js?v=neural-reply-actions-20261103-v1"></script>
+<script src="/assets/javascript/neural-chat-activity.js"></script>
+<script src="/assets/javascript/hypenosys-task-orchestrator.js?v=task-orchestrator-20261101-v1"></script>
+<script src="/assets/javascript/jules-claude-bridge.js?v=claude-jules-bridge-v1"></script>
 
 <script>
     function escapeHtml(str) {
@@ -403,6 +419,30 @@ permalink: /chat/neural/
         const urlParams = new URLSearchParams(window.location.search);
         const taskDataRaw = urlParams.get('task_data');
         const isNewTaskSent = localStorage.getItem('hy_neural_new_task_sent') === 'true';
+        const requestedFromDashboard = urlParams.get('from') === 'dashboard';
+        const dashboardEntryPoint = localStorage.getItem('hy_neural_entry_point');
+        // The URL + one-shot flag are the authoritative handoff. Older dashboard
+        // code did not always write hy_neural_entry_point, which incorrectly made
+        // a genuine robot launch look like a normal session restore.
+        const fromDashboard = requestedFromDashboard && isNewTaskSent;
+        const fromOrchestrator = urlParams.get('from') === 'orchestrator'
+            && window.HypenosysTaskOrchestrator?.isEnabled?.()
+            && isNewTaskSent;
+        const isFreshTaskHandoff = Boolean(taskDataRaw || isNewTaskSent);
+
+        if (fromDashboard && dashboardEntryPoint !== 'dashboard-claude') {
+            console.warn('[NEURAL] Normalizing legacy dashboard handoff without canonical entry marker.');
+        }
+
+        if (fromDashboard || fromOrchestrator) {
+            localStorage.removeItem('hy_neural_entry_point');
+            // A fresh dashboard/orchestrator task is isolated from the previous
+            // task's transient Claude/Jules thread and pending prompt.
+            localStorage.removeItem('hy_neural_thread');
+            localStorage.removeItem('hy_neural_pending_prompt');
+            // Guard against an old Jules-mode selection, without triggering any API call.
+            window.currentSendMode = 'claude';
+        }
 
         // 1. Initialize session UI first
         renderSessionList();
@@ -426,16 +466,21 @@ permalink: /chat/neural/
             }
         }
 
-        // 3. Load initial session (this will also render the banner if task exists)
-        if (window.sessions.length > 0) {
+        // 3. A fresh task always gets a dedicated conversation before any
+        // previous session is loaded. This prevents transient old-session state,
+        // Jules links, or messages from leaking into the new task.
+        if (isFreshTaskHandoff && task) {
+            createNewSession();
+        } else if (window.sessions.length > 0) {
             loadSession(window.sessions[0].id);
         }
 
         if (task && localStorage.getItem('hy_neural_active') === 'true') {
             window._activeTaskContext = task;
 
-            // Sync with Neural Thread if active
-            if (localStorage.getItem('hy_neural_active') === 'true') {
+            // Sync an existing linked thread only when restoring an existing
+            // conversation. Never hydrate a fresh task with another task's thread.
+            if (localStorage.getItem('hy_neural_active') === 'true' && !isFreshTaskHandoff && !fromDashboard && !fromOrchestrator) {
                 const thread = JSON.parse(localStorage.getItem('hy_neural_thread') || '[]');
                 const currentSession = window.sessions.find(s => s.id === window.currentSessionId);
 
@@ -462,10 +507,24 @@ permalink: /chat/neural/
                     localStorage.removeItem('hy_neural_new_task_sent');
                 }
                 const currentSession = window.sessions.find(s => s.id === window.currentSessionId);
-                if (currentSession && currentSession.messages.length > 0) {
+                if (!isFreshTaskHandoff && ((currentSession && currentSession.messages.length > 0) || !window.currentSessionId)) {
                     createNewSession();
-                } else if (!window.currentSessionId) {
-                    createNewSession();
+                }
+
+                if (fromDashboard || fromOrchestrator) {
+                    const dedicated = window.sessions.find(s => s.id === window.currentSessionId);
+                    if (dedicated) {
+                        dedicated.title = '#' + task.id + ' · ' + String(task.title || task.titulo || 'Tarea').slice(0, 90);
+                        dedicated.task_ref = String(task.id);
+                        dedicated.metadata = { ...(dedicated.metadata || {}), origin: fromOrchestrator ? 'orchestrator' : 'dashboard',
+                            dashboardTaskId: String(task.id),
+                            taskRepository: task.repository || task.repo || '',
+                            taskBranch: task.rama || task.branch || '' };
+                        saveSessions(false, 'dashboard-claude-entry');
+                        renderSessionList();
+                        const titleEl = document.getElementById('session-title');
+                        if (titleEl) titleEl.textContent = dedicated.title;
+                    }
                 }
 
                 let prompt = "";
@@ -537,9 +596,25 @@ permalink: /chat/neural/
                 window.chatInput.value = prompt;
                 window.chatInput.dispatchEvent(new Event('input'));
 
-                // If it was an analysis prompt from history, ensure we are in Claude mode
-                if (pendingPrompt && pendingPrompt.includes('FRAGMENTO')) {
+                // Dashboard robot is strictly a Claude analysis entry; Jules is
+                // only engaged by an explicit subsequent action.
+                if (fromDashboard || fromOrchestrator || (pendingPrompt && pendingPrompt.includes('FRAGMENTO'))) {
                     setSendMode('claude');
+                }
+
+                // A robot handoff from Dashboard is an explicit request to analyze
+                // the task, not merely to prefill the composer. Defer the actual
+                // send until provider/profile setup and DOM handlers are ready.
+                if (fromDashboard && task?.id && prompt.trim()) {
+                    const dedicated = window.sessions.find(s => s.id === window.currentSessionId);
+                    const alreadyAutoSent = dedicated?.metadata?.dashboardAutoSentTaskId === String(task.id);
+                    if (!alreadyAutoSent) {
+                        window._pendingDashboardClaudeAutoSend = {
+                            taskId: String(task.id),
+                            sessionId: window.currentSessionId,
+                            prompt
+                        };
+                    }
                 }
 
                 // Clean URL if needed
@@ -567,6 +642,17 @@ permalink: /chat/neural/
         adaptUI(config);
         setupProfileSelector();
         setupApiModalEnhancements();
+
+        if (fromOrchestrator && task?.id && window.HypenosysTaskOrchestrator?.isEnabled?.()) {
+            const orchestratedId = String(localStorage.getItem('hy_orchestrator_auto_task_id') || '');
+            const currentId = String(task.id);
+            const sentKey = 'hy_orchestrator_claude_sent_' + currentId;
+            if (orchestratedId === currentId && localStorage.getItem(sentKey) !== 'true' && window.chatInput?.value.trim()) {
+                localStorage.setItem(sentKey, 'true');
+                window.HypenosysTaskOrchestrator.setPhase('claude-running');
+                setTimeout(() => { void window.sendMessage(); }, 250);
+            }
+        }
 
         // Initialize Docs Toggle
         const docsBadge = document.getElementById('docs-status-badge');
@@ -661,6 +747,69 @@ permalink: /chat/neural/
                     if (!arrancadoGlobal) {
                         if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] send handler attached");
                         window.sendBtn.onclick = sendMessage;
+
+                        // Complete Dashboard -> Claude handoff once initialization
+                        // is fully ready. The session is marked immediately before
+                        // the actual send, never before readiness checks, so a busy
+                        // button cannot silently consume the one-shot handoff.
+                        const pendingAutoSend = window._pendingDashboardClaudeAutoSend;
+                        if (pendingAutoSend &&
+                            pendingAutoSend.sessionId === window.currentSessionId &&
+                            window.chatInput.value.trim() === pendingAutoSend.prompt.trim()) {
+                            window._pendingDashboardClaudeAutoSend = null;
+                            let autoSendAttempts = 0;
+
+                            const triggerDashboardAutoSend = () => {
+                                autoSendAttempts += 1;
+                                const dedicated = window.sessions.find(s => s.id === pendingAutoSend.sessionId);
+                                const sameSession = window.currentSessionId === pendingAutoSend.sessionId;
+                                const samePrompt = window.chatInput.value.trim() === pendingAutoSend.prompt.trim();
+                                const alreadySent = dedicated?.metadata?.dashboardAutoSentTaskId === pendingAutoSend.taskId;
+
+                                if (alreadySent) return;
+
+                                if (sameSession && samePrompt &&
+                                    !window.sendBtn.disabled &&
+                                    !window._neuralSendInFlight &&
+                                    window.currentSendMode === 'claude') {
+                                    // Start the send first. sendMessage() acquires
+                                    // _neuralSendInFlight synchronously; only persist
+                                    // the one-shot marker once we know the send was accepted.
+                                    void window.sendMessage();
+
+                                    if (window._neuralSendInFlight) {
+                                        dedicated.metadata = {
+                                            ...(dedicated.metadata || {}),
+                                            dashboardAutoSentTaskId: pendingAutoSend.taskId,
+                                            dashboardAutoSentAt: new Date().toISOString()
+                                        };
+                                        saveSessions(false, 'dashboard-claude-autosend-mark');
+                                        return;
+                                    }
+
+                                    // The send was not accepted (transient busy/race).
+                                    // Keep the handoff eligible for the bounded retry below.
+                                }
+
+                                // Initialization can briefly leave controls busy.
+                                // Retry only while the exact same handoff is still
+                                // visible; never switch sessions or send stale text.
+                                if (sameSession && samePrompt && autoSendAttempts < 60) {
+                                    setTimeout(triggerDashboardAutoSend, 500);
+                                } else if (sameSession && samePrompt && !alreadySent) {
+                                    // Do not silently lose a task when API/profile readiness
+                                    // exceeds the retry window. Preserve a visible draft.
+                                    localStorage.setItem('hy_neural_pending_prompt', pendingAutoSend.prompt);
+                                    const note = 'No se pudo enviar automáticamente la tarea #' +
+                                        pendingAutoSend.taskId + '. El texto sigue en el editor: pulsa Enviar cuando Anthropic esté listo.';
+                                    if (typeof window.showToast === 'function') window.showToast(note, 'amber');
+                                    else console.warn('[Claude Neural]', note);
+                                }
+                            };
+
+                            setTimeout(triggerDashboardAutoSend, 0);
+                        }
+
                         window.chatInput.onkeydown = (e) => {
                             if (e.key === 'Enter' && !e.shiftKey) {
                                 e.preventDefault();
@@ -699,6 +848,77 @@ permalink: /chat/neural/
                             };
                             reader.readAsDataURL(file);
                         };
+
+                        const fileAttachBtn = document.getElementById('file-attach-btn');
+                        const fileDocInput = document.getElementById('file-doc-input');
+
+                        if (fileAttachBtn && fileDocInput) {
+                            fileAttachBtn.onclick = () => {
+                                if (!window.NeuralChatRAG || !window.NeuralChatRAG.isEmbeddingsReady()) {
+                                    alert('Configura un modelo de embeddings en API CONFIG para habilitar adjuntos de archivos.');
+                                    return;
+                                }
+
+                                const accepted = localStorage.getItem('hy_rag_privacy_accepted') === 'true';
+                                if (!accepted) {
+                                    const privacyNotice = "Los fragmentos del archivo se enviarán al proveedor configurado para generar sus embeddings vectoriales.";
+                                    const confirmNotice = confirm(privacyNotice + "\n\n¿Deseas continuar?");
+                                    if (!confirmNotice) return;
+                                    localStorage.setItem('hy_rag_privacy_accepted', 'true');
+                                }
+
+                                fileDocInput.click();
+                            };
+
+                            fileDocInput.onchange = async (e) => {
+                                const file = e.target.files[0];
+                                fileDocInput.value = '';
+                                if (!file) return;
+
+                                if (!window.currentSessionId) {
+                                    createNewSession();
+                                }
+
+                                if (file.size > window.NeuralChatRAG.MAX_FILE_SIZE_BYTES) {
+                                    if (window.renderRagFileChips) {
+                                        window.renderRagFileChips.addErrorChip({
+                                            fileId: 'file_err_' + Date.now(),
+                                            fileName: file.name,
+                                            fileSize: file.size,
+                                            errorMessage: `El archivo supera el tamaño máximo permitido de 2 MB (${(file.size / (1024 * 1024)).toFixed(2)} MB).`
+                                        });
+                                    }
+                                    return;
+                                }
+
+                                const reader = new FileReader();
+                                reader.onload = async (ev) => {
+                                    const content = ev.target.result;
+                                    const fileId = 'file_' + Date.now();
+
+                                    if (window.handleFileIngestionWithChip) {
+                                        await window.handleFileIngestionWithChip({
+                                            sessionId: window.currentSessionId,
+                                            fileId: fileId,
+                                            fileName: file.name,
+                                            fileSize: file.size,
+                                            fileContent: content
+                                        });
+                                    }
+                                };
+                                reader.onerror = (err) => {
+                                    if (window.renderRagFileChips) {
+                                        window.renderRagFileChips.addErrorChip({
+                                            fileId: 'file_err_' + Date.now(),
+                                            fileName: file.name,
+                                            fileSize: file.size,
+                                            errorMessage: `Error al leer archivo "${file.name}".`
+                                        });
+                                    }
+                                };
+                                reader.readAsText(file);
+                            };
+                        }
                         document.getElementById('toggle-input-mode').onclick = () => {
                             const config = getActiveConfig();
                             config.useTextInAudioMode = !config.useTextInAudioMode;
@@ -811,3 +1031,4 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </body>
 </html>
+

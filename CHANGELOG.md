@@ -2,6 +2,47 @@
 
 ## [Unreleased]
 
+### Changed
+- Updated Hypenosys visual identity v2: locally hosted pixel-art wordmark, browser favicon, mobile icons and header artwork (2026-11-18).
+- **Public identity and legal navigation (2026-11-18):** Clarified Hypenosys as a volunteer, experimental, non-revenue open-source initiative; added legal and cookie information and consistent public footer. Kept legal disclosure limitations explicit pending verification.
+- **Compatibility:** Retained shared authentication/settings shell on existing default-layout pages; included legal navigation on HAIS layout.
+- **Privacy:** Removed unverified third-party and IP-anonymization guarantees from consent UI. Further browser and infrastructure validation required.
+
+
+### Changed
+- **HAIS FRED evidence (2026-11-15):** Official DGS2 4.86% and DGS10 5.10% (2026-11-12 observations, published 2026-11-13). No gateway or other market freshness verification; task #900043 remains Working 30%, PAPER-only.
+
+### Changed
+- **HAIS FRED evidence (2026-11-11):** Recorded official DGS2/DGS10 observations dated 2026-11-09 in task #900043. This does not verify HAIS gateway availability or other market feeds. Task remains Working 30%; PAPER-only.
+
+### Changed
+- **HAIS revisión 2026-11-10:** PR backend #25 fusionada tras CI verde: pruebas offline de rechazo de FRED DGS10 futuro, caducado e incompleto sin caché parcial. Se registran CI/deploy develop y publicación oficial DGS2 del 06-11 en el Kanban; HTTPS público, gateway y frescura de otras fuentes siguen sin verificar. PAPER-only.
+
+
+### Added
+- **HAIS CoinGecko fail-closed browser coverage (2026-11-09)**: Playwright offline checks reject future-dated APE and incomplete ETH quotes without displaying invented or unverified prices. Kanban evidence links verified backend CI and dev deploy; HTTPS public gateway and upstream freshness remain unverified. PAPER-only.
+
+### Changed
+- **HAIS market evidence (2026-11-08)**: Recorded latest verified develop CI and dev deployment, FRED DGS2/DGS10 publication dates, inaccessible public gateway smoke, and pending backend crypto freshness tests in HAIS Kanban. No task closures or LIVE trading.
+
+### Fixed
+- **Jules Panel chat and Claude supervision**: Preserve the reader's scroll position during polling and streaming, avoid rebuilding unchanged transcripts, and prevent reflected workspace broadcasts. Restore previously authorized Claude supervision after reload while preserving manual pauses, reviewed plan versions, decision limits and session isolation. Save review output to the current conversation after cross-tab refreshes, persist review errors, and display the actual supervision policy and limit.
+
+### Fixed
+- **Claude Neural Chat**: Preserve the in-flight conversation during cross-tab synchronization so Claude replies remain visible and persisted. Optional task-context preparation is bounded and failures before the provider are saved in the transcript. Keep message selection inside each bubble, visible and keyboard accessible, removing the floating hover artifact. Refresh the standalone script cache versions.
+
+### Changed
+- **HAIS market evidence (2026-11-03)**: Linked the tested China 10Y/Brent widget-only catalog fix and latest verified CI/deploy runs in the HAIS Kanban; real provider freshness and the protected gateway remain unverified. PAPER-only.
+
+### Fixed
+- **Jules integration and dev deployment**: Updated completion contracts to use the canonical Kanban `OK` state, verify exact task/session association and idempotence, and run Claude/Jules workspace checks before deployment.
+
+### Changed
+- **Neural workspaces**: Updated Claude and Jules with a purple segmented selector, development actions, a shared composer, task context and supervision cards. Jules now includes a session table with execution/history filters and an operational summary driven by existing session data.
+
+### Added
+- **HAIS-001 pilot bootstrap**: Added a 24-task dependency backlog, a PAPER-only validation script, CI contract checks and an onboarding runbook. No production secrets or trading permissions are enabled.
+
 ### Fixed
 - **Command Center Access Control**: Centralized team access validation (`validateToken`) and role resolution (`isAdmin`) dynamically from `assets/data/team_profiles.json`, eliminating hardcoded whitelist arrays and allowing instant propagation of member role changes across the platform.
 
@@ -19,3 +60,6 @@ Todas las actualizaciones notables de Hypenosys se documentarán en este archivo
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
+
+
+

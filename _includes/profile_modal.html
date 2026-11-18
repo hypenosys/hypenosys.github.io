@@ -140,7 +140,7 @@ window.profileEditUI = {
             <input type="text" class="form-control form-control-sm bg-dark text-white border-purple link-label" placeholder="Etiqueta" value="${label}">
             <input type="url" class="form-control form-control-sm bg-dark text-white border-purple link-url" placeholder="URL" value="${url}">
             <div class="input-group-append">
-                <button class="btn btn-outline-danger btn-sm" type="button" onclick="this.closest('.extra-link-row').remove()">
+                <button class="btn btn-outline-danger btn-sm" type="button" aria-label="Eliminar enlace" onclick="this.closest('.extra-link-row').remove()">
                     <i class="fas fa-times"></i>
                 </button>
             </div>

@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2.0",
-  "last_updated": "2026-09-13T06:26:21.846Z",
+  "last_updated": "2026-11-07T13:00:00.000Z",
   "organizationId": "hypenosys",
   "tasks": [
     {
@@ -9,10 +9,10 @@
       "tema_principal": "Concepto / GDD",
       "prioridad": "Critical",
       "milestone": "M1",
-      "estado": "Pending",
+      "estado": "Fixed",
       "completitud": 0.2,
-      "resuelto_por": "Javi",
-      "detectado_por": "Dídac",
+      "resuelto_por": "Alex",
+      "detectado_por": "Axel",
       "rama2": null,
       "ver": true,
       "fecha": "2026-05-24",
@@ -1797,96 +1797,6 @@
       "organizationId": "hypenosys"
     },
     {
-      "title": "Nos podemos asegurar que la conexión en Claude chat con la documentación es real?",
-      "descripcion": "sin malgastar un token, puro Markdown",
-      "rama": "master",
-      "task_type": "feature",
-      "tema_principal": "Programación / Engine",
-      "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Major",
-      "milestone": "M2",
-      "estado": "OK",
-      "completitud": 0.5,
-      "resuelto_por": "Axel",
-      "detectado_por": "Axel",
-      "asignados": [],
-      "email_responsable": "axel@hypenosys.com",
-      "emails_asignados": [],
-      "start_date": "2026-07-03",
-      "due_date": "2026-07-03",
-      "estimated_hours": 2,
-      "story_points": 2,
-      "tags": [],
-      "external_links": [],
-      "subtasks": [],
-      "acceptance_criteria": "",
-      "blocks": [],
-      "blocked_by": [],
-      "comments": [],
-      "images": [],
-      "rama2": null,
-      "ver": true,
-      "fecha": "2026-06-15",
-      "apoyo": null,
-      "limite": null,
-      "comentario": "",
-      "change_log": [
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-15T19:21:12.201Z",
-          "field": "id",
-          "old_value": null,
-          "new_value": "Created"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-15T22:19:01.472Z",
-          "field": "estado",
-          "old_value": "Pending",
-          "new_value": "Working"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-06-21T12:44:58.553Z",
-          "field": "seccion",
-          "new_value": "Chat Neural"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-02T23:02:21.205Z",
-          "field": "due_date",
-          "old_value": null,
-          "new_value": "2026-07-03"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-03T09:47:35.862Z",
-          "field": "estado",
-          "old_value": "Working",
-          "new_value": "In Review"
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-03T09:47:35.862Z",
-          "field": "completitud",
-          "old_value": 0,
-          "new_value": 0.5
-        },
-        {
-          "author_login": "axlfc",
-          "timestamp": "2026-07-16T07:17:38.717Z",
-          "field": "estado",
-          "old_value": "In Review",
-          "new_value": "OK"
-        }
-      ],
-      "id": 55,
-      "seccion": "Chat Neural",
-      "jules_session": null,
-      "branch": "Programación (PRO)",
-      "organizationId": "hypenosys"
-    },
-    {
       "title": "Añadir terminal física en 'comandos' cuando están logueados en github y SVN en repo-admin",
       "descripcion": "habilitar sistma operativo de edición y mantenimiento de cambios y merges inteligentes",
       "rama": "master",
@@ -1895,7 +1805,7 @@
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Medium",
       "milestone": "M2",
-      "estado": "ToDo",
+      "estado": "Working",
       "completitud": 0.5,
       "resuelto_por": "Axel",
       "detectado_por": "Axel",
@@ -2149,55 +2059,6 @@
       "organizationId": "hypenosys"
     },
     {
-      "title": "Arreglo de jjules panel descripcion de repo y branch",
-      "descripcion": "arreglar en jules panel respetando el estilo de la web",
-      "rama": "master",
-      "task_type": "feature",
-      "tema_principal": "Programación / Engine",
-      "seccion": "",
-      "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Major",
-      "milestone": "M1",
-      "estado": "Pending",
-      "completitud": 0,
-      "resuelto_por": null,
-      "detectado_por": "Alex",
-      "asignados": [],
-      "email_responsable": null,
-      "emails_asignados": [],
-      "start_date": null,
-      "due_date": null,
-      "estimated_hours": null,
-      "story_points": null,
-      "tags": [],
-      "external_links": [],
-      "subtasks": [],
-      "acceptance_criteria": "",
-      "blocks": [],
-      "blocked_by": [],
-      "comments": [],
-      "images": [],
-      "rama2": null,
-      "ver": true,
-      "fecha": "2026-06-24",
-      "apoyo": null,
-      "limite": null,
-      "comentario": "",
-      "change_log": [
-        {
-          "author_login": "topperh4rley",
-          "timestamp": "2026-06-24T17:46:08.958Z",
-          "field": "id",
-          "old_value": null,
-          "new_value": "Created"
-        }
-      ],
-      "id": 71,
-      "jules_session": null,
-      "branch": "Programación (PRO)",
-      "organizationId": "hypenosys"
-    },
-    {
       "title": "Fix: Img-Gen txt2image - ComfyUI usa CPU en lugar de GPU",
       "descripcion": "Hemos vaciado la memoria de la GPU del modelo al generar la imagen, pero hay como un bug que sigue tirando de CPU en lugar de usar la GPU",
       "rama": "master",
@@ -2393,7 +2254,7 @@
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Major",
       "milestone": "M1",
-      "estado": "Working",
+      "estado": "OK",
       "completitud": 0,
       "resuelto_por": "Axel",
       "detectado_por": "Axel",
@@ -2530,7 +2391,7 @@
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Major",
       "milestone": "M1",
-      "estado": "ToDo",
+      "estado": "Working",
       "completitud": 0,
       "resuelto_por": "Axel",
       "detectado_por": "Axel",
@@ -2655,55 +2516,6 @@
       "organizationId": "hypenosys"
     },
     {
-      "title": "Sesiones neural",
-      "descripcion": "Cuando envias una nueva sesion al neural chat del jules panel, no te genera una sesion nueva, directamente te coge la ya abierta, corregir este error para que genere una sesion",
-      "rama": "master",
-      "task_type": "bug",
-      "tema_principal": "Programación / Engine",
-      "seccion": "jules panel",
-      "repository": "hypenosys/hypenosys.github.io",
-      "prioridad": "Major",
-      "milestone": "M1",
-      "estado": "Pending",
-      "completitud": 0,
-      "resuelto_por": "Alex",
-      "detectado_por": "Alex",
-      "asignados": [
-        "topperh4rley"
-      ],
-      "email_responsable": null,
-      "emails_asignados": [],
-      "start_date": null,
-      "due_date": null,
-      "estimated_hours": null,
-      "story_points": null,
-      "tags": [],
-      "external_links": [],
-      "subtasks": [],
-      "acceptance_criteria": "",
-      "blocks": [],
-      "blocked_by": [],
-      "comments": [],
-      "images": [],
-      "rama2": null,
-      "ver": true,
-      "fecha": "2026-07-12",
-      "apoyo": null,
-      "limite": null,
-      "comentario": "",
-      "change_log": [
-        {
-          "author_login": "topperh4rley",
-          "timestamp": "2026-07-12T10:45:21.116Z",
-          "field": "id",
-          "old_value": null,
-          "new_value": "Created"
-        }
-      ],
-      "id": 81,
-      "organizationId": "hypenosys"
-    },
-    {
       "title": "Crear página VideoGen",
       "descripcion": "",
       "rama": "master",
@@ -2790,12 +2602,23 @@
       "estimated_hours": null,
       "story_points": null,
       "tags": [],
-      "external_links": [],
+      "external_links": [
+        {
+          "label": "Plan Cog y Forgejo DR",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/COG_JULES_CONTINUITY_2026.md"
+        }
+      ],
       "subtasks": [],
       "acceptance_criteria": "",
       "blocks": [],
       "blocked_by": [],
-      "comments": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:57:04.000Z",
+          "body": "Continuidad GitHub: la instalación de Forgejo en ZimaBoard2 de esta tarea #84 es dependencia de la tarea #104. El espejo/backup, failover de escrituras y CI/hosting alternativo se planifican por separado (tareas #104–#106), sin alterar su estado Working."
+        }
+      ],
       "images": [],
       "rama2": null,
       "ver": true,
@@ -2832,7 +2655,7 @@
       "repository": "hypenosys/hypenosys.github.io",
       "prioridad": "Major",
       "milestone": "M2",
-      "estado": "ToDo",
+      "estado": "Working",
       "completitud": 0,
       "resuelto_por": "Axel",
       "detectado_por": "Axel",
@@ -2938,13 +2761,3113 @@
         }
       ],
       "id": 87
+    },
+    {
+      "id": 88,
+      "ecosystem_v2_key": "foundation",
+      "organizationId": "hypenosys",
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "[Ecosystem 2.0] F0 — Contratos, identidades, ACL y eventos entre Hypenosys, TC y HAIS",
+      "descripcion": "Base transversal: inventariar identidades y fuentes canónicas (tarea Hypenosys, Project/Agent TC, ejecución Claude/Jules/Codex, HAIS); definir envelopes de eventos idempotentes, sincronización y permisos efectivos sin mutar contratos existentes a ciegas.",
+      "rama": "feat/ecosystem-v2-contracts",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Ecosystem 2.0",
+      "prioridad": "Critical",
+      "milestone": "M0",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "chore",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "haopengwang123"
+      ],
+      "email_responsable": "",
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "ecosystem-v2",
+        "roadmap",
+        "epic",
+        "foundation",
+        "m0"
+      ],
+      "external_links": [
+        {
+          "label": "Arquitectura Ecosystem 2.0",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/ECOSYSTEM_2_0_ARCHITECTURE.md"
+        },
+        {
+          "label": "Repositorio objetivo (develop)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/tree/develop"
+        },
+        {
+          "label": "TC ADR interconexión (PR draft)",
+          "url": "https://github.com/Axlfc/tc/pull/849"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 8801,
+          "text": "Auditar los contratos de tareas sharded de Hypenosys, Project/Agent TC y sesiones Jules/Claude existentes en develop.",
+          "done": false
+        },
+        {
+          "id": 8802,
+          "text": "Definir EntityRef, TaskEnvelope y ExecutionRef versionados con correlación, revisión, actor y procedencia.",
+          "done": false
+        },
+        {
+          "id": 8803,
+          "text": "Definir threat model multi-organización, ACL server-side, revocación y política de secretos/gateway.",
+          "done": false
+        },
+        {
+          "id": 8804,
+          "text": "Definir adaptadores y reconciliación idempotente (outbox, reintentos, CAS/ETag, replay y conflicto).",
+          "done": false
+        },
+        {
+          "id": 8805,
+          "text": "Añadir pruebas de contratos, aislamiento de organizaciones y migración/rollback sin cambiar las fuentes de verdad.",
+          "done": false
+        },
+        {
+          "id": 8806,
+          "text": "Documentar ADR de source-of-truth y plan de despliegue progresivo.",
+          "done": false
+        },
+        {
+          "id": 8807,
+          "text": "Añadir contrato IdentityLink, OrgProjectLink, TaskLink y canonical event envelope; medir fuente/ACL/versioning sin migrar automáticamente.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Contratos versionados revisados; cada entidad tiene ID y scope inequívocos; ningún evento permite elevar permisos; reintentos sin duplicados; tests de contrato y seguridad en CI.",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "body": "Planificación 2026-11-06: especificada, no implementada. Base: develop. No ejecutar ni declarar completada hasta superar criterios de aceptación y PR/CI correspondientes."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created via ecosystem v2 planning"
+        }
+      ]
+    },
+    {
+      "id": 89,
+      "ecosystem_v2_key": "design",
+      "organizationId": "hypenosys",
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "[Ecosystem 2.0] F0 — Diseño UX/UI, navegación, componentes accesibles e i18n",
+      "descripcion": "Diseñar sistema visual compartido por las ocho páginas reutilizando Dracula, header y layout actual de Hypenosys. No sustituir los flujos funcionales de dashboard/Neural/Jules por maquetas.",
+      "rama": "feat/ecosystem-v2-shell",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Diseño / UX",
+      "seccion": "Ecosystem 2.0",
+      "prioridad": "Major",
+      "milestone": "M0",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "design",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "haopengwang123"
+      ],
+      "email_responsable": "",
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "ecosystem-v2",
+        "roadmap",
+        "epic",
+        "design",
+        "m0"
+      ],
+      "external_links": [
+        {
+          "label": "Arquitectura Ecosystem 2.0",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/ECOSYSTEM_2_0_ARCHITECTURE.md"
+        },
+        {
+          "label": "Repositorio objetivo (develop)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/tree/develop"
+        },
+        {
+          "label": "Avatar HypenOS autenticado (merged)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/pull/471"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 8901,
+          "text": "Inventariar design tokens, layout, navegación y estados existentes; diseñar IA de las ocho rutas.",
+          "done": false
+        },
+        {
+          "id": 8902,
+          "text": "Crear wireframes desktop/tablet/móvil y navegación cruzada por tarea, proyecto, agente y organización.",
+          "done": false
+        },
+        {
+          "id": 8903,
+          "text": "Definir componentes para tablas, timeline, approvals, graphs, métricas y errores/empty/offline/stale.",
+          "done": false
+        },
+        {
+          "id": 8904,
+          "text": "Asegurar contraste WCAG AA, foco visible, teclado, lectores de pantalla, reduced motion y estados no solo por color.",
+          "done": false
+        },
+        {
+          "id": 8905,
+          "text": "Preparar cadenas traducibles es/ca/en/zh-cn según soporte disponible y pruebas responsive.",
+          "done": false
+        },
+        {
+          "id": 8906,
+          "text": "Definir feature flags y pruebas visuales de regresión sobre dashboard y paneles existentes.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Diseños y componentes trazables a rutas propuestas; responsive, teclado y WCAG AA; traducciones y estados verificados; sin regresiones en UI existente.",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "body": "Planificación 2026-11-06: especificada, no implementada. Base: develop. No ejecutar ni declarar completada hasta superar criterios de aceptación y PR/CI correspondientes."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T21:03:42.000Z",
+          "body": "[HYPENOS MERGE 2026-11-06] PR #471 merged to develop: cabecera con avatar/menú autenticado desktop/móvil. Playwright 17 tests passed. Esto NO da por completado todo el diseño/i18n y no cambia estado Pending."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created via ecosystem v2 planning"
+        }
+      ]
+    },
+    {
+      "id": 90,
+      "ecosystem_v2_key": "mission",
+      "organizationId": "hypenosys",
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "[Ecosystem 2.0] Mission Control — Centro de operaciones unificado",
+      "descripcion": "Crear /control/mission/ como landing operativa con métricas del workspace seleccionado, tareas, bloqueos, agentes y actividad confirmada, reutilizando dashboard y orquestador actuales.",
+      "rama": "feat/ecosystem-v2-mission-control",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Ecosystem 2.0",
+      "prioridad": "Major",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "haopengwang123"
+      ],
+      "email_responsable": "",
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "ecosystem-v2",
+        "roadmap",
+        "epic",
+        "mission",
+        "m1"
+      ],
+      "external_links": [
+        {
+          "label": "Arquitectura Ecosystem 2.0",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/ECOSYSTEM_2_0_ARCHITECTURE.md"
+        },
+        {
+          "label": "Repositorio objetivo (develop)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/tree/develop"
+        },
+        {
+          "label": "HypenOS Mission/Task Flow (draft)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/pull/470"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 9001,
+          "text": "Implementar ruta Jekyll, header y navegación con selector de organización válido.",
+          "done": false
+        },
+        {
+          "id": 9002,
+          "text": "Proyectar tareas sharded, cola orquestador y señales reales de Jules/Claude/HAIS por fuentes autorizadas.",
+          "done": false
+        },
+        {
+          "id": 9003,
+          "text": "Crear KPIs con fuente, timestamp de verificación, estados stale/offline/error y ausencia de datos.",
+          "done": false
+        },
+        {
+          "id": 9004,
+          "text": "Ofrecer drill-down a tarea/sesión/PR y filtros de prioridad, owner, proyecto y estado.",
+          "done": false
+        },
+        {
+          "id": 9005,
+          "text": "Añadir empty/loading/permission denied y pruebas móvil, acceso por teclado y aislamiento multi-org.",
+          "done": false
+        },
+        {
+          "id": 9006,
+          "text": "Verificar que cambios de tarea y PR se reflejan tras reconciliación sin duplicar modelos.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Mission Control no inventa datos/estado verde; muestra bloqueos y fuentes verificadas; navegación contextual, ACL, móvil y pruebas E2E.",
+      "blocks": [],
+      "blocked_by": [
+        "88",
+        "89"
+      ],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "body": "Planificación 2026-11-06: especificada, no implementada. Base: develop. No ejecutar ni declarar completada hasta superar criterios de aceptación y PR/CI correspondientes."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T20:34:41.000Z",
+          "body": "[HYPENOS SPRINT 2026-11-06] Mission Control: cola priorizada, bloqueos reales y actividad a partir de change_log; módulo en PR #470. Tests Node pasan; Playwright en curso. Mantener tarea Pending y blocked_by #88/#89: conector TC y telemetría faltan."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T21:03:42.000Z",
+          "body": "[HYPENOS MERGE 2026-11-06] PR #470 merged to develop (d068e9c7). Mission Control cola priorizada, dependencias y actividad de tareas GitHub. CI Node+Playwright passed. Faltan conectores TC/HAIS, alertas/estado remoto y pruebas de reconciliación; no marcar fase completada."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created via ecosystem v2 planning"
+        }
+      ]
+    },
+    {
+      "id": 91,
+      "ecosystem_v2_key": "flow",
+      "organizationId": "hypenosys",
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "[Ecosystem 2.0] Task Flow — Trazabilidad tarea → Claude/Jules/Codex → PR → merge",
+      "descripcion": "Crear /control/task-flow/ sobre el orquestador y jules-pr-sync existentes: máquina de estados explícita, trazabilidad, historiales aislados por tarea y reconciliación de estado con pruebas.",
+      "rama": "feat/ecosystem-v2-task-flow",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Ecosystem 2.0",
+      "prioridad": "Critical",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "haopengwang123"
+      ],
+      "email_responsable": "",
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "ecosystem-v2",
+        "roadmap",
+        "epic",
+        "flow",
+        "m1"
+      ],
+      "external_links": [
+        {
+          "label": "Arquitectura Ecosystem 2.0",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/ECOSYSTEM_2_0_ARCHITECTURE.md"
+        },
+        {
+          "label": "Repositorio objetivo (develop)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/tree/develop"
+        },
+        {
+          "label": "HypenOS Mission/Task Flow (draft)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/pull/470"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 9101,
+          "text": "Inventariar el lifecycle de create/queue/blocked/Claude/Jules/PR/checks/merge/archive.",
+          "done": false
+        },
+        {
+          "id": 9102,
+          "text": "Definir estados y transiciones verificadas por eventos, causa, correlación y propietario de ejecución.",
+          "done": false
+        },
+        {
+          "id": 9103,
+          "text": "Crear timeline por tarea con hashes, sesión Jules/Claude, PR, checks y mensajes redactados.",
+          "done": false
+        },
+        {
+          "id": 9104,
+          "text": "Añadir detección de divergencias, reintentos idempotentes, recovering y estado esperando aprobación.",
+          "done": false
+        },
+        {
+          "id": 9105,
+          "text": "Actualizar proyecciones de dashboard y cierre solo con merge/QA/política verificados.",
+          "done": false
+        },
+        {
+          "id": 9106,
+          "text": "Agregar tests de no mezcla de conversaciones, deduplicación, errores de PR y tareas bloqueadas.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Una tarea conserva el mismo ID y muestra eventos reales de punta a punta; no se completa antes de la evidencia requerida; no hay mezcla de sesiones ni duplicación por reintentos.",
+      "blocks": [],
+      "blocked_by": [
+        "88",
+        "89"
+      ],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "body": "Planificación 2026-11-06: especificada, no implementada. Base: develop. No ejecutar ni declarar completada hasta superar criterios de aceptación y PR/CI correspondientes."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T20:34:41.000Z",
+          "body": "[HYPENOS SPRINT 2026-11-06] Task Flow: Kanban read-only e inspector de cambios/notas/PR con deep-links del workspace. No equivale a saga Claude/Cog/PR/merge; PR #470 pendiente revisión y Playwright. Mantener estado y deps."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T21:03:42.000Z",
+          "body": "[HYPENOS MERGE 2026-11-06] PR #470 merged to develop: Task Flow Kanban, inspector, deep-link y change_log/PR referenciada sin simular merge. Node y Playwright passed. No implementa ledger TC, ciclo de aprobación Claude/Cog ni CI/merge confirmado. Pendiente #88/#89."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created via ecosystem v2 planning"
+        }
+      ]
+    },
+    {
+      "id": 92,
+      "ecosystem_v2_key": "approvals",
+      "organizationId": "hypenosys",
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "[Ecosystem 2.0] Approval Center — Supervisión humana y automatizada gobernada",
+      "descripcion": "Crear /control/approvals/ para planes, permisos, PR, operaciones de agentes y preguntas a humanos. Soportar supervisión humana/Claude sin autoaprobar operaciones sensibles.",
+      "rama": "feat/ecosystem-v2-approval-center",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Ecosystem 2.0",
+      "prioridad": "Critical",
+      "milestone": "M1",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "haopengwang123"
+      ],
+      "email_responsable": "",
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "ecosystem-v2",
+        "roadmap",
+        "epic",
+        "approvals",
+        "m1"
+      ],
+      "external_links": [
+        {
+          "label": "Arquitectura Ecosystem 2.0",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/ECOSYSTEM_2_0_ARCHITECTURE.md"
+        },
+        {
+          "label": "Repositorio objetivo (develop)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/tree/develop"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 9201,
+          "text": "Definir ApprovalRequest con policy, vencimiento, scope, diff propuesto, riesgo y actor.",
+          "done": false
+        },
+        {
+          "id": 9202,
+          "text": "Conectar pedidos del orquestador, Neural Chat, Jules y GitHub con la misma referencia de tarea.",
+          "done": false
+        },
+        {
+          "id": 9203,
+          "text": "Implementar inbox con approve/reject/request changes y estados pending/decided/expired.",
+          "done": false
+        },
+        {
+          "id": 9204,
+          "text": "Añadir prevención de doble submit, firma/proveniencia del actor y confirmación reforzada en alto riesgo.",
+          "done": false
+        },
+        {
+          "id": 9205,
+          "text": "Garantizar intersección de permisos y no elevación por agente supervisor ni datos entre orgs.",
+          "done": false
+        },
+        {
+          "id": 9206,
+          "text": "Cubrir tests de expiración, idempotencia, denegación, concurrencia, uso offline y auditoría.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Solo un actor autorizado decide; toda decisión se audita y no se duplica; Claude no autoaprueba privilegios o merges fuera de policy; UX informa claramente.",
+      "blocks": [],
+      "blocked_by": [
+        "88",
+        "89"
+      ],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "body": "Planificación 2026-11-06: especificada, no implementada. Base: develop. No ejecutar ni declarar completada hasta superar criterios de aceptación y PR/CI correspondientes."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created via ecosystem v2 planning"
+        }
+      ]
+    },
+    {
+      "id": 93,
+      "ecosystem_v2_key": "agents",
+      "organizationId": "hypenosys",
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "[Ecosystem 2.0] Agent Studio — Identidad, modelos, herramientas y permisos",
+      "descripcion": "Crear /control/agents/ para gestionar agentes disponibles, sesiones, herramientas, proveedores y políticas usando TC canonical Agent y los conectores existentes, sin introducir una segunda identidad.",
+      "rama": "feat/ecosystem-v2-agent-studio",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Ecosystem 2.0",
+      "prioridad": "Major",
+      "milestone": "M2",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "haopengwang123"
+      ],
+      "email_responsable": "",
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "ecosystem-v2",
+        "roadmap",
+        "epic",
+        "agents",
+        "m2"
+      ],
+      "external_links": [
+        {
+          "label": "Arquitectura Ecosystem 2.0",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/ECOSYSTEM_2_0_ARCHITECTURE.md"
+        },
+        {
+          "label": "Repositorio objetivo (develop)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/tree/develop"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 9301,
+          "text": "Mapear modelos/proveedores Claude, Jules, Codex, HAIS y entidad Agent de TC con identidad explícita.",
+          "done": false
+        },
+        {
+          "id": 9302,
+          "text": "Crear catálogo y vista detalle de agentes por proyecto y workspace con estado de conexión real.",
+          "done": false
+        },
+        {
+          "id": 9303,
+          "text": "Mostrar policy de herramientas, coste/cuota, modelo, permisos efectivos y cambios pendientes de aprobación.",
+          "done": false
+        },
+        {
+          "id": 9304,
+          "text": "Implementar configuración versionada mediante API autorizada; nunca exponer tokens al navegador.",
+          "done": false
+        },
+        {
+          "id": 9305,
+          "text": "Visualizar ejecución/sesiones y enlaces a Task Flow; gestionar revoked/unavailable/degraded.",
+          "done": false
+        },
+        {
+          "id": 9306,
+          "text": "Verificar no elevación de privilegios y E2E de identidad Agent consistente entre TC y Hypenosys.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Un agente tiene identidad estable y permisos mínimos verificados; configuración versionada, errores y límites visibles; ninguna credencial filtrada.",
+      "blocks": [],
+      "blocked_by": [
+        "88",
+        "89"
+      ],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "body": "Planificación 2026-11-06: especificada, no implementada. Base: develop. No ejecutar ni declarar completada hasta superar criterios de aceptación y PR/CI correspondientes."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created via ecosystem v2 planning"
+        }
+      ]
+    },
+    {
+      "id": 94,
+      "ecosystem_v2_key": "knowledge",
+      "organizationId": "hypenosys",
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "[Ecosystem 2.0] Knowledge Graph — Grafo de conocimiento con procedencia y ACL",
+      "descripcion": "Crear /knowledge/graph/ conectando tareas, proyectos, sesiones, PR, Wiki y fuentes TC con indexación derivada, procedencia/citas y control de acceso antes de consultar o proyectar.",
+      "rama": "feat/ecosystem-v2-knowledge-graph",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Ecosystem 2.0",
+      "prioridad": "Major",
+      "milestone": "M3",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "haopengwang123"
+      ],
+      "email_responsable": "",
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "ecosystem-v2",
+        "roadmap",
+        "epic",
+        "knowledge",
+        "m3"
+      ],
+      "external_links": [
+        {
+          "label": "Arquitectura Ecosystem 2.0",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/ECOSYSTEM_2_0_ARCHITECTURE.md"
+        },
+        {
+          "label": "Repositorio objetivo (develop)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/tree/develop"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 9401,
+          "text": "Definir NodeRef/EdgeRef con IDs estables, fuente, hash, org/proyecto, timestamps y ACL.",
+          "done": false
+        },
+        {
+          "id": 9402,
+          "text": "Indexar metadata permitida desde Wiki, TC ProjectHistory, tareas, PR y sesiones sin copiar secretos.",
+          "done": false
+        },
+        {
+          "id": 9403,
+          "text": "Implementar consultas y filtros server-side ACL-first; Qdrant únicamente como índice derivado.",
+          "done": false
+        },
+        {
+          "id": 9404,
+          "text": "Crear vista grafo + lista accesible y detalle de fuentes con citas y versionado/superseded.",
+          "done": false
+        },
+        {
+          "id": 9405,
+          "text": "Añadir sincronización idempotente, reindex/rollback y tratamiento de fuentes revocadas.",
+          "done": false
+        },
+        {
+          "id": 9406,
+          "text": "Cubrir tests de fuga por nodos/aristas, autorización RAG, fuente borrada, reconstrucción y accesibilidad.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Citas resuelven a fuentes autorizadas, no hay nodos privados en respuestas no autorizadas; índice reconstruible desde almacenes canónicos.",
+      "blocks": [],
+      "blocked_by": [
+        "88",
+        "89",
+        "98"
+      ],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "body": "Planificación 2026-11-06: especificada, no implementada. Base: develop. No ejecutar ni declarar completada hasta superar criterios de aceptación y PR/CI correspondientes."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created via ecosystem v2 planning"
+        }
+      ]
+    },
+    {
+      "id": 95,
+      "ecosystem_v2_key": "org",
+      "organizationId": "hypenosys",
+      "repository": "Axlfc/tc",
+      "title": "[Ecosystem 2.0] Organization Hub — Organizaciones y proyectos bidireccionales con TC",
+      "descripcion": "Diseñar /organizations/hub/ en Hypenosys con proyección desde /api/projects de TC y miembros de Hypenosys; vincular sin asumir equivalencia directa de IDs, roles ni identidades.",
+      "rama": "feat/ecosystem-v2-organization-hub",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Ecosystem 2.0",
+      "prioridad": "Critical",
+      "milestone": "M3",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "haopengwang123"
+      ],
+      "email_responsable": "",
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "ecosystem-v2",
+        "roadmap",
+        "epic",
+        "org",
+        "m3"
+      ],
+      "external_links": [
+        {
+          "label": "Arquitectura Ecosystem 2.0",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/ECOSYSTEM_2_0_ARCHITECTURE.md"
+        },
+        {
+          "label": "Repositorio objetivo (develop)",
+          "url": "https://github.com/Axlfc/tc/tree/develop"
+        },
+        {
+          "label": "TC ADR interconexión (PR draft)",
+          "url": "https://github.com/Axlfc/tc/pull/849"
+        },
+        {
+          "label": "Piloto THE MACHINE TC/GitHub/Forgejo (ADR draft)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/pull/473"
+        },
+        {
+          "label": "TC THE MACHINE fase 0 read-only binding #852",
+          "url": "https://github.com/Axlfc/tc/pull/852"
+        },
+        {
+          "label": "Organization Hub THE MACHINE phase 0 (review)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/pull/474"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 9501,
+          "text": "Diseñar mapeo explícito entre Hypenosys organizationId, TC Project.id y miembros autorizados.",
+          "done": false
+        },
+        {
+          "id": 9502,
+          "text": "Crear UI de proyectos, equipos, roles, archivos y conexiones; reutilizar pantallas/servicios TC.",
+          "done": false
+        },
+        {
+          "id": 9503,
+          "text": "Implementar linking/unlinking con confirmación y estados linked/pending/conflict/revoked.",
+          "done": false
+        },
+        {
+          "id": 9504,
+          "text": "Aplicar ACL a listados, búsquedas, archivos, invitaciones y eventos en ambos sistemas.",
+          "done": false
+        },
+        {
+          "id": 9505,
+          "text": "Reconciliar cambios TC/Hyp con eventId/idempotencyKey, conflictos y revocación.",
+          "done": false
+        },
+        {
+          "id": 9506,
+          "text": "Añadir E2E multi-org, cambios de miembros, archivos, traducciones y recuperación de fallos.",
+          "done": false
+        },
+        {
+          "id": 9507,
+          "text": "Incorporar orgUid↔TC ProjectUid, membresías accepted, estado de linking/revocación y auditoría real; depender de broker SSO y ledger TC.",
+          "done": false
+        },
+        {
+          "id": 9508,
+          "text": "PILOTO THE MACHINE: confirmar TC Project.id existente con sus miembros accepted y enlazar explícitamente con organización the-machine y repo hypenosys/the_machine; comenzar read-only y verificar ACL.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "No se crea acceso implícito al vincular; usuarios ven solo proyectos permitidos, estado eventual explícito, enlace reversible y errores recuperables.",
+      "blocks": [],
+      "blocked_by": [
+        "88",
+        "89",
+        "98",
+        "109",
+        "110"
+      ],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "body": "Planificación 2026-11-06: especificada, no implementada. Base: develop. No ejecutar ni declarar completada hasta superar criterios de aceptación y PR/CI correspondientes."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-07T11:17:41.000Z",
+          "body": "[THE MACHINE P0 2026-11-07] PR TC #852: vínculo aprobado por owner entre TC Project.id (real, aún sin identificar en instancia) y repo hypenosys/the_machine master, Issues GitHub canónicas de solo lectura, árbol y preview textual con SHA, journal local enlace/revocación, ACL y suite Vitest. Se corrige auth en hidratación de proyectos TC. No se ha creado copia de Issues, Git commit, ledger ACID, mirror Forgejo ni vínculo real en Oracle; mantener pendiente y revisar CI/deploy."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-07T13:00:00.000Z",
+          "body": "[THE MACHINE PHASE 0 2026-11-07] TC PR #852 merged to develop: binding explícito read-only de proyecto existente con owner accepted, GitHub Issues canónicas y árbol de archivos master, journal revocable. CI focalizada passing; no evidencia de despliegue de #852 en dev.tc. Hypenosys PR #474 añade navegación contextual en Org Hub con enlaces GitHub/TC. NO equivale a ledger durable (#110), gateway write (#103), editor Git ni Forgejo espejo (#104). Estado tarea permanece Pending."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created via ecosystem v2 planning"
+        }
+      ]
+    },
+    {
+      "id": 96,
+      "ecosystem_v2_key": "sandbox",
+      "organizationId": "hypenosys",
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "[Ecosystem 2.0] Sandbox Lab — Experimentos Codex/Jules en aislamiento estricto",
+      "descripcion": "Crear /labs/sandbox/ para comparativas de agentes sobre clones saneados por allowlist, límites de CPU/RAM/tiempo/red y sin acceso a credenciales ni repos completos. Relacionado con ensayo HAIS #900019, evitando duplicar su ejecución.",
+      "rama": "feat/ecosystem-v2-sandbox-lab",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Ecosystem 2.0",
+      "prioridad": "Major",
+      "milestone": "M4",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "haopengwang123"
+      ],
+      "email_responsable": "",
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "ecosystem-v2",
+        "roadmap",
+        "epic",
+        "sandbox",
+        "m4"
+      ],
+      "external_links": [
+        {
+          "label": "Arquitectura Ecosystem 2.0",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/ECOSYSTEM_2_0_ARCHITECTURE.md"
+        },
+        {
+          "label": "Repositorio objetivo (develop)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/tree/develop"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 9601,
+          "text": "Inventariar el protocolo de ensayo seguro de HAIS #900019 y reutilizar criterios del sandbox existente si están validados.",
+          "done": false
+        },
+        {
+          "id": 9602,
+          "text": "Definir exportación revisada de archivos, sanitización de rutas, secretos y licencia.",
+          "done": false
+        },
+        {
+          "id": 9603,
+          "text": "Implementar backend runner aislado, egress denegado por defecto, cuotas/timeout y cancelación.",
+          "done": false
+        },
+        {
+          "id": 9604,
+          "text": "Diseñar UI de definición de experimento, selección de agente y ejecución sin credenciales persistentes.",
+          "done": false
+        },
+        {
+          "id": 9605,
+          "text": "Comparar outputs/diffs/tests de Codex y Jules con mismo ticket y versión de entorno.",
+          "done": false
+        },
+        {
+          "id": 9606,
+          "text": "Añadir auditoría, limpieza garantizada, bloqueo de merges automáticos y pruebas adversariales.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Sin secretos, sin acceso al host/repo real, sin persistencia inadvertida; cuotas y red restringidas y comparación reproducible con evidencia.",
+      "blocks": [],
+      "blocked_by": [
+        "88",
+        "89"
+      ],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "body": "Planificación 2026-11-06: especificada, no implementada. Base: develop. No ejecutar ni declarar completada hasta superar criterios de aceptación y PR/CI correspondientes."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created via ecosystem v2 planning"
+        }
+      ]
+    },
+    {
+      "id": 97,
+      "ecosystem_v2_key": "observatory",
+      "organizationId": "hypenosys",
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "[Ecosystem 2.0] HAIS Observatory — Telemetría y presión operativa verificables",
+      "descripcion": "Crear /hais/observatory/ para estado HAIS, colas, capacidad, errores y Stress Index con fuentes y timestamps. No confundir con datos del simulador/mercados ni fabricar indicadores.",
+      "rama": "feat/ecosystem-v2-hais-observatory",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Ecosystem 2.0",
+      "prioridad": "Major",
+      "milestone": "M2",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "haopengwang123"
+      ],
+      "email_responsable": "",
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "ecosystem-v2",
+        "roadmap",
+        "epic",
+        "observatory",
+        "m2"
+      ],
+      "external_links": [
+        {
+          "label": "Arquitectura Ecosystem 2.0",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/ECOSYSTEM_2_0_ARCHITECTURE.md"
+        },
+        {
+          "label": "Repositorio objetivo (develop)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/tree/develop"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 9701,
+          "text": "Inventariar métricas reales disponibles de HAIS, orquestador, runners, Jules y CI; documentar las ausentes.",
+          "done": false
+        },
+        {
+          "id": 9702,
+          "text": "Definir contrato read-only de telemetría por organización con TTL, integridad y timestamps.",
+          "done": false
+        },
+        {
+          "id": 9703,
+          "text": "Crear panel de presión, capacidad, colas, errores, latencia y degradaciones con N/D cuando no haya fuente.",
+          "done": false
+        },
+        {
+          "id": 9704,
+          "text": "Añadir detalles del cálculo/umbral de Stress Index y separar indicador observado de recomendación.",
+          "done": false
+        },
+        {
+          "id": 9705,
+          "text": "Conectar alertas autorizadas a Mission Control sin ejecutar mitigaciones sensibles automáticamente.",
+          "done": false
+        },
+        {
+          "id": 9706,
+          "text": "Añadir tests de métricas stale, auth, accesibilidad, performance y ausencia de datos falsos.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Métricas auditables con fórmula y fuente, no hay cifras simuladas presentadas como reales; alertas y estado degradado explícitos.",
+      "blocks": [],
+      "blocked_by": [
+        "88",
+        "89"
+      ],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "body": "Planificación 2026-11-06: especificada, no implementada. Base: develop. No ejecutar ni declarar completada hasta superar criterios de aceptación y PR/CI correspondientes."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created via ecosystem v2 planning"
+        }
+      ]
+    },
+    {
+      "id": 98,
+      "ecosystem_v2_key": "tcbridge",
+      "organizationId": "hypenosys",
+      "repository": "Axlfc/tc",
+      "title": "[Ecosystem 2.0] F3 — Bridge TC Projects ↔ Hypenosys Workspace/Task",
+      "descripcion": "Construir integración entre contratos ProjectStructure y eventos de proyecto TC con referencias a organizationId/tareas Hypenosys. No dar por merged la rama experimental feat/hypenosys-bidirectional-bridge; comprobar develop.",
+      "rama": "feat/ecosystem-v2-tc-project-bridge",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Ecosystem 2.0",
+      "prioridad": "Critical",
+      "milestone": "M3",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "chore",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "haopengwang123"
+      ],
+      "email_responsable": "",
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "ecosystem-v2",
+        "roadmap",
+        "epic",
+        "tcbridge",
+        "m3"
+      ],
+      "external_links": [
+        {
+          "label": "Arquitectura Ecosystem 2.0",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/ECOSYSTEM_2_0_ARCHITECTURE.md"
+        },
+        {
+          "label": "Repositorio objetivo (develop)",
+          "url": "https://github.com/Axlfc/tc/tree/develop"
+        },
+        {
+          "label": "TC ADR interconexión (PR draft)",
+          "url": "https://github.com/Axlfc/tc/pull/849"
+        },
+        {
+          "label": "Piloto THE MACHINE TC/GitHub/Forgejo (ADR draft)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/pull/473"
+        },
+        {
+          "label": "TC THE MACHINE fase 0 read-only binding #852",
+          "url": "https://github.com/Axlfc/tc/pull/852"
+        },
+        {
+          "label": "Organization Hub THE MACHINE phase 0 (review)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/pull/474"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 9801,
+          "text": "Auditar /api/projects, ProjectStructure, ProjectEvent y alcance de la rama experimental del bridge frente a develop.",
+          "done": false
+        },
+        {
+          "id": 9802,
+          "text": "Definir mapeo org/project/task y endpoint autenticado de linking, sin equivalencia automática ni lectura pública.",
+          "done": false
+        },
+        {
+          "id": 9803,
+          "text": "Implementar autorización server-side, scopes, consentimiento, revocación y protecciones CSRF/replay.",
+          "done": false
+        },
+        {
+          "id": 9804,
+          "text": "Publicar eventos versionados de proyecto y consumir actualizaciones Hypenosys con outbox/reconciliation.",
+          "done": false
+        },
+        {
+          "id": 9805,
+          "text": "Definir alta real de proyectos TC solo vía API autenticada y rollback de vinculaciones fallidas.",
+          "done": false
+        },
+        {
+          "id": 9806,
+          "text": "Cubrir pruebas de multi-org, invitaciones, aislamiento, idempotencia, fallos de red y sincronización eventual.",
+          "done": false
+        },
+        {
+          "id": 9807,
+          "text": "Integración TaskLink: una tarea lógica, adaptador Hyp JSON ↔ TC ProjectStructure, saga para escrituras remotas, CAS e historial TC obligatorio.",
+          "done": false
+        },
+        {
+          "id": 9808,
+          "text": "PILOTO THE MACHINE: proyectar Issues de hypenosys/the_machine (fuente canónica en Hypenosys) en TC Kanban con Issue number/node_id; evitar TC Tasks duplicadas y mapear estados solo con contrato aprobado.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Proyecto TC y organización Hypenosys enlazables con referencias y roles explícitos; operación autorizada, reversible, auditada y con pruebas; sin escritura ficticia en datos de TC.",
+      "blocks": [],
+      "blocked_by": [
+        "88",
+        "108",
+        "109",
+        "110"
+      ],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "body": "Planificación 2026-11-06: especificada, no implementada. Base: develop. No ejecutar ni declarar completada hasta superar criterios de aceptación y PR/CI correspondientes."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-07T11:17:41.000Z",
+          "body": "[THE MACHINE P0 2026-11-07] PR TC #852: vínculo aprobado por owner entre TC Project.id (real, aún sin identificar en instancia) y repo hypenosys/the_machine master, Issues GitHub canónicas de solo lectura, árbol y preview textual con SHA, journal local enlace/revocación, ACL y suite Vitest. Se corrige auth en hidratación de proyectos TC. No se ha creado copia de Issues, Git commit, ledger ACID, mirror Forgejo ni vínculo real en Oracle; mantener pendiente y revisar CI/deploy."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-07T13:00:00.000Z",
+          "body": "[THE MACHINE PHASE 0 2026-11-07] TC PR #852 merged to develop: binding explícito read-only de proyecto existente con owner accepted, GitHub Issues canónicas y árbol de archivos master, journal revocable. CI focalizada passing; no evidencia de despliegue de #852 en dev.tc. Hypenosys PR #474 añade navegación contextual en Org Hub con enlaces GitHub/TC. NO equivale a ledger durable (#110), gateway write (#103), editor Git ni Forgejo espejo (#104). Estado tarea permanece Pending."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created via ecosystem v2 planning"
+        }
+      ]
+    },
+    {
+      "id": 99,
+      "ecosystem_v2_key": "qa",
+      "organizationId": "hypenosys",
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "[Ecosystem 2.0] F4 — Validación E2E, CI, seguridad y rollout progresivo",
+      "descripcion": "Gate transversal antes de declarar las ocho páginas completadas: workflows reales con tareas, agentes y TC; pruebas accesibilidad/performance, permisos y reconciliación; flag rollout y rollback.",
+      "rama": "test/ecosystem-v2-e2e",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "QA / Testing",
+      "seccion": "Ecosystem 2.0",
+      "prioridad": "Critical",
+      "milestone": "M4",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "test",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "haopengwang123"
+      ],
+      "email_responsable": "",
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "ecosystem-v2",
+        "roadmap",
+        "epic",
+        "qa",
+        "m4"
+      ],
+      "external_links": [
+        {
+          "label": "Arquitectura Ecosystem 2.0",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/ECOSYSTEM_2_0_ARCHITECTURE.md"
+        },
+        {
+          "label": "Repositorio objetivo (develop)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/tree/develop"
+        },
+        {
+          "label": "TC ADR interconexión (PR draft)",
+          "url": "https://github.com/Axlfc/tc/pull/849"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 9901,
+          "text": "Construir fixture multi-org con identidades/ACL y datos falsos no sensibles para E2E.",
+          "done": false
+        },
+        {
+          "id": 9902,
+          "text": "Simular task→Claude→Jules/Codex→PR→checks→merge→archive y fallos/reintentos sin duplicaciones.",
+          "done": false
+        },
+        {
+          "id": 9903,
+          "text": "Verificar transiciones de aprobación, cambio de organización, agentes y sesión no mezclada.",
+          "done": false
+        },
+        {
+          "id": 9904,
+          "text": "Ejecutar pruebas cross-browser móvil, WCAG AA, localización, caída de red y métricas stale.",
+          "done": false
+        },
+        {
+          "id": 9905,
+          "text": "Añadir CI obligatorio, revisión de amenazas, escaneo de secretos y rollback/feature flags.",
+          "done": false
+        },
+        {
+          "id": 9906,
+          "text": "Recopilar evidencia de tests y registrar cambios aprendidos en Wiki tras PR aprobado/merge.",
+          "done": false
+        },
+        {
+          "id": 9907,
+          "text": "Agregar E2E cross-domains Hyp/TC/IRC/Matrix, API vs funciones auxiliares, dos usuarios/organizaciones, eventos perdidos, replay y revocación.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "CI y E2E pasan en develop; sin fugas cross-org, sin tareas fantasmas ni éxito ficticio; rollback probado y documentación actualizada.",
+      "blocks": [],
+      "blocked_by": [
+        "90",
+        "91",
+        "92",
+        "93",
+        "94",
+        "95",
+        "96",
+        "97",
+        "98",
+        "107",
+        "111",
+        "112",
+        "113"
+      ],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "body": "Planificación 2026-11-06: especificada, no implementada. Base: develop. No ejecutar ni declarar completada hasta superar criterios de aceptación y PR/CI correspondientes."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:39:52.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created via ecosystem v2 planning"
+        }
+      ]
+    },
+    {
+      "id": 100,
+      "continuity_key": "jules-sunset-export",
+      "organizationId": "hypenosys",
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "[CONTINUIDAD P0] Exportar y conservar sesiones Jules antes del 11/11/2026",
+      "descripcion": "Inventariar y conservar sesiones/planes/activities/patches de Jules, terminar pendientes y recuperar historial sin secrets antes de solo lectura 11/11; Google cierra 31/12. No almacenar exports con env vars en GitHub, TC Wiki, issues o Qdrant.\n\nExportador web existente y operativo al menos para un usuario según informe: pages/jules-panel.html → assets/javascript/jules-export.js. Axel ha realizado una exportación de una cuenta; ZIP y manifest aún no verificados. Reutilizar el botón, completar las otras cuentas y contrastar con export oficial.",
+      "rama": "chore/jules-sunset-safe-export",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Tools / Automation",
+      "seccion": "Continuidad Cog · Jules · Forgejo",
+      "prioridad": "Critical",
+      "milestone": "P0",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "haopengwang123",
+        "axlfc"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": "2026-11-10",
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "continuity-2026",
+        "cog-jules-forgejo",
+        "epic",
+        "p0",
+        "jules-sunset-export"
+      ],
+      "external_links": [
+        {
+          "label": "Plan de continuidad",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/COG_JULES_CONTINUITY_2026.md"
+        },
+        {
+          "label": "Repositorio objetivo (base actual)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/tree/develop"
+        },
+        {
+          "label": "Aviso oficial de cierre Jules",
+          "url": "https://jules.google/docs/changelog/2026-10-29"
+        },
+        {
+          "label": "Exportador web Jules",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/assets/javascript/jules-export.js"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 10001,
+          "text": "Identificar todos los workspace y tareas Hypenosys con Jules session ID, PR y fuente de datos.",
+          "done": false
+        },
+        {
+          "id": 10002,
+          "text": "Revisar las sesiones abiertas, finalizar o cancelar responsablemente antes del corte y registrar estados verificados.",
+          "done": false
+        },
+        {
+          "id": 10003,
+          "text": "Aprovechar el botón Exportar del Jules Panel (ya implementado). Axel comunicó exportación de una cuenta; verificar artefactos existentes antes de repetir o desarrollar otro exporter.",
+          "done": false
+        },
+        {
+          "id": 10004,
+          "text": "Separar y cifrar ajustes y variables de entorno, eliminar secretos de índices y logs, generar manifest de hashes no sensible.",
+          "done": false
+        },
+        {
+          "id": 10005,
+          "text": "Crear archivo histórico consultable por tarea/org con ACL, source y timestamps, preservando PR y patches.",
+          "done": false
+        },
+        {
+          "id": 10006,
+          "text": "Ejecutar smoke de restauración/export y documentar lagunas y fecha de último snapshot.",
+          "done": false
+        },
+        {
+          "id": 10007,
+          "text": "Auditar ZIP índice y todas sus partes de la cuenta exportada: manifest.complete, errors_count, stopReasons, CRC/hash, recuentos de sesiones y restauración de muestra; registrar evidencia saneada.",
+          "done": false
+        },
+        {
+          "id": 10008,
+          "text": "Inventariar cuentas Jules que faltan, usar el botón de Hypenosys con la credencial correcta y etiquetar/salvaguardar cada respaldo sin que se sobrescriban ZIP del mismo día.",
+          "done": false
+        },
+        {
+          "id": 10009,
+          "text": "Corregir semántica del exportador: complete=false/partial cuando hay errores o paginación truncada; exportId por cuenta/ejecución; tests de éxito parcial, multi ZIP y multi cuenta.",
+          "done": false
+        },
+        {
+          "id": 10010,
+          "text": "Contrastar cobertura del exportador web (sesiones, fuentes, actividades, patches) contra el export oficial de Jules (settings/memories/schedules/env) bajo ACL y cifrado; nunca exponer secretos.",
+          "done": false
+        },
+        {
+          "id": 10011,
+          "text": "Diseñar importador validado de archivos Jules en modo solo lectura sin API key, con indexado privado y vínculos org/tarea/PR.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Inventario completo y export cifrado fuera del repositorio, sin secretos en commit ni RAG; al menos una restauración verificada; sesiones históricas referenciables.\nPor cada cuenta: inventario sin credenciales, ZIP index + todas las partes, errores/paginación reconciliados, hashes/CRC y restauración; no marcar completado solo por descarga del navegador ni por manifest.complete actual.",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:57:04.000Z",
+          "body": "Plan registrado 2026-11-06. No ejecutar ni declarar completado sin evidencia verificable; no exponer secretos de Jules, Forgejo o GitHub en documentación/PR."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T19:05:01.000Z",
+          "body": "[REVISIÓN EXPORT WEB 2026-11-06] El usuario muestra botón Exportar en Jules Panel e informa que Axel ya exportó desde una de las cuentas. Revisado código real: exportador existente jules-export.js genera índice ZIP y partes por fecha con sessions/activities/patches/manifest. No se recibieron ZIP para verificar; NO marcar subtareas completadas ni alterar estado Pending. Riesgos a corregir: manifest.complete=true incluso con errores; nombres ZIP por fecha sin cuenta; faltan verificaciones de integridad y demás cuentas. Plan: docs/COG_JULES_CONTINUITY_2026.md."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:57:04.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created via Cog/Forgejo continuity plan"
+        }
+      ]
+    },
+    {
+      "id": 101,
+      "continuity_key": "jules-readonly-adapter",
+      "organizationId": "hypenosys",
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "[CONTINUIDAD P0] Desacoplar Jules: provider neutral, read-only y selector Cog",
+      "descripcion": "Desacoplar el motor de jules-api.js, Jules Panel y Neural Chat mediante CodingAgentProvider. Después de 11/11 Jules es histórico/solo lectura; Cog se selecciona explícitamente como sustituto solo si el runner está operativo.",
+      "rama": "feat/cog-jules-provider-cutover",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Tools / Automation",
+      "seccion": "Continuidad Cog · Jules · Forgejo",
+      "prioridad": "Critical",
+      "milestone": "P0",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "haopengwang123"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": "2026-11-10",
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "continuity-2026",
+        "cog-jules-forgejo",
+        "epic",
+        "p0",
+        "jules-readonly-adapter"
+      ],
+      "external_links": [
+        {
+          "label": "Plan de continuidad",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/COG_JULES_CONTINUITY_2026.md"
+        },
+        {
+          "label": "Repositorio objetivo (base actual)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/tree/develop"
+        },
+        {
+          "label": "Integración Jules actual",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/assets/javascript/jules-api.js"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 10101,
+          "text": "Diseñar interfaz CodingAgentProvider con capabilities, start, events, feedback, cancel y handle de sesión con provider.",
+          "done": false
+        },
+        {
+          "id": 10102,
+          "text": "Implementar adaptador Jules Legacy con capabilities writable=false al corte y degradación controlada ante 401/403/404.",
+          "done": false
+        },
+        {
+          "id": 10103,
+          "text": "Exponer provider activo y estado real en Neural Chat/Jules Panel/Task Flow sin ghost outputs.",
+          "done": false
+        },
+        {
+          "id": 10104,
+          "text": "Mantener sesiones separadas por (organizationId, taskId, provider, executionId) y reconciliar relaciones PR.",
+          "done": false
+        },
+        {
+          "id": 10105,
+          "text": "Añadir feature flag y selector seguro de proveedor sin reintentos silenciosos ni doble ejecución.",
+          "done": false
+        },
+        {
+          "id": 10106,
+          "text": "Probar inputs/errores, exports legibles, backwards compatibility y recuperación de UI si Jules desaparece.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "UI y API no intentan iniciar/aprobar sesiones Jules cuando son read-only; no mezcla historiales; Task Flow reconoce sesiones Cog sin falsificar estado.",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:57:04.000Z",
+          "body": "Plan registrado 2026-11-06. No ejecutar ni declarar completado sin evidencia verificable; no exponer secretos de Jules, Forgejo o GitHub en documentación/PR."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T19:05:01.000Z",
+          "body": "[ARCHIVO IMPORTADO] Reutilizar ZIP producidos por el botón Exportar de Jules Panel y diseñar un importador read-only; el código actual no garantiza cierre sin errores ni conservación en servidor. No vincular sesiones sin organización/identidad verificada."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:57:04.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created via Cog/Forgejo continuity plan"
+        }
+      ]
+    },
+    {
+      "id": 102,
+      "continuity_key": "cog-agent-runner",
+      "organizationId": "hypenosys",
+      "repository": "hypenosys/cog",
+      "title": "[CONTINUIDAD] Convertir Cog/Cognito en coding agent ejecutor aislado con PR",
+      "descripcion": "Cog actual es CLI PowerShell/Cognito + RAG (master); necesita ejecución asíncrona real sobre repo sanitizado, trazas, pruebas, diffs y PR. Integrar con Hypenosys, no simular Jules ni asumir repos privados legibles.",
+      "rama": "feat/cog-coding-agent-runner",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Tools / Automation",
+      "seccion": "Continuidad Cog · Jules · Forgejo",
+      "prioridad": "Critical",
+      "milestone": "P1",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "haopengwang123"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "continuity-2026",
+        "cog-jules-forgejo",
+        "epic",
+        "p1",
+        "cog-agent-runner"
+      ],
+      "external_links": [
+        {
+          "label": "Plan de continuidad",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/COG_JULES_CONTINUITY_2026.md"
+        },
+        {
+          "label": "Repositorio objetivo (base actual)",
+          "url": "https://github.com/hypenosys/cog/tree/master"
+        },
+        {
+          "label": "Repositorio Cog",
+          "url": "https://github.com/hypenosys/cog"
+        },
+        {
+          "label": "HAIS sandbox #900019",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/_data/orgs/hais/tasks.json"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 10201,
+          "text": "Auditar cog.ps1, cog_rag.py, backend Cognito y límites del prototipo sin comprometer el secreto/volumen HAIS.",
+          "done": false
+        },
+        {
+          "id": 10202,
+          "text": "Diseñar lifecycle de ejecución, job IDs, mensajes, plan, cancelación, feedback, estado y persistencia con eventos.",
+          "done": false
+        },
+        {
+          "id": 10203,
+          "text": "Implementar runner aislado de snapshot allowlist con CPU/RAM/timeout/red limitada y vault de tokens efímeros.",
+          "done": false
+        },
+        {
+          "id": 10204,
+          "text": "Implementar patches, validación Git, tests controlados y publicación de branch/PR en backend Git configurado.",
+          "done": false
+        },
+        {
+          "id": 10205,
+          "text": "Integrar connector de Cog en Neural Chat, Task Flow y Approval Center con flujo humano/Claude supervisado.",
+          "done": false
+        },
+        {
+          "id": 10206,
+          "text": "E2E: misma tarea en Cog, eventos/CI/PR reales y control de costo/fallo; reutilizar HAIS #900019.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Cog inicia y completa una tarea verificada en sandbox, crea PR no merge automático, guarda eventos y respeta scopes; no se confunde con RAG/chat sin ejecución.",
+      "blocks": [],
+      "blocked_by": [
+        "101"
+      ],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:57:04.000Z",
+          "body": "Plan registrado 2026-11-06. No ejecutar ni declarar completado sin evidencia verificable; no exponer secretos de Jules, Forgejo o GitHub en documentación/PR."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:57:04.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created via Cog/Forgejo continuity plan"
+        }
+      ]
+    },
+    {
+      "id": 103,
+      "continuity_key": "secure-write-gateway",
+      "organizationId": "hypenosys",
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "[CONTINUIDAD] Endpoint propio de escritura: tareas, GitHub/Forgejo y sesiones",
+      "descripcion": "Reemplazar escrituras desde PAT en localStorage por gateway autenticado con GitHub App o auth server-side equivalentes; usar adaptador GitHub/Forgejo y rutas versionadas con CAS/ACL/replay protection. Un endpoint NO puede reactivar la API cerrada de Jules.",
+      "rama": "feat/secure-write-gateway",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Tools / Automation",
+      "seccion": "Continuidad Cog · Jules · Forgejo",
+      "prioridad": "Critical",
+      "milestone": "P1",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "haopengwang123",
+        "axlfc"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "continuity-2026",
+        "cog-jules-forgejo",
+        "epic",
+        "p1",
+        "secure-write-gateway"
+      ],
+      "external_links": [
+        {
+          "label": "Plan de continuidad",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/COG_JULES_CONTINUITY_2026.md"
+        },
+        {
+          "label": "Repositorio objetivo (base actual)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/tree/develop"
+        },
+        {
+          "label": "Piloto THE MACHINE TC/GitHub/Forgejo (ADR draft)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/pull/473"
+        },
+        {
+          "label": "TC THE MACHINE fase 0 read-only binding #852",
+          "url": "https://github.com/Axlfc/tc/pull/852"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 10301,
+          "text": "Auditar todas las escrituras del navegador (github-api.js, taskOps, credenciales Jules) y definir amenazas y migración.",
+          "done": false
+        },
+        {
+          "id": 10302,
+          "text": "Diseñar API versionada para task transition, run/feedback/cancel, branch/PR, auth, status y capabilities.",
+          "done": false
+        },
+        {
+          "id": 10303,
+          "text": "Implementar autenticación/autorización server-side por usuario/organización/proyecto con tokens mínimos efímeros.",
+          "done": false
+        },
+        {
+          "id": 10304,
+          "text": "Crear adapters GitHub/Forgejo con optimistic locking (SHA/ETag), idempotencyKey, outbox y rate limits.",
+          "done": false
+        },
+        {
+          "id": 10305,
+          "text": "Añadir observabilidad de fallos, 401/403/409/429, compensación, auditoría y revocación de tokens.",
+          "done": false
+        },
+        {
+          "id": 10306,
+          "text": "Probar ejecución durante desconexión de GitHub, no doble escritura, no filtración de secretos y rollback sin bloqueo de UI.",
+          "done": false
+        },
+        {
+          "id": 10307,
+          "text": "PILOTO THE MACHINE: permitir editor TC git-bound con borrador privado, SHA/CAS, branch/PR contra master, publicación explícita y respuestas pending/409/confirmed con permisos server-side.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Permisos y escritura verificados en servidor; sin PAT de escritura persistente en navegador; status remoto/commit SHA comprobable; soporta backend selectable sin split-brain.",
+      "blocks": [],
+      "blocked_by": [
+        "88"
+      ],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:57:04.000Z",
+          "body": "Plan registrado 2026-11-06. No ejecutar ni declarar completado sin evidencia verificable; no exponer secretos de Jules, Forgejo o GitHub en documentación/PR."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-07T11:17:41.000Z",
+          "body": "[THE MACHINE P0 2026-11-07] PR TC #852: vínculo aprobado por owner entre TC Project.id (real, aún sin identificar en instancia) y repo hypenosys/the_machine master, Issues GitHub canónicas de solo lectura, árbol y preview textual con SHA, journal local enlace/revocación, ACL y suite Vitest. Se corrige auth en hidratación de proyectos TC. No se ha creado copia de Issues, Git commit, ledger ACID, mirror Forgejo ni vínculo real en Oracle; mantener pendiente y revisar CI/deploy."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:57:04.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created via Cog/Forgejo continuity plan"
+        }
+      ]
+    },
+    {
+      "id": 104,
+      "continuity_key": "forgejo-mirror-backup",
+      "organizationId": "hypenosys",
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "[RESILIENCIA] Forgejo ZimaBoard2: espejo GitHub y backups independientes",
+      "descripcion": "Extender tarea existente #84 sin duplicar la instalación: auditar Forgejo ZimaBoard2 y crear repos espejo de Hypenosys/TC/HAIS/Cog con ramas reales; backups completos y restores fuera del host. Estado del espejo nunca equivaldrá a disponibilidad del writer.",
+      "rama": "feat/forgejo-mirror-backups",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Tools / Automation",
+      "seccion": "Continuidad Cog · Jules · Forgejo",
+      "prioridad": "Critical",
+      "milestone": "P1",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "axlfc"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "continuity-2026",
+        "cog-jules-forgejo",
+        "epic",
+        "p1",
+        "forgejo-mirror-backup"
+      ],
+      "external_links": [
+        {
+          "label": "Plan de continuidad",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/COG_JULES_CONTINUITY_2026.md"
+        },
+        {
+          "label": "Repositorio objetivo (base actual)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/tree/develop"
+        },
+        {
+          "label": "Forgejo mirroring oficial",
+          "url": "https://forgejo.org/docs/latest/user/repo-mirror/"
+        },
+        {
+          "label": "Piloto THE MACHINE TC/GitHub/Forgejo (ADR draft)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/pull/473"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 10401,
+          "text": "Comprobar que #84 tiene Forgejo funcional, TLS, autenticación, almacenamiento, conectividad y backups básicos.",
+          "done": false
+        },
+        {
+          "id": 10402,
+          "text": "Crear catálogo repo lógico→remote GitHub/Forgejo, rama base real, ACL y ubicación de datos (incl. LFS).",
+          "done": false
+        },
+        {
+          "id": 10403,
+          "text": "Configurar pull mirrors GitHub→Forgejo de forma segura; medir lastMirrorSHA/lag, alertas y fallos.",
+          "done": false
+        },
+        {
+          "id": 10404,
+          "text": "Diseñar export/restauración independiente de issues/PR reviews, wiki, LFS, attachments, Actions y metadatos no incluidos en Git.",
+          "done": false
+        },
+        {
+          "id": 10405,
+          "text": "Automatizar backups cifrados fuera de ZimaBoard2 y comprobar checksum, restauración de al menos un repositorio.",
+          "done": false
+        },
+        {
+          "id": 10406,
+          "text": "Publicar runbook de operaciones sin credenciales, health checks y evidencias reproducibles.",
+          "done": false
+        },
+        {
+          "id": 10407,
+          "text": "PILOTO THE MACHINE: verificar Forgejo en ZimaBoard2 y configurar espejo pull GitHub→Forgejo solo lectura con estado SHA/lag; respaldar Issues, PR, archivos TC y ledger por separado.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Al menos un espejo verificado con ramas y hashes; backup off-host y restauración probada; faltantes no-Git documentados; sin push bidireccional.",
+      "blocks": [],
+      "blocked_by": [
+        "84"
+      ],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:57:04.000Z",
+          "body": "Plan registrado 2026-11-06. No ejecutar ni declarar completado sin evidencia verificable; no exponer secretos de Jules, Forgejo o GitHub en documentación/PR."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:57:04.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created via Cog/Forgejo continuity plan"
+        }
+      ]
+    },
+    {
+      "id": 105,
+      "continuity_key": "forgejo-single-writer-failover",
+      "organizationId": "hypenosys",
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "[RESILIENCIA] Failover GitHub→Forgejo con único escritor y reconciliación",
+      "descripcion": "Capacidad de seguir creando commits/ramas/PR y actualizar tareas cuando Github no esté disponible mediante conmutación explícita al writer Forgejo; fencing/epoch y coordinación evitan escrituras concurrentes y sobrescrituras destructivas.",
+      "rama": "feat/forgejo-controlled-write-failover",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Tools / Automation",
+      "seccion": "Continuidad Cog · Jules · Forgejo",
+      "prioridad": "Critical",
+      "milestone": "P2",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "axlfc",
+        "haopengwang123"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "continuity-2026",
+        "cog-jules-forgejo",
+        "epic",
+        "p2",
+        "forgejo-single-writer-failover"
+      ],
+      "external_links": [
+        {
+          "label": "Plan de continuidad",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/COG_JULES_CONTINUITY_2026.md"
+        },
+        {
+          "label": "Repositorio objetivo (base actual)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/tree/develop"
+        },
+        {
+          "label": "Plan continuidad Cog y Forgejo",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/COG_JULES_CONTINUITY_2026.md"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 10501,
+          "text": "Definir GitBackendProvider, logicalRepoId, chequeos de salud y capabilities de PR/CI/merge GitHub vs Forgejo.",
+          "done": false
+        },
+        {
+          "id": 10502,
+          "text": "Implementar writer lease/epoch/fencing con auditoría y estado degraded/read-only si no se garantiza un solo escritor.",
+          "done": false
+        },
+        {
+          "id": 10503,
+          "text": "Asegurar snapshot consistente de tareas sharded, CAS y que Forgejo contiene los datos necesarios para continuar.",
+          "done": false
+        },
+        {
+          "id": 10504,
+          "text": "Implementar transición explícita GitHub→Forgejo con comprobación de hashes y autorización de operador.",
+          "done": false
+        },
+        {
+          "id": 10505,
+          "text": "Diseñar reconciliación de commits/tareas/PR/conflictos y failback a GitHub sin force-push no revisado.",
+          "done": false
+        },
+        {
+          "id": 10506,
+          "text": "Probar simulaciones de caída/parcialidad de red, split-brain, error de token, idempotencia y revocación.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Una única fuente activa; falla de GitHub no permite dual-write ni falsos OK; Forgejo puede escribir/abrir PR y sincronizar tareas tras failover autorizado, con failback seguro.",
+      "blocks": [],
+      "blocked_by": [
+        "104",
+        "103"
+      ],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:57:04.000Z",
+          "body": "Plan registrado 2026-11-06. No ejecutar ni declarar completado sin evidencia verificable; no exponer secretos de Jules, Forgejo o GitHub en documentación/PR."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:57:04.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created via Cog/Forgejo continuity plan"
+        }
+      ]
+    },
+    {
+      "id": 106,
+      "continuity_key": "forgejo-ci-hosting",
+      "organizationId": "hypenosys",
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "[RESILIENCIA] Forgejo Actions, deploy alternativo y acceso a Hypenosys sin GitHub",
+      "descripcion": "Recuperar pipelines CI/CD y web de Hypenosys cuando falla GitHub Pages/Actions. Forgejo Actions no es compatible al 100%; validar pipelines, runners, artefactos, host alternativo y DNS de forma independiente.",
+      "rama": "feat/forgejo-actions-and-alt-hosting",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Tools / Automation",
+      "seccion": "Continuidad Cog · Jules · Forgejo",
+      "prioridad": "Major",
+      "milestone": "P2",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "axlfc"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "continuity-2026",
+        "cog-jules-forgejo",
+        "epic",
+        "p2",
+        "forgejo-ci-hosting"
+      ],
+      "external_links": [
+        {
+          "label": "Plan de continuidad",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/COG_JULES_CONTINUITY_2026.md"
+        },
+        {
+          "label": "Repositorio objetivo (base actual)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/tree/develop"
+        },
+        {
+          "label": "Forgejo Actions vs GitHub Actions",
+          "url": "https://forgejo.org/docs/latest/user/actions/github-actions/"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 10601,
+          "text": "Inventariar GitHub Actions de Hypenosys, TC, HAIS y Cog, dependencias y secretos.",
+          "done": false
+        },
+        {
+          "id": 10602,
+          "text": "Diseñar workflows Forgejo específicos y runners aislados; prohibir exponer credenciales en PR no confiables.",
+          "done": false
+        },
+        {
+          "id": 10603,
+          "text": "Ejecutar builds/test reales de Jekyll, Next.js, HAIS y Cog con matrices de compatibilidad.",
+          "done": false
+        },
+        {
+          "id": 10604,
+          "text": "Publicar versión de recuperación en hosting propio/alternativo independiente de GitHub Pages.",
+          "done": false
+        },
+        {
+          "id": 10605,
+          "text": "Definir TLS/DNS/health checks, límites y conmutación manual/automatizada segura para frontend y API.",
+          "done": false
+        },
+        {
+          "id": 10606,
+          "text": "Simular caída de Pages/Actions y verificar UI, login, endpoints, CI, PR y rollback.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Compilación y pruebas pasan en runners Forgejo; sitio y APIs sobreviven a corte GitHub Pages mediante hosting independiente verificado; DNS y certificados no dependen del proveedor caído.",
+      "blocks": [],
+      "blocked_by": [
+        "104"
+      ],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:57:04.000Z",
+          "body": "Plan registrado 2026-11-06. No ejecutar ni declarar completado sin evidencia verificable; no exponer secretos de Jules, Forgejo o GitHub en documentación/PR."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:57:04.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created via Cog/Forgejo continuity plan"
+        }
+      ]
+    },
+    {
+      "id": 107,
+      "continuity_key": "continuity-drills",
+      "organizationId": "hypenosys",
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "[RESILIENCIA] Simulacro E2E Jules apagado + Cog + GitHub caído + Forgejo",
+      "descripcion": "Criterio de salida de todo el plan: historial Jules exportado/solo lectura, Cog ejecuta tarea en sandbox, endpoint seguro escribe y Forgejo puede reemplazar GitHub en un simulacro auditado; compatibilidad con TC y HAIS.",
+      "rama": "test/cog-forgejo-resilience-drills",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Tools / Automation",
+      "seccion": "Continuidad Cog · Jules · Forgejo",
+      "prioridad": "Critical",
+      "milestone": "P3",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "haopengwang123",
+        "axlfc"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "continuity-2026",
+        "cog-jules-forgejo",
+        "epic",
+        "p3",
+        "continuity-drills"
+      ],
+      "external_links": [
+        {
+          "label": "Plan de continuidad",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/develop/docs/COG_JULES_CONTINUITY_2026.md"
+        },
+        {
+          "label": "Repositorio objetivo (base actual)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/tree/develop"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 10701,
+          "text": "Crear fixtures de repos/tareas/múltiples organizaciones y permisos sin datos reales sensibles.",
+          "done": false
+        },
+        {
+          "id": 10702,
+          "text": "Simular 401/read-only/404 de Jules y verificar chats archivados sin uso accidental de credenciales.",
+          "done": false
+        },
+        {
+          "id": 10703,
+          "text": "Ejecutar task→Claude/HAIS→Cog→runner→Git PR→CI→Approval→merge→completion y verificar transiciones reales.",
+          "done": false
+        },
+        {
+          "id": 10704,
+          "text": "Simular GitHub fuera: espejo, elección de writer, guard de split-brain, PR, CI y acceso web alternativo.",
+          "done": false
+        },
+        {
+          "id": 10705,
+          "text": "Restaurar GitHub, reconciliar commits/revisiones, validar RPO/RTO medidos y failback sin sobrescrituras.",
+          "done": false
+        },
+        {
+          "id": 10706,
+          "text": "Publicar evidence/runbook, pruebas de seguridad/secretos y rollout por feature flag reversible.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "E2E CI reproducible con degradación honesta, una sola escritura, PR/QA reales, backup restaurable y fallback de frontend; pruebas sin fuga cross-org ni secretos.",
+      "blocks": [],
+      "blocked_by": [
+        "100",
+        "101",
+        "102",
+        "103",
+        "104",
+        "105",
+        "106"
+      ],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:57:04.000Z",
+          "body": "Plan registrado 2026-11-06. No ejecutar ni declarar completado sin evidencia verificable; no exponer secretos de Jules, Forgejo o GitHub en documentación/PR."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T18:57:04.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created via Cog/Forgejo continuity plan"
+        }
+      ]
+    },
+    {
+      "id": 108,
+      "integration_key": "tc-auth-guards",
+      "organizationId": "hypenosys",
+      "repository": "Axlfc/tc",
+      "title": "[INTEROPERABILIDAD P0] TC: asegurar API Projects, History, SSE, auditoría e identidad",
+      "descripcion": "Bloquear por defecto las lecturas/mutaciones y eventos TC-Sync no autorizados; derivar actor del servidor y persistir auditoría requerida antes de afirmar éxito. Hallazgos en code review de develop; no afirmar explotación.",
+      "rama": "fix/tc-auth-history-audit-guards",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Interoperabilidad Hypenosys · TC · IRC",
+      "prioridad": "Critical",
+      "milestone": "P0",
+      "estado": "Working",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "axlfc",
+        "haopengwang123"
+      ],
+      "email_responsable": "",
+      "emails_asignados": [],
+      "start_date": "2026-11-06",
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "interoperability",
+        "tc",
+        "hypenosys",
+        "irc",
+        "identity-ledger",
+        "tc-auth-guards"
+      ],
+      "external_links": [
+        {
+          "label": "ADR propuesta en TC",
+          "url": "https://github.com/Axlfc/tc/blob/docs/hypenosys-tc-irc-identity-ledger-20261106/docs/HYPENOSYS_TC_IRC_UNIFIED_IDENTITY_LEDGER.md"
+        },
+        {
+          "label": "TC PR #849 (draft)",
+          "url": "https://github.com/Axlfc/tc/pull/849"
+        },
+        {
+          "label": "TC CI Pipeline (bloqueado)",
+          "url": "https://github.com/Axlfc/tc/actions/runs/42282233434"
+        },
+        {
+          "label": "TC CodeQL checkout (bloqueado)",
+          "url": "https://github.com/Axlfc/tc/actions/runs/42282233418"
+        },
+        {
+          "label": "TC seguridad ACL/auth (draft)",
+          "url": "https://github.com/Axlfc/tc/pull/850"
+        },
+        {
+          "label": "TC #108 P0 hardening: Sync/Audit/Matrix + tests (draft)",
+          "url": "https://github.com/Axlfc/tc/pull/851"
+        },
+        {
+          "label": "CI seguridad por rutas",
+          "url": "https://github.com/Axlfc/tc/actions/runs/42296962755"
+        },
+        {
+          "label": "Lockfile npm ci reparado (workflow)",
+          "url": "https://github.com/Axlfc/tc/actions/runs/42296391691"
+        },
+        {
+          "label": "CI general (lint legado falla)",
+          "url": "https://github.com/Axlfc/tc/actions/runs/42296584465"
+        },
+        {
+          "label": "Validación HTTP premerge aislada #108 (passing)",
+          "url": "https://github.com/Axlfc/tc/actions/runs/42298143878"
+        },
+        {
+          "label": "Runbook validación premerge #108",
+          "url": "https://github.com/Axlfc/tc/blob/fix/tc-108-sync-audit-matrix-security-20261106/docs/TC108_PREMERGE_VALIDATION.md"
+        },
+        {
+          "label": "Merge TC PR #851 → develop (no auto deploy)",
+          "url": "https://github.com/Axlfc/tc/commit/29f02d5843733731ada0a6ff9dbf3ea58bac8cf5"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 10801,
+          "text": "Revisar y corregir autenticación y autorización en /api/projects, /api/projects/[id] y /api/projects/[id]/history; no fiarse de userId enviado por frontend.",
+          "done": false
+        },
+        {
+          "id": 10802,
+          "text": "Proteger /api/tc-sync/{stream,history,publish}, filtros por sala, replay, CORS y validación de roomId; fail-closed sin secreto configurado.",
+          "done": false
+        },
+        {
+          "id": 10803,
+          "text": "Asegurar JWT con AUTH_SECRET obligatorio y sesiones revocables; no confiar en modo demo para operaciones protegidas.",
+          "done": false
+        },
+        {
+          "id": 10804,
+          "text": "Consolidar logAudit + eventos: errores de persistencia no devuelven OK y no se filtran datos sensibles por logging.",
+          "done": false
+        },
+        {
+          "id": 10805,
+          "text": "Corregir aprovisionamiento Matrix para devolver estado real en caso de error y proteger tokens.",
+          "done": false
+        },
+        {
+          "id": 10806,
+          "text": "Crear pruebas HTTP E2E con dos usuarios, dos proyectos, roles, revocación, acceso anónimo y denegaciones.",
+          "done": false
+        },
+        {
+          "id": 10807,
+          "text": "Reparar el baseline CI de Axlfc/tc: lockfile/npm ci inconsistentes, checkout CodeQL inaccesible y tests i18n/dependencias bloqueados; distinguir de fallos reales de aplicación y reejecutar.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "GET/POST/SSE y auditoría deniegan accesos no autorizados con tests API multiusuario; roles revoked se aplican; sin exponer eventos privados, room IDs ni tokens; fallos de auditoría no afirman éxito.",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T19:36:46.000Z",
+          "body": "Tarea abierta tras revisión de develop 2026-11-06: el contrato y riesgos están especificados, ninguna ejecución o API unificada se declara terminada. PR documentación TC #849 pendiente de review."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T19:44:25.000Z",
+          "body": "[CI TC 2026-11-06] PR TC #849: Project Automation y Documentation Check pasan. CI Pipeline / i18n / Dependency Scan fallan en npm ci por desajuste package-lock (falta typescript 5.9.3, ajv, etc.) antes de ejecutar pruebas. CodeQL falla en checkout con Repository not found; revisar permisos/runner. Security Scan Secret Scanning pasa. No marcar tests de seguridad realizados mientras no se arregle baseline."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T20:34:41.000Z",
+          "body": "[HYPENOS SPRINT 2026-11-06] PR TC #850 añade guards server-side para GET /api/projects, GET /api/projects/:id, historial y POST heredado; JWT sin fallback, pruebas unitarias/HTTP propuestas. CI TC baseline npm ci y checkout CodeQL sigue bloqueada; no merge ni marcar subtareas done."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T21:36:00.000Z",
+          "body": "[TC108 2026-11-06 21:36] PR #850 ya está merged en develop: controles previos de Projects/JWT. PR #851 draft implementa TC-Sync fail-closed/tickets ACL, cliente con Bearer, auditoría explícita y redacción, Matrix status real, miembros de proyectos ACL y paquete npm lockfile sincronizado. Vitest focalizado pasado en Actions; CI global falla después de npm ci por ESLint legacy; CodeQL checkout arreglado en rama, npm audit informa 123 vulnerabilidades (19 critical, 20 high, 75 moderate, 9 low), requieren auditoría/actualización; revocación JWT central y ledger transaccional siguen pendientes. No marcar subtareas terminadas mientras PR #851 no se revise, E2E real no pase y producción no esté verificada."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T21:38:00.000Z",
+          "body": "[TC108 PR PREMERGE HTTP 2026-11-06] PR #851 probada sin merge mediante GH Actions #42298143878: Next.js real en runner desechable con claves aleatorias y proyectos sintéticos separados. Checks HTTP exitosos: Alice/Bob/Eve aislamiento de proyectos e historial, petición de membresía denegada, acceso anónimo/global denegado, salas DM por ACL, ticket SSE ligado a sala y autor de mensajes verificado por servidor. No reemplaza E2E visual ni staging Matrix/broker ni auditoría transaccional; #108 sigue Working y #851 Draft. Guía en docs/TC108_PREMERGE_VALIDATION.md."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T21:43:56.000Z",
+          "body": "[TC108 MERGED 2026-11-06] PR #851 merged mediante squash al develop de Axlfc/tc, commit 29f02d5843733731ada0a6ff9dbf3ea58bac8cf5. Gates específicos (Vitest + HTTP 2 usuarios en runner aislado) pasan al HEAD premerge. Merge usa [skip ci] para evitar el workflow de despliegue automático a dev.tc.hypenosys.com; NO está desplegado. CI general/internacionalización/escaneo de dependencias siguen fallando también en baseline; TypeScript con errores preexistentes. Pendientes: staging con permisos reales, revisiones Matrix y auditoría transaccional/ledger #110; no marcar tarea terminada."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T19:36:46.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created for TC/Hypenosys/IRC integration"
+        }
+      ]
+    },
+    {
+      "id": 109,
+      "integration_key": "unified-identity",
+      "organizationId": "hypenosys",
+      "repository": "Axlfc/tc",
+      "title": "[INTEROPERABILIDAD P0] Identidad SSO estable Hypenosys ↔ TC ↔ IRC/Matrix",
+      "descripcion": "Definir y entregar broker central de identidad userUid + enlaces verificables de GitHub ID numérico, TC User, Matrix MXID e IRC account; no unificar por login/email/nick. Sesión segura por dominio y ACL de org/proyecto.",
+      "rama": "feat/identity-link-oidc",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Interoperabilidad Hypenosys · TC · IRC",
+      "prioridad": "Critical",
+      "milestone": "P0",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "axlfc",
+        "haopengwang123"
+      ],
+      "email_responsable": "",
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "interoperability",
+        "tc",
+        "hypenosys",
+        "irc",
+        "identity-ledger",
+        "unified-identity"
+      ],
+      "external_links": [
+        {
+          "label": "ADR propuesta en TC",
+          "url": "https://github.com/Axlfc/tc/blob/docs/hypenosys-tc-irc-identity-ledger-20261106/docs/HYPENOSYS_TC_IRC_UNIFIED_IDENTITY_LEDGER.md"
+        },
+        {
+          "label": "TC PR #849 (draft)",
+          "url": "https://github.com/Axlfc/tc/pull/849"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 10901,
+          "text": "Definir canonical userUid e IdentityLink con proveedor issuer/subject, prueba de propiedad, revocación y aliases históricos.",
+          "done": false
+        },
+        {
+          "id": 10902,
+          "text": "Implementar servidor OIDC o broker SSO PKCE + sesiones seguras por dominio; proteger audience, issuer, nonce/state/CSRF.",
+          "done": false
+        },
+        {
+          "id": 10903,
+          "text": "Mapear roles y membresías accepted por organización/proyecto de TC y Hypenosys con ACL validado en servidor.",
+          "done": false
+        },
+        {
+          "id": 10904,
+          "text": "Vincular Matrix MXID real del aprovisionamiento existente con userUid y revisar tokens Matrix/rotación.",
+          "done": false
+        },
+        {
+          "id": 10905,
+          "text": "Vincular cuentas IRC (no solo nick) a userUid mediante sesión autenticada y cuenta registrada del IRCd.",
+          "done": false
+        },
+        {
+          "id": 10906,
+          "text": "Probar dos usuarios y dos orgs, revocación inmediata, cambio de nick y fallo del proveedor sin elevación.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Mismo usuario aparece con userUid estable en dev.hypenosys.com, dev.tc.hypenosys.com e irc.hypenosys.com; MFA/revocación, cambio de nick/login, y aislamiento org/proyecto verificados. No PAT en navegador.",
+      "blocks": [],
+      "blocked_by": [
+        "108"
+      ],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T19:36:46.000Z",
+          "body": "Tarea abierta tras revisión de develop 2026-11-06: el contrato y riesgos están especificados, ninguna ejecución o API unificada se declara terminada. PR documentación TC #849 pendiente de review."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T19:36:46.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created for TC/Hypenosys/IRC integration"
+        }
+      ]
+    },
+    {
+      "id": 110,
+      "integration_key": "tc-durable-ledger",
+      "organizationId": "hypenosys",
+      "repository": "Axlfc/tc",
+      "title": "[INTEROPERABILIDAD P0] Ledger TC transaccional de eventos, comandos y outbox",
+      "descripcion": "Ampliar TCEvent/historial existente a almacén PostgreSQL append-only y log requerido con correlationId/causationId, actor/procedencia, estados requested→committed|failed, outbox transaccional, replay ACL-first y reconciliación cross-app.",
+      "rama": "feat/tc-project-event-ledger-postgres",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Interoperabilidad Hypenosys · TC · IRC",
+      "prioridad": "Critical",
+      "milestone": "P0",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "axlfc",
+        "haopengwang123"
+      ],
+      "email_responsable": "",
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "interoperability",
+        "tc",
+        "hypenosys",
+        "irc",
+        "identity-ledger",
+        "tc-durable-ledger"
+      ],
+      "external_links": [
+        {
+          "label": "ADR propuesta en TC",
+          "url": "https://github.com/Axlfc/tc/blob/docs/hypenosys-tc-irc-identity-ledger-20261106/docs/HYPENOSYS_TC_IRC_UNIFIED_IDENTITY_LEDGER.md"
+        },
+        {
+          "label": "TC PR #849 (draft)",
+          "url": "https://github.com/Axlfc/tc/pull/849"
+        },
+        {
+          "label": "Piloto THE MACHINE TC/GitHub/Forgejo (ADR draft)",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/pull/473"
+        },
+        {
+          "label": "TC THE MACHINE fase 0 read-only binding #852",
+          "url": "https://github.com/Axlfc/tc/pull/852"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 11001,
+          "text": "Diseñar schema/migración project_events, domain_commands, outbox_events y external_refs con constraints idempotentes y secuencia por proyecto.",
+          "done": false
+        },
+        {
+          "id": 11002,
+          "text": "Persistir mutación TC+event+outbox en una transacción; para GitHub usar saga duradera hasta SHA confirmado.",
+          "done": false
+        },
+        {
+          "id": 11003,
+          "text": "Publicar API de historial con cursor, filtros proyecto/org/tarea/actor, datos redactados y ACL server-side.",
+          "done": false
+        },
+        {
+          "id": 11004,
+          "text": "Migrar archivos audit NDJSON e historial client-only mediante import idempotente, conservando procedencia y reportando lagunas.",
+          "done": false
+        },
+        {
+          "id": 11005,
+          "text": "Crear worker de delivery/retry/backoff/dead letter y reconciliador de snapshots contra GitHub/Forgejo/TC.",
+          "done": false
+        },
+        {
+          "id": 11006,
+          "text": "E2E fallo base, caída broker, duplicados, replay, edición simultánea y reconstrucción exacta del historial.",
+          "done": false
+        },
+        {
+          "id": 11007,
+          "text": "PILOTO THE MACHINE: registrar edición/archivo/Issue/PR en historial TC append-only con correlationId, actor, comando requested→confirmed|failed, outbox y reconciliación webhook.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Cada mutación produce evento duradero verificable o falla explícitamente; 10 reintentos idempotentes no duplican efectos; reconstrucción de historial y filtros ACL; caídas Matrix/IRC no pierden eventos.",
+      "blocks": [],
+      "blocked_by": [
+        "108"
+      ],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T19:36:46.000Z",
+          "body": "Tarea abierta tras revisión de develop 2026-11-06: el contrato y riesgos están especificados, ninguna ejecución o API unificada se declara terminada. PR documentación TC #849 pendiente de review."
+        },
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-07T11:17:41.000Z",
+          "body": "[THE MACHINE P0 2026-11-07] PR TC #852: vínculo aprobado por owner entre TC Project.id (real, aún sin identificar en instancia) y repo hypenosys/the_machine master, Issues GitHub canónicas de solo lectura, árbol y preview textual con SHA, journal local enlace/revocación, ACL y suite Vitest. Se corrige auth en hidratación de proyectos TC. No se ha creado copia de Issues, Git commit, ledger ACID, mirror Forgejo ni vínculo real en Oracle; mantener pendiente y revisar CI/deploy."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T19:36:46.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created for TC/Hypenosys/IRC integration"
+        }
+      ]
+    },
+    {
+      "id": 111,
+      "integration_key": "matrix-irc-project-bridge",
+      "organizationId": "hypenosys",
+      "repository": "Axlfc/tc",
+      "title": "[INTEROPERABILIDAD P2] Bridge ProjectEvent → Matrix / IRC y supervisión por canal",
+      "descripcion": "Usar Matrix/IRC como proyecciones autorizadas del ledger TC, vincular salas y canales a proyectos y agentes supervisables, deduplicar por eventId/origin, preservar privacidad y evitar autorización basada en mensajes.",
+      "rama": "feat/tc-matrix-irc-project-event-bridge",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Programación / Engine",
+      "seccion": "Interoperabilidad Hypenosys · TC · IRC",
+      "prioridad": "Major",
+      "milestone": "P2",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "axlfc",
+        "haopengwang123"
+      ],
+      "email_responsable": "",
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "interoperability",
+        "tc",
+        "hypenosys",
+        "irc",
+        "identity-ledger",
+        "matrix-irc-project-bridge"
+      ],
+      "external_links": [
+        {
+          "label": "ADR propuesta en TC",
+          "url": "https://github.com/Axlfc/tc/blob/docs/hypenosys-tc-irc-identity-ledger-20261106/docs/HYPENOSYS_TC_IRC_UNIFIED_IDENTITY_LEDGER.md"
+        },
+        {
+          "label": "TC PR #849 (draft)",
+          "url": "https://github.com/Axlfc/tc/pull/849"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 11101,
+          "text": "Crear MatrixBinding/IRCBinding versionados por projectUid/orgUid con estado linked/pending/revoked y pruebas de ACL.",
+          "done": false
+        },
+        {
+          "id": 11102,
+          "text": "Proyectar eventos del outbox a Matrix con appservice mínimo, idempotency/transaction ID, retries y redacción.",
+          "done": false
+        },
+        {
+          "id": 11103,
+          "text": "Crear bridge IRC limitado a canales permitidos, origin/hops/eventId dedup, y cuentas IRC verificadas.",
+          "done": false
+        },
+        {
+          "id": 11104,
+          "text": "Registrar chat/eventos operacionales según retención y privacidad sin convertir mensajes en fuente de verdad de tareas.",
+          "done": false
+        },
+        {
+          "id": 11105,
+          "text": "Implementar comandos seguros !status/!task que consulten gateway; ejecución/aprobación solo mediante acciones autenticadas y policy.",
+          "done": false
+        },
+        {
+          "id": 11106,
+          "text": "Simular sala privada, DM, usuario expulsado, loop de puente, broker desconectado y recuperación de historial.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Eventos de proyecto llegan a sala/canal correcto sin loops ni fugas; caídas no pierden ledger; !status read-only, acciones sensibles pasan por gateway+approval; ACL revocada elimina acceso.",
+      "blocks": [],
+      "blocked_by": [
+        "109",
+        "110",
+        "98"
+      ],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T19:36:46.000Z",
+          "body": "Tarea abierta tras revisión de develop 2026-11-06: el contrato y riesgos están especificados, ninguna ejecución o API unificada se declara terminada. PR documentación TC #849 pendiente de review."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T19:36:46.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created for TC/Hypenosys/IRC integration"
+        }
+      ]
+    },
+    {
+      "id": 112,
+      "integration_key": "irc-real-views",
+      "organizationId": "hypenosys",
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "[IRC HYBRID] Implementar Canales, Bots, Bridges, Incidents y Config sobre datos reales",
+      "descripcion": "Primera UI implementada en PR #466 en forma de cliente web IRC y vistas respaldadas por endpoints de gateway; completar pruebas y conectores reales, sin mocks ni permisos de agentes desde el chat.",
+      "rama": "feat/irc-hybrid-views-cloudflare-20261106",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Tools / Automation",
+      "seccion": "IRC Hybrid",
+      "prioridad": "Major",
+      "milestone": "P1",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "axlfc",
+        "haopengwang123"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "irc-hybrid",
+        "cloudflare",
+        "zimaboard2",
+        "irc-real-views"
+      ],
+      "external_links": [
+        {
+          "label": "PR draft #466",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/pull/466"
+        },
+        {
+          "label": "Guía Cloudflare ZimaBoard2",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/feat/irc-hybrid-views-cloudflare-20261106/docs/IRC_ZIMABOARD2_CLOUDFLARE_DEPLOY.md"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 11201,
+          "text": "Revisar UI de /irc/ con pestañas reales Canales/Bots/Bridges/Incidents/Config, navegación y diseño accesible responsive.",
+          "done": false
+        },
+        {
+          "id": 11202,
+          "text": "Conectar IRCv3 WSS a servidor real y validar PING/PONG, JOIN/LIST, mensajes y reconexión sin estado fantasma.",
+          "done": false
+        },
+        {
+          "id": 11203,
+          "text": "Implementar /api/irc/bots autenticado con identidad/estado reales de agentes canónicos TC.",
+          "done": false
+        },
+        {
+          "id": 11204,
+          "text": "Implementar /api/irc/bridges y /api/irc/incidents con fuentes persistentes, timestamps, error/partial/stale.",
+          "done": false
+        },
+        {
+          "id": 11205,
+          "text": "Configurar preferencias locales y endpoint admin separado con ACL/CSRF y consentimiento cuando exista SSO.",
+          "done": false
+        },
+        {
+          "id": 11206,
+          "text": "Ejecutar QA E2E dos usuarios, canales privados, permisos, modo desconectado, CORS y logs sin secretos.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "Todas las vistas obtienen datos remotos verificables o muestran desconectado/no configurado; CSS/JS, CI, WSS/JOIN/LIST y ACL multi-org verificados; cero datos simulados.",
+      "blocks": [],
+      "blocked_by": [
+        "89"
+      ],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T19:36:46.000Z",
+          "body": "La UI inicial está en PR draft #466; no existe evidencia de backend/infra operativo, ni de CI/E2E. Mantener Pending hasta completar gates."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T19:36:46.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created in IRC hybrid plan"
+        }
+      ]
+    },
+    {
+      "id": 113,
+      "integration_key": "irc-zimaboard-cloudflare",
+      "organizationId": "hypenosys",
+      "repository": "hypenosys/hypenosys.github.io",
+      "title": "[IRC INFRA] Publicar irc.hypenosys.com en ZimaBoard2 mediante Cloudflare Tunnel",
+      "descripcion": "Configurar origin real Ergo IRCd/WS, reverse proxy y hosting del cliente IRC en ZimaBoard2, DNS Cloudflare Tunnel/HTTPS, WAF, backups y monitorización. Documentación en PR #466, infraestructura sin desplegar.",
+      "rama": "infra/irc-zimaboard2-tunnel",
+      "rama2": null,
+      "ver": true,
+      "fecha": "2026-11-06",
+      "apoyo": null,
+      "limite": null,
+      "comentario": "",
+      "tema_principal": "Tools / Automation",
+      "seccion": "IRC Hybrid",
+      "prioridad": "Critical",
+      "milestone": "P1",
+      "estado": "Pending",
+      "completitud": 0,
+      "task_type": "feature",
+      "resuelto_por": "",
+      "detectado_por": "haopengwang123",
+      "asignados": [
+        "axlfc",
+        "haopengwang123"
+      ],
+      "email_responsable": null,
+      "emails_asignados": [],
+      "start_date": null,
+      "due_date": null,
+      "estimated_hours": null,
+      "story_points": null,
+      "tags": [
+        "irc-hybrid",
+        "cloudflare",
+        "zimaboard2",
+        "irc-zimaboard-cloudflare"
+      ],
+      "external_links": [
+        {
+          "label": "PR draft #466",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/pull/466"
+        },
+        {
+          "label": "Guía Cloudflare ZimaBoard2",
+          "url": "https://github.com/hypenosys/hypenosys.github.io/blob/feat/irc-hybrid-views-cloudflare-20261106/docs/IRC_ZIMABOARD2_CLOUDFLARE_DEPLOY.md"
+        }
+      ],
+      "subtasks": [
+        {
+          "id": 11301,
+          "text": "Verificar capacidad/disponibilidad ZimaBoard2, contenedores, políticas de redes y backups; seleccionar ubicación de datos fuera del sitio web.",
+          "done": false
+        },
+        {
+          "id": 11302,
+          "text": "Instalar Ergo IRCd con listeners WebSocket restringidos, cuentas IRC, TLS adecuado y rate limits; sin revelar credenciales.",
+          "done": false
+        },
+        {
+          "id": 11303,
+          "text": "Desplegar reverse proxy con /webirc hacia Ergo, /api/irc/* al gateway y archivos estáticos del build Jekyll.",
+          "done": false
+        },
+        {
+          "id": 11304,
+          "text": "Crear DNS irc.hypenosys.com y Cloudflare Tunnel publicados con WebSockets/HTTPS, probar puerto público sin abrir red del host.",
+          "done": false
+        },
+        {
+          "id": 11305,
+          "text": "Aplicar autenticación para operaciones, WAF y políticas de canal; mantener separada la gestión de SSO, Matrix y bots.",
+          "done": false
+        },
+        {
+          "id": 11306,
+          "text": "Hacer smoke SSL/WSS, fallback/reconexión, backup/restore, seguridad, logs/alertas y confirmar documentación de operación.",
+          "done": false
+        }
+      ],
+      "acceptance_criteria": "DNS/tunnel y sitio público válidos, upgrade WSS 101, IRC real 001/LIST/JOIN/PRIVMSG, protecciones server-side y backup probado; health/incident monitors no inventados.",
+      "blocks": [],
+      "blocked_by": [],
+      "comments": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T19:36:46.000Z",
+          "body": "La UI inicial está en PR draft #466; no existe evidencia de backend/infra operativo, ni de CI/E2E. Mantener Pending hasta completar gates."
+        }
+      ],
+      "images": [],
+      "change_log": [
+        {
+          "author_login": "ChatGPT",
+          "timestamp": "2026-11-06T19:36:46.000Z",
+          "field": "id",
+          "old_value": null,
+          "new_value": "Created in IRC hybrid plan"
+        }
+      ]
     }
   ],
   "_audit_log": [
+    {
+      "action": "chore: archivar tarea #81",
+      "user": "haopengwang123",
+      "timestamp": "2026-11-06T21:33:24.984Z"
+    },
+    {
+      "action": "chore: archivar tarea #71",
+      "user": "haopengwang123",
+      "timestamp": "2026-11-06T21:33:16.099Z"
+    },
+    {
+      "action": "chore: archivar tarea #55",
+      "user": "haopengwang123",
+      "timestamp": "2026-11-06T21:33:13.771Z"
+    },
+    {
+      "action": "chore: actualizar estado tarea #79 → Working",
+      "user": "haopengwang123",
+      "timestamp": "2026-11-06T21:33:00.340Z"
+    },
+    {
+      "action": "chore: actualizar estado tarea #57 → Working",
+      "user": "haopengwang123",
+      "timestamp": "2026-11-06T21:32:57.449Z"
+    },
+    {
+      "action": "chore: actualizar estado tarea #71 → OK",
+      "user": "haopengwang123",
+      "timestamp": "2026-11-06T21:32:48.575Z"
+    },
+    {
+      "action": "chore: actualizar estado tarea #86 → Working",
+      "user": "haopengwang123",
+      "timestamp": "2026-11-06T21:32:40.661Z"
+    },
+    {
+      "action": "chore: actualizar estado tarea #81 → OK",
+      "user": "haopengwang123",
+      "timestamp": "2026-11-06T21:32:37.537Z"
+    },
+    {
+      "action": "chore: actualizar estado tarea #4 → Fixed",
+      "user": "haopengwang123",
+      "timestamp": "2026-11-06T21:32:07.521Z"
+    },
+    {
+      "action": "chore: actualizar estado tarea #74 → OK",
+      "user": "haopengwang123",
+      "timestamp": "2026-11-06T21:31:44.121Z"
+    },
     {
       "action": "chore(sharding): migrar tasks.json para org hypenosys",
       "user": "Sistema",
       "timestamp": "2026-09-13T06:26:21.846Z"
     }
-  ]
+  ],
+  "last_updated_by": "THE MACHINE phase-0 read-only bridge"
 }

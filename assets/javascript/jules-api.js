@@ -5,6 +5,131 @@
 
 const JULES_BASE = 'https://jules.googleapis.com/v1alpha';
 
+function validateJulesApiBase(urlStr) {
+    if (!urlStr || typeof urlStr !== 'string') return null;
+    const trimmed = urlStr.trim();
+    if (!trimmed) return null;
+
+    try {
+        const parsed = new URL(trimmed);
+        if (parsed.protocol !== 'https:') return null;
+        if (parsed.username || parsed.password) return null;
+        const clean = parsed.origin + parsed.pathname;
+        return clean.replace(/\/+$/, '');
+    } catch (e) {
+        return null;
+    }
+}
+
+function getJulesBase() {
+    try {
+        const custom = localStorage.getItem('jules_api_base');
+        const valid = validateJulesApiBase(custom);
+        return valid || JULES_BASE;
+    } catch (e) {
+        return JULES_BASE;
+    }
+}
+
+function saveJulesApiBase(urlStr) {
+    if (!urlStr || typeof urlStr !== 'string' || !urlStr.trim()) {
+        removeJulesApiBase();
+        return;
+    }
+    const valid = validateJulesApiBase(urlStr);
+    if (!valid) {
+        throw new Error('URL de la API Jules inválida: debe usar el protocolo https:// y no contener credenciales en la URL. (Las barras finales se normalizan automáticamente).');
+    }
+    try {
+        localStorage.setItem('jules_api_base', valid);
+    } catch (e) {
+        throw new Error('Storage write failed: localStorage might be blocked or full.');
+    }
+    if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
+        const evt = typeof CustomEvent === 'function' ? new CustomEvent('julesApiBaseChanged', { detail: { base: valid } }) : { type: 'julesApiBaseChanged', detail: { base: valid } };
+        try { window.dispatchEvent(evt); } catch (e) {}
+    }
+}
+
+function removeJulesApiBase() {
+    try {
+        localStorage.removeItem('jules_api_base');
+    } catch (e) {}
+    if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
+        const evt = typeof CustomEvent === 'function' ? new CustomEvent('julesApiBaseChanged', { detail: { base: JULES_BASE } }) : { type: 'julesApiBaseChanged', detail: { base: JULES_BASE } };
+        try { window.dispatchEvent(evt); } catch (e) {}
+    }
+}
+
+function applyJulesApiBaseFromModal(urlValue) {
+    const previous = getJulesBase();
+    const trimmed = typeof urlValue === 'string' ? urlValue.trim() : '';
+
+    if (!trimmed) {
+        removeJulesApiBase();
+    } else {
+        const valid = validateJulesApiBase(trimmed);
+        if (!valid) {
+            throw new Error('URL de la API Jules inválida: debe usar el protocolo https:// y no contener credenciales en la URL. (Las barras finales se normalizan automáticamente).');
+        }
+        saveJulesApiBase(trimmed);
+    }
+
+    const current = getJulesBase();
+    const changed = previous !== current;
+
+    if (changed) {
+        window.julesSessionsCache = [];
+        try { localStorage.removeItem('jules_sessions_cache'); } catch (e) {}
+        window.julesSourcesCache = [];
+        try { localStorage.removeItem('hy_jules_repo_cache'); } catch (e) {}
+
+        if (typeof window.invalidateJulesRequests === 'function') {
+            window.invalidateJulesRequests();
+        }
+    }
+
+    return { changed, previous, base: current };
+}
+
+if (typeof document !== 'undefined' && typeof document.addEventListener === 'function') {
+    document.addEventListener('click', function(e) {
+        const saveBtn = e.target && e.target.closest ? e.target.closest('#btn-save-jules-api-key') : null;
+        const urlInput = document.getElementById('jules-panel-api-url-input');
+        const keyInput = document.getElementById('jules-panel-api-key-input');
+
+        if (saveBtn && urlInput) {
+            const keyVal = keyInput ? keyInput.value.trim() : '';
+
+            // NO aplicar base ni vaciar cachés si la clave está vacía o es de proveedor IA (nvapi-, sk-)
+            if (!keyVal || keyVal.startsWith('nvapi-') || keyVal.startsWith('sk-')) {
+                return;
+            }
+
+            try {
+                const res = applyJulesApiBaseFromModal(urlInput.value);
+                const badge = document.getElementById('jules-custom-url-badge');
+                if (badge) {
+                    const customStored = !!localStorage.getItem('jules_api_base');
+                    if (customStored) badge.classList.remove('d-none');
+                    else badge.classList.add('d-none');
+                }
+            } catch (err) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                if (typeof window.hypeToast === 'function') {
+                    window.hypeToast(err.message, 'red');
+                } else if (window.authManager && typeof window.authManager.showToast === 'function') {
+                    window.authManager.showToast('Error de URL Base', err.message, 'error');
+                } else if (typeof alert === 'function') {
+                    alert(err.message);
+                }
+                if (typeof urlInput.focus === 'function') urlInput.focus();
+            }
+        }
+    }, true);
+}
+
 function isJulesApiKeyValid(key) {
     if (!key || typeof key !== 'string') return false;
     return key.trim().length > 0;
@@ -85,6 +210,29 @@ function updateJulesApiKeyStateIndicator(state) {
 }
 
 function hydrateJulesApiKeyModal() {
+    const urlInput = document.getElementById('jules-panel-api-url-input');
+    const badge = document.getElementById('jules-custom-url-badge');
+
+    // 1. Hydrate URL Base input and badge FIRST
+    if (urlInput) {
+        try {
+            const customUrl = localStorage.getItem('jules_api_base') || '';
+            urlInput.value = customUrl;
+        } catch (e) {
+            urlInput.value = '';
+        }
+    }
+    if (badge) {
+        try {
+            const customStored = !!localStorage.getItem('jules_api_base');
+            if (customStored) badge.classList.remove('d-none');
+            else badge.classList.add('d-none');
+        } catch (e) {
+            badge.classList.add('d-none');
+        }
+    }
+
+    // 2. Hydrate API Key input
     const input = document.getElementById('jules-panel-api-key-input');
     if (!input) return;
 
@@ -123,6 +271,11 @@ function hydrateJulesApiKeyModal() {
 }
 
 // Expose globally
+window.validateJulesApiBase = validateJulesApiBase;
+window.getJulesBase = getJulesBase;
+window.saveJulesApiBase = saveJulesApiBase;
+window.removeJulesApiBase = removeJulesApiBase;
+window.applyJulesApiBaseFromModal = applyJulesApiBaseFromModal;
 window.isJulesApiKeyValid = isJulesApiKeyValid;
 window.getJulesApiKey = getJulesApiKey;
 window.saveJulesApiKey = saveJulesApiKey;
@@ -159,7 +312,7 @@ async function julesApiCall(method, endpoint, body = null, customKey = null, opt
     }
 
     try {
-        const res = await fetch(JULES_BASE + endpoint, {
+        const res = await fetch(getJulesBase() + endpoint, {
             method,
             headers: {
                 'x-goog-api-key': key,
@@ -249,8 +402,10 @@ async function loadAllSources(options = {}) {
 }
 
 class JulesAPI {
-    constructor() {
-        this.baseUrl = JULES_BASE;
+    constructor() {}
+
+    get baseUrl() {
+        return getJulesBase();
     }
 
     get apiKey() {

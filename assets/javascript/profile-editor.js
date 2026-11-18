@@ -221,9 +221,8 @@
 
             // Populate fields FIRST to avoid flashing empty modal
             try {
-                const response = await fetch('/assets/data/team_profiles.json');
-                if (!response.ok) throw new Error('No se pudo cargar team_profiles.json');
-                const profilesRes = await response.json();
+                const { content: profilesRes } = await window.githubApi.fetchFileWithSha('assets/data/team_profiles.json', 'json', true);
+                if (!profilesRes?.members) throw new Error('No se pudo cargar team_profiles.json');
                 const profiles = profilesRes.members || {};
                 console.log('[ProfileEditor] Fetched profiles:', profiles);
 
@@ -328,6 +327,12 @@
 
             const btn = document.getElementById('btn-save-profile-editor');
             const originalHtml = btn.innerHTML;
+            const displayNameField = document.getElementById('prof-display-name');
+            if (!displayNameField || !displayNameField.value.trim()) {
+                window.hypeToast('El nombre público es obligatorio', 'error');
+                displayNameField?.focus();
+                return;
+            }
             btn.disabled = true;
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Guardando...';
 
@@ -368,17 +373,15 @@
                         role,
                         bio,
                         avatar_url,
-                        contact_email,
-                        ai_config: {
-                            provider: ai_provider,
-                            model: ai_model
-                        }
+                        contact_email
                     };
 
                     return db;
                 }, `chore: actualizar perfil de ${login}`);
 
-                // 2. Update team.json (if exists)
+                // 2. Keep legacy team.json in sync where available; it must not
+                // invalidate a successfully saved canonical profile.
+                try {
                 await window.githubApi.atomicWrite('assets/data/team.json', (team) => {
                     if (!Array.isArray(team)) return team;
 
@@ -396,6 +399,9 @@
                     }
                     return team;
                 }, `chore: sincronizar team.json con perfil de ${login}`);
+                } catch (legacyError) {
+                    console.warn('[ProfileEditor] Legacy team.json sync unavailable:', legacyError.message);
+                }
 
                 // 3. Store sensitive data in localStorage
                 const localAiConfig = {
@@ -413,13 +419,37 @@
                 if (typeof renderUserStatus === 'function') {
                     renderUserStatus(window.githubApi.user);
                 }
+                // Dashboard uses a separate runtime cache; apply the confirmed write immediately.
+                if (typeof currentProfiles !== 'undefined' && currentProfiles?.members) {
+                    const key = Object.keys(currentProfiles.members).find(k =>
+                        (currentProfiles.members[k].github_username || currentProfiles.members[k].github_login || '').toLowerCase() === login.toLowerCase()
+                    );
+                    if (key) {
+                        currentProfiles.members[key] = {
+                            ...currentProfiles.members[key],
+                            display_name, role, bio, avatar_url, contact_email
+                        };
+                        if (typeof loadWorkspaceMembers === 'function') loadWorkspaceMembers();
+                        if (typeof renderTeamProfiles === 'function') renderTeamProfiles();
+                    }
+                }
+                document.dispatchEvent(new CustomEvent('authReady', {
+                    detail: { user: window.githubApi.user }
+                }));
+                window.dispatchEvent(new CustomEvent('hypenosysProfileUpdated', {
+                    detail: { login }
+                }));
 
                 window.hypeToast('Perfil actualizado correctamente ✓', 'success');
                 $('#modalEditProfile').modal('hide');
 
             } catch (err) {
                 console.error('[ProfileEditor] Save failed:', err);
-                window.hypeToast('Error al guardar. Inténtalo de nuevo.', 'error');
+                if (window.isWritePermissionError && window.isWritePermissionError(err) && window.showWritePermissionModal) {
+                    window.showWritePermissionModal();
+                } else {
+                    window.hypeToast('Error al guardar. Inténtalo de nuevo.', 'error');
+                }
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = originalHtml;

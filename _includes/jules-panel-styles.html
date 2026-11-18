@@ -568,6 +568,25 @@ body{
   opacity: 1;
 }
 
+/* No checkboxes inside output cards. Contextual routing and Shift+click batch mode. */
+[data-panel-message-index], [data-jules-activity-index] {
+    border-radius: 10px;
+    transition: box-shadow .12s ease, background-color .12s ease;
+}
+[data-panel-message-index].is-picked,
+[data-jules-activity-index].is-picked {
+    box-shadow: inset 0 0 0 2px rgba(189,147,249,.8);
+    background: rgba(189,147,249,.08);
+}
+.neural-context-actions { opacity: .85; transform: none; }
+[data-panel-message-index]:hover .neural-context-actions,
+[data-panel-message-index]:focus-within .neural-context-actions,
+[data-jules-activity-index]:hover .neural-context-actions,
+[data-jules-activity-index]:focus-within .neural-context-actions {
+    opacity: 1; transform: none;
+}
+@media (pointer: coarse) { .neural-context-actions { opacity: 1; } }
+
 /* Neural Message Actions Pill */
 .neural-message-actions {
     opacity: 0;

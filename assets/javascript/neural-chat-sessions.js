@@ -48,12 +48,66 @@ if (window.sessions && window.sessions.length > 0) {
     if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Chat] Migration skipped (no sessions)");
 }
 
+window.updateThinkingToggleUI = function() {
+    const config = JSON.parse(localStorage.getItem('hy_ai_config') || '{}');
+    const provider = config.provider || 'none';
+    const model = config.model || '';
+    const userThinkingOverride = config.user_thinking_override !== undefined ? config.user_thinking_override : null;
+
+    const btn = document.getElementById('toggle-thinking') || window.toggleThinkingBtn;
+    if (!btn) return;
+
+    if (!window.NeuralThinkingCapabilities) {
+        btn.classList.add('hidden');
+        window.isThinkingEnabled = false;
+        return;
+    }
+
+    const cap = window.NeuralThinkingCapabilities.resolveCapability(provider, model, { userOverride: userThinkingOverride });
+
+    if (!cap.supportsThinking) {
+        btn.classList.add('hidden');
+        window.isThinkingEnabled = false;
+        btn.classList.remove('dracula-cyan');
+    } else {
+        btn.classList.remove('hidden');
+
+        const badge = document.getElementById('thinking-mandatory-badge');
+
+        // Check if model cannot be disabled or is unknown Anthropic model
+        if (cap.unknownModelWarning) {
+            btn.title = "Modelo de Anthropic no registrado: no se puede garantizar el apagar razonamiento";
+            btn.classList.add('cursor-not-allowed', 'opacity-80');
+            if (badge) badge.classList.add('hidden');
+        } else if (!cap.canDisable) {
+            btn.title = "Razonamiento siempre activo por el modelo";
+            btn.classList.add('cursor-not-allowed', 'opacity-80');
+            if (badge) badge.classList.remove('hidden');
+        } else {
+            btn.title = "Toggle Extended Thinking";
+            btn.classList.remove('cursor-not-allowed', 'opacity-80');
+            if (badge) badge.classList.add('hidden');
+        }
+
+        // Restore state from current session if valid, or default
+        const currentSession = window.sessions ? window.sessions.find(s => s.id === window.currentSessionId) : null;
+        if (currentSession && currentSession.thinking !== undefined) {
+            window.isThinkingEnabled = !!currentSession.thinking;
+        } else {
+            window.isThinkingEnabled = cap.defaultOn;
+        }
+
+        btn.classList.toggle('dracula-cyan', window.isThinkingEnabled);
+    }
+};
+
 window.createNewSession = function() {
     const newSession = window.NeuralChatCore.createSession({
         title: 'Nueva Conversación'
     });
     const id = newSession.id;
     window.sessions.unshift(newSession);
+
     saveSessions(false, 'create-session');
     renderSessionList();
 
@@ -100,14 +154,22 @@ window.loadSession = async function(id) {
     renderMessages();
     document.getElementById('welcome-screen')?.classList.add('hidden');
 
-    // Sync UI with session settings
-    // isThinkingEnabled is global in html but used here
-    window.isThinkingEnabled = !!currentSession.thinking;
-    if (window.toggleThinkingBtn) window.toggleThinkingBtn.classList.toggle('dracula-cyan', window.isThinkingEnabled);
+    // Sync UI with session settings & capabilities
+    if (typeof window.updateThinkingToggleUI === 'function') {
+        window.updateThinkingToggleUI();
+    } else {
+        window.isThinkingEnabled = !!currentSession.thinking;
+        if (window.toggleThinkingBtn) window.toggleThinkingBtn.classList.toggle('dracula-cyan', window.isThinkingEnabled);
+    }
     document.getElementById('system-prompt-input').value = currentSession.systemPrompt || '';
 
     // Refresh session list to update active state
     renderSessionList();
+
+    // Render attachment chips for the loaded session
+    if (window.renderRagFileChips) {
+        window.renderRagFileChips(id);
+    }
 
     // Background processing for God Mode context
     if (window.godModeTools) {
@@ -126,13 +188,27 @@ window.loadSession = async function(id) {
 }
 
 // Real-time synchronization channel
+window.refreshNeuralSessionsFromStorage = function() {
+    const stored = JSON.parse(localStorage.getItem('claude_chat_sessions') || '[]');
+    if (!Array.isArray(stored)) return;
+    const sending = window._neuralSendInFlight && window._neuralSendingSession;
+    // Only the request's conversation owns its live transcript until the send
+    // finishes. Other conversations still receive their normal remote updates.
+    window.sessions = stored.map(session => sending && session.id === sending.id ? sending : session);
+};
+
 window.neuralSyncChannel = new BroadcastChannel('hypenosys_neural_sessions_sync');
 window.neuralSyncChannel.onmessage = (event) => {
     const { type, sessionId } = event.data;
     if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Neural Sync] Message received:", type, sessionId);
 
     // Refresh sessions from storage
-    window.sessions = JSON.parse(localStorage.getItem('claude_chat_sessions') || '[]');
+    try {
+        window.refreshNeuralSessionsFromStorage();
+    } catch (error) {
+        console.warn('[Neural Sync] Ignoring invalid session storage', error);
+        return;
+    }
 
     if (type === 'active-session-changed' && sessionId) {
         if (window.currentSessionId !== sessionId) {
@@ -149,7 +225,7 @@ window.neuralSyncChannel.onmessage = (event) => {
 window.addEventListener('storage', (e) => {
     if (e.key === 'claude_chat_sessions' || e.key === 'hy_active_claude_session_id') {
         try {
-            window.sessions = JSON.parse(localStorage.getItem('claude_chat_sessions') || '[]');
+            window.refreshNeuralSessionsFromStorage();
             const activeId = localStorage.getItem('hy_active_claude_session_id');
 
             if (e.key === 'hy_active_claude_session_id' && activeId !== window.currentSessionId) {
@@ -203,10 +279,41 @@ window.saveSessions = function(skipSync = false, reason = 'unknown') {
             }
         }
 
-        localStorage.setItem('claude_chat_sessions', JSON.stringify(uniqueSessions));
+        try {
+            localStorage.setItem('claude_chat_sessions', JSON.stringify(uniqueSessions));
+        } catch (storageErr) {
+            if (storageErr.name === 'QuotaExceededError' || storageErr.name === 'NS_ERROR_DOM_QUOTA_REACHED' || storageErr.code === 22 || storageErr.code === 1014) {
+                console.warn('[saveSessions] QuotaExceededError encountered. Pruning oldest m.raw history...');
+                let prunedCount = 0;
+                // Prune m.raw from oldest sessions and messages backwards
+                for (let i = uniqueSessions.length - 1; i >= 0; i--) {
+                    const s = uniqueSessions[i];
+                    if (s.messages) {
+                        for (let j = 0; j < s.messages.length; j++) {
+                            if (s.messages[j].raw) {
+                                delete s.messages[j].raw;
+                                delete s.messages[j].raw_provider;
+                                delete s.messages[j].raw_model;
+                                prunedCount++;
+                            }
+                        }
+                    }
+                }
+                if (prunedCount > 0) {
+                    localStorage.setItem('claude_chat_sessions', JSON.stringify(uniqueSessions));
+                    console.log(`[saveSessions] Successfully saved after pruning ${prunedCount} raw thinking entries.`);
+                } else {
+                    throw storageErr;
+                }
+            } else {
+                throw storageErr;
+            }
+        }
         if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Chat] Storage after save:", uniqueSessions.length, "sessions");
 
-        localStorage.setItem('claude_archived_sessions', JSON.stringify(window.archivedSessions));
+        try {
+            localStorage.setItem('claude_archived_sessions', JSON.stringify(window.archivedSessions));
+        } catch (e) {}
 
         if (window.neuralSyncChannel) {
             window.neuralSyncChannel.postMessage({ type: 'session-updated' });
@@ -535,3 +642,4 @@ window.revealSessionActions = function(content) {
 window.hideSessionActions = function(content) {
     content.style.transform = 'translateX(0)';
 }
+

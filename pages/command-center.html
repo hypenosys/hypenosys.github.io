@@ -812,6 +812,7 @@ body.cc-ready #cc-app { display: block; }
 <!-- ════════════ SCRIPTS ════════════ -->
 <script src="{{ '/assets/javascript/auth-config.js' | relative_url }}"></script>
 <script src="{{ '/assets/javascript/github-api.js' | relative_url }}"></script>
+<script src="{{ '/assets/javascript/jules-api.js' | relative_url }}"></script>
 
 <script>
 (function () {
@@ -1229,7 +1230,8 @@ body.cc-ready #cc-app { display: block; }
 
         if (julesKey) {
             // Basic validation
-            const res = await fetch('https://jules.googleapis.com/v1alpha/sources?pageSize=1', {
+            const baseUrl = typeof window.getJulesBase === 'function' ? window.getJulesBase() : 'https://jules.googleapis.com/v1alpha';
+            const res = await fetch(`${baseUrl}/sources?pageSize=1`, {
                 headers: { 'x-goog-api-key': julesKey }
             });
             if (!res.ok) throw new Error('Jules API Key inválida o error de conexión (' + res.status + ')');

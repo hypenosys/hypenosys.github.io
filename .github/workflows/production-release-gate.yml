@@ -1,0 +1,73 @@
+name: Production release gate
+
+on:
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  release-integrity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+      - name: Install dependencies
+        run: npm ci
+      - name: Dependency audit (all dependencies, high and critical)
+        run: npm audit --audit-level=high
+      - name: Verify JS syntax and auth/provider contracts
+        run: |
+          node --check assets/javascript/global-header.js
+          node --check assets/javascript/auth.js
+          node --check assets/javascript/auth-config.js
+          node --check assets/javascript/analytics-consent.js
+          node tests/test_anthropic_model_discovery.js
+          node tests/test_anthropic_pages_proxy.js
+          node tests/test_dashboard_cache_quota.js
+      - name: Build production artifact
+        run: bundle exec jekyll build --source . --destination ./_site --baseurl ""
+        env:
+          JEKYLL_ENV: production
+      - name: Verify production-critical routes and brand assets
+        run: |
+          set -eu
+          for file in \
+            _site/index.html \
+            _site/aviso-legal/index.html \
+            _site/privacidad/index.html \
+            _site/cookies/index.html \
+            _site/favicon.ico \
+            _site/favicon.svg \
+            _site/assets/images/brand/logo_simple.svg \
+            _site/assets/javascript/global-header.js \
+            _site/assets/javascript/auth.js \
+            _site/assets/javascript/auth-config.js \
+            _site/assets/javascript/analytics-consent.js; do
+            test -s "$file" || { echo "Missing or empty: $file"; exit 1; }
+          done
+          grep -q 'global-header.js' _site/index.html
+          grep -q 'admin_shell' index.html || grep -q 'auth-config.js' _site/index.html
+      - name: Verify historical changelog was not silently truncated
+        run: |
+          git fetch --no-tags origin master
+          python3 - <<'PY'
+          import subprocess
+          from pathlib import Path
+          previous = subprocess.check_output(['git', 'show', 'origin/master:CHANGELOG.html'], text=True)
+          current = Path('CHANGELOG.html').read_text()
+          if len(current) < len(previous) * 0.75:
+              archive = Path('docs/archive/CHANGELOG-pre-release.html')
+              if not archive.exists() or archive.read_text() != previous:
+                  raise SystemExit('Historical changelog shrank by over 25% without a byte-exact archive at docs/archive/CHANGELOG-pre-release.html')
+          PY

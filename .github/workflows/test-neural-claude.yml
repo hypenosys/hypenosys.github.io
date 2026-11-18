@@ -1,0 +1,193 @@
+name: Neural Claude API contract tests
+
+on:
+  pull_request:
+    branches: [develop]
+    paths:
+      - 'assets/javascript/ai-config.js'
+      - 'assets/javascript/neural-provider-client.js'
+      - 'assets/javascript/neural-thinking-*.js'
+      - '_includes/api_config_modal.html'
+      - 'tests/test_anthropic_model_discovery.js'
+      - 'tests/test_neural_claude_smoke.js'
+      - 'tests/test_jules_claude_bridge.js'
+      - 'tests/test_jules_bridge_resume.js'
+      - 'tests/verify_jules_chat_scroll.spec.js'
+      - 'tests/test_jules_task_handoff.js'
+      - 'tests/test_jules_first_message.js'
+      - 'tests/test_jules_launch_lifecycle.js'
+      - 'tests/test_jules_context_actions.js'
+      - '_includes/jules-panel-styles.html'
+      - 'tests/test_jules_task_supervisor.js'
+      - 'tests/test_neural_panel_workspace.js'
+      - 'assets/javascript/neural-panel-workspace.js'
+      - '_includes/neural-panel-workspace-styles.html'
+      - 'assets/javascript/jules-task-supervisor.js'
+      - 'assets/javascript/jules-pr-sync.js'
+      - 'assets/javascript/jules-panel-sessions.js'
+      - 'tests/test_jules_pr_sync.js'
+      - 'tests/test_jules_pr_automerge.js'
+      - 'tests/test_task_orchestrator.js'
+      - '.github/workflows/deploy-dev-pages.yml'
+      - 'assets/javascript/jules-panel-auth.js'
+      - 'assets/javascript/jules-panel-repo.js'
+      - 'assets/javascript/neural-chat-jules.js'
+      - 'assets/javascript/neural-chat-ui.js'
+      - 'assets/javascript/kanban-ui.js'
+      - 'dashboard.html'
+      - 'assets/javascript/dashboard-data.js'
+      - 'assets/javascript/dashboard-cache.js'
+      - 'tests/test_dashboard_cache_quota.js'
+      - 'assets/javascript/dashboard-data.js'
+      - 'assets/javascript/dashboard-cache.js'
+      - 'tests/test_dashboard_cache_quota.js'
+      - 'assets/javascript/jules-claude-bridge.js'
+      - 'assets/javascript/jules-panel-neural.js'
+      - 'assets/javascript/neural-chat-core.js'
+      - 'assets/javascript/neural-chat-send.js'
+      - 'assets/javascript/neural-chat-sessions.js'
+      - '_includes/neural-chat-styles.html'
+      - 'tests/test_neural_send_recovery.js'
+      - 'tests/verify_neural_message_actions.spec.js'
+      - 'pages/jules-panel.html'
+      - 'pages/claude-chat.html'
+      - 'tests/test_anthropic_pages_proxy.js'
+      - 'functions/api/ai/anthropic/**'
+      - 'tests/test_thinking_block*.js'
+      - '.github/workflows/test-neural-claude.yml'
+  push:
+    branches: [develop]
+    paths:
+      - 'assets/javascript/ai-config.js'
+      - 'assets/javascript/neural-provider-client.js'
+      - 'assets/javascript/neural-thinking-*.js'
+      - '_includes/api_config_modal.html'
+      - 'tests/test_anthropic_model_discovery.js'
+      - 'tests/test_neural_claude_smoke.js'
+      - 'tests/test_jules_claude_bridge.js'
+      - 'tests/test_jules_bridge_resume.js'
+      - 'tests/verify_jules_chat_scroll.spec.js'
+      - 'tests/test_jules_task_handoff.js'
+      - 'tests/test_jules_first_message.js'
+      - 'tests/test_jules_launch_lifecycle.js'
+      - 'tests/test_jules_context_actions.js'
+      - '_includes/jules-panel-styles.html'
+      - 'tests/test_jules_task_supervisor.js'
+      - 'tests/test_neural_panel_workspace.js'
+      - 'assets/javascript/neural-panel-workspace.js'
+      - '_includes/neural-panel-workspace-styles.html'
+      - 'assets/javascript/jules-task-supervisor.js'
+      - 'assets/javascript/jules-pr-sync.js'
+      - 'assets/javascript/jules-panel-sessions.js'
+      - 'tests/test_jules_pr_sync.js'
+      - 'tests/test_jules_pr_automerge.js'
+      - 'tests/test_task_orchestrator.js'
+      - '.github/workflows/deploy-dev-pages.yml'
+      - 'assets/javascript/jules-panel-auth.js'
+      - 'assets/javascript/jules-panel-repo.js'
+      - 'assets/javascript/neural-chat-jules.js'
+      - 'assets/javascript/neural-chat-ui.js'
+      - 'assets/javascript/kanban-ui.js'
+      - 'dashboard.html'
+      - 'assets/javascript/jules-claude-bridge.js'
+      - 'assets/javascript/jules-panel-neural.js'
+      - 'assets/javascript/neural-chat-core.js'
+      - 'assets/javascript/neural-chat-send.js'
+      - 'assets/javascript/neural-chat-sessions.js'
+      - '_includes/neural-chat-styles.html'
+      - 'tests/test_neural_send_recovery.js'
+      - 'tests/verify_neural_message_actions.spec.js'
+      - 'pages/jules-panel.html'
+      - 'pages/claude-chat.html'
+      - 'tests/test_anthropic_pages_proxy.js'
+      - 'functions/api/ai/anthropic/**'
+      - 'tests/test_thinking_block*.js'
+      - '.github/workflows/test-neural-claude.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  message-actions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Verify selection and chat scroll at desktop and mobile widths with 130% zoom
+        run: npx playwright test tests/verify_neural_message_actions.spec.js tests/verify_jules_chat_scroll.spec.js --workers=1 --reporter=line
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: neural-message-actions
+          path: test-results/
+          retention-days: 7
+
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Anthropic discovery (mocked)
+        run: node tests/test_anthropic_model_discovery.js
+      - name: Claude native Messages and SSE (mocked)
+        run: node tests/test_neural_claude_smoke.js
+      - name: Standalone Claude send, cross-tab persistence and error recovery
+        run: node tests/test_neural_send_recovery.js
+      - name: Cloudflare Anthropic relay contracts (mocked)
+        run: node tests/test_anthropic_pages_proxy.js
+      - name: Jules and Claude bridge guardrails
+        run: node tests/test_jules_claude_bridge.js
+      - name: Restore authorized Claude supervision and preserve review state
+        run: node tests/test_jules_bridge_resume.js
+      - name: Dashboard to Jules to Claude handoff contracts
+        run: node tests/test_jules_task_handoff.js
+      - name: Jules first message and branch-resolution contracts
+        run: node tests/test_jules_first_message.js
+      - name: Jules session cap and task lifecycle contracts
+        run: node tests/test_jules_launch_lifecycle.js
+      - name: HAIS task supervisor approval and organizational boundary tests
+        run: node tests/test_jules_task_supervisor.js
+      - name: Jules PR merge-to-develop and task synchronization regressions
+        run: node tests/test_jules_pr_sync.js
+      - name: Jules guarded auto-merge into develop or master
+        run: node tests/test_jules_pr_automerge.js
+      - name: Dashboard sync when localStorage quota is exhausted
+        run: |
+          node tests/test_dashboard_cache_quota.js
+          node --check assets/javascript/dashboard-cache.js
+          node --check assets/javascript/dashboard-data.js
+      - name: Task orchestrator architectural boundaries
+        run: node tests/test_task_orchestrator.js
+      - name: Claude and Jules workspace filters, drafts and context isolation
+        run: node tests/test_neural_panel_workspace.js
+      - name: Syntax checks for Neural, Jules and routing scripts
+        run: |
+          node --check assets/javascript/jules-panel-auth.js
+          node --check assets/javascript/jules-panel-repo.js
+          node --check assets/javascript/jules-panel-neural.js
+          node --check assets/javascript/neural-chat-jules.js
+          node --check assets/javascript/neural-chat-ui.js
+          node --check assets/javascript/neural-chat-send.js
+          node --check assets/javascript/neural-chat-sessions.js
+          node --check assets/javascript/jules-claude-bridge.js
+          node --check assets/javascript/jules-task-supervisor.js
+          node --check assets/javascript/jules-pr-sync.js
+          node --check assets/javascript/jules-panel-sessions.js
+          node --check assets/javascript/neural-panel-workspace.js
+          node --check assets/javascript/kanban-ui.js
+      - name: Jules panel contextual actions and partial quote safety
+        run: node tests/test_jules_context_actions.js
+      - name: AI provider config
+        run: node tests/test_api_config.js
+      - name: Thinking adapter regressions
+        run: |
+          for file in tests/test_thinking_block*.js; do node "$file"; done
+
+

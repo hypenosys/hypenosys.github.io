@@ -37,7 +37,7 @@ window.NeuralProviderClient = (function() {
         return normalized;
     }
 
-    async function sendMessage({ messages, systemPrompt, onToken, onDone, onError }) {
+    async function sendMessage({ messages, systemPrompt, options, onToken, onDone, onError }) {
         const config = getConfig();
         const provider = config.provider || 'none';
 
@@ -47,7 +47,7 @@ window.NeuralProviderClient = (function() {
             return;
         }
 
-        const baseUrl = normalizeBaseUrl(config.base_url, provider);
+        const baseUrl = normalizeBaseUrl(config.base_url || (provider === 'anthropic' ? 'https://api.anthropic.com/v1' : ''), provider);
         const model = config.model || (provider === 'ollama' ? 'llama3' : 'gpt-3.5-turbo');
         const apiKey = config.api_key || '';
 
@@ -59,6 +59,7 @@ window.NeuralProviderClient = (function() {
 
         console.log(`[NeuralProviderClient] Request started. Provider: ${provider}, Model: ${model}, BaseURL: ${baseUrl}`);
 
+        let requestTimeout = null;
         try {
             const fullMessages = [];
             if (systemPrompt) {
@@ -80,27 +81,108 @@ window.NeuralProviderClient = (function() {
 
             const useStream = provider !== 'nvidia_nim';
 
-            const payload = {
+            let requestEndpoint = endpoint;
+            let requestHeaders = headers;
+            let payload = {
                 model: model,
                 messages: fullMessages,
                 stream: useStream
             };
+
+            const isThinkingEnabled = !!(options && options.isThinkingEnabled);
+            const cap = window.NeuralThinkingCapabilities ?
+                window.NeuralThinkingCapabilities.resolveCapability(provider, model, options) :
+                { supportsThinking: false };
+
+            if (provider === 'anthropic' && !window.NeuralThinkingAdapters) {
+                throw new Error('Anthropic adapter no disponible. Recarga Neural Chat.');
+            }
+
+            if (provider === 'anthropic' && !apiKey.trim()) {
+                throw new Error('Introduce una API key de Anthropic en API Config.');
+            }
+
+            // Anthropic ALWAYS requires the native /v1/messages schema (even with thinking off).
+            // Do not send its API key to an OpenAI-compatible /chat/completions endpoint.
+            if ((provider === 'anthropic' || ((isThinkingEnabled && cap.supportsThinking) || cap.defaultOn)) && window.NeuralThinkingAdapters) {
+                const adapter = window.NeuralThinkingAdapters.getAdapter(provider);
+                if (adapter) {
+                    const reqObj = adapter.buildRequest({
+                        model,
+                        messages,
+                        systemPrompt,
+                        isThinkingEnabled,
+                        budgetTokens: options?.budgetTokens,
+                        effort: options?.effort,
+                        apiKey,
+                        workspaceId: provider === 'anthropic' ? (config.anthropic_workspace_id || '') : '',
+                        baseUrl,
+                        options
+                    });
+                    requestEndpoint = reqObj.url;
+                    requestHeaders = reqObj.headers;
+                    payload = reqObj.body;
+
+                    if (reqObj.mode === 'native_anthropic' && isThinkingEnabled && options?.hadTemperature && typeof window.showToast === 'function') {
+                        window.showToast("Se ha omitido la temperatura por el modo Extended Thinking.");
+                    }
+                }
+            }
 
             if (window.HYPENOSYS_NEURAL_DEBUG) {
                 console.log("[Claude Neural] sending to provider");
                 console.log("[Claude Neural] provider request payload:", payload);
             }
 
-            const response = await fetch(endpoint, {
-                method: 'POST',
-                headers: headers,
-                body: JSON.stringify(payload),
-                mode: 'cors',
-                credentials: 'omit'
-            });
+            const requestController = typeof AbortController !== 'undefined'
+                ? new AbortController()
+                : null;
+            if (requestController) {
+                requestTimeout = setTimeout(() => requestController.abort(), 120000);
+            }
+            let response;
+            try {
+                const fetchOptions = {
+                    method: 'POST',
+                    headers: requestHeaders,
+                    body: JSON.stringify(payload),
+                    mode: 'cors',
+                    credentials: 'omit'
+                };
+                if (requestController) {
+                    fetchOptions.signal = requestController.signal;
+                }
+                response = await fetch(requestEndpoint, fetchOptions);
+            } catch (fetchError) {
+                if (fetchError?.name === 'AbortError') {
+                    throw new Error('Provider timeout: la petición no terminó en 120 segundos.');
+                }
+                throw fetchError;
+            }
 
             if (!response.ok) {
                 const errText = await response.text().catch(() => 'Unknown error');
+                const is400 = response.status === 400 || errText.includes('Status: 400');
+                const mentionsThinking = /thinking|reasoning|budget_tokens|thinking_config/i.test(errText);
+
+                // Auto-retry fallback on 400 error mentioning thinking parameters
+                if (is400 && mentionsThinking && isThinkingEnabled && !options?._isRetry) {
+                    if (window.NeuralThinkingCapabilities) {
+                        window.NeuralThinkingCapabilities.markModelUnsupported(provider, model, errText);
+                    }
+                    if (typeof window.showToast === 'function') {
+                        window.showToast("Parámetros de pensamiento no soportados por la API. Reintentando sin Extended Thinking...");
+                    }
+                    return await sendMessage({
+                        messages,
+                        systemPrompt,
+                        options: { ...options, isThinkingEnabled: false, _isRetry: true },
+                        onToken,
+                        onDone,
+                        onError
+                    });
+                }
+
                 throw new Error(`AI request failed for provider ${provider} at ${baseUrl}. Status: ${response.status}. ${errText}`);
             }
 
@@ -111,6 +193,8 @@ window.NeuralProviderClient = (function() {
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder();
                 let buffer = '';
+
+                const parseState = window.NeuralThinkingParser ? window.NeuralThinkingParser.createParseState() : null;
 
                 if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] provider response received");
 
@@ -128,17 +212,38 @@ window.NeuralProviderClient = (function() {
                         if (!trimmedLine || !trimmedLine.startsWith('data: ')) continue;
 
                         const dataStr = trimmedLine.substring(6);
-                        if (dataStr === '[DONE]') break;
-
-                        try {
-                            const data = JSON.parse(dataStr);
-                            const delta = data.choices?.[0]?.delta?.content || '';
-                            if (delta) {
-                                aiContent += delta;
-                                if (onToken) onToken(delta, aiContent);
+                        if (dataStr === '[DONE]') {
+                            if (window.NeuralThinkingParser && parseState) {
+                                window.NeuralThinkingParser.flushEof(parseState);
                             }
-                        } catch (e) {
-                            console.warn('[NeuralProviderClient] JSON parse error in stream:', e);
+                            break;
+                        }
+
+                        let data;
+                        try {
+                            data = JSON.parse(dataStr);
+                        } catch (parseError) {
+                            console.warn('[NeuralProviderClient] Ignoring malformed SSE event');
+                            continue;
+                        }
+                        // Stream errors are real failures; do not silently treat them as end-of-message.
+                        if (data.type === 'error') {
+                            throw new Error(`Anthropic streaming error: ${data.error?.type || 'unknown'}`);
+                        }
+                        // Parsing or rendering errors must not be swallowed as malformed JSON.
+                        // That previously left the Claude bubble empty without telling the user.
+                        let contentDelta = '';
+                        let thinkingDelta = '';
+                        if (window.NeuralThinkingParser && parseState) {
+                            const parsed = window.NeuralThinkingParser.parseChunk(provider, data, parseState);
+                            thinkingDelta = parsed.thinkingDelta || '';
+                            contentDelta = parsed.contentDelta || '';
+                        } else {
+                            contentDelta = data.delta?.text || data.choices?.[0]?.delta?.content || '';
+                        }
+                        if (contentDelta || thinkingDelta) {
+                            aiContent += contentDelta;
+                            if (onToken) onToken(contentDelta, aiContent, { thinkingDelta });
                         }
                     }
                 }
@@ -149,11 +254,17 @@ window.NeuralProviderClient = (function() {
                 if (onToken) onToken(aiContent, aiContent);
             }
 
+            if (requestTimeout && typeof clearTimeout !== 'undefined') clearTimeout(requestTimeout);
+            if (!String(aiContent || '').trim()) {
+                throw new Error('El proveedor terminó sin devolver texto visible. Comprueba el modelo, el streaming y los eventos de Anthropic; no se guardará una respuesta vacía.');
+            }
+
             console.log('[NeuralProviderClient] Done');
             if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] provider response text:", aiContent);
             if (onDone) onDone(aiContent);
 
         } catch (e) {
+            if (requestTimeout && typeof clearTimeout !== 'undefined') clearTimeout(requestTimeout);
             // Sanitize error message to prevent API key leakage
             let safeMessage = e.message || "Unknown error";
             if (apiKey) {
@@ -166,13 +277,30 @@ window.NeuralProviderClient = (function() {
             if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] provider call failed:", safeMessage);
 
             if (onError) {
-                const isNetworkFailure = safeMessage.includes('Failed to fetch') ||
-                                       safeMessage.includes('NetworkError') ||
-                                       !safeMessage.includes('Status:');
+                const isNetworkFailure = e instanceof TypeError ||
+                                       safeMessage.includes('Failed to fetch') ||
+                                       safeMessage.includes('NetworkError');
 
                 const isNvidiaCloud = provider === 'nvidia_nim' && baseUrl.includes('integrate.api.nvidia.com');
                 const isNvidiaRelay = provider === 'nvidia_nim' && baseUrl.includes('hypenosys-gatekeeper-v2.axlffcc.workers.dev');
                 const isOllama = provider === 'ollama';
+
+                if (provider === 'anthropic' && isNetworkFailure) {
+                    onError(new Error('No se pudo conectar con el relay de Hypenosys. Comprueba Cloudflare Pages Functions y la red.'));
+                    return;
+                }
+                if (provider === 'anthropic' && !isNetworkFailure) {
+                    let troubleshootingAnthropic = '';
+                    if (safeMessage.includes('Status: 401')) troubleshootingAnthropic = 'API key inválida o caducada';
+                    else if (safeMessage.includes('Status: 403')) troubleshootingAnthropic = 'Sin permisos de acceso para esta clave o workspace';
+                    else if (safeMessage.includes('Status: 404')) troubleshootingAnthropic = 'Modelo no disponible; pulsa DESCUBRIR';
+                    else if (safeMessage.includes('Status: 429')) troubleshootingAnthropic = 'Límite de peticiones o crédito agotado';
+                    else troubleshootingAnthropic = '';
+                    if (troubleshootingAnthropic) {
+                        onError(new Error(`Anthropic: ${troubleshootingAnthropic}. HTTP ${safeMessage.split('Status: ')[1]?.split('.')[0] || 'error'}.`));
+                        return;
+                    }
+                }
 
                 // Specific case: NVIDIA Cloud direct browser failure (CORS/Preflight)
                 if (isNvidiaCloud && isNetworkFailure) {

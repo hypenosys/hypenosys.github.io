@@ -4,6 +4,10 @@
 
 window.isThinkingEnabled = false;
 window.attachedImage = null;
+// Cross-trigger lock: click, Enter, dashboard auto-send and auth/init retries
+// must all converge on one in-flight send.
+window._neuralSendInFlight = false;
+window._neuralSendingSession = null;
 
 const timeoutPromise = (ms) => new Promise((_, reject) =>
     setTimeout(() => reject(new Error('timeout')), ms)
@@ -52,7 +56,8 @@ window.toggleModeDropdown = function() {
 
 window.sendMessage = async function() {
     const content = window.chatInput.value.trim();
-    if ((!content && !window.attachedImage) || window.sendBtn.disabled) return;
+    if ((!content && !window.attachedImage) || window.sendBtn.disabled || window._neuralSendInFlight) return;
+    window._neuralSendInFlight = true;
 
     // Auto-create session if none exists
     if (!window.currentSessionId) {
@@ -68,6 +73,7 @@ window.sendMessage = async function() {
         const provider = config.provider || 'none';
         if (provider === 'none') {
             alert('Configura un proveedor de IA para usar el modo Runners.');
+            window._neuralSendInFlight = false;
             return;
         }
 
@@ -115,6 +121,7 @@ window.sendMessage = async function() {
         } finally {
             window.sendBtn.disabled = false;
             window.chatInput.disabled = false;
+            window._neuralSendInFlight = false;
         }
         return;
     }
@@ -141,6 +148,7 @@ window.sendMessage = async function() {
             setTimeout(() => {
                 window.location.href = '/jules-panel/';
             }, 1000);
+            window._neuralSendInFlight = false;
             return;
         }
 
@@ -175,6 +183,7 @@ window.sendMessage = async function() {
         } finally {
             window.sendBtn.disabled = false;
             window.chatInput.disabled = false;
+            window._neuralSendInFlight = false;
             window.chatInput.focus();
         }
         return;
@@ -184,6 +193,7 @@ window.sendMessage = async function() {
     if (content.startsWith('/')) {
         handleSlashCommand(content);
         window.chatInput.value = '';
+        window._neuralSendInFlight = false;
         return;
     }
 
@@ -193,8 +203,13 @@ window.sendMessage = async function() {
     if (provider === 'none') {
         alert('Por favor, configura un proveedor de IA en API CONFIG.');
         openSettings();
+        window._neuralSendInFlight = false;
         return;
     }
+
+    // Keep this exact object alive during cross-tab sync. The core streams into
+    // it; replacing it with a stored snapshot would discard the reply on save.
+    window._neuralSendingSession = currentSession;
 
     // Logic for sync with Neural Thread if needed
     if (localStorage.getItem('hy_neural_active') === 'true') {
@@ -270,6 +285,27 @@ window.sendMessage = async function() {
                 }
             }
 
+            // RAG LOCAL ATTACHMENTS CONTEXT INJECTION
+            let ragContext = "";
+            let ragSources = [];
+            let ragThreshold = 0.35;
+
+            if (window.NeuralChatRAG && window.NeuralChatRAG.isEmbeddingsReady()) {
+                try {
+                    const ragResult = await window.NeuralChatRAG.searchRelevantChunks(currentSession.id, content);
+                    if (ragResult.mismatch) {
+                        appendSystemMessage("El modelo o dimensión de embeddings ha cambiado desde que se indexaron los archivos. Se recomienda volver a adjuntar e indexar los documentos.", "warn");
+                    }
+                    if (ragResult.items && ragResult.items.length > 0) {
+                        ragSources = ragResult.items;
+                        ragThreshold = ragResult.activeThreshold;
+                        ragContext = window.NeuralChatRAG.formatContextPrompt(ragResult.items);
+                    }
+                } catch (ragErr) {
+                    console.warn('[RAG] Error recuperando fragmentos:', ragErr);
+                }
+            }
+
             // Optimistic UI: Add user message and render immediately
             const userMsg = { role: 'user', content: content, timestamp: Date.now() };
             currentSession.messages.push(userMsg);
@@ -285,13 +321,23 @@ window.sendMessage = async function() {
         window.thinkingIndicator.innerHTML = '<div class="thinking-dots"><span>.</span><span>.</span><span>.</span></div> <span class="text-[10px] ml-2">CLAUDE ESTÁ PENSANDO...</span>';
         if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] thinking indicator shown");
 
-            let baseSystemPrompt = await window.JulesDocsBridge.buildSystemPrompt(content, currentSession.systemPrompt);
+            let baseSystemPrompt = currentSession.systemPrompt;
+            if (window.JulesDocsBridge?.buildSystemPrompt) {
+                try {
+                    baseSystemPrompt = await Promise.race([
+                        window.JulesDocsBridge.buildSystemPrompt(content, currentSession.systemPrompt),
+                        timeoutPromise(3500)
+                    ]);
+                } catch (error) {
+                    console.warn('[NeuralChat] Task context unavailable; continuing with the session prompt', error);
+                }
+            }
 
             // Store sources for the upcoming message (captured during buildSystemPrompt)
             const currentSources = window._lastDocsMetadata || [];
             window._lastDocsMetadata = null;
 
-            const dynamicSystemPrompt = baseSystemPrompt + (docsContext || "") + (svnContext || "");
+            const dynamicSystemPrompt = baseSystemPrompt + (docsContext || "") + (svnContext || "") + ragContext;
 
             if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] sending to provider");
 
@@ -299,6 +345,9 @@ window.sendMessage = async function() {
                 session: currentSession,
                 userMessage: content,
                 systemPrompt: dynamicSystemPrompt,
+                options: {
+                    isThinkingEnabled: window.isThinkingEnabled
+                },
                 saveCallback: () => {
                     saveSessions(false, 'core-save-callback');
                     renderSessionList();
@@ -310,6 +359,10 @@ window.sendMessage = async function() {
                     const lastMsg = currentSession.messages[currentSession.messages.length - 1];
                     if (lastMsg && lastMsg.role === 'assistant') {
                         lastMsg.sources = currentSources;
+                        if (ragSources && ragSources.length > 0) {
+                            lastMsg.ragSources = ragSources;
+                            lastMsg.ragThreshold = ragThreshold;
+                        }
                     }
                     renderMessages();
                     // Periodic save during streaming to prevent loss if refresh occurs
@@ -321,16 +374,53 @@ window.sendMessage = async function() {
                     if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] provider response received");
                     window.thinkingIndicator.classList.add('hidden');
                     if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] assistant rendered");
+                    const lastMsg = currentSession.messages[currentSession.messages.length - 1];
+                    if (lastMsg && lastMsg.role === 'assistant') {
+                        if (ragSources && ragSources.length > 0) {
+                            lastMsg.ragSources = ragSources;
+                            lastMsg.ragThreshold = ragThreshold;
+                        }
+                    }
                     renderMessages();
                     renderSessionList();
                     saveSessions(false, 'assistant-done');
+
+                    const orchestrator = window.HypenosysTaskOrchestrator;
+                    const orchestratorState = orchestrator?.load?.();
+                    const activeTask = window._activeTaskContext;
+                    if (orchestratorState?.enabled && activeTask?.id &&
+                        String(orchestratorState.currentTaskId || '') === String(activeTask.id) &&
+                        orchestratorState.phase === 'claude-running') {
+                        orchestrator.setPhase('handoff-jules');
+                        setTimeout(() => {
+                            try {
+                                window.handoffClaudeToJules(
+                                    fullContent,
+                                    '',
+                                    activeTask,
+                                    currentSession
+                                );
+                            } catch (error) {
+                                orchestrator.patch({ phase: 'error', lastError: error.message || String(error) });
+                            }
+                        }, 150);
+                    }
+
                     if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] send finished");
                 },
                 onError: (err) => {
                     if (window.HYPENOSYS_NEURAL_DEBUG) console.log("[Claude Neural] send failed:", err.message);
                     window.thinkingIndicator.classList.add('hidden');
-                    appendSystemMessage(err.message, 'error');
+                    // Error bubbles are persisted by NeuralChatCore; do not add a
+                    // transient DOM warning that renderMessages would immediately erase.
                     renderMessages();
+                    window.showToast?.('Claude: ' + (err?.message || 'Error de respuesta'));
+                    const orchestrator = window.HypenosysTaskOrchestrator;
+                    const activeTask = window._activeTaskContext;
+                    const state = orchestrator?.load?.();
+                    if (state?.enabled && activeTask?.id && String(state.currentTaskId || '') === String(activeTask.id)) {
+                        orchestrator.patch({ phase: 'error', lastError: 'Claude: ' + err.message });
+                    }
                 }
             });
         } else {
@@ -345,11 +435,24 @@ window.sendMessage = async function() {
         if (provider === 'ollama' && window.ollamaDiscovery) {
             errorMsg = window.ollamaDiscovery.getErrorMessage(e, config.base_url);
         }
-        appendSystemMessage(errorMsg, 'error');
+        // Failures before NeuralChatCore also belong in the transcript. A
+        // transient DOM message disappears on the next render or tab sync.
+        currentSession.messages.push({
+            role: 'assistant',
+            content: 'No se ha podido completar la respuesta de Claude.',
+            error: true,
+            errorMessage: errorMsg,
+            timestamp: Date.now()
+        });
+        currentSession.updatedAt = new Date().toISOString();
+        saveSessions(false, 'send-error');
+        renderMessages();
     } finally {
         window.thinkingIndicator.classList.add('hidden');
         window.sendBtn.disabled = false;
         window.chatInput.disabled = false;
+        window._neuralSendInFlight = false;
+        window._neuralSendingSession = null;
         window.chatInput.focus();
         window.chatMessages.scrollTop = window.chatMessages.scrollHeight;
     }
@@ -607,3 +710,4 @@ function detectCodeLanguage(code) {
 
     return jsScore > pyScore ? 'javascript' : 'python';
 }
+

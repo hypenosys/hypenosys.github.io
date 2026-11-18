@@ -39,6 +39,16 @@
                 const id = el.dataset.id;
 
                 const handler = (e) => {
+                    // Touch browsers usually emit a synthetic click after touchend.
+                    // Ignore that second event so a single tap can never launch the
+                    // same task twice.
+                    const now = Date.now();
+                    if (e.type === 'touchend') {
+                        el._lastKanbanTouchEndAt = now;
+                    } else if (e.type === 'click' && el._lastKanbanTouchEndAt && now - el._lastKanbanTouchEndAt < 800) {
+                        return;
+                    }
+
                     // Prevent default and stop propagation to avoid multiple triggers
                     // and to prevent the card toggle if we clicked a button inside it
                     e.preventDefault();
@@ -59,6 +69,13 @@
                             handleArchiveTask(id);
                         }
                     } else if (action === 'claude') {
+                        const launchKey = String(id);
+                        const previousLaunch = window._dashboardClaudeLaunchGuard;
+                        if (previousLaunch?.taskId === launchKey && now - previousLaunch.at < 1500) {
+                            return;
+                        }
+                        window._dashboardClaudeLaunchGuard = { taskId: launchKey, at: now };
+
                         let taskData = { id };
 
                         // Primary: try window.currentTasks
@@ -80,8 +97,27 @@
                             if (found) taskData = found;
                         }
 
+                        // The robot on a dashboard task is the CLAUDE analysis entry.
+                        // Starting a Jules execution is a separate, explicit action
+                        // from Neural Chat and must never happen on this click.
                         if (typeof window._openTaskInClaude === 'function') {
                             window._openTaskInClaude(taskData);
+                        } else if (typeof window._openTaskInClaudeWithContext === 'function') {
+                            window._openTaskInClaudeWithContext(taskData.id);
+                        } else {
+                            console.warn('[KANBAN] Claude entry route not initialized; routing directly.');
+                            if (!taskData?.id || !(taskData.title || taskData.titulo)) return;
+                            localStorage.removeItem('hy_jules_handoff');
+                            localStorage.removeItem('jules_task_payload');
+                            localStorage.removeItem('hy_pending_claude_handoff_id');
+                            localStorage.removeItem('hy_handoff_autolink');
+                            localStorage.removeItem('hy_neural_pending_prompt');
+                            localStorage.removeItem('hy_neural_thread');
+                            localStorage.setItem('hy_neural_task_context', JSON.stringify(taskData));
+                            localStorage.setItem('hy_neural_active', 'true');
+                            localStorage.setItem('hy_neural_new_task_sent', 'true');
+                            localStorage.setItem('hy_neural_entry_point', 'dashboard-claude');
+                            window.location.assign('/chat/neural/?from=dashboard');
                         }
                     } else if (action === 'move') {
                         const nextStatus = el.dataset.nextStatus;
@@ -284,37 +320,31 @@
             const branchUrl = (repoFullName && branchName) ? `https://github.com/${repoFullName}/tree/${branchName}` : '#';
             const displayRepo = (window.getRepoAlias ? window.getRepoAlias(repoFullName) : null) || repoFullName.split('/').pop() || '---';
 
-            // Robot button action
+            // Initialize the Claude entry synchronously, before asynchronous dashboard
+            // setup. No modal, Jules execution, or delayed decision on this route.
             if (!window._openTaskInClaude) {
-                window._openTaskInClaude = function(taskId) {
-                    // Try different ways to find the task data
-                    const task = (window.taskOps?.getTaskSync ? window.taskOps.getTaskSync(taskId) : null)
-                                 || window._kanbanTasks?.find(t => String(t.id) === String(taskId))
-                                 || (window.JulesPanelState?.tasks?.find(t => String(t.id) === String(taskId)));
-
-                    if (!task) {
-                        console.warn('[KANBAN] Task not found:', taskId);
+                window._openTaskInClaude = function(taskDataOrId) {
+                    const supplied = typeof taskDataOrId === 'object' ? taskDataOrId : null;
+                    const taskId = supplied?.id ?? taskDataOrId;
+                    const task = (window.currentTasks || []).find(t => String(t.id) === String(taskId))
+                        || window._kanbanTasks?.find(t => String(t.id) === String(taskId))
+                        || window.JulesPanelState?.tasks?.find(t => String(t.id) === String(taskId))
+                        || supplied;
+                    if (!task?.id || !(task.title || task.titulo)) {
+                        console.warn('[KANBAN] No complete task found for Claude entry:', taskId);
                         return;
                     }
-
-                    if (window.neuralSession?.open) {
-                        window.neuralSession.open(task);
-                    } else {
-                        // Retry once after 800ms — covers late authReady initialization
-                        setTimeout(() => {
-                            if (window.neuralSession?.open) {
-                                window.neuralSession.open(task);
-                            } else {
-                                console.error('[KANBAN] NeuralSessionPanel not available');
-                                // Fallback to old behavior if everything fails
-                                localStorage.setItem('hy_neural_task_context', JSON.stringify(task));
-                                localStorage.setItem('hy_neural_active', 'true');
-                                localStorage.setItem('hy_neural_new_task_sent', 'true');
-                                const url = `/chat/neural/?from=jules-panel`;
-                                window.location.href = url;
-                            }
-                        }, 800);
-                    }
+                    localStorage.removeItem('hy_jules_handoff');
+                    localStorage.removeItem('jules_task_payload');
+                    localStorage.removeItem('hy_pending_claude_handoff_id');
+                    localStorage.removeItem('hy_handoff_autolink');
+                    localStorage.removeItem('hy_neural_pending_prompt');
+                    localStorage.removeItem('hy_neural_thread');
+                    localStorage.setItem('hy_neural_task_context', JSON.stringify(task));
+                    localStorage.setItem('hy_neural_active', 'true');
+                    localStorage.setItem('hy_neural_new_task_sent', 'true');
+                    localStorage.setItem('hy_neural_entry_point', 'dashboard-claude');
+                    window.location.assign('/chat/neural/?from=dashboard');
                 };
             }
 

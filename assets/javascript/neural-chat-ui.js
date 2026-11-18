@@ -41,6 +41,61 @@ window.appendSystemMessage = function(msg, type = 'error') {
     window.chatMessages.scrollTop = window.chatMessages.scrollHeight;
 }
 
+window._selectedNeuralMessageKeys = window._selectedNeuralMessageKeys || new Set();
+
+window.toggleNeuralMessageSelection = function(index, checked) {
+    const session = (window.sessions || []).find(s => s.id === window.currentSessionId);
+    if (!session?.messages?.[index]) return;
+    const key = session.id + ':' + index;
+    if (checked) window._selectedNeuralMessageKeys.add(key);
+    else window._selectedNeuralMessageKeys.delete(key);
+    window.updateNeuralMessageSelectionCount();
+};
+
+window.updateNeuralMessageSelectionCount = function() {
+    const el = document.getElementById('neural-selected-message-count');
+    if (el) el.textContent = [...window._selectedNeuralMessageKeys].filter(x => x.startsWith(window.currentSessionId + ':')).length + ' mensajes seleccionados';
+};
+
+window.prepareSelectedNeuralMessagesForJules = function() {
+    const session = (window.sessions || []).find(s => s.id === window.currentSessionId);
+    if (!session) return;
+    const messages = (session.messages || []).map((msg, index) => ({msg,index}))
+        .filter(({index}) => window._selectedNeuralMessageKeys.has(session.id + ':' + index));
+    if (!messages.length) {
+        if (window.showToast) showToast('Selecciona antes al menos un mensaje.', 'error');
+        return;
+    }
+    const excerpt = messages.slice(-15).map(({msg}) => {
+        const role = msg.source === 'jules' ? 'JULES' : msg.role === 'assistant' ? 'CLAUDE' : 'USUARIO';
+        const content = String(msg.content || '')
+            .replace(/\b(sk-ant-[\w-]{10,}|gh[pousr]_[\w-]{15,}|github_pat_[\w-]{15,}|nvapi-[\w-]{12,})\b/g, '[REDACTED]');
+        return '[' + role + ']\n' + content.slice(0,2400);
+    }).join('\n\n').slice(0,20000);
+    let task = window._activeTaskContext || null;
+    if (!task) { try { task = JSON.parse(localStorage.getItem('hy_neural_task_context') || 'null'); } catch {} }
+    window._selectedNeuralMessageKeys.clear();
+    window.handoffClaudeToJules?.(excerpt, '', task, session);
+};
+
+// A bad/partial Markdown chunk must never prevent the complete conversation
+// from rendering. Escape fallback content instead of injecting provider HTML.
+window.renderNeuralMessageBody = function(value, fromJules = false) {
+    const content = typeof value === 'string' ? value :
+        (Array.isArray(value) ? value.map(part => typeof part === 'string' ? part : (part?.text || '')).join('\n') : String(value ?? ''));
+    if (!content) return '';
+    const safeText = escapeHtml(content);
+    if (fromJules || !window.marked?.parse || !window.DOMPurify?.sanitize) {
+        return '<div style="white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.65">' + safeText + '</div>';
+    }
+    try {
+        return window.DOMPurify.sanitize(window.marked.parse(content, { breaks: true }));
+    } catch (error) {
+        console.warn('[NeuralChat] Markdown render error, using readable fallback', error);
+        return '<div style="white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.65">' + safeText + '</div>';
+    }
+};
+
 window.renderMessages = function() {
     const currentSession = window.sessions.find(s => s.id === window.currentSessionId);
     if (!currentSession) {
@@ -66,7 +121,7 @@ window.renderMessages = function() {
         const isUser = m.role === 'user';
         const isJules = m.source === 'jules' || m.role === 'agent' || m.role === 'jules';
 
-        let label = isUser ? 'USUARIO' : (isJules ? 'JULES' : 'CLAUDE');
+        let label = m.error ? 'ERROR DE CLAUDE' : (isUser ? 'USUARIO' : (isJules ? 'JULES' : 'CLAUDE'));
         let iconHTML = isUser ? '<i class="fas fa-user"></i>' : (isJules ? '<i class="fas fa-bolt"></i>' : '<i class="fas fa-robot"></i>');
 
         if (isUser) {
@@ -84,7 +139,7 @@ window.renderMessages = function() {
         }
 
         const labelColor = isUser ? 'text-[#f8f8f2]' : (isJules ? 'text-[#6272a4]' : 'text-[#bd93f9]');
-        const bubbleClass = isUser ? 'message-user' : (isJules ? 'message-claude border-[#44475a] border shadow-none bg-[#1a1b26]' : 'message-claude shadow-xl');
+        const bubbleClass = m.error ? 'message-claude border border-red-500/70 bg-red-950/25' : (isUser ? 'message-user' : (isJules ? 'message-claude border-[#44475a] border shadow-none bg-[#1a1b26]' : 'message-claude shadow-xl'));
 
         // Handle <think> blocks for Reasoning
         if (content && typeof content === 'string' && content.includes('<think>')) {
@@ -111,15 +166,15 @@ window.renderMessages = function() {
             safetyBadge = `<div class="mb-2 px-2 py-1 rounded bg-red-500/20 border border-red-500/50 text-red-400 text-[9px] font-bold uppercase tracking-widest">⚠️ SAFETY ALERT: FLAG DETECTED</div>`;
         }
 
-        // Handle Consulted Sources (Docs Bridge)
+        // Handle Consulted Sources (Docs Bridge & Local File RAG)
         let docsSourcesHtml = '';
-        if (m.role === 'assistant' && m.sources && m.sources.length > 0) {
-            const readStatusCount = m.sources.filter(s => s.readStatus === 'completo' || s.readStatus === 'truncado').length;
-            const contextLabel = readStatusCount > 0 ? `Docs Context · ${readStatusCount} documentos leídos` : `Docs Context · ${m.sources.length} fragmentos`;
-
-            docsSourcesHtml = `
-                <div class="mt-4 border-t border-[#44475a]/30 pt-3">
-                    <details class="docs-sources-details">
+        if (m.role === 'assistant' && ((m.sources && m.sources.length > 0) || (m.ragSources && m.ragSources.length > 0))) {
+            let docsPart = '';
+            if (m.sources && m.sources.length > 0) {
+                const readStatusCount = m.sources.filter(s => s.readStatus === 'completo' || s.readStatus === 'truncado').length;
+                const contextLabel = readStatusCount > 0 ? `Docs Context · ${readStatusCount} documentos leídos` : `Docs Context · ${m.sources.length} fragmentos`;
+                docsPart = `
+                    <details class="docs-sources-details mb-2">
                         <summary class="text-[10px] font-bold text-[#6272a4] cursor-pointer hover:text-[#bd93f9] transition-all flex items-center gap-2 uppercase tracking-widest">
                             <i class="fas fa-book-open"></i> ${contextLabel}
                         </summary>
@@ -141,6 +196,36 @@ window.renderMessages = function() {
                             }).join('')}
                         </div>
                     </details>
+                `;
+            }
+
+            let ragPart = '';
+            if (m.ragSources && m.ragSources.length > 0) {
+                const threshold = m.ragThreshold !== undefined ? m.ragThreshold : 0.35;
+                ragPart = `
+                    <details class="rag-sources-details">
+                        <summary class="text-[10px] font-bold text-[#50fa7b] cursor-pointer hover:text-white transition-all flex items-center gap-2 uppercase tracking-widest">
+                            <i class="fas fa-file-code"></i> RAG Adjuntos (${m.ragSources.length} fragmentos, umbral: ${threshold})
+                        </summary>
+                        <div class="mt-2 space-y-2">
+                            ${m.ragSources.map((rs, rIdx) => `
+                                <div class="p-2 bg-[#1e1f29] rounded border border-[#50fa7b]/30">
+                                    <div class="flex justify-between items-center mb-1">
+                                        <span class="text-[10px] font-bold text-[#50fa7b] truncate">[${rIdx + 1}] ${escapeHtml(rs.fileName)}</span>
+                                        <span class="text-[9px] font-mono text-[#8be9fd]">Similitud: ${(rs.score || 0).toFixed(2)}</span>
+                                    </div>
+                                    <div class="text-[8px] text-[#6272a4] font-mono truncate">Chunk ${rs.chunkIndex + 1}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </details>
+                `;
+            }
+
+            docsSourcesHtml = `
+                <div class="mt-4 border-t border-[#44475a]/30 pt-3">
+                    ${docsPart}
+                    ${ragPart}
                 </div>
             `;
         }
@@ -156,30 +241,46 @@ window.renderMessages = function() {
                         ${label}
                     </div>
                 </div>
+                ${m.error ? '<div class="mb-2 text-xs font-semibold text-red-300" style="white-space:pre-wrap;overflow-wrap:anywhere">' + escapeHtml(m.errorMessage || 'Error del proveedor') + '</div>' : ''}
                 ${safetyBadge}
-                ${m.thinking ? `<div class="thinking-block">${escapeHtml(m.thinking)}</div>` : ''}
+                ${m.thinking ? `
+                    <details class="mb-3 border-l-2 border-[#8be9fd] bg-[#8be9fd]/10 rounded-r-lg overflow-hidden thinking-block" open>
+                        <summary class="p-2 text-[10px] font-bold text-[#8be9fd] cursor-pointer hover:bg-[#8be9fd]/10 transition-all uppercase tracking-widest flex items-center gap-2">
+                            <i class="fas fa-brain"></i> Razonamiento extendido
+                        </summary>
+                        <div class="p-3 text-xs text-[#f8f8f2]/90 font-mono bg-black/30 whitespace-pre-wrap">
+                            ${escapeHtml(m.thinking)}
+                        </div>
+                    </details>
+                ` : ''}
                 ${reasoningHtml}
                 <div class="prose prose-invert text-sm prose-pre:bg-[#1e1f29] prose-pre:border prose-pre:border-[#44475a] selection:bg-[#bd93f9]/30">
-                    ${content ? marked.parse(content) : ''}
+                    ${window.renderNeuralMessageBody(content, isJules)}
                 </div>
 
                 ${docsSourcesHtml}
 
-                ${!isUser ? `
-                <div class="neural-message-actions absolute -bottom-3 right-4 flex gap-1.5 z-10">
+                ${`
+                <div class="neural-message-actions">
+                    <label class="neural-action-mini neural-message-select">
+                        <input type="checkbox" aria-label="Seleccionar mensaje" onchange="window.toggleNeuralMessageSelection(${idx},this.checked)" ${window._selectedNeuralMessageKeys.has(currentSession.id + ':' + idx) ? 'checked' : ''}> Seleccionar
+                    </label>
+                    ${!isUser ? `
                     <button onclick="copyMessage(${idx})" class="neural-action-mini" title="Copiar respuesta">
                         <i class="fas fa-copy"></i> <span class="desktop-only">Copiar</span>
                     </button>
                     <button onclick="sendToJulesByIndex(${idx})" class="neural-action-mini" title="Enviar a Jules">
                         <i class="fas fa-bolt"></i> <span class="desktop-only">→ Jules</span>
                     </button>
+                    ` : ''}
                 </div>
-                ` : ''}
+                `}
             </div>
         </div>
         `;
     }).join('');
     window.chatMessages.scrollTop = window.chatMessages.scrollHeight;
+    window.updateNeuralMessageSelectionCount();
 }
 
 window.toggleMobileSidebar = function() {
@@ -403,6 +504,218 @@ window.removeAttachedImage = function() {
     document.getElementById('image-input').value = '';
 }
 
+/* ════════════════════════════════════════
+   RAG ATTACHMENT CHIPS UI ENGINE
+   ════════════════════════════════════════ */
+
+window.ragActiveIngestControllers = {};
+window.ragMemoryErrorChips = {};
+
+window.renderRagFileChips = async function(targetSessionId) {
+    const sessionId = targetSessionId || window.currentSessionId;
+    const container = document.getElementById('rag-file-chips-container');
+    if (!container) return;
+
+    if (!sessionId) {
+        container.innerHTML = '';
+        container.classList.add('hidden');
+        return;
+    }
+
+    // 1. Fetch persistent chunks for current session
+    let readyFiles = [];
+    try {
+        const chunks = await window.aiStorage.getRagChunksBySession(sessionId);
+        const fileMap = new Map();
+        chunks.forEach(c => {
+            if (!fileMap.has(c.fileId)) {
+                fileMap.set(c.fileId, {
+                    fileId: c.fileId,
+                    fileName: c.fileName || 'archivo.txt',
+                    fileSize: c.fileSize || 0,
+                    modelId: c.modelId,
+                    chunkCount: 0
+                });
+            }
+            fileMap.get(c.fileId).chunkCount++;
+        });
+        readyFiles = Array.from(fileMap.values());
+    } catch (e) {
+        console.error('Error fetching RAG chunks for chips:', e);
+    }
+
+    // 2. Active indexing chips for current session
+    const activeIndexing = Object.entries(window.ragActiveIngestControllers)
+        .filter(([_, item]) => item.sessionId === sessionId)
+        .map(([fId, item]) => ({
+            fileId: fId,
+            fileName: item.fileName,
+            fileSize: item.fileSize,
+            progress: item.progress || '0/0',
+            state: 'indexing'
+        }));
+
+    // 3. Memory error chips for current session
+    const memoryErrors = window.ragMemoryErrorChips[sessionId] || [];
+
+    // Current embedding model check
+    const embedConfig = window.getEmbeddingsConfig ? window.getEmbeddingsConfig() : {};
+    const currentModel = embedConfig.model;
+
+    const totalChips = activeIndexing.length + readyFiles.length + memoryErrors.length;
+    if (totalChips === 0) {
+        container.innerHTML = '';
+        container.classList.add('hidden');
+        return;
+    }
+
+    container.classList.remove('hidden');
+
+    let html = '';
+
+    // Render indexing chips
+    activeIndexing.forEach(file => {
+        html += `
+            <div class="rag-chip indexing" id="rag-chip-${file.fileId}">
+                <i class="fas fa-spinner fa-spin text-xs"></i>
+                <span class="rag-chip-name" title="${escapeHtml(file.fileName)}">${escapeHtml(file.fileName)}</span>
+                <span class="rag-chip-size">${file.progress}</span>
+                <button type="button" class="rag-chip-remove" aria-label="Quitar ${escapeHtml(file.fileName)} del contexto" onclick="removeRagChip('${file.fileId}', 'indexing')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        `;
+    });
+
+    // Render ready files chips
+    readyFiles.forEach(file => {
+        const isMismatch = file.modelId && currentModel && file.modelId !== currentModel;
+        const formattedSize = window.NeuralChatRAG?.formatFileSize ? window.NeuralChatRAG.formatFileSize(file.fileSize) : `${file.fileSize} B`;
+
+        html += `
+            <div class="rag-chip ready" id="rag-chip-${file.fileId}">
+                <i class="fas fa-file-lines rag-chip-icon text-xs"></i>
+                <span class="rag-chip-name" title="${escapeHtml(file.fileName)}">${escapeHtml(file.fileName)}</span>
+                <span class="rag-chip-size">${formattedSize}</span>
+                ${isMismatch ? `<span class="rag-chip-badge reindex" title="Modelo de embeddings cambiado (${file.modelId} → ${currentModel})">reindexar</span>` : ''}
+                <button type="button" class="rag-chip-remove" aria-label="Quitar ${escapeHtml(file.fileName)} del contexto" onclick="removeRagChip('${file.fileId}', 'ready')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        `;
+    });
+
+    // Render error chips
+    memoryErrors.forEach(file => {
+        const formattedSize = window.NeuralChatRAG?.formatFileSize ? window.NeuralChatRAG.formatFileSize(file.fileSize) : `${file.fileSize} B`;
+        html += `
+            <div class="rag-chip error" id="rag-chip-${file.fileId}" title="${escapeHtml(file.errorMessage)}">
+                <i class="fas fa-exclamation-triangle text-xs"></i>
+                <span class="rag-chip-name" title="${escapeHtml(file.fileName)}">${escapeHtml(file.fileName)}</span>
+                <span class="rag-chip-size">${formattedSize} · Error</span>
+                <button type="button" class="rag-chip-remove" aria-label="Quitar ${escapeHtml(file.fileName)} del contexto" onclick="removeRagChip('${file.fileId}', 'error')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        `;
+    });
+
+    container.innerHTML = html;
+};
+
+window.renderRagFileChips.addErrorChip = function({ fileId, fileName, fileSize, errorMessage }) {
+    const sessionId = window.currentSessionId;
+    if (!sessionId) return;
+
+    if (!window.ragMemoryErrorChips[sessionId]) {
+        window.ragMemoryErrorChips[sessionId] = [];
+    }
+    // Remove existing error chip for same file if present
+    window.ragMemoryErrorChips[sessionId] = window.ragMemoryErrorChips[sessionId].filter(c => c.fileId !== fileId);
+    window.ragMemoryErrorChips[sessionId].push({
+        fileId,
+        fileName,
+        fileSize,
+        errorMessage,
+        state: 'error'
+    });
+
+    window.renderRagFileChips(sessionId);
+};
+
+window.removeRagChip = async function(fileId, state) {
+    const sessionId = window.currentSessionId;
+    if (!sessionId) return;
+
+    if (state === 'indexing') {
+        const active = window.ragActiveIngestControllers[fileId];
+        if (active && active.controller) {
+            active.controller.abort();
+        }
+        delete window.ragActiveIngestControllers[fileId];
+    } else if (state === 'ready') {
+        await window.aiStorage.deleteRagChunksByFile(sessionId, fileId);
+    } else if (state === 'error') {
+        if (window.ragMemoryErrorChips[sessionId]) {
+            window.ragMemoryErrorChips[sessionId] = window.ragMemoryErrorChips[sessionId].filter(c => c.fileId !== fileId);
+        }
+    }
+
+    await window.renderRagFileChips(sessionId);
+};
+
+window.handleFileIngestionWithChip = async function({ sessionId, fileId, fileName, fileSize, fileContent }) {
+    const controller = new AbortController();
+
+    window.ragActiveIngestControllers[fileId] = {
+        sessionId,
+        controller,
+        fileName,
+        fileSize,
+        progress: '0/0',
+        state: 'indexing'
+    };
+
+    await window.renderRagFileChips(sessionId);
+
+    try {
+        await window.NeuralChatRAG.ingestFile({
+            sessionId,
+            fileId,
+            fileName,
+            fileSize,
+            fileContent,
+            signal: controller.signal,
+            onProgress: (p) => {
+                if (window.ragActiveIngestControllers[fileId]) {
+                    window.ragActiveIngestControllers[fileId].progress = `${p.processedChunks}/${p.totalChunks}`;
+                    window.renderRagFileChips(sessionId);
+                }
+            }
+        });
+
+        delete window.ragActiveIngestControllers[fileId];
+        await window.renderRagFileChips(sessionId);
+
+    } catch (err) {
+        delete window.ragActiveIngestControllers[fileId];
+
+        if (err.name === 'AbortError') {
+            // User cancelled indexing via X button; no chunks were saved
+            await window.renderRagFileChips(sessionId);
+            return;
+        }
+
+        // Display error state chip in memory
+        window.renderRagFileChips.addErrorChip({
+            fileId,
+            fileName,
+            fileSize,
+            errorMessage: err.message || 'Error al indexar archivo'
+        });
+    }
+};
+
 window.sendAudioTranscription = async function(blob) {
     const config = getActiveConfig();
     const baseUrl = (config.base_url || '').trim().replace(/\/+$/, '');
@@ -432,3 +745,4 @@ window.sendAudioTranscription = async function(blob) {
         window.thinkingIndicator.classList.add('hidden');
     }
 }
+

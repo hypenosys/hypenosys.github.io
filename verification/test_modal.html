@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Verification Page for API Config</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/assets/javascript/ai-config.js"></script>
+</head>
+<body class="bg-dark text-white p-4">
+    <div class="container">
+        <h2>Prueba Visibilidad Modal API Config</h2>
+        <div id="modal-container"></div>
+    </div>
+    <script>
+        fetch('/_includes/api_config_modal.html')
+            .then(res => res.text())
+            .then(html => {
+                document.getElementById('modal-container').innerHTML = html;
+                window.jQuery('#modalApiConfig').modal('show');
+            });
+    </script>
+</body>
+</html>
