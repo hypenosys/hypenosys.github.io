@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+### Added
+- **Auditoría de misión y compliance (2026-11-18):** portada con misión, proyectos verificables, H1 accesible y navegación por teclado; pruebas y CI específicas; matriz de 23 riesgos documentada. No se proclama cumplimiento total.
+
+### Fixed
+- **Privacidad y seguridad (2026-11-18):** avisos explícitos de riesgos de localStorage/PAT, eliminación de garantías no verificadas sobre tráfico externo y test Matomo corregido para localhost.
+
 ### Changed
 - Updated Hypenosys visual identity v2: locally hosted pixel-art wordmark, browser favicon, mobile icons and header artwork (2026-11-18).
 - **Public identity and legal navigation (2026-11-18):** Clarified Hypenosys as a volunteer, experimental, non-revenue open-source initiative; added legal and cookie information and consistent public footer. Kept legal disclosure limitations explicit pending verification.
