@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ page.lang | default: site.lang | default: "en" }}">
+<html lang="{{ page.lang | default: site.lang | default: "es" }}">
   {%- include head.html -%}
   <body class="bg-slate-950">
     <script src="/assets/javascript/global-header.js"></script>
@@ -9,5 +9,6 @@
       </div>
     </div>
     {%- include footer.html -%}
+    {% if page.admin_ui == true %}{%- include admin_shell.html -%}{% endif %}
   </body>
 </html>
