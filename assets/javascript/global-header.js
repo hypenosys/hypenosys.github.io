@@ -426,7 +426,7 @@ class GlobalHeader {
         header.innerHTML = `
             <div class="gh-container">
                 <a href="/" class="gh-logo">
-                    <img src="https://raw.githubusercontent.com/hypenosys/hypenosys-logo/master/logo_simple.svg" alt="Hypenosys">
+                    <img src="/assets/images/brand/logo_simple.svg" alt="Hypenosys">
                 </a>
 
                 <div class="gh-mobile-actions">

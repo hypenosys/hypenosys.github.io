@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Changed
+- Updated Hypenosys visual identity v2: locally hosted pixel-art wordmark, browser favicon, mobile icons and header artwork (2026-11-18).
 - **Public identity and legal navigation (2026-11-18):** Clarified Hypenosys as a volunteer, experimental, non-revenue open-source initiative; added legal and cookie information and consistent public footer. Kept legal disclosure limitations explicit pending verification.
 - **Compatibility:** Retained shared authentication/settings shell on existing default-layout pages; included legal navigation on HAIS layout.
 - **Privacy:** Removed unverified third-party and IP-anonymization guarantees from consent UI. Further browser and infrastructure validation required.

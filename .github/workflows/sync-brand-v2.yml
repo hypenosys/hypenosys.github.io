@@ -1,0 +1,52 @@
+name: Sync Hypenosys v2 brand assets
+on:
+  push:
+    branches: [feat/brand-v2-site]
+    paths:
+      - '.github/workflows/sync-brand-v2.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Download approved brand files from hypenosys-logo master
+        shell: bash
+        run: |
+          set -euo pipefail
+          base='https://raw.githubusercontent.com/hypenosys/hypenosys-logo/master'
+          mkdir -p assets/images/brand
+          for file in logo_simple.svg logo_icon.svg favicon.svg favicon.ico favicon-16x16.png favicon-32x32.png android-chrome-192x192.png android-chrome-512x512.png apple-touch-icon.png; do
+            curl --fail --location --retry 4 --silent --show-error "$base/$file" --output "assets/images/brand/$file"
+            test -s "assets/images/brand/$file"
+          done
+          cp assets/images/brand/favicon.ico favicon.ico
+          cp assets/images/brand/favicon.svg favicon.svg
+          cp assets/images/brand/apple-touch-icon.png apple-touch-icon.png
+          cp assets/images/brand/android-chrome-192x192.png android-chrome-192x192.png
+          cp assets/images/brand/android-chrome-512x512.png android-chrome-512x512.png
+      - name: Verify icons and source consistency
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import struct
+          assert Path("favicon.ico").read_bytes()[:4] == b'\x00\x00\x01\x00'
+          assert Path("assets/images/brand/logo_simple.svg").read_text().lstrip().startswith("<svg")
+          for n in ("apple-touch-icon.png","android-chrome-192x192.png","android-chrome-512x512.png"):
+              assert Path(n).read_bytes()[:8] == b'\x89PNG\r\n\x1a\n'
+          print("Brand assets validated")
+          PY
+      - name: Commit brand files
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add favicon.ico favicon.svg apple-touch-icon.png android-chrome-192x192.png android-chrome-512x512.png assets/images/brand/
+          if ! git diff --cached --quiet; then
+            git commit -m 'feat(brand): synchronize approved v2 logos and favicons'
+            git pull --rebase origin feat/brand-v2-site
+            git push
+          fi
