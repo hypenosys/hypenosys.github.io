@@ -468,20 +468,12 @@ class GlobalHeader {
 
                 <div class="gh-nav-content" id="gh-nav-content">
                     <div class="gh-nav-groups">
-                        <!-- Identidad pública -->
-                        <div class="gh-nav-item">
-                            <button type="button" class="gh-dropdown-toggle">Hypenosys <i class="fas fa-chevron-down fa-xs" aria-hidden="true"></i></button>
-                            <div class="gh-dropdown-content">
-                                <a href="/#mision" class="gh-dropdown-link">Nuestra misión</a>
-                                <a href="/#proyectos" class="gh-dropdown-link">Proyectos y evidencias</a>
-                                <a href="/#documentacion" class="gh-dropdown-link">Documentación</a>
-                            </div>
-                        </div>
-
                         <!-- Plataforma -->
                         <div class="gh-nav-item">
                             <button type="button" class="gh-dropdown-toggle">Plataforma <i class="fas fa-chevron-down fa-xs" aria-hidden="true"></i></button>
                             <div class="gh-dropdown-content">
+                                <a href="/#mision" class="gh-dropdown-link">Nuestra misión</a>
+                                <a href="/#proyectos" class="gh-dropdown-link">Proyectos y evidencias</a>
                                 <a href="/dashboard.html" class="gh-dropdown-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
                                 <a href="/documentacion/" class="gh-dropdown-link"><i class="fas fa-book"></i> Documentación</a>
                                 <a href="/guia-comandos/" class="gh-dropdown-link"><i class="fas fa-terminal"></i> Comandos</a>
