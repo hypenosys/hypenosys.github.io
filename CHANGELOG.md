@@ -3,6 +3,12 @@
 ## [Unreleased]
 
 ### Changed
+- **Public identity and legal navigation (2026-11-18):** Clarified Hypenosys as a volunteer, experimental, non-revenue open-source initiative; added legal and cookie information and consistent public footer. Kept legal disclosure limitations explicit pending verification.
+- **Compatibility:** Retained shared authentication/settings shell on existing default-layout pages; included legal navigation on HAIS layout.
+- **Privacy:** Removed unverified third-party and IP-anonymization guarantees from consent UI. Further browser and infrastructure validation required.
+
+
+### Changed
 - **HAIS FRED evidence (2026-11-15):** Official DGS2 4.86% and DGS10 5.10% (2026-11-12 observations, published 2026-11-13). No gateway or other market freshness verification; task #900043 remains Working 30%, PAPER-only.
 
 ### Changed
