@@ -7,13 +7,17 @@ permalink: /
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Hypenosys es un proyecto independiente de código abierto, creación interactiva, ingeniería de software, automatización e inteligencia artificial.">
+    <meta name="description" content="Hypenosys es un laboratorio independiente que investiga y crea software, experiencias interactivas y herramientas de IA con autonomía, criterio técnico y evidencia pública cuando está disponible.">
     <meta name="theme-color" content="#282a36">
     <meta property="og:type" content="website">
     <meta property="og:title" content="Hypenosys — Laboratorio creativo y técnico">
     <meta property="og:description" content="Donde las pesadillas se vuelven código y el arte cobra vida. Proyecto independiente, desarrollo abierto y experimentación técnica.">
     <meta property="og:locale" content="es_ES">
     <meta property="og:url" content="https://hypenosys.com/">
+    <meta property="og:site_name" content="Hypenosys">
+    <meta property="og:image" content="https://hypenosys.com/assets/images/brand/android-chrome-512x512.png">
+    <meta property="og:image:alt" content="Símbolo de Hypenosys">
+    <meta name="twitter:card" content="summary">
     <link rel="canonical" href="https://hypenosys.com/">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -55,6 +59,11 @@ permalink: /
         .hy-resource { display: block; border: 1px solid #47475c; border-radius: 9px; padding: 1rem 1.2rem; text-decoration: none !important; background: rgba(255,255,255,.025); }
         .hy-resource:hover { border-color: #bd93f9; background: rgba(189,147,249,.08); }
         .hy-resource small { display: block; color: #c8c7d2; margin-top: .3rem; }
+        .hy-principle-list { margin-top: 1.5rem; padding-left: 1.3rem; max-width: 48rem; }
+        .hy-principle-list li { margin-bottom: .55rem; line-height: 1.7; }
+        .hy-card-meta { color: #8be9fd; font-size: .8rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin-bottom: .75rem !important; }
+        .hy-card .hy-card-link { display: inline-block; margin-top: 1rem; }
+        .hy-landing :target { scroll-margin-top: 7rem; }
         .hy-footnote { margin-top: 4rem; padding: 1.6rem 0 2rem; border-top: 1px solid #47475c; font-size: .92rem; }
         @media (max-width: 767px) { .hy-grid, .hy-link-grid { grid-template-columns: 1fr; } .hy-hero { padding: 2rem 1.35rem; } .hy-action { width: 100%; } }
         @media (prefers-reduced-motion: no-preference) { .hy-action, .hy-resource { transition: background-color .15s ease, border-color .15s ease; } }
@@ -88,24 +97,37 @@ permalink: /
 <body class="bg-slate-950 text-white">
 <main id="contenido" class="container py-5 hy-landing">
     <section class="hy-hero" aria-labelledby="hy-title">
-        <p class="hy-eyebrow">Proyecto independiente · Open source · En desarrollo</p>
-        <h1 id="hy-title" class="hy-brand-heading"><img src="/assets/images/brand/logo_simple.svg" alt="HYPENOSYS" width="512" height="256"></h1>
+        <p class="hy-eyebrow">Laboratorio independiente · Código abierto donde se indique · En desarrollo</p>
+        <h1 id="hy-title" class="hy-brand-heading"><span class="sr-only">Hypenosys</span><img src="/assets/images/brand/logo_simple.svg" alt="" aria-hidden="true" width="512" height="256"></h1>
         <p class="hy-motto">Donde las pesadillas se vuelven código y el arte cobra vida.</p>
         <p class="hy-muted hy-hero-summary">
-            Un laboratorio creativo y técnico para construir, experimentar y compartir
-            software, experiencias interactivas y herramientas que conectan arte, ingeniería e inteligencia artificial.
+            Investigamos, construimos y documentamos software, experiencias interactivas y herramientas de IA
+            para ampliar la autonomía creativa y técnica. Cada proyecto declara qué es público, qué está en pruebas y qué queda por verificar.
         </p>
         <nav class="hy-actions" aria-label="Acciones principales">
-            <a class="hy-action hy-action-primary" href="{{ '/hais/' | relative_url }}">Explorar HAIS (demo)</a>
-            <a class="hy-action hy-action-primary" href="https://github.com/hypenosys/hypenosys.github.io">Explorar el código</a>
-            <a class="hy-action hy-action-secondary" href="#documentacion">Ver documentación</a>
+            <a class="hy-action hy-action-primary" href="#proyectos">Explorar proyectos</a>
+            <a class="hy-action hy-action-secondary" href="#mision">Nuestra misión</a>
+            <a class="hy-action hy-action-secondary" href="#documentacion">Documentación</a>
             <a class="hy-action hy-action-secondary" href="https://github.com/hypenosys/hypenosys.github.io/blob/master/CONTRIBUTING.md">Cómo contribuir</a>
         </nav>
         <p class="hy-status hy-muted">
-            <strong class="text-white">Estado:</strong> iniciativa independiente de inteligencia artificial, software abierto y experimentación creativa.
-            El código de esta web es público; otros componentes de Hypenosys todavía se desarrollan en repositorios privados.
-            La disponibilidad pública de cada proyecto se indica por separado.
+            <strong class="text-white">Transparencia:</strong> la web y su historial son públicos. No todos los proyectos ni sus repositorios lo son;
+            una demo, un documento conceptual y un producto operativo no son equivalentes. Indicamos el estado de cada ejemplo.
         </p>
+    </section>
+
+    <section class="hy-section" id="mision" aria-labelledby="hy-mission-title">
+        <h2 id="hy-mission-title">Nuestra misión</h2>
+        <p class="hy-muted hy-section-lead">
+            Convertir preguntas creativas y problemas técnicos en experimentos útiles, comprensibles y contrastables.
+            Queremos que el conocimiento, las herramientas y la capacidad de crear dependan menos de cajas negras
+            y más del criterio, la colaboración y la autonomía de quienes las utilizan.
+        </p>
+        <ul class="hy-muted hy-principle-list">
+            <li><strong class="text-white">Crear:</strong> combinar código, narrativas, arte y sistemas sin encerrarnos en una disciplina.</li>
+            <li><strong class="text-white">Comprobar:</strong> separar hipótesis, prototipos y resultados; publicar evidencias cuando puedan compartirse.</li>
+            <li><strong class="text-white">Compartir:</strong> abrir documentación y código por proyecto cuando las licencias, la seguridad y los derechos lo permitan.</li>
+        </ul>
     </section>
 
     <section class="hy-section" id="que-hacemos" aria-labelledby="hy-focus-title">
@@ -126,6 +148,31 @@ permalink: /
             <article class="hy-card">
                 <h3>IA y herramientas creativas</h3>
                 <p class="hy-muted">Investigación aplicada, flujos de trabajo asistidos y experimentación con modelos y herramientas de inteligencia artificial.</p>
+            </article>
+        </div>
+    </section>
+
+    <section class="hy-section" id="proyectos" aria-labelledby="hy-projects-title">
+        <h2 id="hy-projects-title">Proyectos y evidencias</h2>
+        <p class="hy-muted hy-section-lead">Tres entradas con grados distintos de madurez y apertura. Los enlaces llevan a material público verificable; no implican que toda la iniciativa esté liberada.</p>
+        <div class="hy-grid">
+            <article class="hy-card hy-card-accent">
+                <p class="hy-card-meta">HAIS · Observatorio y simulación</p>
+                <h3>Investigar antes de operar</h3>
+                <p class="hy-muted">Visualización de mercados externos y espacio PAPER con dinero ficticio. La simulación no envía órdenes reales y su cartera es local al navegador.</p>
+                <a class="hy-card-link" href="{{ '/hais/' | relative_url }}">Abrir observatorio HAIS &rarr;</a>
+            </article>
+            <article class="hy-card">
+                <p class="hy-card-meta">THE MACHINE · Diseño conceptual</p>
+                <h3>Evaluar información y evidencia</h3>
+                <p class="hy-muted">Investigación documental de arquitecturas local-first y trazabilidad. Estado declarado en su repositorio: preimplementación, HOLD / NO-GO; no es software operativo.</p>
+                <a class="hy-card-link" href="https://github.com/hypenosys/the_machine">Consultar documentación pública &rarr;</a>
+            </article>
+            <article class="hy-card">
+                <p class="hy-card-meta">HYPENOSYS · Web y herramientas</p>
+                <h3>Construir una plataforma abierta a revisión</h3>
+                <p class="hy-muted">Sitio público, documentación y herramientas experimentales. El repositorio permite revisar cambios, colaborar y distinguir funcionalidades de pruebas.</p>
+                <a class="hy-card-link" href="https://github.com/hypenosys/hypenosys.github.io">Ver código de la web &rarr;</a>
             </article>
         </div>
     </section>
@@ -153,7 +200,7 @@ permalink: /
 
     <section class="hy-section" id="documentacion" aria-labelledby="hy-docs-title">
         <h2 id="hy-docs-title">Documentación técnica</h2>
-        <p class="hy-muted hy-section-lead">Material de trabajo y referencias que forman parte del historial del proyecto. Algunas guías describen sistemas o decisiones de etapas anteriores.</p>
+        <p class="hy-muted hy-section-lead">Material técnico y referencias históricas. Las guías antiguas no definen por sí solas la misión actual ni acreditan que todos los sistemas descritos estén desplegados.</p>
         <nav class="hy-link-grid" aria-label="Recursos del proyecto">
             <a class="hy-resource" href="/CHANGELOG.html">Changelog <small>Registro de cambios y actividad</small></a>
             <a class="hy-resource" href="/estructura_del_proyecto/">Estructura del proyecto <small>Organización y arquitectura</small></a>

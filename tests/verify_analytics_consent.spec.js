@@ -68,7 +68,7 @@ test.describe('Hypenosys Matomo & Analytics Consent System', () => {
         expect(isChecked).toBe(false);
     });
 
-    test('Case 3: Accept consent & dynamic Matomo initialization', async ({ page }) => {
+    test('Case 3: Accept consent on localhost without loading unapproved Matomo tracking', async ({ page }) => {
         await page.goto('http://localhost:4000/index.html');
         await page.click('#hy-consent-btn-accept');
 
@@ -84,7 +84,9 @@ test.describe('Hypenosys Matomo & Analytics Consent System', () => {
         expect(paqExists).toBe(true);
 
         const hasMatomoScript = await page.evaluate(() => Boolean(window.__hypenosysMatomoLoaded));
-        expect(hasMatomoScript).toBe(true);
+        // localhost no pertenece a la lista de dominios autorizados:
+        // se guarda la preferencia, pero Matomo nunca debe cargarse aquí.
+        expect(hasMatomoScript).toBe(false);
     });
 
     test('Case 4: Revoke consent after accepting', async ({ page }) => {

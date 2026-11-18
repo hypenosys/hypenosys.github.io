@@ -111,6 +111,7 @@
     justify-content: center;
     gap: 0.4rem;
     padding: 0.55rem 1rem;
+    min-height: 44px;
     border-radius: 8px;
     font-size: 0.85rem;
     font-weight: 600;
@@ -140,8 +141,8 @@
 }
 
 .hy-consent-btn-reject {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: var(--hy-consent-border);
+    background: #293447;
+    border-color: #8d9ab0;
     color: var(--hy-consent-text);
 }
 
@@ -395,4 +396,13 @@
 .hy-consent-trigger-link:hover,
 .hy-consent-trigger-link:focus-visible {
     color: var(--hy-consent-purple) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hy-consent-banner, .hy-consent-modal-overlay, .hy-consent-modal {
+        animation: none !important;
+    }
+    .hy-consent-btn, .hy-consent-floating-trigger {
+        transition: none !important;
+    }
 }

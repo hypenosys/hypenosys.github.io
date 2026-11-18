@@ -1,8 +1,8 @@
-# 🌌 Hypenosys Dashboard
+# Hypenosys — Plataforma y laboratorio
 
 Hypenosys es una iniciativa independiente de inteligencia artificial, software abierto y experimentación creativa. Este repositorio contiene su sitio web y herramientas experimentales.
 
-Construido sobre **Jekyll** y desplegado mediante **un proveedor de páginas estáticas**, el sistema utiliza una arquitectura "serverless" basada en el almacenamiento del lado del cliente y la API de GitHub para la persistencia de datos. 
+Construido sobre **Jekyll** y desplegado en **Cloudflare Pages** (entorno de desarrollo verificado en el workflow), el sistema utiliza una arquitectura "serverless" basada en el almacenamiento del lado del cliente y la API de GitHub para la persistencia de datos. 
 
 ---
 
@@ -47,11 +47,11 @@ npm install
 ```
 
 ### 3. Configuración del Entorno (Client-Side)
-A diferencia de las aplicaciones tradicionales, este dashboard **no utiliza archivos `.env`**. Toda la configuración se gestiona desde la interfaz de usuario y se persiste de forma segura en el almacenamiento local de tu navegador.
+A diferencia de las aplicaciones tradicionales, este dashboard **no utiliza archivos `.env`**. Toda la configuración se gestiona desde la interfaz de usuario y se conserva en el almacenamiento local del navegador cuando así lo dispone cada herramienta. **localStorage no es un almacén seguro de secretos:** cualquier script ejecutado con acceso al origen puede leerlo. No introduzcas claves de producción o compartidas; usa tokens de mínimos privilegios y revisa los relays externos.
 
 #### 🛠️ Modal de Ajustes del Sistema (Settings)
 Accede desde el icono de engranaje para configurar la conectividad base:
-*   **GitHub PAT:** Un *Personal Access Token* con permisos de `repo`. Se guarda como `gh_access_token`.
+*   **GitHub PAT:** Un *Personal Access Token* preferentemente fine-grained, restringido a los repositorios y permisos estrictamente necesarios. Se guarda como `gh_access_token` y es accesible al JavaScript del mismo origen.
 *   **Repositorio Objetivo:** El repositorio donde se leerán/escribirán los datos (ej: `hypenosys/hypenosys.github.io`). Se guarda como `github_repo`.
 *   **Jules API Key:** Clave necesaria para la comunicación con el agente de IA. Se guarda como `jules_api_key`.
 

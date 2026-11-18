@@ -118,6 +118,10 @@ class GlobalHeader {
             }
 
             .gh-dropdown-toggle {
+                background: transparent;
+                border: 0;
+                font-family: inherit;
+                text-align: left;
                 color: var(--gh-text-dim);
                 text-decoration: none;
                 font-size: 10px;
@@ -154,9 +158,25 @@ class GlobalHeader {
                 margin-top: 0.25rem;
             }
 
-            .gh-nav-item:hover .gh-dropdown-content {
+            .gh-nav-item:hover .gh-dropdown-content,
+            .gh-nav-item:focus-within .gh-dropdown-content {
                 display: block;
             }
+            .gh-dropdown-toggle:focus-visible, .gh-skip-link:focus-visible {
+                outline: 2px solid #8be9fd;
+                outline-offset: 3px;
+            }
+            .gh-skip-link {
+                position: absolute;
+                top: -100px;
+                left: 1rem;
+                padding: .65rem 1rem;
+                background: #0f172a;
+                border: 2px solid #8be9fd;
+                color: #f8fafc;
+                z-index: 9999;
+            }
+            .gh-skip-link:focus { top: .5rem; }
 
             /* Bridge the gap between toggle and dropdown content */
             .gh-dropdown-content::before {
@@ -415,7 +435,7 @@ class GlobalHeader {
         const sections = window.HYPENOSYS_PAGE_SECTIONS || [];
         const sectionDropdown = sections.length > 0 ? `
             <div class="gh-nav-item" id="gh-nav-sections">
-                <div class="gh-dropdown-toggle">Sección <i class="fas fa-chevron-down fa-xs"></i></div>
+                <button type="button" class="gh-dropdown-toggle">Sección <i class="fas fa-chevron-down fa-xs" aria-hidden="true"></i></button>
                 <div class="gh-dropdown-content">
                     ${sections.map(s => {
                         const onclick = s.onclick ? `onclick="${s.onclick}"` : '';
@@ -429,6 +449,7 @@ class GlobalHeader {
         ` : '';
 
         header.innerHTML = `
+            ${document.getElementById('contenido') ? '<a class="gh-skip-link" href="#contenido">Saltar al contenido</a>' : ''}
             <div class="gh-container">
                 <a href="/" class="gh-logo">
                     <img src="/assets/images/brand/logo_simple.svg" alt="Hypenosys">
@@ -447,9 +468,19 @@ class GlobalHeader {
 
                 <div class="gh-nav-content" id="gh-nav-content">
                     <div class="gh-nav-groups">
+                        <!-- Identidad pública -->
+                        <div class="gh-nav-item">
+                            <button type="button" class="gh-dropdown-toggle">Hypenosys <i class="fas fa-chevron-down fa-xs" aria-hidden="true"></i></button>
+                            <div class="gh-dropdown-content">
+                                <a href="/#mision" class="gh-dropdown-link">Nuestra misión</a>
+                                <a href="/#proyectos" class="gh-dropdown-link">Proyectos y evidencias</a>
+                                <a href="/#documentacion" class="gh-dropdown-link">Documentación</a>
+                            </div>
+                        </div>
+
                         <!-- Plataforma -->
                         <div class="gh-nav-item">
-                            <div class="gh-dropdown-toggle">Plataforma <i class="fas fa-chevron-down fa-xs"></i></div>
+                            <button type="button" class="gh-dropdown-toggle">Plataforma <i class="fas fa-chevron-down fa-xs" aria-hidden="true"></i></button>
                             <div class="gh-dropdown-content">
                                 <a href="/dashboard.html" class="gh-dropdown-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
                                 <a href="/documentacion/" class="gh-dropdown-link"><i class="fas fa-book"></i> Documentación</a>
@@ -461,7 +492,7 @@ class GlobalHeader {
 
                         <!-- Herramientas IA -->
                         <div class="gh-nav-item">
-                            <div class="gh-dropdown-toggle">Herramientas IA <i class="fas fa-chevron-down fa-xs"></i></div>
+                            <button type="button" class="gh-dropdown-toggle">Herramientas IA <i class="fas fa-chevron-down fa-xs" aria-hidden="true"></i></button>
                             <div class="gh-dropdown-content">
                                 <a href="/chat/neural/" class="gh-dropdown-link"><i class="fas fa-brain"></i> Neural Chat</a>
                                 <a href="/music-gen/" class="gh-dropdown-link"><i class="fas fa-music"></i> MusicGen</a>
