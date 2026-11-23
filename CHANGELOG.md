@@ -11,10 +11,8 @@
 
 - **HAIS FRED evidence (2026-11-15):** Official DGS2 4.86% and DGS10 5.10% (2026-11-12 observations, published 2026-11-13). No gateway or other market freshness verification; task #900043 remains Working 30%, PAPER-only.
 
-### Changed
 - **HAIS FRED evidence (2026-11-11):** Recorded official DGS2/DGS10 observations dated 2026-11-09 in task #900043. This does not verify HAIS gateway availability or other market feeds. Task remains Working 30%; PAPER-only.
 
-### Changed
 - **HAIS revisión 2026-11-10:** PR backend #25 fusionada tras CI verde: pruebas offline de rechazo de FRED DGS10 futuro, caducado e incompleto sin caché parcial. Se registran CI/deploy develop y publicación oficial DGS2 del 06-11 en el Kanban; HTTPS público, gateway y frescura de otras fuentes siguen sin verificar. PAPER-only.
 
 
