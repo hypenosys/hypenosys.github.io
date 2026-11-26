@@ -4434,6 +4434,11 @@
           "author_login": "HAIS review",
           "timestamp": "2026-11-22T08:39:33Z",
           "body": "2026-11-22: FRED DGS2=4,76 % y DGS10=5,04 %, observación 2026-11-19, publicados 2026-11-20 15:16/15:17 CST; próxima publicación anunciada 2026-11-23. https://fred.stlouisfed.org/series/DGS2 y https://fred.stlouisfed.org/series/DGS10 . Solo fuente oficial, NO gateway HAIS. PR #482 continúa draft, mergeable=false, HEAD 6868ed3; consulta de runs por HEAD sin resultados (no equivale a CI correcto). dev.hypenosys.com/hais/estado/ sin respuesta HTTP verificable desde herramienta. S&P 500, NASDAQ, CSI 300, IBEX 35, bonos UE/CN, oro/plata/WTI/Brent y BTC/ETH/SOL/APE sin frescura operativa comprobada. Mantener Working 30%, sin subtareas cerradas, PAPER-only."
+        },
+        {
+          "author_login": "HAIS review",
+          "timestamp": "2026-11-26T08:57:00Z",
+          "body": "2026-11-26: FRED oficial DGS2/DGS10: observaciones 2026-11-20 y 2026-11-23 = 4,63 % / 4,92 %; 2026-11-24 = 4,63 % / 4,91 %, actualización 2026-11-25 15:16 CST, próxima 2026-11-27. https://fred.stlouisfed.org/series/DGS2 y https://fred.stlouisfed.org/series/DGS10 . Preview Cloudflare del HEAD f4af8d9 confirmada el 23/11: https://github.com/hypenosys/hypenosys.github.io/pull/482#issuecomment-6942545748 . No acredita deploy dev ni gateway; PR draft no fusionable, consulta de runs PR sin resultados. Working 30%, PAPER-only, sin cierres."
         }
       ],
       "change_log": [],
