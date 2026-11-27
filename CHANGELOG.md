@@ -3,6 +3,8 @@
 ## [Unreleased]
 
 ### Changed
+- **HAIS FRED evidence (2026-11-26):** DGS2/DGS10 observations 2026-11-20 and 2026-11-23: 4.63% / 4.92%; 2026-11-24: 4.63% / 4.91%. Official FRED only. Cloudflare preview evidence for f4af8d9 (2026-11-23), not dev deployment or gateway validation. Task #900043 remains Working 30%; PAPER-only. PR #482.
+
 - **HAIS FRED evidence (2026-11-22):** DGS2 4.76% and DGS10 5.04% (2026-11-19 observations, published 2026-11-20). Source-only, no gateway validation; PR #482 draft, CI unconfirmed; #900043 Working 30%, PAPER-only.
 
 - **HAIS FRED evidence (2026-11-18):** DGS2 4.83% and DGS10 5.12% (observations 2026-11-16, published 2026-11-17). Official FRED only; gateway and other feeds unverified. #900043 remains Working 30%; PAPER-only.
